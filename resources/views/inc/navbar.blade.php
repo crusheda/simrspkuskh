@@ -54,10 +54,9 @@
             </ul>
             <div class="card nav-action-card bg-brand-color-4">
                 <div class="card-body" style="background-image: {{ url('images/layout/nav-card-bg.svg') }}">
-                    <h5 class="text-dark">Help Center</h5>
-                    <p class="text-dark text-opacity-75">Please contact us for more questions.</p>
-                    <a href="https://phoenixcoded.support-hub.io/" class="btn btn-primary" target="_blank">Go to
-                        help Center</a>
+                    <h5 class="text-dark">Tambahan Fitur?</h5>
+                    <p class="text-dark text-opacity-75">Silakan melakukan permintaan fitur melalui tombol di bawah ini.</p>
+                    <a href="https://phoenixcoded.support-hub.io/" class="btn btn-primary" target="_blank">Form Pengajuan</a>
                 </div>
             </div>
         </div>

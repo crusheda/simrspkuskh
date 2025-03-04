@@ -34,11 +34,12 @@ class DaftarPasienController extends Controller
                 ->select(
                     'pk.*',
                     'pp.NORM',
+                    DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(master.dokter.NIP) AS NAMADOKTER')
                 )
                 // ->selectRaw('SELECT master.getNamaLengkapPegawai("1708205") from master')
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-                ->leftJoin('master.pasien','master.pasien.NORM','=','pp.NORM')
+                ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
                 ->leftJoin('aplikasi.pengguna','aplikasi.pengguna.ID','=','pk.DITERIMA_OLEH')
                 ->leftJoin('master.ruangan','master.ruangan.ID','=','pk.RUANGAN')
                 ->leftJoin('master.dokter','master.dokter.ID','=','pk.DPJP')
