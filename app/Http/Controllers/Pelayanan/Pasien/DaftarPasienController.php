@@ -41,8 +41,16 @@ class DaftarPasienController extends Controller
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                 ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
                 ->leftJoin('aplikasi.pengguna','aplikasi.pengguna.ID','=','pk.DITERIMA_OLEH')
-                ->leftJoin('master.ruangan','master.ruangan.ID','=','pk.RUANGAN')
+                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
                 ->leftJoin('master.dokter','master.dokter.ID','=','pk.DPJP')
+                // ->whereIn('pk.RUANGAN', ['102010101','102010102','102010103','102010104','102010105','102010106','102010107','102010108','102010109','102010110','102010111','102010112','102010113','102010114','102010115','102010116','102010117','102010118'])
+                // ->where('pk.RUANGAN', 'LIKE', '1020101%')
+                // ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
+                ->where(function ($query) {
+                    $query->where('pk.RUANGAN', 'LIKE', '1020101%')
+                            ->orWhere('pk.RUANGAN', 'LIKE', '1020201%');
+                })
+                ->where('ru.STATUS', 1)
                 ->where('pk.STATUS', 1)
                 ->where('pk.KELUAR', null)
                 ->orderBy('pk.MASUK','DESC')

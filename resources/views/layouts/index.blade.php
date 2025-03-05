@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 
-    <title>Sistem Informasi Manajemen RS PKU Muhammadiyah Sukoharjo</title>
+    <title>Sistem Informasi Rekam Medis</title>
 
     <!-- [Meta] -->
     <meta charset="utf-8" />

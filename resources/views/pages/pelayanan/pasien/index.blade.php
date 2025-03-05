@@ -148,7 +148,7 @@
                                                     class="img-radius wid-40" />
                                             </div>
                                             <div class="flex-grow-1 ms-3">
-                                                <h4 class="mb-1">${item.NORM} - <b class="text-primary">${item.NAMAPASIEN}</b></h4>
+                                                <h4 class="mb-1">RM.${item.NORM} - <b class="text-primary">${item.NAMAPASIEN}</b></h4>
                                                 <a class="mb-0">DPJP : ${item.NAMADOKTER}</a><br>
                                                 <a class="mb-2"><code>Ruangan ${item.RUANGAN} | BPJS/JKN</code></a><br>
                                                 <a class="mb-2"><code>${item.NOPEN} | ${status}</code></a>

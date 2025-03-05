@@ -56,7 +56,7 @@
                 <div class="card-body" style="background-image: {{ url('images/layout/nav-card-bg.svg') }}">
                     <h5 class="text-dark">Tambahan Fitur?</h5>
                     <p class="text-dark text-opacity-75">Silakan melakukan permintaan fitur melalui tombol di bawah ini.</p>
-                    <a href="https://phoenixcoded.support-hub.io/" class="btn btn-primary" target="_blank">Form Pengajuan</a>
+                    <a href="javascript:void(0);" class="btn btn-primary" target="_blank">Form Pengajuan</a>
                 </div>
             </div>
         </div>
