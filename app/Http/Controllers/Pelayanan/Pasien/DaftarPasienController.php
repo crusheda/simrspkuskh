@@ -43,23 +43,18 @@ class DaftarPasienController extends Controller
                 ->leftJoin('aplikasi.pengguna','aplikasi.pengguna.ID','=','pk.DITERIMA_OLEH')
                 ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
                 ->leftJoin('master.dokter','master.dokter.ID','=','pk.DPJP')
-                // ->whereIn('pk.RUANGAN', ['102010101','102010102','102010103','102010104','102010105','102010106','102010107','102010108','102010109','102010110','102010111','102010112','102010113','102010114','102010115','102010116','102010117','102010118'])
-                // ->where('pk.RUANGAN', 'LIKE', '1020101%')
-                // ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
+
                 ->where(function ($query) {
                     $query->where('pk.RUANGAN', 'LIKE', '1020101%')
                             ->orWhere('pk.RUANGAN', 'LIKE', '1020201%');
                 })
+
                 ->where('ru.STATUS', 1)
                 ->where('pk.STATUS', 1)
                 ->where('pk.KELUAR', null)
                 ->orderBy('pk.MASUK','DESC')
                 ->get();
 
-        // $coba = DB::select('SELECT master.getNamaLengkapPegawai("1708205")');
-
-        // print_r($show);
-        // die();
 
         $data = [
             'show' => $show,
@@ -81,3 +76,13 @@ class DaftarPasienController extends Controller
 // ->where('medicalrecord.jadwal_kontrol.STATUS',1)
 // ->where('master.kartu_asuransi_pasien.JENIS',2)
 // ->orderBy('medicalrecord.jadwal_kontrol.DIBUAT_TANGGAL','DESC')
+// -------------------------------------------------------------------------------------------------------------------------------
+// GET SELECT DATA WITH QUERY
+// $show = DB::select('SELECT * FROM master.bulan WHERE id=2');
+// $show = DB::connection('db_pendaftaran')->select('CALL CetakSEP("0151R0130225V002145")');
+
+// UPDATE DATA WITH QUERY
+// DB::update('update users set username = ? , status = ? where user_id = ?', ["admin" , "active" , 1]);
+
+// CALL PROCEDURE
+// $show = DB::select('CALL CetakBarcodeRM("37804")');

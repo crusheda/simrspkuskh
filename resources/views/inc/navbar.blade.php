@@ -51,6 +51,27 @@
                         <li class="pc-item"><a class="pc-link" href="javascript:void(0);">e</a></li>
                     </ul>
                 </li>
+                <li class="pc-item pc-caption">
+                    <label>Klaim</label>
+                    <i class="ph-duotone ph-chart-pie"></i>
+                </li>
+                <li class="pc-item pc-hasmenu">
+                    <a href="javascript:void(0);" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-gauge"></i>
+                        </span>
+                        <span class="pc-mtext">Smart Klaim</span>
+                        <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
+                        <span class="pc-badge">2</span>
+                    </a>
+                    <ul class="pc-submenu">
+                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">a</a></li>
+                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">b</a></li>
+                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">c</a></li>
+                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">d</a></li>
+                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">e</a></li>
+                    </ul>
+                </li>
             </ul>
             <div class="card nav-action-card bg-brand-color-4">
                 <div class="card-body" style="background-image: {{ url('images/layout/nav-card-bg.svg') }}">
