@@ -22,6 +22,9 @@ Route::get('/dashboard', function () {
 
 Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'index'])->name('pelayanan.pasien');
 
+// TAMBAHAN NIH COBA YA
+// TAMBAHAN NIH COBA YA
+// TAMBAHAN NIH COBA YA
 
 
 
