@@ -22,9 +22,14 @@ Route::get('/dashboard', function () {
 
 Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'index'])->name('pelayanan.pasien');
 
-// tambahan
-// tambahan
-// tambahan
-// tambahan
-// tambahan
-// tambahan
+
+
+
+
+
+
+
+
+// Route::get('/', function () {
+//     return view('welcome');
+// });
