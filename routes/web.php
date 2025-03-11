@@ -15,3 +15,10 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'index'])->name('pelayanan.pasien');
+
+// tambahan
+// tambahan
+// tambahan
+// tambahan
+// tambahan
+// tambahan
