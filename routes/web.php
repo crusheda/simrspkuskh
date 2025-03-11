@@ -25,6 +25,9 @@ Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'index'])->name(
 // tambahan
 // tambahan
 // tambahan
+// TAMBAHAN NIH COBA YA
+// TAMBAHAN NIH COBA YA
+// TAMBAHAN NIH COBA YA
 // tambahan
 // tambahan
 // tambahan
