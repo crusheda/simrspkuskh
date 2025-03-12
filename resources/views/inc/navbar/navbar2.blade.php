@@ -1,12 +1,20 @@
 <!-- [ Sidebar Menu ] start -->
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
-        <div class="m-header">
-            <a href="javascript:void(0);" class="b-brand text-primary">
-                <!-- ========   Change your logo from here   ============ -->
-                <img src="{{ asset('images/logo/logoname.png') }}" alt="logo image" class="" style="height: 24px" />
-                <span class="badge bg-brand-color-3 rounded-pill ms-1 theme-version">v1.0</span>
-            </a>
+        <div class="card pc-user-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center btn btn-link-secondary" onclick="window.location='{{ route('pelayanan.pasien') }}'">
+                    <div class="flex-shrink-0 me-3">
+                        <i class="ph-duotone ph-caret-double-left"></i>
+                        {{-- <div class="btn btn-icon btn-link-secondary avtar">
+                        </div> --}}
+                    </div>
+                    <div class="flex-grow-1 align-items-left">
+                        <h6 class="mb-0">Kembali ke Halaman</h6>
+                        <small>My Pasien</small>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="navbar-content">
             <ul class="pc-navbar">
@@ -23,7 +31,7 @@
                     </a>
                 </li>
                 <li class="pc-item pc-caption">
-                    <label>Pelayanan</label>
+                    <label>ERM</label>
                     <i class="ph-duotone ph-chart-pie"></i>
                 </li>
                 <li class="pc-item">
@@ -31,28 +39,11 @@
                         <span class="pc-micon">
                             <i class="ph-duotone ph-projector-screen-chart"></i>
                         </span>
-                        <span class="pc-mtext">Daftar Pasien</span>
+                        <span class="pc-mtext">Resume Medis</span>
                     </a>
                 </li>
-                <li class="pc-item pc-hasmenu">
-                    <a href="javascript:void(0);" class="pc-link">
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-gauge"></i>
-                        </span>
-                        <span class="pc-mtext">Pendaftaran</span>
-                        <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
-                        <span class="pc-badge">2</span>
-                    </a>
-                    <ul class="pc-submenu">
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">a</a></li>
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">b</a></li>
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">c</a></li>
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">d</a></li>
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">e</a></li>
-                    </ul>
-                </li>
-                <li class="pc-item pc-caption">
-                    <label>Klaim</label>
+                {{-- <li class="pc-item pc-caption">
+                    <label>Billing</label>
                     <i class="ph-duotone ph-chart-pie"></i>
                 </li>
                 <li class="pc-item pc-hasmenu">
@@ -71,15 +62,8 @@
                         <li class="pc-item"><a class="pc-link" href="javascript:void(0);">d</a></li>
                         <li class="pc-item"><a class="pc-link" href="javascript:void(0);">e</a></li>
                     </ul>
-                </li>
+                </li> --}}
             </ul>
-            <div class="card nav-action-card bg-brand-color-4">
-                <div class="card-body" style="background-image: {{ url('images/layout/nav-card-bg.svg') }}">
-                    <h5 class="text-dark">Tambahan Fitur?</h5>
-                    <p class="text-dark text-opacity-75">Silakan melakukan permintaan fitur melalui tombol di bawah ini.</p>
-                    <a href="javascript:void(0);" class="btn btn-primary" target="_blank">Form Pengajuan</a>
-                </div>
-            </div>
         </div>
         <div class="card pc-user-card">
             <div class="card-body">

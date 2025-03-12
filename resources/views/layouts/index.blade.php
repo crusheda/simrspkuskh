@@ -28,8 +28,8 @@
     </div>
     <!-- [ Pre-loader ] End -->
 
-    @include('inc.navbar')
-    @include('inc.header')
+    @include('inc.navbar.navbar')
+    @include('inc.header.header')
 
     <!-- [ Main Content ] start -->
     <div class="pc-container">
@@ -42,6 +42,7 @@
     <!-- [ Main Content ] end -->
 
     @include('inc.footer')
+    @include('inc.js')
 
     {{-- OFFCANVAS --}}
         {{-- <div class="offcanvas border-0 pct-offcanvas offcanvas-end" tabindex="-1" id="offcanvas_pc_layout">
@@ -228,7 +229,6 @@
         </div> --}}
     {{-- OFFCANVAS --}}
 
-    @include('inc.js')
 
 </body>
 </html>

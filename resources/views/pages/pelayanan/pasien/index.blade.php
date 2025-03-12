@@ -32,7 +32,7 @@
                         <div class="btn-group">
                             <button class="btn btn-primary shadow" onclick="refresh()">Refresh Tabel</button>
                         </div>
-                        <button class="btn btn-info" disabled>Button 2</button>
+                        {{-- <button class="btn btn-info" disabled>Button 2</button> --}}
                     </div>
                     <div class="dropdown">
                         <a class="avtar avtar-s btn-link-secondary dropdown-toggle arrow-none" href="javascript: void(0);"
@@ -128,6 +128,7 @@
                         }
                     }
                     content = ``;
+                    console.log(item.NOPEN);
                     content += `<tr>
                                     <td>
                                         <div class="dropdown">
@@ -137,7 +138,7 @@
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-end" style="">
                                                 <a class="dropdown-item" href="javascript: void(0);">Data Diri Pasien</a>
-                                                <a class="dropdown-item" href="javascript: void(0);">Resume Medis</a>
+                                                <a class="dropdown-item" href="/pelayanan/pasien/resume/${item.NOPEN}">Resume Medis</a>
                                             </div>
                                         </div>
                                     </td>

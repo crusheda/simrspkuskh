@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 // INITIALIZE PATH CONTROLLER
 use App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController;
+use App\Http\Controllers\Pelayanan\Pasien\PasienController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 
 // STARTING CREATIONS
@@ -22,6 +23,7 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'index'])->name('pelayanan.pasien');
+Route::get('/pelayanan/pasien/resume/{NOPEN}', [PasienController::class, 'index'])->name('pelayanan.pasien.resume.index');
 Route::get('/klaim/smart', [SmartKlaimController::class, 'index'])->name('klaim.pasien');
 
 // TAMBAHAN NIH COBA YA
