@@ -10,7 +10,16 @@ use Carbon\Carbon;
 
 class PasienController extends Controller
 {
-    function index($NOPEN)
+    function indexIdentitas($KUNJUNGAN)
+    {
+        $data = [
+            'KUNJUNGAN' => $KUNJUNGAN,
+        ];
+
+        return view('pages.pelayanan.pasien.identitas.index')->with('list',$data);
+    }
+
+    function indexResume($KUNJUNGAN)
     {
         // $show = kunjungan::where('STATUS', 1)
         //         ->where('KELUAR', null)
@@ -20,11 +29,12 @@ class PasienController extends Controller
         // print_r($show);
         // die();
 
-        // $data = [
-        //     'show' => $show,
-        // ];
+        $data = [
+            // 'show' => $show,
+            'KUNJUNGAN' => $KUNJUNGAN,
+        ];
 
         // return view('layouts.index2');
-        return view('pages.pelayanan.pasien.resume.index');
+        return view('pages.pelayanan.pasien.resume.index')->with('list',$data);
     }
 }

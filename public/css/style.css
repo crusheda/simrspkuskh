@@ -15,7 +15,7 @@ File: style.css
 7.  Compact layout css
 8.  Horizontal layout css
 9.  Tab layout css
-10. Widget css 
+10. Widget css
 11. Avtar css
 12. Badge css
 13. Button css
@@ -20217,7 +20217,8 @@ pre[class*=language-] > code {
 }
 .pc-sidebar .navbar-content {
   position: relative;
-  height: calc(100vh - 149px);
+  /* height: calc(100vh - 149px); */
+  height: calc(100vh - 90px);
   padding: 10px 0;
 }
 .pc-sidebar .card {
@@ -20792,6 +20793,7 @@ pre[class*=language-] > code {
   }
   .layout-modern .pc-sidebar .navbar-content {
     height: calc(100vh - 218px);
+    /* height: calc(100vh - 90px); */
   }
   .layout-modern .pc-footer,
   .layout-modern .pc-container {
@@ -21811,7 +21813,7 @@ pre[class*=language-] > code {
   }
 }
 .pc-container .page-header + .row {
-  padding-top: 24px;
+  padding-top: 10px;
 }
 .pc-container .page-header + .pc-content {
   padding-top: 85px;

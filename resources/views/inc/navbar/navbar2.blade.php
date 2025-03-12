@@ -10,8 +10,8 @@
                         </div> --}}
                     </div>
                     <div class="flex-grow-1 align-items-left">
-                        <h6 class="mb-0">Kembali ke Halaman</h6>
-                        <small>My Pasien</small>
+                        <small>Kembali ke Halaman</small>
+                        <h6 class="mb-0">My Pasien</h6>
                     </div>
                 </div>
             </div>
@@ -22,20 +22,20 @@
                     <label data-i18n="Navigation">Publik</label>
                     <i class="ph-duotone ph-gauge"></i>
                 </li>
-                <li class="pc-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <a href="{{ route('dashboard') }}" class="pc-link">
+                <li class="pc-item {{ request()->routeIs('pelayanan.pasien.identitas.index') ? 'active' : '' }}">
+                    <a href="{{ route('pelayanan.pasien.identitas.index',['KUNJUNGAN' => $list['KUNJUNGAN']]) }}" class="pc-link">
                         <span class="pc-micon">
                             <i class="ph-duotone ph-gauge"></i>
                         </span>
-                        <span class="pc-mtext" data-i18n="Dashboard">Dashboard</span>
+                        <span class="pc-mtext" data-i18n="Dashboard">Identitas</span>
                     </a>
                 </li>
                 <li class="pc-item pc-caption">
                     <label>ERM</label>
                     <i class="ph-duotone ph-chart-pie"></i>
                 </li>
-                <li class="pc-item">
-                    <a href="{{ route('pelayanan.pasien') }}" class="pc-link">
+                <li class="pc-item {{ request()->routeIs('pelayanan.pasien.resume.index') ? 'active' : '' }}">
+                    <a href="{{ route('pelayanan.pasien.resume.index',['KUNJUNGAN' => $list['KUNJUNGAN']]) }}" class="pc-link">
                         <span class="pc-micon">
                             <i class="ph-duotone ph-projector-screen-chart"></i>
                         </span>
@@ -64,62 +64,6 @@
                     </ul>
                 </li> --}}
             </ul>
-        </div>
-        <div class="card pc-user-card">
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0">
-                        <img src="{{ asset('/images/user.png') }}" alt="user-image"
-                            class="user-avtar wid-45 rounded-circle" />
-                    </div>
-                    <div class="flex-grow-1 ms-3">
-                        <div class="dropdown">
-                            <a href="#" class="arrow-none dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="false" data-bs-offset="0,20">
-                                <div class="d-flex align-items-center">
-                                    <div class="flex-grow-1 me-2">
-                                        <h6 class="mb-0">Jonh Smith</h6>
-                                        <small>Administrator</small>
-                                    </div>
-                                    <div class="flex-shrink-0">
-                                        <div class="btn btn-icon btn-link-secondary avtar">
-                                            <i class="ph-duotone ph-windows-logo"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                            <div class="dropdown-menu">
-                                <ul>
-                                    <li>
-                                        <a class="pc-user-links">
-                                            <i class="ph-duotone ph-user"></i>
-                                            <span>My Account</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="pc-user-links">
-                                            <i class="ph-duotone ph-gear"></i>
-                                            <span>Settings</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="pc-user-links">
-                                            <i class="ph-duotone ph-lock-key"></i>
-                                            <span>Lock Screen</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="pc-user-links">
-                                            <i class="ph-duotone ph-power"></i>
-                                            <span>Logout</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </nav>

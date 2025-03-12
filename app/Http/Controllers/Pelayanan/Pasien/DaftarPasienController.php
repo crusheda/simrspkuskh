@@ -24,7 +24,7 @@ class DaftarPasienController extends Controller
             'show' => $show,
         ];
 
-        return view('pages.pelayanan.pasien.index');
+        return view('pages.pelayanan.pasien.index'); // ->with('list',$data)
     }
 
     // API --
