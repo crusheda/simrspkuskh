@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController;
 use App\Http\Controllers\Pelayanan\Pasien\PasienController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
+use App\Http\Controllers\Jasper\JasperController;
+use App\Http\Controllers\Jasper\JasperReportsController;
 
 // STARTING CREATIONS
 // Route::get('/', function () {
@@ -27,17 +29,17 @@ Route::get('/pelayanan/pasien/identitas/{KUNJUNGAN}', [PasienController::class, 
 Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}', [PasienController::class, 'indexResume'])->name('pelayanan.pasien.resume.index');
 Route::get('/klaim/smart', [SmartKlaimController::class, 'index'])->name('klaim.pasien');
 
-// TAMBAHAN NIH COBA YA
-// TAMBAHAN NIH COBA YA
-// TAMBAHAN NIH COBA YA
+//Jasper
+Route::get('jasper/compile', [JasperController::class, 'compile']);
+Route::get('jasper/report/{name}/{ext?}', [JasperController::class, 'report']);
+Route::get('/compile', [PasienController::class, 'compile'])->name('report.jrxml.compile');
+Route::get('/report', [PasienController::class, 'report'])->name('report.jrxml.build');
+Route::get('/view', [PasienController::class, 'view'])->name('report.jrxml.view');
 
+// AUTHENTICATION LARAVEL (AUTH UI BOOTSTRAP + SPATIE ROLES PERMISSIONS)
+Auth::routes();
 
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::group(['middleware' => ['auth']], function() {
 
-
-
-
-
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+});

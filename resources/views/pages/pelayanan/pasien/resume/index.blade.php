@@ -59,7 +59,7 @@
                             <p class="text-muted text-sm mb-0">DM on <a href="#" class="text-primary">@williambond</a></p>
                         </div>
                         <div class="flex-shrink-0">
-                            <button class="btn btn-primary btn-sm">Message</button>
+                            <button class="btn btn-primary btn-sm" onclick="cetakResumeMedis">Cetak</button>
                             <button class="btn btn-outline-secondary btn-sm ms-1">Follow</button>
                         </div>
                     </div>
