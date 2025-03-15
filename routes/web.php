@@ -35,6 +35,7 @@ Route::get('jasper/report/{name}/{ext?}', [JasperController::class, 'report']);
 Route::get('/compile', [PasienController::class, 'compile'])->name('report.jrxml.compile');
 Route::get('/report', [PasienController::class, 'report'])->name('report.jrxml.build');
 Route::get('/view', [PasienController::class, 'view'])->name('report.jrxml.view');
+Route::get('/full', [PasienController::class, 'fullJasper'])->name('report.jrxml.full');
 
 // AUTHENTICATION LARAVEL (AUTH UI BOOTSTRAP + SPATIE ROLES PERMISSIONS)
 Auth::routes();

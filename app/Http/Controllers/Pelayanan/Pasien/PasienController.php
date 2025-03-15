@@ -49,27 +49,42 @@ class PasienController extends Controller
         // die();
         $jasper = new PHPJasper;
         $jasper->compile($input)->execute();
-        // $in = "E:/xampp8.2\htdocs\UltimatePOS\storage\app/report\compiled/expense.jasper";
-        // $out = "E:/xampp8.2\htdocs\UltimatePOS\storage\app/report\output\business_1\user_1";
-        // $op = [
-        //     "format" => ["pdf"],
-        //     'locale' => 'en',
-        //     'params' => [],
-        //     'db_connection' => [
-        //         'driver' => env('db_pendaftaran'),
-        //         'username' => env('DB_USERNAME'),
-        //         'host' => env('DB_HOST'),
-        //         'database' => env('DB_DATABASE_PENDAFTARAN'),
-        //         'port' => env('DB_PORT')
-        //     ]
-        // ];
-        // $tp = "expense";
-        // $jasper = new PHPJasper;
-        // return Response::json($jasper->process(
-        //     $in,
-        //     $out,
-        //     $op
-        // )->execute());
+    }
+
+    function fullJasper()
+    {
+        // $input = public_path().'/doc/cetak.jasper';
+        $input = public_path().'/doc/cetak.jrxml';
+        $output = public_path().'/doc/output/';
+        $options = [
+            'format' => ['pdf'],
+            'locale' => 'en',
+            'params' => ['PNOPEN' => '2503110295'],
+            'db_connection' => [
+                'driver' => 'mysql',
+                'username' => env('DB_USERNAME'),
+                'password' => env('DB_PASSWORD'),
+                'host' => env('DB_HOST'),
+                'database' => env('DB_DATABASE_PENDAFTARAN'),
+                'port' => env('DB_PORT')
+            ]
+        ];
+
+        $jasper = new PHPJasper;
+        $jasper->process(
+            $input,
+            $output,
+            $options
+        );
+        // $jasper->compile($input);
+        $jasper->execute();
+
+        // $cek = $jasper->listParameters($input)->execute();
+        // foreach ($cek as $key => $value) {
+        //     print_r($value);
+        // }
+        // die();
+
     }
 
     function report()
@@ -91,6 +106,6 @@ class PasienController extends Controller
 
     function view()
     {
-        return response()->file(public_path().'/doc/output.pdf');
+        return response()->file(public_path().'/doc/output/cetak.pdf');
     }
 }
