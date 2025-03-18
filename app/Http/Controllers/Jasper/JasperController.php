@@ -235,41 +235,5 @@ class JasperController extends Controller
         // }
 
     }
-
-
-
-    //for report testing console
-    static function console(){
-        $client_id = 1;
-        $user_id = 2;
-        $report = "users";
-        $extention = "html";
-
-        $input = storage_path(compiled_path).'/'.$report.'.jasper';
-        $output = JasperController::dir_check(storage_path(output_path)."/client_".$client_id."/user_".$user_id);
-        // $output .= "/".$report.'.'.$extention;
-        // dd($output);
-        // $in = "E:/xampp8.2\htdocs\UltimatePOS\storage\app/report\compiled/users.jasper";
-        // $out = "E:/xampp8.2\htdocs\UltimatePOS\storage\app/report\output\client_1\user_2";
-        $op = [
-            "format" => [$extention],
-            'locale' => 'en',
-            // 'params' => ["client_id" => 2],
-            'db_connection' => [
-                'driver' => self::jasper_driver(),
-                'username' => env('DB_USERNAME'),
-                'host' => env('DB_HOST'),
-                'database' => env('DB_DATABASE'),
-                'port' => env('DB_PORT')
-            ]
-        ];
-        $tp = "users";
-        $jasper = new PHPJasper;
-        return Response::json($jasper->process(
-            $input,
-            $output,
-            $op
-        )->execute());
-    }
 }
 

@@ -4,6 +4,7 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<parameter name="PNOPEN" class="java.lang.String"/>
 	<background>
 		<band/>
 	</background>
@@ -47,6 +48,13 @@
 				</textElement>
 				<text><![CDATA[Hello World !!!]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="14" y="40" width="376" height="90" uuid="ee17da7b-358b-4b9c-bc66-0263db6948ef"/>
+				<textElement>
+					<font size="33"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PNOPEN}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
