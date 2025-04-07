@@ -151,8 +151,12 @@
                                             <div class="flex-grow-1 ms-3">
                                                 <h4 class="mb-1"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis">RM.${item.NORM}</b> - <b class="text-primary">${item.NAMAPASIEN}</b></h4>
                                                 <a class="mb-0 text-dark" href="javascript: void(0);">DPJP : ${item.NAMADOKTER}</a><br>
-                                                <a class="mb-2 text-dark" href="javascript: void(0);"><code>Ruangan <b class="text-pink-900">${item.NAMARUANGAN}</b> | BPJS/JKN</code></a><br>
-                                                <a class="mb-2 text-dark" href="javascript: void(0);"><code><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Registrasi">${item.NOPEN}</b> | ${status}</code></a>
+                                                <a class="mb-2 text-dark" href="javascript: void(0);">
+                                                    <code>
+                                                        Ruangan <b class="text-pink-900">${item.NAMARUANGAN}</b> | <b class="text-teal-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Registrasi">${item.NOPEN}</b>
+                                                        | <b class="text-indigo-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${item.NOSEP}</b>
+                                                    </code></a><br>
+                                                <a class="mb-2 text-dark" href="javascript: void(0);"><code>${status}</code></a>
                                             </div>
                                         </div>
                                     </td>
