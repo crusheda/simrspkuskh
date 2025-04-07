@@ -9,12 +9,13 @@
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Digital</a></li>
-                    <li class="breadcrumb-item" aria-current="page">Smart Klaim</li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Smart Klaim</a></li>
+                    <li class="breadcrumb-item" aria-current="page">Rawat Jalan</li>
                 </ul>
             </div>
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h2 class="mb-0">Daftar Kunjungan</h2>
+                    <h2 class="mb-0">Daftar Kunjungan Pasien BPJS</h2>
                 </div>
             </div>
         </div>
@@ -109,7 +110,7 @@
     function refresh() {
         $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="9"><center><i class="fa fa-spinner fa-spin fa-fw"></i> Memproses data...</center></td></tr>`);
         $.ajax({
-            url: "/api/simgos/kunjungan/pasien",
+            url: "/api/klaim/smart/rj",
             type: 'GET',
             dataType: 'json',
             success: function(res) {
@@ -148,10 +149,10 @@
                                                     class="img-radius wid-40" />
                                             </div>
                                             <div class="flex-grow-1 ms-3">
-                                                <h4 class="mb-1">RM.${item.NORM} - <b class="text-primary">${item.NAMAPASIEN}</b></h4>
-                                                <a class="mb-0">DPJP : ${item.NAMADOKTER}</a><br>
-                                                <a class="mb-2"><code>Ruangan ${item.RUANGAN} | BPJS/JKN</code></a><br>
-                                                <a class="mb-2"><code>${item.NOPEN} | ${status}</code></a>
+                                                <h4 class="mb-1"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis">RM.${item.NORM}</b> - <b class="text-primary">${item.NAMAPASIEN}</b></h4>
+                                                <a class="mb-0 text-dark" href="javascript: void(0);">DPJP : ${item.NAMADOKTER}</a><br>
+                                                <a class="mb-2 text-dark" href="javascript: void(0);"><code>Ruangan <b class="text-pink-900">${item.NAMARUANGAN}</b> | BPJS/JKN</code></a><br>
+                                                <a class="mb-2 text-dark" href="javascript: void(0);"><code><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Registrasi">${item.NOPEN}</b> | ${status}</code></a>
                                             </div>
                                         </div>
                                     </td>
@@ -206,6 +207,10 @@
                     lengthMenu: [7, 10, 25, 50, 75, 100],
                     buttons: ['copy', 'excel', 'pdf', 'colvis']
                 });
+                // Showing Tooltip
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    trigger : 'hover'
+                })
             }
         })
     }

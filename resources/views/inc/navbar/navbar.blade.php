@@ -22,7 +22,7 @@
                         <span class="pc-mtext" data-i18n="Dashboard">Dashboard</span>
                     </a>
                 </li>
-                <li class="pc-item pc-caption">
+                {{-- <li class="pc-item pc-caption">
                     <label>Pelayanan</label>
                     <i class="ph-duotone ph-chart-pie"></i>
                 </li>
@@ -33,7 +33,8 @@
                         </span>
                         <span class="pc-mtext">Kunjungan Pasien</span>
                     </a>
-                </li>
+                </li> --}}
+
                 {{-- <li class="pc-item pc-hasmenu">
                     <a href="javascript:void(0);" class="pc-link">
                         <span class="pc-micon">
@@ -73,8 +74,10 @@
                         <span class="pc-badge">2</span> --}}
                     </a>
                     <ul class="pc-submenu">
-                        <li class="pc-item"><a class="pc-link" href="{{ route('klaim.pasien') }}">Rawat Jalan</a></li>
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">Rawat Inap</a></li>
+                        <li class="pc-item"><a class="pc-link" href="{{ route('klaim.pasien.indexRj') }}">Rawat Jalan</a></li>
+                        <li class="pc-item"><a class="pc-link" href="{{ route('klaim.pasien.indexRi') }}">Rawat Inap</a></li>
+                        <li class="pc-item"><a class="pc-link" href="{{ route('klaim.pasien.indexRd') }}">Rawat Darurat</a></li>
+                        {{-- <li class="pc-item"><a class="pc-link" href="javascript:void(0);">Rawat Inap</a></li> --}}
                         {{-- <li class="pc-item"><a class="pc-link" href="javascript:void(0);">c</a></li>
                         <li class="pc-item"><a class="pc-link" href="javascript:void(0);">d</a></li>
                         <li class="pc-item"><a class="pc-link" href="javascript:void(0);">e</a></li> --}}
