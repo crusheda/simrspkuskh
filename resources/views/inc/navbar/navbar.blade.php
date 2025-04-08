@@ -22,7 +22,7 @@
                         <span class="pc-mtext" data-i18n="Dashboard">Dashboard</span>
                     </a>
                 </li>
-                {{-- <li class="pc-item pc-caption">
+                <li class="pc-item pc-caption">
                     <label>Pelayanan</label>
                     <i class="ph-duotone ph-chart-pie"></i>
                 </li>
@@ -33,7 +33,7 @@
                         </span>
                         <span class="pc-mtext">Kunjungan Pasien</span>
                     </a>
-                </li> --}}
+                </li>
 
                 {{-- <li class="pc-item pc-hasmenu">
                     <a href="javascript:void(0);" class="pc-link">

@@ -24,19 +24,18 @@ class PasienController extends Controller
 
     function indexResume($KUNJUNGAN)
     {
-        // $show = kunjungan::where('STATUS', 1)
-        //         ->where('KELUAR', null)
-        //         ->orderBy('MASUK','DESC')
-        //         ->get();
+        // $data = [
+        //     // 'show' => $show,
+        //     'KUNJUNGAN' => $KUNJUNGAN,
+        // ];
+        $resume = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(
+                    'pk.*')
+                ->where('pk.NOMOR',$KUNJUNGAN)
+                ->get();
 
-        // print_r($show);
-        // die();
-
-        $data = [
-            // 'show' => $show,
-            'KUNJUNGAN' => $KUNJUNGAN,
-        ];
-
+        print_r($resume);
+        die();
         // return view('layouts.index2');
         return view('pages.pelayanan.pasien.resume.index')->with('list',$data);
     }

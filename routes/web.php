@@ -25,9 +25,9 @@ Route::get('dashboard', function () {
 
 // PELAYANAN
     // KUNJUNGAN PASIEN
-    // Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'index'])->name('pelayanan.pasien');
-    // Route::get('/pelayanan/pasien/identitas/{KUNJUNGAN}', [PasienController::class, 'indexIdentitas'])->name('pelayanan.pasien.identitas.index');
-    // Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}', [PasienController::class, 'indexResume'])->name('pelayanan.pasien.resume.index');
+    Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'index'])->name('pelayanan.pasien');
+    Route::get('/pelayanan/pasien/identitas/{KUNJUNGAN}', [PasienController::class, 'indexIdentitas'])->name('pelayanan.pasien.identitas.index');
+    Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}', [PasienController::class, 'indexResume'])->name('pelayanan.pasien.resume.index');
 
 // DIGITAL
     // SMART KLAIM

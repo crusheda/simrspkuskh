@@ -137,6 +137,7 @@
                                                 <i class="ti ti-chevron-down f-18"></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-end" style="">
+                                                <a class="dropdown-item" href="/pelayanan/pasien/resume/${item.NOMOR}">Resume Medis</a>
                                                 <a class="dropdown-item" href="/pelayanan/pasien/identitas/${item.NOMOR}">Detail Kunjungan</a>
                                             </div>
                                         </div>
