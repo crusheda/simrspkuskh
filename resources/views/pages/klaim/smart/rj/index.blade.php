@@ -31,19 +31,22 @@
                 <div class="d-sm-flex align-items-center justify-content-between">
                     <div>
                         <div class="btn-group">
-                            <button class="btn btn-primary shadow" onclick="refresh()">Refresh Tabel</button>
+                            <button class="btn btn-light-danger shadow" onclick="refresh(0)" id="btn-refresh-0"><i class="fas fa-sync me-2"></i> Batal Kunjungan</button>
+                            <button class="btn btn-warning shadow" onclick="refresh(1)" id="btn-refresh-1"><i class="fas fa-sync me-2"></i> Sedang Dilayani</button>
+                            <button class="btn btn-light-primary shadow" onclick="refresh(2)" id="btn-refresh-2"><i class="fas fa-sync me-2"></i> Selesai Kunjungan</button>
                         </div>
                         {{-- <button class="btn btn-info" disabled>Button 2</button> --}}
                     </div>
                     <div class="dropdown">
-                        <a class="avtar avtar-s btn-link-secondary dropdown-toggle arrow-none" href="javascript: void(0);"
+                        <h6>Waktu Update <a id="show-time" class="text-primary"><div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div></a></h6>
+                        {{-- <a class="avtar avtar-s btn-link-secondary dropdown-toggle arrow-none" href="javascript: void(0);"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="ti ti-dots-vertical f-18"></i>
-                        </a>
+                        </a> --}}
                         <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="javascript: void(0);">Batal Kunjungan</a>
-                            <a class="dropdown-item" href="javascript: void(0);">Sedang Dilayani</a>
-                            <a class="dropdown-item" href="javascript: void(0);">Selesai Kunjungan</a>
+                            {{-- <a class="dropdown-item" href="javascript: void(0);" onclick="refresh(0)">Batal Kunjungan</a>
+                            <a class="dropdown-item" href="javascript: void(0);" onclick="refresh(1)">Sedang Dilayani</a>
+                            <a class="dropdown-item" href="javascript: void(0);" onclick="refresh(2)">Selesai Kunjungan</a> --}}
                         </div>
                     </div>
                 </div>
@@ -79,16 +82,33 @@
             </div> --}}
             <div class="card-body pt-3">
                 <div class="table-responsive">
-                    <table class="table table-hover" id="dttable">
+                    <table class="table table-striped" id="dttable">
                         <thead>
                             <tr>
-                                <th>Aksi</th>
-                                <th>Kunjungan Pasien</th>
-                                <th>Masuk Ruangan</th>
-                                <th>Keluar Ruangan</th>
+                                <th rowspan="2">Aksi</th>
+                                <th rowspan="2"><center>Kunjungan Pasien</center></th>
+                                <th rowspan="2">Tanggal Kunjungan</th>
+                                <th colspan="7"><center>Monitoring</center></th>
+                            </tr>
+                            <tr>
+                                <th>TDKN</th>
+                                <th>CPPT</th>
+                                <th>ICD9</th>
+                                <th>ICD10</th>
+                                <th>TTE</th>
+                                <th>SKDP</th>
+                                <th>SEP</th>
                             </tr>
                         </thead>
-                        <tbody id="tampil-tbody"><tr style='font-size:13px'><td colspan="9"><center><i class="fa fa-spinner fa-spin fa-fw"></i> Memproses data...</center></td></tr></tbody>
+                        <tbody id="tampil-tbody">
+                            <tr style='font-size:13px'>
+                                <td colspan="15">
+                                    <center>
+                                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -96,6 +116,48 @@
     </div>
 </div>
 
+{{-- MODAL STARTED --}}
+<div id="showCppt" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showCpptLabel">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="showCpptLabel">IDKUNJUNGAN : <a id="show-id-cppt" class="text-primary"></a></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">TANGGAL</th>
+                                <th style="width: 10%;">TENAGA MEDIS</th>
+                                <th style="width: 5%;">PPA</th>
+                                <th style="width: 10%;">INSTRUKSI</th>
+                                <th style="width: 5%;">JENIS</th>
+                                <th style="width: 60%;">CATATAN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tampil-cppt">
+                            <tr>
+                                <td colspan="15">
+                                    <center>
+                                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {{-- <a href="#!" class="tooltip-test" data-bs-toggle="tooltip" title="Tooltip" data-container="#showCppt">that link</a> --}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                {{-- <button type="button" class="btn btn-primary"></button> --}}
+            </div>
+        </div>
+    </div>
+</div>
+{{-- MODAL ENDED --}}
 <script>
     $(document).ready(function() {
         // $('#xpoli').on('change', function() {
@@ -103,18 +165,35 @@
         //         $("#xtgl").prop('disabled', false);
         //     }
         // });
-        refresh();
+        refresh(1);
     });
 
     // function-function
-    function refresh() {
-        $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="9"><center><i class="fa fa-spinner fa-spin fa-fw"></i> Memproses data...</center></td></tr>`);
+    function refresh(status) {
+        $("#show-time").empty().html('<div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div>');
+        if (status == 0) {
+            $("#btn-refresh-0").prop('disabled',true).removeClass('btn-light-danger btn-danger').addClass('btn-danger');
+            $("#btn-refresh-1").removeClass('btn-light-warning btn-warning').addClass('btn-light-warning');
+            $("#btn-refresh-2").removeClass('btn-light-primary btn-primary').addClass('btn-light-primary');
+        } else {
+            if (status == 1) {
+                $("#btn-refresh-0").removeClass('btn-light-danger btn-danger').addClass('btn-light-danger');
+                $("#btn-refresh-1").prop('disabled',true).removeClass('btn-light-warning btn-warning').addClass('btn-warning');
+                $("#btn-refresh-2").removeClass('btn-light-primary btn-primary').addClass('btn-light-primary');
+            } else {
+                $("#btn-refresh-0").removeClass('btn-light-danger btn-danger').addClass('btn-light-danger');
+                $("#btn-refresh-1").removeClass('btn-light-warning btn-warning').addClass('btn-light-warning');
+                $("#btn-refresh-2").prop('disabled',true).removeClass('btn-light-primary btn-primary').addClass('btn-primary');
+            }
+        }
+        $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
         $.ajax({
-            url: "/api/klaim/smart/rj",
+            url: "/api/klaim/smart/rj/"+status,
             type: 'GET',
             dataType: 'json',
             success: function(res) {
                 // $("#list").empty();
+                $("#show-time").empty().text(res.time);
                 $("#tampil-tbody").empty();
                 $('#dttable').DataTable().clear().destroy();
                 res.show.forEach(item => {
@@ -129,7 +208,7 @@
                         }
                     }
                     content = ``;
-                    console.log(item.NOPEN);
+                    console.log(item.NOMOR);
                     content += `<tr>
                                     <td>
                                         <div class="dropdown">
@@ -138,7 +217,7 @@
                                                 <i class="ti ti-chevron-down f-18"></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-end" style="">
-                                                <a class="dropdown-item" href="/pelayanan/pasien/identitas/${item.NOMOR}">Detail Kunjungan</a>
+                                                <a class="dropdown-item" href="/pelayanan/pasien/identitas/${item.NOMOR}">Detail Klaim</a>
                                             </div>
                                         </div>
                                     </td>
@@ -155,41 +234,25 @@
                                                     <code>
                                                         Ruangan <b class="text-pink-900">${item.NAMARUANGAN}</b> | <b class="text-teal-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Registrasi">${item.NOPEN}</b>
                                                         | <b class="text-indigo-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${item.NOSEP}</b>
-                                                    </code></a><br>
+                                                    </code>
+                                                </a><br>
                                                 <a class="mb-2 text-dark" href="javascript: void(0);"><code>${status}</code></a>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>${item.MASUK}</td>
-                                    <td>${item.KELUAR?item.KELUAR:'-'}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-link-primary btn-sm mb-0">Masuk <span class="badge bg-light text-dark ms-2">${item.MASUK}</span></button><br>
+                                        <button type="button" class="btn btn-link-danger btn-sm mb-0">Keluar <span class="badge bg-light text-dark ms-2">${item.KELUAR?item.KELUAR:'-'}</span></button>
+                                    </td>
+                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
+                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail" onclick="showCppt('${item.NOMOR}')"><i class="fas fa-check text-success"></i></button></td>
+                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
+                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
+                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
+                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
+                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
                                 </tr>`;
                     $('#tampil-tbody').append(content);
-                    // content += `<div class="border rounded p-3 my-3">
-                    //                 <div class="d-flex align-items-center">
-                    //                     <div class="flex-shrink-0">
-                    //                         <img src="{{ asset('/images/user.png') }}" alt="user-image"
-                    //                             class="avtar rounded-circle wid-45 hei-45">
-                    //                     </div>
-                    //                     <div class="flex-grow-1 ms-3">
-                    //                         <h4 class="mb-0">${item.NORM} - NY. </h4>
-                    //                         <a class="mb-0">DPJP : ${item.NAMADOKTER}</a><br>
-                    //                         <a class="mb-2"><code>Ruangan ${item.RUANGAN} | BPJS/JKN</code></a><br>
-                    //                         <a class="mb-2"><code>${item.NOPEN} | ${item.MASUK}</code></a>
-                    //                     </div>
-                    //                     <div class="dropdown">
-                    //                         <a class="avtar avtar-s btn-light-secondary dropdown-toggle arrow-none" href="#"
-                    //                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    //                             <i class="ti ti-chevron-down f-18"></i>
-                    //                         </a>
-                    //                         <div class="dropdown-menu dropdown-menu-end" style="">
-                    //                             <a class="dropdown-item" href="#">Active</a>
-                    //                             <a class="dropdown-item" href="#">Disable</a>
-                    //                             <a class="dropdown-item" href="#">Remove</a>
-                    //                         </div>
-                    //                     </div>
-                    //                 </div>
-                    //             </div>`;
-                    // $('#list').append(content);
                 })
                 var table = $('#dttable').DataTable({
                     dom: 'Bfrtip',
@@ -199,17 +262,26 @@
                     bAutoWidth: false,
                     aoColumns : [
                         { sWidth: '5%' },
-                        { sWidth: '65%' },
-                        { sWidth: '15%' },
-                        { sWidth: '15%' },
+                        { sWidth: '60%' },
+                        { sWidth: '14%' },
+                        { sWidth: '3%' },
+                        { sWidth: '3%' },
+                        { sWidth: '3%' },
+                        { sWidth: '3%' },
+                        { sWidth: '3%' },
+                        { sWidth: '3%' },
+                        { sWidth: '3%' },
                     ],
                     columnDefs: [
                         // { visible: false, targets: [7] },
+                        { targets: [0], sortable: false },
+                        { targets: [1], sortable: false },
+                        { targets: [2], sortable: false },
                     ],
-                    displayLength: 7,
+                    displayLength: 10,
                     lengthChange: true,
-                    lengthMenu: [7, 10, 25, 50, 75, 100],
-                    buttons: ['copy', 'excel', 'pdf', 'colvis']
+                    lengthMenu: [10, 25, 50, 75, 100],
+                    buttons: ['excel', 'pdf'] // 'copy','colvis'
                 });
                 // Showing Tooltip
                 $('[data-bs-toggle="tooltip"]').tooltip({
@@ -217,26 +289,36 @@
                 })
             }
         })
+        $("#btn-refresh-0").prop('disabled',false);
+        $("#btn-refresh-1").prop('disabled',false);
+        $("#btn-refresh-2").prop('disabled',false);
+    }
+
+    function showCppt(kunjungan) {
+        console.log(kunjungan);
+        $('#show-id-cppt').text(kunjungan);
+        $.ajax({
+            url: "/api/pasien/"+kunjungan+"/cppt",
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                $("#tampil-cppt").empty();
+                res.show.forEach(item => {
+                    content = ``;
+                    content += `<tr>
+                                    <td>${item.TANGGAL}</td>
+                                    <td>${item.DOKTER?item.DOKTER:item.PERAWAT}<br>${item.JNSPPA}</td>
+                                    <td>${item.PPA}</td>
+                                    <td>${item.INSTRUKSI}</td>
+                                    <td>${item.JENIS}</td>
+                                    <td>${item.CATATAN}</td>
+                                </tr>
+                    `;
+                    $('#tampil-cppt').append(content);
+                })
+                $('#showCppt').modal('show');
+            }
+        })
     }
 </script>
 @endsection
-{{--
-"NOMOR": "1020101032503040002",
-"NOPEN": "2503040011",
-"RUANGAN": "102010103",
-"MASUK": "2025-03-04 13:22:34",
-"KELUAR": null,
-"RUANG_KAMAR_TIDUR": 0,
-"REF": null,
-"DITERIMA_OLEH": 41,
-"BARU": 0,
-"TITIPAN": 0,
-"TITIPAN_KELAS": 0,
-"STATUS": 1,
-"FINAL_HASIL": 0,
-"FINAL_HASIL_OLEH": 0,
-"FINAL_HASIL_TANGGAL": null,
-"DPJP": 8,
-"OTOMATIS": 0,
-"NORM": 89963,
-"NAMADOKTER": "dr. MUSTOPA, Sp.PD., AIFO-K, FINASIM" --}}
