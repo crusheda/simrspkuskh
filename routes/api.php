@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 // INITIALIZATION
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
+use App\Http\Controllers\Klaim\Smart\ApiSmartKlaimController; // API
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -18,6 +19,8 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 // DIGITAL - SMART KLAIM
-Route::get('klaim/smart/rj', [SmartKlaimController::class, 'tableRj'])->name('api.klaim.pasien.rj');
-Route::get('klaim/smart/ri', [SmartKlaimController::class, 'tableRi'])->name('api.klaim.pasien.ri');
-Route::get('klaim/smart/rd', [SmartKlaimController::class, 'tableRd'])->name('api.klaim.pasien.rd');
+Route::get('klaim/smart/rj/{status}', [ApiSmartKlaimController::class, 'tableRj'])->name('api.klaim.pasien.rj');
+Route::get('klaim/smart/ri/{status}', [ApiSmartKlaimController::class, 'tableRi'])->name('api.klaim.pasien.ri');
+Route::get('klaim/smart/rd/{status}', [ApiSmartKlaimController::class, 'tableRd'])->name('api.klaim.pasien.rd');
+    // CPPT
+    Route::get('pasien/{kunjungan}/cppt', [ApiSmartKlaimController::class, 'cppt'])->name('api.pasien.cppt');
