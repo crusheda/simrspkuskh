@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 // INITIALIZE PATH CONTROLLER
 use App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController;
 use App\Http\Controllers\Pelayanan\Pasien\PasienController;
+use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Jasper\JasperController;
 use App\Http\Controllers\Jasper\JasperReportsController;
@@ -26,8 +27,10 @@ Route::get('dashboard', function () {
 // PELAYANAN
     // KUNJUNGAN PASIEN
     Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'index'])->name('pelayanan.pasien');
-    Route::get('/pelayanan/pasien/identitas/{KUNJUNGAN}', [PasienController::class, 'indexIdentitas'])->name('pelayanan.pasien.identitas.index');
-    Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}', [PasienController::class, 'indexResume'])->name('pelayanan.pasien.resume.index');
+        //IDENTITAS PASIEN
+        Route::get('/pelayanan/pasien/identitas/{KUNJUNGAN}', [PasienController::class, 'indexIdentitas'])->name('pelayanan.pasien.identitas.index');
+        //RESUME
+        Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}', [ResumeMedisController::class, 'indexResume'])->name('pelayanan.pasien.resume.index');
 
 // DIGITAL
     // SMART KLAIM

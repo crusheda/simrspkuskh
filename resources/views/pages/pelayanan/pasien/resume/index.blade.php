@@ -16,7 +16,7 @@
                 </div>
                 <div class="col-md-12 mt-2">
                     <div class="page-header-title">
-                        <h2 class="mb-0">Resume Pasien <b class="text-primary">A/N SUNARYO, TN</b></h2>
+                        <h2 class="mb-0">Resume Pasien <b class="text-primary">A/N {{ $list['resume']->NAMAPASIEN }}</b></h2>
                     </div>
                 </div>
             </div>
@@ -30,37 +30,70 @@
             <div class="card user-card">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <img src="{{ asset('/images/user.png') }}" alt="user-image"
-                                class="avtar rounded-circle wid-45 hei-45">
+                        {{-- <div class="flex-shrink-1 m-r-5 m-l-5">
+                            <img src="{{ asset('/images/pku/logo.png') }}" alt="user-image"
+                                class="avtar rounded-circle wid-65 hei-65" style="width: 65px; height: 65px">
                         </div>
                         <div class="flex-grow-1 ms-3">
-                            <h6 class="mb-1">William Bond</h6>
-                            <p class="text-muted text-sm mb-0">DM on <a href="#" class="text-primary">@williambond</a></p>
-                        </div>
-                        <div class="dropdown">
-                            <a class="avtar avtar-s btn-link-secondary dropdown-toggle arrow-none" href="#"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="ti ti-chevron-down f-18"></i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="javascript: void(0);">Active</a>
-                                <a class="dropdown-item" href="javascript: void(0);">Disable</a>
-                                <a class="dropdown-item" href="javascript: void(0);">Remove</a>
-                            </div>
-                        </div>
+                            <h1 class="mb-1">RS PKU MUHAMMADIYAH SUKOHARJO</h1>
+                            <h5 class="text-muted mb-1">JL. Mayor Sunaryo No. 37 Sukoharjo 57512</h5>
+                        </div> --}}
+                        <table class="table table-borderless border-dark border p-0" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <td rowspan="2" class="p-t-10 p-b-10" style="text-align: center; width:10%;">
+                                        <img src="{{ asset('/images/pku/logo.png') }}" alt="user-image" class="avtar rounded-circle wid-65 hei-65" style="width: 80px; height: 80px">
+                                    </td>
+                                    <td><h1 class="mb-0">RS PKU MUHAMMADIYAH SUKOHARJO</h1></td>
+                                </tr>
+                                <tr>
+                                    <td><h5 class="text-muted mt-0">JL. Mayor Sunaryo No. 37 Sukoharjo 57512</h5></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-dark border bg-gray-900 text-white">
+                                    <td class="p-3 f-16" style="text-align: center" colspan="2">
+                                        RESUME MEDIS
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <table class="table table-borderless border border-dark f-16 m-t-5" style="width: 100%; text-align: center;">
+                            <tbody>
+                                <tr>
+                                    <td class="m-5"  style="width: 30%">Tanggal / Waktu Masuk</td>
+                                    <td style="width: 30%">Nomor Rekam Medis</td>
+                                    <td rowspan="2">Klinik Tujuan</td>
+                                </tr>
+                                <tr>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>Nama Pasien</td>
+                                    <td>Tanggal Lahir / Jenis Kelamin</td>
+                                    <td rowspan="2">-</td>
+                                </tr>
+                                <tr>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="saprator my-3">
-                        <span>..</span>
+                        {{-- <span>..</span> --}}
                     </div>
                     <div class="d-flex flex-wrap gap-2">
                         <div class="flex-grow-1">
-                            <h6 class="mb-1">William Bond</h6>
-                            <p class="text-muted text-sm mb-0">DM on <a href="#" class="text-primary">@williambond</a></p>
+                            <h6 class="mb-1">IT</h6>
+                            <p class="text-muted text-sm mb-0">DM on <a href="#" class="text-primary">@itpkuskh</a></p>
                         </div>
                         <div class="flex-shrink-0">
-                            <button class="btn btn-primary btn-sm" onclick="cetakResumeMedis">Cetak</button>
-                            <button class="btn btn-outline-secondary btn-sm ms-1">Follow</button>
+                            <button class="btn btn-primary btn-sm" onclick="cetakResumeMedis">Simpan</button>
+                            <button class="btn btn-outline-secondary btn-sm ms-1">Cetak</button>
                         </div>
                     </div>
                 </div>

@@ -34,10 +34,10 @@ class PasienController extends Controller
                 ->where('pk.NOMOR',$KUNJUNGAN)
                 ->get();
 
-        print_r($resume);
-        die();
+        // print_r($resume);
+        // die();
         // return view('layouts.index2');
-        return view('pages.pelayanan.pasien.resume.index')->with('list',$data);
+        return view('pages.pelayanan.pasien.resume.index')->with('list',$resume);
     }
 
     function compile()
