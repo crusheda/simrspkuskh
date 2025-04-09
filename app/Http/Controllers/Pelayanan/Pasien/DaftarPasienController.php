@@ -50,8 +50,8 @@ class DaftarPasienController extends Controller
                 })
 
                 ->where('ru.STATUS', 1)
-                ->where('pk.STATUS', 1)
-                ->where('pk.KELUAR', null)
+                ->where('pk.STATUS', 2)
+                ->whereNotNull('pk.KELUAR')
                 ->orderBy('pk.MASUK','DESC')
                 ->get();
 
