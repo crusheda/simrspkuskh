@@ -20,6 +20,7 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 // DIGITAL - SMART KLAIM
 Route::get('klaim/smart/rj/{status}', [ApiSmartKlaimController::class, 'tableRj'])->name('api.klaim.pasien.rj');
+// Route::get('klaim/smart/rj/check/{kunjungan}', [ApiSmartKlaimController::class, 'checkList'])->name('api.monitoring.check.rj');
 Route::get('klaim/smart/ri/{status}', [ApiSmartKlaimController::class, 'tableRi'])->name('api.klaim.pasien.ri');
 Route::get('klaim/smart/rd/{status}', [ApiSmartKlaimController::class, 'tableRd'])->name('api.klaim.pasien.rd');
     // CPPT

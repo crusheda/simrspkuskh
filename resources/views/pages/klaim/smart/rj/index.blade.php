@@ -121,20 +121,20 @@
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="showCpptLabel">IDKUNJUNGAN : <a id="show-id-cppt" class="text-primary"></a></h5>
+                <h5 class="modal-title" id="showCpptLabel">NORM.<a id="show-norm-cppt" class="text-primary"></a> | IDKUNJUNGAN : <a id="show-id-cppt" class="text-primary"></a></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="table-responsive">
+            <div class="modal-body p-3">
+                <small><a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> datarecord CPPT pertama kali saat kunjungan</b></a></small>
+                <div class="table-responsive mt-2">
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th style="width: 5%;">TANGGAL</th>
-                                <th style="width: 10%;">TENAGA MEDIS</th>
-                                <th style="width: 5%;">PPA</th>
-                                <th style="width: 10%;">INSTRUKSI</th>
-                                <th style="width: 5%;">JENIS</th>
-                                <th style="width: 60%;">CATATAN</th>
+                                <th style="width: 10%;">TANGGAL</th>
+                                <th style="width: 40%;">CATATAN</th>
+                                <th style="width: 20%;">PPA</th>
+                                <th style="width: 10%;">JENIS</th>
+                                <th style="width: 20%;">VERIFIKASI</th>
                             </tr>
                         </thead>
                         <tbody id="tampil-cppt">
@@ -217,7 +217,7 @@
                                                 <i class="ti ti-chevron-down f-18"></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-end" style="">
-                                                <a class="dropdown-item" href="/pelayanan/pasien/identitas/${item.NOMOR}">Detail Klaim</a>
+                                                <a class="dropdown-item" href="#">Berkas Klaim</a>
                                             </div>
                                         </div>
                                     </td>
@@ -233,7 +233,7 @@
                                                 <a class="mb-2 text-dark" href="javascript: void(0);">
                                                     <code>
                                                         Ruangan <b class="text-pink-900">${item.NAMARUANGAN}</b> | <b class="text-teal-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Registrasi">${item.NOPEN}</b>
-                                                        | <b class="text-indigo-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${item.NOSEP}</b>
+                                                        | <b class="text-indigo-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${item.NOSEP?item.NOSEP:'<b class="text-danger">SEP Tidak Ditemukan</b>'}</b>
                                                     </code>
                                                 </a><br>
                                                 <a class="mb-2 text-dark" href="javascript: void(0);"><code>${status}</code></a>
@@ -241,16 +241,31 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-link-primary btn-sm mb-0">Masuk <span class="badge bg-light text-dark ms-2">${item.MASUK}</span></button><br>
+                                        <button type="button" class="btn btn-link-secondary text-muted btn-sm mb-0">Daftar <span class="badge bg-light text-dark ms-2">${item.TGLDAFTAR}</span></button><br>
+                                        <button type="button" class="btn btn-link-info btn-sm mb-0">Masuk <span class="badge bg-light text-dark ms-2">${item.MASUK}</span></button><br>
                                         <button type="button" class="btn btn-link-danger btn-sm mb-0">Keluar <span class="badge bg-light text-dark ms-2">${item.KELUAR?item.KELUAR:'-'}</span></button>
                                     </td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
-                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail" onclick="showCppt('${item.NOMOR}')"><i class="fas fa-check text-success"></i></button></td>
+                                    <td>${item.TGLCPPT?`
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail CPPT" onclick="showCppt('`+item.NOMOR+`')">
+                                            <i class="fas fa-check text-success"></i>
+                                        </button>`:`
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="CPPT tidak ditemukan" onclick="showCppt('`+item.NOMOR+`')">
+                                            <i class="fas fa-check text-danger"></i>
+                                        </button>`}
+                                    </td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
-                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
+                                    <td>${item.NOSEP?`
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
+                                            <i class="fas fa-check text-success"></i>
+                                        </button>`:`
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan">
+                                            <i class="fas fa-check text-danger"></i>
+                                        </button>`}
+                                    </td>
                                 </tr>`;
                     $('#tampil-tbody').append(content);
                 })
@@ -303,20 +318,41 @@
             dataType: 'json',
             success: function(res) {
                 $("#tampil-cppt").empty();
-                res.show.forEach(item => {
-                    content = ``;
-                    content += `<tr>
-                                    <td>${item.TANGGAL}</td>
-                                    <td>${item.DOKTER?item.DOKTER:item.PERAWAT}<br>${item.JNSPPA}</td>
-                                    <td>${item.PPA}</td>
-                                    <td>${item.INSTRUKSI}</td>
-                                    <td>${item.JENIS}</td>
-                                    <td>${item.CATATAN}</td>
-                                </tr>
-                    `;
-                    $('#tampil-cppt').append(content);
-                })
-                $('#showCppt').modal('show');
+                $('#show-norm-cppt').text(res.pen.NORM);
+                if (res.show.length != 0) {
+                    res.show.forEach(item => {
+                        content = ``;
+                        content += `<tr>
+                                        <td class="custom-column">${item.TANGGAL}</td>
+                                        <td class="custom-column">${item.CATATAN}<br>${item.INSTRUKSI?"<b>I/ : </b>"+item.INSTRUKSI:''}</td>
+                                        <td class="custom-column">${item.PPA}<br><span class="badge rounded-pill text-bg-primary">${item.JNSPPA}</span></td>
+                                        <td class="custom-column">${item.TBAK_SBAR?item.TBAK_SBAR:'-'}</td>
+                                        <td class="custom-column">${item.VERIFIKASI?'Diverifkasi Oleh<br><b class="text-success">'+item.VERIFIKATOR+'</b><br>Pada '+item.TGLVERIFIKASI:'Belum Diverifikasi'}</td>
+                                    </tr>
+                        `;
+                        $('#tampil-cppt').append(content);
+                    })
+                    $('#showCppt').modal('show');
+                } else {
+                    // Swal.fire({
+                    //     position: "top-end",
+                    //     icon: "error",
+                    //     title: "CPPT Belum Terisi",
+                    //     showConfirmButton: false,
+                    //     timer: 1500,
+                    //     backdrop: `
+                    //         rgba(0,0,123,0.4)
+                    //         url("/images/nyan-cat.gif")
+                    //         left top
+                    //         no-repeat
+                    //     `
+                    // });
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: 'Data CPPT tidak ditemukan / belum diisi',
+                        position: 'topRight'
+                    });
+                }
             }
         })
     }

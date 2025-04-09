@@ -13,19 +13,29 @@ class ApiSmartKlaimController extends Controller
     {
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
         // SUB QUERY FROM ANY TABEL
-        $subCppt = DB::table('medicalrecord.cppt')
-                ->select('KUNJUNGAN', 'TANGGAL')
-                ->where('STATUS', 1) // kalau perlu
-                ->orderBy('TANGGAL', 'desc')
-                ->limit(1); // ambil 1 cppt terakhir
+        // $subCppt = DB::table('medicalrecord.cppt')
+        //         ->select('KUNJUNGAN', 'TANGGAL')
+        //         ->where('STATUS', 1) // kalau perlu
+        //         // ->where('KUNJUNGAN', '1020101042406080005')
+        //         ->orderBy('TANGGAL', 'desc')
+        //         ->get(); // ambil 1 cppt terakhir
+        $subCppt = DB::table(DB::raw('
+            (
+                SELECT *,
+                    ROW_NUMBER() OVER (PARTITION BY KUNJUNGAN ORDER BY TANGGAL DESC) AS rn
+                FROM medicalrecord.cppt
+                WHERE STATUS = 1
+            ) AS cp
+        '))
+        ->where('cp.rn', 1); // hanya baris CPPT terakhir per kunjungan
         // MAIN QUERY
         $show = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(
                     'pk.*',
-                    'pp.NORM',
+                    'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
                     'kjs.noSEP AS NOSEP',
                     'ru.DESKRIPSI AS NAMARUANGAN',
-                    'cp.TANGGAL AS CPPTTANGGAL',
+                    'cp.TANGGAL AS TGLCPPT',
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER')
                 )
@@ -65,19 +75,52 @@ class ApiSmartKlaimController extends Controller
         return response()->json($data, 200);
     }
 
+    // function checkList($kunjungan)
+    // {
+    //     $cppt = DB::table('medicalrecord.cppt')
+    //             ->select('*')
+    //             ->where('KUNJUNGAN', $kunjungan)
+    //             ->orderBy('TANGGAL', 'desc')
+    //             ->first(); // ambil 1 cppt terakhir
+
+    //     $sep = DB::table('pendaftaran.kunjungan AS pk')
+    //             ->select('kjs.*')
+    //             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+    //             ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+    //             ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+    //             ->where('pk.NOMOR', $kunjungan)
+    //             ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
+    //             ->orderBy('pk.MASUK','DESC')
+    //             ->first(); // ambil 1 sep terakhir
+
+    //     $data = [
+    //         'cppt' => $cppt,
+    //         'sep' => $sep,
+    //     ];
+
+    //     return response()->json($data, 200);
+    // }
+
     // MONITORING
         // CPPT
         function cppt($kunjungan)
         {
-            $cppt = DB::table('medicalrecord.cppt')
-                    // ->select('*')
-                    ->where('KUNJUNGAN', $kunjungan) // kalau perlu
-                    ->orderBy('TANGGAL', 'desc')
-                    ->get(); // ambil 1 cppt terakhir
+            // $cppt = DB::table('medicalrecord.cppt')
+            //         ->where('KUNJUNGAN', $kunjungan) // kalau perlu
+            //         ->orderBy('TANGGAL', 'desc')
+            //         ->get(); // ambil 1 cppt terakhir
 
-            $show = DB::select('CALL medicalrecord.CetakCPPT(?, ?)', ['2406020039', $kunjungan]);
+            $getNopen = DB::table('pendaftaran.kunjungan AS pk')
+                        ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                        ->select('pk.NOPEN','pp.NORM')
+                        ->where('pk.NOMOR',$kunjungan)
+                        ->first();
+            $show = DB::select('CALL medicalrecord.CetakCPPT(?, ?)', [$getNopen->NOPEN, $kunjungan]); // NOPEN & NOKUNJUNGAN
+            // print_r($show);
+            // die();
 
             $data = [
+                'pen' => $getNopen,
                 'show' => $show,
             ];
 
