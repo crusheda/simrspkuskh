@@ -18,6 +18,8 @@
 <script src="{{ asset('js/theme.js') }}"></script>
 {{-- <script src="{{ asset('js/multi-lang.js') }}"></script> --}}
 <script src="{{ asset('js/plugins/feather.min.js') }}"></script>
+<script src="{{ asset('js/sweetalert2-11.js') }}"></script>
+<script src="{{ asset('js/iziToast.js') }}"></script>
 
 <script>
     layout_change('light');

@@ -14,7 +14,9 @@
 <link rel="stylesheet" href="{{ asset('fonts/material.css') }}" />
 <!-- [Template CSS Files] -->
 <link rel="stylesheet" href="{{ asset('css/style.css') }}" id="main-style-link" />
+<link rel="stylesheet" href="{{ asset('css/custom.css') }}" />
 <link rel="stylesheet" href="{{ asset('css/style-preset.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/iziToast.css') }}" />
 
 <script src="{{ asset('js/jquery.min.js') }}"></script>
 <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/jszip-3.10.1/dt-2.2.2/b-3.2.2/b-colvis-3.2.2/b-html5-3.2.2/b-print-3.2.2/cr-2.0.4/r-3.0.4/datatables.min.css" rel="stylesheet" integrity="sha384-kxOno6NToQp/2ckZSEK36Pt54N8ZZEMvgi6P6HT6rrQlxneF3tFJatwUy2fbiy+V" crossorigin="anonymous">
