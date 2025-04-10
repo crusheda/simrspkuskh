@@ -35,6 +35,7 @@ Route::get('dashboard', function () {
     // SMART KLAIM
         // RAWAT JALAN
         Route::get('klaim/smart/rj', [SmartKlaimController::class, 'indexRj'])->name('klaim.pasien.indexRj');
+        // Route::get('klaim/smart/rj/jrxml/sep/{kunjungan}', [SmartKlaimController::class, 'compileSep'])->name('klaim.pasien.jrxml.sep');
         // RAWAT INAP
         Route::get('klaim/smart/ri', [SmartKlaimController::class, 'indexRi'])->name('klaim.pasien.indexRi');
         // RAWAT DARURAT
