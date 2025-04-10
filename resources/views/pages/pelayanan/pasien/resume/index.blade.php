@@ -38,7 +38,10 @@
                             <h1 class="mb-1">RS PKU MUHAMMADIYAH SUKOHARJO</h1>
                             <h5 class="text-muted mb-1">JL. Mayor Sunaryo No. 37 Sukoharjo 57512</h5>
                         </div> --}}
-                        <table class="table table-borderless border-dark border" style="width: 100%">
+
+
+
+                        {{-- <table class="table table-borderless border-dark border" style="width: 100%">
                             <thead>
                                 <tr>
                                     <td rowspan="2" class="p-t-10 p-b-10" style="text-align: center; width:15%;">
@@ -57,102 +60,11 @@
                                     </td>
                                 </tr>
                             </tbody>
-                        </table>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <table class="f-22" style="width: 100%; text-align: center;">
-                            <tbody>
-                                <tr>
-                                    <td class="m-5 p-2 border border-bottom-0 border-dark"  style="width: 30%;">Tanggal / Waktu Masuk</td>
-                                    <td class="border border-bottom-0 border-dark" style="width: 30%">Nomor Rekam Medis</td>
-                                    <td rowspan="2" class="border border-bottom-0 border-dark">Klinik Tujuan</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border border-top-0 border-dark">{{ \Carbon\Carbon::parse($list['resume']->MASUK)->isoFormat('DD-MM-YYYY') }}</td>
-                                    <td class="p-2 border border-top-0 border-dark">{{ $list['resume']->NORM }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border border-bottom-0 border-dark">Nama Pasien</td>
-                                    <td class="p-2 border border-bottom-0 border-dark">Tanggal Lahir / Jenis Kelamin</td>
-                                    <td rowspan="2" class="p-2 border border-top-0 border-dark">{{ $list['resume']->DESKRIPSI }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border border-top-0 border-dark">{{ $list['resume']->NAMAPASIEN }}</td>
-                                    <td class="p-2 border border-top-0 border-dark">{{ \Carbon\Carbon::parse($list['resume']->TANGGAL_LAHIR)->isoFormat('DD-MM-YYYY') }} / {{ $list['resume']->JK }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <table class="table table-bordered f-20">
-                            <thead>
-                                <tr>
-                                    <td colspan="8">
-                                        <h3>I. PENGKAJIAN AWAL PASIEN</h3>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="8">
-                                        <b>[Anamnesis] Keluhan Utama</b> :
-                                        @if (is_null($list['awal']->DESKRIPSI))
-                                            'Tidak Ada'
-                                        @else
-                                            {{ $list['awal']->DESKRIPSI }}
-                                        @endif
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align: center" colspan="8">
-                                        <h4>PEMERIKSAAN UMUM</h4>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align: center" colspan="8">
-                                        <h5>TANDA VITAL</h5>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 15%">1. Tekanan Darah</td>
-                                    <td style="width: 5%">:</td>
-                                    <td style="width: 20%">-</td>
-                                    <td style="width: 10%">mmHg</td>
-                                    <td style="width: 15%">5. Saturasi O2</td>
-                                    <td style="width: 5%">:</td>
-                                    <td style="width: 20%">-</td>
-                                    <td style="width: 10%"></td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 15%">2. Frekuensi Nadi</td>
-                                    <td style="width: 5%">:</td>
-                                    <td style="width: 20%">-</td>
-                                    <td style="width: 10%">x/menit</td>
-                                    <td style="width: 15%">6. Alat bantu Nafas</td>
-                                    <td style="width: 5%">:</td>
-                                    <td style="width: 20%">-</td>
-                                    <td style="width: 10%"></td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 15%">3. Suhu (OC)</td>
-                                    <td style="width: 5%">:</td>
-                                    <td style="width: 20%">-</td>
-                                    <td style="width: 10%">°C</td>
-                                    <td style="width: 15%">7. Keadaan Umum</td>
-                                    <td style="width: 5%">:</td>
-                                    <td style="width: 20%">-</td>
-                                    <td style="width: 10%"></td>
-                                </tr>
-                                <tr>
-                                    <td style="width: 15%">4. Frekuensi Nafas</td>
-                                    <td style="width: 5%">:</td>
-                                    <td style="width: 20%">-</td>
-                                    <td style="width: 10%">x/menit</td>
-                                    <td style="width: 15%"></td>
-                                    <td style="width: 5%"></td>
-                                    <td style="width: 20%"></td>
-                                    <td style="width: 10%"></td>
-                                </tr>
-                            </thead>
-                        </table>
+                        </table> --}}
+
+
+
+                        <iframe src="{{ route('pelayanan.pasien.resume.print', ['KUNJUNGAN' => $list['KUNJUNGAN']]) }}" width="100%" height="800px" style="border: none;"></iframe>
                     </div>
                     <div class="saprator my-3">
                         {{-- <span>..</span> --}}
