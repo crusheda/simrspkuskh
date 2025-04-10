@@ -82,7 +82,7 @@
             </div> --}}
             <div class="card-body pt-3">
                 <div class="table-responsive">
-                    <table class="table table-striped" id="dttable">
+                    <table class="table table-striped table-hover" id="dttable">
                         <thead>
                             <tr>
                                 <th rowspan="2">Aksi</th>
@@ -125,7 +125,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3">
-                <small><a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> datarecord CPPT pertama kali saat kunjungan</b></a></small>
+                <small><a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> datarecord CPPT pertama kali saat kunjungan pada tanggal tsb</b></a></small>
                 <div class="table-responsive mt-2">
                     <table class="table table-striped">
                         <thead>
@@ -149,6 +149,23 @@
                     </table>
                 </div>
                 {{-- <a href="#!" class="tooltip-test" data-bs-toggle="tooltip" title="Tooltip" data-container="#showCppt">that link</a> --}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                {{-- <button type="button" class="btn btn-primary"></button> --}}
+            </div>
+        </div>
+    </div>
+</div>
+<div id="showSEP" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showSEPLabel">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="showSEPLabel">NORM.<a id="show-norm-sep" class="text-primary"></a> | IDKUNJUNGAN : <a id="show-id-sep" class="text-primary"></a></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3">
+                <div id="cetak-sep"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -208,7 +225,7 @@
                         }
                     }
                     content = ``;
-                    console.log(item.NOMOR);
+                    // console.log(item.NOMOR);
                     content += `<tr>
                                     <td>
                                         <div class="dropdown">
@@ -217,7 +234,7 @@
                                                 <i class="ti ti-chevron-down f-18"></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-end" style="">
-                                                <a class="dropdown-item" href="#">Berkas Klaim</a>
+                                                <a class="dropdown-item" href="#" onclick="showKlaim('${item.NOMOR}')">Berkas Klaim</a>
                                             </div>
                                         </div>
                                     </td>
@@ -245,25 +262,25 @@
                                         <button type="button" class="btn btn-link-info btn-sm mb-0">Masuk <span class="badge bg-light text-dark ms-2">${item.MASUK}</span></button><br>
                                         <button type="button" class="btn btn-link-danger btn-sm mb-0">Keluar <span class="badge bg-light text-dark ms-2">${item.KELUAR?item.KELUAR:'-'}</span></button>
                                     </td>
-                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
+                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
                                     <td>${item.TGLCPPT?`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail CPPT" onclick="showCppt('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
                                         </button>`:`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="CPPT tidak ditemukan" onclick="showCppt('`+item.NOMOR+`')">
-                                            <i class="fas fa-check text-danger"></i>
+                                            <i class="fas fa-times fs-5 text-danger"></i>
                                         </button>`}
                                     </td>
-                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
-                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
-                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
-                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-check text-success"></i></button></td>
+                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
+                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
+                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
+                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
                                     <td>${item.NOSEP?`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
                                         </button>`:`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan">
-                                            <i class="fas fa-check text-danger"></i>
+                                            <i class="fas fa-times fs-5 text-danger"></i>
                                         </button>`}
                                     </td>
                                 </tr>`;
@@ -310,8 +327,9 @@
     }
 
     function showCppt(kunjungan) {
-        console.log(kunjungan);
+        // console.log($(this).find('i'));
         $('#show-id-cppt').text(kunjungan);
+        $(this).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
         $.ajax({
             url: "/api/pasien/"+kunjungan+"/cppt",
             type: 'GET',
@@ -355,6 +373,53 @@
                 }
             }
         })
+    }
+
+    function showSEP(kunjungan) {
+        // console.log($(this).find('i'));
+        $('#show-id-cppt').text(kunjungan);
+        $(this).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+        $.ajax({
+            url: "/api/klaim/smart/rj/sep/"+kunjungan,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                $("#tampil-sep").empty();
+                $('#show-norm-sep').text(res.pen.NORM);
+                if (res.length != 0) {
+                    console.log(res);
+                    $('#cetak-sep').append(`<iframe src="${res}" width="100%" height="600px"></iframe>`);
+                    $('#showSEP').modal('show');
+                } else {
+                    // Swal.fire({
+                    //     position: "top-end",
+                    //     icon: "error",
+                    //     title: "CPPT Belum Terisi",
+                    //     showConfirmButton: false,
+                    //     timer: 1500,
+                    //     backdrop: `
+                    //         rgba(0,0,123,0.4)
+                    //         url("/images/nyan-cat.gif")
+                    //         left top
+                    //         no-repeat
+                    //     `
+                    // });
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: 'Data SEP tidak ditemukan / belum digenerate (Cek SEP) oleh bagian Pendaftaran',
+                        position: 'topRight'
+                    });
+                }
+            }
+        })
+    }
+
+    function showKlaim(kunjungan) {
+        iziToast.success({
+            title: 'Yeayy!',
+            message: 'Tombol itu akan memunculkan Berkas Klaim Pasien dengan Nomor Kunjungan '+kunjungan,
+            position: 'topRight'
+        });
     }
 </script>
 @endsection
