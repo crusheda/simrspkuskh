@@ -1,7 +1,15 @@
 @extends('layouts.index2')
 
 @section('content')
-    <!-- [ breadcrumb ] start -->
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
+<style>
+    canvas {
+    width: 100%;
+    height: 200px;
+    touch-action: none; /* penting untuk mencegah scroll saat tanda tangan */
+}
+</style>
+<!-- [ breadcrumb ] start -->
     <div class="page-header">
         <div class="page-block">
             <div class="row align-items-center">
@@ -64,7 +72,12 @@
 
 
 
-                        <iframe src="{{ route('pelayanan.pasien.resume.print', ['KUNJUNGAN' => $list['KUNJUNGAN']]) }}" width="100%" height="800px" style="border: none;"></iframe>
+                        {{-- <iframe src="{{ route('pelayanan.pasien.resume.print', ['KUNJUNGAN' => $list['KUNJUNGAN']]) }}" width="100%" height="800px" style="border: none;"></iframe> --}}
+                    </div>
+                    <div>
+                        <canvas id="signature-pad" width="400" height="200" style="border:1px solid #ccc;"></canvas>
+                        <button id="clear">Clear</button>
+                        <input type="hidden" name="signature" id="signature-input">
                     </div>
                     <div class="saprator my-3">
                         {{-- <span>..</span> --}}
@@ -89,5 +102,30 @@
             // showLoader();
             // refresh();
         });
+        const canvas = document.getElementById('signature-pad');
+        const signaturePad = new SignaturePad(canvas);
+
+        // Simpan base64 ke input saat submit
+        document.querySelector('form').addEventListener('submit', function () {
+            if (!signaturePad.isEmpty()) {
+                const dataURL = signaturePad.toDataURL('image/png');
+                document.getElementById('signature-input').value = dataURL;
+            }
+        });
+
+        // Tombol hapus
+        document.getElementById('clear').addEventListener('click', function () {
+            signaturePad.clear();
+        });
+        function resizeCanvas() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext('2d').scale(ratio, ratio);
+            signaturePad.clear(); // Reset tanda tangan
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
     </script>
 @endsection
