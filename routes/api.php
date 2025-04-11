@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 // INITIALIZATION
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Klaim\Smart\ApiSmartKlaimController; // API
+use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -26,3 +27,7 @@ Route::get('klaim/smart/ri/{status}', [ApiSmartKlaimController::class, 'tableRi'
 Route::get('klaim/smart/rd/{status}', [ApiSmartKlaimController::class, 'tableRd'])->name('api.klaim.pasien.rd');
     // CPPT
     Route::get('pasien/{kunjungan}/cppt', [ApiSmartKlaimController::class, 'cppt'])->name('api.pasien.cppt');
+
+// PELAYANAN PASIEN
+    // RESUME
+    Route::post('pelayanan/pasien/resume/ttd/simpan', [ResumeMedisController::class, 'storeTtd'])->name('api.pasien.resume.ttd');

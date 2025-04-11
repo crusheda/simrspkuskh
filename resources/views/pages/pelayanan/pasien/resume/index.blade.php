@@ -9,6 +9,7 @@
     touch-action: none; /* penting untuk mencegah scroll saat tanda tangan */
 }
 </style>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <!-- [ breadcrumb ] start -->
     <div class="page-header">
         <div class="page-block">
@@ -37,7 +38,8 @@
         <div class="col-md-12">
             <div class="card user-card">
                 <div class="card-body">
-                    <div class="d-flex align-items-center">
+                    <button class="btn btn-primary" onclick="refreshResume()">Refresh Resume</button>
+                    <div class="d-flex align-items-center" id="refresh-iframe">
                         {{-- <div class="flex-shrink-1 m-r-5 m-l-5">
                             <img src="{{ asset('/images/pku/logo.png') }}" alt="user-image"
                                 class="avtar rounded-circle wid-65 hei-65" style="width: 65px; height: 65px">
@@ -71,16 +73,21 @@
                         </table> --}}
 
 
-
                         {{-- <iframe src="{{ route('pelayanan.pasien.resume.print', ['KUNJUNGAN' => $list['KUNJUNGAN']]) }}" width="100%" height="800px" style="border: none;"></iframe> --}}
                     </div>
                     <div>
                         <canvas id="signature-pad" width="400" height="200" style="border:1px solid #ccc;"></canvas>
-                        <button id="clear">Clear</button>
+                        <button id="clear" class="btn btn-danger btn-sm">Clear</button>
+                        <button onclick="simpanTtd()" class="btn btn-primary btn-sm">Simpan</button>
                         <input type="hidden" name="signature" id="signature-input">
-                    </div>
+
+                        <div>
+                            <br>
+                            <h3 id="result"></h3>
+                        </div>
+                    {{-- </div>
                     <div class="saprator my-3">
-                        {{-- <span>..</span> --}}
+                        <span>..</span>
                     </div>
                     <div class="d-flex flex-wrap gap-2">
                         <div class="flex-grow-1">
@@ -91,7 +98,7 @@
                             <button class="btn btn-primary btn-sm" onclick="cetakResumeMedis">Simpan</button>
                             <button class="btn btn-outline-secondary btn-sm ms-1">Cetak</button>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
@@ -102,21 +109,25 @@
             // showLoader();
             // refresh();
         });
+
         const canvas = document.getElementById('signature-pad');
-        const signaturePad = new SignaturePad(canvas);
+            const signaturePad = new SignaturePad(canvas);
 
-        // Simpan base64 ke input saat submit
-        document.querySelector('form').addEventListener('submit', function () {
-            if (!signaturePad.isEmpty()) {
-                const dataURL = signaturePad.toDataURL('image/png');
-                document.getElementById('signature-input').value = dataURL;
-            }
-        });
+            // Simpan base64 ke input saat submit
+            document.querySelector('form').addEventListener('submit', function () {
+                if (!signaturePad.isEmpty()) {
+                    const dataURL = signaturePad.toDataURL('image/png');
+                    document.getElementById('signature-input').value = dataURL;
+                }
+            });
 
-        // Tombol hapus
-        document.getElementById('clear').addEventListener('click', function () {
-            signaturePad.clear();
-        });
+            // Tombol hapus
+            document.getElementById('clear').addEventListener('click', function () {
+                signaturePad.clear();
+            });
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
         function resizeCanvas() {
             const ratio = Math.max(window.devicePixelRatio || 1, 1);
             canvas.width = canvas.offsetWidth * ratio;
@@ -124,8 +135,66 @@
             canvas.getContext('2d').scale(ratio, ratio);
             signaturePad.clear(); // Reset tanda tangan
         }
+        function refreshResume() {
+            // <iframe src="{{ route('pelayanan.pasien.resume.print', ['KUNJUNGAN' => $list['KUNJUNGAN']]) }}" width="100%" height="800px" style="border: none;"></iframe>
+            $("#refresh-iframe").empty().append(`
+                <iframe src="/pelayanan/pasien/resume/{{ $list['KUNJUNGAN'] }}/print" width="100%" height="800px" style="border: none;"></iframe>
+            `);
+        }
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        // Submit via AJAX
+        function simpanTtd() {
+            // const nama = document.getElementById('nama').value;
+            const nama = 'coba';
+            const signature = signaturePad.toDataURL('image/png');
+
+            if (!nama || signaturePad.isEmpty()) {
+                alert("Nama dan tanda tangan wajib diisi.");
+                return;
+            }
+
+            // fetch("{{ route('api.pasien.resume.ttd') }}", {
+            //     method: "POST",
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //         "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            //     },
+            //     body: JSON.stringify({ nama: nama, signature: signature })
+            // })
+            // .then(res => res.json())
+            // .then(data => {
+            //     if (data.success) {
+            //         document.getElementById('result').innerHTML = `<p><strong>Berhasil!</strong> ID Pasien: ${data.id}</p>`;
+            //     } else {
+            //         alert("Gagal menyimpan data");
+            //     }
+            // })
+            // .catch(err => {
+            //     console.error(err);
+            //     alert("Error saat mengirim data.");
+            // });
+            $.ajax({
+                url: "{{ route('api.pasien.resume.ttd') }}", // Ganti dengan URL rute yang sesuai
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: JSON.stringify({ nama: nama, signature: signature }),
+                contentType: 'application/json',
+                success: function(data) {
+                    if (data.success) {
+                        // $('#result').html(`<p><strong>Berhasil!</strong> ID Pasien: ${data.id}</p>`);
+                        refreshResume();
+                    } else {
+                        alert("Gagal menyimpan data");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    alert("Error saat mengirim data.");
+                }
+            });
+
+        }
     </script>
 @endsection

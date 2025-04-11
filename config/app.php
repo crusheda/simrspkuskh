@@ -120,6 +120,16 @@ return [
     | Supported drivers: "file", "cache"
     |
     */
+    // 'providers' => [
+    //     // Providers lainnya...
+
+    //     Intervention\Image\ImageServiceProvider::class,
+    // ],
+    // 'aliases' => [
+    //     // Aliases lainnya...
+
+    //     'Image' => Intervention\Image\Facades\Image::class,
+    // ],
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),

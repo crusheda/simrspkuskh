@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Pelayanan\Pasien;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Model\pendaftaran\kunjungan;
+use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Storage;
 
 class ResumeMedisController extends Controller
 {
@@ -130,5 +132,40 @@ class ResumeMedisController extends Controller
 
         // return stream agar bisa ditampilkan langsung
         return $pdf->stream('laporan.pdf');
+    }
+
+    public function storeTtd(Request $request)
+    {
+        $request->validate([
+            // 'nama' => 'required|string|max:255',
+            // 'signature' => 'required|string',
+        ]);
+
+        $image = str_replace('data:image/png;base64,', '', $request->signature);
+        $image = str_replace(' ', '+', $image);
+        $filename = 'ttd_' . time() . '.png';
+
+        // Menggunakan Intervention Image untuk memanipulasi gambar
+        // $img = Image::make(base64_decode($image));
+
+        // Menggunakan trim untuk meng-crop otomatis gambar dan menghapus area kosong
+        // $img->trim();  // ini akan memangkas bagian yang kosong dari gambar
+
+        // Menyimpan gambar yang telah di-crop ke dalam storage
+        // $img->save(storage_path("app/public/signatures/{$filename}"));
+
+        Storage::disk('public')->put("/signatures/{$filename}", base64_decode($image));
+
+        $pasien = DB::table('simrspku_klaim.tanda_tangan')->insert([
+            'nama' => $request->nama,
+            'signature_path' => "signatures/{$filename}",
+        ]);
+
+        // print_r($request->all());
+        // die();
+        return response()->json([
+            'success' => true,
+            // 'id' => $pasien->id,
+        ]);
     }
 }
