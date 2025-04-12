@@ -147,7 +147,7 @@ class ApiSmartKlaimController extends Controller
             $tahun = $getTgl->isoFormat('YYYY');
             // ----------------------------------------------------------------------
             $input = public_path().'/doc/input/sep/CetakSEP.jrxml';
-            $output = public_path().'/doc/output/sep/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show[0]->NOMORSEP;
+            $output = storage_path().'/app/public/files/sep/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show[0]->NOMORSEP;
             // Pastikan folder tujuan ada
             $outputDir = dirname($output);
             if (!File::exists($outputDir)) {
@@ -197,9 +197,21 @@ class ApiSmartKlaimController extends Controller
                 $options
             )->execute();
 
+            // print_r($output);
+            // die();
+
             return response()->file($output.'.pdf',[
                 'Content-Type' => 'application/pdf',
             ]);
+            // return response()->download($output.'.pdf', null, [
+            //     'Content-Type' => 'application/pdf',
+            // ]);
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => 'File generated successfully.',
+            //     'file_url' => '/doc/output/sep/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show[0]->NOMORSEP.'.pdf',
+            //     'nomor_sep' => '0151R0130124V002638'
+            // ]);
         }
 
         function sep()

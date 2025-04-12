@@ -161,7 +161,7 @@
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="showSEPLabel">NORM.<a id="show-norm-sep" class="text-primary"></a> | IDKUNJUNGAN : <a id="show-id-sep" class="text-primary"></a></h5>
+                <h5 class="modal-title" id="showSEPLabel"></a>IDKUNJUNGAN : <a id="show-id-sep" class="text-primary"></a></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3">
@@ -376,42 +376,32 @@
     }
 
     function showSEP(kunjungan) {
-        // console.log($(this).find('i'));
-        $('#show-id-cppt').text(kunjungan);
+        $('#show-id-sep').text(kunjungan);
         $(this).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
-        $.ajax({
-            url: "/api/klaim/smart/rj/sep/"+kunjungan,
-            type: 'GET',
-            dataType: 'json',
-            success: function(res) {
-                $("#tampil-sep").empty();
-                $('#show-norm-sep').text(res.pen.NORM);
-                if (res.length != 0) {
-                    console.log(res);
-                    $('#cetak-sep').append(`<iframe src="${res}" width="100%" height="600px"></iframe>`);
-                    $('#showSEP').modal('show');
-                } else {
-                    // Swal.fire({
-                    //     position: "top-end",
-                    //     icon: "error",
-                    //     title: "CPPT Belum Terisi",
-                    //     showConfirmButton: false,
-                    //     timer: 1500,
-                    //     backdrop: `
-                    //         rgba(0,0,123,0.4)
-                    //         url("/images/nyan-cat.gif")
-                    //         left top
-                    //         no-repeat
-                    //     `
-                    // });
-                    iziToast.error({
-                        title: 'Maaf!',
-                        message: 'Data SEP tidak ditemukan / belum digenerate (Cek SEP) oleh bagian Pendaftaran',
-                        position: 'topRight'
-                    });
-                }
+
+        fetch("/api/klaim/smart/rj/sep/" + kunjungan)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
             }
+            return response.blob();
         })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#cetak-sep').html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#showSEP').modal('show');
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data SEP tidak ditemukan atau belum digenerate.',
+                position: 'topRight'
+            });
+            console.error(error);
+        });
     }
 
     function showKlaim(kunjungan) {
