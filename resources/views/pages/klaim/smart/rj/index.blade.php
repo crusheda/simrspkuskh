@@ -264,7 +264,7 @@
                                     </td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
                                     <td>${item.TGLCPPT?`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail CPPT" onclick="showCppt('`+item.NOMOR+`')">
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-success" id="cppt`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail CPPT" onclick="showCppt('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
                                         </button>`:`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="CPPT tidak ditemukan" onclick="showCppt('`+item.NOMOR+`')">
@@ -276,7 +276,7 @@
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
                                     <td>${item.NOSEP?`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-success" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
                                         </button>`:`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan">
@@ -285,6 +285,10 @@
                                     </td>
                                 </tr>`;
                     $('#tampil-tbody').append(content);
+                })
+                // Showing Tooltip
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    trigger : 'hover'
                 })
                 var table = $('#dttable').DataTable({
                     dom: 'Bfrtip',
@@ -315,10 +319,6 @@
                     lengthMenu: [10, 25, 50, 75, 100],
                     buttons: ['excel', 'pdf'] // 'copy','colvis'
                 });
-                // Showing Tooltip
-                $('[data-bs-toggle="tooltip"]').tooltip({
-                    trigger : 'hover'
-                })
             }
         })
         $("#btn-refresh-0").prop('disabled',false);
@@ -329,7 +329,7 @@
     function showCppt(kunjungan) {
         // console.log($(this).find('i'));
         $('#show-id-cppt').text(kunjungan);
-        $(this).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+        $('#cppt'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
         $.ajax({
             url: "/api/pasien/"+kunjungan+"/cppt",
             type: 'GET',
@@ -351,6 +351,7 @@
                         $('#tampil-cppt').append(content);
                     })
                     $('#showCppt').modal('show');
+                    $('#cppt'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
                 } else {
                     // Swal.fire({
                     //     position: "top-end",
@@ -377,7 +378,7 @@
 
     function showSEP(kunjungan) {
         $('#show-id-sep').text(kunjungan);
-        $(this).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+        $('#sep'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
 
         fetch("/api/klaim/smart/rj/sep/" + kunjungan)
         .then(response => {
@@ -391,8 +392,9 @@
             const fileURL = URL.createObjectURL(blob);
 
             // Tampilkan ke iframe dalam modal
-            $('#cetak-sep').html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#cetak-sep').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
             $('#showSEP').modal('show');
+            $('#sep'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
         })
         .catch(error => {
             iziToast.error({
