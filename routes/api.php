@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Klaim\Smart\ApiSmartKlaimController; // API
 use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
+use App\Http\Controllers\Pelayanan\Pasien\ApiResumeMedisController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -30,4 +31,5 @@ Route::get('klaim/smart/rd/{status}', [ApiSmartKlaimController::class, 'tableRd'
 
 // PELAYANAN PASIEN
     // RESUME
+    Route::get('pelayanan/pasien/rj/resume/{kunjungan}', [ApiResumeMedisController::class, 'compileResumeRj'])->name('api.pasien.resume.rj');
     Route::post('pelayanan/pasien/resume/ttd/simpan', [ResumeMedisController::class, 'storeTtd'])->name('api.pasien.resume.ttd');

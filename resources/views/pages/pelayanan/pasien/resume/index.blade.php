@@ -4,7 +4,7 @@
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
 <style>
     canvas {
-    width: 100%;
+    width: 200px;
     height: 200px;
     touch-action: none; /* penting untuk mencegah scroll saat tanda tangan */
 }
@@ -38,7 +38,7 @@
         <div class="col-md-12">
             <div class="card user-card">
                 <div class="card-body">
-                    <button class="btn btn-primary" onclick="refreshResume()">Refresh Resume</button>
+                    <button class="btn btn-primary" onclick="showRESUME({{ $list['KUNJUNGAN'] }})">Refresh Resume</button>
                     <div class="d-flex align-items-center" id="refresh-iframe">
                         {{-- <div class="flex-shrink-1 m-r-5 m-l-5">
                             <img src="{{ asset('/images/pku/logo.png') }}" alt="user-image"
@@ -81,6 +81,8 @@
                         <button onclick="simpanTtd()" class="btn btn-primary btn-sm">Simpan</button>
                         <input type="hidden" name="signature" id="signature-input">
 
+
+
                         <div>
                             <br>
                             <h3 id="result"></h3>
@@ -106,6 +108,7 @@
     <!-- [ Main Content ] end -->
     <script>
         $(document).ready(function() {
+            showRESUME("{{ $list['KUNJUNGAN'] }}");
             // showLoader();
             // refresh();
         });
@@ -137,9 +140,9 @@
         }
         function refreshResume() {
             // <iframe src="{{ route('pelayanan.pasien.resume.print', ['KUNJUNGAN' => $list['KUNJUNGAN']]) }}" width="100%" height="800px" style="border: none;"></iframe>
-            $("#refresh-iframe").empty().append(`
-                <iframe src="/pelayanan/pasien/resume/{{ $list['KUNJUNGAN'] }}/print" width="100%" height="800px" style="border: none;"></iframe>
-            `);
+            // $("#refresh-iframe").empty().append(`
+            //     <iframe src="/pelayanan/pasien/resume/{{ $list['KUNJUNGAN'] }}/print" width="100%" height="800px" style="border: none;"></iframe>
+            // `);
         }
 
         // Submit via AJAX
@@ -184,6 +187,12 @@
                 success: function(data) {
                     if (data.success) {
                         // $('#result').html(`<p><strong>Berhasil!</strong> ID Pasien: ${data.id}</p>`);
+                        Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Data berhasil disimpan.',
+                        confirmButtonText: 'Oke'
+                        });
                         refreshResume();
                     } else {
                         alert("Gagal menyimpan data");
@@ -195,6 +204,33 @@
                 }
             });
 
+        }
+
+        function showRESUME(kunjungan) {
+            fetch("/api/pelayanan/pasien/rj/resume/" + kunjungan)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('File tidak ditemukan atau gagal diambil.');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Buat object URL dari blob
+                const fileURL = URL.createObjectURL(blob);
+
+                // Tampilkan ke iframe dalam modal
+                $("#refresh-iframe").empty().html(`
+                    <iframe src="${fileURL}" width="100%" height="800px" style="border: none;"></iframe>
+                `);
+            })
+            .catch(error => {
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Data SEP tidak ditemukan atau belum digenerate.',
+                    position: 'topRight'
+                });
+                console.error(error);
+            });
         }
     </script>
 @endsection
