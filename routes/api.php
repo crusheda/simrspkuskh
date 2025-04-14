@@ -26,7 +26,8 @@ Route::get('klaim/smart/rj/sep/{kunjungan}', [ApiSmartKlaimController::class, 'c
 // Route::get('klaim/smart/rj/check/{kunjungan}', [ApiSmartKlaimController::class, 'checkList'])->name('api.monitoring.check.rj');
 Route::get('klaim/smart/ri/{status}', [ApiSmartKlaimController::class, 'tableRi'])->name('api.klaim.pasien.ri');
 Route::get('klaim/smart/rd/{status}', [ApiSmartKlaimController::class, 'tableRd'])->name('api.klaim.pasien.rd');
-    // CPPT
+    // MONITORING
+    Route::get('pasien/{kunjungan}/tindakan', [ApiSmartKlaimController::class, 'tindakan'])->name('api.pasien.tindakan');
     Route::get('pasien/{kunjungan}/cppt', [ApiSmartKlaimController::class, 'cppt'])->name('api.pasien.cppt');
 
 // PELAYANAN PASIEN
