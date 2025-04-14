@@ -38,7 +38,7 @@
         <div class="col-md-12">
             <div class="card user-card">
                 <div class="card-body">
-                    <button class="btn btn-primary" onclick="showRESUME({{ $list['KUNJUNGAN'] }})">Refresh Resume</button>
+                    <button class="btn btn-primary" onclick="showRESUME('{{ $list['KUNJUNGAN'] }}')">Refresh Resume</button>
                     <div class="d-flex align-items-center" id="refresh-iframe">
                         {{-- <div class="flex-shrink-1 m-r-5 m-l-5">
                             <img src="{{ asset('/images/pku/logo.png') }}" alt="user-image"
@@ -76,6 +76,7 @@
                         {{-- <iframe src="{{ route('pelayanan.pasien.resume.print', ['KUNJUNGAN' => $list['KUNJUNGAN']]) }}" width="100%" height="800px" style="border: none;"></iframe> --}}
                     </div>
                     <div>
+                        <input type="hidden" name="nama" id="nama" value="{{ $list['KUNJUNGAN'] }}">
                         <canvas id="signature-pad" width="400" height="200" style="border:1px solid #ccc;"></canvas>
                         <button id="clear" class="btn btn-danger btn-sm">Clear</button>
                         <button onclick="simpanTtd()" class="btn btn-primary btn-sm">Simpan</button>
@@ -148,7 +149,7 @@
         // Submit via AJAX
         function simpanTtd() {
             // const nama = document.getElementById('nama').value;
-            const nama = 'coba';
+            const nama = document.getElementById('nama').value.trim();
             const signature = signaturePad.toDataURL('image/png');
 
             if (!nama || signaturePad.isEmpty()) {
@@ -200,7 +201,12 @@
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
-                    alert("Error saat mengirim data.");
+                    // alert("Error saat mengirim data.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: error.message || 'Dokumen telah ditandatangani.',
+                    });
                 }
             });
 

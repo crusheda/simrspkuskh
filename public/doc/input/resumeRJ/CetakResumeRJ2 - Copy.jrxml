@@ -243,7 +243,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="20" isBold="true"/>
+					<font fontName="Arial" size="20" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{NAMAINSTANSI}]]></textFieldExpression>
 			</textField>
@@ -812,7 +812,7 @@
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="536" y="0" width="15" height="60" uuid="d8de8469-a61f-48b8-a80c-068a86191df4"/>
+				<reportElement stretchType="RelativeToBandHeight" x="536" y="0" width="14" height="60" uuid="d8de8469-a61f-48b8-a80c-068a86191df4"/>
 				<box>
 					<leftPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.0"/>
@@ -845,7 +845,7 @@
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="250" y="60" width="301" height="10" uuid="b942aae9-7ece-4829-bd93-936c20b8a8d5"/>
+				<reportElement stretchType="RelativeToBandHeight" x="250" y="60" width="300" height="10" uuid="b942aae9-7ece-4829-bd93-936c20b8a8d5"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>

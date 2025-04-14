@@ -21,6 +21,8 @@ class ApiResumeMedisController extends Controller
                 ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR')
                 ->where('pk.NOMOR',$kunjungan)
                 ->first();
+        // print_r($getRESUMERJ);
+        // die();
         $show = DB::select('CALL medicalrecord.CetakMR5Custom(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
         // ----------------------------------------------------------------------
         $getTgl = Carbon::parse($show[0]->TGLPERIKSA);
@@ -49,7 +51,7 @@ class ApiResumeMedisController extends Controller
                 'ALAMAT' => $show[0]->ALAMAT,
                 // 'KOTA' => $show[0]->KOTA,
                 'NORM' => $show[0]->NORM,
-                // 'DOKTER' => $show[0]->DOKTER,
+                'DOKTER' => $show[0]->DOKTER,
                 'IMAGES_PATH' => public_path()."/doc/input/resumeRJ/",
                 // 'JENIS_KELAMIN' => $show[0]->JENIS_KELAMIN,
                 // 'NOPEN' => $show[0]->NOPEN,
@@ -57,30 +59,30 @@ class ApiResumeMedisController extends Controller
                 'TANGGAL_LAHIR' => $show[0]->TANGGAL_LAHIR,
                 // 'KUNJUNGAN' => $show[0]->KUNJUNGAN,
                 'TGLMASUK' => $show[0]->TGLMASUK,
-                // 'UNIT' => $show[0]->UNIT,
+                'UNIT' => $show[0]->UNIT,
                 // 'KELUHAN' => $show[0]->KELUHAN,
-                // 'KEADAAN_UMUM' => $show[0]->KEADAAN_UMUM,
-                // 'DARAH' => $show[0]->DARAH,
-                // 'FREKUENSI_NADI' => $show[0]->FREKUENSI_NADI,
-                // 'FREKUENSI_NAFAS' => $show[0]->FREKUENSI_NAFAS,
-                // 'SUHU' => $show[0]->SUHU,
-                // 'TGLPERIKSA' => $show[0]->TGLPERIKSA,
-                // 'JAMPERIKSA' => $show[0]->JAMPERIKSA,
-                // 'ASSESMENT' => $show[0]->ASSESMENT,
-                // 'SUBYEKTIF' => $show[0]->SUBYEKTIF,
-                // 'OBYEKTIF' => $show[0]->OBYEKTIF,
-                // 'PLANNING' => $show[0]->PLANNING,
-                // 'INSTRUKSI' => $show[0]->INSTRUKSI,
-                // 'TINDAKAN' => $show[0]->TINDAKAN,
-                // 'KONSUL' => $show[0]->KONSUL,
+                'KEADAAN_UMUM' => $show[0]->KEADAAN_UMUM,
+                'DARAH' => $show[0]->DARAH,
+                'FREKUENSI_NADI' => $show[0]->FREKUENSI_NADI,
+                'FREKUENSI_NAFAS' => $show[0]->FREKUENSI_NAFAS,
+                'SUHU' => $show[0]->SUHU,
+                'TGLPERIKSA' => $show[0]->TGLPERIKSA,
+                'JAMPERIKSA' => $show[0]->JAMPERIKSA,
+                'ASSESMENT' => $show[0]->ASSESMENT,
+                'SUBYEKTIF' => $show[0]->SUBYEKTIF,
+                'OBYEKTIF' => $show[0]->OBYEKTIF,
+                'PLANNING' => $show[0]->PLANNING,
+                'INSTRUKSI' => $show[0]->INSTRUKSI,
+                'TINDAKAN' => $show[0]->TINDAKAN,
+                'KONSUL' => $show[0]->KONSUL,
                 'DOKTER' => $show[0]->DOKTER,
                 // 'TABLEOBAT' => '',
-                // 'ABN' => $show[0]->ABN,
+                'ABN' => $show[0]->ABN,
 
                 // 'NAMAOBAT' => $show[0]->NAMAOBAT,
                 // 'ATURANPAKAI' => $show[0]->ATURANPAKAI,
 
-                // 'SATURASIO2' => $show[0]->SATURASIO2
+                'SATURASIO2' => $show[0]->SATURASIO2
             ],
             // Data untuk tabel obat, bukan untuk report utama
             'data_source' => $jsonPath
