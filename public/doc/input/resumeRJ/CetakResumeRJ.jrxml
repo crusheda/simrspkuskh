@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MR5" language="groovy" pageWidth="595" pageHeight="900" columnWidth="535" leftMargin="40" rightMargin="20" topMargin="20" bottomMargin="12" uuid="27be4418-27a1-4d08-aafd-4fbd41db6f33">
 	<property name="ireport.zoom" value="1.2100000000000295"/>
 	<property name="ireport.x" value="0"/>
@@ -614,7 +614,7 @@
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="130" y="160" width="383" height="14" uuid="738080ca-7f5f-449b-85b9-075919abf617"/>
 				<box topPadding="2" leftPadding="3">
 					<topPen lineWidth="0.25"/>
@@ -972,7 +972,7 @@
 				</textElement>
 				<text><![CDATA[Waktu]]></text>
 			</staticText>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="130" y="24" width="60" height="13" uuid="66631ab5-a8df-45cd-9faf-fab8283c810d"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.5"/>
@@ -1000,7 +1000,7 @@
 			</staticText>
 		</band>
 		<band height="13">
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="425" height="13" uuid="1e65ae66-227b-4fe8-bc3e-fe88568669e1">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -1042,7 +1042,7 @@
 				</textElement>
 				<text><![CDATA[Subyektif (S)]]></text>
 			</staticText>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="425" height="13" uuid="803fc4df-54a8-4a8c-9f20-9bedaa9c60e9"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<leftPen lineWidth="0.0"/>
@@ -1068,7 +1068,7 @@
 				</textElement>
 				<text><![CDATA[Obyektif (O)]]></text>
 			</staticText>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="425" height="13" uuid="978d7f48-4689-409a-b4d7-b57f60be9f94"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<leftPen lineWidth="0.0"/>
@@ -1094,7 +1094,7 @@
 				</textElement>
 				<text><![CDATA[Planning (P)]]></text>
 			</staticText>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="425" height="13" uuid="7cee0dac-4b40-47bb-886b-2e3d71050677">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -1123,7 +1123,7 @@
 				</textElement>
 				<text><![CDATA[Instruksi (I)]]></text>
 			</staticText>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="88" y="0" width="425" height="13" uuid="91a8832c-7d9d-4c2a-95d9-db8735fb663a"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.25" lineStyle="Solid"/>
@@ -1139,7 +1139,7 @@
 			</textField>
 		</band>
 		<band height="13">
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="425" height="13" uuid="681c11a5-36db-4752-a3c6-6125a3289fb9"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<leftPen lineWidth="0.0"/>
@@ -1165,7 +1165,7 @@
 			</staticText>
 		</band>
 		<band height="13">
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="425" height="13" uuid="78b2e569-4038-45ff-a710-9894838c9a00"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<topPen lineWidth="0.25"/>
@@ -1299,7 +1299,7 @@
 					<font fontName="Arial" size="8" isUnderline="true"/>
 				</textElement>
 			</textField>
-			<textField textAdjust="ScaleFont">
+			<textField>
 				<reportElement x="1" y="57" width="213" height="13" uuid="fe7f1713-e973-4b87-916a-e69691abd999"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font size="8"/>

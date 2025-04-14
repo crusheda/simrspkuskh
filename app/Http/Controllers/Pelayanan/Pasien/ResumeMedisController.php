@@ -8,7 +8,7 @@ use App\Model\pendaftaran\kunjungan;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Storage;
+use Storage, Carbon\Carbon;
 
 class ResumeMedisController extends Controller
 {
@@ -44,20 +44,20 @@ class ResumeMedisController extends Controller
                 })
                 ->first();
 
-        $awal = DB::table('pendaftaran.kunjungan AS pku')
-                ->select(
-                    'pku.*',
-                    'ku.DESKRIPSI'
-                )
-                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pku.NOPEN')
-                ->leftJoin('medicalrecord.keluhan_utama AS ku','ku.KUNJUNGAN','=','pku.NOMOR')
-                ->where('pku.NOMOR',$KUNJUNGAN)
-                ->where('pku.REF', null)
-                ->first();
+        // $awal = DB::table('pendaftaran.kunjungan AS pku')
+        //         ->select(
+        //             'pku.*',
+        //             'ku.DESKRIPSI'
+        //         )
+        //         ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pku.NOPEN')
+        //         ->leftJoin('medicalrecord.keluhan_utama AS ku','ku.KUNJUNGAN','=','pku.NOMOR')
+        //         ->where('pku.NOMOR',$KUNJUNGAN)
+        //         ->where('pku.REF', null)
+        //         ->first();
 
         $data = [
             'resume' => $resume,
-            'awal' => $awal,
+            // 'awal' => $awal,
             'KUNJUNGAN' => $KUNJUNGAN,
         ];
         // print_r($awal);
@@ -136,6 +136,16 @@ class ResumeMedisController extends Controller
 
     public function storeTtd(Request $request)
     {
+        $existing = DB::table('simrspku_klaim.tanda_tangan')
+            ->where('kunjungan', $request->nama)
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tanda tangan untuk kunjungan ini sudah ada.',
+            ], 409); // 409 = Conflict
+        }
         $request->validate([
             // 'nama' => 'required|string|max:255',
             // 'signature' => 'required|string',
@@ -145,27 +155,18 @@ class ResumeMedisController extends Controller
         $image = str_replace(' ', '+', $image);
         $filename = 'ttd_' . time() . '.png';
 
-        // Menggunakan Intervention Image untuk memanipulasi gambar
-        // $img = Image::make(base64_decode($image));
-
-        // Menggunakan trim untuk meng-crop otomatis gambar dan menghapus area kosong
-        // $img->trim();  // ini akan memangkas bagian yang kosong dari gambar
-
-        // Menyimpan gambar yang telah di-crop ke dalam storage
-        // $img->save(storage_path("app/public/signatures/{$filename}"));
-
         Storage::disk('public')->put("/signatures/{$filename}", base64_decode($image));
 
         $pasien = DB::table('simrspku_klaim.tanda_tangan')->insert([
-            'nama' => $request->nama,
+            'kunjungan' => $request->nama,
             'signature_path' => "signatures/{$filename}",
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
         ]);
 
-        // print_r($request->all());
-        // die();
         return response()->json([
             'success' => true,
-            // 'id' => $pasien->id,
+            // 'id' => $pasien->kunjungan
         ]);
     }
 }
