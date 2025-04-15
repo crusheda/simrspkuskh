@@ -117,6 +117,45 @@
 </div>
 
 {{-- MODAL STARTED --}}
+<div id="showTindakan" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showTindakanLabel">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="showTindakanLabel">IDKUNJUNGAN : <a id="show-id-tindakan" class="text-primary"></a></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3">
+                <small><a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> datarecord Tindakan pertama kali dimasukkan saat kunjungan pada tanggal tsb</b></a></small>
+                <div class="table-responsive mt-2">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%;">TANGGAL</th>
+                                <th style="width: 40%;">NAMA TINDAKAN</th>
+                                <th style="width: 30%;">PETUGAS MEDIS</th>
+                                <th style="width: 20%;">USER INPUT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tampil-tindakan">
+                            <tr>
+                                <td colspan="15">
+                                    <center>
+                                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {{-- <a href="#!" class="tooltip-test" data-bs-toggle="tooltip" title="Tooltip" data-container="#showCppt">that link</a> --}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                {{-- <button type="button" class="btn btn-primary"></button> --}}
+            </div>
+        </div>
+    </div>
+</div>
 <div id="showCppt" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showCpptLabel">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
@@ -262,7 +301,14 @@
                                         <button type="button" class="btn btn-link-info btn-sm mb-0">Masuk <span class="badge bg-light text-dark ms-2">${item.MASUK}</span></button><br>
                                         <button type="button" class="btn btn-link-danger btn-sm mb-0">Keluar <span class="badge bg-light text-dark ms-2">${item.KELUAR?item.KELUAR:'-'}</span></button>
                                     </td>
-                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
+                                    <td>${item.TGLTINDAKAN?`
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-success" id="tdk`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail Tindakan" onclick="showTindakan('`+item.NOMOR+`')">
+                                            <i class="fas fa-check text-success"></i>
+                                        </button>`:`
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tindakan tidak ditemukan" onclick="showTindakan('`+item.NOMOR+`')">
+                                            <i class="fas fa-times fs-5 text-danger"></i>
+                                        </button>`}
+                                    </td>
                                     <td>${item.TGLCPPT?`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" id="cppt`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail CPPT" onclick="showCppt('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
@@ -279,7 +325,7 @@
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
                                         </button>`:`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan">
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan" onclick="showSEP('`+item.NOMOR+`')">
                                             <i class="fas fa-times fs-5 text-danger"></i>
                                         </button>`}
                                     </td>
@@ -324,6 +370,54 @@
         $("#btn-refresh-0").prop('disabled',false);
         $("#btn-refresh-1").prop('disabled',false);
         $("#btn-refresh-2").prop('disabled',false);
+    }
+
+    function showTindakan(kunjungan) {
+        // console.log($(this).find('i'));
+        $('#show-id-tindakan').text(kunjungan);
+        $('#tdk'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+        $.ajax({
+            url: "/api/pasien/"+kunjungan+"/tindakan",
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                $("#tampil-tindakan").empty();
+                if (res.show.length != 0) {
+                    res.show.forEach(item => {
+                        content = ``;
+                        content += `<tr>
+                                        <td class="custom-column">${item.TANGGAL}</td>
+                                        <td class="custom-column">${item.NAMATINDAKAN}<br><span class="badge rounded-pill text-bg-primary">Kategori : ${item.JENISTINDAKAN}</span>&nbsp;<span class="badge rounded-pill text-bg-secondary">ID#${item.ID}</span></td>
+                                        <td class="custom-column">${item.TENAGAMEDIS?'<b class="text-gray-800">'+item.TENAGAMEDIS+'</b>':'<b class="text-danger">Paramedis belum terisi/Tidak Ditemukan</b>'}</td>
+                                        <td class="custom-column">${item.NAMAUSER?'Dimasukkan Oleh<br><b class="text-pink-900">'+item.NAMAUSER+'</b>':'-'}</td>
+                                    </tr>
+                        `;
+                        $('#tampil-tindakan').append(content);
+                    })
+                    $('#showTindakan').modal('show');
+                    $('#tdk'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                } else {
+                    // Swal.fire({
+                    //     position: "top-end",
+                    //     icon: "error",
+                    //     title: "CPPT Belum Terisi",
+                    //     showConfirmButton: false,
+                    //     timer: 1500,
+                    //     backdrop: `
+                    //         rgba(0,0,123,0.4)
+                    //         url("/images/nyan-cat.gif")
+                    //         left top
+                    //         no-repeat
+                    //     `
+                    // });
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: 'Data Tindakan tidak ditemukan / belum diisi',
+                        position: 'topRight'
+                    });
+                }
+            }
+        })
     }
 
     function showCppt(kunjungan) {
