@@ -19,6 +19,9 @@ use App\Http\Controllers\Jasper\JasperReportsController;
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
+Route::get('/login', function () {
+    return view('pages.auth.login');
+});
 Route::get('dashboard', function () {
     return view('pages.dashboard.index');
 })->name('dashboard');

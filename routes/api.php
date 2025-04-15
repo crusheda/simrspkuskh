@@ -22,13 +22,14 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 // DIGITAL - SMART KLAIM
 Route::get('klaim/smart/rj/{status}', [ApiSmartKlaimController::class, 'tableRj'])->name('api.klaim.pasien.rj');
-Route::get('klaim/smart/rj/sep/{kunjungan}', [ApiSmartKlaimController::class, 'compileSep'])->name('api.pasien.jrxml.sep');
 // Route::get('klaim/smart/rj/check/{kunjungan}', [ApiSmartKlaimController::class, 'checkList'])->name('api.monitoring.check.rj');
 Route::get('klaim/smart/ri/{status}', [ApiSmartKlaimController::class, 'tableRi'])->name('api.klaim.pasien.ri');
 Route::get('klaim/smart/rd/{status}', [ApiSmartKlaimController::class, 'tableRd'])->name('api.klaim.pasien.rd');
     // MONITORING
     Route::get('pasien/{kunjungan}/tindakan', [ApiSmartKlaimController::class, 'tindakan'])->name('api.pasien.tindakan');
     Route::get('pasien/{kunjungan}/cppt', [ApiSmartKlaimController::class, 'cppt'])->name('api.pasien.cppt');
+    Route::get('pasien/{kunjungan}/skdp', [ApiSmartKlaimController::class, 'compileSkdp'])->name('api.pasien.skdp');
+    Route::get('pasien/{kunjungan}/sep', [ApiSmartKlaimController::class, 'compileSep'])->name('api.pasien.sep');
 
 // PELAYANAN PASIEN
     // RESUME

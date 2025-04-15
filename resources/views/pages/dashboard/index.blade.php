@@ -2,7 +2,7 @@
 
 @section('content')
 <!-- [ Main Content ] start -->
-<div class="row">
+{{-- <div class="row">
     <div class="col-md-4 col-sm-6">
         <div class="card statistics-card-1 overflow-hidden">
             <div class="card-body">
@@ -406,6 +406,6 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 <!-- [ Main Content ] end -->
 @endsection

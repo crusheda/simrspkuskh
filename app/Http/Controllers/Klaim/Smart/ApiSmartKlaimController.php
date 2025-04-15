@@ -49,6 +49,7 @@ class ApiSmartKlaimController extends Controller
                     'ru.DESKRIPSI AS NAMARUANGAN',
                     'cp.TANGGAL AS TGLCPPT',
                     'td.TANGGAL AS TGLTINDAKAN',
+                    'jk.NOMOR AS NOSURKON','jk.NOMOR_BOOKING AS NOMORBOOKING',
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER')
                 )
@@ -61,6 +62,7 @@ class ApiSmartKlaimController extends Controller
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
                 ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                ->leftJoin('medicalrecord.jadwal_kontrol AS jk','jk.KUNJUNGAN','=','pk.NOMOR')
                 ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
                 // ->leftJoin('master.kartu_identitas_pasien AS kip','kip.NORM','=','pp.NORM')
                 ->leftJoin('aplikasi.pengguna','aplikasi.pengguna.ID','=','pk.DITERIMA_OLEH')
@@ -73,6 +75,7 @@ class ApiSmartKlaimController extends Controller
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
                 ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
+                // ->where('jk.STATUS', 1) // STATUS RENCANA KONTROL AKTIF
                 ->where('pk.STATUS', $status) // 0=BATAL;1=MASIH DILAYANI;2=SELESAI
                 // ->where('pk.KELUAR', null)
                 ->orderBy('pk.MASUK','DESC')
@@ -85,32 +88,6 @@ class ApiSmartKlaimController extends Controller
 
         return response()->json($data, 200);
     }
-
-    // function checkList($kunjungan)
-    // {
-    //     $cppt = DB::table('medicalrecord.cppt')
-    //             ->select('*')
-    //             ->where('KUNJUNGAN', $kunjungan)
-    //             ->orderBy('TANGGAL', 'desc')
-    //             ->first(); // ambil 1 cppt terakhir
-
-    //     $sep = DB::table('pendaftaran.kunjungan AS pk')
-    //             ->select('kjs.*')
-    //             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-    //             ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
-    //             ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
-    //             ->where('pk.NOMOR', $kunjungan)
-    //             ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
-    //             ->orderBy('pk.MASUK','DESC')
-    //             ->first(); // ambil 1 sep terakhir
-
-    //     $data = [
-    //         'cppt' => $cppt,
-    //         'sep' => $sep,
-    //     ];
-
-    //     return response()->json($data, 200);
-    // }
 
     // MONITORING
         // CPPT
@@ -203,6 +180,109 @@ class ApiSmartKlaimController extends Controller
             return response()->json($data, 200);
         }
 
+        function compileSkdp($kunjungan)
+        {
+            // $getSEP = DB::table('pendaftaran.kunjungan AS pk')
+            //         ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+            //         ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+            //         ->select('pj.NOMOR AS NOSEP')
+            //         ->where('pk.NOMOR',$kunjungan)
+            //         ->first();
+            $show = DB::select('CALL bpjs.RencanaKontrolCustom(?)',[$kunjungan]);
+            // ----------------------------------------------------------------------
+            // print_r($show);
+            // die();
+            $getTgl = Carbon::parse($show[0]->JKONTROL);
+            $tgl = $getTgl->isoFormat('DD');
+            $bulan = $getTgl->isoFormat('MM');
+            $tahun = $getTgl->isoFormat('YYYY');
+            // ----------------------------------------------------------------------
+            $input = public_path().'/doc/input/skdp/CetakSKDP.jrxml';
+            $output = storage_path().'/app/public/files/skdp/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show[0]->NOMOR;
+            // Pastikan folder tujuan ada
+            $outputDir = dirname($output);
+            if (!File::exists($outputDir)) {
+                File::makeDirectory($outputDir, 0755, true); // true = recursive
+            }
+            $options = [
+                'format' => ['pdf'], // 'xls' / 'rtf
+                'params' => [
+                    'KODEBPJS' => $show[0]->KODEBPJS,
+                    'NOMOR' => $show[0]->NOMOR,
+                    'IDPENJAMIN' => $show[0]->IDPENJAMIN,
+                    'NOMORKARTU' => $show[0]->NOMORKARTU,
+                    'NORMBPJS' => $show[0]->NORMBPJS,
+                    'NOBPJS' => $show[0]->NOBPJS,
+                    'PESERTA' => $show[0]->PESERTA,
+                    'NAMALENGKAP1' => $show[0]->NAMALENGKAP1,
+                    'NAMA_LENGKAP' => $show[0]->NAMA_LENGKAP,
+                    'TANGGAL_LAHIR' => $show[0]->TANGGAL_LAHIR,
+                    'NORM' => $show[0]->NORM,
+                    'KOTA' => $show[0]->KOTA,
+                    'DIBUAT_TANGGAL' => $show[0]->DIBUAT_TANGGAL,
+                    'RUANGAN' => $show[0]->RUANGAN,
+                    'DOKTER' => $show[0]->DOKTER,
+                    'NIP' => $show[0]->NIP,
+                    'DRSEP' => $show[0]->DRSEP,
+                    'DRKONTROL' => $show[0]->DRKONTROL,
+                    'SPESIALISTIK' => $show[0]->SPESIALISTIK,
+                    'SMF' => $show[0]->SMF,
+                    'DIAGNOSIS' => $show[0]->DIAGNOSIS,
+                    'NOMOR_ANTRIAN' => $show[0]->NOMOR_ANTRIAN,
+                    'NOMOR_BOOKING' => $show[0]->NOMOR_BOOKING,
+                    'DIAGMASUK' => $show[0]->DIAGMASUK,
+                    'JADWAL_KONTROL' => $show[0]->JADWAL_KONTROL,
+                    'TGLSO' => $show[0]->TGLSO,
+                    'KETSO' => $show[0]->KETSO,
+                    'KET' => $show[0]->KET,
+                    'JADWALBPJS' => $show[0]->JADWALBPJS,
+                    'BLN' => $show[0]->BLN,
+                    'THN' => $show[0]->THN,
+                    'RENCANA_TERAPI' => $show[0]->RENCANA_TERAPI,
+                    'JENIS_KUNJUNGAN' => $show[0]->JENIS_KUNJUNGAN,
+                    'NOSBPJS' => $show[0]->NOSBPJS,
+                    'NOSURAT' => $show[0]->NOSURAT,
+                    'JENISKONTROL' => $show[0]->JENISKONTROL,
+                    'NORJK' => $show[0]->NORJK,
+                    'TGLRJK' => $show[0]->TGLRJK,
+                    'MASABERLAKU' => $show[0]->MASABERLAKU,
+                    'TUJUANRUJUK' => $show[0]->TUJUANRUJUK,
+                    'nama' => $show[0]->nama,
+                    'kode' => $show[0]->kode,
+                    'JENIS_RUANG_PERAWATAN' => $show[0]->JENIS_RUANG_PERAWATAN,
+                    'JENIS_PERAWATAN' => $show[0]->JENIS_PERAWATAN,
+                    'JKONTROL' => $show[0]->JKONTROL,
+                    'JADWAL_KONTROL1' => $show[0]->JADWAL_KONTROL1,
+                    'USRP' => $show[0]->USRP,
+                    'NORJK' => $show[0]->NORJK,
+                    'IMAGES_PATH' => public_path()."/doc/input/skdp/",
+                ],
+                'classpath' => [
+                    public_path() . "/jasper-libs/core-3.5.3.jar",
+                    public_path() . "/jasper-libs/javase-3.5.3.jar",
+                    public_path() . "/jasper-libs/barcode4j.jar"
+                    // public_path() . "/jasper-libs/core-3.3.3.jar",
+                    // public_path() . "/jasper-libs/javase-3.3.3.jar"
+                ],
+            ];
+
+            // print_r(public_path()."\jasper-libs\core-3.3.3.jar");
+            // die();
+
+            $jasper = new PHPJasper;
+
+            $jasper->process(
+                $input,
+                $output,
+                $options
+            )->execute();
+
+
+            return response()->file($output.'.pdf',[
+                'Content-Type' => 'application/pdf',
+            ]);
+        }
+
         function compileSep($kunjungan)
         {
             $getSEP = DB::table('pendaftaran.kunjungan AS pk')
@@ -286,10 +366,10 @@ class ApiSmartKlaimController extends Controller
             // ]);
         }
 
-        function sep()
-        {
-            return response()->file(public_path().'/doc/output/sep.pdf',[
-                'Content-Type' => 'application/pdf',
-            ]);
-        }
+        // function sep()
+        // {
+        //     return response()->file(public_path().'/doc/output/sep.pdf',[
+        //         'Content-Type' => 'application/pdf',
+        //     ]);
+        // }
 }

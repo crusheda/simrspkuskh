@@ -38,7 +38,7 @@
                         {{-- <button class="btn btn-info" disabled>Button 2</button> --}}
                     </div>
                     <div class="dropdown">
-                        <h6>Waktu Update <a id="show-time" class="text-primary"><div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div></a></h6>
+                        <h6 class="mt-3">Waktu Update <a id="show-time" class="text-primary"><div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div></a></h6>
                         {{-- <a class="avtar avtar-s btn-link-secondary dropdown-toggle arrow-none" href="javascript: void(0);"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="ti ti-dots-vertical f-18"></i>
@@ -82,7 +82,7 @@
             </div> --}}
             <div class="card-body pt-3">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="dttable">
+                    <table class="table table-striped" id="dttable">
                         <thead>
                             <tr>
                                 <th rowspan="2">Aksi</th>
@@ -121,7 +121,7 @@
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="showTindakanLabel">IDKUNJUNGAN : <a id="show-id-tindakan" class="text-primary"></a></h5>
+                <h5 class="modal-title" id="showTindakanLabel"><span class="badge text-bg-secondary">DAFTAR TINDAKAN</span> | IDKUNJUNGAN : <a id="show-id-tindakan" class="text-primary"></a></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3">
@@ -160,7 +160,7 @@
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="showCpptLabel">NORM.<a id="show-norm-cppt" class="text-primary"></a> | IDKUNJUNGAN : <a id="show-id-cppt" class="text-primary"></a></h5>
+                <h5 class="modal-title" id="showCpptLabel"><span class="badge text-bg-secondary">CPPT</span> | NORM.<a id="show-norm-cppt" class="text-primary"></a> | IDKUNJUNGAN : <a id="show-id-cppt" class="text-primary"></a></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3">
@@ -196,11 +196,28 @@
         </div>
     </div>
 </div>
+<div id="showSKDP" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showSKDPLabel">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="showSKDPLabel"><span class="badge text-bg-secondary">SURAT RENCANA KONTROL</span> | IDKUNJUNGAN : <a id="show-id-skdp" class="text-primary"></a></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3">
+                <div id="cetak-skdp"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                {{-- <button type="button" class="btn btn-primary"></button> --}}
+            </div>
+        </div>
+    </div>
+</div>
 <div id="showSEP" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showSEPLabel">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="showSEPLabel"></a>IDKUNJUNGAN : <a id="show-id-sep" class="text-primary"></a></h5>
+                <h5 class="modal-title" id="showSEPLabel"><span class="badge text-bg-secondary">SEP</span> | IDKUNJUNGAN : <a id="show-id-sep" class="text-primary"></a></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3">
@@ -305,7 +322,7 @@
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" id="tdk`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail Tindakan" onclick="showTindakan('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
                                         </button>`:`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tindakan tidak ditemukan" onclick="showTindakan('`+item.NOMOR+`')">
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tindakan tidak ditemukan">
                                             <i class="fas fa-times fs-5 text-danger"></i>
                                         </button>`}
                                     </td>
@@ -313,19 +330,26 @@
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" id="cppt`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail CPPT" onclick="showCppt('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
                                         </button>`:`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="CPPT tidak ditemukan" onclick="showCppt('`+item.NOMOR+`')">
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="CPPT tidak ditemukan">
                                             <i class="fas fa-times fs-5 text-danger"></i>
                                         </button>`}
                                     </td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
-                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
+                                    <td>${item.NOMORBOOKING?`
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-success" id="skdp`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SKDP" onclick="showSKDP('`+item.NOMOR+`')">
+                                            <i class="fas fa-check text-success"></i>
+                                        </button>`:`
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SKDP tidak ditemukan">
+                                            <i class="fas fa-times fs-5 text-danger"></i>
+                                        </button>`}
+                                    </td>
                                     <td>${item.NOSEP?`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
                                         </button>`:`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan" onclick="showSEP('`+item.NOMOR+`')">
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan">
                                             <i class="fas fa-times fs-5 text-danger"></i>
                                         </button>`}
                                     </td>
@@ -470,11 +494,41 @@
         })
     }
 
+    function showSKDP(kunjungan) {
+        $('#show-id-skdp').text(kunjungan);
+        $('#skdp'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+
+        fetch("/api/pasien/"+kunjungan+"/skdp")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#cetak-skdp').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#showSKDP').modal('show');
+            $('#skdp'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data SKDP tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                position: 'topRight'
+            });
+            console.error(error);
+        });
+    }
+
     function showSEP(kunjungan) {
         $('#show-id-sep').text(kunjungan);
         $('#sep'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
 
-        fetch("/api/klaim/smart/rj/sep/" + kunjungan)
+        fetch("/api/pasien/"+kunjungan+"/sep")
         .then(response => {
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
@@ -503,7 +557,7 @@
     function showKlaim(kunjungan) {
         iziToast.success({
             title: 'Yeayy!',
-            message: 'Tombol itu akan memunculkan Berkas Klaim Pasien dengan Nomor Kunjungan '+kunjungan,
+            message: 'Tombol ini nantinya akan memunculkan Berkas Klaim Pasien secara instan dan efektif dengan Nomor Kunjungan '+kunjungan,
             position: 'topRight'
         });
     }

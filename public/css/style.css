@@ -26156,7 +26156,7 @@ select[data-multiselectsplitter-secondselect-selector].dataTable-input {
   width: 100%;
 }
 .auth-main.v2 {
-  background: url("../images/authentication/img-auth-bg.jpg");
+  background: url("/images/pku/bg.png");
   background-size: cover;
   background-position: center;
 }
@@ -26176,7 +26176,7 @@ select[data-multiselectsplitter-secondselect-selector].dataTable-input {
   --bs-bg-opacity: 0.85;
 }
 .auth-main.v2 .auth-wrapper {
-  align-items: flex-end;
+  /* align-items: flex-end; */
 }
 .auth-main.v2 .auth-sidecontent {
   width: 50%;
@@ -26201,7 +26201,7 @@ select[data-multiselectsplitter-secondselect-selector].dataTable-input {
 .auth-main.v2 .auth-form .card {
   border: none;
   box-shadow: none;
-  min-height: calc(100vh - 110px);
+  /* min-height: calc(100vh - 110px); */
 }
 .auth-main.v2 .auth-form .card .card-body {
   display: flex;
