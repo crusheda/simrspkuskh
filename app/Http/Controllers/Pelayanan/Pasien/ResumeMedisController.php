@@ -38,10 +38,11 @@ class ResumeMedisController extends Controller
 
                 ->where('ru.STATUS', 1)
                 ->where('pk.NOMOR',$KUNJUNGAN)
-                ->where(function ($query) {
-                    $query->where('pk.STATUS', '=', '1')
-                            ->orWhere('pk.STATUS', '=', '2');
-                })
+                // ->where(function ($query) {
+                //     $query->where('pk.STATUS', '=', '1')
+                //             ->orWhere('pk.STATUS', '=', '2');
+                // })
+                ->where('pk.STATUS', '2')
                 ->first();
 
         // $awal = DB::table('pendaftaran.kunjungan AS pku')
@@ -92,10 +93,11 @@ class ResumeMedisController extends Controller
 
                 ->where('ru.STATUS', 1)
                 ->where('pk.NOMOR',$KUNJUNGAN)
-                ->where(function ($query) {
-                    $query->where('pk.STATUS', '=', '1')
-                            ->orWhere('pk.STATUS', '=', '2');
-                })
+                // ->where(function ($query) {
+                //     $query->where('pk.STATUS', '=', '1')
+                //             ->orWhere('pk.STATUS', '=', '2');
+                // })
+                ->where('pk.STATUS', 2)
                 ->first();
 
         $awal = DB::table('pendaftaran.kunjungan AS pku')

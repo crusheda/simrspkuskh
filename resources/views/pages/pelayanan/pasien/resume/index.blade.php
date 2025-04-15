@@ -38,8 +38,8 @@
         <div class="col-md-12">
             <div class="card user-card">
                 <div class="card-body">
-                    <button class="btn btn-primary" onclick="showRESUME('{{ $list['KUNJUNGAN'] }}')">Refresh Resume</button>
-                    <div class="d-flex align-items-center" id="refresh-iframe">
+                    <button class="btn btn-primary" id="btn-refresh" onclick="showRESUME('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-sync me-2"></i> Refresh Resume</button>
+                    <div class="d-flex align-items-center mt-3 mb-3" id="refresh-iframe">
                         {{-- <div class="flex-shrink-1 m-r-5 m-l-5">
                             <img src="{{ asset('/images/pku/logo.png') }}" alt="user-image"
                                 class="avtar rounded-circle wid-65 hei-65" style="width: 65px; height: 65px">
@@ -194,7 +194,8 @@
                         text: 'Data berhasil disimpan.',
                         confirmButtonText: 'Oke'
                         });
-                        refreshResume();
+                        // refreshResume();
+                        showRESUME('{{ $list['KUNJUNGAN'] }}')
                     } else {
                         alert("Gagal menyimpan data");
                     }
@@ -213,6 +214,7 @@
         }
 
         function showRESUME(kunjungan) {
+            $('#btn-refresh').prop('disabled',true).find('i').addClass('fa-spin');
             fetch("/api/pelayanan/pasien/rj/resume/" + kunjungan)
             .then(response => {
                 if (!response.ok) {
@@ -228,6 +230,7 @@
                 $("#refresh-iframe").empty().html(`
                     <iframe src="${fileURL}" width="100%" height="800px" style="border: none;"></iframe>
                 `);
+                $('#btn-refresh').prop('disabled',false).find('i').removeClass('fa-spin');
             })
             .catch(error => {
                 iziToast.error({
