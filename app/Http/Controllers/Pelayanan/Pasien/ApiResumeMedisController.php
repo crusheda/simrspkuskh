@@ -22,12 +22,18 @@ class ApiResumeMedisController extends Controller
                 ->where('pk.NOMOR',$kunjungan)
                 ->first();
 
-        $show = DB::select('CALL medicalrecord.CetakMR5Custom(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
-        $obat = DB::select('CALL medicalrecord.CetakObatRJ(?)',[$getRESUMERJ->NOPEN]);
+        $show = DB::select('CALL simrspku_klaim.CetakResumeRJ(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
+        $obat = DB::select('CALL simrspku_klaim.CetakObatRJ(?)',[$getRESUMERJ->NOPEN]);
 
-        $keluhan = $show[0]->KELUHAN = str_replace("//", "/", $show[0]->KELUHAN);
-        $subyektif = $show[0]->SUBYEKTIF = str_replace("//", "/", $show[0]->SUBYEKTIF);
-        // print_r($obat);
+        $keluhan = str_replace("\n", "<br>", $show[0]->KELUHAN);
+        $assesment = str_replace("\n", "<br>", $show[0]->ASSESMENT);
+        $subyektif = str_replace("\n", "<br>", $show[0]->SUBYEKTIF);
+        $obyektif = str_replace("\n", "<br>", $show[0]->OBYEKTIF);
+        $planning = str_replace("\n", "<br>", $show[0]->PLANNING);
+        $instruksi = str_replace("\n", "<br>", $show[0]->INSTRUKSI);
+
+        $NAMA_OBAT = collect($obat)->pluck('NAMAOBAT')->implode(', ');
+        // print_r($NAMA_OBAT);
         // die();
 
         // ----------------------------------------------------------------------
@@ -86,16 +92,17 @@ class ApiResumeMedisController extends Controller
                 'SATURASIO2' => $show[0]->SATURASIO2,
                 'TGLPERIKSA' => $show[0]->TGLPERIKSA,
                 'JAMPERIKSA' => $show[0]->JAMPERIKSA,
-                'ASSESMENT' => $show[0]->ASSESMENT,
-                'SUBYEKTIF' => $subyektif,
-                'OBYEKTIF' => $show[0]->OBYEKTIF,
-                'PLANNING' => $show[0]->PLANNING,
-                'INSTRUKSI' => $show[0]->INSTRUKSI,
+                'ASSESMENT' => $assesment,
+                'OBYEKTIF' => $obyektif,
+                'PLANNING' => $planning,
+                'INSTRUKSI' => $instruksi,
                 'TINDAKAN' => $show[0]->TINDAKAN,
                 'KONSUL' => $show[0]->KONSUL,
                 'DOKTER' => $show[0]->DOKTER,
-                'NAMAOBAT' => $show[0]->NAMAPASIEN,
                 'KELUHAN' => $keluhan,
+                'SUBYEKTIF' => $subyektif,
+
+                'NAMAOBAT' => $NAMA_OBAT,
             ],
             // Data untuk tabel obat, bukan untuk report utama
             // 'data_source' => $jsonPath
