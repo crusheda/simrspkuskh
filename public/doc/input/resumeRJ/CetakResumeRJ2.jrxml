@@ -47,7 +47,7 @@
 					<rightPen lineWidth="0.25" lineColor="#030303"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="14" isBold="true"/>
+					<font fontName="DejaVu Sans" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[RESUME MEDIS RAWAT JALAN]]></text>
 			</staticText>
@@ -162,7 +162,7 @@
 			<staticText>
 				<reportElement x="1" y="135" width="550" height="21" uuid="b78ca359-95b0-4bd1-b9cc-e2b019ce065a"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[I. Pengkajian Keperawatan]]></text>
 			</staticText>
@@ -211,13 +211,13 @@
 		</band>
 		<band height="14" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" x="130" y="0" width="421" height="14" uuid="0f6f5b6b-5ee0-440b-9985-15e7e752ee2a"/>
-				<box topPadding="2" leftPadding="3">
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="130" y="0" width="421" height="14" uuid="0f6f5b6b-5ee0-440b-9985-15e7e752ee2a"/>
+				<box topPadding="2" leftPadding="3" bottomPadding="2">
 					<topPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement verticalAlignment="Top">
+				<textElement verticalAlignment="Top" markup="html">
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{KELUHAN}]]></textFieldExpression>
@@ -230,7 +230,7 @@
 					<bottomPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[[Anamnesis] Keluhan Utama]]></text>
 			</staticText>
@@ -241,7 +241,7 @@
 					<bottomPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8"/>
+					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
@@ -472,7 +472,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tanda Vital]]></text>
 			</staticText>
@@ -484,7 +484,7 @@
 					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Pemeriksaan Umum]]></text>
 			</staticText>
@@ -522,7 +522,7 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Jam :]]></text>
 			</staticText>
@@ -535,14 +535,14 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tanggal :]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="1" y="0" width="550" height="24" uuid="4e835e36-e0f6-479f-a3d4-0c31c11b1a4c"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[II. Pengkajian Medis]]></text>
 			</staticText>
@@ -569,14 +569,10 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Waktu]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="410" y="3" width="100" height="30" uuid="6f3dee32-26d7-4735-8ab4-eb4917e1ac18"/>
-				<textFieldExpression><![CDATA[$P{NAMAOBAT}]]></textFieldExpression>
-			</textField>
 		</band>
 		<band height="13">
 			<textField>
@@ -603,7 +599,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Assesment (A)]]></text>
 			</staticText>
@@ -617,7 +613,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Subyektif (S)]]></text>
 			</staticText>
@@ -643,12 +639,12 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Obyektif (O)]]></text>
 			</staticText>
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="463" height="13" uuid="d2d28007-7026-4fbc-b915-c2052fd050cd"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="88" y="0" width="463" height="13" uuid="d2d28007-7026-4fbc-b915-c2052fd050cd"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<leftPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.25"/>
@@ -661,8 +657,8 @@
 			</textField>
 		</band>
 		<band height="13">
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="463" height="13" uuid="b5c75026-0a00-40a3-b631-13586faa9b61">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="88" y="0" width="463" height="13" uuid="b5c75026-0a00-40a3-b631-13586faa9b61">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
@@ -683,14 +679,14 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Planning (P)]]></text>
 			</staticText>
 		</band>
 		<band height="13">
-			<textField>
-				<reportElement x="88" y="0" width="463" height="13" uuid="a2d50be8-aeae-4d7f-9ec8-7f407c68a126"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="88" y="0" width="463" height="13" uuid="a2d50be8-aeae-4d7f-9ec8-7f407c68a126"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.25" lineStyle="Solid"/>
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -712,7 +708,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Instruksi (I)]]></text>
 			</staticText>
@@ -726,12 +722,12 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tindakan]]></text>
 			</staticText>
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="463" height="13" uuid="a100233d-41c2-47f7-a76d-00ca4c863fa5"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="88" y="0" width="463" height="13" uuid="a100233d-41c2-47f7-a76d-00ca4c863fa5"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<leftPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.25"/>
@@ -744,8 +740,8 @@
 			</textField>
 		</band>
 		<band height="13">
-			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="463" height="13" uuid="b4258fa1-192e-4cee-8a2f-f0057bc676eb"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="88" y="0" width="463" height="13" uuid="b4258fa1-192e-4cee-8a2f-f0057bc676eb"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<topPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
@@ -765,7 +761,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dirujuk / Konsul ke]]></text>
 			</staticText>
@@ -842,7 +838,7 @@
 				<imageExpression><![CDATA[$P{IMAGES_PATH2}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="250" y="20" width="285" height="56" uuid="4466aef4-97c7-4d6f-b1bc-6363a13497ee">
+				<reportElement stretchType="RelativeToBandHeight" x="250" y="12" width="301" height="64" uuid="4466aef4-97c7-4d6f-b1bc-6363a13497ee">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
@@ -855,6 +851,17 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{NAMAOBAT}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="250" y="0" width="301" height="12" uuid="22f03a3d-aaf9-41b7-8e90-59cafa3f3523"/>
+				<box topPadding="0" leftPadding="3" bottomPadding="0">
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Nama Obat :]]></text>
+			</staticText>
 		</band>
 	</detail>
 </jasperReport>
