@@ -1,6 +1,17 @@
 @extends('layouts.index')
 
 @section('content')
+@if (Auth::check())
+    Sistem ini sudah Login dengan Akun : {{ Auth::user()->name }}
+    <br><br>
+    <a class="btn btn-danger" href="javascript:void(0);" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
+        <i class="ti ti-power"></i> Logout
+    </a>
+@endif
+
+<form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
+    {{ csrf_field() }}
+</form>
 <!-- [ Main Content ] start -->
 {{-- <div class="row">
     <div class="col-md-4 col-sm-6">

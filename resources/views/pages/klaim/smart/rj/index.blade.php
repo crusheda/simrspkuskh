@@ -281,7 +281,31 @@
                         }
                     }
                     content = ``;
-                    // console.log(item.NOMOR);
+                    // START VERIFIKASI SEP
+                    if (item.NOSEP) {
+                        valSEP = item.NOSEP.substring(8, 12); // 0624
+                        parts = item.TGLSEP.split("-"); // hasil: ['08', '06', '2024'] || e.g. 2024-01-12 00:00:00
+                        valTGLSEP = parts[1]+parts[0].slice(-2); // '0624'
+                        console.log(valSEP);
+                        console.log(valTGLSEP);
+                        if (valSEP == valTGLSEP) {
+                            SEP = '<b class="text-indigo-900">'+item.NOSEP+'</b>';
+                            btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-success" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
+                                            <i class="fas fa-check text-success"></i>
+                                        </button>`;
+                        } else {
+                            SEP = '<b class="text-danger">Tanggal SEP Tidak Sesuai!</b>';
+                            btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-danger" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="No.SEP tidak sesuai dengan Tanggal SEP" onclick="showSEP('`+item.NOMOR+`')">
+                                            <i class="fas fa-check fs-5 text-danger"></i>
+                                        </button>`;
+                        }
+                    } else {
+                        SEP = '<b class="text-secondary">SEP Tidak Ditemukan</b>';
+                        btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan">
+                                        <i class="fas fa-times fs-5 text-secondary"></i>
+                                    </button>`;
+                    }
+                    // END VERIFIKASI SEP
                     content += `<tr>
                                     <td>
                                         <div class="dropdown">
@@ -306,7 +330,7 @@
                                                 <a class="mb-2 text-dark" href="javascript: void(0);">
                                                     <code>
                                                         Ruangan <b class="text-pink-900">${item.NAMARUANGAN}</b> | <b class="text-teal-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Registrasi">${item.NOPEN}</b>
-                                                        | <b class="text-indigo-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${item.NOSEP?item.NOSEP:'<b class="text-danger">SEP Tidak Ditemukan</b>'}</b>
+                                                        | <b class="text-indigo-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b>
                                                     </code>
                                                 </a><br>
                                                 <a class="mb-2 text-dark" href="javascript: void(0);"><code>${status}</code></a>
@@ -322,16 +346,16 @@
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" id="tdk`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail Tindakan" onclick="showTindakan('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
                                         </button>`:`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tindakan tidak ditemukan">
-                                            <i class="fas fa-times fs-5 text-danger"></i>
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tindakan tidak ditemukan">
+                                            <i class="fas fa-times fs-5 text-secondary"></i>
                                         </button>`}
                                     </td>
                                     <td>${item.TGLCPPT?`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" id="cppt`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail CPPT" onclick="showCppt('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
                                         </button>`:`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="CPPT tidak ditemukan">
-                                            <i class="fas fa-times fs-5 text-danger"></i>
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="CPPT tidak ditemukan">
+                                            <i class="fas fa-times fs-5 text-secondary"></i>
                                         </button>`}
                                     </td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
@@ -341,17 +365,11 @@
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" id="skdp`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SKDP" onclick="showSKDP('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
                                         </button>`:`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SKDP tidak ditemukan">
-                                            <i class="fas fa-times fs-5 text-danger"></i>
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SKDP tidak ditemukan">
+                                            <i class="fas fa-times fs-5 text-secondary"></i>
                                         </button>`}
                                     </td>
-                                    <td>${item.NOSEP?`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-success" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
-                                            <i class="fas fa-check text-success"></i>
-                                        </button>`:`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan">
-                                            <i class="fas fa-times fs-5 text-danger"></i>
-                                        </button>`}
+                                    <td>${btnSEP}
                                     </td>
                                 </tr>`;
                     $('#tampil-tbody').append(content);

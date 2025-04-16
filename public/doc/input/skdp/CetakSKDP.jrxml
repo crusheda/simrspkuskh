@@ -305,7 +305,7 @@
 				<textFieldExpression><![CDATA["No. Surat RS : " + $P{NOSURAT}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="385" y="16" width="170" height="52" uuid="b58275d5-559f-4824-864c-8abfc569853b"/>
+				<reportElement x="370" y="16" width="185" height="52" uuid="b58275d5-559f-4824-864c-8abfc569853b"/>
 				<box leftPadding="6"/>
 				<textElement textAlignment="Right" verticalAlignment="Top" markup="html">
 					<font fontName="Arial Narrow" size="10" isBold="true"/>

@@ -45,7 +45,7 @@ class ApiSmartKlaimController extends Controller
                 ->select(
                     'pk.*',
                     'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
-                    'kjs.noSEP AS NOSEP',
+                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
                     'ru.DESKRIPSI AS NAMARUANGAN',
                     'cp.TANGGAL AS TGLCPPT',
                     'td.TANGGAL AS TGLTINDAKAN',
@@ -103,7 +103,7 @@ class ApiSmartKlaimController extends Controller
                         ->select('pk.NOPEN','pp.NORM')
                         ->where('pk.NOMOR',$kunjungan)
                         ->first();
-            $show = DB::select('CALL medicalrecord.CetakCPPT(?, ?)', [$getNopen->NOPEN, $kunjungan]); // NOPEN & NOKUNJUNGAN
+            $show = DB::select('CALL simrspku_klaim.CetakCPPT(?, ?)', [$getNopen->NOPEN, $kunjungan]); // NOPEN & NOKUNJUNGAN
             // print_r($show);
             // die();
 
@@ -188,7 +188,7 @@ class ApiSmartKlaimController extends Controller
             //         ->select('pj.NOMOR AS NOSEP')
             //         ->where('pk.NOMOR',$kunjungan)
             //         ->first();
-            $show = DB::select('CALL bpjs.RencanaKontrolCustom(?)',[$kunjungan]);
+            $show = DB::select('CALL simrspku_klaim.CetakSKDP(?)',[$kunjungan]);
             // ----------------------------------------------------------------------
             // print_r($show);
             // die();
@@ -266,6 +266,10 @@ class ApiSmartKlaimController extends Controller
                 ],
             ];
 
+            // dd($options);
+            // print_r($options);
+            // die();
+
             // print_r(public_path()."\jasper-libs\core-3.3.3.jar");
             // die();
 
@@ -291,7 +295,7 @@ class ApiSmartKlaimController extends Controller
                     ->select('pj.NOMOR AS NOSEP')
                     ->where('pk.NOMOR',$kunjungan)
                     ->first();
-            $show = DB::select('CALL bpjs.CetakSEPCustom(?)',[$getSEP->NOSEP]);
+            $show = DB::select('CALL simrspku_klaim.CetakSEP(?)',[$getSEP->NOSEP]);
             // ----------------------------------------------------------------------
             $getTgl = Carbon::parse($show[0]->TGLSEP);
             $tgl = $getTgl->isoFormat('DD');
@@ -363,6 +367,61 @@ class ApiSmartKlaimController extends Controller
             //     'message' => 'File generated successfully.',
             //     'file_url' => '/doc/output/sep/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show[0]->NOMORSEP.'.pdf',
             //     'nomor_sep' => '0151R0130124V002638'
+            // ]);
+        }
+
+        function compile()
+        {
+            $data = [
+                [
+                    "NAMA" => "Yussuf Faisal",
+                ]
+            ];
+
+            // 1. Simpan sebagai JSON
+            $jsonPath = public_path().'/doc/input/ujicoba.json';
+            file_put_contents($jsonPath, json_encode($data));
+
+            // 2. Jalankan Jasper
+            $jasper = new PHPJasper;
+            $input = public_path().'/doc/input/ujicoba.jrxml';
+            $output = public_path().'/doc/input/outputujicoba';
+
+            $options = [
+                'format' => ['pdf'],
+                'params' => [
+                    'REPORT_LOCALE' => 'id_ID',
+                ],
+                'data_file' => $jsonPath,
+                'db_connection' => false,
+            ];
+
+            // dd(file_get_contents($jsonPath));
+            $jasper->process($input, $output, $options)->execute();
+            return response()->file($output . '.pdf');
+
+            // try {
+            //     $jasper->process($input, $output, $options)->execute();
+
+            //     // dd($options);
+            //     // 3. Hapus file JSON setelah proses berhasil
+            //     if (file_exists($jsonPath)) {
+            //         unlink($jsonPath);
+            //     }
+
+            //     // 4. Bisa langsung return response download atau apapun yang dibutuhkan
+            //     return response()->file($output . '.pdf');
+
+            // } catch (\Exception $e) {
+            //     // Pastikan JSON tetap dihapus meskipun error
+            //     if (file_exists($jsonPath)) {
+            //         unlink($jsonPath);
+            //     }
+            //     throw $e; // Atau handle error sesuai kebutuhan
+            // }
+
+            // return response()->file($output.'.pdf',[
+            //     'Content-Type' => 'application/pdf',
             // ]);
         }
 

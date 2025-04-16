@@ -72,25 +72,37 @@
                         <center><img class="mb-3" src="{{ asset('images/pku/logo-kop-blue.png') }}" width="300" alt=""></center>
                         <hr class="mb-4" />
                         <h4 class="f-w-500 mb-1">Login | SIRMED</h4>
-                        <p class="mb-3">Belum memiliki Akun? <a href="#"class="link-primary ms-1">Minta Akun</a></p>
-                        <div class="mb-3">
-                            <input type="text" class="form-control" id="floatingInput" placeholder="Username" />
+                        <p class="mb-3">Belum memiliki Akun? <a href="javascript: void(0);"class="link-primary ms-1">Minta Akun</a></p>
+                        <form method="POST" action="{{ route('login') }}">
+                            @csrf
+                        <div class="mb-3" data-validate="Username is required">
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="Username" value="{{ old('name') }}" autocomplete="name" autofocus required/>
+                            @error('name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
-                        <div class="mb-3">
-                            <input type="password" class="form-control" id="floatingInput1" placeholder="Password" />
+                        <div class="mb-3" data-validate="Password is required">
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Password" autocomplete="current-password" required/>
+                            @error('password')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
                         <div class="d-flex mt-1 justify-content-between align-items-center">
                             <div class="form-check">
-                                <input class="form-check-input input-primary" type="checkbox" id="customCheckc1" checked="" />
+                                <input class="form-check-input input-primary {{ old('remember') ? 'checked' : '' }}" type="checkbox" id="remember" name="remember"/>
                                 <label class="form-check-label text-muted" for="customCheckc1">Ingat Saya?</label>
                             </div>
-                            <a href="#">
+                            <a href="javascript: void(0);">
                                 <h6 class="text-secondary f-w-400 mb-0">Lupa Password?</h6>
                             </a>
                         </div>
                         <div class="d-grid mt-4">
-                            <button type="button" class="btn btn-primary mb-3">Masuk</button>
-                            <button class="btn btn-primary" id="show-loader">Loading</button>
+                            <button type="submit" class="btn btn-primary mb-3">Masuk</button>
+                            <a href="javascript: void(0);" class="btn btn-primary" id="show-loader">Loading</a>
                         </div>
                         {{-- <div class="saprator my-3">
                             <span>Or continue with</span>
@@ -122,6 +134,24 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $("#open-password").on("click", function() {
+                var x = $("#password");
+                if (x[0].type === "password") {
+                    x[0].type = "text";
+                    $('#open-password').find("i").toggleClass("fa-eye fa-eye-slash");
+                } else {
+                    x[0].type = "password";
+                    $('#open-password').find("i").toggleClass("fa-eye-slash fa-eye");
+                }
+            });
+
+            // $("#btn-login").on("click", function() {
+            //     console.log('masuk');
+            // });
+        })
+    </script>
 
     <div class="loader">
         <div class="p-4 text-center">
@@ -140,7 +170,7 @@
     <script src="{{ asset('js/icon/custom-font.js') }}"></script>
     <script src="{{ asset('js/script.js') }}"></script>
     <script src="{{ asset('js/theme.js') }}"></script>
-    <script src="{{ asset('js/multi-lang.js') }}"></script>
+    {{-- <script src="{{ asset('js/multi-lang.js') }}"></script> --}}
     <script src="{{ asset('js/plugins/feather.min.js') }}"></script>
 
     <script>

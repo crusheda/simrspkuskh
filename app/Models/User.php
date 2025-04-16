@@ -17,6 +17,9 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    protected $connection = 'db_custom';
+    protected $table = 'simrspku_klaim.users'; // arahkan ke schema+tabel
+
     protected $fillable = [
         'name',
         'email',

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 // use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Auth;
 
 class LoginController extends Controller
 {
@@ -24,7 +25,12 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-        return view('pages.auth.login');
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        } else {
+            return view('pages.auth.login');
+        }
+        // return view('pages.auth.login');
         // return redirect()->route('auth.login');
         // return redirect()->route('login');
     }
@@ -35,7 +41,7 @@ class LoginController extends Controller
      * @var string
      */
     // protected $redirectTo = RouteServiceProvider::HOME;
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/dashboard';
 
     /**
      * Create a new controller instance.
@@ -48,18 +54,27 @@ class LoginController extends Controller
         $request->validate([
             $this->username() => 'required|string',
             'password' => 'required|string',
-            'captcha' => 'required|captcha',
+            // 'captcha' => 'required|captcha',
         ]);
     }
 
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
-        $this->middleware('auth')->only('logout');
+        // $this->middleware('auth')->only('logout');
     }
 
     public function username()
     {
         return 'name';
     }
+
+    // function verifLogin()
+    // {
+    //     if (Auth::check()) {
+    //         return redirect()->route('dashboard');
+    //     } else {
+    //         return view('pages.auth.login');
+    //     }
+    // }
 }

@@ -16,12 +16,13 @@ use App\Http\Controllers\Jasper\JasperReportsController;
 // });
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
+Auth::routes(['register' => false]);
 Route::get('/', function () {
     return redirect()->route('dashboard');
 });
-Route::get('/login', function () {
-    return view('pages.auth.login');
-});
+// Route::get('/login', function () {
+//     return view('pages.auth.login');
+// });
 Route::get('dashboard', function () {
     return view('pages.dashboard.index');
 })->name('dashboard');
@@ -55,7 +56,7 @@ Route::get('view', [PasienController::class, 'view'])->name('report.jrxml.view')
 Route::get('full', [PasienController::class, 'fullJasper'])->name('report.jrxml.full');
 
 // AUTHENTICATION LARAVEL (AUTH UI BOOTSTRAP + SPATIE ROLES PERMISSIONS)
-Auth::routes();
+// Auth::routes();
 
 Route::get('home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::group(['middleware' => ['auth']], function() {
