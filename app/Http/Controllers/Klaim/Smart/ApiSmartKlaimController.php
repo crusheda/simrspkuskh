@@ -13,7 +13,7 @@ use Auth, Storage;
 
 class ApiSmartKlaimController extends Controller
 {
-    function tableRj($status) // RAWAT JALAN
+    function tableRj($status,$tgls,$tgle,$dpjp) // RAWAT JALAN
     {
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
         // $subCppt = DB::table('medicalrecord.cppt')
@@ -72,11 +72,21 @@ class ApiSmartKlaimController extends Controller
                     $query->where('pk.RUANGAN', 'LIKE', '1020101%');
                             // ->orWhere('pk.RUANGAN', 'LIKE', '1020201%');
                 })
+                ->where(function ($query) use ($tgls,$tgle) {
+                    $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
+                })
+                ->when($dpjp != 0, function ($query) use ($dpjp) {
+                    // Hanya menambahkan where jika $dpjp bukan 0
+                    $query->where('dr.NIP', $dpjp);
+                })
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
                 ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
                 // ->where('jk.STATUS', 1) // STATUS RENCANA KONTROL AKTIF
-                ->where('pk.STATUS', $status) // 0=BATAL;1=MASIH DILAYANI;2=SELESAI
+
+                ->when($status != 5, function ($query) use ($status) { // 0=BATAL;1=MASIH DILAYANI;2=SELESAI;5=ALL
+                    $query->where('pk.STATUS', $status);
+                })
                 // ->where('pk.KELUAR', null)
                 ->orderBy('pk.MASUK','DESC')
                 ->get();

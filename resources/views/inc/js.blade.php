@@ -21,6 +21,12 @@
 <script src="{{ asset('js/sweetalert2-11.js') }}"></script>
 <script src="{{ asset('js/iziToast.js') }}"></script>
 
+{{-- ADDON --}}
+<script src="{{ asset('js/plugins/choices.min.js') }}"></script>
+
+{{-- CDN --}}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script>
     layout_change('light');
 </script>

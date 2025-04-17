@@ -15,7 +15,7 @@
             </div>
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h2 class="mb-0">Daftar Kunjungan Pasien BPJS</h2>
+                    <h2 class="mb-0">Digital Smart Klaim Rajal</h2>
                 </div>
             </div>
         </div>
@@ -27,59 +27,82 @@
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-header">
-                <div class="d-sm-flex align-items-center justify-content-between">
-                    <div>
-                        <div class="btn-group">
-                            <button class="btn btn-light-danger shadow" onclick="refresh(0)" id="btn-refresh-0"><i class="fas fa-sync me-2"></i> Batal Kunjungan</button>
-                            <button class="btn btn-warning shadow" onclick="refresh(1)" id="btn-refresh-1"><i class="fas fa-sync me-2"></i> Sedang Dilayani</button>
-                            <button class="btn btn-light-primary shadow" onclick="refresh(2)" id="btn-refresh-2"><i class="fas fa-sync me-2"></i> Selesai Kunjungan</button>
-                        </div>
-                        {{-- <button class="btn btn-info" disabled>Button 2</button> --}}
-                    </div>
+            <div class="card-header p-3">
+                <div class="d-sm-flex align-items-center justify-content-between ms-2">
+                    <h6 class="mt-2"><i class="fas fa-filter text-primary me-2"></i> Filter</h6>
                     <div class="dropdown">
-                        <h6 class="mt-3">Waktu Update <a id="show-time" class="text-primary"><div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div></a></h6>
                         {{-- <a class="avtar avtar-s btn-link-secondary dropdown-toggle arrow-none" href="javascript: void(0);"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="ti ti-dots-vertical f-18"></i>
-                        </a> --}}
+                        </a>
                         <div class="dropdown-menu dropdown-menu-end">
-                            {{-- <a class="dropdown-item" href="javascript: void(0);" onclick="refresh(0)">Batal Kunjungan</a>
+                            <a class="dropdown-item" href="javascript: void(0);" onclick="refresh(0)">Batal Kunjungan</a>
                             <a class="dropdown-item" href="javascript: void(0);" onclick="refresh(1)">Sedang Dilayani</a>
-                            <a class="dropdown-item" href="javascript: void(0);" onclick="refresh(2)">Selesai Kunjungan</a> --}}
+                            <a class="dropdown-item" href="javascript: void(0);" onclick="refresh(2)">Selesai Kunjungan</a>
+                        </div> --}}
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-3">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Status Kunjungan</label>
+                            <select class="form-control" id="filter_status">
+                                <option value="5">Tampilkan Semua Kunjungan</option>
+                                <option value="0">Batal Kunjungan</option>
+                                <option value="1" selected>Sedang Dilayani</option>
+                                <option value="2">Selesai Kunjungan</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Rentang Tgl Kunjungan</label>
+                            <div class="input-group">
+                                <input type="text" id="filter_tgl" class="form-control flatpickr-input active" placeholder="Select date range" readonly="readonly">
+                                <span class="input-group-text"><i class="feather icon-calendar"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">DPJP</label>
+                            <select class="form-control" id="filter_dpjp">
+                                <option value="">Pilih Dokter</option>
+                                @if ($list['dr'])
+                                    @foreach ($list['dr'] as $item)
+                                        <option value="{{ $item->NIP }}">{{ $item->NAMADOKTER }} ({{ $item->DESKRIPSI }})</option>
+                                    @endforeach
+                                @endif
+                            </select>
                         </div>
                     </div>
                 </div>
             </div>
-            {{-- <div class="card-body pt-3">
-                <div id="list" hidden>
-                    <div class="border rounded p-3 my-3">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-shrink-0">
-                                <img src="{{ asset('/images/user.png') }}" alt="user-image"
-                                    class="avtar rounded-circle wid-45 hei-45">
-                            </div>
-                            <div class="flex-grow-1 ms-3">
-                                <h4 class="mb-0">000000005 - YUSSUF FAISAL</h4>
-                                <a class="mb-0">DPJP : dr. Mustopa, Sp.PD., AIFO-K, FINASIM</a><br>
-                                <a class="mb-2"><code>Ruangan Poli Dalam | BPJS/JKN</code></a><br>
-                                <a class="mb-2"><code>04-03-2025 12:33:45</code></a>
-                            </div>
-                            <div class="dropdown">
-                                <a class="avtar avtar-s btn-light-secondary dropdown-toggle arrow-none" href="#"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="ti ti-chevron-down f-18"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end" style="">
-                                    <a class="dropdown-item" href="#">Active</a>
-                                    <a class="dropdown-item" href="#">Disable</a>
-                                    <a class="dropdown-item" href="#">Remove</a>
-                                </div>
-                            </div>
-                        </div>
+            <div class="card-footer d-flex justify-content-between p-3">
+                <div class="text-start">
+                    <h6 class="text-muted ms-2 mt-2">Tekan tombol <span class="badge text-bg-primary">Tampilkan</span> untuk menampilkan <mark>Tabel Kunjungan</mark></h6>
+                </div>
+                <div class="text-end btn-page mb-0">
+                    <a class="btn btn-link-secondary" id="clear_text" href="javascript: void(0);" onclick="clearFilter()">Kosongkan</a>
+                    <button type="button" class="btn btn-shadow btn-primary " onclick="filter()" data-bs-toggle="tooltip"
+                    data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Menampilkan Data Kunjungan"
+                    id="tombol-tampilkan"><i class="fas fa-filter align-middle me-2"></i> Tampilkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12" id="showTable" hidden>
+        <div class="card">
+            <div class="card-header p-3">
+                <div class="d-sm-flex align-items-center justify-content-between ms-2">
+                    <h6 class="mt-2"><i class="fas fa-table text-primary me-2"></i> Tabel Kunjungan</h6>
+                    <div class="dropdown">
+                        <h6 class="mt-2">Waktu Update <a id="show-time" class="text-primary"><div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div></a></h6>
                     </div>
                 </div>
-            </div> --}}
+            </div>
             <div class="card-body pt-3">
                 <div class="table-responsive">
                     <table class="table table-striped" id="dttable">
@@ -238,30 +261,67 @@
         //         $("#xtgl").prop('disabled', false);
         //     }
         // });
-        refresh(1);
+
+        // FLATPICKR DATE
+        const today = new Date(); // Hari ini
+        const fiveYearsAgo = new Date();
+        fiveYearsAgo.setFullYear(today.getFullYear() - 5); // 5 tahun ke belakang
+        $("#filter_tgl").flatpickr(
+            {
+                // enableTime: true,
+                // dateFormat: "Y-m-d H:i",
+                mode: 'range',
+                minDate: fiveYearsAgo, // Mulai dari 5 tahun yang lalu
+                maxDate: today,        // Sampai hari ini
+                dateFormat: 'Y-m-d',
+                defaultDate: [today,today]
+            }
+        );
+
+        // SELECT CHOICES
+        elm = $('#filter_dpjp')[0];
+        choices = new Choices(elm);
+
+        // refresh(1);
     });
 
     // function-function
-    function refresh(status) {
+    function filter() {
+        $('#showTable').prop('hidden',false);
+        $('#tombol-tampilkan').prop('disabled',true).find('i').removeClass('fa-filter').addClass('fa-sync fa-spin');
         $("#show-time").empty().html('<div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div>');
-        if (status == 0) {
-            $("#btn-refresh-0").prop('disabled',true).removeClass('btn-light-danger btn-danger').addClass('btn-danger');
-            $("#btn-refresh-1").removeClass('btn-light-warning btn-warning').addClass('btn-light-warning');
-            $("#btn-refresh-2").removeClass('btn-light-primary btn-primary').addClass('btn-light-primary');
-        } else {
-            if (status == 1) {
-                $("#btn-refresh-0").removeClass('btn-light-danger btn-danger').addClass('btn-light-danger');
-                $("#btn-refresh-1").prop('disabled',true).removeClass('btn-light-warning btn-warning').addClass('btn-warning');
-                $("#btn-refresh-2").removeClass('btn-light-primary btn-primary').addClass('btn-light-primary');
-            } else {
-                $("#btn-refresh-0").removeClass('btn-light-danger btn-danger').addClass('btn-light-danger');
-                $("#btn-refresh-1").removeClass('btn-light-warning btn-warning').addClass('btn-light-warning');
-                $("#btn-refresh-2").prop('disabled',true).removeClass('btn-light-primary btn-primary').addClass('btn-primary');
-            }
-        }
+        // if (status == 0) {
+        //     $("#btn-refresh-0").prop('disabled',true).removeClass('btn-light-danger btn-danger').addClass('btn-danger');
+        //     $("#btn-refresh-1").removeClass('btn-light-warning btn-warning').addClass('btn-light-warning');
+        //     $("#btn-refresh-2").removeClass('btn-light-primary btn-primary').addClass('btn-light-primary');
+        // } else {
+        //     if (status == 1) {
+        //         $("#btn-refresh-0").removeClass('btn-light-danger btn-danger').addClass('btn-light-danger');
+        //         $("#btn-refresh-1").prop('disabled',true).removeClass('btn-light-warning btn-warning').addClass('btn-warning');
+        //         $("#btn-refresh-2").removeClass('btn-light-primary btn-primary').addClass('btn-light-primary');
+        //     } else {
+        //         $("#btn-refresh-0").removeClass('btn-light-danger btn-danger').addClass('btn-light-danger');
+        //         $("#btn-refresh-1").removeClass('btn-light-warning btn-warning').addClass('btn-light-warning');
+        //         $("#btn-refresh-2").prop('disabled',true).removeClass('btn-light-primary btn-primary').addClass('btn-primary');
+        //     }
+        // }
         $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
+        // Initialize
+        var status = $("#filter_status").val();
+        var tgl = $("#filter_tgl").val();
+        var dpjp = $("#filter_dpjp").val() ? $("#filter_dpjp").val() : '0'; // JIKA DPJP KOSONG = 0
+        var exTgl = tgl.split(' to ');
+        if (exTgl.length == 2) { // SPLIT FROM = "2024-01-01 to 2025-01-01"
+            tgls = exTgl[0];
+            tgle = exTgl[1];
+        } else { // SPLIT FROM = "2024-01-01"
+            tgls = exTgl[0];
+            tgle = exTgl[0];
+        }
+        console.log(exTgl);
+        // Process
         $.ajax({
-            url: "/api/klaim/smart/rj/"+status,
+            url: `/api/klaim/smart/rj/${status}/${tgls}/${tgle}/${dpjp}`,
             type: 'GET',
             dataType: 'json',
             success: function(res) {
@@ -379,7 +439,7 @@
                     trigger : 'hover'
                 })
                 var table = $('#dttable').DataTable({
-                    dom: 'Bfrtip',
+                    // dom: 'Bfrtip',
                     order: [
                         [2, "desc"]
                     ],
@@ -402,16 +462,23 @@
                         { targets: [1], sortable: false },
                         { targets: [2], sortable: false },
                     ],
-                    displayLength: 10,
+                    displayLength: 20,
                     lengthChange: true,
-                    lengthMenu: [10, 25, 50, 75, 100],
+                    lengthMenu: [20, 50, 75, 100, 250, 500, 1000, 3000, 7000, 15000, 50000, 100000],
                     buttons: ['excel', 'pdf'] // 'copy','colvis'
                 });
+                $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
+            }, error: function(xhr, status, error) {
+                // Gagal: tangani error di sini
+                console.error('Terjadi kesalahan:', error);
+                // Bisa juga tampilkan alert
+                alert('Gagal mengambil data. Coba lagi.');
+                $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
             }
         })
-        $("#btn-refresh-0").prop('disabled',false);
-        $("#btn-refresh-1").prop('disabled',false);
-        $("#btn-refresh-2").prop('disabled',false);
+        // $("#btn-refresh-0").prop('disabled',false);
+        // $("#btn-refresh-1").prop('disabled',false);
+        // $("#btn-refresh-2").prop('disabled',false);
     }
 
     function showTindakan(kunjungan) {
@@ -578,6 +645,24 @@
             message: 'Tombol ini nantinya akan memunculkan Berkas Klaim Pasien secara instan dan efektif dengan Nomor Kunjungan '+kunjungan,
             position: 'topRight'
         });
+    }
+
+    function clearFilter() {
+        // GET TODAY DATE
+        const today = new Date(); // Hari ini
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // bulan dimulai dari 0
+        const dd = String(today.getDate()).padStart(2, '0');
+
+        // CHANGE FILTER VALUE
+        $("#filter_status").val('1');
+        $("#filter_dpjp").val('');
+        // $('#filter_tgl').val(`${yyyy}-${mm}-${dd}`).trigger('change'); // update select
+        // $("#filter_tgl").val().change();
+
+        // EMPTY TABLE AND HIDE DIV
+        $("#tampil-tbody").empty();
+        $('#showTable').prop('hidden',true);
     }
 </script>
 @endsection
