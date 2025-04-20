@@ -13,6 +13,76 @@ use Auth, Storage;
 
 class ApiResumeMedisController extends Controller
 {
+    function tableRj($status,$tgls,$tgle,$dpjp) // RAWAT JALAN
+    {
+
+        $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+        // $subCppt = DB::table('medicalrecord.cppt')
+        //         ->select('KUNJUNGAN', 'TANGGAL')
+        //         ->where('STATUS', 1) // kalau perlu
+        //         // ->where('KUNJUNGAN', '1020101042406080005')
+        //         ->orderBy('TANGGAL', 'desc')
+        //         ->get(); // ambil 1 cppt terakhir
+
+        // MAIN QUERY
+        $show = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(
+                    'pk.*',
+                    'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
+                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
+                    'ru.DESKRIPSI AS NAMARUANGAN',
+                    // 'cp.TANGGAL AS TGLCPPT',
+                    // 'td.TANGGAL AS TGLTINDAKAN',
+                    'jk.NOMOR AS NOSURKON','jk.NOMOR_BOOKING AS NOMORBOOKING',
+                    DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER')
+                )
+                // ->leftJoinSub($subCppt, 'cp', function ($join) { // CPPT
+                //     $join->on('cp.KUNJUNGAN', '=', 'pk.NOMOR');
+                // })
+                // ->leftJoinSub($subTindakan, 'td', function ($join) { // TINDAKAN
+                //     $join->on('td.KUNJUNGAN', '=', 'pk.NOMOR');
+                // })
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                ->leftJoin('medicalrecord.jadwal_kontrol AS jk','jk.KUNJUNGAN','=','pk.NOMOR')
+                ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
+                // ->leftJoin('master.kartu_identitas_pasien AS kip','kip.NORM','=','pp.NORM')
+                ->leftJoin('aplikasi.pengguna','aplikasi.pengguna.ID','=','pk.DITERIMA_OLEH')
+                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                ->where(function ($query) {
+                    $query->where('pk.RUANGAN', 'LIKE', '1020101%');
+                            // ->orWhere('pk.RUANGAN', 'LIKE', '1020201%');
+                })
+                ->where(function ($query) use ($tgls,$tgle) {
+                    $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
+                })
+                ->when($dpjp != 0, function ($query) use ($dpjp) {
+                    // Hanya menambahkan where jika $dpjp bukan 0
+                    $query->where('dr.NIP', $dpjp);
+                })
+                ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
+                ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
+                ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
+                // ->where('jk.STATUS', 1) // STATUS RENCANA KONTROL AKTIF
+
+                ->when($status != 5, function ($query) use ($status) { // 0=BATAL;1=MASIH DILAYANI;2=SELESAI;5=ALL
+                    $query->where('pk.STATUS', $status);
+                })
+                // ->where('pk.KELUAR', null)
+                ->orderBy('pk.MASUK','DESC')
+                ->get();
+                // print_r($show);
+                // die();
+        $data = [
+            'show' => $show,
+            'time' => $time,
+        ];
+
+        return response()->json($data, 200);
+    }
     function compileResumeRj($kunjungan)
     {
         $getRESUMERJ = DB::table('pendaftaran.kunjungan AS pk')

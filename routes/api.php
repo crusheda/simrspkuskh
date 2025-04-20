@@ -33,6 +33,7 @@ Route::get('klaim/smart/rd/{status}', [ApiSmartKlaimController::class, 'tableRd'
     Route::get('pasien/{kunjungan}/sep', [ApiSmartKlaimController::class, 'compileSep'])->name('api.pasien.sep');
 
 // PELAYANAN PASIEN
+Route::get('pelayanan/pasien/rj/{status}/{tgls}/{tgle}/{dpjp}', [ApiResumeMedisController::class, 'tableRj'])->name('api.pelayanan.pasien.rj');
     // RESUME
     Route::get('pelayanan/pasien/rj/resume/{kunjungan}', [ApiResumeMedisController::class, 'compileResumeRj'])->name('api.pasien.resume.rj');
     Route::post('pelayanan/pasien/resume/ttd/simpan', [ResumeMedisController::class, 'storeTtd'])->name('api.pasien.resume.ttd');

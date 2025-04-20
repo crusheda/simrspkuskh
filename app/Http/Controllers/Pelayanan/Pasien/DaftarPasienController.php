@@ -10,21 +10,55 @@ use Carbon\Carbon;
 
 class DaftarPasienController extends Controller
 {
-    function index()
+    // function index()
+    // {
+    //     $show = kunjungan::where('STATUS', 1)
+    //             ->where('KELUAR', null)
+    //             ->orderBy('MASUK','DESC')
+    //             ->get();
+
+    //     // print_r($show);
+    //     // die();
+
+    //     $data = [
+    //         'show' => $show,
+    //     ];
+
+    //     return view('pages.pelayanan.pasien.index'); // ->with('list',$data)
+    // }
+    function indexRj()
     {
-        $show = kunjungan::where('STATUS', 1)
-                ->where('KELUAR', null)
-                ->orderBy('MASUK','DESC')
+        $dr = DB::table('master.dokter AS dr')
+                ->select(
+                    'dr.id',
+                    'dr.NIP',
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                    'ref.DESKRIPSI'
+                )
+                ->leftJoin('master.pegawai AS pg','pg.NIP','=','dr.NIP')
+                ->leftJoin('master.referensi AS ref', function($join) {
+                    $join->on('ref.ID','=','pg.SMF')
+                        ->where('ref.JENIS', '26');
+                })
+                ->leftJoin('master.dokter_ruangan AS dru','dru.DOKTER','=','dr.ID')
+                ->where('dr.STATUS','1')
+                ->where('dru.STATUS','1')
+                ->where(function ($query) {
+                    $query->where('dru.RUANGAN', 'LIKE', '1020101%');
+                })
+                // ->orderByRaw("CASE WHEN ref.ID = '0' THEN 1 ELSE 0 END")
+                ->orderBy('ref.DESKRIPSI','ASC')
+                ->groupBy('dr.id','dr.NIP','NAMADOKTER')
                 ->get();
 
-        // print_r($show);
-        // die();
-
         $data = [
-            'show' => $show,
+            'dr' => $dr,
         ];
 
-        return view('pages.pelayanan.pasien.index'); // ->with('list',$data)
+        // print_r($dr);
+        // die();
+
+        return view('pages.pelayanan.pasien.index')->with('list', $data);
     }
 
     // API --

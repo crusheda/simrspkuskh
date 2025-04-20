@@ -112,6 +112,25 @@
             showRESUME("{{ $list['KUNJUNGAN'] }}");
             // showLoader();
             // refresh();
+            // FLATPICKR DATE
+        const today = new Date(); // Hari ini
+        const fiveYearsAgo = new Date();
+        fiveYearsAgo.setFullYear(today.getFullYear() - 5); // 5 tahun ke belakang
+        $("#filter_tgl").flatpickr(
+            {
+                // enableTime: true,
+                // dateFormat: "Y-m-d H:i",
+                mode: 'range',
+                minDate: fiveYearsAgo, // Mulai dari 5 tahun yang lalu
+                maxDate: today,        // Sampai hari ini
+                dateFormat: 'Y-m-d',
+                defaultDate: [today,today]
+            }
+        );
+
+        // SELECT CHOICES
+        elm = $('#filter_dpjp')[0];
+        choices = new Choices(elm);
         });
 
         const canvas = document.getElementById('signature-pad');

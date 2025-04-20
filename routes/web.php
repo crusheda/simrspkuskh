@@ -29,7 +29,7 @@ Route::get('dashboard', function () {
 
 // PELAYANAN
     // KUNJUNGAN PASIEN
-    Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'index'])->name('pelayanan.pasien');
+    Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'indexRj'])->name('pelayanan.pasien');
         //IDENTITAS PASIEN
         Route::get('/pelayanan/pasien/identitas/{KUNJUNGAN}', [PasienController::class, 'indexIdentitas'])->name('pelayanan.pasien.identitas.index');
         //RESUME

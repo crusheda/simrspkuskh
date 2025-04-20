@@ -42,7 +42,7 @@ class ResumeMedisController extends Controller
                 //     $query->where('pk.STATUS', '=', '1')
                 //             ->orWhere('pk.STATUS', '=', '2');
                 // })
-                ->where('pk.STATUS', '2')
+                // ->where('pk.STATUS', '2')
                 ->first();
 
         // $awal = DB::table('pendaftaran.kunjungan AS pku')
@@ -61,6 +61,8 @@ class ResumeMedisController extends Controller
             // 'awal' => $awal,
             'KUNJUNGAN' => $KUNJUNGAN,
         ];
+        // print_r($resume);
+        // die();
         // print_r($awal);
         // die();
         // return view('layouts.index2');
@@ -97,7 +99,7 @@ class ResumeMedisController extends Controller
                 //     $query->where('pk.STATUS', '=', '1')
                 //             ->orWhere('pk.STATUS', '=', '2');
                 // })
-                ->where('pk.STATUS', 2)
+                // ->where('pk.STATUS', 2)
                 ->first();
 
         $awal = DB::table('pendaftaran.kunjungan AS pku')
@@ -116,6 +118,7 @@ class ResumeMedisController extends Controller
         //     'awal' => $awal,
         //     'KUNJUNGAN' => $KUNJUNGAN,
         // ];
+
 
         // return view('pages.pelayanan.pasien.resume.print')->with('list',$data);
 
