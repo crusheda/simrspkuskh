@@ -9,13 +9,12 @@
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Digital</a></li>
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Smart Klaim</a></li>
-                    <li class="breadcrumb-item" aria-current="page">Rawat Jalan</li>
+                    <li class="breadcrumb-item" aria-current="page">Monitoring</li>
                 </ul>
             </div>
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h2 class="mb-0">Digital Smart Klaim Rajal</h2>
+                    <h2 class="mb-0">Monitoring Pasien</h2>
                 </div>
             </div>
         </div>
@@ -45,18 +44,29 @@
             </div>
             <div class="card-body pt-3">
                 <div class="row">
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-2 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Status Perawatan</label>
+                            <select class="form-control" id="filter_rawat" disabled>
+                                <option value="5">Semua Perawatan</option>
+                                <option value="1" selected>Rawat Jalan</option>
+                                <option value="2">Rawat Darurat</option>
+                                <option value="3">Rawat Inap</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-3">
                         <div class="form-group">
                             <label class="form-label">Status Kunjungan</label>
                             <select class="form-control" id="filter_status">
-                                <option value="5">Tampilkan Semua Kunjungan</option>
+                                <option value="5">Semua Kunjungan</option>
                                 <option value="0">Batal Kunjungan</option>
                                 <option value="1" selected>Sedang Dilayani</option>
                                 <option value="2">Selesai Kunjungan</option>
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-2 mb-3">
                         <div class="form-group">
                             <label class="form-label">Rentang Tgl Kunjungan</label>
                             <div class="input-group">
@@ -82,7 +92,7 @@
             </div>
             <div class="card-footer d-flex justify-content-between p-3">
                 <div class="text-start">
-                    <h6 class="text-muted ms-2 mt-2">Tekan tombol <span class="badge text-bg-primary">Tampilkan</span> untuk menampilkan <mark>Tabel Kunjungan</mark></h6>
+                    <h6 class="text-muted ms-2 mt-3">Tekan tombol <span class="badge text-bg-primary">Tampilkan</span> untuk menampilkan <mark>Tabel Kunjungan</mark></h6>
                 </div>
                 <div class="text-end btn-page mb-0">
                     <a class="btn btn-link-secondary" id="clear_text" href="javascript: void(0);" onclick="clearFilter()">Kosongkan</a>
@@ -97,18 +107,17 @@
         <div class="card">
             <div class="card-header p-3">
                 <div class="d-sm-flex align-items-center justify-content-between ms-2">
-                    <h6 class="mt-2"><i class="fas fa-table text-primary me-2"></i> Tabel Kunjungan</h6>
+                    <h6 class="mt-2"><i class="fas fa-table text-primary me-2"></i> Tabel</h6>
                     <div class="dropdown">
                         <h6 class="mt-2">Waktu Update <a id="show-time" class="text-primary"><div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div></a></h6>
                     </div>
                 </div>
             </div>
-            <div class="card-body pt-3">
+            <div class="card-body p-1 pb-3">
                 <div class="table-responsive">
                     <table class="table table-striped" id="dttable">
                         <thead>
                             <tr>
-                                <th rowspan="2">Aksi</th>
                                 <th rowspan="2"><center>Kunjungan Pasien</center></th>
                                 <th rowspan="2">Tanggal Kunjungan</th>
                                 <th colspan="7"><center>Monitoring</center></th>
@@ -368,17 +377,6 @@
                     // END VERIFIKASI SEP
                     content += `<tr>
                                     <td>
-                                        <div class="dropdown">
-                                            <a class="avtar avtar-s btn-light-secondary dropdown-toggle arrow-none" href="#"
-                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="ti ti-chevron-down f-18"></i>
-                                            </a>
-                                            <div class="dropdown-menu dropdown-menu-end" style="">
-                                                <a class="dropdown-item" href="#" onclick="showKlaim('${item.NOMOR}')">Berkas Klaim</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0">
                                                 <img src="{{ asset('/images/user.png') }}" alt="user image"
@@ -445,8 +443,7 @@
                     ],
                     bAutoWidth: false,
                     aoColumns : [
-                        { sWidth: '5%' },
-                        { sWidth: '60%' },
+                        { sWidth: '65%' },
                         { sWidth: '14%' },
                         { sWidth: '3%' },
                         { sWidth: '3%' },
@@ -460,7 +457,6 @@
                         // { visible: false, targets: [7] },
                         { targets: [0], sortable: false },
                         { targets: [1], sortable: false },
-                        { targets: [2], sortable: false },
                     ],
                     displayLength: 20,
                     lengthChange: true,

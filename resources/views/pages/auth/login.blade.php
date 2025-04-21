@@ -84,7 +84,12 @@
                             @enderror
                         </div>
                         <div class="mb-3" data-validate="Password is required">
-                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Password" autocomplete="current-password" required/>
+                            <div class="input-group">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Password" autocomplete="current-password" required/>
+                                <button href="javascript:void(0);" type="button" class="btn btn-outline-primary" id="open-password" style="border-color: #ced4da;border-top-right-radius:8px;border-bottom-right-radius:8px">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
                             @error('password')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -101,8 +106,7 @@
                             </a>
                         </div>
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary mb-3">Masuk</button>
-                            <a href="javascript: void(0);" class="btn btn-primary" id="show-loader">Loading</a>
+                            <button type="submit" class="btn btn-primary" id="show-loader">Masuk</button>
                         </div>
                         {{-- <div class="saprator my-3">
                             <span>Or continue with</span>
@@ -156,8 +160,8 @@
     <div class="loader">
         <div class="p-4 text-center">
             <div class="custom-loader"></div>
-            <h2 class="my-3 f-w-400">Loading..</h2>
-            <p class="mb-0">Please wait while we get your information from the web</p>
+            <h2 class="my-3 f-w-400">Authentikasi Pengguna..</h2>
+            <p class="mb-0">Mohon tunggu sementara kami mendapatkan informasi dari Akun Anda</p>
         </div>
     </div>
     <!-- [ Main Content ] end -->

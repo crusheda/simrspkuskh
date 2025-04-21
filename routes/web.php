@@ -3,9 +3,11 @@
 use Illuminate\Support\Facades\Route;
 
 // INITIALIZE PATH CONTROLLER
+use App\Http\Controllers\Setting\ProfilController;
 use App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController;
 use App\Http\Controllers\Pelayanan\Pasien\PasienController;
 use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
+use App\Http\Controllers\Monitoring\MonitoringController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Jasper\JasperController;
 use App\Http\Controllers\Jasper\JasperReportsController;
@@ -27,6 +29,8 @@ Route::get('dashboard', function () {
     return view('pages.dashboard.index');
 })->name('dashboard');
 
+Route::get('/setting/profil', [ProfilController::class, 'index'])->name('profil');
+
 // PELAYANAN
     // KUNJUNGAN PASIEN
     Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'indexRj'])->name('pelayanan.pasien');
@@ -39,12 +43,11 @@ Route::get('dashboard', function () {
 // DIGITAL
     // SMART KLAIM
         // RAWAT JALAN
-        Route::get('klaim/smart/rj', [SmartKlaimController::class, 'indexRj'])->name('klaim.pasien.indexRj');
-        // Route::get('klaim/smart/rj/jrxml/sep/{kunjungan}', [SmartKlaimController::class, 'compileSep'])->name('klaim.pasien.jrxml.sep');
+        Route::get('monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
         // RAWAT INAP
-        Route::get('klaim/smart/ri', [SmartKlaimController::class, 'indexRi'])->name('klaim.pasien.indexRi');
+        // Route::get('klaim/smart/ri', [SmartKlaimController::class, 'indexRi'])->name('klaim.pasien.indexRi');
         // RAWAT DARURAT
-        Route::get('klaim/smart/rd', [SmartKlaimController::class, 'indexRd'])->name('klaim.pasien.indexRd');
+        // Route::get('klaim/smart/rd', [SmartKlaimController::class, 'indexRd'])->name('klaim.pasien.indexRd');
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 // Jasper Function

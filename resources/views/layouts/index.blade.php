@@ -28,6 +28,11 @@
     </div>
     <!-- [ Pre-loader ] End -->
 
+    <!-- Logout Form -->
+    <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
+        {{ csrf_field() }}
+    </form>
+
     @include('inc.navbar.navbar')
     @include('inc.header.header')
 
