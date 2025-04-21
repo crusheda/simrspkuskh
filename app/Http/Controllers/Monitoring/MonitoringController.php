@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use PHPJasper\PHPJasper;
 use Carbon\Carbon;
-use Auth, Storage;
+use Auth, Storage, Hash;
 
 class MonitoringController extends Controller
 {
@@ -43,8 +43,30 @@ class MonitoringController extends Controller
             'dr' => $dr,
         ];
 
-        // print_r($dr);
-        // die();
+
+        // $passInput = 'Crusheda132';
+        // $privateKey = 'KDFLDMSTHBWWSGCBH';
+
+        // // Proses HMAC-nya harus disamakan
+        // $hmacInput = hash_hmac("sha256", $passInput, hash("sha256", $privateKey, false), false);
+        // print_r($hmacInput);
+        // $hashFromDb = '$2y$10$AZQhVuadahmcRhydHVzrR.bkw.gwjPeb09SbQXC.33rpg197Hhupa'; // Dari sistem SIMGOS
+        // if (Hash::check($hmacInput, $hashFromDb)) {
+        //     print_r('COCOK');
+        // } else {
+        //     print_r('TIDAK COCOK');
+        // }
+        $hashedPassword = '$2y$10$cXMnLIgnSdp6Sq.tvRJzBef.9DvAuIclMRUU3qfZCee7mDQcQ3m16';
+        if (Hash::check('sunaryo37', $hashedPassword)) {
+            // Password cocok
+            print_r('COCOK');
+        } else {
+            // Password salah
+            print_r('TIDAK COCOK');
+        }
+        // print_r(bin2hex('Crusheda132'));
+        // print_r(Hash::driver());
+        die();
 
         return view('pages.monitoring.index')->with('list', $data);
     }

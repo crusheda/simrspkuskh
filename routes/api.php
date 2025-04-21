@@ -22,7 +22,7 @@ Route::get('/surkon/table', [App\Http\Controllers\Simgos\RegOnline\surkonControl
 // CONTOH BRIDGING SIMGOS
 Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController::class, 'table'])->name('simgos.kunjungan.pasien');
 
-//---------------------------------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------    A  P  I    -----------------------------------------------------------------
 // DIGITAL
 Route::get('monitoring/rj/{status}/{tgls}/{tgle}/{dpjp}', [ApiMonitoringController::class, 'tableRj'])->name('api.klaim.pasien.rj');
     // MONITORING

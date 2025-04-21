@@ -73,6 +73,15 @@ return [
             'password' => env('DB_PASSWORD', ''),
             // ...
         ],
+        'db_aplikasi' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE_APLIKASI', 'forge'),
+            'username' => env('DB_USERNAME', 'forge'),
+            'password' => env('DB_PASSWORD', ''),
+            // ...
+        ],
         'db_bpjs' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),

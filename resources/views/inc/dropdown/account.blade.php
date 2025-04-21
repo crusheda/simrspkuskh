@@ -1,4 +1,4 @@
-<li class="dropdown pc-h-item header-user-profile"> Hi, @if (Auth::check()) {{ Auth::user()->name }} @else User @endif&nbsp;
+<li class="dropdown pc-h-item header-user-profile"> Hi, @if (Auth::check()) {{ Auth::user()->LOGIN }} @else User @endif&nbsp;
     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
         role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
         <img src="{{ asset('/images/user.png') }}" alt="user-image" class="user-avtar" />
@@ -18,8 +18,8 @@
                                     class="wid-50 rounded-circle" />
                             </div>
                             <div class="flex-grow-1 mx-3">
-                                <h5 class="mb-0">@if (Auth::check()) {{ Auth::user()->name }} @else User @endif</h5>
-                                <a class="link-primary" href="mailto:@if (Auth::check()) {{ Auth::user()->email }} @else admin@admin.com @endif">@if (Auth::check()) {{ Auth::user()->email }} @else admin@admin.com @endif</a>
+                                <h5 class="mb-0">@if (Auth::check()) {{ Auth::user()->NAMA }} @else User @endif</h5>
+                                <a class="link-dark" href="javascript:void(0);">@if (Auth::check()) {{ Auth::user()->NIP . " | " . Auth::user()->NIK }} @else - @endif</a>
                             </div>
                             <span class="badge bg-primary">PRO</span>
                         </div>
@@ -34,7 +34,7 @@
                         <a href="#" class="dropdown-item">
                             <span class="d-flex align-items-center">
                                 <i class="ph-duotone ph-key"></i>
-                                <span>Ubah Password</span>
+                                <span><s>Ubah Password</s></span>
                             </span>
                         </a>
                         <a href="" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
