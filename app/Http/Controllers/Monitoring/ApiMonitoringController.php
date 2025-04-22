@@ -40,6 +40,14 @@ class ApiMonitoringController extends Controller
                 WHERE STATUS = 1
             ) AS cp
         '))->where('cp.rn', 1); // hanya baris CPPT terakhir per kunjungan
+        $subTTD = DB::table(DB::raw('
+            (
+                SELECT *,
+                    ROW_NUMBER() OVER (PARTITION BY KUNJUNGAN ORDER BY created_at DESC) AS rn
+                FROM simrspku_klaim.tanda_tangan
+                WHERE deleted_at IS null
+            ) AS ttd
+        '))->where('ttd.rn', 1); // hanya baris CPPT terakhir per kunjungan
         // MAIN QUERY
         $show = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(
@@ -47,12 +55,16 @@ class ApiMonitoringController extends Controller
                     'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
                     'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
                     'ru.DESKRIPSI AS NAMARUANGAN',
+                    'ttd.created_at AS TGLTTD',
                     'cp.TANGGAL AS TGLCPPT',
                     'td.TANGGAL AS TGLTINDAKAN',
                     'jk.NOMOR AS NOSURKON','jk.NOMOR_BOOKING AS NOMORBOOKING',
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER')
                 )
+                ->leftJoinSub($subTTD, 'ttd', function ($join) { // CPPT
+                    $join->on('ttd.kunjungan', '=', 'pk.NOMOR');
+                })
                 ->leftJoinSub($subCppt, 'cp', function ($join) { // CPPT
                     $join->on('cp.KUNJUNGAN', '=', 'pk.NOMOR');
                 })
@@ -394,6 +406,135 @@ class ApiMonitoringController extends Controller
             //     'file_url' => '/doc/output/sep/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show[0]->NOMORSEP.'.pdf',
             //     'nomor_sep' => '0151R0130124V002638'
             // ]);
+        }
+
+        //TTD RESUME
+        function showTtdResumeRj($kunjungan)
+        {
+            $getRESUMERJ = DB::table('pendaftaran.kunjungan AS pk')
+                    ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                    ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                    ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR')
+                    ->where('pk.NOMOR',$kunjungan)
+                    ->first();
+
+            $show = DB::select('CALL simrspku_klaim.CetakResumeRJ(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
+
+            $data = [
+                'show' => $show,
+            ];
+
+            return response()->json($data, 200);
+        }
+
+        public function storeTtdResumeRj(Request $request)
+        {
+            $existing = DB::table('simrspku_klaim.tanda_tangan')
+                ->where('kunjungan', $request->nama)
+                ->first();
+
+            if ($existing) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tanda tangan untuk kunjungan ini sudah ada.',
+                ], 409); // 409 = Conflict
+            }
+            $request->validate([
+                // 'nama' => 'required|string|max:255',
+                // 'signature' => 'required|string',
+            ]);
+
+            $image = str_replace('data:image/png;base64,', '', $request->signature);
+            $image = str_replace(' ', '+', $image);
+            $filename = 'ttd_' . time() . '.png';
+
+            Storage::disk('public')->put("/signatures/{$filename}", base64_decode($image));
+
+            $pasien = DB::table('simrspku_klaim.tanda_tangan')->insert([
+                'kunjungan' => $request->nama,
+                'signature_path' => "signatures/{$filename}",
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                // 'id' => $pasien->kunjungan
+            ]);
+        }
+
+        function compileResumeRj($kunjungan)
+        {
+            $getRESUMERJ = DB::table('pendaftaran.kunjungan AS pk')
+                    ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                    ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                    ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR')
+                    ->where('pk.NOMOR',$kunjungan)
+                    ->first();
+
+            $show = DB::select('CALL simrspku_klaim.CetakResumeRJ(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
+            $obat = DB::select('CALL simrspku_klaim.CetakObatRJ(?)',[$getRESUMERJ->NOPEN]);
+
+            $keluhan    = $this->cleanText($show[0]->KELUHAN);
+            $assesment  = $this->cleanText($show[0]->ASSESMENT);
+            $subyektif  = $this->cleanText($show[0]->SUBYEKTIF);
+            $obyektif   = $this->cleanText($show[0]->OBYEKTIF);
+            $planning   = $this->cleanText($show[0]->PLANNING);
+            $instruksi  = $this->cleanText($show[0]->INSTRUKSI);
+
+            $NAMA_OBAT = collect($obat)->pluck('NAMAOBAT')->implode(', ');
+            // print_r($obyektif2);
+            // die();
+
+            // ----------------------------------------------------------------------
+            $getTgl = Carbon::parse($show[0]->TGLPERIKSA);
+            $tgl = $getTgl->isoFormat('DD');
+            $bulan = $getTgl->isoFormat('MM');
+            $tahun = $getTgl->isoFormat('YYYY');
+
+            $data = [
+                'show' => $show
+                    // 'NAMAINSTANSI' => $show[0]->NAMAINSTANSI,
+                    // 'ALAMAT' => $show[0]->ALAMAT,
+                    // 'NORM' => $show[0]->NORM,
+                    // 'DOKTER' => $show[0]->DOKTER,
+                    // 'NAMAPASIEN' => $show[0]->NAMAPASIEN,
+                    // 'TANGGAL_LAHIR' => $show[0]->TANGGAL_LAHIR,
+                    // 'TGLMASUK' => $show[0]->TGLMASUK,
+                    // 'UNIT' => $show[0]->UNIT,
+                    // 'KEADAAN_UMUM' => $show[0]->KEADAAN_UMUM,
+                    // 'DARAH' => $show[0]->DARAH,
+                    // 'FREKUENSI_NADI' => $show[0]->FREKUENSI_NADI,
+                    // 'FREKUENSI_NAFAS' => $show[0]->FREKUENSI_NAFAS,
+                    // 'SUHU' => $show[0]->SUHU,
+                    // 'ABN' => $show[0]->ABN,
+                    // 'SATURASIO2' => $show[0]->SATURASIO2,
+                    // 'TGLPERIKSA' => $show[0]->TGLPERIKSA,
+                    // 'JAMPERIKSA' => $show[0]->JAMPERIKSA,
+                    // 'ASSESMENT' => $assesment,
+                    // 'OBYEKTIF' => $obyektif,
+                    // 'PLANNING' => $planning,
+                    // 'INSTRUKSI' => $instruksi,
+                    // 'TINDAKAN' => $show[0]->TINDAKAN,
+                    // 'KONSUL' => $show[0]->KONSUL,
+                    // 'DOKTER' => $show[0]->DOKTER,
+                    // 'KELUHAN' => $keluhan,
+                    // 'SUBYEKTIF' => $subyektif,
+
+                    // 'NAMAOBAT' => $NAMA_OBAT,
+                ];
+            // $data = [
+            //     'pen' => $getNopen,
+            //     'show' => $show,
+            // ];
+
+            return response()->json($data, 200);
+        }
+
+        function cleanText($text) {
+            $allowedTags = '<br><b><i><u>';
+            $text = strip_tags($text, $allowedTags);
+            return str_replace("\n", "<br>", $text);
         }
 
         function compile()

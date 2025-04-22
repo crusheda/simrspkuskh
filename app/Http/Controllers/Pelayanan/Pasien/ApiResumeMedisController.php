@@ -95,15 +95,15 @@ class ApiResumeMedisController extends Controller
         $show = DB::select('CALL simrspku_klaim.CetakResumeRJ(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
         $obat = DB::select('CALL simrspku_klaim.CetakObatRJ(?)',[$getRESUMERJ->NOPEN]);
 
-        $keluhan = str_replace("\n", "<br>", $show[0]->KELUHAN);
-        $assesment = str_replace("\n", "<br>", $show[0]->ASSESMENT);
-        $subyektif = str_replace("\n", "<br>", $show[0]->SUBYEKTIF);
-        $obyektif = str_replace("\n", "<br>", $show[0]->OBYEKTIF);
-        $planning = str_replace("\n", "<br>", $show[0]->PLANNING);
-        $instruksi = str_replace("\n", "<br>", $show[0]->INSTRUKSI);
+        $keluhan    = $this->cleanText($show[0]->KELUHAN);
+        $assesment  = $this->cleanText($show[0]->ASSESMENT);
+        $subyektif  = $this->cleanText($show[0]->SUBYEKTIF);
+        $obyektif   = $this->cleanText($show[0]->OBYEKTIF);
+        $planning   = $this->cleanText($show[0]->PLANNING);
+        $instruksi  = $this->cleanText($show[0]->INSTRUKSI);
 
         $NAMA_OBAT = collect($obat)->pluck('NAMAOBAT')->implode(', ');
-        // print_r($NAMA_OBAT);
+        // print_r($obyektif2);
         // die();
 
         // ----------------------------------------------------------------------
@@ -195,5 +195,11 @@ class ApiResumeMedisController extends Controller
         return response()->file($output.'.pdf',[
             'Content-Type' => 'application/pdf',
         ]);
+    }
+
+    function cleanText($text) {
+        $allowedTags = '<br><b><i><u>';
+        $text = strip_tags($text, $allowedTags);
+        return str_replace("\n", "<br>", $text);
     }
 }

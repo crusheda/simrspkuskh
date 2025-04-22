@@ -22,6 +22,7 @@
 <script src="{{ asset('js/iziToast.js') }}"></script>
 
 {{-- ADDON --}}
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
 <script src="{{ asset('js/plugins/choices.min.js') }}"></script>
 
 {{-- CDN --}}

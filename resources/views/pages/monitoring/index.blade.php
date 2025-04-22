@@ -228,6 +228,47 @@
         </div>
     </div>
 </div>
+<div id="showTTDrj" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showTTDLabelRj">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="showTTDLabelRj"><span class="badge text-bg-secondary">TANDA TANGAN RESUME MEDIS</span> | IDKUNJUNGAN : <a id="show-id-ttd-rj" class="text-primary"></a></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3">
+                <h3>RESUME MEDIS <mark>An/<a id="show-nama-ttd-rj" class="text-primary"></a></mark></h3>
+                {{-- <div class="table-responsive mt-2">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <td>Tenggal/Waktu Masuk</td>
+                                <td>:</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody id="tampil-ttd-rj">
+                            <tr>
+                                <td colspan="15">
+                                    <center>
+                                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div> --}}
+                <div id="tampil-ttd-rj"></div>
+                {{-- <a href="#!" class="tooltip-test" data-bs-toggle="tooltip" title="Tooltip" data-container="#showCppt">that link</a> --}}
+                <div id="canvas"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="clear" class="btn btn-link-secondary btn-sm">Clear</button>
+                <button type="button" class="btn btn-primary" onclick="storeTTDrj()">Submit</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="showSKDP" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showSKDPLabel">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
@@ -264,6 +305,9 @@
 </div>
 {{-- MODAL ENDED --}}
 <script>
+    let canvas;
+    let signaturePad;
+
     $(document).ready(function() {
         // $('#xpoli').on('change', function() {
         //     if (this.value) {
@@ -418,7 +462,14 @@
                                     </td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
-                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
+                                    <td>${item.TGLTTD?`
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-success" id="resumerj`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+item.NOMOR+`')">
+                                            <i class="fas fa-check text-success"></i>
+                                        </button>`:`
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-warning" id="ttdrj`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Dokumen belum ditandatangani" onclick="showTTDrj('`+item.NOMOR+`')">
+                                            <i class="fas fa-times fs-5 text-warning"></i>
+                                        </button>`}
+                                    </td>
                                     <td>${item.NOMORBOOKING?`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" id="skdp`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SKDP" onclick="showSKDP('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
@@ -568,6 +619,168 @@
                     iziToast.error({
                         title: 'Maaf!',
                         message: 'Data CPPT tidak ditemukan / belum diisi',
+                        position: 'topRight'
+                    });
+                }
+            }
+        })
+    }
+
+    function showTTDrj(kunjungan) {
+        // console.log($(this).find('i'));
+        $('#show-id-ttd-rj').text(kunjungan);
+        $('#ttdrj'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+        $.ajax({
+            url: "/api/pasien/"+kunjungan+"/ttdRj",
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                $("#tampil-ttd-rj").empty();
+                $('#show-nama-ttd-rj').text(res.show[0].NAMAPASIEN);
+                content = ``;
+                if (res.show.length != 0) {
+                    // res.show.forEach(item => {
+                    //     content = ``;
+                    //     content += `<tr>
+                    //                     <td class="custom-column">${item.NAMAPASIEN}</td>
+                    //                 </tr>
+                    //     `;
+                    // })
+                    content += `<div class="d-flex align-items-center table-responsive">
+                                    <table class="table" style="width: 100%; text-align: center;">
+                                        <tbody>
+                                            <tr>
+                                                <td class="m-5 p-2 border border-bottom-0 border-dark" style="width: 30%;">Tanggal / Waktu Masuk</td>
+                                                <td class="border border-bottom-0 border-dark" style="width: 30%">Nomor Rekam Medis</td>
+                                                <td rowspan="2" class="border border-bottom-0 border-dark">Klinik Tujuan</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-2 border border-top-0 border-dark">${res.show[0].TGLMASUK}</td>
+                                                <td class="p-2 border border-top-0 border-dark">${res.show[0].NORM}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-2 border border-bottom-0 border-dark">Nama Pasien</td>
+                                                <td class="p-2 border border-bottom-0 border-dark">Tanggal Lahir / Jenis Kelamin</td>
+                                                <td rowspan="2" class="p-2 border border-top-0 border-dark">${res.show[0].UNIT}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-2 border border-top-0 border-dark">${res.show[0].NAMAPASIEN}</td>
+                                                <td class="p-2 border border-top-0 border-dark">${res.show[0].TANGGAL_LAHIR}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>`;
+                    $('#tampil-ttd-rj').append(content);
+                    $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                } else {
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: 'Data tidak ditemukan / belum diisi',
+                        position: 'topRight'
+                    });
+                }
+            }
+        })
+        // var canvas = document.getElementById('signature-pad');
+        // var signaturePad = new SignaturePad(canvas);
+        // // Simpan base64 ke input saat submit
+        // document.querySelector('form').addEventListener('submit', function () {
+        //     if (!signaturePad.isEmpty()) {
+        //         var dataURL = signaturePad.toDataURL('image/png');
+        //         document.getElementById('signature-input').value = dataURL;
+        //     }
+        // });
+        // // Tombol hapus
+        // document.getElementById('clear').addEventListener('click', function () {
+        //     signaturePad.clear();
+        // });
+        // window.addEventListener('resize', resizeCanvas);
+        // resizeCanvas();
+        $('#canvas').empty().append(`
+            <input type="hidden" id="idstorettd" value="${kunjungan}">
+            <canvas id="signature-pad" width="400" height="200" style="border:1px solid #ccc;"></canvas>
+        `);
+        canvas = $('#signature-pad')[0];
+        signaturePad = new SignaturePad(canvas);
+
+        // Saat submit form
+        // $('form').on('submit', function () {
+        //     if (!signaturePad.isEmpty()) {
+        //         var dataURL = signaturePad.toDataURL('image/png');
+        //         $('#signature-input').val(dataURL);
+        //     }
+        // });
+
+        // Tampilkan modal
+        $('#showTTDrj').modal('show');
+
+        // Resize canvas saat modal benar-benar muncul
+        $('#showTTDrj').off('shown.bs.modal').on('shown.bs.modal', function () {
+            $(this).find('button').focus();
+            resizeCanvas();
+        });
+
+        // Juga tetap lakukan resize saat window di-resize
+        $(window).off('resize').on('resize', resizeCanvas);
+
+        $('#clear').on('click', function () {
+            signaturePad.clear();
+        });
+    }
+
+    function resizeCanvas()
+    {
+        var ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext('2d').scale(ratio, ratio);
+        signaturePad.clear(); // Reset tanda tangan
+    }
+
+    function storeTTDrj()
+    {
+
+    }
+
+    function showResumeRj(kunjungan) {
+        // console.log($(this).find('i'));
+        $('#show-id-ttd-rj').text(kunjungan);
+        $('#ttdrj'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+        $.ajax({
+            url: "/api/pasien/"+kunjungan+"/ttdRj",
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                $("#tampil-ttd-rj").empty();
+                // $('#show-norm-ttd').text(res.pen.NORM);
+                if (res.length != 0) {
+                    res.show.forEach(item => {
+                        content = ``;
+                        content += `<tr>
+                                        <td class="custom-column">${item.NAMAPASIEN}</td>
+                                    </tr>
+                        `;
+                        $('#tampil-ttd-rj').append(content);
+                    })
+                    $('#showTTDrj').modal('show');
+                    $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                } else {
+                    // Swal.fire({
+                    //     position: "top-end",
+                    //     icon: "error",
+                    //     title: "CPPT Belum Terisi",
+                    //     showConfirmButton: false,
+                    //     timer: 1500,
+                    //     backdrop: `
+                    //         rgba(0,0,123,0.4)
+                    //         url("/images/nyan-cat.gif")
+                    //         left top
+                    //         no-repeat
+                    //     `
+                    // });
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: 'Data tidak ditemukan / belum diisi',
                         position: 'topRight'
                     });
                 }
