@@ -2,10 +2,10 @@
 
 @section('content')
 @if (Auth::check())
-    Sistem ini sudah Login dengan Akun : {{ Auth::user()->NAMA }}
+    Sistem ini sudah Login menggunakan Akun : {{ Auth::user()->NAMA }}
     <br><br>
-    <a class="btn btn-danger" href="javascript:void(0);" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
-        <i class="ti ti-power"></i> Logout
+    <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
+        <i class="ti ti-power me-1"></i> Logout
     </a>
 @endif
 

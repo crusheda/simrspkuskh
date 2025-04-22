@@ -72,26 +72,29 @@
                         <span class="pc-mtext">Monitoring</span>
                     </a>
                 </li>
-                <li class="pc-item pc-hasmenu">
+                <li class="pc-item {{ request()->routeIs('klaim.index') ? 'active' : '' }}">
+                    <a href="{{ route('klaim.index') }}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-file-lock"></i>
+                        </span>
+                        <span class="pc-mtext">Smart Klaim</span>
+                    </a>
+                </li>
+                {{-- <li class="pc-item pc-hasmenu">
                     <a href="javascript:void(0);" class="pc-link">
                         <span class="pc-micon">
                             <i class="ph-duotone ph-file-lock"></i>
                         </span>
                         <span class="pc-mtext">Smart Klaim</span>
-                        {{-- <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
-                        <span class="pc-badge">2</span> --}}
+                        <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
+                        <span class="pc-badge">2</span>
                     </a>
                     <ul class="pc-submenu">
                         <li class="pc-item"><a class="pc-link" href="javascript:void(0);">Rawat Jalan</a></li>
-                        {{-- <li class="pc-item"><a class="pc-link" href="{{ route('klaim.pasien.indexRi') }}">Rawat Inap</a></li>
-                        <li class="pc-item"><a class="pc-link" href="{{ route('klaim.pasien.indexRd') }}">Rawat Darurat</a></li> --}}
-
                         <li class="pc-item"><a class="pc-link" href="javascript:void(0);">Rawat Inap</a></li>
                         <li class="pc-item"><a class="pc-link" href="javascript:void(0);">Rawat Darurat</a></li>
-                        {{-- <li class="pc-item"><a class="pc-link" href="javascript:void(0);">d</a></li>
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">e</a></li> --}}
                     </ul>
-                </li>
+                </li> --}}
             </ul>
             <div class="card nav-action-card bg-brand-color-4">
                 <div class="card-body" style="background-image: {{ url('images/layout/nav-card-bg.svg') }}">

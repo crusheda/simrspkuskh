@@ -377,7 +377,7 @@
                     // END VERIFIKASI SEP
                     content += `<tr>
                                     <td>
-                                        <div class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center ms-2">
                                             <div class="flex-shrink-0">
                                                 <img src="{{ asset('/images/user.png') }}" alt="user image"
                                                     class="img-radius wid-40" />

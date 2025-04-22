@@ -14,7 +14,7 @@
                 </div>
                 <div class="col-md-12 mt-2">
                     <div class="page-header-title">
-                        <h2 class="mb-0">Identitas Pasien <b class="text-primary">A/N SUNARYO, TN</b></h2>
+                        <h2 class="mb-0">Profil Akun <b class="text-primary">{{ Auth::user()->LOGIN }}</b></h2>
                     </div>
                 </div>
             </div>
@@ -25,7 +25,7 @@
     <!-- [ Main Content ] start -->
     <div class="row">
         <div class="col-sm-12">
-            <div class="card bg-primary">
+            {{-- <div class="card bg-primary">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1 me-3">
@@ -41,7 +41,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <div class="row">
                 <div class="col-lg-5 col-xxl-3">
                     <div class="card overflow-hidden">
@@ -52,10 +52,12 @@
                                         src="{{ asset('/images/user.png') }}" alt="User image" />
                                     <i class="chat-badge bg-success me-2 mb-2"></i>
                                 </div>
-                                <h5 class="mb-0">William Bond</h5>
-                                <p class="text-muted text-sm">DM on <a href="#" class="link-primary">
-                                        @williambond </a> 😍</p>
-                                <ul class="list-inline mx-auto my-4">
+                                <h5 class="mb-0"> </h5>
+                                <p class="text-muted text-sm">
+                                    <h5>{{ Auth::user()->NAMA }}</h5>
+                                    <span class="badge bg-light-primary">USER</span>
+                                </p>
+                                {{-- <ul class="list-inline mx-auto my-4">
                                     <li class="list-inline-item">
                                         <a href="#" class="avtar avtar-s text-white bg-dribbble">
                                             <i class="ti ti-brand-dribbble f-24"></i>
@@ -76,20 +78,20 @@
                                             <i class="ti ti-brand-behance f-24"></i>
                                         </a>
                                     </li>
-                                </ul>
-                                <div class="row g-3">
-                                    <div class="col-4">
-                                        <h5 class="mb-0">86</h5>
-                                        <small class="text-muted">Post</small>
+                                </ul> --}}
+                                <div class="row g-3 mt-3">
+                                    <div class="col-7">
+                                        <h5 class="mb-0">{{ Auth::user()->NIK }}</h5>
+                                        <small class="text-muted">NIK</small>
                                     </div>
-                                    <div class="col-4 border border-top-0 border-bottom-0">
-                                        <h5 class="mb-0">40</h5>
-                                        <small class="text-muted">Project</small>
+                                    <div class="col-5 border border-top-0 border-bottom-0 border-end-0">
+                                        <h5 class="mb-0">{{ Auth::user()->NIP }}</h5>
+                                        <small class="text-muted">NIP</small>
                                     </div>
-                                    <div class="col-4">
+                                    {{-- <div class="col-4">
                                         <h5 class="mb-0">4.5K</h5>
                                         <small class="text-muted">Members</small>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -98,10 +100,9 @@
                             <a class="nav-link list-group-item list-group-item-action active" id="user-set-profile-tab"
                                 data-bs-toggle="pill" href="#user-set-profile" role="tab"
                                 aria-controls="user-set-profile" aria-selected="true">
-                                <span class="f-w-500"><i class="ph-duotone ph-user-circle m-r-10"></i>Profile
-                                    Overview</span>
+                                <span class="f-w-500"><i class="ph-duotone ph-user-circle m-r-10"></i>Biodata Akun</span>
                             </a>
-                            <a class="nav-link list-group-item list-group-item-action" id="user-set-information-tab"
+                            {{-- <a class="nav-link list-group-item list-group-item-action" id="user-set-information-tab"
                                 data-bs-toggle="pill" href="#user-set-information" role="tab"
                                 aria-controls="user-set-information" aria-selected="false">
                                 <span class="f-w-500"><i class="ph-duotone ph-clipboard-text m-r-10"></i>Personal
@@ -112,155 +113,25 @@
                                 aria-controls="user-set-account" aria-selected="false">
                                 <span class="f-w-500"><i class="ph-duotone ph-notebook m-r-10"></i>Account
                                     Information</span>
-                            </a>
+                            </a> --}}
                             <a class="nav-link list-group-item list-group-item-action" id="user-set-passwort-tab"
                                 data-bs-toggle="pill" href="#user-set-passwort" role="tab"
                                 aria-controls="user-set-passwort" aria-selected="false">
-                                <span class="f-w-500"><i class="ph-duotone ph-key m-r-10"></i>Change
-                                    Password</span>
+                                <span class="f-w-500"><i class="ph-duotone ph-key m-r-10"></i>Ubah Password</span>
                             </a>
-                            <a class="nav-link list-group-item list-group-item-action" id="user-set-email-tab"
+                            {{-- <a class="nav-link list-group-item list-group-item-action" id="user-set-email-tab"
                                 data-bs-toggle="pill" href="#user-set-email" role="tab"
                                 aria-controls="user-set-email" aria-selected="false">
                                 <span class="f-w-500"><i class="ph-duotone ph-envelope-open m-r-10"></i>Email
                                     settings</span>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Personal information</h5>
-                        </div>
-                        <div class="card-body position-relative">
-                            <div class="d-inline-flex align-items-center justify-content-between w-100 mb-3">
-                                <p class="mb-0 text-muted me-1">Email</p>
-                                <p class="mb-0">anshan@gmail.com</p>
-                            </div>
-                            <div class="d-inline-flex align-items-center justify-content-between w-100 mb-3">
-                                <p class="mb-0 text-muted me-1">Phone</p>
-                                <p class="mb-0">(+1-876) 8654 239 581</p>
-                            </div>
-                            <div class="d-inline-flex align-items-center justify-content-between w-100">
-                                <p class="mb-0 text-muted me-1">Location</p>
-                                <p class="mb-0">New York</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Skills</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row align-items-center mb-3">
-                                <div class="col-sm-6 mb-2 mb-sm-0">
-                                    <p class="mb-0">Junior</p>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex-grow-1 me-3">
-                                            <div class="progress progress-primary" style="height: 6px">
-                                                <div class="progress-bar" style="width: 30%"></div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <p class="mb-0 text-muted">30%</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row align-items-center mb-3">
-                                <div class="col-sm-6 mb-2 mb-sm-0">
-                                    <p class="mb-0">UX Researcher</p>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex-grow-1 me-3">
-                                            <div class="progress progress-primary" style="height: 6px">
-                                                <div class="progress-bar" style="width: 80%"></div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <p class="mb-0 text-muted">80%</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row align-items-center mb-3">
-                                <div class="col-sm-6 mb-2 mb-sm-0">
-                                    <p class="mb-0">Wordpress</p>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex-grow-1 me-3">
-                                            <div class="progress progress-primary" style="height: 6px">
-                                                <div class="progress-bar" style="width: 90%"></div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <p class="mb-0 text-muted">90%</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row align-items-center mb-3">
-                                <div class="col-sm-6 mb-2 mb-sm-0">
-                                    <p class="mb-0">HTML</p>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex-grow-1 me-3">
-                                            <div class="progress progress-primary" style="height: 6px">
-                                                <div class="progress-bar" style="width: 30%"></div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <p class="mb-0 text-muted">30%</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row align-items-center mb-3">
-                                <div class="col-sm-6 mb-2 mb-sm-0">
-                                    <p class="mb-0">Graphic Design</p>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex-grow-1 me-3">
-                                            <div class="progress progress-primary" style="height: 6px">
-                                                <div class="progress-bar" style="width: 95%"></div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <p class="mb-0 text-muted">95%</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row align-items-center">
-                                <div class="col-sm-6 mb-2 mb-sm-0">
-                                    <p class="mb-0">Code Style</p>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex-grow-1 me-3">
-                                            <div class="progress progress-primary" style="height: 6px">
-                                                <div class="progress-bar" style="width: 75%"></div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <p class="mb-0 text-muted">75%</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            </a> --}}
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-7 col-xxl-9">
                     <div class="tab-content" id="user-set-tabContent">
-                        <div class="tab-pane fade show active" id="user-set-profile" role="tabpanel"
-                            aria-labelledby="user-set-profile-tab">
-                            <div class="card">
+                        <div class="tab-pane fade show active" id="user-set-profile" role="tabpanel" aria-labelledby="user-set-profile-tab">
+                            {{-- <div class="card">
                                 <div class="card-header">
                                     <h5>About me</h5>
                                 </div>
@@ -270,153 +141,42 @@
                                         Products a more Beautiful and usable place. Morbid accusant ipsum. Nam
                                         nec tellus at.</p>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="card">
                                 <div class="card-header">
-                                    <h5>Personal Details</h5>
+                                    <h5>Identitas Diri</h5>
                                 </div>
                                 <div class="card-body">
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item px-0 pt-0">
                                             <div class="row">
-                                                <div class="col-md-6">
-                                                    <p class="mb-1 text-muted">Full Name</p>
-                                                    <p class="mb-0">Anshan Handgun</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p class="mb-1 text-muted">Father Name</p>
-                                                    <p class="mb-0">Mr. Deepen Handgun</p>
+                                                <div class="col-md-12">
+                                                    <p class="mb-1 text-muted">Nama Lengkap</p>
+                                                    <p class="mb-0">{{ Auth::user()->NAMA }}</p>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="list-group-item px-0">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <p class="mb-1 text-muted">Phone</p>
-                                                    <p class="mb-0">(+1-876) 8654 239 581</p>
+                                                    <p class="mb-1 text-muted">Nomor Handphone</p>
+                                                    <p class="mb-0">(+62) *******</p>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <p class="mb-1 text-muted">Country</p>
-                                                    <p class="mb-0">New York</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item px-0">
-                                            <div class="row">
                                                 <div class="col-md-6">
                                                     <p class="mb-1 text-muted">Email</p>
-                                                    <p class="mb-0">anshan.dh81@gmail.com</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p class="mb-1 text-muted">Zip Code</p>
-                                                    <p class="mb-0">956 754</p>
+                                                    <p class="mb-0">*******</p>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="list-group-item px-0 pb-0">
-                                            <p class="mb-1 text-muted">Address</p>
-                                            <p class="mb-0">Street 110-B Kalians Bag, Dewan, M.P. New York</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Education</h5>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-group list-group-flush acc-feeds-list">
-                                        <li class="list-group-item p-0">
-                                            <div class="row">
-                                                <div class="col-md-4 feed-title">
-                                                    <p class="mb-1 text-muted">Master Degree (Year)</p>
-                                                    <p class="mb-0">2014-2017</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p class="mb-1 text-muted">Institute</p>
-                                                    <p class="mb-0">-</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item p-0">
-                                            <div class="row">
-                                                <div class="col-md-4 feed-title">
-                                                    <p class="mb-1 text-muted">Bachelor (Year)</p>
-                                                    <p class="mb-0">2011-2013</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p class="mb-1 text-muted">Institute</p>
-                                                    <p class="mb-0">Imperial College London</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item p-0">
-                                            <div class="row">
-                                                <div class="col-md-4 feed-title">
-                                                    <p class="mb-1 text-muted">School (Year)</p>
-                                                    <p class="mb-0">2009-2011</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p class="mb-1 text-muted">Institute</p>
-                                                    <p class="mb-0">School of London, England</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Employment</h5>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-group list-group-flush acc-feeds-list">
-                                        <li class="list-group-item p-0">
-                                            <div class="row">
-                                                <div class="col-md-4 feed-title">
-                                                    <p class="mb-1 text-muted">Senior</p>
-                                                    <p class="mb-0">Senior UI/UX designer (Year)</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p class="mb-1 text-muted">Job Responsibility</p>
-                                                    <p class="mb-0">Perform task related to project manager with
-                                                        the 100+ team under my observation. Team management is
-                                                        key
-                                                        role in this company.</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item p-0">
-                                            <div class="row">
-                                                <div class="col-md-4 feed-title">
-                                                    <p class="mb-1 text-muted">Trainee cum Project Manager
-                                                        (Year)</p>
-                                                    <p class="mb-0">2017-2019</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p class="mb-1 text-muted">Job Responsibility</p>
-                                                    <p class="mb-0">Team management is key role in this company.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item p-0">
-                                            <div class="row">
-                                                <div class="col-md-4 feed-title">
-                                                    <p class="mb-1 text-muted">School (Year)</p>
-                                                    <p class="mb-0">2009-2011</p>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <p class="mb-1 text-muted">Institute</p>
-                                                    <p class="mb-0">School of London, England</p>
-                                                </div>
-                                            </div>
+                                            <p class="mb-1 text-muted">Alamat Lengkap</p>
+                                            <p class="mb-0">*******</p>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="user-set-information" role="tabpanel"
+                        {{-- <div class="tab-pane fade" id="user-set-information" role="tabpanel"
                             aria-labelledby="user-set-information-tab">
                             <div class="card">
                                 <div class="card-header">
@@ -566,8 +326,8 @@
                                 <div class="btn btn-outline-secondary">Cancel</div>
                                 <div class="btn btn-primary">Update Profile</div>
                             </div>
-                        </div>
-                        <div class="tab-pane fade" id="user-set-account" role="tabpanel"
+                        </div> --}}
+                        {{-- <div class="tab-pane fade" id="user-set-account" role="tabpanel"
                             aria-labelledby="user-set-account-tab">
                             <div class="card">
                                 <div class="card-header">
@@ -803,17 +563,16 @@
                                     <button class="btn btn-primary">Update Profile</button>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="tab-pane fade" id="user-set-passwort" role="tabpanel"
                             aria-labelledby="user-set-passwort-tab">
                             <div class="card alert alert-warning p-0">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         <div class="flex-grow-1 me-3">
-                                            <h4 class="alert-heading">Alert!</h4>
-                                            <p class="mb-2">Your Password will expire in every 3 months. So
-                                                change it periodically.</p>
-                                            <a href="#" class="alert-link"><u>Do not share your password</u></a>
+                                            <h4 class="alert-heading">Perhatian!</h4>
+                                            <p class="mb-2">Password Anda akan kadaluarsa setiap tahunnya. Disarankan untuk melakukan perubahan secara periodik.</p>
+                                            <a href="#" class="alert-link"><u>Jangan memberikan password Anda kepada orang lain.</u></a>
                                         </div>
                                         <div class="flex-shrink-0">
                                             <img src="{{ asset('/images/application/img-accout-password-alert.png') }}"
@@ -824,51 +583,45 @@
                             </div>
                             <div class="card">
                                 <div class="card-header">
-                                    <h5>Change Password</h5>
+                                    <h5>Ubah Password</h5>
                                 </div>
                                 <div class="card-body">
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item pt-0 px-0">
                                             <div class="row mb-0">
-                                                <label class="col-form-label col-md-4 col-sm-12 text-md-end">Current
-                                                    Password <span class="text-danger">*</span>
+                                                <label class="col-form-label col-md-4 col-sm-12 text-md-end">Password Sekarang <span class="text-danger">*</span>
                                                 </label>
                                                 <div class="col-md-8 col-sm-12">
-                                                    <input type="password" class="form-control" />
-                                                    <div class="form-text"> Forgot password? <a href="#"
-                                                            class="link-primary">Click here</a> </div>
+                                                    <input type="password" class="form-control" id="password_lama"/>
+                                                    {{-- <div class="form-text"> Lupa Password? <a href="#" class="link-primary">Klik Disini</a> </div> --}}
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="list-group-item px-0">
                                             <div class="row mb-0">
-                                                <label class="col-form-label col-md-4 col-sm-12 text-md-end">New
-                                                    Password <span class="text-danger">*</span></label>
+                                                <label class="col-form-label col-md-4 col-sm-12 text-md-end">Password Baru <span class="text-danger">*</span></label>
                                                 <div class="col-md-8 col-sm-12">
-                                                    <input type="password" class="form-control" />
+                                                    <input type="password" class="form-control" id="password_baru"/>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="list-group-item pb-0 px-0">
                                             <div class="row mb-0">
-                                                <label class="col-form-label col-md-4 col-sm-12 text-md-end">Confirm
-                                                    Password <span class="text-danger">*</span></label>
+                                                <label class="col-form-label col-md-4 col-sm-12 text-md-end">Konfirmasi Password Baru <span class="text-danger">*</span></label>
                                                 <div class="col-md-8 col-sm-12">
-                                                    <input type="password" class="form-control" />
+                                                    <input type="password" class="form-control" id="password_baru_confirm"/>
                                                 </div>
                                             </div>
                                         </li>
                                     </ul>
                                 </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-body text-end">
-                                    <div class="btn btn-outline-secondary me-2">Cancel</div>
-                                    <div class="btn btn-primary">Change Password</div>
+                                <div class="card-footer text-end p-3">
+                                    <button class="btn btn-link-secondary me-2" disabled>Kosongkan</button>
+                                    <button class="btn btn-primary" disabled>Perbarui Password</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="user-set-email" role="tabpanel"
+                        {{-- <div class="tab-pane fade" id="user-set-email" role="tabpanel"
                             aria-labelledby="user-set-email-tab">
                             <div class="card">
                                 <div class="card-header">
@@ -1023,7 +776,7 @@
                                     <div class="btn btn-primary">Update Profile</div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

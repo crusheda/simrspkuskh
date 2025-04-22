@@ -37,7 +37,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     })->name('dashboard');
 
     // SETTING - PROFIL
-    Route::get('/setting/profil', [ProfilController::class, 'index'])->name('profil');
+    Route::get('setting/profil', [ProfilController::class, 'index'])->name('profil');
 
     // PELAYANAN
         // KUNJUNGAN PASIEN
@@ -49,9 +49,12 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}/print', [ResumeMedisController::class, 'printResume'])->name('pelayanan.pasien.resume.print');
 
     // DIGITAL
+        // MONITORING
+        Route::get('monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
+
         // SMART KLAIM
             // RAWAT JALAN
-            Route::get('monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
+            Route::get('klaim', [SmartKlaimController::class, 'index'])->name('klaim.index');
             // RAWAT INAP
             // Route::get('klaim/smart/ri', [SmartKlaimController::class, 'indexRi'])->name('klaim.pasien.indexRi');
             // RAWAT DARURAT

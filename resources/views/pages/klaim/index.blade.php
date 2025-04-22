@@ -9,13 +9,12 @@
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Digital</a></li>
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Smart Klaim</a></li>
-                    <li class="breadcrumb-item" aria-current="page">Rawat Jalan</li>
+                    <li class="breadcrumb-item" aria-current="page">Smart Klaim</li>
                 </ul>
             </div>
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h2 class="mb-0">Digital Smart Klaim Rajal</h2>
+                    <h2 class="mb-0">Digital Smart Klaim</h2>
                 </div>
             </div>
         </div>
@@ -45,18 +44,29 @@
             </div>
             <div class="card-body pt-3">
                 <div class="row">
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-2 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Status Perawatan</label>
+                            <select class="form-control" id="filter_rawat" disabled>
+                                <option value="5">Semua Perawatan</option>
+                                <option value="1" selected>Rawat Jalan</option>
+                                <option value="2">Rawat Darurat</option>
+                                <option value="3">Rawat Inap</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-3">
                         <div class="form-group">
                             <label class="form-label">Status Kunjungan</label>
                             <select class="form-control" id="filter_status">
-                                <option value="5">Tampilkan Semua Kunjungan</option>
+                                <option value="5">Semua Kunjungan</option>
                                 <option value="0">Batal Kunjungan</option>
                                 <option value="1" selected>Sedang Dilayani</option>
                                 <option value="2">Selesai Kunjungan</option>
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-2 mb-3">
                         <div class="form-group">
                             <label class="form-label">Rentang Tgl Kunjungan</label>
                             <div class="input-group">
@@ -82,7 +92,7 @@
             </div>
             <div class="card-footer d-flex justify-content-between p-3">
                 <div class="text-start">
-                    <h6 class="text-muted ms-2 mt-2">Tekan tombol <span class="badge text-bg-primary">Tampilkan</span> untuk menampilkan <mark>Tabel Kunjungan</mark></h6>
+                    <h6 class="text-muted ms-2 mt-3">Tekan tombol <span class="badge text-bg-primary">Tampilkan</span> untuk menampilkan <mark>Tabel Kunjungan</mark></h6>
                 </div>
                 <div class="text-end btn-page mb-0">
                     <a class="btn btn-link-secondary" id="clear_text" href="javascript: void(0);" onclick="clearFilter()">Kosongkan</a>

@@ -16,11 +16,6 @@ class SmartKlaimController extends Controller
     // INDEX
     function index()
     {
-        return view('pages.klaim.smart.index');
-    }
-
-    function indexRj()
-    {
         $dr = DB::table('master.dokter AS dr')
                 ->select(
                     'dr.id',
@@ -48,10 +43,7 @@ class SmartKlaimController extends Controller
             'dr' => $dr,
         ];
 
-        // print_r($dr);
-        // die();
-
-        return view('pages.klaim.smart.rj.index')->with('list', $data);
+        return view('pages.klaim.index')->with('list', $data);
     }
 
     // function compileSep($kunjungan)
@@ -120,15 +112,5 @@ class SmartKlaimController extends Controller
     //         $options
     //     )->execute();
     // }
-
-    function indexRi()
-    {
-        return view('pages.klaim.smart.ri.index');
-    }
-
-    function indexRd()
-    {
-        return view('pages.klaim.smart.rd.index');
-    }
 
 }
