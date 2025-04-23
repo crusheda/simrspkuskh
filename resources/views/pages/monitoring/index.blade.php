@@ -262,9 +262,26 @@
                 <div id="canvas"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="clear" class="btn btn-link-secondary btn-sm">Clear</button>
-                <button type="button" class="btn btn-primary" onclick="storeTTDrj()">Submit</button>
+                <button type="button" id="clear" class="btn btn-danger btn-sm">Clear</button>
+                <button type="button" class="btn btn-primary" onclick="storeTTDrj()">Simpan</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="showResumeRj" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showResumeLabelRj">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="showResumeLabelRj"><span class="badge text-bg-secondary">RESUME</span> | IDKUNJUNGAN : <a id="show-id-resumeRj" class="text-primary"></a></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3">
+                <div id="cetak-resumerj"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                {{-- <button type="button" class="btn btn-primary"></button> --}}
             </div>
         </div>
     </div>
@@ -647,25 +664,51 @@
                     //     `;
                     // })
                     content += `<div class="d-flex align-items-center table-responsive">
-                                    <table class="table" style="width: 100%; text-align: center;">
+                                    <table class="table table-striped table-bordered" style="text-align: center;">
                                         <tbody>
                                             <tr>
-                                                <td class="m-5 p-2 border border-bottom-0 border-dark" style="width: 30%;">Tanggal / Waktu Masuk</td>
-                                                <td class="border border-bottom-0 border-dark" style="width: 30%">Nomor Rekam Medis</td>
-                                                <td rowspan="2" class="border border-bottom-0 border-dark">Klinik Tujuan</td>
+                                                <td class="m-5 p-2" style="width: 35%;">Tanggal / Waktu Masuk</td>
+                                                <td style="width: 35%">Nomor Rekam Medis</td>
+                                                <td rowspan="2">Klinik Tujuan</td>
                                             </tr>
                                             <tr>
-                                                <td class="p-2 border border-top-0 border-dark">${res.show[0].TGLMASUK}</td>
-                                                <td class="p-2 border border-top-0 border-dark">${res.show[0].NORM}</td>
+                                                <td class="p-2">${res.show[0].TGLMASUK}</td>
+                                                <td class="p-2">${res.show[0].NORM}</td>
                                             </tr>
                                             <tr>
-                                                <td class="p-2 border border-bottom-0 border-dark">Nama Pasien</td>
-                                                <td class="p-2 border border-bottom-0 border-dark">Tanggal Lahir / Jenis Kelamin</td>
-                                                <td rowspan="2" class="p-2 border border-top-0 border-dark">${res.show[0].UNIT}</td>
+                                                <td class="p-2">Nama Pasien</td>
+                                                <td class="p-2">Tanggal Lahir / Jenis Kelamin</td>
+                                                <td rowspan="2" class="p-2">${res.show[0].UNIT}</td>
                                             </tr>
                                             <tr>
-                                                <td class="p-2 border border-top-0 border-dark">${res.show[0].NAMAPASIEN}</td>
-                                                <td class="p-2 border border-top-0 border-dark">${res.show[0].TANGGAL_LAHIR}</td>
+                                                <td class="p-2">${res.show[0].NAMAPASIEN}</td>
+                                                <td class="p-2">${res.show[0].TANGGAL_LAHIR}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="d-flex table-responsive">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <td class="m-5 p-2" style="width: 25%"><b>Subyektif (S)</b></td>
+                                                <td>${res.show[0].SUBYEKTIF}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="m-5 p-2" style="width: 25%"><b>Obyektif (O)</b></td>
+                                                <td>${res.show[0].OBYEKTIF}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="m-5 p-2" style="width: 25%"><b>Assesment (A)</b></td>
+                                                <td>${res.show[0].ASSESMENT}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="m-5 p-2" style="width: 25%"><b>Planning (P)</b></td>
+                                                <td>${res.show[0].PLANNING}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="m-5 p-2" style="width: 25%"><b>Instruksi (I)</b></td>
+                                                <td>${res.show[0].INSTRUKSI}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -697,8 +740,23 @@
         // window.addEventListener('resize', resizeCanvas);
         // resizeCanvas();
         $('#canvas').empty().append(`
+        <div class="row">
             <input type="hidden" id="idstorettd" value="${kunjungan}">
-            <canvas id="signature-pad" width="400" height="200" style="border:1px solid #ccc;"></canvas>
+
+            <div class="col-md-4 mb-3 d-flex justify-content-center align-items-center">
+                <canvas id="signature-pad" style="border:1px solid #ccc; width: 100%; height: 200px;"></canvas>
+            </div>
+
+            <div class="col-md-8">
+                <strong>Keterangan:</strong><br>
+                1. Gunakan perangkat layar sentuh seperti smartphone, tablet, atau laptop dengan touchpad. <br>
+                2. Jika menggunakan komputer, pastikan memiliki mouse atau stylus (jika tersedia).<br>
+                3. Arahkan kursor atau sentuh layar pada area canvas yang tersedia.<br>
+                4. Gambar tanda tangan seperti pada dokumen fisik.<br>
+                5. Gunakan tombol “Clear” atau “Hapus” jika ingin mengulang tanda tangan.<br>
+                6. Klik tombol “Simpan”.<br>
+            </div>
+        </div>
         `);
         canvas = $('#signature-pad')[0];
         signaturePad = new SignaturePad(canvas);
@@ -739,53 +797,78 @@
 
     function storeTTDrj()
     {
+        // const nama = document.getElementById('nama').value;
+        const nama = document.getElementById('idstorettd').value.trim();
+            const signature = signaturePad.toDataURL('image/png');
 
+            if (!nama || signaturePad.isEmpty()) {
+                alert("Nama dan tanda tangan wajib diisi.");
+                return;
+            }
+            $.ajax({
+                url: "{{ route('api.pasien.storeTtdResumeRj') }}", // Ganti dengan URL rute yang sesuai
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: JSON.stringify({ nama: nama, signature: signature }),
+                contentType: 'application/json',
+                success: function(data) {
+                    if (data.success) {
+                        // $('#result').html(`<p><strong>Berhasil!</strong> ID Pasien: ${data.id}</p>`);
+                        Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Data berhasil disimpan.',
+                        confirmButtonText: 'Oke'
+                        });
+                        $('#showTTDrj').modal('hide');
+                        filter();
+                        // refreshResume();
+                    } else {
+                        alert("Gagal menyimpan data");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    // alert("Error saat mengirim data.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: error.message || 'Dokumen telah ditandatangani.',
+                    });
+                }
+            });
     }
 
     function showResumeRj(kunjungan) {
-        // console.log($(this).find('i'));
-        $('#show-id-ttd-rj').text(kunjungan);
-        $('#ttdrj'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
-        $.ajax({
-            url: "/api/pasien/"+kunjungan+"/ttdRj",
-            type: 'GET',
-            dataType: 'json',
-            success: function(res) {
-                $("#tampil-ttd-rj").empty();
-                // $('#show-norm-ttd').text(res.pen.NORM);
-                if (res.length != 0) {
-                    res.show.forEach(item => {
-                        content = ``;
-                        content += `<tr>
-                                        <td class="custom-column">${item.NAMAPASIEN}</td>
-                                    </tr>
-                        `;
-                        $('#tampil-ttd-rj').append(content);
-                    })
-                    $('#showTTDrj').modal('show');
-                    $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
-                } else {
-                    // Swal.fire({
-                    //     position: "top-end",
-                    //     icon: "error",
-                    //     title: "CPPT Belum Terisi",
-                    //     showConfirmButton: false,
-                    //     timer: 1500,
-                    //     backdrop: `
-                    //         rgba(0,0,123,0.4)
-                    //         url("/images/nyan-cat.gif")
-                    //         left top
-                    //         no-repeat
-                    //     `
-                    // });
-                    iziToast.error({
-                        title: 'Maaf!',
-                        message: 'Data tidak ditemukan / belum diisi',
-                        position: 'topRight'
-                    });
-                }
+        $('#show-id-resumeRj').text(kunjungan);
+        $('#resumerj'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+
+        fetch("/api/pasien/"+kunjungan+"/resumeRj")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
             }
+            return response.blob();
         })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#cetak-resumerj').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#showResumeRj').modal('show');
+            $('#resumerj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data Resume tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                position: 'topRight'
+            });
+            console.error(error);
+        });
     }
 
     function showSKDP(kunjungan) {
