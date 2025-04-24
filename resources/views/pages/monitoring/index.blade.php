@@ -46,7 +46,7 @@
                 <div class="row">
                     <div class="col-md-2 mb-3">
                         <div class="form-group">
-                            <label class="form-label">Status Perawatan</label>
+                            <label class="form-label">Jenis Perawatan</label>
                             <select class="form-control" id="filter_rawat" disabled>
                                 <option value="5">Semua Perawatan</option>
                                 <option value="1" selected>Rawat Jalan</option>
