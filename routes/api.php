@@ -25,13 +25,14 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
 //-----------------------------------------------------------------    A  P  I    -----------------------------------------------------------------
 // DIGITAL
 Route::get('monitoring/rj/{status}/{tgls}/{tgle}/{dpjp}', [ApiMonitoringController::class, 'tableRj'])->name('api.monitoring.rj');
-    // MONITORING
+    // MONITORING - KLAIM
         // UMUM
         Route::get('pasien/{kunjungan}/tindakan', [ApiMonitoringController::class, 'tindakan'])->name('api.pasien.tindakan');
         Route::get('pasien/{kunjungan}/cppt', [ApiMonitoringController::class, 'cppt'])->name('api.pasien.cppt');
         Route::get('pasien/{kunjungan}/skdp', [ApiMonitoringController::class, 'compileSkdp'])->name('api.pasien.skdp');
         Route::get('pasien/{kunjungan}/sep', [ApiMonitoringController::class, 'compileSep'])->name('api.pasien.sep');
         Route::get('pasien/{kunjungan}/resumeRj', [ApiMonitoringController::class, 'compileResumeRj'])->name('api.pasien.resumeRj');
+        Route::get('pasien/{kunjungan}/individual', [ApiMonitoringController::class, 'compileIndividual'])->name('api.pasien.individual');
         // TTE
             // RAWAT JALAN
             Route::get('pasien/{kunjungan}/ttdRj', [ApiMonitoringController::class, 'showTtdResumeRj'])->name('api.pasien.ttdResumeRj');

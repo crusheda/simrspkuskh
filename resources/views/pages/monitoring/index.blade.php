@@ -743,11 +743,11 @@
         <div class="row">
             <input type="hidden" id="idstorettd" value="${kunjungan}">
 
-            <div class="col-md-4 mb-3 d-flex justify-content-center align-items-center">
+            <div class="col-12 col-md-5 mb-3 d-flex justify-content-center align-items-center">
                 <canvas id="signature-pad" style="border:1px solid #ccc; width: 100%; height: 200px;"></canvas>
             </div>
 
-            <div class="col-md-8">
+            <div class="col-12 col-md-7">
                 <strong>Keterangan:</strong><br>
                 1. Gunakan perangkat layar sentuh seperti smartphone, tablet, atau laptop dengan touchpad. <br>
                 2. Jika menggunakan komputer, pastikan memiliki mouse atau stylus (jika tersedia).<br>
