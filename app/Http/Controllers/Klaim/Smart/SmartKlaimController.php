@@ -16,6 +16,7 @@ class SmartKlaimController extends Controller
     // INDEX
     function index()
     {
+        $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
         $dr = DB::table('master.dokter AS dr')
                 ->select(
                     'dr.id',
@@ -40,6 +41,7 @@ class SmartKlaimController extends Controller
                 ->get();
 
         $data = [
+            'yearMonth' => $yearMonth,
             'dr' => $dr,
         ];
 
