@@ -16,6 +16,7 @@ class ApiSmartKlaimController extends Controller
     function table($pel,$bln,$dpjp)
     {
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+        [$year, $month] = explode('-', $bln);
         // MAIN QUERY
         $show = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(
@@ -39,6 +40,10 @@ class ApiSmartKlaimController extends Controller
                 // ->where(function ($query) use ($tgls,$tgle) {
                 //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                 // })
+                ->where(function ($query) use ($year,$month) {
+                    $query->whereYear('pk.MASUK', $year)
+                            ->whereMonth('pk.MASUK', $month);
+                })
                 ->when($dpjp != 0, function ($query) use ($dpjp) {
                     // Hanya menambahkan where jika $dpjp bukan 0
                     $query->where('dr.NIP', $dpjp);
@@ -46,9 +51,10 @@ class ApiSmartKlaimController extends Controller
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
                 ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
-                ->when($status != 5, function ($query) use ($status) { // 0=BATAL;1=MASIH DILAYANI;2=SELESAI;5=ALL
-                    $query->where('pk.STATUS', $status);
-                })
+                ->where('pk.STATUS', 2) // KUNJUNGAN SELESAI
+                // ->when($status != 5, function ($query) use ($status) { // 0=BATAL;1=MASIH DILAYANI;2=SELESAI;5=ALL
+                //     $query->where('pk.STATUS', $status);
+                // })
                 ->where('pk.KELUAR', '!=', null)
                 ->orderBy('pk.MASUK','DESC')
                 ->get();

@@ -31,37 +31,20 @@
             </div>
             <div class="card-body p-0 table-body">
                 <div class="table-responsive">
-                    <table class="table mb-0" id="vantable">
+                    <table class="table mb-0 table-hover table-striped" id="vantable">
                         <thead>
                             <tr>
-                                <th>KUNJUNGAN</th>
-                                <th class="text-end">STATUS BERKAS</th>
+                                <th style="width: 60%;">KUNJUNGAN</th>
+                                <th style="width: 30%;" class="text-end">TGL KUNJUNGAN</th>
+                                <th style="width: 10%;" class="text-end">STATUS</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex-shrink-0">
-                                            <a class="avtar avtar-s btn-light-secondary dropdown-toggle arrow-none" href="#"
-                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="ti ti-chevron-down f-18"></i>
-                                            </a>
-                                            <div class="dropdown-menu dropdown-menu-right" style="">
-                                                <a class="dropdown-item" href="#">Berkas Klaim</a>
-                                                <a class="dropdown-item" href="#">Catatan</a>
-                                            </div>
-                                        </div>
-                                        <div class="flex-grow-1 ms-3">
-                                            <h5 class="mb-1">0151R0130424V000024</h5>
-                                            <p class="text-sm text-muted mb-0">RM.113736 - <b class="text-primary">RUSWATI, NY</b></p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="text-end">
-                                    <a href="javascript: void(0);" class="avtar avtar-s btn-link-success">
-                                        <i class="ti ti-square-check f-30"></i>
-                                    </a>
+                        <tbody id="tampil-tbody">
+                            <tr style='font-size:13px'>
+                                <td colspan="3">
+                                    <center>
+                                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                                    </center>
                                 </td>
                             </tr>
                         </tbody>
@@ -90,7 +73,7 @@
                     <div class="col-md-12 mb-3">
                         <div class="form-group">
                             <label class="form-label">Jenis Perawatan</label>
-                            <select id="filter_rawat" class="form-control">
+                            <select id="filter_rawat" class="form-control" disabled>
                                 <option value="5">Semua Perawatan</option>
                                 <option value="1" selected>Rawat Jalan</option>
                                 <option value="2">Rawat Darurat</option>
@@ -100,7 +83,7 @@
                     </div>
                     <div class="col-md-12 mb-3">
                         <label class="form-label">Bulan Kunjungan</label>
-                        <input type="month" class="form-control" value="" placeholder="Pilih Bulan" id="filter_bulan" />
+                        <input type="month" class="form-control" value="{{ $list['yearMonth'] }}" placeholder="Pilih Bulan" id="filter_bulan" />
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
@@ -119,7 +102,7 @@
             </div>
         </div>
         <div class="d-grid mb-3">
-            <button class="btn btn-primary">Tampilkan</button>
+            <button class="btn btn-primary" onclick="filter()" id="tombol-tampilkan"><i class="fa fa-filter me-1"></i> Tampilkan</button>
         </div>
     </div>
 </div>
@@ -168,10 +151,115 @@
 <script>
     $(document).ready(function() {
         // TABLE
-        const dataTable = new simpleDatatables.DataTable('#vantable', { sortable: false });
+        // const dataTable = new simpleDatatables.DataTable('#vantable', { sortable: false });
         // SELECT CHOICES
         elm = $('#filter_dpjp')[0];
         choices = new Choices(elm);
+
+        filter();
     });
+
+    // function-function
+    function filter() {
+        $('#tombol-tampilkan').prop('disabled',true).find('i').removeClass('fa-filter').addClass('fa-sync fa-spin');
+        if (window.dataTable) {
+            window.dataTable.destroy();
+        }
+        $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
+        // Initialize
+        var pel = $("#filter_rawat").val();
+        var bln = $("#filter_bulan").val() ? $("#filter_bulan").val() : '0';
+        var dpjp = $("#filter_dpjp").val() ? $("#filter_dpjp").val() : '0'; // JIKA DPJP KOSONG = 0
+        // console.log(bln);
+        // Process
+        $.ajax({
+            url: `/api/klaim/${pel}/${bln}/${dpjp}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                $("#tampil-tbody").empty();
+                if (res.show && Array.isArray(res.show)) {
+                    res.show.forEach(item => {
+                        if (item.NOSEP) {
+                            valSEP = item.NOSEP.substring(8, 12); // 0624
+                            parts = item.TGLSEP.split("-"); // hasil: ['08', '06', '2024'] || e.g. 2024-01-12 00:00:00
+                            valTGLSEP = parts[1]+parts[0].slice(-2); // '0624'
+                            // console.log(valSEP);
+                            // console.log(valTGLSEP);
+                            if (valSEP == valTGLSEP) {
+                                SEP = '<b class="text-purple-700">'+item.NOSEP+'</b>';
+                                btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-success" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
+                                                <i class="fas fa-check text-success"></i>
+                                            </button>`;
+                            } else {
+                                SEP = '<b class="text-danger">Tanggal SEP Tidak Sesuai!</b>';
+                                btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-danger" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="No.SEP tidak sesuai dengan Tanggal SEP" onclick="showSEP('`+item.NOMOR+`')">
+                                                <i class="fas fa-check fs-5 text-danger"></i>
+                                            </button>`;
+                            }
+                        } else {
+                            SEP = '<b class="text-secondary">SEP Tidak Ditemukan</b>';
+                            btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan">
+                                            <i class="fas fa-times fs-5 text-secondary"></i>
+                                        </button>`;
+                        }
+                        content = ``;
+                        content += `<tr>
+                                        <td>
+                                            <a href="klaim">
+                                                <h5 class="mb-1"><a href="javascript: void(0);"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Surat Elegibilitas Peserta">${SEP}</b></a></h5>
+                                                <p class="text-sm text-muted mb-0">RM.${item.NORM} - <b class="text-primary">${item.NAMAPASIEN}</b><br>${item.NAMARUANGAN} - ${item.NAMADOKTER}</p>
+                                            </a>
+                                        </td>
+                                        <td class="text-end align-middle">
+                                            <a href="javascript: void(0);" class="text-muted">${item.MASUK}</a>
+                                        </td>
+                                        <td class="text-end">
+                                            <a href="javascript: void(0);" class="avtar avtar-s btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Berkas Telah Diverifikasi">
+                                                <i class="ti ti-square-check f-30"></i>
+                                            </a>
+                                        </td>
+                                    </tr>`;
+                        $('#tampil-tbody').append(content);
+                    })
+                }
+                // VANILLA TABLE
+                window.dataTable = new simpleDatatables.DataTable("#vantable", {
+                    sortable: true,
+                    searchable: true,
+                    perPage: 10,
+                    perPageSelect: [10, 20, 50, 100, 300, 500],
+                    fixedColumns: true,
+                    firstLast: true,
+                    layout: "both",
+                    labels: {
+                        placeholder: "Cari data SEP...",
+                        perPage: "Jumlah baris per halaman",
+                        noRows: "Tidak ada data Kunjungan Pasien yang tersedia",
+                        info: "Menampilkan {start} - {end} dari {rows} data",
+                    },
+                    columns: [
+                        // { select: 0, sort: "asc" },   // Kolom ke-0, di-sort ascending
+                        // { select: 1, sort: "desc" },  // Kolom ke-1, descending
+                        { select: 0, sortable: false }, // Kolom ke-2 tidak bisa di-sort
+                        { select: 1, sort: 'desc' }, // Kolom ke-2 tidak bisa di-sort
+                        { select: 2, sortable: false } // Kolom ke-2 tidak bisa di-sort
+                    ]
+                });
+                    // Showing Tooltip
+                    $('[data-bs-toggle="tooltip"]').tooltip({
+                        trigger : 'hover'
+                    })
+                // TOMBOL FILTER TAMPILKAN
+                $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
+            }, error: function(xhr, status, error) {
+                // Gagal: tangani error di sini
+                console.error('Terjadi kesalahan:', error);
+                // Bisa juga tampilkan alert
+                alert('Gagal mengambil data. Coba lagi.');
+                $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
+            }
+        })
+    }
 </script>
 @endsection
