@@ -679,6 +679,139 @@ class ApiMonitoringController extends Controller
                 ]);
             // }
         }
+        function compileBilling($kunjungan)
+        {
+            $getSEP = DB::table('pendaftaran.kunjungan AS pk')
+                    ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                    ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                    ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pp.NOMOR')
+                    ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','tp.TAGIHAN AS TAGIHAN','tp.STATUS AS STATUS')
+                    ->where('pk.NOMOR',$kunjungan)
+                    ->where(function ($query) {
+                        $query->where('tp.STATUS', '=', '1')
+                                ->orWhere('tp.UTAMA', '=', '1');
+                    })
+                    ->first();
+            // print_r($getSEP);
+            // die();
+            $show = DB::select('CALL simrspku_klaim.CetakRincianPasienPerDokterCustom(?,?)',[$getSEP->TAGIHAN,$getSEP->STATUS]);
+            // dd($show);
+            // ----------------------------------------------------------------------
+            $getTgl = Carbon::parse($show[0]->TANGGALREG);
+            $tgl = $getTgl->isoFormat('DD');
+            $bulan = $getTgl->isoFormat('MM');
+            $tahun = $getTgl->isoFormat('YYYY');
+            // ----------------------------------------------------------------------
+            $input = public_path().'/doc/input/billing/CetakBilling.jrxml';
+            $output = storage_path().'/app/public/files/billing/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$getSEP->NOSEP;
+            // Pastikan folder tujuan ada
+            $outputDir = dirname($output);
+            if (!File::exists($outputDir)) {
+                File::makeDirectory($outputDir, 0755, true); // true = recursive
+            }
+            //-----------------------------------------------------------------------
+            // $dataSource = 'asdsda';
+            $dataSource = [];
+            foreach ($show as $item) {
+                $dataSource[] = [
+                    'NORM' => $item->NORM,
+                    // 'NAMALENGKAP' => $item->NAMALENGKAP,
+                    // 'UMUR' => $item->UMUR,
+                    // 'NOPEN' => $item->NOPEN,
+                    // 'TANGGALREG' => $item->TANGGALREG,
+                    // 'ALAMATLENGKAP' => $item->ALAMATLENGKAP,
+                    // 'IDTAGIHAN' => $item->IDTAGIHAN,
+                    // 'CARABAYAR' => $item->CARABAYAR,
+                    // 'NOMORKARTU' => $item->NOMORKARTU,
+                    // 'NOSEP' => $item->NOSEP,
+                    // 'TGLKELUAR' => $item->TGLKELUAR,
+                    // 'DPJP' => $item->DPJP,
+                ];
+            }
+            // dd($dataSource);
+
+            //-----------------------------------------------------------------------
+            // if (file_exists($output . '.pdf')) {
+            //     // File ada
+            //     return response()->file($output.'.pdf',[
+            //         'Content-Type' => 'application/pdf',
+            //     ]);
+            // } else {
+                // File tidak ada
+                $options = [
+                    'format' => ['pdf'], // 'xls' / 'rtf
+                    'params' => [
+                        // 'IMAGES_PATH' => public_path()."/doc/input/billing/",
+                        // 'NORM' => $show[0]->NORM,
+                        // 'NAMALENGKAP' => $show[0]->NAMALENGKAP,
+                        // 'UMUR' => $show[0]->UMUR,
+                        // 'NOPEN' => $show[0]->NOPEN,
+                        // 'TANGGALREG' => $show[0]->TANGGALREG,
+                        // 'ALAMATLENGKAP' => $show[0]->ALAMATLENGKAP,
+                        // 'IDTAGIHAN' => $show[0]->IDTAGIHAN,
+                        // 'CARABAYAR' => $show[0]->CARABAYAR,
+                        // 'NOMORKARTU' => $show[0]->NOMORKARTU,
+                        // 'NOSEP' => $show[0]->NOSEP,
+                        // 'TGLKELUAR' => $show[0]->TGLKELUAR,
+                        // 'DPJP' => $show[0]->DPJP,
+                        // 'JENISPASIEN' => $show[0]->JENISPASIEN,
+                        // 'CARAPULANG' => $show[0]->CARAPULANG,
+                        // 'LOS' => $show[0]->LOS,
+                        // 'BERATLAHIR' => $show[0]->BERATLAHIR,
+                        // 'KODEDIAGNOSAUTAMA' => $show[0]->KODEDIAGNOSAUTAMA,
+                        // 'DIAGNOSAUTAMA' => $show[0]->DIAGNOSAUTAMA,
+                        // 'KODEDIAGNOSASEKUNDER' => $show[0]->KODEDIAGNOSASEKUNDER,
+                        // 'DIAGNOSASEKUNDER' => $show[0]->DIAGNOSASEKUNDER,
+                        // 'KODETINDAKAN' => (!empty($show[0]->KODETINDAKAN) ? $show[0]->KODETINDAKAN : '-'),
+                        // 'TINDAKAN' => $show[0]->TINDAKAN,
+                        // 'ADLAKUT' => $show[0]->ADLAKUT,
+                        // 'ADLKRONIK' => $show[0]->ADLKRONIK,
+                        // 'INACBG' => $show[0]->INACBG,
+                        // 'DESKRIPSIINACBG' => $show[0]->DESKRIPSIINACBG,
+                        // 'UNUSA' => $show[0]->UNUSA,
+                        // 'DESUNUSA' => $show[0]->DESUNUSA,
+                        // 'UNUSC' => $show[0]->UNUSC,
+                        // 'DESUNUSC' => $show[0]->DESUNUSC,
+                        // 'KODESPESIAL' => $show[0]->KODESPESIAL,
+                        // 'DESKKODE' => $show[0]->DESKKODE,
+                        // 'TARIFINACBG' => $show[0]->TARIFINACBG,
+                        // 'TARIFUNUSA' => $show[0]->TARIFUNUSA,
+                        // 'TARIFUNUSC' => $show[0]->TARIFUNUSC,
+                        // 'TARIFKODE' => $show[0]->TARIFKODE,
+                        // 'CODER' => $show[0]->CODER,
+                        // 'VERIFIKATOR' => $show[0]->VERIFIKATOR,
+                        // 'RUANG_RAWAT' => $show[0]->RUANG_RAWAT,
+                        // 'TOTALTARIFINACBG' => $show[0]->TOTALTARIFINACBG,
+                        // 'NO_URUT' => (!empty($show[0]->NO_URUT) ? $show[0]->NO_URUT : 'JKN'),
+                        // 'CATATAN' => $show[0]->CATATAN,
+                        // 'ALOS' => $show[0]->ALOS,
+                        // 'RPKODE' => $show[0]->RPKODE,
+                        // 'BIAYARS' => $show[0]->BIAYARS,
+                        // 'SPECIALPROSEDUR' => $show[0]->SPECIALPROSEDUR,
+                        // 'NAMALENGKAP' => $show[0]->NAMALENGKAP,
+                        // 'CETAK_HEADER' => $CETAK_HEADER,
+                    ],
+                    'dataSource' => $dataSource,
+
+                ];
+                // print_r($options);
+                // die();
+
+                $jasper = new PHPJasper;
+
+                $jasper->process(
+                    $input,
+                    $output,
+                    $options
+                )->execute();
+
+
+
+                return response()->file($output.'.pdf',[
+                    'Content-Type' => 'application/pdf',
+                ]);
+            // }
+        }
 
         function cleanText($text) {
             $allowedTags = '<br><b><i><u>';

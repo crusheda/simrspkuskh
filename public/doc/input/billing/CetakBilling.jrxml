@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="da2af3ea-d902-49e7-a9c0-a2749a666570">
+	<parameter name="dataSource" class="java.util.List"/>
+	<field name="NORM" class="java.lang.String"/>
+	<field name="NAMALENGKAP" class="java.lang.String"/>
+	<field name="UMUR" class="java.lang.String"/>
+	<field name="NOPEN" class="java.lang.String"/>
+	<field name="TANGGALREG" class="java.lang.String"/>
+	<field name="ALAMATLENGKAP" class="java.lang.String"/>
+	<field name="IDTAGIHAN" class="java.lang.String"/>
+	<field name="CARABAYAR" class="java.lang.String"/>
+	<field name="NOMORKARTU" class="java.lang.String"/>
+	<field name="NOSEP" class="java.lang.String"/>
+	<field name="TGLKELUAR" class="java.lang.String"/>
+	<field name="DPJP" class="java.lang.String"/>
+	<detail>
+		<band height="150">
+			<textField>
+				<reportElement x="0" y="0" width="292" height="50" uuid="35384f8d-e1a9-47d6-b81d-0ea1c8ab26c1"/>
+				<textElement>
+					<font size="19" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NORM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
