@@ -2,8 +2,8 @@
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
+            {{-- <div id="logo_simrs"></div> --}}
             <a href="javascript:void(0);" class="b-brand text-primary">
-                <!-- ========   Change your logo from here   ============ -->
                 <img src="{{ asset('images/logo/logoname.png') }}" alt="logo image" class="" style="height: 24px" />
                 <span class="badge bg-brand-color-3 rounded-pill ms-1 theme-version">v1.0</span>
             </a>
@@ -72,7 +72,7 @@
                         <span class="pc-mtext">Monitoring</span>
                     </a>
                 </li>
-                <li class="pc-item {{ request()->routeIs('klaim.index') ? 'active' : '' }}">
+                <li class="pc-item {{ request()->routeIs('klaim.index') || request()->routeIs('klaim.show') ? 'active' : '' }}">
                     <a href="{{ route('klaim.index') }}" class="pc-link">
                         <span class="pc-micon">
                             <i class="ph-duotone ph-file-lock"></i>
@@ -106,4 +106,13 @@
         </div>
     </div>
 </nav>
+<script>
+    // if ($('body').attr('class') == 'layout-nested') {
+    //     $('#logo_simrs').empty().append(`<a href="javascript:void(0);" class="b-brand text-primary"><img src="{{ asset('images/logo/logoname_w.png') }}" alt="logo image" class="" style="height: 24px" />
+    //                             <span class="badge bg-brand-color-3 rounded-pill ms-1 theme-version">v1.0</span></a>`);
+    // } else {
+    //     $('#logo_simrs').empty().append(`<a href="javascript:void(0);" class="b-brand text-primary"><img src="{{ asset('images/logo/logoname.png') }}" alt="logo image" class="" style="height: 24px" />
+    //                             <span class="badge bg-brand-color-3 rounded-pill ms-1 theme-version">v1.0</span></a>`);
+    // }
+</script>
 <!-- [ Sidebar Menu ] end -->

@@ -29,6 +29,8 @@
 {{-- CDN --}}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+{{-- MANUAL JQUERY / JAVASCRIPT --}}
+
 <script>
     layout_change('light');
 </script>

@@ -7,3 +7,17 @@ canvas {
     height: 200px;
     touch-action: none; /* penting untuk mencegah scroll saat tanda tangan */
 }
+.clickable {
+    cursor: pointer;
+    /* background-color: #007bff; */
+    color: white;
+    /* text-align: center; */
+    padding: 5px;
+    /* border-radius: 5px; */
+}
+.clickable:hover {
+    /* background-color: #0056b3; */
+}
+.hover-text-dark:hover {
+    color: #000 !important; /* Atau pakai class text-dark kalau mau */
+}

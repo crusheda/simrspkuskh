@@ -48,6 +48,31 @@ class SmartKlaimController extends Controller
         return view('pages.klaim.index')->with('list', $data);
     }
 
+    function show($KUNJUNGAN)
+    {
+        $show = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(
+                    'pk.*',
+                    'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
+                    'ru.DESKRIPSI AS NAMARUANGAN',
+                    DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER')
+                )
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
+                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                ->where('pk.NOMOR', $KUNJUNGAN)
+                ->first();
+
+        $data = [
+            'show' => $show,
+            'KUNJUNGAN' => $KUNJUNGAN,
+        ];
+
+        return view('pages.klaim.detail')->with('list', $data);
+    }
+
     // function compileSep($kunjungan)
     // {
     //     $getSEP = DB::table('pendaftaran.kunjungan AS pk')

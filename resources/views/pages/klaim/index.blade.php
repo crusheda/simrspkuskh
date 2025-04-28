@@ -68,7 +68,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <h5><i class="ti ti-filter text-primary me-1"></i> Filter</h5>
+                <h5 class="mb-2"><i class="ti ti-filter text-primary me-1"></i> Filter</h5>
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <div class="form-group">
@@ -204,12 +204,10 @@
                                         </button>`;
                         }
                         content = ``;
-                        content += `<tr>
+                        content += `<tr class="clickable" data-href="klaim/${item.NOMOR}">
                                         <td>
-                                            <a href="klaim">
-                                                <h5 class="mb-1"><a href="javascript: void(0);"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Surat Elegibilitas Peserta">${SEP}</b></a></h5>
-                                                <p class="text-sm text-muted mb-0">RM.${item.NORM} - <b class="text-primary">${item.NAMAPASIEN}</b><br>${item.NAMARUANGAN} - ${item.NAMADOKTER}</p>
-                                            </a>
+                                            <h5 class="mb-1"><a href="javascript: void(0);"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Surat Elegibilitas Peserta">${SEP}</b></a></h5>
+                                            <p class="text-sm text-muted mb-0">RM.${item.NORM} - <b class="text-primary">${item.NAMAPASIEN}</b><br>${item.NAMARUANGAN} - ${item.NAMADOKTER}</p>
                                         </td>
                                         <td class="text-end align-middle">
                                             <a href="javascript: void(0);" class="text-muted">${item.MASUK}</a>
@@ -252,6 +250,10 @@
                     })
                 // TOMBOL FILTER TAMPILKAN
                 $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
+                $(document).on('click', '.clickable', function() {
+                    var url = $(this).data('href');
+                    window.location.href = url;
+                });
             }, error: function(xhr, status, error) {
                 // Gagal: tangani error di sini
                 console.error('Terjadi kesalahan:', error);
@@ -261,5 +263,6 @@
             }
         })
     }
+
 </script>
 @endsection
