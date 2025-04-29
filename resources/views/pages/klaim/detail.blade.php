@@ -90,10 +90,46 @@
                 </div>
                 <a class="text-nowrap mt-1">Individual</a>
             </div>
+            <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
+                <div class="input-group">
+                    <input class="form-check-input" type="checkbox" id="ck_laboratorium" style="width: 2em;height: 2.2em;margin-top:0px"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim">
+                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_laboratorium" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    title="Preview Berkas Hasil Laboratorium" onclick="laboratorium('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                </div>
+                <a class="text-nowrap mt-1">Laboratorium</a>
+            </div>
+            <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
+                <div class="input-group">
+                    <input class="form-check-input" type="checkbox" id="ck_radiologi" style="width: 2em;height: 2.2em;margin-top:0px"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim">
+                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_radiologi" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    title="Preview Berkas Hasil Radiologi" onclick="radiologi('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                </div>
+                <a class="text-nowrap mt-1">Radiologi</a>
+            </div>
+            <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
+                <div class="input-group">
+                    <input class="form-check-input" type="checkbox" id="ck_triage" style="width: 2em;height: 2.2em;margin-top:0px"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim">
+                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_triage" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    title="Preview Berkas Triage IGD" onclick="triage('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                </div>
+                <a class="text-nowrap mt-1">Triage IGD</a>
+            </div>
+            <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
+                <div class="input-group">
+                    <input class="form-check-input" type="checkbox" id="ck_operasi" style="width: 2em;height: 2.2em;margin-top:0px"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim">
+                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_operasi" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    title="Preview Berkas Laporan Operasi" onclick="operasi('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                </div>
+                <a class="text-nowrap mt-1">Laporan Operasi</a>
+            </div>
             <div class="card-footer p-3">
                 <div class="btn-group w-100">
                     <button class="btn btn-light-warning btn-sm" onclick="clearCheckbox()"><i class="ti ti-eraser me-1"></i> Clear</button>
-                    <button class="btn btn-primary btn-sm" onclick="submit('{{ $list['KUNJUNGAN'] }}')">Submit <i class="fab fa-telegram-plane ms-1"></i></button>
+                    <button class="btn btn-primary btn-sm" onclick="submit('{{ $list['KUNJUNGAN'] }}')" id="btn-submit">Submit <i class="fab fa-telegram-plane ms-1"></i></button>
                 </div>
             </div>
         </div>
@@ -174,8 +210,355 @@
         });
     }
 
+    function sep(kunjungan) {
+        $('#btn_sep').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#preview').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        `);
+
+        // AJAX FETCH
+        fetch("/api/pasien/"+kunjungan+"/sep")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
+            }
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_sep').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            return response.blob();
+        })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#btn_sep').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_sep').prop('checked', true);
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data SEP tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                position: 'topRight'
+            });
+            console.error(error);
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_sep').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+        });
+    }
+
+    function skdp(kunjungan) {
+        $('#btn_skdp').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#preview').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        `);
+
+        // AJAX FETCH
+        fetch("/api/pasien/"+kunjungan+"/skdp")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
+            }
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_skdp').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            return response.blob();
+        })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#btn_skdp').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_skdp').prop('checked', true);
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data SKDP tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                position: 'topRight'
+            });
+            console.error(error);
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_skdp').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+        });
+    }
+
+    function billing(kunjungan) {
+        $('#btn_billing').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#preview').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        `);
+
+        // AJAX FETCH
+        fetch("/api/pasien/"+kunjungan+"/billing")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
+            }
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_billing').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            return response.blob();
+        })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#btn_billing').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_billing').prop('checked', true);
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data Billing tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                position: 'topRight'
+            });
+            console.error(error);
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_billing').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+        });
+    }
+
+    function individual(kunjungan) {
+        $('#btn_individual').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#preview').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        `);
+
+        // AJAX FETCH
+        fetch("/api/pasien/"+kunjungan+"/individual")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
+            }
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_individual').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            return response.blob();
+        })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#btn_individual').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_individual').prop('checked', true);
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data Individual tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                position: 'topRight'
+            });
+            console.error(error);
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_individual').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+        });
+    }
+
+    function laboratorium(kunjungan) {
+        $('#btn_laboratorium').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#preview').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        `);
+
+        // AJAX FETCH
+        fetch("/api/pasien/"+kunjungan+"/laboratorium")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
+            }
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_laboratorium').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            return response.blob();
+        })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#btn_laboratorium').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_laboratorium').prop('checked', true);
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data Hasil Laboratorium tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                position: 'topRight'
+            });
+            console.error(error);
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_laboratorium').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+        });
+    }
+
+    function radiologi(kunjungan) {
+        $('#btn_radiologi').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#preview').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        `);
+
+        // AJAX FETCH
+        fetch("/api/pasien/"+kunjungan+"/radiologi")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
+            }
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_radiologi').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            return response.blob();
+        })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#btn_radiologi').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_radiologi').prop('checked', true);
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data Hasil Radiologi tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                position: 'topRight'
+            });
+            console.error(error);
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_radiologi').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+        });
+    }
+
+    function triage(kunjungan) {
+        $('#btn_triage').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#preview').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        `);
+
+        // AJAX FETCH
+        fetch("/api/pasien/"+kunjungan+"/triage")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
+            }
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_triage').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            return response.blob();
+        })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#btn_triage').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_triage').prop('checked', true);
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data Triage IGD tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                position: 'topRight'
+            });
+            console.error(error);
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_triage').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+        });
+    }
+    function operasi(kunjungan) {
+        $('#btn_operasi').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#preview').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        `);
+
+        // AJAX FETCH
+        fetch("/api/pasien/"+kunjungan+"/operasi")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
+            }
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_operasi').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            return response.blob();
+        })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#btn_operasi').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_operasi').prop('checked', true);
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data Laporan Operasi tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                position: 'topRight'
+            });
+            console.error(error);
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#btn_operasi').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+        });
+    }
+
     function submit(kunjungan) {
-        console.log($('#ck_resume').prop('checked'));
+        $('#btn-submit').prop('disabled',true).find('i').removeClass('fa-telegram-plane').addClass('fa-sync fa-spin');
+        // console.log($('#ck_resume').prop('checked'));
+        var save = new FormData();
+        save.append('user',"{{ Auth::user()->id }}");
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{ route('api.klaim.submit') }}",
+            method: 'POST',
+            data: save,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function(res) {
+                // Apabila success
+            }, error: function(xhr, status, error) {
+                // Gagal: tangani error di sini
+                console.error('Terjadi kesalahan:', error);
+                // Bisa juga tampilkan alert
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Submit Berkas Gagal dilakukan. Silakan coba lagi.',
+                    position: 'topRight'
+                });
+                $('#btn-submit').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-telegram-plane');
+            }
+        })
     }
 
     function clearCheckbox() {

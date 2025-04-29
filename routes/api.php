@@ -41,6 +41,7 @@ Route::get('monitoring/rj/{status}/{tgls}/{tgle}/{dpjp}', [ApiMonitoringControll
     // SMART KLAIM
         // BERKAS KLAIM
         Route::get('klaim/{pel}/{bln}/{dpjp}', [ApiSmartKlaimController::class, 'table'])->name('api.klaim.table');
+        Route::post('klaim/{kunjungan}/submit', [ApiSmartKlaimController::class, 'submit'])->name('api.klaim.submit');
 
 // PELAYANAN PASIEN
 Route::get('pelayanan/pasien/rj/{status}/{tgls}/{tgle}/{dpjp}', [ApiResumeMedisController::class, 'tableRj'])->name('api.pelayanan.pasien.rj');
