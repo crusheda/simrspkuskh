@@ -173,7 +173,7 @@
         // console.log(bln);
         // Process
         $.ajax({
-            url: `/api/klaim/${pel}/${bln}/${dpjp}`,
+            url: `/api/klaim/table/${pel}/${bln}/${dpjp}`,
             type: 'GET',
             dataType: 'json',
             success: function(res) {

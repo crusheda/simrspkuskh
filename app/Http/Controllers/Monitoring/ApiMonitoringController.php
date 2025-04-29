@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Monitoring;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
+use App\Models\simrspku_klaim\klaim_file;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use PHPJasper\PHPJasper;
@@ -220,12 +221,26 @@ class ApiMonitoringController extends Controller
             $tahun = $getTgl->isoFormat('YYYY');
             // ----------------------------------------------------------------------
             $input = public_path().'/doc/input/skdp/CetakSKDP.jrxml';
-            $output = storage_path().'/app/public/files/skdp/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show[0]->NOMOR;
+            $path = 'files/skdp/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
+            $output = storage_path().'/app/public/'.$path;
             // Pastikan folder tujuan ada
             $outputDir = dirname($output);
             if (!File::exists($outputDir)) {
                 File::makeDirectory($outputDir, 0755, true); // true = recursive
             }
+
+            // SAVE TO DB
+            $verify = klaim_file::where('nomor',$kunjungan)->where('jenis',3)->where('status',true)->first();
+            if (!$verify) {
+                $post = new klaim_file;
+                $post->jenis = 3;
+                $post->nomor = $kunjungan;
+                $post->title = $kunjungan.'.pdf';
+                $post->filename = $path.'.pdf';
+                $post->status = true;
+                $post->save();
+            }
+
             if (file_exists($output . '.pdf')) {
                 // File ada
                 return response()->file($output.'.pdf',[
@@ -332,12 +347,27 @@ class ApiMonitoringController extends Controller
             $tahun = $getTgl->isoFormat('YYYY');
             // ----------------------------------------------------------------------
             $input = public_path().'/doc/input/sep/CetakSEP.jrxml';
-            $output = storage_path().'/app/public/files/sep/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show[0]->NOMORSEP;
+            $path = 'files/sep/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
+            $output = storage_path().'/app/public/'.$path;
             // Pastikan folder tujuan ada
             $outputDir = dirname($output);
             if (!File::exists($outputDir)) {
                 File::makeDirectory($outputDir, 0755, true); // true = recursive
             }
+
+            // SAVE TO DB
+            $verify = klaim_file::where('nomor',$kunjungan)->where('jenis',1)->where('status',true)->first();
+            if (!$verify) {
+                $post = new klaim_file;
+                $post->jenis = 1;
+                $post->nomor = $kunjungan;
+                $post->title = $kunjungan.'.pdf';
+                $post->filename = $path.'.pdf';
+                $post->status = true;
+                $post->save();
+            }
+
+            // CHECKING FILE
             if (file_exists($output . '.pdf')) {
                 // File ada
                 return response()->file($output.'.pdf',[
@@ -345,6 +375,7 @@ class ApiMonitoringController extends Controller
                 ]);
             } else {
                 // File tidak ada
+
                 $options = [
                     'format' => ['pdf'], // 'xls' / 'rtf
                     'params' => [
@@ -505,7 +536,21 @@ class ApiMonitoringController extends Controller
             // ----------------------------------------------------------------------
 
             $input = public_path().'/doc/input/resumeRJ/CetakResumeRJ2.jrxml';
-            $output = storage_path().'/app/public/files/resume/RJ/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show[0]->KUNJUNGAN;
+            $path = 'files/resume/RJ/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
+            $output = storage_path().'/app/public/'.$path;
+
+            // SAVE TO DB
+            $verify = klaim_file::where('nomor',$kunjungan)->where('jenis',2)->where('status',true)->first();
+            if (!$verify) {
+                $post = new klaim_file;
+                $post->jenis = 2;
+                $post->nomor = $kunjungan;
+                $post->title = $kunjungan.'.pdf';
+                $post->filename = $path.'.pdf';
+                $post->status = true;
+                $post->save();
+            }
+
             // Pastikan folder tujuan ada
             $outputDir = dirname($output);
             if (!File::exists($outputDir)) {
@@ -592,7 +637,21 @@ class ApiMonitoringController extends Controller
             $tahun = $getTgl->isoFormat('YYYY');
             // ----------------------------------------------------------------------
             $input = public_path().'/doc/input/individual/CetakLapIndividual.jrxml';
-            $output = storage_path().'/app/public/files/individual/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show[0]->NOMORSEP;
+            $path = 'files/individual/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
+            $output = storage_path().'/app/public/'.$path;
+
+            // SAVE TO DB
+            $verify = klaim_file::where('nomor',$kunjungan)->where('jenis',4)->where('status',true)->first();
+            if (!$verify) {
+                $post = new klaim_file;
+                $post->jenis = 4;
+                $post->nomor = $kunjungan;
+                $post->title = $kunjungan.'.pdf';
+                $post->filename = $path.'.pdf';
+                $post->status = true;
+                $post->save();
+            }
+
             // Pastikan folder tujuan ada
             $outputDir = dirname($output);
             if (!File::exists($outputDir)) {
@@ -703,7 +762,21 @@ class ApiMonitoringController extends Controller
             $tahun = $getTgl->isoFormat('YYYY');
             // ----------------------------------------------------------------------
             $input = public_path().'/doc/input/billing/CetakBillingmaster.jrxml';
-            $output = storage_path().'/app/public/files/billing/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$getSEP->NOSEP;
+            $path = 'files/billing/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
+            $output = storage_path().'/app/public/'.$path;
+
+            // SAVE TO DB
+            $verify = klaim_file::where('nomor',$kunjungan)->where('jenis',5)->where('status',true)->first();
+            if (!$verify) {
+                $post = new klaim_file;
+                $post->jenis = 5;
+                $post->nomor = $kunjungan;
+                $post->title = $kunjungan.'.pdf';
+                $post->filename = $path.'.pdf';
+                $post->status = true;
+                $post->save();
+            }
+
             // Pastikan folder tujuan ada
             $outputDir = dirname($output);
             if (!File::exists($outputDir)) {

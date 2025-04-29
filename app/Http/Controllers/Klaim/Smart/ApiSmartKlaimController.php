@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use App\Models\simrspku_klaim\klaim_verifikasi;
+use App\Models\simrspku_klaim\klaim_file;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use PHPJasper\PHPJasper;
@@ -19,6 +20,15 @@ class ApiSmartKlaimController extends Controller
     {
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
         [$year, $month] = explode('-', $bln);
+        // $parts = explode('-', $bln);
+        // $year = $parts[0] ?? null;
+        // $month = $parts[1] ?? null;
+
+        // if (!$year || !$month) {
+        //     // Tampilkan pesan atau logging
+        //     throw new \Exception("Format bulan tidak valid: $bln");
+        // }
+
         // MAIN QUERY
         $show = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(
@@ -88,22 +98,34 @@ class ApiSmartKlaimController extends Controller
 
         // INITIALIZE
         $now = Carbon::now();
-        $basePath = storage_path('app/public/files/skdp/'.$tahun.'/'.$bulan.'/'.$tgl.'/');
+        $getSEP = DB::table('pendaftaran.kunjungan AS pk')
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                ->select('pj.NOMOR AS NOSEP')
+                ->where('pk.NOMOR',$request->kunjungan)
+                ->first();
+        $show = DB::select('CALL simrspku_klaim.CetakSEP(?)',[$getSEP->NOSEP]);
+        $getTgl = Carbon::parse($show[0]->TGLSEP);
+        $bulan = $getTgl->isoFormat('MM');
+        $tahun = $getTgl->isoFormat('YYYY');
 
-        $files = [
-            $basePath . 'file1.pdf',
-            $basePath . 'file2.pdf',
-            $basePath . 'file3.pdf',
-        ];
+        // MAKE ARRAY ALL COLLECTION FILE PDF KLAIM
+        $files = [];
+        $koleksi = [];
+        $getFileKlaim = klaim_file::where('nomor',$request->kunjungan)->where('status',true)->get();
+        foreach ($getFileKlaim as $value) {
+            $files[] = $value->filename;
+            $koleksi[] = $value->jenis;
+        }
 
+        // EXECUTE PROCESS
         $pdf = new Fpdi();
-
         foreach ($files as $file) {
-            if (!file_exists($file)) {
+            if (!file_exists(storage_path().'/app/public/'.$file)) {
                 return response()->json(['error' => "File tidak ditemukan: $file"], 404);
             }
 
-            $pageCount = $pdf->setSourceFile($file);
+            $pageCount = $pdf->setSourceFile(storage_path().'/app/public/'.$file);
             for ($page = 1; $page <= $pageCount; $page++) {
                 $templateId = $pdf->importPage($page);
                 $size = $pdf->getTemplateSize($templateId);
@@ -112,40 +134,77 @@ class ApiSmartKlaimController extends Controller
             }
         }
 
-        $outputPath = storage_path("app/public/files/klaim/{$tahun}/{$bulan}/{$request->kunjungan}.pdf");
+        // STORE GROUP OF PDF
+        $title = $request->kunjungan.'.pdf';
+        $path ="files/klaim/{$tahun}/{$bulan}/{$title}";
+        $outputPath = storage_path()."/app/public/".$path;
+        $outputDir = dirname($outputPath);
+        if (!File::exists($outputDir)) { // Buat folder baru apabila tidak ada foldernya
+            File::makeDirectory($outputDir, 0755, true); // true = recursive
+        }
+        if (File::exists($outputPath)) { // ✅ Aman untuk overwrite
+            File::delete($outputPath); // hapus file lama sebelum simpan
+        }
+        // 'F' → File: simpan ke path file di server.
+        // 'I' → Inline: tampilkan langsung di browser (sebagai preview PDF).
+        // 'D' → Download: langsung paksa download via browser.
+        // 'S' → String: kembalikan isi PDF sebagai string (bisa simpan ke variabel).
+
+        // SAVING RECORD TO DB
+        $verify = klaim_verifikasi::where('nomor',$request->kunjungan)->where('status',true)->first();
+        if (!$verify) {
+            $push               = new klaim_verifikasi;
+            $push->nomor        = $request->kunjungan;
+            $push->user         = $request->user;
+            $push->bulan        = $bulan;
+            $push->tahun        = $tahun;
+            $push->title        = $title;
+            $push->filename     = $path;
+            $push->koleksi      = json_encode($koleksi);
+            $push->status       = true;
+            $push->save();
+        } else {
+            $push               = klaim_verifikasi::find($verify->id);
+            $push->koleksi      = json_encode($koleksi);
+            $push->save();
+        }
         $pdf->Output($outputPath, 'F');
-        // return response()->download($outputPath);
 
-
-            // $getFile = $request->file('file');
-            // if ($getFile == null) {
-            //     $path = null;
-            //     $title = null;
-            // } else {
-            //     $find = surat_masuk::where('title',$getFile->getClientOriginalName())->first();
-            //     if ($find == null) {
-            //         $path = $getFile->store('public/files/tu/suratmasuk');
-            //         $title = $getFile->getClientOriginalName();
-            //     } else {
-            //         return redirect()->back()->withErrors('Maaf, Nama file '.$getFile->getClientOriginalName().' sudah pernah diupload. Mohon Ganti Nama File yang berbeda. Disarankan untuk menambahkan kode yang unik pada File Anda.');
-            //     }
-            // }
-
-        $data               = new klaim_verifikasi;
-        $data->kunjungan    = $request->kunjungan;
-        $data->user         = $request->user;
-        $data->tgl          = $now;
-        $data->title        = $title;
-        $data->filename     = $filename;
-        $data->koleksi      = $koleksi;
-        $data->status       = true;
-        $data->created_at   = $now;
-        $data->updated_at   = $now;
-        $data->deleted_at   = $now;
-
-        // $data->save();
+        $data = [
+            'pdf' => $pdf,
+            'tahun' => $tahun,
+            'bulan' => $bulan,
+            'kunjungan' => $request->kunjungan,
+            'message' => 'PDF Berhasil di Submit',
+        ];
 
         return response()->json($data, 200);
+    }
+
+    function getKlaim($kunjungan)
+    {
+        $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
+
+        $data = [
+            'show' => $show,
+        ];
+
+        return response()->json($data, 200);
+    }
+
+    function showKlaim($tahun, $bulan, $kunjungan)
+    {
+        $path = 'files/klaim/'.$tahun.'/'.$bulan.'/'.$kunjungan.'.pdf';
+        $output = storage_path('app/public/'.$path);
+
+        if (!file_exists($output)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return response()->file($output, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="merged.pdf"'
+        ]);
     }
 
 }

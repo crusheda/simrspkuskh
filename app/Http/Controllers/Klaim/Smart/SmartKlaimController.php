@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Klaim\Smart;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
+use App\Models\simrspku_klaim\klaim_verifikasi;
+use App\Models\simrspku_klaim\klaim_file;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use PHPJasper\PHPJasper;
@@ -50,6 +52,7 @@ class SmartKlaimController extends Controller
 
     function show($KUNJUNGAN)
     {
+        $klaim = klaim_verifikasi::where('nomor',$KUNJUNGAN)->where('status',true)->first();
         $show = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(
                     'pk.*',
@@ -66,6 +69,7 @@ class SmartKlaimController extends Controller
                 ->first();
 
         $data = [
+            'klaim' => $klaim,
             'show' => $show,
             'KUNJUNGAN' => $KUNJUNGAN,
         ];
