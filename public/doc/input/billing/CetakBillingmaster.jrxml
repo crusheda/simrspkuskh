@@ -115,7 +115,7 @@
 				<textField>
 					<reportElement x="0" y="3" width="559" height="15" uuid="ce885e57-3623-4645-b75f-991ab91bffa6"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="9" isBold="true"/>
+						<font fontName="SansSerif" size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{JENISKUNJUNGAN}+ " ["+$F{NOPEN}+"]"+" / "+$F{TANGGALREG}]]></textFieldExpression>
 				</textField>
@@ -130,7 +130,7 @@
 					<reportElement x="11" y="0" width="547" height="15" uuid="8cd429f1-65b3-4bd5-9c83-317a98a5c606"/>
 					<box leftPadding="5"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="9" isBold="true"/>
+						<font fontName="SansSerif" size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{RUANGAN}]]></textFieldExpression>
 				</textField>
@@ -142,7 +142,7 @@
 					<reportElement x="11" y="0" width="467" height="15" uuid="b71807d0-fdbb-4214-b840-820983a53b58"/>
 					<box leftPadding="5"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="9" isBold="true"/>
+						<font fontName="SansSerif" size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Jumlah "+$F{RUANGAN}]]></textFieldExpression>
 				</textField>
@@ -150,14 +150,14 @@
 					<reportElement x="498" y="0" width="61" height="15" uuid="4ecd9aee-37c3-411a-8b19-370ad4fc3de1"/>
 					<box rightPadding="3"/>
 					<textElement textAlignment="Right">
-						<font fontName="Arial" size="9" isBold="true"/>
+						<font fontName="SansSerif" size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{jml}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="478" y="0" width="20" height="15" uuid="97d8c4d7-8a07-4122-a5f1-28813e880799"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="9" isBold="true"/>
+						<font fontName="SansSerif" size="9" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Rp.]]></text>
 				</staticText>
@@ -174,7 +174,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[RINCIAN BIAYA PELAYANAN PASIEN]]></text>
 			</staticText>
@@ -425,7 +425,7 @@
 			<staticText>
 				<reportElement stretchType="ContainerHeight" x="80" y="2" width="443" height="14" uuid="b0a25d28-ab95-44a7-802a-adb5f6ffaa3a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[PIMPINAN DAERAH MUHAMMADIYAH SUKOHARJO]]></text>
 			</staticText>
@@ -434,7 +434,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="15" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[RS PKU MUHAMMADIYAH SUKOHARJO]]></text>
 			</staticText>
@@ -445,42 +445,42 @@
 			<staticText>
 				<reportElement x="0" y="5" width="75" height="15" uuid="5f0699f5-b0a0-45c0-9606-370e217d223f"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Unit Layanan]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="75" y="5" width="178" height="15" uuid="45d42716-fc5e-4728-81dd-2ea33e14c31e"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Item/Tindakan Pemeriksaan]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="254" y="5" width="84" height="15" uuid="e3ee2d68-c2c2-4e73-83ec-280d97b2eab0"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tanggal]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="340" y="5" width="34" height="15" uuid="760f105b-e376-4034-bab4-e7301c256b64"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Jml]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="377" y="5" width="77" height="15" uuid="f80d36a5-46c8-48fb-bea8-cdea7c8bc34f"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tarif/Harga]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="459" y="5" width="99" height="15" uuid="9d75fc1f-a3f1-4846-957b-cf3f689881d6"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total Tagihan]]></text>
 			</staticText>

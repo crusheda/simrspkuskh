@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e35d1596-420f-4c20-be6b-b3c058dd6a85">
+	<parameter name="PNOMOR" class="java.lang.String"/>
+	<parameter name="PTINDAKAN" class="java.lang.String"/>
+	<parameter name="PFORMAT" class="java.lang.String"/>
+	<parameter name="IMAGES_PATH" class="java.lang.String">
+		<defaultValueExpression><![CDATA[" "]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CETAK_HEADER" class="java.lang.String">
+		<defaultValueExpression><![CDATA[" "]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REQUEST_REPORT_ID" class="java.lang.String"/>
+	<parameter name="PNIP" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[call simrspku_klaim.CetakHasilLab($P{PNOMOR},$P{PTINDAKAN})]]>
+	</queryString>
+	<field name="NORM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NORM"/>
+		<property name="com.jaspersoft.studio.field.label" value="NORM"/>
+	</field>
+	<field name="NAMALENGKAP" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NAMALENGKAP"/>
+		<property name="com.jaspersoft.studio.field.label" value="NAMALENGKAP"/>
+	</field>
+	<field name="JKTGLALHIR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="JKTGLALHIR"/>
+		<property name="com.jaspersoft.studio.field.label" value="JKTGLALHIR"/>
+	</field>
+	<field name="DOKTERASAL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DOKTERASAL"/>
+		<property name="com.jaspersoft.studio.field.label" value="DOKTERASAL"/>
+	</field>
+	<field name="NOPEN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NOPEN"/>
+		<property name="com.jaspersoft.studio.field.label" value="NOPEN"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="kunjungan"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="TGLREG" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="MASUK"/>
+		<property name="com.jaspersoft.studio.field.label" value="TGLREG"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="kunjungan"/>
+	</field>
+	<field name="TANGGALHASIL" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="TANGGAL"/>
+		<property name="com.jaspersoft.studio.field.label" value="TANGGALHASIL"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="hasil_lab"/>
+	</field>
+	<field name="UNITPENGANTAR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DESKRIPSI"/>
+		<property name="com.jaspersoft.studio.field.label" value="UNITPENGANTAR"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ruangan"/>
+	</field>
+	<field name="DIAGNOSA" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ALASAN"/>
+		<property name="com.jaspersoft.studio.field.label" value="DIAGNOSA"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="order_lab"/>
+	</field>
+	<field name="KUNJUNGAN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="KUNJUNGAN"/>
+		<property name="com.jaspersoft.studio.field.label" value="KUNJUNGAN"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="tindakan_medis"/>
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="189" splitType="Stretch">
+			<staticText>
+				<reportElement x="12" y="106" width="95" height="15" uuid="86d41238-6cdc-432a-b5fa-bf235edd8c51">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No. RM]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="120" y="106" width="179" height="15" uuid="910b3b1d-ebcf-43c2-8fb9-2324c1960795"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PNOMOR} + $P{PTINDAKAN}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="110" y="106" width="8" height="15" uuid="486eadf8-18b3-4e32-9051-949b62d4587d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-2" y="82" width="554" height="24" uuid="979a7a2d-adce-44dc-a337-7d703afad8ea"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HASIL PEMERIKSAAN LABORATORIUM]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="-1" width="90" height="69" uuid="4de4f1e8-aad1-4e6f-a9c6-11d3b0493929"/>
+				<imageExpression><![CDATA[$P{IMAGES_PATH} + "logo-pku.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="91" y="12" width="463" height="20" uuid="0e2a082f-06e0-4b86-9392-3bcbe1bf416d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUMAH SAKIT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="27" width="463" height="20" uuid="60ff8d52-9a9a-41d4-b540-12675329b750"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PKU MUHAMMADIYAH SUKOHARJO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="46" width="464" height="26" uuid="1d36eee4-0e8d-41d6-9631-4ddca29c232b"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Jl. Mayor Sunaryo No. 37, Sukoharjo 57512 | Telp. (0271) 593979 | Fax. (0271) 5991158
+Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-1" y="75" width="556" height="3" uuid="2d4ee229-3ca2-4752-8361-4d8c802a9cdc"/>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
