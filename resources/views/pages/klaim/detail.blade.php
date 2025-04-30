@@ -108,19 +108,7 @@
                 </div>
                 <a class="text-nowrap mt-1">Laporan Operasi</a>
             </div>
-            @if ($list['klaim'])
-                <div class="card-footer p-3">
-                    <button class="btn btn-danger w-100 btn-sm mb-3" onclick="" disabled><i class="fas fa-trash me-1"></i> Hapus Klaim</button>
-                    <button class="btn btn-success btn-sm w-100" onclick="submit('{{ $list['KUNJUNGAN'] }}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang</button>
-                </div>
-            @else
-                <div class="card-footer p-3">
-                    <div class="btn-group w-100">
-                        <button class="btn btn-light-warning btn-sm" onclick="clearCheckbox()"><i class="ti ti-eraser me-1"></i> Clear</button>
-                        <button class="btn btn-primary btn-sm" onclick="submit('{{ $list['KUNJUNGAN'] }}')" id="btn-submit">Submit <i class="fas fa-paper-plane ms-1"></i></button>
-                    </div>
-                </div>
-            @endif
+            <div id="footer_submit"></div>
         </div>
     </div>
     <div class="col-md-9">
@@ -152,6 +140,34 @@
 
 <!-- [ Main Content ] end -->
 
+<div class="modal animate__animated animate__rubberBand fade" id="hapus" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Form Hapus Klaim
+                </h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="id_hapus" hidden>
+                <p style="text-align: justify;">Perhatian, saat ini Anda akan melakukan penghapusan Berkas Klaim (ID#<a class="text-danger" id="tx_hapus"></a>), lakukanlah dengan hati-hati. Ceklis dibawah untuk melanjutkan penghapusan.</p>
+                <label class="switch">
+                    <input type="checkbox" class="switch-input" id="setujuhapus">
+                    <span class="switch-toggle-slider">
+                    <span class="switch-on"></span>
+                    <span class="switch-off"></span>
+                    </span>
+                    <span class="switch-label">Anda siap menerima Risiko</span>
+                </label>
+            </div>
+            <div class="col-12 text-center mb-4">
+                <button type="submit" id="btn-hapus" class="btn btn-danger me-sm-3 me-1" onclick="prosesHapus()"><i class="fa fa-trash me-1" style="font-size:13px"></i> Hapus</button>
+                <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function() {
         var kunjungan = "{{ $list['KUNJUNGAN'] }}";
@@ -173,10 +189,6 @@
             type: 'GET',
             dataType: 'json',
             success: function(res) {
-                // if (Array.isArray(koleksi) && koleksi.length > 0) {
-                // }
-                // koleksi.forEach(item => {
-                // });
                 if (!res.show) {
                     $('#ck_sep').prop('checked', false).prop('disabled', false);
                     $('#ck_resume').prop('checked', false).prop('disabled', false);
@@ -187,18 +199,29 @@
                     $('#ck_radiologi').prop('checked', false).prop('disabled', false);
                     $('#ck_triage').prop('checked', false).prop('disabled', false);
                     $('#ck_operasi').prop('checked', false).prop('disabled', false);
+
+                    $('#footer_submit').empty().append(`<div class="card-footer p-3">
+                                                    <div class="btn-group w-100">
+                                                        <button class="btn btn-light-warning btn-sm" onclick="clearCheckbox()"><i class="ti ti-eraser me-1"></i> Clear</button>
+                                                        <button class="btn btn-primary btn-sm" onclick="submit('${kunjungan}')" id="btn-submit">Submit <i class="fas fa-paper-plane ms-1"></i></button>
+                                                    </div>
+                                                </div>`);
                 } else {
                     let koleksi = JSON.parse(res.show.koleksi || '[]');
-                    if (koleksi.includes(1)) { $('#ck_sep').prop('checked', true).prop('disabled', true); } else { $('#ck_sep').prop('checked', false).prop('disabled',false); }
-                    if (koleksi.includes(2)) { $('#ck_resume').prop('checked', true).prop('disabled', true); } else { $('#ck_resume').prop('checked', false).prop('disabled',false); }
-                    if (koleksi.includes(3)) { $('#ck_skdp').prop('checked', true).prop('disabled', true); } else { $('#ck_skdp').prop('checked', false).prop('disabled',false); }
-                    if (koleksi.includes(4)) { $('#ck_individual').prop('checked', true).prop('disabled', true); } else { $('#ck_individual').prop('checked', false).prop('disabled',false); }
-                    if (koleksi.includes(5)) { $('#ck_billing').prop('checked', true).prop('disabled', true); } else { $('#ck_billing').prop('checked', false).prop('disabled',false); }
-                    if (koleksi.includes(6)) { $('#ck_laboratorium').prop('checked', true).prop('disabled', true); } else { $('#ck_laboratorium').prop('checked', false).prop('disabled',false); }
-                    if (koleksi.includes(7)) { $('#ck_radiologi').prop('checked', true).prop('disabled', true); } else { $('#ck_radiologi').prop('checked', false).prop('disabled',false); }
-                    if (koleksi.includes(8)) { $('#ck_triage').prop('checked', true).prop('disabled', true); } else { $('#ck_triage').prop('checked', false).prop('disabled',false); }
-                    if (koleksi.includes(9)) { $('#ck_operasi').prop('checked', true).prop('disabled', true); } else { $('#ck_operasi').prop('checked', false).prop('disabled',false); }
+                    if (koleksi.includes(1)) { $('#ck_sep').prop('checked', true).prop('disabled', false); } else { $('#ck_sep').prop('checked', false).prop('disabled',false); }
+                    if (koleksi.includes(2)) { $('#ck_resume').prop('checked', true).prop('disabled', false); } else { $('#ck_resume').prop('checked', false).prop('disabled',false); }
+                    if (koleksi.includes(3)) { $('#ck_skdp').prop('checked', true).prop('disabled', false); } else { $('#ck_skdp').prop('checked', false).prop('disabled',false); }
+                    if (koleksi.includes(4)) { $('#ck_individual').prop('checked', true).prop('disabled', false); } else { $('#ck_individual').prop('checked', false).prop('disabled',false); }
+                    if (koleksi.includes(5)) { $('#ck_billing').prop('checked', true).prop('disabled', false); } else { $('#ck_billing').prop('checked', false).prop('disabled',false); }
+                    if (koleksi.includes(6)) { $('#ck_laboratorium').prop('checked', true).prop('disabled', false); } else { $('#ck_laboratorium').prop('checked', false).prop('disabled',false); }
+                    if (koleksi.includes(7)) { $('#ck_radiologi').prop('checked', true).prop('disabled', false); } else { $('#ck_radiologi').prop('checked', false).prop('disabled',false); }
+                    if (koleksi.includes(8)) { $('#ck_triage').prop('checked', true).prop('disabled', false); } else { $('#ck_triage').prop('checked', false).prop('disabled',false); }
+                    if (koleksi.includes(9)) { $('#ck_operasi').prop('checked', true).prop('disabled', false); } else { $('#ck_operasi').prop('checked', false).prop('disabled',false); }
 
+                    $('#footer_submit').empty().append(`<div class="card-footer p-3">
+                                                    <button class="btn btn-danger w-100 btn-sm mb-3" onclick="hapus('${kunjungan}')"><i class="fas fa-trash me-1"></i> Hapus Klaim</button>
+                                                    <button class="btn btn-success btn-sm w-100" onclick="submit('${kunjungan}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang</button>
+                                                </div>`);
                 }
             }
         })
@@ -557,9 +580,21 @@
     function submit(kunjungan) {
         $('#btn-submit').prop('disabled',true).find('i').removeClass('fa-paper-plane').addClass('fa-sync fa-spin');
         // console.log($('#ck_resume').prop('checked'));
+
         var save = new FormData();
         save.append('kunjungan',kunjungan);
+        save.append('sep',$('#ck_sep').prop('checked'));
+        save.append('resume',$('#ck_resume').prop('checked'));
+        save.append('skdp',$('#ck_skdp').prop('checked'));
+        save.append('individual',$('#ck_individual').prop('checked'));
+        save.append('billing',$('#ck_billing').prop('checked'));
+        save.append('laboratorium',$('#ck_laboratorium').prop('checked'));
+        save.append('radiologi',$('#ck_radiologi').prop('checked'));
+        save.append('triage',$('#ck_triage').prop('checked'));
+        save.append('operasi',$('#ck_operasi').prop('checked'));
         save.append('user',"{{ Auth::user()->ID }}");
+
+        console.log($('#ck_resume').prop('checked'));
         $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -598,6 +633,42 @@
                 $('#btn-submit').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-paper-plane');
             }
         })
+    }
+
+    function hapus(kunjungan) {
+        $('#id_hapus').val(kunjungan);
+        $('#tx_hapus').text(kunjungan);
+        var inputs = document.getElementById('setujuhapus');
+        inputs.checked = false;
+        $('#hapus').modal('show');
+    }
+
+    function prosesHapus() {
+        var checkboxHapus = $('#setujuhapus').is(":checked");
+        if (checkboxHapus == false) {
+            iziToast.error({
+                title: 'Pesan Galat!',
+                message: 'Mohon menyetujui untuk dilakukan penghapusan berkas klaim tersebut',
+                position: 'topRight'
+            });
+        } else {
+            // PROSES HAPUS
+            var kunjungan = $('#id_hapus').val();
+            $.ajax({
+                url: `/api/klaim/${kunjungan}/hapus`,
+                type: 'DELETE',
+                dataType: 'json',
+                success: function(res) {
+                    verify();
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: `Berkas Klaim dengan No.Kunjungan : ${kunjungan} berhasil dihapus dari datarecord`,
+                        position: 'topRight'
+                    });
+                    $('#hapus').modal('hide');
+                }
+            })
+        }
     }
 
     function clearCheckbox() {

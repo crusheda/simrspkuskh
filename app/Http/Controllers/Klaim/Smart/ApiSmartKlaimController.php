@@ -84,15 +84,15 @@ class ApiSmartKlaimController extends Controller
         $request->validate([
             // 'file' => ['max:5000','mimes:pdf'],
             'kunjungan' => 'required',
-            // 'resume' => 'required',
-            // 'sep' => 'required',
-            // 'skdp' => 'required',
-            // 'billing' => 'required',
-            // 'individual' => 'required',
-            // 'laboratorium' => 'required',
-            // 'radiologi' => 'required',
-            // 'triage' => 'required',
-            // 'operasi' => 'required',
+            'sep' => 'required',
+            'resume' => 'required',
+            'skdp' => 'required',
+            'individual' => 'required',
+            'billing' => 'required',
+            'laboratorium' => 'required',
+            'radiologi' => 'required',
+            'triage' => 'required',
+            'operasi' => 'required',
             'user' => 'required',
         ]);
 
@@ -110,12 +110,39 @@ class ApiSmartKlaimController extends Controller
         $tahun = $getTgl->isoFormat('YYYY');
 
         // MAKE ARRAY ALL COLLECTION FILE PDF KLAIM
-        $files = [];
         $koleksi = [];
-        $getFileKlaim = klaim_file::where('nomor',$request->kunjungan)->where('status',true)->get();
-        foreach ($getFileKlaim as $value) {
-            $files[] = $value->filename;
-            $koleksi[] = $value->jenis;
+        $files = [];
+        $mapJenis = [
+            'sep'          => 1,
+            'resume'       => 2,
+            'skdp'         => 3,
+            'individual'   => 4,
+            'billing'      => 5,
+            'laboratorium' => 6,
+            'radiologi'    => 7,
+            'triage'       => 8,
+            'operasi'      => 9,
+        ];
+
+        // Ambil hanya jenis yang checkbox-nya dicentang
+        $jenisDipilih = [];
+
+        foreach ($mapJenis as $key => $jenis) {
+            if ($request->boolean($key)) {
+                $jenisDipilih[] = $jenis;
+            }
+        }
+
+        if (!empty($jenisDipilih)) {
+            $getFileKlaim = klaim_file::where('nomor', $request->kunjungan)
+                ->where('status', true)
+                ->whereIn('jenis', $jenisDipilih)
+                ->get();
+
+            foreach ($getFileKlaim as $value) {
+                $koleksi[] = $value->jenis;
+                $files[] = $value->filename;
+            }
         }
 
         // EXECUTE PROCESS
@@ -205,10 +232,24 @@ class ApiSmartKlaimController extends Controller
             abort(404, 'File tidak ditemukan');
         }
 
-        return response()->file($output, [
+        return response()->file($output,[
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="merged.pdf"'
         ]);
+        // return response()->file($output, [
+        //     'Content-Type' => 'application/pdf',
+        //     'Content-Disposition' => 'inline; filename="merged.pdf"'
+        // ]);
+    }
+
+    function hapusKlaim($kunjungan)
+    {
+        $now = Carbon::now();
+        $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
+        $show->status = false;
+        $show->delete();
+
+        return response()->json($now, 200);
+
     }
 
 }
