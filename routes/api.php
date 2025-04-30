@@ -24,7 +24,7 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
 
 //-----------------------------------------------------------------    A  P  I    -----------------------------------------------------------------
 // DIGITAL
-Route::get('monitoring/rj/{status}/{tgls}/{tgle}/{dpjp}', [ApiMonitoringController::class, 'tableRj'])->name('api.monitoring.rj');
+Route::get('monitoring/rj/{rawat}/{status}/{tgls}/{tgle}/{dpjp}', [ApiMonitoringController::class, 'tableRj'])->name('api.monitoring.rj');
     // MONITORING - KLAIM
         // UMUM
         Route::get('pasien/{kunjungan}/tindakan', [ApiMonitoringController::class, 'tindakan'])->name('api.pasien.tindakan');

@@ -184,11 +184,15 @@ class ApiSmartKlaimController extends Controller
     function getKlaim($kunjungan)
     {
         $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
+        $file = klaim_file::where('nomor',$kunjungan)->where('status',true)->get();
 
         $data = [
             'show' => $show,
+            'file' => $file,
         ];
 
+        // print_r($file);
+        // die();
         return response()->json($data, 200);
     }
 

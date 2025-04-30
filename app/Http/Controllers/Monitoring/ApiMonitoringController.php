@@ -14,7 +14,7 @@ use Auth, Storage;
 
 class ApiMonitoringController extends Controller
 {
-    function tableRj($status,$tgls,$tgle,$dpjp) // RAWAT JALAN
+    function tableRj($rawat,$status,$tgls,$tgle,$dpjp) // RAWAT JALAN
     {
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
         // $subCppt = DB::table('medicalrecord.cppt')
@@ -81,10 +81,9 @@ class ApiMonitoringController extends Controller
                 ->leftJoin('aplikasi.pengguna','aplikasi.pengguna.ID','=','pk.DITERIMA_OLEH')
                 ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
                 ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
-                ->where(function ($query) {
-                    $query->where('pk.RUANGAN', 'LIKE', '1020101%');
-                            // ->orWhere('pk.RUANGAN', 'LIKE', '1020201%');
-                })
+                // ->where(function ($query) {
+                //     $query->where('pk.RUANGAN', 'LIKE', '1020101%');
+                // })
                 ->where(function ($query) use ($tgls,$tgle) {
                     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                 })
@@ -97,6 +96,31 @@ class ApiMonitoringController extends Controller
                 ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
                 // ->where('jk.STATUS', 1) // STATUS RENCANA KONTROL AKTIF
 
+                // FILTER RUANGAN
+                ->when(in_array($rawat, [1, 2, 3]), function ($query) use ($rawat) {
+                    $prefix = '';
+                    switch ($rawat) {
+                        case 1:
+                            $prefix = '1020101%';
+                            break;
+                        case 2:
+                            $prefix = '1020201%';
+                            break;
+                        case 3:
+                            $prefix = '1020301%';
+                            break;
+                    }
+                    $query->where('pk.RUANGAN', 'LIKE', $prefix);
+                })
+                ->when($rawat == 5, function ($query) {
+                    $query->where(function ($q) {
+                        $q->where('pk.RUANGAN', 'LIKE', '1020101%')
+                            ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
+                            ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
+                    });
+                })
+
+                // FILTER STATUS KUNJUNGAN
                 ->when($status != 5, function ($query) use ($status) { // 0=BATAL;1=MASIH DILAYANI;2=SELESAI;5=ALL
                     $query->where('pk.STATUS', $status);
                 })
@@ -241,94 +265,94 @@ class ApiMonitoringController extends Controller
                 $post->save();
             }
 
-            if (file_exists($output . '.pdf')) {
-                // File ada
-                return response()->file($output.'.pdf',[
-                    'Content-Type' => 'application/pdf',
-                ]);
-            } else {
-                // File tidak ada
-                $options = [
-                    'format' => ['pdf'], // 'xls' / 'rtf
-                    'params' => [
-                        'KODEBPJS' => $show[0]->KODEBPJS,
-                        'NOMOR' => $show[0]->NOMOR,
-                        'IDPENJAMIN' => $show[0]->IDPENJAMIN,
-                        'NOMORKARTU' => $show[0]->NOMORKARTU,
-                        'NORMBPJS' => $show[0]->NORMBPJS,
-                        'NOBPJS' => $show[0]->NOBPJS,
-                        'PESERTA' => $show[0]->PESERTA,
-                        'NAMALENGKAP1' => $show[0]->NAMALENGKAP1,
-                        'NAMA_LENGKAP' => $show[0]->NAMA_LENGKAP,
-                        'TANGGAL_LAHIR' => $show[0]->TANGGAL_LAHIR,
-                        'NORM' => $show[0]->NORM,
-                        'KOTA' => $show[0]->KOTA,
-                        'DIBUAT_TANGGAL' => $show[0]->DIBUAT_TANGGAL,
-                        'RUANGAN' => $show[0]->RUANGAN,
-                        'DOKTER' => $show[0]->DOKTER,
-                        'NIP' => $show[0]->NIP,
-                        'DRSEP' => $show[0]->DRSEP,
-                        'DRKONTROL' => $show[0]->DRKONTROL,
-                        'SPESIALISTIK' => $show[0]->SPESIALISTIK,
-                        'SMF' => $show[0]->SMF,
-                        'DIAGNOSIS' => $show[0]->DIAGNOSIS,
-                        'NOMOR_ANTRIAN' => $show[0]->NOMOR_ANTRIAN,
-                        'NOMOR_BOOKING' => $show[0]->NOMOR_BOOKING,
-                        'DIAGMASUK' => $show[0]->DIAGMASUK,
-                        'JADWAL_KONTROL' => $show[0]->JADWAL_KONTROL,
-                        'TGLSO' => $show[0]->TGLSO,
-                        'KETSO' => $show[0]->KETSO,
-                        'KET' => $show[0]->KET,
-                        'JADWALBPJS' => $show[0]->JADWALBPJS,
-                        'BLN' => $show[0]->BLN,
-                        'THN' => $show[0]->THN,
-                        'RENCANA_TERAPI' => $show[0]->RENCANA_TERAPI,
-                        'JENIS_KUNJUNGAN' => $show[0]->JENIS_KUNJUNGAN,
-                        'NOSBPJS' => $show[0]->NOSBPJS,
-                        'NOSURAT' => $show[0]->NOSURAT,
-                        'JENISKONTROL' => $show[0]->JENISKONTROL,
-                        'NORJK' => $show[0]->NORJK,
-                        'TGLRJK' => $show[0]->TGLRJK,
-                        'MASABERLAKU' => $show[0]->MASABERLAKU,
-                        'TUJUANRUJUK' => $show[0]->TUJUANRUJUK,
-                        'nama' => $show[0]->nama,
-                        'kode' => $show[0]->kode,
-                        'JENIS_RUANG_PERAWATAN' => $show[0]->JENIS_RUANG_PERAWATAN,
-                        'JENIS_PERAWATAN' => $show[0]->JENIS_PERAWATAN,
-                        'JKONTROL' => $show[0]->JKONTROL,
-                        'JADWAL_KONTROL1' => $show[0]->JADWAL_KONTROL1,
-                        'USRP' => $show[0]->USRP,
-                        'NORJK' => $show[0]->NORJK,
-                        'IMAGES_PATH' => public_path()."/doc/input/skdp/",
-                    ],
-                    'classpath' => [
-                        public_path() . "/jasper-libs/core-3.5.3.jar",
-                        public_path() . "/jasper-libs/javase-3.5.3.jar",
-                        public_path() . "/jasper-libs/barcode4j.jar"
-                        // public_path() . "/jasper-libs/core-3.3.3.jar",
-                        // public_path() . "/jasper-libs/javase-3.3.3.jar"
-                    ],
-                ];
+            // if (file_exists($output . '.pdf')) {
+            //     // File ada
+            //     return response()->file($output.'.pdf',[
+            //         'Content-Type' => 'application/pdf',
+            //     ]);
+            // } else {
+            // }
 
-                // dd($options);
-                // print_r($options);
-                // die();
+            $options = [
+                'format' => ['pdf'], // 'xls' / 'rtf
+                'params' => [
+                    'KODEBPJS' => $show[0]->KODEBPJS,
+                    'NOMOR' => $show[0]->NOMOR,
+                    'IDPENJAMIN' => $show[0]->IDPENJAMIN,
+                    'NOMORKARTU' => $show[0]->NOMORKARTU,
+                    'NORMBPJS' => $show[0]->NORMBPJS,
+                    'NOBPJS' => $show[0]->NOBPJS,
+                    'PESERTA' => $show[0]->PESERTA,
+                    'NAMALENGKAP1' => $show[0]->NAMALENGKAP1,
+                    'NAMA_LENGKAP' => $show[0]->NAMA_LENGKAP,
+                    'TANGGAL_LAHIR' => $show[0]->TANGGAL_LAHIR,
+                    'NORM' => $show[0]->NORM,
+                    'KOTA' => $show[0]->KOTA,
+                    'DIBUAT_TANGGAL' => $show[0]->DIBUAT_TANGGAL,
+                    'RUANGAN' => $show[0]->RUANGAN,
+                    'DOKTER' => $show[0]->DOKTER,
+                    'NIP' => $show[0]->NIP,
+                    'DRSEP' => $show[0]->DRSEP,
+                    'DRKONTROL' => $show[0]->DRKONTROL,
+                    'SPESIALISTIK' => $show[0]->SPESIALISTIK,
+                    'SMF' => $show[0]->SMF,
+                    'DIAGNOSIS' => $show[0]->DIAGNOSIS,
+                    'NOMOR_ANTRIAN' => $show[0]->NOMOR_ANTRIAN,
+                    'NOMOR_BOOKING' => $show[0]->NOMOR_BOOKING,
+                    'DIAGMASUK' => $show[0]->DIAGMASUK,
+                    'JADWAL_KONTROL' => $show[0]->JADWAL_KONTROL,
+                    'TGLSO' => $show[0]->TGLSO,
+                    'KETSO' => $show[0]->KETSO,
+                    'KET' => $show[0]->KET,
+                    'JADWALBPJS' => $show[0]->JADWALBPJS,
+                    'BLN' => $show[0]->BLN,
+                    'THN' => $show[0]->THN,
+                    'RENCANA_TERAPI' => $show[0]->RENCANA_TERAPI,
+                    'JENIS_KUNJUNGAN' => $show[0]->JENIS_KUNJUNGAN,
+                    'NOSBPJS' => $show[0]->NOSBPJS,
+                    'NOSURAT' => $show[0]->NOSURAT,
+                    'JENISKONTROL' => $show[0]->JENISKONTROL,
+                    'NORJK' => $show[0]->NORJK,
+                    'TGLRJK' => $show[0]->TGLRJK,
+                    'MASABERLAKU' => $show[0]->MASABERLAKU,
+                    'TUJUANRUJUK' => $show[0]->TUJUANRUJUK,
+                    'nama' => $show[0]->nama,
+                    'kode' => $show[0]->kode,
+                    'JENIS_RUANG_PERAWATAN' => $show[0]->JENIS_RUANG_PERAWATAN,
+                    'JENIS_PERAWATAN' => $show[0]->JENIS_PERAWATAN,
+                    'JKONTROL' => $show[0]->JKONTROL,
+                    'JADWAL_KONTROL1' => $show[0]->JADWAL_KONTROL1,
+                    'USRP' => $show[0]->USRP,
+                    'NORJK' => $show[0]->NORJK,
+                    'IMAGES_PATH' => public_path()."/doc/input/skdp/",
+                ],
+                'classpath' => [
+                    public_path() . "/jasper-libs/core-3.5.3.jar",
+                    public_path() . "/jasper-libs/javase-3.5.3.jar",
+                    public_path() . "/jasper-libs/barcode4j.jar"
+                    // public_path() . "/jasper-libs/core-3.3.3.jar",
+                    // public_path() . "/jasper-libs/javase-3.3.3.jar"
+                ],
+            ];
 
-                // print_r(public_path()."\jasper-libs\core-3.3.3.jar");
-                // die();
+            // dd($options);
+            // print_r($options);
+            // die();
 
-                $jasper = new PHPJasper;
+            // print_r(public_path()."\jasper-libs\core-3.3.3.jar");
+            // die();
 
-                $jasper->process(
-                    $input,
-                    $output,
-                    $options
-                )->execute();
+            $jasper = new PHPJasper;
 
-                return response()->file($output.'.pdf',[
-                    'Content-Type' => 'application/pdf',
-                ]);
-            }
+            $jasper->process(
+                $input,
+                $output,
+                $options
+            )->execute();
+
+            return response()->file($output.'.pdf',[
+                'Content-Type' => 'application/pdf',
+            ]);
         }
 
         function compileSep($kunjungan)
@@ -367,76 +391,56 @@ class ApiMonitoringController extends Controller
                 $post->save();
             }
 
-            // CHECKING FILE
-            if (file_exists($output . '.pdf')) {
-                // File ada
-                return response()->file($output.'.pdf',[
-                    'Content-Type' => 'application/pdf',
-                ]);
-            } else {
-                // File tidak ada
+            $options = [
+                'format' => ['pdf'], // 'xls' / 'rtf
+                'params' => [
+                    'ASPEL' => $show[0]->ASPEL,
+                    'CATATAN' => $show[0]->CATATAN,
+                    'CETAKAN' => $show[0]->CETAKAN,
+                    'COB' => $show[0]->COB,
+                    'DIAGNOSA' => $show[0]->DIAGNOSA,
+                    'DOKTER' => $show[0]->DOKTER,
+                    'IMAGES_PATH' => public_path()."/doc/input/sep/",
+                    'JENISKELAMIN' => $show[0]->JENISKELAMIN,
+                    'JENISRAWAT' => $show[0]->JENISRAWAT,
+                    'KATARAK' => $show[0]->KATARAK,
+                    'KELAS' => $show[0]->KELAS,
+                    'klsRawat' => $show[0]->klsRawat,
+                    'NAMAINSTANSI' => $show[0]->NAMAINSTANSI,
+                    'NAMALENGKAP' => $show[0]->NAMALENGKAP,
+                    'NOMORKARTU' => $show[0]->NOMORKARTU,
+                    'NOMORSEP' => $show[0]->NOMORSEP,
+                    'NORM' => $show[0]->NORM,
+                    'NOTELP' => $show[0]->NOTELP,
+                    'PENJAMIN' => $show[0]->PENJAMIN,
+                    'PENUNJANG' => $show[0]->PENUNJANG,
+                    'PESERTA' => $show[0]->PESERTA,
+                    'POLIPERUJUK' => $show[0]->POLIPERUJUK,
+                    'poliTujuan' => $show[0]->poliTujuan,
+                    'PRB' => $show[0]->PRB,
+                    'PROC' => $show[0]->PROC,
+                    'RUJUKAN' => $show[0]->RUJUKAN,
+                    'TGL_LAHIR' => $show[0]->TGL_LAHIR,
+                    'TGLSEP' => $show[0]->TGLSEP,
+                    'TJKUNJ' => $show[0]->TJKUNJ,
+                    'UNITPELAYANAN' => $show[0]->UNITPELAYANAN
+                ],
+            ];
 
-                $options = [
-                    'format' => ['pdf'], // 'xls' / 'rtf
-                    'params' => [
-                        'ASPEL' => $show[0]->ASPEL,
-                        'CATATAN' => $show[0]->CATATAN,
-                        'CETAKAN' => $show[0]->CETAKAN,
-                        'COB' => $show[0]->COB,
-                        'DIAGNOSA' => $show[0]->DIAGNOSA,
-                        'DOKTER' => $show[0]->DOKTER,
-                        'IMAGES_PATH' => public_path()."/doc/input/sep/",
-                        'JENISKELAMIN' => $show[0]->JENISKELAMIN,
-                        'JENISRAWAT' => $show[0]->JENISRAWAT,
-                        'KATARAK' => $show[0]->KATARAK,
-                        'KELAS' => $show[0]->KELAS,
-                        'klsRawat' => $show[0]->klsRawat,
-                        'NAMAINSTANSI' => $show[0]->NAMAINSTANSI,
-                        'NAMALENGKAP' => $show[0]->NAMALENGKAP,
-                        'NOMORKARTU' => $show[0]->NOMORKARTU,
-                        'NOMORSEP' => $show[0]->NOMORSEP,
-                        'NORM' => $show[0]->NORM,
-                        'NOTELP' => $show[0]->NOTELP,
-                        'PENJAMIN' => $show[0]->PENJAMIN,
-                        'PENUNJANG' => $show[0]->PENUNJANG,
-                        'PESERTA' => $show[0]->PESERTA,
-                        'POLIPERUJUK' => $show[0]->POLIPERUJUK,
-                        'poliTujuan' => $show[0]->poliTujuan,
-                        'PRB' => $show[0]->PRB,
-                        'PROC' => $show[0]->PROC,
-                        'RUJUKAN' => $show[0]->RUJUKAN,
-                        'TGL_LAHIR' => $show[0]->TGL_LAHIR,
-                        'TGLSEP' => $show[0]->TGLSEP,
-                        'TJKUNJ' => $show[0]->TJKUNJ,
-                        'UNITPELAYANAN' => $show[0]->UNITPELAYANAN
-                    ],
-                ];
+            $jasper = new PHPJasper;
 
-                $jasper = new PHPJasper;
+            $jasper->process(
+                $input,
+                $output,
+                $options
+            )->execute();
 
-                $jasper->process(
-                    $input,
-                    $output,
-                    $options
-                )->execute();
+            // print_r($output);
+            // die();
 
-                // print_r($output);
-                // die();
-
-                return response()->file($output.'.pdf',[
-                    'Content-Type' => 'application/pdf',
-                ]);
-            }
-
-            // return response()->download($output.'.pdf', null, [
-            //     'Content-Type' => 'application/pdf',
-            // ]);
-            // return response()->json([
-            //     'success' => true,
-            //     'message' => 'File generated successfully.',
-            //     'file_url' => '/doc/output/sep/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show[0]->NOMORSEP.'.pdf',
-            //     'nomor_sep' => '0151R0130124V002638'
-            // ]);
+            return response()->file($output.'.pdf',[
+                'Content-Type' => 'application/pdf',
+            ]);
         }
 
         //TTD RESUME
@@ -657,86 +661,79 @@ class ApiMonitoringController extends Controller
             if (!File::exists($outputDir)) {
                 File::makeDirectory($outputDir, 0755, true); // true = recursive
             }
-            // if (file_exists($output . '.pdf')) {
-            //     // File ada
-            //     return response()->file($output.'.pdf',[
-            //         'Content-Type' => 'application/pdf',
-            //     ]);
-            // } else {
-                // File tidak ada
-                $options = [
-                    'format' => ['pdf'], // 'xls' / 'rtf
-                    'params' => [
-                        'KODERS' => $show[0]->KODERS,
-                        'NAMAINSTANSI' => $show[0]->NAMAINSTANSI,
-                        'KELASRS' => $show[0]->KELASRS,
-                        'JENISTARIF' => $show[0]->JENISTARIF,
-                        'NOKARTU' => $show[0]->NOKARTU,
-                        'NORM' => $show[0]->NORM,
-                        'UMURTAHUN' => $show[0]->UMURTAHUN,
-                        'UMURHARI' => $show[0]->UMURHARI,
-                        'TANGGAL_LAHIR' => date('d/m/Y', strtotime($show[0]->TANGGAL_LAHIR)),
-                        'JENISKELAMIN' => $show[0]->JENISKELAMIN,
-                        'KELASHAK' => $show[0]->KELASHAK,
-                        'NOMORSEP' => $show[0]->NOMORSEP,
-                        'TGLREG' => date('d/m/Y', strtotime($show[0]->TGLREG)),
-                        'TGLKELUAR' => $show[0]->TGLKELUAR,
-                        'JENISPASIEN' => $show[0]->JENISPASIEN,
-                        'CARAPULANG' => $show[0]->CARAPULANG,
-                        'LOS' => $show[0]->LOS,
-                        'BERATLAHIR' => $show[0]->BERATLAHIR,
-                        'KODEDIAGNOSAUTAMA' => $show[0]->KODEDIAGNOSAUTAMA,
-                        'DIAGNOSAUTAMA' => $show[0]->DIAGNOSAUTAMA,
-                        'KODEDIAGNOSASEKUNDER' => $show[0]->KODEDIAGNOSASEKUNDER,
-                        'DIAGNOSASEKUNDER' => $show[0]->DIAGNOSASEKUNDER,
-                        'KODETINDAKAN' => (!empty($show[0]->KODETINDAKAN) ? $show[0]->KODETINDAKAN : '-'),
-                        'TINDAKAN' => $show[0]->TINDAKAN,
-                        'ADLAKUT' => $show[0]->ADLAKUT,
-                        'ADLKRONIK' => $show[0]->ADLKRONIK,
-                        'INACBG' => $show[0]->INACBG,
-                        'DESKRIPSIINACBG' => $show[0]->DESKRIPSIINACBG,
-                        'UNUSA' => $show[0]->UNUSA,
-                        'DESUNUSA' => $show[0]->DESUNUSA,
-                        'UNUSC' => $show[0]->UNUSC,
-                        'DESUNUSC' => $show[0]->DESUNUSC,
-                        'KODESPESIAL' => $show[0]->KODESPESIAL,
-                        'DESKKODE' => $show[0]->DESKKODE,
-                        'TARIFINACBG' => $show[0]->TARIFINACBG,
-                        'TARIFUNUSA' => $show[0]->TARIFUNUSA,
-                        'TARIFUNUSC' => $show[0]->TARIFUNUSC,
-                        'TARIFKODE' => $show[0]->TARIFKODE,
-                        'CODER' => $show[0]->CODER,
-                        'VERIFIKATOR' => $show[0]->VERIFIKATOR,
-                        'RUANG_RAWAT' => $show[0]->RUANG_RAWAT,
-                        'TOTALTARIFINACBG' => $show[0]->TOTALTARIFINACBG,
-                        'NO_URUT' => (!empty($show[0]->NO_URUT) ? $show[0]->NO_URUT : 'JKN'),
-                        'CATATAN' => $show[0]->CATATAN,
-                        'ALOS' => $show[0]->ALOS,
-                        'RPKODE' => $show[0]->RPKODE,
-                        'BIAYARS' => $show[0]->BIAYARS,
-                        'SPECIALPROSEDUR' => $show[0]->SPECIALPROSEDUR,
-                        'NAMALENGKAP' => $show[0]->NAMALENGKAP,
-                        'IMAGES_PATH' => public_path()."/doc/input/individual/",
-                        'CETAK_HEADER' => $CETAK_HEADER,
-                    ],
-                ];
-                // print_r($options);
-                // die();
 
-                $jasper = new PHPJasper;
+            $options = [
+                'format' => ['pdf'], // 'xls' / 'rtf
+                'params' => [
+                    'KODERS' => $show[0]->KODERS,
+                    'NAMAINSTANSI' => $show[0]->NAMAINSTANSI,
+                    'KELASRS' => $show[0]->KELASRS,
+                    'JENISTARIF' => $show[0]->JENISTARIF,
+                    'NOKARTU' => $show[0]->NOKARTU,
+                    'NORM' => $show[0]->NORM,
+                    'UMURTAHUN' => $show[0]->UMURTAHUN,
+                    'UMURHARI' => $show[0]->UMURHARI,
+                    'TANGGAL_LAHIR' => date('d/m/Y', strtotime($show[0]->TANGGAL_LAHIR)),
+                    'JENISKELAMIN' => $show[0]->JENISKELAMIN,
+                    'KELASHAK' => $show[0]->KELASHAK,
+                    'NOMORSEP' => $show[0]->NOMORSEP,
+                    'TGLREG' => date('d/m/Y', strtotime($show[0]->TGLREG)),
+                    'TGLKELUAR' => $show[0]->TGLKELUAR,
+                    'JENISPASIEN' => $show[0]->JENISPASIEN,
+                    'CARAPULANG' => $show[0]->CARAPULANG,
+                    'LOS' => $show[0]->LOS,
+                    'BERATLAHIR' => $show[0]->BERATLAHIR,
+                    'KODEDIAGNOSAUTAMA' => $show[0]->KODEDIAGNOSAUTAMA,
+                    'DIAGNOSAUTAMA' => $show[0]->DIAGNOSAUTAMA,
+                    'KODEDIAGNOSASEKUNDER' => $show[0]->KODEDIAGNOSASEKUNDER,
+                    'DIAGNOSASEKUNDER' => $show[0]->DIAGNOSASEKUNDER,
+                    'KODETINDAKAN' => (!empty($show[0]->KODETINDAKAN) ? $show[0]->KODETINDAKAN : '-'),
+                    'TINDAKAN' => $show[0]->TINDAKAN,
+                    'ADLAKUT' => $show[0]->ADLAKUT,
+                    'ADLKRONIK' => $show[0]->ADLKRONIK,
+                    'INACBG' => $show[0]->INACBG,
+                    'DESKRIPSIINACBG' => $show[0]->DESKRIPSIINACBG,
+                    'UNUSA' => $show[0]->UNUSA,
+                    'DESUNUSA' => $show[0]->DESUNUSA,
+                    'UNUSC' => $show[0]->UNUSC,
+                    'DESUNUSC' => $show[0]->DESUNUSC,
+                    'KODESPESIAL' => $show[0]->KODESPESIAL,
+                    'DESKKODE' => $show[0]->DESKKODE,
+                    'TARIFINACBG' => $show[0]->TARIFINACBG,
+                    'TARIFUNUSA' => $show[0]->TARIFUNUSA,
+                    'TARIFUNUSC' => $show[0]->TARIFUNUSC,
+                    'TARIFKODE' => $show[0]->TARIFKODE,
+                    'CODER' => $show[0]->CODER,
+                    'VERIFIKATOR' => $show[0]->VERIFIKATOR,
+                    'RUANG_RAWAT' => $show[0]->RUANG_RAWAT,
+                    'TOTALTARIFINACBG' => $show[0]->TOTALTARIFINACBG,
+                    'NO_URUT' => (!empty($show[0]->NO_URUT) ? $show[0]->NO_URUT : 'JKN'),
+                    'CATATAN' => $show[0]->CATATAN,
+                    'ALOS' => $show[0]->ALOS,
+                    'RPKODE' => $show[0]->RPKODE,
+                    'BIAYARS' => $show[0]->BIAYARS,
+                    'SPECIALPROSEDUR' => $show[0]->SPECIALPROSEDUR,
+                    'NAMALENGKAP' => $show[0]->NAMALENGKAP,
+                    'IMAGES_PATH' => public_path()."/doc/input/individual/",
+                    'CETAK_HEADER' => $CETAK_HEADER,
+                ],
+            ];
+            // print_r($options);
+            // die();
 
-                $jasper->process(
-                    $input,
-                    $output,
-                    $options
-                )->execute();
+            $jasper = new PHPJasper;
+
+            $jasper->process(
+                $input,
+                $output,
+                $options
+            )->execute();
 
 
 
-                return response()->file($output.'.pdf',[
-                    'Content-Type' => 'application/pdf',
-                ]);
-            // }
+            return response()->file($output.'.pdf',[
+                'Content-Type' => 'application/pdf',
+            ]);
         }
         function compileBilling($kunjungan)
         {
@@ -782,47 +779,39 @@ class ApiMonitoringController extends Controller
             if (!File::exists($outputDir)) {
                 File::makeDirectory($outputDir, 0755, true); // true = recursive
             }
-            //-----------------------------------------------------------------------
-            // if (file_exists($output . '.pdf')) {
-            //     // File ada
-            //     return response()->file($output.'.pdf',[
-            //         'Content-Type' => 'application/pdf',
-            //     ]);
-            // } else {
-                // File tidak ada
-                $options = [
-                    'format' => ['pdf'],
-                    'params' => [
-                        'PTAGIHAN' => $getSEP->TAGIHAN,
-                        'PSTATUS'  => $getSEP->STATUS,
-                        'IMAGES_PATH' => public_path()."/doc/input/billing/",
-                    ],
-                    'db_connection' => [
-                        'driver'   => 'mysql',
-                        'host'     => env('DB_HOST'),
-                        'port'     => env('DB_PORT'),
-                        'username' => env('DB_USERNAME'),
-                        'password' => env('DB_PASSWORD'),
-                        'database' => env('DB_DATABASE_CUSTOM'),
-                    ],
-                ];
-                // print_r($options);
-                // die();
 
-                $jasper = new PHPJasper;
+            $options = [
+                'format' => ['pdf'],
+                'params' => [
+                    'PTAGIHAN' => $getSEP->TAGIHAN,
+                    'PSTATUS'  => $getSEP->STATUS,
+                    'IMAGES_PATH' => public_path()."/doc/input/billing/",
+                ],
+                'db_connection' => [
+                    'driver'   => 'mysql',
+                    'host'     => env('DB_HOST'),
+                    'port'     => env('DB_PORT'),
+                    'username' => env('DB_USERNAME'),
+                    'password' => env('DB_PASSWORD'),
+                    'database' => env('DB_DATABASE_CUSTOM'),
+                ],
+            ];
+            // print_r($options);
+            // die();
 
-                $jasper->process(
-                    $input,
-                    $output,
-                    $options
-                )->execute();
+            $jasper = new PHPJasper;
+
+            $jasper->process(
+                $input,
+                $output,
+                $options
+            )->execute();
 
 
 
-                return response()->file($output.'.pdf',[
-                    'Content-Type' => 'application/pdf',
-                ]);
-            // }
+            return response()->file($output.'.pdf',[
+                'Content-Type' => 'application/pdf',
+            ]);
         }
 
         function cleanText($text) {
@@ -861,35 +850,6 @@ class ApiMonitoringController extends Controller
             $jasper->process($input, $output, $options)->execute();
             return response()->file($output . '.pdf');
 
-            // try {
-            //     $jasper->process($input, $output, $options)->execute();
-
-            //     // dd($options);
-            //     // 3. Hapus file JSON setelah proses berhasil
-            //     if (file_exists($jsonPath)) {
-            //         unlink($jsonPath);
-            //     }
-
-            //     // 4. Bisa langsung return response download atau apapun yang dibutuhkan
-            //     return response()->file($output . '.pdf');
-
-            // } catch (\Exception $e) {
-            //     // Pastikan JSON tetap dihapus meskipun error
-            //     if (file_exists($jsonPath)) {
-            //         unlink($jsonPath);
-            //     }
-            //     throw $e; // Atau handle error sesuai kebutuhan
-            // }
-
-            // return response()->file($output.'.pdf',[
-            //     'Content-Type' => 'application/pdf',
-            // ]);
         }
 
-        // function sep()
-        // {
-        //     return response()->file(public_path().'/doc/output/sep.pdf',[
-        //         'Content-Type' => 'application/pdf',
-        //     ]);
-        // }
 }

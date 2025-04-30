@@ -47,7 +47,7 @@
                     <div class="col-md-2 mb-3">
                         <div class="form-group">
                             <label class="form-label">Jenis Perawatan</label>
-                            <select class="form-control" id="filter_rawat" disabled>
+                            <select class="form-control" id="filter_rawat">
                                 <option value="5">Semua Perawatan</option>
                                 <option value="1" selected>Rawat Jalan</option>
                                 <option value="2">Rawat Darurat</option>
@@ -377,6 +377,7 @@
         // }
         $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
         // Initialize
+        var rawat = $("#filter_rawat").val();
         var status = $("#filter_status").val();
         var tgl = $("#filter_tgl").val();
         var dpjp = $("#filter_dpjp").val() ? $("#filter_dpjp").val() : '0'; // JIKA DPJP KOSONG = 0
@@ -391,7 +392,7 @@
         console.log(exTgl);
         // Process
         $.ajax({
-            url: `/api/monitoring/rj/${status}/${tgls}/${tgle}/${dpjp}`,
+            url: `/api/monitoring/rj/${rawat}/${status}/${tgls}/${tgle}/${dpjp}`,
             type: 'GET',
             dataType: 'json',
             success: function(res) {

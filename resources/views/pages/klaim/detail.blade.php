@@ -48,81 +48,63 @@
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_sep" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim" disabled>
-                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_sep" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="Preview Berkas SEP" onclick="sep('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ sep('{{ $list['KUNJUNGAN'] }}'); }" disabled>
                 </div>
                 <a class="text-nowrap mt-1">SEP</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_resume" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim" disabled>
-                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_resume" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="Preview Berkas Resume Medis" onclick="resume('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ resume('{{ $list['KUNJUNGAN'] }}'); }" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Resume Medis</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_skdp" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim" disabled>
-                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_skdp" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="Preview Berkas SKDP" onclick="skdp('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ skdp('{{ $list['KUNJUNGAN'] }}'); }" disabled>
                 </div>
                 <a class="text-nowrap mt-1">SKDP</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_individual" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim" disabled>
-                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_individual" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="Preview Berkas Individual" onclick="individual('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ individual('{{ $list['KUNJUNGAN'] }}'); }" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Individual</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_billing" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim" disabled>
-                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_billing" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="Preview Berkas Billing" onclick="billing('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ billing('{{ $list['KUNJUNGAN'] }}'); }" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Billing</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_laboratorium" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim" disabled>
-                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_laboratorium" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="Preview Berkas Hasil Laboratorium" onclick="laboratorium('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ laboratorium('{{ $list['KUNJUNGAN'] }}'); }" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Laboratorium</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_radiologi" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim" disabled>
-                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_radiologi" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="Preview Berkas Hasil Radiologi" onclick="radiologi('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ radiologi('{{ $list['KUNJUNGAN'] }}'); }" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Radiologi</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_triage" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim" disabled>
-                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_triage" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="Preview Berkas Triage IGD" onclick="triage('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ triage('{{ $list['KUNJUNGAN'] }}'); }" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Triage IGD</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_operasi" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Submit Berkas Klaim" disabled>
-                    <button class="btn btn-secondary btn-sm rounded-end" id="btn_operasi" style="width: 2.2em;height: 2.2em" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                    title="Preview Berkas Laporan Operasi" onclick="operasi('{{ $list['KUNJUNGAN'] }}')"><i class="fas fa-file-signature"></i></button>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ operasi('{{ $list['KUNJUNGAN'] }}'); }" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Laporan Operasi</a>
             </div>
@@ -172,6 +154,8 @@
 
 <script>
     $(document).ready(function() {
+        var kunjungan = "{{ $list['KUNJUNGAN'] }}";
+
         $('[data-back-button]').on('click', function() {
             if (document.referrer) {
                 window.history.back();
@@ -214,53 +198,14 @@
                     if (koleksi.includes(7)) { $('#ck_radiologi').prop('checked', true).prop('disabled', true); } else { $('#ck_radiologi').prop('checked', false).prop('disabled',false); }
                     if (koleksi.includes(8)) { $('#ck_triage').prop('checked', true).prop('disabled', true); } else { $('#ck_triage').prop('checked', false).prop('disabled',false); }
                     if (koleksi.includes(9)) { $('#ck_operasi').prop('checked', true).prop('disabled', true); } else { $('#ck_operasi').prop('checked', false).prop('disabled',false); }
+
                 }
             }
         })
     }
 
-    function resume(kunjungan) {
-        $('#btn_resume').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
-        $('#preview').empty().append(`
-            <div class="spinner-grow align-middle me-2" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
-        `);
-
-        // AJAX FETCH
-        fetch("/api/pasien/"+kunjungan+"/resumeRj")
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('File tidak ditemukan atau gagal diambil.');
-            }
-            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_resume').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
-            return response.blob();
-        })
-        .then(blob => {
-            // Buat object URL dari blob
-            const fileURL = URL.createObjectURL(blob);
-
-            // Tampilkan ke iframe dalam modal
-            $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-            $('#btn_resume').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
-            $('#ck_resume').prop('checked', true);
-        })
-        .catch(error => {
-            iziToast.error({
-                title: 'Maaf!',
-                message: 'Data Resume tidak ditemukan atau belum dibuatkan oleh Simgos.',
-                position: 'topRight'
-            });
-            console.error(error);
-            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_resume').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
-        });
-    }
-
     function sep(kunjungan) {
-        $('#btn_sep').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#ck_sep').prop('disabled',true);
         $('#preview').empty().append(`
             <div class="spinner-grow align-middle me-2" role="status">
                 <span class="sr-only">Loading...</span>
@@ -275,7 +220,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_sep').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_sep').prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -284,8 +229,7 @@
 
             // Tampilkan ke iframe dalam modal
             $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-            $('#btn_sep').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
-            $('#ck_sep').prop('checked', true);
+            $('#ck_sep').prop('disabled',false);
         })
         .catch(error => {
             iziToast.error({
@@ -295,12 +239,51 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_sep').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_sep').prop('disabled',false);
+        });
+    }
+
+    function resume(kunjungan) {
+        $('#ck_resume').prop('disabled',true);
+        $('#preview').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        `);
+
+        // AJAX FETCH
+        fetch("/api/pasien/"+kunjungan+"/resumeRj")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
+            }
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#ck_resume').prop('disabled',false);
+            return response.blob();
+        })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            $('#ck_resume').prop('disabled',false);
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data Resume tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                position: 'topRight'
+            });
+            console.error(error);
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            $('#ck_resume').prop('disabled',false);
         });
     }
 
     function skdp(kunjungan) {
-        $('#btn_skdp').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#ck_skdp').prop('disabled',true);
         $('#preview').empty().append(`
             <div class="spinner-grow align-middle me-2" role="status">
                 <span class="sr-only">Loading...</span>
@@ -315,7 +298,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_skdp').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_skdp').prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -324,8 +307,7 @@
 
             // Tampilkan ke iframe dalam modal
             $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-            $('#btn_skdp').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
-            $('#ck_skdp').prop('checked', true);
+            $('#ck_skdp').prop('disabled',false);
         })
         .catch(error => {
             iziToast.error({
@@ -335,12 +317,12 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_skdp').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_skdp').prop('disabled',false);
         });
     }
 
     function billing(kunjungan) {
-        $('#btn_billing').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#ck_billing').prop('disabled',true);
         $('#preview').empty().append(`
             <div class="spinner-grow align-middle me-2" role="status">
                 <span class="sr-only">Loading...</span>
@@ -355,7 +337,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_billing').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_billing').prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -364,8 +346,7 @@
 
             // Tampilkan ke iframe dalam modal
             $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-            $('#btn_billing').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
-            $('#ck_billing').prop('checked', true);
+            $('#ck_billing').prop('disabled',false);
         })
         .catch(error => {
             iziToast.error({
@@ -375,12 +356,12 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_billing').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_billing').prop('disabled',false);
         });
     }
 
     function individual(kunjungan) {
-        $('#btn_individual').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#ck_individual').prop('disabled',true);
         $('#preview').empty().append(`
             <div class="spinner-grow align-middle me-2" role="status">
                 <span class="sr-only">Loading...</span>
@@ -395,7 +376,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_individual').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_individual').prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -404,8 +385,7 @@
 
             // Tampilkan ke iframe dalam modal
             $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-            $('#btn_individual').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
-            $('#ck_individual').prop('checked', true);
+            $('#ck_individual').prop('disabled',false);
         })
         .catch(error => {
             iziToast.error({
@@ -415,12 +395,12 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_individual').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_individual').prop('disabled',false);
         });
     }
 
     function laboratorium(kunjungan) {
-        $('#btn_laboratorium').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#ck_laboratorium').prop('disabled',true);
         $('#preview').empty().append(`
             <div class="spinner-grow align-middle me-2" role="status">
                 <span class="sr-only">Loading...</span>
@@ -435,7 +415,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_laboratorium').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_laboratorium').prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -444,8 +424,7 @@
 
             // Tampilkan ke iframe dalam modal
             $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-            $('#btn_laboratorium').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
-            $('#ck_laboratorium').prop('checked', true);
+            $('#ck_laboratorium').prop('disabled',false);
         })
         .catch(error => {
             iziToast.error({
@@ -455,12 +434,12 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_laboratorium').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_laboratorium').prop('disabled',false);
         });
     }
 
     function radiologi(kunjungan) {
-        $('#btn_radiologi').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#ck_radiologi').prop('disabled',true);
         $('#preview').empty().append(`
             <div class="spinner-grow align-middle me-2" role="status">
                 <span class="sr-only">Loading...</span>
@@ -475,7 +454,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_radiologi').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_radiologi').prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -484,8 +463,7 @@
 
             // Tampilkan ke iframe dalam modal
             $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-            $('#btn_radiologi').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
-            $('#ck_radiologi').prop('checked', true);
+            $('#ck_radiologi').prop('disabled',false);
         })
         .catch(error => {
             iziToast.error({
@@ -495,12 +473,12 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_radiologi').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_radiologi').prop('disabled',false);
         });
     }
 
     function triage(kunjungan) {
-        $('#btn_triage').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#ck_triage').prop('disabled',true);
         $('#preview').empty().append(`
             <div class="spinner-grow align-middle me-2" role="status">
                 <span class="sr-only">Loading...</span>
@@ -515,7 +493,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_triage').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_triage').prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -524,8 +502,7 @@
 
             // Tampilkan ke iframe dalam modal
             $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-            $('#btn_triage').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
-            $('#ck_triage').prop('checked', true);
+            $('#ck_triage').prop('disabled',false);
         })
         .catch(error => {
             iziToast.error({
@@ -535,11 +512,11 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_triage').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_triage').prop('disabled',false);
         });
     }
     function operasi(kunjungan) {
-        $('#btn_operasi').prop('disabled',true).find('i').removeClass('fa-file-signature').addClass('fa-sync fa-spin');
+        $('#ck_operasi').prop('disabled',true);
         $('#preview').empty().append(`
             <div class="spinner-grow align-middle me-2" role="status">
                 <span class="sr-only">Loading...</span>
@@ -554,7 +531,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_operasi').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_operasi').prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -563,8 +540,7 @@
 
             // Tampilkan ke iframe dalam modal
             $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-            $('#btn_operasi').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
-            $('#ck_operasi').prop('checked', true);
+            $('#ck_operasi').prop('disabled',false);
         })
         .catch(error => {
             iziToast.error({
@@ -574,7 +550,7 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#btn_operasi').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-file-signature');
+            $('#ck_operasi').prop('disabled',false);
         });
     }
 
