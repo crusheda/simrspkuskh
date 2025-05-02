@@ -35,6 +35,7 @@ Route::get('monitoring/rj/{rawat}/{status}/{tgls}/{tgle}/{dpjp}', [ApiMonitoring
         Route::get('pasien/{kunjungan}/individual', [ApiMonitoringController::class, 'compileIndividual'])->name('api.pasien.individual');
         Route::get('pasien/{kunjungan}/billing', [ApiMonitoringController::class, 'compileBilling'])->name('api.pasien.billing');
         Route::get('pasien/{kunjungan}/lab', [ApiMonitoringController::class, 'compileLab'])->name('api.pasien.lab');
+        Route::get('pasien/{kunjungan}/rad', [ApiMonitoringController::class, 'compileRad'])->name('api.pasien.rad');
         // TTE
             // RAWAT JALAN
             Route::get('pasien/{kunjungan}/ttdRj', [ApiMonitoringController::class, 'showTtdResumeRj'])->name('api.pasien.ttdResumeRj');
