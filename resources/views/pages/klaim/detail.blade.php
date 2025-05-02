@@ -48,63 +48,72 @@
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_sep" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ sep('{{ $list['KUNJUNGAN'] }}'); }" disabled>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ sep('{{ $list['KUNJUNGAN'] }}'); }
+                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                 </div>
                 <a class="text-nowrap mt-1">SEP</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_resume" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ resume('{{ $list['KUNJUNGAN'] }}'); }" disabled>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ resume('{{ $list['KUNJUNGAN'] }}'); }
+                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Resume Medis</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_skdp" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ skdp('{{ $list['KUNJUNGAN'] }}'); }" disabled>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ skdp('{{ $list['KUNJUNGAN'] }}'); }
+                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                 </div>
                 <a class="text-nowrap mt-1">SKDP</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_individual" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ individual('{{ $list['KUNJUNGAN'] }}'); }" disabled>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ individual('{{ $list['KUNJUNGAN'] }}'); }
+                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Individual</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_billing" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ billing('{{ $list['KUNJUNGAN'] }}'); }" disabled>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ billing('{{ $list['KUNJUNGAN'] }}'); }
+                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Billing</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_laboratorium" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ laboratorium('{{ $list['KUNJUNGAN'] }}'); }" disabled>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ laboratorium('{{ $list['KUNJUNGAN'] }}'); }
+                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Laboratorium</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_radiologi" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ radiologi('{{ $list['KUNJUNGAN'] }}'); }" disabled>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ radiologi('{{ $list['KUNJUNGAN'] }}'); }
+                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Radiologi</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_triage" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ triage('{{ $list['KUNJUNGAN'] }}'); }" disabled>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ triage('{{ $list['KUNJUNGAN'] }}'); }
+                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Triage IGD</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_operasi" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ operasi('{{ $list['KUNJUNGAN'] }}'); }" disabled>
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ operasi('{{ $list['KUNJUNGAN'] }}'); }
+                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Laporan Operasi</a>
             </div>
@@ -432,7 +441,7 @@
         `);
 
         // AJAX FETCH
-        fetch("/api/pasien/"+kunjungan+"/laboratorium")
+        fetch("/api/pasien/"+kunjungan+"/lab")
         .then(response => {
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
@@ -471,7 +480,7 @@
         `);
 
         // AJAX FETCH
-        fetch("/api/pasien/"+kunjungan+"/radiologi")
+        fetch("/api/pasien/"+kunjungan+"/rad")
         .then(response => {
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
@@ -659,6 +668,7 @@
                 type: 'DELETE',
                 dataType: 'json',
                 success: function(res) {
+                    $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
                     verify();
                     iziToast.success({
                         title: 'Pesan Berhasil!',
