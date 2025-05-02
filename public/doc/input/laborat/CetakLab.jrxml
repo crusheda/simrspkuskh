@@ -279,7 +279,7 @@
 			<staticText>
 				<reportElement x="306" y="122" width="94" height="15" uuid="c56e4b03-43df-430c-a639-413908f5025f"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tgl. Registrasi]]></text>
 			</staticText>
@@ -288,7 +288,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[No. RM]]></text>
 			</staticText>
@@ -302,7 +302,7 @@
 			<staticText>
 				<reportElement x="306" y="139" width="94" height="15" uuid="476ee294-c7d9-4db9-bb7c-c955afb39eef"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tgl. Hasil]]></text>
 			</staticText>
@@ -325,7 +325,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Sex / Tgl Lahir]]></text>
 			</staticText>
@@ -339,7 +339,7 @@
 			<staticText>
 				<reportElement x="306" y="106" width="94" height="15" uuid="3a7d3ef9-a72e-42dc-92f0-e59711463a42"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[No. Registrasi]]></text>
 			</staticText>
@@ -376,7 +376,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Nama]]></text>
 			</staticText>
@@ -404,7 +404,7 @@
 			<staticText>
 				<reportElement x="306" y="156" width="94" height="15" uuid="899310d0-3c77-4e5d-ba42-f4395e0b9782"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Unit Pengantar]]></text>
 			</staticText>
@@ -439,7 +439,7 @@
 			<staticText>
 				<reportElement x="306" y="172" width="94" height="15" uuid="6710143c-02bf-441e-9464-70b45e505071"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dokter Perujuk]]></text>
 			</staticText>
@@ -462,7 +462,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[No. Lab]]></text>
 			</staticText>
@@ -471,7 +471,7 @@
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Diagnosa]]></text>
 			</staticText>
@@ -669,14 +669,14 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com ]]></text>
 			<staticText>
 				<reportElement x="104" y="33" width="8" height="15" uuid="da7d5667-74be-4887-9d34-3fa95187a7fa"/>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="9"/>
+					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="4" y="33" width="100" height="15" uuid="c6b168fb-7199-495c-872a-856c0cda2846"/>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Kesan / Saran]]></text>
 			</staticText>
@@ -690,7 +690,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com ]]></text>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="112" y="1" width="217" height="15" uuid="61ec83c0-bb96-49c8-be5a-8edf6bdfc6ee"/>
 				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ANALIS}]]></textFieldExpression>
 			</textField>
@@ -713,7 +713,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com ]]></text>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="9" isBold="true"/>
+					<font fontName="SansSerif" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Ahli Teknologi Laboratorium Medik/ Pemeriksa]]></text>
 			</staticText>
@@ -727,7 +727,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com ]]></text>
 			<staticText>
 				<reportElement x="104" y="1" width="8" height="15" uuid="7205824f-3b2f-4ed2-a544-58ada4bdb58e"/>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="9"/>
+					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>

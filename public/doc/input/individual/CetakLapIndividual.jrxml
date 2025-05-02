@@ -638,7 +638,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.math.BigDecimal($P{TARIFINACBG})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{TARIFINACBG} == null || String.valueOf($P{TARIFINACBG}).trim().equals("") || String.valueOf($P{TARIFINACBG}).equals("0")
+    ? "0,00"
+    : new java.text.DecimalFormat("#,##0.00").format(new java.math.BigDecimal(String.valueOf($P{TARIFINACBG})))
+]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="16" y="634" width="74" height="11" uuid="02609c68-a5a0-4639-9e0a-2418f035559c"/>
@@ -707,7 +710,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{TARIFUNUSA}=="0" ? "0,00" : new java.math.BigDecimal($P{TARIFUNUSA})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{TARIFUNUSA} == null || String.valueOf($P{TARIFUNUSA}).trim().equals("") || String.valueOf($P{TARIFUNUSA}).equals("0"))
+    ? "0,00"
+    : new java.text.DecimalFormat("#,##0.00").format(new java.math.BigDecimal(String.valueOf($P{TARIFUNUSA})))
+]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="144" y="634" width="280" height="11" uuid="ef2b12d4-6092-431c-a75f-2b996c85f975"/>
@@ -728,7 +734,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{TARIFUNUSC}=="0" ? "0,00" : new java.math.BigDecimal($P{TARIFUNUSC})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{TARIFUNUSC} == null || String.valueOf($P{TARIFUNUSC}).trim().equals("") || String.valueOf($P{TARIFUNUSC}).equals("0"))
+    ? "0,00"
+    : new java.text.DecimalFormat("#,##0.00").format(new java.math.BigDecimal(String.valueOf($P{TARIFUNUSC})))
+]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="144" y="647" width="280" height="11" uuid="c1c1ff8e-835f-4936-b3ee-87f812063f52"/>
@@ -840,7 +849,10 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new java.math.BigDecimal($P{TOTALTARIFINACBG})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{TOTALTARIFINACBG} == null || String.valueOf($P{TOTALTARIFINACBG}).trim().equals("") || String.valueOf($P{TOTALTARIFINACBG}).equals("0"))
+    ? "0,00"
+    : new java.text.DecimalFormat("#,##0.00").format(new java.math.BigDecimal(String.valueOf($P{TOTALTARIFINACBG})))
+]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="432" y="6" width="12" height="11" uuid="5fe7cf34-412e-47f7-a296-de9cecf0c4ac"/>
@@ -861,7 +873,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<text><![CDATA[: Rp.]]></text>
+				<text><![CDATA[:]]></text>
 			</staticText>
 			<line>
 				<reportElement x="3" y="2" width="525" height="1" uuid="45e55376-1a90-4865-8fe2-bd3b45824e4a"/>
