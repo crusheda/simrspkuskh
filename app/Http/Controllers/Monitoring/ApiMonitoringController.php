@@ -95,7 +95,7 @@ class ApiMonitoringController extends Controller
                     $query->where('dr.NIP', $dpjp);
                 })
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
-                ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
+                // ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
                 ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
                 // ->where('jk.STATUS', 1) // STATUS RENCANA KONTROL AKTIF
 
@@ -982,17 +982,22 @@ class ApiMonitoringController extends Controller
 
             $show = DB::table('pendaftaran.pendaftaran AS pd')
                     ->leftJoin('pendaftaran.kunjungan AS k', 'k.NOPEN', '=', 'pd.NOMOR')
-                    ->leftJoin('layanan.order_detil_rad AS odr', 'odr.ORDER_ID', '=', 'k.REF')
-                    ->select('k.NOMOR AS NOMOR', 'odr.REF AS TINDAKAN')
+                    ->leftJoin('layanan.tindakan_medis AS tm','tm.KUNJUNGAN','=','k.NOMOR')
+                    ->select('k.NOMOR AS NOMOR', 'tm.ID AS TINDAKAN')
                     ->where('pd.NOMOR', $getSEP->NOPEN)
                     ->where('k.RUANGAN', '=', '102050101')
+                    ->where('tm.STATUS',1)
                     ->get();
+
+            // print_r($show);
+            // die();
 
             if ($show->isEmpty() || empty($show) || !$show) {
                 return response()->json($data, 400);
             }
 
             $listTindakan = $show->pluck('TINDAKAN')->unique(); // Collection of string
+
 
             // Inisialisasi objek PHPJasper
             $jasper = new PHPJasper;
