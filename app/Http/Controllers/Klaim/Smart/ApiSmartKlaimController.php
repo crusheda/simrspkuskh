@@ -41,14 +41,40 @@ class ApiSmartKlaimController extends Controller
                 )
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
+                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
                 ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
                 ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
                 ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
                 ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
-                ->where(function ($query) {
-                    $query->where('pk.RUANGAN', 'LIKE', '1020101%');
-                            // ->orWhere('pk.RUANGAN', 'LIKE', '1020201%');
+                // ->where(function ($query) {
+                //     $query->where('pk.RUANGAN', 'LIKE', '1020101%');
+                // })
+
+                // FILTER RUANGAN
+                ->when(in_array($pel, [1, 2, 3]), function ($query) use ($pel) {
+                    $prefix = '';
+                    switch ($pel) {
+                        case 1:
+                            $prefix = '1020101%';
+                            break;
+                        case 2:
+                            $prefix = '1020201%';
+                            break;
+                        case 3:
+                            $prefix = '1020301%';
+                            break;
+                    }
+                    $query->where('pk.RUANGAN', 'LIKE', $prefix);
                 })
+                ->when($pel == 5, function ($query) {
+                    $query->where(function ($q) {
+                        $q->where('pk.RUANGAN', 'LIKE', '1020101%')
+                            ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
+                            ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
+                    });
+                })
+
                 // ->where(function ($query) use ($tgls,$tgle) {
                 //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                 // })
@@ -56,6 +82,16 @@ class ApiSmartKlaimController extends Controller
                     $query->whereYear('pk.MASUK', $year)
                             ->whereMonth('pk.MASUK', $month);
                 })
+
+                // KHUSUS RAWAT DARURAT
+                ->when($pel == 2, function ($query) use ($pel) {
+                    $query->where(function ($q) {
+                        $q->where('tp.UTAMA', 1)
+                            ->where('tp.STATUS', 1)
+                            ->whereNull('pri.KUNJUNGAN');
+                    });
+                })
+
                 ->when($dpjp != 0, function ($query) use ($dpjp) {
                     // Hanya menambahkan where jika $dpjp bukan 0
                     $query->where('dr.NIP', $dpjp);

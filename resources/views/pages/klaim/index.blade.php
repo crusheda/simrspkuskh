@@ -73,7 +73,7 @@
                     <div class="col-md-12 mb-3">
                         <div class="form-group">
                             <label class="form-label">Jenis Perawatan</label>
-                            <select id="filter_rawat" class="form-control" disabled>
+                            <select id="filter_rawat" class="form-control">
                                 <option value="5">Semua Perawatan</option>
                                 <option value="1" selected>Rawat Jalan</option>
                                 <option value="2">Rawat Darurat</option>

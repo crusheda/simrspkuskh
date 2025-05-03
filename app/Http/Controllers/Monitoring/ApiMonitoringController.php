@@ -75,6 +75,8 @@ class ApiMonitoringController extends Controller
                 })
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
+                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
                 ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
                 ->leftJoin('medicalrecord.jadwal_kontrol AS jk','jk.KUNJUNGAN','=','pk.NOMOR')
                 ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
@@ -118,6 +120,14 @@ class ApiMonitoringController extends Controller
                         $q->where('pk.RUANGAN', 'LIKE', '1020101%')
                             ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
                             ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
+                    });
+                })
+                // KHUSUS RAWAT DARURAT
+                ->when($rawat == 2, function ($query) use ($rawat) {
+                    $query->where(function ($q) {
+                        $q->where('tp.UTAMA', 1)
+                            ->where('tp.STATUS', 1)
+                            ->whereNull('pri.KUNJUNGAN');
                     });
                 })
 
