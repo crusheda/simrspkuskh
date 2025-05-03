@@ -262,9 +262,9 @@
                 <div id="canvas"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="clear" class="btn btn-danger btn-sm">Clear</button>
-                <button type="button" class="btn btn-primary" onclick="storeTTDrj()">Simpan</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" id="clear" class="btn btn-link-danger"><i class="fa fa-erase me-1 align-middle"></i> Kosongkan</button>
+                <button type="button" class="btn btn-primary" onclick="storeTTDrj()"><i class="fa fa-save me-1 align-middle"></i> Simpan</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times me-1 align-middle"></i> Tutup</button>
             </div>
         </div>
     </div>

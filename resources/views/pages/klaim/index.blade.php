@@ -14,7 +14,7 @@
             </div>
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h2 class="mb-0">Digital Smart Klaim</h2>
+                    <h2 class="mb-0">Digital <b class="text-primary">Smart Klaim</b></h2>
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@
                 <h5><i class="ti ti-list-search text-primary me-1"></i> Pencarian No.SEP</h5>
                 <div class="input-group my-3 mb-0">
                     <input type="text" class="form-control" placeholder="Masukkan No.SEP Pasien" id="sep_px"/>
-                    <button class="btn btn-outline-secondary" type="button" id="btn-cari" onclick="cariSep()">Cari</button>
+                    <button class="btn btn-outline-secondary" type="button" id="btn-cari" onclick="cariSep()"><i class="fas fa-search align-middle me-1"></i> Cari</button>
                 </div>
             </div>
         </div>
@@ -265,30 +265,42 @@
     }
 
     function cariSep() {
+        $('#btn-cari').prop('disabled',true).find('i').removeClass('fa-search').addClass('fa-sync fa-spin');
         sepPX = $('#sep_px').val();
 
-        $.ajax({
-            url: `/api/klaim/${sepPX}/verif`,
-            type: 'GET',
-            dataType: 'json',
-            success: function(res) {
-                iziToast.success({
-                    title: 'Pesan System!',
-                    message: res.message,
-                    position: 'topRight'
-                });
-                // console.log(res);
-                var url = '/klaim/'+res.kunjungan;
-                window.location.href = url;
-            },
-            error: function(xhr) {
-                iziToast.error({
-                    title: 'Pesan System!',
-                    message: xhr.responseText,
-                    position: 'topRight'
-                });
-            }
-        })
+        if (sepPX.length == 19) {
+            $.ajax({
+                url: `/api/klaim/${sepPX}/verif`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    iziToast.success({
+                        title: 'Pesan System!',
+                        message: res.message,
+                        position: 'topRight'
+                    });
+                    // console.log(res);
+                    var url = '/klaim/'+res.kunjungan;
+                    window.location.href = url;
+                    $('#btn-cari').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-search');
+                },
+                error: function(xhr) {
+                    iziToast.error({
+                        title: 'Pesan System!',
+                        message: xhr.responseText,
+                        position: 'topRight'
+                    });
+                    $('#btn-cari').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-search');
+                }
+            })
+        } else {
+            iziToast.error({
+                title: 'Pesan System!',
+                message: 'Nomor SEP (Surat Eligibilitas Peserta) Tidak Valid',
+                position: 'topRight'
+            });
+            $('#btn-cari').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-search');
+        }
     }
 
 </script>
