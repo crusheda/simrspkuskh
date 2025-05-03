@@ -100,9 +100,6 @@ class ApiSmartKlaimController extends Controller
                 ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
                 ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
                 ->where('pk.STATUS', 2) // KUNJUNGAN SELESAI
-                // ->when($status != 5, function ($query) use ($status) { // 0=BATAL;1=MASIH DILAYANI;2=SELESAI;5=ALL
-                //     $query->where('pk.STATUS', $status);
-                // })
                 ->where('pk.KELUAR', '!=', null)
                 ->orderBy('pk.MASUK','DESC')
                 ->get();
@@ -242,6 +239,38 @@ class ApiSmartKlaimController extends Controller
         ];
 
         return response()->json($data, 200);
+    }
+
+    function verifSep($sep)
+    {
+        $show = DB::table('pendaftaran.penjamin AS pj')
+                    ->leftJoin('pendaftaran.kunjungan AS pk','pk.NOPEN','=','pj.NOPEN')
+                    ->select('pk.NOMOR')
+                    ->where(function ($query) {
+                        $query->where('pk.RUANGAN', 'LIKE', '1020101%')
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
+                    })
+                    ->where('pk.BARU', 1) // KUNJUNGAN BARU
+                    ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
+                    ->where('pj.NOMOR', $sep)
+                    ->orderBy('pk.MASUK','ASC')
+                    ->first();
+
+        // print_r($show);
+        // die();
+        if ($show) {
+            $data = [
+                'message' => 'No. SEP '.$sep.' Ditemukan',
+                'kunjungan' => $show->NOMOR,
+            ];
+            $status = 200;
+        } else {
+            $data = 'No. SEP '.$sep.' Tidak Ditemukan';
+            $status = 400;
+        }
+
+        return response()->json($data, $status);
     }
 
     function getKlaim($kunjungan)

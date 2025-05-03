@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CetakHasilRad" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="814cbf69-4de0-447c-9225-d2d48d7c9ef4">
 	<property name="ireport.zoom" value="1.1"/>
 	<property name="ireport.x" value="0"/>
@@ -444,7 +444,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				</textElement>
 				<text><![CDATA[___________________________________________________________________________________________]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
+			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="11" y="26" width="534" height="20" uuid="4958fbb3-9cfe-4d1d-a1b6-e73b60473cd5"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="9"/>
@@ -467,7 +467,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				</textElement>
 				<text><![CDATA[HASIL PEMERIKSAAN :]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
+			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="10" y="23" width="535" height="18" uuid="2035ad89-0dee-4d2e-8511-8c6d36cb0d65"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="9"/>
@@ -476,7 +476,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 			</textField>
 		</band>
 		<band height="43">
-			<textField isStretchWithOverflow="true">
+			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="11" y="23" width="535" height="18" uuid="40266b40-ce61-4766-baa1-6800f847eac5"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="9"/>
@@ -492,7 +492,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 			</staticText>
 		</band>
 		<band height="50">
-			<textField isStretchWithOverflow="true">
+			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="11" y="26" width="533" height="21" uuid="39d3f8ae-5b5a-4fc9-9a42-9f721e376efa"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="9"/>

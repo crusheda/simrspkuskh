@@ -252,7 +252,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_sep').prop('disabled',false);
+            $('#ck_sep').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -271,7 +271,7 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_sep').prop('disabled',false);
+            $('#ck_sep').prop('checked', false).prop('disabled',false);
         });
     }
 
@@ -291,7 +291,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_resume').prop('disabled',false);
+            $('#ck_resume').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -310,7 +310,7 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_resume').prop('disabled',false);
+            $('#ck_resume').prop('checked', false).prop('disabled',false);
         });
     }
 
@@ -330,7 +330,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_skdp').prop('disabled',false);
+            $('#ck_skdp').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -349,7 +349,7 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_skdp').prop('disabled',false);
+            $('#ck_skdp').prop('checked', false).prop('disabled',false);
         });
     }
 
@@ -369,7 +369,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_billing').prop('disabled',false);
+            $('#ck_billing').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -388,7 +388,7 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_billing').prop('disabled',false);
+            $('#ck_billing').prop('checked', false).prop('disabled',false);
         });
     }
 
@@ -408,7 +408,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_individual').prop('disabled',false);
+            $('#ck_individual').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -427,7 +427,7 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_individual').prop('disabled',false);
+            $('#ck_individual').prop('checked', false).prop('disabled',false);
         });
     }
 
@@ -447,7 +447,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_laboratorium').prop('disabled',false);
+            $('#ck_laboratorium').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -466,7 +466,7 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_laboratorium').prop('disabled',false);
+            $('#ck_laboratorium').prop('checked', false).prop('disabled',false);
         });
     }
 
@@ -486,7 +486,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_radiologi').prop('disabled',false);
+            $('#ck_radiologi').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -505,7 +505,7 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_radiologi').prop('disabled',false);
+            $('#ck_radiologi').prop('checked', false).prop('disabled',false);
         });
     }
 
@@ -525,7 +525,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_triage').prop('disabled',false);
+            $('#ck_triage').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -544,7 +544,7 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_triage').prop('disabled',false);
+            $('#ck_triage').prop('checked', false).prop('disabled',false);
         });
     }
     function operasi(kunjungan) {
@@ -563,7 +563,7 @@
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_operasi').prop('disabled',false);
+            $('#ck_operasi').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -582,7 +582,7 @@
             });
             console.error(error);
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_operasi').prop('disabled',false);
+            $('#ck_operasi').prop('checked', false).prop('disabled',false);
         });
     }
 

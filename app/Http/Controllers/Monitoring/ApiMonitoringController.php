@@ -134,6 +134,7 @@ class ApiMonitoringController extends Controller
                 // FILTER STATUS KUNJUNGAN
                 ->when($status != 5, function ($query) use ($status) { // 0=BATAL;1=MASIH DILAYANI;2=SELESAI;5=ALL
                     $query->where('pk.STATUS', $status);
+                            // ->where('pp.STATUS', $status);
                 })
                 // ->where('pk.KELUAR', null)
                 ->orderBy('pk.MASUK','DESC')
@@ -247,6 +248,9 @@ class ApiMonitoringController extends Controller
             //         ->where('pk.NOMOR',$kunjungan)
             //         ->first();
             $show = DB::select('CALL simrspku_klaim.CetakSKDP(?)',[$kunjungan]);
+            if (empty($show)) {
+                return response()->json($data, 400);
+            }
             // ----------------------------------------------------------------------
             // print_r($show);
             // die();
@@ -375,6 +379,9 @@ class ApiMonitoringController extends Controller
                     ->where('pk.NOMOR',$kunjungan)
                     ->first();
             $show = DB::select('CALL simrspku_klaim.CetakSEP(?)',[$getSEP->NOSEP]);
+            if (empty($show)) {
+                return response()->json($data, 400);
+            }
             // ----------------------------------------------------------------------
             $getTgl = Carbon::parse($show[0]->TGLSEP);
             $tgl = $getTgl->isoFormat('DD');
@@ -521,6 +528,9 @@ class ApiMonitoringController extends Controller
             $show = DB::select('CALL simrspku_klaim.CetakResumeRJ(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
             $obat = DB::select('CALL simrspku_klaim.CetakObatRJ(?)',[$getRESUMERJ->NOPEN]);
 
+            if (empty($show)) {
+                return response()->json($data, 400);
+            }
             $keluhan    = $this->cleanText($show[0]->KELUHAN);
             $assesment  = $this->cleanText($show[0]->ASSESMENT);
             $subyektif  = $this->cleanText($show[0]->SUBYEKTIF);
@@ -644,6 +654,9 @@ class ApiMonitoringController extends Controller
                     ->where('pk.NOMOR',$kunjungan)
                     ->first();
             $show = DB::select('CALL simrspku_klaim.CetakLapIndividual5(?,?)',[$getSEP->NOPEN,3]);
+            if (empty($show)) {
+                return response()->json($data, 400);
+            }
             $CETAK_HEADER = "1";
             // ----------------------------------------------------------------------
             $getTgl = Carbon::parse($show[0]->TGLREG);
@@ -763,6 +776,9 @@ class ApiMonitoringController extends Controller
             // die();
             // $show = DB::select('CALL simrspku_klaim.CetakRincianPasienPerDokterCustom(?,?)',[$getSEP->TAGIHAN,$getSEP->STATUS]);
             // dd($show);
+            if (!$getSEP) {
+                return response()->json($data, 400);
+            }
             // ----------------------------------------------------------------------
             $getTgl = Carbon::parse($getSEP->TANGGALMASUK);
             $tgl = $getTgl->isoFormat('DD');
@@ -946,7 +962,7 @@ class ApiMonitoringController extends Controller
         }
 
         function compileRad($kunjungan)
-        {
+            {
             $getSEP = DB::table('pendaftaran.kunjungan AS pk')
                     ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                     ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
@@ -965,12 +981,16 @@ class ApiMonitoringController extends Controller
             $tahun = $getTgl->isoFormat('YYYY');
 
             $show = DB::table('pendaftaran.pendaftaran AS pd')
-            ->leftJoin('pendaftaran.kunjungan AS k', 'k.NOPEN', '=', 'pd.NOMOR')
-            ->leftJoin('layanan.order_detil_rad AS odr', 'odr.ORDER_ID', '=', 'k.REF')
-            ->select('k.NOMOR AS NOMOR', 'odr.REF AS TINDAKAN')
-            ->where('pd.NOMOR', $getSEP->NOPEN)
-            ->where('k.RUANGAN', '=', '102050101')
-            ->get();
+                    ->leftJoin('pendaftaran.kunjungan AS k', 'k.NOPEN', '=', 'pd.NOMOR')
+                    ->leftJoin('layanan.order_detil_rad AS odr', 'odr.ORDER_ID', '=', 'k.REF')
+                    ->select('k.NOMOR AS NOMOR', 'odr.REF AS TINDAKAN')
+                    ->where('pd.NOMOR', $getSEP->NOPEN)
+                    ->where('k.RUANGAN', '=', '102050101')
+                    ->get();
+
+            if ($show->isEmpty() || empty($show) || !$show) {
+                return response()->json($data, 400);
+            }
 
             $listTindakan = $show->pluck('TINDAKAN')->unique(); // Collection of string
 
@@ -1009,6 +1029,8 @@ class ApiMonitoringController extends Controller
 
                 // Proses JasperReport untuk setiap PNOMOR
                 $jasper->process($input, $output, $options)->execute();
+                // print_r($jasper);
+                // die();
                 $tempPaths[] = "{$output}.pdf"; // Simpan path PDF sementara
             }
 
@@ -1084,6 +1106,9 @@ class ApiMonitoringController extends Controller
                             ->where('tr.STATUS', 2)
                             ->first();
             $show = DB::select('CALL simrspku_klaim.CetakTriage(?)',[$getData->PID]);
+            if ($show->isEmpty()) {
+                return response()->json($data, 400);
+            }
             // ----------------------------------------------------------------------
             $getTgl = Carbon::parse($getData->TANGGALMASUK);
             $tgl = $getTgl->isoFormat('DD');

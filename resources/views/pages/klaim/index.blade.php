@@ -61,8 +61,8 @@
             <div class="card-body">
                 <h5><i class="ti ti-list-search text-primary me-1"></i> Pencarian No.SEP</h5>
                 <div class="input-group my-3 mb-0">
-                    <input type="text" class="form-control" placeholder="Masukkan No.SEP Pasien" />
-                    <button class="btn btn-outline-secondary" type="button">Cari</button>
+                    <input type="text" class="form-control" placeholder="Masukkan No.SEP Pasien" id="sep_px"/>
+                    <button class="btn btn-outline-secondary" type="button" id="btn-cari" onclick="cariSep()">Cari</button>
                 </div>
             </div>
         </div>
@@ -260,6 +260,33 @@
                 // Bisa juga tampilkan alert
                 alert('Gagal mengambil data. Coba lagi.');
                 $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
+            }
+        })
+    }
+
+    function cariSep() {
+        sepPX = $('#sep_px').val();
+
+        $.ajax({
+            url: `/api/klaim/${sepPX}/verif`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                iziToast.success({
+                    title: 'Pesan System!',
+                    message: res.message,
+                    position: 'topRight'
+                });
+                // console.log(res);
+                var url = '/klaim/'+res.kunjungan;
+                window.location.href = url;
+            },
+            error: function(xhr) {
+                iziToast.error({
+                    title: 'Pesan System!',
+                    message: xhr.responseText,
+                    position: 'topRight'
+                });
             }
         })
     }
