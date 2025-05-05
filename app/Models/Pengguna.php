@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 class Pengguna extends Authenticatable
 {
+    use HasRoles;
+
     protected $connection = 'db_aplikasi';
     protected $table = 'pengguna';
-
+    protected $guard_name = 'web';
     protected $primaryKey = 'ID'; // atau sesuaikan
     public $timestamps = false;
 

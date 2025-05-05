@@ -3,7 +3,10 @@
 use Illuminate\Support\Facades\Route;
 
 // INITIALIZE PATH CONTROLLER
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Setting\ProfilController;
+use App\Http\Controllers\Setting\RolesController;
+use App\Http\Controllers\Setting\PermissionsController;
 use App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController;
 use App\Http\Controllers\Pelayanan\Pasien\PasienController;
 use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
@@ -32,12 +35,15 @@ Auth::routes(['register' => false]); // Cannot Access /register
 Route::group(['middleware' => ['web', 'auth']], function() {
     // DASHBOARD
     Route::get('/', function () { return redirect()->route('dashboard'); });
-    Route::get('dashboard', function () {
-        return view('pages.dashboard.index');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Route::get('dashboard', function () {
+    //     return view('pages.dashboard.index');
+    // })->name('dashboard');
 
     // SETTING - PROFIL
     Route::get('setting/profil', [ProfilController::class, 'index'])->name('profil');
+    Route::get('setting/roles', [RolesController::class, 'index'])->name('roles');
+    Route::get('setting/permissions', [PermissionsController::class, 'index'])->name('permissions');
 
     // PELAYANAN
         // KUNJUNGAN PASIEN

@@ -23,6 +23,26 @@
                     </a>
                 </li>
                 <li class="pc-item pc-caption">
+                    <label data-i18n="Navigation">Setting</label>
+                    <i class="ph-duotone ph-gauge"></i>
+                </li>
+                <li class="pc-item {{ request()->routeIs('roles') ? 'active' : '' }}">
+                    <a href="{{ route('roles') }}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-tree-structure"></i>
+                        </span>
+                        <span class="pc-mtext" data-i18n="Jabatan">Jabatan</span>
+                    </a>
+                </li>
+                <li class="pc-item {{ request()->routeIs('permissions') ? 'active' : '' }}">
+                    <a href="{{ route('permissions') }}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-user-gear"></i>
+                        </span>
+                        <span class="pc-mtext" data-i18n="Akses">Akses</span>
+                    </a>
+                </li>
+                <li class="pc-item pc-caption">
                     <label>Pelayanan</label>
                     <i class="ph-duotone ph-chart-pie"></i>
                 </li>

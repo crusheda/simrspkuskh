@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 // INITIALIZATION
 use App\Http\Controllers\Setting\ProfilController;
+use App\Http\Controllers\Setting\RolesController;
+use App\Http\Controllers\Setting\PermissionsController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Klaim\Smart\ApiSmartKlaimController;
 use App\Http\Controllers\Monitoring\MonitoringController;
@@ -23,6 +25,16 @@ Route::get('/surkon/table', [App\Http\Controllers\Simgos\RegOnline\surkonControl
 Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController::class, 'table'])->name('simgos.kunjungan.pasien');
 
 //-----------------------------------------------------------------    A  P  I    -----------------------------------------------------------------
+// SETTING
+    // ROLES - JABATAN
+    Route::get('roles/data', [RolesController::class, 'showRoles'])->name('roles.data');
+    Route::post('roles/create', [RolesController::class, 'createRoles'])->name('roles.create');
+    Route::post('roles/update', [RolesController::class, 'updateRoles'])->name('roles.update');
+    Route::delete('roles/{id}/delete', [RolesController::class, 'deleteRoles'])->name('roles.delete');
+    Route::get('roles/user/table', [RolesController::class, 'table'])->name('roles.user.table');
+    Route::post('roles/user/update', [RolesController::class, 'updateRolesUser'])->name('roles.user.update');
+    // PERMISSION - AKSES
+
 // DIGITAL
 Route::get('monitoring/rj/{rawat}/{status}/{tgls}/{tgle}/{dpjp}', [ApiMonitoringController::class, 'tableRj'])->name('api.monitoring.rj');
     // MONITORING - KLAIM

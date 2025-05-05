@@ -7,6 +7,7 @@
     <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
         <i class="ti ti-power me-1"></i> Logout
     </a>
+    {{-- {{ auth()->user()->getAllPermissions() }} --}}
 @endif
 
 <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">

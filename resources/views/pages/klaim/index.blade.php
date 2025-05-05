@@ -9,12 +9,12 @@
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Digital</a></li>
-                    <li class="breadcrumb-item" aria-current="page">Smart Klaim</li>
+                    <li class="breadcrumb-item" aria-current="page">Smart Claim</li>
                 </ul>
             </div>
             <div class="col-md-12">
                 <div class="page-header-title">
-                    <h2 class="mb-0">Digital <b class="text-primary">Smart Klaim</b></h2>
+                    <h2 class="mb-0">Digital <b class="text-primary">Smart Claim</b></h2>
                 </div>
             </div>
         </div>
@@ -27,7 +27,7 @@
     <div class="col-xl-8">
         <div class="card">
             <div class="card-header align-items-center">
-                <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Tabel Klaim <span class="ms-2 f-14 px-2 badge bg-light-secondary rounded-pill">1</span></h5>
+                <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Tabel Claim <span class="ms-2 f-14 px-2 badge bg-light-secondary rounded-pill">1</span></h5>
             </div>
             <div class="card-body p-0 table-body">
                 <div class="table-responsive">
