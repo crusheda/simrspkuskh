@@ -521,7 +521,8 @@ class ApiMonitoringController extends Controller
             $getRESUMERJ = DB::table('pendaftaran.kunjungan AS pk')
             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
             ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
-            ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR')
+            ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+            ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR','pk.RUANGAN AS RUANGAN')
             ->where('pk.NOMOR',$kunjungan)
             ->first();
 
@@ -560,7 +561,6 @@ class ApiMonitoringController extends Controller
 
             // ----------------------------------------------------------------------
 
-            $input = public_path().'/doc/input/resumeRJ/CetakResumeRJ2.jrxml';
             $path = 'files/resume/RJ/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
             $output = storage_path().'/app/public/'.$path;
 
@@ -583,55 +583,48 @@ class ApiMonitoringController extends Controller
             }
 
             // ----------------------------------------------------------------------
-            // $table_obat = [
-            //     ['NAMAOBAT' => 'coba1','ATURANPAKAI' => 'coba2'],
-            // ];
+            if (str_starts_with($getRESUMERJ->RUANGAN, '1020201')) {
+                $input = public_path().'/doc/input/resumeRD/CetakResumeRadar.jrxml';
+                $options = [
+                    'format' => ['pdf'],
+                    'params' => [
+                        'PNOPEN' => $getRESUMERJ->NOPEN,
+                        'IMAGES_PATH' => public_path()."/doc/input/resumeRD/",
+                        'IMAGES_PATH2' => $imagePath2,
+                    ],
+                    'db_connection' => [
+                        'driver'   => 'mysql',
+                        'host'     => env('DB_HOST'),
+                        'port'     => env('DB_PORT'),
+                        'username' => env('DB_USERNAME'),
+                        'password' => env('DB_PASSWORD'),
+                        'database' => env('DB_DATABASE_CUSTOM'),
+                    ],
+                ];
+            } else {
+                $input = public_path().'/doc/input/resumeRJ/CetakResumeRJ.jrxml';
+                $options = [
+                    'format' => ['pdf'],
+                    'params' => [
+                        'PNOPEN' => $getRESUMERJ->NOPEN,
+                        'PKUNJUNGAN' => $getRESUMERJ->NOMOR,
+                        'IMAGES_PATH' => public_path()."/doc/input/resumeRJ/",
+                        'IMAGES_PATH2' => $imagePath2,
+                    ],
+                    'db_connection' => [
+                        'driver'   => 'mysql',
+                        'host'     => env('DB_HOST'),
+                        'port'     => env('DB_PORT'),
+                        'username' => env('DB_USERNAME'),
+                        'password' => env('DB_PASSWORD'),
+                        'database' => env('DB_DATABASE_CUSTOM'),
+                    ],
+                ];
+            }
 
-            // ----------------------------------------------------------------------
-            $jsonPath = storage_path('/app/public/files/resume/RJ/'.$tahun.'/'.$bulan.'/'.$tgl.'/obat_table.json');
-            // file_put_contents($jsonPath, json_encode($table_obat));
-            $options = [
-                'format' => ['pdf'], // 'xls' / 'rtf
-                'params' => [
-                    'NAMAINSTANSI' => $show[0]->NAMAINSTANSI,
-                    'ALAMAT' => $show[0]->ALAMAT,
-                    'NORM' => $show[0]->NORM,
-                    'DOKTER' => $show[0]->DOKTER,
-                    'IMAGES_PATH' => public_path()."/doc/input/resumeRJ/",
-                    'IMAGES_PATH2' => $imagePath2,
-                    'NAMAPASIEN' => $show[0]->NAMAPASIEN,
-                    'TANGGAL_LAHIR' => $show[0]->TANGGAL_LAHIR,
-                    'TGLMASUK' => $show[0]->TGLMASUK,
-                    'UNIT' => $show[0]->UNIT,
-                    'KEADAAN_UMUM' => $show[0]->KEADAAN_UMUM,
-                    'DARAH' => $show[0]->DARAH,
-                    'FREKUENSI_NADI' => $show[0]->FREKUENSI_NADI,
-                    'FREKUENSI_NAFAS' => $show[0]->FREKUENSI_NAFAS,
-                    'SUHU' => $show[0]->SUHU,
-                    'ABN' => $show[0]->ABN,
-                    'SATURASIO2' => $show[0]->SATURASIO2,
-                    'TGLPERIKSA' => $show[0]->TGLPERIKSA,
-                    'JAMPERIKSA' => $show[0]->JAMPERIKSA,
-                    'ASSESMENT' => $assesment,
-                    'OBYEKTIF' => $obyektif,
-                    'PLANNING' => $planning,
-                    'INSTRUKSI' => $instruksi,
-                    'TINDAKAN' => $show[0]->TINDAKAN,
-                    'KONSUL' => $show[0]->KONSUL,
-                    'DOKTER' => $show[0]->DOKTER,
-                    'KELUHAN' => $keluhan,
-                    'SUBYEKTIF' => $subyektif,
-
-                    'NAMAOBAT' => $NAMA_OBAT,
-                ],
-                // Data untuk tabel obat, bukan untuk report utama
-                // 'data_source' => $jsonPath
-            ];
             // print_r($options);
             // die();
-            // if (!file_exists(storage_path("app/public/".$ttd->signature_path))) {
-            //     dd('File not found:', storage_path("app/public/".$ttd->signature_path));
-            // }
+
             $jasper = new PHPJasper;
 
             $jasper->process(
