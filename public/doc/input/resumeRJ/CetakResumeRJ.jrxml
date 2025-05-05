@@ -67,8 +67,7 @@
 		</box>
 	</style>
 	<subDataset name="Table Dataset 1" uuid="1a5c15e4-4a7c-4858-9fc4-b371c59c90f7">
-		<parameter name="NAMAOBAT" class="java.lang.String"/>
-		<parameter name="ATURANPAKAI" class="java.lang.String"/>
+		<parameter name="PNOPEN" class="java.lang.String"/>
 		<queryString>
 			<![CDATA[call medicalrecord.CetakObatRJ($P{PNOPEN})]]>
 		</queryString>
@@ -90,38 +89,14 @@
 		<field name="STATUSLAYANAN" class="java.lang.Integer"/>
 	</subDataset>
 	<parameter name="IMAGES_PATH" class="java.lang.String"/>
-	<parameter name="IDPPK" class="java.lang.String"/>
-	<parameter name="NAMAINSTANSI" class="java.lang.String"/>
-	<parameter name="ALAMAT" class="java.lang.String"/>
-	<parameter name="KOTA" class="java.lang.String"/>
-	<parameter name="NORM" class="java.lang.String"/>
-	<parameter name="NOPEN" class="java.lang.String"/>
-	<parameter name="NAMAPASIEN" class="java.lang.String"/>
-	<parameter name="TANGGAL_LAHIR" class="java.lang.String"/>
-	<parameter name="JENIS_KELAMIN" class="java.lang.String"/>
-	<parameter name="KUNJUNGAN" class="java.lang.String"/>
-	<parameter name="TGLMASUK" class="java.lang.String"/>
-	<parameter name="UNIT" class="java.lang.String"/>
-	<parameter name="KELUHAN" class="java.lang.String"/>
-	<parameter name="KEADAAN_UMUM" class="java.lang.String"/>
-	<parameter name="DARAH" class="java.lang.String"/>
-	<parameter name="FREKUENSI_NADI" class="java.lang.String"/>
-	<parameter name="FREKUENSI_NAFAS" class="java.lang.String"/>
-	<parameter name="SUHU" class="java.lang.String"/>
-	<parameter name="TGLPERIKSA" class="java.lang.String"/>
-	<parameter name="JAMPERIKSA" class="java.lang.String"/>
-	<parameter name="ASSESMENT" class="java.lang.String"/>
-	<parameter name="SUBYEKTIF" class="java.lang.String"/>
-	<parameter name="OBYEKTIF" class="java.lang.String"/>
-	<parameter name="PLANNING" class="java.lang.String"/>
-	<parameter name="INSTRUKSI" class="java.lang.String"/>
-	<parameter name="TINDAKAN" class="java.lang.String"/>
-	<parameter name="KONSUL" class="java.lang.String"/>
-	<parameter name="DOKTER" class="java.lang.String"/>
-	<parameter name="ABN" class="java.lang.String"/>
-	<parameter name="SATURASIO2" class="java.lang.String"/>
+	<parameter name="CETAK_HEADER" class="java.lang.String"/>
+	<parameter name="PNOPEN" class="java.lang.String"/>
+	<parameter name="PKUNJUNGAN" class="java.lang.String"/>
+	<parameter name="REQUEST_REPORT_ID" class="java.lang.String"/>
+	<parameter name="PNIP" class="java.lang.String"/>
+	<parameter name="IMAGES_PATH2" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[]]>
+		<![CDATA[call simrspku_klaim.CetakMR5Custom($P{PNOPEN},$P{PKUNJUNGAN})]]>
 	</queryString>
 	<field name="IDPPK" class="java.lang.Integer">
 		<property name="com.jaspersoft.studio.field.name" value="PPK"/>
@@ -449,7 +424,7 @@
 			<staticText>
 				<reportElement x="440" y="0" width="73" height="13" uuid="d90e2924-1691-4c83-a0d1-1ac79f1b1b0a"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[MR. 5/R.J/E/2014]]></text>
 			</staticText>
@@ -472,7 +447,7 @@
 					<rightPen lineWidth="0.25" lineColor="#030303"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="14" isBold="true"/>
+					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[RESUME MEDIS RAWAT JALAN]]></text>
 			</staticText>
@@ -498,7 +473,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{TGLMASUK}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TGLMASUK}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="1" y="111" width="170" height="14" uuid="9afb124c-16ae-4840-8838-b1fa80aa3513"/>
@@ -521,7 +496,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{NAMAPASIEN}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{NAMAPASIEN}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="171" y="83" width="171" height="14" uuid="db34bdba-7ab4-487f-b20a-8cd53f387029"/>
@@ -538,7 +513,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{NORM}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{NORM}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="171" y="111" width="171" height="14" uuid="a7474227-1f6d-46ca-9fcc-9e63c6707bee"/>
@@ -558,7 +533,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{TANGGAL_LAHIR}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TANGGAL_LAHIR}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="342" y="83" width="171" height="28" uuid="59a5fb24-1c29-43cd-b441-159c93234ce8"/>
@@ -582,7 +557,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="Arial" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{UNIT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{UNIT}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="1" y="160" width="119" height="14" uuid="eeed9be8-3c94-462a-bab5-3dcc4c02e794"/>
@@ -592,14 +567,14 @@
 					<bottomPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[[Anamnesis] Keluhan Utama]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="1" y="139" width="512" height="21" uuid="261471bd-01a5-4e63-b554-deca2ddb48ac"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="12" isBold="true"/>
+					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[I. Pengkajian Keperawatan]]></text>
 			</staticText>
@@ -624,7 +599,7 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{KELUHAN}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{KELUHAN}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="112" y="0" width="401" height="36" uuid="a5791f63-d35f-41ff-9c0d-ca943a18753d"/>
@@ -633,9 +608,9 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="20" isBold="true"/>
+					<font fontName="SansSerif" size="20" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{NAMAINSTANSI}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{NAMAINSTANSI}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="112" y="36" width="401" height="20" uuid="34e6988b-1c91-4fc5-ab58-d2951e4dbc36"/>
@@ -645,18 +620,8 @@
 				<textElement>
 					<font fontName="Arial" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ALAMAT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ALAMAT}]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="32" y="3" width="52" height="50" uuid="21ffebd1-29b3-425a-a1cd-ad1b9c7c2f00">
-					<printWhenExpression><![CDATA[($P{CETAK_HEADER}.equalsIgnoreCase( "1" ) ? true : false)]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-				</box>
-				<imageExpression><![CDATA[$P{IMAGES_PATH} +  "logo-pku.png"]]></imageExpression>
-			</image>
 			<staticText>
 				<reportElement mode="Transparent" x="1" y="0" width="111" height="56" uuid="a15ff943-b49a-488e-84fa-b11769a414fc"/>
 				<box>
@@ -670,6 +635,14 @@
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
+			<image>
+				<reportElement x="32" y="3" width="52" height="50" uuid="21ffebd1-29b3-425a-a1cd-ad1b9c7c2f00"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{IMAGES_PATH} + "logo-pku.png"]]></imageExpression>
+			</image>
 		</band>
 		<band height="82" splitType="Stretch">
 			<staticText>
@@ -680,7 +653,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tanda Vital]]></text>
 			</staticText>
@@ -699,7 +672,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{DARAH}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DARAH}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="1" y="43" width="88" height="13" uuid="670dad31-fcf5-4c29-9c15-981d855ab5e0"/>
@@ -716,7 +689,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{FREKUENSI_NADI}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{FREKUENSI_NADI}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="1" y="56" width="88" height="13" uuid="96e2b37d-0d56-46ea-94dd-d6b46817207a"/>
@@ -733,7 +706,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{SUHU}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SUHU}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="1" y="69" width="88" height="13" uuid="fd4e9fa8-0521-45d3-bd4f-2ce2ef5cc576"/>
@@ -754,7 +727,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{FREKUENSI_NAFAS}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{FREKUENSI_NAFAS}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="89" y="30" width="7" height="13" uuid="c8e88944-fbba-4e66-afbb-bfcb1c657969"/>
@@ -830,7 +803,7 @@
 					<rightPen lineWidth="0.25" lineStyle="Solid"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="10" isBold="true"/>
+					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Pemeriksaan Umum]]></text>
 			</staticText>
@@ -893,7 +866,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{SATURASIO2}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SATURASIO2}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###;(#,##0.###-)" isBlankWhenNull="true">
 				<reportElement x="370" y="43" width="143" height="13" uuid="ec31698a-358f-4548-b71c-97e9a98b9b6e"/>
@@ -903,7 +876,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ABN}=="2"?"Ya":"Tidak"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ABN}=="2"?"Ya":"Tidak"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.###;(#,##0.###-)" isBlankWhenNull="true">
 				<reportElement x="370" y="56" width="143" height="13" uuid="31376aeb-2fb3-46b5-b333-4742392f4b97"/>
@@ -913,7 +886,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{KEADAAN_UMUM}==""?"-":$F{KEADAAN_UMUM}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{KEADAAN_UMUM}==""?"-":$F{KEADAAN_UMUM}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="260" y="69" width="253" height="13" uuid="9803642e-b387-4dd8-bac7-4e5146a32d3b"/>
@@ -934,7 +907,7 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Jam :]]></text>
 			</staticText>
@@ -949,12 +922,12 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{JAMPERIKSA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{JAMPERIKSA}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="1" y="0" width="512" height="24" uuid="aee931b5-6961-4eec-b174-cc1ba931270f"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="12" isBold="true"/>
+					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[II. Pengkajian Medis]]></text>
 			</staticText>
@@ -968,7 +941,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Waktu]]></text>
 			</staticText>
@@ -983,7 +956,7 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{TGLPERIKSA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TGLPERIKSA}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="88" y="24" width="42" height="13" uuid="7b103678-9d87-468e-aa91-bed050f6e6b8"/>
@@ -994,7 +967,7 @@
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tanggal :]]></text>
 			</staticText>
@@ -1012,7 +985,7 @@
 				<textElement verticalAlignment="Top" markup="html">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{ASSESMENT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ASSESMENT}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="87" height="13" uuid="abb1e77d-9d0b-457f-af08-2984aa4b77aa">
@@ -1024,7 +997,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Assesment (A)]]></text>
 			</staticText>
@@ -1038,7 +1011,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Subyektif (S)]]></text>
 			</staticText>
@@ -1052,7 +1025,7 @@
 				<textElement verticalAlignment="Top" markup="html">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{SUBYEKTIF}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SUBYEKTIF}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="13">
@@ -1064,7 +1037,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Obyektif (O)]]></text>
 			</staticText>
@@ -1078,7 +1051,7 @@
 				<textElement verticalAlignment="Top" markup="html">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{OBYEKTIF}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{OBYEKTIF}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="13">
@@ -1090,7 +1063,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Planning (P)]]></text>
 			</staticText>
@@ -1106,7 +1079,7 @@
 				<textElement verticalAlignment="Top" markup="html">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{PLANNING}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PLANNING}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="13">
@@ -1119,7 +1092,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Instruksi (I)]]></text>
 			</staticText>
@@ -1135,7 +1108,7 @@
 				<textElement markup="html">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{INSTRUKSI}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{INSTRUKSI}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="13">
@@ -1149,7 +1122,7 @@
 				<textElement verticalAlignment="Top" markup="html">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{TINDAKAN}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TINDAKAN}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="87" height="13" uuid="8f14a7ce-d4b7-447f-b30f-fcf88edeb1a3"/>
@@ -1159,7 +1132,7 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Tindakan]]></text>
 			</staticText>
@@ -1175,7 +1148,7 @@
 				<textElement verticalAlignment="Top" markup="html">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{KONSUL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{KONSUL} == null ? "-" : $F{KONSUL}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="87" height="13" uuid="2a5929d5-81fc-4f4a-89b1-b318e65f9e74"/>
@@ -1186,14 +1159,14 @@
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
+					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dirujuk / Konsul ke]]></text>
 			</staticText>
 		</band>
-		<band height="70">
+		<band height="83">
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="1" y="0" width="213" height="70" uuid="8dee6137-53fc-44a2-8141-7dda77b7f3fe"/>
+				<reportElement stretchType="RelativeToBandHeight" x="1" y="0" width="213" height="81" uuid="8dee6137-53fc-44a2-8141-7dda77b7f3fe"/>
 				<box>
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
@@ -1204,10 +1177,10 @@
 				</textElement>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="500" y="0" width="13" height="60" uuid="9606c06c-e285-4365-8561-9161fdf74a8f"/>
+				<reportElement stretchType="RelativeToBandHeight" x="214" y="0" width="299" height="81" uuid="9606c06c-e285-4365-8561-9161fdf74a8f"/>
 				<box>
 					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1215,8 +1188,10 @@
 				</textElement>
 			</textField>
 			<staticText>
-				<reportElement x="1" y="0" width="213" height="12" uuid="e710ab04-1841-4b00-90b6-37620a5d7bd3"/>
-				<box>
+				<reportElement x="1" y="0" width="213" height="16" uuid="e710ab04-1841-4b00-90b6-37620a5d7bd3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
@@ -1236,11 +1211,22 @@
 					<font fontName="Arial" size="8" isUnderline="true"/>
 				</textElement>
 			</textField>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement x="46" y="11" width="120" height="60" uuid="ad5cf76c-f5d9-461b-9353-99bd6ed261bc"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{IMAGES_PATH2}]]></imageExpression>
+			</image>
 			<componentElement>
-				<reportElement key="table" x="214" y="0" width="286" height="35" uuid="5a7502f4-dd08-4be1-b215-2e72b5ff086d"/>
+				<reportElement key="table" x="214" y="0" width="286" height="71" uuid="5a7502f4-dd08-4be1-b215-2e72b5ff086d"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="Table Dataset 1" uuid="c18d72a7-cdef-4156-8f1e-4c4634009f98">
-						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+					<datasetRun subDataset="Table Dataset 1" uuid="d791a1ee-8995-484a-b5e2-85b301da5670">
+						<datasetParameter name="PNOPEN">
+							<datasetParameterExpression><![CDATA[$P{PNOPEN}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
 					<jr:column width="154" uuid="a1f4d3ef-9769-44a5-9fe5-f0b6b1eb614d">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
@@ -1249,7 +1235,7 @@
 								<reportElement mode="Transparent" x="0" y="0" width="154" height="20" uuid="dbfaa8d6-61d3-4d7e-8a9d-da875d880007"/>
 								<box leftPadding="3"/>
 								<textElement verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="8" isBold="true"/>
+									<font fontName="SansSerif" size="8" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Nama Obat]]></text>
 							</staticText>
@@ -1261,7 +1247,7 @@
 								<textElement verticalAlignment="Middle">
 									<font fontName="Arial Narrow" size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{NAMAOBAT}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{NAMAOBAT}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -1271,7 +1257,7 @@
 							<staticText>
 								<reportElement x="0" y="0" width="106" height="20" uuid="56491556-140d-47b5-aef0-eb0618c0c537"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="Arial Narrow" size="8" isBold="true"/>
+									<font fontName="SansSerif" size="8" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Aturan Pakai]]></text>
 							</staticText>
@@ -1282,29 +1268,18 @@
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font fontName="Arial Narrow" size="8"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$P{ATURANPAKAI}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{ATURANPAKAI}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
 				</jr:table>
 			</componentElement>
-			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="214" y="60" width="299" height="10" uuid="2ed732b6-6ecc-4ba7-ace3-247a2cdf3008"/>
-				<box>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="8" isUnderline="true"/>
-				</textElement>
-			</textField>
 			<textField>
-				<reportElement x="1" y="57" width="213" height="13" uuid="fe7f1713-e973-4b87-916a-e69691abd999"/>
+				<reportElement x="0" y="68" width="213" height="13" uuid="fe7f1713-e973-4b87-916a-e69691abd999"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{DOKTER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DOKTER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
