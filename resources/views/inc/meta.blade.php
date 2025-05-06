@@ -9,3 +9,4 @@
 <link rel="shortcut icon" href="{{ asset('images/logo/logo.png') }}">
 <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('images/logo/logo.png') }}">
 <link rel="icon" href="{{ asset('images/logo/logo.png') }}" type="image/x-icon" />
+<meta name="csrf-token" content="{{ csrf_token() }}">

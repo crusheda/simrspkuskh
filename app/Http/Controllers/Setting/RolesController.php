@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Pengguna;
+use Carbon\Carbon;
 use DB;
 
 class RolesController extends Controller
@@ -17,7 +18,63 @@ class RolesController extends Controller
     }
 
     // API ------------------------------------------------------------------------------------------------------------------
-    function table()
+
+    function dataRoles()
+    {
+        $show = Role::with('permissions')->get();
+
+        $data = [
+            'show' => $show,
+        ];
+
+        // print_r($data);
+        // die();
+        return response()->json($data, 200);
+    }
+
+    function createRoles(Request $request)
+    {
+        $show = Role::create(['name' => $request->role, 'guard_name' => 'web']);
+
+        return response()->json($show, 200);
+    }
+
+    function showRoles($id)
+    {
+        $role = Role::all();
+        $user = Pengguna::find($id);
+        $user_role_id = $user->roles->first()->id ?? null;
+        $user_role_name = $user->roles->first()->name ?? null;
+
+        $data = [
+            'role' => $role,
+            'id' => $user_role_id,
+            'name' => $user_role_name,
+        ];
+
+        return response()->json($data, 200);
+    }
+
+    function updateRoles(Request $request)
+    {
+        $show = Role::find($request->id);
+        $show->name = $request->name;
+        $show->save();
+
+        return response()->json($show, 200);
+    }
+
+    function deleteRoles($id)
+    {
+        $show = Role::find($request->id);
+        $show->delete();
+
+        return response()->json($show, 200);
+    }
+
+    // USER ------------------------------------------------------------------------------------------------------------------
+
+    function dataRolesUser()
     {
         $show = DB::table('aplikasi.pengguna AS ap')
                 ->leftJoin('master.pegawai AS pg','pg.NIP','=','ap.NIP')
@@ -48,45 +105,59 @@ class RolesController extends Controller
         return response()->json($data, 200);
     }
 
-    function showRoles()
+    function showRolesUser($id)
     {
-        $show = Role::all();
+        $role = Role::all();
+        $user = Pengguna::find($id);
+        $user_role_id = $user->roles->first()->id ?? null;
+        $user_role_name = $user->roles->first()->name ?? null;
 
-        return response()->json($show, 200);
+        $data = [
+            'role' => $role,
+            'id' => $user_role_id,
+            'name' => $user_role_name,
+        ];
+
+        return response()->json($data, 200);
     }
-
-    function createRoles(Request $request)
-    {
-        $show = Role::create(['name' => $request->role, 'guard_name' => 'web']);
-
-        return response()->json($show, 200);
-    }
-
-    function updateRoles(Request $request)
-    {
-        $show = Role::find($request->id);
-        $show->name = $request->name;
-        $show->save();
-
-        return response()->json($show, 200);
-    }
-
-    function deleteRoles($id)
-    {
-        $show = Role::find($request->id);
-        $show->delete();
-
-        return response()->json($show, 200);
-    }
-
-    // USER ------------------------------------------------------------------------------------------------------------------
 
     function updateRolesUser(Request $request)
     {
-        $user = Pengguna::find($request->id);
-        $user->assignRole([$request->role]);
+        $now = Carbon::now()->translatedFormat('l, j F Y \P\u\k\u\l H:i') . ' WIB';
 
-        return response()->json($show, 200);
+        // GET USER
+        $user = Pengguna::find($request->id);
+        if (!$user) {
+            return response()->json(['error' => 'User tidak ditemukan'], 404);
+        }
+
+        // GET ROLE
+        $role = Role::find($request->jabatan);
+        if (!$role) {
+            return response()->json(['error' => 'Role tidak ditemukan'], 404);
+        }
+
+        // Ganti semua role user dengan role baru
+        $user->syncRoles([$role->name]);
+
+        // print_r($user->getRoleNames());
+        // die();
+        return response()->json($now, 200);
+    }
+
+    function deleteRolesUser($id)
+    {
+        $now = Carbon::now()->translatedFormat('l, j F Y \P\u\k\u\l H:i') . ' WIB';
+
+        $user = Pengguna::find($id);
+        if (!$user) {
+            return response()->json(['error' => 'User tidak ditemukan'], 404);
+        }
+
+        // Hapus semua role
+        $user->syncRoles([]); // <-- kosongkan semua role
+
+        return response()->json($now, 200);
     }
 
 }
