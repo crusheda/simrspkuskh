@@ -19,11 +19,19 @@ class DashboardController extends Controller
         return view('pages.dashboard.index');
     }
 
-    function tambahPermission()
+    function clearCache()
     {
-
+        \Artisan::call('view:clear');
+        \Artisan::call('config:clear');
+        \Artisan::call('event:clear');
+        \Artisan::call('route:cache');
+        \Artisan::call('cache:clear');
+        \Artisan::call('clear-compiled');
+        \Artisan::call('optimize');
+        return redirect()->back()->with('message','Cache berhasil dibersihkan!');
     }
 }
+
 
 // REFERENSI
     // dd($user->getRoleNames());

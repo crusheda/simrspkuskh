@@ -37,6 +37,12 @@
                                 <span><s>Ubah Password</s></span>
                             </span>
                         </a>
+                        <a href="{{ route('clear.cache') }}" class="dropdown-item" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Bersihkan Sampah!">
+                            <span class="d-flex align-items-center">
+                                <i class="ph-duotone ph-plugs"></i>
+                                <span>Clear Cache System</span>
+                            </span>
+                        </a>
                         <a href="" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
                             <span class="d-flex align-items-center">
                                 <i class="ph-duotone ph-power"></i>
