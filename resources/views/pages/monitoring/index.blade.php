@@ -70,7 +70,7 @@
                         <div class="form-group">
                             <label class="form-label">Rentang Tgl Kunjungan</label>
                             <div class="input-group">
-                                <input type="text" id="filter_tgl" class="form-control flatpickr-input active" placeholder="Select date range" readonly="readonly">
+                                <input type="text" id="filter_tgl" class="form-control flatpickr-input active" placeholder="Pilih Rentang Tanggal" readonly="readonly">
                                 <span class="input-group-text"><i class="feather icon-calendar"></i></span>
                             </div>
                         </div>
@@ -326,12 +326,6 @@
     let signaturePad;
 
     $(document).ready(function() {
-        // $('#xpoli').on('change', function() {
-        //     if (this.value) {
-        //         $("#xtgl").prop('disabled', false);
-        //     }
-        // });
-
         // FLATPICKR DATE
         const today = new Date(); // Hari ini
         const fiveYearsAgo = new Date();
@@ -351,8 +345,6 @@
         // SELECT CHOICES
         elm = $('#filter_dpjp')[0];
         choices = new Choices(elm);
-
-        // refresh(1);
     });
 
     // function-function

@@ -1,18 +1,6 @@
 @extends('layouts.index')
 
 @section('content')
-@if (Auth::check())
-    Sistem ini sudah Login menggunakan Akun : {{ Auth::user()->NAMA }}
-    <br><br>
-    <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
-        <i class="ti ti-power me-1"></i> Logout
-    </a>
-    {{-- {{ auth()->user()->getAllPermissions() }} --}}
-@endif
-
-<form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
-    {{ csrf_field() }}
-</form>
 <!-- [ Main Content ] start -->
 {{-- <div class="row">
     <div class="col-md-4 col-sm-6">

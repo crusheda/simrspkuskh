@@ -55,7 +55,7 @@
                                 <h5 class="mb-0"> </h5>
                                 <p class="text-muted text-sm">
                                     <h5>{{ Auth::user()->NAMA }}</h5>
-                                    <span class="badge bg-light-primary">USER</span>
+                                    <span class="badge bg-light-primary text-uppercase">{{ auth()->user()->getRoleNames()->first() ?? 'USER' }}</span>
                                 </p>
                                 {{-- <ul class="list-inline mx-auto my-4">
                                     <li class="list-inline-item">
@@ -150,27 +150,31 @@
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item px-0 pt-0">
                                             <div class="row">
-                                                <div class="col-md-12">
+                                                <div class="col-md-4">
+                                                    <p class="mb-1 text-muted">Username</p>
+                                                    <p class="mb-0">{{ Auth::user()->LOGIN }}</p>
+                                                </div>
+                                                <div class="col-md-8">
                                                     <p class="mb-1 text-muted">Nama Lengkap</p>
-                                                    <p class="mb-0">{{ Auth::user()->NAMA }}</p>
+                                                    <p class="mb-0">{{ $list['show']->NAMALENGKAP }}</p>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="list-group-item px-0">
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <p class="mb-1 text-muted">Nomor Handphone</p>
-                                                    <p class="mb-0">(+62) *******</p>
+                                                    <p class="mb-0">{{ $list['show']->NOHP }} {{ $list['show']->JENISNOHP ? '('.$list['show']->JENISNOHP.')' : '' }}</p>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <p class="mb-1 text-muted">Email</p>
-                                                    <p class="mb-0">*******</p>
+                                                <div class="col-md-8">
+                                                    <p class="mb-1 text-muted">Tempat, Tanggal Lahir</p>
+                                                    <p class="mb-0">{{ $list['show']->TEMPAT_LAHIR }}{{ $list['show']->TANGGAL_LAHIR ? ', ' . \Carbon\Carbon::parse($list['show']->TANGGAL_LAHIR)->translatedFormat('d F Y') : '' }}</p>
                                                 </div>
                                             </div>
                                         </li>
                                         <li class="list-group-item px-0 pb-0">
                                             <p class="mb-1 text-muted">Alamat Lengkap</p>
-                                            <p class="mb-0">*******</p>
+                                            <p class="mb-0">{{ $list['show']->ALAMAT }}</p>
                                         </li>
                                     </ul>
                                 </div>
@@ -582,8 +586,13 @@
                                 </div>
                             </div>
                             <div class="card">
-                                <div class="card-header">
-                                    <h5>Ubah Password</h5>
+                                <div class="card-header d-flex align-items-center justify-content-between py-3">
+                                    <h5 class="mb-0">Ubah Password</h5>
+                                    <h6 class="mb-0">{!! Auth::user()->TERAKHIR_UBAH_PASSWOD
+                                        ? '<span class="badge text-bg-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Terakhir Ubah Password">'
+                                            . \Carbon\Carbon::parse(Auth::user()->TERAKHIR_UBAH_PASSWOD)->translatedFormat('d F Y \P\u\k\u\l H:i') . ' WIB' . '</span>'
+                                        : '' !!}
+                                    </h6>
                                 </div>
                                 <div class="card-body">
                                     <ul class="list-group list-group-flush">

@@ -64,6 +64,32 @@ class PermissionsController extends Controller
         return response()->json($data, 200);
     }
 
+    function updatePermissions(Request $request)
+    {
+        $now = Carbon::now()->translatedFormat('l, j F Y \P\u\k\u\l H:i') . ' WIB';
+        $roleId = $request->id;
+        $permissionIds = json_decode($request->akses_jabatan); // decode JSON array
+
+        // Ambil Role dari koneksi db_custom
+        $role = Role::on('db_custom')->find($roleId);
+
+        if (!$role) {
+            return response()->json(['error' => 'Role tidak ditemukan.'], 404);
+        }
+
+        // Ambil nama permission berdasarkan ID dari db_custom
+        $permissionNames = DB::connection('db_custom')
+            ->table('permissions')
+            ->whereIn('id', $permissionIds)
+            ->pluck('name')
+            ->toArray();
+
+        // Sinkronisasi permission ke role
+        $role->syncPermissions($permissionNames);
+
+        return response()->json($now, 200);
+    }
+
     function deletePermissions($id)
     {
         $now = Carbon::now()->translatedFormat('l, j F Y \P\u\k\u\l H:i') . ' WIB';

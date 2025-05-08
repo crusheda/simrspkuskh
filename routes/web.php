@@ -68,3 +68,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             // RAWAT DARURAT
             // Route::get('klaim/smart/rd', [SmartKlaimController::class, 'indexRd'])->name('klaim.pasien.indexRd');
 });
+
+Route::fallback(function () {
+    return response()->view('pages.errors.custom-404', [], 404);
+});

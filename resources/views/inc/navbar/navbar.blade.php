@@ -22,27 +22,34 @@
                         <span class="pc-mtext" data-i18n="Dashboard">Dashboard</span>
                     </a>
                 </li>
-                <li class="pc-item pc-caption">
-                    <label data-i18n="Navigation">Setting</label>
-                    <i class="ph-duotone ph-gauge"></i>
-                </li>
-                <li class="pc-item {{ request()->routeIs('roles') ? 'active' : '' }}">
-                    <a href="{{ route('roles') }}" class="pc-link">
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-tree-structure"></i>
-                        </span>
-                        <span class="pc-mtext" data-i18n="Jabatan">Jabatan</span>
-                    </a>
-                </li>
-                <li class="pc-item {{ request()->routeIs('permissions') ? 'active' : '' }}">
-                    <a href="{{ route('permissions') }}" class="pc-link">
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-user-gear"></i>
-                        </span>
-                        <span class="pc-mtext" data-i18n="Akses">Akses</span>
-                    </a>
-                </li>
-                <li class="pc-item pc-caption">
+                @if(auth()->user()->can('setting_jabatan') || auth()->user()->can('setting_akses'))
+                    <li class="pc-item pc-caption">
+                        <label data-i18n="Navigation">Setting</label>
+                        <i class="ph-duotone ph-gauge"></i>
+                    </li>
+                @endif
+                @can('setting_jabatan')
+                    <li class="pc-item {{ request()->routeIs('roles') ? 'active' : '' }}">
+                        <a href="{{ route('roles') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-tree-structure"></i>
+                            </span>
+                            <span class="pc-mtext" data-i18n="Jabatan">Jabatan</span>
+                        </a>
+                    </li>
+                @endcan
+                @can('setting_akses')
+                    <li class="pc-item {{ request()->routeIs('permissions') ? 'active' : '' }}">
+                        <a href="{{ route('permissions') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-user-gear"></i>
+                            </span>
+                            <span class="pc-mtext" data-i18n="Akses">Akses</span>
+                        </a>
+                    </li>
+                @endcan
+
+                {{-- <li class="pc-item pc-caption">
                     <label>Pelayanan</label>
                     <i class="ph-duotone ph-chart-pie"></i>
                 </li>
@@ -53,7 +60,7 @@
                         </span>
                         <span class="pc-mtext">Kunjungan Pasien</span>
                     </a>
-                </li>
+                </li> --}}
 
                 {{-- <li class="pc-item pc-hasmenu">
                     <a href="javascript:void(0);" class="pc-link">
@@ -72,34 +79,32 @@
                         <li class="pc-item"><a class="pc-link" href="javascript:void(0);">e</a></li>
                     </ul>
                 </li> --}}
-                <li class="pc-item pc-caption">
-                    <label>Digital</label>
-                    <i class="ph-duotone ph-chart-pie"></i>
-                </li>
-                {{-- <li class="pc-item">
-                    <a href="{{ route('klaim.pasien') }}" class="pc-link">
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-projector-screen-chart"></i>
-                        </span>
-                        <span class="pc-mtext">Smart Klaim</span>
-                    </a>
-                </li> --}}
-                <li class="pc-item {{ request()->routeIs('monitoring.index') ? 'active' : '' }}">
-                    <a href="{{ route('monitoring.index') }}" class="pc-link">
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-projector-screen-chart"></i>
-                        </span>
-                        <span class="pc-mtext">Monitoring</span>
-                    </a>
-                </li>
-                <li class="pc-item {{ request()->routeIs('klaim.index') || request()->routeIs('klaim.show') ? 'active' : '' }}">
-                    <a href="{{ route('klaim.index') }}" class="pc-link">
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-file-lock"></i>
-                        </span>
-                        <span class="pc-mtext">Smart Klaim</span>
-                    </a>
-                </li>
+                @if(auth()->user()->can('monitoring') || auth()->user()->can('smart_claim'))
+                    <li class="pc-item pc-caption">
+                        <label>Digital</label>
+                        <i class="ph-duotone ph-chart-pie"></i>
+                    </li>
+                @endif
+                @can('monitoring')
+                    <li class="pc-item {{ request()->routeIs('monitoring.index') ? 'active' : '' }}">
+                        <a href="{{ route('monitoring.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-projector-screen-chart"></i>
+                            </span>
+                            <span class="pc-mtext">Monitoring</span>
+                        </a>
+                    </li>
+                @endcan
+                @can('smart_claim')
+                    <li class="pc-item {{ request()->routeIs('klaim.index') || request()->routeIs('klaim.show') ? 'active' : '' }}">
+                        <a href="{{ route('klaim.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-file-lock"></i>
+                            </span>
+                            <span class="pc-mtext">Smart Klaim</span>
+                        </a>
+                    </li>
+                @endcan
                 {{-- <li class="pc-item pc-hasmenu">
                     <a href="javascript:void(0);" class="pc-link">
                         <span class="pc-micon">

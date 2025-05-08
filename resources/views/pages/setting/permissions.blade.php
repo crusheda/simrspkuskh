@@ -169,7 +169,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" id="btn-ubah-roles" onclick="prosesUbahJabatan()" disabled><i class="fa fa-save me-1"></i> Submit</button>
+                <button type="button" class="btn btn-success" id="btn-ubah-roles" onclick="prosesUbahJabatan()"><i class="fa fa-save me-1"></i> Submit</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times me-1"></i> Tutup</button>
             </div>
         </div>
@@ -427,10 +427,53 @@
     }
 
     function prosesUbahJabatan() {
+        $('#btn-ubah-roles').prop('disabled',true);
         var save = new FormData();
-        var id = $('#id_edit').val();
+        var id = $('#id_edit_jabatan').val();
         save.append('id',id);
-        save.append('akses_jabatan_edit',JSON.stringify($('#akses_jabatan_edit').val()));
+        save.append('jabatan',$('#jabatan_edit').val());
+        save.append('akses_jabatan',JSON.stringify($('#akses_jabatan_edit').val()));
+
+        if (
+            save.get('akses') == "" || save.get('jabatan') == ""
+        ) {
+            iziToast.warning({
+                title: 'Pesan Ambigu!',
+                message: 'Pastikan Anda tidak mengosongi semua isian Wajib',
+                position: 'topRight'
+            });
+        } else {
+            // AJAX request
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "/api/permissions/update",
+                method: 'post',
+                data: save,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function(res){
+                    iziToast.success({
+                        title: 'Pesan Sukses!',
+                        message: 'Jabatan dan Akses telah berhasil diperbarui pada '+res,
+                        position: 'topRight'
+                    });
+                    $('#ubahJabatan').modal('hide');
+                    $('#btn-ubah-roles').prop('disabled',false);
+                    refresh();
+                }, error: function(xhr, status, error) {
+                    // Gagal: tangani error di sini
+                    iziToast.error({
+                        title: 'Terjadi Kesalahan!',
+                        message: error,
+                        position: 'topRight'
+                    });
+                    $('#btn-ubah-roles').prop('disabled',false);
+                }
+            });
+        }
     }
 
     function hapusJabatan(id) {
