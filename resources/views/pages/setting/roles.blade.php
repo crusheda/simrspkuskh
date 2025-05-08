@@ -152,10 +152,16 @@
                                         <td class="text-end">${item.USERNAME}</td>
                                         <td class="text-end">${item.ROLE_NAMES?'<span class="badge text-bg-secondary">'+item.ROLE_NAMES+'</span>':''}</td>
                                         <td class="${color}"><i class="fas fa-circle f-10 m-r-10"></i> ${stt}</td>
-                                        <td>
-                                            <a href="javascript:void(0);" onclick="ubah(${item.ID_PENGGUNA})" class="avtar avtar-xs btn-link-warning">
-                                                <i class="ti ti-edit f-20"></i>
-                                            </a>`;
+                                        <td>`;
+                                if (item.STATUS == 1) {
+                                    content += `<a href="javascript:void(0);" onclick="ubah(${item.ID_PENGGUNA})" class="avtar avtar-xs btn-link-warning">
+                                                    <i class="ti ti-edit f-20"></i>
+                                                </a>`;
+                                } else {
+                                    content += `<a href="javascript:void(0);" class="avtar avtar-xs btn-link-secondary">
+                                                    <i class="ti ti-edit f-20"></i>
+                                                </a>`;
+                                }
                                 if (item.ROLE_NAMES) {
                                     content += `<a href="javascript:void(0);" onclick="hapus(${item.ID_PENGGUNA})" class="avtar avtar-xs btn-link-danger">
                                                     <i class="ti ti-trash f-20"></i>
