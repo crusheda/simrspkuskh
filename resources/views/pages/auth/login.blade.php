@@ -56,7 +56,7 @@
                     <hr class="mb-2 mt-3" />
                     <div class="row">
                         <div class="col my-1">
-                            <p class="m-0">Dibuat dengan <a href="#" class="text-danger">&#9829;</a> oleh <b>Tim Programmer RS PKU Muhammadiyah Sukoharjo</b></p>
+                            <p class="m-0">Dibuat dengan <a href="javascript: void(0);" class="text-danger">&#9829;</a> oleh <b>Tim Programmer RS PKU Muhammadiyah Sukoharjo</b></p>
                         </div>
                         {{-- <div class="col-auto my-1">
                             <ul class="list-inline footer-link mb-0">

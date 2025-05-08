@@ -34,9 +34,10 @@ class RolesController extends Controller
 
     function createRoles(Request $request)
     {
-        $show = Role::create(['name' => $request->role, 'guard_name' => 'web']);
+        $now = Carbon::now()->translatedFormat('l, j F Y \P\u\k\u\l H:i') . ' WIB';
+        $show = Role::create(['name' => $request->jabatan, 'guard_name' => 'web']);
 
-        return response()->json($show, 200);
+        return response()->json($now, 200);
     }
 
     function showRoles($id)
@@ -57,19 +58,44 @@ class RolesController extends Controller
 
     function updateRoles(Request $request)
     {
-        $show = Role::find($request->id);
-        $show->name = $request->name;
-        $show->save();
+        // $show = Role::find($request->id);
+        // $show->name = $request->name;
+        // $show->save();
 
-        return response()->json($show, 200);
+        // return response()->json($show, 200);
     }
 
     function deleteRoles($id)
     {
-        $show = Role::find($request->id);
-        $show->delete();
+        $now = Carbon::now()->translatedFormat('l, j F Y \P\u\k\u\l H:i') . ' WIB';
+        $role  = Role::find($id);
 
-        return response()->json($show, 200);
+        // Pastikan role dengan ID tersebut ada
+        $role = DB::connection('db_custom')->table('roles')->where('id', $id)->first();
+
+        if (!$role) {
+            return response()->json(['error' => 'Role tidak ditemukan'], 404);
+        }
+
+        // Hapus relasi role_has_permissions
+        DB::connection('db_custom')
+            ->table('role_has_permissions')
+            ->where('role_id', $id)
+            ->delete();
+
+        // Hapus relasi model_has_roles
+        DB::connection('db_custom')
+            ->table('model_has_roles')
+            ->where('role_id', $id)
+            ->delete();
+
+        // Hapus role dari tabel roles
+        DB::connection('db_custom')
+            ->table('roles')
+            ->where('id', $id)
+            ->delete();
+
+        return response()->json($now, 200);
     }
 
     // USER ------------------------------------------------------------------------------------------------------------------

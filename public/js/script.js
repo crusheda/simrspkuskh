@@ -5,8 +5,8 @@ Template Name: Light-able - Admin Template
 Author: Phoenixcoded
 Support: https://phoenixcoded.authordesk.app
 File: script.js
-Description:  this file will contains behavior, properties, 
-              functionality and interactions of a small module of ui element 
+Description:  this file will contains behavior, properties,
+              functionality and interactions of a small module of ui element
               which used to build a theme layout.
 =========================================================================
 =========================================================================
@@ -422,7 +422,7 @@ var tc = document.querySelectorAll('.auth-main.v2 .img-brand');
 // Loop through each selected element
 for (var t = 0; t < tc.length; t++) {
   // Change the 'src' attribute to the new logo path
-  tc[t].setAttribute('src', '../assets/images/logo-white.svg');
+  tc[t].setAttribute('src', '../../images/logo/logoname.png');
 }
 
 // =======================================================

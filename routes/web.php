@@ -36,6 +36,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     // DASHBOARD
     Route::get('/', function () { return redirect()->route('dashboard'); });
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('clearcache', [DashboardController::class, 'clearCache'])->name('clear.cache');
     // Route::get('dashboard', function () {
     //     return view('pages.dashboard.index');
     // })->name('dashboard');
@@ -66,4 +67,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             // Route::get('klaim/smart/ri', [SmartKlaimController::class, 'indexRi'])->name('klaim.pasien.indexRi');
             // RAWAT DARURAT
             // Route::get('klaim/smart/rd', [SmartKlaimController::class, 'indexRd'])->name('klaim.pasien.indexRd');
+});
+
+Route::fallback(function () {
+    return response()->view('pages.errors.custom-404', [], 404);
 });

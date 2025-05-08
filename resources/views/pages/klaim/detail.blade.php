@@ -251,8 +251,6 @@
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
-            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_sep').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -290,8 +288,6 @@
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
-            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_resume').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -329,8 +325,6 @@
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
-            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_skdp').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -368,8 +362,6 @@
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
-            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_billing').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -407,8 +399,6 @@
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
-            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_individual').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -446,8 +436,6 @@
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
-            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_laboratorium').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -485,8 +473,6 @@
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
-            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_radiologi').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -524,8 +510,6 @@
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
-            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_triage').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -562,8 +546,6 @@
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
             }
-            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_operasi').prop('checked', false).prop('disabled',false);
             return response.blob();
         })
         .then(blob => {
@@ -682,11 +664,14 @@
     }
 
     function clearCheckbox() {
-        $('#ck_resume').prop('checked', false);
-        $('#ck_sep').prop('checked', false);
-        $('#ck_skdp').prop('checked', false);
-        $('#ck_billing').prop('checked', false);
-        $('#ck_individual').prop('checked', false);
+        $('#ck_resume').prop('checked', false).prop('disabled',false);
+        $('#ck_sep').prop('checked', false).prop('disabled',false);
+        $('#ck_skdp').prop('checked', false).prop('disabled',false);
+        $('#ck_billing').prop('checked', false).prop('disabled',false);
+        $('#ck_laboratorium').prop('checked', false).prop('disabled',false);
+        $('#ck_radiologi').prop('checked', false).prop('disabled',false);
+        $('#ck_triage').prop('checked', false).prop('disabled',false);
+        $('#ck_operasi').prop('checked', false).prop('disabled',false);
         $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
         iziToast.success({
             title: 'Pesan Berhasil!',
