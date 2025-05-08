@@ -745,6 +745,12 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com ]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ANALIS} ? $F{ANALIS} : "(.......................................)"]]></textFieldExpression>
 			</textField>
+			<componentElement>
+				<reportElement x="395" y="105" width="94" height="53" uuid="9664e0f5-4c76-4ce3-821d-d633c399f366"/>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA["123456789"]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
 		</band>
 	</summary>
 </jasperReport>

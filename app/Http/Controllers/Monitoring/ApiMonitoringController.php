@@ -855,12 +855,14 @@ class ApiMonitoringController extends Controller
 
             $show = DB::table('pendaftaran.pendaftaran AS pd')
                         ->leftJoin('pendaftaran.kunjungan AS k', 'k.NOPEN', '=', 'pd.NOMOR')
-                        ->leftJoin('layanan.order_detil_lab AS odl', 'odl.ORDER_ID', '=', 'k.REF')
-                        ->select('k.NOMOR AS NOMOR', 'odl.REF AS TINDAKAN')
+                        ->leftJoin('layanan.tindakan_medis AS tm','tm.KUNJUNGAN','=','k.NOMOR')
+                        ->select('k.NOMOR AS NOMOR', 'tm.ID AS TINDAKAN')
                         ->where('pd.NOMOR', $getSEP->NOPEN)
                         ->where('k.RUANGAN', '=', '102040101')
+                        ->where('tm.STATUS',1)
                         ->get();
-
+            // print_r($show);
+            // die();
             if ($show->isEmpty()) {
                 return response()->json($data, 400);
             }
@@ -902,10 +904,23 @@ class ApiMonitoringController extends Controller
                         'password' => env('DB_PASSWORD'),
                         'database' => env('DB_DATABASE_CUSTOM'),
                     ],
+                    'classpath' => public_path() . "/jasper-libs/core-3.5.2.jar"
                 ];
 
+
                 // Proses JasperReport untuk setiap PNOMOR
-                $jasper->process($input, $output, $options)->execute();
+                // $jasper->process($input, $output, $options)->execute();
+                $jasperStarterPath = '/usr/local/bin/jasperstarter'; // path jasperstarter kamu
+                $classPathZXing = public_path() . "/jasper-libs/core-3.5.2.jar"; // ZXing jar path
+
+                $params = "PNOMOR={$PNOMOR} PTINDAKAN=\"{$PTINDAKAN}\" IMAGES_PATH=\"" . public_path() . "/doc/input/laborat/\"";
+
+                $dbParams = "-t mysql -u ".env('DB_USERNAME')." -p ".env('DB_PASSWORD')." -H ".env('DB_HOST')." -n ".env('DB_DATABASE_CUSTOM');
+
+                $cmd = "\"$jasperStarterPath\" process \"$input\" -o \"$output\" -f pdf --classpath \"$classPathZXing\" --params \"$params\" $dbParams";
+
+                $outputShell = shell_exec($cmd);
+
                 $tempPaths[] = "{$output}.pdf"; // Simpan path PDF sementara
             }
 
