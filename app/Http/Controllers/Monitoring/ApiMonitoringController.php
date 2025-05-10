@@ -904,23 +904,11 @@ class ApiMonitoringController extends Controller
                         'password' => env('DB_PASSWORD'),
                         'database' => env('DB_DATABASE_CUSTOM'),
                     ],
-                    'classpath' => public_path() . "/jasper-libs/core-3.5.2.jar"
                 ];
 
 
                 // Proses JasperReport untuk setiap PNOMOR
-                // $jasper->process($input, $output, $options)->execute();
-                $jasperStarterPath = '/usr/local/bin/jasperstarter'; // path jasperstarter kamu
-                $classPathZXing = public_path() . "/jasper-libs/core-3.5.2.jar"; // ZXing jar path
-
-                $params = "PNOMOR={$PNOMOR} PTINDAKAN=\"{$PTINDAKAN}\" IMAGES_PATH=\"" . public_path() . "/doc/input/laborat/\"";
-
-                $dbParams = "-t mysql -u ".env('DB_USERNAME')." -p ".env('DB_PASSWORD')." -H ".env('DB_HOST')." -n ".env('DB_DATABASE_CUSTOM');
-
-                $cmd = "\"$jasperStarterPath\" process \"$input\" -o \"$output\" -f pdf --classpath \"$classPathZXing\" --params \"$params\" $dbParams";
-
-                $outputShell = shell_exec($cmd);
-
+                $jasper->process($input, $output, $options)->execute();
                 $tempPaths[] = "{$output}.pdf"; // Simpan path PDF sementara
             }
 

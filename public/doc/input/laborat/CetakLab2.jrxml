@@ -77,13 +77,6 @@
 				</textElement>
 				<text><![CDATA[No. RM]]></text>
 			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement x="120" y="106" width="179" height="15" uuid="910b3b1d-ebcf-43c2-8fb9-2324c1960795"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="9"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{PNOMOR} + $P{PTINDAKAN}]]></textFieldExpression>
-			</textField>
 			<staticText>
 				<reportElement x="110" y="106" width="8" height="15" uuid="486eadf8-18b3-4e32-9051-949b62d4587d"/>
 				<textElement verticalAlignment="Middle">
@@ -127,10 +120,24 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com ]]></text>
 			<line>
 				<reportElement x="-1" y="75" width="556" height="3" uuid="2d4ee229-3ca2-4752-8361-4d8c802a9cdc"/>
 			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="120" y="106" width="179" height="15" uuid="7606c892-1329-4832-bb29-664b5ba22384"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NORM}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="61" splitType="Stretch"/>
+		<band height="251" splitType="Stretch">
+			<componentElement>
+				<reportElement x="200" y="20" width="199" height="173" uuid="b35d3120-00d4-4e5e-83e4-f6e4e379843b"/>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA["123456789"]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+		</band>
 	</columnHeader>
 	<detail>
 		<band height="125" splitType="Stretch"/>
