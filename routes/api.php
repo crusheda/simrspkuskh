@@ -70,8 +70,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::post('klaim/submit', [ApiSmartKlaimController::class, 'submit'])->name('api.klaim.submit');
             Route::get('klaim/{sep}/verif', [ApiSmartKlaimController::class, 'verifSep'])->name('api.klaim.verifSep');
             Route::get('klaim/{kunjungan}/data', [ApiSmartKlaimController::class, 'getKlaim'])->name('api.klaim.getKlaim');
-            Route::delete('klaim/{kunjungan}/verifikasi', [ApiSmartKlaimController::class, 'verifikasiKlaim'])->name('api.klaim.verifikasiKlaim');
-            Route::delete('klaim/{kunjungan}/batalverifikasi', [ApiSmartKlaimController::class, 'batalVerifikasiKlaim'])->name('api.klaim.batalVerifikasiKlaim');
+            Route::get('klaim/{kunjungan}/verifikasi', [ApiSmartKlaimController::class, 'verifikasiKlaim'])->name('api.klaim.verifikasiKlaim');
+            Route::get('klaim/{kunjungan}/batalverifikasi', [ApiSmartKlaimController::class, 'batalVerifikasiKlaim'])->name('api.klaim.batalVerifikasiKlaim');
             Route::delete('klaim/{kunjungan}/hapus', [ApiSmartKlaimController::class, 'hapusKlaim'])->name('api.klaim.hapusKlaim');
             Route::get('klaim/{tahun}/{bulan}/{kunjungan}/pdf', [ApiSmartKlaimController::class, 'showKlaim'])->name('api.klaim.showKlaim');
             Route::get('klaim/table/{pel}/{bln}/{dpjp}', [ApiSmartKlaimController::class, 'table'])->name('api.klaim.table');

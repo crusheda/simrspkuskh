@@ -37,7 +37,9 @@ class ApiSmartKlaimController extends Controller
                     'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
                     'ru.DESKRIPSI AS NAMARUANGAN',
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
-                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER')
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                    'kv.id AS IDKLAIM','kv.verif AS STATUSVERIF','kv.verif_tgl AS TGLVERIF',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAVERIF'),
+                    DB::raw('CASE WHEN kvc.id IS NOT NULL THEN true ELSE false END AS CATATAN')
                 )
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
@@ -47,6 +49,15 @@ class ApiSmartKlaimController extends Controller
                 ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
                 ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
                 ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) {
+                    $join->on('kv.nomor','=','pk.NOMOR')
+                        ->where('kv.status', true);
+                })
+                ->leftJoin('simrspku_klaim.klaim_verifikasi_catatan AS kvc', function($join) {
+                    $join->on('kvc.nomor','=','pk.NOMOR')
+                        ->where('kvc.status', true);
+                })
+                ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','kv.verif_user')
                 // ->where(function ($query) {
                 //     $query->where('pk.RUANGAN', 'LIKE', '1020101%');
                 // })
@@ -276,10 +287,17 @@ class ApiSmartKlaimController extends Controller
     function getKlaim($kunjungan)
     {
         $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
+        $catatan = DB::table('simrspku_klaim.klaim_verifikasi_catatan AS kvc')
+                        ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','kvc.user')
+                        ->select('kvc.*',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAPEGAWAI'))
+                        ->where('kvc.nomor',$kunjungan)
+                        ->where('kvc.status',true)
+                        ->get();
         $file = klaim_file::where('nomor',$kunjungan)->where('status',true)->get();
 
         $data = [
             'show' => $show,
+            'catatan' => $catatan,
             'file' => $file,
         ];
 
