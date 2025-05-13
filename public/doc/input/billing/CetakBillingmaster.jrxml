@@ -42,6 +42,7 @@
 	<parameter name="IMAGES_PATH" class="java.lang.String"/>
 	<parameter name="PSTATUS" class="java.lang.String"/>
 	<parameter name="PKASIR" class="java.lang.String"/>
+	<parameter name="QRCODE_PATH" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[call simrspku_klaim.CetakRincianPasienPerDokterCustom($P{PTAGIHAN},$P{PSTATUS})]]>
 	</queryString>
@@ -105,6 +106,8 @@
 	<field name="DPJP" class="java.lang.String"/>
 	<field name="NOW" class="java.lang.String"/>
 	<field name="NAMA_KELUARGA_PASIEN" class="java.lang.String"/>
+	<field name="QR1" class="java.lang.String"/>
+	<field name="QR2" class="java.lang.String"/>
 	<variable name="jml" class="java.math.BigDecimal" resetType="Group" resetGroup="Ruangan" calculation="Sum">
 		<variableExpression><![CDATA[$F{TARIF}.multiply($F{JUMLAH})]]></variableExpression>
 	</variable>
@@ -951,6 +954,14 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NAMA_KELUARGA_PASIEN}]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="414" y="208" width="50" height="50" uuid="52dc85d2-aa7a-4ac2-99b0-521a1e2d86bd"/>
+				<imageExpression><![CDATA[$P{QRCODE_PATH} + $F{QR1}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="90" y="208" width="50" height="50" uuid="c4f28666-6dd9-4073-83c3-17a623db8df8"/>
+				<imageExpression><![CDATA[$P{QRCODE_PATH} + $F{QR2}]]></imageExpression>
+			</image>
 		</band>
 	</summary>
 </jasperReport>
