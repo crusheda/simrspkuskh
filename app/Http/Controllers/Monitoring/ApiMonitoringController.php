@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use App\Models\simrspku_klaim\klaim_file;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use setasign\Fpdi\Fpdi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -765,9 +766,16 @@ class ApiMonitoringController extends Controller
                                 ->orWhere('tp.UTAMA', '=', '1');
                     })
                     ->first();
-            // print_r($getSEP);
+
+            $show = DB::select('CALL simrspku_klaim.CetakRincianPasienPerDokterCustom(?,?)',[$getSEP->TAGIHAN,$getSEP->STATUS]);
+            // print_r($show[0]);
             // die();
-            // $show = DB::select('CALL simrspku_klaim.CetakRincianPasienPerDokterCustom(?,?)',[$getSEP->TAGIHAN,$getSEP->STATUS]);
+            //-----------------------------------------------------------------------
+            //GENERATE QR CODE
+            $pegawai = $show[0]->NIP . '-' . $show[0]->PENGGUNA;
+            $image = QrCode::format('png')->size(300)->generate($pegawai);
+            Storage::put('/app/public/files/qrcode'.$show[0]->NIP.'.png', $image);
+            //-----------------------------------------------------------------------
             // dd($show);
             if (!$getSEP) {
                 return response()->json($data, 400);

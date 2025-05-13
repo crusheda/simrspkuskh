@@ -19,6 +19,7 @@
         "laravel/ui": "^4.6",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-permission": "^6.16"
     },
     "require-dev": {
