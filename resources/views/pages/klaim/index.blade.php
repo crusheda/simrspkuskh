@@ -34,14 +34,15 @@
                     <table class="table mb-0 table-hover table-striped" id="vantable">
                         <thead>
                             <tr>
-                                <th style="width: 60%;">KUNJUNGAN</th>
+                                <th style="width: 50%;">KUNJUNGAN</th>
                                 <th style="width: 30%;" class="text-end">TGL KUNJUNGAN</th>
                                 <th style="width: 10%;" class="text-end">STATUS</th>
+                                <th style="width: 10%;" class="text-end">CATATAN</th>
                             </tr>
                         </thead>
                         <tbody id="tampil-tbody">
                             <tr style='font-size:13px'>
-                                <td colspan="3">
+                                <td colspan="5">
                                     <center>
                                         <div class="spinner-border spinner-border-sm" role="status"></div>
                                     </center>
@@ -204,6 +205,16 @@
                                         </button>`;
                         }
                         content = ``;
+                        if (item.STATUSVERIF) {
+                            stt = `<a href="javascript: void(0);" class="avtar avtar-s btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Telah Diverifikasi Oleh ${item.NAMAVERIF} pada ${item.TGLVERIF}" onclick="event.stopPropagation();"><i class="ti ti-square-check f-30"></i></a>`;
+                        } else {
+                            stt = `<a href="javascript: void(0);" class="avtar avtar-s btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Berkas Belum Diverifikasi"><i class="ti ti-square-x f-30"></i></a>`;
+                        }
+                        if (item.CATATAN) {
+                            cat = `<a href="javascript: void(0);" class="avtar avtar-s btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ada Catatan Berkas Klaim" onclick="event.stopPropagation(); lihatCatatan('${item.IDKLAIM}')"><i class="ti ti-file-text f-30"></i></a>`;
+                        } else {
+                            cat = `<a href="javascript: void(0);" class="avtar avtar-s btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tidak Ada Catatan"><i class="ti ti-file-x f-30"></i></a>`;
+                        }
                         content += `<tr class="clickable" data-href="klaim/${item.NOMOR}">
                                         <td>
                                             <h5 class="mb-1"><a href="javascript: void(0);"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Surat Elegibilitas Peserta">${SEP}</b></a></h5>
@@ -212,11 +223,8 @@
                                         <td class="text-end align-middle">
                                             <a href="javascript: void(0);" class="text-muted">${item.MASUK}</a>
                                         </td>
-                                        <td class="text-end">
-                                            <a href="javascript: void(0);" class="avtar avtar-s btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Berkas Telah Diverifikasi">
-                                                <i class="ti ti-square-check f-30"></i>
-                                            </a>
-                                        </td>
+                                        <td class="text-end align-middle">${stt}</td>
+                                        <td class="text-end align-middle">${cat}</td>
                                     </tr>`;
                         $('#tampil-tbody').append(content);
                     })
@@ -237,11 +245,12 @@
                         info: "Menampilkan {start} - {end} dari {rows} data",
                     },
                     columns: [
-                        // { select: 0, sort: "asc" },   // Kolom ke-0, di-sort ascending
-                        // { select: 1, sort: "desc" },  // Kolom ke-1, descending
-                        { select: 0, sortable: false }, // Kolom ke-2 tidak bisa di-sort
-                        { select: 1, sort: 'desc' }, // Kolom ke-2 tidak bisa di-sort
-                        { select: 2, sortable: false } // Kolom ke-2 tidak bisa di-sort
+                        // { select: 0, sort: "asc" },
+                        // { select: 1, sort: "desc" },
+                        { select: 0, sortable: false },
+                        { select: 1, sort: 'desc' },
+                        { select: 2, sortable: false },
+                        { select: 3, sortable: false }
                     ]
                 });
                     // Showing Tooltip

@@ -121,7 +121,7 @@
         </div>
     </div>
     <div class="col-md-9">
-        <div class="alert alert-success d-block text-center text-uppercase"><i class="feather icon-check-circle me-2"></i>Telah Diverifikasi</div>
+        <div id="alert_verif"></div>
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between py-3">
                 <div>
@@ -149,7 +149,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOne">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#verif_collapse" aria-expanded="true" aria-controls="verif_collapse">
-                        <i class="feather icon-check-circle me-2"></i> Verifikasi Berkas
+                        <i class="feather icon-check-circle me-2"></i> Catatan Verifikasi Berkas <span class="badge bg-secondary text-white ms-2"><a id="jumlah_catatan">0</a>&nbsp; Catatan</span>
                     </button>
                 </h2>
                 <div id="verif_collapse" class="accordion-collapse p-3 collapse show" aria-labelledby="headingOne" data-bs-parent="#verif_accordion">
@@ -160,47 +160,17 @@
                             </div>
                         </div>
                         <div class="col-md-12 d-flex justify-content-end mt-3 mb-3">
-                            <button class="btn btn-primary btn-sm" onclick="tambahCatatan()"><i class="fas fa-sticky-note me-1"></i> Tambah Catatan</button>
+                            <div class="btn-group">
+                                <button class="btn btn-warning btn-sm" onclick="refreshCatatan()" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Refresh Data Catatan"><i class="fas fa-sync"></i></button>
+                                <button class="btn btn-primary btn-sm" onclick="tambahCatatan()" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tambah Catatan Baru"><i class="fas fa-sticky-note me-1"></i> Tambah Catatan</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="row">
-                        {{-- <div class="col-sm-auto mb-3 mb-sm-0">
-                            <div class="d-sm-inline-block d-flex align-items-center">
-                                <img class="wid-50 img-radius mb-2" src="{{ asset('/images/user.png') }}" alt="Generic placeholder image" />
-                            </div>
-                        </div> --}}
-                        <div class="col">
-                            <div class="row">
-                                <div class="col">
-                                    <div class="">
-                                        <h4 class="d-inline-block">dr. Fitriana Darmastuti</h4>
-                                        <p class="text-muted">1 Hari yang lalu (Pukul 08:18 WIB)</p>
-                                    </div>
-                                </div>
-                                <div class="col-auto">
-                                    <ul class="list-unstyled mb-0">
-                                        <li class="d-inline-block f-20 me-1">
-                                            <a href="#" data-bs-toggle="tooltip" title="Edit">
-                                                <i data-feather="edit" class="icon-svg-success wid-20"></i>
-                                            </a>
-                                        </li>
-                                        <li class="d-inline-block f-20">
-                                            <a href="#" data-bs-toggle="tooltip" title="Delete">
-                                                <i data-feather="trash-2" class="icon-svg-danger wid-20"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="">
-                                <p><b>hello john doe,</b></p>
-                                <p>you need to create <strong>"toolbar-options" div only once</strong> in a page
-                                    in your code, this div fill found
-                                    <strong>every "td"</strong> tag in your page, just remove those things.
-                                </p>
-                                <p>and also, in option button add <strong>"p-0" class in "I" tag</strong> to</p>
-                                <p>Thanks...</p>
-                            </div>
+                    <div class="row" id="daftar_catatan">
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-grow spinner-grow-sm me-2" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div> <a class="align-middle">Memproses Data Catatan..</a>
                         </div>
                     </div>
                 </div>
@@ -260,6 +230,7 @@
             dataType: 'json',
             success: function(res) {
                 if (!res.show) {
+                    $('#alert_verif').empty();
                     $('#ck_sep').prop('checked', false).prop('disabled', false);
                     $('#ck_resume').prop('checked', false).prop('disabled', false);
                     $('#ck_skdp').prop('checked', false).prop('disabled', false);
@@ -279,6 +250,11 @@
                                 </div>`;
                     $('#footer_submit').empty().append(submit);
                 } else {
+                    if (res.show.verif == 0) {
+                        $('#alert_verif').empty().append(`<div class="alert alert-warning d-block text-center text-uppercase"><i class="feather icon-x-circle me-2"></i>Belum Diverifikasi</div>`);
+                    } else {
+                        $('#alert_verif').empty().append(`<div class="alert alert-success d-block text-center text-uppercase"><i class="feather icon-check-circle me-2"></i>Telah Diverifikasi</div>`);
+                    }
                     let koleksi = JSON.parse(res.show.koleksi || '[]');
                     if (koleksi.includes(1)) { $('#ck_sep').prop('checked', true).prop('disabled', false); } else { $('#ck_sep').prop('checked', false).prop('disabled',false); }
                     if (koleksi.includes(2)) { $('#ck_resume').prop('checked', true).prop('disabled', false); } else { $('#ck_resume').prop('checked', false).prop('disabled',false); }
@@ -293,14 +269,52 @@
                     submit = ``;
                     submit += `<div class="card-footer p-3">`;
                     submit += `     <button class="btn btn-danger w-100 btn-sm mb-3" onclick="hapus('${kunjungan}')"><i class="fas fa-trash me-1"></i> Hapus Klaim</button>
-                                    <button class="btn btn-success btn-sm w-100 mb-3" onclick="submit('${kunjungan}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang</button>`;
-                    submit += `     <button class="btn btn-secondary btn-sm w-100" onclick="verifikasi('${kunjungan}')" id="btn-verif"><i class="fas fa-check-square me-1"></i> Verif</button>`;
+                                    <button class="btn btn-outline-success btn-sm w-100 mb-3" onclick="submit('${kunjungan}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang</button>`;
+                            if (res.show.verif == 0) {
+                                submit += `     <button class="btn btn-secondary btn-sm w-100" onclick="verifikasi('${kunjungan}')" id="btn-verif"><i class="fas fa-check-square me-1"></i> Verifikasi</button>`;
+                            } else {
+                                submit += `     <button class="btn btn-outline-secondary btn-sm w-100" onclick="batalVerifikasi('${kunjungan}')" id="btn-batal-verif"><i class="fas fa-times-circle me-1"></i> Batal Verifikasi</button>`;
+                            }
                     submit += `</div>`;
                     $('#footer_submit').empty().append(submit);
-                    // $('#footer_submit').empty().append(`<div class="card-footer p-3">
-                    //                                 <button class="btn btn-danger w-100 btn-sm mb-3" onclick="hapus('${kunjungan}')"><i class="fas fa-trash me-1"></i> Hapus Klaim</button>
-                    //                                 <button class="btn btn-success btn-sm w-100" onclick="submit('${kunjungan}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang</button>
-                    //                             </div>`);
+                    if (res.catatan) {
+                        $('#jumlah_catatan').text(res.catatan.length);
+                        res.catatan.forEach(item => {
+                            $('#daftar_catatan').empty().append(`<div class="col">
+                                                                    <div class="row">
+                                                                        <div class="col">
+                                                                            <div class="">
+                                                                                <h4 class="d-inline-block">${item.NAMAPEGAWAI}</h4>
+                                                                                <p class="text-muted">${moment(item.updated_at).locale('id').fromNow()} (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-auto">
+                                                                            <ul class="list-unstyled mb-0">
+                                                                                <li class="d-inline-block f-20 me-1">
+                                                                                    <a href="#" data-bs-toggle="tooltip" title="Ubah Catatan" class="text-warning">
+                                                                                        <i class="fas fa-edit"></i>
+                                                                                    </a>
+                                                                                </li>
+                                                                                <li class="d-inline-block f-20">
+                                                                                    <a href="#" data-bs-toggle="tooltip" title="Hapus Catatan" class="text-danger">
+                                                                                        <i class="fas fa-trash"></i>
+                                                                                    </a>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div>
+                                                                        <p>${item.deskripsi}</p>
+                                                                    </div>
+                                                                </div>`);
+                        })
+                        // Showing Tooltip
+                        $('[data-bs-toggle="tooltip"]').tooltip({
+                            trigger : 'hover'
+                        })
+                    } else {
+
+                    }
                 }
             }
         })
@@ -727,7 +741,7 @@
     }
 
     function batalVerifikasi(kunjungan) {
-        $('#btn-verif').prop('disabled',true).find('i').removeClass('fa-check-square').addClass('fa-sync fa-spin');
+        $('#btn-batal-verif').prop('disabled',true).find('i').removeClass('fa-times-circle').addClass('fa-sync fa-spin');
         // console.log($('#ck_resume').prop('checked'));
 
         $.ajax({
@@ -738,20 +752,20 @@
                 verify();
                 iziToast.success({
                     title: 'Pesan Sukses!',
-                    message: 'Verifikasi berkas berhasil dilakukan pada '+res,
+                    message: 'Batal Verifikasi berkas berhasil dilakukan pada '+res,
                     position: 'topRight'
                 });
-                $('#btn-verif').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-check-square');
+                $('#btn-batal-verif').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-times-circle');
             }, error: function(xhr, status, error) {
                 // Gagal: tangani error di sini
                 console.error('Terjadi kesalahan:', error);
                 // Bisa juga tampilkan alert
                 iziToast.error({
                     title: 'Maaf!',
-                    message: 'Verifikasi berkas gagal dilakukan. Silakan coba lagi.',
+                    message: 'Batal Verifikasi berkas gagal dilakukan. Silakan coba lagi.',
                     position: 'topRight'
                 });
-                $('#btn-verif').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-check-square');
+                $('#btn-batal-verif').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-times-circle');
             }
         })
     }
