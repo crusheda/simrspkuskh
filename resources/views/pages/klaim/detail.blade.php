@@ -121,6 +121,7 @@
         </div>
     </div>
     <div class="col-md-9">
+        <div class="alert alert-success d-block text-center text-uppercase"><i class="feather icon-check-circle me-2"></i>Telah Diverifikasi</div>
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between py-3">
                 <div>
@@ -144,9 +145,69 @@
                 @endif
             </div>
         </div>
+        <div class="accordion card" id="verif_accordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#verif_collapse" aria-expanded="true" aria-controls="verif_collapse">
+                        <i class="feather icon-check-circle me-2"></i> Verifikasi Berkas
+                    </button>
+                </h2>
+                <div id="verif_collapse" class="accordion-collapse p-3 collapse show" aria-labelledby="headingOne" data-bs-parent="#verif_accordion">
+                    <div class="row border-bottom mb-3">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <textarea name="catatan_add" id="catatan_add" class="form-control" rows="2" placeholder="Tuliskan catatan berkas klaim disini..."></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12 d-flex justify-content-end mt-3 mb-3">
+                            <button class="btn btn-primary btn-sm" onclick="tambahCatatan()"><i class="fas fa-sticky-note me-1"></i> Tambah Catatan</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        {{-- <div class="col-sm-auto mb-3 mb-sm-0">
+                            <div class="d-sm-inline-block d-flex align-items-center">
+                                <img class="wid-50 img-radius mb-2" src="{{ asset('/images/user.png') }}" alt="Generic placeholder image" />
+                            </div>
+                        </div> --}}
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="">
+                                        <h4 class="d-inline-block">dr. Fitriana Darmastuti</h4>
+                                        <p class="text-muted">1 Hari yang lalu (Pukul 08:18 WIB)</p>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="d-inline-block f-20 me-1">
+                                            <a href="#" data-bs-toggle="tooltip" title="Edit">
+                                                <i data-feather="edit" class="icon-svg-success wid-20"></i>
+                                            </a>
+                                        </li>
+                                        <li class="d-inline-block f-20">
+                                            <a href="#" data-bs-toggle="tooltip" title="Delete">
+                                                <i data-feather="trash-2" class="icon-svg-danger wid-20"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="">
+                                <p><b>hello john doe,</b></p>
+                                <p>you need to create <strong>"toolbar-options" div only once</strong> in a page
+                                    in your code, this div fill found
+                                    <strong>every "td"</strong> tag in your page, just remove those things.
+                                </p>
+                                <p>and also, in option button add <strong>"p-0" class in "I" tag</strong> to</p>
+                                <p>Thanks...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
 <!-- [ Main Content ] end -->
 
 <div class="modal animate__animated animate__rubberBand fade" id="hapus" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
@@ -209,12 +270,14 @@
                     $('#ck_triage').prop('checked', false).prop('disabled', false);
                     $('#ck_operasi').prop('checked', false).prop('disabled', false);
 
-                    $('#footer_submit').empty().append(`<div class="card-footer p-3">
-                                                    <div class="btn-group w-100">
-                                                        <button class="btn btn-light-warning btn-sm" onclick="clearCheckbox()"><i class="ti ti-eraser me-1"></i> Clear</button>
-                                                        <button class="btn btn-primary btn-sm" onclick="submit('${kunjungan}')" id="btn-submit">Submit <i class="fas fa-paper-plane ms-1"></i></button>
-                                                    </div>
-                                                </div>`);
+                    submit = ``;
+                    submit += `<div class="card-footer p-3">
+                                    <div class="btn-group w-100">`;
+                    submit += `         <button class="btn btn-light-warning btn-sm" onclick="clearCheckbox()"><i class="ti ti-eraser me-1"></i> Clear</button>
+                                        <button class="btn btn-primary btn-sm" onclick="submit('${kunjungan}')" id="btn-submit">Submit <i class="fas fa-paper-plane ms-1"></i></button>`;
+                    submit += `     </div>
+                                </div>`;
+                    $('#footer_submit').empty().append(submit);
                 } else {
                     let koleksi = JSON.parse(res.show.koleksi || '[]');
                     if (koleksi.includes(1)) { $('#ck_sep').prop('checked', true).prop('disabled', false); } else { $('#ck_sep').prop('checked', false).prop('disabled',false); }
@@ -227,10 +290,17 @@
                     if (koleksi.includes(8)) { $('#ck_triage').prop('checked', true).prop('disabled', false); } else { $('#ck_triage').prop('checked', false).prop('disabled',false); }
                     if (koleksi.includes(9)) { $('#ck_operasi').prop('checked', true).prop('disabled', false); } else { $('#ck_operasi').prop('checked', false).prop('disabled',false); }
 
-                    $('#footer_submit').empty().append(`<div class="card-footer p-3">
-                                                    <button class="btn btn-danger w-100 btn-sm mb-3" onclick="hapus('${kunjungan}')"><i class="fas fa-trash me-1"></i> Hapus Klaim</button>
-                                                    <button class="btn btn-success btn-sm w-100" onclick="submit('${kunjungan}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang</button>
-                                                </div>`);
+                    submit = ``;
+                    submit += `<div class="card-footer p-3">`;
+                    submit += `     <button class="btn btn-danger w-100 btn-sm mb-3" onclick="hapus('${kunjungan}')"><i class="fas fa-trash me-1"></i> Hapus Klaim</button>
+                                    <button class="btn btn-success btn-sm w-100 mb-3" onclick="submit('${kunjungan}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang</button>`;
+                    submit += `     <button class="btn btn-secondary btn-sm w-100" onclick="verifikasi('${kunjungan}')" id="btn-verif"><i class="fas fa-check-square me-1"></i> Verif</button>`;
+                    submit += `</div>`;
+                    $('#footer_submit').empty().append(submit);
+                    // $('#footer_submit').empty().append(`<div class="card-footer p-3">
+                    //                                 <button class="btn btn-danger w-100 btn-sm mb-3" onclick="hapus('${kunjungan}')"><i class="fas fa-trash me-1"></i> Hapus Klaim</button>
+                    //                                 <button class="btn btn-success btn-sm w-100" onclick="submit('${kunjungan}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang</button>
+                    //                             </div>`);
                 }
             }
         })
@@ -626,6 +696,66 @@
         })
     }
 
+    function verifikasi(kunjungan) {
+        $('#btn-verif').prop('disabled',true).find('i').removeClass('fa-check-square').addClass('fa-sync fa-spin');
+        // console.log($('#ck_resume').prop('checked'));
+
+        $.ajax({
+            url: `/api/klaim/${kunjungan}/verifikasi`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                verify();
+                iziToast.success({
+                    title: 'Pesan Sukses!',
+                    message: 'Verifikasi berkas berhasil dilakukan pada '+res,
+                    position: 'topRight'
+                });
+                $('#btn-verif').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-check-square');
+            }, error: function(xhr, status, error) {
+                // Gagal: tangani error di sini
+                console.error('Terjadi kesalahan:', error);
+                // Bisa juga tampilkan alert
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Verifikasi berkas gagal dilakukan. Silakan coba lagi.',
+                    position: 'topRight'
+                });
+                $('#btn-verif').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-check-square');
+            }
+        })
+    }
+
+    function batalVerifikasi(kunjungan) {
+        $('#btn-verif').prop('disabled',true).find('i').removeClass('fa-check-square').addClass('fa-sync fa-spin');
+        // console.log($('#ck_resume').prop('checked'));
+
+        $.ajax({
+            url: `/api/klaim/${kunjungan}/batalverifikasi`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                verify();
+                iziToast.success({
+                    title: 'Pesan Sukses!',
+                    message: 'Verifikasi berkas berhasil dilakukan pada '+res,
+                    position: 'topRight'
+                });
+                $('#btn-verif').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-check-square');
+            }, error: function(xhr, status, error) {
+                // Gagal: tangani error di sini
+                console.error('Terjadi kesalahan:', error);
+                // Bisa juga tampilkan alert
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Verifikasi berkas gagal dilakukan. Silakan coba lagi.',
+                    position: 'topRight'
+                });
+                $('#btn-verif').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-check-square');
+            }
+        })
+    }
+
     function hapus(kunjungan) {
         $('#id_hapus').val(kunjungan);
         $('#tx_hapus').text(kunjungan);
@@ -646,6 +776,9 @@
             // PROSES HAPUS
             var kunjungan = $('#id_hapus').val();
             $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 url: `/api/klaim/${kunjungan}/hapus`,
                 type: 'DELETE',
                 dataType: 'json',

@@ -288,6 +288,32 @@ class ApiSmartKlaimController extends Controller
         return response()->json($data, 200);
     }
 
+    function verifikasiKlaim($kunjungan)
+    {
+        $now = Carbon::now();
+
+        $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
+        $show->verif = true;
+        $show->verif_user = Auth::user()->ID;
+        $show->verif_tgl = $now;
+        $show->save();
+
+        return response()->json($now, 200);
+    }
+
+    function batalVerifikasiKlaim($kunjungan)
+    {
+        $now = Carbon::now();
+
+        $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
+        $show->verif = false;
+        $show->verif_user = null;
+        $show->verif_tgl = null;
+        $show->save();
+
+        return response()->json($now, 200);
+    }
+
     function showKlaim($tahun, $bulan, $kunjungan)
     {
         $path = 'files/klaim/'.$tahun.'/'.$bulan.'/'.$kunjungan.'.pdf';
@@ -311,6 +337,7 @@ class ApiSmartKlaimController extends Controller
         $now = Carbon::now();
         $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
         $show->status = false;
+        $show->save();
         $show->delete();
 
         return response()->json($now, 200);
