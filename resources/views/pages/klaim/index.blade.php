@@ -27,7 +27,7 @@
     <div class="col-xl-8">
         <div class="card">
             <div class="card-header align-items-center">
-                <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Tabel Claim <span class="ms-2 f-14 px-2 badge bg-light-secondary rounded-pill">1</span></h5>
+                <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Tabel Claim <span class="ms-2 f-14 px-2 badge bg-light-secondary rounded-pill" id="jumlah_claim">0 Data</span></h5>
             </div>
             <div class="card-body p-0 table-body">
                 <div class="table-responsive">
@@ -109,26 +109,25 @@
 </div>
 
 {{-- MODAL STARTED --}}
-<div id="showTindakan" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showTindakanLabel">
+<div id="catatan" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="catatanLabel">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="showTindakanLabel"><span class="badge text-bg-secondary">DAFTAR TINDAKAN</span> | IDKUNJUNGAN : <a id="show-id-tindakan" class="text-primary"></a></h5>
+                <h5 class="modal-title" id="catatanLabel"><span class="badge text-bg-secondary">CATATAN</span> | IDKUNJUNGAN : <a id="show-id-catatan" class="text-primary"></a></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3">
-                <small><a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> datarecord Tindakan pertama kali dimasukkan saat kunjungan pada tanggal tsb</b></a></small>
+                <small><i class="fas fa-sort-amount-down me-1"></i> <a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> catatan pertama kali ditambahkan</b></a></small>
                 <div class="table-responsive mt-2">
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th style="width: 10%;">TANGGAL</th>
-                                <th style="width: 40%;">NAMA TINDAKAN</th>
-                                <th style="width: 30%;">PETUGAS MEDIS</th>
-                                <th style="width: 20%;">USER INPUT</th>
+                                <th style="width: 15%;">TANGGAL</th>
+                                <th style="width: 30%;">NAMA PENGGUNA</th>
+                                <th style="width: 55%;">DESKRIPSI CATATAN</th>
                             </tr>
                         </thead>
-                        <tbody id="tampil-tindakan">
+                        <tbody id="tampil-catatan">
                             <tr>
                                 <td colspan="15">
                                     <center>
@@ -139,11 +138,9 @@
                         </tbody>
                     </table>
                 </div>
-                {{-- <a href="#!" class="tooltip-test" data-bs-toggle="tooltip" title="Tooltip" data-container="#showCppt">that link</a> --}}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                {{-- <button type="button" class="btn btn-primary"></button> --}}
             </div>
         </div>
     </div>
@@ -181,6 +178,7 @@
                 $("#tampil-tbody").empty();
                 if (res.show && Array.isArray(res.show)) {
                     res.show.forEach(item => {
+                        $('#jumlah_claim').text(res.show.length + ' Data');
                         if (item.NOSEP) {
                             valSEP = item.NOSEP.substring(8, 12); // 0624
                             parts = item.TGLSEP.split("-"); // hasil: ['08', '06', '2024'] || e.g. 2024-01-12 00:00:00
@@ -208,12 +206,12 @@
                         if (item.STATUSVERIF) {
                             stt = `<a href="javascript: void(0);" class="avtar avtar-s btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Telah Diverifikasi Oleh ${item.NAMAVERIF} pada ${item.TGLVERIF}" onclick="event.stopPropagation();"><i class="ti ti-square-check f-30"></i></a>`;
                         } else {
-                            stt = `<a href="javascript: void(0);" class="avtar avtar-s btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Berkas Belum Diverifikasi"><i class="ti ti-square-x f-30"></i></a>`;
+                            stt = `<a href="javascript: void(0);" class="avtar avtar-s btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Berkas Belum Diverifikasi" onclick="event.stopPropagation();"><i class="ti ti-square-x f-30"></i></a>`;
                         }
                         if (item.CATATAN) {
-                            cat = `<a href="javascript: void(0);" class="avtar avtar-s btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ada Catatan Berkas Klaim" onclick="event.stopPropagation(); lihatCatatan('${item.IDKLAIM}')"><i class="ti ti-file-text f-30"></i></a>`;
+                            cat = `<a href="javascript: void(0);" class="avtar avtar-s btn-link-success" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Catatan Berkas Klaim" onclick="event.stopPropagation(); lihatCatatan('${item.NOMOR}')" id="catatan${item.NOMOR}"><i class="ti ti-file-text f-30"></i></a>`;
                         } else {
-                            cat = `<a href="javascript: void(0);" class="avtar avtar-s btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tidak Ada Catatan"><i class="ti ti-file-x f-30"></i></a>`;
+                            cat = `<a href="javascript: void(0);" class="avtar avtar-s btn-link-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tidak Ada Catatan" onclick="event.stopPropagation();"><i class="ti ti-file-x f-30"></i></a>`;
                         }
                         content += `<tr class="clickable" data-href="klaim/${item.NOMOR}">
                                         <td>
@@ -312,5 +310,38 @@
         }
     }
 
+    function lihatCatatan(kunjungan) {
+        // console.log($(this).find('i'));
+        $('#show-id-catatan').text(kunjungan);
+        $('#catatan'+kunjungan).find('i').removeClass('ti ti-file-text f-30').addClass('fas fa-sync fa-spin f-20');
+        $.ajax({
+            url: "/api/klaim/"+kunjungan+"/catatan",
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                if (res.show.length != 0) {
+                    res.show.forEach(item => {
+                        content = ``;
+                        content += `<tr>
+                                        <td class="custom-column">${item.updated_at}</td>
+                                        <td class="custom-column">${item.NAMAPEGAWAI}</td>
+                                        <td class="custom-column">${item.deskripsi}</td>
+                                    </tr>
+                        `;
+                        $('#tampil-catatan').empty().append(content);
+                    })
+                    $('#catatan').modal('show');
+                    $('#catatan'+kunjungan).find('i').removeClass('fas fa-sync fa-spin f-20').addClass('ti ti-file-text f-30');
+                } else {
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: 'Data Catatan tidak ditemukan / belum diisi',
+                        position: 'topRight'
+                    });
+                    $('#catatan'+kunjungan).find('i').removeClass('fas fa-sync fa-spin f-20').addClass('ti ti-file-text f-30');
+                }
+            }
+        })
+    }
 </script>
 @endsection

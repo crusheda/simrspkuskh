@@ -25,6 +25,7 @@
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
 <script src="{{ asset('js/plugins/simple-datatables.js') }}"></script>
 <script src="{{ asset('js/plugins/choices.min.js') }}"></script>
+<script src="{{ asset('js/plugins/ckeditor/classic/ckeditor.js') }}"></script>
 
 {{-- CDN --}}
 {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
