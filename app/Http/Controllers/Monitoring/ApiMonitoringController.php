@@ -54,6 +54,14 @@ class ApiMonitoringController extends Controller
                 WHERE deleted_at IS null
             ) AS ttd
         '))->where('ttd.rn', 1); // hanya baris TTD terakhir per kunjungan
+        $subCatatan = DB::table(DB::raw('
+            (
+                SELECT *,
+                    ROW_NUMBER() OVER (PARTITION BY nomor ORDER BY created_at DESC) AS rn
+                FROM simrspku_klaim.klaim_verifikasi_catatan
+                WHERE deleted_at IS null AND status = 1
+            ) AS cat
+        '))->where('cat.rn', 1);
         // MAIN QUERY
         $show = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(
@@ -61,6 +69,7 @@ class ApiMonitoringController extends Controller
                     'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
                     'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
                     'ru.DESKRIPSI AS NAMARUANGAN',
+                    'cat.updated_at AS TGLCATATAN',
                     'ttd.created_at AS TGLTTD',
                     'cp.TANGGAL AS TGLCPPT',
                     'td.TANGGAL AS TGLTINDAKAN',
@@ -68,6 +77,9 @@ class ApiMonitoringController extends Controller
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER')
                 )
+                ->leftJoinSub($subCatatan, 'cat', function ($join) { // CATATAN
+                    $join->on('cat.nomor', '=', 'pk.NOMOR');
+                })
                 ->leftJoinSub($subTTD, 'ttd', function ($join) { // CPPT
                     $join->on('ttd.kunjungan', '=', 'pk.NOMOR');
                 })

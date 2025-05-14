@@ -123,13 +123,13 @@
                                 <th colspan="7"><center>Monitoring</center></th>
                             </tr>
                             <tr>
-                                <th>TDKN</th>
-                                <th>CPPT</th>
-                                <th>ICD9</th>
-                                <th>ICD10</th>
-                                <th>TTE</th>
-                                <th>SKDP</th>
-                                <th>SEP</th>
+                                <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Monitoring Tindakan">TDKN</th>
+                                <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Monitoring Pengisian CPPT">CPPT</th>
+                                <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Monitoring Pengisian Diagnosa Dokter">ICD</th>
+                                <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tanda Tangan Elektronik SIRMED">TTE</th>
+                                <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Surat Rencana Kontrol">SKDP</th>
+                                <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Surat Eligibilitas Peserta">SEP</th>
+                                <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Catatan Berkas Klaim">CAT</th>
                             </tr>
                         </thead>
                         <tbody id="tampil-tbody">
@@ -320,6 +320,42 @@
         </div>
     </div>
 </div>
+<div id="catatan" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="catatanLabel">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="catatanLabel"><span class="badge text-bg-secondary">CATATAN</span> | IDKUNJUNGAN : <a id="show-id-catatan" class="text-primary"></a></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3">
+                <small><i class="fas fa-sort-amount-down me-1"></i> <a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> catatan pertama kali ditambahkan</b></a></small>
+                <div class="table-responsive mt-2">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%;">TANGGAL</th>
+                                <th style="width: 30%;">NAMA PENGGUNA</th>
+                                <th style="width: 55%;">DESKRIPSI CATATAN</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tampil-catatan">
+                            <tr>
+                                <td colspan="15">
+                                    <center>
+                                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
 {{-- MODAL ENDED --}}
 <script>
     let canvas;
@@ -438,14 +474,14 @@
                                             </div>
                                             <div class="flex-grow-1 ms-3">
                                                 <h4 class="mb-1"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis">RM.${item.NORM}</b> - <b class="text-primary">${item.NAMAPASIEN}</b></h4>
-                                                <a class="mb-0 text-dark" href="javascript: void(0);">DPJP : ${item.NAMADOKTER}</a><br>
+                                                <a class="mb-0 text-dark" href="javascript: void(0);"><b>DPJP</b> : ${item.NAMADOKTER}</a><br>
                                                 <a class="mb-2 text-dark" href="javascript: void(0);">
                                                     <code>
                                                         Ruangan <b class="text-pink-900">${item.NAMARUANGAN}</b> | <b class="text-teal-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Registrasi">${item.NOPEN}</b>
                                                         | <b class="text-indigo-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b>
                                                     </code>
                                                 </a><br>
-                                                <a class="mb-2 text-dark" href="javascript: void(0);"><code>${status}</code></a>
+                                                <a class="mb-2 text-dark" href="javascript: void(0);" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan"><code>${status}</code></a>
                                             </div>
                                         </div>
                                     </td>
@@ -471,7 +507,6 @@
                                         </button>`}
                                     </td>
                                     <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
-                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
                                     <td>${item.TGLTTD?`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" id="resumerj`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
@@ -488,7 +523,14 @@
                                             <i class="fas fa-times fs-5 text-secondary"></i>
                                         </button>`}
                                     </td>
-                                    <td>${btnSEP}
+                                    <td>${btnSEP}</td>
+                                    <td>${item.TGLCATATAN?`
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-success" id="catatan`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail Catatan" onclick="showCatatan('`+item.NOMOR+`')">
+                                            <i class="fas fa-check text-success"></i>
+                                        </button>`:`
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Catatan tidak ditemukan">
+                                            <i class="fas fa-times fs-5 text-secondary"></i>
+                                        </button>`}
                                     </td>
                                 </tr>`;
                     $('#tampil-tbody').append(content);
@@ -631,6 +673,40 @@
                         message: 'Data CPPT tidak ditemukan / belum diisi',
                         position: 'topRight'
                     });
+                }
+            }
+        })
+    }
+
+    function showCatatan(kunjungan) {
+        // console.log($(this).find('i'));
+        $('#show-id-catatan').text(kunjungan);
+        $('#catatan'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+        $.ajax({
+            url: "/api/klaim/"+kunjungan+"/catatan",
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                if (res.show.length != 0) {
+                    res.show.forEach(item => {
+                        content = ``;
+                        content += `<tr>
+                                        <td class="custom-column">${item.updated_at}</td>
+                                        <td class="custom-column">${item.NAMAPEGAWAI}</td>
+                                        <td class="custom-column">${item.deskripsi}</td>
+                                    </tr>
+                        `;
+                        $('#tampil-catatan').empty().append(content);
+                    })
+                    $('#catatan').modal('show');
+                    $('#catatan'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                } else {
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: 'Data Catatan tidak ditemukan / belum diisi',
+                        position: 'topRight'
+                    });
+                    $('#catatan'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
                 }
             }
         })

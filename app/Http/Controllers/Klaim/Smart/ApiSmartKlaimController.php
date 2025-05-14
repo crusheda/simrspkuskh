@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Klaim\Smart;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
+use App\Models\simrspku_klaim\klaim_verifikasi_catatan;
 use App\Models\simrspku_klaim\klaim_verifikasi;
 use App\Models\simrspku_klaim\klaim_file;
 use Illuminate\Support\Facades\DB;
@@ -284,6 +285,63 @@ class ApiSmartKlaimController extends Controller
         return response()->json($data, $status);
     }
 
+    function getCatatan($kunjungan) // Semua catatan berkas klaim kunjungan tersebut
+    {
+        $show = DB::table('simrspku_klaim.klaim_verifikasi_catatan AS kvc')
+                        ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','kvc.user')
+                        ->select('kvc.*',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAPEGAWAI'))
+                        ->where('kvc.nomor',$kunjungan)
+                        ->where('kvc.status',true)
+                        ->orderBy('kvc.updated_at','ASC')
+                        ->get();
+
+        $data = [
+            'show' => $show,
+        ];
+
+        return response()->json($data, 200);
+    }
+
+    function showCatatan($id) // Hanya catatan spesifik GET BY ID
+    {
+        $show = DB::table('simrspku_klaim.klaim_verifikasi_catatan AS kvc')
+                        ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','kvc.user')
+                        ->select('kvc.*',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAPEGAWAI'))
+                        ->where('kvc.id',$id)
+                        ->where('kvc.status',true)
+                        ->first();
+
+        return response()->json($show, 200);
+    }
+
+    function ubahCatatan(Request $request)
+    {
+        $now = Carbon::now();
+
+        $show               = klaim_verifikasi_catatan::find($request->id);
+        $show->user         = Auth::user()->ID;
+        $show->deskripsi    = $request->catatan;
+        $show->save();
+
+        $data = [
+            'now' => $now,
+            'show' => $show,
+        ];
+
+        return response()->json($data, 200);
+    }
+
+    function hapusCatatan($id)
+    {
+        $now = Carbon::now();
+        $show = klaim_verifikasi_catatan::where('id',$id)->first();
+        $show->status = false;
+        $show->save();
+        $show->delete();
+
+        return response()->json($now, 200);
+    }
+
     function getKlaim($kunjungan)
     {
         $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
@@ -301,8 +359,6 @@ class ApiSmartKlaimController extends Controller
             'file' => $file,
         ];
 
-        // print_r($file);
-        // die();
         return response()->json($data, 200);
     }
 
@@ -359,7 +415,6 @@ class ApiSmartKlaimController extends Controller
         $show->delete();
 
         return response()->json($now, 200);
-
     }
 
 }

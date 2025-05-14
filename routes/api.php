@@ -69,6 +69,10 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             // BERKAS KLAIM
             Route::post('klaim/submit', [ApiSmartKlaimController::class, 'submit'])->name('api.klaim.submit');
             Route::get('klaim/{sep}/verif', [ApiSmartKlaimController::class, 'verifSep'])->name('api.klaim.verifSep');
+            Route::get('klaim/{kunjungan}/catatan', [ApiSmartKlaimController::class, 'getCatatan'])->name('api.klaim.getCatatan');
+            Route::get('klaim/catatan/{id}', [ApiSmartKlaimController::class, 'showCatatan'])->name('api.klaim.showCatatan');
+            Route::post('klaim/catatan/{id}/ubah', [ApiSmartKlaimController::class, 'ubahCatatan'])->name('api.klaim.ubahCatatan');
+            Route::delete('klaim/catatan/{id}/hapus', [ApiSmartKlaimController::class, 'hapusCatatan'])->name('api.klaim.hapusCatatan');
             Route::get('klaim/{kunjungan}/data', [ApiSmartKlaimController::class, 'getKlaim'])->name('api.klaim.getKlaim');
             Route::get('klaim/{kunjungan}/verifikasi', [ApiSmartKlaimController::class, 'verifikasiKlaim'])->name('api.klaim.verifikasiKlaim');
             Route::get('klaim/{kunjungan}/batalverifikasi', [ApiSmartKlaimController::class, 'batalVerifikasiKlaim'])->name('api.klaim.batalVerifikasiKlaim');
