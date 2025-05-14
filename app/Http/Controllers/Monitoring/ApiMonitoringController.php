@@ -965,6 +965,50 @@ class ApiMonitoringController extends Controller
 
             // Proses setiap PNOMOR
             foreach ($groupedData as $PNOMOR => $PTINDAKAN) {
+                $show2 = DB::select('CALL simrspku_klaim.CetakHasilLab(?,?)',[$PNOMOR,$PTINDAKAN]);
+                // print_r($show2);
+                // die();
+                foreach ($show2 as $key => $value) {
+                    //GENERATE QR CODE
+                    $generator = new DNS2D();
+                    $pegawai = $value->NIP_ANALIS . '-' . $value->ANALIS;
+
+                    // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
+                    $image = $generator->getBarcodePNG($pegawai, 'QRCODE');
+                    // print_r($generator);
+                    // die();
+
+                    // Decode base64 jadi binary PNG
+                    $decodedImage = base64_decode($image);
+                    $token = Crypt::encrypt($value->NIP_ANALIS);
+                    $titleQrcode = Crypt::encrypt($value->NIP_ANALIS).'.png';
+                    if ($value->NIP_ANALIS) {
+                        $verif = klaim_qrcode_pegawai::where('nomor',$value->NIP_ANALIS)->first();
+                        // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
+                        $pathQrcode = 'files/qrcode/' . $titleQrcode;
+                        $outputQrcode = storage_path('app/public/' . $pathQrcode);
+
+                        // SAVE TO DB
+                        if (!$verif) {
+                            file_put_contents($outputQrcode, $decodedImage);
+                            $post = new klaim_qrcode_pegawai;
+                            $post->token = $token;
+                            $post->nomor = $value->NIP_ANALIS;
+                            $post->title = $titleQrcode;
+                            $post->filename = $pathQrcode;
+                            $post->save();
+                        } else {
+                            if (!Storage::disk('public')->exists($verif->filename)) {
+                                file_put_contents($outputQrcode, $decodedImage);
+                                $verif->token = $token;
+                                $verif->title = $titleQrcode;
+                                $verif->filename = $pathQrcode;
+                                $verif->save();
+                            }
+                        }
+                    }
+                }
+
                 $path = 'files/laborat/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan.'/laporan_'.$PNOMOR;
                 $output = storage_path().'/app/public/'.$path;
                 // $outputPath = storage_path("app/reports/laporan_{$PNOMOR}");
@@ -980,6 +1024,7 @@ class ApiMonitoringController extends Controller
                         'PNOMOR' => $PNOMOR,      // Kirim data PNOMOR ke report
                         'PTINDAKAN' => $PTINDAKAN,  // Kirim data PTINDAKAN ke report
                         'IMAGES_PATH' => public_path() . "/doc/input/laborat/",  // Ganti dengan path gambar jika ada
+                        'QRCODE_PATH' => storage_path()."/app/public/",
                     ],
                     'db_connection' => [
                         'driver'   => 'mysql',
@@ -990,7 +1035,8 @@ class ApiMonitoringController extends Controller
                         'database' => env('DB_DATABASE_CUSTOM'),
                     ],
                 ];
-
+                // print_r($options);
+                // die();
 
                 // Proses JasperReport untuk setiap PNOMOR
                 $jasper->process($input, $output, $options)->execute();
@@ -1089,6 +1135,47 @@ class ApiMonitoringController extends Controller
 
             // Proses setiap PNOMOR
             foreach ($listTindakan as $index => $PTINDAKAN) {
+                $show2 = DB::select('CALL simrspku_klaim.CetakHasilRadrspkuskh(?)',[$PTINDAKAN]);
+                // print_r($show2);
+                // die();
+                //GENERATE QR CODE
+                $generator = new DNS2D();
+                $pegawai = $show2[0]->NIP . '-' . $show2[0]->RADIOGRAFER;
+
+                // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
+                $image = $generator->getBarcodePNG($pegawai, 'QRCODE');
+                // print_r($generator);
+                // die();
+
+                // Decode base64 jadi binary PNG
+                $decodedImage = base64_decode($image);
+                $token = Crypt::encrypt($show2[0]->NIP);
+                $titleQrcode = Crypt::encrypt($show2[0]->NIP).'.png';
+                $verif = klaim_qrcode_pegawai::where('nomor',$show2[0]->NIP)->first();
+
+                // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
+                $pathQrcode = 'files/qrcode/' . $titleQrcode;
+                $outputQrcode = storage_path('app/public/' . $pathQrcode);
+
+                // SAVE TO DB
+                if (!$verif) {
+                    file_put_contents($outputQrcode, $decodedImage);
+                    $post = new klaim_qrcode_pegawai;
+                    $post->token = $token;
+                    $post->nomor = $show2[0]->NIP;
+                    $post->title = $titleQrcode;
+                    $post->filename = $pathQrcode;
+                    $post->save();
+                } else {
+                    if (!Storage::disk('public')->exists($verif->filename)) {
+                        file_put_contents($outputQrcode, $decodedImage);
+                        $verif->token = $token;
+                        $verif->title = $titleQrcode;
+                        $verif->filename = $pathQrcode;
+                        $verif->save();
+                    }
+                }
+
                 $path = 'files/radiologi/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan.'/laporan_'.$index;
                 $output = storage_path().'/app/public/'.$path;
 
@@ -1102,6 +1189,7 @@ class ApiMonitoringController extends Controller
                     'params' => [
                         'PTINDAKAN' => $PTINDAKAN,  // Kirim data PTINDAKAN ke report
                         'IMAGES_PATH' => public_path() . "/doc/input/radiologi/",  // Ganti dengan path gambar jika ada
+                        'QRCODE_PATH' => storage_path()."/app/public/",
                     ],
                     'db_connection' => [
                         'driver'   => 'mysql',
@@ -1112,11 +1200,11 @@ class ApiMonitoringController extends Controller
                         'database' => env('DB_DATABASE_CUSTOM'),
                     ],
                 ];
+                // print_r($options);
+                // die();
 
                 // Proses JasperReport untuk setiap PNOMOR
                 $jasper->process($input, $output, $options)->execute();
-                // print_r($jasper);
-                // die();
                 $tempPaths[] = "{$output}.pdf"; // Simpan path PDF sementara
             }
 

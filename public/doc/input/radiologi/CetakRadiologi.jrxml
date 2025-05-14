@@ -15,6 +15,9 @@
 	</parameter>
 	<parameter name="REQUEST_REPORT_ID" class="java.lang.String"/>
 	<parameter name="PNIP" class="java.lang.String"/>
+	<parameter name="QRCODE_PATH" class="java.lang.String">
+		<defaultValueExpression><![CDATA[" "]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[call simrspku_klaim.CetakHasilRadrspkuskh($P{PTINDAKAN})]]>
 	</queryString>
@@ -149,6 +152,7 @@
 	</field>
 	<field name="CARABAYAR" class="java.lang.String"/>
 	<field name="HARI_INI" class="java.sql.Timestamp"/>
+	<field name="QR1" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -538,7 +542,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{RADIOGRAFER} == null ? $F{BTK} : $F{RADIOGRAFER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{RADIOGRAFER} ? $F{RADIOGRAFER} : "(.......................................)"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="301" y="102" width="242" height="15" uuid="ac462e63-d38a-4c9d-b29c-edb11be89888">
@@ -567,6 +571,12 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="107" y="53" width="50" height="50" uuid="58351a6f-2a9f-45c0-b2e8-cbc8f8dc311c">
+					<printWhenExpression><![CDATA[$F{QR1} != null]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{QRCODE_PATH} + $F{QR1}]]></imageExpression>
+			</image>
 		</band>
 	</detail>
 </jasperReport>
