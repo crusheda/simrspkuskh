@@ -320,6 +320,7 @@
             dataType: 'json',
             success: function(res) {
                 if (res.show.length != 0) {
+                    $('#tampil-catatan').empty();
                     res.show.forEach(item => {
                         content = ``;
                         content += `<tr>
@@ -328,7 +329,7 @@
                                         <td class="custom-column">${item.deskripsi}</td>
                                     </tr>
                         `;
-                        $('#tampil-catatan').empty().append(content);
+                        $('#tampil-catatan').append(content);
                     })
                     $('#catatan').modal('show');
                     $('#catatan'+kunjungan).find('i').removeClass('fas fa-sync fa-spin f-20').addClass('ti ti-file-text f-30');

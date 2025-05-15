@@ -71,6 +71,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('klaim/{sep}/verif', [ApiSmartKlaimController::class, 'verifSep'])->name('api.klaim.verifSep');
             Route::get('klaim/{kunjungan}/catatan', [ApiSmartKlaimController::class, 'getCatatan'])->name('api.klaim.getCatatan');
             Route::get('klaim/catatan/{id}', [ApiSmartKlaimController::class, 'showCatatan'])->name('api.klaim.showCatatan');
+            Route::post('klaim/catatan/simpan', [ApiSmartKlaimController::class, 'simpanCatatan'])->name('api.klaim.simpanCatatan');
             Route::post('klaim/catatan/{id}/ubah', [ApiSmartKlaimController::class, 'ubahCatatan'])->name('api.klaim.ubahCatatan');
             Route::delete('klaim/catatan/{id}/hapus', [ApiSmartKlaimController::class, 'hapusCatatan'])->name('api.klaim.hapusCatatan');
             Route::get('klaim/{kunjungan}/data', [ApiSmartKlaimController::class, 'getKlaim'])->name('api.klaim.getKlaim');

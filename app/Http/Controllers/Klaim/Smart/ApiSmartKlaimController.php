@@ -40,7 +40,8 @@ class ApiSmartKlaimController extends Controller
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
                     'kv.id AS IDKLAIM','kv.verif AS STATUSVERIF','kv.verif_tgl AS TGLVERIF',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAVERIF'),
-                    DB::raw('CASE WHEN kvc.id IS NOT NULL THEN true ELSE false END AS CATATAN')
+                    // DB::raw('CASE WHEN kvc.id IS NOT NULL THEN true ELSE false END AS CATATAN')
+                    DB::raw('(SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM simrspku_klaim.klaim_verifikasi_catatan AS kvc WHERE kvc.nomor = pk.NOMOR AND kvc.status = true) AS CATATAN')
                 )
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
@@ -54,10 +55,10 @@ class ApiSmartKlaimController extends Controller
                     $join->on('kv.nomor','=','pk.NOMOR')
                         ->where('kv.status', true);
                 })
-                ->leftJoin('simrspku_klaim.klaim_verifikasi_catatan AS kvc', function($join) {
-                    $join->on('kvc.nomor','=','pk.NOMOR')
-                        ->where('kvc.status', true);
-                })
+                // ->leftJoin('simrspku_klaim.klaim_verifikasi_catatan AS kvc', function($join) {
+                //     $join->on('kvc.nomor','=','pk.NOMOR')
+                //         ->where('kvc.status', true);
+                // })
                 ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','kv.verif_user')
                 // ->where(function ($query) {
                 //     $query->where('pk.RUANGAN', 'LIKE', '1020101%');
@@ -314,9 +315,25 @@ class ApiSmartKlaimController extends Controller
         return response()->json($show, 200);
     }
 
+    function simpanCatatan(Request $request)
+    {
+        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+
+        // print_r(Auth::user()->ID);
+        // die();
+        $data = new klaim_verifikasi_catatan;
+        $data->nomor        = $request->kunjungan;
+        $data->user         = Auth::user()->ID;
+        $data->deskripsi    = $request->catatan;
+        $data->status       = true;
+        $data->save();
+
+        return response()->json($data, 200);
+    }
+
     function ubahCatatan(Request $request)
     {
-        $now = Carbon::now();
+        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
 
         $show               = klaim_verifikasi_catatan::find($request->id);
         $show->user         = Auth::user()->ID;
@@ -333,7 +350,7 @@ class ApiSmartKlaimController extends Controller
 
     function hapusCatatan($id)
     {
-        $now = Carbon::now();
+        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
         $show = klaim_verifikasi_catatan::where('id',$id)->first();
         $show->status = false;
         $show->save();
@@ -350,6 +367,7 @@ class ApiSmartKlaimController extends Controller
                         ->select('kvc.*',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAPEGAWAI'))
                         ->where('kvc.nomor',$kunjungan)
                         ->where('kvc.status',true)
+                        ->orderBy('kvc.created_at','DESC')
                         ->get();
         $file = klaim_file::where('nomor',$kunjungan)->where('status',true)->get();
 
@@ -365,6 +383,7 @@ class ApiSmartKlaimController extends Controller
     function verifikasiKlaim($kunjungan)
     {
         $now = Carbon::now();
+        $time = $now->isoFormat('YYYY-MM-DD HH:mm:ss');
 
         $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
         $show->verif = true;
@@ -372,12 +391,12 @@ class ApiSmartKlaimController extends Controller
         $show->verif_tgl = $now;
         $show->save();
 
-        return response()->json($now, 200);
+        return response()->json($time, 200);
     }
 
     function batalVerifikasiKlaim($kunjungan)
     {
-        $now = Carbon::now();
+        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
 
         $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
         $show->verif = false;
@@ -408,7 +427,7 @@ class ApiSmartKlaimController extends Controller
 
     function hapusKlaim($kunjungan)
     {
-        $now = Carbon::now();
+        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
         $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
         $show->status = false;
         $show->save();

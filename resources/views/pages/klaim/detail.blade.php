@@ -160,12 +160,13 @@
                                 {{-- <textarea name="catatan_add" id="catatan_add" class="form-control" rows="2" placeholder="Tuliskan catatan berkas klaim disini..."></textarea> --}}
                             </div>
                         </div>
-                        <div class="col-md-12 d-flex justify-content-end mt-3 mb-3">
+                        <div class="col-md-12 d-flex justify-content-end mt-3 mb-2">
                             <div class="btn-group">
                                 <button class="btn btn-warning btn-sm" onclick="verify()" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Refresh Data Catatan"><i class="fas fa-sync"></i></button>
-                                <button class="btn btn-primary btn-sm" onclick="tambahCatatan()" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tambah Catatan Baru"><i class="fas fa-sticky-note me-1"></i> Tambah Catatan</button>
+                                <button class="btn btn-primary btn-sm" onclick="tambahCatatan()" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tambah Catatan Baru" id="btn-tambah"><i class="fas fa-sticky-note me-1"></i> Tambah Catatan</button>
                             </div>
                         </div>
+                        <small class="text-center mb-2"><i class="fas fa-sort-amount-down me-1"></i> <a><b>Data di bawah diurutkan berdasarkan <mark>TANGGAL</mark> catatan terakhir ditambahkan</b></a></small>
                     </div>
                     <div class="row" id="daftar_catatan">
                         <div class="d-flex justify-content-center">
@@ -257,17 +258,23 @@
 </div>
 
 <script>
+    var editorCatatanTambah; // global variable
     var editorCatatanEdit; // global variable
     $(document).ready(function() {
-        var kunjungan = "{{ $list['KUNJUNGAN'] }}";
         // $('#catatan_add').each(function() {
         //     ClassicEditor.create(this)
         //         .catch(function(error) {
         //             console.error(error);
         //         });
         // });
-        ClassicEditor.create(document.querySelector('#catatan_add')).catch((error) => {
-            console.error(error);
+        ClassicEditor.create(document.querySelector('#catatan_add'), {
+                placeholder: 'Silakan isi catatan klaim di sini...'
+            })
+            .then(editor => {
+                editorCatatanTambah = editor;
+            })
+            .catch((error) => {
+                console.error(error);
         });
         if ($('#catatan_edit').length) {
             ClassicEditor.create(document.querySelector('#catatan_edit'))
@@ -353,9 +360,10 @@
                     if (res.catatan.length != 0) {
                         // console.log('sampai sini');
                         $('#jumlah_catatan').text(res.catatan.length);
+                        $('#daftar_catatan').empty();
                         res.catatan.forEach(item => {
-                            $('#daftar_catatan').empty()
-                                .append(`<div class="col">
+                            $('#daftar_catatan')
+                                .append(`<div class="col-md-12 border border-top-0 border-start-0 border-end-0 mb-3">
                                             <div class="row">
                                                 <div class="col">
                                                     <div class="">
@@ -885,82 +893,62 @@
         }
     }
 
-    // function simpan() {
-    //     $("#btn-simpan").prop('disabled', true);
-    //     $("#btn-simpan").find("i").toggleClass("fa-save fa-sync fa-spin");
+    function tambahCatatan() {
+        $("#btn-tambah").prop('disabled', true);
+        $("#btn-tambah").find("i").removeClass("fa-sticky-note").addClass('fa-sync fa-spin');
 
-    //     // Definisi
-    //     var save = new FormData();
-    //     // var filesAdded = $('#filex')[0].files;
-    //     save.append('acara',$('#acara').val());
-    //     save.append('tgl',$('#tgl').val());
-    //     save.append('jenis',$('#jenis').val());
-    //     save.append('kendaraan',$('#kendaraan').val());
-    //     save.append('kendaraan_pegawai',JSON.stringify($('#kendaraan_pegawai').val()));
-    //     save.append('lama1',$('#lama1').val());
-    //     save.append('lama2',$('#lama2').val());
-    //     save.append('lokasi',$('#lokasi').val());
-    //     save.append('pegawai',JSON.stringify($('#pegawai').val()));
-    //     save.append('deskripsi',$('#deskripsi').val());
-    //     save.append('user','{{ Auth::user()->id }}');
-    //     // if (filesAdded) {
-    //     //     save.append('file',filesAdded[0]);
-    //     // }
-    //     if (
-    //         save.get('acara') == ""     ||
-    //         save.get('tgl') == ""       ||
-    //         save.get('jenis') == ""     ||
-    //         save.get('kendaraan') == "" ||
-    //         save.get('lama1') == ""     ||
-    //         // save.get('lama2') == ""     ||
-    //         save.get('lokasi') == ""    ||
-    //         $('#pegawai').val() == ""
-    //         // || filesAdded.length == 0 // (Jika Tidak Ada File Yang Diupload)
-    //         ) {
-    //         iziToast.warning({
-    //             title: 'Pesan Ambigu!',
-    //             message: 'Pastikan Anda tidak mengosongi semua isian Wajib',
-    //             position: 'topRight'
-    //         });
-    //     } else {
-    //         $.ajax({
-    //             headers: {
-    //                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    //             },
-    //             url: "",
-    //             method: 'post',
-    //             data: save,
-    //             cache: false,
-    //             contentType: false,
-    //             processData: false,
-    //             dataType: 'json',
-    //             success: function(res) {
-    //                 if (res.code == 200) {
-    //                     notifier.show(
-    //                         "Pesan Sukses!", "Submit Berkas berhasil dilakukan pada "+res.message,
-    //                         "success", "{{ asset('images/notification/ok-48.png') }}", 4e3
-    //                     );
-    //                     showRiwayat();
-    //                     clearInput();
-    //                 } else {
-    //                     notifier.show(
-    //                         "Pesan Galat!", res.message,
-    //                         "warning", "{{ asset('images/notification/medium_priority-48.png') }}", 4e3
-    //                     );
-    //                 }
-    //             },
-    //             error: function (res) {
-    //                 notifier.show(
-    //                     res.statusText + " (Code " + res.status + ")", res.responseText,
-    //                     "danger", "{{ asset('images/notification/high_priority-48.png') }}", 4e3
-    //                 );
-    //             }
-    //         });
-    //     }
+        // Hapus tag HTML dan spasi
+        var isiEditor = editorCatatanTambah.getData();
+        var isiBersih = isiEditor.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim();
+        var kunjungan = "{{ $list['KUNJUNGAN'] }}";
+        // Definisi
+        var save = new FormData();
+        save.append('kunjungan', kunjungan);
+        save.append('catatan', isiEditor);
+        if (isiBersih === '') {
+            iziToast.warning({
+                title: 'Pesan Error!',
+                message: 'Pastikan Anda tidak mengosongi isian Keterangan (Wajib)',
+                position: 'topRight'
+            });
+            $("#btn-tambah").find("i").removeClass("fa-sync fa-spin").addClass("fa-sticky-note");
+            $("#btn-tambah").prop('disabled', false);
+        } else {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "/api/klaim/catatan/simpan",
+                method: 'post',
+                data: save,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function(res) {
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: `Catatan Berkas Klaim telah berhasil ditambahkan`,
+                        position: 'topRight'
+                    });
+                    verify();
+                    editorCatatanTambah.setData('');
+                    $("#btn-tambah").find("i").removeClass("fa-sync fa-spin").addClass("fa-sticky-note");
+                    $("#btn-tambah").prop('disabled', false);
+                },
+                error: function (res) {
+                    iziToast.error({
+                        title: res.statusText + " (Code " + res.status + ")",
+                        message: res.responseText,
+                        position: 'topRight'
+                    });
+                    $("#btn-tambah").find("i").removeClass("fa-sync fa-spin").addClass("fa-sticky-note");
+                    $("#btn-tambah").prop('disabled', false);
+                }
+            });
+        }
 
-    //     $("#btn-simpan").find("i").removeClass("fa-sync fa-spin").addClass("fa-save");
-    //     $("#btn-simpan").prop('disabled', false);
-    // }
+    }
 
     function ubahCatatan(id) {
         $.ajax({
@@ -985,38 +973,47 @@
 
     function prosesUbahCatatan() {
         var id = $("#id_ubah_catatan").val();
+        var isiEditor = editorCatatanEdit.getData();
+        var isiBersih = isiEditor.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim();
         var save = new FormData();
         save.append('id',id);
-        save.append('catatan',editorCatatanEdit.getData());
-            console.log(editorCatatanEdit.getData());
-        $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            url: `/api/klaim/catatan/${id}/ubah`,
-            method: 'post',
-            data: save,
-            cache: false,
-            contentType: false,
-            processData: false,
-            dataType: 'json',
-            success: function(res) {
-                verify();
-                iziToast.success({
-                    title: 'Pesan Berhasil!',
-                    message: `Catatan Berkas Klaim dengan ID#${id} telah berhasil diperbarui`,
-                    position: 'topRight'
-                });
-                $('#ubahCatatan').modal('hide');
-            },
-            error: function (res) {
-                iziToast.error({
-                    title: res.statusText + " (Code " + res.status + ")",
-                    message: res.responseText,
-                    position: 'topRight'
-                });
-            }
-        })
+        save.append('catatan',isiEditor);
+        if (isiBersih === '') {
+            iziToast.warning({
+                title: 'Pesan Error!',
+                message: 'Pastikan Anda tidak mengosongi isian Keterangan (Wajib)',
+                position: 'topRight'
+            });
+        } else {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: `/api/klaim/catatan/${id}/ubah`,
+                method: 'post',
+                data: save,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function(res) {
+                    verify();
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: `Catatan Berkas Klaim dengan ID#${id} telah berhasil diperbarui`,
+                        position: 'topRight'
+                    });
+                    $('#ubahCatatan').modal('hide');
+                },
+                error: function (res) {
+                    iziToast.error({
+                        title: res.statusText + " (Code " + res.status + ")",
+                        message: res.responseText,
+                        position: 'topRight'
+                    });
+                }
+            })
+        }
     }
 
     function hapusCatatan(id) {
