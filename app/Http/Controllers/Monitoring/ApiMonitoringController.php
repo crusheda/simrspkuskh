@@ -413,6 +413,44 @@ class ApiMonitoringController extends Controller
                 File::makeDirectory($outputDir, 0755, true); // true = recursive
             }
 
+            //GENERATE QR CODE
+            $generator = new DNS2D();
+            $sep = $show[0]->NOMORKARTU;
+
+            // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
+            $image = $generator->getBarcodePNG($sep, 'QRCODE');
+            // print_r($generator);
+            // die();
+
+            // Decode base64 jadi binary PNG
+            $decodedImage = base64_decode($image);
+            $token = Crypt::encrypt($show[0]->NOMORKARTU);
+            $titleQrcode = Crypt::encrypt($show[0]->NOMORKARTU).'.png';
+            $verif = klaim_qrcode_pegawai::where('nomor',$show[0]->NOMORKARTU)->first();
+
+            // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
+            $pathQrcode = 'files/qrcode/' . $titleQrcode;
+            $outputQrcode = storage_path('app/public/' . $pathQrcode);
+
+            // SAVE TO DB
+            if (!$verif) {
+                file_put_contents($outputQrcode, $decodedImage);
+                $post = new klaim_qrcode_pegawai;
+                $post->token = $token;
+                $post->nomor = $show[0]->NOMORKARTU;
+                $post->title = $titleQrcode;
+                $post->filename = $pathQrcode;
+                $post->save();
+            } else {
+                if (!Storage::disk('public')->exists($verif->filename)) {
+                    file_put_contents($outputQrcode, $decodedImage);
+                    $verif->token = $token;
+                    $verif->title = $titleQrcode;
+                    $verif->filename = $pathQrcode;
+                    $verif->save();
+                }
+            }
+
             // SAVE TO DB
             $verify = klaim_file::where('nomor',$kunjungan)->where('jenis',1)->where('status',true)->first();
             if (!$verify) {
@@ -426,38 +464,19 @@ class ApiMonitoringController extends Controller
             }
 
             $options = [
-                'format' => ['pdf'], // 'xls' / 'rtf
+                'format' => ['pdf'],
                 'params' => [
-                    'ASPEL' => $show[0]->ASPEL,
-                    'CATATAN' => $show[0]->CATATAN,
-                    'CETAKAN' => $show[0]->CETAKAN,
-                    'COB' => $show[0]->COB,
-                    'DIAGNOSA' => $show[0]->DIAGNOSA,
-                    'DOKTER' => $show[0]->DOKTER,
+                    'PSEP' => $getSEP->NOSEP,
                     'IMAGES_PATH' => public_path()."/doc/input/sep/",
-                    'JENISKELAMIN' => $show[0]->JENISKELAMIN,
-                    'JENISRAWAT' => $show[0]->JENISRAWAT,
-                    'KATARAK' => $show[0]->KATARAK,
-                    'KELAS' => $show[0]->KELAS,
-                    'klsRawat' => $show[0]->klsRawat,
-                    'NAMAINSTANSI' => $show[0]->NAMAINSTANSI,
-                    'NAMALENGKAP' => $show[0]->NAMALENGKAP,
-                    'NOMORKARTU' => $show[0]->NOMORKARTU,
-                    'NOMORSEP' => $show[0]->NOMORSEP,
-                    'NORM' => $show[0]->NORM,
-                    'NOTELP' => $show[0]->NOTELP,
-                    'PENJAMIN' => $show[0]->PENJAMIN,
-                    'PENUNJANG' => $show[0]->PENUNJANG,
-                    'PESERTA' => $show[0]->PESERTA,
-                    'POLIPERUJUK' => $show[0]->POLIPERUJUK,
-                    'poliTujuan' => $show[0]->poliTujuan,
-                    'PRB' => $show[0]->PRB,
-                    'PROC' => $show[0]->PROC,
-                    'RUJUKAN' => $show[0]->RUJUKAN,
-                    'TGL_LAHIR' => $show[0]->TGL_LAHIR,
-                    'TGLSEP' => $show[0]->TGLSEP,
-                    'TJKUNJ' => $show[0]->TJKUNJ,
-                    'UNITPELAYANAN' => $show[0]->UNITPELAYANAN
+                    'QRCODE_PATH' => storage_path()."/app/public/",
+                ],
+                'db_connection' => [
+                    'driver'   => 'mysql',
+                    'host'     => env('DB_HOST'),
+                    'port'     => env('DB_PORT'),
+                    'username' => env('DB_USERNAME'),
+                    'password' => env('DB_PASSWORD'),
+                    'database' => env('DB_DATABASE_CUSTOM'),
                 ],
             ];
 

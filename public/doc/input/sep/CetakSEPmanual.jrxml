@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CetakSEP" language="groovy" pageWidth="595" pageHeight="268" columnWidth="565" leftMargin="16" rightMargin="14" topMargin="8" bottomMargin="8" uuid="d84ba5a7-048f-4251-9a1f-ebf63450da68">
 	<property name="ireport.zoom" value="1.4641000000000017"/>
 	<property name="ireport.x" value="0"/>
@@ -26,18 +26,39 @@
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<parameter name="PSEP" class="java.lang.String"/>
-	<parameter name="CETAK_HEADER" class="java.lang.String">
-		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
-	</parameter>
-	<parameter name="IMAGES_PATH" class="java.lang.String">
-		<defaultValueExpression><![CDATA[" "]]></defaultValueExpression>
-	</parameter>
-	<parameter name="QRCODE_PATH" class="java.lang.String">
-		<defaultValueExpression><![CDATA[" "]]></defaultValueExpression>
-	</parameter>
+	<parameter name="ASPEL" class="java.lang.String"/>
+	<parameter name="CATATAN" class="java.lang.String"/>
+	<parameter name="CETAKAN" class="java.lang.String"/>
+	<parameter name="COB" class="java.lang.String"/>
+	<parameter name="DIAGNOSA" class="java.lang.String"/>
+	<parameter name="DOKTER" class="java.lang.String"/>
+	<parameter name="JENISKELAMIN" class="java.lang.String"/>
+	<parameter name="JENISRAWAT" class="java.lang.String"/>
+	<parameter name="KATARAK" class="java.lang.String"/>
+	<parameter name="KELAS" class="java.lang.String"/>
+	<parameter name="KLSRAWAT" class="java.lang.String"/>
+	<parameter name="klsRawat" class="java.lang.String"/>
+	<parameter name="NAMAINSTANSI" class="java.lang.String"/>
+	<parameter name="NAMALENGKAP" class="java.lang.String"/>
+	<parameter name="NOMORKARTU" class="java.lang.String"/>
+	<parameter name="NOMORSEP" class="java.lang.String"/>
+	<parameter name="NORM" class="java.lang.String"/>
+	<parameter name="NOTELP" class="java.lang.String"/>
+	<parameter name="PENJAMIN" class="java.lang.String"/>
+	<parameter name="PENUNJANG" class="java.lang.String"/>
+	<parameter name="PESERTA" class="java.lang.String"/>
+	<parameter name="POLIPERUJUK" class="java.lang.String"/>
+	<parameter name="poliTujuan" class="java.lang.String"/>
+	<parameter name="PRB" class="java.lang.String"/>
+	<parameter name="PROC" class="java.lang.String"/>
+	<parameter name="RUJUKAN" class="java.lang.String"/>
+	<parameter name="TGL_LAHIR" class="java.lang.String"/>
+	<parameter name="TGLSEP" class="java.lang.String"/>
+	<parameter name="TJKUNJ" class="java.lang.String"/>
+	<parameter name="UNITPELAYANAN" class="java.lang.String"/>
+	<parameter name="IMAGES_PATH" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[CALL simrspku_klaim.CetakSEP($P{PSEP})]]>
+		<![CDATA[]]>
 	</queryString>
 	<field name="NAMAINSTANSI" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="NAMAINSTANSI"/>
@@ -146,15 +167,8 @@
 		<property name="com.jaspersoft.studio.field.label" value="DOKTER"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="dpjp"/>
 	</field>
-	<field name="KLSRAWAT" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.label" value="KLSRAWAT"/>
-	</field>
 	<field name="POLIPERUJUK" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="POLIPERUJUK"/>
-	</field>
-	<field name="QR1" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.label" value="DOKTER"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="dpjp"/>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
@@ -165,30 +179,31 @@
 				<reportElement x="155" y="1" width="213" height="18" uuid="bf21130a-9877-4539-b578-762d3b2c1117"/>
 				<box leftPadding="0"/>
 				<textElement verticalAlignment="Bottom">
-					<font fontName="Arial Narrow" size="12" isBold="false"/>
+					<font fontName="Arial Narrow" size="11" isBold="false"/>
 				</textElement>
 				<text><![CDATA[SURAT ELEGIBILITAS PESERTA]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="155" y="19" width="212" height="19" uuid="c89d2ef1-ae9f-47db-abe0-f297ce868cb9"/>
+			<textField isBlankWhenNull="true">
+				<reportElement x="368" y="0" width="178" height="30" uuid="d0064799-dbb3-4950-aadd-a43339d7d5a6"/>
 				<textElement>
-					<font fontName="Arial Narrow" size="12"/>
+					<font fontName="Arial Narrow" size="13"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{NAMAINSTANSI}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="368" y="19" width="179" height="19" uuid="d0064799-dbb3-4950-aadd-a43339d7d5a6"/>
-				<textElement>
-					<font fontName="Arial Narrow" size="11"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{PRB} == null? "" : $F{PRB}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{PRB}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="0" y="6" width="150" height="32" uuid="f755cfb1-20d9-4e4e-b3bf-a795bef53b10">
+				<reportElement x="0" y="6" width="150" height="32" uuid="5908246c-0fc2-4850-8e1f-5fa7a80242c3">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<imageExpression><![CDATA[$P{IMAGES_PATH} + "logo-bpjs.png"]]></imageExpression>
 			</image>
+			<staticText>
+				<reportElement x="155" y="19" width="213" height="19" uuid="e006bbc3-11b9-4d74-b005-7681dcbb921c"/>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial Narrow" size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[RS PKU MUHAMMADIYAH SUKOHARJO]]></text>
+			</staticText>
 		</band>
 	</pageHeader>
 	<detail>
@@ -300,7 +315,7 @@
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{NOMORSEP}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{NOMORSEP}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="80" y="52" width="7" height="13" uuid="7c01a379-16d8-41fb-b4f5-362d7184f987"/>
@@ -379,21 +394,21 @@
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{TGLSEP}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{TGLSEP}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="87" y="26" width="213" height="13" uuid="dc49dc7d-fe44-4513-8cde-a6262c7d5947"/>
+				<reportElement stretchType="ElementGroupHeight" x="87" y="26" width="213" height="13" uuid="dc49dc7d-fe44-4513-8cde-a6262c7d5947"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{NOMORKARTU} +" ( MR. " + $F{NORM} + " )"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{NOMORKARTU} +" ( MR. " + $P{NORM} + " )"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="87" y="39" width="213" height="13" uuid="0665988b-f34a-4832-8c57-09b69929151e"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{NAMALENGKAP}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{NAMALENGKAP}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="377" y="143" width="170" height="13" uuid="59cc8b0f-38c7-4623-b8f0-2f51c6fb4b45">
@@ -409,28 +424,28 @@
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{TGL_LAHIR}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{TGL_LAHIR}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="377" y="130" width="170" height="13" uuid="02c60c55-b03a-4c78-8ab3-837a0ae90703"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{PENJAMIN} == null ? "" : $F{PENJAMIN}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{PENJAMIN}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="87" y="78" width="213" height="13" uuid="a04d3b27-ef5a-4640-be17-428d8fd238aa"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{poliTujuan} == null ? "-" : $F{poliTujuan}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{poliTujuan} == null ? "-" : $P{poliTujuan}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="87" y="104" width="213" height="13" uuid="8b484582-d497-4eeb-8269-b3e76856e9cc"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{JENISRAWAT} == "Rawat Jalan" ? $F{RUJUKAN} : "RS PKU MUHAMMADIYAH SUKOHARJO"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{JENISRAWAT} == "Rawat Jalan" ? $P{RUJUKAN} : "RS PKU MUHAMMADIYAH SUKOHARJO"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement stretchType="ElementGroupHeight" x="87" y="117" width="213" height="23" uuid="f0fb69f4-5845-4b9c-8ece-4f567d29a179">
@@ -439,7 +454,7 @@
 				<textElement>
 					<font fontName="Arial Narrow" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{DIAGNOSA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{DIAGNOSA}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="370" y="117" width="7" height="13" uuid="0cf0c939-c341-4cf3-a839-86e7214c49a3"/>
@@ -471,49 +486,49 @@
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="377" y="13" width="170" height="13" uuid="e27faaae-288d-4bfa-90eb-1384274ef99c"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{PESERTA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{PESERTA}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="377" y="39" width="170" height="13" uuid="a32e953e-3679-42a9-8339-969363e0d54e"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{JENISRAWAT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{JENISRAWAT}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="377" y="117" width="170" height="13" uuid="a3ea1086-57f6-4774-8895-a13ed3522c46"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{JENISRAWAT}=="Rawat Jalan" ? "-" : $F{klsRawat} == null ? $F{KELAS} : $F{klsRawat}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{JENISRAWAT}=="Rawat Jalan" ? "-" : $P{klsRawat} == null ? $P{KELAS} : $P{klsRawat}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="197" width="300" height="10" uuid="5d353273-383c-404f-8b57-323ce12fbfec"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Arial Narrow" size="8" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{CETAKAN}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{CETAKAN}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="87" y="141" width="213" height="13" uuid="48f93b0e-1276-46c8-8b14-b349fba8ec5e"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{CATATAN}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{CATATAN}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="377" y="26" width="170" height="13" uuid="8fa39311-82bd-4c54-b6d1-4a5e9cb6c25f">
 					<printWhenExpression><![CDATA[$F{COB}=="Ya"]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{COB}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{COB}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="65" width="80" height="13" uuid="d8b9da56-ed62-4bb6-91e8-a110a2cb48e9"/>
@@ -534,21 +549,21 @@
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{NOTELP}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{NOTELP}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="300" y="0" width="247" height="13" uuid="6e07169d-37dc-4202-9009-bda9877867dc"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{KATARAK}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{KATARAK}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="87" y="91" width="213" height="13" uuid="2f7f8e30-25d4-4884-ba1a-443e4021f292"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{DOKTER}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{DOKTER}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="91" width="80" height="13" uuid="6b693ed1-67f9-4ec5-aa44-b3821f95270b"/>
@@ -585,12 +600,12 @@ Kebenaran dan keaslian atas informasi data Pasien menjadi tanggung jawab penuh F
 				</textElement>
 				<text><![CDATA[Jns. Kunjungan]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="377" y="52" width="170" height="13" uuid="3d897ba2-ba81-4ea0-b84b-1f1ffb79fda2"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{TJKUNJ}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{TJKUNJ}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="370" y="52" width="7" height="13" uuid="fc66d1e1-fc72-484d-8254-c4fb95f3b9d5"/>
@@ -613,12 +628,12 @@ Kebenaran dan keaslian atas informasi data Pasien menjadi tanggung jawab penuh F
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="377" y="91" width="170" height="13" uuid="ea9de0ac-d6c7-4690-8f7d-86efc9ff2235"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{POLIPERUJUK} == null ? "-" : $F{POLIPERUJUK}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{POLIPERUJUK} == null ? "-" : $P{POLIPERUJUK}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="370" y="104" width="7" height="13" uuid="b080f1c3-9af5-4cfb-8366-11b2e17f2109"/>
@@ -634,12 +649,12 @@ Kebenaran dan keaslian atas informasi data Pasien menjadi tanggung jawab penuh F
 				</textElement>
 				<text><![CDATA[Kelas Hak]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="377" y="104" width="170" height="13" uuid="29c9c1f3-d82b-4a96-a0de-36ef360ab2ed"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{KELAS}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{KELAS}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="370" y="65" width="7" height="13" uuid="c1cb28e2-38b3-49b4-8f17-3c500cdb2c9b"/>
@@ -648,12 +663,12 @@ Kebenaran dan keaslian atas informasi data Pasien menjadi tanggung jawab penuh F
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="377" y="65" width="170" height="13" uuid="febf7be1-b6a7-4833-a190-b94b02214cb7"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{PROC}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{PROC}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="300" y="65" width="70" height="13" uuid="dcc90c61-1b59-4f8d-b949-6c1a151b1823"/>
@@ -662,23 +677,15 @@ Kebenaran dan keaslian atas informasi data Pasien menjadi tanggung jawab penuh F
 				</textElement>
 				<text><![CDATA[Prosedur]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="377" y="193" width="170" height="14" uuid="3d92ca8f-fd1a-45ff-a944-6a4dd63b6dc9">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{NAMALENGKAP}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{NAMALENGKAP}]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="405" y="156" width="36" height="36" uuid="999aca2d-ceea-4819-809f-2506c2dc152c">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[$F{QR1} != null]]></printWhenExpression>
-				</reportElement>
-				<imageExpression><![CDATA[$P{QRCODE_PATH} + $F{QR1}]]></imageExpression>
-			</image>
 		</band>
 	</detail>
 </jasperReport>
