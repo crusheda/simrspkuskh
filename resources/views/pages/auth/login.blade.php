@@ -106,7 +106,7 @@
                             </a>
                         </div>
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary" id="show-loader">Masuk</button>
+                            <button type="submit" class="btn btn-primary align-middle" id="show-loader">Masuk <i data-feather="log-in" class="ms-1" style="width:13px;height:13px;margin-top:-2px"></i></button>
                         </div>
                         {{-- <div class="saprator my-3">
                             <span>Or continue with</span>
@@ -209,6 +209,7 @@
 
         if (control) {
             control.addEventListener('click', function () {
+                $('#show-loader').props('disabled',true);
                 if (!elem.classList.contains('is-active')) {
                     clearInterval(fadeInInterval);
                     clearInterval(fadeOutInterval);

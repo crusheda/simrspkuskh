@@ -103,7 +103,7 @@
             </div>
         </div>
         <div class="d-grid mb-3">
-            <button class="btn btn-primary" onclick="filter()" id="tombol-tampilkan"><i class="fa fa-filter me-1"></i> Tampilkan</button>
+            <button class="btn btn-primary" onclick="filter()" id="tombol-tampilkan"><i class="fa fa-filter me-1" style="font-size: 13px"></i> Tampilkan</button>
         </div>
     </div>
 </div>
