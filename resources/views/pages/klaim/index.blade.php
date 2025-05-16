@@ -103,7 +103,7 @@
             </div>
         </div>
         <div class="d-grid mb-3">
-            <button class="btn btn-primary" onclick="filter()" id="tombol-tampilkan"><i class="fa fa-filter me-1"></i> Tampilkan</button>
+            <button class="btn btn-primary" onclick="filter()" id="tombol-tampilkan"><i class="fa fa-filter me-1" style="font-size: 13px"></i> Tampilkan</button>
         </div>
     </div>
 </div>
@@ -320,6 +320,7 @@
             dataType: 'json',
             success: function(res) {
                 if (res.show.length != 0) {
+                    $('#tampil-catatan').empty();
                     res.show.forEach(item => {
                         content = ``;
                         content += `<tr>
@@ -328,7 +329,7 @@
                                         <td class="custom-column">${item.deskripsi}</td>
                                     </tr>
                         `;
-                        $('#tampil-catatan').empty().append(content);
+                        $('#tampil-catatan').append(content);
                     })
                     $('#catatan').modal('show');
                     $('#catatan'+kunjungan).find('i').removeClass('fas fa-sync fa-spin f-20').addClass('ti ti-file-text f-30');
