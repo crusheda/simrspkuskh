@@ -324,7 +324,7 @@
                     submit += `<div class="card-footer p-3">
                                     <div class="btn-group w-100">`;
                     submit += `         <button class="btn btn-light-warning btn-sm" onclick="clearCheckbox()"><i class="ti ti-eraser me-1"></i> Clear</button>
-                                        <button class="btn btn-primary btn-sm" onclick="submit('${kunjungan}')" id="btn-submit">Submit <i class="fas fa-paper-plane ms-1"></i></button>`;
+                                        <button class="btn btn-primary btn-sm" onclick="prosesSubmit('${kunjungan}')" id="btn-submit">Submit <i class="fas fa-paper-plane ms-1"></i></button>`;
                     submit += `     </div>
                                 </div>`;
                     $('#footer_submit').empty().append(submit);
@@ -349,7 +349,7 @@
                     submit = ``;
                     submit += `<div class="card-footer p-3">`;
                     submit += `     <button class="btn btn-danger w-100 btn-sm mb-3" onclick="hapus('${kunjungan}')"><i class="fas fa-trash me-1"></i> Hapus Klaim</button>
-                                    <button class="btn btn-outline-success btn-sm w-100 mb-3" onclick="submit('${kunjungan}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang</button>`;
+                                    <button class="btn btn-outline-success btn-sm w-100 mb-3" onclick="prosesSubmit('${kunjungan}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang</button>`;
                             if (res.show.verif == 0) {
                                 submit += `     <button class="btn btn-secondary btn-sm w-100" onclick="verifikasi('${kunjungan}')" id="btn-verif"><i class="fas fa-check-square me-1"></i> Verifikasi</button>`;
                             } else {
@@ -735,9 +735,9 @@
         });
     }
 
-    function submit(kunjungan) {
+    function prosesSubmit(kunjungan) {
         $('#btn-submit').prop('disabled',true).find('i').removeClass('fa-paper-plane').addClass('fa-sync fa-spin');
-        // console.log($('#ck_resume').prop('checked'));
+        // console.log('submit diklik');
 
         var save = new FormData();
         save.append('kunjungan',kunjungan);
@@ -752,7 +752,7 @@
         save.append('operasi',$('#ck_operasi').prop('checked'));
         save.append('user',"{{ Auth::user()->ID }}");
 
-        console.log($('#ck_resume').prop('checked'));
+        // console.log($('#ck_resume').prop('checked'));
         $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
