@@ -263,7 +263,7 @@ class ApiMonitoringController extends Controller
             //         ->select('pj.NOMOR AS NOSEP')
             //         ->where('pk.NOMOR',$kunjungan)
             //         ->first();
-            $show = DB::select('CALL simrspku_klaim.CetakSKDP(?)',[$kunjungan]);
+            $show = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$kunjungan]);
             if (empty($show)) {
                 return response()->json($data, 400);
             }
@@ -282,6 +282,83 @@ class ApiMonitoringController extends Controller
             $outputDir = dirname($output);
             if (!File::exists($outputDir)) {
                 File::makeDirectory($outputDir, 0755, true); // true = recursive
+            }
+
+            //GENERATE QR CODE
+            $generator = new DNS2D();
+            $skdp = $show[0]->NOSURAT;
+
+            // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
+            $image = $generator->getBarcodePNG($skdp, 'QRCODE');
+            // print_r($generator);
+            // die();
+
+            // Decode base64 jadi binary PNG
+            $decodedImage = base64_decode($image);
+            $token = Crypt::encrypt($show[0]->NOSURAT);
+            $titleQrcode = Crypt::encrypt($show[0]->NOSURAT).'.png';
+            $verif = klaim_qrcode_pegawai::where('nomor',$show[0]->SURAT)->first();
+
+            // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
+            $pathQrcode = 'files/qrcode/' . $titleQrcode;
+            $outputQrcode = storage_path('app/public/' . $pathQrcode);
+
+            // SAVE TO DB
+            if (!$verif) {
+                file_put_contents($outputQrcode, $decodedImage);
+                $post = new klaim_qrcode_pegawai;
+                $post->token = $token;
+                $post->nomor = $show[0]->SURAT;
+                $post->title = $titleQrcode;
+                $post->filename = $pathQrcode;
+                $post->save();
+            } else {
+                if (!Storage::disk('public')->exists($verif->filename)) {
+                    file_put_contents($outputQrcode, $decodedImage);
+                    $verif->token = $token;
+                    $verif->title = $titleQrcode;
+                    $verif->filename = $pathQrcode;
+                    $verif->save();
+                }
+            }
+
+            //GENERATE QR CODE
+            $generator2 = new DNS2D();
+            $skdp2 = $show[0]->NOBPJS;
+
+            // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
+            $image2 = $generator2->getBarcodePNG($skdp2, 'QRCODE');
+            // print_r($generator);
+            // die();
+
+            // Decode base64 jadi binary PNG
+            $decodedImage2 = base64_decode($image2);
+            $token2 = Crypt::encrypt($show[0]->NOBPJS);
+            $titleQrcode2 = Crypt::encrypt($show[0]->NOBPJS).'.png';
+            $verif2 = klaim_qrcode::where('nomor',$show[0]->NOBPJS)->where('jenis',3)->first();
+
+            // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
+            $pathQrcode2 = 'files/qrcode/' . $titleQrcode2;
+            $outputQrcode2 = storage_path('app/public/' . $pathQrcode2);
+
+            // SAVE TO DB
+            if (!$verif2) {
+                file_put_contents($outputQrcode2, $decodedImage2);
+                $post = new klaim_qrcode;
+                $post->token = $token2;
+                $post->jenis = 3;
+                $post->nomor = $show[0]->NOBPJS;
+                $post->title = $titleQrcode2;
+                $post->filename = $pathQrcode2;
+                $post->save();
+            } else {
+                if (!Storage::disk('public')->exists($verif2->filename)) {
+                    file_put_contents($outputQrcode2, $decodedImage2);
+                    $verif2->token = $token2;
+                    $verif2->title = $titleQrcode2;
+                    $verif2->filename = $pathQrcode2;
+                    $verif2->save();
+                }
             }
 
             // SAVE TO DB
@@ -305,72 +382,24 @@ class ApiMonitoringController extends Controller
             // }
 
             $options = [
-                'format' => ['pdf'], // 'xls' / 'rtf
+                'format' => ['pdf'],
                 'params' => [
-                    'KODEBPJS' => $show[0]->KODEBPJS,
-                    'NOMOR' => $show[0]->NOMOR,
-                    'IDPENJAMIN' => $show[0]->IDPENJAMIN,
-                    'NOMORKARTU' => $show[0]->NOMORKARTU,
-                    'NORMBPJS' => $show[0]->NORMBPJS,
-                    'NOBPJS' => $show[0]->NOBPJS,
-                    'PESERTA' => $show[0]->PESERTA,
-                    'NAMALENGKAP1' => $show[0]->NAMALENGKAP1,
-                    'NAMA_LENGKAP' => $show[0]->NAMA_LENGKAP,
-                    'TANGGAL_LAHIR' => $show[0]->TANGGAL_LAHIR,
-                    'NORM' => $show[0]->NORM,
-                    'KOTA' => $show[0]->KOTA,
-                    'DIBUAT_TANGGAL' => $show[0]->DIBUAT_TANGGAL,
-                    'RUANGAN' => $show[0]->RUANGAN,
-                    'DOKTER' => $show[0]->DOKTER,
-                    'NIP' => $show[0]->NIP,
-                    'DRSEP' => $show[0]->DRSEP,
-                    'DRKONTROL' => $show[0]->DRKONTROL,
-                    'SPESIALISTIK' => $show[0]->SPESIALISTIK,
-                    'SMF' => $show[0]->SMF,
-                    'DIAGNOSIS' => $show[0]->DIAGNOSIS,
-                    'NOMOR_ANTRIAN' => $show[0]->NOMOR_ANTRIAN,
-                    'NOMOR_BOOKING' => $show[0]->NOMOR_BOOKING,
-                    'DIAGMASUK' => $show[0]->DIAGMASUK,
-                    'JADWAL_KONTROL' => $show[0]->JADWAL_KONTROL,
-                    'TGLSO' => $show[0]->TGLSO,
-                    'KETSO' => $show[0]->KETSO,
-                    'KET' => $show[0]->KET,
-                    'JADWALBPJS' => $show[0]->JADWALBPJS,
-                    'BLN' => $show[0]->BLN,
-                    'THN' => $show[0]->THN,
-                    'RENCANA_TERAPI' => $show[0]->RENCANA_TERAPI,
-                    'JENIS_KUNJUNGAN' => $show[0]->JENIS_KUNJUNGAN,
-                    'NOSBPJS' => $show[0]->NOSBPJS,
-                    'NOSURAT' => $show[0]->NOSURAT,
-                    'JENISKONTROL' => $show[0]->JENISKONTROL,
-                    'NORJK' => $show[0]->NORJK,
-                    'TGLRJK' => $show[0]->TGLRJK,
-                    'MASABERLAKU' => $show[0]->MASABERLAKU,
-                    'TUJUANRUJUK' => $show[0]->TUJUANRUJUK,
-                    'nama' => $show[0]->nama,
-                    'kode' => $show[0]->kode,
-                    'JENIS_RUANG_PERAWATAN' => $show[0]->JENIS_RUANG_PERAWATAN,
-                    'JENIS_PERAWATAN' => $show[0]->JENIS_PERAWATAN,
-                    'JKONTROL' => $show[0]->JKONTROL,
-                    'JADWAL_KONTROL1' => $show[0]->JADWAL_KONTROL1,
-                    'USRP' => $show[0]->USRP,
-                    'NORJK' => $show[0]->NORJK,
+                    'PKUNJUNGAN' => $show[0]->KUNJ,
                     'IMAGES_PATH' => public_path()."/doc/input/skdp/",
+                    'QRCODE_PATH' => storage_path()."/app/public/",
                 ],
-                'classpath' => [
-                    public_path() . "/jasper-libs/core-3.5.3.jar",
-                    public_path() . "/jasper-libs/javase-3.5.3.jar",
-                    public_path() . "/jasper-libs/barcode4j.jar"
-                    // public_path() . "/jasper-libs/core-3.3.3.jar",
-                    // public_path() . "/jasper-libs/javase-3.3.3.jar"
+                'db_connection' => [
+                    'driver'   => 'mysql',
+                    'host'     => env('DB_HOST'),
+                    'port'     => env('DB_PORT'),
+                    'username' => env('DB_USERNAME'),
+                    'password' => env('DB_PASSWORD'),
+                    'database' => env('DB_DATABASE_CUSTOM'),
                 ],
             ];
 
             // dd($options);
             // print_r($options);
-            // die();
-
-            // print_r(public_path()."\jasper-libs\core-3.3.3.jar");
             // die();
 
             $jasper = new PHPJasper;
