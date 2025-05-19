@@ -308,6 +308,7 @@
             type: 'GET',
             dataType: 'json',
             success: function(res) {
+                // REFRESH HALAMAN
                 if (!res.show) {
                     $('#alert_verif').empty();
                     $('#ck_sep').prop('checked', false).prop('disabled', false);
@@ -357,47 +358,48 @@
                             }
                     submit += `</div>`;
                     $('#footer_submit').empty().append(submit);
-                    if (res.catatan.length != 0) {
-                        // console.log('sampai sini');
-                        $('#jumlah_catatan').text(res.catatan.length);
-                        $('#daftar_catatan').empty();
-                        res.catatan.forEach(item => {
-                            $('#daftar_catatan')
-                                .append(`<div class="col-md-12 border border-top-0 border-start-0 border-end-0 mb-3">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <div class="">
-                                                        <h4 class="d-inline-block">${item.NAMAPEGAWAI}</h4>
-                                                        <p class="text-muted">${moment(item.updated_at).locale('id').fromNow()} (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})</p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <ul class="list-unstyled mb-0">
-                                                        <li class="d-inline-block f-20 me-1">
-                                                            <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Ubah Catatan" class="text-warning" onclick="ubahCatatan(${item.id})">
-                                                                <i class="fas fa-edit"></i>
-                                                            </a>
-                                                        </li>
-                                                        <li class="d-inline-block f-20">
-                                                            <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Hapus Catatan" class="text-danger" onclick="hapusCatatan(${item.id})">
-                                                                <i class="fas fa-trash"></i>
-                                                            </a>
-                                                        </li>
-                                                    </ul>
+                }
+                // REFRESH CATATAN
+                if (res.catatan.length != 0) {
+                    // console.log('sampai sini');
+                    $('#jumlah_catatan').text(res.catatan.length);
+                    $('#daftar_catatan').empty();
+                    res.catatan.forEach(item => {
+                        $('#daftar_catatan')
+                            .append(`<div class="col-md-12 border border-top-0 border-start-0 border-end-0 mb-3">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="">
+                                                    <h4 class="d-inline-block">${item.NAMAPEGAWAI}</h4>
+                                                    <p class="text-muted">${moment(item.updated_at).locale('id').fromNow()} (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})</p>
                                                 </div>
                                             </div>
-                                            <div>
-                                                <p>${item.deskripsi?item.deskripsi:'-'}</p>
+                                            <div class="col-auto">
+                                                <ul class="list-unstyled mb-0">
+                                                    <li class="d-inline-block f-20 me-1">
+                                                        <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Ubah Catatan" class="text-warning" onclick="ubahCatatan(${item.id})">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li class="d-inline-block f-20">
+                                                        <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Hapus Catatan" class="text-danger" onclick="hapusCatatan(${item.id})">
+                                                            <i class="fas fa-trash"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
                                             </div>
-                                        </div>`);
-                        })
-                        // Showing Tooltip
-                        $('[data-bs-toggle="tooltip"]').tooltip({
-                            trigger : 'hover'
-                        })
-                    } else {
-                        $('#daftar_catatan').empty().append(`<div class="d-flex justify-content-center"><a class="align-middle">Tidak ada catatan</a></div>`);
-                    }
+                                        </div>
+                                        <div>
+                                            <p>${item.deskripsi?item.deskripsi:'-'}</p>
+                                        </div>
+                                    </div>`);
+                    })
+                    // Showing Tooltip
+                    $('[data-bs-toggle="tooltip"]').tooltip({
+                        trigger : 'hover'
+                    })
+                } else {
+                    $('#daftar_catatan').empty().append(`<div class="d-flex justify-content-center"><a class="align-middle">Tidak ada catatan</a></div>`);
                 }
             }
         })
