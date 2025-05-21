@@ -36,6 +36,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     // DASHBOARD
     Route::get('/', function () { return redirect()->route('dashboard'); });
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('test', [DashboardController::class, 'test'])->name('test');
     Route::get('clearcache', [DashboardController::class, 'clearCache'])->name('clear.cache');
     // Route::get('dashboard', function () {
     //     return view('pages.dashboard.index');

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Pengguna;
+use Halimkun\LaravelEklaim\Eklaim;
 
 class DashboardController extends Controller
 {
@@ -30,6 +31,12 @@ class DashboardController extends Controller
         \Artisan::call('optimize');
         return redirect()->back()->with('message','Cache berhasil dibersihkan!');
     }
+
+    function test()
+    {
+
+    }
+
 }
 
 
