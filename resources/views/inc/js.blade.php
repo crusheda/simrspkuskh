@@ -27,6 +27,9 @@
 <script src="{{ asset('js/plugins/choices.min.js') }}"></script>
 <script src="{{ asset('js/plugins/ckeditor/classic/ckeditor.js') }}"></script>
 
+{{-- DIAGRAM --}}
+<script src="{{ asset('js/plugins/apexcharts.min.js') }}"></script>
+
 {{-- CDN --}}
 {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
 {{-- <script src="{{ asset('js/jquery.min.js') }}"></script> --}}

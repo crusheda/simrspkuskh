@@ -1,411 +1,276 @@
 @extends('layouts.index')
 
 @section('content')
-<!-- [ Main Content ] start -->
-{{-- <div class="row">
-    <div class="col-md-4 col-sm-6">
-        <div class="card statistics-card-1 overflow-hidden">
-            <div class="card-body">
-                <img src="{{ asset('images/widget/img-status-4.svg') }}" alt="img" class="img-fluid img-bg" />
-                <h5 class="mb-4">Daily Sales</h5>
-                <div class="d-flex align-items-center mt-3">
-                    <h3 class="f-w-300 d-flex align-items-center m-b-0">$249.95</h3>
-                    <span class="badge bg-light-success ms-2">36%</span>
-                </div>
-                <p class="text-muted mb-2 text-sm mt-3">You made an extra 35,000 this daily</p>
-                <div class="progress" style="height: 7px">
-                    <div class="progress-bar bg-brand-color-3" role="progressbar" style="width: 75%"
-                        aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 col-sm-6">
-        <div class="card statistics-card-1 overflow-hidden">
-            <div class="card-body">
-                <img src="{{ asset('images/widget/img-status-5.svg') }}" alt="img" class="img-fluid img-bg" />
-                <h5 class="mb-4">Monthly Sales</h5>
-                <div class="d-flex align-items-center mt-3">
-                    <h3 class="f-w-300 d-flex align-items-center m-b-0">$249.95</h3>
-                    <span class="badge bg-light-primary ms-2">20%</span>
-                </div>
-                <p class="text-muted mb-2 text-sm mt-3">You made an extra 35,000 this Monthly</p>
-                <div class="progress" style="height: 7px">
-                    <div class="progress-bar bg-brand-color-3" role="progressbar" style="width: 75%"
-                        aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 col-sm-12">
-        <div class="card statistics-card-1 overflow-hidden bg-brand-color-3">
-            <div class="card-body">
-                <img src="{{ asset('images/widget/img-status-6.svg') }}" alt="img" class="img-fluid img-bg" />
-                <h5 class="mb-4 text-white">Yearly Sales</h5>
-                <div class="d-flex align-items-center mt-3">
-                    <h3 class="text-white f-w-300 d-flex align-items-center m-b-0">$249.95</h3>
-                </div>
-                <p class="text-white text-opacity-75 mb-2 text-sm mt-3">You made an extra 35,000 this Daily
-                </p>
-                <div class="progress bg-white bg-opacity-10" style="height: 7px">
-                    <div class="progress-bar bg-white" role="progressbar" style="width: 75%"
-                        aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-xl-7">
-        <div class="card">
-            <div class="card-header">
-                <h5>Users From United States</h5>
-            </div>
-            <div class="card-body">
-                <div id="world-map-markers" class="set-map" style="height: 365px"></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-xl-5">
-        <div class="card">
-            <div class="card-header d-flex align-items-center justify-content-between py-3">
-                <h5>Users From United States</h5>
-                <div class="dropdown">
-                    <a class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none" href="#"
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
-                            class="material-icons-two-tone f-18">more_vert</i></a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="#">View</a>
-                        <a class="dropdown-item" href="#">Edit</a>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="d-flex align-items-center">
-                    <div class="avtar avtar-s bg-light-primary flex-shrink-0">
-                        <i class="ph-duotone ph-money f-20"></i>
-                    </div>
-                    <div class="flex-grow-1 ms-3">
-                        <p class="mb-0 text-muted">Total Earnings</p>
-                        <h5 class="mb-0">$249.95</h5>
-                    </div>
-                </div>
-                <div id="earnings-users-chart"></div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="d-flex">
-                            <div class="avtar avtar-s bg-light-warning flex-shrink-0">
-                                <i class="ph-duotone ph-lightning f-20"></i>
-                            </div>
-                            <div class="flex-grow-1 ms-2">
-                                <p class="mb-0 text-muted">Total ideas</p>
-                                <h6 class="mb-0">235</h6>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="d-flex">
-                            <div class="avtar avtar-s bg-light-danger flex-shrink-0">
-                                <i class="ph-duotone ph-map-pin f-20"></i>
-                            </div>
-                            <div class="flex-grow-1 ms-2">
-                                <p class="mb-0 text-muted">Total location</p>
-                                <h6 class="mb-0">26</h6>
-                            </div>
-                        </div>
+    <!-- [ breadcrumb ] start -->
+    <div class="page-header">
+        <div class="page-block">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div class="page-header-title text-secondary">
+                        <h2 class="mb-0"><span class="pc-micon me-1 text-primary">
+                            <i class="ph-duotone ph-gauge align-middle"></i>
+                        </span>Dashboard <b class="text-primary">Interaktif</b></h2>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-6 col-xl-4">
-        <div class="card statistics-card-1 overflow-hidden">
-            <div class="card-body">
-                <img src="{{ asset('images/widget/img-status-7.svg') }}" alt="img" class="img-fluid img-bg" />
-                <div class="d-flex align-items-center">
-                    <img src="{{ asset('images/widget/img-facebook.svg') }}" alt="img" class="img-fluid" />
-                    <div class="flex-grow-1 ms-3">
-                        <p class="mb-0 text-muted">Total Likes</p>
-                        <div class="d-inline-flex align-items-center">
-                            <h5 class="f-w-300 d-flex align-items-center m-b-0">12,281</h5>
-                            <span class="badge bg-success ms-2">+7.2%</span>
-                        </div>
+    <!-- [ breadcrumb ] end -->
+    <!-- [ Main Content ] end -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0">Data Record Smart Claim</h5>
+                        <input type="month" class="form-control form-control-sm w-auto border-0 shadow-none2" data-bs-toggle="tooltip" id="inp_tgl_fresh" onchange="refresh()"
+                        data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Filter Berdasarkan Bulan dan Tahun" value="2024-04"> <!-- {{ $list['yearMonth'] }} -->
                     </div>
                 </div>
-                <div class="row g-3 mt-5 text-center">
-                    <div class="col-6">
-                        <p class="mb-0 text-muted">Target</p>
-                        <h5 class="mb-0">35,098</h5>
-                    </div>
-                    <div class="col-6 border-start">
-                        <p class="mb-0 text-muted">Duration</p>
-                        <h5 class="mb-0">3,539</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-xl-4">
-        <div class="card statistics-card-1 overflow-hidden">
-            <div class="card-body">
-                <img src="{{ asset('images/widget/img-status-8.svg') }}" alt="img" class="img-fluid img-bg" />
-                <div class="d-flex align-items-center">
-                    <img src="{{ asset('images/widget/img-google.svg') }}" alt="img" class="img-fluid" />
-                    <div class="flex-grow-1 ms-3">
-                        <p class="mb-0 text-muted">Total Likes</p>
-                        <div class="d-inline-flex align-items-center">
-                            <h5 class="f-w-300 d-flex align-items-center m-b-0">12,281</h5>
-                            <span class="badge bg-success ms-2">+5.9%</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row g-3 mt-5 text-center">
-                    <div class="col-6">
-                        <p class="mb-0 text-muted">Target</p>
-                        <h5 class="mb-0">35,098</h5>
-                    </div>
-                    <div class="col-6 border-start">
-                        <p class="mb-0 text-muted">Duration</p>
-                        <h5 class="mb-0">3,539</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-12 col-xl-4">
-        <div class="card statistics-card-1 overflow-hidden">
-            <div class="card-body">
-                <img src="{{ asset('images/widget/img-status-9.svg') }}" alt="img" class="img-fluid img-bg" />
-                <div class="d-flex align-items-center">
-                    <img src="{{ asset('images/widget/img-twitter.svg') }}" alt="img" class="img-fluid" />
-                    <div class="flex-grow-1 ms-3">
-                        <p class="mb-0 text-muted">Total Likes</p>
-                        <div class="d-inline-flex align-items-center">
-                            <h5 class="f-w-300 d-flex align-items-center m-b-0">12,281</h5>
-                            <span class="badge bg-success ms-2">+6.2%</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row g-3 mt-5 text-center">
-                    <div class="col-6">
-                        <p class="mb-0 text-muted">Target</p>
-                        <h5 class="mb-0">35,098</h5>
-                    </div>
-                    <div class="col-6 border-start">
-                        <p class="mb-0 text-muted">Duration</p>
-                        <h5 class="mb-0">3,539</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-xl-4">
-        <div class="card">
-            <div class="card-header d-flex align-items-center justify-content-between py-3">
-                <h5>Recent Users</h5>
-                <div class="dropdown">
-                    <a class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none" href="#"
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
-                            class="material-icons-two-tone f-18">more_vert</i></a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="#">View</a>
-                        <a class="dropdown-item" href="#">Edit</a>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <h2 class="mb-3"><b>4.7<small class="text-muted f-18">/5</small></b></h2>
-                    <div class="star mb-3 f-20">
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star text-warning"></i>
-                        <i class="fas fa-star-half-alt text-warning"></i>
-                    </div>
-                </div>
-                <div class="row align-items-center g-3 mb-2">
-                    <div class="col-auto">
-                        <h6 class="mb-0">5 <i class="fas fa-star text-warning"></i></h6>
-                    </div>
-                    <div class="col">
-                        <div class="progress" style="height: 8px">
-                            <div class="progress-bar bg-primary" style="width: 70%"></div>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <p class="mb-0 text-muted">384</p>
-                    </div>
-                </div>
-                <div class="row align-items-center g-3 mb-2">
-                    <div class="col-auto">
-                        <h6 class="mb-0">4 <i class="fas fa-star text-warning"></i></h6>
-                    </div>
-                    <div class="col">
-                        <div class="progress" style="height: 8px">
-                            <div class="progress-bar bg-primary" style="width: 55%"></div>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <p class="mb-0 text-muted">145</p>
-                    </div>
-                </div>
-                <div class="row align-items-center g-3 mb-2">
-                    <div class="col-auto">
-                        <h6 class="mb-0">3 <i class="fas fa-star text-warning"></i></h6>
-                    </div>
-                    <div class="col">
-                        <div class="progress" style="height: 8px">
-                            <div class="progress-bar bg-primary" style="width: 40%"></div>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <p class="mb-0 text-muted">24</p>
-                    </div>
-                </div>
-                <div class="row align-items-center g-3 mb-2">
-                    <div class="col-auto">
-                        <h6 class="mb-0">2 <i class="fas fa-star text-warning"></i></h6>
-                    </div>
-                    <div class="col">
-                        <div class="progress" style="height: 8px">
-                            <div class="progress-bar bg-primary" style="width: 25%"></div>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <p class="mb-0 text-muted">1</p>
-                    </div>
-                </div>
-                <div class="row align-items-center g-3">
-                    <div class="col-auto">
-                        <h6 class="mb-0">1 <i class="fas fa-star text-warning"></i></h6>
-                    </div>
-                    <div class="col">
-                        <div class="progress" style="height: 8px">
-                            <div class="progress-bar bg-primary" style="width: 10%"></div>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <p class="mb-0 text-muted">0</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-xl-8">
-        <div class="card table-card">
-            <div class="card-header d-flex align-items-center justify-content-between py-3">
-                <h5>Recent Users</h5>
-                <div class="dropdown">
-                    <a class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none" href="#"
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
-                            class="material-icons-two-tone f-18">more_vert</i></a>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <a class="dropdown-item" href="#">View</a>
-                        <a class="dropdown-item" href="#">Edit</a>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body py-2 px-0">
-                <div class="table-responsive">
-                    <table class="table table-hover table-borderless table-sm mb-0">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <img src="{{ asset('images/user/avatar-1.jpg') }}" alt="user image"
-                                            class="img-radius align-top m-r-15" style="width: 40px" />
-                                        <div class="d-inline-block">
-                                            <h6 class="m-b-0">Quinn Flynn</h6>
-                                            <p class="m-b-0">Android developer</p>
+                <div class="card-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-3 col-xl-2">
+                            <div class="card overflow-hidden">
+                                <div class="card-body pb-4 pt-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <p class="text-muted mb-0">Belum Diverifikasi</p>
+                                            <div class="d-flex align-items-end mt-1">
+                                                <h4 class="mb-0" id="belum_verif"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
+                                                <span class="badge bg-light-secondary ms-2">Berkas</span>
+                                            </div>
+                                        </div>
+                                        <div class="avtar bg-brand-color-2 text-white">
+                                            <i class="ph-duotone ph-x-square f-26"></i>
                                         </div>
                                     </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"><i class="ph-duotone ph-circle text-warning f-12"></i>
-                                        11 may 12:30</p>
-                                </td>
-                                <td class="text-end">
-                                    <button class="btn avtar avtar-xs btn-light-danger"><i
-                                            class="ti ti-x"></i></button>
-                                    <button class="btn avtar avtar-xs btn-light-success"><i
-                                            class="ti ti-check"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <img src="{{ asset('images/user/avatar-2.jpg') }}" alt="user image"
-                                            class="img-radius align-top m-r-15" style="width: 40px" />
-                                        <div class="d-inline-block">
-                                            <h6 class="m-b-0">Garrett Winters</h6>
-                                            <p class="m-b-0">Android developer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-xl-2">
+                            <div class="card overflow-hidden">
+                                <div class="card-body pb-4 pt-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <p class="text-muted mb-0">Telah Diverifikasi</p>
+                                            <div class="d-flex align-items-end mt-1">
+                                                <h4 class="mb-0" id="sudah_verif"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
+                                                <span class="badge bg-light-secondary ms-2">Berkas</span>
+                                            </div>
+                                        </div>
+                                        <div class="avtar bg-brand-color-3 text-white">
+                                            <i class="ph-duotone ph-check-square f-26"></i>
                                         </div>
                                     </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"><i class="ph-duotone ph-circle text-success f-12"></i>
-                                        11 may 12:30</p>
-                                </td>
-                                <td class="text-end">
-                                    <button class="btn avtar avtar-xs btn-light-danger"><i
-                                            class="ti ti-x"></i></button>
-                                    <button class="btn avtar avtar-xs btn-light-success"><i
-                                            class="ti ti-check"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <img src="{{ asset('images/user/avatar-3.jpg') }}" alt="user image"
-                                            class="img-radius align-top m-r-15" style="width: 40px" />
-                                        <div class="d-inline-block">
-                                            <h6 class="m-b-0">Ashton Cox</h6>
-                                            <p class="m-b-0">Android developer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-xl-2">
+                            <div class="card overflow-hidden">
+                                <div class="card-body pb-4 pt-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <p class="text-muted mb-0">Masih Ada Catatan</p>
+                                            <div class="d-flex align-items-end mt-1">
+                                                <h4 class="mb-0" id="masih_catatan"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
+                                                <span class="badge bg-light-secondary ms-2">Berkas</span>
+                                            </div>
+                                        </div>
+                                        <div class="avtar bg-brand-color-1 text-white">
+                                            <i class="ph-duotone ph-note f-26"></i>
                                         </div>
                                     </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"><i class="ph-duotone ph-circle text-primary f-12"></i>
-                                        11 may 12:30</p>
-                                </td>
-                                <td class="text-end">
-                                    <button class="btn avtar avtar-xs btn-light-danger"><i
-                                            class="ti ti-x"></i></button>
-                                    <button class="btn avtar avtar-xs btn-light-success"><i
-                                            class="ti ti-check"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-inline-block align-middle">
-                                        <img src="{{ asset('images/user/avatar-4.jpg') }}" alt="user image"
-                                            class="img-radius align-top m-r-15" style="width: 40px" />
-                                        <div class="d-inline-block">
-                                            <h6 class="m-b-0">Cedric Kelly</h6>
-                                            <p class="m-b-0">Android developer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-xl-3">
+                            <div class="card overflow-hidden">
+                                <div class="card-body pb-3 pt-4">
+                                    <div class="d-flex">
+                                        <!-- Kolom kiri: Total Berkas -->
+                                        <div class="d-flex align-items-center justify-content-center me-3">
+                                            <p class="text-muted mb-0 text-start">Total Berkas Klaim<br><b class="text-primary" id="text_th">...</b></p>
+                                        </div>
+
+                                        <!-- Kolom kanan: IRJ (atas) dan IRD (bawah) -->
+                                        <div class="d-flex flex-column justify-content-between ms-auto align-items-end">
+                                            <!-- IRJ -->
+                                            <div class="d-flex align-items-center mb-2" data-bs-toggle="tooltip" data-bs-offset="0,4"
+                                                data-bs-placement="bottom" data-bs-html="true" title="Rawat Jalan">
+                                                <h4 class="mb-0" id="kunj_irj_th"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
+                                                <span class="badge bg-light-primary ms-2">IRJ</span>
+                                            </div>
+                                            <!-- IRD -->
+                                            <div class="d-flex align-items-center" data-bs-toggle="tooltip" data-bs-offset="0,4"
+                                                data-bs-placement="bottom" data-bs-html="true" title="Rawat Darurat (Tanpa Rawat Inap)">
+                                                <h4 class="mb-0" id="kunj_ird_th"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
+                                                <span class="badge bg-light-danger ms-2">IRD</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </td>
-                                <td>
-                                    <p class="mb-0"><i class="ph-duotone ph-circle text-danger f-12"></i> 11
-                                        may 12:30</p>
-                                </td>
-                                <td class="text-end">
-                                    <button class="btn avtar avtar-xs btn-light-danger"><i
-                                            class="ti ti-x"></i></button>
-                                    <button class="btn avtar avtar-xs btn-light-success"><i
-                                            class="ti ti-check"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-xl-3">
+                            <div class="card overflow-hidden">
+                                <div class="card-body pb-3 pt-4">
+                                    <div class="d-flex">
+                                        <!-- Kolom kiri: Total Berkas -->
+                                        <div class="d-flex align-items-center justify-content-center me-3">
+                                            <p class="text-muted mb-0 text-start">Total Berkas Klaim<br><b class="text-info" id="text_bln_th">...</b></p>
+                                        </div>
+
+                                        <!-- Kolom kanan: IRJ (atas) dan IRD (bawah) -->
+                                        <div class="d-flex flex-column justify-content-between ms-auto align-items-end">
+                                            <!-- IRJ -->
+                                            <div class="d-flex align-items-center mb-2" data-bs-toggle="tooltip" data-bs-offset="0,4"
+                                                data-bs-placement="bottom" data-bs-html="true" title="Rawat Jalan">
+                                                <h4 class="mb-0" id="kunj_irj_bln"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
+                                                <span class="badge bg-light-primary ms-2">IRJ</span>
+                                            </div>
+                                            <!-- IRD -->
+                                            <div class="d-flex align-items-center" data-bs-toggle="tooltip" data-bs-offset="0,4"
+                                                data-bs-placement="bottom" data-bs-html="true" title="Rawat Darurat (Tanpa Rawat Inap)">
+                                                <h4 class="mb-0" id="kunj_ird_bln"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
+                                                <span class="badge bg-light-danger ms-2">IRD</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="chart"></div>
                 </div>
             </div>
         </div>
     </div>
-</div> --}}
-<!-- [ Main Content ] end -->
+
+    <script>
+        $(document).ready(function() {
+            refresh();
+        })
+
+        // FUNCTION-FUNCTION
+        function refresh() {
+            var tgl = $('#inp_tgl_fresh').val();
+            $.ajax({
+                url: `/api/dashboard/dataDiag/${tgl}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    console.log(res);
+                    $('#belum_verif').text(res.unverified);
+                    $('#sudah_verif').text(res.verified);
+                    $('#masih_catatan').text(res.unsolved);
+                    $('#kunj_irj_bln').text(res.kunjirjbln);
+                    $('#kunj_ird_bln').text(res.kunjirdbln);
+                    $('#kunj_irj_th').text(res.kunjirjth);
+                    $('#kunj_ird_th').text(res.kunjirdth);
+                    $('#text_bln_th').text('Bulan '+res.textTgl);
+                    $('#text_th').text('Tahun '+res.tgl[0]);
+                    diagram();
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Pesan Error!',
+                        text: error.message,
+                    });
+                }
+            })
+        }
+
+        function diagram() {
+            var options_invoice = {
+                chart: {
+                    height: 300,
+                    type: 'line',
+                    toolbar: {
+                        show: false
+                    }
+                },
+                plotOptions: {
+                    bar: {
+                        columnWidth: '50%'
+                    }
+                },
+                legend: {
+                    show: false
+                },
+                stroke: {
+                    width: [0, 2],
+                    curve: 'smooth'
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                series: [{
+                        name: 'TEAM A',
+                        type: 'column',
+                        data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30, 25]
+                    },
+                    {
+                        name: 'TEAM B',
+                        type: 'line',
+                        data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39, 35]
+                    }
+                ],
+                stroke: {
+                    width: [0, 2],
+                    curve: 'smooth'
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        inverseColors: false,
+                        shade: 'light',
+                        type: 'vertical',
+                        opacityFrom: [0, 1],
+                        opacityTo: [0.5, 1],
+                        stops: [0, 100],
+                        hover: {
+                            inverseColors: false,
+                            shade: 'light',
+                            type: 'vertical',
+                            opacityFrom: 0.15,
+                            opacityTo: 0.65,
+                            stops: [0, 96, 100]
+                        }
+                    }
+                },
+                markers: {
+                    size: 3,
+                    colors: '#fFF',
+                    strokeColors: '#f4c22b',
+                    strokeWidth: 2,
+                    shape: 'circle',
+                    hover: {
+                        size: 5
+                    }
+                },
+                colors: ['#f4c22b', '#f4c22b'],
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                yaxis: {
+                    tickAmount: 3
+                },
+                grid: {
+                    show: true,
+                    borderColor: '#00000010'
+                },
+                xaxis: {
+                    axisBorder: {
+                        show: false
+                    },
+                    axisTicks: {
+                        show: false
+                    },
+                    tickAmount: 11
+                }
+            };
+            var chart = new ApexCharts(document.querySelector('#chart'), options_invoice);
+            chart.render();
+        }
+    </script>
 @endsection

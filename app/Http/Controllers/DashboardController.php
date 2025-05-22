@@ -7,17 +7,19 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Pengguna;
 use Halimkun\LaravelEklaim\Eklaim;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     function index()
     {
-        // $user = auth()->guard('web')->user();
+        $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
 
-        // $user = Pengguna::find(28);
-        // $user->givePermissionTo('kunjungan_pasien','monitoring','smart_claim');
+        $data = [
+            'yearMonth' => $yearMonth,
+        ];
 
-        return view('pages.dashboard.index');
+        return view('pages.dashboard.index')->with('list', $data);
     }
 
     function clearCache()

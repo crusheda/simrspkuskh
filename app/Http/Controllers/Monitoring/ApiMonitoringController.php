@@ -120,13 +120,13 @@ class ApiMonitoringController extends Controller
                     $prefix = '';
                     switch ($rawat) {
                         case 1:
-                            $prefix = '1020101%';
+                            $prefix = '1020101%'; // RAJAL
                             break;
                         case 2:
-                            $prefix = '1020201%';
+                            $prefix = '1020201%'; // RADAR
                             break;
                         case 3:
-                            $prefix = '1020301%';
+                            $prefix = '1020301%'; // RANAP
                             break;
                     }
                     $query->where('pk.RUANGAN', 'LIKE', $prefix);

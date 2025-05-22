@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
+use App\Models\simrspku_klaim\klaim_verifikasi_catatan;
+use App\Models\simrspku_klaim\klaim_verifikasi;
+use App\Models\simrspku_klaim\klaim_file;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use PHPJasper\PHPJasper;
+use setasign\Fpdi\Fpdi;
+use Carbon\Carbon;
+use Auth, Storage;
+
+class ApiDashboardController extends Controller
+{
+    function dataDiag($tgl)
+    {
+        $exTgl = explode('-',$tgl); // Array ( [0] => 2025 [1] => 05 )
+        $textTgl = Carbon::createFromFormat('Y-m', $tgl)->isoFormat('MMMM Y');
+        $verified = DB::table('simrspku_klaim.klaim_verifikasi AS kv')
+                ->select(DB::raw('count(kv.nomor) as total'))
+                ->where('kv.tahun', $exTgl[0]) // 2025
+                ->where('kv.bulan', $exTgl[1]) // 05
+                ->where('kv.verif', true)
+                ->whereNull('kv.deleted_at')
+                ->value('total');
+
+        $unverified = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(DB::raw('count(pk.NOMOR) as total'))
+                ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
+                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
+                ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) {
+                    $join->on('kv.nomor','=','pk.NOMOR')
+                        ->where('kv.verif', false);
+                })
+                ->where(function ($query) {
+                    $query->where(function ($q) {
+                        $q->where('pk.RUANGAN', 'LIKE', '1020101%');
+                    })->orWhere(function ($q) {
+                        // KHUSUS RUANGAN IGD (1020201)
+                        $q->where('pk.RUANGAN', 'LIKE', '1020201%')
+                            ->where('tp.UTAMA', 1)
+                            ->where('tp.STATUS', 1)
+                            ->whereNull('pri.KUNJUNGAN');
+                    });
+                })
+                ->whereYear('pk.MASUK', $exTgl[0]) // 2025
+                ->whereMonth('pk.MASUK', (int) $exTgl[1]) // 05
+                ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
+                ->where('pk.STATUS', 2)
+                ->where('pk.KELUAR', '!=', null)
+                ->value('total');
+
+        $unsolved = DB::table('simrspku_klaim.klaim_verifikasi_catatan AS kvc')
+                ->select(DB::raw('count(distinct kvc.nomor) as total'))
+                ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) {
+                    $join->on('kv.nomor','=','kvc.nomor')
+                            ->where('kv.verif', false);
+                })
+                ->where('kvc.status', true)
+                ->where('kvc.solved', false)
+                ->whereNull('kvc.deleted_at')
+                ->where('kv.tahun', $exTgl[0]) // 2025
+                ->where('kv.bulan', $exTgl[1]) // 05
+                ->whereNull('kv.deleted_at')
+                ->value('total');
+
+        $kunjIRJbulan = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(DB::raw('count(pk.NOMOR) as total'))
+                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
+                ->where(function ($query) {
+                    $query->where('pk.RUANGAN', 'LIKE', '1020101%'); // RAJAL
+                })
+                ->whereYear('pk.MASUK', $exTgl[0]) // 2025
+                ->whereMonth('pk.MASUK', (int) $exTgl[1]) // 05
+                ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
+                ->where('pk.STATUS', 2)
+                ->where('pk.KELUAR', '!=', null)
+                ->value('total');
+
+        $kunjIRDbulan = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(DB::raw('count(pk.NOMOR) as total'))
+                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
+                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
+                ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri', function($join) {
+                    $join->on('pri.KUNJUNGAN','=','pk.NOMOR')
+                            ->whereNull('pri.KUNJUNGAN');
+                })
+                ->where(function ($query) {
+                    $query->where('pk.RUANGAN', 'LIKE', '1020201%'); // RADAR
+                })
+                ->whereYear('pk.MASUK', $exTgl[0]) // 2025
+                ->whereMonth('pk.MASUK', (int) $exTgl[1]) // 05
+                ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
+                ->where('pk.STATUS', 2)
+                ->where('pk.KELUAR', '!=', null)
+                ->where('tp.UTAMA', 1) // RADAR & TIDAK DENGAN RANAP
+                ->where('tp.STATUS', 1) // RADAR & TIDAK DENGAN RANAP
+                ->value('total');
+
+        $kunjIRJtahun = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(DB::raw('count(pk.NOMOR) as total'))
+                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
+                ->where(function ($query) {
+                    $query->where('pk.RUANGAN', 'LIKE', '1020101%'); // RAJAL
+                })
+                ->whereYear('pk.MASUK', $exTgl[0]) // 2025
+                ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
+                ->where('pk.STATUS', 2)
+                ->where('pk.KELUAR', '!=', null)
+                ->value('total');
+
+        $kunjIRDtahun = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(DB::raw('count(pk.NOMOR) as total'))
+                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
+                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
+                ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri', function($join) {
+                    $join->on('pri.KUNJUNGAN','=','pk.NOMOR')
+                            ->whereNull('pri.KUNJUNGAN');
+                })
+                ->where(function ($query) {
+                    $query->where('pk.RUANGAN', 'LIKE', '1020201%'); // RADAR
+                })
+                ->whereYear('pk.MASUK', $exTgl[0]) // 2025
+                ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
+                ->where('pk.STATUS', 2)
+                ->where('pk.KELUAR', '!=', null)
+                ->where('tp.UTAMA', 1) // RADAR & TIDAK DENGAN RANAP
+                ->where('tp.STATUS', 1) // RADAR & TIDAK DENGAN RANAP
+                ->value('total');
+
+        // print_r($cek);
+        // die();
+
+        $data = [
+            'verified' => $verified,
+            'unverified' => $unverified,
+            'unsolved' => $unsolved,
+            'kunjirjbln' => $kunjIRJbulan,
+            'kunjirdbln' => $kunjIRDbulan,
+            'kunjirjth' => $kunjIRJtahun,
+            'kunjirdth' => $kunjIRDtahun,
+            'tgl' => $exTgl,
+            'textTgl' => $textTgl,
+        ];
+
+        return response()->json($data, 200);
+    }
+}

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 // INITIALIZATION
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ApiDashboardController;
 use App\Http\Controllers\Setting\ProfilController;
 use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
@@ -27,6 +28,9 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
 
 //-----------------------------------------------------------------    A  P  I    -----------------------------------------------------------------
 Route::group(['middleware' => ['web', 'auth']], function() {
+    // DASHBOARD
+        Route::get('dashboard/dataDiag/{tgl}', [ApiDashboardController::class, 'dataDiag'])->name('dashboard.dataDiag');
+
     // SETTING
         // PERMISSION x ROLES
             // PERMISSION SETTING
