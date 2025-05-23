@@ -27,8 +27,8 @@
                         data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Filter Berdasarkan Bulan dan Tahun" value="2024-04"> <!-- {{ $list['yearMonth'] }} -->
                     </div>
                 </div>
-                <div class="card-body">
-                    <div class="row g-3 mb-3">
+                <div class="card-body pb-0">
+                    <div class="row g-3">
                         <div class="col-sm-3 col-xl-2">
                             <div class="card overflow-hidden">
                                 <div class="card-body pb-4 pt-4">
@@ -140,7 +140,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="chart"></div>
+                    {{-- <div id="chart"></div> --}}
                 </div>
             </div>
         </div>
