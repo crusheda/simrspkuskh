@@ -725,13 +725,6 @@
                 $('#show-nama-ttd-rj').text(res.show[0].NAMAPASIEN);
                 content = ``;
                 if (res.show.length != 0) {
-                    // res.show.forEach(item => {
-                    //     content = ``;
-                    //     content += `<tr>
-                    //                     <td class="custom-column">${item.NAMAPASIEN}</td>
-                    //                 </tr>
-                    //     `;
-                    // })
                     content += `<div class="d-flex align-items-center table-responsive">
                                     <table class="table table-striped table-bordered" style="text-align: center;">
                                         <tbody>
@@ -793,21 +786,7 @@
                 }
             }
         })
-        // var canvas = document.getElementById('signature-pad');
-        // var signaturePad = new SignaturePad(canvas);
-        // // Simpan base64 ke input saat submit
-        // document.querySelector('form').addEventListener('submit', function () {
-        //     if (!signaturePad.isEmpty()) {
-        //         var dataURL = signaturePad.toDataURL('image/png');
-        //         document.getElementById('signature-input').value = dataURL;
-        //     }
-        // });
-        // // Tombol hapus
-        // document.getElementById('clear').addEventListener('click', function () {
-        //     signaturePad.clear();
-        // });
-        // window.addEventListener('resize', resizeCanvas);
-        // resizeCanvas();
+
         $('#canvas').empty().append(`
         <div class="row">
             <input type="hidden" id="idstorettd" value="${kunjungan}">
