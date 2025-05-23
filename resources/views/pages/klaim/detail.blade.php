@@ -117,6 +117,7 @@
                 </div>
                 <a class="text-nowrap mt-1">Laporan Operasi</a>
             </div>
+            <div id="dokumen_tambahan"></div>
             <div id="footer_submit"></div>
         </div>
     </div>
@@ -182,6 +183,66 @@
 </div>
 <!-- [ Main Content ] end -->
 
+<div class="modal animate__animated animate__rubberBand fade" id="upload" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Form Upload Berkas Tambahan
+                </h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="id_upload" hidden>
+                <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+                    <small>
+                        <i class="ti ti-arrow-narrow-right text-primary me-1"></i> Batas maksimal upload berkas adalah <b><u>1 mb</u></b> dan berformat <b>PDF</b> atau <b>Image (JPG/PNG)</b> <br>
+                        <i class="ti ti-arrow-narrow-right text-primary me-1"></i> Untuk Mengupload 3 berkas maka silakan untuk melakukan upload pada masing-masing berkas satu persatu <br>
+                        <i class="ti ti-arrow-narrow-right text-primary me-1"></i> Pada kolom isian Nama / Jenis Berkas, isikan Penamaan berkas contoh : Hasil EKG, dll <br>
+                        <i class="ti ti-arrow-narrow-right text-primary me-1"></i> Isian di bawah Wajib dan tidak boleh dikosongi
+
+                    </small>
+                </div>
+                <div class="form-group mb-3">
+                    <input type="text" class="form-control" id="nama_tambahan" placeholder="Tuliskan Nama / Jenis Berkas * (e.g. Hasil EKG / dll)">
+                </div>
+                <div class="form-group">
+                    <input type="file" class="form-control" id="filex">
+                </div>
+            </div>
+            <div class="col-12 text-center mb-4">
+                <button type="submit" id="btn-upload-proses" class="btn btn-primary me-sm-3 me-1" onclick="prosesUpload()"><i class="fa fa-upload me-1" style="font-size:13px"></i> Upload</button>
+                <button type="reset" class="btn btn-link-secondary" data-bs-dismiss="modal" aria-label="Close">Batal <i class="fa fa-times ms-1" style="font-size:13px"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal animate__animated animate__rubberBand fade" id="hapusTambahan" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Form Hapus Berkas Tambahan
+                </h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="id_hapus_tambahan" hidden>
+                <p style="text-align: justify;">Perhatian, saat ini Anda akan melakukan penghapusan Berkas Tambahan Klaim (ID#<a class="text-danger" id="tx_hapus_tambahan"></a>), lakukanlah dengan hati-hati. Ceklis dibawah untuk melanjutkan penghapusan.</p>
+                <label class="switch">
+                    <input type="checkbox" class="switch-input" id="setujuhapustambahan">
+                    <span class="switch-toggle-slider">
+                    <span class="switch-on"></span>
+                    <span class="switch-off"></span>
+                    </span>
+                    <span class="switch-label">Anda siap menerima Risiko</span>
+                </label>
+            </div>
+            <div class="col-12 text-center mb-4">
+                <button type="submit" id="btn-hapus" class="btn btn-danger me-sm-3 me-1" onclick="prosesHapusTambahan()"><i class="fa fa-trash me-1" style="font-size:13px"></i> Hapus</button>
+                <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal animate__animated animate__rubberBand fade" id="hapus" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered">
         <div class="modal-content">
@@ -331,11 +392,6 @@
                     $('#footer_submit').empty().append(submit);
                     $('#daftar_catatan').empty().append(`<div class="d-flex justify-content-center"><a class="align-middle">Tidak ada catatan</a></div>`);
                 } else {
-                    if (res.show.verif == 0) {
-                        $('#alert_verif').empty().append(`<div class="alert alert-warning d-block text-center text-uppercase"><i class="feather icon-x-circle me-2"></i>Belum Diverifikasi</div>`);
-                    } else {
-                        $('#alert_verif').empty().append(`<div class="alert alert-success d-block text-center text-uppercase"><i class="feather icon-check-circle me-2"></i>Telah Diverifikasi</div>`);
-                    }
                     let koleksi = JSON.parse(res.show.koleksi || '[]');
                     if (koleksi.includes(1)) { $('#ck_sep').prop('checked', true).prop('disabled', false); } else { $('#ck_sep').prop('checked', false).prop('disabled',false); }
                     if (koleksi.includes(2)) { $('#ck_resume').prop('checked', true).prop('disabled', false); } else { $('#ck_resume').prop('checked', false).prop('disabled',false); }
@@ -347,16 +403,42 @@
                     if (koleksi.includes(8)) { $('#ck_triage').prop('checked', true).prop('disabled', false); } else { $('#ck_triage').prop('checked', false).prop('disabled',false); }
                     if (koleksi.includes(9)) { $('#ck_operasi').prop('checked', true).prop('disabled', false); } else { $('#ck_operasi').prop('checked', false).prop('disabled',false); }
 
+                    $('#dokumen_tambahan').empty();
+                    tambahan = ``;
+                    console.log(res.file);
+                    res.file.forEach(item => {
+                        if (item.jenis == 10) {
+                            tambahan += `<div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0"  style="justify-content: space-between;">
+                                            <div class="dropdown">
+                                                <button class="btn btn-link-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                                    style="width: 2em; height: 2.2em; display: flex; justify-content: center; align-items: center; padding: 0;"><i class="fas fa-angle-down" style="font-size:13px"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><button class="dropdown-item text-primary" onclick="showUpload(${item.id})"><i class="fas fa-eye"></i> Lihat</button></li>
+                                                    <li><button class="dropdown-item text-danger" id="btn-hapus-tambahan${item.id}" onclick="hapusTambahan(${item.id})"><i class="fas fa-trash"></i> Hapus</button></li>
+                                                </ul>
+                                            </div>
+                                            <a class="text-nowrap mt-1" style="margin-left:auto;">${item.nama_tambahan}</a>
+                                        </div>`;
+                        }
+                    });
+                    $('#dokumen_tambahan').append(tambahan);
+
                     submit = ``;
-                    submit += `<div class="card-footer p-3">`;
-                    submit += `     <button class="btn btn-danger w-100 btn-sm mb-3" onclick="hapus('${kunjungan}')"><i class="fas fa-trash me-1"></i> Hapus Klaim</button>
-                                    <button class="btn btn-outline-success btn-sm w-100 mb-3" onclick="prosesSubmit('${kunjungan}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang</button>`;
-                            if (res.show.verif == 0) {
-                                submit += `     <button class="btn btn-secondary btn-sm w-100" onclick="verifikasi('${kunjungan}')" id="btn-verif"><i class="fas fa-check-square me-1"></i> Verifikasi</button>`;
-                            } else {
-                                submit += `     <button class="btn btn-outline-secondary btn-sm w-100" onclick="batalVerifikasi('${kunjungan}')" id="btn-batal-verif"><i class="fas fa-times-circle me-1"></i> Batal Verifikasi</button>`;
-                            }
-                    submit += `</div>`;
+                    if (res.show.verif == 0) {
+                        $('#alert_verif').empty().append(`<div class="alert alert-warning d-block text-center text-uppercase"><i class="feather icon-x-circle me-2"></i>Berkas Klaim Belum Diverifikasi</div>`);
+                        submit += `<div class="card-footer p-3">`;
+                        submit += `     <button class="btn btn-danger w-100 btn-sm mb-3" onclick="hapus('${kunjungan}')"><i class="fas fa-trash me-1"></i> Hapus Berkas Klaim</button>
+                                        <button class="btn btn-warning btn-sm w-100 mb-3" onclick="upload('${kunjungan}')" id="btn-upload"><i class="fas fa-upload me-1"></i> Upload Berkas Tambahan</button>
+                                        <button class="btn btn-success btn-sm w-100 mb-3" onclick="prosesSubmit('${kunjungan}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang Klaim</button>`;
+                        submit += `     <button class="btn btn-secondary btn-sm w-100" onclick="verifikasi('${kunjungan}')" id="btn-verif"><i class="fas fa-check-square me-1"></i> Verifikasi Berkas</button>`;
+                        submit += `</div>`;
+                    } else {
+                        $('#alert_verif').empty().append(`<div class="alert alert-success d-block text-center text-uppercase"><i class="feather icon-check-circle me-2"></i>Berkas Klaim Telah Diverifikasi</div>`);
+                        submit += `<div class="card-footer p-3">`;
+                        submit += `     <button class="btn btn-outline-secondary btn-sm w-100" onclick="batalVerifikasi('${kunjungan}')" id="btn-batal-verif"><i class="fas fa-times-circle me-1"></i> Batal Verifikasi</button>`;
+                        submit += `</div>`;
+                    }
                     $('#footer_submit').empty().append(submit);
                 }
                 // REFRESH CATATAN
@@ -735,6 +817,136 @@
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
             $('#ck_operasi').prop('checked', false).prop('disabled',false);
         });
+    }
+
+    function showUpload(id) {
+        $('#preview').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        `);
+
+        // AJAX FETCH
+        fetch("/api/klaim/upload/"+id+"/show")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('File tidak ditemukan atau gagal diambil.');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
+
+            // Tampilkan ke iframe dalam modal
+            $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Berkas Upload Tambahan tidak ditemukan atau gagal ditampilkan.',
+                position: 'topRight'
+            });
+            console.error(error);
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+        });
+    }
+    function upload(kunjungan) {
+        $('#id_upload').val(kunjungan);
+        $('#nama_tambahan').val('');
+        $('#filex').val('');
+        $('#upload').modal('show');
+    }
+
+    function prosesUpload() {
+        $('#btn-upload-proses').prop('disabled',true).find('i').removeClass('fa-upload').addClass('fa-sync fa-spin');
+
+        var save = new FormData();
+        var filesAdded = $('#filex')[0].files;
+        save.append('file',filesAdded[0]);
+        save.append('kunjungan',$('#id_upload').val());
+        save.append('nama_tambahan',$('#nama_tambahan').val());
+        save.append('user',"{{ Auth::user()->ID }}");
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{ route('api.klaim.upload') }}",
+            method: 'POST',
+            data: save,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function(res) {
+                // Apabila success
+                verify();
+                iziToast.success({
+                    title: 'Pesan Sukses!',
+                    message: res.message,
+                    position: 'topRight'
+                });
+                $('#btn-upload-proses').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-upload');
+                $('#upload').modal('hide');
+            }, error: function(xhr, status, error) {
+                console.error('Terjadi kesalahan:', error);
+                console.error('Status:', status);
+                console.error('Response Text:', xhr.responseText);
+                // Bisa juga tampilkan alert
+                try {
+                    let response = JSON.parse(xhr.responseText);
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: response.message,
+                        position: 'topRight'
+                    });
+                } catch (e) {
+                    alert('Terjadi kesalahan: ' + error);
+                }
+                $('#btn-upload-proses').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-upload');
+            }
+        })
+    }
+
+    function hapusTambahan(id) {
+        $('#id_hapus_tambahan').val(id);
+        $('#tx_hapus_tambahan').text(id);
+        var inputs = document.getElementById('setujuhapustambahan');
+        inputs.checked = false;
+        $('#hapusTambahan').modal('show');
+    }
+
+    function prosesHapusTambahan() {
+        var checkboxHapus = $('#setujuhapustambahan').is(":checked");
+        if (checkboxHapus == false) {
+            iziToast.error({
+                title: 'Pesan Galat!',
+                message: 'Mohon menyetujui untuk dilakukan penghapusan berkas Tambahan tersebut',
+                position: 'topRight'
+            });
+        } else {
+            // PROSES HAPUS
+            var id_berkas = $('#id_hapus_tambahan').val();
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: `/api/klaim/upload/${id_berkas}/hapus`,
+                type: 'DELETE',
+                dataType: 'json',
+                success: function(res) {
+                    verify();
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: `Salah satu Berkas Tambahan terpilih dengan ID Berkas : ${id_berkas} berhasil dihapus dari datarecord`,
+                        position: 'topRight'
+                    });
+                    $('#hapusTambahan').modal('hide');
+                }
+            })
+        }
     }
 
     function prosesSubmit(kunjungan) {

@@ -125,6 +125,133 @@ class ApiSmartKlaimController extends Controller
         return response()->json($data, 200);
     }
 
+    function showUpload($id)
+    {
+        $getFile = klaim_file::where('id',$id)->first();
+        $output = storage_path('app/public/'.$getFile->filename);
+
+        if (!file_exists($output)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return response()->file($output,[
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
+
+    function upload(Request $request)
+    {
+        $request->validate([
+            'nama_tambahan' => ['required'],
+            'file' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:1000'],
+        ], [
+            'nama_tambahan.required' => 'Isian Nama / Jenis Berkas Tidak Boleh Kosong.',
+            'file.required' => 'File harus diunggah.',
+            'file.mimes' => 'File harus berupa JPG, PNG, atau PDF.',
+            'file.max' => 'Ukuran file maksimal 1 MB.',
+        ]);
+        $getSEP = DB::table('pendaftaran.kunjungan AS pk')
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                ->select('pj.NOMOR AS NOSEP')
+                ->where('pk.NOMOR',$request->kunjungan)
+                ->first();
+        $show = DB::select('CALL simrspku_klaim.CetakSEP(?)',[$getSEP->NOSEP]);
+        if (empty($show)) {
+            return response()->json(['message' => 'SEP Tidak Ditemukan'], 400);
+        }
+        // ----------------------------------------------------------------------
+        $getTgl = Carbon::parse($show[0]->TGLSEP);
+        $tgl = $getTgl->isoFormat('DD');
+        $bulan = $getTgl->isoFormat('MM');
+        $tahun = $getTgl->isoFormat('YYYY');
+        // ----------------------------------------------------------------------
+        $validasi = klaim_file::where('nomor',$request->kunjungan)
+                                ->where('jenis',10)
+                                ->where('status',1)
+                                ->whereNull('deleted_at')
+                                ->count();
+
+        $uploadedFile = $request->file('file');
+        $path = 'files/tambahan/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$request->kunjungan .'-'. ($validasi+1). '.pdf';
+        $output = storage_path('app/public/' . $path);
+
+        // Buat folder kalau belum ada
+        $outputDir = dirname($output);
+        if (!File::exists($outputDir)) {
+            File::makeDirectory($outputDir, 0755, true);
+        }
+
+        if ($uploadedFile) {
+            $mime = $uploadedFile->getMimeType();
+
+            if (in_array($mime, ['image/jpeg', 'image/png'])) {
+                $pdf = new Fpdi();
+                $pdf->AddPage();
+
+                list($width, $height) = getimagesize($uploadedFile->getPathname());
+
+                $widthMm = $width * 0.264583;
+                $heightMm = $height * 0.264583;
+
+                $scale = min(210 / $widthMm, 297 / $heightMm, 1);
+                $widthMm *= $scale;
+                $heightMm *= $scale;
+
+                // Simpan sementara file dengan ekstensi asli
+                $ext = $uploadedFile->getClientOriginalExtension();
+                $tmpImagePath = storage_path('app/temp_image_' . uniqid() . '.' . $ext);
+                $uploadedFile->move(dirname($tmpImagePath), basename($tmpImagePath));
+
+                $pdf->Image($tmpImagePath, 0, 0, $widthMm, $heightMm);
+                $pdf->Output($output, 'F');
+
+                // Hapus file sementara
+                if (file_exists($tmpImagePath)) {
+                    unlink($tmpImagePath);
+                }
+
+            } elseif ($mime === 'application/pdf') {
+                $uploadedFile->storeAs(dirname($path), basename($path), 'public');
+            } else {
+                return response()->json(['message' => 'Format file tidak didukung.'], 400);
+            }
+
+            // SAVE TO DB
+            $post = new klaim_file;
+            $post->jenis = 10;
+            $post->sub_jenis = $validasi+1;
+            $post->nomor = $request->kunjungan;
+            $post->title = $request->kunjungan.'-'.($validasi+1).'.pdf';
+            $post->filename = $path;
+            $post->nama_tambahan = $request->nama_tambahan;
+            $post->status = true;
+            $post->user = Auth::user()->ID;
+            $post->save();
+
+            return response()->json(['message' => 'Berkas '.$request->nama_tambahan.' telah berhasil diupload dengan nama '.$request->kunjungan.'-'.($validasi+1).'.pdf'], 200);
+        } else {
+            return response()->json(['message' => 'File Berkas Upload tidak ditemukan'], 400);
+        }
+    }
+
+    function hapusUpload($id)
+    {
+        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+
+        $show = klaim_file::where('id',$id)->first();
+        $show->status = false;
+
+        if (Storage::disk('public')->exists($show->filename)) {
+            Storage::disk('public')->delete($show->filename);
+        }
+
+        $show->save();
+        $show->delete();
+
+        return response()->json($now, 200);
+    }
+
     function submit(Request $request)
     {
         $request->validate([
@@ -369,7 +496,7 @@ class ApiSmartKlaimController extends Controller
                         ->where('kvc.status',true)
                         ->orderBy('kvc.created_at','DESC')
                         ->get();
-        $file = klaim_file::where('nomor',$kunjungan)->where('status',true)->get();
+        $file = klaim_file::where('nomor',$kunjungan)->where('status',true)->whereNull('deleted_at')->get();
 
         $data = [
             'show' => $show,

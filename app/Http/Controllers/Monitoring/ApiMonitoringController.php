@@ -913,7 +913,7 @@ class ApiMonitoringController extends Controller
 
             //-----------------------------------------------------------------------
             if (!$getSEP) {
-                return response()->json($data, 400);
+                return response()->json($show, 400);
             }
             // ----------------------------------------------------------------------
             $getTgl = Carbon::parse($getSEP->TANGGALMASUK);
