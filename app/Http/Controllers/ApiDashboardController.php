@@ -59,25 +59,31 @@ class ApiDashboardController extends Controller
         //         ->value('total');
         $unverified = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(DB::raw('count(pk.NOMOR) as total'))
-                ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
-                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
+                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp', function($join) {
+                    $join->on('tp.PENDAFTARAN','=','pk.NOPEN')
+                        ->where('tp.UTAMA', 1)
+                        ->where('tp.STATUS', 1);
+                })
+                ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri', function($join) {
+                    $join->on('pri.KUNJUNGAN','=','pk.NOMOR')
+                            ->whereNull('pri.KUNJUNGAN');
+                })
                 ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) {
                     $join->on('kv.nomor','=','pk.NOMOR')
-                        ->where('kv.verif', false);
+                        ->where('kv.verif', false)
+                        ->whereNull('kv.deleted_at');
                 })
                 ->where(function ($query) {
                     $query->where(function ($q) {
                         $q->where('pk.RUANGAN', 'LIKE', '1020101%')
                             ->where('tp.UTAMA', 1)
-                            ->where('tp.STATUS', 1)
-                            ->whereNull('pri.KUNJUNGAN');
+                            ->where('tp.STATUS', 1);
                     })->orWhere(function ($q) {
                         // KHUSUS RUANGAN IGD (1020201)
                         $q->where('pk.RUANGAN', 'LIKE', '1020201%')
                             ->where('tp.UTAMA', 1)
-                            ->where('tp.STATUS', 1)
-                            ->whereNull('pri.KUNJUNGAN');
+                            ->where('tp.STATUS', 1);
                     })->orWhere(function ($q) {
                         // KHUSUS RUANGAN IGD (1020201)
                         $q->where('pk.RUANGAN', 'LIKE', '1020702%');
@@ -88,18 +94,23 @@ class ApiDashboardController extends Controller
                 // ->whereDay('pk.MASUK','13')
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 ->whereIn('pk.STATUS', [1, 2])
-                ->whereNull('pk.REF')
                 ->where('pk.KELUAR', '!=', null)
+                ->whereNull('pk.REF')
                 ->value('total');
 
         $duplicates = DB::table('pendaftaran.kunjungan AS pk')
-                ->select('pk.NOMOR', DB::raw('COUNT(pk.NOMOR) as jumlah'))
+                ->select('pk.NOMOR','tp.TAGIHAN', DB::raw('COUNT(pk.NOMOR) as jumlah'))
                 ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
-                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
+                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp', function($join) {
+                    $join->on('tp.PENDAFTARAN','=','pk.NOPEN')
+                        ->where('tp.UTAMA', 1)
+                        ->where('tp.STATUS', 1);
+                })
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
                 ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) {
                     $join->on('kv.nomor','=','pk.NOMOR')
-                        ->where('kv.verif', false);
+                        ->where('kv.verif', false)
+                        ->whereNull('kv.deleted_at');
                 })
                 ->where(function ($query) {
                     $query->where(function ($q) {
@@ -118,11 +129,12 @@ class ApiDashboardController extends Controller
                 })
                 ->whereYear('pk.MASUK', $exTgl[0])
                 ->whereMonth('pk.MASUK', (int) $exTgl[1])
+                ->whereDay('pk.MASUK','30')
                 ->where('pj.JENIS', 2)
                 ->whereIn('pk.STATUS', [1, 2])
                 ->whereNull('pk.REF')
                 ->whereNotNull('pk.KELUAR')
-                ->groupBy('pk.NOMOR')
+                ->groupBy('tp.TAGIHAN')
                 ->havingRaw('COUNT(pk.NOMOR) > 1')
                 ->get();
 
@@ -158,8 +170,15 @@ class ApiDashboardController extends Controller
         $kunjIRJbulan = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(DB::raw('count(pk.NOMOR) as total'))
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
-                ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
-                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
+                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp', function($join) {
+                    $join->on('tp.PENDAFTARAN','=','pk.NOPEN')
+                        ->where('tp.UTAMA', 1)
+                        ->where('tp.STATUS', 1);
+                })
+                ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri', function($join) {
+                    $join->on('pri.KUNJUNGAN','=','pk.NOMOR')
+                            ->whereNull('pri.KUNJUNGAN');
+                })
                 ->where(function ($query) {
                     $query->where(function ($q) {
                         $q->where('pk.RUANGAN', 'LIKE', '1020101%')
@@ -204,13 +223,19 @@ class ApiDashboardController extends Controller
         $kunjIRDbulan = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(DB::raw('count(pk.NOMOR) as total'))
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
-                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
+                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp', function($join) {
+                    $join->on('tp.PENDAFTARAN','=','pk.NOPEN')
+                        ->where('tp.UTAMA', 1)
+                        ->where('tp.STATUS', 1);
+                })
                 ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri', function($join) {
                     $join->on('pri.KUNJUNGAN','=','pk.NOMOR')
                             ->whereNull('pri.KUNJUNGAN');
                 })
                 ->where(function ($query) {
-                    $query->where('pk.RUANGAN', 'LIKE', '1020201%'); // RADAR
+                    $query->where('pk.RUANGAN', 'LIKE', '1020201%')
+                            ->where('tp.UTAMA', 1)
+                            ->where('tp.STATUS', 1); // RADAR
                 })
                 ->whereYear('pk.MASUK', $exTgl[0]) // 2025
                 ->whereMonth('pk.MASUK', (int) $exTgl[1]) // 05
