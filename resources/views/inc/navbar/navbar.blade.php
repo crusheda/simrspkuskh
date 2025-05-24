@@ -101,7 +101,7 @@
                             <span class="pc-micon">
                                 <i class="ph-duotone ph-file-lock"></i>
                             </span>
-                            <span class="pc-mtext">Smart Klaim</span>
+                            <span class="pc-mtext">Smart Claim</span>
                         </a>
                     </li>
                 @endcan

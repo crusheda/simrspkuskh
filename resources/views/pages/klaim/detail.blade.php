@@ -404,7 +404,7 @@
                     if (koleksi.includes(8)) { $('#ck_triage').prop('checked', true).prop('disabled', false); } else { $('#ck_triage').prop('checked', false).prop('disabled',false); }
                     if (koleksi.includes(9)) { $('#ck_operasi').prop('checked', true).prop('disabled', false); } else { $('#ck_operasi').prop('checked', false).prop('disabled',false); }
 
-                    $('#btn-refresh-klaim').append(`<button class="btn btn-light-primary" onclick="prosesSubmit('${kunjungan}')">Tampilkan Klaim</button>`);
+                    $('#btn-refresh-klaim').empty().append(`<button class="btn btn-light-primary" onclick="prosesSubmit('${kunjungan}')">Refresh Preview Klaim</button>`);
 
                     $('#dokumen_tambahan').empty();
                     tambahan = ``;
@@ -417,8 +417,14 @@
                                                     style="width: 2em; height: 2.2em; display: flex; justify-content: center; align-items: center; padding: 0;"><i class="fas fa-angle-down" style="font-size:13px"></i>
                                                 </button>
                                                 <ul class="dropdown-menu">
-                                                    <li><button class="dropdown-item text-primary" onclick="showUpload(${item.id})"><i class="fas fa-eye"></i> Lihat</button></li>
-                                                    <li><button class="dropdown-item text-danger" id="btn-hapus-tambahan${item.id}" onclick="hapusTambahan(${item.id})"><i class="fas fa-trash"></i> Hapus</button></li>
+                                                    ${res.show.verif == 0?
+                                                        `<li><button class="dropdown-item text-primary" onclick="showUpload(${item.id})"><i class="fas fa-eye" style="font-size:13px"></i> Lihat</button></li>
+                                                        <li><button class="dropdown-item text-danger" id="btn-hapus-tambahan${item.id}" onclick="hapusTambahan(${item.id})"><i class="fas fa-trash" style="font-size:13px"></i> Hapus</button></li>`
+                                                    :
+                                                        `<li><button class="dropdown-item text-primary" onclick="showUpload(${item.id})"><i class="fas fa-eye" style="font-size:13px"></i> Lihat</button></li>
+                                                        <li><button class="dropdown-item text-secondary" disabled><i class="fas fa-trash" style="font-size:13px"></i> Hapus</button></li>`
+                                                    }
+
                                                 </ul>
                                             </div>
                                             <a class="text-nowrap mt-1" style="margin-left:auto;">${item.nama_tambahan}</a>
@@ -455,22 +461,36 @@
                                         <div class="row">
                                             <div class="col">
                                                 <div class="">
-                                                    <h4 class="d-inline-block">${item.NAMAPEGAWAI} ${item.solved == 0?'<span class="badge rounded-pill text-bg-danger p-2">Belum Terselesaikan</span>':'<span class="badge rounded-pill text-bg-success p-2">Terselesaikan</span>'}</h4>
+                                                    <h4 class="d-inline-block">${item.NAMAPEGAWAI} ${item.solved == 0?'<span class="badge text-bg-danger p-1">Belum Terselesaikan</span>':'<span class="badge text-bg-success p-1">Terselesaikan</span>'}</h4>
                                                     <p class="text-muted">${moment(item.updated_at).locale('id').fromNow()} (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})</p>
                                                 </div>
                                             </div>
                                             <div class="col-auto">
                                                 <ul class="list-unstyled mb-0">
-                                                    <li class="d-inline-block f-20 me-1">
-                                                        <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Ubah Catatan" class="text-warning" onclick="ubahCatatan(${item.id})">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li class="d-inline-block f-20">
-                                                        <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Hapus Catatan" class="text-danger" onclick="hapusCatatan(${item.id})">
-                                                            <i class="fas fa-trash"></i>
-                                                        </a>
-                                                    </li>
+                                                    ${item.solved == 0?
+                                                        `<li class="d-inline-block f-20 me-2">
+                                                            <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Ubah Catatan" class="text-warning" onclick="ubahCatatan(${item.id})">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li class="d-inline-block f-20">
+                                                            <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Hapus Catatan" class="text-danger" onclick="hapusCatatan(${item.id})">
+                                                                <i class="fas fa-trash"></i>
+                                                            </a>
+                                                        </li>`
+                                                    :
+                                                        `<li class="d-inline-block f-20 me-2">
+                                                            <a href="javascript: void(0);" class="text-secondary">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li class="d-inline-block f-20">
+                                                            <a href="javascript: void(0);" class="text-secondary">
+                                                                <i class="fas fa-trash"></i>
+                                                            </a>
+                                                        </li>`
+                                                    }
+
                                                 </ul>
                                             </div>
                                         </div>
@@ -1019,12 +1039,20 @@
             type: 'GET',
             dataType: 'json',
             success: function(res) {
-                verify();
-                iziToast.success({
-                    title: 'Pesan Sukses!',
-                    message: 'Verifikasi berkas berhasil dilakukan pada '+res,
-                    position: 'topRight'
-                });
+                if (res.code == 1) {
+                    verify();
+                    iziToast.success({
+                        title: 'Pesan Sukses!',
+                        message: res.message,
+                        position: 'topRight'
+                    });
+                } else {
+                    iziToast.warning({
+                        title: 'Maaf!',
+                        message: res.message,
+                        position: 'topRight'
+                    });
+                }
                 $('#btn-verif').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-check-square');
             }, error: function(xhr, status, error) {
                 // Gagal: tangani error di sini

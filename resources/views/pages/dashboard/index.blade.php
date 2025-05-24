@@ -23,8 +23,14 @@
                 <div class="card-header">
                     <div class="d-flex align-items-center justify-content-between">
                         <h5 class="mb-0">Data Record Smart Claim</h5>
-                        <input type="month" class="form-control form-control-sm w-auto border-0 shadow-none2" data-bs-toggle="tooltip" id="inp_tgl_fresh" onchange="refresh()"
-                        data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Filter Berdasarkan Bulan dan Tahun" value="2024-04"> <!-- {{ $list['yearMonth'] }} -->
+                        <div>
+                            <div class="input-group">
+                                <input type="month" class="form-control form-control-sm w-auto border-0 shadow-none2" data-bs-toggle="tooltip" id="inp_tgl_fresh" onchange="refresh()"
+                                data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Filter Berdasarkan Bulan dan Tahun" value="2024-04"> <!-- {{ $list['yearMonth'] }} -->
+                                <button class="btn btn-sm btn-link-secondary" onclick="refresh()" id="btn-refresh"><i class="fas fa-sync fa-spin" style="font-size: 13px"></i></button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="card-body pb-0">
@@ -153,23 +159,37 @@
 
         // FUNCTION-FUNCTION
         function refresh() {
+            // INITIALIZE
+            $('#btn-refresh').find('i').removeClass('fa-spin').addClass('fa-spin');
+            $('#belum_verif').empty().append(`<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>`);
+            $('#sudah_verif').empty().append(`<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>`);
+            $('#masih_catatan').empty().append(`<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>`);
+            $('#kunj_irj_bln').empty().append(`<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>`);
+            $('#kunj_ird_bln').empty().append(`<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>`);
+            $('#kunj_irj_th').empty().append(`<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>`);
+            $('#kunj_ird_th').empty().append(`<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>`);
+            $('#text_bln_th').empty().text('...');
+            $('#text_th').empty().text('...');
             var tgl = $('#inp_tgl_fresh').val();
+
+            // PROCESS
             $.ajax({
                 url: `/api/dashboard/dataDiag/${tgl}`,
                 type: 'GET',
                 dataType: 'json',
                 success: function(res) {
                     console.log(res);
-                    $('#belum_verif').text(res.unverified);
-                    $('#sudah_verif').text(res.verified);
-                    $('#masih_catatan').text(res.unsolved);
-                    $('#kunj_irj_bln').text(res.kunjirjbln);
-                    $('#kunj_ird_bln').text(res.kunjirdbln);
-                    $('#kunj_irj_th').text(res.kunjirjth);
-                    $('#kunj_ird_th').text(res.kunjirdth);
-                    $('#text_bln_th').text('Bulan '+res.textTgl);
-                    $('#text_th').text('Tahun '+res.tgl[0]);
+                    $('#belum_verif').empty().text(res.unverified);
+                    $('#sudah_verif').empty().text(res.verified);
+                    $('#masih_catatan').empty().text(res.unsolved);
+                    $('#kunj_irj_bln').empty().text(res.kunjirjbln);
+                    $('#kunj_ird_bln').empty().text(res.kunjirdbln);
+                    $('#kunj_irj_th').empty().text(res.kunjirjth);
+                    $('#kunj_ird_th').empty().text(res.kunjirdth);
+                    $('#text_bln_th').empty().text('Bulan '+res.textTgl);
+                    $('#text_th').empty().text('Tahun '+res.tgl[0]);
                     diagram();
+                    $('#btn-refresh').find('i').removeClass('fa-spin');
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
@@ -178,6 +198,7 @@
                         title: 'Pesan Error!',
                         text: error.message,
                     });
+                    $('#btn-refresh').find('i').removeClass('fa-spin');
                 }
             })
         }

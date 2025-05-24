@@ -465,6 +465,19 @@
                                     </button>`;
                     }
                     // END VERIFIKASI SEP
+                    // VERIFIKASI CATATAN
+                    if (item.CATATAN == 2) {
+                        colCat = 'success';
+                        txCat = 'Semua Catatan Terselesaikan';
+                    } else {
+                        if (item.CATATAN == 1) {
+                            colCat = 'warning';
+                            txCat = 'Lihat Catatan Yang Belum Terselesaikan';
+                        } else {
+                            colCat = 'secondary';
+                            txCat = 'Catatan tidak ditemukan';
+                        }
+                    }
                     content += `<tr>
                                     <td>
                                         <div class="d-flex align-items-center ms-2">
@@ -525,11 +538,11 @@
                                     </td>
                                     <td>${btnSEP}</td>
                                     <td>${item.TGLCATATAN?`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-success" id="catatan`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail Catatan" onclick="showCatatan('`+item.NOMOR+`')">
-                                            <i class="fas fa-check text-success"></i>
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-${colCat}" id="catatan`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="${txCat}" onclick="showCatatan('`+item.NOMOR+`')">
+                                            <i class="fas fa-check text-${colCat}"></i>
                                         </button>`:`
-                                        <button type="button" class="btn btn-sm btn-icon btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Catatan tidak ditemukan">
-                                            <i class="fas fa-times fs-5 text-secondary"></i>
+                                        <button type="button" class="btn btn-sm btn-icon btn-link-${colCat}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="${txCat}">
+                                            <i class="fas fa-times fs-5 text-${colCat}"></i>
                                         </button>`}
                                     </td>
                                 </tr>`;
@@ -693,12 +706,26 @@
                     content = ``;
                     res.show.forEach(item => {
                         content += `<tr>
-                                        <td class="custom-column">${item.solved == 0?'<button class="btn btn-link-success" onclick="selesaiCatatan('+item.id+')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tombol Apabila Catatan telah diselesaikan">Selesai <i class="ti ti-thumb-up ms-1"></i></button>'
-                                            :'<button class="btn btn-link-danger" onclick="batalSelesaiCatatan('+item.id+')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tombol Apabila Batal Menyelesaikan Catatan">Batalkan <i class="ti ti-thumb-down ms-1"></i></button>'}</td>
-                                        <td class="custom-column"><span class="badge rounded-pill text-bg-info p-1">${item.updated_at}</span><br>Ditambahkan Oleh <b>${item.NAMAPEGAWAI}</b></td>
-                                        <td class="custom-column">${item.solved == 0?'<span class="badge rounded-pill text-bg-danger p-1">Belum Terselesaikan</span><br>':'<span class="badge rounded-pill text-bg-success p-1">Terselesaikan</span><br>'}${item.deskripsi}</td>
-                                    </tr>
-                        `;
+                                        <td class="custom-column">`;
+                                        if (res.klaim.verif == 0) {
+                                            if (item.solved == 0) {
+                            content += `        <button class="btn btn-link-success" onclick="selesaiCatatan('${item.id}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tombol Apabila Catatan telah diselesaikan">Selesai <i class="ti ti-thumb-up ms-1"></i></button>`;
+                                            } else {
+                            content += `        <button class="btn btn-link-danger" onclick="batalSelesaiCatatan('${item.id}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tombol Apabila Batal Menyelesaikan Catatan">Batalkan <i class="ti ti-thumb-down ms-1"></i></button>`;
+                                            }
+                                        } else {
+                        content += `        <button class="btn btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Berkas telah diverifikasi dan catatan telah diselesaikan"><i class="ti ti-thumb-up"></i></button>`;
+                                        }
+                        content += `    </td>`;
+                        content += `    <td class="custom-column">Ditambahkan Pada <span class="badge text-bg-info p-1">${item.updated_at}</span><br>Oleh <b>${item.NAMAPEGAWAI}</b></td>`;
+                        content += `    <td class="custom-column">`;
+                                        if (item.solved == 0) {
+                        content += `        <span class="badge text-bg-danger p-1">Belum Terselesaikan</span><br>`;
+                                        } else {
+                        content += `        <span class="badge text-bg-success p-1">Terselesaikan</span><br>`;
+                                        }
+                        content += `    ${item.deskripsi}</td>`;
+                        content += `</tr>`;
                     })
                     $('#tampil-catatan').append(content);
                     $('#btn-refresh-catatan').empty().append(`<button type="button" class="btn btn-warning" onclick="showCatatan('${kunjungan}')">Refresh</button>`);

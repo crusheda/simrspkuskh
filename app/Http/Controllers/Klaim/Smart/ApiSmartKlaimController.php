@@ -41,7 +41,17 @@ class ApiSmartKlaimController extends Controller
                     DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
                     'kv.id AS IDKLAIM','kv.verif AS STATUSVERIF','kv.verif_tgl AS TGLVERIF',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAVERIF'),
                     // DB::raw('CASE WHEN kvc.id IS NOT NULL THEN true ELSE false END AS CATATAN')
-                    DB::raw('(SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM simrspku_klaim.klaim_verifikasi_catatan AS kvc WHERE kvc.nomor = pk.NOMOR AND kvc.status = true) AS CATATAN')
+                    DB::raw("(
+                        SELECT
+                            CASE
+                                WHEN COUNT(*) = 0 THEN 0
+                                WHEN SUM(CASE WHEN kvc.status = true THEN 1 ELSE 0 END) = 0 THEN 0
+                                WHEN SUM(CASE WHEN kvc.status = true AND kvc.solved = 0 THEN 1 ELSE 0 END) > 0 THEN 1
+                                ELSE 2
+                            END
+                        FROM simrspku_klaim.klaim_verifikasi_catatan AS kvc
+                        WHERE kvc.nomor = pk.NOMOR
+                    ) AS CATATAN")
                 )
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
@@ -444,6 +454,11 @@ class ApiSmartKlaimController extends Controller
 
     function getCatatan($kunjungan) // Semua catatan berkas klaim kunjungan tersebut
     {
+        $klaim = klaim_verifikasi::withTrashed()
+                        ->where('nomor',$kunjungan)
+                        // ->where('status',true)
+                        // ->whereNull('deleted_at')
+                        ->first();
         $show = DB::table('simrspku_klaim.klaim_verifikasi_catatan AS kvc')
                         ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','kvc.user')
                         ->select('kvc.*',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAPEGAWAI'))
@@ -454,6 +469,7 @@ class ApiSmartKlaimController extends Controller
 
         $data = [
             'show' => $show,
+            'klaim' => $klaim,
         ];
 
         return response()->json($data, 200);
@@ -461,6 +477,7 @@ class ApiSmartKlaimController extends Controller
 
     function showCatatan($id) // Hanya catatan spesifik GET BY ID
     {
+        // $klaim = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->whereNull('deleted_at')->first();
         $show = DB::table('simrspku_klaim.klaim_verifikasi_catatan AS kvc')
                         ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','kvc.user')
                         ->select('kvc.*',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAPEGAWAI'))
@@ -561,13 +578,25 @@ class ApiSmartKlaimController extends Controller
         $now = Carbon::now();
         $time = $now->isoFormat('YYYY-MM-DD HH:mm:ss');
 
-        $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
-        $show->verif = true;
-        $show->verif_user = Auth::user()->ID;
-        $show->verif_tgl = $now;
-        $show->save();
+        $cek = klaim_verifikasi_catatan::where('nomor',$kunjungan)->where('status',true)->where('solved',false)->whereNull('deleted_at')->first();
 
-        return response()->json($time, 200);
+        if ($cek) {
+            return response()->json([
+                'code' => 0,
+                'message' => 'Verifikasi berkas gagal dilakukan karena masih ada catatan yang belum terselesaikan'
+            ], 200);
+        } else {
+            $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
+            $show->verif = true;
+            $show->verif_user = Auth::user()->ID;
+            $show->verif_tgl = $now;
+            $show->save();
+
+            return response()->json([
+                'code' => 1,
+                'message' => 'Verifikasi berkas berhasil dilakukan pada '.$now
+            ], 200);
+        }
     }
 
     function batalVerifikasiKlaim($kunjungan)

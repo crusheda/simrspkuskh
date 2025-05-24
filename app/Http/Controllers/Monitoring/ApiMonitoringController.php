@@ -19,7 +19,7 @@ use Auth, Storage;
 
 class ApiMonitoringController extends Controller
 {
-    function tableRj($rawat,$status,$tgls,$tgle,$dpjp) // RAWAT JALAN
+    function tableRj($rawat,$status,$tgls,$tgle,$dpjp)
     {
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
         // $subCppt = DB::table('medicalrecord.cppt')
@@ -75,7 +75,18 @@ class ApiMonitoringController extends Controller
                     'td.TANGGAL AS TGLTINDAKAN',
                     'jk.NOMOR AS NOSURKON','jk.NOMOR_BOOKING AS NOMORBOOKING',
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
-                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER')
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                    DB::raw("(
+                        SELECT
+                            CASE
+                                WHEN COUNT(*) = 0 THEN 0
+                                WHEN SUM(CASE WHEN kvc.status = true THEN 1 ELSE 0 END) = 0 THEN 0
+                                WHEN SUM(CASE WHEN kvc.status = true AND kvc.solved = 0 THEN 1 ELSE 0 END) > 0 THEN 1
+                                ELSE 2
+                            END
+                        FROM simrspku_klaim.klaim_verifikasi_catatan AS kvc
+                        WHERE kvc.nomor = pk.NOMOR
+                    ) AS CATATAN")
                 )
                 ->leftJoinSub($subCatatan, 'cat', function ($join) { // CATATAN
                     $join->on('cat.nomor', '=', 'pk.NOMOR');
