@@ -309,12 +309,41 @@ class ApiSmartKlaimController extends Controller
         if (!empty($jenisDipilih)) {
             $getFileKlaim = klaim_file::where('nomor', $request->kunjungan)
                 ->where('status', true)
+                ->whereNull('deleted_at')
                 ->whereIn('jenis', $jenisDipilih)
+                ->get();
+
+            $getFileKlaimTambahan = klaim_file::where('nomor', $request->kunjungan)
+                ->where('status', true)
+                ->whereNull('deleted_at')
+                ->where('jenis', 10)
+                ->where('sub_jenis', '!=', null)
                 ->get();
 
             foreach ($getFileKlaim as $value) {
                 $koleksi[] = $value->jenis;
                 $files[] = $value->filename;
+            }
+
+            if ($getFileKlaimTambahan->isNotEmpty()) {
+                foreach ($getFileKlaimTambahan as $value) {
+                    $koleksi[] = (int)($value->jenis . $value->sub_jenis);
+                    $files[] = $value->filename;
+                }
+            }
+        } else {
+            $getFileKlaimTambahan = klaim_file::where('nomor', $request->kunjungan)
+                ->where('status', true)
+                ->whereNull('deleted_at')
+                ->where('jenis', 10)
+                ->where('sub_jenis', '!=', null)
+                ->get();
+
+            if ($getFileKlaimTambahan->isNotEmpty()) {
+                foreach ($getFileKlaimTambahan as $value) {
+                    $koleksi[] = (int)($value->jenis . $value->sub_jenis);
+                    $files[] = $value->filename;
+                }
             }
         }
 
@@ -420,7 +449,7 @@ class ApiSmartKlaimController extends Controller
                         ->select('kvc.*',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAPEGAWAI'))
                         ->where('kvc.nomor',$kunjungan)
                         ->where('kvc.status',true)
-                        ->orderBy('kvc.updated_at','ASC')
+                        ->orderBy('kvc.created_at','ASC')
                         ->get();
 
         $data = [
@@ -438,6 +467,26 @@ class ApiSmartKlaimController extends Controller
                         ->where('kvc.id',$id)
                         ->where('kvc.status',true)
                         ->first();
+
+        return response()->json($show, 200);
+    }
+
+    function solvedCatatan($id) // Hanya catatan spesifik GET BY ID
+    {
+        $show = klaim_verifikasi_catatan::find($id);
+        $show->solved = true;
+        $show->user_solved = Auth::user()->ID;
+        $show->save();
+
+        return response()->json($show, 200);
+    }
+
+    function unsolvedCatatan($id) // Hanya catatan spesifik GET BY ID
+    {
+        $show = klaim_verifikasi_catatan::find($id);
+        $show->solved = false;
+        $show->user_solved = Auth::user()->ID;
+        $show->save();
 
         return response()->json($show, 200);
     }

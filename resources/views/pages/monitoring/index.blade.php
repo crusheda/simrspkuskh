@@ -315,7 +315,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                {{-- <button type="button" class="btn btn-primary"></button> --}}
             </div>
         </div>
     </div>
@@ -330,12 +329,12 @@
             <div class="modal-body p-3">
                 <small><i class="fas fa-sort-amount-down me-1"></i> <a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> catatan pertama kali ditambahkan</b></a></small>
                 <div class="table-responsive mt-2">
-                    <table class="table table-striped">
+                    <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 15%;">TANGGAL</th>
-                                <th style="width: 30%;">NAMA PENGGUNA</th>
-                                <th style="width: 55%;">DESKRIPSI CATATAN</th>
+                                <th style="width: 10%;" class="text-center">AKSI</th>
+                                <th style="width: 25%;">NAMA PENGGUNA</th>
+                                <th style="width: 65%;">DESKRIPSI CATATAN</th>
                             </tr>
                         </thead>
                         <tbody id="tampil-catatan">
@@ -351,6 +350,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <div id="btn-refresh-catatan"></div>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
@@ -679,6 +679,7 @@
     }
 
     function showCatatan(kunjungan) {
+        $("#tampil-catatan").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
         // console.log($(this).find('i'));
         $('#show-id-catatan').text(kunjungan);
         $('#catatan'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
@@ -688,16 +689,19 @@
             dataType: 'json',
             success: function(res) {
                 if (res.show.length != 0) {
+                    $('#tampil-catatan').empty();
+                    content = ``;
                     res.show.forEach(item => {
-                        content = ``;
                         content += `<tr>
-                                        <td class="custom-column">${item.updated_at}</td>
-                                        <td class="custom-column">${item.NAMAPEGAWAI}</td>
-                                        <td class="custom-column">${item.deskripsi}</td>
+                                        <td class="custom-column">${item.solved == 0?'<button class="btn btn-link-success" onclick="selesaiCatatan('+item.id+')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tombol Apabila Catatan telah diselesaikan">Selesai <i class="ti ti-thumb-up ms-1"></i></button>'
+                                            :'<button class="btn btn-link-danger" onclick="batalSelesaiCatatan('+item.id+')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tombol Apabila Batal Menyelesaikan Catatan">Batalkan <i class="ti ti-thumb-down ms-1"></i></button>'}</td>
+                                        <td class="custom-column"><span class="badge rounded-pill text-bg-info p-1">${item.updated_at}</span><br>Ditambahkan Oleh <b>${item.NAMAPEGAWAI}</b></td>
+                                        <td class="custom-column">${item.solved == 0?'<span class="badge rounded-pill text-bg-danger p-1">Belum Terselesaikan</span><br>':'<span class="badge rounded-pill text-bg-success p-1">Terselesaikan</span><br>'}${item.deskripsi}</td>
                                     </tr>
                         `;
-                        $('#tampil-catatan').empty().append(content);
                     })
+                    $('#tampil-catatan').append(content);
+                    $('#btn-refresh-catatan').empty().append(`<button type="button" class="btn btn-warning" onclick="showCatatan('${kunjungan}')">Refresh</button>`);
                     $('#catatan').modal('show');
                     $('#catatan'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
                 } else {
@@ -708,6 +712,33 @@
                     });
                     $('#catatan'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
                 }
+                // Showing Tooltip
+                $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    trigger : 'hover'
+                })
+            }
+        })
+    }
+
+    function selesaiCatatan(id) {
+        $.ajax({
+            url: "/api/klaim/catatan/"+id+"/solved",
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                showCatatan(res.nomor);
+            }
+        })
+    }
+
+    function batalSelesaiCatatan(id) {
+        $.ajax({
+            url: "/api/klaim/catatan/"+id+"/unsolved",
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                showCatatan(res.nomor);
             }
         })
     }

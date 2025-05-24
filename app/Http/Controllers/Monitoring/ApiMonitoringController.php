@@ -370,6 +370,7 @@ class ApiMonitoringController extends Controller
                 $post->title = $kunjungan.'.pdf';
                 $post->filename = $path.'.pdf';
                 $post->status = true;
+                $post->user = Auth::user()->ID;
                 $post->save();
             }
 
@@ -489,6 +490,7 @@ class ApiMonitoringController extends Controller
                 $post->title = $kunjungan.'.pdf';
                 $post->filename = $path.'.pdf';
                 $post->status = true;
+                $post->user = Auth::user()->ID;
                 $post->save();
             }
 
@@ -637,6 +639,7 @@ class ApiMonitoringController extends Controller
                 $post->title = $kunjungan.'.pdf';
                 $post->filename = $path.'.pdf';
                 $post->status = true;
+                $post->user = Auth::user()->ID;
                 $post->save();
             }
 
@@ -734,6 +737,7 @@ class ApiMonitoringController extends Controller
                 $post->title = $kunjungan.'.pdf';
                 $post->filename = $path.'.pdf';
                 $post->status = true;
+                $post->user = Auth::user()->ID;
                 $post->save();
             }
 
@@ -934,6 +938,7 @@ class ApiMonitoringController extends Controller
                 $post->title = $kunjungan.'.pdf';
                 $post->filename = $path.'.pdf';
                 $post->status = true;
+                $post->user = Auth::user()->ID;
                 $post->save();
             }
 
@@ -1118,8 +1123,9 @@ class ApiMonitoringController extends Controller
                 $post->jenis = 6;
                 $post->nomor = $kunjungan;
                 $post->title = $kunjungan.'.pdf';
-                $post->filename = $outputMerged.'.pdf';
+                $post->filename = $pathMerged.'.pdf';
                 $post->status = true;
+                $post->user = Auth::user()->ID;
                 $post->save();
             }
 
@@ -1283,8 +1289,9 @@ class ApiMonitoringController extends Controller
                 $post->jenis = 7;
                 $post->nomor = $kunjungan;
                 $post->title = $kunjungan.'.pdf';
-                $post->filename = $outputMerged.'.pdf';
+                $post->filename = $pathMerged.'.pdf';
                 $post->status = true;
+                $post->user = Auth::user()->ID;
                 $post->save();
             }
 
@@ -1372,6 +1379,7 @@ class ApiMonitoringController extends Controller
                 $post->title = $kunjungan.'.pdf';
                 $post->filename = $path.'.pdf';
                 $post->status = true;
+                $post->user = Auth::user()->ID;
                 $post->save();
             }
 
@@ -1505,8 +1513,9 @@ class ApiMonitoringController extends Controller
                 $post->jenis = 9;
                 $post->nomor = $kunjungan;
                 $post->title = $kunjungan.'.pdf';
-                $post->filename = $outputMerged.'.pdf';
+                $post->filename = $pathMerged.'.pdf';
                 $post->status = true;
+                $post->user = Auth::user()->ID;
                 $post->save();
             }
 

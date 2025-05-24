@@ -129,6 +129,7 @@
                     <h5 class="mb-2">Preview Berkas Klaim</h5>
                     <small class="m-0">Pilih daftar berkas di bilah menu kiri</small>
                 </div>
+                <div id="btn-refresh-klaim"></div>
                 {{-- <div class="dropdown">
                     <a class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none" href="#" data-bs-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false"><i class="material-icons-two-tone f-18">more_vert</i></a>
@@ -183,7 +184,7 @@
 </div>
 <!-- [ Main Content ] end -->
 
-<div class="modal animate__animated animate__rubberBand fade" id="upload" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+<div class="modal animate__animated animate__rubberBand fade" id="upload" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -198,7 +199,7 @@
                         <i class="ti ti-arrow-narrow-right text-primary me-1"></i> Batas maksimal upload berkas adalah <b><u>1 mb</u></b> dan berformat <b>PDF</b> atau <b>Image (JPG/PNG)</b> <br>
                         <i class="ti ti-arrow-narrow-right text-primary me-1"></i> Untuk Mengupload 3 berkas maka silakan untuk melakukan upload pada masing-masing berkas satu persatu <br>
                         <i class="ti ti-arrow-narrow-right text-primary me-1"></i> Pada kolom isian Nama / Jenis Berkas, isikan Penamaan berkas contoh : Hasil EKG, dll <br>
-                        <i class="ti ti-arrow-narrow-right text-primary me-1"></i> Isian di bawah Wajib dan tidak boleh dikosongi
+                        <i class="ti ti-arrow-narrow-right text-primary me-1"></i> Isian-isian di bawah bersifat Wajib diisi atau tidak boleh dikosongi
 
                     </small>
                 </div>
@@ -284,7 +285,7 @@
             </div>
             <div class="col-12 text-center mb-4">
                 <button type="submit" id="btn-ubah-catatan" class="btn btn-primary me-sm-3 me-1" onclick="prosesUbahCatatan()"><i class="fa fa-edit me-1" style="font-size:13px"></i> Ubah</button>
-                <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
+                <button type="reset" class="btn btn-link-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
             </div>
         </div>
     </div>
@@ -312,7 +313,7 @@
             </div>
             <div class="col-12 text-center mb-4">
                 <button type="submit" id="btn-hapus-catatan" class="btn btn-danger me-sm-3 me-1" onclick="prosesHapusCatatan()"><i class="fa fa-trash me-1" style="font-size:13px"></i> Hapus</button>
-                <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
+                <button type="reset" class="btn btn-link-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
             </div>
         </div>
     </div>
@@ -403,6 +404,8 @@
                     if (koleksi.includes(8)) { $('#ck_triage').prop('checked', true).prop('disabled', false); } else { $('#ck_triage').prop('checked', false).prop('disabled',false); }
                     if (koleksi.includes(9)) { $('#ck_operasi').prop('checked', true).prop('disabled', false); } else { $('#ck_operasi').prop('checked', false).prop('disabled',false); }
 
+                    $('#btn-refresh-klaim').append(`<button class="btn btn-light-primary" onclick="prosesSubmit('${kunjungan}')">Tampilkan Klaim</button>`);
+
                     $('#dokumen_tambahan').empty();
                     tambahan = ``;
                     console.log(res.file);
@@ -452,7 +455,7 @@
                                         <div class="row">
                                             <div class="col">
                                                 <div class="">
-                                                    <h4 class="d-inline-block">${item.NAMAPEGAWAI}</h4>
+                                                    <h4 class="d-inline-block">${item.NAMAPEGAWAI} ${item.solved == 0?'<span class="badge rounded-pill text-bg-danger p-2">Belum Terselesaikan</span>':'<span class="badge rounded-pill text-bg-success p-2">Terselesaikan</span>'}</h4>
                                                     <p class="text-muted">${moment(item.updated_at).locale('id').fromNow()} (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})</p>
                                                 </div>
                                             </div>
