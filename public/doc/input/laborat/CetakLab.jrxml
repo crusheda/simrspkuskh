@@ -6,15 +6,7 @@
 	<property name="ireport.y" value="338"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="OPR-RSWS"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="mm"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
-	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit." value="cm"/>
 	<parameter name="PNOMOR" class="java.lang.String"/>
 	<parameter name="PTINDAKAN" class="java.lang.String"/>
 	<parameter name="PFORMAT" class="java.lang.String"/>
@@ -468,9 +460,9 @@ Telp. (0271) 593979 Email. pku.sukoharjo@gmail.com ]]></text>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="34" splitType="Stretch">
+		<band height="29" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="9" width="170" height="25" uuid="d802fd72-f672-452b-9bc8-702f5629bce2"/>
+				<reportElement x="0" y="4" width="170" height="25" uuid="d802fd72-f672-452b-9bc8-702f5629bce2"/>
 				<box leftPadding="9">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -483,7 +475,7 @@ Telp. (0271) 593979 Email. pku.sukoharjo@gmail.com ]]></text>
 				<text><![CDATA[PEMERIKSAAN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="170" y="9" width="117" height="25" uuid="e8692d8f-b5ec-4680-a67a-38173303fedb"/>
+				<reportElement x="170" y="4" width="117" height="25" uuid="e8692d8f-b5ec-4680-a67a-38173303fedb"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -496,7 +488,7 @@ Telp. (0271) 593979 Email. pku.sukoharjo@gmail.com ]]></text>
 				<text><![CDATA[HASIL]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="369" y="9" width="115" height="25" uuid="7761103d-fa43-493c-839e-1c96c80e145a"/>
+				<reportElement x="369" y="4" width="115" height="25" uuid="7761103d-fa43-493c-839e-1c96c80e145a"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -510,7 +502,7 @@ Telp. (0271) 593979 Email. pku.sukoharjo@gmail.com ]]></text>
 				<text><![CDATA[NILAI RUJUKAN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="287" y="9" width="82" height="25" uuid="89f74480-dd22-4d2c-ad03-78466c9fe5e9"/>
+				<reportElement x="287" y="4" width="82" height="25" uuid="89f74480-dd22-4d2c-ad03-78466c9fe5e9"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -524,7 +516,7 @@ Telp. (0271) 593979 Email. pku.sukoharjo@gmail.com ]]></text>
 				<text><![CDATA[SATUAN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="484" y="9" width="82" height="25" uuid="02e89383-5e27-47fd-9585-a261b23e7af4"/>
+				<reportElement x="484" y="4" width="82" height="25" uuid="02e89383-5e27-47fd-9585-a261b23e7af4"/>
 				<box leftPadding="0">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="1.0" lineStyle="Solid"/>
@@ -614,104 +606,89 @@ Telp. (0271) 593979 Email. pku.sukoharjo@gmail.com ]]></text>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="28">
+		<band height="20">
 			<textField>
-				<reportElement x="306" y="8" width="207" height="20" uuid="58e39f1e-0fc5-45ac-b125-9d4afcae9257"/>
+				<reportElement x="306" y="3" width="207" height="17" uuid="58e39f1e-0fc5-45ac-b125-9d4afcae9257"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA["Halaman "+$V{PAGE_NUMBER}+" dari"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="513" y="8" width="40" height="20" uuid="f48cc3f6-b93d-47c0-8bc7-646ebcfba572"/>
+				<reportElement x="513" y="3" width="40" height="17" uuid="f48cc3f6-b93d-47c0-8bc7-646ebcfba572"/>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="160" splitType="Stretch">
+		<band height="137" splitType="Stretch">
 			<staticText>
-				<reportElement x="104" y="33" width="8" height="15" uuid="da7d5667-74be-4887-9d34-3fa95187a7fa"/>
+				<reportElement x="104" y="2" width="8" height="15" uuid="da7d5667-74be-4887-9d34-3fa95187a7fa"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="9"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="4" y="33" width="100" height="15" uuid="c6b168fb-7199-495c-872a-856c0cda2846"/>
+				<reportElement x="4" y="2" width="100" height="15" uuid="c6b168fb-7199-495c-872a-856c0cda2846"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Kesan / Saran]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="112" y="33" width="432" height="27" uuid="a66c0f2a-af5e-43cc-a99d-c6c302e93f85"/>
+				<reportElement x="112" y="2" width="432" height="27" uuid="a66c0f2a-af5e-43cc-a99d-c6c302e93f85"/>
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{CATATAN} == null ? "-" : $F{CATATAN}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="112" y="1" width="217" height="15" uuid="61ec83c0-bb96-49c8-be5a-8edf6bdfc6ee"/>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="SansSerif" size="9" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{ANALIS}]]></textFieldExpression>
-			</textField>
 			<textField>
-				<reportElement x="340" y="75" width="204" height="15" uuid="ab1bead0-b55e-4c50-afb2-abd713e03edc"/>
+				<reportElement x="340" y="44" width="204" height="15" uuid="ab1bead0-b55e-4c50-afb2-abd713e03edc"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Dokter"]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="340" y="60" width="204" height="15" uuid="c3f3c06c-4b3f-46a8-8c77-4d5de3baa4c8"/>
+				<reportElement x="340" y="29" width="204" height="15" uuid="c3f3c06c-4b3f-46a8-8c77-4d5de3baa4c8"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{KOTA}+", "+$F{TGLSKRG}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="4" y="1" width="100" height="32" uuid="2ceecbea-87dd-4f44-8d88-285d31f1e071">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="SansSerif" size="9" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Ahli Teknologi Laboratorium Medik/ Pemeriksa]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="340" y="145" width="204" height="15" uuid="a31d41b8-8b3a-4df7-9313-a5c6a2642003"/>
+				<reportElement x="340" y="114" width="204" height="15" uuid="a31d41b8-8b3a-4df7-9313-a5c6a2642003"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DOKTER} == null ? "dr. ENDANG TRI PETERANI, Sp.PK" : $F{DOKTER}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="104" y="1" width="8" height="15" uuid="7205824f-3b2f-4ed2-a544-58ada4bdb58e"/>
-				<textElement verticalAlignment="Top">
-					<font fontName="SansSerif" size="9"/>
-				</textElement>
-				<text><![CDATA[:]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="6" y="75" width="204" height="15" uuid="64571298-5006-49a4-8b43-5dd1908c743e"/>
+				<reportElement x="6" y="44" width="204" height="15" uuid="64571298-5006-49a4-8b43-5dd1908c743e"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Analis/Pemeriksa"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="6" y="145" width="204" height="15" uuid="071ef84b-48ab-4cac-ab8a-3bbb586abbc6"/>
+				<reportElement x="6" y="114" width="204" height="15" uuid="071ef84b-48ab-4cac-ab8a-3bbb586abbc6"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ANALIS} ? $F{ANALIS} : "(.......................................)"]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="83" y="93" width="50" height="50" uuid="387d2dfb-cf00-4696-b5d4-af0e808f4f33">
+				<reportElement x="83" y="62" width="50" height="50" uuid="387d2dfb-cf00-4696-b5d4-af0e808f4f33">
 					<printWhenExpression><![CDATA[$F{QR1} != null]]></printWhenExpression>
 				</reportElement>
 				<imageExpression><![CDATA[$P{QRCODE_PATH} + $F{QR1}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="104" y="37" width="100" height="100" uuid="621b3b9a-dc00-43ca-b75a-c54a45a0dd5f"/>
+				<imageExpression><![CDATA[$P{IMAGES_PATH} +"cap-lab.png"]]></imageExpression>
+			</image>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="376" y="62" width="133" height="50" uuid="6ffbafc8-99d9-43b4-aec2-89cccc5153dc"/>
+				<imageExpression><![CDATA[$P{IMAGES_PATH} + "ttd-dokter.png"]]></imageExpression>
 			</image>
 		</band>
 	</summary>
