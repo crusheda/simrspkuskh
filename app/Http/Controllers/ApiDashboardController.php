@@ -115,31 +115,14 @@ class ApiDashboardController extends Controller
 
         $unsolved = DB::table('simrspku_klaim.klaim_verifikasi_catatan AS kvc')
                 ->select(DB::raw('count(distinct kvc.nomor) as total'))
-                ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) {
-                    $join->on('kv.nomor','=','kvc.nomor')
-                            ->where('kv.verif', false);
-                })
+                ->leftJoin('pendaftaran.kunjungan AS pk','pk.NOMOR','=','kvc.nomor')
                 ->where('kvc.status', true)
                 ->where('kvc.solved', false)
                 ->whereNull('kvc.deleted_at')
-                ->where('kv.tahun', $exTgl[0]) // 2025
-                ->where('kv.bulan', $exTgl[1]) // 05
-                ->whereNull('kv.deleted_at')
+                ->whereYear('pk.MASUK', $exTgl[0]) // 2025
+                ->whereMonth('pk.MASUK', $exTgl[1]) // 05
+                ->whereIn('pk.STATUS',[1,2])
                 ->value('total');
-
-        // $debug = DB::table('simrspku_klaim.klaim_verifikasi_catatan AS kvc')
-        //         ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) use ($exTgl) {
-        //             $join->on('kv.nomor','=','kvc.nomor')
-        //                 ->where('kv.verif', false)
-        //                 ->where('kv.tahun', $exTgl[0])
-        //                 ->where('kv.bulan', $exTgl[1])
-        //                 ->whereNull('kv.deleted_at');
-        //         })
-        //         ->where('kvc.status', true)
-        //         ->where('kvc.solved', false)
-        //         ->whereNull('kvc.deleted_at')
-        //         ->select('kvc.nomor', 'kv.nomor AS kv_nomor', 'kv.tahun', 'kv.bulan')
-        //         ->get();
 
         $kunjIRJbulan = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(DB::raw('count(pk.NOMOR) as total'))
@@ -204,13 +187,18 @@ class ApiDashboardController extends Controller
                 ->select(DB::raw('count(pk.NOMOR) as total'))
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
                 ->where(function ($query) {
-                    $query->where('pk.RUANGAN', 'LIKE', '1020101%')
-                            ->orWhere('pk.RUANGAN', 'LIKE', '1020702%'); // RAJAL
+                    $query->where(function ($q) {
+                        $q->where('pk.RUANGAN', 'LIKE', '1020101%');
+                    })->orWhere(function ($q) {
+                        // KHUSUS RUANGAN IGD (1020201)
+                        $q->where('pk.RUANGAN', 'LIKE', '1020702%');
+                    });
                 })
                 ->whereYear('pk.MASUK', $exTgl[0]) // 2025
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 ->whereIn('pk.STATUS', [1, 2])
                 ->where('pk.KELUAR', '!=', null)
+                ->whereNull('pk.REF')
                 ->value('total');
 
         $kunjIRDtahun = DB::table('pendaftaran.kunjungan AS pk')
@@ -222,12 +210,15 @@ class ApiDashboardController extends Controller
                             ->whereNull('pri.KUNJUNGAN');
                 })
                 ->where(function ($query) {
-                    $query->where('pk.RUANGAN', 'LIKE', '1020201%'); // RADAR
+                    $query->where('pk.RUANGAN', 'LIKE', '1020201%')
+                            ->where('tp.UTAMA', 1)
+                            ->where('tp.STATUS', 1); // RADAR
                 })
                 ->whereYear('pk.MASUK', $exTgl[0]) // 2025
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 ->whereIn('pk.STATUS', [1, 2])
                 ->where('pk.KELUAR', '!=', null)
+                ->whereNull('pk.REF')
                 ->where('tp.UTAMA', 1) // RADAR & TIDAK DENGAN RANAP
                 ->where('tp.STATUS', 1) // RADAR & TIDAK DENGAN RANAP
                 ->value('total');
@@ -240,7 +231,6 @@ class ApiDashboardController extends Controller
             'unverified' => $unverified,
             'duplicates' => $duplicates,
             'unsolved' => $unsolved,
-            // 'debug' => $debug,
             'kunjirjbln' => $kunjIRJbulan,
             'kunjirdbln' => $kunjIRDbulan,
             'kunjirjth' => $kunjIRJtahun,
