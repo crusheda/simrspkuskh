@@ -21,3 +21,13 @@ canvas {
 .hover-text-dark:hover {
     color: #000 !important; /* Atau pakai class text-dark kalau mau */
 }
+
+.spin {
+    display: inline-block; /* supaya transform bisa bekerja */
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}

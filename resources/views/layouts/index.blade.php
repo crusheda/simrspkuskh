@@ -8,8 +8,31 @@
 
     @include('inc.css')
 
+    {{-- DATA PC THEME START --}}
+    <script>
+        // Terapkan tema seawal mungkin (sebelum render)
+        (function () {
+            const savedTheme = localStorage.getItem('pc-theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-pc-theme', savedTheme);
+            }
+        })();
+    </script>
+    {{-- <style>
+        /* default: dark mode */
+        #logo-light { display: none; }
+        #logo-dark { display: inline; }
+
+        /* jika pakai data-pc-theme="light" di body */
+        body[data-pc-theme="light"] #logo-light { display: inline; }
+        body[data-pc-theme="light"] #logo-dark { display: none; }
+        body[data-pc-theme="dark"] #logo-light { display: none; }
+        body[data-pc-theme="dark"] #logo-dark { display: inline; }
+    </style> --}}
+    {{-- DATA PC THEME END --}}
+
 </head>
-<body data-pc-preset="preset-1" data-pc-sidebar-theme="light" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
+<body id="main-body" data-pc-preset="preset-1" data-pc-sidebar-theme="light" data-pc-sidebar-caption="true" data-pc-direction="ltr"> <!-- data-pc-theme="dark" -->
 
     <!-- [ Pre-loader ] start -->
     <div class="loader-bg">

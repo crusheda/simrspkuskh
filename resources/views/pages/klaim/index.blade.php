@@ -27,7 +27,7 @@
     <div class="col-xl-8">
         <div class="card">
             <div class="card-header align-items-center">
-                <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Tabel Claim <span class="ms-2 f-14 px-2 badge bg-light-secondary rounded-pill" id="jumlah_claim">0 Data</span></h5>
+                <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Claim Table <span class="ms-2 f-14 px-2 badge bg-light-secondary rounded-pill" id="jumlah_claim">0 Data</span></h5>
             </div>
             <div class="card-body p-0 table-body">
                 <div class="table-responsive">
@@ -156,6 +156,22 @@
         choices = new Choices(elm);
 
         filter();
+
+        // ENTER CARI SEP
+        $('#sep_px').on('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // mencegah aksi default
+                cariSep(); // panggil fungsi cariSep
+            }
+        });
+
+        // ENTER TAMPILKAN
+        $('#filter_rawat, #filter_bulan, #filter_dpjp').on('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // mencegah aksi default
+                filter(); // panggil fungsi filter
+            }
+        });
     });
 
     // function-function
@@ -333,7 +349,7 @@
                     res.show.forEach(item => {
                         content += `<tr>
                                         <td class="custom-column">`;
-                                        if (res.klaim.verif == 0) {
+                                        if (!res.klaim || res.klaim.verif == 0) {
                                             if (item.solved == 0) {
                             content += `        <button class="btn btn-link-success" onclick="selesaiCatatan('${item.id}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tombol Apabila Catatan telah diselesaikan">Selesai <i class="ti ti-thumb-up ms-1"></i></button>`;
                                             } else {
