@@ -28,35 +28,6 @@ class ApiDashboardController extends Controller
                 ->whereNull('kv.deleted_at')
                 ->value('total');
 
-        // $unverified = DB::table('pendaftaran.kunjungan AS pk')
-        //         ->select(DB::raw('count(pk.NOMOR) as total'))
-        //         ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
-        //         ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
-        //         ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
-        //         ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) {
-        //             $join->on('kv.nomor','=','pk.NOMOR')
-        //                 ->where('kv.verif', false);
-        //         })
-        //         ->where(function ($query) {
-        //             $query->where(function ($q) {
-        //                 $q->where('pk.RUANGAN', 'LIKE', '1020101%')
-        //                     ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
-        //             })->orWhere(function ($q) {
-        //                 // KHUSUS RUANGAN IGD (1020201)
-        //                 $q->where('pk.RUANGAN', 'LIKE', '1020201%')
-        //                     ->where('tp.UTAMA', 1)
-        //                     ->where('tp.STATUS', 1)
-        //                     ->whereNull('pri.KUNJUNGAN');
-        //             });
-        //         })
-        //         ->whereYear('pk.MASUK', $exTgl[0]) // 2025
-        //         ->whereMonth('pk.MASUK', (int) $exTgl[1]) // 05
-        //         ->whereDay('pk.MASUK','13')
-        //         ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
-        //         ->whereIn('pk.STATUS', [1, 2])
-        //         ->whereNull('pk.REF')
-        //         ->where('pk.KELUAR', '!=', null)
-        //         ->value('total');
         $unverified = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(DB::raw('count(pk.NOMOR) as total'))
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
@@ -71,7 +42,7 @@ class ApiDashboardController extends Controller
                 })
                 ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) {
                     $join->on('kv.nomor','=','pk.NOMOR')
-                        ->where('kv.verif', false)
+                        // ->where('kv.verif', false)
                         ->whereNull('kv.deleted_at');
                 })
                 ->where(function ($query) {
@@ -85,7 +56,7 @@ class ApiDashboardController extends Controller
                             ->where('tp.UTAMA', 1)
                             ->where('tp.STATUS', 1);
                     })->orWhere(function ($q) {
-                        // KHUSUS RUANGAN IGD (1020201)
+                        // KHUSUS RUANGAN REHAB MEDIK (1020201)
                         $q->where('pk.RUANGAN', 'LIKE', '1020702%');
                     });
                 })
@@ -95,6 +66,10 @@ class ApiDashboardController extends Controller
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 ->whereIn('pk.STATUS', [1, 2])
                 ->where('pk.KELUAR', '!=', null)
+                ->where(function ($q) {
+                        $q->whereNull('kv.nomor') // tidak ada klaim
+                        ->orWhere('kv.verif', 0); // atau klaim belum diverifikasi
+                    })
                 ->whereNull('pk.REF')
                 ->value('total');
 
@@ -152,21 +127,20 @@ class ApiDashboardController extends Controller
                 ->whereNull('kv.deleted_at')
                 ->value('total');
 
-        // $kunjIRJbulan = DB::table('pendaftaran.kunjungan AS pk')
-        //         ->select(DB::raw('count(pk.NOMOR) as total'))
-        //         ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
-        //         ->where(function ($query) {
-        //             $query->where('pk.RUANGAN', 'LIKE', '1020101%')
-        //                     ->orWhere('pk.RUANGAN', 'LIKE', '1020702%'); // RAJAL
+        // $debug = DB::table('simrspku_klaim.klaim_verifikasi_catatan AS kvc')
+        //         ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) use ($exTgl) {
+        //             $join->on('kv.nomor','=','kvc.nomor')
+        //                 ->where('kv.verif', false)
+        //                 ->where('kv.tahun', $exTgl[0])
+        //                 ->where('kv.bulan', $exTgl[1])
+        //                 ->whereNull('kv.deleted_at');
         //         })
-        //         ->whereYear('pk.MASUK', $exTgl[0]) // 2025
-        //         ->whereMonth('pk.MASUK', (int) $exTgl[1]) // 05
-        //         ->whereDay('pk.MASUK','13')
-        //         ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
-        //         ->whereIn('pk.STATUS', [1, 2])
-        //         ->where('pk.KELUAR', '!=', null)
-        //         ->whereNull('pk.REF')
-        //         ->value('total');
+        //         ->where('kvc.status', true)
+        //         ->where('kvc.solved', false)
+        //         ->whereNull('kvc.deleted_at')
+        //         ->select('kvc.nomor', 'kv.nomor AS kv_nomor', 'kv.tahun', 'kv.bulan')
+        //         ->get();
+
         $kunjIRJbulan = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(DB::raw('count(pk.NOMOR) as total'))
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
@@ -183,8 +157,7 @@ class ApiDashboardController extends Controller
                     $query->where(function ($q) {
                         $q->where('pk.RUANGAN', 'LIKE', '1020101%')
                             ->where('tp.UTAMA', 1)
-                            ->where('tp.STATUS', 1)
-                            ->whereNull('pri.KUNJUNGAN');
+                            ->where('tp.STATUS', 1);
                     })->orWhere(function ($q) {
                         // KHUSUS RUANGAN IGD (1020201)
                         $q->where('pk.RUANGAN', 'LIKE', '1020702%');
@@ -199,27 +172,6 @@ class ApiDashboardController extends Controller
                 ->whereNull('pk.REF')
                 ->value('total');
 
-        // $kunjIRDbulan = DB::table('pendaftaran.kunjungan AS pk')
-        //         ->select(DB::raw('count(pk.NOMOR) as total'))
-        //         ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
-        //         ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
-        //         ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri', function($join) {
-        //             $join->on('pri.KUNJUNGAN','=','pk.NOMOR')
-        //                     ->whereNull('pri.KUNJUNGAN');
-        //         })
-        //         ->where(function ($query) {
-        //             $query->where('pk.RUANGAN', 'LIKE', '1020201%'); // RADAR
-        //         })
-        //         ->whereYear('pk.MASUK', $exTgl[0]) // 2025
-        //         ->whereMonth('pk.MASUK', (int) $exTgl[1]) // 05
-        //         ->whereDay('pk.MASUK','13')
-        //         ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
-        //         ->whereIn('pk.STATUS', [1, 2])
-        //         ->where('pk.KELUAR', '!=', null)
-        //         ->where('tp.UTAMA', 1) // RADAR & TIDAK DENGAN RANAP
-        //         ->where('tp.STATUS', 1) // RADAR & TIDAK DENGAN RANAP
-        //         ->whereNull('pk.REF')
-        //         ->value('total');
         $kunjIRDbulan = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(DB::raw('count(pk.NOMOR) as total'))
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
@@ -243,8 +195,8 @@ class ApiDashboardController extends Controller
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 ->whereIn('pk.STATUS', [1, 2])
                 ->where('pk.KELUAR', '!=', null)
-                ->where('tp.UTAMA', 1) // RADAR & TIDAK DENGAN RANAP
-                ->where('tp.STATUS', 1) // RADAR & TIDAK DENGAN RANAP
+                // ->where('tp.UTAMA', 1) // RADAR & TIDAK DENGAN RANAP
+                // ->where('tp.STATUS', 1) // RADAR & TIDAK DENGAN RANAP
                 ->whereNull('pk.REF')
                 ->value('total');
 
@@ -288,6 +240,7 @@ class ApiDashboardController extends Controller
             'unverified' => $unverified,
             'duplicates' => $duplicates,
             'unsolved' => $unsolved,
+            // 'debug' => $debug,
             'kunjirjbln' => $kunjIRJbulan,
             'kunjirdbln' => $kunjIRDbulan,
             'kunjirjth' => $kunjIRJtahun,

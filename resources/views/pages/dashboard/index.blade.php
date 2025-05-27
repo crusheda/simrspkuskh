@@ -42,7 +42,9 @@
                                         <div>
                                             <p class="text-muted mb-0">Belum Diverifikasi</p>
                                             <div class="d-flex align-items-end mt-1">
-                                                <h4 class="mb-0" id="belum_verif"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
+                                                <h4 class="mb-0" id="belum_verif" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Jumlah Klaim IRJ dan IRD yang belum Diverifikasi">
+                                                    <div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>
+                                                </h4>
                                                 <span class="badge bg-light-secondary ms-2">Berkas</span>
                                             </div>
                                         </div>
@@ -60,7 +62,9 @@
                                         <div>
                                             <p class="text-muted mb-0">Telah Diverifikasi</p>
                                             <div class="d-flex align-items-end mt-1">
-                                                <h4 class="mb-0" id="sudah_verif"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
+                                                <h4 class="mb-0" id="sudah_verif" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Jumlah Klaim IRJ dan IRD yang telah Diverifikasi">
+                                                    <div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>
+                                                </h4>
                                                 <span class="badge bg-light-secondary ms-2">Berkas</span>
                                             </div>
                                         </div>
@@ -78,7 +82,9 @@
                                         <div>
                                             <p class="text-muted mb-0">Masih Ada Catatan</p>
                                             <div class="d-flex align-items-end mt-1">
-                                                <h4 class="mb-0" id="masih_catatan"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
+                                                <h4 class="mb-0" id="masih_catatan" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Jumlah Klaim IRJ dan IRD yang masih ada Catatan (Belum Diverifikasi)">
+                                                    <div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>
+                                                </h4>
                                                 <span class="badge bg-light-secondary ms-2">Berkas</span>
                                             </div>
                                         </div>
@@ -102,13 +108,13 @@
                                         <div class="d-flex flex-column justify-content-between ms-auto align-items-end">
                                             <!-- IRJ -->
                                             <div class="d-flex align-items-center mb-2" data-bs-toggle="tooltip" data-bs-offset="0,4"
-                                                data-bs-placement="bottom" data-bs-html="true" title="Rawat Jalan">
+                                                data-bs-placement="bottom" data-bs-html="true" title="Rawat Jalan Tanpa Rawat Inap (Sudah Verifikasi Maupun Belum Diverifikasi) Dalam 1 Bulan">
                                                 <h4 class="mb-0" id="kunj_irj_th"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
                                                 <span class="badge bg-light-primary ms-2">IRJ</span>
                                             </div>
                                             <!-- IRD -->
                                             <div class="d-flex align-items-center" data-bs-toggle="tooltip" data-bs-offset="0,4"
-                                                data-bs-placement="bottom" data-bs-html="true" title="Rawat Darurat (Tanpa Rawat Inap)">
+                                                data-bs-placement="bottom" data-bs-html="true" title="Rawat Darurat Tanpa Rawat Inap (Sudah Verifikasi Maupun Belum Diverifikasi) Dalam 1 Bulan">
                                                 <h4 class="mb-0" id="kunj_ird_th"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
                                                 <span class="badge bg-light-danger ms-2">IRD</span>
                                             </div>
@@ -130,13 +136,13 @@
                                         <div class="d-flex flex-column justify-content-between ms-auto align-items-end">
                                             <!-- IRJ -->
                                             <div class="d-flex align-items-center mb-2" data-bs-toggle="tooltip" data-bs-offset="0,4"
-                                                data-bs-placement="bottom" data-bs-html="true" title="Rawat Jalan">
+                                                data-bs-placement="bottom" data-bs-html="true" title="Rawat Jalan Tanpa Rawat Inap (Sudah Verifikasi Maupun Belum Diverifikasi) Dalam 1 Tahun">
                                                 <h4 class="mb-0" id="kunj_irj_bln"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
                                                 <span class="badge bg-light-primary ms-2">IRJ</span>
                                             </div>
                                             <!-- IRD -->
                                             <div class="d-flex align-items-center" data-bs-toggle="tooltip" data-bs-offset="0,4"
-                                                data-bs-placement="bottom" data-bs-html="true" title="Rawat Darurat (Tanpa Rawat Inap)">
+                                                data-bs-placement="bottom" data-bs-html="true" title="Rawat Darurat Tanpa Rawat Inap (Sudah Verifikasi Maupun Belum Diverifikasi) Dalam 1 Tahun">
                                                 <h4 class="mb-0" id="kunj_ird_bln"><div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div></h4>
                                                 <span class="badge bg-light-danger ms-2">IRD</span>
                                             </div>
