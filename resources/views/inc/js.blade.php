@@ -36,10 +36,31 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-{{-- MANUAL JQUERY / JAVASCRIPT --}}
 
-<script>
-    layout_change('light');
+{{-- MANUAL JQUERY / JAVASCRIPT --}}
+    {{-- DATA PC THEME START --}}
+    <script>
+        function layout_change(theme) {
+            document.documentElement.setAttribute('data-pc-theme', theme);
+            localStorage.setItem('pc-theme', theme);
+            if (theme == 'light') {
+                document.getElementById('logo-light').style.display = 'inline';
+                document.getElementById('logo-dark').style.display = 'none';
+            } else {
+                document.getElementById('logo-light').style.display = 'none';
+                document.getElementById('logo-dark').style.display = 'inline';
+            }
+        }
+
+        // function layout_change_default() {
+        //     document.body.setAttribute('data-pc-theme', 'dark');
+        //     localStorage.removeItem('pc-theme');
+        // }
+    </script>
+    {{-- DATA PC THEME END --}}
+
+{{-- <script>
+    layout_change('dark');
 </script>
 
 <script>
@@ -60,4 +81,4 @@
 
 <script>
     preset_change('preset-1');
-</script>
+</script> --}}

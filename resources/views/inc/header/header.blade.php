@@ -367,6 +367,23 @@
                     </div>
                 </li> --}}
 
+                {{-- DATA PC THEME = LIGHT / DARK --}}
+                <li class="dropdown pc-h-item d-none d-md-inline-flex">
+                    <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ubah Tema SIRMED">
+                        <i class="ph-duotone ph-sun-dim spin"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end pc-h-dropdown" style="">
+                        <a href="javascript: void(0);" class="dropdown-item" onclick="layout_change('dark')">
+                            <i class="ph-duotone ph-moon"></i>
+                            <span>Dark</span>
+                        </a>
+                        <a href="javascript: void(0);" class="dropdown-item" onclick="layout_change('light')">
+                            <i class="ph-duotone ph-sun-dim"></i>
+                            <span>Light</span>
+                        </a>
+                    </div>
+                </li>
                 @include('inc.dropdown.account')
             </ul>
         </div>

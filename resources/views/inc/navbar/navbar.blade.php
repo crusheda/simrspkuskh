@@ -4,10 +4,27 @@
         <div class="m-header">
             {{-- <div id="logo_simrs"></div> --}}
             <a href="javascript:void(0);" class="b-brand text-primary">
-                <img src="{{ asset('images/logo/logoname.png') }}" alt="logo image" class="" style="height: 24px" />
+                <img id="logo-light" src="{{ asset('images/logo/logoname.png') }}" alt="logo light" style="height: 24px" />
+                <img id="logo-dark" src="{{ asset('images/logo/logoname_w.png') }}" alt="logo dark" style="height: 24px" />
                 <span class="badge bg-brand-color-3 rounded-pill ms-1 theme-version">v1.0</span>
             </a>
         </div>
+
+        <script>
+            (function () {
+                const savedTheme = localStorage.getItem('pc-theme');
+                if (savedTheme) {
+                    if (savedTheme == 'light') {
+                        document.getElementById('logo-light').style.display = 'inline';
+                        document.getElementById('logo-dark').style.display = 'none';
+                    } else {
+                        document.getElementById('logo-light').style.display = 'none';
+                        document.getElementById('logo-dark').style.display = 'inline';
+                    }
+                }
+            })();
+        </script>
+
         <div class="navbar-content">
             <ul class="pc-navbar">
                 <li class="pc-item pc-caption">

@@ -147,7 +147,7 @@
                 @endif
             </div>
         </div>
-        <div class="accordion card" id="verif_accordion">
+        <div class="accordion card" id="verif_accordion" hidden>
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingOne">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#verif_collapse" aria-expanded="true" aria-controls="verif_collapse">
@@ -442,69 +442,74 @@
                                         <button class="btn btn-success btn-sm w-100 mb-3" onclick="prosesSubmit('${kunjungan}')" id="btn-submit"><i class="fas fa-paper-plane me-1"></i> Submit Ulang Klaim</button>`;
                         submit += `     <button class="btn btn-secondary btn-sm w-100" onclick="verifikasi('${kunjungan}')" id="btn-verif"><i class="fas fa-check-square me-1"></i> Verifikasi Berkas</button>`;
                         submit += `</div>`;
+
+                        // REFRESH CATATAN
+                        $('#verif_accordion').prop('hidden',false);
+                        if (res.catatan.length != 0) {
+                            // console.log('sampai sini');
+                            $('#jumlah_catatan').text(res.catatan.length);
+                            $('#daftar_catatan').empty();
+                            res.catatan.forEach(item => {
+                                $('#daftar_catatan')
+                                    .append(`<div class="col-md-12 border border-top-0 border-start-0 border-end-0 mb-3">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="">
+                                                            <h4 class="d-inline-block">${item.NAMAPEGAWAI} ${item.solved == 0?'<span class="badge text-bg-danger p-1">Belum Terselesaikan</span>':'<span class="badge text-bg-success p-1">Terselesaikan</span>'}</h4>
+                                                            <p class="text-muted">${moment(item.updated_at).locale('id').fromNow()} (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <ul class="list-unstyled mb-0">
+                                                            ${item.solved == 0?
+                                                                `<li class="d-inline-block f-20 me-2">
+                                                                    <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Ubah Catatan" class="text-warning" onclick="ubahCatatan(${item.id})">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="d-inline-block f-20">
+                                                                    <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Hapus Catatan" class="text-danger" onclick="hapusCatatan(${item.id})">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </a>
+                                                                </li>`
+                                                            :
+                                                                `<li class="d-inline-block f-20 me-2">
+                                                                    <a href="javascript: void(0);" class="text-secondary">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li class="d-inline-block f-20">
+                                                                    <a href="javascript: void(0);" class="text-secondary">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </a>
+                                                                </li>`
+                                                            }
+
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <p>${item.deskripsi?item.deskripsi:'-'}</p>
+                                                </div>
+                                            </div>`);
+                            })
+                            // Showing Tooltip
+                            $('[data-bs-toggle="tooltip"]').tooltip({
+                                trigger : 'hover'
+                            })
+                        } else {
+                            $('#daftar_catatan').empty().append(`<div class="d-flex justify-content-center"><a class="align-middle">Tidak ada catatan</a></div>`);
+                        }
                     } else {
                         $('#alert_verif').empty().append(`<div class="alert alert-success d-block text-center text-uppercase"><i class="feather icon-check-circle me-2"></i>Berkas Klaim Telah Diverifikasi</div>`);
                         submit += `<div class="card-footer p-3">`;
                         submit += `     <button class="btn btn-outline-secondary btn-sm w-100" onclick="batalVerifikasi('${kunjungan}')" id="btn-batal-verif"><i class="fas fa-times-circle me-1"></i> Batal Verifikasi</button>`;
                         submit += `</div>`;
+
+                        // REFRESH CATATAN
+                        $('#verif_accordion').prop('hidden',true);
                     }
                     $('#footer_submit').empty().append(submit);
-                }
-                // REFRESH CATATAN
-                if (res.catatan.length != 0) {
-                    // console.log('sampai sini');
-                    $('#jumlah_catatan').text(res.catatan.length);
-                    $('#daftar_catatan').empty();
-                    res.catatan.forEach(item => {
-                        $('#daftar_catatan')
-                            .append(`<div class="col-md-12 border border-top-0 border-start-0 border-end-0 mb-3">
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="">
-                                                    <h4 class="d-inline-block">${item.NAMAPEGAWAI} ${item.solved == 0?'<span class="badge text-bg-danger p-1">Belum Terselesaikan</span>':'<span class="badge text-bg-success p-1">Terselesaikan</span>'}</h4>
-                                                    <p class="text-muted">${moment(item.updated_at).locale('id').fromNow()} (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})</p>
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <ul class="list-unstyled mb-0">
-                                                    ${item.solved == 0?
-                                                        `<li class="d-inline-block f-20 me-2">
-                                                            <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Ubah Catatan" class="text-warning" onclick="ubahCatatan(${item.id})">
-                                                                <i class="fas fa-edit"></i>
-                                                            </a>
-                                                        </li>
-                                                        <li class="d-inline-block f-20">
-                                                            <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Hapus Catatan" class="text-danger" onclick="hapusCatatan(${item.id})">
-                                                                <i class="fas fa-trash"></i>
-                                                            </a>
-                                                        </li>`
-                                                    :
-                                                        `<li class="d-inline-block f-20 me-2">
-                                                            <a href="javascript: void(0);" class="text-secondary">
-                                                                <i class="fas fa-edit"></i>
-                                                            </a>
-                                                        </li>
-                                                        <li class="d-inline-block f-20">
-                                                            <a href="javascript: void(0);" class="text-secondary">
-                                                                <i class="fas fa-trash"></i>
-                                                            </a>
-                                                        </li>`
-                                                    }
-
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <p>${item.deskripsi?item.deskripsi:'-'}</p>
-                                        </div>
-                                    </div>`);
-                    })
-                    // Showing Tooltip
-                    $('[data-bs-toggle="tooltip"]').tooltip({
-                        trigger : 'hover'
-                    })
-                } else {
-                    $('#daftar_catatan').empty().append(`<div class="d-flex justify-content-center"><a class="align-middle">Tidak ada catatan</a></div>`);
                 }
             }
         })
