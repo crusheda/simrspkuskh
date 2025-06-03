@@ -846,7 +846,7 @@ class ApiMonitoringController extends Controller
                     ->first();
 
             $show = DB::select('CALL simrspku_klaim.CetakRincianPasienPerDokterCustom(?,?)',[$getSEP->TAGIHAN,$getSEP->STATUS]);
-            // print_r($show[0]);
+            // print_r($show);
             // die();
             //-----------------------------------------------------------------------
             //GENERATE QR CODE
@@ -858,38 +858,41 @@ class ApiMonitoringController extends Controller
             // print_r($generator);
             // die();
 
-            // Decode base64 jadi binary PNG
-            $decodedImage = base64_decode($image);
-            $token = Crypt::encrypt($show[0]->NIP);
-            $titleQrcode = Crypt::encrypt($show[0]->NIP).'.png';
-            $verif = klaim_qrcode_pegawai::where('nomor',$show[0]->NIP)->first();
+            if ($show[0]->NIP) {
+                // Decode base64 jadi binary PNG
+                $decodedImage = base64_decode($image);
+                $token = Crypt::encrypt($show[0]->NIP);
+                $titleQrcode = Crypt::encrypt($show[0]->NIP).'.png';
+                $verif = klaim_qrcode_pegawai::where('nomor',$show[0]->NIP)->first();
 
-            // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
-            $pathQrcode = 'files/qrcode/' . $titleQrcode;
-            $outputQrcode = storage_path('app/public/' . $pathQrcode);
+                // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
+                $pathQrcode = 'files/qrcode/' . $titleQrcode;
+                $outputQrcode = storage_path('app/public/' . $pathQrcode);
 
-            // SAVE TO DB
-            if (!$verif) {
-                file_put_contents($outputQrcode, $decodedImage);
-                $post = new klaim_qrcode_pegawai;
-                $post->token = $token;
-                $post->nomor = $show[0]->NIP;
-                $post->title = $titleQrcode;
-                $post->filename = $pathQrcode;
-                $post->save();
-            } else {
-                if (!Storage::disk('public')->exists($verif->filename)) {
+                // SAVE TO DB
+                if (!$verif) {
                     file_put_contents($outputQrcode, $decodedImage);
-                    $verif->token = $token;
-                    $verif->title = $titleQrcode;
-                    $verif->filename = $pathQrcode;
-                    $verif->save();
+                    $post = new klaim_qrcode_pegawai;
+                    $post->token = $token;
+                    $post->nomor = $show[0]->NIP;
+                    $post->title = $titleQrcode;
+                    $post->filename = $pathQrcode;
+                    $post->save();
+                } else {
+                    if (!Storage::disk('public')->exists($verif->filename)) {
+                        file_put_contents($outputQrcode, $decodedImage);
+                        $verif->token = $token;
+                        $verif->title = $titleQrcode;
+                        $verif->filename = $pathQrcode;
+                        $verif->save();
+                    }
                 }
             }
 
             //GENERATE QR CODE
             $generator2 = new DNS2D();
-            $pasien = $show[0]->RM .'-'. $show[0]->NAMA_KELUARGA_PASIEN;
+            $nama = $show[0]->NAMA_KELUARGA_PASIEN ? $show[0]->NAMA_KELUARGA_PASIEN : $show[0]->NAMALENGKAP;
+            $pasien = $show[0]->RM .'-'.$nama;
 
             // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
             $image2 = $generator2->getBarcodePNG($pasien, 'QRCODE');
@@ -898,8 +901,8 @@ class ApiMonitoringController extends Controller
 
             // Decode base64 jadi binary PNG
             $decodedImage2 = base64_decode($image2);
-            $token2 = Crypt::encrypt($show[0]->NAMA_KELUARGA_PASIEN);
-            $titleQrcode2 = Crypt::encrypt($show[0]->NAMA_KELUARGA_PASIEN).'.png';
+            $token2 = Crypt::encrypt($nama);
+            $titleQrcode2 = Crypt::encrypt($nama).'.png';
             $verif2 = klaim_qrcode::where('nomor',$show[0]->RM)->where('jenis',1)->first();
 
             // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
