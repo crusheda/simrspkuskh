@@ -296,15 +296,15 @@ class ApiSmartKlaimController extends Controller
         $koleksi = [];
         $files = [];
         $mapJenis = [
+            'individual'   => 4,
             'sep'          => 1,
             'resume'       => 2,
-            'skdp'         => 3,
-            'individual'   => 4,
             'billing'      => 5,
             'laboratorium' => 6,
             'radiologi'    => 7,
             'triage'       => 8,
             'operasi'      => 9,
+            'skdp'         => 3,
         ];
 
         // Ambil hanya jenis yang checkbox-nya dicentang
@@ -327,26 +327,37 @@ class ApiSmartKlaimController extends Controller
                 ->where('status', true)
                 ->whereNull('deleted_at')
                 ->where('jenis', 10)
-                ->where('sub_jenis', '!=', null)
+                ->whereNotNull('sub_jenis')
                 ->get();
 
+            // Mapping hasil query utama: [jenis => filename]
+            $fileMap = [];
+            $fileKol = [];
+
             foreach ($getFileKlaim as $value) {
-                $koleksi[] = $value->jenis;
-                $files[] = $value->filename;
+                $fileMap[$value->jenis] = $value->filename;
+                $fileKol[$value->jenis] = (int)($value->jenis . $value->sub_jenis);
             }
 
-            if ($getFileKlaimTambahan->isNotEmpty()) {
-                foreach ($getFileKlaimTambahan as $value) {
-                    $koleksi[] = (int)($value->jenis . $value->sub_jenis);
-                    $files[] = $value->filename;
+            // Susun koleksi dan files sesuai urutan $mapJenis
+            foreach ($mapJenis as $key => $jenisInt) {
+                if (in_array($jenisInt, $jenisDipilih) && isset($fileMap[$jenisInt])) {
+                    $koleksi[] = $fileKol[$jenisInt] ?? $jenisInt; // fallback kalau sub_jenis null
+                    $files[] = $fileMap[$jenisInt];
                 }
+            }
+
+            // Tambahkan file tambahan (jenis = 10)
+            foreach ($getFileKlaimTambahan as $value) {
+                $koleksi[] = (int)($value->jenis . $value->sub_jenis);
+                $files[] = $value->filename;
             }
         } else {
             $getFileKlaimTambahan = klaim_file::where('nomor', $request->kunjungan)
                 ->where('status', true)
                 ->whereNull('deleted_at')
                 ->where('jenis', 10)
-                ->where('sub_jenis', '!=', null)
+                ->whereNotNull('sub_jenis')
                 ->get();
 
             if ($getFileKlaimTambahan->isNotEmpty()) {
