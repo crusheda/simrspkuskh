@@ -938,7 +938,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{WILAYAH}+", "+DateFormat.getDateInstance(DateFormat.LONG, $P{REPORT_LOCALE}).format($F{TANGGALBAYAR})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{WILAYAH}+", "+DateFormat.getDateInstance(DateFormat.LONG, new java.util.Locale("id", "ID")).format($F{TANGGALBAYAR})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="23" y="193" width="184" height="15" uuid="daa76f94-f0d1-4ab2-b736-b1aaf3eef0ad"/>
@@ -955,11 +955,15 @@
 				<textFieldExpression><![CDATA[$F{NAMA_KELUARGA_PASIEN}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="414" y="208" width="50" height="50" uuid="52dc85d2-aa7a-4ac2-99b0-521a1e2d86bd"/>
+				<reportElement x="414" y="208" width="50" height="50" uuid="52dc85d2-aa7a-4ac2-99b0-521a1e2d86bd">
+					<printWhenExpression><![CDATA[$F{QR1} != null]]></printWhenExpression>
+				</reportElement>
 				<imageExpression><![CDATA[$P{QRCODE_PATH} + $F{QR1}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="90" y="208" width="50" height="50" uuid="c4f28666-6dd9-4073-83c3-17a623db8df8"/>
+				<reportElement x="90" y="208" width="50" height="50" uuid="c4f28666-6dd9-4073-83c3-17a623db8df8">
+					<printWhenExpression><![CDATA[$F{QR2} != null]]></printWhenExpression>
+				</reportElement>
 				<imageExpression><![CDATA[$P{QRCODE_PATH} + $F{QR2}]]></imageExpression>
 			</image>
 		</band>
