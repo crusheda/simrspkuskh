@@ -31,8 +31,10 @@
                     <h5 class="mb-0">Data Record Smart Claim</h5>
                     <div>
                         <div class="input-group">
-                            <input type="month" class="form-control form-control-sm w-auto border-0 shadow-none2" data-bs-toggle="tooltip" id="inp_tgl_fresh" onchange="refresh()"
-                            data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Filter Berdasarkan Bulan dan Tahun" value="2024-04"> <!-- {{ $list['yearMonth'] }} -->
+                            <input type="date" class="form-control form-control-sm w-auto border-0 shadow-none2" data-bs-toggle="tooltip" id="inp_tgl_fresh" onchange="refresh()"
+                            data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Filter Berdasarkan Tanggal-Bulan-Tahun" value="2025-04-04"> <!-- {{ $list['yearMonth'] }} -->
+                            {{-- <input type="month" class="form-control form-control-sm w-auto border-0 shadow-none2" data-bs-toggle="tooltip" id="inp_tgl_fresh" onchange="refresh()"
+                            data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Filter Berdasarkan Bulan dan Tahun" value="2024-04"> <!-- {{ $list['yearMonth'] }} --> --}}
                             <button class="btn btn-sm btn-link-secondary" onclick="refresh()" id="btn-refresh"><i class="fas fa-sync fa-spin" style="font-size: 13px"></i></button>
                         </div>
                     </div>

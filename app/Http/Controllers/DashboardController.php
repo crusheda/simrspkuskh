@@ -13,7 +13,7 @@ class DashboardController extends Controller
 {
     function index()
     {
-        $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
+        $yearMonth = Carbon::now()->isoFormat('YYYY-MM-DD');
 
         $data = [
             'yearMonth' => $yearMonth,

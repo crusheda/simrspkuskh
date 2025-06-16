@@ -14,20 +14,27 @@ use setasign\Fpdi\Fpdi;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use PHPJasper\PHPJasper;
+use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use Auth, Storage;
 
 class ApiMonitoringController extends Controller
 {
-    function tableRj($rawat,$status,$tgls,$tgle,$dpjp)
+    function table(Request $request)
     {
+        // INIT
+        $rawat  = $request->rawat;
+        $status = $request->status;
+        $tgls   = $request->tgls;
+        $tgle   = $request->tgle;
+        $dpjp   = $request->dpjp;
+        $berkas = $request->berkas;
+        // Berkas = 5 = Semua Status
+        // Berkas = 0 = Berkas Belum Lengkap (Sudah ada Tindakan, Cppt, TTE, dan SEP)
+        // Berkas = 1 = Berkas Masih Ada Catatan
+        // Berkas = 2 = Berkas Sudah Lengkap
+
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
-        // $subCppt = DB::table('medicalrecord.cppt')
-        //         ->select('KUNJUNGAN', 'TANGGAL')
-        //         ->where('STATUS', 1) // kalau perlu
-        //         // ->where('KUNJUNGAN', '1020101042406080005')
-        //         ->orderBy('TANGGAL', 'desc')
-        //         ->get(); // ambil 1 cppt terakhir
 
         // SUB QUERY FROM ANY TABEL
         $subTindakan = DB::table(DB::raw('
@@ -62,6 +69,18 @@ class ApiMonitoringController extends Controller
                 WHERE deleted_at IS null AND status = 1
             ) AS cat
         '))->where('cat.rn', 1);
+        $subCatatanAgg = DB::table('simrspku_klaim.klaim_verifikasi_catatan') // subquery yang menghitung status catatan per nomor
+            ->select('nomor', DB::raw('
+                CASE
+                    WHEN COUNT(*) = 0 THEN 0
+                    WHEN SUM(CASE WHEN status = true THEN 1 ELSE 0 END) = 0 THEN 0
+                    WHEN SUM(CASE WHEN status = true AND solved = 0 THEN 1 ELSE 0 END) > 0 THEN 1
+                    ELSE 2
+                END AS catatan_status
+            '))
+            ->whereNull('deleted_at')
+            ->where('status', 1)
+            ->groupBy('nomor');
         // MAIN QUERY
         $show = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(
@@ -76,20 +95,24 @@ class ApiMonitoringController extends Controller
                     'jk.NOMOR AS NOSURKON','jk.NOMOR_BOOKING AS NOMORBOOKING',
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
-                    DB::raw("(
-                        SELECT
-                            CASE
-                                WHEN COUNT(*) = 0 THEN 0
-                                WHEN SUM(CASE WHEN kvc.status = true THEN 1 ELSE 0 END) = 0 THEN 0
-                                WHEN SUM(CASE WHEN kvc.status = true AND kvc.solved = 0 THEN 1 ELSE 0 END) > 0 THEN 1
-                                ELSE 2
-                            END
-                        FROM simrspku_klaim.klaim_verifikasi_catatan AS kvc
-                        WHERE kvc.nomor = pk.NOMOR
-                    ) AS CATATAN")
+                    'catagg.catatan_status AS CATATAN'
+                    // DB::raw("(
+                    //     SELECT
+                    //         CASE
+                    //             WHEN COUNT(*) = 0 THEN 0
+                    //             WHEN SUM(CASE WHEN kvc.status = true THEN 1 ELSE 0 END) = 0 THEN 0
+                    //             WHEN SUM(CASE WHEN kvc.status = true AND kvc.solved = 0 THEN 1 ELSE 0 END) > 0 THEN 1
+                    //             ELSE 2
+                    //         END
+                    //     FROM simrspku_klaim.klaim_verifikasi_catatan AS kvc
+                    //     WHERE kvc.nomor = pk.NOMOR
+                    // ) AS CATATAN")
                 )
                 ->leftJoinSub($subCatatan, 'cat', function ($join) { // CATATAN
                     $join->on('cat.nomor', '=', 'pk.NOMOR');
+                })
+                ->leftJoinSub($subCatatanAgg, 'catagg', function ($join) {
+                    $join->on('catagg.nomor', '=', 'pk.NOMOR');
                 })
                 ->leftJoinSub($subTTD, 'ttd', function ($join) { // CPPT
                     $join->on('ttd.kunjungan', '=', 'pk.NOMOR');
@@ -149,6 +172,30 @@ class ApiMonitoringController extends Controller
                             ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
                     });
                 })
+
+                // FILTER STATUS BERKAS
+                ->when($berkas == 2, function ($query) { // BERKAS SUDAH LENGKAP
+                    $query->where(function ($q) {
+                        $q->whereNotNull('cp.TANGGAL') // CPPT
+                            ->whereNotNull('td.TANGGAL') // TINDAKAN
+                            ->whereNotNull('kjs.noSEP') // SEP
+                            ->whereNotNull('ttd.created_at'); // TTE
+                    });
+                })
+                ->when($berkas == 1, function ($query) { // BERKAS MASIH ADA CATATAN
+                    $query->where(function ($q) {
+                        $q->whereNotNull('cat.updated_at');
+                    });
+                })
+                ->when($berkas == 0, function ($query) { // BERKAS BELUM LENGKAP
+                    $query->where(function ($q) {
+                        $q->where('cp.TANGGAL',null) // CPPT
+                            ->orWhere('td.TANGGAL',null) // TINDAKAN
+                            ->orWhere('kjs.noSEP',null) // SEP
+                            ->orWhere('ttd.created_at',null); // TTE
+                    });
+                })
+
                 // KHUSUS RAWAT DARURAT
                 ->when($rawat == 2, function ($query) use ($rawat) {
                     $query->where(function ($q) {
@@ -163,7 +210,7 @@ class ApiMonitoringController extends Controller
                     $query->where('pk.STATUS', $status);
                             // ->where('pp.STATUS', $status);
                 })
-                // ->where('pk.KELUAR', null)
+
                 ->orderBy('pk.MASUK','DESC')
                 ->get();
 

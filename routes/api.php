@@ -52,7 +52,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::delete('roles/user/{id}/delete', [RolesController::class, 'deleteRolesUser'])->name('roles.user.delete');
 
     // DIGITAL
-    Route::get('monitoring/rj/{rawat}/{status}/{tgls}/{tgle}/{dpjp}', [ApiMonitoringController::class, 'tableRj'])->name('api.monitoring.rj');
+    Route::post('monitoring', [ApiMonitoringController::class, 'table'])->name('api.monitoring');
         // MONITORING - KLAIM
             // UMUM
             Route::get('pasien/{kunjungan}/tindakan', [ApiMonitoringController::class, 'tindakan'])->name('api.pasien.tindakan');
@@ -91,13 +91,15 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('klaim/{tahun}/{bulan}/{kunjungan}/pdf', [ApiSmartKlaimController::class, 'showKlaim'])->name('api.klaim.showKlaim');
             Route::get('klaim/table/{pel}/{bln}/{dpjp}', [ApiSmartKlaimController::class, 'table'])->name('api.klaim.table');
 
+
+    // TIDAK DIPAKAI =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // PELAYANAN PASIEN
-    Route::get('pelayanan/pasien/rj/{status}/{tgls}/{tgle}/{dpjp}', [ApiResumeMedisController::class, 'tableRj'])->name('api.pelayanan.pasien.rj');
+    Route::get('pelayanan/pasien', [ApiResumeMedisController::class, 'table'])->name('api.pelayanan.pasien.table');
         // RESUME
         Route::get('pelayanan/pasien/rj/resume/{kunjungan}', [ApiResumeMedisController::class, 'compileResumeRj'])->name('api.pasien.resume.rj');
         Route::post('pelayanan/pasien/resume/ttd/simpan', [ResumeMedisController::class, 'storeTtd'])->name('api.pasien.resume.ttd');
 
     // EKLAIM
-
+    // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 });
 

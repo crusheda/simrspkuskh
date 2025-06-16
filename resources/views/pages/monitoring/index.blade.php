@@ -75,7 +75,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                         <div class="form-group">
                             <label class="form-label">DPJP</label>
                             <select class="form-control" id="filter_dpjp">
@@ -85,6 +85,17 @@
                                         <option value="{{ $item->NIP }}">{{ $item->NAMADOKTER }} ({{ $item->DESKRIPSI }})</option>
                                     @endforeach
                                 @endif
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Status Berkas Klaim</label>
+                            <select class="form-control" id="filter_berkas">
+                                <option value="5" selected>Semua Status</option>
+                                <option value="0">Berkas Belum Lengkap</option>
+                                <option value="1">Berkas Masih Ada Catatan</option>
+                                <option value="2">Berkas Sudah Lengkap</option>
                             </select>
                         </div>
                     </div>
@@ -120,12 +131,12 @@
                             <tr>
                                 <th rowspan="2"><center>Kunjungan Pasien</center></th>
                                 <th rowspan="2">Tanggal Kunjungan</th>
-                                <th colspan="7"><center>Monitoring</center></th>
+                                <th colspan="6"><center>Monitoring</center></th>
                             </tr>
                             <tr>
                                 <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Monitoring Tindakan">TDKN</th>
                                 <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Monitoring Pengisian CPPT">CPPT</th>
-                                <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Monitoring Pengisian Diagnosa Dokter">ICD</th>
+                                {{-- <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Monitoring Pengisian Diagnosa Dokter">ICD</th> --}}
                                 <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tanda Tangan Elektronik SIRMED">TTE</th>
                                 <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Surat Rencana Kontrol">SKDP</th>
                                 <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Surat Eligibilitas Peserta">SEP</th>
@@ -388,26 +399,12 @@
         $('#showTable').prop('hidden',false);
         $('#tombol-tampilkan').prop('disabled',true).find('i').removeClass('fa-filter').addClass('fa-sync fa-spin');
         $("#show-time").empty().html('<div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div>');
-        // if (status == 0) {
-        //     $("#btn-refresh-0").prop('disabled',true).removeClass('btn-light-danger btn-danger').addClass('btn-danger');
-        //     $("#btn-refresh-1").removeClass('btn-light-warning btn-warning').addClass('btn-light-warning');
-        //     $("#btn-refresh-2").removeClass('btn-light-primary btn-primary').addClass('btn-light-primary');
-        // } else {
-        //     if (status == 1) {
-        //         $("#btn-refresh-0").removeClass('btn-light-danger btn-danger').addClass('btn-light-danger');
-        //         $("#btn-refresh-1").prop('disabled',true).removeClass('btn-light-warning btn-warning').addClass('btn-warning');
-        //         $("#btn-refresh-2").removeClass('btn-light-primary btn-primary').addClass('btn-light-primary');
-        //     } else {
-        //         $("#btn-refresh-0").removeClass('btn-light-danger btn-danger').addClass('btn-light-danger');
-        //         $("#btn-refresh-1").removeClass('btn-light-warning btn-warning').addClass('btn-light-warning');
-        //         $("#btn-refresh-2").prop('disabled',true).removeClass('btn-light-primary btn-primary').addClass('btn-primary');
-        //     }
-        // }
         $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
         // Initialize
         var rawat = $("#filter_rawat").val();
         var status = $("#filter_status").val();
         var tgl = $("#filter_tgl").val();
+        var berkas = $("#filter_berkas").val();
         var dpjp = $("#filter_dpjp").val() ? $("#filter_dpjp").val() : '0'; // JIKA DPJP KOSONG = 0
         var exTgl = tgl.split(' to ');
         if (exTgl.length == 2) { // SPLIT FROM = "2024-01-01 to 2025-01-01"
@@ -417,12 +414,21 @@
             tgls = exTgl[0];
             tgle = exTgl[0];
         }
-        console.log(exTgl);
         // Process
         $.ajax({
-            url: `/api/monitoring/rj/${rawat}/${status}/${tgls}/${tgle}/${dpjp}`,
-            type: 'GET',
-            dataType: 'json',
+            url: '/api/monitoring',
+            type: 'POST',
+            data: {
+                rawat: rawat,
+                status: status,
+                tgls: tgls,
+                tgle: tgle,
+                dpjp: dpjp,
+                berkas: berkas,
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             success: function(res) {
                 // $("#list").empty();
                 $("#show-time").empty().text(res.time);
@@ -519,7 +525,6 @@
                                             <i class="fas fa-times fs-5 text-secondary"></i>
                                         </button>`}
                                     </td>
-                                    <td><button type="button" class="btn btn-sm btn-icon btn-link-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail"><i class="fas fa-question text-secondary"></i></button></td>
                                     <td>${item.TGLTTD?`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" id="resumerj`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
@@ -560,8 +565,7 @@
                     bAutoWidth: false,
                     aoColumns : [
                         { sWidth: '65%' },
-                        { sWidth: '14%' },
-                        { sWidth: '3%' },
+                        { sWidth: '17%' },
                         { sWidth: '3%' },
                         { sWidth: '3%' },
                         { sWidth: '3%' },
@@ -588,9 +592,6 @@
                 $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
             }
         })
-        // $("#btn-refresh-0").prop('disabled',false);
-        // $("#btn-refresh-1").prop('disabled',false);
-        // $("#btn-refresh-2").prop('disabled',false);
     }
 
     function showTindakan(kunjungan) {

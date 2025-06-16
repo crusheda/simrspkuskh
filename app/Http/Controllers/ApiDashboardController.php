@@ -18,8 +18,10 @@ class ApiDashboardController extends Controller
 {
     function dataDiag($tgl)
     {
-        $exTgl = explode('-',$tgl); // Array ( [0] => 2025 [1] => 05 )
-        $textTgl = Carbon::createFromFormat('Y-m', $tgl)->isoFormat('MMMM Y');
+        $exTgl = explode('-',$tgl); // Array ( [0] => 2025 [1] => 05 [2] => 23 )
+        $textTgl = Carbon::createFromFormat('Y-m-d', $tgl)->isoFormat('MMMM Y');
+        // print_r($textTgl);
+        // die();
         $verified = DB::table('simrspku_klaim.klaim_verifikasi AS kv')
                 ->select(DB::raw('count(kv.nomor) as total'))
                 ->where('kv.tahun', $exTgl[0]) // 2025
@@ -60,9 +62,9 @@ class ApiDashboardController extends Controller
                         $q->where('pk.RUANGAN', 'LIKE', '1020702%');
                     });
                 })
-                ->whereYear('pk.MASUK', $exTgl[0]) // 2025
-                ->whereMonth('pk.MASUK', (int) $exTgl[1]) // 05
-                // ->whereDay('pk.MASUK','13')
+                // ->whereYear('pk.MASUK', $exTgl[0]) // 2025
+                // ->whereMonth('pk.MASUK', (int) $exTgl[1]) // 05
+                ->whereDate('pk.MASUK',$tgl)
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 ->whereIn('pk.STATUS', [1, 2])
                 ->where('pk.KELUAR', '!=', null)
@@ -102,9 +104,10 @@ class ApiDashboardController extends Controller
                         $q->where('pk.RUANGAN', 'LIKE', '1020702%');
                     });
                 })
-                ->whereYear('pk.MASUK', $exTgl[0])
-                ->whereMonth('pk.MASUK', (int) $exTgl[1])
-                ->whereDay('pk.MASUK','30')
+                // ->whereYear('pk.MASUK', $exTgl[0])
+                // ->whereMonth('pk.MASUK', (int) $exTgl[1])
+                // ->whereDay('pk.MASUK','30')
+                ->whereDate('pk.MASUK',$tgl)
                 ->where('pj.JENIS', 2)
                 ->whereIn('pk.STATUS', [1, 2])
                 ->whereNull('pk.REF')
@@ -119,8 +122,9 @@ class ApiDashboardController extends Controller
                 ->where('kvc.status', true)
                 ->where('kvc.solved', false)
                 ->whereNull('kvc.deleted_at')
-                ->whereYear('pk.MASUK', $exTgl[0]) // 2025
-                ->whereMonth('pk.MASUK', $exTgl[1]) // 05
+                // ->whereYear('pk.MASUK', $exTgl[0]) // 2025
+                // ->whereMonth('pk.MASUK', $exTgl[1]) // 05
+                ->whereDate('pk.MASUK',$tgl)
                 ->whereIn('pk.STATUS',[1,2])
                 ->value('total');
 
@@ -148,7 +152,6 @@ class ApiDashboardController extends Controller
                 })
                 ->whereYear('pk.MASUK', $exTgl[0]) // 2025
                 ->whereMonth('pk.MASUK', (int) $exTgl[1]) // 05
-                // ->whereDay('pk.MASUK','13')
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 ->whereIn('pk.STATUS', [1, 2])
                 ->where('pk.KELUAR', '!=', null)
@@ -174,7 +177,6 @@ class ApiDashboardController extends Controller
                 })
                 ->whereYear('pk.MASUK', $exTgl[0]) // 2025
                 ->whereMonth('pk.MASUK', (int) $exTgl[1]) // 05
-                // ->whereDay('pk.MASUK','13')
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 ->whereIn('pk.STATUS', [1, 2])
                 ->where('pk.KELUAR', '!=', null)
@@ -222,9 +224,6 @@ class ApiDashboardController extends Controller
                 ->where('tp.UTAMA', 1) // RADAR & TIDAK DENGAN RANAP
                 ->where('tp.STATUS', 1) // RADAR & TIDAK DENGAN RANAP
                 ->value('total');
-
-        // print_r($unverified);
-        // die();
 
         $data = [
             'verified' => $verified,

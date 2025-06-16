@@ -13,16 +13,10 @@ use Auth, Storage;
 
 class ApiResumeMedisController extends Controller
 {
-    function tableRj($status,$tgls,$tgle,$dpjp) // RAWAT JALAN
+    function table($rawat, $status, $tgls, $tgle, $dpjp, $berkas)
     {
-
+        // INIT
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
-        // $subCppt = DB::table('medicalrecord.cppt')
-        //         ->select('KUNJUNGAN', 'TANGGAL')
-        //         ->where('STATUS', 1) // kalau perlu
-        //         // ->where('KUNJUNGAN', '1020101042406080005')
-        //         ->orderBy('TANGGAL', 'desc')
-        //         ->get(); // ambil 1 cppt terakhir
 
         // MAIN QUERY
         $show = DB::table('pendaftaran.kunjungan AS pk')
