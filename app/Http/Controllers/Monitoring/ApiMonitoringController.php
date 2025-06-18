@@ -322,12 +322,19 @@ class ApiMonitoringController extends Controller
             //         ->where('pk.NOMOR',$kunjungan)
             //         ->first();
             $show = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$kunjungan]);
+            // print_r($show);
+            // die();
             if (empty($show)) {
                 return response()->json($data, 400);
             }
-            // ----------------------------------------------------------------------
-            // print_r($show);
+            $getSKDP = DB::select('CALL simrspku_klaim.CariSKDP(?)',[$show[0]->NOPEN]);
+            if (empty($getSKDP)) {
+                return response()->json($data, 400);
+            }
+            $cetakSKDP = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$getSKDP[0]->LAMA]);
+            // print_r($cetakSKDP);
             // die();
+            // ----------------------------------------------------------------------
             $getTgl = Carbon::parse($show[0]->JKONTROL);
             $tgl = $getTgl->isoFormat('DD');
             $bulan = $getTgl->isoFormat('MM');
@@ -344,7 +351,7 @@ class ApiMonitoringController extends Controller
 
             //GENERATE QR CODE
             $generator = new DNS2D();
-            $skdp = $show[0]->NOSURAT;
+            $skdp = $cetakSKDP[0]->NOSURAT;
 
             // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
             $image = $generator->getBarcodePNG($skdp, 'QRCODE');
@@ -353,9 +360,9 @@ class ApiMonitoringController extends Controller
 
             // Decode base64 jadi binary PNG
             $decodedImage = base64_decode($image);
-            $token = Crypt::encrypt($show[0]->NOSURAT);
-            $titleQrcode = Crypt::encrypt($show[0]->NOSURAT).'.png';
-            $verif = klaim_qrcode_pegawai::where('nomor',$show[0]->SURAT)->first();
+            $token = Crypt::encrypt($cetakSKDP[0]->NOSURAT);
+            $titleQrcode = Crypt::encrypt($cetakSKDP[0]->NOSURAT).'.png';
+            $verif = klaim_qrcode_pegawai::where('nomor',$cetakSKDP[0]->SURAT)->first();
 
             // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
             $pathQrcode = 'files/qrcode/' . $titleQrcode;
@@ -366,7 +373,7 @@ class ApiMonitoringController extends Controller
                 file_put_contents($outputQrcode, $decodedImage);
                 $post = new klaim_qrcode_pegawai;
                 $post->token = $token;
-                $post->nomor = $show[0]->SURAT;
+                $post->nomor = $cetakSKDP[0]->SURAT;
                 $post->title = $titleQrcode;
                 $post->filename = $pathQrcode;
                 $post->save();
@@ -382,7 +389,7 @@ class ApiMonitoringController extends Controller
 
             //GENERATE QR CODE
             $generator2 = new DNS2D();
-            $skdp2 = $show[0]->NOBPJS;
+            $skdp2 = $cetakSKDP[0]->NOBPJS;
 
             // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
             $image2 = $generator2->getBarcodePNG($skdp2, 'QRCODE');
@@ -391,9 +398,9 @@ class ApiMonitoringController extends Controller
 
             // Decode base64 jadi binary PNG
             $decodedImage2 = base64_decode($image2);
-            $token2 = Crypt::encrypt($show[0]->NOBPJS);
-            $titleQrcode2 = Crypt::encrypt($show[0]->NOBPJS).'.png';
-            $verif2 = klaim_qrcode::where('nomor',$show[0]->NOBPJS)->where('jenis',3)->first();
+            $token2 = Crypt::encrypt($cetakSKDP[0]->NOBPJS);
+            $titleQrcode2 = Crypt::encrypt($cetakSKDP[0]->NOBPJS).'.png';
+            $verif2 = klaim_qrcode::where('nomor',$cetakSKDP[0]->NOBPJS)->where('jenis',3)->first();
 
             // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
             $pathQrcode2 = 'files/qrcode/' . $titleQrcode2;
@@ -405,7 +412,7 @@ class ApiMonitoringController extends Controller
                 $post = new klaim_qrcode;
                 $post->token = $token2;
                 $post->jenis = 3;
-                $post->nomor = $show[0]->NOBPJS;
+                $post->nomor = $cetakSKDP[0]->NOBPJS;
                 $post->title = $titleQrcode2;
                 $post->filename = $pathQrcode2;
                 $post->save();
@@ -443,7 +450,7 @@ class ApiMonitoringController extends Controller
             $options = [
                 'format' => ['pdf'],
                 'params' => [
-                    'PKUNJUNGAN' => $show[0]->KUNJ,
+                    'PKUNJUNGAN' => $getSKDP[0]->LAMA,
                     'IMAGES_PATH' => public_path()."/doc/input/skdp/",
                     'QRCODE_PATH' => storage_path()."/app/public/",
                 ],
