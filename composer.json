@@ -22,7 +22,8 @@
         "setasign/fpdi": "^2.6",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-permission": "^6.16",
-        "yajra/laravel-datatables": "12.0"
+        "yajra/laravel-datatables": "12.0",
+        "yajra/laravel-datatables-oracle": "^12.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

@@ -23,12 +23,12 @@ class ApiMonitoringController extends Controller
     function table(Request $request)
     {
         // INIT
-        $rawat  = $request->rawat;
-        $status = $request->status;
         $tgls   = $request->tgls;
         $tgle   = $request->tgle;
         $dpjp   = $request->dpjp;
-        $berkas = $request->berkas;
+        $status = (int) $request->status;
+        $rawat = (int) $request->rawat;
+        $berkas = (int) $request->berkas;
         // Berkas = 5 = Semua Status
         // Berkas = 0 = Berkas Belum Lengkap (Sudah ada Tindakan, Cppt, TTE, dan SEP)
         // Berkas = 1 = Berkas Masih Ada Catatan
@@ -92,7 +92,8 @@ class ApiMonitoringController extends Controller
                     'ttd.created_at AS TGLTTD',
                     'cp.TANGGAL AS TGLCPPT',
                     'td.TANGGAL AS TGLTINDAKAN',
-                    'jk.NOMOR AS NOSURKON','jk.NOMOR_BOOKING AS NOMORBOOKING',
+                    'pj.NO_SURAT AS NOMORBOOKING',
+                    // 'jk.NOMOR AS NOSURKON','jk.NOMOR_BOOKING AS NOMORBOOKING',
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
                     'catagg.catatan_status AS CATATAN'
@@ -128,7 +129,7 @@ class ApiMonitoringController extends Controller
                 ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
                 ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
                 ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
-                ->leftJoin('medicalrecord.jadwal_kontrol AS jk','jk.KUNJUNGAN','=','pk.NOMOR')
+                // ->leftJoin('medicalrecord.jadwal_kontrol AS jk','jk.KUNJUNGAN','=','pk.NOMOR')
                 ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
                 // ->leftJoin('master.kartu_identitas_pasien AS kip','kip.NORM','=','pp.NORM')
                 ->leftJoin('aplikasi.pengguna','aplikasi.pengguna.ID','=','pk.DITERIMA_OLEH')
@@ -322,14 +323,16 @@ class ApiMonitoringController extends Controller
             //         ->where('pk.NOMOR',$kunjungan)
             //         ->first();
             $show = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$kunjungan]);
-            // print_r($show);
-            // die();
             if (empty($show)) {
                 return response()->json($data, 400);
             }
+            // print_r($show);
+            // die();
             $getSKDP = DB::select('CALL simrspku_klaim.CariSKDP(?)',[$show[0]->NOPEN]);
+            // print_r($getSKDP);
+            // die();
             if (empty($getSKDP)) {
-                return response()->json($data, 400);
+                return response()->json($getSKDP, 400);
             }
             $cetakSKDP = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$getSKDP[0]->LAMA]);
             // print_r($cetakSKDP);
@@ -455,12 +458,12 @@ class ApiMonitoringController extends Controller
                     'QRCODE_PATH' => storage_path()."/app/public/",
                 ],
                 'db_connection' => [
-                    'driver'   => 'mysql',
-                    'host'     => env('DB_HOST'),
-                    'port'     => env('DB_PORT'),
-                    'username' => env('DB_USERNAME'),
-                    'password' => env('DB_PASSWORD'),
-                    'database' => env('DB_DATABASE_CUSTOM'),
+                    'driver'   => config('database.connections.db_custom.driver'),
+                    'host'     => config('database.connections.db_custom.host'),
+                    'port'     => config('database.connections.db_custom.port'),
+                    'username' => config('database.connections.db_custom.username'),
+                    'password' => config('database.connections.db_custom.password'),
+                    'database' => config('database.connections.db_custom.database'),
                 ],
             ];
 
@@ -567,12 +570,12 @@ class ApiMonitoringController extends Controller
                     'QRCODE_PATH' => storage_path()."/app/public/",
                 ],
                 'db_connection' => [
-                    'driver'   => 'mysql',
-                    'host'     => env('DB_HOST'),
-                    'port'     => env('DB_PORT'),
-                    'username' => env('DB_USERNAME'),
-                    'password' => env('DB_PASSWORD'),
-                    'database' => env('DB_DATABASE_CUSTOM'),
+                    'driver'   => config('database.connections.db_custom.driver'),
+                    'host'     => config('database.connections.db_custom.host'),
+                    'port'     => config('database.connections.db_custom.port'),
+                    'username' => config('database.connections.db_custom.username'),
+                    'password' => config('database.connections.db_custom.password'),
+                    'database' => config('database.connections.db_custom.database'),
                 ],
             ];
 
@@ -639,6 +642,7 @@ class ApiMonitoringController extends Controller
                 'signature_path' => "signatures/{$filename}",
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+                'user' => Auth::user()->ID,
             ]);
 
             return response()->json([
@@ -671,8 +675,6 @@ class ApiMonitoringController extends Controller
             $instruksi  = $this->cleanText($show[0]->INSTRUKSI);
 
             $NAMA_OBAT = collect($obat)->pluck('NAMAOBAT')->implode(', ');
-            // print_r($obyektif2);
-            // die();
 
             // ----------------------------------------------------------------------
             $ttd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
@@ -725,13 +727,21 @@ class ApiMonitoringController extends Controller
                         'IMAGES_PATH2' => $imagePath2,
                     ],
                     'db_connection' => [
-                        'driver'   => 'mysql',
-                        'host'     => env('DB_HOST'),
-                        'port'     => env('DB_PORT'),
-                        'username' => env('DB_USERNAME'),
-                        'password' => env('DB_PASSWORD'),
-                        'database' => env('DB_DATABASE_CUSTOM'),
+                        'driver'   => config('database.connections.db_custom.driver'),
+                        'host'     => config('database.connections.db_custom.host'),
+                        'port'     => config('database.connections.db_custom.port'),
+                        'username' => config('database.connections.db_custom.username'),
+                        'password' => config('database.connections.db_custom.password'),
+                        'database' => config('database.connections.db_custom.database'),
                     ],
+                    // 'db_connection' => [
+                    //     'driver'   => 'mysql',
+                    //     'host'     => env('DB_HOST'),
+                    //     'port'     => env('DB_PORT'),
+                    //     'username' => env('DB_USERNAME'),
+                    //     'password' => env('DB_PASSWORD'),
+                    //     'database' => env('DB_DATABASE_CUSTOM'),
+                    // ],
                 ];
             } else {
                 $input = public_path().'/doc/input/resumeRJ/CetakResumeRJ.jrxml';
@@ -744,13 +754,21 @@ class ApiMonitoringController extends Controller
                         'IMAGES_PATH2' => $imagePath2,
                     ],
                     'db_connection' => [
-                        'driver'   => 'mysql',
-                        'host'     => env('DB_HOST'),
-                        'port'     => env('DB_PORT'),
-                        'username' => env('DB_USERNAME'),
-                        'password' => env('DB_PASSWORD'),
-                        'database' => env('DB_DATABASE_CUSTOM'),
+                        'driver'   => config('database.connections.db_custom.driver'),
+                        'host'     => config('database.connections.db_custom.host'),
+                        'port'     => config('database.connections.db_custom.port'),
+                        'username' => config('database.connections.db_custom.username'),
+                        'password' => config('database.connections.db_custom.password'),
+                        'database' => config('database.connections.db_custom.database'),
                     ],
+                    // 'db_connection' => [
+                    //     'driver'   => 'mysql',
+                    //     'host'     => env('DB_HOST'),
+                    //     'port'     => env('DB_PORT'),
+                    //     'username' => env('DB_USERNAME'),
+                    //     'password' => env('DB_PASSWORD'),
+                    //     'database' => env('DB_DATABASE_CUSTOM'),
+                    // ],
                 ];
             }
 
@@ -1025,12 +1043,12 @@ class ApiMonitoringController extends Controller
                     'QRCODE_PATH' => storage_path()."/app/public/",
                 ],
                 'db_connection' => [
-                    'driver'   => 'mysql',
-                    'host'     => env('DB_HOST'),
-                    'port'     => env('DB_PORT'),
-                    'username' => env('DB_USERNAME'),
-                    'password' => env('DB_PASSWORD'),
-                    'database' => env('DB_DATABASE_CUSTOM'),
+                    'driver'   => config('database.connections.db_custom.driver'),
+                    'host'     => config('database.connections.db_custom.host'),
+                    'port'     => config('database.connections.db_custom.port'),
+                    'username' => config('database.connections.db_custom.username'),
+                    'password' => config('database.connections.db_custom.password'),
+                    'database' => config('database.connections.db_custom.database'),
                 ],
             ];
             // print_r($options);
@@ -1160,12 +1178,12 @@ class ApiMonitoringController extends Controller
                         'QRCODE_PATH' => storage_path()."/app/public/",
                     ],
                     'db_connection' => [
-                        'driver'   => 'mysql',
-                        'host'     => env('DB_HOST'),
-                        'port'     => env('DB_PORT'),
-                        'username' => env('DB_USERNAME'),
-                        'password' => env('DB_PASSWORD'),
-                        'database' => env('DB_DATABASE_CUSTOM'),
+                        'driver'   => config('database.connections.db_custom.driver'),
+                        'host'     => config('database.connections.db_custom.host'),
+                        'port'     => config('database.connections.db_custom.port'),
+                        'username' => config('database.connections.db_custom.username'),
+                        'password' => config('database.connections.db_custom.password'),
+                        'database' => config('database.connections.db_custom.database'),
                     ],
                 ];
                 // print_r($options);
@@ -1326,12 +1344,12 @@ class ApiMonitoringController extends Controller
                         'QRCODE_PATH' => storage_path()."/app/public/",
                     ],
                     'db_connection' => [
-                        'driver'   => 'mysql',
-                        'host'     => env('DB_HOST'),
-                        'port'     => env('DB_PORT'),
-                        'username' => env('DB_USERNAME'),
-                        'password' => env('DB_PASSWORD'),
-                        'database' => env('DB_DATABASE_CUSTOM'),
+                        'driver'   => config('database.connections.db_custom.driver'),
+                        'host'     => config('database.connections.db_custom.host'),
+                        'port'     => config('database.connections.db_custom.port'),
+                        'username' => config('database.connections.db_custom.username'),
+                        'password' => config('database.connections.db_custom.password'),
+                        'database' => config('database.connections.db_custom.database'),
                     ],
                 ];
                 // print_r($options);
@@ -1464,12 +1482,12 @@ class ApiMonitoringController extends Controller
                     'IMAGES_PATH' => public_path()."/doc/input/triage/",
                 ],
                 'db_connection' => [
-                    'driver'   => 'mysql',
-                    'host'     => env('DB_HOST'),
-                    'port'     => env('DB_PORT'),
-                    'username' => env('DB_USERNAME'),
-                    'password' => env('DB_PASSWORD'),
-                    'database' => env('DB_DATABASE_CUSTOM'),
+                    'driver'   => config('database.connections.db_custom.driver'),
+                    'host'     => config('database.connections.db_custom.host'),
+                    'port'     => config('database.connections.db_custom.port'),
+                    'username' => config('database.connections.db_custom.username'),
+                    'password' => config('database.connections.db_custom.password'),
+                    'database' => config('database.connections.db_custom.database'),
                 ],
             ];
 
@@ -1552,12 +1570,12 @@ class ApiMonitoringController extends Controller
                         'IMAGES_PATH' => public_path() . "/doc/input/operasi/",  // Ganti dengan path gambar jika ada
                     ],
                     'db_connection' => [
-                        'driver'   => 'mysql',
-                        'host'     => env('DB_HOST'),
-                        'port'     => env('DB_PORT'),
-                        'username' => env('DB_USERNAME'),
-                        'password' => env('DB_PASSWORD'),
-                        'database' => env('DB_DATABASE_CUSTOM'),
+                        'driver'   => config('database.connections.db_custom.driver'),
+                        'host'     => config('database.connections.db_custom.host'),
+                        'port'     => config('database.connections.db_custom.port'),
+                        'username' => config('database.connections.db_custom.username'),
+                        'password' => config('database.connections.db_custom.password'),
+                        'database' => config('database.connections.db_custom.database'),
                     ],
                 ];
 
