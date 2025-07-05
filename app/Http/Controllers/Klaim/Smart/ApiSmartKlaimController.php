@@ -120,7 +120,7 @@ class ApiSmartKlaimController extends Controller
                     $query->where('dr.NIP', $dpjp);
                 })
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
-                ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
+                // ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
                 ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
                 ->where('pk.STATUS', 2) // KUNJUNGAN SELESAI
                 ->where('pk.KELUAR', '!=', null)
