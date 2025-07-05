@@ -71,6 +71,11 @@
                     <div class="card-body">
                         <center><img class="mb-3" src="{{ asset('images/pku/logo-kop-blue.png') }}" width="300" alt=""></center>
                         <hr class="mb-4" />
+                        @if(session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                         <h4 class="f-w-500 mb-1">Login | SIRMED</h4>
                         <p class="mb-3">Belum memiliki Akun? <a href="javascript: void(0);"class="link-primary ms-1">Minta Akun</a></p>
                         <form method="POST" action="{{ route('login') }}">

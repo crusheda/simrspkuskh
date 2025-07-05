@@ -904,7 +904,7 @@
 
     function storeTTDrj()
     {
-        // const nama = document.getElementById('nama').value;
+        id_user = '{{ Auth::user()->id }}';
         const nama = document.getElementById('idstorettd').value.trim();
             const signature = signaturePad.toDataURL('image/png');
 
