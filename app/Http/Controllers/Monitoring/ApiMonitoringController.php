@@ -22,6 +22,8 @@ class ApiMonitoringController extends Controller
 {
     function table(Request $request)
     {
+        $user = auth()->user();
+
         // INIT
         $tgls   = $request->tgls;
         $tgle   = $request->tgle;
@@ -141,10 +143,6 @@ class ApiMonitoringController extends Controller
                 ->where(function ($query) use ($tgls,$tgle) {
                     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                 })
-                ->when($dpjp != 0, function ($query) use ($dpjp) {
-                    // Hanya menambahkan where jika $dpjp bukan 0
-                    $query->where('dr.NIP', $dpjp);
-                })
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 // ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
                 ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
@@ -180,12 +178,18 @@ class ApiMonitoringController extends Controller
                         $q->whereNotNull('cp.TANGGAL') // CPPT
                             ->whereNotNull('td.TANGGAL') // TINDAKAN
                             ->whereNotNull('kjs.noSEP') // SEP
-                            ->whereNotNull('ttd.created_at'); // TTE
+                            ->whereNotNull('ttd.created_at') // TTE
+                            ->whereNotNull('cat.updated_at')
+                            ->whereNotNull('cat.solved')
+                            ->where('cat.solved',1);
                     });
                 })
                 ->when($berkas == 1, function ($query) { // BERKAS MASIH ADA CATATAN
                     $query->where(function ($q) {
-                        $q->whereNotNull('cat.updated_at');
+                        $q->whereNotNull('cat.updated_at')
+                            ->whereNotNull('cat.solved')
+                            ->where('cat.status',1)
+                            ->where('cat.solved',0);
                     });
                 })
                 ->when($berkas == 0, function ($query) { // BERKAS BELUM LENGKAP
@@ -193,7 +197,8 @@ class ApiMonitoringController extends Controller
                         $q->where('cp.TANGGAL',null) // CPPT
                             ->orWhere('td.TANGGAL',null) // TINDAKAN
                             ->orWhere('kjs.noSEP',null) // SEP
-                            ->orWhere('ttd.created_at',null); // TTE
+                            ->orWhere('ttd.created_at',null) // TTE
+                            ->whereNull('cat.updated_at');
                     });
                 })
 
@@ -210,9 +215,18 @@ class ApiMonitoringController extends Controller
                 ->when($status != 5, function ($query) use ($status) { // 0=BATAL;1=MASIH DILAYANI;2=SELESAI;5=ALL
                     $query->where('pk.STATUS', $status);
                             // ->where('pp.STATUS', $status);
-                })
+                });
 
-                ->orderBy('pk.MASUK','DESC')
+                if (Auth::user()->hasAnyRole(['dokterspesialis'])) {
+                    $show->where('dr.NIP', Auth::user()->NIP);
+                } else {
+                    $show->when($dpjp != 0, function ($query) use ($dpjp) {
+                        // Hanya menambahkan where jika $dpjp bukan 0
+                        $query->where('dr.NIP', $dpjp);
+                    });
+                }
+
+        $show = $show->orderBy('pk.MASUK','DESC')
                 ->get();
 
         $data = [
@@ -679,6 +693,7 @@ class ApiMonitoringController extends Controller
             // ----------------------------------------------------------------------
             $ttd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
                 ->where('ttd.kunjungan',$kunjungan)
+                ->whereNull('deleted_at')
                 ->first();
             if ($ttd) {
                 $imagePath2 = storage_path()."/app/public/".$ttd->signature_path;

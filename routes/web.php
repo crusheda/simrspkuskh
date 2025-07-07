@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 // INITIALIZE PATH CONTROLLER
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RilisController;
 use App\Http\Controllers\Setting\ProfilController;
 use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
@@ -36,6 +37,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     // DASHBOARD
     Route::get('/', function () { return redirect()->route('dashboard'); });
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('rilis', [RilisController::class, 'index'])->name('rilis.index');
     Route::get('test', [DashboardController::class, 'test'])->name('test');
     Route::get('clearcache', [DashboardController::class, 'clearCache'])->name('clear.cache');
     // Route::get('dashboard', function () {

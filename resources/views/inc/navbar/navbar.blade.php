@@ -39,6 +39,14 @@
                         <span class="pc-mtext" data-i18n="Dashboard">Dashboard</span>
                     </a>
                 </li>
+                {{-- <li class="pc-item {{ request()->routeIs('rilis.index') ? 'active' : '' }}">
+                    <a href="{{ route('rilis.index') }}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-rocket-launch"></i>
+                        </span>
+                        <span class="pc-mtext" data-i18n="Release">Catatan Rilis</span>
+                    </a>
+                </li> --}}
                 @if(auth()->user()->can('setting_jabatan') || auth()->user()->can('setting_akses'))
                     <li class="pc-item pc-caption">
                         <label data-i18n="Navigation">Setting</label>
@@ -138,13 +146,13 @@
                     </ul>
                 </li> --}}
             </ul>
-            <div class="card nav-action-card bg-brand-color-4">
+            {{-- <div class="card nav-action-card bg-brand-color-4">
                 <div class="card-body" style="background-image: {{ url('images/layout/nav-card-bg.svg') }}">
                     <h5 class="text-dark">Tambahan Fitur?</h5>
                     <p class="text-dark text-opacity-75">Silakan melakukan permintaan fitur melalui tombol di bawah ini.</p>
                     <a href="javascript:void(0);" class="btn btn-primary" target="_blank">Form Pengajuan</a>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 </nav>
