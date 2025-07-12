@@ -202,7 +202,7 @@ class ApiMonitoringController extends Controller
                     });
                 })
 
-                // KHUSUS RAWAT DARURAT
+                // KHUSUS RAWAT DARURAT (TANPA PERENCANAAN RAWAT INAP)
                 ->when($rawat == 2, function ($query) use ($rawat) {
                     $query->where(function ($q) {
                         $q->where('tp.UTAMA', 1)

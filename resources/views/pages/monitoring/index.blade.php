@@ -49,7 +49,7 @@
                             <select class="form-control" id="filter_rawat">
                                 <option value="5">Semua Perawatan</option>
                                 <option value="1" selected>Rawat Jalan</option>
-                                <option value="2">Rawat Darurat</option>
+                                <option value="2">Rawat Darurat (Tanpa Inap)</option>
                                 <option value="3">Rawat Inap</option>
                             </select>
                         </div>

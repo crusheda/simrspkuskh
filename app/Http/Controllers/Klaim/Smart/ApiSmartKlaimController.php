@@ -98,6 +98,7 @@ class ApiSmartKlaimController extends Controller
                     });
                 })
 
+                // FILTER BULAN TAHUN
                 // ->where(function ($query) use ($tgls,$tgle) {
                 //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                 // })
@@ -115,10 +116,12 @@ class ApiSmartKlaimController extends Controller
                     });
                 })
 
+                // FILTER DPJP
                 ->when($dpjp != 0, function ($query) use ($dpjp) {
                     // Hanya menambahkan where jika $dpjp bukan 0
                     $query->where('dr.NIP', $dpjp);
                 })
+
                 ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 // ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
                 ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF

@@ -11,6 +11,7 @@ use App\Http\Controllers\Setting\PermissionsController;
 use App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController;
 use App\Http\Controllers\Pelayanan\Pasien\PasienController;
 use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
+use App\Http\Controllers\RME\IGD\ModulMatrixController;
 use App\Http\Controllers\Monitoring\MonitoringController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Jasper\JasperController;
@@ -57,6 +58,11 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             //RESUME
             Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}', [ResumeMedisController::class, 'indexResume'])->name('pelayanan.pasien.resume.index');
             Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}/print', [ResumeMedisController::class, 'printResume'])->name('pelayanan.pasien.resume.print');
+
+    // RME
+        // IGD
+            // FORM MATRIX
+            Route::get('rme/igd/matrix', [ModulMatrixController::class, 'index'])->name('rme.igd.matrix.index');
 
     // DIGITAL
         // MONITORING
