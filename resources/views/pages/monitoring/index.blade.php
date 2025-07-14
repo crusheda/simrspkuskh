@@ -1060,8 +1060,8 @@
                     console.error(error);
                     // alert("Error saat mengirim data.");
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
+                        icon: 'warning',
+                        title: 'Gagal Memproses Data!',
                         text: error.message || 'Dokumen telah ditandatangani.',
                     });
                 }
