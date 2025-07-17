@@ -104,6 +104,20 @@
                         <li class="pc-item"><a class="pc-link" href="javascript:void(0);">e</a></li>
                     </ul>
                 </li> --}}
+                @role('admin')
+                    <li class="pc-item pc-caption">
+                        <label>Electonic</label>
+                        <i class="ph-duotone ph-chart-pie"></i>
+                    </li>
+                    <li class="pc-item {{ request()->routeIs('emr.index') ? 'active' : '' }}">
+                        <a href="{{ route('emr.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-activity"></i>
+                            </span>
+                            <span class="pc-mtext">Medical Record</span>
+                        </a>
+                    </li>
+                @endrole
                 @if(auth()->user()->can('monitoring') || auth()->user()->can('smart_claim'))
                     <li class="pc-item pc-caption">
                         <label>Digital</label>

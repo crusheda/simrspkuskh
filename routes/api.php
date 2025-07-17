@@ -9,6 +9,7 @@ use App\Http\Controllers\ApiDashboardController;
 use App\Http\Controllers\Setting\ProfilController;
 use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
+use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Klaim\Smart\ApiSmartKlaimController;
 use App\Http\Controllers\Monitoring\MonitoringController;
@@ -55,6 +56,9 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('roles/user/{id}/show', [RolesController::class, 'showRolesUser'])->name('roles.user.show');
             Route::post('roles/user/update', [RolesController::class, 'updateRolesUser'])->name('roles.user.update');
             Route::delete('roles/user/{id}/delete', [RolesController::class, 'deleteRolesUser'])->name('roles.user.delete');
+
+    // DIGITAL
+    Route::post('emr', [EMRController::class, 'table'])->name('api.emr');
 
     // DIGITAL
     Route::post('monitoring', [ApiMonitoringController::class, 'table'])->name('api.monitoring');
