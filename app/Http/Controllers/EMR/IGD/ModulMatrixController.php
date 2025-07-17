@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\RME\IGD;
+namespace App\Http\Controllers\EMR\IGD;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
