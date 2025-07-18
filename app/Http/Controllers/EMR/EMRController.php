@@ -52,7 +52,101 @@ class EMRController extends Controller
 
     function detail($KUNJUNGAN)
     {
-        return view('pages.emr.detail')->with('KUNJUNGAN', $KUNJUNGAN);
+        $show = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(
+                    'pk.*',
+                    'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
+                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
+                    'kjs.noKartu AS NOBPJS',
+                    'ru.DESKRIPSI AS NAMARUANGAN',
+                    'kips.NOMOR AS NIKPASIEN',
+                    'ps.NAMA AS NAMALENGKAPPASIEN',
+                    'ps.PANGGILAN AS PANGGILANPASIEN',
+                    'ps.TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+                    'kps.NOMOR AS NOHPPASIEN',
+                    'kgs.NAMA AS KELUARGAPASIEN',
+                    DB::raw("
+                        IF(
+                            ps.JENIS_KELAMIN = 1,
+                            'LAKI-LAKI',
+                            IF(
+                                ps.JENIS_KELAMIN = 2,
+                                'PEREMPUAN',
+                                'TIDAK DIKETAHUI'
+                            )
+                        ) AS JKPASIEN
+                    "),
+                    DB::raw("
+                        IF(
+                            kgs.JENIS_KELAMIN = 1,
+                            'LAKI-LAKI',
+                            IF(
+                                kgs.JENIS_KELAMIN = 2,
+                                'PEREMPUAN',
+                                'TIDAK DIKETAHUI'
+                            )
+                        ) AS JKKELUARGAPASIEN
+                    "),
+                    DB::raw("(
+                        SELECT DESKRIPSI
+                        FROM master.referensi AS refkgs
+                        WHERE refkgs.ID = kgs.SHDK
+                        AND refkgs.JENIS = 7
+                    ) AS STKELUARGAPASIEN"),
+                    DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
+                    DB::raw('master.getAlamatPasienCustom(ps.NORM) AS ALAMATPASIEN'),
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                    DB::raw('master.getCariUmur(pp.TANGGAL,ps.TANGGAL_LAHIR) AS UMURPASIEN'),
+                    DB::raw("(
+                        SELECT DESKRIPSI
+                        FROM master.wilayah AS wil
+                        WHERE wil.ID = ps.TEMPAT_LAHIR
+                    ) AS TLPASIEN"),
+                )
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
+                ->leftJoin('master.kontak_pasien AS kps','ps.NORM','=','kps.NORM')
+                ->leftJoin('master.keluarga_pasien AS kgs','ps.NORM','=','kgs.NORM')
+                ->leftJoin('master.kartu_identitas_pasien AS kips','ps.NORM','=','kips.NORM')
+                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                ->where('pk.NOMOR',$KUNJUNGAN)
+                ->first();
+
+        $riwayat = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(
+                    'pk.NOMOR AS NOKUNJUNGAN','pp.TANGGAL AS TGLDAFTAR',
+                    'pp.STATUS AS STATUSDAFTAR','pk.STATUS AS STATUSKUNJUNGAN',
+                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
+                    'ru.DESKRIPSI AS NAMARUANGAN',
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                )
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                ->where(function ($q) {
+                    $q->where('pk.RUANGAN', 'LIKE', '1020101%')
+                    ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
+                    ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
+                })
+                ->where('pp.NORM',$show->NORM)
+                ->orderBy('pp.TANGGAL','DESC')
+                ->get();
+
+        // print_r($riwayat);
+        // die();
+
+        $data = [
+            'show' => $show,
+            'riwayat' => $riwayat,
+            'KUNJUNGAN' => $KUNJUNGAN,
+        ];
+
+        return view('pages.emr.detail')->with('list', $data);
     }
 
     // API

@@ -10,7 +10,7 @@
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
                         <li class="breadcrumb-item"><a href="javascript: void(0);">Electronic</a></li>
                         <li class="breadcrumb-item"><a href="{{ route('emr.index') }}">Medical Record</a></li>
-                        <li class="breadcrumb-item" aria-current="page">NOKUNJ. <b>{{ $KUNJUNGAN }}</b></li>
+                        <li class="breadcrumb-item" aria-current="page"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kunjungan Pasien">{{ $list['KUNJUNGAN'] }}</b></li>
                     </ul>
                 </div>
             </div>
@@ -24,7 +24,7 @@
             <div class="card-body p-2">
                 <div class="row">
                     <div class="col-md-auto">
-                        <div data-back-button class="d-flex align-items-center btn btn-outline-secondary">
+                        <div data-back-button class="d-flex align-items-center btn btn-outline-primary">
                             <div class="flex-shrink-0 me-3">
                                 <i class="ph-duotone ph-caret-double-left align-middle"></i>
                                 {{-- <div class="btn btn-icon btn-link-secondary avtar">
@@ -38,27 +38,38 @@
                     </div>
                     <div class="col">
                         <div class="row justify-content-between d-flex align-items-center p-2">
-                            <div class="col-md-5 col-xl-6">
-                                <h4 class="mb-1 align-middle">A/N <a id="nama_px" class="text-primary">Muhammad Arizal Yusuf Hermawan</a></h4>
-                                <p class="mb-0" style="font-size: 12px"><b>RM. <a id="rm_px" class="text-danger">00037804</a></b> | <b>NOBPJS. <a id="bpjs_px" class="text-warning">0001263101444</a></b></p>
+                            <div class="col-md-4 col-xl-5">
+                                <h4 class="text-truncate mb-1 align-middle"><a class="text-primary">{{ $list['show']->NAMAPASIEN }}</a></h4>
+                                <p class="text-truncate mb-0" style="font-size: 12px">
+                                    <b>RM. <a class="text-secondary"><u><b>{{ $list['show']->NORM }}</b></u></a></b>
+                                    | <b>NOBPJS. <a class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kartu BPJS Pasien">{{ $list['show']->NOBPJS }}</a></b>
+                                    | <b data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP Tgl. {{ $list['show']->TGLSEP?\Carbon\Carbon::parse($list['show']->TGLSEP)->translatedFormat('d F Y'):'' }}">SEP. <a class="text-info">{{ $list['show']->NOSEP?$list['show']->NOSEP:'Tidak Ditemukan' }}</a></b>
+                                </p>
                             </div>
-                            <div class="col-md-7 col-xl-6 col-xxl-5">
+                            <div class="col-md-8 col-xl-7 col-xxl-6">
                                 <div class="row g-1 text-center">
-                                    <div class="col-3">
-                                        <h5 class="mb-0">239k</h5>
-                                        <p class="text-muted mb-0">Followers</p>
+                                    <div class="col-4 col-xxl-5 text-end">
+                                        <p class="text-muted mb-0 me-3"><b>{{ $list['show']->NAMARUANGAN }}</b></p>
+                                        <h6 class="text-truncate mb-0 me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="DPJP. {{ $list['show']->NAMADOKTER }}">{{ $list['show']->NAMADOKTER }}</h6>
                                     </div>
-                                    <div class="col-3 border border-top-0 border-bottom-0">
-                                        <h5 class="mb-0">539k</h5>
-                                        <p class="text-muted mb-0">Following</p>
+                                    {{-- <div class="col-3 border border-top-0 border-bottom-0">
+                                        <p class="text-muted mb-0">DPJP</p>
+                                    </div> --}}
+                                    <div class="col-6 col-xxl-5 border border-top-0 border-bottom-0 text-start">
+                                        <p class="text-truncate text-muted mb-0 ms-3"><b>Masuk :</b>&nbsp;&nbsp;{{ \Carbon\Carbon::parse($list['show']->MASUK)->format('d M Y H.i') . ' WIB' }}</p>
+                                        <p class="text-truncate text-muted mb-0 ms-3"><b>Keluar :</b>&nbsp;&nbsp;{{ $list['show']->KELUAR?\Carbon\Carbon::parse($list['show']->KELUAR)->format('d M Y H.i') . ' WIB':'-' }}</p>
                                     </div>
-                                    <div class="col-3 border border-top-0 border-bottom-0">
-                                        <h5 class="mb-0">400</h5>
-                                        <p class="text-muted mb-0">Post</p>
-                                    </div>
-                                    <div class="col-3">
-                                        <h5 class="mb-0">539k</h5>
-                                        <p class="text-muted mb-0">Like</p>
+                                    <div class="col-2 col-xxl-2">
+                                        <p class="text-muted mb-0" style="font-size: 12px">Status</p>
+                                        @if ($list['show']->STATUS == 1)
+                                            <span class="badge text-bg-warning">Dilayani</span>
+                                        @else
+                                            @if ($list['show']->STATUS == 2)
+                                                <span class="badge text-bg-primary">Selesai</span>
+                                            @else
+                                                <span class="badge text-bg-danger">Batal</span>
+                                            @endif
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -71,949 +82,870 @@
             <div class="card-body py-0">
                 <ul class="nav nav-tabs profile-tabs" id="" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="" data-bs-toggle="tab" href="#frehab" role="tab"
+                        <a class="nav-link active" id="" data-bs-toggle="tab" href="#identitas" role="tab"
                             aria-selected="false" tabindex="-1">
-                            <i class="ph-duotone ph-user-circle me-2"></i> Form Rehab Medik
-                        </a>
-                    </li>
-                    {{-- <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="followers-tab" data-bs-toggle="tab" href="#followers" role="tab"
-                            aria-selected="false" tabindex="-1">
-                            <i class="ph-duotone ph-users me-2"></i> Friends
-                            <span class="badge bg-secondary rounded-pill ms-2">99</span>
+                            <i class="ph-duotone ph-user-switch me-2"></i> Identitas Pasien
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="friends-tab" data-bs-toggle="tab" href="#friends" role="tab"
+                        <a class="nav-link" id="" data-bs-toggle="tab" href="#frehab" role="tab"
                             aria-selected="false" tabindex="-1">
-                            <i class="ph-duotone ph-user-circle-plus me-2"></i> Friends Request
+                            <i class="ph-duotone ph-file-lock me-2"></i> Form Rehab Medik
                         </a>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="gallery-tab" data-bs-toggle="tab" href="#gallery" role="tab"
-                            aria-selected="true">
-                            <i class="ph-duotone ph-image me-2"></i> Gallery
-                        </a>
-                    </li> --}}
                 </ul>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-8 col-xxl-9">
-                <div class="tab-content">
-                    <div class="tab-pane active show" id="frehab" role="tabpanel">
+        <div class="tab-content">
+            <div class="tab-pane active show" id="identitas" role="tabpanel">
+                <div class="row">
+                    <div class="col-lg-7 col-xxl-8">
                         <div class="card">
-                            <div class="card-body">
-                                <textarea class="form-control border-0 shadow-none" placeholder="What’s new, Stebin?" rows="1" style="height: 159px;"></textarea>
-                                <div class="row align-items-center mt-3">
-                                    <div class="col">
-                                        <ul class="list-inline ms-auto mb-0">
-                                            <li class="list-inline-item border-end pe-2 me-2">
-                                                <a href="#" class="avtar avtar-s btn-link-warning">
-                                                    <i class="ti ti-mood-smile f-18"></i>
-                                                </a>
-                                            </li>
-                                            <li class="list-inline-item">
-                                                <a href="#" class="avtar avtar-s btn-link-secondary">
-                                                    <i class="ti ti-photo f-18"></i>
-                                                </a>
-                                            </li>
-                                            <li class="list-inline-item">
-                                                <a href="#" class="avtar avtar-s btn-link-secondary">
-                                                    <i class="ti ti-paperclip f-18"></i>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="col-auto text-end">
-                                        <button class="btn btn-primary">Post</button>
+                            <div class="card-header d-flex align-items-center justify-content-between">
+                                <h5>Biodata Pasien</h5>
+                                <div class="dropdown">
+                                    <a class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none" href="javascript: void(0);"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="ph-duotone ph-dots-three-outline-vertical"></i></a>
+                                    <div class="dropdown-menu dropdown-menu-end" style="">
+                                        <a class="dropdown-item" href="javascript: void(0);">Ubah Data</a>
+                                        {{-- <a class="dropdown-item" href="#">Delete</a> --}}
                                     </div>
                                 </div>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item px-0 pt-0">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Nama Lengkap</p>
+                                                <p class="mb-0">{{ $list['show']->NAMALENGKAPPASIEN }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Panggilan</p>
+                                                <p class="mb-0">{{ $list['show']->PANGGILANPASIEN }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item px-0">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Nomor Induk Kependudukan</p>
+                                                <p class="mb-0">{{ $list['show']->NIKPASIEN }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">No.HP</p>
+                                                <p class="mb-0">{{ $list['show']->NOHPPASIEN }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item px-0">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Lahir di</p>
+                                                <p class="mb-0 text-uppercase">{{ $list['show']->TLPASIEN.', ' }}{{ \Carbon\Carbon::parse($list['show']->TGLLAHIRPASIEN)->translatedFormat('d F Y') }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Umur Sekarang</p>
+                                                <p class="mb-0">{{ $list['show']->UMURPASIEN }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item px-0">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Jenis Kelamin</p>
+                                                <p class="mb-0">{{ $list['show']->JKPASIEN }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Keluarga/Orang Terdekat</p>
+                                                <p class="mb-0 text-uppercase">{{ $list['show']->KELUARGAPASIEN?$list['show']->KELUARGAPASIEN:'-' }}{{ $list['show']->STKELUARGAPASIEN?' ('.$list['show']->STKELUARGAPASIEN.')':'' }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item px-0 pb-0">
+                                        <p class="mb-1 text-muted">Alamat Lengkap</p>
+                                        <p class="mb-0"> {{ $list['show']->ALAMATPASIEN }}</p>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="tab-pane" id="followers" role="tabpanel" aria-labelledby="followers-tab">
+                    <div class="col-lg-5 col-xxl-4">
                         <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-10.jpg" alt="User image">
-                                                        <i class="chat-badge bg-success mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-2.jpg" alt="User image">
-                                                        <i class="chat-badge bg-danger mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-3.jpg" alt="User image">
-                                                        <i class="chat-badge bg-success mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-4.jpg" alt="User image">
-                                                        <i class="chat-badge bg-danger mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-5.jpg" alt="User image">
-                                                        <i class="chat-badge bg-success mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-6.jpg" alt="User image">
-                                                        <i class="chat-badge bg-success mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-7.jpg" alt="User image">
-                                                        <i class="chat-badge bg-danger mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-8.jpg" alt="User image">
-                                                        <i class="chat-badge bg-success mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-9.jpg" alt="User image">
-                                                        <i class="chat-badge bg-danger mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-10.jpg" alt="User image">
-                                                        <i class="chat-badge bg-success mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-2.jpg" alt="User image">
-                                                        <i class="chat-badge bg-danger mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-3.jpg" alt="User image">
-                                                        <i class="chat-badge bg-success mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-4.jpg" alt="User image">
-                                                        <i class="chat-badge bg-danger mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-5.jpg" alt="User image">
-                                                        <i class="chat-badge bg-success mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-6.jpg" alt="User image">
-                                                        <i class="chat-badge bg-success mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-7.jpg" alt="User image">
-                                                        <i class="chat-badge bg-danger mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-8.jpg" alt="User image">
-                                                        <i class="chat-badge bg-success mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-6 col-xxl-4">
-                                        <div class="card border shadow-none">
-                                            <div class="card-body">
-                                                <div class="text-center">
-                                                    <div class="chat-avtar d-inline-flex">
-                                                        <img class="rounded-circle img-thumbnail img-fluid wid-80"
-                                                            src="../assets/images/user/avatar-9.jpg" alt="User image">
-                                                        <i class="chat-badge bg-danger mb-2 me-2"></i>
-                                                    </div>
-                                                    <div class="my-3">
-                                                        <h5 class="mb-0">William Bond</h5>
-                                                        <p class="mb-0">DM on <a href="#"
-                                                                class="link-primary">@williambond</a>😍</p>
-                                                    </div>
-                                                </div>
-                                                <div class="row g-2">
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-primary">Accept</button></div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="d-grid"><button
-                                                                class="btn btn-outline-secondary">Decline</button></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                            <div class="card-header d-flex align-items-center justify-content-between">
+                                <h5>Riwayat Kunjungan</h5>
+                                <div class="dropdown">
+                                    <a class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none" href="javascript: void(0);"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="ph-duotone ph-dots-three-outline-vertical"></i></a>
+                                    <div class="dropdown-menu dropdown-menu-end" style="">
+                                        <a class="dropdown-item" href="javascript: void(0);">Selengkapnya</a>
                                     </div>
                                 </div>
+                            </div>
+                            <div style="max-height: 420px; overflow-y: auto;" class="rounded-bottom">
+                                <ul class="list-group list-group-flush">
+                                    @if ($list['riwayat']->isNotEmpty())
+                                        @foreach ($list['riwayat'] as $item)
+                                            <li class="list-group-item">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-shrink-0">
+                                                        <button class="avtar avtar-xs btn btn-light-secondary flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail Kunjungan"
+                                                            onclick="window.location.href='{{ route('emr.detail', ['KUNJUNGAN' => $item->NOKUNJUNGAN]) }}'">
+                                                            <i class="ph-duotone ph-stethoscope"></i>
+                                                        </button>
+                                                    </div>
+                                                    <div class="flex-grow-1 mx-2">
+                                                        <h6 class="mb-0">{{ $item->NAMARUANGAN }}</h6>
+                                                        <p class="mb-0">{{ Str::limit($item->NAMADOKTER, 25, '...') }}</p>
+                                                    </div>
+                                                    <div class="flex-shrink-0">
+                                                        <p class="mb-0 text-end" style="font-size: 12px">
+                                                            @if ($item->STATUSDAFTAR == 1)
+                                                                Aktif
+                                                            @else
+                                                                @if ($item->STATUSDAFTAR == 2)
+                                                                    Selesai
+                                                                @else
+                                                                    Non Aktif
+                                                                @endif
+                                                            @endif
+                                                        </p>
+                                                        <span class="mt-0 text-muted" style="font-size: 12px">{{ \Carbon\Carbon::parse($item->TGLDAFTAR)->diffForHumans() }}</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    @else
+                                        <li class="list-group-item">
+                                            <div class="d-flex align-items-center text-center">
+                                                <span class="text-muted">Tidak ada kunjungan terakhir</span>
+                                            </div>
+                                        </li>
+                                    @endif
+                                </ul>
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane" id="friends" role="tabpanel" aria-labelledby="friends-tab">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5>Personal Details</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-muted">Full Name</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="mb-0">Akshay Handge</h6>
-                                    </div>
-                                </div>
-                                <div class="row g-3 mt-0">
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-muted">Father's Name</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="mb-0">Mr. Deepak Handge</h6>
-                                    </div>
-                                </div>
-                                <div class="row g-3 mt-0">
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-muted">Address</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="mb-0">Street 110-B Kalani Bag, Dewas, M.P. INDIA</h6>
-                                    </div>
-                                </div>
-                                <div class="row g-3 mt-0">
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-muted">Zip Code</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="mb-0">12345</h6>
-                                    </div>
-                                </div>
-                                <div class="row g-3 mt-0">
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-muted">Phone</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="mb-0">+0 123456789 , +0 123456789</h6>
-                                    </div>
-                                </div>
-                                <div class="row g-3 mt-0">
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-muted">Email</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="mb-0"><a href="mailto:support@example.com"
-                                                class="link-primary">support@example.com</a></h6>
-                                    </div>
-                                </div>
-                                <div class="row g-3 mt-0">
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-muted">Website</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="mb-0"><a href="#"
-                                                class="link-primary">http://example.com</a></h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <h5>other Information</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-muted">Occupation</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="mb-0">Designer</h6>
-                                    </div>
-                                </div>
-                                <div class="row g-3 mt-0">
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-muted">Skills</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="mb-0">C#, Javascript, Scss</h6>
-                                    </div>
-                                </div>
-                                <div class="row g-3 mt-0">
-                                    <div class="col-md-4">
-                                        <p class="mb-0 text-muted">Jobs</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6 class="mb-0">Phoenixcoded</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane active show" id="gallery" role="tabpanel" aria-labelledby="gallery-tab">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5>Gallery</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-2">
-                                    <div class="col-md-6">
-                                        <a class="img-post card social-gallery-card"
-                                            data-lightbox="../assets/images/application/img-gallery-1.jpg">
-                                            <img src="../assets/images/application/img-gallery-1.jpg" alt="img"
-                                                class="card-img">
-                                            <div class="card-img-overlay">
-                                                <i class="ti ti-cloud-download"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="row g-2">
-                                            <div class="col-md-12">
-                                                <a class="img-post card social-gallery-card"
-                                                    data-lightbox="../assets/images/application/img-gallery-2.jpg">
-                                                    <img src="../assets/images/application/img-gallery-2.jpg"
-                                                        alt="img" class="card-img">
-                                                    <div class="card-img-overlay">
-                                                        <i class="ti ti-cloud-download"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <a class="img-post card social-gallery-card"
-                                                    data-lightbox="../assets/images/application/img-gallery-3.jpg">
-                                                    <img src="../assets/images/application/img-gallery-3.jpg"
-                                                        alt="img" class="card-img">
-                                                    <div class="card-img-overlay">
-                                                        <i class="ti ti-cloud-download"></i>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <a class="img-post card social-gallery-card"
-                                            data-lightbox="../assets/images/application/img-gallery-5.jpg">
-                                            <img src="../assets/images/application/img-gallery-5.jpg" alt="img"
-                                                class="card-img">
-                                            <div class="card-img-overlay">
-                                                <i class="ti ti-cloud-download"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <a class="img-post card social-gallery-card"
-                                            data-lightbox="../assets/images/application/img-gallery-6.jpg">
-                                            <img src="../assets/images/application/img-gallery-6.jpg" alt="img"
-                                                class="card-img">
-                                            <div class="card-img-overlay">
-                                                <i class="ti ti-cloud-download"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <a class="img-post card social-gallery-card"
-                                            data-lightbox="../assets/images/application/img-gallery-4.jpg">
-                                            <img src="../assets/images/application/img-gallery-4.jpg" alt="img"
-                                                class="card-img">
-                                            <div class="card-img-overlay">
-                                                <i class="ti ti-cloud-download"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <a class="img-post card social-gallery-card"
-                                            data-lightbox="../assets/images/application/img-gallery-8.jpg">
-                                            <img src="../assets/images/application/img-gallery-8.jpg" alt="img"
-                                                class="card-img">
-                                            <div class="card-img-overlay">
-                                                <i class="ti ti-cloud-download"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <a class="img-post card social-gallery-card"
-                                            data-lightbox="../assets/images/application/img-gallery-7.jpg">
-                                            <img src="../assets/images/application/img-gallery-7.jpg" alt="img"
-                                                class="card-img">
-                                            <div class="card-img-overlay">
-                                                <i class="ti ti-cloud-download"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
                 </div>
             </div>
-            <div class="col-lg-4 col-xxl-3">
+            {{-- <div class="tab-pane" id="followers" role="tabpanel" aria-labelledby="followers-tab">
                 <div class="card">
-                    <div class="card-header d-flex align-items-center justify-content-between">
-                        <h5>Personal information</h5>
-                        <div class="dropdown">
-                            <a class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none" href="#"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
-                                    class="material-icons-two-tone f-18">more_vert</i></a>
-                            <div class="dropdown-menu dropdown-menu-end" style="">
-                                <a class="dropdown-item" href="#">Edit</a>
-                                <a class="dropdown-item" href="#">Delete</a>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-10.jpg" alt="User image">
+                                                <i class="chat-badge bg-success mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-2.jpg" alt="User image">
+                                                <i class="chat-badge bg-danger mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-3.jpg" alt="User image">
+                                                <i class="chat-badge bg-success mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-4.jpg" alt="User image">
+                                                <i class="chat-badge bg-danger mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-5.jpg" alt="User image">
+                                                <i class="chat-badge bg-success mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-6.jpg" alt="User image">
+                                                <i class="chat-badge bg-success mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-7.jpg" alt="User image">
+                                                <i class="chat-badge bg-danger mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-8.jpg" alt="User image">
+                                                <i class="chat-badge bg-success mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-9.jpg" alt="User image">
+                                                <i class="chat-badge bg-danger mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-10.jpg" alt="User image">
+                                                <i class="chat-badge bg-success mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-2.jpg" alt="User image">
+                                                <i class="chat-badge bg-danger mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-3.jpg" alt="User image">
+                                                <i class="chat-badge bg-success mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-4.jpg" alt="User image">
+                                                <i class="chat-badge bg-danger mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-5.jpg" alt="User image">
+                                                <i class="chat-badge bg-success mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-6.jpg" alt="User image">
+                                                <i class="chat-badge bg-success mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-7.jpg" alt="User image">
+                                                <i class="chat-badge bg-danger mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-8.jpg" alt="User image">
+                                                <i class="chat-badge bg-success mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-xxl-4">
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <div class="text-center">
+                                            <div class="chat-avtar d-inline-flex">
+                                                <img class="rounded-circle img-thumbnail img-fluid wid-80"
+                                                    src="../assets/images/user/avatar-9.jpg" alt="User image">
+                                                <i class="chat-badge bg-danger mb-2 me-2"></i>
+                                            </div>
+                                            <div class="my-3">
+                                                <h5 class="mb-0">William Bond</h5>
+                                                <p class="mb-0">DM on <a href="#"
+                                                        class="link-primary">@williambond</a>😍</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-primary">Accept</button></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="d-grid"><button
+                                                        class="btn btn-outline-secondary">Decline</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="friends" role="tabpanel" aria-labelledby="friends-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Personal Details</h5>
+                    </div>
                     <div class="card-body">
-                        <ul class="list-unstyled mb-0">
-                            <li>
-                                <a class="d-flex align-items-center text-muted text-hover-primary mb-2"
-                                    href="https://phoenixcoded.net/" target="_blank">
-                                    <div class="avtar avtar-xs bg-light-secondary flex-shrink-0 me-2">
-                                        <i class="material-icons-two-tone text-secondary f-16">language</i>
-                                    </div>
-                                    <span class="text-truncate w-100">https://phoenixcoded.net/</span>
-                                </a>
-                            </li>
-                            <li>
-                                <div class="d-flex align-items-center text-muted mb-2">
-                                    <div class="avtar avtar-xs bg-light-secondary flex-shrink-0 me-2">
-                                        <i class="material-icons-two-tone text-secondary f-16">home</i>
-                                    </div>
-                                    <span class="text-truncate w-100">Hanoi, Vietnam</span>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="d-flex align-items-center text-muted mb-2">
-                                    <div class="avtar avtar-xs bg-light-secondary flex-shrink-0 me-2">
-                                        <i class="material-icons-two-tone text-secondary f-16">calendar_today</i>
-                                    </div>
-                                    <span class="text-truncate w-100">Auguest, 21,1996</span>
-                                </div>
-                            </li>
-                            <li>
-                                <a class="d-flex align-items-center text-muted text-hover-primary mb-0"
-                                    href="mailto:demo123@mail.com" target="_blank">
-                                    <div class="avtar avtar-xs bg-light-secondary flex-shrink-0 me-2">
-                                        <i class="material-icons-two-tone text-secondary f-16">email</i>
-                                    </div>
-                                    <span class="text-truncate w-100">demo123@mail.com</span>
-                                </a>
-                            </li>
-                        </ul>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <p class="mb-0 text-muted">Full Name</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-0">Akshay Handge</h6>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-0">
+                            <div class="col-md-4">
+                                <p class="mb-0 text-muted">Father's Name</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-0">Mr. Deepak Handge</h6>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-0">
+                            <div class="col-md-4">
+                                <p class="mb-0 text-muted">Address</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-0">Street 110-B Kalani Bag, Dewas, M.P. INDIA</h6>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-0">
+                            <div class="col-md-4">
+                                <p class="mb-0 text-muted">Zip Code</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-0">12345</h6>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-0">
+                            <div class="col-md-4">
+                                <p class="mb-0 text-muted">Phone</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-0">+0 123456789 , +0 123456789</h6>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-0">
+                            <div class="col-md-4">
+                                <p class="mb-0 text-muted">Email</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-0"><a href="mailto:support@example.com"
+                                        class="link-primary">support@example.com</a></h6>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-0">
+                            <div class="col-md-4">
+                                <p class="mb-0 text-muted">Website</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-0"><a href="#"
+                                        class="link-primary">http://example.com</a></h6>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card">
                     <div class="card-header">
-                        <h5>Who is follow you</h5>
+                        <h5>other Information</h5>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <img class="rounded img-fluid wid-40" src="../assets/images/user/avatar-1.jpg"
-                                        alt="User image">
-                                </div>
-                                <div class="flex-grow-1 mx-2">
-                                    <h6 class="mb-0">John Doe</h6>
-                                    <p class="mb-0">@John_Doe</p>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <span class="text-muted">5 min ago</span>
-                                </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <p class="mb-0 text-muted">Occupation</p>
                             </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <img class="rounded img-fluid wid-40" src="../assets/images/user/avatar-5.jpg"
-                                        alt="User image">
-                                </div>
-                                <div class="flex-grow-1 mx-2">
-                                    <h6 class="mb-0">Addie Bass</h6>
-                                    <p class="mb-0">@A_Bass</p>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <span class="text-muted">Yesterday</span>
-                                </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-0">Designer</h6>
                             </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <img class="rounded img-fluid wid-40" src="../assets/images/user/avatar-3.jpg"
-                                        alt="User image">
-                                </div>
-                                <div class="flex-grow-1 mx-2">
-                                    <h6 class="mb-0">Alberta Robbins</h6>
-                                    <p class="mb-0">@AlbeRob12</p>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <span class="text-muted">1 Day ago</span>
-                                </div>
+                        </div>
+                        <div class="row g-3 mt-0">
+                            <div class="col-md-4">
+                                <p class="mb-0 text-muted">Skills</p>
                             </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <img class="rounded img-fluid wid-40" src="../assets/images/user/avatar-4.jpg"
-                                        alt="User image">
-                                </div>
-                                <div class="flex-grow-1 mx-2">
-                                    <h6 class="mb-0">Agnes McGee</h6>
-                                    <p class="mb-0">@AgnMcGee</p>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <span class="text-muted">2 Day ago</span>
-                                </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-0">C#, Javascript, Scss</h6>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                        <div class="row g-3 mt-0">
+                            <div class="col-md-4">
+                                <p class="mb-0 text-muted">Jobs</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-0">Phoenixcoded</h6>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+            <div class="tab-pane active show" id="gallery" role="tabpanel" aria-labelledby="gallery-tab">
                 <div class="card">
-                    <div class="card-header d-flex align-items-center justify-content-between">
-                        <h5>Your page <span class="badge bg-light-secondary rounded-pill">2</span></h5>
-                        <button class="btn btn-link-primary btn-sm">See All</button>
+                    <div class="card-header">
+                        <h5>Gallery</h5>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <div class="d-flex align-items-center">
-                                <div class="avtar avtar-s bg-light-primary flex-shrink-0 rounded-circle">
-                                    <i class="ph-duotone ph-paint-brush text-primary"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h5 class="mb-0 f-w-400">UI Design Team</h5>
+                    <div class="card-body">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <a class="img-post card social-gallery-card"
+                                    data-lightbox="../assets/images/application/img-gallery-1.jpg">
+                                    <img src="../assets/images/application/img-gallery-1.jpg" alt="img"
+                                        class="card-img">
+                                    <div class="card-img-overlay">
+                                        <i class="ti ti-cloud-download"></i>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row g-2">
+                                    <div class="col-md-12">
+                                        <a class="img-post card social-gallery-card"
+                                            data-lightbox="../assets/images/application/img-gallery-2.jpg">
+                                            <img src="../assets/images/application/img-gallery-2.jpg"
+                                                alt="img" class="card-img">
+                                            <div class="card-img-overlay">
+                                                <i class="ti ti-cloud-download"></i>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <a class="img-post card social-gallery-card"
+                                            data-lightbox="../assets/images/application/img-gallery-3.jpg">
+                                            <img src="../assets/images/application/img-gallery-3.jpg"
+                                                alt="img" class="card-img">
+                                            <div class="card-img-overlay">
+                                                <i class="ti ti-cloud-download"></i>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div class="d-flex align-items-center">
-                                <div class="avtar avtar-s bg-light-warning flex-shrink-0 rounded-circle">
-                                    <i class="ph-duotone ph-handshake text-warning"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h5 class="mb-0 f-w-400">Creative Team</h5>
-                                </div>
+                            <div class="col-md-4">
+                                <a class="img-post card social-gallery-card"
+                                    data-lightbox="../assets/images/application/img-gallery-5.jpg">
+                                    <img src="../assets/images/application/img-gallery-5.jpg" alt="img"
+                                        class="card-img">
+                                    <div class="card-img-overlay">
+                                        <i class="ti ti-cloud-download"></i>
+                                    </div>
+                                </a>
                             </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div class="d-flex align-items-center">
-                                <div class="avtar avtar-s bg-light-warning flex-shrink-0 rounded-circle">
-                                    <i class="ph-duotone ph-buildings text-success"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h5 class="mb-0 f-w-400">Marketing</h5>
-                                </div>
+                            <div class="col-md-4">
+                                <a class="img-post card social-gallery-card"
+                                    data-lightbox="../assets/images/application/img-gallery-6.jpg">
+                                    <img src="../assets/images/application/img-gallery-6.jpg" alt="img"
+                                        class="card-img">
+                                    <div class="card-img-overlay">
+                                        <i class="ti ti-cloud-download"></i>
+                                    </div>
+                                </a>
                             </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div class="d-flex align-items-center">
-                                <div class="avtar avtar-s bg-light-warning flex-shrink-0 rounded-circle">
-                                    <i class="ph-duotone ph-globe text-danger"></i>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h5 class="mb-0 f-w-400">SEO Optimized</h5>
-                                </div>
+                            <div class="col-md-4">
+                                <a class="img-post card social-gallery-card"
+                                    data-lightbox="../assets/images/application/img-gallery-4.jpg">
+                                    <img src="../assets/images/application/img-gallery-4.jpg" alt="img"
+                                        class="card-img">
+                                    <div class="card-img-overlay">
+                                        <i class="ti ti-cloud-download"></i>
+                                    </div>
+                                </a>
                             </div>
-                        </li>
-                    </ul>
+                            <div class="col-md-6">
+                                <a class="img-post card social-gallery-card"
+                                    data-lightbox="../assets/images/application/img-gallery-8.jpg">
+                                    <img src="../assets/images/application/img-gallery-8.jpg" alt="img"
+                                        class="card-img">
+                                    <div class="card-img-overlay">
+                                        <i class="ti ti-cloud-download"></i>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a class="img-post card social-gallery-card"
+                                    data-lightbox="../assets/images/application/img-gallery-7.jpg">
+                                    <img src="../assets/images/application/img-gallery-7.jpg" alt="img"
+                                        class="card-img">
+                                    <div class="card-img-overlay">
+                                        <i class="ti ti-cloud-download"></i>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div> --}}
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane" id="frehab" role="tabpanel">
+                form rehab
             </div>
         </div>
     </div>
 
     <script>
         $(document).ready(function() {
-
+            // TOMBOL KEMBALI
             $('[data-back-button]').on('click', function() {
                 if (document.referrer) {
                     window.history.back();
@@ -1021,7 +953,7 @@
                     window.location.href = "{{ route('klaim.index') }}"; // fallback ke klaim
                 }
             });
-
+            $('[data-bs-toggle="tooltip"]').tooltip();
         });
     </script>
 @endsection
