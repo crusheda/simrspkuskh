@@ -32,6 +32,11 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     // DASHBOARD
         Route::get('dashboard/dataDiag/{tgl}', [ApiDashboardController::class, 'dataDiag'])->name('dashboard.dataDiag');
 
+    //PROFIL
+        //TTD PEGAWAI
+        Route::get('pegawai/{NIP}/ttdPeg', [ProfilController::class, 'showTtdPeg'])->name('api.pegawai.ttdPeg');
+        Route::post('pegawai/profil/ttdPeg/simpan', [ProfilController::class, 'storeTtdPeg'])->name('api.pegawai.storeTtdPeg');
+
     // SETTING
         // PERMISSION x ROLES
             // PERMISSION SETTING

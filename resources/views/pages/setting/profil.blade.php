@@ -1,6 +1,15 @@
 @extends('layouts.index')
 
 @section('content')
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
+<style>
+    canvas {
+    width: 200px;
+    height: 200px;
+    touch-action: none; /* penting untuk mencegah scroll saat tanda tangan */
+}
+</style>
+<meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- [ breadcrumb ] start -->
     <div class="page-header">
         <div class="page-block">
@@ -177,6 +186,66 @@
                                             <p class="mb-0">{{ $list['show']->ALAMAT }}</p>
                                         </li>
                                     </ul>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Tanda Tangan Pegawai</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h5 class="mb-0"><span class="badge text-bg-secondary">TANDA TANGAN PEGAWAI</span> | IDKUNJUNGAN : <span id="show-id-ttd-peg" class="text-primary"></span></h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <h3>Tanda Tangan Pegawai <mark>An/<span id="show-nama-ttd-peg" class="text-primary"></span></mark></h3>
+
+                                            <div class="mb-3" id="preview-wrapper" style="display: none;">
+                                                <img id="preview-ttd-peg" src="" alt="Belum ada tanda tangan" style="max-width: 300px; border: 1px solid #ccc;" />
+                                                <div class="mt-2">
+                                                    <button type="button" id="btn-ubah-ttd" class="btn btn-warning btn-sm"><i class="fa fa-pen"></i> Ubah TTD</button>
+                                                </div>
+                                            </div>
+
+                                            <div id="tampil-ttd-peg" class="mb-3"></div>
+
+                                            <div id="canvas"></div>
+
+                                        </div>
+                                    </div>
+
+                                    <input type="hidden" id="idstorettd" value="">
+
+                                    {{-- <ul class="list-group list-group-flush">
+                                        <li class="list-group-item px-0 pt-0">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <p class="mb-1 text-muted">Username</p>
+                                                    <p class="mb-0">{{ Auth::user()->LOGIN }}</p>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-1 text-muted">Nama Lengkap</p>
+                                                    <p class="mb-0">{{ $list['show']->NAMALENGKAP }}</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item px-0">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <p class="mb-1 text-muted">Nomor Handphone</p>
+                                                    <p class="mb-0">{{ $list['show']->NOHP }} {{ $list['show']->JENISNOHP ? '('.$list['show']->JENISNOHP.')' : '' }}</p>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-1 text-muted">Tempat, Tanggal Lahir</p>
+                                                    <p class="mb-0">{{ $list['show']->TEMPAT_LAHIR }}{{ $list['show']->TANGGAL_LAHIR ? ', ' . \Carbon\Carbon::parse($list['show']->TANGGAL_LAHIR)->translatedFormat('d F Y') : '' }}</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-group-item px-0 pb-0">
+                                            <p class="mb-1 text-muted">Alamat Lengkap</p>
+                                            <p class="mb-0">{{ $list['show']->ALAMAT }}</p>
+                                        </li>
+                                    </ul> --}}
                                 </div>
                             </div>
                         </div>
@@ -797,6 +866,127 @@
         $(document).ready(function() {
             // showLoader();
             // refresh();
+            const pegawaiNIP = "{{ Auth::user()->NIP }}"; // Dikirim dari controller ke blade
+            if (pegawaiNIP) {
+                showTTDpeg(pegawaiNIP);
+            }
         });
+
+        let canvas, signaturePad;
+
+        function showTTDpeg(NIP) {
+            $('#show-id-ttd-peg').text(NIP);
+            $('#idstorettd').val(NIP);
+
+            $.ajax({
+                url: `/api/pegawai/${NIP}/ttdPeg`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $('#show-nama-ttd-peg').text(res.show.NAMALENGKAP);
+                    $("#tampil-ttd-peg").html(`<p>Tanda tangan ini digunakan sebagai ganti tanda tangan basah untuk dokumen pasien.</p>`);
+                    $('#canvas').empty(); // clear canvas
+                    $('#preview-wrapper').hide();
+
+                    if (res.dbttd && res.dbttd.signature_path) {
+                        // tampilkan gambar TTD
+                        $('#preview-ttd-peg').attr('src', `/storage/${res.dbttd.signature_path}`);
+                        $('#preview-wrapper').show();
+
+                        // jika tombol "ubah" diklik, munculkan canvas
+                        $('#btn-ubah-ttd').off('click').on('click', function () {
+                            $('#preview-wrapper').hide(); // sembunyikan gambar
+                            tampilkanCanvasTTD();         // munculkan canvas
+                        });
+
+                        return; // selesai, tidak munculkan canvas langsung
+                    }
+
+                    tampilkanCanvasTTD(); // kalau belum ada TTD, langsung tampilkan canvas
+                }
+            });
+        }
+
+        function tampilkanCanvasTTD() {
+            $('#canvas').html(`
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <canvas id="signature-pad" style="border:1px solid #ccc; width: 100%; height: 200px;"></canvas>
+                    </div>
+                    <div class="col-md-7">
+                        <strong>Petunjuk:</strong><br>
+                        1. Gunakan layar sentuh atau mouse.<br>
+                        2. Gambar tanda tangan pada canvas.<br>
+                        3. Klik "Kosongkan" untuk menghapus.<br>
+                        4. Klik "Simpan" untuk menyimpan.<br>
+
+                        <div class="mt-3 d-flex gap-2">
+                            <button type="button" id="clear" class="btn btn-danger"><i class="fa fa-erase me-1"></i> Kosongkan</button>
+                            <button type="button" class="btn btn-primary" onclick="storeTTDpeg()"><i class="fa fa-save me-1"></i> Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            canvas = document.getElementById('signature-pad');
+            signaturePad = new SignaturePad(canvas);
+            resizeCanvas();
+
+            $('#clear').on('click', function () {
+                signaturePad.clear();
+            });
+
+            $(window).off('resize').on('resize', resizeCanvas);
+        }
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            var ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+            signaturePad.clear();
+        }
+
+        function storeTTDpeg() {
+            const nip = document.getElementById('idstorettd').value.trim();
+            const signature = signaturePad.toDataURL('image/png');
+
+            if (!nip || signaturePad.isEmpty()) {
+                alert("Tanda tangan wajib diisi.");
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('api.pegawai.storeTtdPeg') }}",
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: JSON.stringify({ nip: nip, signature: signature }),
+                contentType: 'application/json',
+                success: function(data) {
+                    if (data.success) {
+                        iziToast.success({
+                            title: 'Yeayy!',
+                            message: 'TTE telah berhasil disimpan.',
+                            position: 'topRight'
+                        });
+                        // Ganti canvas dengan gambar tanda tangan
+                        const nip = document.getElementById('idstorettd').value.trim();
+                        showTTDpeg(nip);
+                    } else {
+                        alert("Gagal menyimpan data");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Gagal Memproses Data!',
+                        text: error.message || 'Dokumen telah ditandatangani.',
+                    });
+                }
+            });
+        }
     </script>
 @endsection
