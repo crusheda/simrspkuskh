@@ -938,7 +938,7 @@
         </div>
         <div class="tab-content">
             <div class="tab-pane" id="frehab" role="tabpanel">
-                form rehab
+                @include('pages.emr.rehabmedik.form_jp')
             </div>
         </div>
     </div>

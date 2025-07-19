@@ -10,6 +10,7 @@ use App\Http\Controllers\Setting\ProfilController;
 use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
 use App\Http\Controllers\EMR\EMRController;
+use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Klaim\Smart\ApiSmartKlaimController;
 use App\Http\Controllers\Monitoring\MonitoringController;
