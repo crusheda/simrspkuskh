@@ -201,7 +201,7 @@
                                                         <p class="mb-0">{{ Str::limit($item->NAMADOKTER, 25, '...') }}</p>
                                                     </div>
                                                     <div class="flex-shrink-0">
-                                                        <p class="mb-0 text-end" style="font-size: 12px">
+                                                        <p class="mb-0 text-end" style="font-size: 12px; cursor: pointer">
                                                             @if ($item->STATUSDAFTAR == 1)
                                                                 Aktif
                                                             @else
@@ -212,7 +212,9 @@
                                                                 @endif
                                                             @endif
                                                         </p>
-                                                        <span class="mt-0 text-muted" style="font-size: 12px">{{ \Carbon\Carbon::parse($item->TGLDAFTAR)->diffForHumans() }}</span>
+                                                        <span class="mt-0 badge bg-light-dark" style="font-size: 10px; cursor: pointer" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ \Carbon\Carbon::parse($item->TGLDAFTAR)->translatedFormat('d F Y') }}">
+                                                            {{ \Carbon\Carbon::parse($item->TGLDAFTAR)->diffForHumans() }}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </li>

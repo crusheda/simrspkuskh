@@ -59,6 +59,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::delete('roles/user/{id}/delete', [RolesController::class, 'deleteRolesUser'])->name('roles.user.delete');
 
     // DIGITAL
+    Route::get('emr/ruangan/{id}', [EMRController::class, 'ruangan'])->name('api.ruangan');
     Route::post('emr', [EMRController::class, 'table'])->name('api.emr');
 
     // DIGITAL

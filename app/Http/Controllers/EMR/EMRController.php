@@ -150,6 +150,33 @@ class EMRController extends Controller
     }
 
     // API
+    function ruangan($id)
+    {
+        $prefix = '';
+        if ($id == 1) {
+            $prefix = ['1020101%', '1020702%'];
+        } elseif ($id == 2) {
+            $prefix = ['1020201%'];
+        } elseif ($id == 3) {
+            $prefix = ['1020301%'];
+        } else {
+            return response()->json('Tidak ada Ruangan yang sesuai!', 404);
+        }
+
+        $ruangan = DB::table('master.ruangan AS ru')
+                ->where('ru.JENIS',5)
+                ->where('ru.STATUS',1)
+                ->where(function ($q) use ($prefix) {
+                    foreach ($prefix as $p) {
+                        $q->orWhere('ru.ID', 'LIKE', $p);
+                    }
+                })
+                ->orderBy('ru.ID','ASC')
+                ->get();
+
+        return response()->json($ruangan, 200);
+    }
+
     function table(Request $request)
     {
         $user = auth()->user();
@@ -158,6 +185,7 @@ class EMRController extends Controller
         $tgls   = $request->tgls;
         $tgle   = $request->tgle;
         $dpjp   = $request->dpjp;
+        $ruang   = $request->ruang;
         $status = (int) $request->status;
         $rawat = (int) $request->rawat;
 
@@ -182,7 +210,6 @@ class EMRController extends Controller
                 ->leftJoin('aplikasi.pengguna','aplikasi.pengguna.ID','=','pk.DITERIMA_OLEH')
                 ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
                 ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
-
                 ->where(function ($query) use ($tgls,$tgle) {
                     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                 })
@@ -191,28 +218,40 @@ class EMRController extends Controller
                 ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
                 // ->where('jk.STATUS', 1) // STATUS RENCANA KONTROL AKTIF
 
-                // FILTER RUANGAN
+                // FILTER JENIS PERAWATAN
                 ->when(in_array($rawat, [1, 2, 3]), function ($query) use ($rawat) {
-                    $prefix = '';
+                    $prefix = [];
                     switch ($rawat) {
                         case 1:
-                            $prefix = '1020101%'; // RAJAL
+                            $prefix = ['1020101%','1020702%'];
                             break;
                         case 2:
-                            $prefix = '1020201%'; // RADAR
+                            $prefix = ['1020201%'];
                             break;
                         case 3:
-                            $prefix = '1020301%'; // RANAP
+                            $prefix = ['1020301%'];
                             break;
                     }
-                    $query->where('pk.RUANGAN', 'LIKE', $prefix);
+
+                    $query->where(function ($q) use ($prefix) {
+                        foreach ($prefix as $p) {
+                            $q->orWhere('pk.RUANGAN', 'LIKE', $p);
+                        }
+                    });
                 })
                 ->when($rawat == 5, function ($query) {
                     $query->where(function ($q) {
                         $q->where('pk.RUANGAN', 'LIKE', '1020101%')
+                            ->orWhere('pk.RUANGAN', 'LIKE', '1020702%')
                             ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
                             ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
                     });
+                })
+
+                // FILTER RUANGAN
+                ->when($ruang != 5, function ($query) use ($ruang) { // 0=BATAL;1=MASIH DILAYANI;2=SELESAI;5=ALL
+                    $query->where('pk.RUANGAN', $ruang);
+                            // ->where('pp.STATUS', $status);
                 })
 
                 // KHUSUS RAWAT DARURAT (TANPA PERENCANAAN RAWAT INAP)
