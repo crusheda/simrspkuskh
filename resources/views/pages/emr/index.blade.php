@@ -38,12 +38,18 @@
                     <div class="col-md-2 mb-3">
                         <div class="form-group">
                             <label class="form-label">Jenis Perawatan</label>
-                            <select id="filter_rawat" class="form-control">
+                            <select id="filter_rawat" class="form-control" onchange="getRuangan()">
                                 <option value="5">Semua Perawatan</option>
                                 <option value="1" selected>Rawat Jalan</option>
                                 <option value="2">Rawat Darurat (Tanpa Inap)</option>
                                 <option value="3">Rawat Inap</option>
                             </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Ruangan</label>
+                            <select id="filter_ruang" class="form-control" disabled><option value="5" selected>...</option></select>
                         </div>
                     </div>
                     <div class="col-md-2 mb-3">
@@ -66,7 +72,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5 mb-3">
+                    <div class="col-md-3 mb-3">
                         <div class="form-group">
                             <label class="form-label">DPJP</label>
                             <select class="form-control" id="filter_dpjp">
@@ -187,9 +193,40 @@
         // });
 
         // filter();
+        getRuangan();
     });
 
     // function-function
+    function getRuangan() {
+        idRuang = $('#filter_rawat').val();
+        if (idRuang == 5) {
+            $('#filter_ruang').prop('disabled',true);
+            $("#filter_ruang").find('option').remove();
+            $("#filter_ruang").append(`
+                <option value="5" selected>Semua Ruangan</option>
+            `);
+        } else {
+            $.ajax({
+                url: `/api/emr/ruangan/${idRuang}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $('#filter_ruang').prop('disabled',false);
+                    $("#filter_ruang").find('option').remove();
+                    $("#filter_ruang").append(`
+                        <option value="5" selected>Semua Ruangan</option>
+                    `);
+                    res.forEach(pouch => {
+                        $("#filter_ruang").append(`
+                            <option value="${pouch.ID}">${pouch.DESKRIPSI}</option>
+                        `);
+                    });
+                    // $("#filter_ruang").val(up).change();
+                }
+            })
+        }
+    }
+
     function filter() {
         if (window.dataTable) {
             window.dataTable.destroy();
@@ -199,6 +236,7 @@
         $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
         // Initialize
         var rawat = $("#filter_rawat").val();
+        var ruang = $("#filter_ruang").val();
         var status = $("#filter_status").val();
         var tgl = $("#filter_tgl").val();
         var dpjp = $("#filter_dpjp").val() ? $("#filter_dpjp").val() : '0'; // JIKA DPJP KOSONG = 0
@@ -216,6 +254,7 @@
             type: 'POST',
             data: {
                 rawat: rawat,
+                ruang: ruang,
                 status: status,
                 tgls: tgls,
                 tgle: tgle,
@@ -348,6 +387,8 @@
 
         // CHANGE FILTER VALUE
         $("#filter_status").val('1');
+        $("#filter_rawat").val('5');
+        $("#filter_ruang").val('5').prop('disabled',true);
 
         choices.removeActiveItems();      // hapus semua yang aktif
         choices.setChoiceByValue('');     // pilih option kosong (value="")
