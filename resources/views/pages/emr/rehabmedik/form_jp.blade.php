@@ -22,8 +22,8 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <div class="form-floating mb-0">
-                                <input type="email" class="form-control" id="floatingInput" placeholder="Email address">
-                                <label for="floatingInput">Email address</label>
+                                <input type="text" class="form-control" id="floatingInput" placeholder="">
+                                <label for="floatingInput">Anamnesa</label>
                             </div>
                         </div>
                     </div>
@@ -34,17 +34,17 @@
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Page Title</th>
-                                <th>URL</th>
-                                <th>State</th>
-                                <th>Action</th>
+                                <th>A</th>
+                                <th>B</th>
+                                <th>C</th>
+                                <th>D</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Privacy Policy</td>
-                                <td>/privacy-policy</td>
-                                <td><span class="badge text-bg-danger">Unpublished</span></td>
+                                <td>demo</td>
+                                <td>/demo</td>
+                                <td><span class="badge text-bg-danger">demo</span></td>
                                 <td>
                                     <a href="#" class="avtar avtar-xs btn-link-secondary">
                                         <i class="ti ti-eye f-20"></i>
@@ -57,7 +57,7 @@
                                     </a>
                                 </td>
                             </tr>
-                            <tr>
+                            {{-- <tr>
                                 <td>Main Page</td>
                                 <td>/main.page</td>
                                 <td><span class="badge text-bg-success">Published</span></td>
@@ -184,7 +184,7 @@
                                         <i class="ti ti-trash f-20"></i>
                                     </a>
                                 </td>
-                            </tr>
+                            </tr> --}}
                         </tbody>
                     </table>
                 </div>
