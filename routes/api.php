@@ -58,6 +58,9 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::post('roles/user/update', [RolesController::class, 'updateRolesUser'])->name('roles.user.update');
             Route::delete('roles/user/{id}/delete', [RolesController::class, 'deleteRolesUser'])->name('roles.user.delete');
 
+    // EMR
+    Route::get('emr/{NORM}/fkfr/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKfr'])->name('api.emr.fkfr.get');
+
     // DIGITAL
     Route::get('emr/ruangan/{id}', [EMRController::class, 'ruangan'])->name('api.ruangan');
     Route::post('emr', [EMRController::class, 'table'])->name('api.emr');

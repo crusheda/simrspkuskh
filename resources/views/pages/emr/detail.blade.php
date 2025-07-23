@@ -80,18 +80,18 @@
         </div>
         <div class="card">
             <div class="card-body py-0">
-                <ul class="nav nav-tabs profile-tabs" id="" role="tablist">
+                <ul class="nav nav-tabs profile-tabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="" data-bs-toggle="tab" href="#identitas" role="tab"
-                            aria-selected="false" tabindex="-1">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#identitas" role="tab"
+                            aria-selected="false" tabindex="-1" aria-controls="identitas">
                             <i class="ph-duotone ph-user-switch me-2"></i> Identitas Pasien
-                        </a>
+                        </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="" data-bs-toggle="tab" href="#frehab" role="tab"
-                            aria-selected="false" tabindex="-1">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frehab" role="tab"
+                            aria-selected="false" tabindex="-1" disabled>
                             <i class="ph-duotone ph-file-lock me-2"></i> Form Rehab Medik
-                        </a>
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -940,7 +940,7 @@
         </div>
         <div class="tab-content">
             <div class="tab-pane" id="frehab" role="tabpanel">
-                @include('pages.emr.rehabmedik.form_jp')
+                @include('pages.emr.rehabmedik.form')
             </div>
         </div>
     </div>
@@ -956,6 +956,7 @@
                 }
             });
             $('[data-bs-toggle="tooltip"]').tooltip();
+            $('.nav-link').prop('disabled', false);
         });
     </script>
 @endsection
