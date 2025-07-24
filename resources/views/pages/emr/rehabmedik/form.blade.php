@@ -156,7 +156,7 @@
                                     <button class="btn btn-light-secondary" onclick="kosongi()"><i class="fas fa-edit me-1"></i> Kosongkan Formulir</button>
                                 </div>
                                 <div class="col-sm-auto btn-page">
-                                    <button class="btn btn-primary"><i class="fas fa-save me-1"></i> Simpan Formulir</button>
+                                    <button class="btn btn-primary" onclick="simpanFormulirBaru()"><i class="fas fa-save me-1"></i> Simpan Formulir</button>
                                 </div>
                             </div>
                         </div>
@@ -248,6 +248,7 @@
     let canvas = null;
 
     $(document).ready(function() {
+
         $('input[type=radio][name=suspek]').change(function() {
             var selectedValue = $(this).val();
             $('#suspekya').val('');
@@ -260,9 +261,9 @@
 
         $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
             var target = $(e.target).data('bsTarget');
-            if (target === '#formlayanankfr' || target === '#frehab') {
-                showTTE();
+            if (target === '#frehab' || target === '#formlayanankfr') {
                 validPageFormKfr();
+                console.log('running jalan');
             }
         });
 
@@ -270,6 +271,7 @@
             var target = $(e.target).data('bsTarget');
             if (target === '#formlayanankfr') {
                 destroyTTE();
+                console.log('hapus jalan');
             }
         });
 
@@ -282,6 +284,7 @@
             dataType: 'json',
             success: function(res) {
                 if (res.form) {
+                    showPreviewFormKfr(res.form.group);
                     $('#previewformkfr').prop('hidden',false);
                     $('#allformkfr').prop('hidden',true);
                 } else {
@@ -310,7 +313,10 @@
                         showFormBaru();
                     }
                 }
-                // console.log(res);
+
+                // JALANKAN FUNCTION TTE
+                showTTE();
+
             }, error: function(xhr, status, error) {
                 console.error('Terjadi kesalahan:', error);
             }
@@ -353,7 +359,34 @@
         canvas.getContext("2d").scale(ratio, ratio);
     }
 
-    function showFormulirKfr() {
+    function showPreviewFormKfr(GROUP) {
+        // $('#show-id-sep').text(kunjungan);
+        // $('#sep'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+
+        // fetch("/api/emr/fkfr/"+GROUP+"/preview")
+        // .then(response => {
+        //     if (!response.ok) {
+        //         throw new Error('Formulir tidak ditemukan atau gagal diambil.');
+        //     }
+        //     return response.blob();
+        // })
+        // .then(blob => {
+        //     // Buat object URL dari blob
+        //     const fileURL = URL.createObjectURL(blob);
+
+        //     // Tampilkan ke iframe dalam modal
+        //     $('#cetak-sep').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+        //     $('#sep'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+        //     $('#previewformkfr').prop('hidden',false);
+        // })
+        // .catch(error => {
+        //     iziToast.error({
+        //         title: 'Maaf!',
+        //         message: 'Data SEP tidak ditemukan atau belum digenerate.',
+        //         position: 'topRight'
+        //     });
+        //     console.error(error);
+        // });
     }
 
     function showJadwalPelayanan() {
@@ -381,6 +414,101 @@
         kosongi();
     }
 
+    function simpanFormulirBaru() {
+        var save = new FormData();
+        save.append('nomor',"{{ $list['KUNJUNGAN'] }}");
+        save.append('rm',"{{ $list['show']->NORM }}");
+        save.append('diagmedis',$('#diagmedis').val());
+        save.append('diagfungsi',$('#diagfungsi').val());
+        save.append('anamnesa',$('#anamnesa').val());
+        save.append('fisik',$('#fisik').val());
+        save.append('penunjang',$('#penunjang').val());
+        save.append('tatalaksana',$('#tatalaksana').val());
+        save.append('anjuran',$('#anjuran').val());
+        save.append('evaluasi',$('#evaluasi').val());
+        save.append('target',$('#target').val());
+        save.append('suspek',$('input[name="suspek"]:checked').val());
+        if ($('input[name="suspek"]:checked').val() == 1) {
+            save.append('suspekya',$('#suspekya').val());
+        }
+        save.append('tte',signaturePad.toDataURL('image/png'));
+        save.append('dokter',"{{ Auth::user()->ID }}");
+        save.append('user',"{{ Auth::user()->NIP }}");
+
+        var isFormValid = validateInput([
+            { selector: '#diagmedis' },
+            { selector: '#diagfungsi' },
+            { selector: '#anamnesa' },
+            { selector: '#fisik' },
+            { selector: '#penunjang' },
+            { selector: '#tatalaksana' },
+            { selector: '#anjuran' },
+            { selector: '#evaluasi' },
+            { selector: '#target' },
+        ]);
+
+        // Reset class suspekya dulu
+        $('#suspekya').removeClass('is-invalid is-valid');
+
+        if ($('input[name="suspek"]:checked').val() == '1') {
+            if ($('#suspekya').val().trim() === '') {
+                $('#suspekya').addClass('is-invalid');
+                isFormValid = false;
+            } else {
+                $('#suspekya').addClass('is-valid');
+            }
+        }
+
+        if (signaturePad.isEmpty()) { // Belum Tanda Tangan
+            isFormValid = false;
+        }
+
+        if (!isFormValid) {
+            iziToast.warning({
+                title: 'Form Belum Lengkap!',
+                message: 'Pastikan Anda tidak mengosongi isian wajib.',
+                position: 'topRight'
+            });
+            return;
+        }
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('api.emr.fkfr.simpanformbaru')}}",
+            method: 'post',
+            data: save,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            success: function(res) {
+                if (res.code == 200) {
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: res.message,
+                        position: 'topRight'
+                    });
+                    validPageFormKfr();
+                } else {
+                    iziToast.warning({
+                        title: 'Pesan API Error!',
+                        message: res.message,
+                        position: 'topRight'
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                iziToast.error({
+                    title: 'Pesan Error!',
+                    message: error.message,
+                    position: 'topRight'
+                });
+            }
+        });
+    }
+
     function kosongi() {
         $('#diagmedis').val('');
         $('#diagfungsi').val('');
@@ -395,6 +523,48 @@
         $('#suspek0').prop('checked', true);
         $('#suspekya').val('');
         $('#showsuspekya').prop('hidden', true);
-        signaturePad.clear();
+        if (signaturePad) {
+            signaturePad.clear();
+        }
+        $('.form-control').removeClass('is-valid is-invalid');
+    }
+
+    /**
+     * Cek field satu atau banyak, kalau kosong tambah class is-invalid.
+     * @param {Array} fields - Array selector ID atau name
+     * @returns {Boolean} true = valid, false = ada yang kosong
+     */
+
+    function validateInput(fields) {
+        var isValid = true;
+
+        fields.forEach(f => {
+            if (f.type === 'radio') {
+                var val = $(`input[name="${f.selector}"]:checked`).val();
+                var radios = $(`input[name="${f.selector}"]`);
+                radios.removeClass('is-invalid is-valid');
+
+                if (!val) {
+                    radios.addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    radios.addClass('is-valid');
+                }
+
+            } else {
+                var el = $(f.selector);
+                var val = el.val();
+                el.removeClass('is-invalid is-valid');
+
+                if (!val || val.trim() === '') {
+                    el.addClass('is-invalid');
+                    isValid = false;
+                } else {
+                    el.addClass('is-valid');
+                }
+            }
+        });
+
+        return isValid;
     }
 </script>
