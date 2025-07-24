@@ -106,7 +106,7 @@
                 </li> --}}
                 @role('admin')
                     <li class="pc-item pc-caption">
-                        <label>Electonic</label>
+                        <label>Electronic</label>
                         <i class="ph-duotone ph-chart-pie"></i>
                     </li>
                     <li class="pc-item {{ request()->routeIs('emr.index') ? 'active' : '' }}">

@@ -58,9 +58,12 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::post('roles/user/update', [RolesController::class, 'updateRolesUser'])->name('roles.user.update');
             Route::delete('roles/user/{id}/delete', [RolesController::class, 'deleteRolesUser'])->name('roles.user.delete');
 
-    // DIGITAL
-    Route::get('emr/ruangan/{id}', [EMRController::class, 'ruangan'])->name('api.ruangan');
+    // EMR
     Route::post('emr', [EMRController::class, 'table'])->name('api.emr');
+    Route::get('emr/ruangan/{id}', [EMRController::class, 'ruangan'])->name('api.ruangan');
+    Route::get('emr/{NORM}/fkfr/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKfr'])->name('api.emr.fkfr.get');
+    Route::post('emr/fkfr/formbaru', [ApiRehabMedikController::class, 'simpanFormKfrBaru'])->name('api.emr.fkfr.simpanformbaru');
+    Route::get('emr/fkfr/{GROUP}/preview', [ApiRehabMedikController::class, 'compileFormKfr'])->name('api.emr.fkfr.preview');
 
     // DIGITAL
     Route::post('monitoring', [ApiMonitoringController::class, 'table'])->name('api.monitoring');
