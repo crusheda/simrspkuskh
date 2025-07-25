@@ -99,6 +99,12 @@
                             <i class="ph-duotone ph-files"></i> Form Konsul
                         </a>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="" data-bs-toggle="tab" href="#fmatriks" role="tab"
+                            aria-selected="false" tabindex="-1" onclick="showFormKonsul()">
+                            <i class="ph-duotone ph-film-script"></i> Matriks
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -1000,6 +1006,11 @@
         <div class="tab-content">
             <div class="tab-pane" id="frehab" role="tabpanel">
                 @include('pages.emr.rehabmedik.form')
+            </div>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane" id="fmatriks" role="tabpanel">
+                @include('pages.emr.matriks')
             </div>
         </div>
     </div>
