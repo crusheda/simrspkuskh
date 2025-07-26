@@ -105,41 +105,55 @@ class ApiRehabMedikController extends Controller
         ));
     }
 
-    function compileFormKfr()
+    function compileFormKfr($GROUP)
     {
-        $getSEP = DB::table('pendaftaran.kunjungan AS pk')
-                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-                ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
-                ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN')
-                ->where('pk.NOMOR',$kunjungan)
+        $show = DB::table('simrspku_klaim.form_kfr AS fkfr')
+                ->leftJoin('master.pasien AS ps', function($join) {
+                    $join->on('ps.NORM','=','fkfr.rm')
+                        ->where('ps.status', true);
+                })
+                ->leftJoin('master.kontak_pasien AS kps','ps.NORM','=','kps.NORM')
+                ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','fkfr.dokter')
+                ->select(
+                    'fkfr.*',
+                    'ps.TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+                    'kps.NOMOR AS NOHPPASIEN',
+                    DB::raw('master.getNamaLengkap(fkfr.rm) AS NAMAPASIEN'),
+                    DB::raw('master.getAlamatPasienCustom(fkfr.rm) AS ALAMATPASIEN'),
+                    DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMADOKTER'),
+                    DB::raw('master.getCariUmur(fkfr.tgl,ps.TANGGAL_LAHIR) AS UMURPASIEN')
+                )
+                ->where('fkfr.GROUP',$GROUP)
+                ->whereNull('fkfr.deleted_at')
                 ->first();
-        $show = DB::select('CALL simrspku_klaim.CetakLapIndividual5(?,?)',[$getSEP->NOPEN,3]);
         if (empty($show)) {
-            return response()->json($data, 400);
+            return response()->json('Error mengambil Data Formulir KFR', 401);
         }
-        $CETAK_HEADER = "1";
-        // ----------------------------------------------------------------------
-        $getTgl = Carbon::parse($show[0]->TGLREG);
+        $getTgl = Carbon::parse($show->tgl);
         $tgl = $getTgl->isoFormat('DD');
         $bulan = $getTgl->isoFormat('MM');
         $tahun = $getTgl->isoFormat('YYYY');
         // ----------------------------------------------------------------------
-        $input = public_path().'/doc/input/individual/CetakLapIndividual.jrxml';
-        $path = 'files/individual/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
+        $validasi = klaim_file::where('nomor',$show->nomor)
+                                ->where('jenis',11)
+                                ->where('status',1)
+                                ->whereNull('deleted_at')
+                                ->count();
+        $input = public_path().'/doc/input/rehabmedik/CetakFormKFR.jrxml';
+        $path = 'files/rehabmedik/formlayanankfr/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show->nomor.'-'.($validasi+1);
         $output = storage_path().'/app/public/'.$path;
 
         // SAVE TO DB
-        $verify = klaim_file::where('nomor',$kunjungan)->where('jenis',4)->where('status',true)->first();
-        if (!$verify) {
-            $post = new klaim_file;
-            $post->jenis = 4;
-            $post->nomor = $kunjungan;
-            $post->title = $kunjungan.'.pdf';
-            $post->filename = $path.'.pdf';
-            $post->status = true;
-            $post->user = Auth::user()->ID;
-            $post->save();
-        }
+        $post = new klaim_file;
+        $post->jenis = 11;
+        $post->sub_jenis = $validasi+1;
+        $post->nomor = $show->nomor;
+        $post->title = $show->nomor.'-'.($validasi+1).'.pdf';
+        $post->filename = $path;
+        $post->nama_tambahan = 'Formulir Layanan KFR';
+        $post->status = true;
+        $post->user = Auth::user()->ID;
+        // $post->save();
 
         // Pastikan folder tujuan ada
         $outputDir = dirname($output);
@@ -150,61 +164,29 @@ class ApiRehabMedikController extends Controller
         $options = [
             'format' => ['pdf'], // 'xls' / 'rtf
             'params' => [
-                'KODERS' => $show[0]->KODERS,
-                'NAMAINSTANSI' => $show[0]->NAMAINSTANSI,
-                'KELASRS' => $show[0]->KELASRS,
-                'JENISTARIF' => $show[0]->JENISTARIF,
-                'NOKARTU' => $show[0]->NOKARTU,
-                'NORM' => $show[0]->NORM,
-                'UMURTAHUN' => $show[0]->UMURTAHUN,
-                'UMURHARI' => $show[0]->UMURHARI,
-                'TANGGAL_LAHIR' => date('d/m/Y', strtotime($show[0]->TANGGAL_LAHIR)),
-                'JENISKELAMIN' => $show[0]->JENISKELAMIN,
-                'KELASHAK' => $show[0]->KELASHAK,
-                'NOMORSEP' => $show[0]->NOMORSEP,
-                'TGLREG' => date('d/m/Y', strtotime($show[0]->TGLREG)),
-                'TGLKELUAR' => $show[0]->TGLKELUAR,
-                'JENISPASIEN' => $show[0]->JENISPASIEN,
-                'CARAPULANG' => $show[0]->CARAPULANG,
-                'LOS' => $show[0]->LOS,
-                'BERATLAHIR' => $show[0]->BERATLAHIR,
-                'KODEDIAGNOSAUTAMA' => $show[0]->KODEDIAGNOSAUTAMA,
-                'DIAGNOSAUTAMA' => $show[0]->DIAGNOSAUTAMA,
-                'KODEDIAGNOSASEKUNDER' => $show[0]->KODEDIAGNOSASEKUNDER,
-                'DIAGNOSASEKUNDER' => $show[0]->DIAGNOSASEKUNDER,
-                'KODETINDAKAN' => (!empty($show[0]->KODETINDAKAN) ? $show[0]->KODETINDAKAN : '-'),
-                'TINDAKAN' => $show[0]->TINDAKAN,
-                'ADLAKUT' => $show[0]->ADLAKUT,
-                'ADLKRONIK' => $show[0]->ADLKRONIK,
-                'INACBG' => $show[0]->INACBG,
-                'DESKRIPSIINACBG' => $show[0]->DESKRIPSIINACBG,
-                'UNUSA' => $show[0]->UNUSA,
-                'DESUNUSA' => $show[0]->DESUNUSA,
-                'UNUSC' => $show[0]->UNUSC,
-                'DESUNUSC' => $show[0]->DESUNUSC,
-                'KODESPESIAL' => $show[0]->KODESPESIAL,
-                'DESKKODE' => $show[0]->DESKKODE,
-                'TARIFINACBG' => $show[0]->TARIFINACBG,
-                'TARIFUNUSA' => $show[0]->TARIFUNUSA,
-                'TARIFUNUSC' => $show[0]->TARIFUNUSC,
-                'TARIFKODE' => $show[0]->TARIFKODE,
-                'CODER' => $show[0]->CODER,
-                'VERIFIKATOR' => $show[0]->VERIFIKATOR,
-                'RUANG_RAWAT' => $show[0]->RUANG_RAWAT,
-                'TOTALTARIFINACBG' => $show[0]->TOTALTARIFINACBG,
-                'NO_URUT' => (!empty($show[0]->NO_URUT) ? $show[0]->NO_URUT : 'JKN'),
-                'CATATAN' => $show[0]->CATATAN,
-                'ALOS' => $show[0]->ALOS,
-                'RPKODE' => $show[0]->RPKODE,
-                'BIAYARS' => $show[0]->BIAYARS,
-                'SPECIALPROSEDUR' => $show[0]->SPECIALPROSEDUR,
-                'NAMALENGKAP' => $show[0]->NAMALENGKAP,
-                'IMAGES_PATH' => public_path()."/doc/input/individual/",
-                'CETAK_HEADER' => $CETAK_HEADER,
+                'TANGGAL' => Carbon::parse($show->tgl)->translatedFormat('d F Y'),
+                'NAMAPASIEN' => $show->NAMAPASIEN,
+                'NAMADOKTER' => $show->NAMADOKTER,
+                'TGLLAHIRPASIEN' => Carbon::parse($show->TGLLAHIRPASIEN)->translatedFormat('d F Y'),
+                'UMURPASIEN' => $show->UMURPASIEN,
+                'NOHPPASIEN' => (!empty($show->NOHPPASIEN) ? $show->NOHPPASIEN : '-'),
+                'ALAMATPASIEN' => $show->ALAMATPASIEN,
+                'PATH_LOGO' => public_path()."/doc/input/",
+                'PATH_TTE_DOKTER' => storage_path()."/app/public/".$show->tte_dokter,
+                'PATH_TTE_PASIEN' => storage_path()."/app/public/".$show->tte_pasien,
+                'ANAMNESA' => $show->anamnesa,
+                'PEMERIKSAANFISIK' => $show->pemeriksaan_fisik,
+                'DIAGMEDIS' => $show->diagnosa_medis,
+                'DIAGFUNGSI' => $show->diagnosa_fungsi,
+                'PEMERIKSAANPENUNJANG' => $show->pemeriksaan_penunjang,
+                'TATALAKSANA' => $show->tata_laksana_kfr,
+                'ANJURAN' => $show->anjuran,
+                'EVALUASI' => $show->evaluasi,
+                'TARGET' => $show->target,
+                'SPAKCEK' => $show->spak_index,
+                'SPAK' => $show->spak,
             ],
         ];
-        // print_r($options);
-        // die();
 
         $jasper = new PHPJasper;
 

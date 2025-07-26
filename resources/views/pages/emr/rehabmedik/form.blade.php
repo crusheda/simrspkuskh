@@ -3,7 +3,7 @@
         <ul class="nav nav-tabs profile-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#formlayanankfr"
-                type="button" role="tab" aria-controls="formlayanankfr" aria-selected="true">Form Layanan</button>
+                type="button" role="tab" aria-controls="formlayanankfr" aria-selected="true">Form Layanan KFR</button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#formjadwalpelayanan"
@@ -360,33 +360,32 @@
     }
 
     function showPreviewFormKfr(GROUP) {
-        // $('#show-id-sep').text(kunjungan);
-        // $('#sep'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+        $('#show-id-sep').text(kunjungan);
+        $('#sep'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
 
-        // fetch("/api/emr/fkfr/"+GROUP+"/preview")
-        // .then(response => {
-        //     if (!response.ok) {
-        //         throw new Error('Formulir tidak ditemukan atau gagal diambil.');
-        //     }
-        //     return response.blob();
-        // })
-        // .then(blob => {
-        //     // Buat object URL dari blob
-        //     const fileURL = URL.createObjectURL(blob);
+        fetch("/api/emr/fkfr/"+GROUP+"/preview")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Formulir tidak ditemukan atau gagal diambil.');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            // Buat object URL dari blob
+            const fileURL = URL.createObjectURL(blob);
 
-        //     // Tampilkan ke iframe dalam modal
-        //     $('#cetak-sep').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-        //     $('#sep'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
-        //     $('#previewformkfr').prop('hidden',false);
-        // })
-        // .catch(error => {
-        //     iziToast.error({
-        //         title: 'Maaf!',
-        //         message: 'Data SEP tidak ditemukan atau belum digenerate.',
-        //         position: 'topRight'
-        //     });
-        //     console.error(error);
-        // });
+            // Tampilkan ke iframe dalam modal
+            $('#previewformkfr').prop('hidden',false);
+            $('#previewformkfr').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Data Formulir tidak ditemukan atau gagal diproses.',
+                position: 'topRight'
+            });
+            console.error(error);
+        });
     }
 
     function showJadwalPelayanan() {
