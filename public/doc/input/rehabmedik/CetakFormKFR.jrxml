@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ujicoba" pageWidth="612" pageHeight="936" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1db09c0c-05d1-48bf-8ca5-a61224144fd7">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ujicoba" language="groovy" pageWidth="612" pageHeight="936" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1db09c0c-05d1-48bf-8ca5-a61224144fd7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
@@ -30,6 +30,7 @@
 	<parameter name="TARGET" class="java.lang.String"/>
 	<parameter name="SPAKCEK" class="java.lang.Integer"/>
 	<parameter name="SPAK" class="java.lang.String"/>
+	<parameter name="CAP" class="java.lang.String"/>
 	<queryString language="JSON">
 		<![CDATA[$[*]]]>
 	</queryString>
@@ -99,9 +100,9 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="226" splitType="Stretch">
+		<band height="143">
 			<textField>
-				<reportElement x="160" y="83" width="401" height="20" uuid="4f7f54d0-fa5e-4713-ba16-b1d96e5637e4">
+				<reportElement x="153" y="83" width="406" height="20" uuid="4f7f54d0-fa5e-4713-ba16-b1d96e5637e4">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="2"/>
@@ -111,7 +112,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				<textFieldExpression><![CDATA[$P{NAMAPASIEN}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="80" y="11" width="400" height="36" uuid="cee87038-55c1-4e1d-81e5-3cc7d9a43d39">
+				<reportElement x="80" y="13" width="400" height="36" uuid="cee87038-55c1-4e1d-81e5-3cc7d9a43d39">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center">
@@ -128,58 +129,21 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 				<text><![CDATA[I.  Diisi oleh Pasien/Peserta]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="30" y="83" width="130" height="20" uuid="9857f2c5-dba6-4c5a-9162-3dcaf0730739"/>
+				<reportElement x="23" y="83" width="130" height="20" uuid="9857f2c5-dba6-4c5a-9162-3dcaf0730739"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Nama Pasien		:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="30" y="103" width="130" height="20" uuid="17c46d40-f5aa-488a-b423-5d05db085d51"/>
+				<reportElement x="23" y="103" width="130" height="20" uuid="17c46d40-f5aa-488a-b423-5d05db085d51"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Tanggal Lahir/Umur	:]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="30" y="123" width="130" height="20" uuid="7452db87-0f33-45e3-b904-e005c07dd92a"/>
-				<textElement textAlignment="Left">
-					<font size="12" isBold="false"/>
-				</textElement>
-				<text><![CDATA[Alamat			:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="30" y="143" width="130" height="20" uuid="372f8ff1-0bd8-4a5b-9a3c-db428a3c8236"/>
-				<textElement textAlignment="Left">
-					<font size="12" isBold="false"/>
-				</textElement>
-				<text><![CDATA[Telp / HP		:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="166" width="300" height="20" uuid="4a148a0e-839c-486f-8dbb-fa14ad92a2f6">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Left">
-					<font size="12" isBold="false"/>
-				</textElement>
-				<text><![CDATA[II. Diisi oleh Dokter SpKFR]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="20" y="186" width="170" height="20" uuid="e6a77f57-6cbe-4ea0-8d5e-bdee6d6b5f28"/>
-				<textElement textAlignment="Left">
-					<font size="12" isBold="false"/>
-				</textElement>
-				<text><![CDATA[ Tanggal Pelayanan		:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="20" y="206" width="200" height="20" uuid="a3730740-7aa5-4b89-997f-3ec7b1fe9bad"/>
-				<textElement textAlignment="Left">
-					<font size="12" isBold="false"/>
-				</textElement>
-				<text><![CDATA[ - Anamnesa]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="160" y="103" width="401" height="20" uuid="bf3815a8-f59a-45f5-873d-110d8fdd5a57">
+				<reportElement x="153" y="103" width="406" height="20" uuid="bf3815a8-f59a-45f5-873d-110d8fdd5a57">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="2"/>
@@ -188,18 +152,57 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{TGLLAHIRPASIEN}+" ("+$P{UMURPASIEN}+")"]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement stretchType="ElementGroupHeight" x="23" y="123" width="130" height="20" uuid="7452db87-0f33-45e3-b904-e005c07dd92a"/>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Alamat			:]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="160" y="123" width="401" height="20" uuid="22b60417-f5d1-4595-9945-7199edb6c7d3">
+				<reportElement stretchType="RelativeToBandHeight" x="153" y="123" width="406" height="20" uuid="22b60417-f5d1-4595-9945-7199edb6c7d3">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="2"/>
-				<textElement>
+				<textElement markup="none">
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ALAMATPASIEN}]]></textFieldExpression>
 			</textField>
+		</band>
+		<band height="87">
+			<staticText>
+				<reportElement x="23" y="0" width="130" height="20" uuid="372f8ff1-0bd8-4a5b-9a3c-db428a3c8236"/>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Telp / HP		:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="23" width="300" height="20" uuid="4a148a0e-839c-486f-8dbb-fa14ad92a2f6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[II. Diisi oleh Dokter SpKFR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="47" width="200" height="20" uuid="e6a77f57-6cbe-4ea0-8d5e-bdee6d6b5f28"/>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Tanggal Pelayanan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="67" width="200" height="20" uuid="a3730740-7aa5-4b89-997f-3ec7b1fe9bad"/>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ - Anamnesa]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="160" y="143" width="401" height="20" uuid="fb6525d2-569a-4c37-be6a-248f73c73b1f">
+				<reportElement x="153" y="0" width="406" height="20" uuid="fb6525d2-569a-4c37-be6a-248f73c73b1f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="2"/>
@@ -209,7 +212,7 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 				<textFieldExpression><![CDATA[$P{NOHPPASIEN}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="190" y="186" width="370" height="20" uuid="a96ab02f-8488-4074-9650-2e3ebaeb271f">
+				<reportElement x="230" y="47" width="330" height="20" uuid="a96ab02f-8488-4074-9650-2e3ebaeb271f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="2"/>
@@ -219,7 +222,7 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 				<textFieldExpression><![CDATA[$P{TANGGAL}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="230" y="206" width="330" height="20" uuid="3f9a7551-a382-492a-aa09-b130c2c92a5d">
+				<reportElement x="230" y="67" width="330" height="20" uuid="3f9a7551-a382-492a-aa09-b130c2c92a5d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="2"/>
@@ -229,7 +232,16 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 				<textFieldExpression><![CDATA[$P{ANAMNESA}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="220" y="206" width="10" height="20" uuid="688d1c54-62c0-40d2-82c6-90f99dd1112f"/>
+				<reportElement x="220" y="67" width="10" height="20" uuid="688d1c54-62c0-40d2-82c6-90f99dd1112f"/>
+				<box topPadding="1"/>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="220" y="47" width="10" height="20" uuid="b6360d38-d70d-47d7-be00-7fb7774ddf2c"/>
+				<box topPadding="1"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
@@ -256,6 +268,7 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 			</textField>
 			<staticText>
 				<reportElement x="220" y="0" width="10" height="20" uuid="7587121b-faf9-45cd-bf84-a5d75a34edf0"/>
+				<box topPadding="1"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
@@ -299,6 +312,7 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 			</textField>
 			<staticText>
 				<reportElement x="220" y="0" width="10" height="20" uuid="c03cbe2a-80ca-41ad-a67c-dd7f7da1f8cd"/>
+				<box topPadding="1"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
@@ -306,6 +320,7 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="220" y="20" width="10" height="20" uuid="9aa7ee6d-63f9-4912-b96f-b68222f4f509"/>
+				<box topPadding="1"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
@@ -313,25 +328,27 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 			</staticText>
 		</band>
 		<band height="20">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<staticText>
-				<reportElement x="20" y="0" width="200" height="20" uuid="a5032c69-7410-46ed-b70f-07f862083269"/>
+				<reportElement stretchType="RelativeToBandHeight" x="20" y="0" width="200" height="20" uuid="a5032c69-7410-46ed-b70f-07f862083269"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
 				<text><![CDATA[ - Pemeriksaan Penunjang]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="230" y="0" width="330" height="20" uuid="ca6ea591-3eb0-447d-ade5-ca33b19bba55">
+				<reportElement stretchType="RelativeToBandHeight" x="230" y="0" width="330" height="20" uuid="ca6ea591-3eb0-447d-ade5-ca33b19bba55">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="2"/>
-				<textElement>
+				<textElement markup="html">
 					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{PEMERIKSAANPENUNJANG}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="220" y="0" width="10" height="20" uuid="fce99ab6-9493-4772-b14e-66a9530e8c69"/>
+				<reportElement stretchType="RelativeToBandHeight" x="220" y="0" width="10" height="20" uuid="fce99ab6-9493-4772-b14e-66a9530e8c69"/>
+				<box topPadding="1"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
@@ -347,7 +364,7 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 				<text><![CDATA[ - Tata Laksana KFR (ICD 9 CM)]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="230" y="0" width="330" height="20" uuid="a4f6d99a-89cb-4646-934d-c37a04421320">
+				<reportElement stretchType="RelativeToBandHeight" x="230" y="0" width="330" height="20" uuid="a4f6d99a-89cb-4646-934d-c37a04421320">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="2"/>
@@ -358,6 +375,7 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 			</textField>
 			<staticText>
 				<reportElement x="220" y="0" width="10" height="20" uuid="c49f4a36-606d-4b3d-a705-7268eecf7692"/>
+				<box topPadding="1"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
@@ -445,14 +463,6 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 				</box>
 				<imageExpression><![CDATA[$P{PATH_TTE_PASIEN}]]></imageExpression>
 			</image>
-			<image hAlign="Center" vAlign="Middle">
-				<reportElement x="340" y="170" width="200" height="74" uuid="a27a5536-4621-41e7-a618-26f96115d96e"/>
-				<box>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-				</box>
-				<imageExpression><![CDATA[$P{PATH_TTE_DOKTER}]]></imageExpression>
-			</image>
 			<textField>
 				<reportElement x="230" y="0" width="330" height="20" uuid="c12f8540-f7f5-4341-9e82-265106c9626f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -484,7 +494,7 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 				<textFieldExpression><![CDATA[$P{TARGET}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="280" y="62" width="279" height="18" uuid="c6d365d5-7b0b-4565-8695-2b0f063b3cfc">
+				<reportElement x="280" y="64" width="279" height="18" uuid="c6d365d5-7b0b-4565-8695-2b0f063b3cfc">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="2"/>
@@ -495,6 +505,7 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 			</textField>
 			<staticText>
 				<reportElement x="220" y="60" width="10" height="20" uuid="c22159c2-6856-4544-b994-72ba2b764553"/>
+				<box topPadding="1"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
@@ -502,6 +513,7 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="220" y="0" width="10" height="20" uuid="da7acc96-304c-4abc-86d9-64f22decc72e"/>
+				<box topPadding="1"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
@@ -509,6 +521,7 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="220" y="40" width="10" height="20" uuid="31f6d9b9-4e17-4c26-9a15-b81347ad8a32"/>
+				<box topPadding="1"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
@@ -516,61 +529,78 @@ LAYANAN KEDOKTERAN FISIK DAN REHABILITASI]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="220" y="20" width="10" height="20" uuid="3869eed8-13e9-48e1-87dd-b6e9d3b4af7b"/>
+				<box topPadding="1"/>
 				<textElement textAlignment="Left">
 					<font size="12" isBold="false"/>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="256" y="62" width="24" height="18" uuid="5b0c5d64-6b08-45cf-9d39-e287458c69b1"/>
+				<reportElement x="256" y="64" width="24" height="18" uuid="5b0c5d64-6b08-45cf-9d39-e287458c69b1"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="12" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Ya]]></text>
 			</staticText>
 			<rectangle>
-				<reportElement x="232" y="85" width="18" height="18" uuid="cec82ca1-2061-4e75-bde2-c2aa04e4d7d9"/>
-			</rectangle>
-			<rectangle>
-				<reportElement x="232" y="62" width="18" height="18" uuid="63694416-519b-419d-9f72-18515bf63d98"/>
+				<reportElement x="235" y="67" width="13" height="13" uuid="63694416-519b-419d-9f72-18515bf63d98">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
 			</rectangle>
 			<staticText>
-				<reportElement x="256" y="85" width="34" height="18" uuid="7217ca52-7222-4571-8c25-253bbe9d07c5"/>
+				<reportElement x="256" y="87" width="34" height="18" uuid="7217ca52-7222-4571-8c25-253bbe9d07c5"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="12" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Tidak]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="232" y="85" width="18" height="18" uuid="0edb887b-49cf-4ee6-a094-ab1f3f40bf87">
+				<reportElement x="231" y="86" width="20" height="20" uuid="0edb887b-49cf-4ee6-a094-ab1f3f40bf87">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="14"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{SPAKCEK}==0?"✔":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{SPAKCEK}==0?"√":""]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="232" y="62" width="18" height="18" uuid="4cd6744e-5978-468b-935a-9dd55503b78a">
+				<reportElement x="231" y="63" width="20" height="20" uuid="4cd6744e-5978-468b-935a-9dd55503b78a">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
+					<font fontName="DejaVu Sans" size="14"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{SPAKCEK}==1?"✔":""]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{SPAKCEK}==1?"√":""]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="131" y="80" width="58" height="49" uuid="3570d4bf-26ae-4fb5-8346-1ae078911c01">
+			<rectangle>
+				<reportElement x="235" y="90" width="13" height="13" uuid="01a964c7-1506-40e1-b1d9-f34cf9f52d6f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
-				<box topPadding="2"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{SPAKCEK}==1?"✔":""]]></textFieldExpression>
-			</textField>
+			</rectangle>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="280" y="180" width="180" height="54" uuid="1f2bd6f4-7d0b-4967-9a2d-62759df28700">
+					<printWhenExpression><![CDATA[$P{CAP}!=""]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{CAP}]]></imageExpression>
+			</image>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="340" y="170" width="200" height="74" uuid="a27a5536-4621-41e7-a618-26f96115d96e"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{PATH_TTE_DOKTER}]]></imageExpression>
+			</image>
 		</band>
 	</detail>
 </jasperReport>

@@ -118,6 +118,7 @@ class ApiRehabMedikController extends Controller
                     'fkfr.*',
                     'ps.TANGGAL_LAHIR AS TGLLAHIRPASIEN',
                     'kps.NOMOR AS NOHPPASIEN',
+                    'pe.NIP AS NIPDOKTER',
                     DB::raw('master.getNamaLengkap(fkfr.rm) AS NAMAPASIEN'),
                     DB::raw('master.getAlamatPasienCustom(fkfr.rm) AS ALAMATPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMADOKTER'),
@@ -142,6 +143,16 @@ class ApiRehabMedikController extends Controller
         $input = public_path().'/doc/input/rehabmedik/CetakFormKFR.jrxml';
         $path = 'files/rehabmedik/formlayanankfr/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show->nomor.'-'.($validasi+1);
         $output = storage_path().'/app/public/'.$path;
+
+        // GET CAP DOKTER
+        if ($show->NIPDOKTER == '2101341') { // Lidiawati
+            $cap = public_path().'/signatures/cap/lidiawati.png';
+        } elseif ($show->NIPDOKTER == '2505550') { // Stephanie Indrawati Sugiarto
+            $cap = public_path().'/signatures/cap/stephanie.png';
+        } else {
+            $cap = public_path().'/signatures/cap/lidiawati.png';
+            // $cap = '';
+        }
 
         // SAVE TO DB
         $post = new klaim_file;
@@ -178,13 +189,14 @@ class ApiRehabMedikController extends Controller
                 'PEMERIKSAANFISIK' => $show->pemeriksaan_fisik,
                 'DIAGMEDIS' => $show->diagnosa_medis,
                 'DIAGFUNGSI' => $show->diagnosa_fungsi,
-                'PEMERIKSAANPENUNJANG' => $show->pemeriksaan_penunjang,
+                'PEMERIKSAANPENUNJANG' => $show->pemeriksaan_penunjang.'////dsadsj <br> dbnasjbdlksbakjlfd <br> bdklfnbdskjfdsjkfjkbaskjdbsakjdbsk <br> ajfnbkjnfjkldngjkdfskdfjfgljdfn',
                 'TATALAKSANA' => $show->tata_laksana_kfr,
                 'ANJURAN' => $show->anjuran,
                 'EVALUASI' => $show->evaluasi,
                 'TARGET' => $show->target,
                 'SPAKCEK' => $show->spak_index,
                 'SPAK' => $show->spak,
+                'CAP' => $cap,
             ],
         ];
 
