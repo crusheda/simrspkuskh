@@ -765,6 +765,7 @@ class ApiMonitoringController extends Controller
                     'params' => [
                         'PNOPEN' => $getRESUMERJ->NOPEN,
                         'PKUNJUNGAN' => $getRESUMERJ->NOMOR,
+                        'COBA' => 'KRINCING RT 14/06 KRINCING RT. 0 RW. 0 Kel/Desa. KRINCING Kec. INI HANYA CONTOH. KRINCING RT 14/06 KRINCING RT. 0 RW. 0 Kel/Desa. KRINCING Kec. SELESAIIIIIII',
                         'IMAGES_PATH' => public_path()."/doc/input/resumeRJ/",
                         'IMAGES_PATH2' => $imagePath2,
                     ],

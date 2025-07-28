@@ -465,7 +465,7 @@
 <script>
     let canvas;
     let signaturePad;
-    const isDokter = @json(auth()->user()->hasAnyRole(['dokterspesialis']));
+    const isDokter = @json(auth()->user()->hasAnyRole(['dokterspesialis','admin']));
 
     $(document).ready(function() {
         // FLATPICKR DATE
