@@ -9,12 +9,21 @@ use App\Models\simrspku_klaim\klaim_verifikasi;
 use App\Models\simrspku_klaim\klaim_file;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use PhpOffice\PhpWord\TemplateProcessor;
 use PHPJasper\PHPJasper;
 use Carbon\Carbon;
 use Auth, Storage;
 
 class ApiRehabMedikController extends Controller
 {
+    public function libreOffice($input, $output) {
+        // LINK DOWNLOAD LIBRE OFFICE = https://www.libreoffice.org/download/download
+        $soffice = '"C:\Program Files\LibreOffice\program\soffice.exe"';
+        $cmd = $soffice . ' --headless --convert-to pdf ' . escapeshellarg($input) . ' --outdir ' . escapeshellarg($output);
+        exec($cmd, $log, $result);
+        return [$log, $result];
+    }
+
     function getFormKfr($NORM, $KUNJUNGAN)
     {
         $show = DB::table('simrspku_klaim.form_kfr AS kfr')
@@ -127,9 +136,11 @@ class ApiRehabMedikController extends Controller
                 ->where('fkfr.GROUP',$GROUP)
                 ->whereNull('fkfr.deleted_at')
                 ->first();
+
         if (empty($show)) {
             return response()->json('Error mengambil Data Formulir KFR', 401);
         }
+
         $getTgl = Carbon::parse($show->tgl);
         $tgl = $getTgl->isoFormat('DD');
         $bulan = $getTgl->isoFormat('MM');
@@ -140,7 +151,7 @@ class ApiRehabMedikController extends Controller
                                 ->where('status',1)
                                 ->whereNull('deleted_at')
                                 ->count();
-        $input = public_path().'/doc/input/rehabmedik/CetakFormKFR.jrxml';
+
         $path = 'files/rehabmedik/formlayanankfr/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show->nomor.'-'.($validasi+1);
         $output = storage_path().'/app/public/'.$path;
 
@@ -172,43 +183,46 @@ class ApiRehabMedikController extends Controller
             File::makeDirectory($outputDir, 0755, true); // true = recursive
         }
 
-        $options = [
-            'format' => ['pdf'], // 'xls' / 'rtf
-            'params' => [
-                'TANGGAL' => Carbon::parse($show->tgl)->translatedFormat('d F Y'),
-                'NAMAPASIEN' => $show->NAMAPASIEN,
-                'NAMADOKTER' => $show->NAMADOKTER,
-                'TGLLAHIRPASIEN' => Carbon::parse($show->TGLLAHIRPASIEN)->translatedFormat('d F Y'),
-                'UMURPASIEN' => $show->UMURPASIEN,
-                'NOHPPASIEN' => (!empty($show->NOHPPASIEN) ? $show->NOHPPASIEN : '-'),
-                'ALAMATPASIEN' => $show->ALAMATPASIEN,
-                'PATH_LOGO' => public_path()."/doc/input/",
-                'PATH_TTE_DOKTER' => storage_path()."/app/public/".$show->tte_dokter,
-                'PATH_TTE_PASIEN' => storage_path()."/app/public/".$show->tte_pasien,
-                'ANAMNESA' => $show->anamnesa,
-                'PEMERIKSAANFISIK' => $show->pemeriksaan_fisik,
-                'DIAGMEDIS' => $show->diagnosa_medis,
-                'DIAGFUNGSI' => $show->diagnosa_fungsi,
-                'PEMERIKSAANPENUNJANG' => $show->pemeriksaan_penunjang.'////dsadsj <br> dbnasjbdlksbakjlfd <br> bdklfnbdskjfdsjkfjkbaskjdbsakjdbsk <br> ajfnbkjnfjkldngjkdfskdfjfgljdfn',
-                'TATALAKSANA' => $show->tata_laksana_kfr,
-                'ANJURAN' => $show->anjuran,
-                'EVALUASI' => $show->evaluasi,
-                'TARGET' => $show->target,
-                'SPAKCEK' => $show->spak_index,
-                'SPAK' => $show->spak,
-                'CAP' => $cap,
-            ],
+        $data = [
+            'TANGGAL' => Carbon::parse($show->tgl)->translatedFormat('d F Y'),
+            'NAMAPASIEN' => $show->NAMAPASIEN,
+            'NAMADOKTER' => $show->NAMADOKTER,
+            'TGLLAHIRPASIEN' => Carbon::parse($show->TGLLAHIRPASIEN)->translatedFormat('d F Y'),
+            'UMURPASIEN' => $show->UMURPASIEN,
+            'NOHPPASIEN' => (!empty($show->NOHPPASIEN) ? $show->NOHPPASIEN : '-'),
+            'ALAMATPASIEN' => $show->ALAMATPASIEN,
+            'PATH_LOGO' => public_path()."/doc/input/",
+            'PATH_TTE_DOKTER' => storage_path()."/app/public/".$show->tte_dokter,
+            'PATH_TTE_PASIEN' => storage_path()."/app/public/".$show->tte_pasien,
+            'ANAMNESA' => $show->anamnesa,
+            'PEMERIKSAANFISIK' => $show->pemeriksaan_fisik,
+            'DIAGMEDIS' => $show->diagnosa_medis,
+            'DIAGFUNGSI' => $show->diagnosa_fungsi,
+            'PEMERIKSAANPENUNJANG' => $show->pemeriksaan_penunjang,
+            'TATALAKSANA' => $show->tata_laksana_kfr,
+            'ANJURAN' => $show->anjuran,
+            'EVALUASI' => $show->evaluasi,
+            'TARGET' => $show->target,
+            'SPAKCEK' => $show->spak_index,
+            'SPAK' => $show->spak,
+            'CAP' => $cap,
         ];
 
-        $jasper = new PHPJasper;
+        $templateProcessor = new TemplateProcessor(public_path('/doc/input/rehabmedik/cetakFormKFR.docx'));
 
-        $jasper->process(
-            $input,
-            $output,
-            $options
-        )->execute();
+        foreach ($data as $key => $value) {
+            $templateProcessor->setValue($key, $value);
+        }
 
-        return response()->file($output.'.pdf',[
+        $outputWord = $output.'.docx';
+        $templateProcessor->saveAs($outputWord);
+        [$log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+
+        if (File::exists($outputWord)) {
+            File::delete($outputWord);
+        }
+
+        return response()->file($output.'.pdf', [
             'Content-Type' => 'application/pdf',
         ]);
     }
