@@ -1,178 +1,217 @@
-<div class="card">
-    <div class="card-header">
-        <h5>Custom radio</h5>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0 text-center">
-                <thead class="align-middle">
-                    <tr>
-                        <th>No.</th>
-                        <th>Aspek Regulasi</th>
-                        <th>Dijamin RITL</th>
-                        <th>Dijamin RJTL</th>
-                        <th>Tidak Dijamin</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="align-middle">
-                    <tr>
-                        <td rowspan="6" style="vertical-align: top">1</td>
-                        <td class="text-start">Memenuhi salah satu kriteria Gawat Darurat</td>
-                        <td>+</td>
-                        <td>+</td>
-                        <td>-</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class="text-start">a. Mengancam nyawa, membahayakan diri dan orang lain/lingkungan</td>
-                        <td><input class="form-check-input" type="radio" name="no1a" id="no1a1"></td>
-                        <td><input class="form-check-input" type="radio" name="no1a" id="no1a2"></td>
-                        <td><input class="form-check-input" type="radio" name="no1a" id="no1a3"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                    <tr>
-                        <td class="text-start">b. Adanya gangguan pada jalan nafas, pernafasan, dan sirkulasi</td>
-                        <td><input class="form-check-input" type="radio" name="no1b" id="no1b1"></td>
-                        <td><input class="form-check-input" type="radio" name="no1b" id="no1b2"></td>
-                        <td><input class="form-check-input" type="radio" name="no1b" id="no1b3"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                    <tr>
-                        <td class="text-start">c. Adanya penurunan kesadaran</td>
-                        <td><input class="form-check-input" type="radio" name="no1c" id="no1c1"></td>
-                        <td><input class="form-check-input" type="radio" name="no1c" id="no1c2"></td>
-                        <td><input class="form-check-input" type="radio" name="no1c" id="no1c3"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                    <tr>
-                        <td class="text-start">d. Adanya gangguan hemodiomi</td>
-                        <td><input class="form-check-input" type="radio" name="no1d" id="no1d1"></td>
-                        <td><input class="form-check-input" type="radio" name="no1d" id="no1d2"></td>
-                        <td><input class="form-check-input" type="radio" name="no1d" id="no1d3"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                    <tr>
-                        <td class="text-start">e. Memerlukan tindakan segera</td>
-                        <td><input class="form-check-input" type="radio" name="no1e" id="no1e1"></td>
-                        <td><input class="form-check-input" type="radio" name="no1e" id="no1e2"></td>
-                        <td><input class="form-check-input" type="radio" name="no1e" id="no1e3"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="4" style="vertical-align: top">2</td>
-                        <td class="text-start">Perawatan IGD yang diberikan RS dilakukan sampai tuntas.</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class="text-start">a. Tidak dirujuk</td>
-                        <td><input class="form-check-input" type="radio" name="no2a" id="no2a1"></td>
-                        <td><input class="form-check-input" type="radio" name="no2a" id="no2a2"></td>
-                        <td><input class="form-check-input" type="radio" name="no2a" id="no2a3"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                    <tr>
-                        <td class="text-start">b. Dirujuk</td>
-                        <td><input class="form-check-input" type="radio" name="no2b" id="no2b1"></td>
-                        <td><input class="form-check-input" type="radio" name="no2b" id="no2b2"></td>
-                        <td><input class="form-check-input" type="radio" name="no2b" id="no2b3"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                    <tr>
-                        <td class="text-start">Note : telah mendapatkan tatalaksana sesuai indikasi medis sampai tuntas</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td class="text-start">Telah stabil Menunggu dirujuk</td>
-                        <td><input class="form-check-input" type="radio" name="no3" id="no31"></td>
-                        <td><input class="form-check-input" type="radio" name="no3" id="no32"></td>
-                        <td><input class="form-check-input" type="radio" name="no3" id="no33"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td class="text-start">Pelayanan yang diberikan di IGD &gt;6 jam</td>
-                        <td><input class="form-check-input" type="radio" name="no4" id="no41"></td>
-                        <td><input class="form-check-input" type="radio" name="no4" id="no42"></td>
-                        <td><input class="form-check-input" type="radio" name="no4" id="no43"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td class="text-start">Mendapatkan tatalaksana Rawat Inap</td>
-                        <td><input class="form-check-input" type="radio" name="no5" id="no51"></td>
-                        <td><input class="form-check-input" type="radio" name="no5" id="no52"></td>
-                        <td><input class="form-check-input" type="radio" name="no5" id="no53"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
-                        <td class="text-start">Memenuhi administrasi Rawat Inap</td>
-                        <td><input class="form-check-input" type="radio" name="no6" id="no61"></td>
-                        <td><input class="form-check-input" type="radio" name="no6" id="no62"></td>
-                        <td><input class="form-check-input" type="radio" name="no6" id="no63"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                    <tr>
-                        <td>7</td>
-                        <td class="text-start">Memenuhi indikasi medis Rawat Inap</td>
-                        <td><input class="form-check-input" type="radio" name="no7" id="no71"></td>
-                        <td><input class="form-check-input" type="radio" name="no7" id="no72"></td>
-                        <td><input class="form-check-input" type="radio" name="no7" id="no73"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                    <tr>
-                        <td>8</td>
-                        <td class="text-start">
-                            Telah menempati ruang perawatan, dan telah mendapatkan visistasi dari dokter spesialis yang merawat (DPJP)
-                            <br>Keterangan :
-                            <br>Kategori Ruang Rawat Inap sesuai Permenkes 40 Tahun 2022
-                        </td>
-                        <td><input class="form-check-input" type="radio" name="no8" id="no81"></td>
-                        <td><input class="form-check-input" type="radio" name="no8" id="no82"></td>
-                        <td><input class="form-check-input" type="radio" name="no8" id="no83"></td>
-                        <td class="action-cell"></td>
-                    </tr>
-                </tbody>
-            </table>
+
+    <input type="hidden" name="nomor" value="{{ $list['KUNJUNGAN'] }}">
+
+    <div class="card">
+        <div class="card-header">
+            <h5>Nomor Kunjungan: {{ $list['KUNJUNGAN'] }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead class="align-middle">
+                        <tr>
+                            <th>No.</th>
+                            <th>Aspek Regulasi</th>
+                            <th>Dijamin RITL</th>
+                            <th>Dijamin RJTL</th>
+                            <th>Tidak Dijamin</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                        @php
+                            $fields = [
+                                'no1a' => 'a. Mengancam nyawa, membahayakan diri dan orang lain/lingkungan',
+                                'no1b' => 'b. Adanya gangguan pada jalan nafas, pernafasan, dan sirkulasi',
+                                'no1c' => 'c. Adanya penurunan kesadaran',
+                                'no1d' => 'd. Adanya gangguan hemodiomi',
+                                'no1e' => 'e. Memerlukan tindakan segera',
+                                'no2a' => 'a. Tidak dirujuk',
+                                'no2b' => 'b. Dirujuk',
+                                'no3' => 'Telah stabil Menunggu dirujuk',
+                                'no4' => 'Pelayanan yang diberikan di IGD >6 jam',
+                                'no5' => 'Mendapatkan tatalaksana Rawat Inap',
+                                'no6' => 'Memenuhi administrasi Rawat Inap',
+                                'no7' => 'Memenuhi indikasi medis Rawat Inap',
+                                'no8' => 'Telah menempati ruang perawatan, dan telah mendapatkan visistasi dari DPJP',
+                            ];
+                        @endphp
+
+                        <tr>
+                            <td rowspan="6">1</td>
+                            <td class="text-start">Memenuhi salah satu kriteria Gawat Darurat</td>
+                            <td>+</td><td>+</td><td>-</td>
+                        </tr>
+
+                        @foreach (['no1a','no1b','no1c','no1d','no1e'] as $key)
+                        <tr>
+                            <td class="text-start">{{ $fields[$key] }}</td>
+                            <td><input class="form-check-input" type="radio" name="{{ $key }}" value="1" {{ (isset($data) && $data->$key == '1') ? 'checked' : '' }}></td>
+                            <td><input class="form-check-input" type="radio" name="{{ $key }}" value="2" {{ (isset($data) && $data->$key == '2') ? 'checked' : '' }}></td>
+                            <td><input class="form-check-input" type="radio" name="{{ $key }}" value="3" {{ (isset($data) && $data->$key == '3') ? 'checked' : '' }}></td>
+                            <td class="action-cell"></td>
+                        </tr>
+                        @endforeach
+
+                        <tr>
+                            <td rowspan="4">2</td>
+                            <td class="text-start">Perawatan IGD yang diberikan RS dilakukan sampai tuntas.</td>
+                            <td></td><td></td><td></td>
+                        </tr>
+
+                        @foreach (['no2a','no2b'] as $key)
+                        <tr>
+                            <td class="text-start">{{ $fields[$key] }}</td>
+                            <td><input class="form-check-input" type="radio" name="{{ $key }}" value="1" {{ (isset($data) && $data->$key == '1') ? 'checked' : '' }}></td>
+                            <td><input class="form-check-input" type="radio" name="{{ $key }}" value="2" {{ (isset($data) && $data->$key == '2') ? 'checked' : '' }}></td>
+                            <td><input class="form-check-input" type="radio" name="{{ $key }}" value="3" {{ (isset($data) && $data->$key == '3') ? 'checked' : '' }}></td>
+                            <td class="action-cell"></td>
+                        </tr>
+                        @endforeach
+
+                        <tr>
+                            <td class="text-start">Note: Telah mendapatkan tatalaksana sesuai indikasi medis sampai tuntas</td>
+                            <td></td><td></td><td></td>
+                        </tr>
+
+                        @foreach (['no3','no4','no5','no6','no7','no8'] as $key)
+                        <tr>
+                            <td>{{ ltrim($key, 'no') }}</td>
+                            <td class="text-start">{{ $fields[$key] }}</td>
+                            <td><input class="form-check-input" type="radio" name="{{ $key }}" value="1" {{ (isset($data) && $data->$key == '1') ? 'checked' : '' }}></td>
+                            <td><input class="form-check-input" type="radio" name="{{ $key }}" value="2" {{ (isset($data) && $data->$key == '2') ? 'checked' : '' }}></td>
+                            <td><input class="form-check-input" type="radio" name="{{ $key }}" value="3" {{ (isset($data) && $data->$key == '3') ? 'checked' : '' }}></td>
+                            <td class="action-cell"></td>
+                        </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
+
+    <div class="mt-3 text-end">
+        <button type="submit" class="btn btn-primary" onclick="simpanForm()">Simpan</button>
+    </div>
 
 <!-- JavaScript -->
 <script>
-document.querySelectorAll('input[type=radio]').forEach(radio => {
-    radio.addEventListener('change', function () {
-        const row = this.closest('tr');
-        const actionCell = row.querySelector('.action-cell');
+    $(document).ready(function() {
+        $('input[type=radio]').on('change', function () {
+            const $row = $(this).closest('tr');
+            const $actionCell = $row.find('.action-cell');
 
-        // Kosongkan semua radio di baris tersebut, kecuali yang ini
-        row.querySelectorAll('input[type=radio]').forEach(r => {
-            if (r !== this) r.checked = false;
+            // Kosongkan semua radio di baris tersebut, kecuali yang ini
+            $row.find('input[type=radio]').not(this).prop('checked', false);
+
+            if ($actionCell.length) {
+                $actionCell.empty();
+
+                const $deleteBtn = $('<button>')
+                    .addClass('btn btn-sm btn-danger')
+                    .text('Hapus')
+                    .on('click', function () {
+                        $row.find('input[type=radio]').prop('checked', false);
+                        $actionCell.empty();
+                    });
+
+                $actionCell.append($deleteBtn);
+            }
         });
 
-        if (actionCell) {
-            actionCell.innerHTML = '';
+        // $('#form-matriks').on('submit', function (e) {
+        //     e.preventDefault();
+        //     simpanForm();
+        // });
 
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'btn btn-sm btn-danger';
-            deleteBtn.textContent = 'Hapus';
-
-            deleteBtn.onclick = function () {
-                // Uncheck semua radio di baris ini
-                row.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
-                actionCell.innerHTML = '';
-            };
-
-            actionCell.appendChild(deleteBtn);
-        }
+        tampilForm("{{ $list['KUNJUNGAN'] }}");
     });
-});
+
+    function tampilForm(nomor) {
+        // tampil isian
+        $.ajax({
+            url: `/api/emr/matriks/${nomor}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function (res) {
+                const data = res; // pastikan sudah dalam bentuk object hasil `json_decode`
+
+                const fields = [
+                    'no1a','no1b','no1c','no1d','no1e',
+                    'no2a','no2b',
+                    'no3','no4','no5','no6','no7','no8'
+                ];
+
+                fields.forEach(function (key) {
+                    const value = data[key];
+
+                    if (value) {
+                        // Uncheck dulu semua radio untuk field ini
+                        $(`input[name="${key}"]`).prop('checked', false);
+
+                        // Check radio yang sesuai
+                        $(`input[name="${key}"][value="${value}"]`).prop('checked', true);
+                    } else {
+                        // Kalau value = 0 atau null, pastikan semua radio untuk field ini tidak tercentang
+                        $(`input[name="${key}"]`).prop('checked', false);
+                    }
+                });
+            },
+            error: function (xhr) {
+                alert('Gagal mengambil data: ' + xhr.responseText);
+                console.error(xhr);
+            }
+        })
+    }
+
+    function simpanForm() {
+        const payload = {};
+
+        // Ambil semua radio yang dicek
+        $('input[type=radio]:checked').each(function () {
+            const name = $(this).attr('name');
+            const value = $(this).val();
+            payload[name] = value;
+        });
+
+        // Tambahkan field `nomor` dari input hidden
+        payload['nomor'] = $('input[name="nomor"]').val();
+
+        // Tambahkan nilai default "0" jika radio tidak dipilih
+        const fields = [
+            'no1a','no1b','no1c','no1d','no1e',
+            'no2a','no2b',
+            'no3','no4','no5','no6','no7','no8'
+        ];
+
+        fields.forEach(function (key) {
+            if (!(key in payload)) {
+                payload[key] = '0';
+            }
+        });
+
+        // AJAX POST
+        $.ajax({
+            url: '/api/emr/matriks',
+            method: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify(payload),
+            success: function (res) {
+                alert('Data berhasil disimpan!');
+                console.log(res);
+                tampilForm(nomor);
+            },
+            error: function (xhr) {
+                alert('Gagal menyimpan data:\n' + xhr.responseText);
+                console.error('Error detail:', xhr);
+            }
+        });
+    }
+
+
 </script>

@@ -11,6 +11,7 @@ use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
+use App\Http\Controllers\EMR\ApiMatriksController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Klaim\Smart\ApiSmartKlaimController;
 use App\Http\Controllers\Monitoring\MonitoringController;
@@ -64,6 +65,10 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     Route::get('emr/{NORM}/fkfr/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKfr'])->name('api.emr.fkfr.get');
     Route::post('emr/fkfr/formbaru', [ApiRehabMedikController::class, 'simpanFormKfrBaru'])->name('api.emr.fkfr.simpanformbaru');
     Route::get('emr/fkfr/{GROUP}/preview', [ApiRehabMedikController::class, 'compileFormKfr'])->name('api.emr.fkfr.preview');
+    //MATRIKS
+    Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');
+    Route::post('emr/matriks', [ApiMatriksController::class, 'store'])->name('api.emr.matriks.store');
+
 
     // DIGITAL
     Route::post('monitoring', [ApiMonitoringController::class, 'table'])->name('api.monitoring');
