@@ -23,7 +23,8 @@ class ProfilController extends Controller
                         'pg.*',
                         'kp.NOMOR AS NOHP',
                         'ref.DESKRIPSI AS JENISNOHP',
-                        DB::raw('master.getNamaLengkapPegawai(pg.NIP) AS NAMALENGKAP')
+                        DB::raw('master.getNamaLengkapPegawai(pg.NIP) AS NAMALENGKAP'),
+                        'pegawai.nama AS NAMA'
                     )
                     ->where('ap.ID', Auth::user()->ID)
                     ->where('pg.STATUS', 1)

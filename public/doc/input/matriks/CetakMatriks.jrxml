@@ -1,0 +1,1209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ujicoba" language="groovy" pageWidth="311" pageHeight="609" columnWidth="271" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1db09c0c-05d1-48bf-8ca5-a61224144fd7">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="mm"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
+	<parameter name="IMAGES_PATH" class="java.lang.String"/>
+	<parameter name="nomor" class="java.lang.String"/>
+	<parameter name="no1a" class="java.lang.String"/>
+	<parameter name="no1b" class="java.lang.String"/>
+	<parameter name="no1c" class="java.lang.String"/>
+	<parameter name="no1d" class="java.lang.String"/>
+	<parameter name="no1e" class="java.lang.String"/>
+	<parameter name="no2a" class="java.lang.String"/>
+	<parameter name="no2b" class="java.lang.String"/>
+	<parameter name="no3" class="java.lang.String"/>
+	<parameter name="no4" class="java.lang.String"/>
+	<parameter name="no5" class="java.lang.String"/>
+	<parameter name="no6" class="java.lang.String"/>
+	<parameter name="no7" class="java.lang.String"/>
+	<parameter name="no8" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[CALL simrspku_klaim.CetakFormFKFR()]]>
+	</queryString>
+	<field name="ALAMATPASIEN" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="62">
+			<image>
+				<reportElement x="-12" y="0" width="51" height="51" uuid="35a01728-dea3-4c53-a320-b7528b32a157"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{IMAGES_PATH} +  "logo-pku.png"]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="-13" y="57" width="297" height="1" forecolor="#00B050" uuid="fb16e1ee-a7bd-4782-8982-26e9a6436a2a">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="39" y="0" width="244" height="17" forecolor="#00B050" uuid="c22b3910-354b-4247-ac95-429949658621"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="SansSerif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PIMPINAN DAERAH MUHAMMADIYAH SUKOHARJO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="39" y="8" width="244" height="17" forecolor="#00B050" uuid="63cc5bdf-b24c-48bb-a436-8b6215568f9f">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUMAH SAKIT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="39" y="20" width="244" height="17" forecolor="#00B050" uuid="7a290549-7895-48bb-b296-c071c7bbed60">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PKU MUHAMMADIYAH SUKOHARJO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="-13" y="60" width="297" height="1" forecolor="#00B050" uuid="6dd53cf6-c571-4496-87a5-f6e08aac7665"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="39" y="35" width="244" height="17" forecolor="#00B050" uuid="adcf48ab-ad21-4356-8405-959a6d7defc6"/>
+				<textElement textAlignment="Center">
+					<font fontName="SansSerif" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Jl. Mayor Sunaryo No. 37, Sukoharjo 57512 | Telp. (0271) 593979 | Fax. (0271) 5991158
+Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
+]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="452">
+			<staticText>
+				<reportElement x="10" y="0" width="254" height="52" forecolor="#00B050" uuid="d3de3063-93b0-4718-9ee9-f27357b838b4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Matriks Ketentuan Penjaminan Dan
+Penagihan Klaim IGD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="56" width="14" height="22" forecolor="#00843C" uuid="03257a0f-3d4e-4d6f-8bf7-be45b3013a14">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="56" width="192" height="22" forecolor="#00843C" uuid="93a1ef26-321c-4b8f-ae77-9eef80bb8f85">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aspek Regulasi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="196" y="56" width="28" height="22" forecolor="#00843C" uuid="fe3c4b50-0bcd-41be-b53c-0e8e27817d87"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Dijamin
+RITL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="224" y="56" width="28" height="22" forecolor="#00843C" uuid="d5e6df8c-9457-4120-865f-48056b0ad69b"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Dijamin
+RJTL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="252" y="56" width="28" height="22" forecolor="#00843C" uuid="13d89174-9a5a-4a59-a724-ac4620880fbc">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Tidak
+Dijamin]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="78" width="14" height="17" forecolor="#00843C" uuid="5781d0fe-44a7-4b7c-970c-91a5396efca9">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="78" width="192" height="17" forecolor="#00843C" uuid="9f170845-9fe3-4b50-9579-628227e948f1">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Memenuhi salah satu kriteria Gawat Darurat]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="196" y="78" width="28" height="17" forecolor="#00843C" uuid="40f9f094-37ab-418c-8a23-0a7888e5c322">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["+"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="78" width="28" height="17" forecolor="#00843C" uuid="9eb2047a-038a-45cc-8bf1-6528926a8011">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["+"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="78" width="28" height="17" forecolor="#00843C" uuid="87e8858f-9c7f-41a6-a961-fee22f9e01bc">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="95" width="28" height="25" forecolor="#00843C" uuid="7ff0e46c-e64d-4d64-a80f-d0491ef94f5e">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1a}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="95" width="28" height="25" forecolor="#00843C" uuid="9f9c78e9-e792-4871-8117-b400f464014a">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1a}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-10" y="95" width="14" height="25" forecolor="#00843C" uuid="a9d02e9c-30df-4070-920e-8892fa05aac9">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="95" width="175" height="25" forecolor="#00843C" uuid="4ae70bab-53c3-4934-9274-aca4ca012bf0"/>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Mengancam nyawa, membahayakan diri dan orang lain/lingkungan;]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="224" y="95" width="28" height="25" forecolor="#00843C" uuid="0f47dbb3-ff93-41b0-8eed-47acd8f1c081">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1a}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="95" width="17" height="25" forecolor="#00843C" uuid="200f38a3-9423-4502-8df0-2b61a0bc6a15">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[a.
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="120" width="14" height="25" forecolor="#00843C" uuid="22c2268d-733d-4cb1-9a65-1051a94b62bf">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="120" width="17" height="25" forecolor="#00843C" uuid="48836624-21b8-4a89-ab02-4e1e3b0bd2ff">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[b.
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="120" width="175" height="25" forecolor="#00843C" uuid="0df94432-8500-4533-98a0-8ec55f703f94"/>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Adanya gangguan pada jalan nafas, pernafasan, dan sirkulasi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="145" width="14" height="17" forecolor="#00843C" uuid="8d479da4-cc5f-4ce1-8715-7d886dee6e06">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="145" width="17" height="17" forecolor="#00843C" uuid="c1239404-9907-4485-88b6-031571a76257"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[c.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="145" width="175" height="17" forecolor="#00843C" uuid="1f40c9fe-296d-44cd-8a7b-364601e8d90a">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Adanya penurunan kesadaran]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="162" width="14" height="17" forecolor="#00843C" uuid="a11bbd9f-de2d-4127-a77c-08a3ba50ad71">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="162" width="17" height="17" forecolor="#00843C" uuid="0c8c1253-0580-48b1-87f7-1da812d891cc"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[d.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="162" width="175" height="17" forecolor="#00843C" uuid="07271ef9-2487-4969-8a4f-2040545a8eb1">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Adanya gangguan hemodiami, dan/atau]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="179" width="14" height="17" forecolor="#00843C" uuid="51b51c64-4f01-4246-b3e8-2bcdf0cbcecb">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="179" width="175" height="17" forecolor="#00843C" uuid="7e0881d0-e20f-4104-9b0a-0bb9b3b99e4f">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Memerlukan tindakan segera]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="179" width="17" height="17" forecolor="#00843C" uuid="b8e311bf-1ec4-4c53-8c4f-57609b8ed328"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[e.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="196" width="192" height="17" forecolor="#00843C" uuid="9c9d3791-abe4-4c67-930d-0357172f6e70">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Perawatan IGD yang diberikan RS dilakukan sampai tuntas]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="196" y="196" width="28" height="17" forecolor="#00843C" uuid="17afbc65-0901-44b0-9e42-588737776c19">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-10" y="196" width="14" height="87" forecolor="#00843C" uuid="33c33d1a-005b-4fe1-838b-eb101d41e2f2"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[2]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="224" y="196" width="28" height="17" forecolor="#00843C" uuid="3b10305c-4b44-403b-9f4f-01b9380adf47">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="196" width="28" height="17" forecolor="#00843C" uuid="23f01d56-fd29-41a2-81b0-06432732e240">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="213" width="192" height="17" forecolor="#00843C" uuid="0b029846-6997-4ac0-8407-52e59595096d">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#00AF50"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[a. Tidak dirujuk]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="230" width="192" height="17" forecolor="#00843C" uuid="037be1f6-5e71-4485-857a-2338ab104ebb">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#00AF50"/>
+					<leftPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[b. Dirujuk]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="247" width="192" height="36" forecolor="#00843C" uuid="8c292a8f-12b0-4816-ad84-9c3aa9591655">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Note : telah mendapatkan tata laksana sesuai indikasi medis sampai tuntas]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="196" y="247" width="28" height="36" forecolor="#00843C" uuid="e2486251-6330-494b-9a28-fedfb7274637"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="247" width="28" height="36" forecolor="#00843C" uuid="dbff9261-7239-4392-ab64-97badcd6e635"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="247" width="28" height="36" forecolor="#00843C" uuid="be3b3abf-e520-4ca9-bfe3-697e0ca73cf7"/>
+				<box>
+					<pen lineWidth="0.0" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[""]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-10" y="283" width="14" height="17" forecolor="#00843C" uuid="5c16fe76-102c-473d-8f79-30271c903ef1">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[3]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="283" width="192" height="17" forecolor="#00843C" uuid="1eafad8f-969d-416c-bd03-65aa82bf2a6e">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Telah stabil Menunggu dirujuk]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="300" width="192" height="17" forecolor="#00843C" uuid="dbb90836-87cc-431d-9152-66810e00696d">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Pelayanan yang diberikan di IGD >6 jam]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="300" width="14" height="17" forecolor="#00843C" uuid="28087336-1952-44bd-a118-c384c8746819">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[4]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="317" width="192" height="17" forecolor="#00843C" uuid="ab606bc4-5e8c-428f-b6f7-e381fe876559">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Mendapatkan tatalaksana rawat inap]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="317" width="14" height="17" forecolor="#00843C" uuid="60e19c02-fe64-4e16-b492-75ea814365e7">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[5]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="334" width="192" height="17" forecolor="#00843C" uuid="050da622-b607-463d-9ea6-14312049c21a">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Memenuhi administrasi rawat inap]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="334" width="14" height="17" forecolor="#00843C" uuid="108da76d-9e79-480b-8559-58dcc589b414">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[6]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="351" width="192" height="17" forecolor="#00843C" uuid="88d47cea-8b8f-445e-990b-d84333c9965d">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Memenuhi indikasi medis Rawat Inap]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="351" width="14" height="17" forecolor="#00843C" uuid="20a1ae53-8926-4735-9a30-777247703135">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[7]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="368" width="192" height="56" forecolor="#00843C" uuid="b8deb29c-3bc5-4ffa-8379-8e29a9ff975e"/>
+				<box padding="2">
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Telah menempati ruang perawatan, dan telah
+mendapatkan visitasi dari dokter spesialis yang merawat (DPJP)
+Keterangan :
+Kategori ruang rawat inap sesuai Permenkes 40 tahun 2022]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-10" y="368" width="14" height="56" forecolor="#00843C" uuid="1f4e9262-4e3c-46f7-923b-8d4d920a10ed">
+					<property name="com.jaspersoft.studio.unit.width" value="mm"/>
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[8]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="252" y="120" width="28" height="25" forecolor="#00843C" uuid="7d0d95d8-e7ee-493e-90c7-0918f025dbd9">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1b}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="120" width="28" height="25" forecolor="#00843C" uuid="aaefdfd2-3d52-4475-b467-3549c7c6c9a5">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1b}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="120" width="28" height="25" forecolor="#00843C" uuid="7e3b15a3-239b-4ae2-9369-00c29beeeec9">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1b}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="145" width="28" height="17" forecolor="#00843C" uuid="3109d228-13f2-4215-9e51-6af4b2d9f061">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1c}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="145" width="28" height="17" forecolor="#00843C" uuid="63a39a48-44b2-424e-b93a-9effb2835906">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1c}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="145" width="28" height="17" forecolor="#00843C" uuid="cf066d0f-6954-4b84-a72d-83497dafa17c">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1c}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="162" width="28" height="17" forecolor="#00843C" uuid="b1cbd748-8c33-43a9-b6bd-877abd640c35">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1d}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="162" width="28" height="17" forecolor="#00843C" uuid="4afcb82a-55eb-4fbd-bb9f-85358ecf5cc7">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1d}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="162" width="28" height="17" forecolor="#00843C" uuid="cd02acaa-adac-48f1-bed4-9c1334e55b7a">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1d}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="179" width="28" height="17" forecolor="#00843C" uuid="413af636-08df-4243-bec9-2486587942f3">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1e}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="179" width="28" height="17" forecolor="#00843C" uuid="5c27f9aa-39fa-47dc-9063-7ba9abe44409">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1e}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="179" width="28" height="17" forecolor="#00843C" uuid="80b9744b-9504-4400-96d3-811f74bae635">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no1e}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="213" width="28" height="17" forecolor="#00843C" uuid="6443e883-5c88-4ba2-b419-911156c4efb8">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no2a}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="213" width="28" height="17" forecolor="#00843C" uuid="e89bc519-11aa-4a3b-81e3-a0426ff1d398">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no2a}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="230" width="28" height="17" forecolor="#00843C" uuid="753dd804-a733-401b-92db-e3f07432fe8b">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no2b}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="230" width="28" height="17" forecolor="#00843C" uuid="26d1dc61-9ba2-4d45-a439-49ad2dac4fad">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no2b}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="230" width="28" height="17" forecolor="#00843C" uuid="a9628ce7-1658-4713-96f3-0f7c704cf88c">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no2b}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="213" width="28" height="17" forecolor="#00843C" uuid="2ae75506-4b4f-490d-99df-83f132a7356c">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no2a}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="300" width="28" height="17" forecolor="#00843C" uuid="1fea3fcf-4e8b-4152-a447-8cf7ec6ba7f3">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no4}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="300" width="28" height="17" forecolor="#00843C" uuid="b9d553d4-94a2-4789-8237-db2c7941090c">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no4}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="283" width="28" height="17" forecolor="#00843C" uuid="bf35dc07-f689-4623-be8c-fbe344e93803">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no3}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="317" width="28" height="17" forecolor="#00843C" uuid="5eb268a6-1a3a-4b2d-aec5-41ef42f8dce4">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no5}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="317" width="28" height="17" forecolor="#00843C" uuid="987759e4-efce-452b-be4c-2e30be8a9e38">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no5}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="317" width="28" height="17" forecolor="#00843C" uuid="4dca3492-f58e-4f22-9e61-a818a68fddea">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no5}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="283" width="28" height="17" forecolor="#00843C" uuid="409e09a0-59ea-47ee-8bb3-3c2f18901abc">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no3}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="283" width="28" height="17" forecolor="#00843C" uuid="dd041995-971d-41e2-8347-e42469ea094d">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no3}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="300" width="28" height="17" forecolor="#00843C" uuid="1f86d0d7-5b40-49ae-b636-fc96fb86c482">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no4}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="351" width="28" height="17" forecolor="#00843C" uuid="b16d900f-bf57-4073-afed-813cf7689bc9">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no7}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="351" width="28" height="17" forecolor="#00843C" uuid="fa1e3901-1f71-4b0c-b0ab-6fe5fe512798">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no7}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="334" width="28" height="17" forecolor="#00843C" uuid="40f6d214-7e23-4958-b258-6d971d72930a">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no6}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="334" width="28" height="17" forecolor="#00843C" uuid="ab9d5ea9-1bc4-42f6-96a4-62f1147afe44">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no6}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="351" width="28" height="17" forecolor="#00843C" uuid="470cf4f1-0d61-4b17-b897-e0b55489e016">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no7}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="334" width="28" height="17" forecolor="#00843C" uuid="901df7a6-7c89-4834-9f1c-38149ac286d7">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no6}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="224" y="368" width="28" height="56" forecolor="#00843C" uuid="f57d1330-cd43-4076-8eca-07970d9a33de">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no8}=="2" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="252" y="368" width="28" height="56" forecolor="#00843C" uuid="dac4bc34-7470-47f5-bbc9-46ad7fd267f2">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no8}=="3" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="368" width="28" height="56" forecolor="#00843C" uuid="022dbd52-b099-4944-88e0-7ff6276d1db5">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#00AF50"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{no8}=="1" ? "✔" : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

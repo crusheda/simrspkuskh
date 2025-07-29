@@ -165,7 +165,7 @@
                                                 </div>
                                                 <div class="col-md-8">
                                                     <p class="mb-1 text-muted">Nama Lengkap</p>
-                                                    <p class="mb-0">{{ $list['show']->NAMALENGKAP }}</p>
+                                                    <p class="mb-0">{{ $list['show']->NAMALENGKAP ?? $list['show']->NAMA }}</p>
                                                 </div>
                                             </div>
                                         </li>

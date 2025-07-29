@@ -68,6 +68,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     //MATRIKS
     Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');
     Route::post('emr/matriks', [ApiMatriksController::class, 'store'])->name('api.emr.matriks.store');
+    Route::get('emr/{NOMOR}/matriks', [ApiMatriksController::class, 'compileMatriks'])->name('api.emr.matriks.preview');
 
 
     // DIGITAL

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\EMR;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use PHPJasper\PHPJasper;
 use Carbon\Carbon;
 
 class ApiMatriksController extends Controller
@@ -77,5 +79,69 @@ class ApiMatriksController extends Controller
         return response()->json([
             'message' => 'Data berhasil disimpan.'
         ], 200);
+    }
+    function compileMatriks($NOMOR)
+    {
+        $getMatriks = DB::table('simrspku_klaim.matriks AS mat')
+                ->where('mat.nomor',$NOMOR)
+                ->first();
+        // $show = DB::select('CALL simrspku_klaim.CetakLapIndividual5(?,?)',[$getSEP->NOPEN,3]);
+        if (empty($getMatriks)) {
+            return response()->json($data, 400);
+        }
+        $CETAK_HEADER = "1";
+        // ----------------------------------------------------------------------
+        $getTgl = Carbon::parse($getMatriks->created_at);
+        $tgl = $getTgl->isoFormat('DD');
+        $bulan = $getTgl->isoFormat('MM');
+        $tahun = $getTgl->isoFormat('YYYY');
+        // ----------------------------------------------------------------------
+        $input = public_path().'/doc/input/matriks/CetakMatriks.jrxml';
+        $path = 'files/matriks/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$NOMOR;
+        $output = storage_path().'/app/public/'.$path;
+
+        // Pastikan folder tujuan ada
+        $outputDir = dirname($output);
+        if (!File::exists($outputDir)) {
+            File::makeDirectory($outputDir, 0755, true); // true = recursive
+        }
+
+        $options = [
+            'format' => ['pdf'],
+            'params' => [
+                'nomor' => $getMatriks->nomor,
+                'no1a' => $getMatriks->no1a,
+                'no1b' => $getMatriks->no1b,
+                'no1c' => $getMatriks->no1c,
+                'no1d' => $getMatriks->no1d,
+                'no1e' => $getMatriks->no1e,
+                'no2a' => $getMatriks->no2a,
+                'no2b' => $getMatriks->no2b,
+                'no3' => $getMatriks->no3,
+                'no4' => $getMatriks->no4,
+                'no5' => $getMatriks->no5,
+                'no6' => $getMatriks->no6,
+                'no7' => $getMatriks->no7,
+                'no8' => $getMatriks->no8,
+                'IMAGES_PATH' => public_path()."/doc/input/matriks/",
+            ],
+        ];
+
+        // print_r($options);
+        // die();
+
+        $jasper = new PHPJasper;
+
+        $jasper->process(
+            $input,
+            $output,
+            $options
+        )->execute();
+
+
+
+        return response()->file($output.'.pdf',[
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 }
