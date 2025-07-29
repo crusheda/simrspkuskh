@@ -10,7 +10,7 @@
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
                         <li class="breadcrumb-item"><a href="javascript: void(0);">Electronic</a></li>
                         <li class="breadcrumb-item"><a href="{{ route('emr.index') }}">Medical Record</a></li>
-                        <li class="breadcrumb-item" aria-current="page"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kunjungan Pasien">{{ $list['KUNJUNGAN'] }}</b></li>
+                        <li class="breadcrumb-item" aria-current="page"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kunjungan Pasien">KUNJ#{{ $list['KUNJUNGAN'] }}</b></li>
                     </ul>
                 </div>
             </div>
