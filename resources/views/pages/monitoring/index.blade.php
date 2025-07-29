@@ -607,7 +607,6 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-link-secondary text-muted btn-sm mb-0">Daftar <span class="badge bg-light text-dark ms-2">${item.TGLDAFTAR}</span></button><br>
                                         <button type="button" class="btn btn-link-info btn-sm mb-0">Masuk <span class="badge bg-light text-dark ms-2">${item.MASUK}</span></button><br>
                                         <button type="button" class="btn btn-link-danger btn-sm mb-0">Keluar <span class="badge bg-light text-dark ms-2">${item.KELUAR?item.KELUAR:'-'}</span></button>
                                     </td>

@@ -106,6 +106,8 @@ class ApiRehabMedikController extends Controller
             'tte_pasien' => $path_tte_pasien,
             'tte_dokter' => $getTtdDokter->signature_path,
             'tgl_tte_pasien' => $now,
+            'created_at' => $now,
+            'updated_at' => $now,
         ]);
 
         return Response::json(array(
@@ -161,8 +163,8 @@ class ApiRehabMedikController extends Controller
         } elseif ($show->NIPDOKTER == '2505550') { // Stephanie Indrawati Sugiarto
             $cap = public_path().'/signatures/cap/stephanie.png';
         } else {
-            $cap = public_path().'/signatures/cap/lidiawati.png';
-            // $cap = '';
+            // $cap = public_path().'/signatures/cap/lidiawati.png';
+            $cap = '';
         }
 
         // SAVE TO DB
@@ -175,7 +177,7 @@ class ApiRehabMedikController extends Controller
         $post->nama_tambahan = 'Formulir Layanan KFR';
         $post->status = true;
         $post->user = Auth::user()->ID;
-        // $post->save();
+        $post->save();
 
         // Pastikan folder tujuan ada
         $outputDir = dirname($output);
@@ -191,9 +193,6 @@ class ApiRehabMedikController extends Controller
             'UMURPASIEN' => $show->UMURPASIEN,
             'NOHPPASIEN' => (!empty($show->NOHPPASIEN) ? $show->NOHPPASIEN : '-'),
             'ALAMATPASIEN' => $show->ALAMATPASIEN,
-            'PATH_LOGO' => public_path()."/doc/input/",
-            'PATH_TTE_DOKTER' => storage_path()."/app/public/".$show->tte_dokter,
-            'PATH_TTE_PASIEN' => storage_path()."/app/public/".$show->tte_pasien,
             'ANAMNESA' => $show->anamnesa,
             'PEMERIKSAANFISIK' => $show->pemeriksaan_fisik,
             'DIAGMEDIS' => $show->diagnosa_medis,
@@ -203,12 +202,19 @@ class ApiRehabMedikController extends Controller
             'ANJURAN' => $show->anjuran,
             'EVALUASI' => $show->evaluasi,
             'TARGET' => $show->target,
-            'SPAKCEK' => $show->spak_index,
-            'SPAK' => $show->spak,
-            'CAP' => $cap,
+            'SPAKCEK' => ($show->spak_index === 1) ? "✓" : "",
+            'SPAKUNCEK' => ($show->spak_index === 0) ? "✓" : "",
+            'SPAK' => ($show->spak) ? $show->spak : "",
+            'CAP' => "",
         ];
 
         $templateProcessor = new TemplateProcessor(public_path('/doc/input/rehabmedik/cetakFormKFR.docx'));
+
+        $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->tte_dokter, 170); // 150 is Width
+        $this->setImgWord($templateProcessor, 'PATH_TTE_PASIEN', storage_path()."/app/public/".$show->tte_pasien, 300);
+        if ($cap) {
+            $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
+        }
 
         foreach ($data as $key => $value) {
             $templateProcessor->setValue($key, $value);
@@ -224,6 +230,28 @@ class ApiRehabMedikController extends Controller
 
         return response()->file($output.'.pdf', [
             'Content-Type' => 'application/pdf',
+        ]);
+    }
+
+    public static function setImgWord(TemplateProcessor $templateProcessor, string $key, string $imagePath, int $targetWidth)
+    {
+        if (!file_exists($imagePath)) {
+            throw new \Exception("Gambar tidak ditemukan: {$imagePath}");
+        }
+
+        [$originalWidth, $originalHeight] = getimagesize($imagePath);
+
+        if ($originalWidth === 0) {
+            throw new \Exception("Lebar gambar 0: {$imagePath}");
+        }
+
+        $ratio = $originalHeight / $originalWidth;
+        $targetHeight = $targetWidth * $ratio;
+
+        $templateProcessor->setImageValue($key, [
+            'path' => $imagePath,
+            'width' => $targetWidth,
+            'height' => $targetHeight,
         ]);
     }
 }
