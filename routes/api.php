@@ -12,6 +12,7 @@ use App\Http\Controllers\Setting\PermissionsController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\EMR\ApiMatriksController;
+use App\Http\Controllers\EMR\ApiKonsulController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Klaim\Smart\ApiSmartKlaimController;
 use App\Http\Controllers\Monitoring\MonitoringController;
@@ -69,7 +70,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');
     Route::post('emr/matriks', [ApiMatriksController::class, 'store'])->name('api.emr.matriks.store');
     Route::get('emr/{NOMOR}/matriks', [ApiMatriksController::class, 'compileMatriks'])->name('api.emr.matriks.preview');
-
+    //KONSUL
+    Route::get('emr/konsul/{NOMOR}', [ApiKonsulController::class, 'showKonsul'])->name('api.emr.konsul.show');
 
     // DIGITAL
     Route::post('monitoring', [ApiMonitoringController::class, 'table'])->name('api.monitoring');
