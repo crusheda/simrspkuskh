@@ -2,45 +2,41 @@
     <div class="card-header pb-0 pt-2">
         <ul class="nav nav-tabs profile-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#formlayanankfr" type="button"
-                    role="tab" aria-controls="formlayanankfr" aria-selected="true">Form Layanan KFR</button>
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#daftarkonsul" type="button"
+                    role="tab" aria-controls="daftarkonsul" aria-selected="true">Daftar Konsul</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#formjadwalpelayanan" type="button"
-                    role="tab" aria-controls="formjadwalpelayanan" aria-selected="true">Jadwal Pelayanan</button>
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#jawabkonsul" type="button"
+                    role="tab" aria-controls="jawabkonsul" aria-selected="true">Jadwal Pelayanan</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#riwayatkfr" type="button" role="tab"
-                    aria-controls="riwayatkfr" aria-selected="false">Riwayat</button>
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#riwayatkonsul" type="button" role="tab"
+                    aria-controls="riwayatkonsul" aria-selected="false">Riwayat</button>
             </li>
         </ul>
     </div>
     <div class="card-body p-3">
         <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade active show" id="formlayanankfr" role="tabpanel" aria-labelledby="home-tab">
-                <div id="allformkfr">
-                    <div class="row" id="formBaruKfr">
-                        <div class="col-md-12 d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="mb-0">Daftar Konsul</h5>
-                        </div>
-                        <div class="table-responsive border-top">
-                            <table class="table mb-0 table-hover table-display">
-                                <thead>
-                                    <tr>
-                                        <th>Konsul</th>
-                                        <th>Alasan</th>
-                                        <th>Ruang Tujuan</th>
-                                        <th>Oleh</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbody-konsul">
-                                    <tr>
-                                        <td colspan="8" class="text-center">Memuat data...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+            <div class="tab-pane fade active show" id="daftarkonsul" role="tabpanel" aria-labelledby="home-tab">
+                <div class="col-md-12 d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">Daftar Konsul</h5>
+                </div>
+                <div class="table-responsive border-top">
+                    <table class="table mb-0 table-hover table-display">
+                        <thead>
+                            <tr>
+                                <th>Konsul</th>
+                                <th>Alasan</th>
+                                <th>Ruang Tujuan</th>
+                                <th>Oleh</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-konsul">
+                            <tr>
+                                <td colspan="8" class="text-center">Memuat data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
