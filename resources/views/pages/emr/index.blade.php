@@ -314,9 +314,6 @@
                                             <a class="mb-2 text-dark" href="javascript: void(0);" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan"><code>${status}</code></a>
                                         </td>
                                         <td class="text-start align-middle">
-                                            <button type="button" class="btn btn-link-secondary text-muted btn-sm mb-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Waktu Pasien Didaftar" onclick="event.stopPropagation();">
-                                                Daftar <span class="badge bg-light text-dark ms-2">${item.TGLDAFTAR}</span>
-                                            </button><br>
                                             <button type="button" class="btn btn-link-info btn-sm mb-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Waktu Pasien Diterima Di Ruangan" onclick="event.stopPropagation();">
                                                 Masuk <span class="badge bg-light text-dark ms-2">${item.MASUK}</span>
                                             </button><br>
