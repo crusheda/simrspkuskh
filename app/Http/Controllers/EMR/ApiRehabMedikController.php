@@ -45,6 +45,16 @@ class ApiRehabMedikController extends Controller
         return response()->json($data, 200);
     }
 
+    function getFormKfrById($id)
+    {
+        $data = DB::table('simrspku_klaim.form_kfr AS kfr')
+                ->where('kfr.id',$id)
+                ->whereNull('kfr.deleted_at')
+                ->first();
+
+        return response()->json($data, 200);
+    }
+
     function simpanFormKfrBaru(Request $request)
     {
         $request->validate([

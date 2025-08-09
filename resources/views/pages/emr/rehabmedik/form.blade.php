@@ -28,18 +28,89 @@
                             </select>
                             <label for="floatingSelect">Formulir Layanan KFR Yang Tersedia</label>
                         </div>
+                        <div class="row" id="formLamaKfrPick" hidden>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="anamnesa_pick" style="height: 100px" disabled></textarea>
+                                        <label for="anamnesa">Anamnesa <a class="text-danger">*</a></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="fisik_pick" style="height: 100px" disabled></textarea>
+                                        <label for="fisik">Pemeriksaan Fisik dan Uji Fungsi <a
+                                                class="text-danger">*</a></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="penunjang_pick" style="height: 100px" disabled></textarea>
+                                        <label for="penunjang">Pemeriksaan Penunjang <a class="text-danger">*</a></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="tatalaksana_pick" style="height: 100px" disabled></textarea>
+                                        <label for="tatalaksana">Tata Laksana KFR (ICD 9 CM) <a
+                                                class="text-danger">*</a></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <hr class="mt-0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <div class="form-floating mb-0">
+                                        <input type="text" class="form-control" id="anjuran_pick" placeholder="" disabled>
+                                        <label for="anjuran">Anjuran <a class="text-danger">*</a></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <div class="form-floating mb-0">
+                                        <input type="text" class="form-control" id="evaluasi_pick" placeholder="" disabled>
+                                        <label for="evaluasi">Evaluasi <a class="text-danger">*</a></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group mb-3">
+                                    <div class="form-floating mb-0">
+                                        <input type="text" class="form-control" id="target_pick" placeholder="" disabled>
+                                        <label for="target">Target <a class="text-danger">*</a></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group mb-3">
+                                    <div class="form-floating mb-0">
+                                        <input type="text" class="form-control" id="suspekya_pick" placeholder="" disabled>
+                                        <label for="suspekya">Suspek Penyakit Akibat Kerja <a class="text-danger">*</a></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="d-flex justify-content-between align-items-center">
-                            <button class="btn btn-primary"><i class="fas fa-lock me-1"></i> Tetapkan Formulir
-                                Terpilih</button>
-                            <button class="btn btn-secondary" onclick="showformBaruKfr()"><i
-                                    class="fas fa-file-signature me-1"></i> Buat Formulir Baru</button>
+                            <button class="btn btn-secondary" onclick="showformBaruKfr()">
+                                <i class="fas fa-file-signature me-1"></i> Buat Formulir Baru
+                            </button>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-lock me-1"></i> Tetapkan Formulir Terpilih
+                            </button>
                         </div>
                     </div>
                     <div class="row" id="formBaruKfr" hidden>
                         <div class="col-md-12 d-flex justify-content-between align-items-center mb-2">
                             <h5 class="mb-0">Formulir Ini Diisi Oleh Dokter Sp.KFR</h5>
-                            <button class="btn btn-sm btn-light-secondary" onclick="showformLamaKfr()"><i
-                                    class="fab fa-wpforms me-1"></i> Lihat Formulir Lama</button>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-3">
@@ -168,12 +239,19 @@
                         <div class="col-md-12">
                             <div class="row align-items-center justify-content-between g-3">
                                 <div class="col-sm-auto">
-                                    <button class="btn btn-light-secondary" onclick="kosongiKfr()"><i
-                                            class="fas fa-edit me-1"></i> Kosongkan Formulir</button>
+                                    <div class="btn-group">
+                                        <button class="btn btn-warning" onclick="kosongiKfr()">
+                                            <i  class="fas fa-edit me-1"></i> Kosongkan Formulir
+                                        </button>
+                                        <button class="btn btn-secondary" onclick="showformLamaKfr()">
+                                            <i class="fab fa-wpforms me-1"></i> Lihat Formulir Yang Ada
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="col-sm-auto btn-page">
-                                    <button class="btn btn-primary" onclick="simpanFormulirKfrBaru()"><i
-                                            class="fas fa-save me-1"></i> Simpan Formulir</button>
+                                    <button class="btn btn-primary" onclick="simpanFormulirKfrBaru()">
+                                        <i class="fas fa-save me-1"></i> Simpan Formulir Baru
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -441,6 +519,8 @@
             type: 'GET',
             dataType: 'json',
             success: function(res) {
+                $('#formLamaKfrPick').prop('hidden', true);
+
                 if (res.form) {
                     showPreviewFormKfr(res.form.group);
                     $('#previewformkfr').prop('hidden', false);
@@ -456,7 +536,7 @@
                         `);
                         res.show.forEach(pouch => {
                             $("#filterformLamaKfr").append(`
-                                <option value="${pouch.id}">${pouch.rm}</option>
+                                <option value="${pouch.id}">${pouch.nomor} | Tgl.${pouch.tgl}</option>
                             `);
                         });
 
@@ -472,6 +552,34 @@
                     }
                 }
 
+                $('#filterformLamaKfr').change(function() {
+                    $.ajax({
+                        url: `/api/emr/fkfr/${$(this).val()}`,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(res) {
+                            $('#formLamaKfrPick').prop('hidden', false);
+                            // show value
+                            $('#diagmedis_pick').val(res.diagnosa_medis);
+                            $('#diagfungsi_pick').val(res.diagnosa_fungsi);
+                            $('#anamnesa_pick').val(res.anamnesa);
+                            $('#fisik_pick').val(res.pemeriksaan_fisik);
+                            $('#penunjang_pick').val(res.pemeriksaan_penunjang);
+                            $('#tatalaksana_pick').val(res.tata_laksana_kfr);
+                            $('#anjuran_pick').val(res.anjuran);
+                            $('#evaluasi_pick').val(res.evaluasi);
+                            $('#target_pick').val(res.target);
+                            if (res.spak_index == 1) {
+                                $('#suspekya_pick').val(res.spak);
+                            } else {
+                                $('#suspekya_pick').val('-');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Terjadi kesalahan:', error);
+                        }
+                    })
+                })
                 // JALANKAN FUNCTION TTE
                 initPadKfr();
                 // showTTEKFR();

@@ -65,6 +65,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     Route::get('emr/ruangan/{id}', [EMRController::class, 'ruangan'])->name('api.ruangan');
     Route::get('emr/{NORM}/fkfr/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKfr'])->name('api.emr.fkfr.get');
     Route::post('emr/fkfr/formbaru', [ApiRehabMedikController::class, 'simpanFormKfrBaru'])->name('api.emr.fkfr.simpanformbaru');
+    Route::get('emr/fkfr/{id}', [ApiRehabMedikController::class, 'getFormKfrById'])->name('api.emr.fkfr.getById');
     Route::get('emr/fkfr/{GROUP}/preview', [ApiRehabMedikController::class, 'compileFormKfr'])->name('api.emr.fkfr.preview');
     //MATRIKS
     Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');
