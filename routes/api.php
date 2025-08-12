@@ -82,6 +82,9 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     Route::get('emr/{NOMOR}/matriks', [ApiMatriksController::class, 'compileMatriks'])->name('api.emr.matriks.preview');
     //KONSUL
     Route::get('emr/konsul/{NOMOR}', [ApiKonsulController::class, 'showKonsul'])->name('api.emr.konsul.show');
+    Route::get('emr/konsul/masuk/{NOMOR}', [ApiKonsulController::class, 'masukKonsul'])->name('api.emr.konsul.masuk.show');
+    Route::get('emr/konsul/jawaban/{NOMOR}', [ApiKonsulController::class, 'getJawabanKonsul'])->name('api.emr.konsul.jawaban.show');
+
 
     // DIGITAL
     Route::post('monitoring', [ApiMonitoringController::class, 'table'])->name('api.monitoring');

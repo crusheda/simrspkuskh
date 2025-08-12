@@ -55,19 +55,19 @@
                             <div class="card-body bg-light px-4 py-4">
                                 <div class="mb-4">
                                     <label class="form-label fw-semibold">Jawaban:</label>
-                                    <textarea class="form-control rounded" rows="3" readonly>jawab</textarea>
+                                    <textarea id="input-jawaban" class="form-control rounded" rows="3" readonly></textarea>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label fw-semibold">Anjuran:</label>
-                                    <textarea class="form-control rounded" rows="3" readonly>gini</textarea>
+                                    <textarea id="input-anjuran" class="form-control rounded" rows="3" readonly></textarea>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label fw-semibold">Tanggal & Waktu:</label>
-                                    <input type="text" class="form-control rounded" value="07/08/2025 19:58:23" readonly>
+                                    <input id="input-tgljawab" type="text" class="form-control rounded" readonly>
                                 </div>
                                 <div>
                                     <label class="form-label fw-semibold">Dokter yg Menjawab:</label>
-                                    <input type="text" class="form-control rounded" value="2008338 - dr. Bahtiar Mahdi Cahya Kusuma, Sp. N" readonly>
+                                    <input id="input-dokterjawab" type="text" class="form-control rounded" readonly>
                                 </div>
                             </div>
                         </div>
@@ -84,13 +84,14 @@
                     <table class="table mb-0 table-hover table-display">
                         <thead>
                             <tr>
-                                <th>Konsul</th>
+                                <th>Asal Konsul</th>
+                                <th>Tanggal</th>
                                 <th>Alasan</th>
+                                <th>Konsul Yg. Diminta</th>
                                 <th>Ruang Tujuan</th>
-                                <th>Oleh</th>
                             </tr>
                         </thead>
-                        <tbody id="tbody-konsul">
+                        <tbody id="tbody-konsulmasuk">
                             <tr>
                                 <td colspan="8" class="text-center">Memuat data...</td>
                             </tr>
@@ -103,12 +104,24 @@
     </div>
 </div>
 
-
 <script>
     // Contoh panggil saat halaman siap
     $(document).ready(function () {
         tampilKonsul("{{ $list['KUNJUNGAN'] }}");
+        konsulMasuk("{{ $list['KUNJUNGAN'] }}");
+
+        $(document).on('click', '.baris-konsul', function () {
+            const nomor = $(this).data('nomor');
+            if (nomor) {
+                $('.baris-konsul').removeClass('table-active');
+                $(this).addClass('table-active');
+
+                tampilJawabanKonsul(nomor);
+                $('button[data-bs-target="#riwayatkonsul"]').tab('show');
+            }
+        });
     });
+
     function tampilKonsul(nomor) {
         $('#tbody-konsul').html('<tr><td colspan="8" class="text-center">Memuat data...</td></tr>');
 
@@ -117,19 +130,23 @@
             type: 'GET',
             dataType: 'json',
             success: function (data) {
-                if (data && Object.keys(data).length > 0) {
-                    $('#tbody-konsul').html(`
-                        <tr>
-                            <td>
-                                <span><strong>${data.NOMOR}</strong></span><br>
-                                <span><small>Dokter Asal : ${data.NAMADOKTER}</small></span>
-                            </td>
-                            <td>${formatTanggal(data.TANGGAL)}</td>
-                            <td>${data.ALASAN}</td>
-                            <td>${data.PERMINTAAN_TINDAKAN}</td>
-                            <td>${data.NAMARUANGAN}</td>
-                        </tr>
-                    `);
+                if (Array.isArray(data) && data.length > 0) {
+                    let html = '';
+                    data.forEach(function(item) {
+                        html += `
+                            <tr class="baris-konsul" data-nomor="${item.NOMOR}">
+                                <td>
+                                    <span><strong>${item.NOMOR}</strong></span><br>
+                                    <span><small>Dokter Asal : ${item.NAMADOKTER}</small></span>
+                                </td>
+                                <td>${formatTanggal(item.TANGGAL)}</td>
+                                <td>${item.ALASAN}</td>
+                                <td>${item.PERMINTAAN_TINDAKAN}</td>
+                                <td>${item.NAMARUANGAN}</td>
+                            </tr>
+                        `;
+                    });
+                    $('#tbody-konsul').html(html);
                 } else {
                     $('#tbody-konsul').html('<tr><td colspan="8" class="text-center">Data tidak ditemukan</td></tr>');
                 }
@@ -138,6 +155,70 @@
                 $('#tbody-konsul').html('<tr><td colspan="8" class="text-center text-danger">Gagal memuat data</td></tr>');
             }
         });
+    }
+
+    function konsulMasuk(nomor) {
+        $('#tbody-konsulmasuk').html('<tr><td colspan="8" class="text-center">Memuat data...</td></tr>');
+
+        $.ajax({
+            url: `/api/emr/konsul/masuk/${nomor}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                if (Array.isArray(data) && data.length > 0) {
+                    let html = '';
+                    data.forEach(function(item) {
+                        html += `
+                            <tr>
+                                <td>
+                                    <h4 class="mb-1 text-primary"><b data-bs-toggle="tooltip" data-bs-placement="bottom">${item.NAMARUANGAN}</b></h4>
+                                    <span><strong>${item.NOMOR}</strong></span><br>
+                                    <span><small>Dokter Asal : ${item.NAMADOKTER}</small></span>
+                                </td>
+                                <td>${formatTanggal(item.TANGGAL)}</td>
+                                <td>${item.ALASAN}</td>
+                                <td>${item.PERMINTAAN_TINDAKAN}</td>
+                                <td>${item.TUJUAN}</td>
+                            </tr>
+                        `;
+                    });
+                    $('#tbody-konsulmasuk').html(html);
+                } else {
+                    $('#tbody-konsulmasuk').html('<tr><td colspan="8" class="text-center">Data tidak ditemukan</td></tr>');
+                }
+            },
+            error: function () {
+                $('#tbody-konsulmasuk').html('<tr><td colspan="8" class="text-center text-danger">Gagal memuat data</td></tr>');
+            }
+        });
+    }
+
+    function tampilJawabanKonsul(nomor) {
+        $.ajax({
+            url: `/api/emr/konsul/jawaban/${nomor}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                if (data) {
+                    $('#input-jawaban').val(data.JAWABAN || '-');
+                    $('#input-anjuran').val(data.ANJURAN || '-');
+                    $('#input-tgljawab').val(formatTanggal(data.TANGGAL_JAWABAN) || '-');
+                    $('#input-dokterjawab').val(`${data.KODE_DOKTER || ''} - ${data.JAWABDOKTER || ''}`);
+                } else {
+                    kosongkanJawabanKonsul();
+                }
+            },
+            error: function() {
+                kosongkanJawabanKonsul();
+            }
+        });
+    }
+
+    function kosongkanJawabanKonsul() {
+        $('#input-jawaban').val('-');
+        $('#input-anjuran').val('-');
+        $('#input-tgljawab').val('-');
+        $('#input-dokterjawab').val('-');
     }
 
     function formatTanggal(dateTime) {
