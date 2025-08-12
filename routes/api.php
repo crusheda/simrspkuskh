@@ -61,12 +61,21 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::delete('roles/user/{id}/delete', [RolesController::class, 'deleteRolesUser'])->name('roles.user.delete');
 
     // EMR
-    Route::post('emr', [EMRController::class, 'table'])->name('api.emr');
-    Route::get('emr/ruangan/{id}', [EMRController::class, 'ruangan'])->name('api.ruangan');
-    Route::get('emr/{NORM}/fkfr/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKfr'])->name('api.emr.fkfr.get');
-    Route::post('emr/fkfr/formbaru', [ApiRehabMedikController::class, 'simpanFormKfrBaru'])->name('api.emr.fkfr.simpanformbaru');
-    Route::get('emr/fkfr/{id}', [ApiRehabMedikController::class, 'getFormKfrById'])->name('api.emr.fkfr.getById');
-    Route::get('emr/fkfr/{GROUP}/preview', [ApiRehabMedikController::class, 'compileFormKfr'])->name('api.emr.fkfr.preview');
+        // REHABILITASI MEDIK
+            // FORM KFR
+            Route::post('emr', [EMRController::class, 'table'])->name('api.emr');
+            Route::get('emr/ruangan/{id}', [EMRController::class, 'ruangan'])->name('api.ruangan');
+            Route::get('emr/{NORM}/fkfr/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKfr'])->name('api.emr.fkfr.get');
+            Route::post('emr/fkfr/formbaru', [ApiRehabMedikController::class, 'simpanFormKfrBaru'])->name('api.emr.fkfr.simpanformbaru');
+            Route::post('emr/fkfr/formlama', [ApiRehabMedikController::class, 'simpanFormKfrLama'])->name('api.emr.fkfr.simpanformlama');
+            Route::get('emr/fkfr/{id}', [ApiRehabMedikController::class, 'getFormKfrByGroup'])->name('api.emr.fkfr.getByGroup');
+            Route::delete('emr/fkfr/{NOMOR}/hapus/{USER}', [ApiRehabMedikController::class, 'hapusFormKfr'])->name('api.emr.fkfr.hapusFormKfr');
+            Route::get('emr/fkfr/{GROUP}/preview', [ApiRehabMedikController::class, 'compileFormKfr'])->name('api.emr.fkfr.preview');
+            // JADWAL PELAYANAN
+            Route::get('emr/jp/{NOMOR}', [ApiRehabMedikController::class, 'getFormJp'])->name('api.emr.jp.get');
+            Route::post('emr/jp', [ApiRehabMedikController::class, 'simpanJp'])->name('api.emr.jp.simpanJp');
+            Route::delete('emr/jp/hapus/{id}', [ApiRehabMedikController::class, 'hapusFormJp'])->name('api.emr.jp.hapusFormJp');
+
     //MATRIKS
     Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');
     Route::post('emr/matriks', [ApiMatriksController::class, 'store'])->name('api.emr.matriks.store');

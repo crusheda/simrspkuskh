@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use App\Models\simrspku_klaim\klaim_verifikasi;
 use App\Models\simrspku_klaim\klaim_file;
+use App\Models\simrspku_klaim\form_kfr;
+use App\Models\Pengguna;
+use App\Models\simrspku_klaim\form_kfr_jp;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use PhpOffice\PhpWord\TemplateProcessor;
@@ -16,6 +19,7 @@ use Auth, Storage;
 
 class ApiRehabMedikController extends Controller
 {
+    // --------------------------------------------------- ADD ONN ------------------------------------------------
     public function libreOffice($input, $output) {
         // LINK DOWNLOAD LIBRE OFFICE = https://www.libreoffice.org/download/download
         $soffice = '"C:\Program Files\LibreOffice\program\soffice.exe"';
@@ -24,12 +28,37 @@ class ApiRehabMedikController extends Controller
         return [$log, $result];
     }
 
+    public static function setImgWord(TemplateProcessor $templateProcessor, string $key, string $imagePath, int $targetWidth)
+    {
+        if (!file_exists($imagePath)) {
+            throw new \Exception("Gambar tidak ditemukan: {$imagePath}");
+        }
+
+        [$originalWidth, $originalHeight] = getimagesize($imagePath);
+
+        if ($originalWidth === 0) {
+            throw new \Exception("Lebar gambar 0: {$imagePath}");
+        }
+
+        $ratio = $originalHeight / $originalWidth;
+        $targetHeight = $targetWidth * $ratio;
+
+        $templateProcessor->setImageValue($key, [
+            'path' => $imagePath,
+            'width' => $targetWidth,
+            'height' => $targetHeight,
+        ]);
+    }
+
+    // --------------------------------------------- FORM LAYANAN KFR ---------------------------------------------
     function getFormKfr($NORM, $KUNJUNGAN)
     {
         $show = DB::table('simrspku_klaim.form_kfr AS kfr')
+                ->select('kfr.group',DB::raw("LPAD(kfr.rm, 8, '0') as rm"),DB::raw("DATE_FORMAT(kfr.tgl, '%e %M %Y') as tgl"),'kfr.nama_dokter')
                 ->where('kfr.rm',$NORM)
                 ->whereNull('kfr.deleted_at')
-                ->orderBy('kfr.tgl','DESC')
+                ->orderBy('kfr.id','ASC')
+                ->groupBy('kfr.group',DB::raw("LPAD(kfr.rm, 8, '0')"),DB::raw("DATE_FORMAT(kfr.tgl, '%e %M %Y')"),'kfr.nama_dokter')
                 ->get();
 
         $form = DB::table('simrspku_klaim.form_kfr AS kfr')
@@ -45,11 +74,12 @@ class ApiRehabMedikController extends Controller
         return response()->json($data, 200);
     }
 
-    function getFormKfrById($id)
+    function getFormKfrByGroup($GROUP)
     {
         $data = DB::table('simrspku_klaim.form_kfr AS kfr')
-                ->where('kfr.id',$id)
+                ->where('kfr.group',$GROUP)
                 ->whereNull('kfr.deleted_at')
+                ->orderBy('kfr.id','ASC')
                 ->first();
 
         return response()->json($data, 200);
@@ -113,6 +143,7 @@ class ApiRehabMedikController extends Controller
             'spak_index' => $request->suspek,
             'spak' => $request->suspekya,
             'dokter' => $request->dokter,
+            'nama_dokter' => $getTtdDokter->nama_pegawai,
             'tte_pasien' => $path_tte_pasien,
             'tte_dokter' => $getTtdDokter->signature_path,
             'tgl_tte_pasien' => $now,
@@ -124,6 +155,47 @@ class ApiRehabMedikController extends Controller
             'message' => 'Formulir Rawat Jalan Layanan KFR telah berhasil diterbitkan',
             'code' => 200,
         ));
+    }
+
+    function simpanFormKfrLama(Request $request)
+    {
+        $formLama = form_kfr::where('group',$request->group)
+                            ->whereNull('deleted_at')
+                            ->orderBy('id','ASC')
+                            ->first();
+        if ($formLama) {
+            $now = Carbon::now();
+
+            // Clone model
+            $formBaru = $formLama->replicate();
+
+            // Change Value
+            $formBaru->nomor = $request->nomor;
+            $formBaru->created_at = $now;
+            $formBaru->updated_at = $now;
+
+            // Simpan sebagai baris baru
+            $formBaru->save();
+
+            return Response::json(array(
+                'message' => 'Formulir Rawat Jalan Layanan KFR telah berhasil diterbitkan',
+                'code' => 200,
+            ));
+        } else {
+            return response()->json("Error mengambil Data Formulir KFR Lama dari (GROUPID:".$request->group.")", 401);
+        }
+    }
+
+    function hapusFormKfr($NOMOR,$USER)
+    {
+        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+
+        $show = form_kfr::where('nomor',$NOMOR)->first();
+        $show->user_deleted = $USER;
+        $show->save();
+        $show->delete();
+
+        return response()->json($now, 200);
     }
 
     function compileFormKfr($GROUP)
@@ -147,6 +219,7 @@ class ApiRehabMedikController extends Controller
                 )
                 ->where('fkfr.GROUP',$GROUP)
                 ->whereNull('fkfr.deleted_at')
+                ->orderBy('fkfr.id','ASC')
                 ->first();
 
         if (empty($show)) {
@@ -243,25 +316,106 @@ class ApiRehabMedikController extends Controller
         ]);
     }
 
-    public static function setImgWord(TemplateProcessor $templateProcessor, string $key, string $imagePath, int $targetWidth)
+    // ----------------------------------------- FORM JADWAL PELAYANAN -------------------------------------------
+    function getFormJp($NOMOR)
     {
-        if (!file_exists($imagePath)) {
-            throw new \Exception("Gambar tidak ditemukan: {$imagePath}");
+        $form_kfr = DB::table('simrspku_klaim.form_kfr')
+            ->where('nomor', $NOMOR)
+            ->whereNull('deleted_at')
+            ->first();
+
+        if ($form_kfr) {
+            $form_jp = DB::table('simrspku_klaim.form_kfr_jp as fkfrjp')
+                ->leftJoin('aplikasi.pengguna as pe','pe.ID','=','fkfrjp.user')
+                ->select('fkfrjp.*','pe.NAMA as nama_user')
+                ->where('fkfrjp.group', $form_kfr->group)
+                ->whereNull('fkfrjp.deleted_at')
+                ->orderBy('fkfrjp.tgl','ASC')
+                ->get();
+        } else {
+            $form_jp = collect();
         }
 
-        [$originalWidth, $originalHeight] = getimagesize($imagePath);
+        $data = [
+            'form_kfr' => $form_kfr,
+            'form_jp' => $form_jp,
+        ];
 
-        if ($originalWidth === 0) {
-            throw new \Exception("Lebar gambar 0: {$imagePath}");
-        }
+        return response()->json($data, 200);
+    }
 
-        $ratio = $originalHeight / $originalWidth;
-        $targetHeight = $targetWidth * $ratio;
-
-        $templateProcessor->setImageValue($key, [
-            'path' => $imagePath,
-            'width' => $targetWidth,
-            'height' => $targetHeight,
+    function simpanJp(Request $request)
+    {
+        $request->validate([
+            'group' => 'required',
+            'nomor' => 'required',
+            'tgl' => 'required',
+            'program' => 'required',
+            'tte_p' => 'required|string',
+            'tte_t' => 'required|string',
         ]);
+
+        $now = Carbon::now();
+        $getForm = form_kfr::where('nomor',$request->nomor)
+                            ->where('group',$request->group)
+                            ->whereNull('deleted_at')
+                            ->first();
+        $getPengguna = Pengguna::where('ID',$getForm->dokter)->first();
+        $getTtdDokter = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+            ->where('nip', $getPengguna->NIP)
+            ->whereNull('deleted_at')
+            ->first();
+
+        if (!$getTtdDokter) {
+            return Response::json(array(
+                'message' => 'Tanda tangan User/Dokter tidak ditemukan. Silakan memperbarui Data TTE pada halaman Profil.',
+                'code' => 500,
+            ));
+        }
+
+        // TTE PASIEN
+        $imagep = str_replace('data:image/png;base64,', '', $request->tte_p);
+        $imagep = str_replace(' ', '+', $imagep);
+        $filename_p = time().'.png';
+        $path_tte_pasien = "signatures/pasien/{$getForm->rm}/{$filename_p}";
+        Storage::disk('public')->put($path_tte_pasien, base64_decode($imagep));
+
+        // TTE TERAPIS
+        $imaget = str_replace('data:image/png;base64,', '', $request->tte_t);
+        $imaget = str_replace(' ', '+', $imaget);
+        $filename_t = time().'.png';
+        $path_tte_terapis = "signatures/terapis/{$getForm->rm}/{$filename_t}";
+        Storage::disk('public')->put($path_tte_terapis, base64_decode($imaget));
+
+        DB::table('simrspku_klaim.form_kfr_jp')->insert([
+            'group' => $request->group,
+            'tgl' => $request->tgl,
+            'dokter' => $getForm->dokter,
+            'terapis' => $request->id_user,
+            'program' => $request->program,
+            'tte_pasien' => $path_tte_pasien,
+            'tte_dokter' => $getTtdDokter->signature_path,
+            'tte_terapis' => $path_tte_terapis,
+            'user' => $request->id_user,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        return Response::json(array(
+            'message' => 'Formulir Jadwal Pelayanan telah berhasil diterbitkan',
+            'code' => 200,
+        ));
+    }
+
+    function hapusFormJp($id)
+    {
+        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+
+        $show = form_kfr_jp::where('id',$id)->first();
+        $show->user = Auth::user()->ID;
+        $show->save();
+        $show->delete();
+
+        return response()->json($now, 200);
     }
 }

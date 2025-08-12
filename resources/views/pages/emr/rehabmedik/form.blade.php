@@ -9,10 +9,10 @@
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#formjadwalpelayanan" type="button"
                     role="tab" aria-controls="formjadwalpelayanan" aria-selected="true">Jadwal Pelayanan</button>
             </li>
-            <li class="nav-item" role="presentation">
+            {{-- <li class="nav-item" role="presentation">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#riwayatkfr" type="button" role="tab"
                     aria-controls="riwayatkfr" aria-selected="false">Riwayat</button>
-            </li>
+            </li> --}}
         </ul>
     </div>
     <div class="card-body p-3">
@@ -103,7 +103,7 @@
                             <button class="btn btn-secondary" onclick="showformBaruKfr()">
                                 <i class="fas fa-file-signature me-1"></i> Buat Formulir Baru
                             </button>
-                            <button class="btn btn-primary">
+                            <button class="btn btn-primary" onclick="simpanFormulirKfrLama()">
                                 <i class="fas fa-lock me-1"></i> Tetapkan Formulir Terpilih
                             </button>
                         </div>
@@ -259,100 +259,137 @@
                 </div>
             </div>
             <div class="tab-pane fade" id="formjadwalpelayanan" role="tabpanel" aria-labelledby="profile-tab">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <div class="form-floating mb-0">
-                                <textarea class="form-control" id="diagmedis" style="height: 50px" placeholder="Terisi Otomatis" disabled>Terisi Otomatis oleh Sistem</textarea>
-                                <label for="diagmedis">Diagnosis Medis (ICD-10) <a class="text-danger">*</a></label>
+                <div id="hideFormJp" class="text-center mt-2" hidden>
+                    <h5>Formulir Layanan KFR tidak ditemukan pada kunjungan ini. Silakan melakukan Pengisian pada Menu Form Layanan KFR terlebih dahulu.</h5>
+                </div>
+                <div id="showFormJp" hidden>
+                    <h5 class="text-start">Form <b class="text-primary">Program Pelayanan</b></h5>
+                    <input type="text" class="form-control" id="groupid" hidden>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <div class="form-floating mb-0">
+                                    <textarea class="form-control" id="diagmedis_jp" style="height: 50px" placeholder="Terisi Otomatis" readonly>Terisi Otomatis oleh Sistem</textarea>
+                                    <label for="diagmedis">Diagnosis Medis (ICD-10) <a class="text-danger">*</a></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="tatalaksana_jp" style="height: 50px" placeholder="Terisi Otomatis" readonly>Terisi Otomatis oleh Sistem</textarea>
+                                    <label for="tatalaksana">Permintaan Terapi <a class="text-danger">*</a></label>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <div class="form-floating">
-                                <textarea class="form-control" id="tatalaksana" style="height: 50px" placeholder="Terisi Otomatis" disabled>Terisi Otomatis oleh Sistem</textarea>
-                                <label for="tatalaksana">Permintaan Terapi <a class="text-danger">*</a></label>
+                    <hr class="mt-0">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <div class="form-group">
+                                        <label class="form-label">Tanggal Pelayanan <a class="text-danger">*</a></label>
+                                        <div class="input-group">
+                                            <input type="text" id="filter_tgl_jp" class="form-control flatpickr-input" placeholder="Pilih Rentang Tanggal">
+                                            <span class="input-group-text"><i class="feather icon-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <div class="form-group">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" id="program_jp" style="height: 100px" placeholder=""></textarea>
+                                            <label for="tatalaksana">Program Pelayanan <a class="text-danger">*</a></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="row">
+                                <div class="col mb-3">
+                                    <div class="form-group" id="padjpp">
+                                        <div class="position-relative overflow-hidden">
+                                            <canvas id="signature-pad-jpp" class="w-100 border rounded"
+                                                style="height: 200px;"></canvas>
+                                            <div id="placeholder-ttd-jpp"
+                                                class="position-absolute top-50 start-50 translate-middle text-muted"
+                                                style="pointer-events: none; opacity: 0.3;">
+                                                Tanda tangan Pasien <a class="text-danger">*</a>
+                                            </div>
+                                            <button id="clear-jpp" class="btn btn-sm btn-danger position-absolute align-middle"
+                                                style="top: 10px; right: 10px; z-index: 10;">
+                                                <i class="ti ti-writing-sign"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col mb-3">
+                                    <div class="form-group" id="padjpt">
+                                        <div class="position-relative overflow-hidden">
+                                            <canvas id="signature-pad-jpt" class="w-100 border rounded"
+                                                style="height: 200px;"></canvas>
+                                            <div id="placeholder-ttd-jpt"
+                                                class="position-absolute top-50 start-50 translate-middle text-muted"
+                                                style="pointer-events: none; opacity: 0.3;">
+                                                Tanda tangan Terapis <a class="text-danger">*</a>
+                                            </div>
+                                            <button id="clear-jpt" class="btn btn-sm btn-danger position-absolute align-middle"
+                                                style="top: 10px; right: 10px; z-index: 10;">
+                                                <i class="ti ti-writing-sign"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row align-items-center justify-content-between g-3">
+                                <div class="col-sm-auto btn-page">
+                                    <div class="btn-group">
+                                        <button class="btn btn-warning" onclick="kosongiJp()"><i
+                                                class="fas fa-edit me-1"></i> Kosongkan Formulir</button>
+                                        <button class="btn btn-light-secondary" onclick="refreshRiwayatJp()"
+                                            id="btn-refresh-riwayatjp" hidden>
+                                            <i class="fas fa-sync me-1"></i> Refresh Riwayat
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-sm-auto btn-page">
+                                    <button class="btn btn-primary" onclick="simpanFormulirJp()"><i
+                                            class="fas fa-save me-1"></i> Simpan Formulir</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <hr class="mt-0">
-                <div class="row">
-                    <div class="col-md-5">
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <div class="form-group">
-                                    <label class="form-label">Tanggal Pelayanan <a class="text-danger">*</a></label>
-                                    <div class="input-group">
-                                        <input type="text" id="filter_tgl_jp" class="form-control flatpickr-input" placeholder="Pilih Rentang Tanggal">
-                                        <span class="input-group-text"><i class="feather icon-calendar"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 mb-3">
-                                <div class="form-group">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="program_jp" style="height: 100px" placeholder=""></textarea>
-                                        <label for="tatalaksana">Program Pelayanan <a class="text-danger">*</a></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-7">
-                        <div class="row">
-                            <div class="col mb-3">
-                                <div class="form-group" id="padjpp">
-                                    <div class="position-relative overflow-hidden">
-                                        <canvas id="signature-pad-jpp" class="w-100 border rounded"
-                                            style="height: 200px;"></canvas>
-                                        <div id="placeholder-ttd-jpp"
-                                            class="position-absolute top-50 start-50 translate-middle text-muted"
-                                            style="pointer-events: none; opacity: 0.3;">
-                                            Tanda tangan Pasien <a class="text-danger">*</a>
-                                        </div>
-                                        <button id="clear-jpp" class="btn btn-sm btn-danger position-absolute align-middle"
-                                            style="top: 10px; right: 10px; z-index: 10;">
-                                            <i class="ti ti-writing-sign"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col mb-3">
-                                <div class="form-group" id="padjpt">
-                                    <div class="position-relative overflow-hidden">
-                                        <canvas id="signature-pad-jpt" class="w-100 border rounded"
-                                            style="height: 200px;"></canvas>
-                                        <div id="placeholder-ttd-jpt"
-                                            class="position-absolute top-50 start-50 translate-middle text-muted"
-                                            style="pointer-events: none; opacity: 0.3;">
-                                            Tanda tangan Terapis <a class="text-danger">*</a>
-                                        </div>
-                                        <button id="clear-jpt" class="btn btn-sm btn-danger position-absolute align-middle"
-                                            style="top: 10px; right: 10px; z-index: 10;">
-                                            <i class="ti ti-writing-sign"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="row align-items-center justify-content-between g-3">
-                            <div class="col-sm-auto">
-                                <button class="btn btn-light-secondary" onclick="kosongiJp()"><i
-                                        class="fas fa-edit me-1"></i> Kosongkan Formulir</button>
-                            </div>
-                            <div class="col-sm-auto btn-page">
-                                <button class="btn btn-primary" onclick="simpanFormulirJp()"><i
-                                        class="fas fa-save me-1"></i> Simpan Formulir</button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="table-responsive mt-3" id="show_table_jp" hidden>
+                    <hr class="mt-0">
+                    <h5 class="text-center">Riwayat <b class="text-primary">Program Pelayanan</b></h5>
+                    <table class="table mb-0 table-hover table-display" id="vantable_jp">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">AKSI</th>
+                                <th style="width: 5%;">NO</th>
+                                <th style="width: 60%;">PROGRAM PELAYANAN</th>
+                                <th style="width: 15%;" class="text-center">TANGGAL</th>
+                                <th style="width: 15%;" class="text-end">DITAMBAHKAN OLEH</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tampil-tbody-jp">
+                            <tr style='font-size:13px'>
+                                <td colspan="5">
+                                    <center>
+                                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="tab-pane fade" id="riwayatkfr" role="tabpanel" aria-labelledby="profile-tab">
+            {{-- <div class="tab-pane fade" id="riwayatkfr" role="tabpanel" aria-labelledby="profile-tab">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead>
@@ -383,6 +420,34 @@
                         </tbody>
                     </table>
                 </div>
+            </div> --}}
+        </div>
+    </div>
+</div>
+
+<div class="modal animate__animated animate__rubberBand fade" id="modalHapusJp" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Form Hapus Program Pelayanan
+                </h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="id_hapus_jp" hidden>
+                <p style="text-align: justify;">Anda akan melakukan penghapusan Program Pelayanan tersebut, lakukanlah dengan hati-hati. Ceklis dibawah untuk melanjutkan penghapusan.</p>
+                <label class="switch">
+                    <input type="checkbox" class="switch-input" id="setujuhapusjp">
+                    <span class="switch-toggle-slider">
+                    <span class="switch-on"></span>
+                    <span class="switch-off"></span>
+                    </span>
+                    <span class="switch-label">Anda siap menerima Risiko</span>
+                </label>
+            </div>
+            <div class="col-12 text-center mb-4">
+                <button type="submit" class="btn btn-danger me-sm-3 me-1" onclick="prosesHapusJp()"><i class="fa fa-trash me-1" style="font-size:13px"></i> Hapus</button>
+                <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
             </div>
         </div>
     </div>
@@ -520,7 +585,6 @@
             dataType: 'json',
             success: function(res) {
                 $('#formLamaKfrPick').prop('hidden', true);
-
                 if (res.form) {
                     showPreviewFormKfr(res.form.group);
                     $('#previewformkfr').prop('hidden', false);
@@ -532,11 +596,11 @@
                         $('#filterformLamaKfr').prop('disabled', false);
                         $("#filterformLamaKfr").find('option').remove();
                         $("#filterformLamaKfr").append(`
-                            <option value="" selected>Pilih Salah Satu</option>
+                            <option value="" selected hidden>Pilih Salah Satu</option>
                         `);
                         res.show.forEach(pouch => {
                             $("#filterformLamaKfr").append(`
-                                <option value="${pouch.id}">${pouch.nomor} | Tgl.${pouch.tgl}</option>
+                                <option value="${pouch.group}">RM. ${pouch.rm} | Tgl. ${pouch.tgl} | ${pouch.nama_dokter}</option>
                             `);
                         });
 
@@ -615,6 +679,16 @@
                 $('#previewformkfr').empty().html(
                     `<iframe src="${fileURL}" width="100%" height="500px" frameborder="0" class="rounded"></iframe>`
                 );
+                $('#previewformkfr').append(`
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <button class="btn btn-warning" onclick="showPreviewFormKfr(${GROUP})">
+                            <i class="fas fa-sync me-1"></i> Muat Ulang Laporan
+                        </button>
+                        <button class="btn btn-danger" onclick="hapusFormKfr()">
+                            <i class="fas fa-trash me-1"></i> Hapus Formulir Kunjungan
+                        </button>
+                    </div>
+                `);
             })
             .catch(error => {
                 iziToast.error({
@@ -650,7 +724,7 @@
             save.append('tte', padKfr.toDataURL('image/png'));
         } else {
             iziToast.warning({
-                title: 'Tanda Tangan!',
+                title: 'Tanda Tangan Kosong!',
                 message: 'Silakan tanda tangan terlebih dahulu.',
                 position: 'topRight'
             });
@@ -745,6 +819,88 @@
         });
     }
 
+    function simpanFormulirKfrLama() {
+        var group = $('#filterformLamaKfr').val();
+        var nomor = "{{ $list['KUNJUNGAN'] }}";
+
+        const save = new FormData();
+        save.append('group', group);
+        save.append('nomor', nomor);
+
+        if (group == '') {
+            iziToast.warning({
+                title: 'Maaf!',
+                message: 'Mohon untuk memilih formulir layanan KFR yang tersedia',
+                position: 'topRight'
+            });
+        } else {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('api.emr.fkfr.simpanformlama') }}",
+                method: 'POST',
+                data: save,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function(res) {
+                    if (res.code === 200) {
+                        iziToast.success({
+                            title: 'Berhasil!',
+                            message: res.message,
+                            position: 'topRight'
+                        });
+                        validPageFormKfr();
+                    } else {
+                        iziToast.warning({
+                            title: 'API Error!',
+                            message: res.message,
+                            position: 'topRight'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    iziToast.error({
+                        title: 'Gagal!',
+                        message: error,
+                        position: 'topRight'
+                    });
+                }
+            });
+        }
+    }
+
+    function hapusFormKfr() {
+        var nomor = "{{ $list['KUNJUNGAN'] }}";
+        var id_user = "{{ Auth::user()->ID }}";
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: `/api/emr/fkfr/${nomor}/hapus/${id_user}`,
+            type: 'DELETE',
+            dataType: 'json',
+            success: function(res) {
+                iziToast.success({
+                    title: 'Pesan Berhasil!',
+                    message: `Formulir Layanan KFR kunjungan ini berhasil dihapus dari Grup Berkas Klaim pada `+res,
+                    position: 'topRight'
+                });
+                validPageFormKfr();
+            },
+            error: function(xhr, status, error) {
+                iziToast.error({
+                    title: 'Gagal!',
+                    message: error,
+                    position: 'topRight'
+                });
+            }
+        })
+    }
+
     function kosongiKfr() {
         $('#diagmedis').val('');
         $('#diagfungsi').val('');
@@ -767,23 +923,245 @@
 
     // FORM JADWAL PELAYANAN
     function validPageFormJp() {
+        if (window.dataTable) {
+            window.dataTable.destroy();
+        }
         $.ajax({
-            url: `/api/emr/{{ $list['show']->NORM }}/fkfr/{{ $list['KUNJUNGAN'] }}`,
+            url: `/api/emr/jp/{{ $list['KUNJUNGAN'] }}`,
             type: 'GET',
             dataType: 'json',
             success: function(res) {
-                if (res.form) {
+                if (res.form_kfr) {
+                    $('#hideFormJp').prop('hidden',true);
+                    $('#showFormJp').prop('hidden',false);
+                    $('#groupid').val(res.form_kfr.group);
+                    $('#diagmedis_jp').val(res.form_kfr.diagnosa_medis);
+                    $('#tatalaksana_jp').val(res.form_kfr.tata_laksana_kfr);
 
+                    // JALANKAN FUNCTION TTE
+                    initPadJp();
+
+                    if (!res.form_jp || res.form_jp.length === 0) {
+                        $('#btn-refresh-riwayatjp').prop('hidden',true);
+                        $('#show_table_jp').prop('hidden',true);
+                    } else {
+                        $('#btn-refresh-riwayatjp').prop('hidden',false);
+                        $('#show_table_jp').prop('hidden',false);
+                        $("#tampil-tbody-jp").empty();
+                        if (res.form_jp && Array.isArray(res.form_jp)) {
+                            res.form_jp.forEach((item, index) => {
+                                $("#tampil-tbody-jp").append(`
+                                    <tr id="jpid_${item.id}">
+                                        <td>
+                                            <button class="btn btn-icon btn-danger avtar-s mb-0" onclick="hapusJp(${item.id})">
+                                                <i class="fas fa-trash" style="font-size: 13px;"></i>
+                                            </button>
+                                        </td>
+                                        <td>${index + 1}</td>
+                                        <td>${item.program}</td>
+                                        <td class="text-center">${formatTanggal(item.tgl)}</td>
+                                        <td class="text-end">${item.nama_user}</td>
+                                    </tr>
+                                `);
+                            })
+                        }
+                        // VANILLA TABLE
+                        window.dataTable = new simpleDatatables.DataTable("#vantable_jp", {
+                            sortable: true,
+                            searchable: true,
+                            perPage: 10,
+                            perPageSelect: [10, 20, 50, 100, 300, 500],
+                            fixedColumns: true,
+                            firstLast: true,
+                            layout: "both",
+                            labels: {
+                                placeholder: "Cari Program Kunjungan...",
+                                perPage: "Jumlah baris per halaman",
+                                noRows: "Tidak ada data Jadwal Pelayanan yang tersedia",
+                                info: "Menampilkan {start} - {end} dari {rows} data",
+                            },
+                            columns: [
+                                { select: 0, sortable: false },
+                                { select: 1, sortable: false },
+                                { select: 2, sortable: false },
+                                { select: 3, sort: 'ASC' },
+                                { select: 4, sortable: false },
+                            ]
+                        });
+                        // Showing Tooltip
+                        $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                        $('.tooltip').remove();
+                        $('[data-bs-toggle="tooltip"]').tooltip({
+                            trigger : 'hover'
+                        })
+                    }
+                } else {
+                    $('#hideFormJp').prop('hidden',false);
+                    $('#groupid').val('');
+                    $('#diagmedis_jp').val('');
+                    $('#tatalaksana_jp').val('');
+                    $('#showFormJp').prop('hidden',true);
                 }
-
-                // JALANKAN FUNCTION TTE
-                initPadJp();
-
             },
             error: function(xhr, status, error) {
                 console.error('Terjadi kesalahan:', error);
             }
         })
+    }
+
+    function refreshRiwayatJp() {
+        $('#btn-refresh-riwayatjp').find('i').addClass('fa-spin');
+        $('#show_table_jp').prop('hidden',false);
+        if (window.dataTable) {
+            window.dataTable.destroy();
+        }
+        $("#tampil-tbody-jp").empty().append(`
+            <tr style='font-size:13px'>
+                <td colspan="15">
+                    <center>
+                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                    </center>
+                </td>
+            </tr>
+        `);
+        validPageFormJp();
+        $('#btn-refresh-riwayatjp').find('i').removeClass('fa-spin');
+    }
+
+    function simpanFormulirJp() {
+        var group = $('#groupid').val();
+        var nomor = "{{ $list['KUNJUNGAN'] }}";
+        var tgl = $('#filter_tgl_jp').val();
+        var program = $('#program_jp').val();
+        var id_user = "{{ Auth::user()->ID }}";
+
+        const save = new FormData();
+        save.append('group', group);
+        save.append('nomor', nomor);
+        save.append('tgl', tgl);
+        save.append('program', program);
+        save.append('id_user', id_user);
+
+        if (padJpP && !padJpP.isEmpty()) {
+            save.append('tte_p', padJpP.toDataURL('image/png'));
+        } else {
+            iziToast.warning({
+                title: 'Tanda Tangan Pasien Kosong!',
+                message: 'Silakan tanda tangan terlebih dahulu.',
+                position: 'topRight'
+            });
+            return;
+        }
+
+        if (padJpT && !padJpT.isEmpty()) {
+            save.append('tte_t', padJpT.toDataURL('image/png'));
+        } else {
+            iziToast.warning({
+                title: 'Tanda Tangan Terapis Kosong!',
+                message: 'Silakan tanda tangan terlebih dahulu.',
+                position: 'topRight'
+            });
+            return;
+        }
+
+        if (group == '') {
+            iziToast.warning({
+                title: 'Maaf, Terjadi Error!',
+                message: 'ID Group tidak ditemukan! Mohon refresh Browser Anda.',
+                position: 'topRight'
+            });
+        } else {
+            if (program == '' || tgl == '') {
+                iziToast.warning({
+                    title: 'Isian Program masih kosong!',
+                    message: 'Mohon untuk mengisi Program Pelayanan Pasien dan Tanggal Program pada kunjungan saat ini terlebih dahulu.',
+                    position: 'topRight'
+                });
+            } else {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "{{ route('api.emr.jp.simpanJp') }}",
+                    method: 'POST',
+                    data: save,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: function(res) {
+                        if (res.code === 200) {
+                            iziToast.success({
+                                title: 'Berhasil!',
+                                message: res.message,
+                                position: 'topRight'
+                            });
+                            kosongiJp();
+                            validPageFormJp();
+                        } else {
+                            iziToast.warning({
+                                title: 'API Error!',
+                                message: res.message,
+                                position: 'topRight'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        iziToast.error({
+                            title: 'Gagal!',
+                            message: error,
+                            position: 'topRight'
+                        });
+                    }
+                });
+            }
+        }
+    }
+
+    function hapusJp(id) {
+        $("#id_hapus_jp").val(id);
+        var inputs = document.getElementById('setujuhapusjp');
+        inputs.checked = false;
+        $('#modalHapusJp').modal('show');
+    }
+
+    function prosesHapusJp() {
+        // SWITCH BTN HAPUS
+        var checkboxHapus = $('#setujuhapusjp').is(":checked");
+        if (checkboxHapus == false) {
+            iziToast.error({
+                title: 'Pesan Galat!',
+                message: 'Mohon menyetujui untuk dilakukan penghapusan berkas tersebut',
+                position: 'topRight'
+            });
+        } else {
+            // PROSES HAPUS
+            var id = $("#id_hapus_jp").val();
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "/api/emr/jp/hapus/"+id,
+                type: 'DELETE',
+                success: function(res) {
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: 'Program Pelayanan telah berhasil dihapus pada '+res,
+                        position: 'topRight'
+                    });
+                    $('#modalHapusJp').modal('hide');
+                    kosongiJp();
+                    validPageFormJp();
+                },
+                error: function(res) {
+                    iziToast.error({
+                        title: 'API Error!',
+                        message: 'Program Pelayanan Anda gagal dihapus',
+                        position: 'topRight'
+                    });
+                }
+            });
+        }
     }
 
     function kosongiJp() {
@@ -837,5 +1215,19 @@
         });
 
         return isValid;
+    }
+
+    function formatTanggal(tanggal) {
+        const bulanIndo = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+
+        const parts = tanggal.split('-'); // ["2025","08","12"]
+        const tahun = parts[0];
+        const bulan = parseInt(parts[1], 10) - 1; // index array
+        const hari = parts[2];
+
+        return `${parseInt(hari, 10)} ${bulanIndo[bulan]} ${tahun}`;
     }
 </script>
