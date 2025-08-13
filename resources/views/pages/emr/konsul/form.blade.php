@@ -22,6 +22,9 @@
                         <div class="card border-0">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <strong>Riwayat Konsul</strong>
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalTambahKonsul">
+                                    + Tambah Konsul
+                                </button>
                             </div>
                             <div class="card-body p-0">
                                 <div class="table-responsive">
@@ -101,6 +104,50 @@
             </div>
 
         </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalTambahKonsul" tabindex="-1" aria-labelledby="modalTambahKonsulLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form id="formTambahKonsul">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Konsul Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Alasan Konsul</label>
+                        <textarea name="alasan" class="form-control" required></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Permintaan Tindakan</label>
+                        <textarea name="permintaan" class="form-control" required></textarea>
+                    </div>
+                    <!-- Ruangan Tujuan -->
+                    <div class="col-md-6">
+                        <label class="form-label">Ruang Tujuan</label>
+                        <select name="tujuan" id="select-ruangan" class="form-select" required>
+                            <option value="">-- Pilih Ruangan --</option>
+                            <!-- Diisi lewat JS -->
+                        </select>
+                    </div>
+
+                    <!-- Dokter Tujuan -->
+                    <div class="col-md-6">
+                        <label class="form-label">Dokter Tujuan</label>
+                        <select name="dokter" id="select-dokter" class="form-select" required>
+                            <option value="">-- Pilih Dokter --</option>
+                            <!-- Diisi berdasarkan ruangan -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -221,6 +268,40 @@
         $('#input-dokterjawab').val('-');
     }
 
+    $('#formTambahKonsul').submit(function (e) {
+        e.preventDefault();
+
+        const formData = {
+            alasan: $('textarea[name="alasan"]').val(),
+            permintaan: $('textarea[name="permintaan"]').val(),
+            tujuan: $('select[name="tujuan"]').val(),
+            dokter: $('select[name="dokter"]').val(),
+            kunjungan: "{{ $list['KUNJUNGAN'] }}",
+            oleh: "{{ Auth::user()->ID }}"
+        };
+
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: '/api/emr/konsulko/tambah', // Ganti sesuai endpoint API yang kamu buat
+            type: 'POST',
+            data: JSON.stringify(formData),
+            contentType: 'application/json',
+            success: function (response) {
+                $('#modalTambahKonsul').modal('hide');
+                $('#formTambahKonsul')[0].reset();
+                konsulMasuk(formData.kunjungan); // Refresh data tabel
+                alert('Konsul berhasil ditambahkan');
+            },
+            error: function (xhr) {
+                // alert('Gagal menyimpan data. Silakan coba lagi.');
+                console.error('Error:', xhr.responseText);
+                alert('Gagal menyimpan data: ' + xhr.responseText);
+            }
+        });
+    });
+
     function formatTanggal(dateTime) {
         if (!dateTime) return '-';
         const date = new Date(dateTime);
@@ -234,4 +315,53 @@
                 minute: '2-digit'
             });
     }
+
+    // Load data ruangan saat modal dibuka
+    $('#modalTambahKonsul').on('show.bs.modal', function () {
+        loadRuangan();
+        $('#select-dokter').html('<option value="">-- Pilih Dokter --</option>'); // Reset dokter
+    });
+
+    // Saat ruangan dipilih, ambil dokter
+    $('#select-ruangan').on('change', function () {
+        const ruanganId = $(this).val();
+        loadDokterByRuangan(ruanganId);
+    });
+
+    function loadRuangan() {
+        $.ajax({
+            url: '/api/emr/konsulk/ruangan',
+            type: 'GET',
+            success: function (data) {
+                let options = '<option value="">-- Pilih Ruangan --</option>';
+                data.forEach(function (ruangan) {
+                    options += `<option value="${ruangan.ID}">${ruangan.DESKRIPSI}</option>`;
+                });
+                $('#select-ruangan').html(options);
+            },
+            error: function () {
+                alert('Gagal memuat data ruangan');
+            }
+        });
+    }
+
+    function loadDokterByRuangan(ruanganId) {
+        if (!ruanganId) return;
+
+        $.ajax({
+            url: `/api/emr/konsulk/ruangan/dokter/${ruanganId}`,
+            type: 'GET',
+            success: function (data) {
+                let options = '<option value="">-- Pilih Dokter --</option>';
+                data.forEach(function (dokter) {
+                    options += `<option value="${dokter.NIP}">${dokter.NAMADOKTER}</option>`;
+                });
+                $('#select-dokter').html(options);
+            },
+            error: function () {
+                $('#select-dokter').html('<option value="">-- Tidak ada dokter --</option>');
+            }
+        });
+    }
+
 </script>
