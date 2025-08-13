@@ -327,7 +327,10 @@ class ApiRehabMedikController extends Controller
         if ($form_kfr) {
             $form_jp = DB::table('simrspku_klaim.form_kfr_jp as fkfrjp')
                 ->leftJoin('aplikasi.pengguna as pe','pe.ID','=','fkfrjp.user')
-                ->select('fkfrjp.*','pe.NAMA as nama_user')
+                ->leftJoin('pendaftaran.kunjungan AS kj','kj.NOMOR','=','fkfrjp.nomor')
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','kj.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                ->select('fkfrjp.*','pe.NAMA as nama_user','kj.MASUK','kj.KELUAR','pj.NOMOR AS NOSEP')
                 ->where('fkfrjp.group', $form_kfr->group)
                 ->whereNull('fkfrjp.deleted_at')
                 ->orderBy('fkfrjp.tgl','ASC')
@@ -389,6 +392,7 @@ class ApiRehabMedikController extends Controller
 
         DB::table('simrspku_klaim.form_kfr_jp')->insert([
             'group' => $request->group,
+            'nomor' => $request->nomor,
             'tgl' => $request->tgl,
             'dokter' => $getForm->dokter,
             'terapis' => $request->id_user,
