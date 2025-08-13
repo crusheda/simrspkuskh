@@ -239,14 +239,12 @@
                         <div class="col-md-12">
                             <div class="row align-items-center justify-content-between g-3">
                                 <div class="col-sm-auto">
-                                    <div class="btn-group">
-                                        <button class="btn btn-warning" onclick="kosongiKfr()">
-                                            <i  class="fas fa-edit me-1"></i> Kosongkan Formulir
-                                        </button>
-                                        <button class="btn btn-secondary" onclick="showformLamaKfr()">
-                                            <i class="fab fa-wpforms me-1"></i> Lihat Formulir Yang Ada
-                                        </button>
-                                    </div>
+                                    <button class="btn btn-warning me-2" onclick="kosongiKfr()">
+                                        <i  class="fas fa-edit me-1"></i> Kosongkan Formulir
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="showformLamaKfr()">
+                                        <i class="fab fa-wpforms me-1"></i> Lihat Formulir Yang Ada
+                                    </button>
                                 </div>
                                 <div class="col-sm-auto btn-page">
                                     <button class="btn btn-primary" onclick="simpanFormulirKfrBaru()">
@@ -347,18 +345,17 @@
                         <div class="col-md-12">
                             <div class="row align-items-center justify-content-between g-3">
                                 <div class="col-sm-auto btn-page">
-                                    <div class="btn-group">
-                                        <button class="btn btn-warning" onclick="kosongiJp()"><i
-                                                class="fas fa-edit me-1"></i> Kosongkan Formulir</button>
-                                        <button class="btn btn-light-secondary" onclick="refreshRiwayatJp()"
-                                            id="btn-refresh-riwayatjp" hidden>
-                                            <i class="fas fa-sync me-1"></i> Refresh Riwayat
-                                        </button>
-                                    </div>
+                                    <button class="btn btn-warning me-2" onclick="kosongiJp()">
+                                        <i class="fas fa-edit me-1"></i> Kosongkan Form
+                                    </button>
+                                    <button class="btn btn-light-secondary" onclick="refreshRiwayatJp()" id="btn-refresh-riwayatjp" hidden>
+                                        <i class="fas fa-sync me-1"></i> Refresh Riwayat
+                                    </button>
                                 </div>
                                 <div class="col-sm-auto btn-page">
-                                    <button class="btn btn-primary" onclick="simpanFormulirJp()"><i
-                                            class="fas fa-save me-1"></i> Simpan Formulir</button>
+                                    <button class="btn btn-primary" onclick="simpanFormulirJp()">
+                                        <i class="fas fa-save me-1"></i> Simpan Form Program
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -372,9 +369,10 @@
                             <tr>
                                 <th style="width: 5%;">AKSI</th>
                                 <th style="width: 5%;">NO</th>
-                                <th style="width: 60%;">PROGRAM PELAYANAN</th>
-                                <th style="width: 15%;" class="text-center">TANGGAL</th>
-                                <th style="width: 15%;" class="text-end">DITAMBAHKAN OLEH</th>
+                                <th style="width: 15%;">KUNJUNGAN PASIEN</th>
+                                <th style="width: 55%;">PROGRAM PELAYANAN</th>
+                                <th style="width: 10%;" class="text-center">TANGGAL</th>
+                                <th style="width: 10%;" class="text-end">DITAMBAHKAN OLEH</th>
                             </tr>
                         </thead>
                         <tbody id="tampil-tbody-jp">
@@ -958,6 +956,21 @@
                                             </button>
                                         </td>
                                         <td>${index + 1}</td>
+                                        <td style='white-space: normal !important;word-wrap: break-word;'>
+                                            <div class='d-flex justify-content-start align-items-center'>
+                                                <div class='d-flex flex-column'>
+                                                    <h6 class='mb-0 text-truncate text-primary'>
+                                                        <a href='javascript:void(0);' data-bs-toggle='tooltip' data-bs-placement='bottom' data-bs-html='true' title='Nomor SEP Kunjungan Pasien'>${item.NOSEP}</a>
+                                                    </h6>
+                                                    <small class='text-truncate text-muted'>
+                                                        <strong><u>Masuk Ruangan</u> : ${item.MASUK}</strong>
+                                                    </small>
+                                                    <small class='text-truncate text-muted'>
+                                                        <strong><u>Keluar Ruangan</u> : ${item.KELUAR}</strong>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </td>
                                         <td>${item.program}</td>
                                         <td class="text-center">${formatTanggal(item.tgl)}</td>
                                         <td class="text-end">${item.nama_user}</td>
@@ -984,8 +997,9 @@
                                 { select: 0, sortable: false },
                                 { select: 1, sortable: false },
                                 { select: 2, sortable: false },
-                                { select: 3, sort: 'ASC' },
-                                { select: 4, sortable: false },
+                                { select: 3, sortable: false },
+                                { select: 4, sort: 'ASC' },
+                                { select: 5, sortable: false },
                             ]
                         });
                         // Showing Tooltip
