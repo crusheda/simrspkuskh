@@ -258,7 +258,7 @@
                     firstLast: true,
                     layout: "both",
                     labels: {
-                        placeholder: "Cari data SEP...",
+                        placeholder: "Cari data Kunjungan...",
                         perPage: "Jumlah baris per halaman",
                         noRows: "Tidak ada data Kunjungan Pasien yang tersedia",
                         info: "Menampilkan {start} - {end} dari {rows} data",

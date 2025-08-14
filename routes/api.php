@@ -113,6 +113,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('klaim/upload/{id}/show', [ApiSmartKlaimController::class, 'showUpload'])->name('api.klaim.showUpload');
             Route::post('klaim/upload', [ApiSmartKlaimController::class, 'upload'])->name('api.klaim.upload');
             Route::delete('klaim/upload/{id}/hapus', [ApiSmartKlaimController::class, 'hapusUpload'])->name('api.klaim.hapusUpload');
+            Route::delete('klaim/rehab/{id}/hapus', [ApiSmartKlaimController::class, 'hapusRehab'])->name('api.klaim.hapusRehab');
             Route::post('klaim/submit', [ApiSmartKlaimController::class, 'submit'])->name('api.klaim.submit');
             Route::get('klaim/{sep}/verif', [ApiSmartKlaimController::class, 'verifSep'])->name('api.klaim.verifSep');
             Route::get('klaim/{kunjungan}/catatan', [ApiSmartKlaimController::class, 'getCatatan'])->name('api.klaim.getCatatan');

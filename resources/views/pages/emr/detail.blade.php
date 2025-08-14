@@ -120,7 +120,7 @@
                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="ph-duotone ph-dots-three-outline-vertical"></i></a>
                                     <div class="dropdown-menu dropdown-menu-end" style="">
-                                        <a class="dropdown-item" href="javascript: void(0);">Ubah Data</a>
+                                        <a class="dropdown-item" href="javascript: void(0);"><s>Ubah Data</s></a>
                                         {{-- <a class="dropdown-item" href="#">Delete</a> --}}
                                     </div>
                                 </div>
@@ -192,7 +192,7 @@
                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <i class="ph-duotone ph-dots-three-outline-vertical"></i></a>
                                     <div class="dropdown-menu dropdown-menu-end" style="">
-                                        <a class="dropdown-item" href="javascript: void(0);">Selengkapnya</a>
+                                        <a class="dropdown-item" href="javascript: void(0);"><s>Selengkapnya</s></a>
                                     </div>
                                 </div>
                             </div>

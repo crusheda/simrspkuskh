@@ -131,7 +131,8 @@ class EMRController extends Controller
                 ->where(function ($q) {
                     $q->where('pk.RUANGAN', 'LIKE', '1020101%')
                     ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
-                    ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
+                    ->orWhere('pk.RUANGAN', 'LIKE', '1020301%')
+                    ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
                 })
                 ->where('pp.NORM',$show->NORM)
                 ->orderBy('pp.TANGGAL','DESC')

@@ -45,6 +45,14 @@
             <div class="card-header p-3">
                 <h6 class="mb-0"><i class="ti ti-sort-descending-2 me-1"></i> Pilihan Berkas</h6>
             </div>
+            <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
+                <div class="input-group">
+                    <input class="form-check-input" type="checkbox" id="ck_individual" style="width: 2em;height: 2.2em;margin-top:0px"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ individual('{{ $list['KUNJUNGAN'] }}'); }
+                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
+                </div>
+                <a class="text-nowrap mt-1">Individual</a>
+            </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
                 <div class="input-group">
                     <input class="form-check-input" type="checkbox" id="ck_sep" style="width: 2em;height: 2.2em;margin-top:0px"
@@ -60,22 +68,6 @@
                     else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                 </div>
                 <a class="text-nowrap mt-1">Resume Medis</a>
-            </div>
-            <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
-                <div class="input-group">
-                    <input class="form-check-input" type="checkbox" id="ck_skdp" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ skdp('{{ $list['KUNJUNGAN'] }}'); }
-                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
-                </div>
-                <a class="text-nowrap mt-1">SKDP</a>
-            </div>
-            <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
-                <div class="input-group">
-                    <input class="form-check-input" type="checkbox" id="ck_individual" style="width: 2em;height: 2.2em;margin-top:0px"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ individual('{{ $list['KUNJUNGAN'] }}'); }
-                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
-                </div>
-                <a class="text-nowrap mt-1">Individual</a>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
                 <div class="input-group">
@@ -117,7 +109,16 @@
                 </div>
                 <a class="text-nowrap mt-1">Laporan Operasi</a>
             </div>
+            <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
+                <div class="input-group">
+                    <input class="form-check-input" type="checkbox" id="ck_skdp" style="width: 2em;height: 2.2em;margin-top:0px"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ skdp('{{ $list['KUNJUNGAN'] }}'); }
+                    else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
+                </div>
+                <a class="text-nowrap mt-1">SKDP</a>
+            </div>
             <div id="dokumen_tambahan"></div>
+            <div id="dokumen_rehab"></div>
             <div id="footer_submit"></div>
         </div>
     </div>
@@ -238,7 +239,34 @@
                 </label>
             </div>
             <div class="col-12 text-center mb-4">
-                <button type="submit" id="btn-hapus" class="btn btn-danger me-sm-3 me-1" onclick="prosesHapusTambahan()"><i class="fa fa-trash me-1" style="font-size:13px"></i> Hapus</button>
+                <button type="submit" id="btn-hapus-tambahan" class="btn btn-danger me-sm-3 me-1" onclick="prosesHapusTambahan()"><i class="fa fa-trash me-1" style="font-size:13px"></i> Hapus</button>
+                <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal animate__animated animate__rubberBand fade" id="hapusRehab" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Form Hapus Berkas Rehabilitasi Medik
+                </h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="id_hapus_rehab" hidden>
+                <p style="text-align: justify;">Perhatian, saat ini Anda akan melakukan penghapusan Berkas Rehabilitasi Medik untuk Klaim (ID#<a class="text-danger" id="tx_hapus_rehab"></a>), lakukanlah dengan hati-hati. Ceklis dibawah untuk melanjutkan penghapusan.</p>
+                <label class="switch">
+                    <input type="checkbox" class="switch-input" id="setujuhapusrehab">
+                    <span class="switch-toggle-slider">
+                    <span class="switch-on"></span>
+                    <span class="switch-off"></span>
+                    </span>
+                    <span class="switch-label">Anda siap menerima Risiko</span>
+                </label>
+            </div>
+            <div class="col-12 text-center mb-4">
+                <button type="submit" id="btn-hapus-rehab" class="btn btn-danger me-sm-3 me-1" onclick="prosesHapusRehab()"><i class="fa fa-trash me-1" style="font-size:13px"></i> Hapus</button>
                 <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
             </div>
         </div>
@@ -265,7 +293,7 @@
                 </label>
             </div>
             <div class="col-12 text-center mb-4">
-                <button type="submit" id="btn-hapus" class="btn btn-danger me-sm-3 me-1" onclick="prosesHapus()"><i class="fa fa-trash me-1" style="font-size:13px"></i> Hapus</button>
+                <button type="submit" id="btn-hapus-klaim" class="btn btn-danger me-sm-3 me-1" onclick="prosesHapus()"><i class="fa fa-trash me-1" style="font-size:13px"></i> Hapus</button>
                 <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
             </div>
         </div>
@@ -392,6 +420,28 @@
                                 </div>`;
                     $('#footer_submit').empty().append(submit);
 
+                    // DOKUMEN REHABILITASI MEDIK
+                    $('#dokumen_rehab').empty();
+                    rehab = ``;
+                    console.log(res.file);
+                    res.file.forEach(item => {
+                        if (item.jenis == 11) {
+                            rehab += `<div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0"  style="justify-content: space-between;">
+                                            <div class="dropdown">
+                                                <button class="btn btn-link-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                                    style="width: 2em; height: 2.2em; display: flex; justify-content: center; align-items: center; padding: 0;"><i class="fas fa-angle-down" style="font-size:13px"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><button class="dropdown-item text-primary" onclick="showUpload(${item.id})"><i class="fas fa-eye" style="font-size:13px"></i> Lihat</button></li>
+                                                    <li><button class="dropdown-item text-danger" id="btn-hapus-rehab${item.id}" onclick="hapusRehab(${item.id})"><i class="fas fa-trash" style="font-size:13px"></i> Hapus</button></li>
+                                                </ul>
+                                            </div>
+                                            <a class="text-nowrap mt-1" style="margin-left:auto;">${item.nama_tambahan}</a>
+                                        </div>`;
+                        }
+                    });
+                    $('#dokumen_rehab').append(rehab);
+
                     // REFRESH CATATAN
                     $('#verif_accordion').prop('hidden',false);
                     if (res.catatan.length != 0) {
@@ -463,9 +513,10 @@
 
                     $('#btn-refresh-klaim').empty().append(`<button class="btn btn-light-primary" onclick="prosesSubmit('${kunjungan}')">Refresh Preview Klaim</button>`);
 
+                    // DOKUMEN TAMBAHAN
                     $('#dokumen_tambahan').empty();
                     tambahan = ``;
-                    console.log(res.file);
+                    // console.log(res.file);
                     res.file.forEach(item => {
                         if (item.jenis == 10) {
                             tambahan += `<div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0"  style="justify-content: space-between;">
@@ -489,6 +540,34 @@
                         }
                     });
                     $('#dokumen_tambahan').append(tambahan);
+
+                    // DOKUMEN REHABILITASI MEDIK
+                    $('#dokumen_rehab').empty();
+                    rehab = ``;
+                    console.log(res.file);
+                    res.file.forEach(item => {
+                        if (item.jenis == 11) {
+                            rehab += `<div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0"  style="justify-content: space-between;">
+                                            <div class="dropdown">
+                                                <button class="btn btn-link-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                                    style="width: 2em; height: 2.2em; display: flex; justify-content: center; align-items: center; padding: 0;"><i class="fas fa-angle-down" style="font-size:13px"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    ${res.show.verif == 0?
+                                                        `<li><button class="dropdown-item text-primary" onclick="showUpload(${item.id})"><i class="fas fa-eye" style="font-size:13px"></i> Lihat</button></li>
+                                                        <li><button class="dropdown-item text-danger" id="btn-hapus-rehab${item.id}" onclick="hapusRehab(${item.id})"><i class="fas fa-trash" style="font-size:13px"></i> Hapus</button></li>`
+                                                    :
+                                                        `<li><button class="dropdown-item text-primary" onclick="showUpload(${item.id})"><i class="fas fa-eye" style="font-size:13px"></i> Lihat</button></li>
+                                                        <li><button class="dropdown-item text-secondary" disabled><i class="fas fa-trash" style="font-size:13px"></i> Hapus</button></li>`
+                                                    }
+
+                                                </ul>
+                                            </div>
+                                            <a class="text-nowrap mt-1" style="margin-left:auto;">${item.nama_tambahan}</a>
+                                        </div>`;
+                        }
+                    });
+                    $('#dokumen_rehab').append(rehab);
 
                     submit = ``;
                     if (res.show.verif == 0) {
@@ -1029,6 +1108,45 @@
                         position: 'topRight'
                     });
                     $('#hapusTambahan').modal('hide');
+                }
+            })
+        }
+    }
+
+    function hapusRehab(id) {
+        $('#id_hapus_rehab').val(id);
+        $('#tx_hapus_tambahan').text(id);
+        var inputs = document.getElementById('setujuhapusrehab');
+        inputs.checked = false;
+        $('#hapusRehab').modal('show');
+    }
+
+    function prosesHapusRehab() {
+        var checkboxHapus = $('#setujuhapusrehab').is(":checked");
+        if (checkboxHapus == false) {
+            iziToast.error({
+                title: 'Pesan Galat!',
+                message: 'Mohon menyetujui untuk dilakukan penghapusan berkas Rehabilitasi Medik tersebut',
+                position: 'topRight'
+            });
+        } else {
+            // PROSES HAPUS
+            var id_berkas = $('#id_hapus_rehab').val();
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: `/api/klaim/rehab/${id_berkas}/hapus`,
+                type: 'DELETE',
+                dataType: 'json',
+                success: function(res) {
+                    verify();
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: `Salah satu Berkas Rehabilitasi Medik terpilih dengan ID Berkas : ${id_berkas} berhasil dihapus dari datarecord`,
+                        position: 'topRight'
+                    });
+                    $('#hapusRehab').modal('hide');
                 }
             })
         }

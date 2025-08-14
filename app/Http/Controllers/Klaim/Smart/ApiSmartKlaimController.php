@@ -30,105 +30,113 @@ class ApiSmartKlaimController extends Controller
         //     throw new \Exception("Format bulan tidak valid: $bln");
         // }
 
+        // print_r('halo');
+        // die();
         // MAIN QUERY
-        $show = DB::table('pendaftaran.kunjungan AS pk')
-                ->select(
-                    'pk.*',
-                    'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
-                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
-                    'ru.DESKRIPSI AS NAMARUANGAN',
-                    DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
-                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
-                    'kv.id AS IDKLAIM','kv.verif AS STATUSVERIF','kv.verif_tgl AS TGLVERIF',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAVERIF'),
-                    // DB::raw('CASE WHEN kvc.id IS NOT NULL THEN true ELSE false END AS CATATAN')
-                    DB::raw("(
-                        SELECT
-                            CASE
-                                WHEN COUNT(*) = 0 THEN 0
-                                WHEN SUM(CASE WHEN kvc.status = true THEN 1 ELSE 0 END) = 0 THEN 0
-                                WHEN SUM(CASE WHEN kvc.status = true AND kvc.solved = 0 THEN 1 ELSE 0 END) > 0 THEN 1
-                                ELSE 2
-                            END
-                        FROM simrspku_klaim.klaim_verifikasi_catatan AS kvc
-                        WHERE kvc.nomor = pk.NOMOR
-                    ) AS CATATAN")
-                )
-                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
-                ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
-                ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
-                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
-                ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
-                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
-                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
-                ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) {
-                    $join->on('kv.nomor','=','pk.NOMOR')
-                        ->where('kv.status', true);
-                })
-                // ->leftJoin('simrspku_klaim.klaim_verifikasi_catatan AS kvc', function($join) {
-                //     $join->on('kvc.nomor','=','pk.NOMOR')
-                //         ->where('kvc.status', true);
-                // })
-                ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','kv.verif_user')
-                // ->where(function ($query) {
-                //     $query->where('pk.RUANGAN', 'LIKE', '1020101%');
-                // })
+            // NON REHABILITASI MEDIK
+            $show = DB::table('pendaftaran.kunjungan AS pk')
+                    ->select(
+                        'pk.*',
+                        'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
+                        'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
+                        'ru.DESKRIPSI AS NAMARUANGAN',
+                        DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
+                        DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                        'kv.id AS IDKLAIM','kv.verif AS STATUSVERIF','kv.verif_tgl AS TGLVERIF',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAVERIF'),
+                        // DB::raw('CASE WHEN kvc.id IS NOT NULL THEN true ELSE false END AS CATATAN')
+                        DB::raw("(
+                            SELECT
+                                CASE
+                                    WHEN COUNT(*) = 0 THEN 0
+                                    WHEN SUM(CASE WHEN kvc.status = true THEN 1 ELSE 0 END) = 0 THEN 0
+                                    WHEN SUM(CASE WHEN kvc.status = true AND kvc.solved = 0 THEN 1 ELSE 0 END) > 0 THEN 1
+                                    ELSE 2
+                                END
+                            FROM simrspku_klaim.klaim_verifikasi_catatan AS kvc
+                            WHERE kvc.nomor = pk.NOMOR
+                        ) AS CATATAN")
+                    )
+                    ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                    ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                    ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
+                    ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
+                    ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                    ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
+                    ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                    ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                    ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) {
+                        $join->on('kv.nomor','=','pk.NOMOR')
+                            ->where('kv.status', true);
+                    })
+                    // ->leftJoin('simrspku_klaim.klaim_verifikasi_catatan AS kvc', function($join) {
+                    //     $join->on('kvc.nomor','=','pk.NOMOR')
+                    //         ->where('kvc.status', true);
+                    // })
+                    ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','kv.verif_user')
+                    // ->where(function ($query) {
+                    //     $query->where('pk.RUANGAN', 'LIKE', '1020101%');
+                    // })
 
-                // FILTER RUANGAN
-                ->when(in_array($pel, [1, 2, 3]), function ($query) use ($pel) {
-                    $prefix = '';
-                    switch ($pel) {
-                        case 1:
-                            $prefix = '1020101%';
-                            break;
-                        case 2:
-                            $prefix = '1020201%';
-                            break;
-                        case 3:
-                            $prefix = '1020301%';
-                            break;
-                    }
-                    $query->where('pk.RUANGAN', 'LIKE', $prefix);
-                })
-                ->when($pel == 5, function ($query) {
-                    $query->where(function ($q) {
-                        $q->where('pk.RUANGAN', 'LIKE', '1020101%')
-                            ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
-                            ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
-                    });
-                })
+                    // FILTER RUANGAN
+                    ->when(in_array($pel, [1, 2, 3]), function ($query) use ($pel) {
+                        $prefix = [];
+                        switch ($pel) {
+                            case 1:
+                                $prefix = ['1020101%','1020702%'];
+                                break;
+                            case 2:
+                                $prefix = ['1020201%'];
+                                break;
+                            case 3:
+                                $prefix = ['1020301%'];
+                                break;
+                        }
 
-                // FILTER BULAN TAHUN
-                // ->where(function ($query) use ($tgls,$tgle) {
-                //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
-                // })
-                ->where(function ($query) use ($year,$month) {
-                    $query->whereYear('pk.MASUK', $year)
-                            ->whereMonth('pk.MASUK', $month);
-                })
+                        $query->where(function ($q) use ($prefix) {
+                            foreach ($prefix as $p) {
+                                $q->orWhere('pk.RUANGAN', 'LIKE', $p);
+                            }
+                        });
+                    })
+                    ->when($pel == 5, function ($query) {
+                        $query->where(function ($q) {
+                            $q->where('pk.RUANGAN', 'LIKE', '1020101%')
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
+                        });
+                    })
 
-                // KHUSUS RAWAT DARURAT
-                ->when($pel == 2, function ($query) use ($pel) {
-                    $query->where(function ($q) {
-                        $q->where('tp.UTAMA', 1)
-                            ->where('tp.STATUS', 1)
-                            ->whereNull('pri.KUNJUNGAN');
-                    });
-                })
+                    // FILTER BULAN TAHUN
+                    // ->where(function ($query) use ($tgls,$tgle) {
+                    //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
+                    // })
+                    ->where(function ($query) use ($year,$month) {
+                        $query->whereYear('pk.MASUK', $year)
+                                ->whereMonth('pk.MASUK', $month);
+                    })
 
-                // FILTER DPJP
-                ->when($dpjp != 0, function ($query) use ($dpjp) {
-                    // Hanya menambahkan where jika $dpjp bukan 0
-                    $query->where('dr.NIP', $dpjp);
-                })
+                    // KHUSUS RAWAT DARURAT
+                    ->when($pel == 2, function ($query) use ($pel) {
+                        $query->where(function ($q) {
+                            $q->where('tp.UTAMA', 1)
+                                ->where('tp.STATUS', 1)
+                                ->whereNull('pri.KUNJUNGAN');
+                        });
+                    })
 
-                ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
-                // ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
-                ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
-                ->where('pk.STATUS', 2) // KUNJUNGAN SELESAI
-                ->where('pk.KELUAR', '!=', null)
-                ->orderBy('pk.MASUK','DESC')
-                ->get();
+                    // FILTER DPJP
+                    ->when($dpjp != 0, function ($query) use ($dpjp) {
+                        // Hanya menambahkan where jika $dpjp bukan 0
+                        $query->where('dr.NIP', $dpjp);
+                    })
+
+                    ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
+                    // ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
+                    ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
+                    ->where('pk.STATUS', 2) // KUNJUNGAN SELESAI
+                    ->where('pk.KELUAR', '!=', null)
+                    ->orderBy('pk.MASUK','DESC')
+                    ->get();
 
         $data = [
             'show' => $show,
@@ -265,6 +273,23 @@ class ApiSmartKlaimController extends Controller
         return response()->json($now, 200);
     }
 
+    function hapusRehab($id)
+    {
+        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+
+        $show = klaim_file::where('id',$id)->first();
+        $show->status = false;
+
+        if (Storage::disk('public')->exists($show->filename)) {
+            // Storage::disk('public')->delete($show->filename);
+        }
+
+        $show->save();
+        $show->delete();
+
+        return response()->json($now, 200);
+    }
+
     function submit(Request $request)
     {
         $request->validate([
@@ -333,6 +358,14 @@ class ApiSmartKlaimController extends Controller
                 ->whereNotNull('sub_jenis')
                 ->get();
 
+            $getFileKlaimRehab = klaim_file::where('nomor', $request->kunjungan)
+                ->where('status', true)
+                ->whereNull('deleted_at')
+                ->where('jenis', 11)
+                ->whereNotNull('sub_jenis')
+                ->orderBy('sub_jenis','ASC')
+                ->get();
+
             // Mapping hasil query utama: [jenis => filename]
             $fileMap = [];
             $fileKol = [];
@@ -355,6 +388,12 @@ class ApiSmartKlaimController extends Controller
                 $koleksi[] = (int)($value->jenis . $value->sub_jenis);
                 $files[] = $value->filename;
             }
+
+            // Tambahkan file Rehab (jenis = 11)
+            foreach ($getFileKlaimRehab as $value) {
+                $koleksi[] = (int)($value->jenis . $value->sub_jenis);
+                $files[] = $value->filename;
+            }
         } else {
             $getFileKlaimTambahan = klaim_file::where('nomor', $request->kunjungan)
                 ->where('status', true)
@@ -363,8 +402,25 @@ class ApiSmartKlaimController extends Controller
                 ->whereNotNull('sub_jenis')
                 ->get();
 
+            $getFileKlaimRehab = klaim_file::where('nomor', $request->kunjungan)
+                ->where('status', true)
+                ->whereNull('deleted_at')
+                ->where('jenis', 11)
+                ->whereNotNull('sub_jenis')
+                ->orderBy('sub_jenis','ASC')
+                ->get();
+
+            // Tambahkan file tambahan (jenis = 10)
             if ($getFileKlaimTambahan->isNotEmpty()) {
                 foreach ($getFileKlaimTambahan as $value) {
+                    $koleksi[] = (int)($value->jenis . $value->sub_jenis);
+                    $files[] = $value->filename;
+                }
+            }
+
+            // Tambahkan file Rehab (jenis = 11)
+            if ($getFileKlaimRehab->isNotEmpty()) {
+                foreach ($getFileKlaimRehab as $value) {
                     $koleksi[] = (int)($value->jenis . $value->sub_jenis);
                     $files[] = $value->filename;
                 }

@@ -237,9 +237,6 @@ class ApiRehabMedikController extends Controller
                                 ->whereNull('deleted_at')
                                 ->count();
 
-        $path = 'files/rehabmedik/formlayanankfr/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show->nomor.'-'.($validasi+1);
-        $output = storage_path().'/app/public/'.$path;
-
         // GET CAP DOKTER
         if ($show->NIPDOKTER == '2101341') { // Lidiawati
             $cap = public_path().'/signatures/cap/lidiawati.png';
@@ -251,16 +248,34 @@ class ApiRehabMedikController extends Controller
         }
 
         // SAVE TO DB
-        $post = new klaim_file;
-        $post->jenis = 11;
-        $post->sub_jenis = $validasi+1;
-        $post->nomor = $show->nomor;
-        $post->title = $show->nomor.'-'.($validasi+1).'.pdf';
-        $post->filename = $path;
-        $post->nama_tambahan = 'Formulir Layanan KFR';
-        $post->status = true;
-        $post->user = Auth::user()->ID;
-        $post->save();
+        $verify = klaim_file::where('nomor',$show->nomor)
+                            ->where('jenis',11)
+                            ->where('status',true)
+                            ->whereNull('deleted_at')
+                            ->orderBy('sub_jenis','DESC')
+                            ->first();
+
+        if (!$verify) {
+            $path = 'files/rehabmedik/formlayanankfr/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show->nomor.'-'.($validasi+1);
+
+            $post = new klaim_file;
+            $post->jenis = 11;
+            $post->sub_jenis = $validasi+1;
+            $post->nomor = $show->nomor;
+            $post->title = $show->nomor.'-'.($validasi+1).'.pdf';
+            $post->filename = $path.'.pdf';
+            $post->nama_tambahan = 'Formulir Layanan KFR';
+            $post->status = true;
+            $post->user = Auth::user()->ID;
+            $post->save();
+        } else {
+            $path = 'files/rehabmedik/formlayanankfr/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show->nomor.'-'.$validasi;
+
+            $verify->user = Auth::user()->ID;
+            $verify->save();
+        }
+
+        $output = storage_path().'/app/public/'.$path;
 
         // Pastikan folder tujuan ada
         $outputDir = dirname($output);
