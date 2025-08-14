@@ -12,17 +12,57 @@ class ApiKonsulController extends Controller
 {
     public function showKonsul($NOMOR)
     {
-        $data = DB::table('pendaftaran.konsul AS kon')
+        // Query dari database pendaftaran.konsul
+        $query1 = DB::table('pendaftaran.konsul AS kon')
             ->select(
-                'kon.*',
+                'kon.NOMOR',
+                'kon.KUNJUNGAN',
+                'kon.TANGGAL',
+                'kon.DOKTER_ASAL',
+                'kon.DOKTER_TUJUAN',
+                'kon.ALASAN',
+                'kon.PERMINTAAN_TINDAKAN',
+                'kon.TUJUAN',
+                'kon.OLEH',
+                'kon.STATUS',
                 'ru.DESKRIPSI AS NAMARUANGAN',
-                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER')
+                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                DB::raw('NULL AS created_at'),
+                DB::raw('NULL AS updated_at'),
+                DB::raw('NULL AS deleted_at')
             )
-            ->leftJoin('pendaftaran.kunjungan AS pk','pk.NOMOR','=','kon.KUNJUNGAN')
-            ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
-            ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
-            ->where('kunjungan', $NOMOR)
-            ->get();
+            ->leftJoin('pendaftaran.kunjungan AS pk', 'pk.NOMOR', '=', 'kon.KUNJUNGAN')
+            ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'kon.TUJUAN')
+            ->leftJoin('master.dokter AS dr', 'dr.ID', '=', 'pk.DPJP')
+            ->where('kon.KUNJUNGAN', $NOMOR);
+
+        // Query dari database simrspku_klaim.konsul
+        $query2 = DB::table('simrspku_klaim.konsul AS kon')
+            ->select(
+                'kon.NOMOR',
+                'kon.KUNJUNGAN',
+                'kon.TANGGAL',
+                'kon.DOKTER_ASAL',
+                'kon.DOKTER_TUJUAN',
+                'kon.ALASAN',
+                'kon.PERMINTAAN_TINDAKAN',
+                'kon.TUJUAN',
+                'kon.OLEH',
+                'kon.STATUS',
+                'ru.DESKRIPSI AS NAMARUANGAN',
+                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                'kon.created_at',
+                'kon.updated_at',
+                'kon.deleted_at'
+            )
+            ->leftJoin('pendaftaran.kunjungan AS pk', 'pk.NOMOR', '=', 'kon.KUNJUNGAN')
+            ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'kon.TUJUAN')
+            ->leftJoin('master.dokter AS dr', 'dr.ID', '=', 'pk.DPJP')
+            ->where('kon.KUNJUNGAN', $NOMOR);
+
+        // Gabungkan kedua query
+        $data = $query1->unionAll($query2)->get();
+
         return response()->json($data, 200);
     }
     public function masukKonsul($NOMOR)
@@ -40,29 +80,75 @@ class ApiKonsulController extends Controller
             ->first();
         // print_r($show);
         // die();
-        $data = DB::table('pendaftaran.konsul AS kon')
+        // Pastikan daftar kolom sama di kedua query
+
+        $query1 = DB::table('pendaftaran.konsul AS kon')
             ->select(
-                'kon.*',
+                'kon.NOMOR',
+                'kon.KUNJUNGAN',
+                'kon.TANGGAL',
+                'kon.DOKTER_ASAL',
+                'kon.DOKTER_TUJUAN',
+                'kon.ALASAN',
+                'kon.PERMINTAAN_TINDAKAN',
+                'kon.TUJUAN',
+                'kon.OLEH',
+                'kon.STATUS',
                 'ru.DESKRIPSI AS NAMARUANGAN',
-                'ruang.DESKRIPSI AS TUJUAN',
-                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER')
+                'ruang.DESKRIPSI AS TUJUAN_NAMA',
+                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                DB::raw('master.getNamaLengkapPegawai(mdr.NIP) AS DOKTER'),
             )
             ->leftJoin('pendaftaran.kunjungan AS pk','pk.NOMOR','=','kon.KUNJUNGAN')
             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
             ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
             ->leftJoin('master.ruangan AS ruang','ruang.ID','=','kon.TUJUAN')
             ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+            ->leftJoin('master.dokter AS mdr','mdr.ID','=','kon.DOKTER_TUJUAN')
             ->where('pp.NORM', $show->NORM)
             ->where('kon.TUJUAN', $show->RUANGAN)
-            ->where('kon.DOKTER_TUJUAN', $show->DPJP)
-            ->get();
+            ->where('kon.DOKTER_TUJUAN', $show->DPJP);
+
+        $query2 = DB::table('simrspku_klaim.konsul AS kon')
+            ->select(
+                'kon.NOMOR',
+                'kon.KUNJUNGAN',
+                'kon.TANGGAL',
+                'kon.DOKTER_ASAL',
+                'kon.DOKTER_TUJUAN',
+                'kon.ALASAN',
+                'kon.PERMINTAAN_TINDAKAN',
+                'kon.TUJUAN',
+                'kon.OLEH',
+                'kon.STATUS',
+                'ru.DESKRIPSI AS NAMARUANGAN',
+                'ruang.DESKRIPSI AS TUJUAN_NAMA',
+                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                DB::raw('master.getNamaLengkapPegawai(mdr.NIP) AS DOKTER'),
+            )
+            ->leftJoin('pendaftaran.kunjungan AS pk','pk.NOMOR','=','kon.KUNJUNGAN')
+            ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+            ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+            ->leftJoin('master.ruangan AS ruang','ruang.ID','=','kon.TUJUAN')
+            ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+            ->leftJoin('master.dokter AS mdr','mdr.ID','=','kon.DOKTER_TUJUAN')
+            ->where('pp.NORM', $show->NORM)
+            ->where('kon.TUJUAN', $show->RUANGAN)
+            ->where('kon.DOKTER_TUJUAN', $show->DPJP);
+
+        // print_r($query2);
+        // die();
+
+        $data = $query1->unionAll($query2)->get();
         return response()->json($data, 200);
     }
     public function getJawabanKonsul($NOMOR)
     {
-        $jawaban = DB::table('pendaftaran.konsul AS kon')
+        // print_r($NOMOR);
+        // die();
+        $query1 = DB::table('pendaftaran.konsul AS kon')
             ->select(
-                'kon.*',
+                'kon.NOMOR',
                 'jk.JAWABAN AS JAWABAN',
                 'jk.ANJURAN AS ANJURAN',
                 'jk.TANGGAL AS TANGGAL_JAWABAN',
@@ -71,11 +157,23 @@ class ApiKonsulController extends Controller
             )
             ->leftJoin('pendaftaran.jawaban_konsul AS jk','jk.KONSUL_NOMOR','=','kon.NOMOR')
             ->leftJoin('master.dokter AS dr','dr.ID','=','jk.DOKTER')
-            ->where('kon.NOMOR', $NOMOR)
-            ->first();
+            ->where('kon.NOMOR', $NOMOR);
+        $query2 = DB::table('simrspku_klaim.konsul AS kon')
+            ->select(
+                'kon.NOMOR',
+                'jk.JAWABAN AS JAWABAN',
+                'jk.ANJURAN AS ANJURAN',
+                'jk.TANGGAL AS TANGGAL_JAWABAN',
+                'dr.NIP AS KODE_DOKTER',
+                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS JAWABDOKTER')
+            )
+            ->leftJoin('simrspku_klaim.jawaban_konsul AS jk','jk.KONSUL_NOMOR','=','kon.NOMOR')
+            ->leftJoin('master.dokter AS dr','dr.ID','=','jk.DOKTER')
+            ->where('kon.NOMOR', $NOMOR);
         // print_r($jawaban);
         // die();
-        return response()->json($jawaban,200);
+        $data = $query1->unionAll($query2)->get();
+        return response()->json($data, 200);
     }
     public function store(Request $request)
     {
@@ -156,7 +254,7 @@ class ApiKonsulController extends Controller
     {
         $data = DB::table('master.dokter_ruangan AS mdr')
             ->select(
-                'dok.NIP AS NIP',
+                'dok.ID AS ID',
                 DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER')
             )
             ->leftJoin('master.dokter AS dok','dok.ID','=','mdr.DOKTER')
@@ -170,4 +268,80 @@ class ApiKonsulController extends Controller
         return response()->json($data, 200);
     }
 
+    public function getJawabKonsul($nomor)
+    {
+        $jawaban = DB::table('simrspku_klaim.jawaban_konsul')
+            ->where('KONSUL_NOMOR', $nomor)
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'data' => $jawaban
+        ]);
+    }
+
+    public function simpanJawaban(Request $request)
+    {
+        // print_r($request->all());
+        // die();
+        $request->validate([
+            'nomor' => 'required|string',
+            'jawaban' => 'required|string',
+            'anjuran' => 'nullable|string',
+            'oleh' => 'required|integer'
+        ]);
+
+        $now = Carbon::now();
+        $nomorKonsul = $request->input('nomor');
+
+        $doktere = DB::table('simrspku_klaim.konsul')
+            ->where('NOMOR', $nomorKonsul)
+            ->first();
+
+        if (!$doktere) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data konsul tidak ditemukan'
+            ], 404);
+        }
+
+        $existing = DB::table('simrspku_klaim.jawaban_konsul')
+            ->where('KONSUL_NOMOR', $nomorKonsul)
+            ->first();
+
+        if ($existing) {
+            // Update
+            DB::table('simrspku_klaim.jawaban_konsul')
+                ->where('KONSUL_NOMOR', $nomorKonsul)
+                ->update([
+                    'JAWABAN' => $request->input('jawaban'),
+                    'ANJURAN' => $request->input('anjuran'),
+                    'DOKTER' => $doktere->DOKTER_TUJUAN,
+                    'OLEH' => $request->input('oleh'),
+                    'updated_at' => $now,
+                ]);
+        } else {
+            // Insert
+            $urutFormatted = str_pad(1, 2, '0', STR_PAD_LEFT);
+            $nomorBaru = $nomorKonsul . $urutFormatted;
+
+            DB::table('simrspku_klaim.jawaban_konsul')->insert([
+                'NOMOR' => $nomorBaru,
+                'KONSUL_NOMOR' => $nomorKonsul,
+                'TANGGAL' => $now,
+                'JAWABAN' => $request->input('jawaban'),
+                'ANJURAN' => $request->input('anjuran'),
+                'DOKTER' => $doktere->DOKTER_TUJUAN,
+                'OLEH' => $request->input('oleh'),
+                'STATUS' => 1,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jawaban konsul berhasil disimpan'
+        ]);
+    }
 }

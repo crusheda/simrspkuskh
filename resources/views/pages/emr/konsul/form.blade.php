@@ -92,6 +92,7 @@
                                 <th>Alasan</th>
                                 <th>Konsul Yg. Diminta</th>
                                 <th>Ruang Tujuan</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-konsulmasuk">
@@ -150,6 +151,36 @@
         </form>
     </div>
 </div>
+<div class="modal fade" id="modalJawabKonsul" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <form id="formJawabKonsul">
+        @csrf
+        <input type="hidden" name="nomor" id="jawab-nomor">
+        <input type="hidden" name="oleh" value="{{ auth()->id() }}">
+
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">Jawab Konsul</h5>
+            </div>
+            <div class="modal-body">
+            <div class="form-group">
+                <label>Jawaban</label>
+                <textarea class="form-control" name="jawaban" id="jawaban"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Anjuran</label>
+                <textarea class="form-control" name="anjuran" id="anjuran"></textarea>
+            </div>
+            </div>
+            <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+
 
 <script>
     // Contoh panggil saat halaman siap
@@ -167,6 +198,15 @@
                 $('button[data-bs-target="#riwayatkonsul"]').tab('show');
             }
         });
+
+        $(document).on('click', '.btn-jawab', function() {
+            const nomor = $(this).data('nomor');
+            openJawabKonsul(nomor);
+            $('#jawab-nomor').val(nomor);
+            $('#formJawabKonsul')[0].reset();
+            $('#modalJawabKonsul').modal('show');
+        });
+
     });
 
     function tampilKonsul(nomor) {
@@ -225,7 +265,15 @@
                                 <td>${formatTanggal(item.TANGGAL)}</td>
                                 <td>${item.ALASAN}</td>
                                 <td>${item.PERMINTAAN_TINDAKAN}</td>
-                                <td>${item.TUJUAN}</td>
+                                <td>
+                                    <span><strong>${item.TUJUAN_NAMA}</strong></span><br>
+                                    <span><small>Dokter Asal : ${item.DOKTER}</small></span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-success btn-sm btn-jawab" data-nomor="${item.NOMOR}">
+                                        Jawab
+                                    </button>
+                                </td>
                             </tr>
                         `;
                     });
@@ -242,21 +290,18 @@
 
     function tampilJawabanKonsul(nomor) {
         $.ajax({
-            url: `/api/emr/konsul/jawaban/${nomor}`,
+            url: `/api/emr/konsulkons/jawaban/${nomor}`,
             type: 'GET',
             dataType: 'json',
-            success: function(data) {
-                if (data) {
-                    $('#input-jawaban').val(data.JAWABAN || '-');
-                    $('#input-anjuran').val(data.ANJURAN || '-');
-                    $('#input-tgljawab').val(formatTanggal(data.TANGGAL_JAWABAN) || '-');
-                    $('#input-dokterjawab').val(`${data.KODE_DOKTER || ''} - ${data.JAWABDOKTER || ''}`);
+            success: function(res) {
+                if (res && res.data) {
+                    $('#input-jawaban').val(res.data.JAWABAN || '-');
+                    $('#input-anjuran').val(res.data.ANJURAN || '-');
+                    $('#input-tgljawab').val(formatTanggal(res.data.TANGGAL) || '-');
+                    $('#input-dokterjawab').val(`${res.data.DOKTER || ''} - ${res.data.OLEH || ''}`);
                 } else {
                     kosongkanJawabanKonsul();
                 }
-            },
-            error: function() {
-                kosongkanJawabanKonsul();
             }
         });
     }
@@ -354,7 +399,7 @@
             success: function (data) {
                 let options = '<option value="">-- Pilih Dokter --</option>';
                 data.forEach(function (dokter) {
-                    options += `<option value="${dokter.NIP}">${dokter.NAMADOKTER}</option>`;
+                    options += `<option value="${dokter.ID}">${dokter.NAMADOKTER}</option>`;
                 });
                 $('#select-dokter').html(options);
             },
@@ -363,5 +408,65 @@
             }
         });
     }
+    function openJawabKonsul(nomorKonsul) {
+        $.ajax({
+        url: '/api/emr/konsulkons/jawaban/' + nomorKonsul,
+        type: 'GET',
+        dataType: 'json',
+        success: function(res) {
+            $('#jawab-nomor').val(nomorKonsul);
+            if (res.data) {
+                $('#jawaban').val(res.data.JAWABAN);
+                $('#anjuran').val(res.data.ANJURAN);
+            } else {
+                $('#jawaban').val('');
+                $('#anjuran').val('');
+            }
+            $('#modalJawabKonsul').modal('show');
+        }
+    });
+    }
+
+    $('#formJawabKonsul').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/api/emr/konsulkon/jawaban',
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(res) {
+                alert(res.message);
+                $('#modalJawabKonsul').modal('hide');
+            }
+        });
+    });
+    // $('#formJawabKonsul').submit(function(e) {
+    //     e.preventDefault();
+
+    //     const formData = {
+    //         nomor: $('#jawab-nomor').val(),
+    //         jawaban: $('textarea[name="jawaban"]').val(),
+    //         anjuran: $('textarea[name="anjuran"]').val(),
+    //         oleh: "{{ Auth::user()->ID }}"
+    //     };
+
+    //     $.ajax({
+    //         headers: {
+    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //         },
+    //         url: '/api/emr/konsulkon/jawab',
+    //         type: 'POST',
+    //         data: JSON.stringify(formData),
+    //         contentType: 'application/json',
+    //         success: function(res) {
+    //             $('#modalJawabKonsul').modal('hide');
+    //             konsulMasuk("{{ $list['KUNJUNGAN'] }}");
+    //             alert(res.message);
+    //         },
+    //         error: function(err) {
+    //             alert('Gagal menyimpan jawaban.');
+    //             console.error(err.responseText);
+    //         }
+    //     });
+    // });
 
 </script>
