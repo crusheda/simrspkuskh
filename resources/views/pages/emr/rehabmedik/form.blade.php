@@ -353,6 +353,9 @@
                                     </button>
                                 </div>
                                 <div class="col-sm-auto btn-page">
+                                    <button class="btn btn-success me-2" id="btn-preview-form-jp" hidden>
+                                        <i class="fas fa-file-contract me-1"></i> Preview Form
+                                    </button>
                                     <button class="btn btn-primary" onclick="simpanFormulirJp()">
                                         <i class="fas fa-save me-1"></i> Simpan Form Program
                                     </button>
@@ -371,7 +374,7 @@
                                 <th style="width: 5%;">NO</th>
                                 <th style="width: 15%;">KUNJUNGAN PASIEN</th>
                                 <th style="width: 55%;">PROGRAM PELAYANAN</th>
-                                <th style="width: 10%;" class="text-center">TANGGAL</th>
+                                <th style="width: 10%;" class="text-center">TANGGALPELAYANAN</th>
                                 <th style="width: 10%;" class="text-end">DITAMBAHKAN OLEH</th>
                             </tr>
                         </thead>
@@ -419,6 +422,24 @@
                     </table>
                 </div>
             </div> --}}
+        </div>
+    </div>
+</div>
+
+<div class="modal animate__animated animate__rubberBand fade" id="modalPreviewJp" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Preview Jadwal Program Pelayanan
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div id="previewFormJadwalPelayanan"></div>
+            </div>
+            <div class="col-12 text-center mb-4">
+                <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
+            </div>
         </div>
     </div>
 </div>
@@ -661,7 +682,7 @@
             Memuat Data...
         `);
 
-        fetch("/api/emr/fkfr/" + GROUP + "/preview")
+        fetch("/api/emr/fkfr/{{ $list['KUNJUNGAN'] }}/preview/" + GROUP)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Formulir tidak ditemukan atau gagal diambil.');
@@ -919,17 +940,18 @@
         $('.form-control').removeClass('is-valid is-invalid');
     }
 
-    // FORM JADWAL PELAYANAN
+    // ----------------------------------------------------------------------------  FORM JADWAL PELAYANAN  -------------------------------------------------------------------
     function validPageFormJp() {
         if (window.dataTable) {
             window.dataTable.destroy();
         }
         $.ajax({
-            url: `/api/emr/jp/{{ $list['KUNJUNGAN'] }}`,
+            url: `/api/emr/{{ $list['show']->NORM }}/jp/{{ $list['KUNJUNGAN'] }}`,
             type: 'GET',
             dataType: 'json',
             success: function(res) {
                 if (res.form_kfr) {
+                    // showPreviewFormJp(res.form.group);
                     $('#hideFormJp').prop('hidden',true);
                     $('#showFormJp').prop('hidden',false);
                     $('#groupid').val(res.form_kfr.group);
@@ -940,9 +962,12 @@
                     initPadJp();
 
                     if (!res.form_jp || res.form_jp.length === 0) {
+                        $('#btn-preview-form-jp').prop('hidden',true);
                         $('#btn-refresh-riwayatjp').prop('hidden',true);
                         $('#show_table_jp').prop('hidden',true);
                     } else {
+                        $('#btn-preview-form-jp').attr('onclick', `showPreviewFormJp(${res.form_kfr.group})`);
+                        $('#btn-preview-form-jp').prop('hidden',false);
                         $('#btn-refresh-riwayatjp').prop('hidden',false);
                         $('#show_table_jp').prop('hidden',false);
                         $("#tampil-tbody-jp").empty();
@@ -1040,6 +1065,48 @@
         `);
         validPageFormJp();
         $('#btn-refresh-riwayatjp').find('i').removeClass('fa-spin');
+    }
+
+    function showPreviewFormJp(GROUP) {
+        $('#modalPreviewJp').modal('show');
+        $('#previewFormJadwalPelayanan').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Memuat Formulir...
+        `);
+
+        fetch("/api/emr/jp/{{ $list['KUNJUNGAN'] }}/preview/" + GROUP)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Formulir tidak ditemukan atau gagal diambil.');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Buat object URL dari blob
+                const fileURL = URL.createObjectURL(blob);
+
+                // Tampilkan ke iframe dalam modal
+                $('#previewFormJadwalPelayanan').empty().html(
+                    `<iframe src="${fileURL}" width="100%" height="500px" frameborder="0" class="rounded"></iframe>`
+                );
+                $('#previewFormJadwalPelayanan').append(`
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <button class="btn btn-warning" onclick="showPreviewFormJp(${GROUP})">
+                            <i class="fas fa-sync me-1"></i> Muat Ulang Laporan
+                        </button>
+                    </div>
+                `);
+            })
+            .catch(error => {
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Data Formulir tidak ditemukan atau gagal diproses.',
+                    position: 'topRight'
+                });
+                console.error(error);
+            });
     }
 
     function simpanFormulirJp() {

@@ -398,6 +398,7 @@
             type: 'GET',
             dataType: 'json',
             success: function(res) {
+                console.log(res.file);
                 // REFRESH HALAMAN
                 if (!res.show) {
                     $('#alert_verif').empty();
@@ -423,7 +424,6 @@
                     // DOKUMEN REHABILITASI MEDIK
                     $('#dokumen_rehab').empty();
                     rehab = ``;
-                    console.log(res.file);
                     res.file.forEach(item => {
                         if (item.jenis == 11) {
                             rehab += `<div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0"  style="justify-content: space-between;">

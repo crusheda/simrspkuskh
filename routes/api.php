@@ -68,11 +68,13 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('emr/{NORM}/fkfr/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKfr'])->name('api.emr.fkfr.get');
             Route::post('emr/fkfr/formbaru', [ApiRehabMedikController::class, 'simpanFormKfrBaru'])->name('api.emr.fkfr.simpanformbaru');
             Route::post('emr/fkfr/formlama', [ApiRehabMedikController::class, 'simpanFormKfrLama'])->name('api.emr.fkfr.simpanformlama');
-            Route::get('emr/fkfr/{id}', [ApiRehabMedikController::class, 'getFormKfrByGroup'])->name('api.emr.fkfr.getByGroup');
+            Route::get('emr/fkfr/{id}', [ApiRehabMedikController::class, 'getFormKfrByGroup'])->name('api.emr.fkfr.getFormKfrByGroup');
             Route::delete('emr/fkfr/{NOMOR}/hapus/{USER}', [ApiRehabMedikController::class, 'hapusFormKfr'])->name('api.emr.fkfr.hapusFormKfr');
-            Route::get('emr/fkfr/{GROUP}/preview', [ApiRehabMedikController::class, 'compileFormKfr'])->name('api.emr.fkfr.preview');
+            Route::get('emr/fkfr/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormKfr'])->name('api.emr.fkfr.preview');
             // JADWAL PELAYANAN
-            Route::get('emr/jp/{NOMOR}', [ApiRehabMedikController::class, 'getFormJp'])->name('api.emr.jp.get');
+            Route::get('emr/{NORM}/jp/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormJp'])->name('api.emr.jp.get');
+            Route::get('emr/jp/{id}', [ApiRehabMedikController::class, 'getFormJpByGroup'])->name('api.emr.fkfr.getFormJpByGroup');
+            Route::get('emr/jp/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormJp'])->name('api.emr.jp.preview');
             Route::post('emr/jp', [ApiRehabMedikController::class, 'simpanJp'])->name('api.emr.jp.simpanJp');
             Route::delete('emr/jp/hapus/{id}', [ApiRehabMedikController::class, 'hapusFormJp'])->name('api.emr.jp.hapusFormJp');
 
