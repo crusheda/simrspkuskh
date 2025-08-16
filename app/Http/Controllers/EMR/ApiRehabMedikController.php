@@ -327,144 +327,6 @@ class ApiRehabMedikController extends Controller
         ]);
     }
 
-    function compileFormJp($KUNJUNGAN,$GROUP)
-    {
-        $show = DB::table('simrspku_klaim.form_kfr AS fkfr')
-                ->leftJoin('master.pasien AS ps', function($join) {
-                    $join->on('ps.NORM','=','fkfr.rm')
-                        ->where('ps.status', true);
-                })
-                ->leftJoin('master.kontak_pasien AS kps','ps.NORM','=','kps.NORM')
-                ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','fkfr.dokter')
-                ->select(
-                    'fkfr.*',
-                    'ps.TANGGAL_LAHIR AS TGLLAHIRPASIEN',
-                    'kps.NOMOR AS NOHPPASIEN',
-                    'pe.NIP AS NIPDOKTER',
-                    DB::raw('master.getNamaLengkap(fkfr.rm) AS NAMAPASIEN'),
-                    DB::raw('master.getAlamatPasienCustom(fkfr.rm) AS ALAMATPASIEN'),
-                    DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMADOKTER'),
-                    DB::raw('master.getCariUmur(fkfr.tgl,ps.TANGGAL_LAHIR) AS UMURPASIEN')
-                )
-                ->where('fkfr.nomor',$KUNJUNGAN)
-                ->where('fkfr.GROUP',$GROUP)
-                ->whereNull('fkfr.deleted_at')
-                ->orderBy('fkfr.id','DESC')
-                ->first();
-
-        if (empty($show)) {
-            return response()->json('Error mengambil Data Formulir Jadwal Pelayanan', 401);
-        }
-
-        $getTgl = Carbon::parse($show->tgl);
-        $tgl = $getTgl->isoFormat('DD');
-        $bulan = $getTgl->isoFormat('MM');
-        $tahun = $getTgl->isoFormat('YYYY');
-
-        // ----------------------------------------------------------------------
-
-        // GET CAP DOKTER
-        if ($show->NIPDOKTER == '2101341') { // Lidiawati
-            $cap = public_path().'/signatures/cap/lidiawati.png';
-        } elseif ($show->NIPDOKTER == '2505550') { // Stephanie Indrawati Sugiarto
-            $cap = public_path().'/signatures/cap/stephanie.png';
-        } else {
-            // $cap = public_path().'/signatures/cap/lidiawati.png';
-            $cap = '';
-        }
-
-        // SAVE TO DB
-        $verify = klaim_file::where('nomor',$KUNJUNGAN)
-                            ->where('jenis',11)
-                            ->where('sub_jenis',2) // FORM JP
-                            ->where('status',true)
-                            ->whereNull('deleted_at')
-                            ->orderBy('id','DESC')
-                            ->first();
-        // ----------------------------------------------------------------------
-        $verify_formJp = form_kfr_jp::where('nomor',$KUNJUNGAN)
-                            ->where('group',$GROUP)
-                            ->whereNull('deleted_at')
-                            ->orderBy('id','DESC')
-                            ->first();
-
-        $path = 'files/rehabmedik/jadwalpelayanan/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$KUNJUNGAN.'-2';
-
-        if ($verify_formJp) {
-            if ($verify) {
-                $post2 = new klaim_file;
-                $post2->jenis = 11;
-                $post2->sub_jenis = 2;
-                $post2->nomor = $KUNJUNGAN;
-                $post2->title = $KUNJUNGAN.'-2.pdf';
-                $post2->filename = $path.'.pdf';
-                $post2->nama_tambahan = 'Formulir Layanan KFR';
-                $post2->status = true;
-                $post2->user = Auth::user()->ID;
-                $post2->save();
-            } else {
-                $verify->user = Auth::user()->ID;
-                $verify->save();
-            }
-        }
-
-        $output = storage_path().'/app/public/'.$path;
-
-        // Pastikan folder tujuan ada
-        $outputDir = dirname($output);
-        if (!File::exists($outputDir)) {
-            File::makeDirectory($outputDir, 0755, true); // true = recursive
-        }
-
-        // SAMPAI SINI
-        $data = [
-            'TANGGAL' => Carbon::parse($show->tgl)->translatedFormat('d F Y'),
-            'NAMAPASIEN' => $show->NAMAPASIEN,
-            'NAMADOKTER' => $show->NAMADOKTER,
-            'TGLLAHIRPASIEN' => Carbon::parse($show->TGLLAHIRPASIEN)->translatedFormat('d F Y'),
-            'UMURPASIEN' => $show->UMURPASIEN,
-            'NOHPPASIEN' => (!empty($show->NOHPPASIEN) ? $show->NOHPPASIEN : '-'),
-            'ALAMATPASIEN' => $show->ALAMATPASIEN,
-            'ANAMNESA' => $show->anamnesa,
-            'PEMERIKSAANFISIK' => $show->pemeriksaan_fisik,
-            'DIAGMEDIS' => $show->diagnosa_medis,
-            'DIAGFUNGSI' => $show->diagnosa_fungsi,
-            'PEMERIKSAANPENUNJANG' => $show->pemeriksaan_penunjang,
-            'TATALAKSANA' => $show->tata_laksana_kfr,
-            'ANJURAN' => $show->anjuran,
-            'EVALUASI' => $show->evaluasi,
-            'TARGET' => $show->target,
-            'SPAKCEK' => ($show->spak_index === 1) ? "✓" : "",
-            'SPAKUNCEK' => ($show->spak_index === 0) ? "✓" : "",
-            'SPAK' => ($show->spak) ? $show->spak : "",
-            'CAP' => "",
-        ];
-
-        $templateProcessor = new TemplateProcessor(public_path('/doc/input/rehabmedik/cetakFormKFR.docx'));
-
-        $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->tte_dokter, 170); // 150 is Width
-        $this->setImgWord($templateProcessor, 'PATH_TTE_PASIEN', storage_path()."/app/public/".$show->tte_pasien, 300);
-        if ($cap) {
-            $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
-        }
-
-        foreach ($data as $key => $value) {
-            $templateProcessor->setValue($key, $value);
-        }
-
-        $outputWord = $output.'.docx';
-        $templateProcessor->saveAs($outputWord);
-        [$log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
-
-        if (File::exists($outputWord)) {
-            File::delete($outputWord);
-        }
-
-        return response()->file($output.'.pdf', [
-            'Content-Type' => 'application/pdf',
-        ]);
-    }
-
     // ----------------------------------------- FORM JADWAL PELAYANAN -------------------------------------------
     function getFormJp($NORM,$KUNJUNGAN)
     {
@@ -593,15 +455,6 @@ class ApiRehabMedikController extends Controller
             'updated_at' => $now,
         ]);
 
-        // SAVE TO DB klaim_file
-        // $verify = klaim_file::where('nomor',$request->nomor)
-        //                     ->where('jenis',11)
-        //                     ->where('sub_jenis',2) // FORM JP
-        //                     ->whereNotNull('kode')
-        //                     ->where('status',true)
-        //                     ->whereNull('deleted_at')
-        //                     ->orderBy('id','DESC')
-        //                     ->first();
         // ----------------------------------------------------------------------
         // GET FORM SAVED
         $verify = form_kfr_jp::where('id',$saveId)->first();
@@ -619,6 +472,7 @@ class ApiRehabMedikController extends Controller
 
             $path = 'files/rehabmedik/jadwalpelayanan/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$request->nomor.'-2-'.($countForm+1);
 
+            // SAVE TO DB klaim_file
             $post2 = new klaim_file;
             $post2->jenis = 11;
             $post2->sub_jenis = 2;
@@ -648,8 +502,8 @@ class ApiRehabMedikController extends Controller
         } elseif ($show->NIPDOKTER == '2505550') { // Stephanie Indrawati Sugiarto
             $cap = public_path().'/signatures/cap/stephanie.png';
         } else {
-            // $cap = public_path().'/signatures/cap/lidiawati.png';
-            $cap = '';
+            $cap = public_path().'/signatures/cap/lidiawati.png';
+            // $cap = '';
         }
 
         $data = [
@@ -660,36 +514,53 @@ class ApiRehabMedikController extends Controller
             'TGLLAHIRPASIEN' => Carbon::parse($show->TGLLAHIRPASIEN)->translatedFormat('d F Y'),
             'UMURPASIEN' => $show->UMURPASIEN,
             'ALAMATPASIEN' => $show->ALAMATPASIEN,
+            'DIAGNOSA' => $show->diagnosa_medis,
+            'PERMINTAANTERAPI' => $show->tata_laksana_kfr,
+            'EVALUASI' => "",
             'CAP' => "",
         ];
 
         $templateProcessor = new TemplateProcessor(public_path('/doc/input/rehabmedik/cetakFormJP.docx'));
 
+        // TTE DOKTER UTAMA
+        $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->tte_dokter, 170);
+
         // POST TTE
-        foreach ($getJp as $i => $value) {
+        // foreach ($getJp as $i => $value) {
+        for ($i = 0; $i < 8; $i++) {
             $index = $i + 1;
 
-            // Kolom lainnya
-            $templateProcessor->setValue("PROGRAMPELAYANAN_{$index}", $value->program);
-            $templateProcessor->setValue("TANGGALPELAYANAN_{$index}", $value->tgl);
+            // Program Layanan
+            if (!empty($getJp[$i]->program)) {
+                $templateProcessor->setValue("PROGRAMPELAYANAN_{$index}", $getJp[$i]->program);
+            } else {
+                $templateProcessor->setValue("PROGRAMPELAYANAN_{$index}", '');
+            }
+
+            // Tanggal Pelayanan
+            if (!empty($getJp[$i]->tgl)) {
+                $templateProcessor->setValue("TANGGALPELAYANAN_{$index}", $getJp[$i]->tgl);
+            } else {
+                $templateProcessor->setValue("TANGGALPELAYANAN_{$index}", '');
+            }
 
             // Dokter
-            if (!empty($value->tte_dokter) && file_exists(storage_path("app/public/{$value->tte_dokter}"))) {
-                $this->setImgWord($templateProcessor, "PATH_TTE_DOKTER_{$index}", storage_path("app/public/{$value->tte_dokter}"), 170);
+            if (!empty($getJp[$i]->tte_dokter) && file_exists(storage_path("app/public/{$getJp[$i]->tte_dokter}"))) {
+                $this->setImgWord($templateProcessor, "PATH_TTE_DOKTER_{$index}", storage_path("app/public/{$getJp[$i]->tte_dokter}"), 100);
             } else {
                 $templateProcessor->setValue("PATH_TTE_DOKTER_{$index}", '');
             }
 
             // Pasien
-            if (!empty($value->tte_pasien) && file_exists(storage_path("app/public/{$value->tte_pasien}"))) {
-                $this->setImgWord($templateProcessor, "PATH_TTE_PASIEN_{$index}", storage_path("app/public/{$value->tte_pasien}"), 300);
+            if (!empty($getJp[$i]->tte_pasien) && file_exists(storage_path("app/public/{$getJp[$i]->tte_pasien}"))) {
+                $this->setImgWord($templateProcessor, "PATH_TTE_PASIEN_{$index}", storage_path("app/public/{$getJp[$i]->tte_pasien}"), 100);
             } else {
                 $templateProcessor->setValue("PATH_TTE_PASIEN_{$index}", '');
             }
 
             // Terapis
-            if (!empty($value->tte_terapis) && file_exists(storage_path("app/public/{$value->tte_terapis}"))) {
-                $this->setImgWord($templateProcessor, "PATH_TTE_TERAPIS_{$index}", storage_path("app/public/{$value->tte_terapis}"), 300);
+            if (!empty($getJp[$i]->tte_terapis) && file_exists(storage_path("app/public/{$getJp[$i]->tte_terapis}"))) {
+                $this->setImgWord($templateProcessor, "PATH_TTE_TERAPIS_{$index}", storage_path("app/public/{$getJp[$i]->tte_terapis}"), 100);
             } else {
                 $templateProcessor->setValue("PATH_TTE_TERAPIS_{$index}", '');
             }
@@ -719,14 +590,53 @@ class ApiRehabMedikController extends Controller
         ));
     }
 
+    function compileFormJp($KUNJUNGAN,$GROUP)
+    {
+        $show = klaim_file::where('nomor',$KUNJUNGAN)
+                            ->where('jenis',11)
+                            ->where('sub_jenis',2)
+                            ->where('ref',$GROUP)
+                            ->where('status',true)
+                            ->whereNull('deleted_at')
+                            ->orderBy('id','DESC')
+                            ->first();
+
+        $output = storage_path().'/app/public/'.$show->filename;
+        // print_r($output);
+        // die();
+
+        return response()->file($output, [
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
+
     function hapusFormJp($id)
     {
         $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
 
-        $show = form_kfr_jp::where('id',$id)->first();
-        $show->user = Auth::user()->ID;
-        $show->save();
-        $show->delete();
+        // HAPUS FORM KFR JP
+        $form_kfr_jp = form_kfr_jp::where('id',$id)->first();
+
+        $getKunjungan = $form_kfr_jp->nomor;
+        $getGroup = $form_kfr_jp->group;
+
+        $form_kfr_jp->user = Auth::user()->ID;
+        $form_kfr_jp->save();
+        $form_kfr_jp->delete();
+
+        // HAPUS FILE BERKAS KLAIM
+        $klaim_file = klaim_file::where('nomor',$getKunjungan)
+                            ->where('jenis',11)
+                            ->where('sub_jenis',2)
+                            ->where('ref',$getGroup)
+                            ->where('status',true)
+                            ->whereNull('deleted_at')
+                            ->orderBy('id','DESC')
+                            ->first();
+        $klaim_file->user = Auth::user()->ID;
+        $klaim_file->status = 0;
+        $klaim_file->save();
+        $klaim_file->delete();
 
         return response()->json($now, 200);
     }

@@ -115,16 +115,16 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <div class="form-floating mb-0">
-                                    <input type="text" class="form-control" id="diagmedis" placeholder="">
-                                    <label for="diagmedis">Diagnosis Medis (ICD-10) <a class="text-danger">*</a></label>
+                                    <input type="text" class="form-control" id="diagmedis_add" placeholder="">
+                                    <label for="diagmedis_add">Diagnosis Medis (ICD-10) <a class="text-danger">*</a></label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <div class="form-floating mb-0">
-                                    <input type="text" class="form-control" id="diagfungsi" placeholder="">
-                                    <label for="diagfungsi">Diagnosis Fungsi (ICD-10) <a
+                                    <input type="text" class="form-control" id="diagfungsi_add" placeholder="">
+                                    <label for="diagfungsi_add">Diagnosis Fungsi (ICD-10) <a
                                             class="text-danger">*</a></label>
                                 </div>
                             </div>
@@ -135,16 +135,16 @@
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <div class="form-floating">
-                                    <textarea class="form-control" id="anamnesa" style="height: 100px"></textarea>
-                                    <label for="anamnesa">Anamnesa <a class="text-danger">*</a></label>
+                                    <textarea class="form-control" id="anamnesa_add" style="height: 100px"></textarea>
+                                    <label for="anamnesa_add">Anamnesa <a class="text-danger">*</a></label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <div class="form-floating">
-                                    <textarea class="form-control" id="fisik" style="height: 100px"></textarea>
-                                    <label for="fisik">Pemeriksaan Fisik dan Uji Fungsi <a
+                                    <textarea class="form-control" id="fisik_add" style="height: 100px"></textarea>
+                                    <label for="fisik_add">Pemeriksaan Fisik dan Uji Fungsi <a
                                             class="text-danger">*</a></label>
                                 </div>
                             </div>
@@ -152,16 +152,16 @@
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <div class="form-floating">
-                                    <textarea class="form-control" id="penunjang" style="height: 100px"></textarea>
-                                    <label for="penunjang">Pemeriksaan Penunjang <a class="text-danger">*</a></label>
+                                    <textarea class="form-control" id="penunjang_add" style="height: 100px"></textarea>
+                                    <label for="penunjang_add">Pemeriksaan Penunjang <a class="text-danger">*</a></label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <div class="form-floating">
-                                    <textarea class="form-control" id="tatalaksana" style="height: 100px"></textarea>
-                                    <label for="tatalaksana">Tata Laksana KFR (ICD 9 CM) <a
+                                    <textarea class="form-control" id="tatalaksana_add" style="height: 100px"></textarea>
+                                    <label for="tatalaksana_add">Tata Laksana KFR (ICD 9 CM) <a
                                             class="text-danger">*</a></label>
                                 </div>
                             </div>
@@ -172,24 +172,24 @@
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <div class="form-floating mb-0">
-                                    <input type="text" class="form-control" id="anjuran" placeholder="">
-                                    <label for="anjuran">Anjuran <a class="text-danger">*</a></label>
+                                    <input type="text" class="form-control" id="anjuran_add" placeholder="">
+                                    <label for="anjuran_add">Anjuran <a class="text-danger">*</a></label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <div class="form-floating mb-0">
-                                    <input type="text" class="form-control" id="evaluasi" placeholder="">
-                                    <label for="evaluasi">Evaluasi <a class="text-danger">*</a></label>
+                                    <input type="text" class="form-control" id="evaluasi_add" placeholder="">
+                                    <label for="evaluasi_add">Evaluasi <a class="text-danger">*</a></label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-group mb-3">
                                 <div class="form-floating mb-0">
-                                    <input type="text" class="form-control" id="target" placeholder="">
-                                    <label for="target">Target <a class="text-danger">*</a></label>
+                                    <input type="text" class="form-control" id="target_add" placeholder="">
+                                    <label for="target_add">Target <a class="text-danger">*</a></label>
                                 </div>
                             </div>
                             <div class="form-group mb-3">
@@ -283,7 +283,7 @@
                     </div>
                     <hr class="mt-0">
                     <div class="row">
-                        <div class="col-md-5">
+                        <div class="col-md-6">
                             <div class="row">
                                 <div class="col-md-12 mb-3">
                                     <div class="form-group">
@@ -304,36 +304,50 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-7">
-                            <div class="row">
-                                <div class="col mb-3">
+                        <div class="col-md-6">
+                            <div class="row justify-center items-center text-center">
+                                <div class="col-6 mb-3 justify-center items-center text-center">
                                     <div class="form-group" id="padjpp">
-                                        <div class="position-relative overflow-hidden">
-                                            <canvas id="signature-pad-jpp" class="w-100 border rounded"
-                                                style="height: 200px;"></canvas>
+                                        <!-- responsive wrapper -->
+                                        <div class="position-relative overflow-hidden" style="width:100%; max-width:500px; height:200px;">
+
+                                            <!-- canvas ikut parent -->
+                                            <canvas id="signature-pad-jpp" class="border rounded w-100 h-100"></canvas>
+
+                                            <!-- placeholder di tengah -->
                                             <div id="placeholder-ttd-jpp"
                                                 class="position-absolute top-50 start-50 translate-middle text-muted"
                                                 style="pointer-events: none; opacity: 0.3;">
                                                 Tanda tangan Pasien <a class="text-danger">*</a>
                                             </div>
-                                            <button id="clear-jpp" class="btn btn-sm btn-danger position-absolute align-middle"
+
+                                            <!-- tombol clear dalam kotak -->
+                                            <button id="clear-jpp"
+                                                class="btn btn-sm btn-danger position-absolute"
                                                 style="top: 10px; right: 10px; z-index: 10;">
                                                 <i class="ti ti-writing-sign"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col mb-3">
+                                <div class="col-6 mb-3 justify-center items-center text-center">
                                     <div class="form-group" id="padjpt">
-                                        <div class="position-relative overflow-hidden">
-                                            <canvas id="signature-pad-jpt" class="w-100 border rounded"
-                                                style="height: 200px;"></canvas>
+                                        <!-- responsive wrapper -->
+                                        <div class="position-relative overflow-hidden" style="width:100%; max-width:500px; height:200px;">
+
+                                            <!-- canvas ikut parent -->
+                                            <canvas id="signature-pad-jpt" class="border rounded w-100 h-100"></canvas>
+
+                                            <!-- placeholder di tengah -->
                                             <div id="placeholder-ttd-jpt"
                                                 class="position-absolute top-50 start-50 translate-middle text-muted"
                                                 style="pointer-events: none; opacity: 0.3;">
                                                 Tanda tangan Terapis <a class="text-danger">*</a>
                                             </div>
-                                            <button id="clear-jpt" class="btn btn-sm btn-danger position-absolute align-middle"
+
+                                            <!-- tombol clear pojok kanan atas -->
+                                            <button id="clear-jpt"
+                                                class="btn btn-sm btn-danger position-absolute"
                                                 style="top: 10px; right: 10px; z-index: 10;">
                                                 <i class="ti ti-writing-sign"></i>
                                             </button>
@@ -431,13 +445,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">
-                    Preview Jadwal Program Pelayanan
+                    Preview Jadwal Program Pelayanan (<kbd id="showTxModalPJP"></kbd>)
                 </h4>
             </div>
             <div class="modal-body">
                 <div id="previewFormJadwalPelayanan"></div>
             </div>
-            <div class="col-12 text-center mb-4">
+            <div class="col-12 text-center p-4 pt-0" id="btn-footer-preview-jp">
                 <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
             </div>
         </div>
@@ -517,6 +531,21 @@
         });
     });
 
+    function resizeCanvasPixelRatio(canvas, width = 500, height = 200) {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+        // ukuran tampilan (CSS)
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+
+        // ukuran internal buffer (pixel real)
+        canvas.width = width * ratio;
+        canvas.height = height * ratio;
+
+        // scale context biar koordinat sinkron
+        canvas.getContext("2d").scale(ratio, ratio);
+    }
+
     function initPadKfr() {
         if (padKfr) return; // Sudah inisiasi
         const canvas = document.getElementById('signature-pad-kfr');
@@ -541,38 +570,66 @@
         if (!padJpP) {
             const canvasP = document.getElementById('signature-pad-jpp');
             padJpP = new SignaturePad(canvasP);
-            resizeCanvas(canvasP);
 
+            function resizeCanvasResponsive(canvas) {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+                // ambil lebar parent (max 500px)
+                const parentWidth = canvas.parentElement.offsetWidth;
+                const width = parentWidth > 500 ? 500 : parentWidth;
+                const height = 200;
+
+                // CSS size (tampilan)
+                canvas.style.width = width + "px";
+                canvas.style.height = height + "px";
+
+                // buffer internal (supaya tajam & koordinat sesuai)
+                canvas.width = width * ratio;
+                canvas.height = height * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+            }
+
+            // panggil pertama kali
+            resizeCanvasResponsive(canvasP);
+
+            // tombol clear
             $('#clear-jpp').on('click', function() {
                 padJpP.clear();
                 $('#placeholder-ttd-jpp').show();
             });
 
+            // sembunyikan placeholder saat menulis
             padJpP.onBegin = function() {
                 $('#placeholder-ttd-jpp').hide();
             };
 
+            // resize kalau layar berubah
             $(window).on('resize.jpp', function() {
-                resizeCanvas(canvasP);
+                resizeCanvasResponsive(canvasP);
             });
         }
 
         if (!padJpT) {
             const canvasT = document.getElementById('signature-pad-jpt');
             padJpT = new SignaturePad(canvasT);
-            resizeCanvas(canvasT);
 
+            // pertama kali set
+            resizeCanvasResponsive(canvasT);
+
+            // tombol clear
             $('#clear-jpt').on('click', function() {
                 padJpT.clear();
                 $('#placeholder-ttd-jpt').show();
             });
 
+            // sembunyikan placeholder ketika mulai menulis
             padJpT.onBegin = function() {
                 $('#placeholder-ttd-jpt').hide();
             };
 
+            // resize kalau layar berubah
             $(window).on('resize.jpt', function() {
-                resizeCanvas(canvasT);
+                resizeCanvasResponsive(canvasT);
             });
         }
     }
@@ -724,15 +781,15 @@
 
         save.append('nomor', "{{ $list['KUNJUNGAN'] }}");
         save.append('rm', "{{ $list['show']->NORM }}");
-        save.append('diagmedis', $('#diagmedis').val().trim());
-        save.append('diagfungsi', $('#diagfungsi').val().trim());
-        save.append('anamnesa', $('#anamnesa').val().trim());
-        save.append('fisik', $('#fisik').val().trim());
-        save.append('penunjang', $('#penunjang').val().trim());
-        save.append('tatalaksana', $('#tatalaksana').val().trim());
-        save.append('anjuran', $('#anjuran').val().trim());
-        save.append('evaluasi', $('#evaluasi').val().trim());
-        save.append('target', $('#target').val().trim());
+        save.append('diagmedis', $('#diagmedis_add').val().trim());
+        save.append('diagfungsi', $('#diagfungsi_add').val().trim());
+        save.append('anamnesa', $('#anamnesa_add').val().trim());
+        save.append('fisik', $('#fisik_add').val().trim());
+        save.append('penunjang', $('#penunjang_add').val().trim());
+        save.append('tatalaksana', $('#tatalaksana_add').val().trim());
+        save.append('anjuran', $('#anjuran_add').val().trim());
+        save.append('evaluasi', $('#evaluasi_add').val().trim());
+        save.append('target', $('#target_add').val().trim());
         save.append('suspek', $('input[name="suspek"]:checked').val());
 
         if ($('input[name="suspek"]:checked').val() == '1') {
@@ -754,31 +811,31 @@
         save.append('user', "{{ Auth::user()->NIP }}");
 
         let isFormValid = validateInput([{
-                selector: '#diagmedis'
+                selector: '#diagmedis_add'
             },
             {
-                selector: '#diagfungsi'
+                selector: '#diagfungsi_add'
             },
             {
-                selector: '#anamnesa'
+                selector: '#anamnesa_add'
             },
             {
-                selector: '#fisik'
+                selector: '#fisik_add'
             },
             {
-                selector: '#penunjang'
+                selector: '#penunjang_add'
             },
             {
-                selector: '#tatalaksana'
+                selector: '#tatalaksana_add'
             },
             {
-                selector: '#anjuran'
+                selector: '#anjuran_add'
             },
             {
-                selector: '#evaluasi'
+                selector: '#evaluasi_add'
             },
             {
-                selector: '#target'
+                selector: '#target_add'
             },
         ]);
 
@@ -976,7 +1033,8 @@
                                 $("#tampil-tbody-jp").append(`
                                     <tr id="jpid_${item.id}">
                                         <td>
-                                            <button class="btn btn-icon btn-danger avtar-s mb-0" onclick="hapusJp(${item.id})">
+                                            <button class="btn btn-icon btn-danger avtar-s mb-0" onclick="hapusJp(${item.id})"
+                                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hapus Program (ID:${item.id})">
                                                 <i class="fas fa-trash" style="font-size: 13px;"></i>
                                             </button>
                                         </td>
@@ -1086,16 +1144,18 @@
             .then(blob => {
                 // Buat object URL dari blob
                 const fileURL = URL.createObjectURL(blob);
+                $('#showTxModalPJP').text("{{ $list['KUNJUNGAN'] }}#"+GROUP);
 
                 // Tampilkan ke iframe dalam modal
                 $('#previewFormJadwalPelayanan').empty().html(
                     `<iframe src="${fileURL}" width="100%" height="500px" frameborder="0" class="rounded"></iframe>`
                 );
-                $('#previewFormJadwalPelayanan').append(`
+                $('#btn-footer-preview-jp').empty().append(`
                     <div class="d-flex justify-content-between align-items-center mt-2">
                         <button class="btn btn-warning" onclick="showPreviewFormJp(${GROUP})">
                             <i class="fas fa-sync me-1"></i> Muat Ulang Laporan
                         </button>
+                        <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
                     </div>
                 `);
             })

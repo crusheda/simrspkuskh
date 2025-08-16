@@ -28,8 +28,8 @@
         <div class="card">
             <div class="card-header p-2">
                 <div class="d-sm-flex align-items-center justify-content-between ms-2">
-                    <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Table Kunjungan Pasien</h5>
-                    <span class="ms-2 f-14 px-2 badge bg-light-secondary">Total : <a id="jumlah_data">0 Data</a></span>
+                    <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Table Kunjungan Pasien <span class="ms-2 f-14 px-2 badge bg-light-secondary">Total : <a id="jumlah_data">0 Data</a></span></h5>
+                    <a class="btn btn-link-info btn-sm text-end" href="javascript: void(0);" onclick="tataCara()"><i class="fas fa-info-circle text-info me-2"></i> <s>Tata Cara Penggunaan</s></a>
                     {{-- <button class="btn btn-link-info btn-sm rounded me-1 mb-1 mt-1" type="button" data-bs-toggle="collapse" data-bs-target="#filter-collapse" aria-expanded="false" aria-controls="collapseExample">Filter <i class="ph-duotone ph-caret-down ms-1"></i></button> --}}
                 </div>
             </div>
