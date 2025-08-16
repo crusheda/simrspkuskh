@@ -36,6 +36,7 @@
                                                 <th>Alasan</th>
                                                 <th>Konsul Yg. Diminta</th>
                                                 <th>Tujuan</th>
+                                                <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tbody-konsul">
@@ -207,6 +208,13 @@
             $('#modalJawabKonsul').modal('show');
         });
 
+        $(document).on('click', '.btn-batal', function () {
+            const nomor = $(this).data('nomor');
+            if (confirm('Apakah Anda yakin ingin membatalkan konsul ini?')) {
+                batalKonsul(nomor);
+            }
+        });
+
     });
 
     function tampilKonsul(nomor) {
@@ -220,6 +228,11 @@
                 if (Array.isArray(data) && data.length > 0) {
                     let html = '';
                     data.forEach(function(item) {
+                        const tombolBatal = (!item.JAWABAN && item.SUMBER === 'simrspku_klaim.konsul') ?
+                        `<button class="btn btn-danger btn-sm btn-batal" data-nomor="${item.NOMOR}">
+                            Batal
+                        </button>` : '-';
+
                         html += `
                             <tr class="baris-konsul" data-nomor="${item.NOMOR}">
                                 <td>
@@ -439,34 +452,23 @@
             }
         });
     });
-    // $('#formJawabKonsul').submit(function(e) {
-    //     e.preventDefault();
 
-    //     const formData = {
-    //         nomor: $('#jawab-nomor').val(),
-    //         jawaban: $('textarea[name="jawaban"]').val(),
-    //         anjuran: $('textarea[name="anjuran"]').val(),
-    //         oleh: "{{ Auth::user()->ID }}"
-    //     };
-
-    //     $.ajax({
-    //         headers: {
-    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    //         },
-    //         url: '/api/emr/konsulkon/jawab',
-    //         type: 'POST',
-    //         data: JSON.stringify(formData),
-    //         contentType: 'application/json',
-    //         success: function(res) {
-    //             $('#modalJawabKonsul').modal('hide');
-    //             konsulMasuk("{{ $list['KUNJUNGAN'] }}");
-    //             alert(res.message);
-    //         },
-    //         error: function(err) {
-    //             alert('Gagal menyimpan jawaban.');
-    //             console.error(err.responseText);
-    //         }
-    //     });
-    // });
+    function batalKonsul(nomor) {
+        $.ajax({
+            url: `/api/emr/konsulko/batal/${nomor}`,
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res) {
+                alert('Konsul berhasil dibatalkan.');
+                tampilKonsul("{{ $list['KUNJUNGAN'] }}"); // Refresh riwayat
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                alert('Gagal membatalkan konsul.');
+            }
+        });
+    }
 
 </script>

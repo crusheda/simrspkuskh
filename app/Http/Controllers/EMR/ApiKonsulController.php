@@ -58,7 +58,8 @@ class ApiKonsulController extends Controller
             ->leftJoin('pendaftaran.kunjungan AS pk', 'pk.NOMOR', '=', 'kon.KUNJUNGAN')
             ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'kon.TUJUAN')
             ->leftJoin('master.dokter AS dr', 'dr.ID', '=', 'pk.DPJP')
-            ->where('kon.KUNJUNGAN', $NOMOR);
+            ->where('kon.KUNJUNGAN', $NOMOR)
+            ->whereNull('deleted_at');
 
         // Gabungkan kedua query
         $data = $query1->unionAll($query2)->get();
@@ -134,7 +135,8 @@ class ApiKonsulController extends Controller
             ->leftJoin('master.dokter AS mdr','mdr.ID','=','kon.DOKTER_TUJUAN')
             ->where('pp.NORM', $show->NORM)
             ->where('kon.TUJUAN', $show->RUANGAN)
-            ->where('kon.DOKTER_TUJUAN', $show->DPJP);
+            ->where('kon.DOKTER_TUJUAN', $show->DPJP)
+            ->whereNull('deleted_at');
 
         // print_r($query2);
         // die();
@@ -169,7 +171,8 @@ class ApiKonsulController extends Controller
             )
             ->leftJoin('simrspku_klaim.jawaban_konsul AS jk','jk.KONSUL_NOMOR','=','kon.NOMOR')
             ->leftJoin('master.dokter AS dr','dr.ID','=','jk.DOKTER')
-            ->where('kon.NOMOR', $NOMOR);
+            ->where('kon.NOMOR', $NOMOR)
+            ->whereNull('deleted_at');
         // print_r($jawaban);
         // die();
         $data = $query1->unionAll($query2)->get();
@@ -324,7 +327,8 @@ class ApiKonsulController extends Controller
             // Insert
             $urutFormatted = str_pad(1, 2, '0', STR_PAD_LEFT);
             $nomorBaru = $nomorKonsul . $urutFormatted;
-
+            // print_r($nomorBaru);
+            // die();
             DB::table('simrspku_klaim.jawaban_konsul')->insert([
                 'NOMOR' => $nomorBaru,
                 'KONSUL_NOMOR' => $nomorKonsul,
@@ -343,5 +347,31 @@ class ApiKonsulController extends Controller
             'success' => true,
             'message' => 'Jawaban konsul berhasil disimpan'
         ]);
+    }
+    public function batal($nomor)
+    {
+        $konsul = DB::table('simrspku_klaim.konsul')
+            ->where('NOMOR', $nomor)
+            ->whereNull('deleted_at')
+            ->first();
+
+        if (!$konsul) {
+            return response()->json(['message' => 'Konsul tidak ditemukan atau sudah dibatalkan.'], 404);
+        }
+
+        // Pastikan belum dijawab
+        $sudahDijawab = DB::table('simrspku_klaim.jawaban_konsul')
+            ->where('NOMOR_KONSUL', $nomor)
+            ->exists();
+
+        if ($sudahDijawab) {
+            return response()->json(['message' => 'Konsul sudah dijawab, tidak dapat dibatalkan.'], 400);
+        }
+
+        DB::table('simrspku_klaim.konsul')
+            ->where('NOMOR', $nomor)
+            ->update(['deleted_at' => Carbon::now()]);
+
+        return response()->json(['message' => 'Konsul berhasil dibatalkan.']);
     }
 }

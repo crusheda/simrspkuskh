@@ -89,8 +89,10 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     Route::get('emr/konsulk/ruangan', [ApiKonsulController::class, 'listRuangan'])->name('api.emr.konsul.ruangan.show');
     Route::get('emr/konsulk/ruangan/dokter/{id}', [ApiKonsulController::class, 'dokterByRuangan']);
     Route::post('emr/konsulko/tambah', [ApiKonsulController::class, 'store'])->name('api.emr.simpankonsul');
+    Route::post('emr/konsulko/batal/{nomor}', [ApiKonsulController::class, 'batal']);
     Route::post('emr/konsulkon/jawaban', [ApiKonsulController::class, 'simpanJawaban']);
     Route::get('emr/konsulkons/jawaban/{nomor}', [ApiKonsulController::class, 'getJawabKonsul']);
+
 
     // DIGITAL
     Route::post('monitoring', [ApiMonitoringController::class, 'table'])->name('api.monitoring');
