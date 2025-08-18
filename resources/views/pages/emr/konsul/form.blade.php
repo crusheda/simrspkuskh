@@ -118,6 +118,21 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body row g-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Layanan yang Diminta</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="layanan_konsultasi" id="layanan_konsultasi" value="1">
+                            <label class="form-check-label" for="layanan_konsultasi">Konsultasi</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="layanan_rawat_bersama" id="layanan_rawat_bersama" value="1">
+                            <label class="form-check-label" for="layanan_rawat_bersama">Rawat Bersama</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="layanan_alih_rawat" id="layanan_alih_rawat" value="1">
+                            <label class="form-check-label" for="layanan_alih_rawat">Alih Rawat</label>
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <label class="form-label">Alasan Konsul</label>
                         <textarea name="alasan" class="form-control" required></textarea>
@@ -157,6 +172,8 @@
         <form id="formJawabKonsul">
         @csrf
         <input type="hidden" name="nomor" id="jawab-nomor">
+        <input type="hidden" id="aktif-kunjungan" value="{{ $list['KUNJUNGAN'] }}">
+        <input type="hidden" name="KUNJUNGAN" id="jawab-kunjungan">
         <input type="hidden" name="oleh" value="{{ auth()->id() }}">
 
         <div class="modal-content">
@@ -202,9 +219,13 @@
 
         $(document).on('click', '.btn-jawab', function() {
             const nomor = $(this).data('nomor');
-            openJawabKonsul(nomor);
-            $('#jawab-nomor').val(nomor);
+            const kunjungan = $('#aktif-kunjungan').val(); // Ambil kunjungan aktif
+
             $('#formJawabKonsul')[0].reset();
+            $('#jawab-nomor').val(nomor);
+            $('#jawab-kunjungan').val(kunjungan); // Set input hidden untuk form submit
+
+            openJawabKonsul(nomor);
             $('#modalJawabKonsul').modal('show');
         });
 
@@ -228,7 +249,7 @@
                 if (Array.isArray(data) && data.length > 0) {
                     let html = '';
                     data.forEach(function(item) {
-                        const tombolBatal = (!item.JAWABAN && item.SUMBER === 'simrspku_klaim.konsul') ?
+                        const tombolBatal = (!item.JAWABAN) ?
                         `<button class="btn btn-danger btn-sm btn-batal" data-nomor="${item.NOMOR}">
                             Batal
                         </button>` : '-';
@@ -243,6 +264,7 @@
                                 <td>${item.ALASAN}</td>
                                 <td>${item.PERMINTAAN_TINDAKAN}</td>
                                 <td>${item.NAMARUANGAN}</td>
+                                <td>${tombolBatal}</td>
                             </tr>
                         `;
                     });
@@ -268,12 +290,19 @@
                 if (Array.isArray(data) && data.length > 0) {
                     let html = '';
                     data.forEach(function(item) {
+                        let layananList = [];
+                        if (item.KONSULTASI == 1) layananList.push('<span class="badge bg-success me-1">Konsultasi</span>');
+                        if (item.RAWAT_BERSAMA == 1) layananList.push('<span class="badge bg-primary me-1">Rawat Bersama</span>');
+                        if (item.ALIH_RAWAT == 1) layananList.push('<span class="badge bg-warning text-dark me-1">Alih Rawat</span>');
+
+                        let layananHtml = layananList.join(' ');
                         html += `
                             <tr>
                                 <td>
                                     <h4 class="mb-1 text-primary"><b data-bs-toggle="tooltip" data-bs-placement="bottom">${item.NAMARUANGAN}</b></h4>
                                     <span><strong>${item.NOMOR}</strong></span><br>
-                                    <span><small>Dokter Asal : ${item.NAMADOKTER}</small></span>
+                                    <span><small>Dokter Asal : ${item.NAMADOKTER}</small></span><br>
+                                    ${layananHtml}
                                 </td>
                                 <td>${formatTanggal(item.TANGGAL)}</td>
                                 <td>${item.ALASAN}</td>
@@ -311,7 +340,7 @@
                     $('#input-jawaban').val(res.data.JAWABAN || '-');
                     $('#input-anjuran').val(res.data.ANJURAN || '-');
                     $('#input-tgljawab').val(formatTanggal(res.data.TANGGAL) || '-');
-                    $('#input-dokterjawab').val(`${res.data.DOKTER || ''} - ${res.data.OLEH || ''}`);
+                    $('#input-dokterjawab').val(`${res.data.NIP || ''} - ${res.data.JAWABDOKTER || ''}`);
                 } else {
                     kosongkanJawabanKonsul();
                 }
@@ -330,6 +359,9 @@
         e.preventDefault();
 
         const formData = {
+            layanan_konsultasi: $('#layanan_konsultasi').is(':checked') ? 1 : 0,
+            layanan_rawat_bersama: $('#layanan_rawat_bersama').is(':checked') ? 1 : 0,
+            layanan_alih_rawat: $('#layanan_alih_rawat').is(':checked') ? 1 : 0,
             alasan: $('textarea[name="alasan"]').val(),
             permintaan: $('textarea[name="permintaan"]').val(),
             tujuan: $('select[name="tujuan"]').val(),
@@ -423,25 +455,33 @@
     }
     function openJawabKonsul(nomorKonsul) {
         $.ajax({
-        url: '/api/emr/konsulkons/jawaban/' + nomorKonsul,
-        type: 'GET',
-        dataType: 'json',
-        success: function(res) {
-            $('#jawab-nomor').val(nomorKonsul);
-            if (res.data) {
-                $('#jawaban').val(res.data.JAWABAN);
-                $('#anjuran').val(res.data.ANJURAN);
-            } else {
-                $('#jawaban').val('');
-                $('#anjuran').val('');
+            url: '/api/emr/konsulkons/jawaban/' + nomorKonsul,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                // Tidak perlu reset lagi di sini
+                if (res.data) {
+                    $('#jawaban').val(res.data.JAWABAN);
+                    $('#anjuran').val(res.data.ANJURAN);
+
+                    // Jangan timpa kunjungan jika sebelumnya sudah diset
+                    if (res.data.KUNJUNGAN) {
+                        $('#jawab-kunjungan').val(res.data.KUNJUNGAN);
+                    }
+                } else {
+                    $('#jawaban').val('');
+                    $('#anjuran').val('');
+                    // Tidak sentuh #jawab-kunjungan
+                }
             }
-            $('#modalJawabKonsul').modal('show');
-        }
-    });
+        });
     }
 
     $('#formJawabKonsul').on('submit', function(e) {
         e.preventDefault();
+        if (!$('#jawab-kunjungan').val()) {
+            $('#jawab-kunjungan').val($('#aktif-kunjungan').val());
+        }
         $.ajax({
             url: '/api/emr/konsulkon/jawaban',
             type: 'POST',
@@ -449,13 +489,16 @@
             success: function(res) {
                 alert(res.message);
                 $('#modalJawabKonsul').modal('hide');
+            },
+                error: function(xhr) {
+                alert('Gagal menyimpan jawaban konsul: ' + xhr.responseText);
             }
         });
     });
 
     function batalKonsul(nomor) {
         $.ajax({
-            url: `/api/emr/konsulko/batal/${nomor}`,
+            url: `/api/emr/konsulkonsu/batal/${nomor}`,
             type: 'POST',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

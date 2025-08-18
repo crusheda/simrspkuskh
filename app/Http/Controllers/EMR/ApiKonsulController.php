@@ -27,10 +27,12 @@ class ApiKonsulController extends Controller
                 'kon.STATUS',
                 'ru.DESKRIPSI AS NAMARUANGAN',
                 DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                'jk.NOMOR AS JAWABAN',
                 DB::raw('NULL AS created_at'),
                 DB::raw('NULL AS updated_at'),
-                DB::raw('NULL AS deleted_at')
+                DB::raw('NULL AS deleted_at'),
             )
+            ->leftJoin('pendaftaran.jawaban_konsul AS jk','jk.KONSUL_NOMOR','=','kon.NOMOR')
             ->leftJoin('pendaftaran.kunjungan AS pk', 'pk.NOMOR', '=', 'kon.KUNJUNGAN')
             ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'kon.TUJUAN')
             ->leftJoin('master.dokter AS dr', 'dr.ID', '=', 'pk.DPJP')
@@ -51,15 +53,17 @@ class ApiKonsulController extends Controller
                 'kon.STATUS',
                 'ru.DESKRIPSI AS NAMARUANGAN',
                 DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                'jk.NOMOR AS JAWABAN',
                 'kon.created_at',
                 'kon.updated_at',
-                'kon.deleted_at'
+                'kon.deleted_at',
             )
+            ->leftJoin('simrspku_klaim.jawaban_konsul AS jk','jk.KONSUL_NOMOR','=','kon.NOMOR')
             ->leftJoin('pendaftaran.kunjungan AS pk', 'pk.NOMOR', '=', 'kon.KUNJUNGAN')
             ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'kon.TUJUAN')
             ->leftJoin('master.dokter AS dr', 'dr.ID', '=', 'pk.DPJP')
             ->where('kon.KUNJUNGAN', $NOMOR)
-            ->whereNull('deleted_at');
+            ->whereNull('kon.deleted_at');
 
         // Gabungkan kedua query
         $data = $query1->unionAll($query2)->get();
@@ -95,6 +99,9 @@ class ApiKonsulController extends Controller
                 'kon.TUJUAN',
                 'kon.OLEH',
                 'kon.STATUS',
+                DB::raw('NULL AS KONSULTASI'),
+                DB::raw('NULL AS RAWAT_BERSAMA'),
+                DB::raw('NULL AS ALIH_RAWAT'),
                 'ru.DESKRIPSI AS NAMARUANGAN',
                 'ruang.DESKRIPSI AS TUJUAN_NAMA',
                 DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
@@ -122,6 +129,9 @@ class ApiKonsulController extends Controller
                 'kon.TUJUAN',
                 'kon.OLEH',
                 'kon.STATUS',
+                'kon.KONSULTASI',
+                'kon.RAWAT_BERSAMA',
+                'kon.ALIH_RAWAT',
                 'ru.DESKRIPSI AS NAMARUANGAN',
                 'ruang.DESKRIPSI AS TUJUAN_NAMA',
                 DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
@@ -225,6 +235,9 @@ class ApiKonsulController extends Controller
             'PERMINTAAN_TINDAKAN' => $request->input('permintaan'),
             'TUJUAN' => $request->input('tujuan'),
             'OLEH' => $request->input('oleh'),
+            'KONSULTASI' => $request->input('layanan_konsultasi', 0),
+            'RAWAT_BERSAMA' => $request->input('layanan_rawat_bersama', 0),
+            'ALIH_RAWAT' => $request->input('layanan_alih_rawat', 0),
             'created_at' => $now,
             'updated_at' => $now,
         ]);
@@ -273,7 +286,13 @@ class ApiKonsulController extends Controller
 
     public function getJawabKonsul($nomor)
     {
-        $jawaban = DB::table('simrspku_klaim.jawaban_konsul')
+        $jawaban = DB::table('simrspku_klaim.jawaban_konsul AS jk')
+            ->select(
+                'jk.*',
+                'dr.NIP AS NIP',
+                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS JAWABDOKTER')
+            )
+            ->leftJoin('master.dokter AS dr','dr.ID','=','jk.DOKTER')
             ->where('KONSUL_NOMOR', $nomor)
             ->first();
 
@@ -291,6 +310,7 @@ class ApiKonsulController extends Controller
             'nomor' => 'required|string',
             'jawaban' => 'required|string',
             'anjuran' => 'nullable|string',
+            'KUNJUNGAN' => 'nullable|string',
             'oleh' => 'required|integer'
         ]);
 
@@ -319,6 +339,7 @@ class ApiKonsulController extends Controller
                 ->update([
                     'JAWABAN' => $request->input('jawaban'),
                     'ANJURAN' => $request->input('anjuran'),
+                    'KUNJUNGAN' => $request->input('KUNJUNGAN'),
                     'DOKTER' => $doktere->DOKTER_TUJUAN,
                     'OLEH' => $request->input('oleh'),
                     'updated_at' => $now,
@@ -338,6 +359,7 @@ class ApiKonsulController extends Controller
                 'DOKTER' => $doktere->DOKTER_TUJUAN,
                 'OLEH' => $request->input('oleh'),
                 'STATUS' => 1,
+                'KUNJUNGAN' => $request->input('KUNJUNGAN'),
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
@@ -361,7 +383,7 @@ class ApiKonsulController extends Controller
 
         // Pastikan belum dijawab
         $sudahDijawab = DB::table('simrspku_klaim.jawaban_konsul')
-            ->where('NOMOR_KONSUL', $nomor)
+            ->where('KONSUL_NOMOR', $nomor)
             ->exists();
 
         if ($sudahDijawab) {
