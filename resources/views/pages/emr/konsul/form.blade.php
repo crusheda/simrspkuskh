@@ -236,6 +236,13 @@
             }
         });
 
+        $(document).on('click', '.btn-cetak', function () {
+            const nomor = $(this).data('nomor');
+            if (nomor) {
+                window.open(`/api/emr/konsulkonsul/cetak/${nomor}`, '_blank');
+            }
+        });
+
     });
 
     function tampilKonsul(nomor) {
@@ -249,6 +256,11 @@
                 if (Array.isArray(data) && data.length > 0) {
                     let html = '';
                     data.forEach(function(item) {
+                        const tombolCetak = `
+                            <button class="btn btn-info btn-sm btn-cetak" data-nomor="${item.NOMOR}">
+                                Cetak
+                            </button>
+                        `;
                         const tombolBatal = (!item.JAWABAN) ?
                         `<button class="btn btn-danger btn-sm btn-batal" data-nomor="${item.NOMOR}">
                             Batal
@@ -264,7 +276,7 @@
                                 <td>${item.ALASAN}</td>
                                 <td>${item.PERMINTAAN_TINDAKAN}</td>
                                 <td>${item.NAMARUANGAN}</td>
-                                <td>${tombolBatal}</td>
+                                <td>${tombolBatal} ${tombolCetak}</td>
                             </tr>
                         `;
                     });

@@ -13,6 +13,7 @@ use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\EMR\ApiMatriksController;
 use App\Http\Controllers\EMR\ApiKonsulController;
+use App\Http\Controllers\EMR\ApiUploadController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Klaim\Smart\ApiSmartKlaimController;
 use App\Http\Controllers\Monitoring\MonitoringController;
@@ -98,6 +99,12 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     Route::post('emr/konsulkon/jawaban', [ApiKonsulController::class, 'simpanJawaban']);
     Route::get('emr/konsulkons/jawaban/{nomor}', [ApiKonsulController::class, 'getJawabKonsul']);
     Route::post('emr/konsulkonsu/batal/{nomor}', [ApiKonsulController::class, 'batal']);
+    Route::get('emr/konsulkonsul/cetak/{nomor}', [ApiKonsulController::class, 'cetakPDF'])->name('konsul.cetak');
+    //UPLOAD FILE
+    Route::get('emr/file-upload/{nomor}', [ApiUploadController::class, 'index'])->name('file.tambahan.index');
+    Route::post('emr/file-upload/{nomor}', [ApiUploadController::class, 'store'])->name('file.tambahan.upload');
+    Route::get('emr/file-upload/{nomor}/list', [ApiUploadController::class, 'listFiles'])->name('file.tambahan.list');
+    Route::delete('emr/file-upload/{nomor}/{id}', [ApiUploadController::class, 'destroy'])->name('file.tambahan.delete');
 
 
     // DIGITAL
