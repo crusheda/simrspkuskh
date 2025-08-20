@@ -115,39 +115,40 @@ class EMRController extends Controller
                 ->where('pk.NOMOR',$KUNJUNGAN)
                 ->first();
 
-        $riwayat = DB::table('pendaftaran.kunjungan AS pk')
-                ->select(
-                    'pk.NOMOR AS NOKUNJUNGAN','pp.TANGGAL AS TGLDAFTAR',
-                    'pp.STATUS AS STATUSDAFTAR','pk.STATUS AS STATUSKUNJUNGAN',
-                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
-                    'ru.DESKRIPSI AS NAMARUANGAN',
-                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
-                )
-                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
-                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
-                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
-                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
-                ->where(function ($q) {
-                    $q->where('pk.RUANGAN', 'LIKE', '1020101%')
-                    ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
-                    ->orWhere('pk.RUANGAN', 'LIKE', '1020301%')
-                    ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
-                })
-                ->where('pp.NORM',$show->NORM)
-                ->orderBy('pp.TANGGAL','DESC')
-                ->get();
+        if ($show) {
+            $riwayat = DB::table('pendaftaran.kunjungan AS pk')
+                    ->select(
+                        'pk.NOMOR AS NOKUNJUNGAN','pp.TANGGAL AS TGLDAFTAR',
+                        'pp.STATUS AS STATUSDAFTAR','pk.STATUS AS STATUSKUNJUNGAN',
+                        'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
+                        'ru.DESKRIPSI AS NAMARUANGAN',
+                        DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                    )
+                    ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                    ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                    ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                    ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                    ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                    ->where(function ($q) {
+                        $q->where('pk.RUANGAN', 'LIKE', '1020101%')
+                        ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
+                        ->orWhere('pk.RUANGAN', 'LIKE', '1020301%')
+                        ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
+                    })
+                    ->where('pp.NORM',$show->NORM)
+                    ->orderBy('pp.TANGGAL','DESC')
+                    ->get();
 
-        // print_r($riwayat);
-        // die();
+            $data = [
+                'show' => $show,
+                'riwayat' => $riwayat,
+                'KUNJUNGAN' => $KUNJUNGAN,
+            ];
 
-        $data = [
-            'show' => $show,
-            'riwayat' => $riwayat,
-            'KUNJUNGAN' => $KUNJUNGAN,
-        ];
-
-        return view('pages.emr.detail')->with('list', $data);
+            return view('pages.emr.detail')->with('list', $data);
+        } else {
+            return redirect()->back()->withErrors('Kunjungan '.$KUNJUNGAN.' Tidak Ditemukan');
+        }
     }
 
     // API

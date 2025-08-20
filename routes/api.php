@@ -71,12 +71,18 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('emr/fkfr/{id}', [ApiRehabMedikController::class, 'getFormKfrByGroup'])->name('api.emr.fkfr.getFormKfrByGroup');
             Route::delete('emr/fkfr/{NOMOR}/hapus/{USER}', [ApiRehabMedikController::class, 'hapusFormKfr'])->name('api.emr.fkfr.hapusFormKfr');
             Route::get('emr/fkfr/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormKfr'])->name('api.emr.fkfr.preview');
-            // JADWAL PELAYANAN
+            // JP - JADWAL PELAYANAN
             Route::get('emr/{NORM}/jp/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormJp'])->name('api.emr.jp.get');
             Route::get('emr/jp/{id}', [ApiRehabMedikController::class, 'getFormJpByGroup'])->name('api.emr.fkfr.getFormJpByGroup');
             Route::get('emr/jp/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormJp'])->name('api.emr.jp.preview');
             Route::post('emr/jp', [ApiRehabMedikController::class, 'simpanJp'])->name('api.emr.jp.simpanJp');
             Route::delete('emr/jp/hapus/{id}', [ApiRehabMedikController::class, 'hapusFormJp'])->name('api.emr.jp.hapusFormJp');
+            // KS - REKOMENDASI DOKTER
+            Route::get('emr/{NORM}/ks/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKs'])->name('api.emr.ks.get');
+            Route::get('emr/ks/{id}', [ApiRehabMedikController::class, 'getFormKsByGroup'])->name('api.emr.fkfr.getFormKsByGroup');
+            Route::get('emr/ks/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormKs'])->name('api.emr.ks.preview');
+            Route::post('emr/ks', [ApiRehabMedikController::class, 'simpanKs'])->name('api.emr.ks.simpan');
+            Route::delete('emr/ks/hapus/{id}', [ApiRehabMedikController::class, 'hapusFormKs'])->name('api.emr.ks.hapus');
 
     //MATRIKS
     Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');

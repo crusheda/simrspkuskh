@@ -9,15 +9,16 @@
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#formjadwalpelayanan" type="button"
                     role="tab" aria-controls="formjadwalpelayanan" aria-selected="true">Jadwal Pelayanan</button>
             </li>
-            {{-- <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#riwayatkfr" type="button" role="tab"
-                    aria-controls="riwayatkfr" aria-selected="false">Riwayat</button>
-            </li> --}}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#formkonsulkfr" type="button" role="tab"
+                    aria-controls="formkonsulkfr" aria-selected="false">Rekomendasi Dokter</button>
+            </li>
         </ul>
     </div>
     <div class="card-body p-3">
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade active show" id="formlayanankfr" role="tabpanel" aria-labelledby="home-tab">
+                <div id="loading-kfr"></div>
                 <div id="previewformkfr" hidden></div>
                 <div id="allformkfr" hidden>
                     <div id="formLamaKfr" hidden>
@@ -257,8 +258,9 @@
                 </div>
             </div>
             <div class="tab-pane fade" id="formjadwalpelayanan" role="tabpanel" aria-labelledby="profile-tab">
+                <div id="loading-jp"></div>
                 <div id="hideFormJp" class="text-center mt-2" hidden>
-                    <h5>Formulir Layanan KFR tidak ditemukan pada kunjungan ini. Silakan melakukan Pengisian pada Menu Form Layanan KFR terlebih dahulu.</h5>
+                    <h5>Formulir <b class="text-primary">Jadwal Program Layanan KFR</b> tidak ditemukan pada kunjungan ini. Silakan melakukan Pengisian pada Menu Form Layanan KFR terlebih dahulu.</h5>
                 </div>
                 <div id="showFormJp" hidden>
                     <h5 class="text-start">Form <b class="text-primary">Program Pelayanan</b></h5>
@@ -289,7 +291,7 @@
                                     <div class="form-group">
                                         <label class="form-label">Tanggal Pelayanan <a class="text-danger">*</a></label>
                                         <div class="input-group">
-                                            <input type="text" id="filter_tgl_jp" class="form-control flatpickr-input" placeholder="Pilih Rentang Tanggal">
+                                            <input type="text" id="filter_tgl_jp" class="form-control flatpickr-input-jp" placeholder="Pilih Tanggal">
                                             <span class="input-group-text"><i class="feather icon-calendar"></i></span>
                                         </div>
                                     </div>
@@ -404,38 +406,83 @@
                     </table>
                 </div>
             </div>
-            {{-- <div class="tab-pane fade" id="riwayatkfr" role="tabpanel" aria-labelledby="profile-tab">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>A</th>
-                                <th>B</th>
-                                <th>C</th>
-                                <th>D</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>demo</td>
-                                <td>/demo</td>
-                                <td><span class="badge text-bg-danger">demo</span></td>
-                                <td>
-                                    <a href="#" class="avtar avtar-xs btn-link-secondary">
-                                        <i class="ti ti-eye f-20"></i>
-                                    </a>
-                                    <a href="#" class="avtar avtar-xs btn-link-secondary">
-                                        <i class="ti ti-edit f-20"></i>
-                                    </a>
-                                    <a href="#" class="avtar avtar-xs btn-link-secondary">
-                                        <i class="ti ti-trash f-20"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="tab-pane fade" id="formkonsulkfr" role="tabpanel" aria-labelledby="profile-tab">
+                <div id="loading-ks"></div>
+                <div id="hideFormKs" class="text-center mt-2" hidden>
+                    <h5>Formulir <b class="text-primary">Rekomendasi Dokter</b> tidak ditemukan pada kunjungan ini. Silakan melakukan Pengisian pada Menu Form Layanan KFR terlebih dahulu.</h5>
                 </div>
-            </div> --}}
+                <div id="showFormKsUtama" class="text-center mt-2" hidden></div>
+                <div id="showFormKs" hidden>
+                    <input type="text" class="form-control" id="groupidks" hidden>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Diagnosa Medis</label>
+                                <input type="text" class="form-control" id="diagmedis_ks" placeholder="Terisi Otomatis oleh Sistem" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Diagnosa Fungsi</label>
+                                <input type="text" class="form-control" id="diagfungsi_ks" placeholder="Terisi Otomatis oleh Sistem" readonly>
+                            </div>
+                        </div>
+                        <hr class="m-2 mb-3">
+                        <h6>Tindak lanjut yang dianjurkan :</h6>
+                        <div class="col-md-6 mb-3">
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <div class="form-group">
+                                        <label class="form-label">Kontrol kembali ke Rumah Sakit pada <a class="text-danger">*</a></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="feather icon-calendar me-2"></i> Tanggal</span>
+                                            <input type="text" id="filter_tgl_ks" class="form-control flatpickr-input-ks" placeholder="Pilih Tanggal">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="form-floating">
+                                            <textarea class="form-control" id="alasan_ks" style="height: 100px" placeholder=""></textarea>
+                                            <label for="alasan_ks">Alasan :</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Konsultasi selesai / Rujuk Balik</label>
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="terapi_ks" style="height: 165px" placeholder=""></textarea>
+                                    <label for="terapi_ks">Terapi Rujuk Balik :</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row align-items-center justify-content-between g-3">
+                                <div class="col-sm-auto btn-page">
+                                    <button class="btn btn-warning me-2" id="btn-kosongi-ks" onclick="kosongiKs()" disabled>
+                                        <i class="fas fa-edit me-1"></i> Kosongkan Form
+                                    </button>
+                                </div>
+                                <div class="col-sm-auto btn-page">
+                                    <button class="btn btn-success me-2" id="btn-preview-form-ks" hidden>
+                                        <i class="fas fa-file-contract me-1"></i> Preview Form
+                                    </button>
+                                    <button class="btn btn-primary" id="btn-simpan-ks" onclick="simpanFormulirKs()">
+                                        <i class="fas fa-save me-1"></i> Simpan Form Rekomendasi
+                                    </button>
+                                    <button class="btn btn-danger" id="btn-hapus-ks" onclick="hapusFormulirKs()" hidden>
+                                        <i class="fas fa-trash me-1"></i> Hapus Form Rekomendasi
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="previewKs" hidden></div>
+            </div>
         </div>
     </div>
 </div>
@@ -452,6 +499,24 @@
                 <div id="previewFormJadwalPelayanan"></div>
             </div>
             <div class="col-12 text-center p-4 pt-0" id="btn-footer-preview-jp">
+                <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal animate__animated animate__rubberBand fade" id="modalPreviewKs" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Preview Form Rekomendasi Dokter (<kbd id="showTxModalKs"></kbd>)
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div id="previewFormKs"></div>
+            </div>
+            <div class="col-12 text-center p-4 pt-0" id="btn-footer-preview-ks">
                 <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
             </div>
         </div>
@@ -486,18 +551,47 @@
     </div>
 </div>
 
+<div class="modal animate__animated animate__rubberBand fade" id="modalHapusKs" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Form Hapus Rekomendasi Dokter
+                </h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="id_hapus_ks" hidden>
+                <p style="text-align: justify;">Anda akan melakukan penghapusan Form Rekomendasi Dokter tersebut, lakukanlah dengan hati-hati. Ceklis dibawah untuk melanjutkan penghapusan.</p>
+                <label class="switch">
+                    <input type="checkbox" class="switch-input" id="setujuhapusks">
+                    <span class="switch-toggle-slider">
+                    <span class="switch-on"></span>
+                    <span class="switch-off"></span>
+                    </span>
+                    <span class="switch-label">Anda siap menerima Risiko</span>
+                </label>
+            </div>
+            <div class="col-12 text-center mb-4">
+                <button type="submit" class="btn btn-danger me-sm-3 me-1" onclick="prosesHapusKs()"><i class="fa fa-trash me-1" style="font-size:13px"></i> Hapus</button>
+                <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // Variabel Global
     let padKfr = null,
         padJpP = null,
         padJpT = null,
         filterTglJp = null;
+        filterTglKs = null;
 
     $(document).ready(function() {
         const today = new Date(); // Hari ini
         const fiveYearsAgo = new Date();
         fiveYearsAgo.setFullYear(today.getFullYear() - 5); // 5 tahun ke belakang
-        filterTglJp = $(".flatpickr-input").flatpickr(
+        filterTglJp = $(".flatpickr-input-jp").flatpickr(
             {
                 // enableTime: true,
                 // dateFormat: "Y-m-d H:i",
@@ -505,6 +599,16 @@
                 maxDate: today,        // Sampai hari ini
                 dateFormat: 'Y-m-d',
                 defaultDate: today
+            }
+        );
+        filterTglKs = $(".flatpickr-input-ks").flatpickr(
+            {
+                // enableTime: true,
+                // dateFormat: "Y-m-d H:i",
+                minDate: fiveYearsAgo, // Mulai dari 5 tahun yang lalu
+                maxDate: today,        // Sampai hari ini
+                dateFormat: 'Y-m-d',
+                // defaultDate: today
             }
         );
 
@@ -527,6 +631,9 @@
             } else if (target === '#formjadwalpelayanan') {
                 validPageFormJp();
                 console.log('jalan jp');
+            } else if (target === '#formkonsulkfr') {
+                validPageFormKs();
+                console.log('jalan ks');
             }
         });
     });
@@ -655,12 +762,21 @@
     }
 
     function validPageFormKfr() {
+        $('#loading-kfr').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Memuat Formulir...
+        `);
+        $('#previewformkfr').prop('hidden', true);
+        $('#allformkfr').prop('hidden', true);
         $.ajax({
             url: `/api/emr/{{ $list['show']->NORM }}/fkfr/{{ $list['KUNJUNGAN'] }}`,
             type: 'GET',
             dataType: 'json',
             success: function(res) {
                 $('#formLamaKfrPick').prop('hidden', true);
+                $('#loading-kfr').empty();
                 if (res.form) {
                     showPreviewFormKfr(res.form.group);
                     $('#previewformkfr').prop('hidden', false);
@@ -999,6 +1115,15 @@
 
     // ----------------------------------------------------------------------------  FORM JADWAL PELAYANAN  -------------------------------------------------------------------
     function validPageFormJp() {
+        $('#loading-jp').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Memuat Formulir...
+        `);
+        $('#hideFormJp').prop('hidden',true);
+        $('#showFormJp').prop('hidden',true);
+        $('#show_table_jp').prop('hidden',true);
         if (window.dataTable) {
             window.dataTable.destroy();
         }
@@ -1007,6 +1132,8 @@
             type: 'GET',
             dataType: 'json',
             success: function(res) {
+                var nomorKunj = "{{ $list['KUNJUNGAN'] }}";
+                $('#loading-jp').empty();
                 if (res.form_kfr) {
                     // showPreviewFormJp(res.form.group);
                     $('#hideFormJp').prop('hidden',true);
@@ -1033,10 +1160,18 @@
                                 $("#tampil-tbody-jp").append(`
                                     <tr id="jpid_${item.id}">
                                         <td>
-                                            <button class="btn btn-icon btn-danger avtar-s mb-0" onclick="hapusJp(${item.id})"
-                                                data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hapus Program (ID:${item.id})">
-                                                <i class="fas fa-trash" style="font-size: 13px;"></i>
-                                            </button>
+                                            ${item.nomor == nomorKunj?
+                                                `<button class="btn btn-icon btn-danger avtar-s mb-0" onclick="hapusJp(${item.id})"
+                                                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hapus Program (ID:${item.id})">
+                                                    <i class="fas fa-trash" style="font-size: 13px;"></i>
+                                                </button>`
+                                            :
+                                                `<button class="btn btn-icon btn-secondary avtar-s mb-0" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                    title="Hapus Program (ID:${item.id})">
+                                                    <i class="fas fa-trash" style="font-size: 13px;"></i>
+                                                </button>`
+                                            }
+
                                         </td>
                                         <td>${index + 1}</td>
                                         <td style='white-space: normal !important;word-wrap: break-word;'>
@@ -1318,6 +1453,320 @@
         }
         $('.form-control').removeClass('is-valid is-invalid');
     }
+
+    // ----------------------------------------------------------------------------  FORM JADWAL PELAYANAN  -------------------------------------------------------------------
+    function validPageFormKs() {
+        $('#loading-ks').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Memuat Formulir...
+        `);
+        $('#hideFormKs').prop('hidden', true);
+        $('#showFormKsUtama').prop('hidden', true);
+        $('#showFormKs').prop('hidden', true);
+        $('#previewKs').prop('hidden', true);
+        $.ajax({
+            url: `/api/emr/{{ $list['show']->NORM }}/ks/{{ $list['KUNJUNGAN'] }}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                var nomorKunj = "{{ $list['KUNJUNGAN'] }}";
+                $('#loading-ks').empty();
+                kosongiKs();
+                if (res.form_kfr) {
+                    // showPreviewFormJp(res.form.group);
+                    // console.log(nomorKunj);
+                    console.log(res.form_ks.group);
+                    $('#hideFormKs').prop('hidden',true);
+                    if (nomorKunj == res.form_kfr_group.nomor) {
+                        if (res.form_ks) {
+                            $('#btn-preview-form-ks').attr('onclick', `showPreviewFormKsModal(${res.form_ks.group})`);
+                            $('#btn-preview-form-ks').prop('hidden',false);
+                            $('#filter_tgl_ks').val(res.form_ks.tgl).prop('disabled',true);
+                            $('#alasan_ks').val(res.form_ks.alasan).prop('disabled',true);
+                            $('#terapi_ks').val(res.form_ks.terapi).prop('disabled',true);
+                            $('#btn-kosongi-ks').prop('disabled',true);
+                            $('#btn-simpan-ks').prop('hidden',true);
+                            $('#btn-hapus-ks').prop('hidden',false);
+                        } else {
+                            $('#btn-preview-form-ks').prop('hidden',true);
+                            $('#alasan_ks').val('').prop('disabled',false);
+                            $('#terapi_ks').val('').prop('disabled',false);
+                            $('#btn-kosongi-ks').prop('disabled',false);
+                            $('#btn-simpan-ks').prop('hidden',false);
+                            $('#btn-hapus-ks').prop('hidden',true);
+                        }
+                        $('#groupidks').val(res.form_kfr.group);
+                        $('#diagmedis_ks').val(res.form_kfr.diagnosa_medis);
+                        $('#diagfungsi_ks').val(res.form_kfr.diagnosa_fungsi);
+                        $('#showFormKs').prop('hidden',false);
+                        $('#showFormKsUtama').empty().prop('hidden',true);
+                        $('#previewKs').empty().prop('hidden',true);
+                    } else {
+                        if (res.form_ks) {
+                            $('#showFormKs').prop('hidden',true);
+                            $('#showFormKsUtama').empty().prop('hidden',true);
+                            $('#previewKs').empty().prop('hidden',false);
+                            showPreviewFormKs(res.form_ks.group);
+                            // alert('muncul preview KS');
+                        } else {
+                            $('#showFormKs').prop('hidden',true);
+                            $('#showFormKsUtama').empty().append(`
+                                <h5>Formulir <b class="text-primary">Rekomendasi Dokter</b> tidak dapat dimasukkan pada kunjungan saat ini dikarenakan form tersebut sudah pernah dimasukkan pada kunjungan sebelumnya.
+                                    <br>Silakan melakukan Pengisian pada Kunjungan yang sama dengan form yang sudah ditetapkan pada <a data-bs-toggle="tab" data-bs-target="#formlayanankfr" type="button"
+                                    role="tab" aria-controls="formlayanankfr" aria-selected="true">Menu Form Layanan KFR</a> sebelumnya terlebih dahulu. <br>Untuk menuju Kunjungan yang dimaksud, dapat melalui tombol di bawah ini
+                                </h5>
+                                <button class="btn btn-primary" onclick="window.location='{{ url("emr") }}/${res.form_kfr_group.nomor}'">
+                                    Kunjungan Pertama Layanan KFR
+                                </button>
+                            `);
+                            $('#showFormKsUtama').prop('hidden',false);
+                            $('#previewKs').empty().prop('hidden',true);
+                        }
+                    }
+                } else {
+                    $('#hideFormKs').prop('hidden',false);
+
+                    $('#groupidks').val('');
+                    $('#diagmedis_ks').val('');
+                    $('#diagfungsi_ks').val('');
+
+                    $('#showFormKs').prop('hidden',true);
+                    $('#previewKs').prop('hidden',true);
+                    $('#showFormKsUtama').prop('hidden',true);
+                }
+
+                // Showing Tooltip
+                $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                $('.tooltip').remove();
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    trigger : 'hover'
+                })
+            },
+            error: function(xhr, status, error) {
+                console.error('Terjadi kesalahan:', error);
+            }
+        })
+    }
+
+    function showPreviewFormKsModal(GROUP) {
+        $('#modalPreviewKs').modal('show');
+        $('#previewFormKs').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Memuat Formulir...
+        `);
+
+        fetch("/api/emr/ks/{{ $list['KUNJUNGAN'] }}/preview/" + GROUP)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Formulir tidak ditemukan atau gagal diambil.');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Buat object URL dari blob
+                const fileURL = URL.createObjectURL(blob);
+                $('#showTxModalKs').text("{{ $list['KUNJUNGAN'] }}#"+GROUP);
+
+                // Tampilkan ke iframe dalam modal
+                $('#previewFormKs').empty().html(
+                    `<iframe src="${fileURL}" width="100%" height="500px" frameborder="0" class="rounded"></iframe>`
+                );
+                $('#btn-footer-preview-ks').empty().append(`
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <button class="btn btn-warning" onclick="showPreviewFormKs(${GROUP})">
+                            <i class="fas fa-sync me-1"></i> Muat Ulang Laporan
+                        </button>
+                        <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
+                    </div>
+                `);
+            })
+            .catch(error => {
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Data Formulir tidak ditemukan atau gagal diproses.',
+                    position: 'topRight'
+                });
+                console.error(error);
+            });
+    }
+
+    function showPreviewFormKs(GROUP) {
+        $('#previewKs').empty().append(`
+            <div class="spinner-grow align-middle me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            Memuat Formulir...
+        `);
+
+        fetch("/api/emr/ks/{{ $list['KUNJUNGAN'] }}/preview/" + GROUP)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Formulir tidak ditemukan atau gagal diambil.');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Buat object URL dari blob
+                const fileURL = URL.createObjectURL(blob);
+
+                // Tampilkan ke iframe dalam modal
+                $('#previewKs').empty().html(
+                    `<iframe src="${fileURL}" width="100%" height="500px" frameborder="0" class="rounded"></iframe>`
+                );
+                $('#previewKs').append(`
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <button class="btn btn-warning" onclick="showPreviewFormKs(${GROUP})">
+                            <i class="fas fa-sync me-1"></i> Muat Ulang Laporan
+                        </button>
+                    </div>
+                `);
+            })
+            .catch(error => {
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Data Formulir tidak ditemukan atau gagal diproses.',
+                    position: 'topRight'
+                });
+                console.error(error);
+            });
+    }
+
+    function simpanFormulirKs() {
+        var group = $('#groupidks').val();
+        var nomor = "{{ $list['KUNJUNGAN'] }}";
+        var tgl = $('#filter_tgl_ks').val();
+        var alasan = $('#alasan_ks').val();
+        var terapi = $('#terapi_ks').val();
+        var id_user = "{{ Auth::user()->ID }}";
+
+        const save = new FormData();
+        save.append('group', group);
+        save.append('nomor', nomor);
+        save.append('tgl', tgl);
+        save.append('alasan', alasan);
+        save.append('terapi', terapi);
+        save.append('id_user', id_user);
+
+        var error = 0;
+        var message = null;
+
+        if (tgl != '') {
+            if (alasan == '') {
+                error = 1;
+                message = 'Isian Alasan masih kosong.';
+            }
+        } else {
+            if (alasan != '') {
+                error = 1;
+                message = 'Isian Tanggal Kontrol Kembali masih kosong.';
+            }
+        }
+
+        if (error != 0) {
+            iziToast.warning({
+                title: message,
+                message: 'Periksa kembali isian pada form Anda.',
+                position: 'topRight'
+            });
+        } else {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('api.emr.ks.simpan') }}",
+                method: 'POST',
+                data: save,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function(res) {
+                    if (res.code === 200) {
+                        iziToast.success({
+                            title: 'Berhasil!',
+                            message: res.message,
+                            position: 'topRight'
+                        });
+                        kosongiKs();
+                        validPageFormKs();
+                    } else {
+                        iziToast.warning({
+                            title: 'API Error!',
+                            message: res.message,
+                            position: 'topRight'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    iziToast.error({
+                        title: 'Gagal!',
+                        message: error,
+                        position: 'topRight'
+                    });
+                }
+            });
+        }
+    }
+
+    function hapusJp(id) {
+        $("#id_hapus_ks").val(id);
+        var inputs = document.getElementById('setujuhapusks');
+        inputs.checked = false;
+        $('#modalHapusKs').modal('show');
+    }
+
+    function prosesHapusJp() {
+        // SWITCH BTN HAPUS
+        var checkboxHapus = $('#setujuhapusks').is(":checked");
+        if (checkboxHapus == false) {
+            iziToast.error({
+                title: 'Pesan Galat!',
+                message: 'Mohon menyetujui untuk dilakukan penghapusan berkas tersebut',
+                position: 'topRight'
+            });
+        } else {
+            // PROSES HAPUS
+            var id = $("#id_hapus_ks").val();
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "/api/emr/ks/hapus/"+id,
+                type: 'DELETE',
+                success: function(res) {
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: 'Form Rekomendasi Dokter telah berhasil dihapus pada '+res,
+                        position: 'topRight'
+                    });
+                    $('#modalHapusKs').modal('hide');
+                    kosongiKs();
+                    validPageFormKs();
+                },
+                error: function(res) {
+                    iziToast.error({
+                        title: 'API Error!',
+                        message: 'Form Rekomendasi Dokter Anda gagal dihapus',
+                        position: 'topRight'
+                    });
+                }
+            });
+        }
+    }
+
+    function kosongiKs() {
+        if (filterTglKs) {
+            filterTglKs.setDate(new Date(), true);
+        }
+        $('#alasan_ks').val('');
+        $('#terapi_ks').val('');
+        $('.form-control').removeClass('is-valid is-invalid');
+    }
+
     /**
      * Cek field satu atau banyak, kalau kosong tambah class is-invalid.
      * @param {Array} fields - Array selector ID atau name
