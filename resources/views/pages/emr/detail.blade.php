@@ -101,8 +101,14 @@
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="" data-bs-toggle="tab" href="#fmatriks" role="tab"
-                            aria-selected="false" tabindex="-1" onclick="showFormKonsul()">
+                            aria-selected="false" tabindex="-1" disabled>
                             <i class="ph-duotone ph-film-script"></i> Matriks
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="" data-bs-toggle="tab" href="#fuploads" role="tab"
+                            aria-selected="false" tabindex="-1" disabled>
+                            <i class="ph-duotone ph-upload-simple"></i> Upload File
                         </a>
                     </li>
                 </ul>
@@ -953,6 +959,11 @@
         <div class="tab-content">
             <div class="tab-pane" id="konsul" role="tabpanel">
                 @include('pages.emr.konsul.form')
+            </div>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane" id="fuploads" role="tabpanel">
+                @include('pages.emr.upload')
             </div>
         </div>
         <div class="tab-content">

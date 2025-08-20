@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
+use PHPJasper\PHPJasper;
+use App\Models\simrspku_klaim\klaim_file;
+use Auth, Storage;
 
 class ApiKonsulController extends Controller
 {
@@ -395,5 +399,88 @@ class ApiKonsulController extends Controller
             ->update(['deleted_at' => Carbon::now()]);
 
         return response()->json(['message' => 'Konsul berhasil dibatalkan.']);
+    }
+    public function cetakPDF($nomor)
+    {
+        $getKonsul = DB::table('simrspku_klaim.konsul AS kon')
+                ->select(
+                    'kon.*',
+                    'pk.NOPEN'
+                )
+                ->leftJoin('pendaftaran.kunjungan AS pk','pk.NOMOR','=','kon.KUNJUNGAN')
+                ->where('kon.NOMOR', $nomor)
+                ->whereNull('kon.deleted_at')
+                ->first();
+        if (empty($getKonsul)) {
+            return response()->json($data, 400);
+        }
+        $getJawaban = DB::table('simrspku_klaim.jawaban_konsul')
+                ->where('KONSUL_NOMOR', $getKonsul->NOMOR)
+                ->whereNull('deleted_at')
+                ->first();
+        // print_r($getKonsul);
+        // die();
+        $CETAK_HEADER = "1";
+        // ----------------------------------------------------------------------
+        $getTgl = Carbon::parse($getKonsul->created_at);
+        $tgl = $getTgl->isoFormat('DD');
+        $bulan = $getTgl->isoFormat('MM');
+        $tahun = $getTgl->isoFormat('YYYY');
+        // ----------------------------------------------------------------------
+        $input = public_path().'/doc/input/konsul/CetakKonsul.jrxml';
+        $path = 'files/konsul/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$nomor;
+        $output = storage_path().'/app/public/'.$path;
+
+        // SAVE TO DB
+        $verify = klaim_file::where('nomor',$nomor)->where('jenis',12)->where('status',true)->first();
+        if (!$verify) {
+            $post = new klaim_file;
+            $post->jenis = 12;
+            $post->nomor = $nomor;
+            $post->title = $nomor.'.pdf';
+            $post->filename = $path.'.pdf';
+            $post->status = true;
+            $post->user = Auth::user()->ID;
+            $post->save();
+        }
+
+        // Pastikan folder tujuan ada
+        $outputDir = dirname($output);
+        if (!File::exists($outputDir)) {
+            File::makeDirectory($outputDir, 0755, true); // true = recursive
+        }
+
+        $options = [
+            'format' => ['pdf'],
+            'params' => [
+                'PKONSUL' => $getKonsul->NOMOR,
+                'PNOPEN' => $getKonsul->NOPEN,
+                'IMAGES_PATH' => public_path()."/doc/input/konsul/",
+                'TTD_PATH' => storage_path()."/app/public/",
+            ],
+            'db_connection' => [
+                'driver'   => config('database.connections.db_custom.driver'),
+                'host'     => config('database.connections.db_custom.host'),
+                'port'     => config('database.connections.db_custom.port'),
+                'username' => config('database.connections.db_custom.username'),
+                'password' => config('database.connections.db_custom.password'),
+                'database' => config('database.connections.db_custom.database'),
+            ],
+        ];
+
+        // print_r($options);
+        // die();
+
+        $jasper = new PHPJasper;
+
+        $jasper->process(
+            $input,
+            $output,
+            $options
+        )->execute();
+
+        return response()->file($output.'.pdf',[
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 }
