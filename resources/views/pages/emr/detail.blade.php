@@ -87,28 +87,30 @@
                             <i class="ph-duotone ph-user-switch me-2"></i> Identitas Pasien
                         </button>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frehab" role="tab"
-                            aria-selected="false" tabindex="-1" disabled>
-                            <i class="ph-duotone ph-file-lock me-2"></i> Program Rehab Medik
-                        </button>
-                    </li>
+                    @if (Str::startsWith($list['show']->IDRUANGAN, '10207'))
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frehab" role="tab"
+                                aria-selected="false" tabindex="-1" id="tab-frehab" disabled>
+                                <i class="ph-duotone ph-file-lock me-2"></i> Program Rehab Medik
+                            </button>
+                        </li>
+                    @endif
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="" data-bs-toggle="tab" href="#konsul" role="tab"
-                            aria-selected="false" tabindex="-1" disabled>
-                            <i class="ph-duotone ph-files"></i> Form Konsul
+                            aria-selected="false" tabindex="-1" id="tab-konsul" disabled>
+                            <i class="ph-duotone ph-files me-2"></i> Form Konsul
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="" data-bs-toggle="tab" href="#fmatriks" role="tab"
-                            aria-selected="false" tabindex="-1" disabled>
-                            <i class="ph-duotone ph-film-script"></i> Matriks
+                            aria-selected="false" tabindex="-1" id="tab-fmatriks" disabled>
+                            <i class="ph-duotone ph-film-script me-2"></i> Matriks
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="" data-bs-toggle="tab" href="#fuploads" role="tab"
-                            aria-selected="false" tabindex="-1" disabled>
-                            <i class="ph-duotone ph-upload-simple"></i> Upload File
+                            aria-selected="false" tabindex="-1" id="tab-fuploads" disabled>
+                            <i class="ph-duotone ph-upload-simple me-2"></i> Upload File
                         </a>
                     </li>
                 </ul>

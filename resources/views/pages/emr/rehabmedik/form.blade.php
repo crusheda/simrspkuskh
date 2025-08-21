@@ -40,37 +40,31 @@
                             Memuat Riwayat Form KFR...
                         </div>
                         <div class="row" id="formLamaKfrPick" hidden>
-                            <hr class="mt-0 mb-2">
+                            <div class="col-md-12">
+                                <hr class="mt-2 mb-2">
+                            </div>
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <label for="anamnesa">Anamnesa <a class="text-danger">*</a></label>
+                                    <label class="form-label" for="anamnesa">Anamnesa <a class="text-danger">*</a></label>
                                     <textarea class="form-control" id="anamnesa_pick" style="height: 100px" disabled></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="fisik_pick" style="height: 100px" disabled></textarea>
-                                        <label for="fisik">Pemeriksaan Fisik dan Uji Fungsi <a
-                                                class="text-danger">*</a></label>
-                                    </div>
+                                    <label class="form-label" for="fisik">Pemeriksaan Fisik dan Uji Fungsi <a class="text-danger">*</a></label>
+                                    <textarea class="form-control" id="fisik_pick" style="height: 100px" disabled></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="penunjang_pick" style="height: 100px" disabled></textarea>
-                                        <label for="penunjang">Pemeriksaan Penunjang <a class="text-danger">*</a></label>
-                                    </div>
+                                    <label class="form-label" for="penunjang">Pemeriksaan Penunjang <a class="text-danger">*</a></label>
+                                    <textarea class="form-control" id="penunjang_pick" style="height: 100px" disabled></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="tatalaksana_pick" style="height: 100px" disabled></textarea>
-                                        <label for="tatalaksana">Tata Laksana KFR (ICD 9 CM) <a
-                                                class="text-danger">*</a></label>
-                                    </div>
+                                    <label class="form-label" for="tatalaksana">Tata Laksana KFR (ICD 9 CM) <a class="text-danger">*</a></label>
+                                    <textarea class="form-control" id="tatalaksana_pick" style="height: 100px" disabled></textarea>
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -78,34 +72,26 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <div class="form-floating mb-0">
-                                        <input type="text" class="form-control" id="anjuran_pick" placeholder="" disabled>
-                                        <label for="anjuran">Anjuran <a class="text-danger">*</a></label>
-                                    </div>
+                                    <label class="form-label" for="anjuran">Anjuran <a class="text-danger">*</a></label>
+                                    <input type="text" class="form-control" id="anjuran_pick" placeholder="" disabled>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <div class="form-floating mb-0">
-                                        <input type="text" class="form-control" id="evaluasi_pick" placeholder="" disabled>
-                                        <label for="evaluasi">Evaluasi <a class="text-danger">*</a></label>
-                                    </div>
+                                    <label class="form-label" for="evaluasi">Evaluasi <a class="text-danger">*</a></label>
+                                    <input type="text" class="form-control" id="evaluasi_pick" placeholder="" disabled>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <div class="form-group mb-3">
-                                    <div class="form-floating mb-0">
-                                        <input type="text" class="form-control" id="target_pick" placeholder="" disabled>
-                                        <label for="target">Target <a class="text-danger">*</a></label>
-                                    </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="target">Target <a class="text-danger">*</a></label>
+                                    <input type="text" class="form-control" id="target_pick" placeholder="" disabled>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <div class="form-group mb-3">
-                                    <div class="form-floating mb-0">
-                                        <input type="text" class="form-control" id="suspekya_pick" placeholder="" disabled>
-                                        <label for="suspekya">Suspek Penyakit Akibat Kerja <a class="text-danger">*</a></label>
-                                    </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="suspekya">Suspek Penyakit Akibat Kerja <a class="text-danger">*</a></label>
+                                    <input type="text" class="form-control" id="suspekya_pick" placeholder="" disabled>
                                 </div>
                             </div>
                         </div>
@@ -113,9 +99,14 @@
                             <button class="btn btn-secondary" onclick="showformBaruKfr()">
                                 <i class="fas fa-file-signature me-2"></i> Buat Formulir Baru
                             </button>
-                            <button class="btn btn-primary" onclick="simpanFormulirKfrLama()" id="btn-penetapan-formkfr">
-                                <i class="fas fa-lock me-2"></i> Tetapkan Formulir Terpilih
-                            </button>
+                            <div>
+                                <button class="btn btn-success" id="btn-detail-formkfr-lama" hidden>
+                                    <i class="fab fa-wpforms me-2"></i> Lihat Kunjungan Terpilih
+                                </button>
+                                <button class="btn btn-primary" onclick="simpanFormulirKfrLama()" id="btn-penetapan-formkfr">
+                                    <i class="fas fa-lock me-2"></i> Tetapkan Formulir Terpilih
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="row" id="formBaruKfr" hidden>
@@ -425,18 +416,18 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
-                                <label class="form-label">Diagnosa Medis</label>
+                                <label class="form-label">Diagnosa Medis (<b class="text-danger">Terisi Otomatis oleh Sistem</b>)</label>
                                 <input type="text" class="form-control" id="diagmedis_ks" placeholder="Terisi Otomatis oleh Sistem" readonly>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
-                                <label class="form-label">Diagnosa Fungsi</label>
+                                <label class="form-label">Diagnosa Fungsi (<b class="text-danger">Terisi Otomatis oleh Sistem</b>)</label>
                                 <input type="text" class="form-control" id="diagfungsi_ks" placeholder="Terisi Otomatis oleh Sistem" readonly>
                             </div>
                         </div>
                         <hr class="m-2 mb-3">
-                        <h6>Tindak lanjut yang dianjurkan :</h6>
+                        <h6>Tindak lanjut yang dianjurkan : (<b class="text-success">Diisi oleh DPJP</b>)</h6>
                         <div class="col-md-6 mb-3">
                             <div class="row">
                                 <div class="col-md-12 mb-3">
@@ -518,7 +509,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">
-                    Preview Form Rekomendasi Dokter (<kbd id="showTxModalKs"></kbd>)
+                    Preview Form Rekomendasi Dokter <kbd class="ms-1" id="showTxModalKs"><i class="fas fa-sync fa-spin"></i></kbd>
                 </h4>
             </div>
             <div class="modal-body">
@@ -553,6 +544,44 @@
             </div>
             <div class="col-12 text-center mb-4">
                 <button type="submit" class="btn btn-danger me-sm-3 me-1" onclick="prosesHapusJp()"><i class="fa fa-trash me-1" style="font-size:13px"></i> Hapus</button>
+                <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal animate__animated animate__rubberBand fade" id="modalHapusKfr" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Form Hapus Layanan KFR <kbd>NOKUNJ#{{ $list['KUNJUNGAN'] }}</kbd>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="group_hapus_form_kfr" hidden>
+                <p style="text-align: justify;">Anda akan melakukan penghapusan Form Layanan KFR tersebut, lakukanlah dengan hati-hati.
+                    <br>Tersedia 2 pilihan tombol hapus, guna penghapusan <b>berdasarkan Kunjungan</b>
+                    dan <b>berdasarkan Group Kunjungan (Penghapusan Serentak)</b>.
+                </p>
+                <h6>Keterangan Penghapusan :</h6>
+                <ul>
+                    <li>Hapus <b>by Group</b> adalah penghapusan untuk semua form layanan KFR, jadwal program layanan, dan rekomendasi dokter yang terikat dengan kunjungan ini (dari kunjungan pertama sampai selesai)</li>
+                    <li>Hapus <b>by Kunjungan</b> adalah penghapusan hanya khusus untuk form layanan KFR, jadwal program layanan, dan rekomendasi dokter di kunjungan pasien ini saja (tidak berlaku untuk penghapusan form pada kunjungan lainnya)</li>
+                </ul>
+                <p>Ceklis dibawah untuk melanjutkan penghapusan atau klik tombol Batal untuk membatalkan proses penghapusan</p>
+                <label class="switch">
+                    <input type="checkbox" class="switch-input" id="setujuhapuskfr">
+                    <span class="switch-toggle-slider">
+                    <span class="switch-on"></span>
+                    <span class="switch-off"></span>
+                    </span>
+                    <span class="switch-label">Anda siap menerima Risiko</span>
+                </label>
+            </div>
+            <div class="col-12 text-center mb-4">
+                <button type="submit" class="btn btn-light-danger me-sm-3 me-1" onclick="prosesHapusKfrAll()"><i class="fas fa-trash-alt me-1" style="font-size:13px"></i> Hapus (Group/Serentak)</button>
+                <button type="submit" class="btn btn-danger me-sm-3 me-1" onclick="prosesHapusKfr()"><i class="fa fa-trash me-1" style="font-size:13px"></i> Hapus (Kunjungan)</button>
                 <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
             </div>
         </div>
@@ -597,6 +626,9 @@
         choices = null;
 
     $(document).ready(function() {
+        // aktifkan saat pertama kali load
+        aktifkanTabsDariHash();
+
         // SELECT FUNCTION FILTER FORM LAMA KFR
         var selectFormKFRLama = document.getElementById('filterformLamaKfr');
         choices = new Choices(selectFormKFRLama, {
@@ -666,6 +698,36 @@
             }
         });
     });
+
+    function aktifkanTabsDariHash() {
+        const hash = window.location.hash; // contoh: #frehab#formlayanankfr
+        if (!hash) return;
+
+        // pecah jadi array ['frehab', 'formlayanankfr']
+        const ids = hash.split('#').filter(Boolean);
+
+        ids.forEach((id, index) => {
+            const selector = '#' + id;
+            const $tabBtn = $('[data-bs-target="' + selector + '"]');
+
+            if ($tabBtn.length) {
+                const tab = new bootstrap.Tab($tabBtn[0]);
+                tab.show();
+
+                // jalankan validasi sesuai target
+                if (selector === '#frehab' || selector === '#formlayanankfr') {
+                    validPageFormKfr();
+                    console.log('jalan kfr');
+                } else if (selector === '#formjadwalpelayanan') {
+                    validPageFormJp();
+                    console.log('jalan jp');
+                } else if (selector === '#formkonsulkfr') {
+                    validPageFormKs();
+                    console.log('jalan ks');
+                }
+            }
+        });
+    }
 
     function resizeCanvasPixelRatio(canvas, width = 500, height = 200) {
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
@@ -789,8 +851,10 @@
             success: function(res) {
                 $('#formLamaKfrPick').prop('hidden', true);
                 $('#loading-kfr').empty();
+                console.log(res.form);
+                console.log(res.show);
                 if (res.form) {
-                    showPreviewFormKfr(res.form.group);
+                    showPreviewFormKfr(res.form.group,res.formutama.nomor);
                     $('#previewformkfr').prop('hidden', false);
                     $('#allformkfr').prop('hidden', true);
                 } else {
@@ -820,6 +884,7 @@
                         }));
 
                         // 🔥 Reset dan isi ulang tanpa new Choices lagi
+                        console.log(choices);
                         choices.clearStore();
                         choices.clearChoices();
                         choices.removeActiveItems();
@@ -850,6 +915,7 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function(res) {
+                            console.log(res);
                             $('#loading-kfr-detail').prop('hidden',true);
                             $('#formLamaKfrPick').prop('hidden', false);
                             // show value
@@ -867,6 +933,8 @@
                             } else {
                                 $('#suspekya_pick').val('-');
                             }
+                            $('#btn-detail-formkfr-lama').prop('hidden',false);
+                            $('#btn-detail-formkfr-lama').attr('onclick', `window.location.href='/emr/${res.nomor}#frehab#formkonsulkfr'`);
                         },
                         error: function(xhr, status, error) {
                             console.error('Terjadi kesalahan:', error);
@@ -886,7 +954,7 @@
         })
     }
 
-    function showPreviewFormKfr(GROUP) {
+    function showPreviewFormKfr(GROUP,NOMOR) {
         $('#previewformkfr').empty().append(`
             <div class="spinner-grow align-middle me-2" role="status">
                 <span class="sr-only">Loading...</span>
@@ -910,14 +978,24 @@
                 $('#previewformkfr').empty().html(
                     `<iframe src="${fileURL}" width="100%" height="500px" frameborder="0" class="rounded"></iframe>`
                 );
+                if (NOMOR != "{{ $list['KUNJUNGAN'] }}") {
+                    pushBtn = `<button class="btn btn-success" onclick="window.location.href='/emr/${NOMOR}#frehab#formlayanankfr'">
+                                    <i class="fab fa-wpforms me-1"></i> Lihat Kunjungan terpilih
+                                </button>`;
+                } else {
+                    pushBtn = ``;
+                }
                 $('#previewformkfr').append(`
                     <div class="d-flex justify-content-between align-items-center mt-2">
                         <button class="btn btn-warning" onclick="showPreviewFormKfr(${GROUP})">
                             <i class="fas fa-sync me-1"></i> Muat Ulang Laporan
                         </button>
-                        <button class="btn btn-danger" onclick="hapusFormKfr()">
-                            <i class="fas fa-trash me-1"></i> Hapus Formulir Kunjungan
-                        </button>
+                        <div>
+                            ${pushBtn}
+                            <button class="btn btn-danger" onclick="hapusFormKfr(${GROUP})">
+                                <i class="fas fa-trash me-1"></i> Hapus Formulir
+                            </button>
+                        </div>
                     </div>
                 `);
             })
@@ -1111,33 +1189,94 @@
         }
     }
 
-    function hapusFormKfr() {
+    function hapusFormKfr(GROUP) {
+        $('#group_hapus_form_kfr').val(GROUP);
+        var inputs = document.getElementById('setujuhapuskfr');
+        inputs.checked = false;
+        $('#modalHapusKfr').modal('show');
+    }
+
+    function prosesHapusKfr() {
         var nomor = "{{ $list['KUNJUNGAN'] }}";
         var id_user = "{{ Auth::user()->ID }}";
 
-        $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            url: `/api/emr/fkfr/${nomor}/hapus/${id_user}`,
-            type: 'DELETE',
-            dataType: 'json',
-            success: function(res) {
-                iziToast.success({
-                    title: 'Pesan Berhasil!',
-                    message: `Formulir Layanan KFR kunjungan ini berhasil dihapus dari Grup Berkas Klaim pada `+res,
-                    position: 'topRight'
-                });
-                validPageFormKfr();
-            },
-            error: function(xhr, status, error) {
-                iziToast.error({
-                    title: 'Gagal!',
-                    message: error,
-                    position: 'topRight'
-                });
-            }
-        })
+        // SWITCH BTN HAPUS
+        var checkboxHapus = $('#setujuhapuskfr').is(":checked");
+        if (checkboxHapus == false) {
+            iziToast.error({
+                title: 'Pesan Galat!',
+                message: 'Mohon menyetujui untuk dilakukan penghapusan form KFR tersebut',
+                position: 'topRight'
+            });
+        } else {
+            // PROSES HAPUS
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: `/api/emr/fkfr/${nomor}/hapus/${id_user}`,
+                type: 'DELETE',
+                dataType: 'json',
+                success: function(res) {
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: `Formulir Layanan KFR kunjungan ini berhasil dihapus dari Grup Berkas Klaim pada `+res,
+                        position: 'topRight'
+                    });
+                    $('#modalHapusKfr').modal('hide');
+                    validPageFormKfr();
+                },
+                error: function(xhr, status, error) {
+                    iziToast.error({
+                        title: 'Gagal!',
+                        message: error,
+                        position: 'topRight'
+                    });
+                }
+            });
+        }
+    }
+
+    function prosesHapusKfrAll() {
+        var nomor = "{{ $list['KUNJUNGAN'] }}";
+        var id_user = "{{ Auth::user()->ID }}";
+        var group = $('#group_hapus_form_kfr').val();
+
+        // SWITCH BTN HAPUS
+        var checkboxHapus = $('#setujuhapuskfr').is(":checked");
+        if (checkboxHapus == false) {
+            iziToast.error({
+                title: 'Pesan Galat!',
+                message: 'Mohon menyetujui untuk dilakukan penghapusan form KFR tersebut',
+                position: 'topRight'
+            });
+        } else {
+            // PROSES HAPUS
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: `/api/emr/fkfr/${nomor}/hapus/${id_user}/all/${group}`,
+                type: 'DELETE',
+                dataType: 'json',
+                success: function(res) {
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: `Seluruh Formulir Layanan KFR Group Kunjungan ini berhasil dihapus dari Grup Berkas Klaim pada `+res,
+                        position: 'topRight'
+                    });
+                    $('#modalHapusKfr').modal('hide');
+                    validPageFormKfr();
+                },
+                error: function(xhr, status, error) {
+                    iziToast.error({
+                        title: 'Gagal!',
+                        message: error,
+                        position: 'topRight'
+                    });
+                }
+            });
+        }
     }
 
     function kosongiKfr() {
@@ -1524,7 +1663,7 @@
                 if (res.form_kfr) {
                     // showPreviewFormJp(res.form.group);
                     // console.log(nomorKunj);
-                    console.log(res.form_ks.group);
+                    console.log(res.form_ks);
                     $('#hideFormKs').prop('hidden',true);
                     if (nomorKunj == res.form_kfr_group.nomor) {
                         if (res.form_ks) {
@@ -1616,7 +1755,7 @@
             .then(blob => {
                 // Buat object URL dari blob
                 const fileURL = URL.createObjectURL(blob);
-                $('#showTxModalKs').text("{{ $list['KUNJUNGAN'] }}#"+GROUP);
+                $('#showTxModalKs').text("{{ $list['KUNJUNGAN'] }}#GROUP"+GROUP);
 
                 // Tampilkan ke iframe dalam modal
                 $('#previewFormKs').empty().html(
@@ -1624,7 +1763,7 @@
                 );
                 $('#btn-footer-preview-ks').empty().append(`
                     <div class="d-flex justify-content-between align-items-center mt-2">
-                        <button class="btn btn-warning" onclick="showPreviewFormKs(${GROUP})">
+                        <button class="btn btn-warning" onclick="showPreviewFormKsModal(${GROUP})">
                             <i class="fas fa-sync me-1"></i> Muat Ulang Laporan
                         </button>
                         <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>

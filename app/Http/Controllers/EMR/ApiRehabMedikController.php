@@ -70,9 +70,20 @@ class ApiRehabMedikController extends Controller
                 ->whereNull('kfr.deleted_at')
                 ->first();
 
+        if ($form) {
+            $formutama = DB::table('simrspku_klaim.form_kfr AS kfr')
+                    ->where('kfr.group',$form->group)
+                    ->whereNull('kfr.deleted_at')
+                    ->orderBy('id','ASC')
+                    ->first();
+        } else {
+            $formutama = null;
+        }
+
         $data = [
             'show' => $show,
             'form' => $form,
+            'formutama' => $formutama,
         ];
 
         return response()->json($data, 200);
@@ -242,21 +253,96 @@ class ApiRehabMedikController extends Controller
     {
         $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
 
-        $show = form_kfr::where('nomor',$NOMOR)->first();
-        $show->user_deleted = $USER;
-        $show->save();
-        $show->delete();
+        $hapus1 = form_kfr::where('nomor',$NOMOR)
+                        ->whereNull('deleted_at')
+                        ->first();
+        if ($hapus1) {
+            $hapus1->user_deleted = $USER;
+            $hapus1->save();
+            $hapus1->delete();
+        }
 
-        $show = form_kfr_ks::where('nomor',$NOMOR)->first();
-        $show->user_deleted = $USER;
-        $show->save();
-        $show->delete();
+        $hapus2 = form_kfr_jp::where('nomor',$NOMOR)
+                        ->whereNull('deleted_at')
+                        ->first();
+        if ($hapus2) {
+            $hapus2->user_deleted = $USER;
+            $hapus2->save();
+            $hapus2->delete();
+        }
 
-        $show = klaim_file::where('nomor',$NOMOR)->first();
-        $show->user_deleted = $USER;
-        $show->status = 0;
-        $show->save();
-        $show->delete();
+        $hapus3 = form_kfr_ks::where('nomor',$NOMOR)
+                        ->whereNull('deleted_at')
+                        ->first();
+        if ($hapus3) {
+            $hapus3->user_deleted = $USER;
+            $hapus3->save();
+            $hapus3->delete();
+        }
+
+        $hapus4 = klaim_file::where('nomor',$NOMOR)
+                        ->where('status',true)
+                        ->whereNull('deleted_at')
+                        ->first();
+        if ($hapus4) {
+            $hapus4->user_deleted = $USER;
+            $hapus4->status = 0;
+            $hapus4->save();
+            $hapus4->delete();
+        }
+
+        return response()->json($now, 200);
+    }
+
+    function hapusFormKfrAll($NOMOR,$USER,$GROUP)
+    {
+        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+
+        $hapus1 = form_kfr::where('group',$GROUP)
+                        ->whereNull('deleted_at')
+                        ->get();
+        if ($hapus1->isNotEmpty()) {
+            foreach ($hapus1 as $file) {
+                $file->user_deleted = $USER;
+                $file->save();
+                $file->delete();
+            }
+        }
+
+        $hapus2 = form_kfr_jp::where('group',$GROUP)
+                        ->whereNull('deleted_at')
+                        ->get();
+        if ($hapus2->isNotEmpty()) {
+            foreach ($hapus2 as $file) {
+                $file->user_deleted = $USER;
+                $file->save();
+                $file->delete();
+            }
+        }
+
+        $hapus3 = form_kfr_ks::where('group',$GROUP)
+                        ->whereNull('deleted_at')
+                        ->get();
+        if ($hapus3->isNotEmpty()) {
+            foreach ($hapus3 as $file) {
+                $file->user_deleted = $USER;
+                $file->save();
+                $file->delete();
+            }
+        }
+
+        $hapus4 = klaim_file::where('ref',$GROUP)
+                        ->where('status',true)
+                        ->whereNull('deleted_at')
+                        ->get();
+        if ($hapus4->isNotEmpty()) {
+            foreach ($hapus4 as $file) {
+                $file->user_deleted = $USER;
+                $file->status = 0;
+                $file->save();
+                $file->delete();
+            }
+        }
 
         return response()->json($now, 200);
     }
@@ -322,6 +408,7 @@ class ApiRehabMedikController extends Controller
             $post = new klaim_file;
             $post->jenis = 11;
             $post->sub_jenis = 1;
+            $post->ref = $GROUP;
             $post->nomor = $KUNJUNGAN;
             $post->title = $KUNJUNGAN.'-1.pdf';
             $post->filename = $path.'.pdf';
@@ -898,7 +985,7 @@ class ApiRehabMedikController extends Controller
             $templateProcessor = new TemplateProcessor(public_path('/doc/input/rehabmedik/cetakFormKonsul.docx'));
 
             // TTE DOKTER UTAMA
-            $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$verify->tte_dokter, 170);
+            $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$verify->tte_dokter, 250);
 
             // POST CAP
             if ($cap) {

@@ -58,6 +58,7 @@ class EMRController extends Controller
                     'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
                     'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
                     'kjs.noKartu AS NOBPJS',
+                    'ru.ID AS IDRUANGAN',
                     'ru.DESKRIPSI AS NAMARUANGAN',
                     'kips.NOMOR AS NIKPASIEN',
                     'ps.NAMA AS NAMALENGKAPPASIEN',

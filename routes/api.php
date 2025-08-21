@@ -71,6 +71,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::post('emr/fkfr/formlama', [ApiRehabMedikController::class, 'simpanFormKfrLama'])->name('api.emr.fkfr.simpanformlama');
             Route::get('emr/fkfr/{id}', [ApiRehabMedikController::class, 'getFormKfrByGroup'])->name('api.emr.fkfr.getFormKfrByGroup');
             Route::delete('emr/fkfr/{NOMOR}/hapus/{USER}', [ApiRehabMedikController::class, 'hapusFormKfr'])->name('api.emr.fkfr.hapusFormKfr');
+            Route::delete('emr/fkfr/{NOMOR}/hapus/{USER}/all/{GROUP}', [ApiRehabMedikController::class, 'hapusFormKfrAll'])->name('api.emr.fkfr.hapusFormKfrAll');
             Route::get('emr/fkfr/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormKfr'])->name('api.emr.fkfr.preview');
             // JP - JADWAL PELAYANAN
             Route::get('emr/{NORM}/jp/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormJp'])->name('api.emr.jp.get');
