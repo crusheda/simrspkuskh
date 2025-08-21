@@ -189,32 +189,68 @@
                                 </div>
                             </div>
                             <div class="card">
-                                <div class="card-header">
-                                    <h5>Tanda Tangan Pegawai</h5>
+                                <div class="card-header p-3">
+                                    <div class="d-sm-flex align-items-center justify-content-between ms-2">
+                                        <h5>Tanda Tangan Pegawai</h5>
+                                        <button class="btn btn-link-warning" onclick="showTTDpeg({{ Auth::user()->NIP }})"><i class="fas fa-sync"></i></button>
+                                    </div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="card mb-4">
-                                        <div class="card-header">
-                                            <h5 class="mb-0"><span class="badge text-bg-secondary">TANDA TANGAN PEGAWAI</span> | IDKUNJUNGAN : <span id="show-id-ttd-peg" class="text-primary"></span></h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <h3>Tanda Tangan Pegawai <mark>An/<span id="show-nama-ttd-peg" class="text-primary"></span></mark></h3>
+                                    <input type="hidden" id="idstorettd" value="">
 
-                                            <div class="mb-3" id="preview-wrapper" style="display: none;">
+                                    <div id="loading-ttd">
+                                        <div class="spinner-grow align-middle me-2" role="status">
+                                            <span class="sr-only">Loading...</span>
+                                        </div>
+                                        Mengambil Data...
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6" id="show-petunjuk" hidden>
+                                            <strong>Keterangan:</strong><br>
+                                            <p>Tanda tangan ini digunakan sebagai ganti tanda tangan basah untuk dokumen pasien</p>
+                                            <strong>Petunjuk:</strong><br>
+                                            1. Gunakan layar sentuh atau mouse.<br>
+                                            2. Gambar tanda tangan pada canvas.<br>
+                                            3. Klik "<span class="badge text-bg-danger"><i class="ti ti-writing-sign"></i></span>" untuk menghapus.<br>
+                                            4. Klik "<span class="badge text-bg-primary"><i class="ti ti-writing-sign me-1"></i> Simpan Tanda Tangan</span>" untuk menyimpan.<br>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3" id="preview-wrapper" hidden>
                                                 <img id="preview-ttd-peg" src="" alt="Belum ada tanda tangan" style="max-width: 300px; border: 1px solid #ccc;" />
-                                                <div class="mt-2">
-                                                    <button type="button" id="btn-ubah-ttd" class="btn btn-warning btn-sm"><i class="fa fa-pen"></i> Ubah TTD</button>
+                                                <div class="mt-3">
+                                                    <button type="button" id="btn-ubah-ttd" class="btn btn-warning me-2"><i class="fa fa-pen me-1"></i> Ubah TTD</button>
+                                                    <a id="date-updated"></a>
                                                 </div>
                                             </div>
 
-                                            <div id="tampil-ttd-peg" class="mb-3"></div>
+                                            <div class="form-group" id="paduser" hidden>
+                                                <!-- responsive wrapper -->
 
-                                            <div id="canvas"></div>
+                                                <div class="position-relative overflow-hidden mb-3" style="width:100%; max-width:500px; height:200px;">
+                                                    <!-- canvas ikut parent -->
+                                                    <canvas id="signature-pad-user" class="border rounded w-100 h-100"></canvas>
 
+                                                    <!-- placeholder di tengah -->
+                                                    <div id="placeholder-ttd-user"
+                                                        class="position-absolute top-50 start-50 translate-middle text-muted"
+                                                        style="pointer-events: none; opacity: 0.3;">
+                                                        Tanda tangan Pegawai <a class="text-danger">*</a>
+                                                    </div>
+
+                                                    <!-- tombol clear dalam kotak -->
+                                                    <button id="clear-user"
+                                                        class="btn btn-sm btn-danger position-absolute"
+                                                        style="top: 10px; right: 10px; z-index: 10;">
+                                                        <i class="ti ti-writing-sign"></i>
+                                                    </button>
+                                                </div>
+                                                <button class="btn btn-primary" onclick="storeTTDpeg()" id="btn-save-ttd">
+                                                    <i class="fas fa-save me-1"></i> Simpan Tanda Tangan
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <input type="hidden" id="idstorettd" value="">
 
                                     {{-- <ul class="list-group list-group-flush">
                                         <li class="list-group-item px-0 pt-0">
@@ -872,9 +908,18 @@
             }
         });
 
-        let canvas, signaturePad;
+        let padUser = null;
 
         function showTTDpeg(NIP) {
+            $('#paduser').prop('hidden',true);
+            $('#show-petunjuk').prop('hidden',true);
+            $('#preview-wrapper').prop('hidden',true);
+            $('#loading-ttd').empty().append(`
+                <div class="spinner-grow align-middle me-2" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                Memproses Tanda Tangan...
+            `);
             $('#show-id-ttd-peg').text(NIP);
             $('#idstorettd').val(NIP);
 
@@ -883,76 +928,110 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(res) {
-                    $('#show-nama-ttd-peg').text(res.show.NAMALENGKAP);
-                    $("#tampil-ttd-peg").html(`<p>Tanda tangan ini digunakan sebagai ganti tanda tangan basah untuk dokumen pasien.</p>`);
-                    $('#canvas').empty(); // clear canvas
-                    $('#preview-wrapper').hide();
+                    $('#loading-ttd').empty();
+                    console.log(res);
 
                     if (res.dbttd && res.dbttd.signature_path) {
                         // tampilkan gambar TTD
                         $('#preview-ttd-peg').attr('src', `/storage/${res.dbttd.signature_path}`);
-                        $('#preview-wrapper').show();
+                        $('#paduser').prop('hidden',true);
+                        $('#show-petunjuk').prop('hidden',true);
+                        $('#preview-wrapper').prop('hidden',false);
+                        $('#date-updated').text('Diperbarui pada ' + res.dbttd.signature_date);
 
                         // jika tombol "ubah" diklik, munculkan canvas
                         $('#btn-ubah-ttd').off('click').on('click', function () {
-                            $('#preview-wrapper').hide(); // sembunyikan gambar
+                            $('#preview-wrapper').prop('hidden',true); // sembunyikan gambar
+                            $('#show-petunjuk').prop('hidden',false);
+                            $('#paduser').prop('hidden',false);
                             tampilkanCanvasTTD();         // munculkan canvas
                         });
 
                         return; // selesai, tidak munculkan canvas langsung
+                    } else {
+                        $('#paduser').prop('hidden',false);
+                        $('#show-petunjuk').prop('hidden',false);
+                        tampilkanCanvasTTD(); // kalau belum ada TTD, langsung tampilkan canvas
                     }
-
-                    tampilkanCanvasTTD(); // kalau belum ada TTD, langsung tampilkan canvas
                 }
             });
         }
 
         function tampilkanCanvasTTD() {
-            $('#canvas').html(`
-                <div class="row">
-                    <div class="col-md-5 mb-3">
-                        <canvas id="signature-pad" style="border:1px solid #ccc; width: 100%; height: 200px;"></canvas>
-                    </div>
-                    <div class="col-md-7">
-                        <strong>Petunjuk:</strong><br>
-                        1. Gunakan layar sentuh atau mouse.<br>
-                        2. Gambar tanda tangan pada canvas.<br>
-                        3. Klik "Kosongkan" untuk menghapus.<br>
-                        4. Klik "Simpan" untuk menyimpan.<br>
+            // $('#canvas').html(`
+            //     <div class="row">
+            //         <div class="col-md-5 mb-3">
+            //             <canvas id="signature-pad" style="border:1px solid #ccc; width: 100%; height: 200px;"></canvas>
+            //         </div>
+            //         <div class="col-md-7">
+            //             <strong>Petunjuk:</strong><br>
+            //             1. Gunakan layar sentuh atau mouse.<br>
+            //             2. Gambar tanda tangan pada canvas.<br>
+            //             3. Klik "Kosongkan" untuk menghapus.<br>
+            //             4. Klik "Simpan" untuk menyimpan.<br>
 
-                        <div class="mt-3 d-flex gap-2">
-                            <button type="button" id="clear" class="btn btn-danger"><i class="fa fa-erase me-1"></i> Kosongkan</button>
-                            <button type="button" class="btn btn-primary" onclick="storeTTDpeg()"><i class="fa fa-save me-1"></i> Simpan</button>
-                        </div>
-                    </div>
-                </div>
-            `);
+            //             <div class="mt-3 d-flex gap-2">
+            //                 <button type="button" id="clear" class="btn btn-danger"><i class="fa fa-erase me-1"></i> Kosongkan</button>
+            //                 <button type="button" class="btn btn-primary" onclick="storeTTDpeg()"><i class="fa fa-save me-1"></i> Simpan</button>
+            //             </div>
+            //         </div>
+            //     </div>
+            // `);
 
-            canvas = document.getElementById('signature-pad');
-            signaturePad = new SignaturePad(canvas);
-            resizeCanvas();
+            if (padUser) return; // Sudah inisiasi
+            const canvas = document.getElementById('signature-pad-user');
+            padUser = new SignaturePad(canvas);
 
-            $('#clear').on('click', function () {
-                signaturePad.clear();
+            resizeCanvasResponsive(canvas);
+
+            $('#clear-user').on('click', function() {
+                padUser.clear();
+                $('#placeholder-ttd-user').show();
             });
 
-            $(window).off('resize').on('resize', resizeCanvas);
+            padUser.onBegin = function() {
+                $('#placeholder-ttd-user').hide();
+            };
+
+            $(window).on('resize.user', function() {
+                resizeCanvasResponsive(canvas);
+            });
+            // canvas = document.getElementById('signature-pad');
+            // signaturePad = new SignaturePad(canvas);
+            // resizeCanvas();
+
+            // $('#clear').on('click', function () {
+            //     signaturePad.clear();
+            // });
+
+            // $(window).off('resize').on('resize', resizeCanvas);
         }
 
-        function resizeCanvas() {
-            if (!canvas) return;
-            var ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
+        function resizeCanvasResponsive(canvas) {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+            // ambil lebar parent (max 500px)
+            const parentWidth = canvas.parentElement.offsetWidth;
+            const width = parentWidth > 500 ? 500 : parentWidth;
+            const height = 200;
+
+            // CSS size (tampilan)
+            canvas.style.width = width + "px";
+            canvas.style.height = height + "px";
+
+            // buffer internal (supaya tajam & koordinat sesuai)
+            canvas.width = width * ratio;
+            canvas.height = height * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
-            signaturePad.clear();
         }
 
         function storeTTDpeg() {
             const nip = document.getElementById('idstorettd').value.trim();
-            const signature = signaturePad.toDataURL('image/png');
+            const signature = padUser.toDataURL('image/png');
+            $('#btn-save-ttd').prop('disabled',true);
+            $('#btn-save-ttd').find('i').removeClass('fa-save').addClass('fa-sync fa-spin');
 
-            if (!nip || signaturePad.isEmpty()) {
+            if (!nip || padUser.isEmpty()) {
                 alert("Tanda tangan wajib diisi.");
                 return;
             }
@@ -975,8 +1054,12 @@
                         // Ganti canvas dengan gambar tanda tangan
                         const nip = document.getElementById('idstorettd').value.trim();
                         showTTDpeg(nip);
+                        $('#btn-save-ttd').prop('disabled',false);
+                        $('#btn-save-ttd').find('i').removeClass('fa-sync fa-spin').addClass('fa-save');
                     } else {
                         alert("Gagal menyimpan data");
+                        $('#btn-save-ttd').prop('disabled',false);
+                        $('#btn-save-ttd').find('i').removeClass('fa-sync fa-spin').addClass('fa-save');
                     }
                 },
                 error: function(xhr, status, error) {
@@ -985,6 +1068,8 @@
                         title: 'Gagal Memproses Data!',
                         text: error.message || 'Dokumen telah ditandatangani.',
                     });
+                    $('#btn-save-ttd').prop('disabled',false);
+                    $('#btn-save-ttd').find('i').removeClass('fa-sync fa-spin').addClass('fa-save');
                 }
             });
         }

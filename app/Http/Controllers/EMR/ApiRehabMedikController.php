@@ -55,11 +55,14 @@ class ApiRehabMedikController extends Controller
     function getFormKfr($NORM, $KUNJUNGAN)
     {
         $show = DB::table('simrspku_klaim.form_kfr AS kfr')
-                ->select('kfr.group',DB::raw("LPAD(kfr.rm, 8, '0') as rm"),DB::raw("DATE_FORMAT(kfr.tgl, '%e %M %Y') as tgl"),'kfr.nama_dokter')
+                ->leftJoin('pendaftaran.kunjungan AS pk','pk.NOMOR','=','kfr.nomor')
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                ->select('kfr.group',DB::raw("LPAD(kfr.rm, 8, '0') as rm"),DB::raw("DATE_FORMAT(kfr.tgl, '%e %M %Y') as tgl"),'kfr.nama_dokter','pj.NOMOR AS nosep')
                 ->where('kfr.rm',$NORM)
                 ->whereNull('kfr.deleted_at')
                 ->orderBy('kfr.id','ASC')
-                ->groupBy('kfr.group',DB::raw("LPAD(kfr.rm, 8, '0')"),DB::raw("DATE_FORMAT(kfr.tgl, '%e %M %Y')"),'kfr.nama_dokter')
+                ->groupBy('kfr.group',DB::raw("LPAD(kfr.rm, 8, '0')"),DB::raw("DATE_FORMAT(kfr.tgl, '%e %M %Y')"),'kfr.nama_dokter','pj.NOMOR')
                 ->get();
 
         $form = DB::table('simrspku_klaim.form_kfr AS kfr')
@@ -180,7 +183,7 @@ class ApiRehabMedikController extends Controller
         if (!$verify) {
             return Response::json(array(
                 'message' => 'Formulir Rekomendasi Dokter pada kunjungan terakhir (nomor:'.$formLama->nomor.') belum terisi. silakan melakukan pengisian form terlebih dahulu.',
-                'code' => 200,
+                'code' => 500,
             ));
         } else {
             if ($formLama) {
@@ -365,7 +368,7 @@ class ApiRehabMedikController extends Controller
         $templateProcessor = new TemplateProcessor(public_path('/doc/input/rehabmedik/cetakFormKFR.docx'));
 
         $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->tte_dokter, 170); // 150 is Width
-        $this->setImgWord($templateProcessor, 'PATH_TTE_PASIEN', storage_path()."/app/public/".$show->tte_pasien, 300);
+        $this->setImgWord($templateProcessor, 'PATH_TTE_PASIEN', storage_path()."/app/public/".$show->tte_pasien, 170);
         if ($cap) {
             $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
         }

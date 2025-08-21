@@ -72,6 +72,7 @@ class ProfilController extends Controller
             'dbttd' => [
                 'signature_path' => $existing ? $existing->signature_path : null,
                 'signature_url' => $signature_url,
+                'signature_date' => $existing ? $existing->updated_at : null,
             ],
         ]);
     }

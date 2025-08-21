@@ -22,20 +22,29 @@
                 <div id="previewformkfr" hidden></div>
                 <div id="allformkfr" hidden>
                     <div id="formLamaKfr" hidden>
-                        <div class="form-floating mb-3">
+                        {{-- <div class="form-floating">
                             <select class="form-select" id="filterformLamaKfr"
                                 aria-label="Floating label select example" disabled>
                                 <option selected="">...</option>
                             </select>
                             <label for="floatingSelect">Formulir Layanan KFR Yang Tersedia</label>
+                        </div> --}}
+                        <select class="form-control" data-trigger id="filterformLamaKfr"></select>
+                        <div class="mb-2 ms-1 mt-1">
+                            <small>Urutan = <mark>NO.RM | TGL. DILAYANI | NO.SEP | NAMA DOKTER DPJP</mark></small>
+                        </div>
+                        <div class="mt-2 mb-3" id="loading-kfr-detail" hidden>
+                            <div class="spinner-grow align-middle me-2" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            Memuat Riwayat Form KFR...
                         </div>
                         <div class="row" id="formLamaKfrPick" hidden>
+                            <hr class="mt-0 mb-2">
                             <div class="col-md-6 mb-3">
                                 <div class="form-group">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" id="anamnesa_pick" style="height: 100px" disabled></textarea>
-                                        <label for="anamnesa">Anamnesa <a class="text-danger">*</a></label>
-                                    </div>
+                                    <label for="anamnesa">Anamnesa <a class="text-danger">*</a></label>
+                                    <textarea class="form-control" id="anamnesa_pick" style="height: 100px" disabled></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -102,10 +111,10 @@
                         </div>
                         <div class="d-flex justify-content-between align-items-center">
                             <button class="btn btn-secondary" onclick="showformBaruKfr()">
-                                <i class="fas fa-file-signature me-1"></i> Buat Formulir Baru
+                                <i class="fas fa-file-signature me-2"></i> Buat Formulir Baru
                             </button>
-                            <button class="btn btn-primary" onclick="simpanFormulirKfrLama()">
-                                <i class="fas fa-lock me-1"></i> Tetapkan Formulir Terpilih
+                            <button class="btn btn-primary" onclick="simpanFormulirKfrLama()" id="btn-penetapan-formkfr">
+                                <i class="fas fa-lock me-2"></i> Tetapkan Formulir Terpilih
                             </button>
                         </div>
                     </div>
@@ -221,9 +230,8 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-group" id="padkfr">
-                                <div class="position-relative overflow-hidden">
-                                    <canvas id="signature-pad-kfr" class="w-100 border rounded"
-                                        style="height: 200px;"></canvas>
+                                <div class="position-relative overflow-hidden" style="width:100%; max-width:500px; height:200px;">
+                                    <canvas id="signature-pad-kfr" class="w-100 h-100 border rounded"></canvas>
                                     <div id="placeholder-ttd-kfr"
                                         class="position-absolute top-50 start-50 translate-middle text-muted"
                                         style="pointer-events: none; opacity: 0.3;">
@@ -243,7 +251,7 @@
                                     <button class="btn btn-warning me-2" onclick="kosongiKfr()">
                                         <i  class="fas fa-edit me-1"></i> Kosongkan Formulir
                                     </button>
-                                    <button class="btn btn-secondary" onclick="showformLamaKfr()">
+                                    <button class="btn btn-secondary" onclick="showformLamaKfr()" id="btn-form-lama">
                                         <i class="fab fa-wpforms me-1"></i> Lihat Formulir Yang Ada
                                     </button>
                                 </div>
@@ -584,10 +592,31 @@
     let padKfr = null,
         padJpP = null,
         padJpT = null,
-        filterTglJp = null;
-        filterTglKs = null;
+        filterTglJp = null,
+        filterTglKs = null,
+        choices = null;
 
     $(document).ready(function() {
+        // SELECT FUNCTION FILTER FORM LAMA KFR
+        var selectFormKFRLama = document.getElementById('filterformLamaKfr');
+        choices = new Choices(selectFormKFRLama, {
+            searchEnabled: true,      // aktifkan search
+            itemSelectText: 'contoh',       // teks saat hover (bisa kosong)
+            removeItemButton: true,    // tombol x untuk hapus pilihan
+            placeholderValue: 'Pilih Kunjungan Pasien', // teks placeholder
+            searchPlaceholderValue: 'Ketik untuk mencari kunjungan...' // opsional
+        });
+
+        // contoh ambil value saat berubah
+        $('#filterformLamaKfr').on('change', function() {
+            console.log("Kamu pilih: " + $(this).val());
+        });
+
+        // contoh set value via jQuery
+        // $('#setValueBtn').on('click', function() {
+        //     choices.setChoiceByValue('Paris'); // otomatis select Paris
+        // });
+
         const today = new Date(); // Hari ini
         const fiveYearsAgo = new Date();
         fiveYearsAgo.setFullYear(today.getFullYear() - 5); // 5 tahun ke belakang
@@ -657,7 +686,8 @@
         if (padKfr) return; // Sudah inisiasi
         const canvas = document.getElementById('signature-pad-kfr');
         padKfr = new SignaturePad(canvas);
-        resizeCanvas(canvas);
+
+        resizeCanvasResponsive(canvas);
 
         $('#clear-kfr').on('click', function() {
             padKfr.clear();
@@ -669,7 +699,7 @@
         };
 
         $(window).on('resize.kfr', function() {
-            resizeCanvas(canvas);
+            resizeCanvasResponsive(canvas);
         });
     }
 
@@ -677,24 +707,6 @@
         if (!padJpP) {
             const canvasP = document.getElementById('signature-pad-jpp');
             padJpP = new SignaturePad(canvasP);
-
-            function resizeCanvasResponsive(canvas) {
-                const ratio = Math.max(window.devicePixelRatio || 1, 1);
-
-                // ambil lebar parent (max 500px)
-                const parentWidth = canvas.parentElement.offsetWidth;
-                const width = parentWidth > 500 ? 500 : parentWidth;
-                const height = 200;
-
-                // CSS size (tampilan)
-                canvas.style.width = width + "px";
-                canvas.style.height = height + "px";
-
-                // buffer internal (supaya tajam & koordinat sesuai)
-                canvas.width = width * ratio;
-                canvas.height = height * ratio;
-                canvas.getContext("2d").scale(ratio, ratio);
-            }
 
             // panggil pertama kali
             resizeCanvasResponsive(canvasP);
@@ -786,34 +798,59 @@
                     $('#allformkfr').prop('hidden', false);
                     if (res.show.length != 0) {
                         $('#filterformLamaKfr').prop('disabled', false);
-                        $("#filterformLamaKfr").find('option').remove();
-                        $("#filterformLamaKfr").append(`
-                            <option value="" selected hidden>Pilih Salah Satu</option>
-                        `);
-                        res.show.forEach(pouch => {
-                            $("#filterformLamaKfr").append(`
-                                <option value="${pouch.group}">RM. ${pouch.rm} | Tgl. ${pouch.tgl} | ${pouch.nama_dokter}</option>
-                            `);
+                        $("#filterformLamaKfr").empty();
+
+                        // Kelompokkan berdasarkan nama_dokter
+                        let grouped = {};
+                        res.show.forEach(item => {
+                            if (!grouped[item.nama_dokter]) {
+                                grouped[item.nama_dokter] = [];
+                            }
+                            grouped[item.nama_dokter].push(item);
                         });
 
+                        // Convert ke format Choices
+                        let dataChoices = Object.keys(grouped).map(dokter => ({
+                            label: `Nama Dokter DPJP : ${dokter}`,
+                            id: dokter,
+                            choices: grouped[dokter].map(item => {
+                                let label = `RM. ${item.rm} | TGL. ${item.tgl} | SEP. ${item.nosep}`;
+                                return { value: item.group, label: label }; // pakai item.group sebagai ID
+                            })
+                        }));
+
+                        // 🔥 Reset dan isi ulang tanpa new Choices lagi
+                        choices.clearStore();
+                        choices.clearChoices();
+                        choices.removeActiveItems();
+                        choices.setChoices(dataChoices, 'value', 'label', false);
+
+                        $('#btn-form-lama').prop('hidden',false);
                         showformLamaKfr();
                     } else {
-                        $('#filterformLamaKfr').prop('disabled', true);
-                        $("#filterformLamaKfr").find('option').remove();
-                        $("#filterformLamaKfr").append(`
-                            <option value="" selected>Tidak Ditemukan</option>
-                        `);
-
+                        // $('#filterformLamaKfr').prop('disabled', true);
+                        // $("#filterformLamaKfr").find('option').remove();
+                        // $("#filterformLamaKfr").append(`
+                        // <option value="" selected>Tidak Ditemukan</option>
+                        // `);
+                        choices.clearStore();
+                        choices.clearChoices();
+                        choices.removeActiveItems();
+                        choices.setChoices([{ value: '', label: 'Tidak Ditemukan', disabled: true }], 'value', 'label', true);
+                        $('#btn-form-lama').prop('hidden',true);
                         showformBaruKfr();
                     }
                 }
 
                 $('#filterformLamaKfr').change(function() {
+                    $('#formLamaKfrPick').prop('hidden', true);
+                    $('#loading-kfr-detail').prop('hidden',false);
                     $.ajax({
                         url: `/api/emr/fkfr/${$(this).val()}`,
                         type: 'GET',
                         dataType: 'json',
                         success: function(res) {
+                            $('#loading-kfr-detail').prop('hidden',true);
                             $('#formLamaKfrPick').prop('hidden', false);
                             // show value
                             $('#diagmedis_pick').val(res.diagnosa_medis);
@@ -833,6 +870,8 @@
                         },
                         error: function(xhr, status, error) {
                             console.error('Terjadi kesalahan:', error);
+                            $('#loading-kfr-detail').prop('hidden',true);
+                            $('#formLamaKfrPick').prop('hidden', true);
                         }
                     })
                 })
@@ -1014,6 +1053,8 @@
     function simpanFormulirKfrLama() {
         var group = $('#filterformLamaKfr').val();
         var nomor = "{{ $list['KUNJUNGAN'] }}";
+        $('#btn-penetapan-formkfr').prop('disabled',true);
+        $('#btn-penetapan-formkfr').find('i').removeClass('fa-lock').addClass('fa-sync fa-spin');
 
         const save = new FormData();
         save.append('group', group);
@@ -1025,6 +1066,8 @@
                 message: 'Mohon untuk memilih formulir layanan KFR yang tersedia',
                 position: 'topRight'
             });
+            $('#btn-penetapan-formkfr').prop('disabled',false);
+            $('#btn-penetapan-formkfr').find('i').removeClass('fa-sync fa-spin').addClass('fa-lock');
         } else {
             $.ajax({
                 headers: {
@@ -1052,6 +1095,8 @@
                             position: 'topRight'
                         });
                     }
+                    $('#btn-penetapan-formkfr').prop('disabled',false);
+                    $('#btn-penetapan-formkfr').find('i').removeClass('fa-sync fa-spin').addClass('fa-lock');
                 },
                 error: function(xhr, status, error) {
                     iziToast.error({
@@ -1059,6 +1104,8 @@
                         message: error,
                         position: 'topRight'
                     });
+                    $('#btn-penetapan-formkfr').prop('disabled',false);
+                    $('#btn-penetapan-formkfr').find('i').removeClass('fa-sync fa-spin').addClass('fa-lock');
                 }
             });
         }
@@ -1819,5 +1866,23 @@
         const hari = parts[2];
 
         return `${parseInt(hari, 10)} ${bulanIndo[bulan]} ${tahun}`;
+    }
+
+    function resizeCanvasResponsive(canvas) {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+        // ambil lebar parent (max 500px)
+        const parentWidth = canvas.parentElement.offsetWidth;
+        const width = parentWidth > 500 ? 500 : parentWidth;
+        const height = 200;
+
+        // CSS size (tampilan)
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+
+        // buffer internal (supaya tajam & koordinat sesuai)
+        canvas.width = width * ratio;
+        canvas.height = height * ratio;
+        canvas.getContext("2d").scale(ratio, ratio);
     }
 </script>
