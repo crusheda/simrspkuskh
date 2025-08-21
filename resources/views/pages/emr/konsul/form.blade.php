@@ -243,6 +243,39 @@
             }
         });
 
+        function toggleLayanan() {
+            const konsultasiChecked = $('#layanan_konsultasi').is(':checked');
+            const rawatBersamaChecked = $('#layanan_rawat_bersama').is(':checked');
+            const alihRawatChecked = $('#layanan_alih_rawat').is(':checked');
+
+            if (konsultasiChecked || rawatBersamaChecked) {
+                // Disable Alih Rawat
+                $('#layanan_alih_rawat').prop('checked', false).prop('disabled', true);
+            } else {
+                $('#layanan_alih_rawat').prop('disabled', false);
+            }
+
+            if (alihRawatChecked) {
+                // Disable Konsultasi dan Rawat Bersama
+                $('#layanan_konsultasi, #layanan_rawat_bersama')
+                    .prop('checked', false)
+                    .prop('disabled', true);
+            } else {
+                $('#layanan_konsultasi, #layanan_rawat_bersama')
+                    .prop('disabled', false);
+            }
+        }
+
+        // Jalankan fungsi saat salah satu checkbox berubah
+        $('#layanan_konsultasi, #layanan_rawat_bersama, #layanan_alih_rawat').on('change', function () {
+            toggleLayanan();
+        });
+
+        // Inisialisasi saat modal dibuka
+        $('#modalTambahKonsul').on('shown.bs.modal', function () {
+            toggleLayanan();
+        });
+
     });
 
     function tampilKonsul(nomor) {

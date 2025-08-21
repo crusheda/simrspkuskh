@@ -153,6 +153,7 @@
 	<field name="CARABAYAR" class="java.lang.String"/>
 	<field name="HARI_INI" class="java.sql.Timestamp"/>
 	<field name="QR1" class="java.lang.String"/>
+	<field name="TTD" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -571,11 +572,11 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="107" y="53" width="50" height="50" uuid="58351a6f-2a9f-45c0-b2e8-cbc8f8dc311c">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="81" y="52" width="102" height="50" uuid="58351a6f-2a9f-45c0-b2e8-cbc8f8dc311c">
 					<printWhenExpression><![CDATA[$F{QR1} != null]]></printWhenExpression>
 				</reportElement>
-				<imageExpression><![CDATA[$P{QRCODE_PATH} + $F{QR1}]]></imageExpression>
+				<imageExpression><![CDATA[$F{TTD} ? $P{QRCODE_PATH} + $F{TTD} : $P{QRCODE_PATH} + $F{QR1}]]></imageExpression>
 			</image>
 			<image hAlign="Center" vAlign="Middle">
 				<reportElement x="356" y="53" width="133" height="50" uuid="7f0a752f-8e9b-420e-95fa-217a7091d16d">
