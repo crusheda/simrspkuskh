@@ -28,9 +28,10 @@ class ProfilController extends Controller
                     )
                     ->where('ap.ID', Auth::user()->ID)
                     ->where('pg.STATUS', 1)
-                    ->where('kp.STATUS', 1)
+                    // ->where('kp.STATUS', 1)
                     ->first();
-
+        // print_r($show);
+        // die();
         $data = [
             'show' => $show,
         ];
@@ -95,14 +96,16 @@ class ProfilController extends Controller
                     'pg.*',
                     'kp.NOMOR AS NOHP',
                     'ref.DESKRIPSI AS JENISNOHP',
-                    DB::raw('master.getNamaLengkapPegawai(pg.NIP) AS NAMALENGKAP')
+                    DB::raw('master.getNamaLengkapPegawai(pg.NIP) AS NAMALENGKAP'),
+                    'pg.nama AS NAMA'
                 )
                 ->where('ap.ID', Auth::user()->ID)
                 ->where('pg.STATUS', 1)
-                ->where('kp.STATUS', 1)
+                // ->where('kp.STATUS', 1)
                 ->where('ap.NIP',$request->nip)
                 ->first();
-
+        // print_r($peg);
+        // die();
         $image = str_replace('data:image/png;base64,', '', $request->signature);
         $image = str_replace(' ', '+', $image);
         $filename = 'ttd_' . time() . '.png';
@@ -118,7 +121,7 @@ class ProfilController extends Controller
 
         DB::table('simrspku_klaim.tanda_tangan_pegawai')->insert([
             'nip' => $request->nip,
-            'nama_pegawai' => $peg->NAMALENGKAP,
+            'nama_pegawai' => $peg->NAMALENGKAP ? $peg->NAMALENGKAP : $peg->NAMA,
             'signature_path' => "signatures/{$filename}",
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

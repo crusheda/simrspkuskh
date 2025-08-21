@@ -220,6 +220,11 @@
 		<property name="com.jaspersoft.studio.field.label" value="KETERANGAN"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="hasil_lab"/>
 	</field>
+	<field name="TTD" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="KETERANGAN"/>
+		<property name="com.jaspersoft.studio.field.label" value="KETERANGAN"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="hasil_lab"/>
+	</field>
 	<variable name="TOT_ROW" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[$V{REPORT_COUNT}]]></variableExpression>
 	</variable>
@@ -355,7 +360,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{DOKTERASAL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DOKTERASAL} ? $F{DOKTERASAL} : "-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="306" y="80" width="94" height="15" uuid="899310d0-3c77-4e5d-ba42-f4395e0b9782"/>
@@ -676,11 +681,11 @@ Telp. (0271) 593979 Email. pku.sukoharjo@gmail.com ]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ANALIS} ? $F{ANALIS} : "(.......................................)"]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="83" y="62" width="50" height="50" uuid="387d2dfb-cf00-4696-b5d4-af0e808f4f33">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="32" y="59" width="106" height="55" uuid="387d2dfb-cf00-4696-b5d4-af0e808f4f33">
 					<printWhenExpression><![CDATA[$F{QR1} != null]]></printWhenExpression>
 				</reportElement>
-				<imageExpression><![CDATA[$P{QRCODE_PATH} + $F{QR1}]]></imageExpression>
+				<imageExpression><![CDATA[$F{TTD} ? $P{QRCODE_PATH} + $F{TTD} : $P{QRCODE_PATH} + $F{QR1}]]></imageExpression>
 			</image>
 			<image>
 				<reportElement x="104" y="37" width="100" height="100" uuid="621b3b9a-dc00-43ca-b75a-c54a45a0dd5f"/>
