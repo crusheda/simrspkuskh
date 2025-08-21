@@ -256,15 +256,15 @@
                 if (Array.isArray(data) && data.length > 0) {
                     let html = '';
                     data.forEach(function(item) {
-                        const tombolCetak = `
+                        const tombolCetak = (item.JAWABAN) ?`
                             <button class="btn btn-info btn-sm btn-cetak" data-nomor="${item.NOMOR}">
                                 Cetak
                             </button>
-                        `;
+                        `:'';
                         const tombolBatal = (!item.JAWABAN) ?
                         `<button class="btn btn-danger btn-sm btn-batal" data-nomor="${item.NOMOR}">
                             Batal
-                        </button>` : '-';
+                        </button>` : '';
 
                         html += `
                             <tr class="baris-konsul" data-nomor="${item.NOMOR}">

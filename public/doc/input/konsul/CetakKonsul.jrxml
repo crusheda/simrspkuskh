@@ -227,21 +227,21 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				<text><![CDATA[Assalamu'alaikum Wr. Wb.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="161" width="130" height="15" forecolor="#000000" uuid="2ccf53b3-7aa1-4455-ae4f-4682826c6f0b"/>
+				<reportElement x="10" y="161" width="110" height="15" forecolor="#000000" uuid="2ccf53b3-7aa1-4455-ae4f-4682826c6f0b"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Alasan : ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="247" width="130" height="15" forecolor="#000000" uuid="1b298e1a-b35e-4aa9-9c2c-7ede67720cbc"/>
+				<reportElement x="10" y="247" width="110" height="15" forecolor="#000000" uuid="1b298e1a-b35e-4aa9-9c2c-7ede67720cbc"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Permintaan Tindakan : ]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="140" y="161" width="430" height="85" forecolor="#000000" uuid="cc17a497-67e1-4445-8daa-bf1aba705dc2">
+				<reportElement x="120" y="161" width="450" height="85" forecolor="#000000" uuid="cc17a497-67e1-4445-8daa-bf1aba705dc2">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="2" leftPadding="2"/>
@@ -251,7 +251,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				<textFieldExpression><![CDATA[$F{ALASAN}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="140" y="247" width="430" height="85" forecolor="#000000" uuid="e2ce380f-1a2f-47bf-a5b7-08764ab83570"/>
+				<reportElement x="120" y="247" width="450" height="85" forecolor="#000000" uuid="e2ce380f-1a2f-47bf-a5b7-08764ab83570"/>
 				<box topPadding="2" leftPadding="2"/>
 				<textElement verticalAlignment="Top">
 					<font size="10"/>
@@ -295,7 +295,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				<imageExpression><![CDATA[$P{TTD_PATH} + $F{TTD_DOKTER_TUJUAN}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="140" y="185" width="430" height="85" forecolor="#000000" uuid="82ec1f4b-f193-4f0e-b2e3-da9c7e71953e"/>
+				<reportElement x="120" y="185" width="450" height="85" forecolor="#000000" uuid="82ec1f4b-f193-4f0e-b2e3-da9c7e71953e"/>
 				<box topPadding="2" leftPadding="2"/>
 				<textElement verticalAlignment="Top">
 					<font size="10"/>
@@ -303,7 +303,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				<textFieldExpression><![CDATA[$F{ANJURAN}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="10" y="185" width="130" height="15" forecolor="#000000" uuid="882fc91e-9c65-474d-869f-2df2e9a9216f"/>
+				<reportElement x="10" y="185" width="110" height="15" forecolor="#000000" uuid="882fc91e-9c65-474d-869f-2df2e9a9216f"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
@@ -335,7 +335,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				<textFieldExpression><![CDATA[$F{DOKTER_TUJUAN}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="140" y="100" width="430" height="85" forecolor="#000000" uuid="d22d13fc-7db3-4eb2-bfcd-fe022ca1cd6c"/>
+				<reportElement x="120" y="100" width="450" height="85" forecolor="#000000" uuid="d22d13fc-7db3-4eb2-bfcd-fe022ca1cd6c"/>
 				<box topPadding="2" leftPadding="2"/>
 				<textElement verticalAlignment="Top">
 					<font size="10"/>
@@ -350,7 +350,7 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				<text><![CDATA[Assalamu'alaikum Wr. Wb.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="10" y="100" width="130" height="15" forecolor="#000000" uuid="c1f0ee16-edcd-4d3c-82fd-70f63d164201"/>
+				<reportElement x="10" y="100" width="110" height="15" forecolor="#000000" uuid="c1f0ee16-edcd-4d3c-82fd-70f63d164201"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>

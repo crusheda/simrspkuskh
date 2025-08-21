@@ -431,18 +431,28 @@ class ApiKonsulController extends Controller
         $path = 'files/konsul/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$nomor;
         $output = storage_path().'/app/public/'.$path;
 
-        // SAVE TO DB
-        $verify = klaim_file::where('nomor',$nomor)->where('jenis',12)->where('status',true)->first();
+        $verify = klaim_file::where('nomor', $getJawaban->KUNJUNGAN)
+            ->where('jenis', 12)
+            ->where('status', true)
+            ->first();
+
         if (!$verify) {
+            // Data tidak ada, maka buat baru
             $post = new klaim_file;
-            $post->jenis = 12;
-            $post->nomor = $nomor;
-            $post->title = $nomor.'.pdf';
-            $post->filename = $path.'.pdf';
-            $post->status = true;
-            $post->user = Auth::user()->ID;
-            $post->save();
+        } else {
+            // Data sudah ada, maka update
+            $post = $verify;
         }
+
+        // Baik buat baru atau update, set data berikut
+        $post->jenis = 12;
+        $post->nomor = $getJawaban->KUNJUNGAN;
+        $post->title = $nomor . '.pdf';
+        $post->filename = $path . '.pdf';
+        $post->nama_tambahan = 'Lembar Konsul';
+        $post->status = true;
+        $post->user = Auth::user()->ID;
+        $post->save();
 
         // Pastikan folder tujuan ada
         $outputDir = dirname($output);
