@@ -119,6 +119,7 @@
             </div>
             <div id="dokumen_tambahan"></div>
             <div id="dokumen_rehab"></div>
+            <div id="dokumen_konsul"></div>
             <div id="footer_submit"></div>
         </div>
     </div>
@@ -421,12 +422,34 @@
                                 </div>`;
                     $('#footer_submit').empty().append(submit);
 
+                    // DOKUMEN TAMBAHAN
+                    $('#dokumen_tambahan').empty();
+                    tambahan = ``;
+                    // console.log(res.file);
+                    res.file.forEach(item => {
+                        if (item.jenis == 10) {
+                            tambahan += `<div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0"  style="justify-content: space-between;">
+                                            <div class="dropdown">
+                                                <button class="btn btn-link-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                                    style="width: 2em; height: 2.2em; display: flex; justify-content: center; align-items: center; padding: 0;"><i class="fas fa-angle-down" style="font-size:13px"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><button class="dropdown-item text-primary" onclick="showUpload(${item.id})"><i class="fas fa-eye" style="font-size:13px"></i> Lihat</button></li>
+                                                    <li><button class="dropdown-item text-danger" id="btn-hapus-tambahan${item.id}" onclick="hapusTambahan(${item.id})"><i class="fas fa-trash" style="font-size:13px"></i> Hapus</button></li>
+                                                </ul>
+                                            </div>
+                                            <a class="text-nowrap mt-1" style="margin-left:auto;">${item.nama_tambahan}</a>
+                                        </div>`;
+                        }
+                    });
+                    $('#dokumen_tambahan').append(tambahan);
+
                     // DOKUMEN REHABILITASI MEDIK
                     $('#dokumen_rehab').empty();
                     rehab = ``;
                     res.file.forEach(item => {
                         if (item.jenis == 11) {
-                            rehab += `<div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0"  style="justify-content: space-between;">
+                            rehab += `<div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0" style="justify-content: space-between;">
                                             <div class="dropdown">
                                                 <button class="btn btn-link-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
                                                     style="width: 2em; height: 2.2em; display: flex; justify-content: center; align-items: center; padding: 0;"><i class="fas fa-angle-down" style="font-size:13px"></i>
@@ -441,6 +464,27 @@
                         }
                     });
                     $('#dokumen_rehab').append(rehab);
+
+                    // DOKUMEN KONSUL
+                    $('#dokumen_konsul').empty();
+                    konsul = ``;
+                    res.file.forEach(item => {
+                        if (item.jenis == 12) {
+                            konsul += `<div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0" style="justify-content: space-between;">
+                                            <div class="dropdown">
+                                                <button class="btn btn-link-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                                    style="width: 2em; height: 2.2em; display: flex; justify-content: center; align-items: center; padding: 0;"><i class="fas fa-angle-down" style="font-size:13px"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><button class="dropdown-item text-primary" onclick="showUpload(${item.id})"><i class="fas fa-eye" style="font-size:13px"></i> Lihat</button></li>
+                                                    <li><button class="dropdown-item text-danger" id="btn-hapus-konsul${item.id}" onclick="hapusKonsul(${item.id})"><i class="fas fa-trash" style="font-size:13px"></i> Hapus</button></li>
+                                                </ul>
+                                            </div>
+                                            <a class="text-nowrap mt-1" style="margin-left:auto;">${item.nama_tambahan}</a>
+                                        </div>`;
+                        }
+                    });
+                    $('#dokumen_konsul').append(konsul);
 
                     // REFRESH CATATAN
                     $('#verif_accordion').prop('hidden',false);
@@ -537,6 +581,7 @@
                                             </div>
                                             <a class="text-nowrap mt-1" style="margin-left:auto;">${item.nama_tambahan}</a>
                                         </div>`;
+                            console.log('muncul');
                         }
                     });
                     $('#dokumen_tambahan').append(tambahan);
@@ -560,7 +605,6 @@
                                                         `<li><button class="dropdown-item text-primary" onclick="showUpload(${item.id})"><i class="fas fa-eye" style="font-size:13px"></i> Lihat</button></li>
                                                         <li><button class="dropdown-item text-secondary" disabled><i class="fas fa-trash" style="font-size:13px"></i> Hapus</button></li>`
                                                     }
-
                                                 </ul>
                                             </div>
                                             <a class="text-nowrap mt-1" style="margin-left:auto;">${item.nama_tambahan}</a>
@@ -568,6 +612,32 @@
                         }
                     });
                     $('#dokumen_rehab').append(rehab);
+
+                    // DOKUMEN KONSUL
+                    $('#dokumen_konsul').empty();
+                    konsul = ``;
+                    res.file.forEach(item => {
+                        if (item.jenis == 12) {
+                            konsul += `<div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0" style="justify-content: space-between;">
+                                            <div class="dropdown">
+                                                <button class="btn btn-link-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                                    style="width: 2em; height: 2.2em; display: flex; justify-content: center; align-items: center; padding: 0;"><i class="fas fa-angle-down" style="font-size:13px"></i>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    ${res.show.verif == 0?
+                                                        `<li><button class="dropdown-item text-primary" onclick="showUpload(${item.id})"><i class="fas fa-eye" style="font-size:13px"></i> Lihat</button></li>
+                                                        <li><button class="dropdown-item text-danger" id="btn-hapus-konsul${item.id}" onclick="hapusKonsul(${item.id})"><i class="fas fa-trash" style="font-size:13px"></i> Hapus</button></li>`
+                                                    :
+                                                        `<li><button class="dropdown-item text-primary" onclick="showUpload(${item.id})"><i class="fas fa-eye" style="font-size:13px"></i> Lihat</button></li>
+                                                        <li><button class="dropdown-item text-secondary" disabled><i class="fas fa-trash" style="font-size:13px"></i> Hapus</button></li>`
+                                                    }
+                                                </ul>
+                                            </div>
+                                            <a class="text-nowrap mt-1" style="margin-left:auto;">${item.nama_tambahan}</a>
+                                        </div>`;
+                        }
+                    });
+                    $('#dokumen_konsul').append(konsul);
 
                     submit = ``;
                     if (res.show.verif == 0) {

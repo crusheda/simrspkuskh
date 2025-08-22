@@ -262,6 +262,7 @@ class ApiSmartKlaimController extends Controller
 
         $show = klaim_file::where('id',$id)->first();
         $show->status = false;
+        $show->user_deleted = Auth::user()->ID;
 
         if (Storage::disk('public')->exists($show->filename)) {
             Storage::disk('public')->delete($show->filename);
