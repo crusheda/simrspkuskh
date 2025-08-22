@@ -199,6 +199,23 @@
     </div>
 </div>
 
+<div class="modal animate__animated animate__rubberBand fade" id="modalPreviewKonsul" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    Preview Form Rekomendasi Dokter
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div id="previewFormKonsulRz"></div>
+            </div>
+            <div class="col-12 text-center p-4 pt-0">
+                <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     // Contoh panggil saat halaman siap
@@ -236,12 +253,12 @@
             }
         });
 
-        $(document).on('click', '.btn-cetak', function () {
-            const nomor = $(this).data('nomor');
-            if (nomor) {
-                window.open(`/api/emr/konsulkonsul/cetak/${nomor}`, '_blank');
-            }
-        });
+        // $(document).on('click', '.btn-cetak', function () {
+        //     const nomor = $(this).data('nomor');
+        //     if (nomor) {
+        //         window.open(`/api/emr/konsulkonsul/cetak/${nomor}`); // , '_blank'
+        //     }
+        // });
 
         function toggleLayanan() {
             const konsultasiChecked = $('#layanan_konsultasi').is(':checked');
@@ -290,7 +307,7 @@
                     let html = '';
                     data.forEach(function(item) {
                         const tombolCetak = (item.JAWABAN) ?`
-                            <button class="btn btn-info btn-sm btn-cetak" data-nomor="${item.NOMOR}">
+                            <button class="btn btn-info btn-sm btn-cetak" data-nomor="${item.NOMOR}" onclick="previewCetakKonsul('${item.NOMOR}')">
                                 Cetak
                             </button>
                         `:'';
@@ -324,6 +341,37 @@
         });
     }
 
+    function previewCetakKonsul(NOMOR) {
+        fetch("/api/emr/konsulkonsul/cetak/" + NOMOR)
+            .then(async response => {
+                if (!response.ok) {
+                    const errorData = await response.json(); // Ambil pesan dari server
+                    throw new Error(errorData.message || 'Terjadi kesalahan saat pengambilan data konsul');
+                }
+                console.log(response);
+                return response.blob();
+            })
+            .then(blob => {
+                // Buat object URL dari blob
+                const fileURL = URL.createObjectURL(blob);
+
+                // Tampilkan ke iframe dalam modal
+                $('#previewFormKonsulRz').empty().html(
+                    `<iframe src="${fileURL}" width="100%" height="500px" frameborder="0" class="rounded"></iframe>`
+                );
+                console.log(fileURL);
+                $('#modalPreviewKonsul').modal('show');
+            })
+            .catch(error => {
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: error.message || 'Data Formulir tidak ditemukan atau gagal diproses.',
+                    position: 'topRight'
+                });
+                console.error(error);
+            });
+    }
+
     function konsulMasuk(nomor) {
         $('#tbody-konsulmasuk').html('<tr><td colspan="8" class="text-center">Memuat data...</td></tr>');
 
@@ -335,6 +383,11 @@
                 if (Array.isArray(data) && data.length > 0) {
                     let html = '';
                     data.forEach(function(item) {
+                        const tombolJawabKonsul = (item.SUMBER != 'SIMGOS') ?`
+                            <button class="btn btn-success btn-sm btn-jawab" data-nomor="${item.NOMOR}">
+                                Jawab
+                            </button>
+                        `:'';
                         let layananList = [];
                         if (item.KONSULTASI == 1) layananList.push('<span class="badge bg-success me-1">Konsultasi</span>');
                         if (item.RAWAT_BERSAMA == 1) layananList.push('<span class="badge bg-primary me-1">Rawat Bersama</span>');
@@ -356,11 +409,7 @@
                                     <span><strong>${item.TUJUAN_NAMA}</strong></span><br>
                                     <span><small>Dokter Asal : ${item.DOKTER}</small></span>
                                 </td>
-                                <td>
-                                    <button class="btn btn-success btn-sm btn-jawab" data-nomor="${item.NOMOR}">
-                                        Jawab
-                                    </button>
-                                </td>
+                                <td>${tombolJawabKonsul}</td>
                             </tr>
                         `;
                     });
@@ -426,7 +475,7 @@
             success: function (response) {
                 $('#modalTambahKonsul').modal('hide');
                 $('#formTambahKonsul')[0].reset();
-                konsulMasuk(formData.kunjungan); // Refresh data tabel
+                tampilKonsul(formData.kunjungan); // Refresh data tabel
                 alert('Konsul berhasil ditambahkan');
             },
             error: function (xhr) {

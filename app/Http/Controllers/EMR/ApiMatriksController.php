@@ -138,8 +138,6 @@ class ApiMatriksController extends Controller
             $options
         )->execute();
 
-
-
         return response()->file($output.'.pdf',[
             'Content-Type' => 'application/pdf',
         ]);

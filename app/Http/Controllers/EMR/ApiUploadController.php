@@ -32,7 +32,8 @@ class ApiUploadController extends Controller
         ]);
 
         $path = $request->file('file')->store('files/upload', 'public');
-
+        // print_r($path.basename($path));
+        // die();
         // hitung sub_jenis terakhir untuk nomor dan jenis 10
         $lastSubJenis = DB::table('simrspku_klaim.klaim_file')
             ->where('nomor', $nomor)
@@ -45,8 +46,8 @@ class ApiUploadController extends Controller
             'jenis' => 10,
             'sub_jenis' => $subJenis,
             'nomor' => $nomor,
-            'title' => $request->file('file')->getClientOriginalName(),
-            'filename' => basename($path),
+            'title' => basename($path),
+            'filename' => $path,
             'nama_tambahan' => $request->input('nama_tambahan'),
             'user' => auth()->id() ?? null,
             'status' => 1,

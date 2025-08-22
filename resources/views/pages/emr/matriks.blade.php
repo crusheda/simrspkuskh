@@ -1,5 +1,5 @@
 
-    <input type="hidden" name="nomor" value="{{ $list['KUNJUNGAN'] }}">
+    <input type="hidden" name="nomorMatriks" id="nomorMatriks" value="{{ $list['KUNJUNGAN'] }}">
 
     <div class="card">
         <div class="card-header">
@@ -176,7 +176,7 @@
         });
 
         // Tambahkan field `nomor` dari input hidden
-        payload['nomor'] = $('input[name="nomor"]').val();
+        payload['nomor'] = $('input[name="nomorMatriks"]').val();
 
         // Tambahkan nilai default "0" jika radio tidak dipilih
         const fields = [

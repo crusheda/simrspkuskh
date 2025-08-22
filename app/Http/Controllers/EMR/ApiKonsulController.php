@@ -106,6 +106,7 @@ class ApiKonsulController extends Controller
                 DB::raw('NULL AS KONSULTASI'),
                 DB::raw('NULL AS RAWAT_BERSAMA'),
                 DB::raw('NULL AS ALIH_RAWAT'),
+                DB::raw("CAST('SIMGOS' AS CHAR) AS SUMBER"),
                 'ru.DESKRIPSI AS NAMARUANGAN',
                 'ruang.DESKRIPSI AS TUJUAN_NAMA',
                 DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
@@ -118,8 +119,9 @@ class ApiKonsulController extends Controller
             ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
             ->leftJoin('master.dokter AS mdr','mdr.ID','=','kon.DOKTER_TUJUAN')
             ->where('pp.NORM', $show->NORM)
-            ->where('kon.TUJUAN', $show->RUANGAN)
-            ->where('kon.DOKTER_TUJUAN', $show->DPJP);
+            ->where('kon.TUJUAN', $show->RUANGAN);
+            // ->where('kon.DOKTER_TUJUAN', $show->DPJP)
+            // ->get();
 
         $query2 = DB::table('simrspku_klaim.konsul AS kon')
             ->select(
@@ -135,6 +137,7 @@ class ApiKonsulController extends Controller
                 'kon.STATUS',
                 'kon.KONSULTASI',
                 'kon.RAWAT_BERSAMA',
+                DB::raw("CAST('SIRMED' AS CHAR) AS SUMBER"),
                 'kon.ALIH_RAWAT',
                 'ru.DESKRIPSI AS NAMARUANGAN',
                 'ruang.DESKRIPSI AS TUJUAN_NAMA',
@@ -152,7 +155,7 @@ class ApiKonsulController extends Controller
             ->where('kon.DOKTER_TUJUAN', $show->DPJP)
             ->whereNull('deleted_at');
 
-        // print_r($query2);
+        // print_r($query1);
         // die();
 
         $data = $query1->unionAll($query2)->get();
@@ -400,26 +403,55 @@ class ApiKonsulController extends Controller
 
         return response()->json(['message' => 'Konsul berhasil dibatalkan.']);
     }
+
     public function cetakPDF($nomor)
     {
         $getKonsul = DB::table('simrspku_klaim.konsul AS kon')
                 ->select(
                     'kon.*',
-                    'pk.NOPEN'
+                    'pk.NOPEN',
+                    'ttd.signature_path as path_ttd',
+                    DB::raw('master.getNamaLengkapPegawai(dk.NIP) AS nama_ttd'),
+                    'ttd2.signature_path as path_ttd2',
+                    DB::raw('master.getNamaLengkapPegawai(dkd.NIP) AS nama_ttd2'),
                 )
                 ->leftJoin('pendaftaran.kunjungan AS pk','pk.NOMOR','=','kon.KUNJUNGAN')
+                ->leftJoin('master.dokter AS dk','dk.ID','=','kon.DOKTER_ASAL')
+                ->leftJoin('master.dokter AS dkd','dkd.ID','=','kon.DOKTER_TUJUAN')
+                ->leftJoin('simrspku_klaim.tanda_tangan_pegawai AS ttd', function($join) {
+                        $join->on('dk.NIP','=','ttd.nip')
+                            ->whereNull('ttd.deleted_at');
+                    })
+                ->leftJoin('simrspku_klaim.tanda_tangan_pegawai AS ttd2', function($join) {
+                        $join->on('dkd.NIP','=','ttd2.nip')
+                            ->whereNull('ttd2.deleted_at');
+                    })
                 ->where('kon.NOMOR', $nomor)
                 ->whereNull('kon.deleted_at')
                 ->first();
+
         if (empty($getKonsul)) {
-            return response()->json($data, 400);
+            return Response::json(array(
+                'message' => 'Pengambilan data konsul gagal.'
+            ), 400);
         }
+
+        if (!$getKonsul->path_ttd) {
+            return Response::json(array(
+                'message' => 'Tanda tangan '.$getKonsul->nama_ttd.' tidak ditemukan/belum ditambahkan. Silakan memperbarui Data TTE pada halaman Profil.',
+            ), 400);
+        }
+        if (!$getKonsul->path_ttd2) {
+            return Response::json(array(
+                'message' => 'Tanda tangan '.$getKonsul->nama_ttd2.' tidak ditemukan/belum ditambahkan. Silakan memperbarui Data TTE pada halaman Profil.',
+            ), 400);
+        }
+
         $getJawaban = DB::table('simrspku_klaim.jawaban_konsul')
                 ->where('KONSUL_NOMOR', $getKonsul->NOMOR)
                 ->whereNull('deleted_at')
                 ->first();
-        // print_r($getKonsul);
-        // die();
+
         $CETAK_HEADER = "1";
         // ----------------------------------------------------------------------
         $getTgl = Carbon::parse($getKonsul->created_at);
@@ -477,9 +509,6 @@ class ApiKonsulController extends Controller
                 'database' => config('database.connections.db_custom.database'),
             ],
         ];
-
-        // print_r($options);
-        // die();
 
         $jasper = new PHPJasper;
 
