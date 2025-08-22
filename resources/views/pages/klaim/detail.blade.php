@@ -124,6 +124,32 @@
         </div>
     </div>
     <div class="col-md-9">
+        <div class="card social-profile">
+            <div class="card-body p-2">
+                <div class="row justify-content-between d-flex align-items-center p-2">
+                    <div class="col-md-4 col-xl-5 col-xxl-6 text-start">
+                        <h4 class="text-truncate mb-1 align-middle"><a class="text-primary">{{ $list['show']->NAMAPASIEN }}</a></h4>
+                        <p class="text-truncate mb-1" style="font-size: 12px">
+                            <b>RM. <a class="text-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis Pasien"><u><b>{{ str_pad($list['show']->NORM, 8, '0', STR_PAD_LEFT) }}</b></u></a></b>
+                            | <b>NOBPJS. <a class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kartu BPJS Pasien">{{ $list['show']->NOBPJS }}</a></b>
+                            | <b data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP Tgl. {{ $list['show']->TGLSEP?\Carbon\Carbon::parse($list['show']->TGLSEP)->translatedFormat('d F Y'):'' }}">SEP. <a class="text-info">{{ $list['show']->NOSEP?$list['show']->NOSEP:'Tidak Ditemukan' }}</a></b>
+                        </p>
+                        <p class="text-truncate mb-0" style="font-size: 12px"><mark data-bs-toggle="tooltip" data-bs-placement="bottom"
+                            title="DPJP. {{ $list['show']->NAMADOKTER }}"><b>{{ $list['show']->NAMARUANGAN }} - {{ $list['show']->NAMADOKTER }}</b></mark></p>
+                    </div>
+                    <div class="col-md-8 col-xl-7 col-xxl-6 text-end">
+                        <p class="text-truncate text-muted mb-2">
+                            <b>Masuk :</b>&nbsp;&nbsp;
+                            {{ \Carbon\Carbon::parse($list['show']->MASUK)->format('d M Y H.i') . ' WIB' }}
+                        </p>
+                        <p class="text-truncate text-muted mb-0">
+                            <b>Keluar :</b>&nbsp;&nbsp;
+                            {{ $list['show']->KELUAR ? \Carbon\Carbon::parse($list['show']->KELUAR)->format('d M Y H.i') . ' WIB' : '-' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="alert_verif"></div>
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between py-3">

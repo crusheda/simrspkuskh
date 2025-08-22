@@ -2,7 +2,6 @@
 <nav class="pc-sidebar">
     <div class="navbar-wrapper">
         <div class="m-header">
-            {{-- <div id="logo_simrs"></div> --}}
             <a href="javascript:void(0);" class="b-brand text-primary">
                 <img id="logo-light" src="{{ asset('images/logo/logoname.png') }}" alt="logo light" style="height: 24px" />
                 <img id="logo-dark" src="{{ asset('images/logo/logoname_w.png') }}" alt="logo dark" style="height: 24px" />
