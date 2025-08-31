@@ -103,7 +103,8 @@
                         <li class="pc-item"><a class="pc-link" href="javascript:void(0);">e</a></li>
                     </ul>
                 </li> --}}
-                @role('admin')
+                @if(auth()->user()->can('emr'))
+                {{-- @role('admin') --}}
                     <li class="pc-item pc-caption">
                         <label>Electronic</label>
                         <i class="ph-duotone ph-chart-pie"></i>
@@ -116,7 +117,8 @@
                             <span class="pc-mtext">Medical Record</span>
                         </a>
                     </li>
-                @endrole
+                {{-- @endrole --}}
+                @endif
                 @if(auth()->user()->can('monitoring') || auth()->user()->can('smart_claim'))
                     <li class="pc-item pc-caption">
                         <label>Digital</label>
