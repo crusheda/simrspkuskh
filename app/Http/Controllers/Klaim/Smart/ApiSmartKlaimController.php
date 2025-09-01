@@ -17,21 +17,10 @@ use Auth, Storage;
 
 class ApiSmartKlaimController extends Controller
 {
-    function table($pel,$bln,$dpjp)
+    function table($pel,$tgls,$tgle,$bln,$dpjp)
     {
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
         [$year, $month] = explode('-', $bln);
-        // $parts = explode('-', $bln);
-        // $year = $parts[0] ?? null;
-        // $month = $parts[1] ?? null;
-
-        // if (!$year || !$month) {
-        //     // Tampilkan pesan atau logging
-        //     throw new \Exception("Format bulan tidak valid: $bln");
-        // }
-
-        // print_r('halo');
-        // die();
         // MAIN QUERY
             // NON REHABILITASI MEDIK
             $show = DB::table('pendaftaran.kunjungan AS pk')
@@ -110,10 +99,25 @@ class ApiSmartKlaimController extends Controller
                     // ->where(function ($query) use ($tgls,$tgle) {
                     //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                     // })
-                    ->where(function ($query) use ($year,$month) {
-                        $query->whereYear('pk.MASUK', $year)
-                                ->whereMonth('pk.MASUK', $month);
+                    // ->where(function ($query) use ($year,$month) {
+                    //     $query->whereYear('pk.MASUK', $year)
+                    //             ->whereMonth('pk.MASUK', $month);
+                    // })
+
+                    // ->where(function ($query) use ($tgls,$tgle) {
+                    //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
+                    // })
+                    ->when($tgls !== '0' && $tgle !== '0', function ($query) use ($tgls, $tgle) {
+                        // PRIORITAS: Jika filter tanggal tersedia → gunakan ini
+                        $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                     })
+                    ->when($tgls === '0' && $tgle === '0' && $bln !== '0' && strpos($bln, '-') !== false, function ($query) use ($bln) {
+                        // HANYA jika tanggal tidak tersedia dan bulan valid → gunakan bulan
+                        [$year, $month] = explode('-', $bln);
+                        $query->whereYear('pk.MASUK', $year)
+                            ->whereMonth('pk.MASUK', $month);
+                    })
+
 
                     // KHUSUS RAWAT DARURAT
                     ->when($pel == 2, function ($query) use ($pel) {
@@ -137,7 +141,8 @@ class ApiSmartKlaimController extends Controller
                     ->where('pk.KELUAR', '!=', null)
                     ->orderBy('pk.MASUK','DESC')
                     ->get();
-
+        // print_r($show);
+        // die();
         $data = [
             'show' => $show,
             'time' => $time,

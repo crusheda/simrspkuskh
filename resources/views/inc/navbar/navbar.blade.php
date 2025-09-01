@@ -119,7 +119,7 @@
                     </li>
                 {{-- @endrole --}}
                 @endif
-                @if(auth()->user()->can('monitoring') || auth()->user()->can('smart_claim'))
+                @if(auth()->user()->can('monitoring') || auth()->user()->can('smart_claim') || auth()->user()->can('smart_claim_farmasi'))
                     <li class="pc-item pc-caption">
                         <label>Digital</label>
                         <i class="ph-duotone ph-chart-pie"></i>
@@ -135,7 +135,7 @@
                         </a>
                     </li>
                 @endcan
-                @can('smart_claim')
+                @canany(['smart_claim', 'smart_claim_farmasi'])
                     <li class="pc-item {{ request()->routeIs('klaim.index') || request()->routeIs('klaim.show') ? 'active' : '' }}">
                         <a href="{{ route('klaim.index') }}" class="pc-link">
                             <span class="pc-micon">
@@ -144,7 +144,7 @@
                             <span class="pc-mtext">Smart Claim</span>
                         </a>
                     </li>
-                @endcan
+                @endcanany
                 {{-- <li class="pc-item pc-hasmenu">
                     <a href="javascript:void(0);" class="pc-link">
                         <span class="pc-micon">

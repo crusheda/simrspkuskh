@@ -83,6 +83,13 @@
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
+                        <label class="form-label">Rentang Tgl Kunjungan</label>
+                        <div class="input-group">
+                            <input type="text" id="filter_tgl" class="form-control flatpickr-input active" placeholder="Pilih Rentang Tanggal" readonly="readonly">
+                            <span class="input-group-text"><i class="feather icon-calendar"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
                         <label class="form-label">Bulan Kunjungan</label>
                         <input type="month" class="form-control" value="{{ $list['yearMonth'] }}" placeholder="Pilih Bulan" id="filter_bulan" />
                     </div>
@@ -166,13 +173,33 @@
         });
 
         // ENTER TAMPILKAN
-        $('#filter_rawat, #filter_bulan, #filter_dpjp').on('keydown', function (e) {
+        $('#filter_rawat, #filter_bulan, #filter_dpjp, #filter_tgl').on('keydown', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault(); // mencegah aksi default
                 filter(); // panggil fungsi filter
             }
         });
+
+        // FLATPICKR DATE
+        const today = new Date(); // Hari ini
+        const fiveYearsAgo = new Date();
+        fiveYearsAgo.setFullYear(today.getFullYear() - 5); // 5 tahun ke belakang
+        $("#filter_tgl").flatpickr(
+            {
+                // enableTime: true,
+                // dateFormat: "Y-m-d H:i",
+                mode: 'range',
+                minDate: fiveYearsAgo, // Mulai dari 5 tahun yang lalu
+                maxDate: today,        // Sampai hari ini
+                dateFormat: 'Y-m-d',
+                // defaultDate: [today,today]
+            }
+        );
     });
+
+    // Passing permissions ke JS
+    const canSmartClaim = {{ auth()->user()->can('smart_claim') ? 'true' : 'false' }};
+    const canSmartClaimFarmasi = {{ auth()->user()->can('smart_claim_farmasi') ? 'true' : 'false' }};
 
     // function-function
     function filter() {
@@ -185,10 +212,19 @@
         var pel = $("#filter_rawat").val();
         var bln = $("#filter_bulan").val() ? $("#filter_bulan").val() : '0';
         var dpjp = $("#filter_dpjp").val() ? $("#filter_dpjp").val() : '0'; // JIKA DPJP KOSONG = 0
+        var tgl = $("#filter_tgl").val() ? $("#filter_tgl").val() : '0';
+        var exTgl = tgl.split(' to ');
+        if (exTgl.length == 2) { // SPLIT FROM = "2024-01-01 to 2025-01-01"
+            tgls = exTgl[0];
+            tgle = exTgl[1];
+        } else { // SPLIT FROM = "2024-01-01"
+            tgls = exTgl[0];
+            tgle = exTgl[0];
+        }
         // console.log(bln);
         // Process
         $.ajax({
-            url: `/api/klaim/table/${pel}/${bln}/${dpjp}`,
+            url: `/api/klaim/table/${pel}/${tgls}/${tgle}/${bln}/${dpjp}`,
             type: 'GET',
             dataType: 'json',
             success: function(res) {
@@ -234,7 +270,17 @@
                             }
                         }
                         content = ``;
-                        content += `<tr class="clickable" data-href="/klaim/${item.NOMOR}">
+                        content += `<tr class="clickable" data-href="`;
+
+                        if (canSmartClaim) {
+                            content += `/klaim/${item.NOMOR}`;
+                        } else if (canSmartClaimFarmasi) {
+                            content += `/klaim/farmasi/${item.NOMOR}`;
+                        } else {
+                            content += `#`;
+                        }
+
+                        content += `">
                                         <td>
                                             <h5 class="mb-1"><a href="javascript: void(0);"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Surat Elegibilitas Peserta">${SEP}</b></a></h5>
                                             <p class="text-sm text-muted mb-0">RM.${item.NORM} - <b class="text-primary">${item.NAMAPASIEN}</b><br>${item.NAMARUANGAN} - ${item.NAMADOKTER}</p>

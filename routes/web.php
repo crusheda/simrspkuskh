@@ -75,6 +75,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             // RAWAT JALAN
             Route::get('klaim', [SmartKlaimController::class, 'index'])->name('klaim.index');
             Route::get('klaim/{KUNJUNGAN}', [SmartKlaimController::class, 'show'])->name('klaim.show');
+            Route::get('klaim/farmasi/{KUNJUNGAN}', [SmartKlaimController::class, 'showFarmasi'])->name('klaim.farmasi.show');
             // RAWAT INAP
             // Route::get('klaim/smart/ri', [SmartKlaimController::class, 'indexRi'])->name('klaim.pasien.indexRi');
             // RAWAT DARURAT
