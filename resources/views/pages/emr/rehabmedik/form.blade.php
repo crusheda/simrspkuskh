@@ -472,7 +472,7 @@
                                     <button class="btn btn-primary" id="btn-simpan-ks" onclick="simpanFormulirKs()">
                                         <i class="fas fa-save me-1"></i> Simpan Form Rekomendasi
                                     </button>
-                                    <button class="btn btn-danger" id="btn-hapus-ks" onclick="hapusFormulirKs()" hidden>
+                                    <button class="btn btn-danger" id="btn-hapus-ks" onclick="hapusKs()" hidden>
                                         <i class="fas fa-trash me-1"></i> Hapus Form Rekomendasi
                                     </button>
                                 </div>
@@ -1898,14 +1898,14 @@
         }
     }
 
-    function hapusJp(id) {
+    function hapusKs(id) {
         $("#id_hapus_ks").val(id);
         var inputs = document.getElementById('setujuhapusks');
         inputs.checked = false;
         $('#modalHapusKs').modal('show');
     }
 
-    function prosesHapusJp() {
+    function prosesHapusKs() {
         // SWITCH BTN HAPUS
         var checkboxHapus = $('#setujuhapusks').is(":checked");
         if (checkboxHapus == false) {
