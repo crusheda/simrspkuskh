@@ -91,7 +91,7 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frehab" role="tab"
                                 aria-selected="false" tabindex="-1" id="tab-frehab" disabled>
-                                <i class="ph-duotone ph-file-lock me-2"></i> Program Rehab Medik
+                                <i class="ph-duotone ph-archive-tray me-2"></i> Program Rehab Medik
                             </button>
                         </li>
                     @endif

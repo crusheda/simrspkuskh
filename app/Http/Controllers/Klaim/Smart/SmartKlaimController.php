@@ -58,10 +58,25 @@ class SmartKlaimController extends Controller
                     'pk.*',
                     'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
                     'ru.DESKRIPSI AS NAMARUANGAN',
+                    'kjs.noKartu AS NOBPJS',
+                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
-                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER')
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                    DB::raw("
+                        IF(
+                            ps.JENIS_KELAMIN = 1,
+                            'LAKI-LAKI',
+                            IF(
+                                ps.JENIS_KELAMIN = 2,
+                                'PEREMPUAN',
+                                'TIDAK DIKETAHUI'
+                            )
+                        ) AS JKPASIEN
+                    ")
                 )
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
                 ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
                 ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
                 ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')

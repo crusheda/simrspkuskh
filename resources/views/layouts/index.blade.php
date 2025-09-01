@@ -12,9 +12,24 @@
     <script>
         // Terapkan tema seawal mungkin (sebelum render)
         (function () {
-            const savedTheme = localStorage.getItem('pc-theme');
+            const savedTheme = localStorage.getItem('pc-theme') || 'light';
             if (savedTheme) {
+                // Set attribute theme ke <html> atau <body>
                 document.documentElement.setAttribute('data-pc-theme', savedTheme);
+
+                // Atur logo sesuai theme
+                window.addEventListener("DOMContentLoaded", function () {
+                    const logoLight = document.getElementById('logo-light');
+                    const logoDark  = document.getElementById('logo-dark');
+
+                    if (savedTheme === 'light') {
+                        logoLight.style.display = 'inline';
+                        logoDark.style.display  = 'none';
+                    } else {
+                        logoLight.style.display = 'none';
+                        logoDark.style.display  = 'inline';
+                    }
+                });
             }
         })();
     </script>
