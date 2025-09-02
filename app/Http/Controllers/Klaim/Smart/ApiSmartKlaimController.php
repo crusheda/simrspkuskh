@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use App\Models\simrspku_klaim\klaim_verifikasi_catatan;
 use App\Models\simrspku_klaim\klaim_verifikasi;
+use App\Models\simrspku_klaim\klaim_farmasi_verifikasi;
 use App\Models\simrspku_klaim\klaim_file;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -496,6 +497,198 @@ class ApiSmartKlaimController extends Controller
         return response()->json($data, 200);
     }
 
+    function submitFarmasi(Request $request)
+    {
+        // print_r($request->all());
+        // die();
+        $request->validate([
+            // 'file' => ['max:5000','mimes:pdf'],
+            'kunjungan' => 'required',
+            'sep' => 'required',
+            'resume' => 'required',
+            'laboratorium' => 'required',
+            'kwitansiresep' => 'required',
+            'user' => 'required',
+        ]);
+
+        // INITIALIZE
+        $now = Carbon::now();
+        $getSEP = DB::table('pendaftaran.kunjungan AS pk')
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                ->select('pj.NOMOR AS NOSEP')
+                ->where('pk.NOMOR',$request->kunjungan)
+                ->first();
+        $show = DB::select('CALL simrspku_klaim.CetakSEP(?)',[$getSEP->NOSEP]);
+        $getTgl = Carbon::parse($show[0]->TGLSEP);
+        $bulan = $getTgl->isoFormat('MM');
+        $tahun = $getTgl->isoFormat('YYYY');
+
+        // MAKE ARRAY ALL COLLECTION FILE PDF KLAIM
+        $koleksi = [];
+        $files = [];
+        $mapJenis = [
+            'sep'           => 1,
+            'resume'        => 2,
+            'kwitansiresep' => 12,
+            'laboratorium'  => 6,
+        ];
+
+        // Ambil hanya jenis yang checkbox-nya dicentang
+        $jenisDipilih = [];
+
+        foreach ($mapJenis as $key => $jenis) {
+            if ($request->boolean($key)) {
+                $jenisDipilih[] = $jenis;
+            }
+        }
+
+        if (!empty($jenisDipilih)) {
+            $getFileKlaim = klaim_file::where('nomor', $request->kunjungan)
+                ->where('status', true)
+                ->whereNull('deleted_at')
+                ->whereIn('jenis', $jenisDipilih)
+                ->get();
+
+            $getFileKlaimTambahan = klaim_file::where('nomor', $request->kunjungan)
+                ->where('status', true)
+                ->whereNull('deleted_at')
+                ->where('jenis', 10)
+                ->whereNotNull('sub_jenis')
+                ->get();
+
+            $getFileKlaimRehab = klaim_file::where('nomor', $request->kunjungan)
+                ->where('status', true)
+                ->whereNull('deleted_at')
+                ->where('jenis', 11)
+                ->whereNotNull('sub_jenis')
+                ->orderBy('sub_jenis','ASC')
+                ->get();
+
+            // Mapping hasil query utama: [jenis => filename]
+            $fileMap = [];
+            $fileKol = [];
+
+            foreach ($getFileKlaim as $value) {
+                $fileMap[$value->jenis] = $value->filename;
+                $fileKol[$value->jenis] = (int)($value->jenis . $value->sub_jenis);
+            }
+
+            // Susun koleksi dan files sesuai urutan $mapJenis
+            foreach ($mapJenis as $key => $jenisInt) {
+                if (in_array($jenisInt, $jenisDipilih) && isset($fileMap[$jenisInt])) {
+                    $koleksi[] = $fileKol[$jenisInt] ?? $jenisInt; // fallback kalau sub_jenis null
+                    $files[] = $fileMap[$jenisInt];
+                }
+            }
+
+            // Tambahkan file tambahan (jenis = 10)
+            foreach ($getFileKlaimTambahan as $value) {
+                $koleksi[] = (int)($value->jenis . $value->sub_jenis);
+                $files[] = $value->filename;
+            }
+
+            // Tambahkan file Rehab (jenis = 11)
+            foreach ($getFileKlaimRehab as $value) {
+                $koleksi[] = (int)($value->jenis . $value->sub_jenis);
+                $files[] = $value->filename;
+            }
+        } else {
+            $getFileKlaimTambahan = klaim_file::where('nomor', $request->kunjungan)
+                ->where('status', true)
+                ->whereNull('deleted_at')
+                ->where('jenis', 10)
+                ->whereNotNull('sub_jenis')
+                ->get();
+
+            $getFileKlaimRehab = klaim_file::where('nomor', $request->kunjungan)
+                ->where('status', true)
+                ->whereNull('deleted_at')
+                ->where('jenis', 11)
+                ->whereNotNull('sub_jenis')
+                ->orderBy('sub_jenis','ASC')
+                ->get();
+
+            // Tambahkan file tambahan (jenis = 10)
+            if ($getFileKlaimTambahan->isNotEmpty()) {
+                foreach ($getFileKlaimTambahan as $value) {
+                    $koleksi[] = (int)($value->jenis . $value->sub_jenis);
+                    $files[] = $value->filename;
+                }
+            }
+
+            // Tambahkan file Rehab (jenis = 11)
+            if ($getFileKlaimRehab->isNotEmpty()) {
+                foreach ($getFileKlaimRehab as $value) {
+                    $koleksi[] = (int)($value->jenis . $value->sub_jenis);
+                    $files[] = $value->filename;
+                }
+            }
+        }
+
+        // EXECUTE PROCESS
+        $pdf = new Fpdi();
+        foreach ($files as $file) {
+            if (!file_exists(storage_path().'/app/public/'.$file)) {
+                return response()->json(['error' => "File tidak ditemukan: $file"], 404);
+            }
+
+            $pageCount = $pdf->setSourceFile(storage_path().'/app/public/'.$file);
+            for ($page = 1; $page <= $pageCount; $page++) {
+                $templateId = $pdf->importPage($page);
+                $size = $pdf->getTemplateSize($templateId);
+                $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                $pdf->useTemplate($templateId);
+            }
+        }
+
+        // STORE GROUP OF PDF
+        $title = $request->kunjungan.'.pdf';
+        $path ="files/klaim/farmasi/{$tahun}/{$bulan}/{$title}";
+        $outputPath = storage_path()."/app/public/".$path;
+        $outputDir = dirname($outputPath);
+        if (!File::exists($outputDir)) { // Buat folder baru apabila tidak ada foldernya
+            File::makeDirectory($outputDir, 0755, true); // true = recursive
+        }
+        if (File::exists($outputPath)) { // ✅ Aman untuk overwrite
+            File::delete($outputPath); // hapus file lama sebelum simpan
+        }
+        // 'F' → File: simpan ke path file di server.
+        // 'I' → Inline: tampilkan langsung di browser (sebagai preview PDF).
+        // 'D' → Download: langsung paksa download via browser.
+        // 'S' → String: kembalikan isi PDF sebagai string (bisa simpan ke variabel).
+
+        // SAVING RECORD TO DB
+        $verify = klaim_farmasi_verifikasi::where('nomor',$request->kunjungan)->where('status',true)->first();
+        if (!$verify) {
+            $push               = new klaim_farmasi_verifikasi;
+            $push->nomor        = $request->kunjungan;
+            $push->user         = $request->user;
+            $push->bulan        = $bulan;
+            $push->tahun        = $tahun;
+            $push->title        = $title;
+            $push->filename     = $path;
+            $push->koleksi      = json_encode($koleksi);
+            $push->status       = true;
+            $push->save();
+        } else {
+            $push               = klaim_farmasi_verifikasi::find($verify->id);
+            $push->koleksi      = json_encode($koleksi);
+            $push->save();
+        }
+        $pdf->Output($outputPath, 'F');
+
+        $data = [
+            'pdf' => $pdf,
+            'tahun' => $tahun,
+            'bulan' => $bulan,
+            'kunjungan' => $request->kunjungan,
+            'message' => 'PDF Berhasil di Submit',
+        ];
+
+        return response()->json($data, 200);
+    }
+
     function verifSep($sep)
     {
         $show = DB::table('pendaftaran.penjamin AS pj')
@@ -649,6 +842,19 @@ class ApiSmartKlaimController extends Controller
         return response()->json($data, 200);
     }
 
+    function getKlaimFarmasi($kunjungan)
+    {
+        $show = klaim_farmasi_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
+        $file = klaim_file::where('nomor',$kunjungan)->where('status',true)->whereNull('deleted_at')->get();
+
+        $data = [
+            'show' => $show,
+            'file' => $file,
+        ];
+
+        return response()->json($data, 200);
+    }
+
     function verifikasiKlaim($kunjungan)
     {
         $now = Carbon::now();
@@ -688,9 +894,57 @@ class ApiSmartKlaimController extends Controller
         return response()->json($now, 200);
     }
 
+    function verifikasiKlaimFarmasi($kunjungan)
+    {
+        $now = Carbon::now();
+        $time = $now->isoFormat('YYYY-MM-DD HH:mm:ss');
+
+        $show = klaim_farmasi_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
+        $show->verif = true;
+        $show->verif_user = Auth::user()->ID;
+        $show->verif_tgl = $now;
+        $show->save();
+
+        return response()->json([
+            'code' => 1,
+            'message' => 'Verifikasi berkas berhasil dilakukan pada '.$now
+        ], 200);
+    }
+
+    function batalVerifikasiKlaimFarmasi($kunjungan)
+    {
+        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+
+        $show = klaim_farmasi_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
+        $show->verif = false;
+        $show->verif_user = null;
+        $show->verif_tgl = null;
+        $show->save();
+
+        return response()->json($now, 200);
+    }
+
     function showKlaim($tahun, $bulan, $kunjungan)
     {
         $path = 'files/klaim/'.$tahun.'/'.$bulan.'/'.$kunjungan.'.pdf';
+        $output = storage_path('app/public/'.$path);
+
+        if (!file_exists($output)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return response()->file($output,[
+            'Content-Type' => 'application/pdf',
+        ]);
+        // return response()->file($output, [
+        //     'Content-Type' => 'application/pdf',
+        //     'Content-Disposition' => 'inline; filename="merged.pdf"'
+        // ]);
+    }
+
+    function showKlaimFarmasi($tahun, $bulan, $kunjungan)
+    {
+        $path = 'files/klaim/farmasi/'.$tahun.'/'.$bulan.'/'.$kunjungan.'.pdf';
         $output = storage_path('app/public/'.$path);
 
         if (!file_exists($output)) {
@@ -710,6 +964,17 @@ class ApiSmartKlaimController extends Controller
     {
         $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
         $show = klaim_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
+        $show->status = false;
+        $show->save();
+        $show->delete();
+
+        return response()->json($now, 200);
+    }
+
+    function hapusKlaimFarmasi($kunjungan)
+    {
+        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+        $show = klaim_farmasi_verifikasi::where('nomor',$kunjungan)->where('status',true)->first();
         $show->status = false;
         $show->save();
         $show->delete();

@@ -123,6 +123,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('pasien/{kunjungan}/rad', [ApiMonitoringController::class, 'compileRad'])->name('api.pasien.rad');
             Route::get('pasien/{kunjungan}/triage', [ApiMonitoringController::class, 'compileTriage'])->name('api.pasien.triage');
             Route::get('pasien/{kunjungan}/operasi', [ApiMonitoringController::class, 'compileOperasi'])->name('api.pasien.operasi');
+            Route::get('pasien/{kunjungan}/kwitansiResep', [ApiMonitoringController::class, 'compileKwitansiResep'])->name('api.pasien.kwitansiResep');
             // TTE
                 // RAWAT JALAN
                 Route::get('pasien/{kunjungan}/ttdRj', [ApiMonitoringController::class, 'showTtdResumeRj'])->name('api.pasien.ttdResumeRj');
@@ -148,7 +149,13 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::delete('klaim/{kunjungan}/hapus', [ApiSmartKlaimController::class, 'hapusKlaim'])->name('api.klaim.hapusKlaim');
             Route::get('klaim/{tahun}/{bulan}/{kunjungan}/pdf', [ApiSmartKlaimController::class, 'showKlaim'])->name('api.klaim.showKlaim');
             Route::get('klaim/table/{pel}/{tgls}/{tgle}/{bln}/{dpjp}', [ApiSmartKlaimController::class, 'table'])->name('api.klaim.table');
-
+            // BERKAS KLAIM FARMASI
+            Route::get('klaim/farmasi/{kunjungan}/data', [ApiSmartKlaimController::class, 'getKlaimFarmasi'])->name('api.klaim.farmasi.getKlaim');
+            Route::get('klaim/farmasi/{kunjungan}/verifikasi', [ApiSmartKlaimController::class, 'verifikasiKlaimFarmasi'])->name('api.klaim.farmasi.verifikasiKlaim');
+            Route::get('klaim/farmasi/{kunjungan}/batalverifikasi', [ApiSmartKlaimController::class, 'batalVerifikasiKlaimFarmasi'])->name('api.klaim.farmasi.batalVerifikasiKlaim');
+            Route::post('klaim/farmasi/submit', [ApiSmartKlaimController::class, 'submitFarmasi'])->name('api.klaim.farmasi.submit');
+            Route::get('klaim/farmasi/{tahun}/{bulan}/{kunjungan}/pdf', [ApiSmartKlaimController::class, 'showKlaimFarmasi'])->name('api.klaim.farmasi.showKlaim');
+            Route::delete('klaim/farmasi/{kunjungan}/hapus', [ApiSmartKlaimController::class, 'hapusKlaimFarmasi'])->name('api.klaim.farmasi.hapusKlaim');
 
     // TIDAK DIPAKAI =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // PELAYANAN PASIEN
