@@ -21,7 +21,11 @@ class ApiSmartKlaimController extends Controller
     function table($pel,$tgls,$tgle,$bln,$dpjp)
     {
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
-        [$year, $month] = explode('-', $bln);
+
+        if ($tgls === '0' && $tgle === '0' && $bln === '0') {
+            return response()->json("Pilih tanggal / bulan terlebih dahulu.", 401);
+        }
+
         // MAIN QUERY
             // NON REHABILITASI MEDIK
             $show = DB::table('pendaftaran.kunjungan AS pk')
@@ -108,11 +112,11 @@ class ApiSmartKlaimController extends Controller
                     // ->where(function ($query) use ($tgls,$tgle) {
                     //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                     // })
-                    ->when($tgls !== '0' && $tgle !== '0', function ($query) use ($tgls, $tgle) {
+                    ->when($tgls !== '0' && $tgle !== '0' && $bln === '0', function ($query) use ($tgls, $tgle) {
                         // PRIORITAS: Jika filter tanggal tersedia → gunakan ini
                         $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                     })
-                    ->when($tgls === '0' && $tgle === '0' && $bln !== '0' && strpos($bln, '-') !== false, function ($query) use ($bln) {
+                    ->when($tgls === '0' && $tgle === '0' && $bln !== '0', function ($query) use ($bln) { //  && strpos($bln, '-') !== false
                         // HANYA jika tanggal tidak tersedia dan bulan valid → gunakan bulan
                         [$year, $month] = explode('-', $bln);
                         $query->whereYear('pk.MASUK', $year)

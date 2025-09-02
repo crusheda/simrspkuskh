@@ -82,16 +82,19 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-12 mb-3" id="hide-filter-tgl" hidden>
                         <label class="form-label">Rentang Tgl Kunjungan</label>
                         <div class="input-group">
-                            <input type="text" id="filter_tgl" class="form-control flatpickr-input active" placeholder="Pilih Rentang Tanggal" readonly="readonly">
-                            <span class="input-group-text"><i class="feather icon-calendar"></i></span>
+                            <input type="text" id="filter_tgl" class="form-control flatpickr-input active border border-2" placeholder="Pilih Rentang Tanggal" disabled>
+                            <button class="btn btn-secondary" type="button" id="btn-clear-filter-tgl" disabled><i data-feather="repeat"></i></button>
                         </div>
                     </div>
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-12 mb-3" id="hide-filter-bulan">
                         <label class="form-label">Bulan Kunjungan</label>
-                        <input type="month" class="form-control" value="{{ $list['yearMonth'] }}" placeholder="Pilih Bulan" id="filter_bulan" />
+                        <div class="input-group">
+                            <input type="month" class="form-control" value="{{ $list['yearMonth'] }}" placeholder="Pilih Bulan" id="filter_bulan" />
+                            <button class="btn btn-warning" type="button" id="btn-clear-filter-bulan"><i data-feather="repeat"></i></button>
+                        </div>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
@@ -195,6 +198,44 @@
                 // defaultDate: [today,today]
             }
         );
+
+        // saat input tanggal berubah
+        // $("#filter_tgl").on("change", function() {
+        //     if ($(this).val() !== "") {
+        //         $("#filter_bulan").prop("disabled", true);
+        //     } else {
+        //         $("#filter_bulan").prop("disabled", false);
+        //     }
+        // });
+
+        // saat input bulan berubah
+        // $("#filter_bulan").on("change", function() {
+        //     if ($(this).val() !== "") {
+        //         $("#filter_tgl").prop("disabled", true);
+        //     } else {
+        //         $("#filter_tgl").prop("disabled", false);
+        //     }
+        // });
+
+        // tombol clear tanggal
+        $("#btn-clear-filter-tgl").on("click", function() {
+            $(this).removeClass('btn-warning').addClass('btn-secondary').prop('disabled',true);
+            $("#btn-clear-filter-bulan").removeClass('btn-secondary').addClass('btn-warning').prop('disabled',false);
+            $("#filter_tgl").val("").trigger("change").prop('disabled',true);
+            $("#filter_bulan").val("").trigger("change").prop('disabled',false);
+            $("#hide-filter-bulan").prop('hidden',false);
+            $("#hide-filter-tgl").prop('hidden',true);
+        });
+
+        // tombol clear bulan
+        $("#btn-clear-filter-bulan").on("click", function() {
+            $(this).removeClass('btn-warning').addClass('btn-secondary').prop('disabled',true);
+            $("#btn-clear-filter-tgl").removeClass('btn-secondary').addClass('btn-warning').prop('disabled',false);
+            $("#filter_bulan").val("").trigger("change").prop('disabled',true);
+            $("#filter_tgl").val("").trigger("change").prop('disabled',false);
+            $("#hide-filter-tgl").prop('hidden',false);
+            $("#hide-filter-bulan").prop('hidden',true);
+        });
     });
 
     // Passing permissions ke JS
@@ -331,10 +372,12 @@
                     window.location.href = url;
                 });
             }, error: function(xhr, status, error) {
-                // Gagal: tangani error di sini
-                console.error('Terjadi kesalahan:', error);
-                // Bisa juga tampilkan alert
-                alert('Gagal mengambil data. Coba lagi.');
+                let pesan = xhr.responseJSON ?? xhr.responseText ?? 'Gagal mengambil data. Coba lagi.';
+                iziToast.error({
+                    title: 'Pesan System!',
+                    message: pesan,
+                    position: 'topRight'
+                });$("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center>Gagal Memuat Data Klaim</center></td></tr>`);
                 $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
             }
         })
