@@ -936,10 +936,6 @@ class ApiSmartKlaimController extends Controller
         return response()->file($output,[
             'Content-Type' => 'application/pdf',
         ]);
-        // return response()->file($output, [
-        //     'Content-Type' => 'application/pdf',
-        //     'Content-Disposition' => 'inline; filename="merged.pdf"'
-        // ]);
     }
 
     function showKlaimFarmasi($tahun, $bulan, $kunjungan)
@@ -951,13 +947,18 @@ class ApiSmartKlaimController extends Controller
             abort(404, 'File tidak ditemukan');
         }
 
+        $sep = DB::table('pendaftaran.kunjungan AS pk')
+                    ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pk.NOPEN')
+                    ->select('pj.NOMOR')
+                    ->where('pk.NOMOR', $kunjungan)
+                    ->first();
+
+        $filename = $sep->NOMOR.'.pdf';
+
         return response()->file($output,[
             'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$filename.'"'
         ]);
-        // return response()->file($output, [
-        //     'Content-Type' => 'application/pdf',
-        //     'Content-Disposition' => 'inline; filename="merged.pdf"'
-        // ]);
     }
 
     function hapusKlaim($kunjungan)

@@ -4,10 +4,12 @@ namespace App\Http\Controllers\EMR;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\simrspku_klaim\klaim_file;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use PHPJasper\PHPJasper;
 use Carbon\Carbon;
+use Auth;
 
 class ApiMatriksController extends Controller
 {
@@ -82,6 +84,7 @@ class ApiMatriksController extends Controller
     }
     function compileMatriks($NOMOR)
     {
+        $kunjungan = $NOMOR;
         $getMatriks = DB::table('simrspku_klaim.matriks AS mat')
                 ->where('mat.nomor',$NOMOR)
                 ->first();
@@ -104,6 +107,29 @@ class ApiMatriksController extends Controller
         $outputDir = dirname($output);
         if (!File::exists($outputDir)) {
             File::makeDirectory($outputDir, 0755, true); // true = recursive
+        }
+
+        // SAVE TO DB
+        $validasi = klaim_file::where('nomor',$kunjungan)
+                                ->where('jenis',10)
+                                ->where('status',1)
+                                ->whereNull('deleted_at')
+                                ->count();
+        $verify = klaim_file::where('nomor',$kunjungan)->where('jenis',10)->where('nama_tambahan','matriks')->where('status',true)->first();
+        if (!$verify) {
+            $post = new klaim_file;
+            $post->jenis = 10;
+            $post->sub_jenis = $validasi+1;
+            $post->nomor = $kunjungan;
+            $post->title = $kunjungan.'-'.($validasi+1).'.pdf';
+            $post->filename = $path.'.pdf';
+            $post->nama_tambahan = 'matriks';
+            $post->status = true;
+            $post->user = Auth::user()->ID;
+            $post->save();
+        }else {
+            $verify->filename = $path . '.pdf';
+            $verify->save(); //
         }
 
         $options = [
