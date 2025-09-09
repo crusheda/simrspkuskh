@@ -140,10 +140,13 @@ class EMRController extends Controller
                     ->orderBy('pp.TANGGAL','DESC')
                     ->get();
 
+            $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')->where('nip',Auth::user()->NIP)->whereNull('deleted_at')->exists();
+
             $data = [
                 'show' => $show,
                 'riwayat' => $riwayat,
                 'KUNJUNGAN' => $KUNJUNGAN,
+                'tte_pegawai' => $tte_pegawai,
             ];
 
             return view('pages.emr.detail')->with('list', $data);

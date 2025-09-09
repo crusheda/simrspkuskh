@@ -982,6 +982,22 @@
 
     <script>
         $(document).ready(function() {
+            console.log("{{ $list['tte_pegawai'] }}");
+            if ("{{ $list['tte_pegawai'] }}" != true) {
+                // kalau ada tanda tangan pegawai
+                Swal.fire({
+                    title: `Tanda Tangan tidak ditemukan!`,
+                    text: 'Silakan mengisi/menambahkan tanda tangan di menu Profil Akun Pengguna sebelum melakukan pengisian pada halaman Elektronik Medical Record.',
+                    icon: `warning`,
+                    showConfirmButton: false,
+                    showCancelButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    backdrop: `rgba(26,27,41,0.8)`,
+                });
+            }
             // TOMBOL KEMBALI
             $('[data-back-button]').on('click', function() {
                 if (document.referrer) {

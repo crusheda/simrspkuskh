@@ -21,18 +21,45 @@ use Auth, Storage;
 class ApiRehabMedikController extends Controller
 {
     // --------------------------------------------------- ADD ONN ------------------------------------------------
-    public function libreOffice($input, $output) {
+    // public function libreOffice($input, $output) {
+    //     // LINK DOWNLOAD LIBRE OFFICE = https://www.libreoffice.org/download/download
+    //     $soffice = '"C:\Program Files\LibreOffice\program\soffice.exe"';
+    //     $cmd = $soffice . ' --headless --convert-to pdf ' . escapeshellarg($input) . ' --outdir ' . escapeshellarg($output);
+    //     exec($cmd, $log, $result);
+    //     return [$log, $result];
+    // }
+    public function libreOffice($input, $output)
+    {
         // LINK DOWNLOAD LIBRE OFFICE = https://www.libreoffice.org/download/download
-        $soffice = '"C:\Program Files\LibreOffice\program\soffice.exe"';
+        // Ambil path dari .env (lebih fleksibel kalau update LibreOffice)
+        $soffice = env('LIBREOFFICE_PATH', 'C:/Program Files/LibreOffice/program/soffice.exe');
+        $soffice = '"'.$soffice.'"';
+
+        // 🔹 Kill proses lama dulu (biar tidak nyangkut)
+        exec('taskkill /IM soffice.bin /F 2> NUL');
+
+        // Jalankan konversi
         $cmd = $soffice . ' --headless --convert-to pdf ' . escapeshellarg($input) . ' --outdir ' . escapeshellarg($output);
         exec($cmd, $log, $result);
-        return [$log, $result];
+
+        // 🔹 Cek hasil
+        $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
+        if ($result !== 0 || !file_exists($outputPdf)) {
+            \Log::error('LibreOffice gagal konversi', [
+                'cmd' => $cmd,
+                'log' => $log,
+                'result' => $result
+            ]);
+            return [false, $log, $result];
+        }
+
+        return [true, $log, $result];
     }
 
     public static function setImgWord(TemplateProcessor $templateProcessor, string $key, string $imagePath, int $targetWidth)
     {
         if (!file_exists($imagePath)) {
-            throw new \Exception("Gambar tidak ditemukan: {$imagePath}");
+            throw new \Exception("Gambar TTE tidak ditemukan: {$imagePath}");
         }
 
         [$originalWidth, $originalHeight] = getimagesize($imagePath);
@@ -158,6 +185,7 @@ class ApiRehabMedikController extends Controller
             'spak_index' => $request->suspek,
             'spak' => $request->suspekya,
             'dokter' => $request->dokter,
+            'nip_dokter' => Auth::user()->NIP,
             'nama_dokter' => $getTtdDokter->nama_pegawai,
             'tte_pasien' => $path_tte_pasien,
             'tte_dokter' => $getTtdDokter->signature_path,
@@ -454,11 +482,21 @@ class ApiRehabMedikController extends Controller
 
         $templateProcessor = new TemplateProcessor(public_path('/doc/input/rehabmedik/cetakFormKFR.docx'));
 
-        $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->tte_dokter, 170); // 150 is Width
-        $this->setImgWord($templateProcessor, 'PATH_TTE_PASIEN', storage_path()."/app/public/".$show->tte_pasien, 170);
-        if ($cap) {
-            $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
+        try {
+            $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->tte_dokter, 170);
+            $this->setImgWord($templateProcessor, 'PATH_TTE_PASIEN', storage_path()."/app/public/".$show->tte_pasien, 170);
+            if ($cap) {
+                $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
         }
+
+        // $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->tte_dokter, 170); // 150 is Width
+        // $this->setImgWord($templateProcessor, 'PATH_TTE_PASIEN', storage_path()."/app/public/".$show->tte_pasien, 170);
+        // if ($cap) {
+        //     $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
+        // }
 
         foreach ($data as $key => $value) {
             $templateProcessor->setValue($key, $value);
@@ -466,7 +504,12 @@ class ApiRehabMedikController extends Controller
 
         $outputWord = $output.'.docx';
         $templateProcessor->saveAs($outputWord);
-        [$log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+        // [$log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+        [$success, $log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+
+        if (!$success) {
+            return response()->json("Gagal membuat PDF Formulir KFR (Periksa File/Instal Ulang Libre Office di Server)", 500);
+        }
 
         if (File::exists($outputWord)) {
             File::delete($outputWord);
@@ -595,6 +638,7 @@ class ApiRehabMedikController extends Controller
             'nomor' => $request->nomor,
             'tgl' => $request->tgl,
             'dokter' => $getForm->dokter,
+            'nip_dokter' => Auth::user()->NIP,
             'terapis' => $request->id_user,
             'program' => $request->program,
             'tte_pasien' => $path_tte_pasien,
@@ -673,7 +717,15 @@ class ApiRehabMedikController extends Controller
         $templateProcessor = new TemplateProcessor(public_path('/doc/input/rehabmedik/cetakFormJP.docx'));
 
         // TTE DOKTER UTAMA
-        $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->tte_dokter, 170);
+        try {
+            $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->tte_dokter, 170);
+            // POST CAP
+            if ($cap) {
+                $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
 
         // POST TTE
         // foreach ($getJp as $i => $value) {
@@ -696,29 +748,36 @@ class ApiRehabMedikController extends Controller
 
             // Dokter
             if (!empty($getJp[$i]->tte_dokter) && file_exists(storage_path("app/public/{$getJp[$i]->tte_dokter}"))) {
-                $this->setImgWord($templateProcessor, "PATH_TTE_DOKTER_{$index}", storage_path("app/public/{$getJp[$i]->tte_dokter}"), 100);
+                try {
+                    $this->setImgWord($templateProcessor, "PATH_TTE_DOKTER_{$index}", storage_path("app/public/{$getJp[$i]->tte_dokter}"), 100);
+                } catch (\Exception $e) {
+                    return response()->json(['error' => $e->getMessage()], 422);
+                }
             } else {
                 $templateProcessor->setValue("PATH_TTE_DOKTER_{$index}", '');
             }
 
             // Pasien
             if (!empty($getJp[$i]->tte_pasien) && file_exists(storage_path("app/public/{$getJp[$i]->tte_pasien}"))) {
-                $this->setImgWord($templateProcessor, "PATH_TTE_PASIEN_{$index}", storage_path("app/public/{$getJp[$i]->tte_pasien}"), 100);
+                try {
+                    $this->setImgWord($templateProcessor, "PATH_TTE_PASIEN_{$index}", storage_path("app/public/{$getJp[$i]->tte_pasien}"), 100);
+                } catch (\Exception $e) {
+                    return response()->json(['error' => $e->getMessage()], 422);
+                }
             } else {
                 $templateProcessor->setValue("PATH_TTE_PASIEN_{$index}", '');
             }
 
             // Terapis
             if (!empty($getJp[$i]->tte_terapis) && file_exists(storage_path("app/public/{$getJp[$i]->tte_terapis}"))) {
-                $this->setImgWord($templateProcessor, "PATH_TTE_TERAPIS_{$index}", storage_path("app/public/{$getJp[$i]->tte_terapis}"), 100);
+                try {
+                    $this->setImgWord($templateProcessor, "PATH_TTE_TERAPIS_{$index}", storage_path("app/public/{$getJp[$i]->tte_terapis}"), 100);
+                } catch (\Exception $e) {
+                    return response()->json(['error' => $e->getMessage()], 422);
+                }
             } else {
                 $templateProcessor->setValue("PATH_TTE_TERAPIS_{$index}", '');
             }
-        }
-
-        // POST CAP
-        if ($cap) {
-            $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
         }
 
         // POST DATA
@@ -728,7 +787,12 @@ class ApiRehabMedikController extends Controller
 
         $outputWord = $output.'.docx';
         $templateProcessor->saveAs($outputWord);
-        [$log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+        // [$log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+        [$success, $log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+
+        if (!$success) {
+            return response()->json("Gagal membuat PDF Formulir KFR (Periksa File/Instal Ulang Libre Office di Server)", 500);
+        }
 
         if (File::exists($outputWord)) {
             File::delete($outputWord);
@@ -915,6 +979,7 @@ class ApiRehabMedikController extends Controller
                 'terapi' => $request->terapi,
                 'tte_dokter' => $getTtdDokter->signature_path,
                 'dokter' => $getForm->dokter,
+                'nip_dokter' => Auth::user()->NIP,
                 'user' => $request->id_user,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -984,12 +1049,16 @@ class ApiRehabMedikController extends Controller
 
             $templateProcessor = new TemplateProcessor(public_path('/doc/input/rehabmedik/cetakFormKonsul.docx'));
 
-            // TTE DOKTER UTAMA
-            $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$verify->tte_dokter, 250);
+            try {
+                // TTE DOKTER UTAMA
+                $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$verify->tte_dokter, 250);
 
-            // POST CAP
-            if ($cap) {
-                $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
+                // POST CAP
+                if ($cap) {
+                    $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
+                }
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()], 422);
             }
 
             // POST DATA
@@ -999,7 +1068,12 @@ class ApiRehabMedikController extends Controller
 
             $outputWord = $output.'.docx';
             $templateProcessor->saveAs($outputWord);
-            [$log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+            // [$log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+            [$success, $log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+
+            if (!$success) {
+                return response()->json("Gagal membuat PDF Formulir KFR (Periksa File/Instal Ulang Libre Office di Server)", 500);
+            }
 
             if (File::exists($outputWord)) {
                 File::delete($outputWord);

@@ -268,16 +268,16 @@
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <div class="form-floating mb-0">
-                                    <textarea class="form-control" id="diagmedis_jp" style="height: 50px" placeholder="Terisi Otomatis" readonly>Terisi Otomatis oleh Sistem</textarea>
-                                    <label for="diagmedis">Diagnosis Medis (ICD-10) <a class="text-danger">*</a></label>
+                                    <textarea class="form-control" id="diagmedis_jp" style="height: 50px" placeholder="Terisi Otomatis" readonly disabled>...</textarea>
+                                    <label for="diagmedis">Diagnosis Medis (ICD-10) (<a class="text-danger">Terisi Otomatis oleh Sistem</a>)</label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <div class="form-floating">
-                                    <textarea class="form-control" id="tatalaksana_jp" style="height: 50px" placeholder="Terisi Otomatis" readonly>Terisi Otomatis oleh Sistem</textarea>
-                                    <label for="tatalaksana">Permintaan Terapi <a class="text-danger">*</a></label>
+                                    <textarea class="form-control" id="tatalaksana_jp" style="height: 50px" placeholder="Terisi Otomatis" readonly disabled>...</textarea>
+                                    <label for="tatalaksana">Permintaan Terapi (<a class="text-danger">Terisi Otomatis oleh Sistem</a>)</label>
                                 </div>
                             </div>
                         </div>
@@ -417,13 +417,13 @@
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <label class="form-label">Diagnosa Medis (<b class="text-danger">Terisi Otomatis oleh Sistem</b>)</label>
-                                <input type="text" class="form-control" id="diagmedis_ks" placeholder="Terisi Otomatis oleh Sistem" readonly>
+                                <input type="text" class="form-control" id="diagmedis_ks" placeholder="Terisi Otomatis oleh Sistem" readonly disabled>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <label class="form-label">Diagnosa Fungsi (<b class="text-danger">Terisi Otomatis oleh Sistem</b>)</label>
-                                <input type="text" class="form-control" id="diagfungsi_ks" placeholder="Terisi Otomatis oleh Sistem" readonly>
+                                <input type="text" class="form-control" id="diagfungsi_ks" placeholder="Terisi Otomatis oleh Sistem" readonly disabled>
                             </div>
                         </div>
                         <hr class="m-2 mb-3">
@@ -436,6 +436,7 @@
                                         <div class="input-group">
                                             <span class="input-group-text"><i class="feather icon-calendar me-2"></i> Tanggal</span>
                                             <input type="text" id="filter_tgl_ks" class="form-control flatpickr-input-ks" placeholder="Pilih Tanggal">
+                                            <button type="button" id="clear_tgl_ks" class="btn btn-secondary">Kosongkan</button>
                                         </div>
                                     </div>
                                 </div>
@@ -651,7 +652,9 @@
 
         const today = new Date(); // Hari ini
         const fiveYearsAgo = new Date();
+        const fiveYearsLater = new Date();
         fiveYearsAgo.setFullYear(today.getFullYear() - 5); // 5 tahun ke belakang
+        fiveYearsLater.setFullYear(today.getFullYear() + 5); // 5 tahun ke depan
         filterTglJp = $(".flatpickr-input-jp").flatpickr(
             {
                 // enableTime: true,
@@ -666,12 +669,15 @@
             {
                 // enableTime: true,
                 // dateFormat: "Y-m-d H:i",
-                minDate: fiveYearsAgo, // Mulai dari 5 tahun yang lalu
-                maxDate: today,        // Sampai hari ini
+                minDate: today, // Mulai dari hari ini
+                maxDate: fiveYearsLater,  // Sampai 5 tahun setelah hari ini
                 dateFormat: 'Y-m-d',
                 // defaultDate: today
             }
         );
+        $("#clear_tgl_ks").on("click", function () {
+            filterTglKs.clear(); // reset value flatpickr
+        });
 
         $('input[type=radio][name=suspek]').change(function() {
             var selectedValue = $(this).val();
@@ -965,6 +971,24 @@
         fetch("/api/emr/fkfr/{{ $list['KUNJUNGAN'] }}/preview/" + GROUP)
             .then(response => {
                 if (!response.ok) {
+                    $('#previewformkfr').prop('hidden', false);
+                    if (NOMOR == "{{ $list['KUNJUNGAN'] }}") {
+                        delBtnKfr = `<button class="btn btn-danger" onclick="hapusFormKfr(${GROUP})">
+                                        <i class="fas fa-trash me-1"></i> Hapus Formulir
+                                    </button>`;
+                    } else {
+                        delBtnKfr = ``;
+                    }
+                    $('#previewformkfr').empty().append(`
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button class="btn btn-warning" onclick="generateUlangFormKFR(${NOMOR},${GROUP})">
+                                <i class="fas fa-sync me-1"></i> Generate Ulang Laporan KFR
+                            </button>
+                            <div>
+                                ${delBtnKfr}
+                            </div>
+                        </div>
+                    `);
                     throw new Error('Formulir tidak ditemukan atau gagal diambil.');
                 }
                 return response.blob();

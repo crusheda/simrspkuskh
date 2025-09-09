@@ -92,7 +92,7 @@
     </div>
 
     <div class="mt-3 text-end">
-        <button type="submit" class="btn btn-primary" onclick="simpanForm()">Simpan</button>
+        <button type="submit" class="btn btn-primary" onclick="simpanForm()"><i class="fas fa-save me-1"></i> Simpan </button>
     </div>
 
 <!-- JavaScript -->

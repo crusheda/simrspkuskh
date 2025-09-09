@@ -10,15 +10,15 @@
             <div class="card-body">
                 <form id="upload-form" enctype="multipart/form-data">
                     @csrf
-                    <div class="form-group">
-                        <label for="nama_tambahan">Nama File</label>
+                    <div class="form-group mb-3">
+                        <label class="form-label" for="nama_tambahan">Nama File <a class="text-danger">*</a></label>
                         <input type="text" class="form-control" name="nama_tambahan" id="nama_tambahan" required>
                     </div>
-                    <div class="form-group">
-                        <label for="file">Pilih File</label>
+                    <div class="form-group mb-3">
+                        <label class="form-label" for="file">Pilih File <a class="text-danger">*</a></label>
                         <input type="file" class="form-control" name="file" id="file" required>
                     </div>
-                    <button type="submit" class="btn btn-primary mt-2">Upload</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-upload me-1"></i> Upload</button>
                 </form>
             </div>
         </div>
