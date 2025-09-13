@@ -897,16 +897,16 @@
                 if (res.show.length != 0) {
                     if (res.isExist) {
                         $('#showTTDrj').modal('hide');
-                        showResumeRj(kunjungan);
-                        iziToast.success({
-                            title: 'Pesan Berhasil!',
-                            message: 'Resume Medis telah ada / ditandatangani',
-                            position: 'topRight'
-                        });
-                        $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
                         $('#btn-showResume-'+kunjungan).empty().append(`<button type="button" class="btn btn-sm btn-icon btn-link-success" id="resumerj`+kunjungan+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+kunjungan+`')">
                                                                         <i class="fas fa-check text-success"></i>
                                                                     </button>`);
+                        iziToast.success({
+                            title: 'Pesan Berhasil!',
+                            message: 'Resume Medis telah ada / ditandatangani. Mohon menunggu proses sampai Dokumen ditampilkan.',
+                            position: 'topRight'
+                        });
+                        $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                        showResumeRj(kunjungan);
                     } else {
                         content += `<div class="d-flex align-items-center table-responsive">
                                         <table class="table table-striped table-bordered" style="text-align: center;">

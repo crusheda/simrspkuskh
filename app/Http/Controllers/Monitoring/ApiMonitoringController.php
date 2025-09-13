@@ -764,7 +764,6 @@ class ApiMonitoringController extends Controller
             $tahun = $getTgl->isoFormat('YYYY');
 
             // ----------------------------------------------------------------------
-
             $path = 'files/resume/RJ/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
             $output = storage_path().'/app/public/'.$path;
 
