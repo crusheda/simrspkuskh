@@ -626,7 +626,7 @@
                                             <i class="fas fa-times fs-5 text-danger"></i>
                                         </button>`}
                                     </td>
-                                    <td>${item.TGLTTD?`
+                                    <td id="btn-showResume-`+item.NOMOR+`">${item.TGLTTD?`
                                         <button type="button" class="btn btn-sm btn-icon btn-link-success" id="resumerj`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+item.NOMOR+`')">
                                             <i class="fas fa-check text-success"></i>
                                         </button>`:`
@@ -904,6 +904,9 @@
                             position: 'topRight'
                         });
                         $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                        $('#btn-showResume-'+kunjungan).empty().append(`<button type="button" class="btn btn-sm btn-icon btn-link-success" id="resumerj`+kunjungan+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+kunjungan+`')">
+                                                                        <i class="fas fa-check text-success"></i>
+                                                                    </button>`);
                     } else {
                         content += `<div class="d-flex align-items-center table-responsive">
                                         <table class="table table-striped table-bordered" style="text-align: center;">
