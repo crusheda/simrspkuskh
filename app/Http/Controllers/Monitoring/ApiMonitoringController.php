@@ -706,7 +706,7 @@ class ApiMonitoringController extends Controller
             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
             ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
             ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
-            ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR','pk.RUANGAN AS RUANGAN')
+            ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR','pk.RUANGAN AS RUANGAN','pk.DPJP')
             ->where('pk.NOMOR',$kunjungan)
             ->first();
 
@@ -733,7 +733,28 @@ class ApiMonitoringController extends Controller
             if ($ttd) {
                 $imagePath2 = storage_path()."/app/public/".$ttd->signature_path;
             } else {
-                $imagePath2 = null;
+                $getIDUser = DB::table('master.dokter AS dr')
+                                ->leftJoin('aplikasi.pengguna AS pe','pe.NIP','=','dr.NIP')
+                                ->select('pe.ID')
+                                ->where('dr.ID',$getRESUMERJ->DPJP)
+                                ->where('dr.STATUS',1)
+                                ->first();
+                $getTtdLast = DB::table('simrspku_klaim.tanda_tangan AS ttd')
+                                ->where('ttd.user',$getIDUser->ID)
+                                ->whereNull('deleted_at')
+                                ->first();
+                if ($getTtdLast) {
+                    $imagePath2 = storage_path()."/app/public/".$getTtdLast->signature_path;
+                    DB::table('simrspku_klaim.tanda_tangan')->insert([
+                        'kunjungan' => $kunjungan,
+                        'signature_path' => $getTtdLast->signature_path,
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                        'user' => Auth::user()->ID,
+                    ]);
+                } else {
+                    $imagePath2 = null;
+                }
             }
 
             // ----------------------------------------------------------------------
@@ -748,28 +769,27 @@ class ApiMonitoringController extends Controller
             $output = storage_path().'/app/public/'.$path;
 
             // cek di DB
-            $verify = klaim_file::where('nomor', $kunjungan)
-                ->where('jenis', 2)
-                ->where('status', true)
-                ->first();
+            // $verify = klaim_file::where('nomor', $kunjungan)
+            //     ->where('jenis', 2)
+            //     ->where('status', true)
+            //     ->first();
 
-            // cek file ada di storage
-            if (file_exists($output.'.pdf')) {
-                if (!$verify) {
-                    $post = new klaim_file;
-                    $post->jenis = 2;
-                    $post->nomor = $kunjungan;
-                    $post->title = $kunjungan.'.pdf';
-                    $post->filename = $path.'.pdf';
-                    $post->status = true;
-                    $post->user = Auth::user()->ID;
-                    $post->save();
-                }
+            // if (file_exists($output.'.pdf')) {
+            //     if (!$verify) {
+            //         $post = new klaim_file;
+            //         $post->jenis = 2;
+            //         $post->nomor = $kunjungan;
+            //         $post->title = $kunjungan.'.pdf';
+            //         $post->filename = $path.'.pdf';
+            //         $post->status = true;
+            //         $post->user = Auth::user()->ID;
+            //         $post->save();
+            //     }
 
-                return response()->file($output.'.pdf',[
-                    'Content-Type' => 'application/pdf',
-                ]);
-            }
+            //     return response()->file($output.'.pdf',[
+            //         'Content-Type' => 'application/pdf',
+            //     ]);
+            // }
 
             if (!$verify) {
                 $post = new klaim_file;
