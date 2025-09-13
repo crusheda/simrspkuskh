@@ -769,10 +769,10 @@ class ApiMonitoringController extends Controller
             $output = storage_path().'/app/public/'.$path;
 
             // cek di DB
-            // $verify = klaim_file::where('nomor', $kunjungan)
-            //     ->where('jenis', 2)
-            //     ->where('status', true)
-            //     ->first();
+            $verify = klaim_file::where('nomor', $kunjungan)
+                ->where('jenis', 2)
+                ->where('status', true)
+                ->first();
 
             // if (file_exists($output.'.pdf')) {
             //     if (!$verify) {
