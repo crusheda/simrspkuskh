@@ -475,6 +475,7 @@ class ApiSmartKlaimController extends Controller
         if (!$verify) {
             $push               = new klaim_verifikasi;
             $push->nomor        = $request->kunjungan;
+            $push->sep          = $getSEP->NOSEP ?? '';
             $push->user         = $request->user;
             $push->bulan        = $bulan;
             $push->tahun        = $tahun;
@@ -495,6 +496,7 @@ class ApiSmartKlaimController extends Controller
             'tahun' => $tahun,
             'bulan' => $bulan,
             'kunjungan' => $request->kunjungan,
+            'sep' => $getSEP->NOSEP,
             'message' => 'PDF Berhasil di Submit',
         ];
 
@@ -928,7 +930,7 @@ class ApiSmartKlaimController extends Controller
         return response()->json($now, 200);
     }
 
-    function showKlaim($tahun, $bulan, $kunjungan)
+    function showKlaim($tahun, $bulan, $kunjungan, $sep)
     {
         $path = 'files/klaim/'.$tahun.'/'.$bulan.'/'.$kunjungan.'.pdf';
         $output = storage_path('app/public/'.$path);
@@ -938,6 +940,25 @@ class ApiSmartKlaimController extends Controller
         }
 
         return response()->file($output,[
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
+
+    function downloadKlaim($kunjungan)
+    {
+        $sep  = klaim_verifikasi::where('nomor', $kunjungan)
+                    ->where('status', true)
+                    ->first();
+
+        $filename = $sep && $sep->sep ? $sep->sep.'.pdf' : $kunjungan.'.pdf';
+        $output   = storage_path('app/public/'.$sep->filename);
+
+        if (!file_exists($output)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        // langsung download dengan nama file sesuai $filename
+        return response()->download($output, $filename, [
             'Content-Type' => 'application/pdf',
         ]);
     }

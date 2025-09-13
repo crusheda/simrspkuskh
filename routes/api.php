@@ -147,7 +147,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('klaim/{kunjungan}/verifikasi', [ApiSmartKlaimController::class, 'verifikasiKlaim'])->name('api.klaim.verifikasiKlaim');
             Route::get('klaim/{kunjungan}/batalverifikasi', [ApiSmartKlaimController::class, 'batalVerifikasiKlaim'])->name('api.klaim.batalVerifikasiKlaim');
             Route::delete('klaim/{kunjungan}/hapus', [ApiSmartKlaimController::class, 'hapusKlaim'])->name('api.klaim.hapusKlaim');
-            Route::get('klaim/{tahun}/{bulan}/{kunjungan}/pdf', [ApiSmartKlaimController::class, 'showKlaim'])->name('api.klaim.showKlaim');
+            Route::get('klaim/{tahun}/{bulan}/{kunjungan}/pdf/{sep}', [ApiSmartKlaimController::class, 'showKlaim'])->name('api.klaim.showKlaim');
+            Route::get('klaim/{kunjungan}/pdf/download', [ApiSmartKlaimController::class, 'downloadKlaim'])->name('api.klaim.downloadKlaim');
             Route::get('klaim/table/{pel}/{tgls}/{tgle}/{bln}/{dpjp}', [ApiSmartKlaimController::class, 'table'])->name('api.klaim.table');
             // BERKAS KLAIM FARMASI
             Route::get('klaim/farmasi/{kunjungan}/data', [ApiSmartKlaimController::class, 'getKlaimFarmasi'])->name('api.klaim.farmasi.getKlaim');

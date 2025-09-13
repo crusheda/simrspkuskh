@@ -169,7 +169,7 @@
             </div>
             <div class="card-body align-middle" id="preview">
                 @if ($list['klaim'])
-                    <iframe src="/api/klaim/{{ $list['klaim']->tahun }}/{{ $list['klaim']->bulan }}/{{ $list['klaim']->nomor }}/pdf" width="100%" height="500px" frameborder="0"></iframe>
+                    <iframe src="/api/klaim/{{ $list['klaim']->tahun }}/{{ $list['klaim']->bulan }}/{{ $list['klaim']->nomor }}/pdf/{{ $list['klaim']->sep }}" width="100%" height="500px" frameborder="0"></iframe>
                 @else
                     Area ini akan menampilkan Preview Berkas Klaim yang dipilih
                 @endif
@@ -581,7 +581,12 @@
                     if (koleksi.includes(8)) { $('#ck_triage').prop('checked', true).prop('disabled', false); } else { $('#ck_triage').prop('checked', false).prop('disabled',false); }
                     if (koleksi.includes(9)) { $('#ck_operasi').prop('checked', true).prop('disabled', false); } else { $('#ck_operasi').prop('checked', false).prop('disabled',false); }
 
-                    $('#btn-refresh-klaim').empty().append(`<button class="btn btn-light-primary" onclick="prosesSubmit('${kunjungan}')">Refresh Preview Klaim</button>`);
+                    $('#btn-refresh-klaim').empty().append(`
+                        <div class="btn-group">
+                            <button class="btn btn-light-primary" onclick="prosesSubmit('${kunjungan}')"><i class="fas fa-sync me-1"></i> Refresh Preview Klaim</button>
+                            <a class="btn btn-light-success" href="/api/klaim/${kunjungan}/pdf/download"><i class="fas fa-download me-1"></i> Download Berkas Klaim</a>
+                        </div>
+                    `);
 
                     // DOKUMEN TAMBAHAN
                     $('#dokumen_tambahan').empty();
@@ -1282,7 +1287,8 @@
                 const tahun = res.tahun;
                 const bulan = res.bulan;
                 const kunjungan = res.kunjungan;
-                const fileURL = `/api/klaim/${tahun}/${bulan}/${kunjungan}/pdf`;
+                const sep = res.sep;
+                const fileURL = `/api/klaim/${tahun}/${bulan}/${kunjungan}/pdf/${sep}`;
                 // $('#preview').empty();
                 verify();
                 $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
