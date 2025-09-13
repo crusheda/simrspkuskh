@@ -621,8 +621,43 @@ class ApiMonitoringController extends Controller
 
             $show = DB::select('CALL simrspku_klaim.CetakResumeRJ(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
 
+            if ($show) {
+                $getTgl = Carbon::parse($show[0]->TGLPERIKSA);
+                $tgl = $getTgl->isoFormat('DD');
+                $bulan = $getTgl->isoFormat('MM');
+                $tahun = $getTgl->isoFormat('YYYY');
+
+                $path = 'files/resume/RJ/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
+                $output = storage_path().'/app/public/'.$path;
+
+                if (file_exists($output.'.pdf')) {
+                    $verify = klaim_file::where('nomor', $kunjungan)
+                        ->where('jenis', 2)
+                        ->where('status', true)
+                        ->first();
+
+                    if (!$verify) {
+                        $post = new klaim_file;
+                        $post->jenis = 2;
+                        $post->nomor = $kunjungan;
+                        $post->title = $kunjungan.'.pdf';
+                        $post->filename = $path.'.pdf';
+                        $post->status = true;
+                        $post->user = Auth::user()->ID;
+                        $post->save();
+                    }
+
+                    $isExist = true;
+                } else {
+                    $isExist = false;
+                }
+            } else {
+                $isExist = false;
+            }
+
             $data = [
                 'show' => $show,
+                'isExist' => $isExist,
             ];
 
             return response()->json($data, 200);
@@ -712,8 +747,30 @@ class ApiMonitoringController extends Controller
             $path = 'files/resume/RJ/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
             $output = storage_path().'/app/public/'.$path;
 
-            // SAVE TO DB
-            $verify = klaim_file::where('nomor',$kunjungan)->where('jenis',2)->where('status',true)->first();
+            // cek di DB
+            $verify = klaim_file::where('nomor', $kunjungan)
+                ->where('jenis', 2)
+                ->where('status', true)
+                ->first();
+
+            // cek file ada di storage
+            if (file_exists($output.'.pdf')) {
+                if (!$verify) {
+                    $post = new klaim_file;
+                    $post->jenis = 2;
+                    $post->nomor = $kunjungan;
+                    $post->title = $kunjungan.'.pdf';
+                    $post->filename = $path.'.pdf';
+                    $post->status = true;
+                    $post->user = Auth::user()->ID;
+                    $post->save();
+                }
+
+                return response()->file($output.'.pdf',[
+                    'Content-Type' => 'application/pdf',
+                ]);
+            }
+
             if (!$verify) {
                 $post = new klaim_file;
                 $post->jenis = 2;

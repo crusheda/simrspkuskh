@@ -362,13 +362,13 @@
                         </tbody>
                     </table>
                 </div> --}}
-                <div id="tampil-ttd-rj"></div>
+                <div id="tampil-ttd-rj"><hr><h5><i class="fas fa-sync fa-spin me-1"></i> Mengambil Data</h5><hr></div>
                 {{-- <a href="#!" class="tooltip-test" data-bs-toggle="tooltip" title="Tooltip" data-container="#showCppt">that link</a> --}}
                 <div id="canvas"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" id="clear" class="btn btn-link-danger"><i class="fa fa-erase me-1 align-middle"></i> Kosongkan</button>
-                <button type="button" class="btn btn-primary" onclick="storeTTDrj()"><i class="fa fa-save me-1 align-middle"></i> Simpan</button>
+                <button type="button" class="btn btn-primary" id="btn-store-tte-resume" onclick="storeTTDrj()" disabled><i class="fa fa-save me-1 align-middle"></i> Simpan</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times me-1 align-middle"></i> Tutup</button>
             </div>
         </div>
@@ -873,6 +873,8 @@
     }
 
     function showTTDrj(kunjungan) {
+        $("#tampil-ttd-rj").empty().append(`<hr><h5><i class="fas fa-sync fa-spin me-1"></i> Memuat Data Resume Medis</h5><hr>`);
+        $('#btn-store-tte-resume').prop('disabled',true);
         if (!isDokter) {
             iziToast.error({
                 title: 'Maaf!',
@@ -893,64 +895,78 @@
                 $('#show-nama-ttd-rj').text(res.show[0].NAMAPASIEN);
                 content = ``;
                 if (res.show.length != 0) {
-                    content += `<div class="d-flex align-items-center table-responsive">
-                                    <table class="table table-striped table-bordered" style="text-align: center;">
-                                        <tbody>
-                                            <tr>
-                                                <td class="m-5 p-2" style="width: 35%;">Tanggal / Waktu Masuk</td>
-                                                <td style="width: 35%">Nomor Rekam Medis</td>
-                                                <td rowspan="2">Klinik Tujuan</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-2">${res.show[0].TGLMASUK}</td>
-                                                <td class="p-2">${res.show[0].NORM}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-2">Nama Pasien</td>
-                                                <td class="p-2">Tanggal Lahir / Jenis Kelamin</td>
-                                                <td rowspan="2" class="p-2">${res.show[0].UNIT}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-2">${res.show[0].NAMAPASIEN}</td>
-                                                <td class="p-2">${res.show[0].TANGGAL_LAHIR}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="d-flex table-responsive">
-                                    <table class="table table-bordered">
-                                        <tbody>
-                                            <tr>
-                                                <td class="m-5 p-2" style="width: 25%"><b>Subyektif (S)</b></td>
-                                                <td>${res.show[0].SUBYEKTIF}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="m-5 p-2" style="width: 25%"><b>Obyektif (O)</b></td>
-                                                <td>${res.show[0].OBYEKTIF}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="m-5 p-2" style="width: 25%"><b>Assesment (A)</b></td>
-                                                <td>${res.show[0].ASSESMENT}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="m-5 p-2" style="width: 25%"><b>Planning (P)</b></td>
-                                                <td>${res.show[0].PLANNING}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="m-5 p-2" style="width: 25%"><b>Instruksi (I)</b></td>
-                                                <td>${res.show[0].INSTRUKSI}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>`;
-                    $('#tampil-ttd-rj').append(content);
-                    $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                    if (res.isExist) {
+                        $('#showTTDrj').modal('hide');
+                        showResumeRj(kunjungan);
+                        iziToast.success({
+                            title: 'Pesan Berhasil!',
+                            message: 'Resume Medis telah ada / ditandatangani',
+                            position: 'topRight'
+                        });
+                        $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                    } else {
+                        content += `<div class="d-flex align-items-center table-responsive">
+                                        <table class="table table-striped table-bordered" style="text-align: center;">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="m-5 p-2" style="width: 35%;">Tanggal / Waktu Masuk</td>
+                                                    <td style="width: 35%">Nomor Rekam Medis</td>
+                                                    <td rowspan="2">Klinik Tujuan</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="p-2">${res.show[0].TGLMASUK}</td>
+                                                    <td class="p-2">${res.show[0].NORM}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="p-2">Nama Pasien</td>
+                                                    <td class="p-2">Tanggal Lahir / Jenis Kelamin</td>
+                                                    <td rowspan="2" class="p-2">${res.show[0].UNIT}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="p-2">${res.show[0].NAMAPASIEN}</td>
+                                                    <td class="p-2">${res.show[0].TANGGAL_LAHIR}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="d-flex table-responsive">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="m-5 p-2" style="width: 25%"><b>Subyektif (S)</b></td>
+                                                    <td>${res.show[0].SUBYEKTIF}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="m-5 p-2" style="width: 25%"><b>Obyektif (O)</b></td>
+                                                    <td>${res.show[0].OBYEKTIF}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="m-5 p-2" style="width: 25%"><b>Assesment (A)</b></td>
+                                                    <td>${res.show[0].ASSESMENT}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="m-5 p-2" style="width: 25%"><b>Planning (P)</b></td>
+                                                    <td>${res.show[0].PLANNING}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="m-5 p-2" style="width: 25%"><b>Instruksi (I)</b></td>
+                                                    <td>${res.show[0].INSTRUKSI}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>`;
+                        $('#tampil-ttd-rj').append(content);
+                        $('#btn-store-tte-resume').prop('disabled',false);
+                        $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                    }
                 } else {
                     iziToast.error({
                         title: 'Maaf!',
                         message: 'Data tidak ditemukan / belum diisi',
                         position: 'topRight'
                     });
+                    $('#btn-store-tte-resume').prop('disabled',true);
+                    $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
                 }
             }
         })
