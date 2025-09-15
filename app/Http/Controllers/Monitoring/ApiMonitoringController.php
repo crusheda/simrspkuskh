@@ -1138,8 +1138,8 @@ class ApiMonitoringController extends Controller
 
             //GENERATE QR CODE
             $generator2 = new DNS2D();
-            $nama = $show[0]->NAMA_KELUARGA_PASIEN ? $show[0]->NAMA_KELUARGA_PASIEN : $show[0]->NAMALENGKAP;
-            $pasien = $show[0]->RM .'-'.$nama;
+            // $nama = $show[0]->NAMA_KELUARGA_PASIEN ? $show[0]->NAMA_KELUARGA_PASIEN : $show[0]->NAMALENGKAP;
+            $pasien = $show[0]->RM .'-'.$show[0]->NAMALENGKAP;
 
             // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
             $image2 = $generator2->getBarcodePNG($pasien, 'QRCODE');
@@ -1148,16 +1148,18 @@ class ApiMonitoringController extends Controller
 
             // Decode base64 jadi binary PNG
             $decodedImage2 = base64_decode($image2);
-            $token2 = Crypt::encrypt($nama);
-            $titleQrcode2 = Crypt::encrypt($nama).'.png';
+            $token2 = Crypt::encrypt($show[0]->RM);
+            $titleQrcode2 = Crypt::encrypt($show[0]->RM).'.png';
             $verif2 = klaim_qrcode::where('nomor',$show[0]->RM)->where('jenis',1)->first();
-
+            // print_r($titleQrcode2);
+            // die();
             // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
             $pathQrcode2 = 'files/qrcode/' . $titleQrcode2;
             $outputQrcode2 = storage_path('app/public/' . $pathQrcode2);
 
             // SAVE TO DB
             if (!$verif2) {
+                // \Log::info('Menyimpan file ke: ' . $outputQrcode2);
                 file_put_contents($outputQrcode2, $decodedImage2);
                 $post = new klaim_qrcode;
                 $post->jenis = 1;
