@@ -742,6 +742,9 @@ class ApiSmartKlaimController extends Controller
                         ->orderBy('kvc.created_at','ASC')
                         ->get();
 
+        // print_r($klaim);
+        // die();
+
         $data = [
             'show' => $show,
             'klaim' => $klaim,

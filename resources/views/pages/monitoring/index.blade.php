@@ -809,7 +809,7 @@
                     res.show.forEach(item => {
                         content += `<tr>
                                         <td class="custom-column">`;
-                                        if (res.klaim.verif == 0) {
+                                        if (!res.klaim || res.klaim.verif == 0) {
                                             if (item.solved == 0) {
                             content += `        <button class="btn btn-link-success" onclick="selesaiCatatan('${item.id}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tombol Apabila Catatan telah diselesaikan">Selesai <i class="ti ti-thumb-up ms-1"></i></button>`;
                                             } else {
@@ -909,7 +909,7 @@
                         showResumeRj(kunjungan);
                     } else {
                         content += `<div class="d-flex align-items-center table-responsive">
-                                        <table class="table table-striped table-bordered" style="text-align: center;">
+                                        <table class="table table-striped table-bordered" style="text-align: center; width: 100%;">
                                             <tbody>
                                                 <tr>
                                                     <td class="m-5 p-2" style="width: 35%;">Tanggal / Waktu Masuk</td>
@@ -932,28 +932,28 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="d-flex table-responsive">
+                                    <div class="d-flex">
                                         <table class="table table-bordered">
                                             <tbody>
                                                 <tr>
                                                     <td class="m-5 p-2" style="width: 25%"><b>Subyektif (S)</b></td>
-                                                    <td>${res.show[0].SUBYEKTIF}</td>
+                                                    <td style="white-space: normal; word-break: break-word;">${res.show[0].SUBYEKTIF}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="m-5 p-2" style="width: 25%"><b>Obyektif (O)</b></td>
-                                                    <td>${res.show[0].OBYEKTIF}</td>
+                                                    <td style="white-space: normal; word-break: break-word;">${res.show[0].OBYEKTIF}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="m-5 p-2" style="width: 25%"><b>Assesment (A)</b></td>
-                                                    <td>${res.show[0].ASSESMENT}</td>
+                                                    <td style="white-space: normal; word-break: break-word;">${res.show[0].ASSESMENT}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="m-5 p-2" style="width: 25%"><b>Planning (P)</b></td>
-                                                    <td>${res.show[0].PLANNING}</td>
+                                                    <td style="white-space: normal; word-break: break-word;">${res.show[0].PLANNING}</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="m-5 p-2" style="width: 25%"><b>Instruksi (I)</b></td>
-                                                    <td>${res.show[0].INSTRUKSI}</td>
+                                                    <td style="white-space: normal; word-break: break-word;">${res.show[0].INSTRUKSI}</td>
                                                 </tr>
                                             </tbody>
                                         </table>

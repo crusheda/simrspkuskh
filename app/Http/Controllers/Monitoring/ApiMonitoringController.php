@@ -340,10 +340,10 @@ class ApiMonitoringController extends Controller
             if (empty($show)) {
                 return response()->json($data, 400);
             }
-            // print_r($show);
+            // print_r($show[0]->NOPEN);
             // die();
             $getSKDP = DB::select('CALL simrspku_klaim.CariSKDP(?)',[$show[0]->NOPEN]);
-            // print_r($getSKDP);
+            // print_r($getSKDP[0]->LAMA);
             // die();
             if (empty($getSKDP)) {
                 return response()->json($getSKDP, 400);
@@ -384,6 +384,10 @@ class ApiMonitoringController extends Controller
             // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
             $pathQrcode = 'files/qrcode/' . $titleQrcode;
             $outputQrcode = storage_path('app/public/' . $pathQrcode);
+            $outputQrcodeMerged = dirname($outputQrcode);
+            if (!File::exists($outputQrcodeMerged)) {
+                File::makeDirectory($outputQrcodeMerged, 0755, true); // true = recursive
+            }
 
             // SAVE TO DB
             if (!$verif) {
@@ -543,6 +547,10 @@ class ApiMonitoringController extends Controller
             // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
             $pathQrcode = 'files/qrcode/' . $titleQrcode;
             $outputQrcode = storage_path('app/public/' . $pathQrcode);
+            $outputQrcodeMerged = dirname($outputQrcode);
+            if (!File::exists($outputQrcodeMerged)) {
+                File::makeDirectory($outputQrcodeMerged, 0755, true); // true = recursive
+            }
 
             // SAVE TO DB
             if (!$verif) {
@@ -806,6 +814,9 @@ class ApiMonitoringController extends Controller
             if (!File::exists($outputDir)) {
                 File::makeDirectory($outputDir, 0755, true); // true = recursive
             }
+
+            // print_r($getRESUMERJ);
+            // die();
 
             // ----------------------------------------------------------------------
             if (str_starts_with($getRESUMERJ->RUANGAN, '1020201')) {
@@ -1114,7 +1125,11 @@ class ApiMonitoringController extends Controller
 
                 // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
                 $pathQrcode = 'files/qrcode/' . $titleQrcode;
-                $outputQrcode = storage_path('app/public/' . $pathQrcode);
+                $outputQrcode = storage_path('/app/public/' . $pathQrcode);
+                $outputQrcodeMerged = dirname($outputQrcode);
+                if (!File::exists($outputQrcodeMerged)) {
+                    File::makeDirectory($outputQrcodeMerged, 0755, true); // true = recursive
+                }
 
                 // SAVE TO DB
                 if (!$verif) {
@@ -1315,6 +1330,10 @@ class ApiMonitoringController extends Controller
                         // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
                         $pathQrcode = 'files/qrcode/' . $titleQrcode;
                         $outputQrcode = storage_path('app/public/' . $pathQrcode);
+                        $outputQrcodeMerged = dirname($outputQrcode);
+                        if (!File::exists($outputQrcodeMerged)) {
+                            File::makeDirectory($outputQrcodeMerged, 0755, true); // true = recursive
+                        }
 
                         // SAVE TO DB
                         if (!$verif) {
@@ -1485,6 +1504,10 @@ class ApiMonitoringController extends Controller
                 // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
                 $pathQrcode = 'files/qrcode/' . $titleQrcode;
                 $outputQrcode = storage_path('app/public/' . $pathQrcode);
+                $outputQrcodeMerged = dirname($outputQrcode);
+                if (!File::exists($outputQrcodeMerged)) {
+                    File::makeDirectory($outputQrcodeMerged, 0755, true); // true = recursive
+                }
 
                 // SAVE TO DB
                 if (!$verif) {

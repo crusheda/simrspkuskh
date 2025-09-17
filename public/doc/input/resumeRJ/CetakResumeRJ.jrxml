@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MR5" language="groovy" pageWidth="595" pageHeight="900" columnWidth="535" leftMargin="40" rightMargin="20" topMargin="20" bottomMargin="12" uuid="27be4418-27a1-4d08-aafd-4fbd41db6f33">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MR5" language="groovy" pageWidth="593" pageHeight="900" columnWidth="513" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="12" uuid="27be4418-27a1-4d08-aafd-4fbd41db6f33">
 	<property name="ireport.zoom" value="1.2100000000000295"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="367"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="OPR-RSWS"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -900,7 +909,7 @@
 		</band>
 		<band height="37">
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="190" y="24" width="27" height="13" uuid="f77ab09c-ed35-4049-85e5-6bad1c60ad39"/>
+				<reportElement stretchType="RelativeToTallestObject" x="172" y="24" width="27" height="13" uuid="f77ab09c-ed35-4049-85e5-6bad1c60ad39"/>
 				<box leftPadding="3">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.5"/>
@@ -913,7 +922,7 @@
 				<text><![CDATA[Jam :]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="217" y="24" width="296" height="13" uuid="292b5012-fc13-42e0-8dc9-5c1c2fa7366f"/>
+				<reportElement stretchType="RelativeToTallestObject" x="199" y="24" width="314" height="13" uuid="292b5012-fc13-42e0-8dc9-5c1c2fa7366f"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -933,7 +942,7 @@
 				<text><![CDATA[II. Pengkajian Medis]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="24" width="87" height="13" uuid="db1ed02b-a219-49e5-bc54-0ff758ef6108"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="24" width="69" height="13" uuid="db1ed02b-a219-49e5-bc54-0ff758ef6108"/>
 				<box leftPadding="3">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -947,7 +956,7 @@
 				<text><![CDATA[Waktu]]></text>
 			</staticText>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="130" y="24" width="60" height="13" uuid="66631ab5-a8df-45cd-9faf-fab8283c810d"/>
+				<reportElement stretchType="RelativeToTallestObject" x="112" y="24" width="60" height="13" uuid="66631ab5-a8df-45cd-9faf-fab8283c810d"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.0"/>
@@ -960,7 +969,7 @@
 				<textFieldExpression><![CDATA[$F{TGLPERIKSA}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="88" y="24" width="42" height="13" uuid="7b103678-9d87-468e-aa91-bed050f6e6b8"/>
+				<reportElement stretchType="RelativeToTallestObject" x="70" y="24" width="42" height="13" uuid="7b103678-9d87-468e-aa91-bed050f6e6b8"/>
 				<box topPadding="0" leftPadding="3" bottomPadding="0" rightPadding="0">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.5"/>
@@ -973,9 +982,10 @@
 				<text><![CDATA[Tanggal :]]></text>
 			</staticText>
 		</band>
-		<band height="13">
+		<band height="40">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="425" height="13" uuid="1e65ae66-227b-4fe8-bc3e-fe88568669e1">
+				<reportElement stretchType="RelativeToBandHeight" x="70" y="0" width="443" height="40" uuid="1e65ae66-227b-4fe8-bc3e-fe88568669e1">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
@@ -989,7 +999,7 @@
 				<textFieldExpression><![CDATA[$F{ASSESMENT}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="87" height="13" uuid="abb1e77d-9d0b-457f-af08-2984aa4b77aa">
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="69" height="40" uuid="abb1e77d-9d0b-457f-af08-2984aa4b77aa">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box leftPadding="3">
@@ -1003,9 +1013,10 @@
 				<text><![CDATA[Assesment (A)]]></text>
 			</staticText>
 		</band>
-		<band height="13">
+		<band height="66">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="87" height="13" uuid="a1f0788d-cd65-4189-891b-55a1d0b3d95a"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="69" height="66" uuid="a1f0788d-cd65-4189-891b-55a1d0b3d95a"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
@@ -1017,7 +1028,7 @@
 				<text><![CDATA[Subyektif (S)]]></text>
 			</staticText>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="425" height="13" uuid="803fc4df-54a8-4a8c-9f20-9bedaa9c60e9"/>
+				<reportElement stretchType="RelativeToBandHeight" x="70" y="0" width="443" height="66" uuid="803fc4df-54a8-4a8c-9f20-9bedaa9c60e9"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<leftPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.25"/>
@@ -1029,9 +1040,10 @@
 				<textFieldExpression><![CDATA[$F{SUBYEKTIF}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="13">
+		<band height="40">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="87" height="13" uuid="152ae112-522e-4a24-add3-259b9a327f1a"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="69" height="40" uuid="152ae112-522e-4a24-add3-259b9a327f1a"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
@@ -1043,7 +1055,7 @@
 				<text><![CDATA[Obyektif (O)]]></text>
 			</staticText>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="425" height="13" uuid="978d7f48-4689-409a-b4d7-b57f60be9f94"/>
+				<reportElement stretchType="RelativeToBandHeight" x="70" y="0" width="443" height="40" uuid="978d7f48-4689-409a-b4d7-b57f60be9f94"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<leftPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.25"/>
@@ -1055,9 +1067,10 @@
 				<textFieldExpression><![CDATA[$F{OBYEKTIF}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="13">
+		<band height="40">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="87" height="13" uuid="b5f7dda7-db37-47b2-8594-1150d7bf007e"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="69" height="40" uuid="b5f7dda7-db37-47b2-8594-1150d7bf007e"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
@@ -1069,7 +1082,7 @@
 				<text><![CDATA[Planning (P)]]></text>
 			</staticText>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="425" height="13" uuid="7cee0dac-4b40-47bb-886b-2e3d71050677">
+				<reportElement stretchType="RelativeToBandHeight" x="70" y="0" width="443" height="40" uuid="7cee0dac-4b40-47bb-886b-2e3d71050677">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
@@ -1083,9 +1096,10 @@
 				<textFieldExpression><![CDATA[$F{PLANNING}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="13">
+		<band height="40">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="87" height="13" uuid="ce66e5e7-7f5f-4843-af51-5b6f24dd25ed"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="69" height="40" uuid="ce66e5e7-7f5f-4843-af51-5b6f24dd25ed"/>
 				<box leftPadding="3">
 					<pen lineWidth="0.25" lineStyle="Solid"/>
 					<leftPen lineWidth="0.25"/>
@@ -1098,7 +1112,7 @@
 				<text><![CDATA[Instruksi (I)]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="88" y="0" width="425" height="13" uuid="91a8832c-7d9d-4c2a-95d9-db8735fb663a"/>
+				<reportElement x="70" y="0" width="443" height="40" uuid="91a8832c-7d9d-4c2a-95d9-db8735fb663a"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.25" lineStyle="Solid"/>
 					<topPen lineWidth="0.25" lineStyle="Solid" lineColor="#000000"/>
@@ -1112,9 +1126,10 @@
 				<textFieldExpression><![CDATA[$F{INSTRUKSI}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="13">
+		<band height="40">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="425" height="13" uuid="681c11a5-36db-4752-a3c6-6125a3289fb9"/>
+				<reportElement stretchType="RelativeToBandHeight" x="70" y="0" width="443" height="40" uuid="681c11a5-36db-4752-a3c6-6125a3289fb9"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<leftPen lineWidth="0.0"/>
 					<bottomPen lineWidth="0.25"/>
@@ -1126,7 +1141,7 @@
 				<textFieldExpression><![CDATA[$F{TINDAKAN}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="87" height="13" uuid="8f14a7ce-d4b7-447f-b30f-fcf88edeb1a3"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="69" height="40" uuid="8f14a7ce-d4b7-447f-b30f-fcf88edeb1a3"/>
 				<box leftPadding="3">
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
@@ -1138,9 +1153,10 @@
 				<text><![CDATA[Tindakan]]></text>
 			</staticText>
 		</band>
-		<band height="13">
+		<band height="30">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField>
-				<reportElement stretchType="RelativeToBandHeight" x="88" y="0" width="425" height="13" uuid="78b2e569-4038-45ff-a710-9894838c9a00"/>
+				<reportElement stretchType="RelativeToBandHeight" x="70" y="0" width="443" height="30" uuid="78b2e569-4038-45ff-a710-9894838c9a00"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="3">
 					<topPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
@@ -1152,7 +1168,7 @@
 				<textFieldExpression><![CDATA[$F{KONSUL} == null ? "-" : $F{KONSUL}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="87" height="13" uuid="2a5929d5-81fc-4f4a-89b1-b318e65f9e74"/>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="69" height="30" uuid="2a5929d5-81fc-4f4a-89b1-b318e65f9e74"/>
 				<box leftPadding="3">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -1162,7 +1178,8 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Dirujuk / Konsul ke]]></text>
+				<text><![CDATA[Dirujuk / 
+Konsul ke]]></text>
 			</staticText>
 		</band>
 		<band height="83">

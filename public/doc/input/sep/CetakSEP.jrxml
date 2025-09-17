@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CetakSEP" language="groovy" pageWidth="595" pageHeight="268" columnWidth="565" leftMargin="16" rightMargin="14" topMargin="8" bottomMargin="8" uuid="d84ba5a7-048f-4251-9a1f-ebf63450da68">
 	<property name="ireport.zoom" value="1.4641000000000017"/>
 	<property name="ireport.x" value="0"/>
@@ -192,7 +192,7 @@
 		</band>
 	</pageHeader>
 	<detail>
-		<band height="207" splitType="Stretch">
+		<band height="214" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="0" width="80" height="13" uuid="4ab1c1ff-92cd-4a30-a19a-f80f23f30e46"/>
 				<textElement>
@@ -396,10 +396,10 @@
 				<textFieldExpression><![CDATA[$F{NAMALENGKAP}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="377" y="143" width="170" height="13" uuid="59cc8b0f-38c7-4623-b8f0-2f51c6fb4b45">
+				<reportElement x="360" y="143" width="186" height="13" uuid="59cc8b0f-38c7-4623-b8f0-2f51c6fb4b45">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
 				<text><![CDATA[Pasien/Keluarga Pasien]]></text>
@@ -425,7 +425,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{poliTujuan} == null ? "-" : $F{poliTujuan}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="87" y="104" width="213" height="13" uuid="8b484582-d497-4eeb-8269-b3e76856e9cc"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
@@ -543,7 +543,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{KATARAK}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="87" y="91" width="213" height="13" uuid="2f7f8e30-25d4-4884-ba1a-443e4021f292"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
@@ -663,16 +663,16 @@ Kebenaran dan keaslian atas informasi data Pasien menjadi tanggung jawab penuh F
 				<text><![CDATA[Prosedur]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="377" y="193" width="170" height="14" uuid="3d92ca8f-fd1a-45ff-a944-6a4dd63b6dc9">
+				<reportElement x="360" y="200" width="186" height="14" uuid="3d92ca8f-fd1a-45ff-a944-6a4dd63b6dc9">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement verticalAlignment="Bottom">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NAMALENGKAP}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="405" y="156" width="36" height="36" uuid="999aca2d-ceea-4819-809f-2506c2dc152c">
+				<reportElement x="439" y="160" width="36" height="36" uuid="999aca2d-ceea-4819-809f-2506c2dc152c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<printWhenExpression><![CDATA[$F{QR1} != null]]></printWhenExpression>
