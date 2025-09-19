@@ -330,29 +330,60 @@ class ApiMonitoringController extends Controller
 
         function compileSkdp($kunjungan)
         {
-            // $getSEP = DB::table('pendaftaran.kunjungan AS pk')
-            //         ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-            //         ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
-            //         ->select('pj.NOMOR AS NOSEP')
-            //         ->where('pk.NOMOR',$kunjungan)
-            //         ->first();
-            $show = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$kunjungan]);
-            if (empty($show)) {
-                return response()->json($data, 400);
+            $getData = DB::table('pendaftaran.kunjungan AS pk')
+                        ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                        ->select('pk.NOMOR AS NOPEN','pk.RUANGAN','pp.NORM','pp.TANGGAL')
+                        ->where('pk.NOMOR',$kunjungan)
+                        ->first();
+
+            // $show = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$kunjungan]);
+
+            if (!$getData) {
+                return response()->json('Kunjungan Pasien Tidak Ditemukan', 400);
             }
-            // print_r($show[0]->NOPEN);
-            // die();
-            $getSKDP = DB::select('CALL simrspku_klaim.CariSKDP(?)',[$show[0]->NOPEN]);
-            // print_r($getSKDP[0]->LAMA);
-            // die();
-            if (empty($getSKDP)) {
-                return response()->json($getSKDP, 400);
+
+            // $getSKDP = DB::select('CALL simrspku_klaim.CariSKDP(?)',[$getData->NOPEN]);
+
+            $getSKDP = DB::table('pendaftaran.penjamin AS pj') // AMBIL DATA BERDASARKAN RIWAYAT NO.SURKON PADA KUNJUNGAN SEBELUMNYA
+                            ->leftJoin('medicalrecord.jadwal_kontrol AS jk','jk.NOMOR_REFERENSI','=','pj.NO_SURAT')
+                            ->leftJoin('pendaftaran.kunjungan AS pk','pk.NOMOR','=','jk.KUNJUNGAN')
+                            ->select(
+                                'pj.NOPEN',
+                                'pj.NO_SURAT',
+                                'jk.KUNJUNGAN',
+                                'pk.NOMOR'
+                            )
+                            ->where('pj.NOPEN', $getData->NOPEN)
+                            ->whereNotNull('pj.NO_SURAT')
+                            ->where('pj.NO_SURAT', '!=', '')
+                            ->first();
+
+            if (!$getSKDP) { // AMBIL DATA KUNJUNGAN DARI KUNJUNGAN PASIEN SEBELUMNYA (DENGAN RUANGAN YANG SAMA)
+                $getSKDP = DB::table('pendaftaran.pendaftaran AS pp')
+                            ->join('pendaftaran.kunjungan AS pk', function($join) use ($getData) {
+                                $join->on('pp.NOMOR', '=', 'pk.NOPEN')
+                                    ->where('pk.RUANGAN', $getData->RUANGAN)
+                                    ->whereIn('pk.STATUS', [1,2,3]);
+                            })
+                            ->select('pk.NOMOR','pk.RUANGAN','pp.TANGGAL')
+                            ->where('pp.NORM', $getData->NORM)
+                            ->whereIn('pp.STATUS', [1,2])
+                            ->where('pp.TANGGAL', '<', $getData->TANGGAL)
+                            ->orderBy('pp.TANGGAL', 'desc')
+                            ->first();
             }
-            $cetakSKDP = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$getSKDP[0]->LAMA]);
+
+            if (!$getSKDP) { // JIKA SKDP memang tidak ditemukan di DB
+                return response()->json('SKDP Tidak Ditemukan atau Belum Diterbitkan', 400);
+            }
+
+            $cetakSKDP = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$getSKDP->NOMOR]);
+
             // print_r($cetakSKDP);
             // die();
+
             // ----------------------------------------------------------------------
-            $getTgl = Carbon::parse($show[0]->JKONTROL);
+            $getTgl = Carbon::parse($getData->TANGGAL);
             $tgl = $getTgl->isoFormat('DD');
             $bulan = $getTgl->isoFormat('MM');
             $tahun = $getTgl->isoFormat('YYYY');
@@ -360,6 +391,7 @@ class ApiMonitoringController extends Controller
             $input = public_path().'/doc/input/skdp/CetakSKDP.jrxml';
             $path = 'files/skdp/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
             $output = storage_path().'/app/public/'.$path;
+
             // Pastikan folder tujuan ada
             $outputDir = dirname($output);
             if (!File::exists($outputDir)) {
@@ -471,7 +503,7 @@ class ApiMonitoringController extends Controller
             $options = [
                 'format' => ['pdf'],
                 'params' => [
-                    'PKUNJUNGAN' => $getSKDP[0]->LAMA,
+                    'PKUNJUNGAN' => $getSKDP->NOMOR,
                     'IMAGES_PATH' => public_path()."/doc/input/skdp/",
                     'QRCODE_PATH' => storage_path()."/app/public/",
                 ],
