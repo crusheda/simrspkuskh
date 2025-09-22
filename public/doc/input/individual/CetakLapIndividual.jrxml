@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CetakLapIndividual" language="groovy" pageWidth="595" pageHeight="842" columnWidth="525" leftMargin="56" rightMargin="14" topMargin="28" bottomMargin="2" uuid="0d9a6cd4-0b81-4864-9a93-67b73097ecde">
 	<property name="ireport.zoom" value="1.3310000000000013"/>
 	<property name="ireport.x" value="0"/>
@@ -298,7 +298,7 @@
 				<text><![CDATA[Nama RS]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="124" y="80" width="154" height="11" uuid="70e525b8-420f-469c-8a84-985e2f9b0701"/>
+				<reportElement x="124" y="80" width="216" height="11" uuid="70e525b8-420f-469c-8a84-985e2f9b0701"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
@@ -316,7 +316,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{JENISTARIF}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{JENISTARIF}==null?"TARIF RS KELAS C SWASTA":$F{JENISTARIF}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="285" y="67" width="68" height="11" uuid="a082c2a6-a3af-437f-9785-9ecdeea3eb64"/>
@@ -532,7 +532,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{BERATLAHIR}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{BERATLAHIR}==null?"-":$F{BERATLAHIR}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="113" y="169" width="11" height="11" uuid="ea547340-3e1a-43b7-8d5f-3415f6740aa0"/>
@@ -624,7 +624,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{DIAGNOSAUTAMA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DIAGNOSAUTAMA}?$F{DIAGNOSAUTAMA}:"-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="13" y="203" width="100" height="11" uuid="5851bafc-357a-4fbe-967a-2988d86946a4"/>
@@ -705,7 +705,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ADLAKUT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ADLAKUT}?$F{ADLAKUT}:"-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="13" y="593" width="100" height="11" uuid="abded911-a7c1-4b18-ae59-80b8ccec44f9"/>
@@ -725,7 +725,7 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{DESKRIPSIINACBG}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DESKRIPSIINACBG}?$F{DESKRIPSIINACBG}:"-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="13" y="614" width="74" height="11" uuid="b6fd2e55-9bc1-45da-8018-9b22f3c5c802"/>
@@ -746,21 +746,21 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[': '+$F{INACBG}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[": "+$F{INACBG}==null?$F{INACBG}:"-"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="88" y="634" width="53" height="11" uuid="e18552c9-3167-4cba-84e3-25b4a5ae1482"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[': '+$F{UNUSA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[": "+$F{UNUSA}==null?$F{UNUSA}:"-"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement x="441" y="614" width="76" height="11" uuid="2d4aa763-8363-4262-8e04-91a252d84f2f"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{TARIFINACBG}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TARIFINACBG}?$F{TARIFINACBG}:"-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="13" y="634" width="74" height="11" uuid="5cae42c2-ffd8-4e95-86f6-588c2bb0f9b8"/>
@@ -825,7 +825,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{KODEDIAGNOSAUTAMA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{KODEDIAGNOSAUTAMA}?$F{KODEDIAGNOSAUTAMA}:"-"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="161" y="219" width="363" height="172" uuid="910a7fe2-fbb8-4525-9b16-12d809c7d81e">
@@ -864,7 +864,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ADLKRONIK}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ADLKRONIK}?$F{ADLKRONIK}:"-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="429" y="634" width="12" height="11" uuid="a71ae9f9-f56b-49de-b06e-56354c876953"/>
@@ -873,7 +873,7 @@
 				</textElement>
 				<text><![CDATA[Rp]]></text>
 			</staticText>
-			<textField pattern="#,##0.00">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="441" y="634" width="76" height="11" uuid="077e883f-082c-499b-bd25-ff73785f0be2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
@@ -885,7 +885,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{DESUNUSA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DESUNUSA}?$F{DESUNUSA}:"-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="13" y="647" width="74" height="11" uuid="59b8cd9b-fde2-495a-9045-35248bf170f3"/>
@@ -894,7 +894,7 @@
 				</textElement>
 				<text><![CDATA[Chronic]]></text>
 			</staticText>
-			<textField pattern="#,##0.00">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="441" y="647" width="76" height="11" uuid="85b0333d-cd98-4d55-a190-ba981bb293c9"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
@@ -906,14 +906,14 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{DESUNUSC}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DESUNUSC}?$F{DESUNUSC}:"-"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="88" y="647" width="53" height="11" uuid="f07b6a87-efa8-4ab2-8f28-6e36c60491ae"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[': '+$F{UNUSC}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[": "+$F{UNUSC}==null?$F{UNUSC}:"-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="429" y="647" width="12" height="11" uuid="4af3d716-96fc-4975-837d-19cfa2ff354f"/>
@@ -922,12 +922,12 @@
 				</textElement>
 				<text><![CDATA[Rp]]></text>
 			</staticText>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="88" y="659" width="53" height="11" uuid="83b0f4a1-53b2-438b-82bf-73328517a407"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{KODESPESIAL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{KODESPESIAL}==null?$F{KODESPESIAL}:"-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="13" y="659" width="74" height="11" uuid="af7d4eed-589f-482c-87ed-917eb7aa08d3"/>
@@ -941,14 +941,14 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{DESKKODE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DESKKODE}?$F{DESKKODE}:"-"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement x="441" y="659" width="76" height="11" uuid="301ad516-01ac-44aa-aefe-58ba214eaeed"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{TARIFKODE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TARIFKODE}?$F{TARIFKODE}:"-"]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
 				<reportElement x="429" y="659" width="12" height="11" uuid="51bab4d7-175d-4a79-8cb2-7e6f66c3e6a4"/>
@@ -963,6 +963,13 @@
 					<font fontName="Verdana" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NO_URUT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="550" y="659" width="302" height="11" uuid="aaa58def-f396-4693-b6e7-bb9c16006869"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Verdana" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODER} ? $F{CODER}+" "+$F{VERIFIKATOR} +" "+$F{RUANG_RAWAT} : $F{VERIFIKATOR} +" "+$F{RUANG_RAWAT}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -983,18 +990,11 @@
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report" pattern="">
-				<reportElement x="0" y="7" width="42" height="11" uuid="9e4939d8-1784-4c4c-8f05-2d2789facca5"/>
+				<reportElement x="13" y="7" width="74" height="11" uuid="9e4939d8-1784-4c4c-8f05-2d2789facca5"/>
 				<textElement>
 					<font fontName="Verdana" size="7" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA['Generated : ']]></textFieldExpression>
-			</textField>
-			<textField pattern="EEEEE dd MMMMM yyyy HH:mm:ss">
-				<reportElement x="42" y="7" width="106" height="11" uuid="49ded937-1e8c-41f3-8237-0c6256262928"/>
-				<textElement>
-					<font fontName="Verdana" size="7" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="1" width="525" height="1" uuid="e822a25e-6299-48f7-a37e-7e93fcc4ec0f"/>
@@ -1003,11 +1003,11 @@
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement x="148" y="6" width="302" height="11" uuid="637ff9d4-16de-4a88-9f8c-f5139bbe9b8c"/>
+				<reportElement x="87" y="7" width="334" height="11" uuid="8656fa7c-2901-46d9-aa7a-2d79765f437d"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Verdana" size="7" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{CODER} ? $F{CODER}+" "+$F{VERIFIKATOR} +" "+$F{RUANG_RAWAT} : $F{VERIFIKATOR} +" "+$F{RUANG_RAWAT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[": E-Klaim @ "+new java.util.Date()]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
@@ -1018,7 +1018,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Verdana" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{TOTALTARIFINACBG}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{TOTALTARIFINACBG}?$F{TOTALTARIFINACBG}:"-"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="429" y="5" width="12" height="11" uuid="6f9c8c41-6fcf-4a24-b370-c8645c5410f1"/>
