@@ -30,8 +30,8 @@
                 <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Claim Table <span class="ms-2 f-14 px-2 badge bg-light-secondary rounded-pill" id="jumlah_claim">0 Data</span></h5>
             </div>
             <div class="card-body p-0 table-body">
-                <div class="table-responsive">
-                    <table class="table mb-0 table-hover table-striped" id="vantable">
+                <div class="table-responsive pb-3">
+                    <table class="table mb-0 table-hover table-striped" id="dttable">
                         <thead>
                             <tr>
                                 <th style="width: 50%;">KUNJUNGAN</th>
@@ -236,6 +236,13 @@
             $("#hide-filter-tgl").prop('hidden',false);
             $("#hide-filter-bulan").prop('hidden',true);
         });
+
+        // $(document).on('click', '#vantable tbody tr.clickable', function() {
+        //     var url = $(this).data('href');
+        //     if (url && url !== '#') {
+        //         window.location.href = url;
+        //     }
+        // });
     });
 
     // Passing permissions ke JS
@@ -285,13 +292,13 @@
                                                 <i class="fas fa-check text-success"></i>
                                             </button>`;
                             } else {
-                                SEP = '<b class="text-danger">Tanggal SEP Tidak Sesuai!</b>';
+                                SEP = '<span class="badge rounded text-bg-warning text-white"><b class="text-white">Tanggal SEP Tidak Sesuai!</b></span>';
                                 btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-danger" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="No.SEP tidak sesuai dengan Tanggal SEP" onclick="showSEP('`+item.NOMOR+`')">
                                                 <i class="fas fa-check fs-5 text-danger"></i>
                                             </button>`;
                             }
                         } else {
-                            SEP = '<b class="text-secondary">SEP Tidak Ditemukan</b>';
+                            SEP = '<span class="badge rounded text-bg-danger"><b class="text-white">SEP Tidak Ditemukan</b></span>';
                             btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan">
                                             <i class="fas fa-times fs-5 text-secondary"></i>
                                         </button>`;
@@ -335,30 +342,57 @@
                         $('#tampil-tbody').append(content);
                     })
                 }
-                // VANILLA TABLE
-                window.dataTable = new simpleDatatables.DataTable("#vantable", {
-                    sortable: true,
-                    searchable: true,
-                    perPage: 10,
-                    perPageSelect: [10, 20, 50, 100, 300, 500],
-                    fixedColumns: true,
-                    firstLast: true,
-                    layout: "both",
-                    labels: {
-                        placeholder: "Cari data Kunjungan...",
-                        perPage: "Jumlah baris per halaman",
-                        noRows: "Tidak ada data Kunjungan Pasien yang tersedia",
-                        info: "Menampilkan {start} - {end} dari {rows} data",
-                    },
-                    columns: [
-                        // { select: 0, sort: "asc" },
-                        // { select: 1, sort: "desc" },
-                        { select: 0, sortable: false },
-                        { select: 1, sort: 'desc' },
-                        { select: 2, sortable: false },
-                        { select: 3, sortable: false }
-                    ]
+                var table = $('#dttable').DataTable({
+                    // dom: 'Bfrtip',
+                    order: [
+                        [1, "desc"]
+                    ],
+                    bAutoWidth: false,
+                    aoColumns : [
+                    ],
+                    columnDefs: [
+                        { targets: [0], sortable: false },
+                        { targets: [2], sortable: false },
+                        { targets: [3], sortable: false }
+                        // { visible: false, targets: [7] },
+                    ],
+                    displayLength: 10,
+                    lengthChange: true,
+                    lengthMenu: [10, 30, 50, 75, 100, 250, 500, 1000, 3000, 7000, 15000, 50000, 100000],
+                    buttons: ['excel', 'pdf'] // 'copy','colvis'
                 });
+                // VANILLA TABLE
+                // window.dataTable = new simpleDatatables.DataTable("#dttable", {
+                //     sortable: true,
+                //     searchable: true,
+                //     perPage: 10,
+                //     perPageSelect: [10, 20, 50, 100, 300, 500],
+                //     fixedColumns: true,
+                //     firstLast: true,
+                //     layout: "both",
+                //     labels: {
+                //         placeholder: "Cari data Kunjungan...",
+                //         perPage: "Jumlah baris per halaman",
+                //         noRows: "Tidak ada data Kunjungan Pasien yang tersedia",
+                //         info: "Menampilkan {start} - {end} dari {rows} data",
+                //     },
+                //     columns: [
+                //         // { select: 0, sort: "asc" },
+                //         // { select: 1, sort: "desc" },
+                //         { select: 0, sortable: false },
+                //         { select: 1, sort: 'desc' },
+                //         { select: 2, sortable: false },
+                //         { select: 3, sortable: false }
+                //     ]
+                // });
+                // window.dataTable.on("datatable.click", (event) => {
+                //     let tr = event.event.target.closest("tr");   // ambil baris yg diklik
+                //     let url = $(tr).data("href");               // baca data-href
+
+                //     if (url && url !== "#") {
+                //         window.location.href = url;
+                //     }
+                // });
                 // Showing Tooltip
                 $('[data-bs-toggle="tooltip"]').tooltip('dispose');
                 $('.tooltip').remove();
