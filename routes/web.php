@@ -11,6 +11,7 @@ use App\Http\Controllers\Setting\PermissionsController;
 use App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController;
 use App\Http\Controllers\Pelayanan\Pasien\PasienController;
 use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
+use App\Http\Controllers\Pelayanan\Penunjang\RISController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\IGD\ModulMatrixController;
 use App\Http\Controllers\Monitoring\MonitoringController;
@@ -59,7 +60,10 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             //RESUME
             Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}', [ResumeMedisController::class, 'indexResume'])->name('pelayanan.pasien.resume.index');
             Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}/print', [ResumeMedisController::class, 'printResume'])->name('pelayanan.pasien.resume.print');
-
+        // PENUNJANG MEDIS
+            // RIS - RADIOLOGI
+            Route::get('pelayanan/ris', [RISController::class, 'indexRIS'])->name('pelayanan.ris.index');
+            
     // RME
     Route::get('emr', [EMRController::class, 'index'])->name('emr.index');
     Route::get('emr/{KUNJUNGAN}', [EMRController::class, 'detail'])->name('emr.detail');

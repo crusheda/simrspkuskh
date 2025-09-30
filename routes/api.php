@@ -18,6 +18,7 @@ use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Klaim\Smart\ApiSmartKlaimController;
 use App\Http\Controllers\Monitoring\MonitoringController;
 use App\Http\Controllers\Monitoring\ApiMonitoringController;
+use App\Http\Controllers\Pelayanan\Penunjang\RISController;
 use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
 use App\Http\Controllers\Pelayanan\Pasien\ApiResumeMedisController;
 
@@ -85,6 +86,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('emr/ks/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormKs'])->name('api.emr.ks.preview');
             Route::post('emr/ks', [ApiRehabMedikController::class, 'simpanKs'])->name('api.emr.ks.simpan');
             Route::delete('emr/ks/hapus/{id}', [ApiRehabMedikController::class, 'hapusFormKs'])->name('api.emr.ks.hapus');
+            // RIS
+            Route::get('dcom/{filename}', [RISController::class, 'getDCOM'])->name('api.emr.ris.getDCOM');
 
     //MATRIKS
     Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');
