@@ -252,9 +252,9 @@
     // function-function
     function filter() {
         $('#tombol-tampilkan').prop('disabled',true).find('i').removeClass('fa-filter').addClass('fa-sync fa-spin');
-        if (window.dataTable) {
-            window.dataTable.destroy();
-        }
+        // if (window.dataTable) {
+        //     window.dataTable.destroy();
+        // }
         $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
         // Initialize
         var pel = $("#filter_rawat").val();
@@ -277,6 +277,7 @@
             dataType: 'json',
             success: function(res) {
                 $("#tampil-tbody").empty();
+                $('#dttable').DataTable().clear().destroy();
                 if (res.show && Array.isArray(res.show)) {
                     res.show.forEach(item => {
                         $('#jumlah_claim').text(res.show.length + ' Data');
