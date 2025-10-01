@@ -1583,6 +1583,7 @@
     }
 
     function clearCheckbox() {
+        $('#ck_individual').prop('checked', false).prop('disabled',false);
         $('#ck_resume').prop('checked', false).prop('disabled',false);
         $('#ck_sep').prop('checked', false).prop('disabled',false);
         $('#ck_skdp').prop('checked', false).prop('disabled',false);
