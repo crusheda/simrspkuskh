@@ -1393,14 +1393,41 @@ class ApiMonitoringController extends Controller
                 File::makeDirectory($outputDir, 0755, true); // true = recursive
             }
 
+            $params = [
+                'PTAGIHAN' => $getSEP->TAGIHAN ?? '',
+                'PSTATUS'  => $getSEP->STATUS ?? '',
+                'IMAGES_PATH' => public_path() . "/doc/input/billing/",
+                'QRCODE_PATH' => storage_path() . "/app/public/",
+            ];
+
+            //CEK PAKAI PARAMETER LANGSUNG
+            // if ($getSEP) {
+            //     $show = DB::select('CALL simrspku_klaim.CetakRincianPasienPerDokterCustom(?, ?)', [$getSEP->TAGIHAN, $getSEP->STATUS]);
+            //     $firstShow = $show[0] ?? null;
+
+            //     if ($firstShow) {
+            //         $showArray = (array) $firstShow;
+
+            //         if (isset($showArray['TANGGALBAYAR'])) {
+            //             $tgl = $showArray['TANGGALBAYAR'];
+            //             if ($tgl instanceof \DateTime) {
+            //                 $showArray['TANGGALBAYAR'] = $tgl->format('Y-m-d H:i:s');
+            //             } else {
+            //                 $timestamp = strtotime($tgl);
+            //                 if ($timestamp !== false) {
+            //                     $showArray['TANGGALBAYAR'] = date('Y-m-d H:i:s', $timestamp);
+            //                 }
+            //             }
+            //         }
+
+            //         $params = array_merge($params, $showArray);
+            //         $params = array_map(fn($v) => $v === null ? '' : $v, $params);
+            //     }
+            // }
+
             $options = [
                 'format' => ['pdf'],
-                'params' => [
-                    'PTAGIHAN' => $getSEP->TAGIHAN,
-                    'PSTATUS'  => $getSEP->STATUS,
-                    'IMAGES_PATH' => public_path()."/doc/input/billing/",
-                    'QRCODE_PATH' => storage_path()."/app/public/",
-                ],
+                'params' => $params,
                 'db_connection' => [
                     'driver'   => config('database.connections.db_custom.driver'),
                     'host'     => config('database.connections.db_custom.host'),
