@@ -42,8 +42,13 @@
             </div>
         </div>
         <div class="card list-group mb-0">
-            <div class="card-header p-3">
-                <h6 class="mb-0"><i class="ti ti-sort-descending-2 me-1"></i> Pilihan Berkas</h6>
+            <div class="card-header p-3 d-flex align-items-center gap-2 bg-info text-white">
+                <div class="mb-0 flex-shrink-0 form-check d-flex align-items-center">
+                    <input class="form-check-input" type="checkbox" id="ck_all" style="width: 2em;height: 2.2em;margin-top:0px"
+                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Centang Semua Berkas Klaim Langsung" onchange="checkAll(this)">
+                    <label class="form-check-label ms-2"><b>Centang Semua<b class="text-danger">*</b></b></label>
+                </div>
+                <h6 class="mb-0 flex-grow-1 text-end text-white"><i class="ti ti-sort-descending-2 me-1"></i> Pilihan Berkas</h6>
             </div>
             <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                 <div class="input-group">
@@ -378,6 +383,24 @@
     var editorCatatanTambah; // global variable
     var editorCatatanEdit; // global variable
     $(document).ready(function() {
+        const listCheckbox = [
+            '#ck_individual',
+            '#ck_resume',
+            '#ck_sep',
+            '#ck_skdp',
+            '#ck_billing',
+            '#ck_laboratorium',
+            '#ck_radiologi',
+            '#ck_triage',
+            '#ck_operasi'
+        ];
+        // Tambahkan event handler ke semua checkbox individu (CK ALL)
+        $(listCheckbox.join(',')).on('change', function() {
+            const allUnchecked = listCheckbox.every(selector => !$(selector).prop('checked'));
+            if (allUnchecked) {
+                $('#ck_all').prop('checked', false).prop('disabled', false);
+            }
+        });
         // $('#catatan_add').each(function() {
         //     ClassicEditor.create(this)
         //         .catch(function(error) {
@@ -1582,7 +1605,46 @@
         }
     }
 
+    function checkAll(el) {
+        if(el.checked){
+            $('#ck_all').prop('disabled',true);
+
+            $('#ck_individual').prop('checked', true);
+            individual('{{ $list['KUNJUNGAN'] }}');
+
+            $('#ck_resume').prop('checked', true);
+            resume('{{ $list['KUNJUNGAN'] }}');
+
+            $('#ck_sep').prop('checked', true);
+            sep('{{ $list['KUNJUNGAN'] }}');
+
+            $('#ck_skdp').prop('checked', true);
+            skdp('{{ $list['KUNJUNGAN'] }}');
+
+            $('#ck_billing').prop('checked', true);
+            billing('{{ $list['KUNJUNGAN'] }}');
+
+            $('#ck_laboratorium').prop('checked', true);
+            laboratorium('{{ $list['KUNJUNGAN'] }}');
+
+            $('#ck_radiologi').prop('checked', true);
+            radiologi('{{ $list['KUNJUNGAN'] }}');
+
+            $('#ck_triage').prop('checked', true);
+            triage('{{ $list['KUNJUNGAN'] }}');
+
+            $('#ck_operasi').prop('checked', true);
+            operasi('{{ $list['KUNJUNGAN'] }}');
+        } else {
+            $('#ck_all').prop('disabled',false);
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            clearCheckbox();
+        }
+    }
+
     function clearCheckbox() {
+        $('#ck_all').prop('checked', false).prop('disabled',false);
+        $('#ck_individual').prop('checked', false).prop('disabled',false);
         $('#ck_resume').prop('checked', false).prop('disabled',false);
         $('#ck_sep').prop('checked', false).prop('disabled',false);
         $('#ck_skdp').prop('checked', false).prop('disabled',false);

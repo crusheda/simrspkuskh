@@ -162,22 +162,22 @@
 	<pageHeader>
 		<band height="38" splitType="Stretch">
 			<staticText>
-				<reportElement x="155" y="1" width="213" height="18" uuid="bf21130a-9877-4539-b578-762d3b2c1117"/>
+				<reportElement x="155" y="0" width="213" height="18" uuid="bf21130a-9877-4539-b578-762d3b2c1117"/>
 				<box leftPadding="0"/>
 				<textElement verticalAlignment="Bottom">
-					<font fontName="Arial Narrow" size="12" isBold="false"/>
+					<font fontName="Arial Narrow" size="11" isBold="false"/>
 				</textElement>
 				<text><![CDATA[SURAT ELEGIBILITAS PESERTA]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="155" y="19" width="212" height="19" uuid="c89d2ef1-ae9f-47db-abe0-f297ce868cb9"/>
+				<reportElement x="155" y="18" width="212" height="19" uuid="c89d2ef1-ae9f-47db-abe0-f297ce868cb9"/>
 				<textElement>
-					<font fontName="Arial Narrow" size="12"/>
+					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NAMAINSTANSI}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="368" y="19" width="179" height="19" uuid="d0064799-dbb3-4950-aadd-a43339d7d5a6"/>
+				<reportElement x="368" y="18" width="179" height="19" uuid="d0064799-dbb3-4950-aadd-a43339d7d5a6"/>
 				<textElement>
 					<font fontName="Arial Narrow" size="11"/>
 				</textElement>
