@@ -332,7 +332,7 @@ class ApiMonitoringController extends Controller
         {
             $getData = DB::table('pendaftaran.kunjungan AS pk')
                         ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-                        ->select('pk.NOMOR AS NOPEN','pk.RUANGAN','pp.NORM','pp.TANGGAL')
+                        ->select('pk.NOMOR AS NOMOR','pk.RUANGAN','pp.NORM','pp.TANGGAL')
                         ->where('pk.NOMOR',$kunjungan)
                         ->first();
 
@@ -342,7 +342,7 @@ class ApiMonitoringController extends Controller
                 return response()->json('Kunjungan Pasien Tidak Ditemukan', 400);
             }
 
-            // $getSKDP = DB::select('CALL simrspku_klaim.CariSKDP(?)',[$getData->NOPEN]);
+            // $getSKDP = DB::select('CALL simrspku_klaim.CariSKDP(?)',[$getData->NOMOR]);
 
             $getSKDP = DB::table('pendaftaran.penjamin AS pj') // AMBIL DATA BERDASARKAN RIWAYAT NO.SURKON PADA KUNJUNGAN SEBELUMNYA
                             ->leftJoin('medicalrecord.jadwal_kontrol AS jk','jk.NOMOR_REFERENSI','=','pj.NO_SURAT')
@@ -353,7 +353,7 @@ class ApiMonitoringController extends Controller
                                 'jk.KUNJUNGAN',
                                 'pk.NOMOR'
                             )
-                            ->where('pj.NOPEN', $getData->NOPEN)
+                            ->where('pj.NOPEN', $getData->NOMOR)
                             ->whereNotNull('pj.NO_SURAT')
                             ->where('pj.NO_SURAT', '!=', '')
                             ->first();
@@ -363,6 +363,7 @@ class ApiMonitoringController extends Controller
                             ->join('pendaftaran.kunjungan AS pk', function($join) use ($getData) {
                                 $join->on('pp.NOMOR', '=', 'pk.NOPEN')
                                     ->where('pk.RUANGAN', $getData->RUANGAN)
+                                    // ->where('pk.RUANGAN', 'LIKE', '10203%')
                                     ->whereIn('pk.STATUS', [1,2,3]);
                             })
                             ->select('pk.NOMOR','pk.RUANGAN','pp.TANGGAL')
@@ -371,16 +372,37 @@ class ApiMonitoringController extends Controller
                             ->where('pp.TANGGAL', '<', $getData->TANGGAL)
                             ->orderBy('pp.TANGGAL', 'desc')
                             ->first();
+
+                // Jika rawat inap, cek lagi apakah ada kunjungan rawat inap setelah kunjungan baseline
+                if ($getSKDP) {
+                    $rawatInap = DB::table('pendaftaran.pendaftaran AS pp')
+                        ->join('pendaftaran.kunjungan AS pk', function($join) {
+                            $join->on('pp.NOMOR', '=', 'pk.NOPEN')
+                                ->where('pk.RUANGAN', 'LIKE', '10203%') // ✅ cek rawat inap
+                                ->whereIn('pk.STATUS', [1,2,3]);
+                        })
+                        ->select('pk.NOMOR','pk.RUANGAN','pp.TANGGAL')
+                        ->where('pp.NORM', $getData->NORM)
+                        ->whereIn('pp.STATUS', [1,2])
+                        ->where('pp.TANGGAL', '>=', $getSKDP->TANGGAL) // setelah kunjungan baseline
+                        ->orderBy('pp.TANGGAL', 'asc')
+                        ->first();
+
+                    if ($rawatInap) {
+                        $getSKDP = $rawatInap; // override pakai rawat inap
+                    }
+                }
             }
 
             if (!$getSKDP) { // JIKA SKDP memang tidak ditemukan di DB
                 return response()->json('SKDP Tidak Ditemukan atau Belum Diterbitkan', 400);
             }
 
-            $cetakSKDP = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$getSKDP->NOMOR]);
-
-            // print_r($cetakSKDP);
+            // print_r($getData->NORM.' - '.$getData->NOMOR.' - '.$getData->TANGGAL);
+            // print_r($getSKDP);
             // die();
+
+            $cetakSKDP = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$getSKDP->NOMOR]);
 
             // ----------------------------------------------------------------------
             $getTgl = Carbon::parse($getData->TANGGAL);
@@ -746,24 +768,24 @@ class ApiMonitoringController extends Controller
             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
             ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
             ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
-            ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR','pk.RUANGAN AS RUANGAN','pk.DPJP')
+            ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR','pk.RUANGAN AS RUANGAN','pk.DPJP','pp.TANGGAL AS TGLPERIKSA')
             ->where('pk.NOMOR',$kunjungan)
             ->first();
 
-            $show = DB::select('CALL simrspku_klaim.CetakResumeRJ(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
-            $obat = DB::select('CALL simrspku_klaim.CetakObatRJ(?)',[$getRESUMERJ->NOPEN]);
+            // $show = DB::select('CALL simrspku_klaim.CetakResumeRJ(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
+            // $obat = DB::select('CALL simrspku_klaim.CetakObatRJ(?)',[$getRESUMERJ->NOPEN]);
 
-            if (empty($show)) {
-                return response()->json($data, 400);
-            }
-            $keluhan    = $this->cleanText($show[0]->KELUHAN);
-            $assesment  = $this->cleanText($show[0]->ASSESMENT);
-            $subyektif  = $this->cleanText($show[0]->SUBYEKTIF);
-            $obyektif   = $this->cleanText($show[0]->OBYEKTIF);
-            $planning   = $this->cleanText($show[0]->PLANNING);
-            $instruksi  = $this->cleanText($show[0]->INSTRUKSI);
+            // if (empty($show)) {
+            //     return response()->json($data, 400);
+            // }
+            // $keluhan    = $this->cleanText($show[0]->KELUHAN);
+            // $assesment  = $this->cleanText($show[0]->ASSESMENT);
+            // $subyektif  = $this->cleanText($show[0]->SUBYEKTIF);
+            // $obyektif   = $this->cleanText($show[0]->OBYEKTIF);
+            // $planning   = $this->cleanText($show[0]->PLANNING);
+            // $instruksi  = $this->cleanText($show[0]->INSTRUKSI);
 
-            $NAMA_OBAT = collect($obat)->pluck('NAMAOBAT')->implode(', ');
+            // $NAMA_OBAT = collect($obat)->pluck('NAMAOBAT')->implode(', ');
 
             // ----------------------------------------------------------------------
             $ttd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
@@ -798,7 +820,7 @@ class ApiMonitoringController extends Controller
             }
 
             // ----------------------------------------------------------------------
-            $getTgl = Carbon::parse($show[0]->TGLPERIKSA);
+            $getTgl = Carbon::parse($getRESUMERJ->TGLPERIKSA);
             $tgl = $getTgl->isoFormat('DD');
             $bulan = $getTgl->isoFormat('MM');
             $tahun = $getTgl->isoFormat('YYYY');
@@ -928,16 +950,16 @@ class ApiMonitoringController extends Controller
             $getSEP = DB::table('pendaftaran.kunjungan AS pk')
                     ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                     ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
-                    ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN')
+                    ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pp.TANGGAL AS TGLREG')
                     ->where('pk.NOMOR',$kunjungan)
                     ->first();
-            $show = DB::select('CALL simrspku_klaim.CetakLapIndividual5(?,?)',[$getSEP->NOPEN,3]);
-            if (empty($show)) {
-                return response()->json($data, 400);
+            // $show = DB::select('CALL simrspku_klaim.CetakLapIndividual5(?,?)',[$getSEP->NOPEN,3]);
+            if (empty($getSEP)) {
+                return response()->json('SEP Tidak ditemukan. Periksa data kunjungan sekali lagi.', 400);
             }
             $CETAK_HEADER = "1";
             // ----------------------------------------------------------------------
-            $getTgl = Carbon::parse($show[0]->TGLREG);
+            $getTgl = Carbon::parse($getSEP->TGLREG);
             $tgl = $getTgl->isoFormat('DD');
             $bulan = $getTgl->isoFormat('MM');
             $tahun = $getTgl->isoFormat('YYYY');
@@ -1067,8 +1089,6 @@ class ApiMonitoringController extends Controller
                         'database' => config('database.connections.db_custom.database'),
                     ],
                 ];
-                // print_r($options);
-                // die();
 
                 // Proses JasperReport untuk setiap PNOMOR
                 $jasper->process($input, $output, $options)->execute();

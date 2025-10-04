@@ -538,7 +538,7 @@
 				<imageExpression><![CDATA[$P{QRCODE_PATH} + $F{QR1}]]></imageExpression>
 			</image>
 		</band>
-		<band height="85">
+		<band height="98">
 			<rectangle>
 				<reportElement x="0" y="4" width="40" height="38" uuid="403670ab-026a-45d6-bd81-32439150c401">
 					<printWhenExpression><![CDATA[$F{JENISKONTROL}==2]]></printWhenExpression>
@@ -646,9 +646,11 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="12" isBold="false" isUnderline="false"/>
+					<font fontName="Arial" size="10" isBold="false" isUnderline="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{MASABERLAKU}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{MASABERLAKU} != null && $F{MASABERLAKU}.length() > 30
+    ? $F{MASABERLAKU}.substring(0, 30) + "..." 
+    : $F{MASABERLAKU}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Middle">
 				<reportElement x="1" y="6" width="38" height="34" uuid="443f910b-50d7-4947-82ce-fca1e63b1cae">
@@ -673,6 +675,22 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Nb."]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="0" y="82" width="320" height="13" forecolor="#FF0703" uuid="2467a865-d11d-44c7-975f-1f43e12a9c38">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{JENISKONTROL}==2]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[- INFORMASI LEBIH LANJUT BISA MENGHUBUNGI : 0851-5076-3480]]></text>
+			</staticText>
 		</band>
 	</detail>
 </jasperReport>
