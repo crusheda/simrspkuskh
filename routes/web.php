@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 // INITIALIZE PATH CONTROLLER
+use App\Http\Controllers\Auth\LupaPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RilisController;
 use App\Http\Controllers\Setting\ProfilController;
@@ -35,6 +36,8 @@ Route::get('full', [PasienController::class, 'fullJasper'])->name('report.jrxml.
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // AUTHENTICATION LARAVEL (AUTH UI BOOTSTRAP + SPATIE ROLES PERMISSIONS)
+Route::get('/lupapassword', [LupaPasswordController::class, 'index'])->name('lupapassword.index');
+Route::post('/lupapassword/update', [LupaPasswordController::class, 'update'])->name('lupapassword.update');
 Auth::routes(['register' => false]); // Cannot Access /register
 Route::group(['middleware' => ['web', 'auth']], function() {
     // DASHBOARD
@@ -63,7 +66,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
         // PENUNJANG MEDIS
             // RIS - RADIOLOGI
             Route::get('pelayanan/ris', [RISController::class, 'indexRIS'])->name('pelayanan.ris.index');
-            
+
     // RME
     Route::get('emr', [EMRController::class, 'index'])->name('emr.index');
     Route::get('emr/{KUNJUNGAN}', [EMRController::class, 'detail'])->name('emr.detail');

@@ -106,7 +106,7 @@
                                 <input class="form-check-input input-primary {{ old('remember') ? 'checked' : '' }}" type="checkbox" id="remember" name="remember"/>
                                 <label class="form-check-label text-muted" for="customCheckc1">Ingat Saya?</label>
                             </div>
-                            <a href="javascript: void(0);">
+                            <a href="{{ route('lupapassword.index') }}">
                                 <h6 class="text-secondary f-w-400 mb-0">Lupa Password?</h6>
                             </a>
                         </div>
