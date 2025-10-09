@@ -69,7 +69,7 @@
                             <div class="mb-3">
                                 <div class="form-group">
                                     <label class="form-label">NIP (Nomor Induk Pegawai) : <a data-bs-toggle="modal" data-bs-target="#hubsdi" href="javascript:void(0);">Lupa NIP Anda?</a></label>
-                                    <input type="number" class="form-control" name="nip" id="nip" placeholder="Tuliskan NIP Anda (7 Digit)" autofocus required/>
+                                    <input type="number" class="form-control" name="nip" id="nip" placeholder="Tuliskan NIP Anda (7 Digit Tanpa Titik/Koma)" autofocus required/>
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -108,7 +108,7 @@
                             </div>
                             <div class="d-grid mt-3">
                                 <a class="btn btn-light-info mb-3" href="{{ route('dashboard') }}">Login SIRMED v.1.0</a>
-                                <a class="btn btn-light-success" href="http://192.168.1.2/apps/SIMpel">Login SIMGOS v.2</a>
+                                <a class="btn btn-light-success" href="http://192.168.1.2/apps/SIMpel">Login SIMGOS v.2.x</a>
                             </div>
                         </form>
                     </div>
@@ -119,22 +119,23 @@
     </div>
 
     <div id="hubsdi" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="catatanLabel">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="catatanLabel">Daftar Nomor Bagian SDI (Sumber Daya Insani)</h5>
+                <div class="modal-header p-3">
+                    <h5 class="modal-title" id="catatanLabel">✆ Daftar Nomor Yang Bisa Dihubungi</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-3">
-                    <h6 class="mb-3">No.Telp Kantor : Hubungi <b class="text-primary">188</b> (Hanya Disaat Jam Kerja)</h6>
-                    <h6>Nomor Lainnya :</h6>
+                <div class="modal-body p-3 pb-0">
+                    <h6 class="mb-3">Masalah <mark>Terkait Akun</mark> silakan Hubungi No.Telp Bagian SDI : <b class="text-primary">188</b> (Hanya Disaat Jam Kerja)</h6>
+                    <h6>Nomor Bagian SDI :</h6>
                     <ul>
                         <li>Novita Yuliani, S.KM, M.Kes (<b class="text-success">Whatsapp</b> : <b class="text-danger">089689514960</b>)</li>
                         <li>Kholid Hidayat Al-Khoiri, S.Psi (<b class="text-success">Whatsapp</b> : <b class="text-danger">0882003805027</b>)</li>
                         <li>Sri Suryani, SM (<b class="text-success">Whatsapp</b> : <b class="text-danger">081330795309</b>)</li>
                     </ul>
+                    <h6 class="mb-3">Masalah <mark>Teknis Sistem</mark> silakan Hubungi No.Telp IT : <b class="text-primary">102</b> / <b class="text-primary">193</b></h6>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer p-2">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>

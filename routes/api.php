@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 // INITIALIZATION
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ApiDashboardController;
+use App\Http\Controllers\Log\BerkasController;
 use App\Http\Controllers\Setting\ProfilController;
 use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
@@ -161,6 +162,10 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('klaim/farmasi/{tahun}/{bulan}/{kunjungan}/pdf', [ApiSmartKlaimController::class, 'showKlaimFarmasi'])->name('api.klaim.farmasi.showKlaim');
             Route::delete('klaim/farmasi/{kunjungan}/hapus', [ApiSmartKlaimController::class, 'hapusKlaimFarmasi'])->name('api.klaim.farmasi.hapusKlaim');
 
+    // LOG
+        // BERKAS
+            Route::get('log/berkas/table', [BerkasController::class, 'table'])->name('api.log.berkas.table');
+            Route::get('log/berkas/table/{id}', [BerkasController::class, 'show'])->name('api.log.berkas.show');
     // TIDAK DIPAKAI =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // PELAYANAN PASIEN
     Route::get('pelayanan/pasien', [ApiResumeMedisController::class, 'table'])->name('api.pelayanan.pasien.table');

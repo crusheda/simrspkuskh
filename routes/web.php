@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LupaPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RilisController;
+use App\Http\Controllers\Log\BerkasController;
 use App\Http\Controllers\Setting\ProfilController;
 use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
@@ -87,6 +88,10 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             // Route::get('klaim/smart/ri', [SmartKlaimController::class, 'indexRi'])->name('klaim.pasien.indexRi');
             // RAWAT DARURAT
             // Route::get('klaim/smart/rd', [SmartKlaimController::class, 'indexRd'])->name('klaim.pasien.indexRd');
+
+    // LOG
+        // BERKAS
+            Route::get('log/berkas', [BerkasController::class, 'index'])->name('log.berkas.index');
 });
 
 Route::fallback(function () {

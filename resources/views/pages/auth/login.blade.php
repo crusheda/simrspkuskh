@@ -67,7 +67,7 @@
                 </div>
             </div>
             <div class="auth-form">
-                <div class="card my-5 mx-3">
+                <div class="card my-5 mx-3 shadow-lg">
                     <div class="card-body">
                         <center><img class="mb-3" src="{{ asset('images/pku/logo-kop-blue.png') }}" width="300" alt=""></center>
                         <hr class="mb-4" />
@@ -76,8 +76,17 @@
                                 {{ session('error') }}
                             </div>
                         @endif
-                        <h4 class="f-w-500 mb-1">Login | SIRMED</h4>
-                        <p class="mb-3">Belum memiliki Akun? <a href="javascript: void(0);"class="link-primary ms-1">Minta Akun</a></p>
+                        <h4 class="f-w-500 mb-0">Sign in | <span class="badge text-bg-primary me-1">SIRMED v1.0</span></h4>
+                        <p class="">
+                            <div class="alert alert-secondary pb-0 ps-0 mb-1">
+                                <ul>
+                                    <li>
+                                        Belum memiliki Akun? <a data-bs-toggle="modal" data-bs-target="#hubsdi" href="javascript: void(0);" class="ms-1"><b>Buat Akun Baru</b></a>
+                                    </li>
+                                    <li>Silakan masuk menggunakan Akun <b>SIMGOS Versi 2</b></li>
+                                </ul>
+                            </div>
+                        </p>
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
                         <div class="mb-3" data-validate="Username is required">
@@ -106,12 +115,12 @@
                                 <input class="form-check-input input-primary {{ old('remember') ? 'checked' : '' }}" type="checkbox" id="remember" name="remember"/>
                                 <label class="form-check-label text-muted" for="customCheckc1">Ingat Saya?</label>
                             </div>
-                            <a href="{{ route('lupapassword.index') }}">
-                                <h6 class="text-secondary f-w-400 mb-0">Lupa Password?</h6>
+                            <a href="{{ route('lupapassword.index') }}" class="f-w-400 mb-0">
+                                <b>Lupa Password Akun?</b>
                             </a>
                         </div>
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary align-middle" id="show-loader">Masuk <i data-feather="log-in" class="ms-1" style="width:13px;height:13px;margin-top:-2px"></i></button>
+                            <button type="submit" class="btn btn-primary align-middle shadow-lg" id="show-loader">Masuk <i data-feather="log-in" class="ms-1" style="width:13px;height:13px;margin-top:-2px"></i></button>
                         </div>
                         {{-- <div class="saprator my-3">
                             <span>Or continue with</span>
@@ -139,6 +148,29 @@
                             </ul>
                         </div> --}}
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="hubsdi" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="catatanLabel">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header p-3">
+                    <h5 class="modal-title" id="catatanLabel">✆ Daftar Nomor Yang Bisa Dihubungi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3 pb-0">
+                    <h6 class="mb-3">Masalah <mark>Terkait Akun</mark> silakan Hubungi No.Telp Bagian SDI : <b class="text-primary">188</b> (Hanya Disaat Jam Kerja)</h6>
+                    <h6>Nomor Bagian SDI :</h6>
+                    <ul>
+                        <li>Novita Yuliani, S.KM, M.Kes (<b class="text-success">Whatsapp</b> : <b class="text-danger">089689514960</b>)</li>
+                        <li>Kholid Hidayat Al-Khoiri, S.Psi (<b class="text-success">Whatsapp</b> : <b class="text-danger">0882003805027</b>)</li>
+                        <li>Sri Suryani, SM (<b class="text-success">Whatsapp</b> : <b class="text-danger">081330795309</b>)</li>
+                    </ul>
+                    <h6 class="mb-3">Masalah <mark>Teknis Sistem</mark> silakan Hubungi No.Telp IT : <b class="text-primary">102</b> / <b class="text-primary">193</b></h6>
+                </div>
+                <div class="modal-footer p-2">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
