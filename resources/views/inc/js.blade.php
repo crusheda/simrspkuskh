@@ -1,4 +1,5 @@
 <!-- [Page Specific JS] start -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ asset('js/plugins/apexcharts.min.js') }}"></script>
 <script src="{{ asset('js/plugins/jsvectormap.min.js') }}"></script>
 <script src="{{ asset('js/plugins/world.js') }}"></script>
@@ -18,7 +19,7 @@
 <script src="{{ asset('js/theme.js') }}"></script>
 {{-- <script src="{{ asset('js/multi-lang.js') }}"></script> --}}
 <script src="{{ asset('js/plugins/feather.min.js') }}"></script>
-<script src="{{ asset('js/sweetalert2-11.js') }}"></script>
+{{-- <script src="{{ asset('js/sweetalert2-11.js') }}"></script> --}}
 <script src="{{ asset('js/iziToast.js') }}"></script>
 
 {{-- ADDON --}}

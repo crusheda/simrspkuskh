@@ -982,7 +982,7 @@
 
     <script>
         $(document).ready(function() {
-            console.log("{{ $list['tte_pegawai'] }}");
+            // console.log("{{ $list['tte_pegawai'] }}");
             if ("{{ $list['tte_pegawai'] }}" != true) {
                 // kalau ada tanda tangan pegawai
                 Swal.fire({

@@ -161,6 +161,37 @@
 
 <script>
     $(document).ready(function() {
+        if ("{{ $list['tte_pegawai'] }}" != true) {
+            // kalau tidak ada tanda tangan pegawai
+            Swal.fire({
+                title: `Tanda Tangan tidak ditemukan!`,
+                text: 'Silakan menambahkan tanda tangan di menu Profil Akun Pengguna sebelum melakukan pengisian pada halaman Elektronik Medical Record.',
+                icon: `warning`,
+                showCloseButton: true,
+                showCancelButton: true,
+                focusConfirm: false,
+                confirmButtonText: `
+                    <i class="fa fa-thumbs-up"></i> Tanda Tangan
+                `,
+                confirmButtonAriaLabel: "Tanda Tangan",
+                cancelButtonText: `
+                    <i class="fa fa-thumbs-down"></i> Tutup
+                `,
+                cancelButtonAriaLabel: "Tutup",
+                backdrop: `
+                    rgba(0,0,0,0.6)
+                    left top
+                    no-repeat
+                `,
+                allowOutsideClick: false, // supaya user fokus ke alert
+                allowEscapeKey: false,    // tidak bisa ditutup pakai tombol ESC
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // buka halaman profil
+                    window.location.href = "{{ route('profil') }}";
+                }
+            });
+        }
         // BUTTON FILTER READY
         $('#tombol-tampilkan').prop('disabled', false);
 

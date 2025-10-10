@@ -42,9 +42,12 @@ class EMRController extends Controller
                 ->groupBy('dr.id','dr.NIP','NAMADOKTER')
                 ->get();
 
+        $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')->where('nip',Auth::user()->NIP)->whereNull('deleted_at')->exists();
+
         $data = [
             'yearMonth' => $yearMonth,
             'dr' => $dr,
+            'tte_pegawai' => $tte_pegawai,
         ];
 
         return view('pages.emr.index')->with('list', $data);
