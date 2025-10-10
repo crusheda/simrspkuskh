@@ -18,7 +18,11 @@ class BerkasController extends Controller
 {
     function index()
     {
-        return view('pages.log.berkas.index');
+        if (auth()->user()->can('log_berkas')) {
+            return view('pages.log.berkas.index');
+        }
+
+        abort(403, 'Anda tidak memiliki izin untuk melihat halaman ini.');
     }
 
     function table()
@@ -29,8 +33,28 @@ class BerkasController extends Controller
                 ->orderBy('updated_at','DESC')
                 ->get();
 
+        $now = Carbon::now()->translatedFormat('l, d F Y H:i:s');
+
+        $storagePath = storage_path();
+
+        // Hitung ukuran folder storage
+        $storageSize = collect(File::allFiles($storagePath))->sum->getSize();
+
+        // Info disk
+        $total = disk_total_space($storagePath);
+        $free = disk_free_space($storagePath);
+        $used = $total - $free;
+
+        $path_storage = storage_path('app/public');
+        $size_storage = $this->folderSize($path_storage);
+
         $data = [
             'show' => $show,
+            'now' => $now,
+            'size_storage' => $this->formatSize($size_storage),
+            'disk_total' => $this->formatSize($total),
+            'disk_used' => $this->formatSize($used),
+            'disk_free' => $this->formatSize($free),
         ];
 
         return response()->json($data, 200);
@@ -48,5 +72,43 @@ class BerkasController extends Controller
         return response()->file($output,[
             'Content-Type' => 'application/pdf',
         ]);
+    }
+
+    function delete($id)
+    {
+        $file = klaim_file::find($id)->first();
+
+        if (!$file) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        $file->status = 0;
+        $file->user_deleted = Auth::user()->ID;
+        $file->save();
+        $file->delete();
+
+        return response()->file($output,[
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
+
+    function folderSize($dir) {
+        $size = 0;
+        foreach (File::allFiles($dir) as $file) {
+            $size += $file->getSize();
+        }
+        return $size;
+    }
+
+    function formatSize($bytes) {
+        if ($bytes >= 1073741824) {
+            return number_format($bytes / 1073741824, 2) . ' GB';
+        } elseif ($bytes >= 1048576) {
+            return number_format($bytes / 1048576, 2) . ' MB';
+        } elseif ($bytes >= 1024) {
+            return number_format($bytes / 1024, 2) . ' KB';
+        } else {
+            return $bytes . ' bytes';
+        }
     }
 }

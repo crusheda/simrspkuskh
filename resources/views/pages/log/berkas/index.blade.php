@@ -24,6 +24,78 @@
 
     <!-- [ Main Content ] start -->
     <div class="row gy-4">
+        <div class="col-md-3">
+            <div class="card statistics-card-1 mb-0">
+                <div class="card-body">
+                    <img src="{{ asset('images/widget/img-status-2.svg') }}" alt="img" class="img-fluid img-bg">
+                    <div class="d-flex align-items-center">
+                        <div class="avtar bg-brand-color-1 text-white me-3">
+                            <i class="ph-duotone ph-files f-26"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted mb-0">Total Kapasitas Disk</p>
+                            <div class="d-flex align-items-end">
+                                <h2 class="mb-0 f-w-500" id="disk_total"><div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card statistics-card-1 mb-0">
+                <div class="card-body">
+                    <img src="{{ asset('images/widget/img-status-1.svg') }}" alt="img" class="img-fluid img-bg">
+                    <div class="d-flex align-items-center">
+                        <div class="avtar bg-brand-color-2 text-white me-3">
+                            <i class="ph-duotone ph-file-arrow-down f-26"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted mb-0">Total Kapasitas Terpakai</p>
+                            <div class="d-flex align-items-end">
+                                <h2 class="mb-0 f-w-500" id="disk_used"><div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card statistics-card-1 mb-0">
+                <div class="card-body">
+                    <img src="{{ asset('images/widget/img-status-3.svg') }}" alt="img" class="img-fluid img-bg">
+                    <div class="d-flex align-items-center">
+                        <div class="avtar bg-brand-color-4 text-white me-3">
+                            <i class="ph-duotone ph-file-arrow-up f-26"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted mb-0">Total Kapasitas Tersedia</p>
+                            <div class="d-flex align-items-end">
+                                <h2 class="mb-0 f-w-500" id="disk_free"><div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card statistics-card-1 mb-0">
+                <div class="card-body">
+                    <img src="{{ asset('images/widget/img-status-5.svg') }}" alt="img" class="img-fluid img-bg">
+                    <div class="d-flex align-items-center">
+                        <div class="avtar bg-brand-color-3 text-white me-3">
+                            <i class="ph-duotone ph-file-pdf f-26"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted mb-0">Total Kapasitas PDF Terpakai</p>
+                            <div class="d-flex align-items-end">
+                                <h2 class="mb-0 f-w-500" id="size_storage"><div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div></h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header p-3">
@@ -36,14 +108,14 @@
                 </div>
                 <div class="card-body p-1 pb-3">
                     <div class="table-responsive">
-                        <table class="table table-striped" id="dttable">
+                        <table class="table table-striped table-hover" id="dttable">
                             <thead>
                                 <tr>
                                     <th><center>ID</center></th>
                                     <th>JENIS</th>
-                                    <th>NOMOR</th>
-                                    <th>TITLE</th>
-                                    <th>FILENAME</th>
+                                    <th>NOMOR KUNJUNGAN</th>
+                                    <th>NAMA FILE</th>
+                                    <th>PATH FILE</th>
                                     <th>DIPERBARUI</th>
                                 </tr>
                             </thead>
@@ -69,26 +141,53 @@
         })
 
         function refresh() {
+            $('#show-time').empty().append('<div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div>');
+            $('#disk_total').empty().append('<div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div>');
+            $('#disk_used').empty().append('<div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div>');
+            $('#disk_free').empty().append('<div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div>');
+            $('#size_storage').empty().append('<div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div>')
             $.ajax({
                 url: `/api/log/berkas/table`,
                 type: 'GET',
                 dataType: 'json',
                 success: function(res) {
-                    $("#tampil-tbody").empty();
-                    $('#dttable').DataTable().clear().destroy();
+                    // INISIAL VAL
+                    $('#show-time').text(res.now);
+                    $('#disk_total').text(res.disk_total);
+                    $('#disk_used').text(res.disk_used);
+                    $('#disk_free').text(res.disk_free);
+                    $('#size_storage').text(res.size_storage);
+
+                    // TABLE
+                    if ($.fn.DataTable.isDataTable('#dttable')) {
+                        $('#dttable').DataTable().clear().destroy();
+                    }
                     if (res.show && Array.isArray(res.show)) {
                         var content = ``;
                         res.show.forEach(item => {
-                            // JENIS (1:sep; 2:resume; 3:skdp; 4:invidual; 5:billing; 6:laboratorium; 7:radiologi; 8:triage; 9:operasi; 10:berkasTambahan; 11:berkasRehab; 12:konsul;)
-                            if (item.jenis == 1) {
-
-                            } else {
-
-                            }
+                            const jenisMap = {
+                                1: 'SEP',
+                                2: 'Resume Medis',
+                                3: 'SKDP',
+                                4: 'Individual',
+                                5: 'Billing',
+                                6: 'Laboratorium',
+                                7: 'Radiologi',
+                                8: 'Triage',
+                                9: 'Operasi',
+                                10: 'Berkas Tambahan',
+                                11: 'Berkas Rehab',
+                                12: 'Konsul'
+                            };
                             content += `
                                 <tr id="data${item.id}">
-                                    <td>${item.id}</td>
-                                    <td>${item.jenis}</td>
+                                    <td class="text-center">${item.id}</td>
+                                    <td>
+                                        ${jenisMap[item.jenis] || '<a class="text-danger">Tidak Diketahui</a>'}
+                                        ${item.sub_jenis?'<span class="badge text-bg-secondary me-1">#'+item.sub_jenis+'</span>':''}
+                                        ${item.kode?'<span class="badge text-bg-warning me-1">SUB#'+item.kode+'</span>':''}
+                                        ${item.ref?'<span class="badge text-bg-danger me-1">REF#'+item.ref+'</span>':''}
+                                    </td>
                                     <td>${item.nomor}</td>
                                     <td>${item.title}</td>
                                     <td>${item.filename}</td>
@@ -96,7 +195,7 @@
                                 </tr>
                             `;
                         })
-                        $('#tampil-tbody').append(content);
+                        $('#tampil-tbody').empty().append(content);
                     }
                     var table = $('#dttable').DataTable({
                         // dom: 'Bfrtip',
@@ -104,15 +203,15 @@
                             [5, "desc"]
                         ],
                         bAutoWidth: false,
-                        aoColumns : [
-                        ],
+                        // aoColumns : [
+                        // ],
                         columnDefs: [
-                            // { targets: [0], sortable: false },
-                            // { targets: [2], sortable: false },
+                            { targets: [3], sortable: false },
+                            { targets: [4], sortable: false },
                             // { targets: [3], sortable: false }
                             // { visible: false, targets: [7] },
                         ],
-                        displayLength: 10,
+                        displayLength: 30,
                         lengthChange: true,
                         lengthMenu: [10, 30, 50, 75, 100, 250, 500, 1000, 3000, 7000, 15000, 50000, 100000],
                         buttons: ['excel', 'pdf'] // 'copy','colvis'
@@ -130,6 +229,7 @@
                         message: pesan,
                         position: 'topRight'
                     });
+                    $('#show-time').text('-');
                     $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center>Gagal Memuat Data Klaim</center></td></tr>`);
                     // $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
                 }
