@@ -27,11 +27,31 @@ class BerkasController extends Controller
 
     function table()
     {
+        $that = $this;
         $show = klaim_file::select('*')
                 ->whereNull('deleted_at')
                 ->where('status', 1)
                 ->orderBy('updated_at','DESC')
-                ->get();
+                ->get()
+                ->map(function ($item) use ($that) {
+                    // Pastikan path sesuai dengan disk yang kamu gunakan
+                    $path = storage_path('app/public/'.$item->filename);
+
+                    /// Cegah error jika file tidak ditemukan
+                    // $item->size = File::exists($path);
+                    if (File::exists($path)) {
+                        try {
+                            $bytes = File::size($path); // lebih aman daripada filesize()
+                            $item->size = $that->formatSize($bytes);
+                        } catch (\Exception $e) {
+                            $item->size = 'Tidak bisa membaca ukuran';
+                        }
+                    } else {
+                        $item->size = 'File tidak ditemukan!';
+                    }
+
+                    return $item;
+                });
 
         $now = Carbon::now()->translatedFormat('l, d F Y H:i:s');
 
@@ -66,7 +86,7 @@ class BerkasController extends Controller
         $output = storage_path('app/public/'.$getFile->filename);
 
         if (!file_exists($output)) {
-            abort(404, 'File tidak ditemukan');
+            abort(404, 'File tidak ditemukan di Storage');
         }
 
         return response()->file($output,[
@@ -76,6 +96,7 @@ class BerkasController extends Controller
 
     function delete($id)
     {
+        $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
         $file = klaim_file::find($id)->first();
 
         if (!$file) {
@@ -87,9 +108,7 @@ class BerkasController extends Controller
         $file->save();
         $file->delete();
 
-        return response()->file($output,[
-            'Content-Type' => 'application/pdf',
-        ]);
+        return response()->json($time, 200);
     }
 
     function folderSize($dir) {

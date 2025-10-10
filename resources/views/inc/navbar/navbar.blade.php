@@ -46,7 +46,7 @@
                         <span class="pc-mtext" data-i18n="Release">Catatan Rilis</span>
                     </a>
                 </li> --}}
-                @if(auth()->user()->can('setting_jabatan') || auth()->user()->can('setting_akses'))
+                @if(auth()->user()->can('setting_jabatan') || auth()->user()->can('setting_akses') || auth()->user()->can('log_berkas'))
                     <li class="pc-item pc-caption">
                         <label data-i18n="Navigation">Setting</label>
                         <i class="ph-duotone ph-gauge"></i>
