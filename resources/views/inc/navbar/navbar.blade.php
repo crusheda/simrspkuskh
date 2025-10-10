@@ -46,7 +46,7 @@
                         <span class="pc-mtext" data-i18n="Release">Catatan Rilis</span>
                     </a>
                 </li> --}}
-                @if(auth()->user()->can('setting_jabatan') || auth()->user()->can('setting_akses'))
+                @if(auth()->user()->can('setting_jabatan') || auth()->user()->can('setting_akses') || auth()->user()->can('log_berkas'))
                     <li class="pc-item pc-caption">
                         <label data-i18n="Navigation">Setting</label>
                         <i class="ph-duotone ph-gauge"></i>
@@ -69,6 +69,16 @@
                                 <i class="ph-duotone ph-user-gear"></i>
                             </span>
                             <span class="pc-mtext" data-i18n="Akses">Akses</span>
+                        </a>
+                    </li>
+                @endcan
+                @can('log_berkas')
+                    <li class="pc-item {{ request()->routeIs('log.berkas.index') ? 'active' : '' }}">
+                        <a href="{{ route('log.berkas.index') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-stack-overflow-logo"></i>
+                            </span>
+                            <span class="pc-mtext" data-i18n="Akses">Log Berkas</span>
                         </a>
                     </li>
                 @endcan

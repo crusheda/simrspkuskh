@@ -165,7 +165,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     // LOG
         // BERKAS
             Route::get('log/berkas/table', [BerkasController::class, 'table'])->name('api.log.berkas.table');
-            Route::get('log/berkas/table/{id}', [BerkasController::class, 'show'])->name('api.log.berkas.show');
+            Route::get('log/berkas/{id}/show', [BerkasController::class, 'show'])->name('api.log.berkas.show');
+            Route::delete('log/berkas/{id}/delete', [BerkasController::class, 'delete'])->name('api.log.berkas.delete');
     // TIDAK DIPAKAI =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // PELAYANAN PASIEN
     Route::get('pelayanan/pasien', [ApiResumeMedisController::class, 'table'])->name('api.pelayanan.pasien.table');
