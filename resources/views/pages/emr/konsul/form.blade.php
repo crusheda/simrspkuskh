@@ -191,8 +191,8 @@
             </div>
             </div>
             <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Simpan</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary" id="btn-simpan-knslx"><i class="fas fa-save me-1"></i> Simpan</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i> Batal</button>
             </div>
         </div>
         </form>
@@ -572,6 +572,7 @@
     }
 
     $('#formJawabKonsul').on('submit', function(e) {
+        $('#btn-simpan-knslx').prop('disabled',true).find('i').removeClass('fa-save').addClass('fa-sync fa-spin');
         e.preventDefault();
         if (!$('#jawab-kunjungan').val()) {
             $('#jawab-kunjungan').val($('#aktif-kunjungan').val());
@@ -582,10 +583,12 @@
             data: $(this).serialize(),
             success: function(res) {
                 alert(res.message);
+                $('#btn-simpan-knslx').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-save');
                 $('#modalJawabKonsul').modal('hide');
             },
                 error: function(xhr) {
                 alert('Gagal menyimpan jawaban konsul: ' + xhr.responseText);
+                $('#btn-simpan-knslx').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-save');
             }
         });
     });

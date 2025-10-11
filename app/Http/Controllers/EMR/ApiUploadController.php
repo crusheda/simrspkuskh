@@ -31,10 +31,7 @@ class ApiUploadController extends Controller
             'nama_tambahan' => 'required|string|max:255',
         ]);
 
-        $path = $request->file('file')->store('files/upload', 'public');
-        // print_r($path.basename($path));
-        // die();
-        // hitung sub_jenis terakhir untuk nomor dan jenis 10
+        // cari sub_jenis terakhir untuk nomor dan jenis 10
         $lastSubJenis = DB::table('simrspku_klaim.klaim_file')
             ->where('nomor', $nomor)
             ->where('jenis', 10)
@@ -42,11 +39,34 @@ class ApiUploadController extends Controller
 
         $subJenis = $lastSubJenis ? $lastSubJenis + 1 : 1;
 
+        // format urutan dengan 2 digit: 01, 02, 03, dst
+        $urutanFormatted = str_pad($subJenis, 2, '0', STR_PAD_LEFT);
+
+        // ambil ekstensi asli file
+        $ext = $request->file('file')->getClientOriginalExtension();
+
+        // buat nama file custom: NOMOR-URUTAN.EXT
+        $filename = $nomor . '-' . $urutanFormatted . '.' . $ext;
+
+        // simpan file dengan nama custom ke folder public/files/upload
+        $path = $request->file('file')->storeAs('files/upload', $filename, 'public');
+
+        // $path = $request->file('file')->store('files/upload', 'public');
+        // // print_r($path.basename($path));
+        // // die();
+        // // hitung sub_jenis terakhir untuk nomor dan jenis 10
+        // $lastSubJenis = DB::table('simrspku_klaim.klaim_file')
+        //     ->where('nomor', $nomor)
+        //     ->where('jenis', 10)
+        //     ->max('sub_jenis');
+
+        // $subJenis = $lastSubJenis ? $lastSubJenis + 1 : 1;
+
         DB::table('simrspku_klaim.klaim_file')->insert([
             'jenis' => 10,
             'sub_jenis' => $subJenis,
             'nomor' => $nomor,
-            'title' => basename($path),
+            'title' => $filename,
             'filename' => $path,
             'nama_tambahan' => $request->input('nama_tambahan'),
             'user' => auth()->id() ?? null,

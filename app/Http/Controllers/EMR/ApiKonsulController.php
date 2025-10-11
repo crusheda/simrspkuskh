@@ -313,63 +313,201 @@ class ApiKonsulController extends Controller
     {
         // print_r($request->all());
         // die();
-        $request->validate([
-            'nomor' => 'required|string',
-            'jawaban' => 'required|string',
-            'anjuran' => 'nullable|string',
-            'KUNJUNGAN' => 'nullable|string',
-            'oleh' => 'required|integer'
-        ]);
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'nomor' => 'required|string',
+                'jawaban' => 'required|string',
+                'anjuran' => 'nullable|string',
+                'KUNJUNGAN' => 'nullable|string',
+                'oleh' => 'required|integer'
+            ]);
 
-        $now = Carbon::now();
-        $nomorKonsul = $request->input('nomor');
+            $now = Carbon::now();
+            $nomorKonsul = $request->input('nomor');
 
-        $doktere = DB::table('simrspku_klaim.konsul')
-            ->where('NOMOR', $nomorKonsul)
-            ->first();
+            $doktere = DB::table('simrspku_klaim.konsul')
+                ->where('NOMOR', $nomorKonsul)
+                ->first();
 
-        if (!$doktere) {
+            if (!$doktere) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data konsul tidak ditemukan'
+                ], 404);
+            }
+
+            $existing = DB::table('simrspku_klaim.jawaban_konsul')
+                ->where('KONSUL_NOMOR', $nomorKonsul)
+                ->first();
+
+            if ($existing) {
+                // Update
+                DB::table('simrspku_klaim.jawaban_konsul')
+                    ->where('KONSUL_NOMOR', $nomorKonsul)
+                    ->update([
+                        'JAWABAN' => $request->input('jawaban'),
+                        'ANJURAN' => $request->input('anjuran'),
+                        'KUNJUNGAN' => $request->input('KUNJUNGAN'),
+                        'DOKTER' => $doktere->DOKTER_TUJUAN,
+                        'OLEH' => $request->input('oleh'),
+                        'updated_at' => $now,
+                    ]);
+            } else {
+                // Insert
+                $urutFormatted = str_pad(1, 2, '0', STR_PAD_LEFT);
+                $nomorBaru = $nomorKonsul . $urutFormatted;
+                // print_r($nomorBaru);
+                // die();
+                DB::table('simrspku_klaim.jawaban_konsul')->insert([
+                    'NOMOR' => $nomorBaru,
+                    'KONSUL_NOMOR' => $nomorKonsul,
+                    'TANGGAL' => $now,
+                    'JAWABAN' => $request->input('jawaban'),
+                    'ANJURAN' => $request->input('anjuran'),
+                    'DOKTER' => $doktere->DOKTER_TUJUAN,
+                    'OLEH' => $request->input('oleh'),
+                    'STATUS' => 1,
+                    'KUNJUNGAN' => $request->input('KUNJUNGAN'),
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Data konsul tidak ditemukan'
+                'message' => 'Terjadi kesalahan: '.$e->getMessage()
+            ], 500);
+        }
+        $asalKonsul = DB::table('simrspku_klaim.konsul')
+                ->where('NOMOR', $nomorKonsul)
+                ->whereNull('deleted_at')
+                ->first();
+
+        $getKonsul = DB::table('simrspku_klaim.konsul AS kon')
+                ->select(
+                    'kon.*',
+                    'pk.NOPEN',
+                    'ttd.signature_path as path_ttd',
+                    DB::raw('master.getNamaLengkapPegawai(dk.NIP) AS nama_ttd'),
+                    'ttd2.signature_path as path_ttd2',
+                    DB::raw('master.getNamaLengkapPegawai(dkd.NIP) AS nama_ttd2'),
+                )
+                ->leftJoin('pendaftaran.kunjungan AS pk','pk.NOMOR','=','kon.KUNJUNGAN')
+                ->leftJoin('master.dokter AS dk','dk.ID','=','kon.DOKTER_ASAL')
+                ->leftJoin('master.dokter AS dkd','dkd.ID','=','kon.DOKTER_TUJUAN')
+                ->leftJoin('simrspku_klaim.tanda_tangan_pegawai AS ttd', function($join) {
+                        $join->on('dk.NIP','=','ttd.nip')
+                            ->whereNull('ttd.deleted_at');
+                    })
+                ->leftJoin('simrspku_klaim.tanda_tangan_pegawai AS ttd2', function($join) {
+                        $join->on('dkd.NIP','=','ttd2.nip')
+                            ->whereNull('ttd2.deleted_at');
+                    })
+                ->where('kon.NOMOR', $nomorKonsul)
+                ->whereNull('kon.deleted_at')
+                ->first();
+
+        if (empty($getKonsul)) {
+            return Response::json(array(
+                'message' => 'Pengambilan data konsul gagal.'
+            ), 400);
+        }
+
+        if (!$getKonsul->path_ttd) {
+            return Response::json(array(
+                'message' => 'Tanda tangan '.$getKonsul->nama_ttd.' tidak ditemukan/belum ditambahkan. Silakan memperbarui Data TTE pada halaman Profil.',
+            ), 400);
+        }
+        if (!$getKonsul->path_ttd2) {
+            return Response::json(array(
+                'message' => 'Tanda tangan '.$getKonsul->nama_ttd2.' tidak ditemukan/belum ditambahkan. Silakan memperbarui Data TTE pada halaman Profil.',
+            ), 400);
+        }
+
+        $getJawaban = DB::table('simrspku_klaim.jawaban_konsul')
+                ->where('KONSUL_NOMOR', $getKonsul->NOMOR)
+                ->whereNull('deleted_at')
+                ->first();
+        if (!$getJawaban) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data jawaban tidak ditemukan.'
             ], 404);
         }
 
-        $existing = DB::table('simrspku_klaim.jawaban_konsul')
-            ->where('KONSUL_NOMOR', $nomorKonsul)
+        $CETAK_HEADER = "1";
+        // ----------------------------------------------------------------------
+        $getTgl = Carbon::parse($getKonsul->created_at);
+        $tgl = $getTgl->isoFormat('DD');
+        $bulan = $getTgl->isoFormat('MM');
+        $tahun = $getTgl->isoFormat('YYYY');
+        // ----------------------------------------------------------------------
+        $input = public_path().'/doc/input/konsul/CetakKonsul.jrxml';
+        $path = 'files/konsul/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$getJawaban->KUNJUNGAN;
+        $output = storage_path().'/app/public/'.$path;
+        // print_r($output);
+        // die();
+        $verify = klaim_file::where('nomor', $getJawaban->KUNJUNGAN)
+            ->where('jenis', 12)
+            ->where('status', true)
             ->first();
 
-        if ($existing) {
-            // Update
-            DB::table('simrspku_klaim.jawaban_konsul')
-                ->where('KONSUL_NOMOR', $nomorKonsul)
-                ->update([
-                    'JAWABAN' => $request->input('jawaban'),
-                    'ANJURAN' => $request->input('anjuran'),
-                    'KUNJUNGAN' => $request->input('KUNJUNGAN'),
-                    'DOKTER' => $doktere->DOKTER_TUJUAN,
-                    'OLEH' => $request->input('oleh'),
-                    'updated_at' => $now,
-                ]);
+        if (!$verify) {
+            // Data tidak ada, maka buat baru
+            $post = new klaim_file;
         } else {
-            // Insert
-            $urutFormatted = str_pad(1, 2, '0', STR_PAD_LEFT);
-            $nomorBaru = $nomorKonsul . $urutFormatted;
-            // print_r($nomorBaru);
-            // die();
-            DB::table('simrspku_klaim.jawaban_konsul')->insert([
-                'NOMOR' => $nomorBaru,
-                'KONSUL_NOMOR' => $nomorKonsul,
-                'TANGGAL' => $now,
-                'JAWABAN' => $request->input('jawaban'),
-                'ANJURAN' => $request->input('anjuran'),
-                'DOKTER' => $doktere->DOKTER_TUJUAN,
-                'OLEH' => $request->input('oleh'),
-                'STATUS' => 1,
-                'KUNJUNGAN' => $request->input('KUNJUNGAN'),
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
+            // Data sudah ada, maka update
+            $post = $verify;
+        }
+
+        // Baik buat baru atau update, set data berikut
+        $post->jenis = 12;
+        $post->ref = $asalKonsul->KUNJUNGAN;
+        $post->nomor = $getJawaban->KUNJUNGAN;
+        $post->title = $getJawaban->KUNJUNGAN . '.pdf';
+        $post->filename = $path . '.pdf';
+        $post->nama_tambahan = 'Lembar Konsul';
+        $post->status = true;
+        $post->user = Auth::user()->ID;
+        $post->save();
+
+        // Pastikan folder tujuan ada
+        $outputDir = dirname($output);
+        if (!File::exists($outputDir)) {
+            File::makeDirectory($outputDir, 0755, true); // true = recursive
+        }
+
+        $options = [
+            'format' => ['pdf'],
+            'params' => [
+                'PKONSUL' => $getKonsul->NOMOR,
+                'PNOPEN' => $getKonsul->NOPEN,
+                'IMAGES_PATH' => public_path()."/doc/input/konsul/",
+                'TTD_PATH' => storage_path()."/app/public/",
+            ],
+            'db_connection' => [
+                'driver'   => config('database.connections.db_custom.driver'),
+                'host'     => config('database.connections.db_custom.host'),
+                'port'     => config('database.connections.db_custom.port'),
+                'username' => config('database.connections.db_custom.username'),
+                'password' => config('database.connections.db_custom.password'),
+                'database' => config('database.connections.db_custom.database'),
+            ],
+        ];
+
+        $jasper = new PHPJasper;
+
+        try {
+            $jasper->process($input, $output, $options)->execute();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membuat file PDF: '.$e->getMessage()
+            ], 500);
         }
 
         return response()->json([
