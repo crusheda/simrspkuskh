@@ -376,11 +376,11 @@
                     <div class="dropdown-menu dropdown-menu-end pc-h-dropdown" style="">
                         <a href="javascript: void(0);" class="dropdown-item" onclick="layout_change('dark')">
                             <i class="ph-duotone ph-moon"></i>
-                            <span>Dark</span>
+                            <span>Tema Gelap</span>
                         </a>
                         <a href="javascript: void(0);" class="dropdown-item" onclick="layout_change('light')">
                             <i class="ph-duotone ph-sun-dim"></i>
-                            <span>Light</span>
+                            <span>Tema Terang</span>
                         </a>
                     </div>
                 </li>

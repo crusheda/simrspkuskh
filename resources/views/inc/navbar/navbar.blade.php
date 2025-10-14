@@ -3,13 +3,13 @@
     <div class="navbar-wrapper">
         <div class="m-header">
             <a href="javascript:void(0);" class="b-brand text-primary">
-                <img id="logo-light" src="{{ asset('images/logo/logoname.png') }}" alt="logo light" style="height: 24px" />
-                <img id="logo-dark" src="{{ asset('images/logo/logoname_w.png') }}" alt="logo dark" style="height: 24px" />
+                <img id="app-logo" src="{{ asset('images/logo/logoname.png') }}" alt="logo light" style="height: 24px" />
+                {{-- <img id="logo-dark" src="{{ asset('images/logo/logoname_w.png') }}" alt="logo dark" style="height: 24px" /> --}}
                 <span class="badge bg-brand-color-3 rounded-pill ms-1 theme-version">v1.0</span>
             </a>
         </div>
 
-        <script>
+        {{-- <script>
             (function () {
                 const savedTheme = localStorage.getItem('pc-theme');
                 if (savedTheme) {
@@ -22,7 +22,7 @@
                     }
                 }
             })();
-        </script>
+        </script> --}}
 
         <div class="navbar-content">
             <ul class="pc-navbar">

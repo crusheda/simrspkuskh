@@ -1,6 +1,35 @@
 <!doctype html>
 <html lang="en">
 <head>
+    {{-- DATA PC THEME START --}}
+    <script>
+        function setLogoByTheme(theme) {
+            const logo = document.getElementById("app-logo");
+            if (!logo) return;
+
+            if (theme === "dark") {
+                logo.src = "{{ asset('images/logo/logoname_w.png') }}";
+            } else {
+                logo.src = "{{ asset('images/logo/logoname.png') }}";
+            }
+        }
+
+        (function() {
+            var savedTheme = localStorage.getItem("theme") || "light"; // default dark
+            console.log('Saved Theme : '+savedTheme);
+
+            // pasang theme ke body juga
+            // gunakan MutationObserver untuk tunggu body muncul
+            var observer = new MutationObserver(function(mutations, me) {
+                if (document.body) {
+                    document.body.setAttribute("data-pc-theme", savedTheme);
+                    setLogoByTheme(savedTheme); // update logo juga
+                    me.disconnect(); // stop observer
+                }
+            });
+            observer.observe(document.documentElement, {childList: true});
+        })();
+    </script>
 
     <title>Sistem Informasi Rekam Medis</title>
 
@@ -8,8 +37,7 @@
 
     @include('inc.css')
 
-    {{-- DATA PC THEME START --}}
-    <script>
+    {{-- <script>
         // Terapkan tema seawal mungkin (sebelum render)
         (function () {
             const savedTheme = localStorage.getItem('pc-theme') || 'light';
@@ -32,7 +60,7 @@
                 });
             }
         })();
-    </script>
+    </script> --}}
     {{-- <style>
         /* default: dark mode */
         #logo-light { display: none; }

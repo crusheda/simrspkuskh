@@ -1,6 +1,6 @@
 <!-- [Page Specific JS] start -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ asset('js/plugins/apexcharts.min.js') }}"></script>
+{{-- <script src="{{ asset('js/plugins/apexcharts.min.js') }}"></script> --}}
 <script src="{{ asset('js/plugins/jsvectormap.min.js') }}"></script>
 <script src="{{ asset('js/plugins/world.js') }}"></script>
 <script src="{{ asset('js/plugins/world-merc.js') }}"></script>
@@ -29,7 +29,7 @@
 <script src="{{ asset('js/plugins/ckeditor/classic/ckeditor.js') }}"></script>
 
 {{-- DIAGRAM --}}
-<script src="{{ asset('js/plugins/apexcharts.min.js') }}"></script>
+{{-- <script src="{{ asset('js/plugins/apexcharts.min.js') }}"></script> --}}
 
 {{-- CDN --}}
 {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
@@ -42,21 +42,14 @@
     {{-- DATA PC THEME START --}}
     <script>
         function layout_change(theme) {
-            document.documentElement.setAttribute('data-pc-theme', theme);
-            localStorage.setItem('pc-theme', theme);
-            if (theme == 'light') {
-                document.getElementById('logo-light').style.display = 'inline';
-                document.getElementById('logo-dark').style.display = 'none';
-            } else {
-                document.getElementById('logo-light').style.display = 'none';
-                document.getElementById('logo-dark').style.display = 'inline';
-            }
-        }
+            console.log('Theme changed to : '+theme);
+            // ubah attribute body
+            document.body.setAttribute("data-pc-theme", theme);
 
-        // function layout_change_default() {
-        //     document.body.setAttribute('data-pc-theme', 'dark');
-        //     localStorage.removeItem('pc-theme');
-        // }
+            // simpan pilihan ke localStorage agar persist
+            localStorage.setItem("theme", theme);
+            setLogoByTheme(theme); // update logo juga
+        }
     </script>
     {{-- DATA PC THEME END --}}
 
