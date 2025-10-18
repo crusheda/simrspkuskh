@@ -658,7 +658,7 @@
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<printWhenExpression><![CDATA[$F{JENISKONTROL}==2]]></printWhenExpression>
 				</reportElement>
-				<imageExpression><![CDATA[$P{IMAGES_PATH} + "mjkn.jpg"]]></imageExpression>
+				<imageExpression><![CDATA[$P{IMAGES_PATH} + "mjkn.png"]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="6" width="39" height="20" uuid="cd8a12e4-d32d-4cb3-843d-bcf457829b6c">
