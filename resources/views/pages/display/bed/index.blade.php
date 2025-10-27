@@ -20,38 +20,38 @@
     </div>
 </div>
 <div class="container-fluid py-3 card" id="myDiv">
-    <h3 class="text-center mt-3 mb-4">Display Tempat Tidur Rawat Inap</h3>
+    <h2 class="text-center mt-3 mb-4">Display Tempat Tidur Rawat Inap</h2>
 
     <!-- Progress Bar -->
     <div class="progress mb-3 ms-3 me-3" style="height:7px; position: sticky; top:0; z-index:9999;">
         <div id="refreshProgress" class="progress-bar bg-brand-color-3" role="progressbar" style="width: 0%;"></div>
     </div>
 
-    <div class="bed-summary-cards d-flex justify-content-center gap-4 mb-4">
+    <div class="bed-summary-cards d-flex justify-content-center gap-4 mb-3">
         <div class="card-summary">
             <div class="icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill="#04A9F5" d="M22.102 11.147v1.731H1.904V6.672H0v12.414h1.904v-2.837h20.198v3.074H24v-8.178z"></path><path fill="#f3bede" d="M8.709 11.165v.001c0 .564-.457 1.022-1.022 1.022H3.793a1.022 1.022 0 0 1-1.022-1.022v-.002c0-.564.457-1.022 1.022-1.022h3.894c.564 0 1.022.457 1.022 1.022zm11.034-4.001h-2.37V4.8h-1.68v2.365h-2.365v1.68h2.364v2.365h1.68V8.845h2.37z"></path></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24"><path fill="#04A9F5" d="M22.102 11.147v1.731H1.904V6.672H0v12.414h1.904v-2.837h20.198v3.074H24v-8.178z"></path><path fill="#f3bede" d="M8.709 11.165v.001c0 .564-.457 1.022-1.022 1.022H3.793a1.022 1.022 0 0 1-1.022-1.022v-.002c0-.564.457-1.022 1.022-1.022h3.894c.564 0 1.022.457 1.022 1.022zm11.034-4.001h-2.37V4.8h-1.68v2.365h-2.365v1.68h2.364v2.365h1.68V8.845h2.37z"></path></svg>
             </div>
             <div class="number" id="totalBed">--</div>
             <div class="label">TOTAL BED</div>
         </div>
         <div class="card-summary">
             <div class="icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><g fill="none"><path stroke="#04A9F5" stroke-linecap="round" stroke-linejoin="round" d="M21.5 18.5v-11a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v11m-3 0v-8h-7a1 1 0 0 0-1 1v7"></path><path stroke="#04A9F5" stroke-linecap="round" stroke-linejoin="round" d="M3.5 10.5h18v3h-19v-2a1 1 0 0 1 1-1"></path><path fill="#04A9F5" d="M10.5 12.5v-1a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1"></path></g></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24"><g fill="none"><path stroke="#04A9F5" stroke-linecap="round" stroke-linejoin="round" d="M21.5 18.5v-11a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v11m-3 0v-8h-7a1 1 0 0 0-1 1v7"></path><path stroke="#04A9F5" stroke-linecap="round" stroke-linejoin="round" d="M3.5 10.5h18v3h-19v-2a1 1 0 0 1 1-1"></path><path fill="#04A9F5" d="M10.5 12.5v-1a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1"></path></g></svg>
             </div>
             <div class="number" id="totalKosong">--</div>
             <div class="label">TERSEDIA</div>
         </div>
         <div class="card-summary">
             <div class="icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill="#04A9F5" d="M19.2 9.5L16 7.7V4h1.5v2.8l2.4 1.4l-.7 1.3m3 2.2c.5.7.8 1.5.8 2.3v9h-2v-3H3v3H1V8h2v9h8v-6.4c-.6-1.1-1-2.3-1-3.6c0-3.9 3.1-7 7-7s7 3.1 7 7c0 1.8-.7 3.4-1.8 4.7M12 7c0 2.8 2.2 5 5 5s5-2.2 5-5s-2.2-5-5-5s-5 2.2-5 5m-5 9c1.7 0 3-1.3 3-3s-1.3-3-3-3s-3 1.3-3 3s1.3 3 3 3Z"></path></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24"><path fill="#04A9F5" d="M19.2 9.5L16 7.7V4h1.5v2.8l2.4 1.4l-.7 1.3m3 2.2c.5.7.8 1.5.8 2.3v9h-2v-3H3v3H1V8h2v9h8v-6.4c-.6-1.1-1-2.3-1-3.6c0-3.9 3.1-7 7-7s7 3.1 7 7c0 1.8-.7 3.4-1.8 4.7M12 7c0 2.8 2.2 5 5 5s5-2.2 5-5s-2.2-5-5-5s-5 2.2-5 5m-5 9c1.7 0 3-1.3 3-3s-1.3-3-3-3s-3 1.3-3 3s1.3 3 3 3Z"></path></svg>
             </div>
             <div class="number" id="totalTerpesan">--</div>
             <div class="label">TERPESAN</div>
         </div>
         <div class="card-summary">
             <div class="icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 2048 1280"><path fill="#04A9F5" d="M256 768h1728q26 0 45 19t19 45v448h-256v-256H256v256H0V64q0-26 19-45T64 0h128q26 0 45 19t19 45v704zm576-320q0-106-75-181t-181-75t-181 75t-75 181t75 181t181 75t181-75t75-181zm1216 256v-64q0-159-112.5-271.5T1664 256H960q-26 0-45 19t-19 45v384h1152z"></path></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 2048 1280"><path fill="#04A9F5" d="M256 768h1728q26 0 45 19t19 45v448h-256v-256H256v256H0V64q0-26 19-45T64 0h128q26 0 45 19t19 45v704zm576-320q0-106-75-181t-181-75t-181 75t-75 181t75 181t181 75t181-75t75-181zm1216 256v-64q0-159-112.5-271.5T1664 256H960q-26 0-45 19t-19 45v384h1152z"></path></svg>
             </div>
             <div class="number" id="totalTerisi">--</div>
             <div class="label">TERISI</div>
@@ -64,7 +64,7 @@
 
                 <thead>
                     <tr>
-                        <th>Bangsal</th>
+                        <th>Ruangan</th>
                         <th>Kelas Ruangan</th>
                         <th>Kosong</th>
                         <th>Terisi</th>
@@ -144,7 +144,7 @@
         box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
         padding: 20px 30px;
         text-align: center;
-        width: 150px;
+        width: 200px;
         font-family: 'Arial', sans-serif;
         color: #333;
     }
@@ -157,13 +157,13 @@
 
     .card-summary .number {
         font-weight: 700;
-        font-size: 26px;
-        margin-bottom: 6px;
+        font-size: 30px;
+        margin-bottom: 10px;
     }
 
     .card-summary .label {
         font-weight: 700;
-        font-size: 14px;
+        font-size: 18px;
         color: #666;
     }
 
@@ -177,7 +177,7 @@
     }
 
     .fixed-header-footer td {
-        font-size: 18px;           /* ukuran font lebih besar dari default */
+        font-size: 22px;           /* ukuran font lebih besar dari default */
         padding: 10px 8px;         /* padding nyaman */
         vertical-align: middle;    /* tengah vertikal */
         text-align: center;
@@ -237,7 +237,7 @@
                                 <td>${kelas.nama_kelas}</td>
                                 <td class="text-success fw-bold">${kelas.kosong}</td>
                                 <td class="text-danger fw-bold">${kelas.terisi}</td>
-                                <td>${kelas.total_bed}</td>
+                                <td class="fw-bold bg-light">${kelas.total_bed}</td>
                             </tr>`;
                         });
                     });
