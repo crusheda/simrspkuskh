@@ -10,6 +10,7 @@ use App\Http\Controllers\Log\BerkasController;
 use App\Http\Controllers\Setting\ProfilController;
 use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
+use App\Http\Controllers\Display\BedController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\EMR\ApiMatriksController;
@@ -62,6 +63,10 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('roles/user/{id}/show', [RolesController::class, 'showRolesUser'])->name('roles.user.show');
             Route::post('roles/user/update', [RolesController::class, 'updateRolesUser'])->name('roles.user.update');
             Route::delete('roles/user/{id}/delete', [RolesController::class, 'deleteRolesUser'])->name('roles.user.delete');
+
+    // DISPLAY
+        // TEMPAT TIDUR
+            Route::get('display/tt', [BedController::class, 'getDisplayTt'])->name('api.display.tt');
 
     // EMR
         // REHABILITASI MEDIK

@@ -14,6 +14,7 @@ use App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController;
 use App\Http\Controllers\Pelayanan\Pasien\PasienController;
 use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
 use App\Http\Controllers\Pelayanan\Penunjang\RISController;
+use App\Http\Controllers\Display\BedController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\IGD\ModulMatrixController;
 use App\Http\Controllers\Monitoring\MonitoringController;
@@ -50,6 +51,9 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     // Route::get('dashboard', function () {
     //     return view('pages.dashboard.index');
     // })->name('dashboard');
+
+    // RME
+    Route::get('bed', [BedController::class, 'index'])->name('bed.index');
 
     // SETTING - PROFIL
     Route::get('setting/profil', [ProfilController::class, 'index'])->name('profil');

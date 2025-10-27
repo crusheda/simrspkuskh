@@ -38,6 +38,18 @@
                         <span class="pc-mtext" data-i18n="Dashboard">Dashboard</span>
                     </a>
                 </li>
+                <li class="pc-item pc-caption">
+                    <label data-i18n="Navigation">Display</label>
+                    <i class="ph-duotone ph-bed"></i>
+                </li>
+                <li class="pc-item {{ request()->routeIs('bed.index') ? 'active' : '' }}">
+                    <a href="{{ route('bed.index') }}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-bed"></i>
+                        </span>
+                        <span class="pc-mtext" data-i18n="Dashboard">Tempat Tidur</span>
+                    </a>
+                </li>
                 {{-- <li class="pc-item {{ request()->routeIs('rilis.index') ? 'active' : '' }}">
                     <a href="{{ route('rilis.index') }}" class="pc-link">
                         <span class="pc-micon">
