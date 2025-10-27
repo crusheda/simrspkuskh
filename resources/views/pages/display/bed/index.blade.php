@@ -59,7 +59,7 @@
     </div>
 
     <div class="p-3 scroll-wrapper">
-        <div class="table-responsive scroll-container" id="scrollContainer" style="max-height: 700px; overflow-y: auto;">
+        <div class="table-responsive scroll-container" id="scrollContainer" style="max-height: 600px; overflow-y: auto;">
             <table class="table table-bordered text-center align-middle mb-0 fixed-header-footer">
 
                 <thead>
