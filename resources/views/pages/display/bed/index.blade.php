@@ -151,14 +151,14 @@
 
     .card-summary .icon {
         font-size: 36px;
-        margin-bottom: 12px;
+        margin-bottom: 6px;
         opacity: 0.3;
     }
 
     .card-summary .number {
         font-weight: 700;
         font-size: 26px;
-        margin-bottom: 10px;
+        margin-bottom: 6px;
     }
 
     .card-summary .label {

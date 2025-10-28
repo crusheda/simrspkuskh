@@ -35,6 +35,12 @@ Route::get('/surkon/table', [App\Http\Controllers\Simgos\RegOnline\surkonControl
 Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController::class, 'table'])->name('simgos.kunjungan.pasien');
 
 //-----------------------------------------------------------------    A  P  I    -----------------------------------------------------------------
+//API PUBLIC
+    // DISPLAY
+        // TEMPAT TIDUR
+            Route::get('display/tt', [BedController::class, 'getDisplayTt'])->name('api.display.tt');
+
+//API PRIVATE
 Route::group(['middleware' => ['web', 'auth']], function() {
     // DASHBOARD
         Route::get('dashboard/dataDiag/{tgl}', [ApiDashboardController::class, 'dataDiag'])->name('dashboard.dataDiag');
@@ -63,10 +69,6 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('roles/user/{id}/show', [RolesController::class, 'showRolesUser'])->name('roles.user.show');
             Route::post('roles/user/update', [RolesController::class, 'updateRolesUser'])->name('roles.user.update');
             Route::delete('roles/user/{id}/delete', [RolesController::class, 'deleteRolesUser'])->name('roles.user.delete');
-
-    // DISPLAY
-        // TEMPAT TIDUR
-            Route::get('display/tt', [BedController::class, 'getDisplayTt'])->name('api.display.tt');
 
     // EMR
         // REHABILITASI MEDIK
