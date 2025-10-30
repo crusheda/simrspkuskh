@@ -89,6 +89,7 @@ class BedController extends Controller
                     'rk.KELAS',
                     DB::raw('COUNT(rkt.ID) as total_bed'),
                     DB::raw("SUM(CASE WHEN rkt.STATUS = 1 THEN 1 ELSE 0 END) as kosong"),
+                    DB::raw("SUM(CASE WHEN rkt.STATUS = 2 THEN 1 ELSE 0 END) as terpesan"),
                     DB::raw("SUM(CASE WHEN rkt.STATUS = 3 THEN 1 ELSE 0 END) as terisi")
                 )
                 ->where('rk.RUANGAN', $b->ID)

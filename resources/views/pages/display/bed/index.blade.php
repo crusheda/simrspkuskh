@@ -67,6 +67,7 @@
                         <th>Ruangan</th>
                         <th>Kelas Ruangan</th>
                         <th>Kosong</th>
+                        <th>Terpesan</th>
                         <th>Terisi</th>
                         <th>Total Bed</th>
                     </tr>
@@ -235,7 +236,8 @@
                             }
                             html += `
                                 <td>${kelas.nama_kelas}</td>
-                                <td class="text-success fw-bold">${kelas.kosong}</td>
+                                <td class="text-primary fw-bold">${kelas.kosong}</td>
+                                <td class="text-success fw-bold">${kelas.terpesan}</td>
                                 <td class="text-danger fw-bold">${kelas.terisi}</td>
                                 <td class="fw-bold bg-light">${kelas.total_bed}</td>
                             </tr>`;
