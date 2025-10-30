@@ -244,7 +244,7 @@
 
                     $("#tampil-tbody").html(html);
                     $("#totalKosong").text(res.total.kosong);
-                    $("#totalTerpesan").text(res.total.tepesan);
+                    $("#totalTerpesan").text(res.total.terpesan);
                     $("#totalTerisi").text(res.total.terisi);
                     $("#totalBed").text(res.total.total_bed);
                 } else {
