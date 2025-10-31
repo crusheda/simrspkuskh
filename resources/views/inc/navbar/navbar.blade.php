@@ -38,18 +38,32 @@
                         <span class="pc-mtext" data-i18n="Dashboard">Dashboard</span>
                     </a>
                 </li>
+                @canany(['display_tt', 'display_antrian_poli'])
                 <li class="pc-item pc-caption">
                     <label data-i18n="Navigation">Display</label>
                     <i class="ph-duotone ph-bed"></i>
                 </li>
-                <li class="pc-item {{ request()->routeIs('bed.index') ? 'active' : '' }}">
-                    <a href="{{ route('bed.index') }}" class="pc-link">
+                @endcanany
+                @can('display_tt')
+                <li class="pc-item {{ request()->routeIs('display.bed.index') ? 'active' : '' }}">
+                    <a href="{{ route('display.bed.index') }}" class="pc-link">
                         <span class="pc-micon">
                             <i class="ph-duotone ph-bed"></i>
                         </span>
                         <span class="pc-mtext" data-i18n="Dashboard">Tempat Tidur</span>
                     </a>
                 </li>
+                @endcan
+                @can('display_antrian_poli')
+                <li class="pc-item {{ request()->routeIs('display.antrian.poli.index') ? 'active' : '' }}">
+                    <a href="{{ route('display.antrian.poli.index') }}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-queue"></i>
+                        </span>
+                        <span class="pc-mtext" data-i18n="Antrian">Antrian Poli</span>
+                    </a>
+                </li>
+                @endcan
                 {{-- <li class="pc-item {{ request()->routeIs('rilis.index') ? 'active' : '' }}">
                     <a href="{{ route('rilis.index') }}" class="pc-link">
                         <span class="pc-micon">

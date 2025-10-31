@@ -11,6 +11,7 @@ use App\Http\Controllers\Setting\ProfilController;
 use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
 use App\Http\Controllers\Display\BedController;
+use App\Http\Controllers\Display\AntrianPoliController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\EMR\ApiMatriksController;
@@ -39,6 +40,8 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
     // DISPLAY
         // TEMPAT TIDUR
             Route::get('display/tt', [BedController::class, 'getDisplayTt'])->name('api.display.tt');
+        // TEMPAT TIDUR
+            Route::get('display/antrian/poli/{tgl}/{ruangan}', [AntrianPoliController::class, 'getDisplayAntrianPoli'])->name('api.display.antrian.poli');
 
 //API PRIVATE
 Route::group(['middleware' => ['web', 'auth']], function() {
