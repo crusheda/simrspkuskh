@@ -38,13 +38,30 @@
                                 @endforeach
                             @endif
                         </select>
-                        <button class="btn btn-primary btn-wave me-1 waves-effect waves-light" id="tampil_antrian" onclick="refresh($('#pilih_poli').val())">
+                        <select class="form-select" id="pilih_dr" disabled>
+                            <option value="">Pilih Dokter Spesialis</option>
+                        </select>
+                        {{-- <select class="form-select" id="pilih_dr">
+                            <option value="">Pilih Dokter Spesialis</option>
+                            @if (count($list['dokter']) > 0)
+                                @foreach ($list['mapDokterPoli'] as $val)
+                                    @if ($val->RUANGAN == $('pilih_poli').val())
+                                        @foreach ($list['dokter'] as $item)
+                                            @if ($val->DOKTER == $item->ID_DPJP_SIMRS)
+                                                <option value="{{ $item->ID_DPJP_BPJS }}">{{ $item->NAMADOKTER }}</option>
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                @endforeach
+                            @endif
+                        </select> --}}
+                        <button class="btn btn-primary btn-wave me-1 waves-effect waves-light" id="tampil_antrian" onclick="refresh($('#pilih_poli').val(),$('#pilih_dr').val())" disabled>
                             <i class="fas fa-search me-1"></i> Terapkan
                         </button>
                     </div>
                 </div>
                 <div class="btn-group">
-                    <button id="enableSound" class="btn btn-info">🔔 Aktifkan Notifikasi</button>
+                    <button id="enableSound" class="btn btn-light-info">🔔 Aktifkan Suara Antrian</button>
                     <button id="openFullscreenBtn" class="btn btn-success" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark"
                         data-bs-placement="bottom" title="Terapkan Display Layar Penuh">
                         <i class="ti ti-arrows-maximize"></i>
@@ -60,7 +77,7 @@
                 <div class="card custom-card">
                     <div class="card-header bg-dark-gradient rounded">
                         <div class="d-flex justify-content-between align-items-center w-100 text-wrap">
-                            <div id="poli" class="fw-bold text-dark text-start mb-0" style="font-size:70px">
+                            <div id="poli" class="fw-bold text-dark text-start mb-0" style="font-size:60px">
                                 <div class="spinner-border text-white" role="status">
                                     <span class="visually-hidden">Memuat Nama Poliklinik...</span>
                                 </div>
@@ -143,6 +160,8 @@
     let progressInterval; // simpan interval supaya bisa dihentikan
     let lastNomorDipanggil = null;
     let soundEnabled = false;
+    const mapDokterPoli = @json($list['mapDokterPoli']);
+    const semuaDokter = @json($list['dokter']);
 
     function playSound() {
         if (!soundEnabled) return;
@@ -156,7 +175,11 @@
             let audio = new Audio('/sounds/in.wav');
             audio.play().then(() => {
                 soundEnabled = true;
-                alert("Suara notifikasi aktif ✅");
+                iziToast.success({
+                    title: 'Suara Antrian berhasil diinisialisasi! ✅',
+                    message: 'Silakan melanjutkan pemanggilan Antrian',
+                    position: 'topRight'
+                });
                 $(this).hide(); // sembunyikan tombol setelah aktif
             }).catch(err => console.log("Gagal aktifkan suara:", err));
         });
@@ -176,6 +199,45 @@
             } else if (elem.msRequestFullscreen) { // IE/Edge
             elem.msRequestFullscreen();
             }
+        });
+
+        $('#pilih_poli').on('change', function () {
+            const poliId = $(this).val();
+            const $dokterSelect = $('#pilih_dr');
+
+            $dokterSelect.empty().append('<option value="">Pilih Dokter Spesialis</option>');
+
+            if (!poliId || poliId == '') {
+                $dokterSelect.prop('disabled',true);
+                return;
+            } else {
+                $dokterSelect.prop('disabled',false);
+                $dokterSelect.val('');
+                $('#tampil_antrian').prop('disabled',true);
+            };
+
+            // Ambil daftar dokter yang sesuai dengan poli yang dipilih
+            const dokterTerkait = mapDokterPoli
+                .filter(m => m.RUANGAN == poliId)
+                .map(m => m.DOKTER);
+
+            // Loop daftar dokter dan tampilkan hanya yang sesuai
+            semuaDokter.forEach(d => {
+                if (dokterTerkait.includes(d.ID_DPJP_SIMRS)) {
+                    $dokterSelect.append(
+                        `<option value="${d.ID_DPJP_BPJS}">${d.NAMADOKTER}</option>`
+                    );
+                }
+            });
+        });
+
+        $('#pilih_dr').on('change', function () {
+            const selDr = $(this).val();
+            if (!selDr) {
+                $('#tampil_antrian').prop('disabled',true);
+            } else {
+                $('#tampil_antrian').prop('disabled',false);
+            };
         });
 
         // startProgressBar();
@@ -213,7 +275,7 @@
 
             if (progress >= 100) {
                 clearInterval(progressInterval);
-                refresh($('#pilih_poli').val());
+                refresh($('#pilih_poli').val(),$('#pilih_dr').val());
             }
         }, 100);
     }
@@ -223,29 +285,39 @@
         progressBar.css("width", "0%"); // reset
     }
 
-    function refresh(poli) {
+    function refresh(poli,dr) {
         if (poli == '') {
             iziToast.error({
                 title: 'Maaf!',
-                message: 'Pilih poliklinik terlebih dahulu.',
+                message: 'Pilih Poliklinik terlebih dahulu.',
                 position: 'topRight'
             });
             return;
         }
-        // console.log(poli);
-        // return;
+        if (dr == '') {
+            iziToast.error({
+                title: 'Maaf!',
+                message: 'Pilih Dokter Spesialis terlebih dahulu.',
+                position: 'topRight'
+            });
+            return;
+        }
+
         $('#tampil_antrian').find('i').removeClass('fa-search').addClass('fa-sync fa-spin').prop('disabled',true);
         const tgl = moment().format('YYYY-MM-DD'); // TGL HARI INI
 
-        $('#menunggu').html('<div class="text-center p-4"><div class="spinner-border text-info" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>');
-        $('#dipanggil').html('<div class="text-center p-4"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>');
-        $('#selesai').html('<div class="text-center p-4"><div class="spinner-border text-success" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>');
+        // $('#menunggu').html('<div class="text-center p-4"><div class="spinner-border text-info" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>');
+        // $('#dipanggil').html('<div class="text-center p-4"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>');
+        // $('#selesai').html('<div class="text-center p-4"><div class="spinner-border text-success" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>');
         $.ajax({
-            url: `/api/display/antrian/poli/${tgl}/${poli}`,
+            url: `/api/display/antrian/poli/${tgl}/${poli}/${dr}`,
             type: "GET",
             dataType: "json",
             success: function(res) {
-                $('#poli').html('Antrean <u>' + res.poli.NAMARUANGAN+'</u>');
+                $('#poli').html(`
+                    <h1 class="mb-0" style="font-size:80px">Antrean <u>${res.poli.NAMARUANGAN}</u></h1>
+                    <h1 class="mb-0" style="font-size:50px">Dokter : <b class="text-primary">${res.dokter.NAMADOKTER}</b></h1>
+                `);
 
                 // render data
                 let rows_menunggu = "";
@@ -259,7 +331,7 @@
                             <div class="card custom-card mb-3 shadow">
                                 <div class="card-body card-bg-light d-flex align-items-center">
                                     <div class="me-3 border border-primary rounded d-flex justify-content-center align-items-center" style="height: auto; width: auto;">
-                                        <span class="fw-bold p-2" style="font-size: 50px">${item.POS.toString()}-${item.NOMORANTREAN.toString().padStart(3, '0')}</span>
+                                        <span class="fw-bold p-2" style="font-size: 50px">${item.POS?item.POS.toString():'A2'}-${item.NOMORANTREAN.toString().padStart(3, '0')}</span>
                                     </div>
                                     <div>
                                         <div class="fs-1 fw-medium">Menunggu Dipanggil</div>
@@ -326,8 +398,8 @@
 
                 // kalau sukses -> jalankan progress bar lagi
                 startProgressBar();
-                
-            $('#tampil_antrian').find('i').removeClass('fa-sync fa-spin').addClass('fa-search').prop('disabled',false);
+
+                $('#tampil_antrian').find('i').removeClass('fa-sync fa-spin').addClass('fa-search').prop('disabled',false);
             },
             error: function(xhr, status, error) {
                 iziToast.error({
