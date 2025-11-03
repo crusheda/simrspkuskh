@@ -481,10 +481,10 @@
                                         </span>
                                     </div>
                                     <div class="flex-grow-1" style="min-width: 0;">
-                                        <div class="fs-1 fw-medium text-truncate">
+                                        <div class="fs-2 fw-medium text-truncate">
                                             ${identityEnabled ? item.NAMAPASIEN : 'Menunggu Dipanggil'}
                                         </div>
-                                        <p class="mb-0 text-muted fs-2">RM. ${item.NORM.toString().padStart(8, '0')}</p>
+                                        <p class="mb-0 text-muted fs-3">RM. ${item.NORM.toString().padStart(8, '0')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -496,12 +496,12 @@
                 if (res.dipanggil && res.dipanggil.NOMORANTREAN) {
                     $('#dipanggil').empty().append(`
                         <div class="mb-3">
-                            <h2 class="fw-bold" style="font-size: 80px">NOMOR ANTRIAN</h2>
-                            <h1 class="fw-bold text-danger" style="font-size: 250px">${res.dipanggil.POS?res.dipanggil.POS.toString()+'-':''}${res.dipanggil.NOMORANTREAN.toString().padStart(3, '0')}</h1>
+                            <h2 class="fw-bold" style="font-size: 60px">NOMOR ANTRIAN</h2>
+                            <h1 class="fw-bold text-danger" style="font-size: 170px">${res.dipanggil.POS?res.dipanggil.POS.toString()+'-':''}${res.dipanggil.NOMORANTREAN.toString().padStart(3, '0')}</h1>
                         </div>
                         <div class="mb-3">
-                            <div class="fw-bold mb-3" style="font-size:80px"><u>${res.dipanggil.NAMARUANGAN}</u></div>
-                            <div class="fw-bold mb-3 text-wrap" style="font-size:50px" id="namaShowDipanggil" hidden>${res.dipanggil.NAMAPASIEN}</div>
+                            <div class="fw-bold mb-3" style="font-size:55px"><u>${res.dipanggil.NAMARUANGAN}</u></div>
+                            <div class="fw-bold mb-3 text-truncate" style="font-size:45px" id="namaShowDipanggil" hidden>${res.dipanggil.NAMAPASIEN}</div>
                             <div class="fw-bold mb-3" style="font-size:40px">RM. ${res.dipanggil.NORM.toString().padStart(8, '0')}</div>
                         </div>
                     `);
@@ -573,8 +573,8 @@
                                         <span class="fw-bold p-2" style="font-size: 50px">${item.POS.toString()}-${item.NOMORANTREAN.toString().padStart(3, '0')}</span>
                                     </div>
                                     <div class="flex-grow-1" style="min-width: 0;">
-                                        <div class="fs-1 fw-medium text-truncate ${item.STATUSANTREAN == 2?'text-indigo-900':''}">${identityEnabled?item.NAMAPASIEN:'Sudah Dipanggil'}</div>
-                                        <p class="mb-0 text-muted fs-2">RM. ${item.NORM.toString().padStart(8, '0')}</p>
+                                        <div class="fs-2 fw-medium text-truncate ${item.STATUSANTREAN == 2?'text-indigo-900':''}">${identityEnabled?item.NAMAPASIEN:'Sudah Dipanggil'}</div>
+                                        <p class="mb-0 text-muted fs-3">RM. ${item.NORM.toString().padStart(8, '0')}</p>
                                     </div>
                                 </div>
                             </div>
