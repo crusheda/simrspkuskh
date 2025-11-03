@@ -480,7 +480,7 @@
                                             ${item.POS ? item.POS.toString() : 'A2'}-${item.NOMORANTREAN.toString().padStart(3, '0')}
                                         </span>
                                     </div>
-                                    <div class="flex-grow-1" style="min-width: 0;"> 
+                                    <div class="flex-grow-1" style="min-width: 0;">
                                         <div class="fs-1 fw-medium text-truncate">
                                             ${identityEnabled ? item.NAMAPASIEN : 'Menunggu Dipanggil'}
                                         </div>
@@ -516,7 +516,7 @@
                     // console.log(nomorBaru);
                     // console.log(lastNomorDipanggil);
                     // if (nomorBaru !== lastNomorDipanggil) { // lastNomorDipanggil !== null &&
-                    
+
                         // Panggil Nomor Antrian STATUS = 1
                         pauseProgressBar();
                         $('#pause').prop('disabled',true);
@@ -573,7 +573,7 @@
                                         <span class="fw-bold p-2" style="font-size: 50px">${item.POS.toString()}-${item.NOMORANTREAN.toString().padStart(3, '0')}</span>
                                     </div>
                                     <div class="flex-grow-1" style="min-width: 0;">
-                                        <div class="fs-1 fw-medium text-truncate">${identityEnabled?item.NAMAPASIEN:'Sudah Dipanggil'}</div>
+                                        <div class="fs-1 fw-medium text-truncate ${item.STATUSANTREAN == 2?'text-indigo-900':''}">${identityEnabled?item.NAMAPASIEN:'Sudah Dipanggil'}</div>
                                         <p class="mb-0 text-muted fs-2">RM. ${item.NORM.toString().padStart(8, '0')}</p>
                                     </div>
                                 </div>

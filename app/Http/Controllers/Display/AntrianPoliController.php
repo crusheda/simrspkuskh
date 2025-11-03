@@ -45,7 +45,7 @@ class AntrianPoliController extends Controller
     function getDisplayAntrianPoli($tgl,$ruangan,$dr)
     {
         $tgl = Carbon::now()->isoFormat('YYYY-MM-DD');
-        // $tgl = '2025-11-01';
+        $tgl = '2025-11-01';
         // $tgl = '2025-10-30';
         // $ruangan = '102010105'; // POLI BEDAH
 
@@ -107,7 +107,33 @@ class AntrianPoliController extends Controller
             ->get();
 
         // SELESAI (exclude yang dipanggil)
-        $selesai = DB::table('pendaftaran.panggilan_antrian_ruangan AS par')
+        // $selesai = DB::table('pendaftaran.panggilan_antrian_ruangan AS par')
+        //     ->select(
+        //         'pp.NORM','ar.ID',
+        //         DB::raw('master.getNamaLengkap(pp.NORM) AS NAMAPASIEN'),
+        //         'ar.POS','ar.NOMOR AS NOMORANTREAN','ar.STATUS AS STATUSANTREAN',
+        //         'par.STATUS AS STATUSPANGGILAN',
+        //         'ru.DESKRIPSI AS NAMARUANGAN',
+        //         // 'ar.ID AS ANTRIAN_ID'
+        //     )
+        //     ->join('pendaftaran.antrian_ruangan AS ar', function($join) {
+        //         $join->on('ar.ID','=','par.ANTRIAN_RUANGAN')
+        //             ->where('ar.STATUS', '!=', 0); // TIDAK BATAL KUNJUNGAN
+        //     })
+        //     ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
+        //     ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
+        //     ->where('ar.RUANGAN', $ruangan)
+        //     ->where('ar.DOKTER', $dr)
+        //     ->where('par.STATUS', 2)
+        //     ->where('ar.TANGGAL',$tgl)
+        //     ->when($antrianDipanggilId, function($q) use ($antrianDipanggilId) {
+        //         $q->where('ar.ID','!=',$antrianDipanggilId);
+        //     })
+        //     ->groupBy('NORM','ID','NAMAPASIEN','POS','NOMORANTREAN','STATUSANTREAN','STATUSPANGGILAN','NAMARUANGAN')
+        //     ->orderBy('par.ID', 'DESC')
+        //     ->get();
+
+        $selesai = DB::table('pendaftaran.antrian_ruangan AS ar')
             ->select(
                 'pp.NORM','ar.ID',
                 DB::raw('master.getNamaLengkap(pp.NORM) AS NAMAPASIEN'),
@@ -116,21 +142,24 @@ class AntrianPoliController extends Controller
                 'ru.DESKRIPSI AS NAMARUANGAN',
                 // 'ar.ID AS ANTRIAN_ID'
             )
-            ->join('pendaftaran.antrian_ruangan AS ar', function($join) {
+            ->leftJoin('pendaftaran.panggilan_antrian_ruangan AS par', function($join) {
                 $join->on('ar.ID','=','par.ANTRIAN_RUANGAN')
-                    ->where('ar.STATUS', '!=', 0); // TIDAK BATAL KUNJUNGAN
+                    ->where('par.STATUS', 2); // TIDAK BATAL KUNJUNGAN
             })
             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
             ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
             ->where('ar.RUANGAN', $ruangan)
             ->where('ar.DOKTER', $dr)
-            ->where('par.STATUS', 2)
+            ->where('ar.STATUS', '!=', 0)
             ->where('ar.TANGGAL',$tgl)
             ->when($antrianDipanggilId, function($q) use ($antrianDipanggilId) {
                 $q->where('ar.ID','!=',$antrianDipanggilId);
             })
             ->groupBy('NORM','ID','NAMAPASIEN','POS','NOMORANTREAN','STATUSANTREAN','STATUSPANGGILAN','NAMARUANGAN')
-            ->orderBy('par.ID', 'DESC')
+            ->orderByRaw('CASE WHEN par.ID IS NULL THEN 1 ELSE 0 END, par.ID DESC, ar.NOMOR DESC') // Itu akan menempatkan antrean yang belum pernah dipanggil di bawah daftar yang sudah pernah dipanggil.
+            // ->orderByRaw('par.ID DESC, ar.NOMOR ASC')
+            // ->orderBy('ar.NOMOR', 'DESC')
+            // ->orderBy('par.ID', 'DESC')
             ->get();
 
         $poli = DB::table('master.ruangan AS ru')
