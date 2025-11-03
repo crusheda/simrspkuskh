@@ -42,6 +42,7 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
             Route::get('display/tt', [BedController::class, 'getDisplayTt'])->name('api.display.tt');
         // TEMPAT TIDUR
             Route::get('display/antrian/poli/{tgl}/{ruangan}/{dr}', [AntrianPoliController::class, 'getDisplayAntrianPoli'])->name('api.display.antrian.poli');
+            Route::post('display/antrian/poli/update', [AntrianPoliController::class, 'updatePanggilanAntrian'])->name('api.display.antrian.update');
 
 //API PRIVATE
 Route::group(['middleware' => ['web', 'auth']], function() {

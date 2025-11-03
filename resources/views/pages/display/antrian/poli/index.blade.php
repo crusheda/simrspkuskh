@@ -30,7 +30,7 @@
             <div class="card-header align-items-center d-flex justify-content-between py-2 px-0">
                 <div>
                     <div class="input-group">
-                        <select class="form-select" id="pilih_poli">
+                        <select class="form-select" id="pilih_poli" disabled>
                             <option value="">Pilih Poliklinik</option>
                             @if (count($list['poli']) > 0)
                                 @foreach ($list['poli'] as $item)
@@ -55,17 +55,23 @@
                                 @endforeach
                             @endif
                         </select> --}}
+                        <div class="input-group-text">
+                            <input class="form-check-input" type="checkbox" id="showNama" value="" aria-label="" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark"
+                            data-bs-placement="bottom" title="Centang untuk Memperlihatkan Nama Pasien Di Antrian">
+                        </div>
                         <button class="btn btn-primary btn-wave me-1 waves-effect waves-light" id="tampil_antrian" onclick="refresh($('#pilih_poli').val(),$('#pilih_dr').val())" disabled>
                             <i class="fas fa-search me-1"></i> Terapkan
                         </button>
                     </div>
                 </div>
                 <div class="btn-group">
-                    <button id="enableSound" class="btn btn-light-info">🔔 Aktifkan Suara Antrian</button>
-                    <button id="openFullscreenBtn" class="btn btn-success" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark"
-                        data-bs-placement="bottom" title="Terapkan Display Layar Penuh">
-                        <i class="ti ti-arrows-maximize"></i>
+                    {{-- <button id="enableSound" class="btn btn-light-info">🔔 Aktifkan Suara Antrian</button> --}}
+                    <button id="openFullscreenBtn" class="btn btn-success d-inline-flex align-items-center" data-bs-toggle="tooltip"
+                        data-bs-placement="left" title="Terapkan Display Layar Penuh">
+                        <i class="ti ti-arrows-maximize me-2"></i> <span>Tampilan Layar Penuh</span>
                     </button>
+                    <button class="btn btn-danger" id="pause" onclick="pauseProgressBar()" hidden><i class="ti ti-player-pause"></i></button>
+                    <button class="btn btn-info" id="resume" onclick="resumeProgressBar()" hidden><i class="ti ti-player-play"></i></button>
                 </div>
             </div>
     </div>
@@ -84,7 +90,7 @@
                             </div>
                             <div class="fs-1 fw-bold text-dark text-end mb-0">
                                 <h1 id="antrian-tgl">. . .</h1>
-                                <h1 id="antrian-detik">. . .</h1>
+                                <h1 id="antrian-detik" style="font-size:70px">. . .</h1>
                             </div>
                         </div>
                     </div>
@@ -101,11 +107,11 @@
             </div>
 
             <div class="col-md-4">
-                <div class="card custom-card" style="height: 90vh; max-height: calc(90vh - 100px);">
+                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
                     <div class="card-header bg-cyan-900">
                         <div class="align-items-center text-center w-100">
                             <div class="p-4">
-                                <h1 class="text-uppercase text-gray-100 fw-bold">Belum Dipanggil</h1>
+                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Belum Dipanggil</h1>
                             </div>
                         </div>
                     </div>
@@ -118,11 +124,11 @@
             </div>
 
             <div class="col-md-4">
-                <div class="card custom-card" style="height: 90vh; max-height: calc(90vh - 100px);">
+                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
                     <div class="card-header bg-red-900">
                         <div class="align-items-center w-100 text-center">
                             <div class="p-4">
-                                <h1 class="text-uppercase text-gray-100 fw-bold">Saat ini Dipanggil</h1>
+                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Saat ini Dipanggil</h1>
                             </div>
                         </div>
                     </div>
@@ -133,11 +139,11 @@
             </div>
 
             <div class="col-md-4">
-                <div class="card custom-card" style="height: 90vh; max-height: calc(90vh - 100px);">
+                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
                     <div class="card-header bg-green-900">
                         <div class="align-items-center text-center w-100">
                             <div class="p-4">
-                                <h1 class="text-uppercase text-gray-100 fw-bold">Sudah Dipanggil</h1>
+                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Sudah Dipanggil</h1>
                             </div>
                         </div>
                     </div>
@@ -158,30 +164,29 @@
     let refreshInterval = 5000; // 1 menit = 60000 ms, 5000 = 5 detik
     let progressBar = $("#refresh-progress");
     let progressInterval; // simpan interval supaya bisa dihentikan
-    let lastNomorDipanggil = null;
+    // let lastNomorDipanggil = null;
     let soundEnabled = false;
+    let identityEnabled = false;
+    let progressPaused = false;
     const mapDokterPoli = @json($list['mapDokterPoli']);
     const semuaDokter = @json($list['dokter']);
 
-    function playSound() {
-        if (!soundEnabled) return;
-        // ganti path sesuai file mp3 kamu
-        let audio = new Audio('/sounds/in.wav');
-        audio.play().catch(err => console.log("Audio tidak bisa diputar:", err));
-    }
-
     $(document).ready(function() {
-        $("#enableSound").on("click", function() {
-            let audio = new Audio('/sounds/in.wav');
+        $("#tampil_antrian").on("click", function() {
+            // let audio = new Audio('/sounds/in.wav');
+            let audio = new Audio('/sounds/opening2.mp3');
             audio.play().then(() => {
                 soundEnabled = true;
-                iziToast.success({
-                    title: 'Suara Antrian berhasil diinisialisasi! ✅',
-                    message: 'Silakan melanjutkan pemanggilan Antrian',
-                    position: 'topRight'
-                });
-                $(this).hide(); // sembunyikan tombol setelah aktif
+                // iziToast.success({
+                //     title: 'Suara Antrian berhasil diinisialisasi! ✅',
+                //     message: 'Silakan melanjutkan pemanggilan Antrian',
+                //     position: 'topRight'
+                // });
+                console.log('Suara Antrian berhasil diinisialisasi');
+                // $(this).hide(); // sembunyikan tombol setelah aktif
             }).catch(err => console.log("Gagal aktifkan suara:", err));
+            $('#resume').prop('hidden',true);
+            $('#pause').prop('hidden',false);
         });
 
         updateJam();
@@ -240,8 +245,141 @@
             };
         });
 
+        $('#showNama').on('change', function() {
+            const showNama = $(this).is(':checked');
+
+            if (showNama) {
+                identityEnabled = true;
+            } else {
+                identityEnabled = false;
+            }
+
+            // $(this).prop('disabled',true);
+            console.log('Identitas Diperlihatkan : '+identityEnabled);
+        });
+
         // startProgressBar();
+        $('#pilih_poli').prop('disabled',false);
     });
+
+    // function playSound(resDipanggil = null) {
+    //     if (!soundEnabled) return;
+    //     console.log('audio dipanggil');
+    //     const inSound = new Audio('/sounds/in.wav');
+    //     const outSound = new Audio('/sounds/out.wav');
+
+    //     // 🔹 pastikan data antrian tersedia
+    //     if (!resDipanggil) return;
+
+    //     // Bentuk teks ucapan, contoh: "Nomor Antrian A2 013 Silakan masuk ke Poliklinik Penyakit Dalam"
+    //     const nomor = `${resDipanggil.POS ? resDipanggil.POS.toString() + " " : ""}${resDipanggil.NOMORANTREAN.toString().padStart(3, '0')}`;
+    //     const ruangan = resDipanggil.NAMARUANGAN || "ruangan pemeriksaan poliklinik";
+    //     const dokter = resDipanggil.NAMADOKTER || "dokter spesialis";
+    //     const textToSpeak = `Nomor Antrian ${nomor}. Silakan masuk ke ${ruangan}.`;
+
+    //     // 🔹 fungsi untuk bicara
+    //     const speakText = (text) => {
+    //         return new Promise((resolve) => {
+    //             const utter = new SpeechSynthesisUtterance(text);
+    //             utter.lang = "id-ID"; // Bahasa Indonesia
+    //             utter.rate = 0.9;     // agak pelan supaya jelas
+    //             utter.pitch = 1.0;
+    //             utter.volume = 1.0;
+
+    //             utter.onend = resolve; // lanjut setelah selesai bicara
+    //             window.speechSynthesis.speak(utter);
+    //         });
+    //     };
+
+    //     // 🔹 urutkan suara -> in.wav -> ucapkan -> out.wav
+    //     inSound.play()
+    //         .then(() => {
+    //             return new Promise(resolve => {
+    //                 inSound.onended = resolve; // tunggu sampai in.wav selesai
+    //             });
+    //         })
+    //         .then(() => speakText(textToSpeak))
+    //         .then(() => outSound.play())
+    //         .catch(err => console.error("Gagal memainkan suara:", err));
+    // }
+
+    async function playSound(resDipanggil = null) {
+        if (!soundEnabled) return;
+        console.log('audio dipanggil');
+
+        const inSound = new Audio('/sounds/in.wav');
+        const outSound = new Audio('/sounds/out.wav');
+
+        if (!resDipanggil) return;
+
+        // Format nomor antrian (contoh: A1-003)
+        const nomor = `${resDipanggil.POS ? resDipanggil.POS.toString() + " " : ""}${resDipanggil.NOMORANTREAN.toString().padStart(3, '0')}`;
+        const ruangan = resDipanggil.NAMARUANGAN || "ruangan pemeriksaan poliklinik";
+
+        // ✅ ubah angka jadi penyebutan per karakter
+        const nomorSpelled = spellNomorAntrian(nomor);
+
+        const textToSpeak = `Nomor Antrian ${nomorSpelled}. Silakan masuk ke ${ruangan}.`;
+
+        // fungsi bicara dengan jeda
+        const speakText = (text) => {
+            return new Promise((resolve) => {
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = "id-ID";
+                utter.rate = 0.9;
+                utter.pitch = 1.0;
+                utter.volume = 1.0;
+                utter.onend = resolve;
+                window.speechSynthesis.speak(utter);
+            });
+        };
+
+        // Tunggu urutan audio selesai
+        await inSound.play().catch(() => {});
+        await new Promise(r => inSound.onended = r);
+        await speakText(textToSpeak);
+        await outSound.play().catch(() => {});
+        await new Promise(r => outSound.onended = r);
+    }
+
+    function spellNomorAntrian(nomor) {
+        const mapAngka = {
+            '0': 'kosong',
+            '1': 'satu',
+            '2': 'dua',
+            '3': 'tiga',
+            '4': 'empat',
+            '5': 'lima',
+            '6': 'enam',
+            '7': 'tujuh',
+            '8': 'delapan',
+            '9': 'sembilan'
+        };
+
+        let hasil = '';
+        for (let char of nomor) {
+            if (/[A-Za-z]/.test(char)) {
+                hasil += `${char.toUpperCase()} `;
+            } else if (/[0-9]/.test(char)) {
+                hasil += `${mapAngka[char]} `; // sebut tiap angka
+            } else if (char === '-' || char === ' ') {
+                hasil += ' '; // jeda kecil
+            }
+        }
+        return hasil.trim();
+    }
+
+    function pauseProgressBar() {
+        progressPaused = true;
+        $('#pause').prop('hidden',true).prop('disabled',false);
+        $('#resume').prop('hidden',false).prop('disabled',false);
+    }
+
+    function resumeProgressBar() {
+        progressPaused = false;
+        $('#pause').prop('hidden',false).prop('disabled',false);
+        $('#resume').prop('hidden',true).prop('disabled',false);
+    }
 
     function startProgressBar() {
         clearInterval(progressInterval); // pastikan tidak ada interval lama
@@ -268,10 +406,16 @@
         let progress = 0;
 
         progressInterval = setInterval(() => {
-            progress += step;
-            if (progress > 100) progress = 100;
+            if (!progressPaused) {
+                progress += step;
+                if (progress > 100) progress = 100;
+                progressBar.css("width", progress + "%");
+            }
 
-            progressBar.css("width", progress + "%");
+            // progress += step;
+            // if (progress > 100) progress = 100;
+
+            // progressBar.css("width", progress + "%");
 
             if (progress >= 100) {
                 clearInterval(progressInterval);
@@ -315,8 +459,8 @@
             dataType: "json",
             success: function(res) {
                 $('#poli').html(`
-                    <h1 class="mb-0" style="font-size:80px">Antrean <u>${res.poli.NAMARUANGAN}</u></h1>
-                    <h1 class="mb-0" style="font-size:50px">Dokter : <b class="text-primary">${res.dokter.NAMADOKTER}</b></h1>
+                    <h1 class="mb-0" style="font-size:80px">Antrean <b class="text-danger fw-bold">${res.poli.NAMARUANGAN}</b></h1>
+                    <h1 class="mb-0" style="font-size:50px">Dokter : <b class="text-primary fw-bold">${res.dokter.NAMADOKTER}</b></h1>
                 `);
 
                 // render data
@@ -329,12 +473,17 @@
                     $.each(res.menunggu, function(index, item) {
                         rows_menunggu += `
                             <div class="card custom-card mb-3 shadow">
-                                <div class="card-body card-bg-light d-flex align-items-center">
-                                    <div class="me-3 border border-primary rounded d-flex justify-content-center align-items-center" style="height: auto; width: auto;">
-                                        <span class="fw-bold p-2" style="font-size: 50px">${item.POS?item.POS.toString():'A2'}-${item.NOMORANTREAN.toString().padStart(3, '0')}</span>
+                                <div class="card-body card-bg-light d-flex align-items-center gap-3">
+                                    <div class="me-3 border border-primary rounded d-flex justify-content-center align-items-center"
+                                        style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
+                                        <span class="fw-bold p-2" style="font-size: 50px">
+                                            ${item.POS ? item.POS.toString() : 'A2'}-${item.NOMORANTREAN.toString().padStart(3, '0')}
+                                        </span>
                                     </div>
-                                    <div>
-                                        <div class="fs-1 fw-medium">Menunggu Dipanggil</div>
+                                    <div class="flex-grow-1" style="min-width: 0;"> 
+                                        <div class="fs-1 fw-medium text-truncate">
+                                            ${identityEnabled ? item.NAMAPASIEN : 'Menunggu Dipanggil'}
+                                        </div>
                                         <p class="mb-0 text-muted fs-2">RM. ${item.NORM.toString().padStart(8, '0')}</p>
                                     </div>
                                 </div>
@@ -344,7 +493,7 @@
                 }
                 $("#menunggu").empty().html(rows_menunggu);
 
-                if (res.dipanggil) {
+                if (res.dipanggil && res.dipanggil.NOMORANTREAN) {
                     $('#dipanggil').empty().append(`
                         <div class="mb-3">
                             <h2 class="fw-bold" style="font-size: 80px">NOMOR ANTRIAN</h2>
@@ -352,25 +501,65 @@
                         </div>
                         <div class="mb-3">
                             <div class="fw-bold mb-3" style="font-size:80px"><u>${res.dipanggil.NAMARUANGAN}</u></div>
-                            <p class="mb-3 fs-1 fw-bold">RM. ${res.dipanggil.NORM.toString().padStart(8, '0')}</p>
+                            <div class="fw-bold mb-3 text-wrap" style="font-size:50px" id="namaShowDipanggil" hidden>${res.dipanggil.NAMAPASIEN}</div>
+                            <div class="fw-bold mb-3" style="font-size:40px">RM. ${res.dipanggil.NORM.toString().padStart(8, '0')}</div>
                         </div>
                     `);
-                } else {
-                    $('#dipanggil').empty().append(`
-                        <div class="mb-3">
-                            <h2 class="fw-bold" style="font-size: 50px">NOMOR ANTRIAN</h2>
-                            <h1 class="fw-bold text-danger" style="font-size: 250px">00</h1>
-                        </div>
-                    `);
-                }
 
-                // 🔔 cek notifikasi suara
-                if (res.dipanggil && res.dipanggil.NOMORANTREAN) {
-                    let nomorBaru = res.dipanggil.NOMORANTREAN;
-                    if (lastNomorDipanggil !== null && nomorBaru !== lastNomorDipanggil) {
-                        playSound();
+                    if (identityEnabled) {
+                        $('#namaShowDipanggil').prop('hidden',false);
+                    } else {
+                        $('#namaShowDipanggil').prop('hidden',true);
                     }
-                    lastNomorDipanggil = nomorBaru;
+
+                    // let nomorBaru = res.dipanggil.NOMORANTREAN;
+                    // console.log(nomorBaru);
+                    // console.log(lastNomorDipanggil);
+                    // if (nomorBaru !== lastNomorDipanggil) { // lastNomorDipanggil !== null &&
+                    
+                        // Panggil Nomor Antrian STATUS = 1
+                        pauseProgressBar();
+                        $('#pause').prop('disabled',true);
+                        $('#resume').prop('disabled',true);
+                        playSound(res.dipanggil).then(() => {
+                            resumeProgressBar(); // ▶️ lanjutkan progress setelah suara selesai
+                            $('#pause').prop('disabled',false);
+                            $('#resume').prop('disabled',false);
+                        });
+                        // playSound(res.dipanggil);
+
+                        // Change STATUS from 1 into 2
+                        const save = new FormData();
+                        save.append('ID', res.dipanggil.ANTRIAN_ID);
+                        $.ajax({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            url: "{{ route('api.display.antrian.update') }}",
+                            method: 'POST',
+                            data: save,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            success: function(response) {
+                                console.log(`Antrian ID#${res.dipanggil.ANTRIAN_ID} Dipanggil Diupdate ke STATUS = 2. Total Antrian Terupdate = ${response}`);
+                            },
+                            error: function(xhr, status, error) {
+                                console.log(`Gagal Mengupdate Antrian ID#${res.dipanggil.ANTRIAN_ID} Dipanggil ke STATUS = 2.`);
+                            }
+                        })
+                    // }
+                    // console.log('update nomorBaru ke LastNomorDipanggil');
+                    // lastNomorDipanggil = nomorBaru;
+                } else {
+                    $('#dipanggil').empty();
+                    // $('#dipanggil').empty().append(`
+                    //     <div class="mb-3">
+                    //         <h2 class="fw-bold" style="font-size: 50px">NOMOR ANTRIAN</h2>
+                    //         <h1 class="fw-bold text-danger" style="font-size: 250px">00</h1>
+                    //     </div>
+                    // `);
                 }
 
                 if (res.selesai.length === 0) {
@@ -379,12 +568,12 @@
                     $.each(res.selesai, function(index, item) {
                         rows_selesai += `
                             <div class="card custom-card mb-3 shadow">
-                                <div class="card-body card-bg-light d-flex align-items-center">
-                                    <div class="me-3 border border-primary rounded d-flex justify-content-center align-items-center" style="height: auto; width: auto;">
+                                <div class="card-body card-bg-light d-flex align-items-center gap-3">
+                                    <div class="me-3 border border-success rounded d-flex justify-content-center align-items-center" style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
                                         <span class="fw-bold p-2" style="font-size: 50px">${item.POS.toString()}-${item.NOMORANTREAN.toString().padStart(3, '0')}</span>
                                     </div>
-                                    <div>
-                                        <div class="fs-1 fw-medium">Sudah Dipanggil</div>
+                                    <div class="flex-grow-1" style="min-width: 0;">
+                                        <div class="fs-1 fw-medium text-truncate">${identityEnabled?item.NAMAPASIEN:'Sudah Dipanggil'}</div>
                                         <p class="mb-0 text-muted fs-2">RM. ${item.NORM.toString().padStart(8, '0')}</p>
                                     </div>
                                 </div>

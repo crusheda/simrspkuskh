@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Display;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\pendaftaran\panggilan_antrian_ruangan;
 use Carbon\Carbon;
 
 class AntrianPoliController extends Controller
@@ -43,8 +44,9 @@ class AntrianPoliController extends Controller
 
     function getDisplayAntrianPoli($tgl,$ruangan,$dr)
     {
-        // $tgl = Carbon::now()->isoFormat('YYYY-MM-DD');
-        $tgl = '2025-10-30';
+        $tgl = Carbon::now()->isoFormat('YYYY-MM-DD');
+        // $tgl = '2025-11-01';
+        // $tgl = '2025-10-30';
         // $ruangan = '102010105'; // POLI BEDAH
 
         // Ambil yang sedang dipanggil dulu
@@ -66,9 +68,9 @@ class AntrianPoliController extends Controller
             ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
             ->where('ar.RUANGAN', $ruangan)
             ->where('ar.DOKTER', $dr)
-            ->whereIn('par.STATUS', [1,2])
+            ->where('par.STATUS', 1)
             ->where('ar.TANGGAL',$tgl)
-            ->orderBy('par.ID', 'DESC')
+            ->orderBy('par.ID', 'ASC')
             ->first();
 
         $antrianDipanggilId = $dipanggil->ANTRIAN_ID ?? null;
@@ -151,5 +153,14 @@ class AntrianPoliController extends Controller
             'poli' => $poli,
             'dokter' => $dokter,
         ], 200);
+    }
+
+    function updatePanggilanAntrian(Request $request)
+    {
+        $updated = panggilan_antrian_ruangan::where('ANTRIAN_RUANGAN', $request->ID)
+            ->where('STATUS', 1)
+            ->update(['STATUS' => 2]);
+
+        return response()->json(['updated' => $updated]);
     }
 }
