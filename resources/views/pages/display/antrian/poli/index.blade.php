@@ -263,8 +263,8 @@
         // startProgressBar();
         $('#pilih_poli').prop('disabled',false);
 
-        startAutoScroll('#menunggu', 0.3);
-        startAutoScroll('#selesai', 0.3);
+        startAutoScroll('#menunggu', 1); // 0.3
+        startAutoScroll('#selesai', 1); // 0.3
     });
 
     // function playSound(resDipanggil = null) {
