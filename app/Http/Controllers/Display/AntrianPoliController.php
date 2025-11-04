@@ -106,32 +106,7 @@ class AntrianPoliController extends Controller
             ->orderBy('ar.NOMOR', 'ASC')
             ->get();
 
-        // SELESAI (exclude yang dipanggil)
-        // $selesai = DB::table('pendaftaran.panggilan_antrian_ruangan AS par')
-        //     ->select(
-        //         'pp.NORM','ar.ID',
-        //         DB::raw('master.getNamaLengkap(pp.NORM) AS NAMAPASIEN'),
-        //         'ar.POS','ar.NOMOR AS NOMORANTREAN','ar.STATUS AS STATUSANTREAN',
-        //         'par.STATUS AS STATUSPANGGILAN',
-        //         'ru.DESKRIPSI AS NAMARUANGAN',
-        //         // 'ar.ID AS ANTRIAN_ID'
-        //     )
-        //     ->join('pendaftaran.antrian_ruangan AS ar', function($join) {
-        //         $join->on('ar.ID','=','par.ANTRIAN_RUANGAN')
-        //             ->where('ar.STATUS', '!=', 0); // TIDAK BATAL KUNJUNGAN
-        //     })
-        //     ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
-        //     ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
-        //     ->where('ar.RUANGAN', $ruangan)
-        //     ->where('ar.DOKTER', $dr)
-        //     ->where('par.STATUS', 2)
-        //     ->where('ar.TANGGAL',$tgl)
-        //     ->when($antrianDipanggilId, function($q) use ($antrianDipanggilId) {
-        //         $q->where('ar.ID','!=',$antrianDipanggilId);
-        //     })
-        //     ->groupBy('NORM','ID','NAMAPASIEN','POS','NOMORANTREAN','STATUSANTREAN','STATUSPANGGILAN','NAMARUANGAN')
-        //     ->orderBy('par.ID', 'DESC')
-        //     ->get();
+        $menungguIds = $menunggu->pluck('ID')->toArray(); // ambil ID dari $menunggu
 
         $selesai = DB::table('pendaftaran.antrian_ruangan AS ar')
             ->select(
@@ -139,12 +114,11 @@ class AntrianPoliController extends Controller
                 DB::raw('master.getNamaLengkap(pp.NORM) AS NAMAPASIEN'),
                 'ar.POS','ar.NOMOR AS NOMORANTREAN','ar.STATUS AS STATUSANTREAN',
                 'par.STATUS AS STATUSPANGGILAN',
-                'ru.DESKRIPSI AS NAMARUANGAN',
-                // 'ar.ID AS ANTRIAN_ID'
+                'ru.DESKRIPSI AS NAMARUANGAN'
             )
             ->leftJoin('pendaftaran.panggilan_antrian_ruangan AS par', function($join) {
                 $join->on('ar.ID','=','par.ANTRIAN_RUANGAN')
-                    ->where('par.STATUS', 2); // TIDAK BATAL KUNJUNGAN
+                    ->where('par.STATUS', 2);
             })
             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
             ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
@@ -155,13 +129,19 @@ class AntrianPoliController extends Controller
             ->when($antrianDipanggilId, function($q) use ($antrianDipanggilId) {
                 $q->where('ar.ID','!=',$antrianDipanggilId);
             })
+            ->when(!empty($menungguIds), function($q) use ($menungguIds) {
+                $q->whereNotIn('ar.ID', $menungguIds); // filter yang ada di menunggu
+            })
             ->groupBy('NORM','ID','NAMAPASIEN','POS','NOMORANTREAN','STATUSANTREAN','STATUSPANGGILAN','NAMARUANGAN')
-            ->orderByRaw('CASE WHEN par.ID IS NULL THEN 1 ELSE 0 END, par.ID DESC, ar.NOMOR DESC') // Itu akan menempatkan antrean yang belum pernah dipanggil di bawah daftar yang sudah pernah dipanggil.
-            // ->orderByRaw('par.ID DESC, ar.NOMOR ASC')
-            // ->orderBy('ar.NOMOR', 'DESC')
-            // ->orderBy('par.ID', 'DESC')
+            ->orderByRaw('CASE WHEN par.ID IS NULL THEN 1 ELSE 0 END, par.ID DESC, ar.NOMOR DESC')
             ->get();
 
+        // PAKAI INI JUGA BISA
+        // $menungguIds = $menunggu->pluck('ID')->toArray();
+        // $selesai = $selesai->filter(function($item) use ($menungguIds) {
+        //     return !in_array($item->ID, $menungguIds);
+        // })->values();
+            
         $poli = DB::table('master.ruangan AS ru')
             ->select('ru.DESKRIPSI AS NAMARUANGAN')
             ->where('ru.ID', $ruangan)
