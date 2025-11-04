@@ -164,7 +164,7 @@
     let refreshInterval = 5000; // 1 menit = 60000 ms, 5000 = 5 detik
     let progressBar = $("#refresh-progress");
     let progressInterval; // simpan interval supaya bisa dihentikan
-    // let lastNomorDipanggil = null;
+    let lastDipanggil = null; // simpan nomor terakhir yang sudah dipanggil
     let soundEnabled = false;
     let identityEnabled = false;
     let progressPaused = false;
@@ -496,6 +496,7 @@
                 $("#menunggu").empty().html(rows_menunggu);
 
                 if (res.dipanggil && res.dipanggil.NOMORANTREAN) {
+                    lastDipanggil = res.dipanggil; // simpan seluruh objek
                     $('#dipanggil').empty().append(`
                         <div class="mb-3">
                             <h2 class="fw-bold" style="font-size: 60px">NOMOR ANTRIAN</h2>
@@ -514,54 +515,70 @@
                         $('#namaShowDipanggil').prop('hidden',true);
                     }
 
-                    // let nomorBaru = res.dipanggil.NOMORANTREAN;
-                    // console.log(nomorBaru);
-                    // console.log(lastNomorDipanggil);
-                    // if (nomorBaru !== lastNomorDipanggil) { // lastNomorDipanggil !== null &&
+                    pauseProgressBar();
+                    $('#pause').prop('disabled',true);
+                    $('#resume').prop('disabled',true);
 
-                        // Panggil Nomor Antrian STATUS = 1
-                        pauseProgressBar();
-                        $('#pause').prop('disabled',true);
-                        $('#resume').prop('disabled',true);
-                        playSound(res.dipanggil).then(() => {
-                            resumeProgressBar(); // ▶️ lanjutkan progress setelah suara selesai
-                            $('#pause').prop('disabled',false);
-                            $('#resume').prop('disabled',false);
-                        });
-                        // playSound(res.dipanggil);
+                    playSound(res.dipanggil).then(() => {
+                        resumeProgressBar(); // ▶️ lanjutkan progress setelah suara selesai
+                        $('#pause').prop('disabled',false);
+                        $('#resume').prop('disabled',false);
+                    });
 
-                        // Change STATUS from 1 into 2
-                        const save = new FormData();
-                        save.append('ID', res.dipanggil.ANTRIAN_ID);
-                        $.ajax({
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            url: "{{ route('api.display.antrian.update') }}",
-                            method: 'POST',
-                            data: save,
-                            cache: false,
-                            contentType: false,
-                            processData: false,
-                            dataType: 'json',
-                            success: function(response) {
-                                console.log(`Antrian ID#${res.dipanggil.ANTRIAN_ID} Dipanggil Diupdate ke STATUS = 2. Total Antrian Terupdate = ${response}`);
-                            },
-                            error: function(xhr, status, error) {
-                                console.log(`Gagal Mengupdate Antrian ID#${res.dipanggil.ANTRIAN_ID} Dipanggil ke STATUS = 2.`);
-                            }
-                        })
-                    // }
-                    // console.log('update nomorBaru ke LastNomorDipanggil');
-                    // lastNomorDipanggil = nomorBaru;
+                    // Change STATUS from 1 into 2
+                    const save = new FormData();
+                    save.append('ID', res.dipanggil.ANTRIAN_ID);
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: "{{ route('api.display.antrian.update') }}",
+                        method: 'POST',
+                        data: save,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        dataType: 'json',
+                        success: function(response) {
+                            console.log(`Antrian ID#${res.dipanggil.ANTRIAN_ID} Dipanggil Diupdate ke STATUS = 2. Total Antrian Terupdate = ${response}`);
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(`Gagal Mengupdate Antrian ID#${res.dipanggil.ANTRIAN_ID} Dipanggil ke STATUS = 2.`);
+                        }
+                    })
+                } else if (lastDipanggil) {
+                    // res.dipanggil kosong → tampilkan nomor terakhir
+                    $('#dipanggil').empty().append(`
+                        <div class="mb-3">
+                            <h2 class="fw-bold" style="font-size:60px">NOMOR ANTRIAN</h2>
+                            <h1 class="fw-bold text-danger" style="font-size:170px">${lastDipanggil.POS?lastDipanggil.POS+'-':''}${lastDipanggil.NOMORANTREAN.toString().padStart(3,'0')}</h1>
+                        </div>
+                        <div class="mb-3">
+                            <div class="fw-bold mb-3" style="font-size:55px"><u>${lastDipanggil.NAMARUANGAN}</u></div>
+                            <div class="fw-bold mb-3 text-truncate" style="font-size:45px" id="namaShowDipanggil" hidden>${identityEnabled?lastDipanggil.NAMAPASIEN:''}</div>
+                            <div class="fw-bold mb-3" style="font-size:40px">RM. ${lastDipanggil.NORM.toString().padStart(8,'0')}</div>
+                        </div>
+                    `);
+
+                    if (identityEnabled) {
+                        $('#namaShowDipanggil').prop('hidden',false);
+                    } else {
+                        $('#namaShowDipanggil').prop('hidden',true);
+                    }
                 } else {
                     $('#dipanggil').empty();
                 }
 
-                if (res.selesai.length === 0) {
-                    rows_selesai = ` `;
-                } else {
-                    $.each(res.selesai, function(index, item) {
+                let selesaiFiltered = '';
+                if (res.selesai.length > 0) {
+                    selesaiFiltered = res.selesai;
+
+                    // jika ada lastDipanggil dan saat ini dipanggil kosong → exclude dari rows_selesai
+                    if (lastDipanggil && (!res.dipanggil || res.dipanggil.NOMORANTREAN === null)) {
+                        selesaiFiltered = res.selesai.filter(item => item.ID !== lastDipanggil.ANTRIAN_ID);
+                    }
+
+                    $.each(selesaiFiltered, function(index, item) {
                         rows_selesai += `
                             <div class="card custom-card mb-3 shadow">
                                 <div class="card-body card-bg-light d-flex align-items-center gap-3">
@@ -577,7 +594,12 @@
                         `;
                     });
                 }
+
                 $("#selesai").empty().html(rows_selesai);
+
+                // console.log("lastDipanggil:", lastDipanggil);
+                // console.log("res.selesai:", res.selesai);
+                // console.log("selesaiFiltered:", selesaiFiltered);
 
                 $('#myDiv').prop('hidden',false);
 

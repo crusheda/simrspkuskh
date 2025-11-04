@@ -45,8 +45,7 @@ class AntrianPoliController extends Controller
     function getDisplayAntrianPoli($tgl,$ruangan,$dr)
     {
         $tgl = Carbon::now()->isoFormat('YYYY-MM-DD');
-        // $tgl = '2025-11-01';
-        // $tgl = '2025-10-30';
+        $tgl = '2025-11-02';
         // $ruangan = '102010105'; // POLI BEDAH
 
         // Ambil yang sedang dipanggil dulu
@@ -133,7 +132,8 @@ class AntrianPoliController extends Controller
                 $q->whereNotIn('ar.ID', $menungguIds); // filter yang ada di menunggu
             })
             ->groupBy('NORM','ID','NAMAPASIEN','POS','NOMORANTREAN','STATUSANTREAN','STATUSPANGGILAN','NAMARUANGAN')
-            ->orderByRaw('CASE WHEN par.ID IS NULL THEN 1 ELSE 0 END, par.ID DESC, ar.NOMOR DESC')
+            // ->orderByRaw('CASE WHEN par.ID IS NULL THEN 1 ELSE 0 END, par.ID DESC, ar.NOMOR DESC')
+            ->orderBy('ar.NOMOR','DESC')
             ->get();
 
         // PAKAI INI JUGA BISA
@@ -141,7 +141,7 @@ class AntrianPoliController extends Controller
         // $selesai = $selesai->filter(function($item) use ($menungguIds) {
         //     return !in_array($item->ID, $menungguIds);
         // })->values();
-            
+
         $poli = DB::table('master.ruangan AS ru')
             ->select('ru.DESKRIPSI AS NAMARUANGAN')
             ->where('ru.ID', $ruangan)
