@@ -45,7 +45,7 @@ class AntrianPoliController extends Controller
     function getDisplayAntrianPoli($tgl,$ruangan,$dr)
     {
         $tgl = Carbon::now()->isoFormat('YYYY-MM-DD');
-        $tgl = '2025-11-02';
+        // $tgl = '2025-11-02';
         // $ruangan = '102010105'; // POLI BEDAH
 
         // Ambil yang sedang dipanggil dulu
