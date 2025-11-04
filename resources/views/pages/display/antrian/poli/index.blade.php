@@ -168,6 +168,8 @@
     let soundEnabled = false;
     let identityEnabled = false;
     let progressPaused = false;
+    let menungguScrollTop = $('#menunggu').scrollTop();
+    let selesaiScrollTop = $('#selesai').scrollTop();
     const mapDokterPoli = @json($list['mapDokterPoli']);
     const semuaDokter = @json($list['dokter']);
 
@@ -260,6 +262,9 @@
 
         // startProgressBar();
         $('#pilih_poli').prop('disabled',false);
+
+        startAutoScroll('#menunggu', 0.3);
+        startAutoScroll('#selesai', 0.3);
     });
 
     // function playSound(resDipanggil = null) {
@@ -450,9 +455,6 @@
         $('#tampil_antrian').find('i').removeClass('fa-search').addClass('fa-sync fa-spin').prop('disabled',true);
         const tgl = moment().format('YYYY-MM-DD'); // TGL HARI INI
 
-        // $('#menunggu').html('<div class="text-center p-4"><div class="spinner-border text-info" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>');
-        // $('#dipanggil').html('<div class="text-center p-4"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>');
-        // $('#selesai').html('<div class="text-center p-4"><div class="spinner-border text-success" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>');
         $.ajax({
             url: `/api/display/antrian/poli/${tgl}/${poli}/${dr}`,
             type: "GET",
@@ -554,12 +556,6 @@
                     // lastNomorDipanggil = nomorBaru;
                 } else {
                     $('#dipanggil').empty();
-                    // $('#dipanggil').empty().append(`
-                    //     <div class="mb-3">
-                    //         <h2 class="fw-bold" style="font-size: 50px">NOMOR ANTRIAN</h2>
-                    //         <h1 class="fw-bold text-danger" style="font-size: 250px">00</h1>
-                    //     </div>
-                    // `);
                 }
 
                 if (res.selesai.length === 0) {
@@ -588,6 +584,14 @@
                 // kalau sukses -> jalankan progress bar lagi
                 startProgressBar();
 
+                // kembalikan posisi scroll sebelumnya
+                $('#menunggu').scrollTop(menungguScrollTop);
+                $('#selesai').scrollTop(selesaiScrollTop);
+
+                // Jalankan auto scroll untuk menunggu dan selesai
+                // startAutoScroll('#menunggu', 50);
+                // startAutoScroll('#selesai', 50);
+
                 $('#tampil_antrian').find('i').removeClass('fa-sync fa-spin').addClass('fa-search').prop('disabled',false);
             },
             error: function(xhr, status, error) {
@@ -607,6 +611,46 @@
             }
         });
     }
+
+    function startAutoScroll(containerSelector, speed = 1) {
+        const $container = $(containerSelector);
+        if (!$container.length) return;
+
+        let scrollTop = 0;
+
+        function scrollStep() {
+            const scrollHeight = $container[0].scrollHeight;
+            scrollTop += speed; // speed = px per frame
+            if (scrollTop >= scrollHeight - $container.height()) {
+                scrollTop = 0;
+            }
+            $container.scrollTop(scrollTop);
+            requestAnimationFrame(scrollStep);
+        }
+
+        scrollStep();
+    }
+
+    // function startAutoScroll(containerSelector, speed = 50) {
+    //     const $container = $(containerSelector);
+    //     if (!$container.length) return;
+
+    //     let scrollHeight = $container[0].scrollHeight; // total scroll
+    //     let scrollTop = 0;
+    //     let direction = 0.5; // scroll ke bawah
+
+    //     function scrollStep() {
+    //         scrollTop += direction;
+    //         const scrollHeight = $container[0].scrollHeight; // ambil baru tiap frame
+    //         if (scrollTop >= scrollHeight - $container.height()) {
+    //             scrollTop = 0;
+    //         }
+    //         $container.scrollTop(scrollTop);
+    //         requestAnimationFrame(scrollStep);
+    //     }
+
+    //     scrollStep();
+    // }
 
     function padZero(num) {
         return num < 10 ? '0' + num : num;
