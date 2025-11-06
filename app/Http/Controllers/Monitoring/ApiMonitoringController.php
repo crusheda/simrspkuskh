@@ -366,15 +366,23 @@ class ApiMonitoringController extends Controller
                                     // ->where('pk.RUANGAN', 'LIKE', '10203%')
                                     ->whereIn('pk.STATUS', [1,2,3]);
                             })
-                            ->select('pk.NOMOR','pk.RUANGAN','pp.TANGGAL')
+                            //tambahan cek tanggal
+                            ->leftJoin('medicalrecord.jadwal_kontrol AS jk', function($join) {
+                                $join->on('jk.KUNJUNGAN', '=', 'pk.NOMOR')
+                                    ->where('jk.STATUS', '!=', 0);
+                            })
+                            ->select('pk.NOMOR','pk.RUANGAN','pp.TANGGAL', 'jk.TANGGAL AS TANGGAL_SKDP')
                             ->where('pp.NORM', $getData->NORM)
                             ->whereIn('pp.STATUS', [1,2])
                             ->where('pp.TANGGAL', '<', $getData->TANGGAL)
                             ->orderBy('pp.TANGGAL', 'desc')
                             ->first();
 
+                $tgl_kunjungan = Carbon::parse($getData->TANGGAL)->format('Y-m-d');
+
                 // Jika rawat inap, cek lagi apakah ada kunjungan rawat inap setelah kunjungan baseline
-                if ($getSKDP) {
+                // if ($getSKDP) {
+                if ($getSKDP && !empty($getSKDP->TANGGAL_SKDP) && Carbon::parse($getSKDP->TANGGAL_SKDP)->format('Y-m-d') != $tgl_kunjungan) {
                     $rawatInap = DB::table('pendaftaran.pendaftaran AS pp')
                         ->join('pendaftaran.kunjungan AS pk', function($join) {
                             $join->on('pp.NOMOR', '=', 'pk.NOPEN')
@@ -403,6 +411,8 @@ class ApiMonitoringController extends Controller
             // die();
 
             $cetakSKDP = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$getSKDP->NOMOR]);
+            // print_r($cetakSKDP);
+            // die();
 
             // ----------------------------------------------------------------------
             $getTgl = Carbon::parse($getData->TANGGAL);
@@ -426,8 +436,6 @@ class ApiMonitoringController extends Controller
 
             // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
             $image = $generator->getBarcodePNG($skdp, 'QRCODE');
-            // print_r($generator);
-            // die();
 
             // Decode base64 jadi binary PNG
             $decodedImage = base64_decode($image);
