@@ -332,7 +332,7 @@ class ApiMonitoringController extends Controller
         {
             $getData = DB::table('pendaftaran.kunjungan AS pk')
                         ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-                        ->select('pk.NOMOR AS NOMOR','pk.RUANGAN','pp.NORM','pp.TANGGAL')
+                        ->select('pk.NOMOR AS NOMOR', 'pp.NOMOR AS NOPEN','pk.RUANGAN','pp.NORM','pp.TANGGAL')
                         ->where('pk.NOMOR',$kunjungan)
                         ->first();
 
@@ -353,11 +353,12 @@ class ApiMonitoringController extends Controller
                                 'jk.KUNJUNGAN',
                                 'pk.NOMOR'
                             )
-                            ->where('pj.NOPEN', $getData->NOMOR)
+                            ->where('pj.NOPEN', $getData->NOPEN)
                             ->whereNotNull('pj.NO_SURAT')
                             ->where('pj.NO_SURAT', '!=', '')
                             ->first();
-
+            // print_r($getSKDP);
+            // die();
             if (!$getSKDP) { // AMBIL DATA KUNJUNGAN DARI KUNJUNGAN PASIEN SEBELUMNYA (DENGAN RUANGAN YANG SAMA)
                 $getSKDP = DB::table('pendaftaran.pendaftaran AS pp')
                             ->join('pendaftaran.kunjungan AS pk', function($join) use ($getData) {
@@ -382,6 +383,31 @@ class ApiMonitoringController extends Controller
 
                 // Jika rawat inap, cek lagi apakah ada kunjungan rawat inap setelah kunjungan baseline
                 // if ($getSKDP) {
+                if ($getSKDP && !empty($getSKDP->TANGGAL_SKDP) && Carbon::parse($getSKDP->TANGGAL_SKDP)->format('Y-m-d') != $tgl_kunjungan) {
+                    $lanjutan = DB::table('pendaftaran.pendaftaran AS pp')
+                            ->join('pendaftaran.kunjungan AS pk', function($join) use ($getData) {
+                                $join->on('pp.NOMOR', '=', 'pk.NOPEN')
+                                    ->where('pk.RUANGAN', $getData->RUANGAN)
+                                    // ->where('pk.RUANGAN', 'LIKE', '10203%')
+                                    ->whereIn('pk.STATUS', [1,2,3]);
+                            })
+                            //tambahan cek tanggal
+                            ->join('medicalrecord.jadwal_kontrol AS jk', function($join) {
+                                $join->on('jk.KUNJUNGAN', '=', 'pk.NOMOR')
+                                    ->where('jk.STATUS', '!=', 0);
+                            })
+                            ->select('pk.NOMOR','pk.RUANGAN','pp.TANGGAL', 'jk.TANGGAL AS TANGGAL_SKDP')
+                            ->where('pp.NORM', $getData->NORM)
+                            ->whereIn('pp.STATUS', [1,2])
+                            ->where('jk.TANGGAL', '=', $tgl_kunjungan)
+                            ->orderBy('jk.TANGGAL', 'desc')
+                            ->first();
+                            // print_r($lanjutan);
+                            // die();
+                    if ($lanjutan) {
+                        $getSKDP = $lanjutan; // override pakai lanjutan
+                    }
+                }
                 if ($getSKDP && !empty($getSKDP->TANGGAL_SKDP) && Carbon::parse($getSKDP->TANGGAL_SKDP)->format('Y-m-d') != $tgl_kunjungan) {
                     $rawatInap = DB::table('pendaftaran.pendaftaran AS pp')
                         ->join('pendaftaran.kunjungan AS pk', function($join) {
