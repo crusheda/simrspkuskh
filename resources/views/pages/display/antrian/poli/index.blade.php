@@ -30,7 +30,8 @@
             <div class="card-header align-items-center d-flex justify-content-between py-2 px-0">
                 <div>
                     <div class="input-group">
-                        <select class="form-select" id="pilih_poli" disabled>
+                        {{-- POLI DOKTER 1 --}}
+                        <select class="form-select" id="pilih_poli1" disabled>
                             <option value="">Pilih Poliklinik</option>
                             @if (count($list['poli']) > 0)
                                 @foreach ($list['poli'] as $item)
@@ -38,28 +39,36 @@
                                 @endforeach
                             @endif
                         </select>
-                        <select class="form-select" id="pilih_dr" disabled>
+                        <select class="form-select" id="pilih_dr1" disabled>
                             <option value="">Pilih Dokter Spesialis</option>
                         </select>
-                        {{-- <select class="form-select" id="pilih_dr">
-                            <option value="">Pilih Dokter Spesialis</option>
-                            @if (count($list['dokter']) > 0)
-                                @foreach ($list['mapDokterPoli'] as $val)
-                                    @if ($val->RUANGAN == $('pilih_poli').val())
-                                        @foreach ($list['dokter'] as $item)
-                                            @if ($val->DOKTER == $item->ID_DPJP_SIMRS)
-                                                <option value="{{ $item->ID_DPJP_BPJS }}">{{ $item->NAMADOKTER }}</option>
-                                            @endif
-                                        @endforeach
-                                    @endif
+                        {{-- POLI DOKTER 2 --}}
+                        <select class="form-select" id="pilih_poli2" disabled hidden>
+                            <option value="">Pilih Poliklinik</option>
+                            @if (count($list['poli']) > 0)
+                                @foreach ($list['poli'] as $item)
+                                    <option value="{{ $item->IDRUANGAN }}">{{ $item->NAMARUANGAN }}</option>
                                 @endforeach
                             @endif
-                        </select> --}}
+                        </select>
+                        <select class="form-select" id="pilih_dr2" disabled hidden>
+                            <option value="">Pilih Dokter Spesialis</option>
+                        </select>
                         <div class="input-group-text">
-                            <input class="form-check-input" type="checkbox" id="showNama" value="" aria-label="" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark"
-                            data-bs-placement="bottom" title="Centang untuk Memperlihatkan Nama Pasien Di Antrian">
+                            <div class="form-check">
+                                <input class="form-check-input input-primary" type="checkbox" id="showNama" value="" aria-label="" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark"
+                                data-bs-placement="bottom" title="Centang untuk Memperlihatkan Nama Pasien Di Antrian">
+                                <label class="form-check-label">Identitas?</label>
+                            </div>
                         </div>
-                        <button class="btn btn-primary btn-wave me-1 waves-effect waves-light" id="tampil_antrian" onclick="refresh($('#pilih_poli').val(),$('#pilih_dr').val())" disabled>
+                        <div class="input-group-text">
+                            <div class="form-check">
+                                <input class="form-check-input input-danger" type="checkbox" id="showMultipleDisplay" value="" aria-label="" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark"
+                                data-bs-placement="bottom" title="Centang untuk Menampilkan 2 Display Antrian Poliklinik">
+                                <label class="form-check-label">Dual?</label>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-wave me-1 waves-effect waves-light" id="tampil_antrian" onclick="refresh($('#pilih_poli1').val(),$('#pilih_dr1').val(),$('#pilih_poli2').val(),$('#pilih_dr2').val())" disabled>
                             <i class="fas fa-search me-1"></i> Terapkan
                         </button>
                     </div>
@@ -67,7 +76,7 @@
                 <div class="btn-group">
                     {{-- <button id="enableSound" class="btn btn-light-info">🔔 Aktifkan Suara Antrian</button> --}}
                     <button id="openFullscreenBtn" class="btn btn-success d-inline-flex align-items-center" data-bs-toggle="tooltip"
-                        data-bs-placement="left" title="Terapkan Display Layar Penuh">
+                        data-bs-placement="left" title="Terapkan Display Layar Penuh" disabled>
                         <i class="ti ti-arrows-maximize me-2"></i> <span>Tampilan Layar Penuh</span>
                     </button>
                     <button class="btn btn-danger" id="pause" onclick="pauseProgressBar()" hidden><i class="ti ti-player-pause"></i></button>
@@ -94,15 +103,15 @@
                             </div>
                         </div>
                     </div>
-            <div class="progress" style="height: 15px;">
-                <div id="refresh-progress"
-                    class="progress-bar bg-warning"
-                    role="progressbar"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    style="width: 0%">
-                </div>
-            </div>
+                    <div class="progress" style="height: 15px;">
+                        <div id="refresh-progress"
+                            class="progress-bar bg-warning"
+                            role="progressbar"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                            style="width: 0%">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -126,8 +135,8 @@
             <div class="col-md-4">
                 <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
                     <div class="card-header bg-red-900">
-                        <div class="align-items-center w-100 text-center">
-                            <div class="p-4">
+                        <div class="align-items-center w-100 text-wrap">
+                            <div class="text-center p-4">
                                 <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Saat ini Dipanggil</h1>
                             </div>
                         </div>
@@ -157,16 +166,141 @@
 
         </div>
     </div>
+
+    {{-- FOR DUAL DISPLAY --}}
+    <div class="container-fluid py-3 card" id="myDivDual">
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="card custom-card">
+                    <div class="card-header bg-dark-gradient rounded p-2 ms-2 me-2">
+                        <div class="d-flex justify-content-between align-items-center w-100 text-wrap">
+                            <h1 id="antrian-tgl-m" style="font-size:40px">. . .</h1>
+                            <h1 id="antrian-detik-m" style="font-size:40px">. . .</h1>
+                        </div>
+                    </div>
+                    <div class="progress" style="height: 15px;">
+                        <div id="refresh-progress"
+                            class="progress-bar bg-warning"
+                            role="progressbar"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                            style="width: 0%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card custom-card">
+                    <div class="card-header bg-dark-gradient rounded">
+                        <div class="align-items-center w-100 text-wrap">
+                            <div id="poli-m1" class="fw-bold text-dark text-start mb-0" style="font-size:60px">
+                                <div class="spinner-border text-white" role="status">
+                                    <span class="visually-hidden">Memuat Nama Poliklinik...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
+                    <div class="card-header bg-cyan-900">
+                        <div class="align-items-center text-center w-100">
+                            <div class="p-4">
+                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Belum Dipanggil</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body card-bg-light overflow-auto" id="menunggu-m1">
+                        <div class="card custom-card mb-3 shadow">
+                            <div class="text-center p-4"><div class="spinner-border text-info" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
+                    <div class="card-header bg-red-900">
+                        <div class="align-items-center w-100 text-center">
+                            <div class="text-center p-4">
+                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Saat ini Dipanggil</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body card-bg-light d-flex flex-column justify-content-center align-items-center text-center" style="height: 100vh;" id="dipanggil-m1">
+                        <div class="text-center p-4"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card custom-card">
+                    <div class="card-header bg-dark-gradient rounded">
+                        <div class="d-flex justify-content-between align-items-center w-100 text-wrap">
+                            <div id="poli-m2" class="fw-bold text-dark text-start mb-0" style="font-size:60px">
+                                <div class="spinner-border text-white" role="status">
+                                    <span class="visually-hidden">Memuat Nama Poliklinik...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
+                    <div class="card-header bg-cyan-900">
+                        <div class="align-items-center text-center w-100">
+                            <div class="p-4">
+                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Belum Dipanggil</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body card-bg-light overflow-auto" id="menunggu-m2">
+                        <div class="card custom-card mb-3 shadow">
+                            <div class="text-center p-4"><div class="spinner-border text-info" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
+                    <div class="card-header bg-red-900">
+                        <div class="align-items-center w-100 text-center">
+                            <div class="p-4">
+                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Saat ini Dipanggil</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body card-bg-light d-flex flex-column justify-content-center align-items-center text-center" style="height: 100vh;" id="dipanggil-m2">
+                        <div class="text-center p-4"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- <div class="col-md-4">
+                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
+                    <div class="card-header bg-green-900">
+                        <div class="align-items-center text-center w-100">
+                            <div class="p-4">
+                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Sudah Dipanggil</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body card-bg-light overflow-auto" id="selesai">
+                        <div class="card custom-card mb-3 shadow">
+                            <div class="text-center p-4"><div class="spinner-border text-success" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div> --}}
+
+        </div>
+    </div>
 </div>
 <!-- [ Main Content ] end -->
 
 <script>
+    let elemm = $("#myDiv")[0];
     let refreshInterval = 5000; // 1 menit = 60000 ms, 5000 = 5 detik
     let progressBar = $("#refresh-progress");
     let progressInterval; // simpan interval supaya bisa dihentikan
     let lastDipanggil = null; // simpan nomor terakhir yang sudah dipanggil
     let soundEnabled = false;
     let identityEnabled = false;
+    let multipleDisplayEnabled = false;
     let progressPaused = false;
     let menungguScrollTop = $('#menunggu').scrollTop();
     let selesaiScrollTop = $('#selesai').scrollTop();
@@ -194,23 +328,9 @@
         updateJam();
         setInterval(updateJam, 1000);
 
-        var elem = $("#myDiv")[0]; // ambil elemen DOM murni dari jQuery object
-
-        $("#openFullscreenBtn").on("click", function() {
-            if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-            } else if (elem.mozRequestFullScreen) { // Firefox
-            elem.mozRequestFullScreen();
-            } else if (elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
-            elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) { // IE/Edge
-            elem.msRequestFullscreen();
-            }
-        });
-
-        $('#pilih_poli').on('change', function () {
+        $('#pilih_poli1').on('change', function () {
             const poliId = $(this).val();
-            const $dokterSelect = $('#pilih_dr');
+            const $dokterSelect = $('#pilih_dr1');
 
             $dokterSelect.empty().append('<option value="">Pilih Dokter Spesialis</option>');
 
@@ -238,12 +358,20 @@
             });
         });
 
-        $('#pilih_dr').on('change', function () {
+        $('#pilih_dr1').on('change', function () {
             const selDr = $(this).val();
             if (!selDr) {
                 $('#tampil_antrian').prop('disabled',true);
             } else {
-                $('#tampil_antrian').prop('disabled',false);
+                if ($('#showMultipleDisplay').is(':checked')) {
+                    if ($('#pilih_poli2').val() == '' || $('#pilih_dr2').val() == '') {
+                        $('#tampil_antrian').prop('disabled',true);
+                    } else {
+                        $('#tampil_antrian').prop('disabled',false);
+                    }
+                } else {
+                    $('#tampil_antrian').prop('disabled',false);
+                }
             };
         });
 
@@ -260,11 +388,91 @@
             console.log('Identitas Diperlihatkan : '+identityEnabled);
         });
 
+        $('#showMultipleDisplay').on('change', function() {
+            const showMultipleDisplay = $(this).is(':checked');
+            if (showMultipleDisplay) { // ambil elemen DOM murni dari jQuery object
+                elemm = $("#myDivDual")[0];
+            } else {
+                elemm = $("#myDiv")[0];
+            }
+
+            if (showMultipleDisplay) {
+                $('#tampil_antrian').prop('disabled',true);
+                multipleDisplayEnabled = true;
+                $('#pilih_poli2').prop('disabled',false).prop('hidden',false);
+                $('#pilih_dr2').prop('hidden',false);
+
+                $('#pilih_poli2').on('change', function () {
+                    const poliId = $(this).val();
+                    const $dokterSelect = $('#pilih_dr2');
+
+                    $dokterSelect.empty().append('<option value="">Pilih Dokter Spesialis</option>');
+
+                    if (!poliId || poliId == '') {
+                        $dokterSelect.prop('disabled',true);
+                        return;
+                    } else {
+                        $dokterSelect.prop('disabled',false);
+                        $dokterSelect.val('');
+                        $('#tampil_antrian').prop('disabled',true);
+                    };
+
+                    // Ambil daftar dokter yang sesuai dengan poli yang dipilih
+                    const dokterTerkait = mapDokterPoli
+                        .filter(m => m.RUANGAN == poliId)
+                        .map(m => m.DOKTER);
+
+                    // Loop daftar dokter dan tampilkan hanya yang sesuai
+                    semuaDokter.forEach(d => {
+                        if (dokterTerkait.includes(d.ID_DPJP_SIMRS)) {
+                            $dokterSelect.append(
+                                `<option value="${d.ID_DPJP_BPJS}">${d.NAMADOKTER}</option>`
+                            );
+                        }
+                    });
+                });
+
+                $('#pilih_dr2').on('change', function () {
+                    const selDr2 = $(this).val();
+                    if (!selDr2) {
+                        $('#tampil_antrian').prop('disabled',true);
+                    } else {
+                        if ($('#pilih_poli1').val() == '' || $('#pilih_dr1').val() == '') {
+                            $('#tampil_antrian').prop('disabled',true);
+                        } else {
+                            $('#tampil_antrian').prop('disabled',false);
+                        }
+                    };
+                });
+            } else {
+                if ($('#pilih_poli1').val() == '' || $('#pilih_dr1').val() == '') {
+                    $('#tampil_antrian').prop('disabled',true);
+                } else {
+                    $('#tampil_antrian').prop('disabled',false);
+                }
+                multipleDisplayEnabled = false;
+                $('#pilih_poli2').val('').prop('disabled',true).prop('hidden',true);
+                $('#pilih_dr2').val('').prop('disabled',true).prop('hidden',true);
+            }
+        });
+
         // startProgressBar();
-        $('#pilih_poli').prop('disabled',false);
+        $('#pilih_poli1').prop('disabled',false);
 
         startAutoScroll('#menunggu', 1); // 0.3
         startAutoScroll('#selesai', 1); // 0.3
+
+        $("#openFullscreenBtn").on("click", function() {
+            if (elemm.requestFullscreen) {
+            elemm.requestFullscreen();
+            } else if (elemm.mozRequestFullScreen) { // Firefox
+            elemm.mozRequestFullScreen();
+            } else if (elemm.webkitRequestFullscreen) { // Chrome, Safari, Opera
+            elemm.webkitRequestFullscreen();
+            } else if (elemm.msRequestFullscreen) { // IE/Edge
+            elemm.msRequestFullscreen();
+            }
+        });
     });
 
     // function playSound(resDipanggil = null) {
@@ -417,14 +625,9 @@
                 progressBar.css("width", progress + "%");
             }
 
-            // progress += step;
-            // if (progress > 100) progress = 100;
-
-            // progressBar.css("width", progress + "%");
-
             if (progress >= 100) {
                 clearInterval(progressInterval);
-                refresh($('#pilih_poli').val(),$('#pilih_dr').val());
+                refresh($('#pilih_poli1').val(),$('#pilih_dr1').val(),$('#pilih_poli2').val(),$('#pilih_dr2').val());
             }
         }, 100);
     }
@@ -434,8 +637,10 @@
         progressBar.css("width", "0%"); // reset
     }
 
-    function refresh(poli,dr) {
-        if (poli == '') {
+    function refresh(poli1,dr1,poli2,dr2) {
+        var md = $('#showMultipleDisplay').is(':checked');
+
+        if (poli1 == '') {
             iziToast.error({
                 title: 'Maaf!',
                 message: 'Pilih Poliklinik terlebih dahulu.',
@@ -443,7 +648,7 @@
             });
             return;
         }
-        if (dr == '') {
+        if (dr1 == '') {
             iziToast.error({
                 title: 'Maaf!',
                 message: 'Pilih Dokter Spesialis terlebih dahulu.',
@@ -452,169 +657,54 @@
             return;
         }
 
+        if (md) { // Jika Multiple Display AKTIF!!
+            if (poli2 == '') {
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Pilih Poliklinik Display Kedua terlebih dahulu.',
+                    position: 'topRight'
+                });
+                return;
+            }
+            if (dr2 == '') {
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Pilih Dokter Spesialis Display Kedua terlebih dahulu.',
+                    position: 'topRight'
+                });
+                return;
+            }
+        }
+
         $('#tampil_antrian').find('i').removeClass('fa-search').addClass('fa-sync fa-spin').prop('disabled',true);
         const tgl = moment().format('YYYY-MM-DD'); // TGL HARI INI
 
+        var save = new FormData();
+        save.append('tgl', tgl);
+        save.append('poli1', poli1);
+        save.append('dr1', dr1);
+        save.append('poli2', poli2);
+        save.append('dr2', dr2);
+        save.append('md', md);
+
         $.ajax({
-            url: `/api/display/antrian/poli/${tgl}/${poli}/${dr}`,
-            type: "GET",
-            dataType: "json",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: `/api/display/antrian/poli`,
+            method: 'post',
+            data: save,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
             success: function(res) {
-                $('#poli').html(`
-                    <h1 class="mb-0" style="font-size:80px">Antrean <b class="text-danger fw-bold">${res.poli.NAMARUANGAN}</b></h1>
-                    <h1 class="mb-0" style="font-size:50px">Dokter : <b class="text-primary fw-bold">${res.dokter.NAMADOKTER}</b></h1>
-                `);
-
-                // render data
-                let rows_menunggu = "";
-                let rows_selesai = "";
-
-                if (res.menunggu.length === 0) {
-                    rows_menunggu = ` `;
+                if (md) {
+                    startDisplayMultiple(res);
                 } else {
-                    $.each(res.menunggu, function(index, item) {
-                        rows_menunggu += `
-                            <div class="card custom-card mb-3 shadow">
-                                <div class="card-body card-bg-light d-flex align-items-center gap-3">
-                                    <div class="me-3 border border-primary rounded d-flex justify-content-center align-items-center"
-                                        style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
-                                        <span class="fw-bold p-2" style="font-size: 50px">
-                                            ${item.POS ? item.POS.toString() : 'A2'}-${item.NOMORANTREAN.toString().padStart(3, '0')}
-                                        </span>
-                                    </div>
-                                    <div class="flex-grow-1" style="min-width: 0;">
-                                        <div class="fs-2 fw-medium text-truncate">
-                                            ${identityEnabled ? item.NAMAPASIEN : 'Menunggu Dipanggil'}
-                                        </div>
-                                        <p class="mb-0 text-muted fs-3">RM. ${item.NORM.toString().padStart(8, '0')}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
+                    startDisplaySingle(res);
                 }
-                $("#menunggu").empty().html(rows_menunggu);
-
-                if (res.dipanggil && res.dipanggil.NOMORANTREAN) {
-                    lastDipanggil = res.dipanggil; // simpan seluruh objek
-                    $('#dipanggil').empty().append(`
-                        <div class="mb-3">
-                            <h2 class="fw-bold" style="font-size: 60px">NOMOR ANTRIAN</h2>
-                            <h1 class="fw-bold text-danger" style="font-size: 170px">${res.dipanggil.POS?res.dipanggil.POS.toString()+'-':''}${res.dipanggil.NOMORANTREAN.toString().padStart(3, '0')}</h1>
-                        </div>
-                        <div class="mb-3">
-                            <div class="fw-bold mb-3" style="font-size:55px"><u>${res.dipanggil.NAMARUANGAN}</u></div>
-                            <div class="fw-bold mb-3 text-truncate" style="font-size:45px" id="namaShowDipanggil" hidden>${res.dipanggil.NAMAPASIEN}</div>
-                            <div class="fw-bold mb-3" style="font-size:40px">RM. ${res.dipanggil.NORM.toString().padStart(8, '0')}</div>
-                        </div>
-                    `);
-
-                    if (identityEnabled) {
-                        $('#namaShowDipanggil').prop('hidden',false);
-                    } else {
-                        $('#namaShowDipanggil').prop('hidden',true);
-                    }
-
-                    pauseProgressBar();
-                    $('#pause').prop('disabled',true);
-                    $('#resume').prop('disabled',true);
-
-                    playSound(res.dipanggil).then(() => {
-                        resumeProgressBar(); // ▶️ lanjutkan progress setelah suara selesai
-                        $('#pause').prop('disabled',false);
-                        $('#resume').prop('disabled',false);
-                    });
-
-                    // Change STATUS from 1 into 2
-                    const save = new FormData();
-                    save.append('ID', res.dipanggil.ANTRIAN_ID);
-                    $.ajax({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: "{{ route('api.display.antrian.update') }}",
-                        method: 'POST',
-                        data: save,
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        dataType: 'json',
-                        success: function(response) {
-                            console.log(`Antrian ID#${res.dipanggil.ANTRIAN_ID} Dipanggil Diupdate ke STATUS = 2. Total Antrian Terupdate = ${response}`);
-                        },
-                        error: function(xhr, status, error) {
-                            console.log(`Gagal Mengupdate Antrian ID#${res.dipanggil.ANTRIAN_ID} Dipanggil ke STATUS = 2.`);
-                        }
-                    })
-                } else if (lastDipanggil) {
-                    // res.dipanggil kosong → tampilkan nomor terakhir
-                    $('#dipanggil').empty().append(`
-                        <div class="mb-3">
-                            <h2 class="fw-bold" style="font-size:60px">NOMOR ANTRIAN</h2>
-                            <h1 class="fw-bold text-danger" style="font-size:170px">${lastDipanggil.POS?lastDipanggil.POS+'-':''}${lastDipanggil.NOMORANTREAN.toString().padStart(3,'0')}</h1>
-                        </div>
-                        <div class="mb-3">
-                            <div class="fw-bold mb-3" style="font-size:55px"><u>${lastDipanggil.NAMARUANGAN}</u></div>
-                            <div class="fw-bold mb-3 text-truncate" style="font-size:45px" id="namaShowDipanggil" hidden>${identityEnabled?lastDipanggil.NAMAPASIEN:''}</div>
-                            <div class="fw-bold mb-3" style="font-size:40px">RM. ${lastDipanggil.NORM.toString().padStart(8,'0')}</div>
-                        </div>
-                    `);
-
-                    if (identityEnabled) {
-                        $('#namaShowDipanggil').prop('hidden',false);
-                    } else {
-                        $('#namaShowDipanggil').prop('hidden',true);
-                    }
-                } else {
-                    $('#dipanggil').empty();
-                }
-
-                let selesaiFiltered = '';
-                if (res.selesai.length > 0) {
-                    selesaiFiltered = res.selesai;
-
-                    // jika ada lastDipanggil dan saat ini dipanggil kosong → exclude dari rows_selesai
-                    if (lastDipanggil && (!res.dipanggil || res.dipanggil.NOMORANTREAN === null)) {
-                        selesaiFiltered = res.selesai.filter(item => item.ID !== lastDipanggil.ANTRIAN_ID);
-                    }
-
-                    $.each(selesaiFiltered, function(index, item) {
-                        rows_selesai += `
-                            <div class="card custom-card mb-3 shadow">
-                                <div class="card-body card-bg-light d-flex align-items-center gap-3">
-                                    <div class="me-3 border border-success rounded d-flex justify-content-center align-items-center" style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
-                                        <span class="fw-bold p-2" style="font-size: 50px">${item.POS.toString()}-${item.NOMORANTREAN.toString().padStart(3, '0')}</span>
-                                    </div>
-                                    <div class="flex-grow-1" style="min-width: 0;">
-                                        <div class="fs-2 fw-medium text-truncate ${item.STATUSANTREAN == 2?'text-indigo-900':''}">${identityEnabled?item.NAMAPASIEN:'Sudah Dipanggil'}</div>
-                                        <p class="mb-0 text-muted fs-3">RM. ${item.NORM.toString().padStart(8, '0')}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                }
-
-                $("#selesai").empty().html(rows_selesai);
-
-                // console.log("lastDipanggil:", lastDipanggil);
-                // console.log("res.selesai:", res.selesai);
-                // console.log("selesaiFiltered:", selesaiFiltered);
-
-                $('#myDiv').prop('hidden',false);
-
-                // kalau sukses -> jalankan progress bar lagi
-                startProgressBar();
-
-                // kembalikan posisi scroll sebelumnya
-                $('#menunggu').scrollTop(menungguScrollTop);
-                $('#selesai').scrollTop(selesaiScrollTop);
-
-                // Jalankan auto scroll untuk menunggu dan selesai
-                // startAutoScroll('#menunggu', 50);
-                // startAutoScroll('#selesai', 50);
-
-                $('#tampil_antrian').find('i').removeClass('fa-sync fa-spin').addClass('fa-search').prop('disabled',false);
+                $('#openFullscreenBtn').prop('disabled',false);
             },
             error: function(xhr, status, error) {
                 iziToast.error({
@@ -632,6 +722,330 @@
                 $('#tampil_antrian').find('i').removeClass('fa-sync fa-spin').addClass('fa-search').prop('disabled',false);
             }
         });
+    }
+
+    function startDisplaySingle(res) {
+        $('#myDivDual').prop('hidden',true);
+
+        $('#poli').html(`
+            <h1 class="mb-0" style="font-size:80px">Antrean <b class="text-danger fw-bold">${res.poli1.NAMARUANGAN}</b></h1>
+            <h1 class="mb-0" style="font-size:50px">Dokter : <b class="text-primary fw-bold">${res.dokter1.NAMADOKTER}</b></h1>
+        `);
+
+        // render data
+        let rows_menunggu = "";
+        let rows_selesai = "";
+
+        if (res.menunggu1.length === 0) {
+            rows_menunggu = ` `;
+        } else {
+            $.each(res.menunggu1, function(index, item) {
+                rows_menunggu += `
+                    <div class="card custom-card mb-3 shadow">
+                        <div class="card-body card-bg-light d-flex align-items-center gap-3">
+                            <div class="me-3 border border-primary rounded d-flex justify-content-center align-items-center"
+                                style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
+                                <span class="fw-bold p-2" style="font-size: 50px">
+                                    ${item.POS ? item.POS.toString() : 'A2'}-${item.NOMORANTREAN.toString().padStart(3, '0')}
+                                </span>
+                            </div>
+                            <div class="flex-grow-1" style="min-width: 0;">
+                                <div class="fs-2 fw-medium text-truncate">
+                                    ${identityEnabled ? item.NAMAPASIEN : 'Menunggu Dipanggil'}
+                                </div>
+                                <p class="mb-0 text-muted fs-3">RM. ${item.NORM.toString().padStart(8, '0')}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        $("#menunggu").empty().html(rows_menunggu);
+
+        if (res.dipanggil1 && res.dipanggil1.NOMORANTREAN) {
+            lastDipanggil = res.dipanggil1; // simpan seluruh objek
+            $('#dipanggil').empty().append(`
+                <div class="mb-3">
+                    <h2 class="fw-bold" style="font-size: 60px">NOMOR ANTRIAN</h2>
+                    <h1 class="fw-bold text-danger" style="font-size: 170px">${res.dipanggil1.POS?res.dipanggil1.POS.toString()+'-':''}${res.dipanggil1.NOMORANTREAN.toString().padStart(3, '0')}</h1>
+                </div>
+                <div class="mb-3">
+                    <div class="fw-bold mb-3" style="font-size:55px"><u>${res.dipanggil1.NAMARUANGAN}</u></div>
+                    <div class="fw-bold mb-3 text-truncate" style="font-size:45px" id="namaShowDipanggil" hidden>${res.dipanggil1.NAMAPASIEN}</div>
+                    <div class="fw-bold mb-3" style="font-size:40px">RM. ${res.dipanggil1.NORM.toString().padStart(8, '0')}</div>
+                </div>
+            `);
+
+            if (identityEnabled) {
+                $('#namaShowDipanggil').prop('hidden',false);
+            } else {
+                $('#namaShowDipanggil').prop('hidden',true);
+            }
+
+            pauseProgressBar();
+            $('#pause').prop('disabled',true);
+            $('#resume').prop('disabled',true);
+
+            playSound(res.dipanggil1).then(() => {
+                resumeProgressBar(); // ▶️ lanjutkan progress setelah suara selesai
+                $('#pause').prop('disabled',false);
+                $('#resume').prop('disabled',false);
+            });
+
+            // Change STATUS from 1 into 2
+            const save = new FormData();
+            save.append('ID', res.dipanggil1.ANTRIAN_ID);
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('api.display.antrian.update') }}",
+                method: 'POST',
+                data: save,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function(response) {
+                    console.log(`Antrian ID#${res.dipanggil1.ANTRIAN_ID} Dipanggil Diupdate ke STATUS = 2. Total Antrian Terupdate = ${response}`);
+                },
+                error: function(xhr, status, error) {
+                    console.log(`Gagal Mengupdate Antrian ID#${res.dipanggil1.ANTRIAN_ID} Dipanggil ke STATUS = 2.`);
+                }
+            })
+        } else if (lastDipanggil) {
+            // res.dipanggil kosong → tampilkan nomor terakhir
+            $('#dipanggil').empty().append(`
+                <div class="mb-3">
+                    <h2 class="fw-bold" style="font-size:60px">NOMOR ANTRIAN</h2>
+                    <h1 class="fw-bold text-danger" style="font-size:170px">${lastDipanggil.POS?lastDipanggil.POS+'-':''}${lastDipanggil.NOMORANTREAN.toString().padStart(3,'0')}</h1>
+                </div>
+                <div class="mb-3">
+                    <div class="fw-bold mb-3" style="font-size:55px"><u>${lastDipanggil.NAMARUANGAN}</u></div>
+                    <div class="fw-bold mb-3 text-truncate" style="font-size:45px" id="namaShowDipanggil" hidden>${identityEnabled?lastDipanggil.NAMAPASIEN:''}</div>
+                    <div class="fw-bold mb-3" style="font-size:40px">RM. ${lastDipanggil.NORM.toString().padStart(8,'0')}</div>
+                </div>
+            `);
+
+            if (identityEnabled) {
+                $('#namaShowDipanggil').prop('hidden',false);
+            } else {
+                $('#namaShowDipanggil').prop('hidden',true);
+            }
+        } else {
+            $('#dipanggil').empty();
+        }
+
+        let selesaiFiltered = '';
+        if (res.selesai1.length > 0) {
+            selesaiFiltered = res.selesai1;
+
+            // jika ada lastDipanggil dan saat ini dipanggil kosong → exclude dari rows_selesai
+            if (lastDipanggil && (!res.dipanggil || res.dipanggil1.NOMORANTREAN === null)) {
+                selesaiFiltered = res.selesai1.filter(item => item.ID !== lastDipanggil.ANTRIAN_ID);
+            }
+
+            $.each(selesaiFiltered, function(index, item) {
+                rows_selesai += `
+                    <div class="card custom-card mb-3 shadow">
+                        <div class="card-body card-bg-light d-flex align-items-center gap-3">
+                            <div class="me-3 border border-success rounded d-flex justify-content-center align-items-center" style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
+                                <span class="fw-bold p-2" style="font-size: 50px">${item.POS.toString()}-${item.NOMORANTREAN.toString().padStart(3, '0')}</span>
+                            </div>
+                            <div class="flex-grow-1" style="min-width: 0;">
+                                <div class="fs-2 fw-medium text-truncate ${item.STATUSANTREAN == 2?'text-indigo-900':''}">${identityEnabled?item.NAMAPASIEN:'Sudah Dipanggil'}</div>
+                                <p class="mb-0 text-muted fs-3">RM. ${item.NORM.toString().padStart(8, '0')}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        $("#selesai").empty().html(rows_selesai);
+
+        // console.log("lastDipanggil:", lastDipanggil);
+        // console.log("res.selesai:", res.selesai);
+        // console.log("selesaiFiltered:", selesaiFiltered);
+
+        $('#myDiv').prop('hidden',false);
+
+        // kalau sukses -> jalankan progress bar lagi
+        startProgressBar();
+
+        // kembalikan posisi scroll sebelumnya
+        $('#menunggu').scrollTop(menungguScrollTop);
+        $('#selesai').scrollTop(selesaiScrollTop);
+
+        // Jalankan auto scroll untuk menunggu dan selesai
+        // startAutoScroll('#menunggu', 50);
+        // startAutoScroll('#selesai', 50);
+
+        $('#tampil_antrian').find('i').removeClass('fa-sync fa-spin').addClass('fa-search').prop('disabled',false);
+    }
+
+    function startDisplayMultiple(res) {
+        $('#myDiv').prop('hidden',true);
+
+        $('#poli-m1').html(`
+            <h1 class="mb-0 text-wrap" style="font-size:60px">Antrean <b class="text-danger fw-bold">${res.poli1.NAMARUANGAN}</b></h1>
+            <h1 class="mb-0 text-wrap" style="font-size:40px">Dokter : <b class="text-primary fw-bold">${res.dokter1.NAMADOKTER}</b></h1>
+        `);
+        $('#poli-m2').html(`
+            <h1 class="mb-0 text-wrap" style="font-size:60px">Antrean <b class="text-danger fw-bold">${res.poli2.NAMARUANGAN}</b></h1>
+            <h1 class="mb-0 text-wrap" style="font-size:40px">Dokter : <b class="text-primary fw-bold">${res.dokter2.NAMADOKTER}</b></h1>
+        `);
+
+        // render data
+        let rows_menunggu = "";
+        let rows_selesai = "";
+
+        if (res.menunggu1.length === 0) {
+            rows_menunggu = ` `;
+        } else {
+            $.each(res.menunggu1, function(index, item) {
+                rows_menunggu += `
+                    <div class="card custom-card mb-3 shadow">
+                        <div class="card-body card-bg-light d-flex align-items-center gap-3">
+                            <div class="me-3 border border-primary rounded d-flex justify-content-center align-items-center"
+                                style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
+                                <span class="fw-bold p-2" style="font-size: 50px">
+                                    ${item.POS ? item.POS.toString() : 'A2'}-${item.NOMORANTREAN.toString().padStart(3, '0')}
+                                </span>
+                            </div>
+                            <div class="flex-grow-1" style="min-width: 0;">
+                                <div class="fs-2 fw-medium text-truncate">
+                                    ${identityEnabled ? item.NAMAPASIEN : 'Menunggu Dipanggil'}
+                                </div>
+                                <p class="mb-0 text-muted fs-3">RM. ${item.NORM.toString().padStart(8, '0')}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        $("#menunggu-m1").empty().html(rows_menunggu);
+
+        if (res.dipanggil1 && res.dipanggil1.NOMORANTREAN) {
+            lastDipanggil = res.dipanggil1; // simpan seluruh objek
+            $('#dipanggil-m1').empty().append(`
+                <div class="mb-3">
+                    <h2 class="fw-bold" style="font-size: 60px">NOMOR ANTRIAN</h2>
+                    <h1 class="fw-bold text-danger" style="font-size: 170px">${res.dipanggil1.POS?res.dipanggil1.POS.toString()+'-':''}${res.dipanggil1.NOMORANTREAN.toString().padStart(3, '0')}</h1>
+                </div>
+                <div class="mb-3">
+                    <div class="fw-bold mb-3" style="font-size:55px"><u>${res.dipanggil1.NAMARUANGAN}</u></div>
+                    <div class="fw-bold mb-3 text-truncate" style="font-size:45px" id="namaShowDipanggil-m1" hidden>${res.dipanggil1.NAMAPASIEN}</div>
+                    <div class="fw-bold mb-3" style="font-size:40px">RM. ${res.dipanggil1.NORM.toString().padStart(8, '0')}</div>
+                </div>
+            `);
+
+            if (identityEnabled) {
+                $('#namaShowDipanggil-m1').prop('hidden',false);
+            } else {
+                $('#namaShowDipanggil-m1').prop('hidden',true);
+            }
+
+            pauseProgressBar();
+            $('#pause').prop('disabled',true);
+            $('#resume').prop('disabled',true);
+
+            playSound(res.dipanggil1).then(() => {
+                resumeProgressBar(); // ▶️ lanjutkan progress setelah suara selesai
+                $('#pause').prop('disabled',false);
+                $('#resume').prop('disabled',false);
+            });
+
+            // Change STATUS from 1 into 2
+            const save = new FormData();
+            save.append('ID', res.dipanggil1.ANTRIAN_ID);
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('api.display.antrian.update') }}",
+                method: 'POST',
+                data: save,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function(response) {
+                    console.log(`Antrian ID#${res.dipanggil1.ANTRIAN_ID} Dipanggil Diupdate ke STATUS = 2. Total Antrian Terupdate = ${response}`);
+                },
+                error: function(xhr, status, error) {
+                    console.log(`Gagal Mengupdate Antrian ID#${res.dipanggil1.ANTRIAN_ID} Dipanggil ke STATUS = 2.`);
+                }
+            })
+        } else if (lastDipanggil) {
+            // res.dipanggil kosong → tampilkan nomor terakhir
+            $('#dipanggil-m1').empty().append(`
+                <div class="mb-3">
+                    <h2 class="fw-bold" style="font-size:60px">NOMOR ANTRIAN</h2>
+                    <h1 class="fw-bold text-danger" style="font-size:170px">${lastDipanggil.POS?lastDipanggil.POS+'-':''}${lastDipanggil.NOMORANTREAN.toString().padStart(3,'0')}</h1>
+                </div>
+                <div class="mb-3">
+                    <div class="fw-bold mb-3" style="font-size:55px"><u>${lastDipanggil.NAMARUANGAN}</u></div>
+                    <div class="fw-bold mb-3 text-truncate" style="font-size:45px" id="namaShowDipanggil" hidden>${identityEnabled?lastDipanggil.NAMAPASIEN:''}</div>
+                    <div class="fw-bold mb-3" style="font-size:40px">RM. ${lastDipanggil.NORM.toString().padStart(8,'0')}</div>
+                </div>
+            `);
+
+            if (identityEnabled) {
+                $('#namaShowDipanggil').prop('hidden',false);
+            } else {
+                $('#namaShowDipanggil').prop('hidden',true);
+            }
+        } else {
+            $('#dipanggil-m1').empty();
+        }
+
+        let selesaiFiltered = '';
+        if (res.selesai1.length > 0) {
+            selesaiFiltered = res.selesai1;
+
+            // jika ada lastDipanggil dan saat ini dipanggil kosong → exclude dari rows_selesai
+            if (lastDipanggil && (!res.dipanggil1 || res.dipanggil1.NOMORANTREAN === null)) {
+                selesaiFiltered = res.selesai1.filter(item => item.ID !== lastDipanggil.ANTRIAN_ID);
+            }
+
+            $.each(selesaiFiltered, function(index, item) {
+                rows_selesai += `
+                    <div class="card custom-card mb-3 shadow">
+                        <div class="card-body card-bg-light d-flex align-items-center gap-3">
+                            <div class="me-3 border border-success rounded d-flex justify-content-center align-items-center" style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
+                                <span class="fw-bold p-2" style="font-size: 50px">${item.POS.toString()}-${item.NOMORANTREAN.toString().padStart(3, '0')}</span>
+                            </div>
+                            <div class="flex-grow-1" style="min-width: 0;">
+                                <div class="fs-2 fw-medium text-truncate ${item.STATUSANTREAN == 2?'text-indigo-900':''}">${identityEnabled?item.NAMAPASIEN:'Sudah Dipanggil'}</div>
+                                <p class="mb-0 text-muted fs-3">RM. ${item.NORM.toString().padStart(8, '0')}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        $("#selesai-m1").empty().html(rows_selesai);
+
+        // console.log("lastDipanggil:", lastDipanggil);
+        // console.log("res.selesai:", res.selesai);
+        // console.log("selesaiFiltered:", selesaiFiltered);
+
+        $('#myDivDual').prop('hidden',false);
+
+        // kalau sukses -> jalankan progress bar lagi
+        // startProgressBar();
+
+        // kembalikan posisi scroll sebelumnya
+        $('#menunggu-m1').scrollTop(menungguScrollTop);
+        $('#selesai-m1').scrollTop(selesaiScrollTop);
+
+        // Jalankan auto scroll untuk menunggu dan selesai
+        // startAutoScroll('#menunggu', 50);
+        // startAutoScroll('#selesai', 50);
+
+        $('#tampil_antrian').find('i').removeClass('fa-sync fa-spin').addClass('fa-search').prop('disabled',false);
     }
 
     function startAutoScroll(containerSelector, speed = 1) {
@@ -699,8 +1113,13 @@
         const waktuFormatTgl = `${namaHari}, ${tanggal} ${namaBulan} ${tahun}`;
         const waktuFormatDetik = `Pukul ${jam}:${menit}:${detik} WIB`;
 
-        $('#antrian-tgl').text(waktuFormatTgl);
-        $('#antrian-detik').text(waktuFormatDetik);
+        if ($('#showMultipleDisplay').is(':checked')) {
+            $('#antrian-tgl-m').text(waktuFormatTgl);
+            $('#antrian-detik-m').text(waktuFormatDetik);
+        } else {
+            $('#antrian-tgl').text(waktuFormatTgl);
+            $('#antrian-detik').text(waktuFormatDetik);
+        }
     }
 </script>
 @endsection

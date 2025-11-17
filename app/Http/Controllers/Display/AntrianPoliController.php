@@ -42,14 +42,15 @@ class AntrianPoliController extends Controller
         return view('pages.display.antrian.poli.index')->with('list', $data);
     }
 
-    function getDisplayAntrianPoli($tgl,$ruangan,$dr)
+    function getDisplayAntrianPoli(Request $request)
     {
+        // $tgl,$ruangan,$dr,$md
         $tgl = Carbon::now()->isoFormat('YYYY-MM-DD');
-        // $tgl = '2025-11-02';
+        $tgl = '2025-11-02';
         // $ruangan = '102010105'; // POLI BEDAH
 
         // Ambil yang sedang dipanggil dulu
-        $dipanggil = DB::table('pendaftaran.panggilan_antrian_ruangan AS par')
+        $dipanggil1 = DB::table('pendaftaran.panggilan_antrian_ruangan AS par')
             ->select(
                 'par.ID',
                 'pp.NORM',
@@ -65,17 +66,17 @@ class AntrianPoliController extends Controller
             })
             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
             ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
-            ->where('ar.RUANGAN', $ruangan)
-            ->where('ar.DOKTER', $dr)
+            ->where('ar.RUANGAN', $request->poli1)
+            ->where('ar.DOKTER', $request->dr1)
             ->where('par.STATUS', 1)
             ->where('ar.TANGGAL',$tgl)
             ->orderBy('par.ID', 'ASC')
             ->first();
 
-        $antrianDipanggilId = $dipanggil->ANTRIAN_ID ?? null;
+        $antrianDipanggilId1 = $dipanggil1->ANTRIAN_ID ?? null;
 
         // MENUNGGU (exclude yang dipanggil)
-        $menunggu = DB::table('pendaftaran.antrian_ruangan AS ar')
+        $menunggu1 = DB::table('pendaftaran.antrian_ruangan AS ar')
             ->select(
                 'pp.NORM',
                 'ar.ID',
@@ -90,12 +91,12 @@ class AntrianPoliController extends Controller
             // })
             ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
-            ->where('ar.RUANGAN', $ruangan)
-            ->where('ar.DOKTER', $dr)
+            ->where('ar.RUANGAN', $request->poli1)
+            ->where('ar.DOKTER', $request->dr1)
             ->where('ar.STATUS', 1) // MENUNGGU DIPANGGIL
             ->where('ar.TANGGAL',$tgl)
-            ->when($antrianDipanggilId, function($q) use ($antrianDipanggilId) {
-                $q->where('ar.ID','!=',$antrianDipanggilId);
+            ->when($antrianDipanggilId1, function($q) use ($antrianDipanggilId1) {
+                $q->where('ar.ID','!=',$antrianDipanggilId1);
             })
             ->whereNotExists(function($q) {
                 $q->select(DB::raw(1))
@@ -105,62 +106,136 @@ class AntrianPoliController extends Controller
             ->orderBy('ar.NOMOR', 'ASC')
             ->get();
 
-        $menungguIds = $menunggu->pluck('ID')->toArray(); // ambil ID dari $menunggu
-
-        $selesai = DB::table('pendaftaran.antrian_ruangan AS ar')
-            ->select(
-                'pp.NORM','ar.ID',
-                DB::raw('master.getNamaLengkap(pp.NORM) AS NAMAPASIEN'),
-                'ar.POS','ar.NOMOR AS NOMORANTREAN','ar.STATUS AS STATUSANTREAN',
-                'par.STATUS AS STATUSPANGGILAN',
-                'ru.DESKRIPSI AS NAMARUANGAN'
-            )
-            ->leftJoin('pendaftaran.panggilan_antrian_ruangan AS par', function($join) {
-                $join->on('ar.ID','=','par.ANTRIAN_RUANGAN')
-                    ->where('par.STATUS', 2);
-            })
-            ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
-            ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
-            ->where('ar.RUANGAN', $ruangan)
-            ->where('ar.DOKTER', $dr)
-            ->where('ar.STATUS', '!=', 0)
-            ->where('ar.TANGGAL',$tgl)
-            ->when($antrianDipanggilId, function($q) use ($antrianDipanggilId) {
-                $q->where('ar.ID','!=',$antrianDipanggilId);
-            })
-            ->when(!empty($menungguIds), function($q) use ($menungguIds) {
-                $q->whereNotIn('ar.ID', $menungguIds); // filter yang ada di menunggu
-            })
-            ->groupBy('NORM','ID','NAMAPASIEN','POS','NOMORANTREAN','STATUSANTREAN','STATUSPANGGILAN','NAMARUANGAN')
-            // ->orderByRaw('CASE WHEN par.ID IS NULL THEN 1 ELSE 0 END, par.ID DESC, ar.NOMOR DESC')
-            ->orderBy('ar.NOMOR','DESC')
-            ->get();
-
-        // PAKAI INI JUGA BISA
-        // $menungguIds = $menunggu->pluck('ID')->toArray();
-        // $selesai = $selesai->filter(function($item) use ($menungguIds) {
-        //     return !in_array($item->ID, $menungguIds);
-        // })->values();
-
-        $poli = DB::table('master.ruangan AS ru')
+        $poli1 = DB::table('master.ruangan AS ru')
             ->select('ru.DESKRIPSI AS NAMARUANGAN')
-            ->where('ru.ID', $ruangan)
+            ->where('ru.ID', $request->poli1)
             ->first();
 
-        $dokter = DB::table('penjamin_rs.dpjp as dpjp')
+        $dokter1 = DB::table('penjamin_rs.dpjp as dpjp')
             ->leftJoin('master.dokter as md','md.ID','=','dpjp.DPJP_RS')
             ->leftJoin('aplikasi.pengguna as pe','pe.NIP','=','md.NIP')
             ->select(DB::raw('master.getNamaLengkapPegawai(md.NIP) AS NAMADOKTER'))
             ->where('dpjp.STATUS',1)
-            ->where('dpjp.DPJP_PENJAMIN',$dr)
+            ->where('dpjp.DPJP_PENJAMIN',$request->dr1)
             ->first();
 
+        $selesai1 = '';
+        if (!$request->md) { // JIKA DISPLAY SINGLE
+            $menungguIds = $menunggu->pluck('ID')->toArray(); // ambil ID dari $menunggu
+
+            $selesai1 = DB::table('pendaftaran.antrian_ruangan AS ar')
+                ->select(
+                    'pp.NORM','ar.ID',
+                    DB::raw('master.getNamaLengkap(pp.NORM) AS NAMAPASIEN'),
+                    'ar.POS','ar.NOMOR AS NOMORANTREAN','ar.STATUS AS STATUSANTREAN',
+                    'par.STATUS AS STATUSPANGGILAN',
+                    'ru.DESKRIPSI AS NAMARUANGAN'
+                )
+                ->leftJoin('pendaftaran.panggilan_antrian_ruangan AS par', function($join) {
+                    $join->on('ar.ID','=','par.ANTRIAN_RUANGAN')
+                        ->where('par.STATUS', 2);
+                })
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
+                ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
+                ->where('ar.RUANGAN', $request->poli1)
+                ->where('ar.DOKTER', $request->dr1)
+                ->where('ar.STATUS', '!=', 0)
+                ->where('ar.TANGGAL',$tgl)
+                ->when($antrianDipanggilId, function($q) use ($antrianDipanggilId) {
+                    $q->where('ar.ID','!=',$antrianDipanggilId);
+                })
+                ->when(!empty($menungguIds), function($q) use ($menungguIds) {
+                    $q->whereNotIn('ar.ID', $menungguIds); // filter yang ada di menunggu
+                })
+                ->groupBy('NORM','ID','NAMAPASIEN','POS','NOMORANTREAN','STATUSANTREAN','STATUSPANGGILAN','NAMARUANGAN')
+                // ->orderByRaw('CASE WHEN par.ID IS NULL THEN 1 ELSE 0 END, par.ID DESC, ar.NOMOR DESC')
+                ->orderBy('ar.NOMOR','DESC')
+                ->get();
+        } else {
+            // Ambil yang sedang dipanggil dulu
+            $dipanggil2 = DB::table('pendaftaran.panggilan_antrian_ruangan AS par')
+                ->select(
+                    'par.ID',
+                    'pp.NORM',
+                    DB::raw('master.getNamaLengkap(pp.NORM) AS NAMAPASIEN'),
+                    'ar.POS','ar.NOMOR AS NOMORANTREAN','ar.STATUS AS STATUSANTREAN',
+                    'par.STATUS AS STATUSPANGGILAN',
+                    'ru.DESKRIPSI AS NAMARUANGAN',
+                    'ar.ID AS ANTRIAN_ID'
+                )
+                ->join('pendaftaran.antrian_ruangan AS ar', function($join) {
+                    $join->on('ar.ID','=','par.ANTRIAN_RUANGAN')
+                        ->where('ar.STATUS', '!=', 0); // TIDAK BATAL KUNJUNGAN
+                })
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
+                ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
+                ->where('ar.RUANGAN', $request->poli2)
+                ->where('ar.DOKTER', $request->dr2)
+                ->where('par.STATUS', 1)
+                ->where('ar.TANGGAL',$tgl)
+                ->orderBy('par.ID', 'ASC')
+                ->first();
+
+            $antrianDipanggilId2 = $dipanggil2->ANTRIAN_ID ?? null;
+
+            // MENUNGGU (exclude yang dipanggil)
+            $menunggu2 = DB::table('pendaftaran.antrian_ruangan AS ar')
+                ->select(
+                    'pp.NORM',
+                    'ar.ID',
+                    DB::raw('master.getNamaLengkap(pp.NORM) AS NAMAPASIEN'),
+                    'ar.POS','ar.NOMOR AS NOMORANTREAN','ar.STATUS AS STATUSANTREAN',
+                    // 'par.STATUS AS STATUSPANGGILAN',
+                    'ru.DESKRIPSI AS NAMARUANGAN'
+                )
+                // ->join('pendaftaran.antrian_ruangan AS ar', function($join) {
+                //     $join->on('ar.ID','=','par.ANTRIAN_RUANGAN')
+                //         ->where('ar.STATUS', '!=', 0); // TIDAK BATAL KUNJUNGAN
+                // })
+                ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
+                ->where('ar.RUANGAN', $request->poli2)
+                ->where('ar.DOKTER', $request->dr2)
+                ->where('ar.STATUS', 1) // MENUNGGU DIPANGGIL
+                ->where('ar.TANGGAL',$tgl)
+                ->when($antrianDipanggilId2, function($q) use ($antrianDipanggilId2) {
+                    $q->where('ar.ID','!=',$antrianDipanggilId2);
+                })
+                ->whereNotExists(function($q) {
+                    $q->select(DB::raw(1))
+                    ->from('pendaftaran.panggilan_antrian_ruangan AS par2')
+                    ->whereRaw('par2.ANTRIAN_RUANGAN = ar.ID');
+                })
+                ->orderBy('ar.NOMOR', 'ASC')
+                ->get();
+
+            $poli2 = DB::table('master.ruangan AS ru')
+                ->select('ru.DESKRIPSI AS NAMARUANGAN')
+                ->where('ru.ID', $request->poli2)
+                ->first();
+
+            $dokter2 = DB::table('penjamin_rs.dpjp as dpjp')
+                ->leftJoin('master.dokter as md','md.ID','=','dpjp.DPJP_RS')
+                ->leftJoin('aplikasi.pengguna as pe','pe.NIP','=','md.NIP')
+                ->select(DB::raw('master.getNamaLengkapPegawai(md.NIP) AS NAMADOKTER'))
+                ->where('dpjp.STATUS',1)
+                ->where('dpjp.DPJP_PENJAMIN',$request->dr2)
+                ->first();
+        }
+
         return response()->json([
-            'menunggu' => $menunggu,
-            'dipanggil' => $dipanggil,
-            'selesai' => $selesai,
-            'poli' => $poli,
-            'dokter' => $dokter,
+            // ANTRIAN PERTAMA
+            'menunggu1' => $menunggu1,
+            'dipanggil1' => $dipanggil1,
+            'selesai1' => $selesai1,
+            'poli1' => $poli1,
+            'dokter1' => $dokter1,
+            // ANTRIAN KEDUA
+            'menunggu2' => $menunggu2,
+            'dipanggil2' => $dipanggil2,
+                // 'selesai2' => $selesai2,
+            'poli2' => $poli2,
+            'dokter2' => $dokter2,
         ], 200);
     }
 
