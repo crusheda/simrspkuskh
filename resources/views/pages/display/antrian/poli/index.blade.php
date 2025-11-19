@@ -103,7 +103,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="progress" style="height: 15px;">
+                    <div class="progress" style="height: 5px;">
                         <div id="refresh-progress"
                             class="progress-bar bg-warning"
                             role="progressbar"
@@ -168,19 +168,19 @@
     </div>
 
     {{-- FOR DUAL DISPLAY --}}
-    <div class="container-fluid py-3 card" id="myDivDual">
+    <div class="container-fluid py-3 card" id="myDivDual" hidden>
         <div class="row">
 
             <div class="col-md-12">
-                <div class="card custom-card">
-                    <div class="card-header bg-dark-gradient rounded p-2 ms-2 me-2">
+                <div class="card custom-card mb-1">
+                    <div class="card-header bg-dark-gradient rounded p-2 ms-2 me-2 pb-1">
                         <div class="d-flex justify-content-between align-items-center w-100 text-wrap">
-                            <h1 id="antrian-tgl-m" style="font-size:40px">. . .</h1>
-                            <h1 id="antrian-detik-m" style="font-size:40px">. . .</h1>
+                            <h1 id="antrian-tgl-m" class="mb-0" style="font-size:30px">. . .</h1>
+                            <h1 id="antrian-detik-m" class="mb-0" style="font-size:30px">. . .</h1>
                         </div>
                     </div>
-                    <div class="progress" style="height: 15px;">
-                        <div id="refresh-progress"
+                    <div class="progress" style="height: 5px;">
+                        <div id="refresh-progress-dual"
                             class="progress-bar bg-warning"
                             role="progressbar"
                             aria-valuemin="0"
@@ -191,11 +191,11 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <div class="card custom-card">
-                    <div class="card-header bg-dark-gradient rounded">
+            <div class="col-md-6"> {{-- DISPLAY KIRI --}}
+                <div class="card custom-card mb-1">
+                    <div class="card-header bg-dark-gradient rounded p-2">
                         <div class="align-items-center w-100 text-wrap">
-                            <div id="poli-m1" class="fw-bold text-dark text-start mb-0" style="font-size:60px">
+                            <div id="poli-m1" class="fw-bold text-dark text-start mb-0" style="font-size:30px">
                                 <div class="spinner-border text-white" role="status">
                                     <span class="visually-hidden">Memuat Nama Poliklinik...</span>
                                 </div>
@@ -203,89 +203,73 @@
                         </div>
                     </div>
                 </div>
-                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
-                    <div class="card-header bg-cyan-900">
+                <div class="card custom-card mb-1" style="height: 47vh; max-height: calc(47vh - 100px);">
+                    <div class="card-header bg-cyan-600 p-2">
                         <div class="align-items-center text-center w-100">
-                            <div class="p-4">
-                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Belum Dipanggil</h1>
+                            <div class="p-0">
+                                <h1 class="text-uppercase text-gray-100 fw-bold mb-0" style="font-size: 20px">Belum Dipanggil</h1>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body card-bg-light overflow-auto" id="menunggu-m1">
+                    <div class="card-body card-bg-light overflow-auto p-2" id="menunggu-m1">
                         <div class="card custom-card mb-3 shadow">
                             <div class="text-center p-4"><div class="spinner-border text-info" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
                         </div>
                     </div>
                 </div>
-                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
-                    <div class="card-header bg-red-900">
+                <div class="card custom-card mb-1" style="height: 55vh; max-height: calc(55vh - 100px);">
+                    <div class="card-header bg-red-900 p-2">
                         <div class="align-items-center w-100 text-center">
-                            <div class="text-center p-4">
-                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Saat ini Dipanggil</h1>
+                            <div class="text-center p-0">
+                                <h1 class="text-uppercase text-gray-100 fw-bold mb-0" style="font-size: 20px">Saat ini Dipanggil</h1>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body card-bg-light d-flex flex-column justify-content-center align-items-center text-center" style="height: 100vh;" id="dipanggil-m1">
-                        <div class="text-center p-4"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card custom-card">
-                    <div class="card-header bg-dark-gradient rounded">
-                        <div class="d-flex justify-content-between align-items-center w-100 text-wrap">
-                            <div id="poli-m2" class="fw-bold text-dark text-start mb-0" style="font-size:60px">
-                                <div class="spinner-border text-white" role="status">
-                                    <span class="visually-hidden">Memuat Nama Poliklinik...</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
-                    <div class="card-header bg-cyan-900">
-                        <div class="align-items-center text-center w-100">
-                            <div class="p-4">
-                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Belum Dipanggil</h1>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body card-bg-light overflow-auto" id="menunggu-m2">
-                        <div class="card custom-card mb-3 shadow">
-                            <div class="text-center p-4"><div class="spinner-border text-info" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
-                    <div class="card-header bg-red-900">
-                        <div class="align-items-center w-100 text-center">
-                            <div class="p-4">
-                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Saat ini Dipanggil</h1>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body card-bg-light d-flex flex-column justify-content-center align-items-center text-center" style="height: 100vh;" id="dipanggil-m2">
+                    <div class="card-body card-bg-light d-flex flex-column justify-content-center align-items-center text-center" style="height: 50vh;" id="dipanggil-m1">
                         <div class="text-center p-4"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
                     </div>
                 </div>
             </div>
 
-            {{-- <div class="col-md-4">
-                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
-                    <div class="card-header bg-green-900">
-                        <div class="align-items-center text-center w-100">
-                            <div class="p-4">
-                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Sudah Dipanggil</h1>
+            <div class="col-md-6"> {{-- DISPLAY KANAN --}}
+                <div class="card custom-card mb-1">
+                    <div class="card-header bg-dark-gradient rounded p-2">
+                        <div class="d-flex justify-content-between align-items-center w-100 text-wrap">
+                            <div id="poli-m2" class="fw-bold text-dark text-start mb-0" style="font-size:30px">
+                                <div class="spinner-border text-white" role="status">
+                                    <span class="visually-hidden">Memuat Nama Poliklinik...</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body card-bg-light overflow-auto" id="selesai">
+                </div>
+                <div class="card custom-card mb-1" style="height: 47vh; max-height: calc(47vh - 100px);">
+                    <div class="card-header bg-cyan-600 p-2">
+                        <div class="align-items-center text-center w-100">
+                            <div class="p-0">
+                                <h1 class="text-uppercase text-gray-100 fw-bold mb-0" style="font-size: 20px">Belum Dipanggil</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body card-bg-light overflow-auto p-2" id="menunggu-m2">
                         <div class="card custom-card mb-3 shadow">
-                            <div class="text-center p-4"><div class="spinner-border text-success" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
+                            <div class="text-center p-4"><div class="spinner-border text-info" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
                         </div>
                     </div>
                 </div>
-            </div> --}}
+                <div class="card custom-card mb-1" style="height: 55vh; max-height: calc(55vh - 100px);">
+                    <div class="card-header bg-red-900 p-2">
+                        <div class="align-items-center w-100 text-center">
+                            <div class="text-center p-0">
+                                <h1 class="text-uppercase text-gray-100 fw-bold mb-0" style="font-size: 20px">Saat ini Dipanggil</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body card-bg-light d-flex flex-column justify-content-center align-items-center text-center" style="height: 50vh;" id="dipanggil-m2">
+                        <div class="text-center p-4"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
@@ -296,13 +280,22 @@
     let elemm = $("#myDiv")[0];
     let refreshInterval = 5000; // 1 menit = 60000 ms, 5000 = 5 detik
     let progressBar = $("#refresh-progress");
+    let progressBarDual = $("#refresh-progress-dual");
     let progressInterval; // simpan interval supaya bisa dihentikan
     let lastDipanggil = null; // simpan nomor terakhir yang sudah dipanggil
+    let lastDipanggil1 = null; // simpan nomor terakhir yang sudah dipanggil
+    let lastDipanggil2 = null; // simpan nomor terakhir yang sudah dipanggil
     let soundEnabled = false;
+    let soundQueue = Promise.resolve();
+    let soundLock = false;
     let identityEnabled = false;
+    let identityEnabled1 = false;
+    let identityEnabled2 = false;
     let multipleDisplayEnabled = false;
     let progressPaused = false;
     let menungguScrollTop = $('#menunggu').scrollTop();
+    let menungguScrollTop1 = $('#menunggu-m1').scrollTop();
+    let menungguScrollTop2 = $('#menunggu-m2').scrollTop();
     let selesaiScrollTop = $('#selesai').scrollTop();
     const mapDokterPoli = @json($list['mapDokterPoli']);
     const semuaDokter = @json($list['dokter']);
@@ -380,12 +373,16 @@
 
             if (showNama) {
                 identityEnabled = true;
+                identityEnabled1 = true;
+                identityEnabled2 = true;
             } else {
                 identityEnabled = false;
+                identityEnabled1 = false;
+                identityEnabled2 = false;
             }
 
             // $(this).prop('disabled',true);
-            console.log('Identitas Diperlihatkan : '+identityEnabled);
+            // console.log('Identitas Diperlihatkan : '+identityEnabled);
         });
 
         $('#showMultipleDisplay').on('change', function() {
@@ -460,6 +457,8 @@
         $('#pilih_poli1').prop('disabled',false);
 
         startAutoScroll('#menunggu', 1); // 0.3
+        startAutoScroll('#menunggu-m1', 1); // 0.3
+        startAutoScroll('#menunggu-m2', 1); // 0.3
         startAutoScroll('#selesai', 1); // 0.3
 
         $("#openFullscreenBtn").on("click", function() {
@@ -527,12 +526,21 @@
 
         // Format nomor antrian (contoh: A1-003)
         const nomor = `${resDipanggil.POS ? resDipanggil.POS.toString() + " " : ""}${resDipanggil.NOMORANTREAN.toString().padStart(3, '0')}`;
+        // const dokter = "Dokter " + resDipanggil.NAMADOKTER || "";
+        const dokterAsli = "Dokter " + resDipanggil.NAMADOKTER || "";
+
+        // → turunkan dulu
+        let dokter = dokterAsli.toLowerCase();
+
+        // → perbaiki kapitalisasi tiap kata (biar TTS baca lebih natural)
+        dokter = dokter.replace(/\b\w/g, c => c.toUpperCase());
+
         const ruangan = resDipanggil.NAMARUANGAN || "ruangan pemeriksaan poliklinik";
 
         // ✅ ubah angka jadi penyebutan per karakter
         const nomorSpelled = spellNomorAntrian(nomor);
 
-        const textToSpeak = `Nomor Antrian ${nomorSpelled}. Silakan masuk ke ${ruangan}.`;
+        const textToSpeak = `Nomor Antrian ${nomorSpelled}. Silakan masuk ke ${ruangan}. ${dokter}.`;
 
         // fungsi bicara dengan jeda
         const speakText = (text) => {
@@ -637,6 +645,49 @@
         progressBar.css("width", "0%"); // reset
     }
 
+    function startProgressBarDual() {
+        clearInterval(progressInterval); // pastikan tidak ada interval lama
+
+        iziToast.success({
+            title: 'Antrian berhasil ditampilkan!',
+            message: 'Antrian diperbarui setiap 5 detik.',
+            position: 'topRight'
+        });
+
+        // Matikan animasi sementara
+        progressBarDual.css({
+            "transition": "none",
+            "width": "0%"
+        });
+
+        // Force reflow supaya browser benar2 terapkan width 0%
+        progressBarDual[0].offsetHeight;
+
+        // Hidupkan lagi animasi
+        progressBarDual.css("transition", "width 0.1s linear");
+
+        let step = 100 / (refreshInterval / 100);
+        let progress = 0;
+
+        progressInterval = setInterval(() => {
+            if (!progressPaused) {
+                progress += step;
+                if (progress > 100) progress = 100;
+                progressBarDual.css("width", progress + "%");
+            }
+
+            if (progress >= 100) {
+                clearInterval(progressInterval);
+                refresh($('#pilih_poli1').val(),$('#pilih_dr1').val(),$('#pilih_poli2').val(),$('#pilih_dr2').val());
+            }
+        }, 100);
+    }
+
+    function stopProgressBarDual() {
+        clearInterval(progressInterval);
+        progressBarDual.css("width", "0%"); // reset
+    }
+
     function refresh(poli1,dr1,poli2,dr2) {
         var md = $('#showMultipleDisplay').is(':checked');
 
@@ -714,9 +765,14 @@
                 });
                 console.error("Gagal load antrean:", error);
                 $('#menunggu').html('');
+                $('#menunggu-m1').html('');
+                $('#menunggu-m2').html('');
                 $('#dipanggil').html('');
+                $('#dipanggil-m1').html('');
+                $('#dipanggil-m2').html('');
                 $('#selesai').html('');
                 stopProgressBar();
+                stopProgressBarDual();
                 // coba ulang setelah 5 detik
                 // setTimeout(refresh, 3000);
                 $('#tampil_antrian').find('i').removeClass('fa-sync fa-spin').addClass('fa-search').prop('disabled',false);
@@ -887,164 +943,255 @@
     function startDisplayMultiple(res) {
         $('#myDiv').prop('hidden',true);
 
-        $('#poli-m1').html(`
-            <h1 class="mb-0 text-wrap" style="font-size:60px">Antrean <b class="text-danger fw-bold">${res.poli1.NAMARUANGAN}</b></h1>
-            <h1 class="mb-0 text-wrap" style="font-size:40px">Dokter : <b class="text-primary fw-bold">${res.dokter1.NAMADOKTER}</b></h1>
-        `);
-        $('#poli-m2').html(`
-            <h1 class="mb-0 text-wrap" style="font-size:60px">Antrean <b class="text-danger fw-bold">${res.poli2.NAMARUANGAN}</b></h1>
-            <h1 class="mb-0 text-wrap" style="font-size:40px">Dokter : <b class="text-primary fw-bold">${res.dokter2.NAMADOKTER}</b></h1>
-        `);
+        // DISPLAY GRID KIRI
+            $('#poli-m1').html(`
+                <h1 class="mb-0 text-wrap" style="font-size:30px">Antrean <b class="text-danger fw-bold">${res.poli1.NAMARUANGAN}</b></h1>
+                <h1 class="mb-0 text-truncate" style="font-size:20px">Dokter : <b class="text-primary fw-bold">${res.dokter1.NAMADOKTER}</b></h1>
+            `);
 
-        // render data
-        let rows_menunggu = "";
-        let rows_selesai = "";
+            // render data
+            let rows1_menunggu = "";
 
-        if (res.menunggu1.length === 0) {
-            rows_menunggu = ` `;
-        } else {
-            $.each(res.menunggu1, function(index, item) {
-                rows_menunggu += `
-                    <div class="card custom-card mb-3 shadow">
-                        <div class="card-body card-bg-light d-flex align-items-center gap-3">
-                            <div class="me-3 border border-primary rounded d-flex justify-content-center align-items-center"
-                                style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
-                                <span class="fw-bold p-2" style="font-size: 50px">
-                                    ${item.POS ? item.POS.toString() : 'A2'}-${item.NOMORANTREAN.toString().padStart(3, '0')}
-                                </span>
-                            </div>
-                            <div class="flex-grow-1" style="min-width: 0;">
-                                <div class="fs-2 fw-medium text-truncate">
-                                    ${identityEnabled ? item.NAMAPASIEN : 'Menunggu Dipanggil'}
+            if (res.menunggu1.length === 0) {
+                rows1_menunggu = ` `;
+            } else {
+                $.each(res.menunggu1, function(index, item) {
+                    rows1_menunggu += `
+                        <div class="card custom-card mb-3 shadow">
+                            <div class="card-body card-bg-light d-flex align-items-center gap-3 p-2">
+                                <div class="me-3 border border-primary rounded d-flex justify-content-center align-items-center"
+                                    style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
+                                    <span class="fw-bold p-2" style="font-size: 30px">
+                                        ${item.POS ? item.POS.toString() : 'A2'}-${item.NOMORANTREAN.toString().padStart(3, '0')}
+                                    </span>
                                 </div>
-                                <p class="mb-0 text-muted fs-3">RM. ${item.NORM.toString().padStart(8, '0')}</p>
+                                <div class="flex-grow-1" style="min-width: 0;">
+                                    <div class="fs-4 fw-medium text-truncate">
+                                        ${identityEnabled1 ? item.NAMAPASIEN : 'Menunggu Dipanggil'}
+                                    </div>
+                                    <p class="mb-0 text-muted fs-5">RM. ${item.NORM.toString().padStart(8, '0')}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-            });
-        }
-        $("#menunggu-m1").empty().html(rows_menunggu);
-
-        if (res.dipanggil1 && res.dipanggil1.NOMORANTREAN) {
-            lastDipanggil = res.dipanggil1; // simpan seluruh objek
-            $('#dipanggil-m1').empty().append(`
-                <div class="mb-3">
-                    <h2 class="fw-bold" style="font-size: 60px">NOMOR ANTRIAN</h2>
-                    <h1 class="fw-bold text-danger" style="font-size: 170px">${res.dipanggil1.POS?res.dipanggil1.POS.toString()+'-':''}${res.dipanggil1.NOMORANTREAN.toString().padStart(3, '0')}</h1>
-                </div>
-                <div class="mb-3">
-                    <div class="fw-bold mb-3" style="font-size:55px"><u>${res.dipanggil1.NAMARUANGAN}</u></div>
-                    <div class="fw-bold mb-3 text-truncate" style="font-size:45px" id="namaShowDipanggil-m1" hidden>${res.dipanggil1.NAMAPASIEN}</div>
-                    <div class="fw-bold mb-3" style="font-size:40px">RM. ${res.dipanggil1.NORM.toString().padStart(8, '0')}</div>
-                </div>
-            `);
-
-            if (identityEnabled) {
-                $('#namaShowDipanggil-m1').prop('hidden',false);
-            } else {
-                $('#namaShowDipanggil-m1').prop('hidden',true);
+                    `;
+                });
             }
+            $("#menunggu-m1").empty().html(rows1_menunggu);
 
-            pauseProgressBar();
-            $('#pause').prop('disabled',true);
-            $('#resume').prop('disabled',true);
+            if (res.dipanggil1 && res.dipanggil1.NOMORANTREAN) {
+                lastDipanggil1 = res.dipanggil1; // simpan seluruh objek
+                $('#dipanggil-m1').empty().append(`
+                    <div class="mb-0">
+                        <h2 class="fw-bold mb-0" style="font-size: 20px">NOMOR ANTRIAN</h2>
+                        <h1 class="fw-bold text-danger mb-0" style="font-size: 70px">${res.dipanggil1.POS?res.dipanggil1.POS.toString()+'-':''}${res.dipanggil1.NOMORANTREAN.toString().padStart(3, '0')}</h1>
+                    </div>
+                    <div class="mb-3">
+                        <div class="fw-bold mb-1" style="font-size:35px"><u>${res.dipanggil1.NAMARUANGAN}</u></div>
+                        <div class="fw-bold mb-0 text-truncate" style="font-size:15px" id="namaShowDipanggil-m1" hidden>${res.dipanggil1.NAMAPASIEN}</div>
+                        <div class="fw-bold mb-3" style="font-size:15px">RM. ${res.dipanggil1.NORM.toString().padStart(8, '0')}</div>
+                    </div>
+                `);
 
-            playSound(res.dipanggil1).then(() => {
-                resumeProgressBar(); // ▶️ lanjutkan progress setelah suara selesai
-                $('#pause').prop('disabled',false);
-                $('#resume').prop('disabled',false);
-            });
-
-            // Change STATUS from 1 into 2
-            const save = new FormData();
-            save.append('ID', res.dipanggil1.ANTRIAN_ID);
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: "{{ route('api.display.antrian.update') }}",
-                method: 'POST',
-                data: save,
-                cache: false,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                success: function(response) {
-                    console.log(`Antrian ID#${res.dipanggil1.ANTRIAN_ID} Dipanggil Diupdate ke STATUS = 2. Total Antrian Terupdate = ${response}`);
-                },
-                error: function(xhr, status, error) {
-                    console.log(`Gagal Mengupdate Antrian ID#${res.dipanggil1.ANTRIAN_ID} Dipanggil ke STATUS = 2.`);
+                if (identityEnabled1) {
+                    $('#namaShowDipanggil-m1').prop('hidden',false);
+                } else {
+                    $('#namaShowDipanggil-m1').prop('hidden',true);
                 }
-            })
-        } else if (lastDipanggil) {
-            // res.dipanggil kosong → tampilkan nomor terakhir
-            $('#dipanggil-m1').empty().append(`
-                <div class="mb-3">
-                    <h2 class="fw-bold" style="font-size:60px">NOMOR ANTRIAN</h2>
-                    <h1 class="fw-bold text-danger" style="font-size:170px">${lastDipanggil.POS?lastDipanggil.POS+'-':''}${lastDipanggil.NOMORANTREAN.toString().padStart(3,'0')}</h1>
-                </div>
-                <div class="mb-3">
-                    <div class="fw-bold mb-3" style="font-size:55px"><u>${lastDipanggil.NAMARUANGAN}</u></div>
-                    <div class="fw-bold mb-3 text-truncate" style="font-size:45px" id="namaShowDipanggil" hidden>${identityEnabled?lastDipanggil.NAMAPASIEN:''}</div>
-                    <div class="fw-bold mb-3" style="font-size:40px">RM. ${lastDipanggil.NORM.toString().padStart(8,'0')}</div>
-                </div>
+
+                pauseProgressBar();
+                $('#pause').prop('disabled',true);
+                $('#resume').prop('disabled',true);
+
+                soundQueue = soundQueue
+                .then(() => {
+                    soundLock = true;
+                    return playSound(res.dipanggil1);
+                })
+                .then(() => {
+                    soundLock = false;
+                    resumeProgressBar();
+                    $('#pause').prop('disabled',false);
+                    $('#resume').prop('disabled',false);
+                });
+
+                // playSound(res.dipanggil1).then(() => {
+                //     resumeProgressBar(); // ▶️ lanjutkan progress setelah suara selesai
+                //     $('#pause').prop('disabled',false);
+                //     $('#resume').prop('disabled',false);
+                // });
+
+                // Change STATUS from 1 into 2
+                const save1 = new FormData();
+                save1.append('ID', res.dipanggil1.ANTRIAN_ID);
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "{{ route('api.display.antrian.update') }}",
+                    method: 'POST',
+                    data: save1,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log(`Antrian ID#${res.dipanggil1.ANTRIAN_ID} Dipanggil Diupdate ke STATUS = 2. Total Antrian Terupdate = ${response}`);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(`Gagal Mengupdate Antrian ID#${res.dipanggil1.ANTRIAN_ID} Dipanggil ke STATUS = 2.`);
+                    }
+                })
+            } else if (lastDipanggil1) {
+                // res.dipanggil kosong → tampilkan nomor terakhir
+                $('#dipanggil-m1').empty().append(`
+                    <div class="mb-0">
+                        <h2 class="fw-bold mb-0" style="font-size:20px">NOMOR ANTRIAN</h2>
+                        <h1 class="fw-bold text-danger mb-0" style="font-size:70px">${lastDipanggil1.POS?lastDipanggil1.POS+'-':''}${lastDipanggil1.NOMORANTREAN.toString().padStart(3,'0')}</h1>
+                    </div>
+                    <div class="mb-3">
+                        <div class="fw-bold mb-1" style="font-size:35px"><u>${lastDipanggil1.NAMARUANGAN}</u></div>
+                        <div class="fw-bold mb-0 text-truncate" style="font-size:15px" id="namaShowDipanggil-m1" hidden>${identityEnabled1?lastDipanggil1.NAMAPASIEN:''}</div>
+                        <div class="fw-bold mb-3" style="font-size:15px">RM. ${lastDipanggil1.NORM.toString().padStart(8,'0')}</div>
+                    </div>
+                `);
+
+                if (identityEnabled1) {
+                    $('#namaShowDipanggil-m1').prop('hidden',false);
+                } else {
+                    $('#namaShowDipanggil-m1').prop('hidden',true);
+                }
+            } else {
+                $('#dipanggil-m1').empty();
+            }
+
+            $('#menunggu-m1').scrollTop(menungguScrollTop);
+
+        // DISPLAY GRID KANAN
+            $('#poli-m2').html(`
+                <h1 class="mb-0 text-wrap" style="font-size:30px">Antrean <b class="text-danger fw-bold">${res.poli2.NAMARUANGAN}</b></h1>
+                <h1 class="mb-0 text-truncate" style="font-size:20px">Dokter : <b class="text-primary fw-bold">${res.dokter2.NAMADOKTER}</b></h1>
             `);
 
-            if (identityEnabled) {
-                $('#namaShowDipanggil').prop('hidden',false);
+            // render data
+            let rows2_menunggu = "";
+
+            if (res.menunggu2.length === 0) {
+                rows2_menunggu = ` `;
             } else {
-                $('#namaShowDipanggil').prop('hidden',true);
-            }
-        } else {
-            $('#dipanggil-m1').empty();
-        }
-
-        let selesaiFiltered = '';
-        if (res.selesai1.length > 0) {
-            selesaiFiltered = res.selesai1;
-
-            // jika ada lastDipanggil dan saat ini dipanggil kosong → exclude dari rows_selesai
-            if (lastDipanggil && (!res.dipanggil1 || res.dipanggil1.NOMORANTREAN === null)) {
-                selesaiFiltered = res.selesai1.filter(item => item.ID !== lastDipanggil.ANTRIAN_ID);
-            }
-
-            $.each(selesaiFiltered, function(index, item) {
-                rows_selesai += `
-                    <div class="card custom-card mb-3 shadow">
-                        <div class="card-body card-bg-light d-flex align-items-center gap-3">
-                            <div class="me-3 border border-success rounded d-flex justify-content-center align-items-center" style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
-                                <span class="fw-bold p-2" style="font-size: 50px">${item.POS.toString()}-${item.NOMORANTREAN.toString().padStart(3, '0')}</span>
-                            </div>
-                            <div class="flex-grow-1" style="min-width: 0;">
-                                <div class="fs-2 fw-medium text-truncate ${item.STATUSANTREAN == 2?'text-indigo-900':''}">${identityEnabled?item.NAMAPASIEN:'Sudah Dipanggil'}</div>
-                                <p class="mb-0 text-muted fs-3">RM. ${item.NORM.toString().padStart(8, '0')}</p>
+                $.each(res.menunggu2, function(index, item) {
+                    rows2_menunggu += `
+                        <div class="card custom-card mb-3 shadow">
+                            <div class="card-body card-bg-light d-flex align-items-center gap-3 p-2">
+                                <div class="me-3 border border-primary rounded d-flex justify-content-center align-items-center"
+                                    style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
+                                    <span class="fw-bold p-2" style="font-size: 30px">
+                                        ${item.POS ? item.POS.toString() : 'A2'}-${item.NOMORANTREAN.toString().padStart(3, '0')}
+                                    </span>
+                                </div>
+                                <div class="flex-grow-1" style="min-width: 0;">
+                                    <div class="fs-4 fw-medium text-truncate">
+                                        ${identityEnabled2 ? item.NAMAPASIEN : 'Menunggu Dipanggil'}
+                                    </div>
+                                    <p class="mb-0 text-muted fs-5">RM. ${item.NORM.toString().padStart(8, '0')}</p>
+                                </div>
                             </div>
                         </div>
+                    `;
+                });
+            }
+            $("#menunggu-m2").empty().html(rows2_menunggu);
+
+            if (res.dipanggil2 && res.dipanggil2.NOMORANTREAN) {
+                lastDipanggil2 = res.dipanggil2; // simpan seluruh objek
+                $('#dipanggil-m2').empty().append(`
+                    <div class="mb-0">
+                        <h2 class="fw-bold mb-0" style="font-size: 20px">NOMOR ANTRIAN</h2>
+                        <h1 class="fw-bold text-danger mb-0" style="font-size: 70px">${res.dipanggil2.POS?res.dipanggil2.POS.toString()+'-':''}${res.dipanggil2.NOMORANTREAN.toString().padStart(3, '0')}</h1>
                     </div>
-                `;
-            });
-        }
+                    <div class="mb-3">
+                        <div class="fw-bold mb-1" style="font-size:35px"><u>${res.dipanggil2.NAMARUANGAN}</u></div>
+                        <div class="fw-bold mb-0 text-truncate" style="font-size:15px" id="namaShowDipanggil-m2" hidden>${res.dipanggil2.NAMAPASIEN}</div>
+                        <div class="fw-bold mb-3" style="font-size:15px">RM. ${res.dipanggil2.NORM.toString().padStart(8, '0')}</div>
+                    </div>
+                `);
 
-        $("#selesai-m1").empty().html(rows_selesai);
+                if (identityEnabled2) {
+                    $('#namaShowDipanggil-m2').prop('hidden',false);
+                } else {
+                    $('#namaShowDipanggil-m2').prop('hidden',true);
+                }
 
-        // console.log("lastDipanggil:", lastDipanggil);
-        // console.log("res.selesai:", res.selesai);
-        // console.log("selesaiFiltered:", selesaiFiltered);
+                pauseProgressBar();
+                $('#pause').prop('disabled',true);
+                $('#resume').prop('disabled',true);
 
+                soundQueue = soundQueue
+                .then(() => {
+                    soundLock = true;
+                    return playSound(res.dipanggil2);
+                })
+                .then(() => {
+                    soundLock = false;
+                    resumeProgressBar();
+                    $('#pause').prop('disabled',false);
+                    $('#resume').prop('disabled',false);
+                });
+
+                // playSound(res.dipanggil2).then(() => {
+                //     resumeProgressBar(); // ▶️ lanjutkan progress setelah suara selesai
+                //     $('#pause').prop('disabled',false);
+                //     $('#resume').prop('disabled',false);
+                // });
+
+                // Change STATUS from 1 into 2
+                const save2 = new FormData();
+                save2.append('ID', res.dipanggil2.ANTRIAN_ID);
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "{{ route('api.display.antrian.update') }}",
+                    method: 'POST',
+                    data: save2,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log(`Antrian ID#${res.dipanggil2.ANTRIAN_ID} Dipanggil Diupdate ke STATUS = 2. Total Antrian Terupdate = ${response}`);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(`Gagal Mengupdate Antrian ID#${res.dipanggil2.ANTRIAN_ID} Dipanggil ke STATUS = 2.`);
+                    }
+                })
+            } else if (lastDipanggil2) {
+                // res.dipanggil kosong → tampilkan nomor terakhir
+                $('#dipanggil-m2').empty().append(`
+                    <div class="mb-0">
+                        <h2 class="fw-bold mb-0" style="font-size:20px">NOMOR ANTRIAN</h2>
+                        <h1 class="fw-bold text-danger mb-0" style="font-size:70px">${lastDipanggil2.POS?lastDipanggil2.POS+'-':''}${lastDipanggil2.NOMORANTREAN.toString().padStart(3,'0')}</h1>
+                    </div>
+                    <div class="mb-3">
+                        <div class="fw-bold mb-1" style="font-size:35px"><u>${lastDipanggil2.NAMARUANGAN}</u></div>
+                        <div class="fw-bold mb-0 text-truncate" style="font-size:15px" id="namaShowDipanggil-m2" hidden>${identityEnabled2?lastDipanggil2.NAMAPASIEN:''}</div>
+                        <div class="fw-bold mb-3" style="font-size:15px">RM. ${lastDipanggil2.NORM.toString().padStart(8,'0')}</div>
+                    </div>
+                `);
+
+                if (identityEnabled2) {
+                    $('#namaShowDipanggil-m2').prop('hidden',false);
+                } else {
+                    $('#namaShowDipanggil-m2').prop('hidden',true);
+                }
+            } else {
+                $('#dipanggil-m2').empty();
+            }
+
+            $('#menunggu-m2').scrollTop(menungguScrollTop);
+
+        // FRESH
         $('#myDivDual').prop('hidden',false);
-
-        // kalau sukses -> jalankan progress bar lagi
-        // startProgressBar();
-
-        // kembalikan posisi scroll sebelumnya
-        $('#menunggu-m1').scrollTop(menungguScrollTop);
-        $('#selesai-m1').scrollTop(selesaiScrollTop);
-
-        // Jalankan auto scroll untuk menunggu dan selesai
-        // startAutoScroll('#menunggu', 50);
-        // startAutoScroll('#selesai', 50);
-
+        startProgressBarDual();
         $('#tampil_antrian').find('i').removeClass('fa-sync fa-spin').addClass('fa-search').prop('disabled',false);
     }
 

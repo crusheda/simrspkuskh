@@ -46,7 +46,7 @@ class AntrianPoliController extends Controller
     {
         // $tgl,$ruangan,$dr,$md
         $tgl = Carbon::now()->isoFormat('YYYY-MM-DD');
-        $tgl = '2025-11-02';
+        $tgl = '2025-11-04';
         // $ruangan = '102010105'; // POLI BEDAH
 
         // Ambil yang sedang dipanggil dulu
@@ -55,6 +55,7 @@ class AntrianPoliController extends Controller
                 'par.ID',
                 'pp.NORM',
                 DB::raw('master.getNamaLengkap(pp.NORM) AS NAMAPASIEN'),
+                DB::raw('master.getNamaDokterSingkat(dr.NIP) AS NAMADOKTER'),
                 'ar.POS','ar.NOMOR AS NOMORANTREAN','ar.STATUS AS STATUSANTREAN',
                 'par.STATUS AS STATUSPANGGILAN',
                 'ru.DESKRIPSI AS NAMARUANGAN',
@@ -66,6 +67,11 @@ class AntrianPoliController extends Controller
             })
             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
             ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
+            ->leftJoin('penjamin_rs.dpjp as dpjp', function($join) {
+                $join->on('dpjp.DPJP_PENJAMIN','=','ar.DOKTER')
+                    ->where('dpjp.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.dokter as dr','dr.ID','=','dpjp.DPJP_RS')
             ->where('ar.RUANGAN', $request->poli1)
             ->where('ar.DOKTER', $request->dr1)
             ->where('par.STATUS', 1)
@@ -158,6 +164,7 @@ class AntrianPoliController extends Controller
                     'par.ID',
                     'pp.NORM',
                     DB::raw('master.getNamaLengkap(pp.NORM) AS NAMAPASIEN'),
+                    DB::raw('master.getNamaDokterSingkat(dr.NIP) AS NAMADOKTER'),
                     'ar.POS','ar.NOMOR AS NOMORANTREAN','ar.STATUS AS STATUSANTREAN',
                     'par.STATUS AS STATUSPANGGILAN',
                     'ru.DESKRIPSI AS NAMARUANGAN',
@@ -169,6 +176,11 @@ class AntrianPoliController extends Controller
                 })
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
                 ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
+                ->leftJoin('penjamin_rs.dpjp as dpjp', function($join) {
+                    $join->on('dpjp.DPJP_PENJAMIN','=','ar.DOKTER')
+                        ->where('dpjp.STATUS', '!=', 0);
+                })
+                ->leftJoin('master.dokter as dr','dr.ID','=','dpjp.DPJP_RS')
                 ->where('ar.RUANGAN', $request->poli2)
                 ->where('ar.DOKTER', $request->dr2)
                 ->where('par.STATUS', 1)
