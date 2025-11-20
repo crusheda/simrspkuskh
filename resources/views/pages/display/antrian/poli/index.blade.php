@@ -54,17 +54,15 @@
                         <select class="form-select" id="pilih_dr2" disabled hidden>
                             <option value="">Pilih Dokter Spesialis</option>
                         </select>
-                        <div class="input-group-text">
+                        <div class="input-group-text" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark" data-bs-placement="bottom" title="Centang untuk Memperlihatkan Nama Pasien Di Antrian">
                             <div class="form-check">
-                                <input class="form-check-input input-primary" type="checkbox" id="showNama" value="" aria-label="" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark"
-                                data-bs-placement="bottom" title="Centang untuk Memperlihatkan Nama Pasien Di Antrian">
+                                <input class="form-check-input input-primary" type="checkbox" id="showNama" value="" aria-label="">
                                 <label class="form-check-label">Identitas?</label>
                             </div>
                         </div>
-                        <div class="input-group-text">
+                        <div class="input-group-text" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark" data-bs-placement="bottom" title="Centang untuk Menampilkan 2 Display Antrian Poliklinik">
                             <div class="form-check">
-                                <input class="form-check-input input-danger" type="checkbox" id="showMultipleDisplay" value="" aria-label="" data-bs-toggle="tooltip" data-bs-custom-class="tooltip-dark"
-                                data-bs-placement="bottom" title="Centang untuk Menampilkan 2 Display Antrian Poliklinik">
+                                <input class="form-check-input input-danger" type="checkbox" id="showMultipleDisplay" value="" aria-label="">
                                 <label class="form-check-label">Dual?</label>
                             </div>
                         </div>
@@ -274,9 +272,8 @@
             <div class="col-md-12">
                 <div class="position-fixed bottom-0 start-0 w-100 fw-bold py-2" style="overflow:hidden;white-space:nowrap; z-index:9999;background:#570a0a; color:#ffd705;">
                     <div class="d-inline-block text-uppercase" style="padding-left:100%; animation: runtext 35s linear infinite;font-size:18px;">
-                        Selamat Datang di Poliklinik Rumah Sakit PKU Muhammadiyah Sukoharjo.&nbsp;&nbsp;&nbsp;Bila pasien dipanggil tidak ada maka akan dilewati 5 pasien berikutnya.
+                        Selamat Datang di Poliklinik Spesialis Rumah Sakit PKU Muhammadiyah Sukoharjo.&nbsp;&nbsp;&nbsp;Bila pasien dipanggil tidak ada maka akan dilewati 5 pasien berikutnya.
                         &nbsp;&nbsp;&nbsp;Harap menunggu dengan tertib.&nbsp;&nbsp;&nbsp;Pastikan nomor antrian sesuai urutan untuk mempercepat pelayanan.&nbsp;&nbsp;&nbsp;Terima kasih.
-
                     </div>
 
                     <style>
@@ -404,6 +401,7 @@
 
         $('#showMultipleDisplay').on('change', function() {
             const showMultipleDisplay = $(this).is(':checked');
+
             if (showMultipleDisplay) { // ambil elemen DOM murni dari jQuery object
                 elemm = $("#myDivDual")[0];
             } else {
@@ -411,6 +409,7 @@
             }
 
             if (showMultipleDisplay) {
+                $('nav.pc-sidebar').addClass('pc-sidebar-hide'); // Hide Sidebar
                 $('#tampil_antrian').prop('disabled',true);
                 multipleDisplayEnabled = true;
                 $('#pilih_poli2').prop('disabled',false).prop('hidden',false);
