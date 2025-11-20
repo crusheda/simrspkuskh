@@ -44,9 +44,10 @@ class AntrianPoliController extends Controller
 
     function getDisplayAntrianPoli(Request $request)
     {
+        $debug = '';
         // $tgl,$ruangan,$dr,$md
         $tgl = Carbon::now()->isoFormat('YYYY-MM-DD');
-        $tgl = '2025-11-04';
+        // $tgl = '2025-11-04';
         // $ruangan = '102010105'; // POLI BEDAH
 
         // Ambil yang sedang dipanggil dulu
@@ -126,8 +127,13 @@ class AntrianPoliController extends Controller
             ->first();
 
         $selesai1 = '';
-        if (!$request->md) { // JIKA DISPLAY SINGLE
-            $menungguIds = $menunggu->pluck('ID')->toArray(); // ambil ID dari $menunggu
+        $dipanggil2 = '';
+        $menunggu2 = '';
+        $poli2 = '';
+        $dokter2 = '';
+
+        if ($request->md != 1) { // JIKA DISPLAY SINGLE
+            $menungguIds = $menunggu1->pluck('ID')->toArray(); // ambil ID dari $menunggu
 
             $selesai1 = DB::table('pendaftaran.antrian_ruangan AS ar')
                 ->select(
@@ -147,8 +153,8 @@ class AntrianPoliController extends Controller
                 ->where('ar.DOKTER', $request->dr1)
                 ->where('ar.STATUS', '!=', 0)
                 ->where('ar.TANGGAL',$tgl)
-                ->when($antrianDipanggilId, function($q) use ($antrianDipanggilId) {
-                    $q->where('ar.ID','!=',$antrianDipanggilId);
+                ->when($antrianDipanggilId1, function($q) use ($antrianDipanggilId1) {
+                    $q->where('ar.ID','!=',$antrianDipanggilId1);
                 })
                 ->when(!empty($menungguIds), function($q) use ($menungguIds) {
                     $q->whereNotIn('ar.ID', $menungguIds); // filter yang ada di menunggu
@@ -157,6 +163,7 @@ class AntrianPoliController extends Controller
                 // ->orderByRaw('CASE WHEN par.ID IS NULL THEN 1 ELSE 0 END, par.ID DESC, ar.NOMOR DESC')
                 ->orderBy('ar.NOMOR','DESC')
                 ->get();
+            $debug = 'berhasil';
         } else {
             // Ambil yang sedang dipanggil dulu
             $dipanggil2 = DB::table('pendaftaran.panggilan_antrian_ruangan AS par')
@@ -248,6 +255,7 @@ class AntrianPoliController extends Controller
                 // 'selesai2' => $selesai2,
             'poli2' => $poli2,
             'dokter2' => $dokter2,
+            'debug' => $debug,
         ], 200);
     }
 

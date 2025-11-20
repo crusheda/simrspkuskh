@@ -203,7 +203,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="card custom-card mb-1" style="height: 47vh; max-height: calc(47vh - 100px);">
+                <div class="card custom-card mb-1" style="height: 44vh; max-height: calc(44vh - 100px);">
+                    <div class="card-header bg-red-900 p-2">
+                        <div class="align-items-center w-100 text-center">
+                            <div class="text-center p-0">
+                                <h1 class="text-uppercase text-gray-100 fw-bold mb-0" style="font-size: 20px">Saat ini Dipanggil</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body card-bg-light d-flex flex-column justify-content-center align-items-center text-center pt-3" style="height: 50vh;" id="dipanggil-m1">
+                        <div class="text-center p-4"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
+                    </div>
+                </div>
+                <div class="card custom-card mb-1" style="height: 54vh; max-height: calc(54vh - 100px);">
                     <div class="card-header bg-cyan-600 p-2">
                         <div class="align-items-center text-center w-100">
                             <div class="p-0">
@@ -215,18 +227,6 @@
                         <div class="card custom-card mb-3 shadow">
                             <div class="text-center p-4"><div class="spinner-border text-info" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
                         </div>
-                    </div>
-                </div>
-                <div class="card custom-card mb-1" style="height: 55vh; max-height: calc(55vh - 100px);">
-                    <div class="card-header bg-red-900 p-2">
-                        <div class="align-items-center w-100 text-center">
-                            <div class="text-center p-0">
-                                <h1 class="text-uppercase text-gray-100 fw-bold mb-0" style="font-size: 20px">Saat ini Dipanggil</h1>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body card-bg-light d-flex flex-column justify-content-center align-items-center text-center" style="height: 50vh;" id="dipanggil-m1">
-                        <div class="text-center p-4"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
                     </div>
                 </div>
             </div>
@@ -243,7 +243,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="card custom-card mb-1" style="height: 47vh; max-height: calc(47vh - 100px);">
+                <div class="card custom-card mb-1" style="height: 44vh; max-height: calc(44vh - 100px);">
+                    <div class="card-header bg-red-900 p-2">
+                        <div class="align-items-center w-100 text-center">
+                            <div class="text-center p-0">
+                                <h1 class="text-uppercase text-gray-100 fw-bold mb-0" style="font-size: 20px">Saat ini Dipanggil</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body card-bg-light d-flex flex-column justify-content-center align-items-center text-center pt-3" style="height: 50vh;" id="dipanggil-m2">
+                        <div class="text-center p-4"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
+                    </div>
+                </div>
+                <div class="card custom-card mb-1" style="height: 54vh; max-height: calc(54vh - 100px);">
                     <div class="card-header bg-cyan-600 p-2">
                         <div class="align-items-center text-center w-100">
                             <div class="p-0">
@@ -257,17 +269,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="card custom-card mb-1" style="height: 55vh; max-height: calc(55vh - 100px);">
-                    <div class="card-header bg-red-900 p-2">
-                        <div class="align-items-center w-100 text-center">
-                            <div class="text-center p-0">
-                                <h1 class="text-uppercase text-gray-100 fw-bold mb-0" style="font-size: 20px">Saat ini Dipanggil</h1>
-                            </div>
-                        </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="position-fixed bottom-0 start-0 w-100 fw-bold py-2" style="overflow:hidden;white-space:nowrap; z-index:9999;background:#570a0a; color:#ffd705;">
+                    <div class="d-inline-block text-uppercase" style="padding-left:100%; animation: runtext 35s linear infinite;font-size:18px;">
+                        Selamat Datang di Poliklinik Rumah Sakit PKU Muhammadiyah Sukoharjo.&nbsp;&nbsp;&nbsp;Bila pasien dipanggil tidak ada maka akan dilewati 5 pasien berikutnya.
+                        &nbsp;&nbsp;&nbsp;Harap menunggu dengan tertib.&nbsp;&nbsp;&nbsp;Pastikan nomor antrian sesuai urutan untuk mempercepat pelayanan.&nbsp;&nbsp;&nbsp;Terima kasih.
+
                     </div>
-                    <div class="card-body card-bg-light d-flex flex-column justify-content-center align-items-center text-center" style="height: 50vh;" id="dipanggil-m2">
-                        <div class="text-center p-4"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Memuat Antrean...</span></div></div>
-                    </div>
+
+                    <style>
+                        @keyframes runtext {
+                            from { transform: translateX(0); }
+                            to   { transform: translateX(-100%); }
+                        }
+                    </style>
                 </div>
             </div>
 
@@ -736,7 +753,8 @@
         save.append('dr1', dr1);
         save.append('poli2', poli2);
         save.append('dr2', dr2);
-        save.append('md', md);
+        // save.append('md', md);
+        save.append('md', md ? "1" : "0");
 
         $.ajax({
             headers: {
@@ -986,7 +1004,7 @@
                         <h1 class="fw-bold text-danger mb-0" style="font-size: 70px">${res.dipanggil1.POS?res.dipanggil1.POS.toString()+'-':''}${res.dipanggil1.NOMORANTREAN.toString().padStart(3, '0')}</h1>
                     </div>
                     <div class="mb-3">
-                        <div class="fw-bold mb-1" style="font-size:35px"><u>${res.dipanggil1.NAMARUANGAN}</u></div>
+                        <div class="fw-bold mb-1" style="font-size:35px" hidden><u>${res.dipanggil1.NAMARUANGAN}</u></div>
                         <div class="fw-bold mb-0 text-truncate" style="font-size:15px" id="namaShowDipanggil-m1" hidden>${res.dipanggil1.NAMAPASIEN}</div>
                         <div class="fw-bold mb-3" style="font-size:15px">RM. ${res.dipanggil1.NORM.toString().padStart(8, '0')}</div>
                     </div>
@@ -998,17 +1016,19 @@
                     $('#namaShowDipanggil-m1').prop('hidden',true);
                 }
 
-                pauseProgressBar();
-                $('#pause').prop('disabled',true);
-                $('#resume').prop('disabled',true);
-
                 soundQueue = soundQueue
                 .then(() => {
+                    // sebelum memainkan suara, pause progress dan disable tombol
+                    pauseProgressBar();
+                    $('#pause').prop('disabled',true);
+                    $('#resume').prop('disabled',true);
+
                     soundLock = true;
                     return playSound(res.dipanggil1);
                 })
                 .then(() => {
                     soundLock = false;
+                    // setelah suara selesai -> resume progress & enable tombol
                     resumeProgressBar();
                     $('#pause').prop('disabled',false);
                     $('#resume').prop('disabled',false);
@@ -1049,7 +1069,7 @@
                         <h1 class="fw-bold text-danger mb-0" style="font-size:70px">${lastDipanggil1.POS?lastDipanggil1.POS+'-':''}${lastDipanggil1.NOMORANTREAN.toString().padStart(3,'0')}</h1>
                     </div>
                     <div class="mb-3">
-                        <div class="fw-bold mb-1" style="font-size:35px"><u>${lastDipanggil1.NAMARUANGAN}</u></div>
+                        <div class="fw-bold mb-1" style="font-size:35px" hidden><u>${lastDipanggil1.NAMARUANGAN}</u></div>
                         <div class="fw-bold mb-0 text-truncate" style="font-size:15px" id="namaShowDipanggil-m1" hidden>${identityEnabled1?lastDipanggil1.NAMAPASIEN:''}</div>
                         <div class="fw-bold mb-3" style="font-size:15px">RM. ${lastDipanggil1.NORM.toString().padStart(8,'0')}</div>
                     </div>
@@ -1109,7 +1129,7 @@
                         <h1 class="fw-bold text-danger mb-0" style="font-size: 70px">${res.dipanggil2.POS?res.dipanggil2.POS.toString()+'-':''}${res.dipanggil2.NOMORANTREAN.toString().padStart(3, '0')}</h1>
                     </div>
                     <div class="mb-3">
-                        <div class="fw-bold mb-1" style="font-size:35px"><u>${res.dipanggil2.NAMARUANGAN}</u></div>
+                        <div class="fw-bold mb-1" style="font-size:35px" hidden><u>${res.dipanggil2.NAMARUANGAN}</u></div>
                         <div class="fw-bold mb-0 text-truncate" style="font-size:15px" id="namaShowDipanggil-m2" hidden>${res.dipanggil2.NAMAPASIEN}</div>
                         <div class="fw-bold mb-3" style="font-size:15px">RM. ${res.dipanggil2.NORM.toString().padStart(8, '0')}</div>
                     </div>
@@ -1121,17 +1141,19 @@
                     $('#namaShowDipanggil-m2').prop('hidden',true);
                 }
 
-                pauseProgressBar();
-                $('#pause').prop('disabled',true);
-                $('#resume').prop('disabled',true);
-
                 soundQueue = soundQueue
                 .then(() => {
+                    // sebelum memainkan suara, pause progress dan disable tombol
+                    pauseProgressBar();
+                    $('#pause').prop('disabled',true);
+                    $('#resume').prop('disabled',true);
+
                     soundLock = true;
                     return playSound(res.dipanggil2);
                 })
                 .then(() => {
                     soundLock = false;
+                    // setelah suara selesai -> resume progress & enable tombol
                     resumeProgressBar();
                     $('#pause').prop('disabled',false);
                     $('#resume').prop('disabled',false);
@@ -1172,7 +1194,7 @@
                         <h1 class="fw-bold text-danger mb-0" style="font-size:70px">${lastDipanggil2.POS?lastDipanggil2.POS+'-':''}${lastDipanggil2.NOMORANTREAN.toString().padStart(3,'0')}</h1>
                     </div>
                     <div class="mb-3">
-                        <div class="fw-bold mb-1" style="font-size:35px"><u>${lastDipanggil2.NAMARUANGAN}</u></div>
+                        <div class="fw-bold mb-1" style="font-size:35px" hidden><u>${lastDipanggil2.NAMARUANGAN}</u></div>
                         <div class="fw-bold mb-0 text-truncate" style="font-size:15px" id="namaShowDipanggil-m2" hidden>${identityEnabled2?lastDipanggil2.NAMAPASIEN:''}</div>
                         <div class="fw-bold mb-3" style="font-size:15px">RM. ${lastDipanggil2.NORM.toString().padStart(8,'0')}</div>
                     </div>
