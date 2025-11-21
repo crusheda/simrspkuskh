@@ -47,7 +47,7 @@ class AntrianPoliController extends Controller
         $debug = '';
         // $tgl,$ruangan,$dr,$md
         $tgl = Carbon::now()->isoFormat('YYYY-MM-DD');
-        $tgl = '2025-11-06';
+        // $tgl = '2025-11-06';
         // $ruangan = '102010105'; // POLI BEDAH
 
         // Ambil yang sedang dipanggil dulu
