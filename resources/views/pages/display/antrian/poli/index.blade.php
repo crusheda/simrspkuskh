@@ -90,14 +90,14 @@
                 <div class="card custom-card">
                     <div class="card-header bg-dark-gradient rounded">
                         <div class="d-flex justify-content-between align-items-center w-100 text-wrap">
-                            <div id="poli" class="fw-bold text-dark text-start mb-0" style="font-size:60px">
+                            <div id="poli" class="fw-bold text-dark text-start mb-0" style="font-size:30px">
                                 <div class="spinner-border text-white" role="status">
                                     <span class="visually-hidden">Memuat Nama Poliklinik...</span>
                                 </div>
                             </div>
                             <div class="fs-1 fw-bold text-dark text-end mb-0">
-                                <h1 id="antrian-tgl">. . .</h1>
-                                <h1 id="antrian-detik" style="font-size:70px">. . .</h1>
+                                <h1 id="antrian-tgl" style="font-size:30px">. . .</h1>
+                                <h1 id="antrian-detik" style="font-size:40px">. . .</h1>
                             </div>
                         </div>
                     </div>
@@ -113,12 +113,12 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
-                    <div class="card-header bg-cyan-900">
+            <div class="col-md-6">
+                <div class="card custom-card" style="height: 85vh; max-height: calc(85vh - 100px);">
+                    <div class="card-header bg-cyan-900 p-2">
                         <div class="align-items-center text-center w-100">
-                            <div class="p-4">
-                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Belum Dipanggil</h1>
+                            <div class="p-2 mt-2">
+                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 30px">Belum Dipanggil</h1>
                             </div>
                         </div>
                     </div>
@@ -130,12 +130,12 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
-                    <div class="card-header bg-red-900">
+            <div class="col-md-6">
+                <div class="card custom-card" style="height: 82vh; max-height: calc(85vh - 100px);">
+                    <div class="card-header bg-red-900 p-2">
                         <div class="align-items-center w-100 text-wrap">
-                            <div class="text-center p-4">
-                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Saat ini Dipanggil</h1>
+                            <div class="text-center p-2 mt-2">
+                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 30px">Saat ini Dipanggil</h1>
                             </div>
                         </div>
                     </div>
@@ -145,12 +145,12 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card custom-card" style="height: 87vh; max-height: calc(87vh - 100px);">
-                    <div class="card-header bg-green-900">
+            <div class="col-md-4" hidden>
+                <div class="card custom-card" style="height: 82vh; max-height: calc(85vh - 100px);">
+                    <div class="card-header bg-green-900 p-2">
                         <div class="align-items-center text-center w-100">
-                            <div class="p-4">
-                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 50px">Sudah Dipanggil</h1>
+                            <div class="p-2 mt-2">
+                                <h1 class="text-uppercase text-gray-100 fw-bold" style="font-size: 30px">Sudah Dipanggil</h1>
                             </div>
                         </div>
                     </div>
@@ -801,8 +801,8 @@
         $('#myDivDual').prop('hidden',true);
 
         $('#poli').html(`
-            <h1 class="mb-0" style="font-size:80px">Antrean <b class="text-danger fw-bold">${res.poli1.NAMARUANGAN}</b></h1>
-            <h1 class="mb-0" style="font-size:50px">Dokter : <b class="text-primary fw-bold">${res.dokter1.NAMADOKTER}</b></h1>
+            <h1 class="mb-0 text-wrap" style="font-size:40px">Antrean <b class="text-danger fw-bold">${res.poli1.NAMARUANGAN}</b></h1>
+            <h1 class="mb-0 text-truncate" style="font-size:30px">Dokter : <b class="text-primary fw-bold">${res.dokter1.NAMADOKTER}</b></h1>
         `);
 
         // render data
@@ -815,18 +815,18 @@
             $.each(res.menunggu1, function(index, item) {
                 rows_menunggu += `
                     <div class="card custom-card mb-3 shadow">
-                        <div class="card-body card-bg-light d-flex align-items-center gap-3">
+                        <div class="card-body card-bg-light d-flex align-items-center gap-3 p-2">
                             <div class="me-3 border border-primary rounded d-flex justify-content-center align-items-center"
                                 style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
-                                <span class="fw-bold p-2" style="font-size: 50px">
+                                <span class="fw-bold p-2" style="font-size: 30px">
                                     ${item.POS ? item.POS.toString() : 'A2'}-${item.NOMORANTREAN.toString().padStart(3, '0')}
                                 </span>
                             </div>
                             <div class="flex-grow-1" style="min-width: 0;">
-                                <div class="fs-2 fw-medium text-truncate">
+                                <div class="fs-4 fw-medium text-truncate">
                                     ${identityEnabled ? item.NAMAPASIEN : 'Menunggu Dipanggil'}
                                 </div>
-                                <p class="mb-0 text-muted fs-3">RM. ${item.NORM.toString().padStart(8, '0')}</p>
+                                <p class="mb-0 text-muted fs-5">RM. ${item.NORM.toString().padStart(8, '0')}</p>
                             </div>
                         </div>
                     </div>
@@ -839,13 +839,13 @@
             lastDipanggil = res.dipanggil1; // simpan seluruh objek
             $('#dipanggil').empty().append(`
                 <div class="mb-3">
-                    <h2 class="fw-bold" style="font-size: 60px">NOMOR ANTRIAN</h2>
-                    <h1 class="fw-bold text-danger" style="font-size: 170px">${res.dipanggil1.POS?res.dipanggil1.POS.toString()+'-':''}${res.dipanggil1.NOMORANTREAN.toString().padStart(3, '0')}</h1>
+                    <h2 class="fw-bold mb-3" style="font-size: 40px">NOMOR ANTRIAN</h2>
+                    <h1 class="fw-bold text-danger mb-0" style="font-size: 100px">${res.dipanggil1.POS?res.dipanggil1.POS.toString()+'-':''}${res.dipanggil1.NOMORANTREAN.toString().padStart(3, '0')}</h1>
                 </div>
                 <div class="mb-3">
-                    <div class="fw-bold mb-3" style="font-size:55px"><u>${res.dipanggil1.NAMARUANGAN}</u></div>
-                    <div class="fw-bold mb-3 text-truncate" style="font-size:45px" id="namaShowDipanggil" hidden>${res.dipanggil1.NAMAPASIEN}</div>
-                    <div class="fw-bold mb-3" style="font-size:40px">RM. ${res.dipanggil1.NORM.toString().padStart(8, '0')}</div>
+                    <div class="fw-bold mb-1" style="font-size:35px" hidden><u>${res.dipanggil1.NAMARUANGAN}</u></div>
+                    <div class="fw-bold mb-2 text-truncate" style="font-size:20px" id="namaShowDipanggil" hidden>${res.dipanggil1.NAMAPASIEN}</div>
+                    <div class="fw-bold mb-3" style="font-size:35px">RM. ${res.dipanggil1.NORM.toString().padStart(8, '0')}</div>
                 </div>
             `);
 
@@ -890,13 +890,13 @@
             // res.dipanggil kosong → tampilkan nomor terakhir
             $('#dipanggil').empty().append(`
                 <div class="mb-3">
-                    <h2 class="fw-bold" style="font-size:60px">NOMOR ANTRIAN</h2>
-                    <h1 class="fw-bold text-danger" style="font-size:170px">${lastDipanggil.POS?lastDipanggil.POS+'-':''}${lastDipanggil.NOMORANTREAN.toString().padStart(3,'0')}</h1>
+                    <h2 class="fw-bold mb-3" style="font-size:40px">NOMOR ANTRIAN</h2>
+                    <h1 class="fw-bold text-danger mb-0" style="font-size:100px">${lastDipanggil.POS?lastDipanggil.POS+'-':''}${lastDipanggil.NOMORANTREAN.toString().padStart(3,'0')}</h1>
                 </div>
                 <div class="mb-3">
-                    <div class="fw-bold mb-3" style="font-size:55px"><u>${lastDipanggil.NAMARUANGAN}</u></div>
-                    <div class="fw-bold mb-3 text-truncate" style="font-size:45px" id="namaShowDipanggil" hidden>${identityEnabled?lastDipanggil.NAMAPASIEN:''}</div>
-                    <div class="fw-bold mb-3" style="font-size:40px">RM. ${lastDipanggil.NORM.toString().padStart(8,'0')}</div>
+                    <div class="fw-bold mb-1" style="font-size:35px" hidden><u>${lastDipanggil.NAMARUANGAN}</u></div>
+                    <div class="fw-bold mb-2 text-truncate" style="font-size:20px" id="namaShowDipanggil" hidden>${identityEnabled?lastDipanggil.NAMAPASIEN:''}</div>
+                    <div class="fw-bold mb-3" style="font-size:35px">RM. ${lastDipanggil.NORM.toString().padStart(8,'0')}</div>
                 </div>
             `);
 
@@ -921,7 +921,7 @@
             $.each(selesaiFiltered, function(index, item) {
                 rows_selesai += `
                     <div class="card custom-card mb-3 shadow">
-                        <div class="card-body card-bg-light d-flex align-items-center gap-3">
+                        <div class="card-body card-bg-light d-flex align-items-center gap-3 p-2">
                             <div class="me-3 border border-success rounded d-flex justify-content-center align-items-center" style="height: auto; width: auto; white-space: nowrap; flex-shrink: 0;">
                                 <span class="fw-bold p-2" style="font-size: 50px">${item.POS.toString()}-${item.NOMORANTREAN.toString().padStart(3, '0')}</span>
                             </div>

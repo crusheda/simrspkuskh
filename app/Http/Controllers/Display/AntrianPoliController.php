@@ -47,7 +47,7 @@ class AntrianPoliController extends Controller
         $debug = '';
         // $tgl,$ruangan,$dr,$md
         $tgl = Carbon::now()->isoFormat('YYYY-MM-DD');
-        // $tgl = '2025-11-04';
+        $tgl = '2025-11-06';
         // $ruangan = '102010105'; // POLI BEDAH
 
         // Ambil yang sedang dipanggil dulu
@@ -66,7 +66,15 @@ class AntrianPoliController extends Controller
                 $join->on('ar.ID','=','par.ANTRIAN_RUANGAN')
                     ->where('ar.STATUS', '!=', 0); // TIDAK BATAL KUNJUNGAN
             })
-            ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
+            ->leftJoin('pendaftaran.pendaftaran AS pp', function($join) {
+                $join->on('pp.NOMOR','=','ar.REF')
+                    ->where('pp.STATUS', '!=', 0);
+            })
+            ->join('pendaftaran.tujuan_pasien AS tp', function($join) use ($request) {
+                $join->on('tp.NOPEN','=','pp.NOMOR')
+                    ->where('tp.STATUS', '=', 2) // SUDAH DITERIMA DI KUNJUNGAN PASIEN
+                    ->where('tp.RUANGAN', '=', $request->poli1);
+            })
             ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
             ->leftJoin('penjamin_rs.dpjp as dpjp', function($join) {
                 $join->on('dpjp.DPJP_PENJAMIN','=','ar.DOKTER')
@@ -92,15 +100,19 @@ class AntrianPoliController extends Controller
                 // 'par.STATUS AS STATUSPANGGILAN',
                 'ru.DESKRIPSI AS NAMARUANGAN'
             )
-            // ->join('pendaftaran.antrian_ruangan AS ar', function($join) {
-            //     $join->on('ar.ID','=','par.ANTRIAN_RUANGAN')
-            //         ->where('ar.STATUS', '!=', 0); // TIDAK BATAL KUNJUNGAN
-            // })
             ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
-            ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
+            ->leftJoin('pendaftaran.pendaftaran AS pp', function($join) {
+                $join->on('pp.NOMOR','=','ar.REF')
+                    ->where('pp.STATUS', '!=', 0);
+            })
+            ->join('pendaftaran.tujuan_pasien AS tp', function($join) use ($request) {
+                $join->on('tp.NOPEN','=','pp.NOMOR')
+                    ->where('tp.STATUS', '=', 2) // SUDAH DITERIMA DI KUNJUNGAN PASIEN
+                    ->where('tp.RUANGAN', '=', $request->poli1);
+            })
             ->where('ar.RUANGAN', $request->poli1)
             ->where('ar.DOKTER', $request->dr1)
-            ->where('ar.STATUS', 1) // MENUNGGU DIPANGGIL
+            ->where('ar.STATUS', '!=', 0) // TIDAK BATAL ANTRIAN
             ->where('ar.TANGGAL',$tgl)
             ->when($antrianDipanggilId1, function($q) use ($antrianDipanggilId1) {
                 $q->where('ar.ID','!=',$antrianDipanggilId1);
@@ -147,7 +159,15 @@ class AntrianPoliController extends Controller
                     $join->on('ar.ID','=','par.ANTRIAN_RUANGAN')
                         ->where('par.STATUS', 2);
                 })
-                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
+                ->leftJoin('pendaftaran.pendaftaran AS pp', function($join) {
+                    $join->on('pp.NOMOR','=','ar.REF')
+                        ->where('pp.STATUS', '!=', 0);
+                })
+                ->join('pendaftaran.tujuan_pasien AS tp', function($join) use ($request) {
+                    $join->on('tp.NOPEN','=','pp.NOMOR')
+                        ->where('tp.STATUS', '=', 2) // SUDAH DITERIMA DI KUNJUNGAN PASIEN
+                        ->where('tp.RUANGAN', '=', $request->poli1);
+                })
                 ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
                 ->where('ar.RUANGAN', $request->poli1)
                 ->where('ar.DOKTER', $request->dr1)
@@ -181,7 +201,15 @@ class AntrianPoliController extends Controller
                     $join->on('ar.ID','=','par.ANTRIAN_RUANGAN')
                         ->where('ar.STATUS', '!=', 0); // TIDAK BATAL KUNJUNGAN
                 })
-                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
+                ->leftJoin('pendaftaran.pendaftaran AS pp', function($join) {
+                    $join->on('pp.NOMOR','=','ar.REF')
+                        ->where('pp.STATUS', '!=', 0);
+                })
+                ->join('pendaftaran.tujuan_pasien AS tp', function($join) use ($request) {
+                    $join->on('tp.NOPEN','=','pp.NOMOR')
+                        ->where('tp.STATUS', '=', 2) // SUDAH DITERIMA DI KUNJUNGAN PASIEN
+                        ->where('tp.RUANGAN', '=', $request->poli1);
+                })
                 ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
                 ->leftJoin('penjamin_rs.dpjp as dpjp', function($join) {
                     $join->on('dpjp.DPJP_PENJAMIN','=','ar.DOKTER')
@@ -212,10 +240,19 @@ class AntrianPoliController extends Controller
                 //         ->where('ar.STATUS', '!=', 0); // TIDAK BATAL KUNJUNGAN
                 // })
                 ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
-                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','ar.REF')
+                ->leftJoin('pendaftaran.pendaftaran AS pp', function($join) {
+                    $join->on('pp.NOMOR','=','ar.REF')
+                        ->where('pp.STATUS', '!=', 0);
+                })
+                ->join('pendaftaran.tujuan_pasien AS tp', function($join) use ($request) {
+                    $join->on('tp.NOPEN','=','pp.NOMOR')
+                        ->where('tp.STATUS', '=', 2) // SUDAH DITERIMA DI KUNJUNGAN PASIEN
+                        ->where('tp.RUANGAN', '=', $request->poli1);
+                })
                 ->where('ar.RUANGAN', $request->poli2)
                 ->where('ar.DOKTER', $request->dr2)
-                ->where('ar.STATUS', 1) // MENUNGGU DIPANGGIL
+                // ->where('ar.STATUS', 1) // MENUNGGU DIPANGGIL
+                ->where('ar.STATUS', '!=', 0) // TIDAK BATAL ANTRIAN
                 ->where('ar.TANGGAL',$tgl)
                 ->when($antrianDipanggilId2, function($q) use ($antrianDipanggilId2) {
                     $q->where('ar.ID','!=',$antrianDipanggilId2);
