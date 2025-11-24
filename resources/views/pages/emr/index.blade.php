@@ -167,6 +167,7 @@
                 title: `Tanda Tangan tidak ditemukan!`,
                 text: 'Silakan menambahkan tanda tangan di menu Profil Akun Pengguna sebelum melakukan pengisian pada halaman Elektronik Medical Record.',
                 icon: `warning`,
+                theme: 'bootstrap-5',
                 showCloseButton: true,
                 showCancelButton: true,
                 focusConfirm: false,
@@ -178,11 +179,11 @@
                     <i class="fa fa-thumbs-down"></i> Tutup
                 `,
                 cancelButtonAriaLabel: "Tutup",
-                backdrop: `
-                    rgba(0,0,0,0.6)
-                    left top
-                    no-repeat
-                `,
+                // backdrop: `
+                //     rgba(0,0,0,0.6)
+                //     left top
+                //     no-repeat
+                // `,
                 allowOutsideClick: false, // supaya user fokus ke alert
                 allowEscapeKey: false,    // tidak bisa ditutup pakai tombol ESC
             }).then((result) => {

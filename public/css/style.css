@@ -29126,7 +29126,7 @@ select[data-multiselectsplitter-secondselect-selector].dataTable-input {
 /**  =====================
     26. Sweetalert css start
 ========================== **/
-body .swal2-container {
+/* body .swal2-container {
   z-index: 1080 !important;
 }
 body .swal2-container.swal2-backdrop-show {
@@ -29137,8 +29137,8 @@ body .swal2-container.swal2-noanimation {
 }
 body .swal2-container.swal2-noanimation {
   background: rgba(0, 0, 0, 0.6) !important;
-}
-
+} */
+/*
 .swal-icon--error {
   border-color: #f44236;
 }
@@ -29406,7 +29406,7 @@ div:where(.swal2-icon) {
 
 div:where(.swal2-container) button:where(.swal2-close):focus {
   box-shadow: none !important;
-}
+} */
 
 /**  =====================
     26. Sweetalert css end
