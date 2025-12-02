@@ -208,7 +208,7 @@ class AntrianPoliController extends Controller
                 ->join('pendaftaran.tujuan_pasien AS tp', function($join) use ($request) {
                     $join->on('tp.NOPEN','=','pp.NOMOR')
                         ->where('tp.STATUS', '=', 2) // SUDAH DITERIMA DI KUNJUNGAN PASIEN
-                        ->where('tp.RUANGAN', '=', $request->poli1);
+                        ->where('tp.RUANGAN', '=', $request->poli2);
                 })
                 ->leftJoin('master.ruangan AS ru','ar.RUANGAN','=','ru.ID')
                 ->leftJoin('penjamin_rs.dpjp as dpjp', function($join) {
@@ -247,7 +247,7 @@ class AntrianPoliController extends Controller
                 ->join('pendaftaran.tujuan_pasien AS tp', function($join) use ($request) {
                     $join->on('tp.NOPEN','=','pp.NOMOR')
                         ->where('tp.STATUS', '=', 2) // SUDAH DITERIMA DI KUNJUNGAN PASIEN
-                        ->where('tp.RUANGAN', '=', $request->poli1);
+                        ->where('tp.RUANGAN', '=', $request->poli2);
                 })
                 ->where('ar.RUANGAN', $request->poli2)
                 ->where('ar.DOKTER', $request->dr2)
