@@ -70,6 +70,12 @@ class AntrianPoliController extends Controller
                 $join->on('pp.NOMOR','=','ar.REF')
                     ->where('pp.STATUS', '!=', 0);
             })
+            ->join('pendaftaran.kunjungan AS kj', function($join) use ($request) {
+                $join->on('kj.NOPEN','=','ar.REF')
+                    ->where('kj.STATUS', '=', 1)
+                    ->where('kj.RUANG_KAMAR_TIDUR', '=', 0)
+                    ->where('kj.RUANGAN', '=', $request->poli1);
+            })
             ->join('pendaftaran.tujuan_pasien AS tp', function($join) use ($request) {
                 $join->on('tp.NOPEN','=','pp.NOMOR')
                     ->where('tp.STATUS', '=', 2) // SUDAH DITERIMA DI KUNJUNGAN PASIEN
@@ -104,6 +110,12 @@ class AntrianPoliController extends Controller
             ->leftJoin('pendaftaran.pendaftaran AS pp', function($join) {
                 $join->on('pp.NOMOR','=','ar.REF')
                     ->where('pp.STATUS', '!=', 0);
+            })
+            ->join('pendaftaran.kunjungan AS kj', function($join) use ($request) {
+                $join->on('kj.NOPEN','=','ar.REF')
+                    ->where('kj.STATUS', '=', 1)
+                    ->where('kj.RUANG_KAMAR_TIDUR', '=', 0)
+                    ->where('kj.RUANGAN', '=', $request->poli1);
             })
             ->join('pendaftaran.tujuan_pasien AS tp', function($join) use ($request) {
                 $join->on('tp.NOPEN','=','pp.NOMOR')
@@ -205,6 +217,12 @@ class AntrianPoliController extends Controller
                     $join->on('pp.NOMOR','=','ar.REF')
                         ->where('pp.STATUS', '!=', 0);
                 })
+                ->join('pendaftaran.kunjungan AS kj', function($join) use ($request) {
+                    $join->on('kj.NOPEN','=','ar.REF')
+                        ->where('kj.STATUS', '=', 1)
+                        ->where('kj.RUANG_KAMAR_TIDUR', '=', 0)
+                        ->where('kj.RUANGAN', '=', $request->poli2);
+                })
                 ->join('pendaftaran.tujuan_pasien AS tp', function($join) use ($request) {
                     $join->on('tp.NOPEN','=','pp.NOMOR')
                         ->where('tp.STATUS', '=', 2) // SUDAH DITERIMA DI KUNJUNGAN PASIEN
@@ -243,6 +261,12 @@ class AntrianPoliController extends Controller
                 ->leftJoin('pendaftaran.pendaftaran AS pp', function($join) {
                     $join->on('pp.NOMOR','=','ar.REF')
                         ->where('pp.STATUS', '!=', 0);
+                })
+                ->join('pendaftaran.kunjungan AS kj', function($join) use ($request) {
+                    $join->on('kj.NOPEN','=','ar.REF')
+                        ->where('kj.STATUS', '=', 1)
+                        ->where('kj.RUANG_KAMAR_TIDUR', '=', 0)
+                        ->where('kj.RUANGAN', '=', $request->poli2);
                 })
                 ->join('pendaftaran.tujuan_pasien AS tp', function($join) use ($request) {
                     $join->on('tp.NOPEN','=','pp.NOMOR')
