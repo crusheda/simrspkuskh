@@ -780,8 +780,10 @@
             dataType: 'json',
             success: function(res) {
                 if (md) {
+                    $('#refresh-progress-dual').removeClass('bg-warning bg-danger').addClass('bg-warning');
                     startDisplayMultiple(res);
                 } else {
+                    $('#refresh-progress').removeClass('bg-warning bg-danger').addClass('bg-warning');
                     startDisplaySingle(res);
                 }
                 $('#openFullscreenBtn').prop('disabled',false);
@@ -812,8 +814,10 @@
                 $('#tampil_antrian').find('i').removeClass('fa-sync fa-spin').addClass('fa-search').prop('disabled',false);
                 setTimeout(() => {
                     if ($('#showMultipleDisplay').is(':checked')) {
+                        $('#refresh-progress-dual').removeClass('bg-warning bg-danger').addClass('bg-danger');
                         startProgressBarDual();
                     } else {
+                        $('#refresh-progress').removeClass('bg-warning bg-danger').addClass('bg-danger');
                         startProgressBar();
                     }
                 }, 3000); // tunggu 3 detik sebelum retry
