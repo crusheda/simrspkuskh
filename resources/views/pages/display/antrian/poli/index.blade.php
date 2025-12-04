@@ -162,6 +162,22 @@
                 </div>
             </div>
 
+            <div class="col-md-12">
+                <div class="position-fixed bottom-0 start-0 w-100 fw-bold py-2" style="overflow:hidden;white-space:nowrap; z-index:9999;background:#570a0a; color:#ffd705;">
+                    <div class="d-inline-block text-uppercase" style="padding-left:100%; animation: runtext 35s linear infinite;font-size:18px;">
+                        Selamat Datang di Poliklinik Spesialis Rumah Sakit PKU Muhammadiyah Sukoharjo.&nbsp;&nbsp;&nbsp;Bila pasien dipanggil tidak ada maka akan dilewati 5 pasien berikutnya.
+                        &nbsp;&nbsp;&nbsp;Harap menunggu dengan tertib.&nbsp;&nbsp;&nbsp;Pastikan nomor antrian sesuai urutan untuk mempercepat pelayanan.&nbsp;&nbsp;&nbsp;Terima kasih.
+                    </div>
+
+                    <style>
+                        @keyframes runtext {
+                            from { transform: translateX(0); }
+                            to   { transform: translateX(-100%); }
+                        }
+                    </style>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -621,12 +637,6 @@
     function startProgressBar() {
         clearInterval(progressInterval); // pastikan tidak ada interval lama
 
-        iziToast.success({
-            title: 'Antrian berhasil ditampilkan!',
-            message: 'Antrian diperbarui setiap 5 detik.',
-            position: 'topRight'
-        });
-
         // Matikan animasi sementara
         progressBar.css({
             "transition": "none",
@@ -663,12 +673,6 @@
 
     function startProgressBarDual() {
         clearInterval(progressInterval); // pastikan tidak ada interval lama
-
-        iziToast.success({
-            title: 'Antrian berhasil ditampilkan!',
-            message: 'Antrian diperbarui setiap 5 detik.',
-            position: 'topRight'
-        });
 
         // Matikan animasi sementara
         progressBarDual.css({
@@ -773,6 +777,11 @@
                     startDisplaySingle(res);
                 }
                 $('#openFullscreenBtn').prop('disabled',false);
+                iziToast.success({
+                    title: 'Antrian berhasil ditampilkan!',
+                    message: 'Antrian diperbarui setiap 5 detik.',
+                    position: 'topRight'
+                });
             },
             error: function(xhr, status, error) {
                 iziToast.error({
@@ -781,18 +790,25 @@
                     position: 'topRight'
                 });
                 console.error("Gagal load antrean:", error);
-                $('#menunggu').html('');
-                $('#menunggu-m1').html('');
-                $('#menunggu-m2').html('');
-                $('#dipanggil').html('');
-                $('#dipanggil-m1').html('');
-                $('#dipanggil-m2').html('');
-                $('#selesai').html('');
+                // $('#menunggu').html('');
+                // $('#menunggu-m1').html('');
+                // $('#menunggu-m2').html('');
+                // $('#dipanggil').html('');
+                // $('#dipanggil-m1').html('');
+                // $('#dipanggil-m2').html('');
+                // $('#selesai').html('');
                 stopProgressBar();
                 stopProgressBarDual();
                 // coba ulang setelah 5 detik
                 // setTimeout(refresh, 3000);
                 $('#tampil_antrian').find('i').removeClass('fa-sync fa-spin').addClass('fa-search').prop('disabled',false);
+                setTimeout(() => {
+                    if ($('#showMultipleDisplay').is(':checked')) {
+                        startProgressBarDual();
+                    } else {
+                        startProgressBar();
+                    }
+                }, 3000); // tunggu 3 detik sebelum retry
             }
         });
     }
