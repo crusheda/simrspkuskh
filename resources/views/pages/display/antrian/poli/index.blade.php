@@ -114,7 +114,7 @@
             </div>
 
             <div class="col-md-6">
-                <div class="card custom-card" style="height: 85vh; max-height: calc(85vh - 100px);">
+                <div class="card custom-card" style="height: 84vh; max-height: calc(84vh - 100px);">
                     <div class="card-header bg-cyan-900 p-2">
                         <div class="align-items-center text-center w-100">
                             <div class="p-2 mt-2">
@@ -131,7 +131,7 @@
             </div>
 
             <div class="col-md-6">
-                <div class="card custom-card" style="height: 82vh; max-height: calc(85vh - 100px);">
+                <div class="card custom-card" style="height: 84vh; max-height: calc(84vh - 100px);">
                     <div class="card-header bg-red-900 p-2">
                         <div class="align-items-center w-100 text-wrap">
                             <div class="text-center p-2 mt-2">
@@ -146,7 +146,7 @@
             </div>
 
             <div class="col-md-4" hidden>
-                <div class="card custom-card" style="height: 82vh; max-height: calc(85vh - 100px);">
+                <div class="card custom-card" style="height: 84vh; max-height: calc(84vh - 100px);">
                     <div class="card-header bg-green-900 p-2">
                         <div class="align-items-center text-center w-100">
                             <div class="p-2 mt-2">
