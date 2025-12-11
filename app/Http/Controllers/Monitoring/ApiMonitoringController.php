@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use App\Models\simrspku_klaim\klaim_file;
+use App\Models\simrspku_klaim\klaim_verifikasi;
 use App\Models\simrspku_klaim\klaim_qrcode;
 use App\Models\simrspku_klaim\klaim_qrcode_pegawai;
 use Illuminate\Support\Facades\Crypt;
@@ -2053,6 +2054,66 @@ class ApiMonitoringController extends Controller
 
             return response()->file($outputMerged.'.pdf',[
                 'Content-Type' => 'application/pdf',
+            ]);
+        }
+
+        function hapusTtdResumeRj($KUNJUNGAN)
+        {
+            $data = klaim_file::where('nomor',$KUNJUNGAN)
+                    ->where('jenis',2)
+                    ->whereNull('deleted_at')
+                    ->first();
+
+            $verif = klaim_verifikasi::where('nomor',$KUNJUNGAN)
+                    ->where('status',1)
+                    ->whereNull('deleted_at')
+                    ->first();
+
+            if ($verif) {
+                if ($verif->verif != 0) {
+                    return response()->json([
+                        'status' => 400,
+                        'message' => 'Dokumen telah diverifikasi oleh Bagian Klaim, silakan konfirmasi kepada Bagian Terkait',
+                    ]);
+                } else {
+                    // Decode satu kali
+                    $koleksi = json_decode($verif->koleksi, true);
+
+                    // Pastikan hasilnya array
+                    if (!is_array($koleksi)) {
+                        $koleksi = [];
+                    }
+
+                    // Jika ada Resume (angka 2)
+                    if (in_array(2, $koleksi)) {
+
+                        // Hapus angka 2
+                        $koleksi = array_filter($koleksi, function ($item) {
+                            return $item != 2;
+                        });
+
+                        // Re-index
+                        $koleksi = array_values($koleksi);
+
+                        // Simpan kembali
+                        $verif->koleksi = json_encode($koleksi);
+                        $verif->save();
+                    }
+                }
+            }
+
+            if ($data) {
+                $data->user_deleted = Auth::user()->ID;
+                $data->status = 0;
+                $data->save();
+                $data->delete();
+
+                // Storage::disk('public')->delete($data->filename);
+            }
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Dokumen Resume Berhasil Dihapus dari Database',
             ]);
         }
 

@@ -377,16 +377,20 @@
 <div id="showResumeRj" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showResumeLabelRj">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
+            <input type="text" class="form-control" id="idShowResumeRj" hidden>
             <div class="modal-header">
-                <h5 class="modal-title" id="showResumeLabelRj"><span class="badge text-bg-secondary">RESUME</span> | IDKUNJUNGAN : <a id="show-id-resumeRj" class="text-primary"></a></h5>
+                <h5 class="modal-title" id="showResumeLabelRj"><span class="badge text-bg-secondary">RESUME MEDIS</span> | IDKUNJUNGAN : <a id="show-id-resumeRj" class="text-primary"></a></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3">
                 <div id="cetak-resumerj"></div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                {{-- <button type="button" class="btn btn-primary"></button> --}}
+            <div class="modal-footer d-flex justify-content-between align-items-center">
+                <h6 class="m-0">Hapus Dokumen <b class="text-danger">HANYA BERLAKU</b><br>Jika Berkas Klaim <mark>Belum Diverifikasi</mark></h6>
+                <div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-danger" onclick="hapusTtdResume()">Hapus Dokumen (Hapus TTD)</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1087,6 +1091,7 @@
     }
 
     function showResumeRj(kunjungan) {
+        $('#idShowResumeRj').val(kunjungan);
         $('#show-id-resumeRj').text(kunjungan);
         $('#resumerj'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
 
@@ -1114,6 +1119,45 @@
             });
             console.error(error);
         });
+    }
+
+    function hapusTtdResume() {
+        var kunjungan = $('#idShowResumeRj').val();
+        $.ajax({
+            url: "/api/pasien/"+kunjungan+"/hapusTtdResumeRj",
+            type: 'DELETE',
+            dataType: 'json',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(res) {
+                if (res.status == 200) {
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: res.message,
+                        position: 'topRight'
+                    });
+                    $('#showResumeRj').modal('hide');
+                    $('#btn-showResume-'+kunjungan).empty().append(`<button type="button" class="btn btn-sm btn-icon btn-link-warning" id="ttdrj`+kunjungan+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Dokumen belum ditandatangani" onclick="showTTDrj('`+kunjungan+`')">
+                                                                            <i class="fas fa-times fs-5 text-warning"></i>
+                                                                        </button>`);
+                    // filter();
+                } else {
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: res.message,
+                        position: 'topRight'
+                    });
+                }
+            }, error: function(xhr, status, error) {
+                console.error('Terjadi kesalahan:', error);
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Gagal menghapus TTE Resume Medis. Coba lagi.',
+                    position: 'topRight'
+                });
+            }
+        })
     }
 
     function showSKDP(kunjungan) {
