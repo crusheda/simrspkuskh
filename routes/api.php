@@ -51,8 +51,9 @@ Route::group(['middleware' => ['web', 'auth']], function() {
 
     //PROFIL
         //TTD PEGAWAI
-        Route::get('pegawai/{NIP}/ttdPeg', [ProfilController::class, 'showTtdPeg'])->name('api.pegawai.ttdPeg');
-        Route::post('pegawai/profil/ttdPeg/simpan', [ProfilController::class, 'storeTtdPeg'])->name('api.pegawai.storeTtdPeg');
+        Route::get('pegawai/{NIP}/ttd', [ProfilController::class, 'showTtdPeg'])->name('api.pegawai.ttdPeg');
+        // Route::post('pegawai/profil/ttdPeg/simpan', [ProfilController::class, 'storeTtdPeg'])->name('api.pegawai.storeTtdPeg');
+        Route::post('pegawai/ttd', [ProfilController::class, 'storeTtdPeg'])->name('api.pegawai.storeTtdPeg');
 
     // SETTING
         // PERMISSION x ROLES

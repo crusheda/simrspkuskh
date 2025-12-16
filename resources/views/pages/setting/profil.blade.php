@@ -7,6 +7,7 @@
     width: 200px;
     height: 200px;
     touch-action: none; /* penting untuk mencegah scroll saat tanda tangan */
+    pointer-events: auto !important;
 }
 </style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -109,7 +110,7 @@
                             <a class="nav-link list-group-item list-group-item-action active" id="user-set-profile-tab"
                                 data-bs-toggle="pill" href="#user-set-profile" role="tab"
                                 aria-controls="user-set-profile" aria-selected="true">
-                                <span class="f-w-500"><i class="ph-duotone ph-user-circle m-r-10"></i>Biodata Akun</span>
+                                <span class="f-w-500"><i class="ph-duotone ph-user-circle m-r-10"></i>Akun Pengguna</span>
                             </a>
                             {{-- <a class="nav-link list-group-item list-group-item-action" id="user-set-information-tab"
                                 data-bs-toggle="pill" href="#user-set-information" role="tab"
@@ -140,17 +141,6 @@
                 <div class="col-lg-7 col-xxl-9">
                     <div class="tab-content" id="user-set-tabContent">
                         <div class="tab-pane fade show active" id="user-set-profile" role="tabpanel" aria-labelledby="user-set-profile-tab">
-                            {{-- <div class="card">
-                                <div class="card-header">
-                                    <h5>About me</h5>
-                                </div>
-                                <div class="card-body">
-                                    <p class="mb-0">Hello, I’m Anshan Handgun Creative Graphic Designer & User
-                                        Experience Designer based in Website, I create digital
-                                        Products a more Beautiful and usable place. Morbid accusant ipsum. Nam
-                                        nec tellus at.</p>
-                                </div>
-                            </div> --}}
                             <div class="card">
                                 <div class="card-header">
                                     <h5>Identitas Diri</h5>
@@ -191,8 +181,8 @@
                             <div class="card">
                                 <div class="card-header p-3">
                                     <div class="d-sm-flex align-items-center justify-content-between ms-2">
-                                        <h5>Tanda Tangan Pegawai</h5>
-                                        <button class="btn btn-link-warning" onclick="showTTDpeg({{ Auth::user()->NIP }})"><i class="fas fa-sync"></i></button>
+                                        <h5>Tanda Tangan Elektronik</h5>
+                                        <button class="btn btn-light-warning" onclick="showTTDpeg({{ Auth::user()->NIP }})"><i class="fas fa-sync me-1"></i> Refresh</button>
                                     </div>
                                 </div>
                                 <div class="card-body">
@@ -206,473 +196,86 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6" id="show-petunjuk" hidden>
-                                            <strong>Keterangan:</strong><br>
-                                            <p>Tanda tangan ini digunakan sebagai ganti tanda tangan basah untuk dokumen pasien</p>
-                                            <strong>Petunjuk:</strong><br>
-                                            1. Gunakan layar sentuh atau mouse.<br>
-                                            2. Gambar tanda tangan pada canvas.<br>
-                                            3. Klik "<span class="badge text-bg-danger"><i class="ti ti-writing-sign"></i></span>" untuk menghapus.<br>
-                                            4. Klik "<span class="badge text-bg-primary"><i class="ti ti-writing-sign me-1"></i> Simpan Tanda Tangan</span>" untuk menyimpan.<br>
+                                        <div class="col-md-12 mb-3" id="show-petunjuk" hidden>
+                                            <strong>Keterangan:</strong>
+                                            <p>
+                                                Tanda tangan ini digunakan sebagai pengganti tanda tangan basah pada dokumen pasien. Dengan menambahkan tanda tangan,
+                                                Anda menyatakan persetujuan bahwa tanda tangan tersebut dapat digunakan secara resmi dalam sistem, dengan tetap menjamin
+                                                aspek keamanan agar tidak disalahgunakan. Setiap tanda tangan yang dibuat wajib sesuai dengan ketentuan dan kesepakatan
+                                                yang berlaku di Rumah Sakit. Variasi (6x) tanda tangan yang disimpan akan digunakan secara acak pada saat pembubuhan tanda tangan
+                                                pada berkas klaim pasien.
+                                            </p>
+                                            <strong>Hal yang perlu diperhatikan:</strong>
+                                            <p class="mb-0">
+                                                <ol>
+                                                    <li>Tanda tangan wajib diisi minimal 1x ttd atau dapat juga bervariasi (Lebih dari 1x ttd)</li>
+                                                    <li>Perubahan tanda tangan dapat dilakukan pada masing-masing variasi yang tersedia</li>
+                                                    <li>Tanda tangan baru tidak akan berpengaruh pada laporan yang sudah dibuat</li>
+                                                </ol>
+                                            </p>
+                                            <strong>Petunjuk Pengisian:</strong>
+                                            <p class="mb-0">
+                                                <ol>
+                                                    <li>Gunakan layar sentuh atau mouse</li>
+                                                    <li>Gambar tanda tangan pada canvas</li>
+                                                    <li>Klik "<span class="badge text-bg-warning"><i class="fas fa-sync me-1"></i> Refresh</span>" untuk menampilkan TTD</li>
+                                                    <li>Klik "<span class="badge text-bg-danger"><i class="ti ti-writing-sign"></i></span>" untuk menghapus</li>
+                                                    <li>Klik "<span class="badge text-bg-primary"><i class="fas fa-save me-1"></i> Simpan Tanda Tangan</span>" untuk menyimpan</li>
+                                                </ol>
+                                            </p>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="mb-3" id="preview-wrapper" hidden>
-                                                <img id="preview-ttd-peg" src="" alt="Belum ada tanda tangan" style="max-width: 300px; border: 1px solid #ccc;" />
+                                                <div class="row" id="preview-ttd-list"></div>
+
+                                                <div class="mt-3 text-center">
+                                                    <button type="button" id="btn-ubah-ttd" class="btn btn-warning">
+                                                        <i class="fa fa-pen me-1"></i> Ubah TTD
+                                                    </button>
+                                                </div>
+                                                {{-- <img id="preview-ttd-peg" src="" alt="Belum ada tanda tangan" style="max-width: 300px; border: 1px solid #ccc;" />
                                                 <div class="mt-3">
                                                     <button type="button" id="btn-ubah-ttd" class="btn btn-warning me-2"><i class="fa fa-pen me-1"></i> Ubah TTD</button>
                                                     <a id="date-updated"></a>
-                                                </div>
+                                                </div> --}}
                                             </div>
 
-                                            <div class="form-group" id="paduser" hidden>
-                                                <!-- responsive wrapper -->
+                                            <div class="row" id="paduser" hidden>
+                                                @for ($i = 1; $i <= 6; $i++)
+                                                    <div class="col-xl-4 col-md-6 col-sm-12">
+                                                        <div class="mb-4 border rounded p-3">
+                                                            <h6 class="mb-2">Tanda Tangan <span class="badge text-bg-secondary">Variasi {{ $i }}</span></h6>
 
-                                                <div class="position-relative overflow-hidden mb-3" style="width:100%; max-width:500px; height:200px;">
-                                                    <!-- canvas ikut parent -->
-                                                    <canvas id="signature-pad-user" class="border rounded w-100 h-100"></canvas>
+                                                            <div class="position-relative overflow-hidden mb-3" style="width:100%; max-width:500px; height:200px;">
+                                                                <canvas id="signature-pad-user-{{ $i }}" class="border rounded w-100 h-100"></canvas>
 
-                                                    <!-- placeholder di tengah -->
-                                                    <div id="placeholder-ttd-user"
-                                                        class="position-absolute top-50 start-50 translate-middle text-muted"
-                                                        style="pointer-events: none; opacity: 0.3;">
-                                                        Tanda tangan Pegawai <a class="text-danger">*</a>
+                                                                <div id="placeholder-ttd-user-{{ $i }}"
+                                                                    class="position-absolute top-50 start-50 translate-middle text-muted"
+                                                                    style="pointer-events:none; opacity:.3;">
+                                                                    Tanda tangan ke-{{ $i }}
+                                                                </div>
+
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-danger position-absolute clear-user"
+                                                                    data-index="{{ $i }}"
+                                                                    style="top:10px; right:10px; z-index:10;">
+                                                                    <i class="ti ti-writing-sign"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
                                                     </div>
+                                                @endfor
 
-                                                    <!-- tombol clear dalam kotak -->
-                                                    <button id="clear-user"
-                                                        class="btn btn-sm btn-danger position-absolute"
-                                                        style="top: 10px; right: 10px; z-index: 10;">
-                                                        <i class="ti ti-writing-sign"></i>
-                                                    </button>
-                                                </div>
                                                 <button class="btn btn-primary" onclick="storeTTDpeg()" id="btn-save-ttd">
                                                     <i class="fas fa-save me-1"></i> Simpan Tanda Tangan
                                                 </button>
                                             </div>
+
                                         </div>
                                     </div>
-
-                                    {{-- <ul class="list-group list-group-flush">
-                                        <li class="list-group-item px-0 pt-0">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <p class="mb-1 text-muted">Username</p>
-                                                    <p class="mb-0">{{ Auth::user()->LOGIN }}</p>
-                                                </div>
-                                                <div class="col-md-8">
-                                                    <p class="mb-1 text-muted">Nama Lengkap</p>
-                                                    <p class="mb-0">{{ $list['show']->NAMALENGKAP }}</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item px-0">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <p class="mb-1 text-muted">Nomor Handphone</p>
-                                                    <p class="mb-0">{{ $list['show']->NOHP }} {{ $list['show']->JENISNOHP ? '('.$list['show']->JENISNOHP.')' : '' }}</p>
-                                                </div>
-                                                <div class="col-md-8">
-                                                    <p class="mb-1 text-muted">Tempat, Tanggal Lahir</p>
-                                                    <p class="mb-0">{{ $list['show']->TEMPAT_LAHIR }}{{ $list['show']->TANGGAL_LAHIR ? ', ' . \Carbon\Carbon::parse($list['show']->TANGGAL_LAHIR)->translatedFormat('d F Y') : '' }}</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item px-0 pb-0">
-                                            <p class="mb-1 text-muted">Alamat Lengkap</p>
-                                            <p class="mb-0">{{ $list['show']->ALAMAT }}</p>
-                                        </li>
-                                    </ul> --}}
                                 </div>
                             </div>
                         </div>
-                        {{-- <div class="tab-pane fade" id="user-set-information" role="tabpanel"
-                            aria-labelledby="user-set-information-tab">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Personal Information</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">First Name</label>
-                                                <input type="text" class="form-control" value="Anshan" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Last Name</label>
-                                                <input type="text" class="form-control" value="Handgun" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Country</label>
-                                                <input type="text" class="form-control" value="New York" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Zip code</label>
-                                                <input type="text" class="form-control" value="956754" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <div class="mb-3">
-                                                <label class="form-label">Bio</label>
-                                                <textarea class="form-control">Hello, I’m Anshan Handgun</textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <div class="mb-0">
-                                                <label class="form-label">Experience</label>
-                                                <select class="form-control">
-                                                    <option>Startup</option>
-                                                    <option>2 year</option>
-                                                    <option>3 year</option>
-                                                    <option selected>4 year</option>
-                                                    <option>5 year</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Social Network</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div class="flex-grow-1 me-3">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0">
-                                                    <div class="avtar avtar-xs btn-light-twitter">
-                                                        <i class="fab fa-twitter f-16"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <h6 class="mb-0">Twitter</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <button class="btn btn-link-primary">Connect</button>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div class="flex-grow-1 me-3">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0">
-                                                    <div class="avtar avtar-xs btn-light-facebook">
-                                                        <i class="fab fa-facebook-f f-16"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <h6 class="mb-0">Facebook <small class="text-muted f-w-400">/Anshan
-                                                            Handgun</small>
-                                                    </h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <button class="btn btn-link-danger">Remove</button>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center">
-                                        <div class="flex-grow-1 me-3">
-                                            <div class="d-flex align-items-center">
-                                                <div class="flex-shrink-0">
-                                                    <div class="avtar avtar-xs btn-light-linkedin">
-                                                        <i class="fab fa-linkedin-in f-16"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <h6 class="mb-0">Linkedin</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-shrink-0">
-                                            <button class="btn btn-link-primary">Connect</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Contact Information</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Contact Phone</label>
-                                                <input type="text" class="form-control" value="(+99) 9999 999 999" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">Email <span class="text-danger">*</span></label>
-                                                <input type="email" class="form-control" value="demo@sample.com" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <div class="mb-3">
-                                                <label class="form-label">Portfolio Url</label>
-                                                <input type="text" class="form-control" value="https://demo.com/" />
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <div class="mb-0">
-                                                <label class="form-label">Address</label>
-                                                <textarea class="form-control">3379  Monroe Avenue, Fort Myers, Florida(33912)</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-end btn-page">
-                                <div class="btn btn-outline-secondary">Cancel</div>
-                                <div class="btn btn-primary">Update Profile</div>
-                            </div>
-                        </div> --}}
-                        {{-- <div class="tab-pane fade" id="user-set-account" role="tabpanel"
-                            aria-labelledby="user-set-account-tab">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>General Settings</h5>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item px-0 pt-0">
-                                            <div class="row mb-0">
-                                                <label class="col-form-label col-md-4 col-sm-12 text-md-end">Username
-                                                    <span class="text-danger">*</span></label>
-                                                <div class="col-md-8 col-sm-12">
-                                                    <input type="text" class="form-control" value="Ashoka_Tano_16" />
-                                                    <div class="form-text">
-                                                        Your Profile URL: <a href="#"
-                                                            class="link-primary">https://pc.com/Ashoka_Tano_16</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item px-0">
-                                            <div class="row mb-0">
-                                                <label class="col-form-label col-md-4 col-sm-12 text-md-end">Account
-                                                    Email <span class="text-danger">*</span></label>
-                                                <div class="col-md-8 col-sm-12">
-                                                    <input type="text" class="form-control" value="demo@sample.com" />
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item px-0">
-                                            <div class="row mb-0">
-                                                <label
-                                                    class="col-form-label col-md-4 col-sm-12 text-md-end">Language</label>
-                                                <div class="col-md-8 col-sm-12">
-                                                    <select class="form-control">
-                                                        <option>Washington</option>
-                                                        <option>India</option>
-                                                        <option>Africa</option>
-                                                        <option>New York</option>
-                                                        <option>Malaysia</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item px-0 pb-0">
-                                            <div class="row mb-0">
-                                                <label class="col-form-label col-md-4 col-sm-12 text-md-end">Sign
-                                                    in Using <span class="text-danger">*</span></label>
-                                                <div class="col-md-8 col-sm-12">
-                                                    <select class="form-control">
-                                                        <option>Password</option>
-                                                        <option>Face Recognition</option>
-                                                        <option>Thumb Impression</option>
-                                                        <option>Key</option>
-                                                        <option>Pin</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Advance Settings</h5>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item px-0 pt-0">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div>
-                                                    <p class="mb-1">Secure Browsing</p>
-                                                    <p class="text-muted text-sm mb-0">Browsing Securely ( https
-                                                        ) when it's necessary</p>
-                                                </div>
-                                                <div class="form-check form-switch p-0">
-                                                    <input class="form-check-input h4 position-relative m-0"
-                                                        type="checkbox" role="switch" checked="" />
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item px-0">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div>
-                                                    <p class="mb-1">Login Notifications</p>
-                                                    <p class="text-muted text-sm mb-0">Notify when login
-                                                        attempted from other place</p>
-                                                </div>
-                                                <div class="form-check form-switch p-0">
-                                                    <input class="form-check-input h4 position-relative m-0"
-                                                        type="checkbox" role="switch" checked="" />
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item px-0 pb-0">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div>
-                                                    <p class="mb-1">Login Approvals</p>
-                                                    <p class="text-muted text-sm mb-0">Approvals is not required
-                                                        when login from unrecognized devices.</p>
-                                                </div>
-                                                <div class="form-check form-switch p-0">
-                                                    <input class="form-check-input h4 position-relative m-0"
-                                                        type="checkbox" role="switch" checked="" />
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Recognized Devices</h5>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item px-0 pt-0">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="me-2">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avtar bg-light-primary">
-                                                            <i class="ph-duotone ph-desktop f-24"></i>
-                                                        </div>
-                                                        <div class="ms-2">
-                                                            <p class="mb-1">Celt Desktop</p>
-                                                            <p class="mb-0 text-muted">4351 Deans Lane</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="">
-                                                    <div class="text-success d-inline-block me-2">
-                                                        <i class="fas fa-circle f-10 me-2"></i>
-                                                        Active
-                                                    </div>
-                                                    <a href="#!" class="text-danger"><i
-                                                            class="feather icon-x-circle"></i></a>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item px-0">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="me-2">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avtar bg-light-primary">
-                                                            <i class="ph-duotone ph-device-tablet-camera f-24"></i>
-                                                        </div>
-                                                        <div class="ms-2">
-                                                            <p class="mb-1">Imco Tablet</p>
-                                                            <p class="mb-0 text-muted">4185 Michigan Avenue</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="">
-                                                    <div class="text-muted d-inline-block me-2">
-                                                        <i class="fas fa-circle f-10 me-2"></i>
-                                                        5 days
-                                                    </div>
-                                                    <a href="#!" class="text-danger"><i
-                                                            class="feather icon-x-circle"></i></a>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item px-0 pb-0">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="me-2">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avtar bg-light-primary">
-                                                            <i class="ph-duotone ph-device-mobile-camera f-24"></i>
-                                                        </div>
-                                                        <div class="ms-2">
-                                                            <p class="mb-1">Albs Mobile</p>
-                                                            <p class="mb-0 text-muted">3462 Fairfax Drive</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="">
-                                                    <div class="text-muted d-inline-block me-2">
-                                                        <i class="fas fa-circle f-10 me-2"></i>
-                                                        1 month
-                                                    </div>
-                                                    <a href="#!" class="text-danger"><i
-                                                            class="feather icon-x-circle"></i></a>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Active Sessions</h5>
-                                </div>
-                                <div class="card-body">
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item px-0 pt-0">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="me-2">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avtar bg-light-primary">
-                                                            <i class="ph-duotone ph-desktop f-24"></i>
-                                                        </div>
-                                                        <div class="ms-2">
-                                                            <p class="mb-1">Celt Desktop</p>
-                                                            <p class="mb-0 text-muted">4351 Deans Lane</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <button class="btn btn-link-danger">Logout</button>
-                                            </div>
-                                        </li>
-                                        <li class="list-group-item px-0 pb-0">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="me-2">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avtar bg-light-primary">
-                                                            <i class="ph-duotone ph-device-tablet-camera f-24"></i>
-                                                        </div>
-                                                        <div class="ms-2">
-                                                            <p class="mb-1">Moon Tablet</p>
-                                                            <p class="mb-0 text-muted">4185 Michigan Avenue</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <button class="btn btn-link-danger">Logout</button>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-body text-end">
-                                    <button class="btn btn-outline-dark me-2">Clear</button>
-                                    <button class="btn btn-primary">Update Profile</button>
-                                </div>
-                            </div>
-                        </div> --}}
                         <div class="tab-pane fade" id="user-set-passwort" role="tabpanel"
                             aria-labelledby="user-set-passwort-tab">
                             <div class="card alert alert-warning p-0">
@@ -706,7 +309,7 @@
                                                 <label class="col-form-label col-md-4 col-sm-12 text-md-end">Password Sekarang <span class="text-danger">*</span>
                                                 </label>
                                                 <div class="col-md-8 col-sm-12">
-                                                    <input type="password" class="form-control" id="password_lama"/>
+                                                    <input type="password" class="form-control" id="password_lama" disabled/>
                                                     {{-- <div class="form-text"> Lupa Password? <a href="#" class="link-primary">Klik Disini</a> </div> --}}
                                                 </div>
                                             </div>
@@ -715,7 +318,7 @@
                                             <div class="row mb-0">
                                                 <label class="col-form-label col-md-4 col-sm-12 text-md-end">Password Baru <span class="text-danger">*</span></label>
                                                 <div class="col-md-8 col-sm-12">
-                                                    <input type="password" class="form-control" id="password_baru"/>
+                                                    <input type="password" class="form-control" id="password_baru" disabled/>
                                                 </div>
                                             </div>
                                         </li>
@@ -723,7 +326,7 @@
                                             <div class="row mb-0">
                                                 <label class="col-form-label col-md-4 col-sm-12 text-md-end">Konfirmasi Password Baru <span class="text-danger">*</span></label>
                                                 <div class="col-md-8 col-sm-12">
-                                                    <input type="password" class="form-control" id="password_baru_confirm"/>
+                                                    <input type="password" class="form-control" id="password_baru_confirm" disabled/>
                                                 </div>
                                             </div>
                                         </li>
@@ -735,162 +338,6 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- <div class="tab-pane fade" id="user-set-email" role="tabpanel"
-                            aria-labelledby="user-set-email-tab">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Email Settings</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h6 class="mb-3">Setup Email Notification</h6>
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div>
-                                            <p class="text-muted mb-0">Email Notification</p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" checked="" />
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-0">
-                                        <div>
-                                            <p class="text-muted mb-0">Send Copy To Personal Email</p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Activity Related Emails</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h6 class="mb-3">When to email?</h6>
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div>
-                                            <p class="text-muted mb-0">Have new notifications</p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" checked="" />
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div>
-                                            <p class="text-muted mb-0">You're sent a direct message</p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" />
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div>
-                                            <p class="text-muted mb-0">Someone adds you as a connection</p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" checked="" />
-                                        </div>
-                                    </div>
-                                    <hr class="my-2 border border-secondary-subtle" />
-                                    <h6 class="mb-3">When to escalate emails?</h6>
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div>
-                                            <p class="text-muted mb-0">Upon new order</p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" checked="" />
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div>
-                                            <p class="text-muted mb-0">New membership approval</p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" />
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-0">
-                                        <div>
-                                            <p class="text-muted mb-0">Member registration</p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" checked="" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5>Updates from System Notification</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h6 class="mb-3">Email you with?</h6>
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div>
-                                            <p class="text-muted mb-0">News about PCT-themes products and
-                                                feature updates</p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" checked="" />
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div>
-                                            <p class="text-muted mb-0">Tips on getting more out of PCT-themes
-                                            </p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" checked="" />
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div>
-                                            <p class="text-muted mb-0">Things you missed since you last logged
-                                                into PCT-themes</p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" />
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div>
-                                            <p class="text-muted mb-0">News about products and other services
-                                            </p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" />
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-0">
-                                        <div>
-                                            <p class="text-muted mb-0">Tips and Document business products</p>
-                                        </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="m-0 form-check-input h5 position-relative" type="checkbox"
-                                                role="switch" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-body text-end btn-page">
-                                    <div class="btn btn-outline-secondary">Cancel</div>
-                                    <div class="btn btn-primary">Update Profile</div>
-                                </div>
-                            </div>
-                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -898,6 +345,7 @@
         <!-- [ sample-page ] end -->
     </div>
     <!-- [ Main Content ] end -->
+
     <script>
         $(document).ready(function() {
             // showLoader();
@@ -908,103 +356,97 @@
             }
         });
 
-        let padUser = null;
+        let padUsers = {};
 
         function showTTDpeg(NIP) {
-            $('#paduser').prop('hidden',true);
-            $('#show-petunjuk').prop('hidden',true);
-            $('#preview-wrapper').prop('hidden',true);
-            $('#loading-ttd').empty().append(`
-                <div class="spinner-grow align-middle me-2" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
+            $('#paduser').prop('hidden', true);
+            $('#show-petunjuk').prop('hidden', true);
+            $('#preview-wrapper').prop('hidden', true);
+            $('#preview-ttd-list').empty();
+
+            $('#loading-ttd').html(`
+                <div class="spinner-grow me-2"></div>
                 Memproses Tanda Tangan...
             `);
-            $('#show-id-ttd-peg').text(NIP);
             $('#idstorettd').val(NIP);
 
             $.ajax({
-                url: `/api/pegawai/${NIP}/ttdPeg`,
+                url: `/api/pegawai/${NIP}/ttd`,
                 type: 'GET',
                 dataType: 'json',
                 success: function(res) {
+
                     $('#loading-ttd').empty();
-                    console.log(res);
 
-                    if (res.dbttd && res.dbttd.signature_path) {
-                        // tampilkan gambar TTD
-                        $('#preview-ttd-peg').attr('src', `/storage/${res.dbttd.signature_path}`);
-                        $('#paduser').prop('hidden',true);
-                        $('#show-petunjuk').prop('hidden',true);
-                        $('#preview-wrapper').prop('hidden',false);
-                        $('#date-updated').text('Diperbarui pada ' + res.dbttd.signature_date);
+                    if (res.ttds && res.ttds.length > 0) {
 
-                        // jika tombol "ubah" diklik, munculkan canvas
-                        $('#btn-ubah-ttd').off('click').on('click', function () {
-                            $('#preview-wrapper').prop('hidden',true); // sembunyikan gambar
-                            $('#show-petunjuk').prop('hidden',false);
-                            $('#paduser').prop('hidden',false);
-                            tampilkanCanvasTTD();         // munculkan canvas
+                        res.ttds.forEach(function(ttd) {
+                            $('#preview-ttd-list').append(`
+                                <div class="col-md-4 text-center mb-3">
+                                    <small class="text-muted">Variasi ${ttd.queue}</small>
+                                    <img src="${ttd.signature_url}"
+                                        class="img-fluid border rounded"
+                                        style="max-height:150px;">
+                                    <div class="small text-muted mt-1">
+                                        ${moment(ttd.updated_at).format('DD MMM YYYY HH:mm')}
+                                    </div>
+                                </div>
+                            `);
                         });
 
-                        return; // selesai, tidak munculkan canvas langsung
+                        $('#preview-wrapper').prop('hidden', false);
+
+                        $('#btn-ubah-ttd').off('click').on('click', function () {
+                            $('#preview-wrapper').prop('hidden', true);
+                            $('#show-petunjuk').prop('hidden', false);
+                            $('#paduser').prop('hidden', false);
+
+                            // 🔥 reset semua signature pad
+                            padUsers = {};
+
+                            // ⏱️ tunggu DOM benar-benar tampil
+                            setTimeout(() => {
+                                tampilkanCanvasTTD();
+                            }, 50);
+                        });
+
                     } else {
-                        $('#paduser').prop('hidden',false);
-                        $('#show-petunjuk').prop('hidden',false);
-                        tampilkanCanvasTTD(); // kalau belum ada TTD, langsung tampilkan canvas
+                        // belum ada TTD sama sekali
+                        $('#paduser').prop('hidden', false);
+                        $('#show-petunjuk').prop('hidden', false);
+                        tampilkanCanvasTTD();
                     }
                 }
             });
         }
 
         function tampilkanCanvasTTD() {
-            // $('#canvas').html(`
-            //     <div class="row">
-            //         <div class="col-md-5 mb-3">
-            //             <canvas id="signature-pad" style="border:1px solid #ccc; width: 100%; height: 200px;"></canvas>
-            //         </div>
-            //         <div class="col-md-7">
-            //             <strong>Petunjuk:</strong><br>
-            //             1. Gunakan layar sentuh atau mouse.<br>
-            //             2. Gambar tanda tangan pada canvas.<br>
-            //             3. Klik "Kosongkan" untuk menghapus.<br>
-            //             4. Klik "Simpan" untuk menyimpan.<br>
+            for (let i = 1; i <= 6; i++) {
+                // if (padUsers[i]) continue;
 
-            //             <div class="mt-3 d-flex gap-2">
-            //                 <button type="button" id="clear" class="btn btn-danger"><i class="fa fa-erase me-1"></i> Kosongkan</button>
-            //                 <button type="button" class="btn btn-primary" onclick="storeTTDpeg()"><i class="fa fa-save me-1"></i> Simpan</button>
-            //             </div>
-            //         </div>
-            //     </div>
-            // `);
+                const canvas = document.getElementById('signature-pad-user-' + i);
+                if (!canvas) continue;
 
-            if (padUser) return; // Sudah inisiasi
-            const canvas = document.getElementById('signature-pad-user');
-            padUser = new SignaturePad(canvas);
-
-            resizeCanvasResponsive(canvas);
-
-            $('#clear-user').on('click', function() {
-                padUser.clear();
-                $('#placeholder-ttd-user').show();
-            });
-
-            padUser.onBegin = function() {
-                $('#placeholder-ttd-user').hide();
-            };
-
-            $(window).on('resize.user', function() {
+                padUsers[i] = new SignaturePad(canvas);
                 resizeCanvasResponsive(canvas);
+
+                padUsers[i].onBegin = function () {
+                    $('#placeholder-ttd-user-' + i).hide();
+                };
+            }
+
+            $('.clear-user').off('click').on('click', function () {
+                const idx = $(this).data('index');
+                padUsers[idx].clear();
+                $('#placeholder-ttd-user-' + idx).show();
             });
-            // canvas = document.getElementById('signature-pad');
-            // signaturePad = new SignaturePad(canvas);
-            // resizeCanvas();
 
-            // $('#clear').on('click', function () {
-            //     signaturePad.clear();
-            // });
-
-            // $(window).off('resize').on('resize', resizeCanvas);
+            $(window).on('resize.user', function () {
+                for (let i = 1; i <= 6; i++) {
+                    const canvas = document.getElementById('signature-pad-user-' + i);
+                    if (canvas) resizeCanvasResponsive(canvas);
+                }
+            });
         }
 
         function resizeCanvasResponsive(canvas) {
@@ -1026,50 +468,47 @@
         }
 
         function storeTTDpeg() {
-            const nip = document.getElementById('idstorettd').value.trim();
-            const signature = padUser.toDataURL('image/png');
-            $('#btn-save-ttd').prop('disabled',true);
-            $('#btn-save-ttd').find('i').removeClass('fa-save').addClass('fa-sync fa-spin');
+            const nip = $('#idstorettd').val().trim();
+            let signatures = [];
 
-            if (!nip || padUser.isEmpty()) {
-                alert("Tanda tangan wajib diisi.");
+            for (let i = 1; i <= 6; i++) {
+                if (padUsers[i] && !padUsers[i].isEmpty()) {
+                    signatures.push({
+                        queue: i,
+                        image: padUsers[i].toDataURL('image/png')
+                    });
+                }
+            }
+
+            if (signatures.length === 0) {
+                alert('Minimal 1 tanda tangan harus diisi');
                 return;
             }
 
+            $('#btn-save-ttd').prop('disabled', true)
+                .find('i').addClass('fa-spin fa-sync');
+
             $.ajax({
                 url: "{{ route('api.pegawai.storeTtdPeg') }}",
-                method: 'POST',
+                method: "POST",
+                contentType: "application/json",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                data: JSON.stringify({ nip: nip, signature: signature }),
-                contentType: 'application/json',
-                success: function(data) {
-                    if (data.success) {
-                        iziToast.success({
-                            title: 'Yeayy!',
-                            message: 'TTE telah berhasil disimpan.',
-                            position: 'topRight'
-                        });
-                        // Ganti canvas dengan gambar tanda tangan
-                        const nip = document.getElementById('idstorettd').value.trim();
-                        showTTDpeg(nip);
-                        $('#btn-save-ttd').prop('disabled',false);
-                        $('#btn-save-ttd').find('i').removeClass('fa-sync fa-spin').addClass('fa-save');
-                    } else {
-                        alert("Gagal menyimpan data");
-                        $('#btn-save-ttd').prop('disabled',false);
-                        $('#btn-save-ttd').find('i').removeClass('fa-sync fa-spin').addClass('fa-save');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Gagal Memproses Data!',
-                        text: error.message || 'Dokumen telah ditandatangani.',
+                data: JSON.stringify({
+                    nip: nip,
+                    signatures: signatures
+                }),
+                success: function (res) {
+                    iziToast.success({
+                        title: 'Berhasil',
+                        message: 'Tanda tangan berhasil disimpan'
                     });
-                    $('#btn-save-ttd').prop('disabled',false);
-                    $('#btn-save-ttd').find('i').removeClass('fa-sync fa-spin').addClass('fa-save');
+                    showTTDpeg(nip);
+                },
+                complete: function () {
+                    $('#btn-save-ttd').prop('disabled', false)
+                        .find('i').removeClass('fa-spin fa-sync');
                 }
             });
         }
