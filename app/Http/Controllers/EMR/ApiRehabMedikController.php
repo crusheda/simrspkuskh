@@ -34,35 +34,34 @@ class ApiRehabMedikController extends Controller
     {
         $soffice = env('LIBREOFFICE_PATH', '/usr/bin/soffice');
 
-        // Pastikan path absolut
         $input  = realpath($input);
         $output = realpath($output);
 
         if (!$input || !$output) {
             \Log::error('Path input/output tidak valid', compact('input','output'));
-            return [false, [], -1];
+            return [false, ['Path invalid'], -1];
         }
 
-        // Kill proses soffice lama (Linux)
-        exec('pkill -f soffice 2>/dev/null');
-
-        // Command convert
         $cmd = sprintf(
-            '%s --headless --nologo --nofirststartwizard --convert-to pdf %s --outdir %s 2>&1',
+            'HOME=/tmp %s --headless --nologo --nofirststartwizard --convert-to pdf %s --outdir %s 2>&1',
             escapeshellcmd($soffice),
             escapeshellarg($input),
             escapeshellarg($output)
         );
 
+        // Jalankan dan tangkap output
         exec($cmd, $log, $result);
 
-        $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
+        // Simpan log lengkap ke file supaya bisa dicek
+        file_put_contents(storage_path('logs/libreoffice_debug.log'), date('Y-m-d H:i:s') . " CMD: $cmd\nLOG: " . implode("\n", $log) . "\nRESULT: $result\n\n", FILE_APPEND);
 
-        if ($result !== 0 || !file_exists($outputPdf)) {
-            \Log::error('LibreOffice Linux gagal konversi', [
+        $outputPdf = $output.'/'.pathinfo($input, PATHINFO_FILENAME).'.pdf';
+
+        if (!file_exists($outputPdf)) {
+            \Log::error('LibreOffice gagal konversi PDF', [
                 'cmd' => $cmd,
                 'log' => $log,
-                'result' => $result
+                'result' => $result,
             ]);
             return [false, $log, $result];
         }

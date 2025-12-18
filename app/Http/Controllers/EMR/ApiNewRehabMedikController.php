@@ -25,7 +25,7 @@ class ApiNewRehabMedikController extends Controller
     {
         $soffice = env('LIBREOFFICE_PATH', '/usr/bin/soffice');
 
-        // Pastikan path absolut
+        // Path absolut
         $input  = realpath($input);
         $output = realpath($output);
 
@@ -34,13 +34,20 @@ class ApiNewRehabMedikController extends Controller
             return [false, [], -1];
         }
 
-        // Kill proses soffice lama (Linux)
-        exec('pkill -f soffice 2>/dev/null');
+        // Environment aman untuk www-data
+        putenv('HOME=/tmp');
+        putenv('XDG_CACHE_HOME=/tmp');
+
+        // Profile unik per proses (ANTI TABRAKAN)
+        $profile = '/tmp/lo_' . uniqid();
 
         // Command convert
         $cmd = sprintf(
-            '%s --headless --nologo --nofirststartwizard --convert-to pdf %s --outdir %s 2>&1',
+            '%s --headless --nologo --nofirststartwizard ' .
+            '-env:UserInstallation=file://%s ' .
+            '--convert-to pdf %s --outdir %s 2>&1',
             escapeshellcmd($soffice),
+            escapeshellarg($profile),
             escapeshellarg($input),
             escapeshellarg($output)
         );
@@ -49,16 +56,19 @@ class ApiNewRehabMedikController extends Controller
 
         $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
 
+        // Cleanup profile
+        exec('rm -rf ' . escapeshellarg($profile));
+
         if ($result !== 0 || !file_exists($outputPdf)) {
             \Log::error('LibreOffice Linux gagal konversi', [
                 'cmd' => $cmd,
                 'log' => $log,
-                'result' => $result
+                'result' => $result,
             ]);
             return [false, $log, $result];
         }
 
-        return [true, $log, $result];
+        return [true, $outputPdf];
     }
 
     // CONTROLLER FOR LIBRE OFFICE ON WINDOWS SERVER
