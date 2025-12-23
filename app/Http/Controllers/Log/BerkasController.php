@@ -27,6 +27,10 @@ class BerkasController extends Controller
 
     function table()
     {
+        if (!auth()->check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
         $that = $this;
         $show = klaim_file::select('*')
                 ->whereNull('deleted_at')
@@ -66,7 +70,13 @@ class BerkasController extends Controller
         $used = $total - $free;
 
         $path_storage = storage_path('app/public');
-        $size_storage = $this->folderSize($path_storage);
+        // $size_storage = $this->folderSize($path_storage);
+        $size_storage = 0;
+        try {
+            $size_storage = $this->folderSize($path_storage);
+        } catch (\Throwable $e) {
+            $size_storage = 0;
+        }
 
         $data = [
             'show' => $show,
