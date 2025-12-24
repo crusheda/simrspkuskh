@@ -31,18 +31,54 @@
 
 <script>
     $(document).ready(function() {
-        // $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
-        //     const target = $(e.target).data('bsTarget');
+        $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
+            const target = $(e.target).data('bsTarget');
 
-        //     if (target === '#fmrehab' || target === '#frjkfr') {
-        //         // validPageFormKfr();
-        //         console.log('form kfr');
-        //     } else if (target === '#lpterapi') {
-        //         // validPageFormJp();
-        //         console.log('form program terapi');
-        //     } else {
-        //         console.log('form lainnya');
-        //     }
-        // });
+            if (target === '#frjkfr') {
+                loadFormKfr();
+                console.log('masuk form kfr');
+            } else if (target === '#pterapi') {
+                console.log('masuk form program terapi');
+            } else {
+                console.log('masuk form lainnya');
+            }
+        });
     });
+
+    function loadFormKfr() {
+        kunjungan = $('#kunjungan_kfr').val();
+        $.ajax({
+            url: '/api/emr/kfr/' + kunjungan,
+            type: 'GET',
+            success: function(res) {
+
+                if (!res.status) {
+                    Swal.fire('Info', res.message, 'info');
+                    $('#btn-kosongi-form-kfr').prop('hidden', false);
+                    $('#btn-simpan-form-kfr').prop('hidden', false);
+                    $('#btn-update-form-kfr').prop('hidden', true);
+                    $('#btn-hapus-form-kfr').prop('hidden', true);
+                    return;
+                }
+                $('#btn-kosongi-form-kfr').prop('hidden', true);
+                $('#btn-simpan-form-kfr').prop('hidden', true);
+                $('#btn-update-form-kfr').prop('hidden', false);
+                $('#btn-hapus-form-kfr').prop('hidden', false);
+
+                $('#id_cppt_kfr').val(res.id_cppt);
+
+                $('#cppt_s').val(res.data.s);
+                $('#cppt_o').val(res.data.o);
+                $('#cppt_a').val(res.data.a);
+
+                $('#cppt_p_1').val(res.data.p1);
+                $('#cppt_p_2').val(res.data.p2);
+                $('#cppt_p_3').val(res.data.p3);
+                $('#cppt_p_4').val(res.data.p4);
+
+                $('#cppt_i').val(res.data.cppt_i).trigger('change');
+                $('#cppt_i_rtl').val(res.data.cppt_i_rtl);
+            }
+        });
+    }
 </script>

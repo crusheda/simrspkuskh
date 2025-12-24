@@ -12,6 +12,7 @@ use App\Models\simrspku_klaim\form_kfr;
 use App\Models\simrspku_klaim\form_kfr_jp;
 use App\Models\simrspku_klaim\form_kfr_ks;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
 use PhpOffice\PhpWord\TemplateProcessor;
 use PHPJasper\PHPJasper;
@@ -99,6 +100,334 @@ class ApiNewRehabMedikController extends Controller
 
     //     return [true, $log, $result];
     // }
+
+    public function get($KUNJUNGAN)
+    {
+        $data = DB::table('simrspku_klaim.emr_form_kfr AS kfr')
+            ->join('medicalrecord.cppt AS cppt', 'cppt.ID', '=', 'kfr.id_cppt')
+            ->where('kfr.nomor', $KUNJUNGAN)
+            ->where('kfr.status', 1)
+            ->select(
+                'cppt.ID AS ID_CPPT',
+                'cppt.SUBYEKTIF',
+                'cppt.OBYEKTIF',
+                'cppt.ASSESMENT',
+                'cppt.PLANNING',
+                'cppt.INSTRUKSI'
+            )
+            ->first();
+
+        if (!$data) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data tidak ditemukan'
+            ]);
+        }
+
+        // === pecah PLANNING ===
+        $planning = explode("\n", $data->PLANNING);
+
+        // === mapping INSTRUKSI → select + textarea ===
+        $instruksi_text = trim($data->INSTRUKSI);
+
+        $cppt_i = 0;
+        $cppt_i_rtl = '';
+
+        if (str_starts_with($instruksi_text, "Evaluasi")) {
+            $cppt_i = 1;
+            $cppt_i_rtl = trim(str_replace("Evaluasi :", "", $instruksi_text));
+        } elseif (str_starts_with($instruksi_text, "Rujuk")) {
+            $cppt_i = 2;
+            $cppt_i_rtl = trim(str_replace("Rujuk :", "", $instruksi_text));
+        } elseif (str_starts_with($instruksi_text, "Selesai")) {
+            $cppt_i = 3;
+            $cppt_i_rtl = trim(str_replace("Selesai :", "", $instruksi_text));
+        }
+
+        return response()->json([
+            'status' => true,
+            'id_cppt' => $data->ID_CPPT,
+            'data' => [
+                's' => $data->SUBYEKTIF,
+                'o' => $data->OBYEKTIF,
+                'a' => $data->ASSESMENT,
+                'p1'=> $planning[0] ?? '',
+                'p2'=> $planning[1] ?? '',
+                'p3'=> $planning[2] ?? '',
+                'p4'=> $planning[3] ?? '',
+                'cppt_i'      => $cppt_i,
+                'cppt_i_rtl'  => $cppt_i_rtl,
+            ]
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'rm'           => 'required|integer',
+            'kunjungan'    => 'required',
+            'tgl'          => 'required|date',
+
+            'cppt_s'       => 'required',
+            'cppt_o'       => 'required',
+            'cppt_a'       => 'required',
+
+            'cppt_p_1'     => 'required',
+            'cppt_p_2'     => 'required',
+            'cppt_p_3'     => 'required',
+            'cppt_p_4'     => 'required',
+
+            'cppt_i'       => 'required|in:1,2,3',
+            'cppt_i_rtl'   => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message'=> $validator->errors()->first()
+            ], 422);
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $kunjungan = $request->kunjungan;
+            $dokter = DB::table('master.dokter as dr')
+                        ->leftJoin('aplikasi.pengguna as pe', function($join) {
+                            $join->on('pe.NIP', '=', 'dr.NIP')
+                                ->where('pe.STATUS', '=', 1);
+                        })
+                        ->select('dr.ID', 'pe.NAMA AS DOKTER', 'dr.NIP', DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'))
+                        ->where('pe.ID', auth()->id())
+                        ->where('dr.STATUS', 1)
+                        ->first();
+
+            if (!$dokter) {
+                throw new \Exception('Data dokter tidak ditemukan untuk user ini');
+            }
+
+            $ttd_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
+                ->where('ttp.nip', $dokter->NIP)
+                ->where('status', 1)
+                ->inRandomOrder()
+                ->first();
+
+            if ($request->cppt_i == 1) {
+                $cppt_i = "Evaluasi :\n".$request->cppt_i_rtl;
+            } elseif ($request->cppt_i == 2) {
+                $cppt_i = "Rujuk :\n".$request->cppt_i_rtl;
+            } elseif ($request->cppt_i == 3) {
+                $cppt_i = "Selesai :\n".$request->cppt_i_rtl;
+            } else {
+                $cppt_i = "";
+            }
+
+            /* ==========================
+            * 1. INSERT CPPT
+            * ========================== */
+            $id_cppt = DB::table('medicalrecord.cppt')->insertGetId([
+                'KUNJUNGAN'    => $kunjungan,
+                'TANGGAL'      => $request->tgl,
+                'SUBYEKTIF'    => $request->cppt_s,
+                'OBYEKTIF'     => $request->cppt_o,
+                'ASSESMENT'    => $request->cppt_a,
+                'PLANNING'     =>
+                    $request->cppt_p_1 . "\n" .
+                    $request->cppt_p_2 . "\n" .
+                    $request->cppt_p_3 . "\n" .
+                    $request->cppt_p_4,
+                'INSTRUKSI'    => $cppt_i,
+                'JENIS'        => 1,
+                'TENAGA_MEDIS' => $dokter->ID,
+                'OLEH'         => auth()->id(),
+                'STATUS'       => 1,
+            ]);
+
+            /* ==========================
+            * 2. INSERT EMR FORM KFR
+            * ========================== */
+            DB::table('simrspku_klaim.emr_form_kfr')->insert([
+                'id_cppt'       => $id_cppt,
+                'group'         => 1,
+                'nomor_init'    => $kunjungan,
+                'nomor'         => $kunjungan,
+                'tgl_init'      => now()->toDateString(),
+                'tgl'           => now()->toDateString(),
+                'rm'            => $request->rm,
+                'id_ttd_dokter' => $ttd_pegawai->id,
+                'ttd_dokter'    => $ttd_pegawai->signature_path,
+                'nip_dokter'    => $ttd_pegawai->nip,
+                'nama_dokter'   => $dokter->NAMADOKTER,
+                'status'        => 1,
+                'user'          => auth()->id(),
+                'created_at'    => now(),
+                'updated_at'    => now()
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message'=> 'Form KFR & CPPT berhasil disimpan'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message'=> $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $IDCPPT)
+    {
+        $validator = Validator::make($request->all(), [
+            'tgl'          => 'required|date',
+
+            'cppt_s'       => 'required',
+            'cppt_o'       => 'required',
+            'cppt_a'       => 'required',
+
+            'cppt_p_1'     => 'required',
+            'cppt_p_2'     => 'required',
+            'cppt_p_3'     => 'required',
+            'cppt_p_4'     => 'required',
+
+            'cppt_i'       => 'required|in:1,2,3',
+            'cppt_i_rtl'   => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message'=> $validator->errors()->first()
+            ], 422);
+        }
+
+        // === Build INSTRUKSI sesuai pilihan ===
+        if ($request->cppt_i == 1) {
+            $cppt_i = "Evaluasi : \n".$request->cppt_i_rtl;
+        } elseif ($request->cppt_i == 2) {
+            $cppt_i = "Rujuk : \n".$request->cppt_i_rtl;
+        } else { // 3
+            $cppt_i = "Selesai : \n".$request->cppt_i_rtl;
+        }
+
+        // PLANNING — gabung hanya yang terisi
+        $planningParts = array_filter([
+            trim($request->cppt_p_1),
+            trim($request->cppt_p_2),
+            trim($request->cppt_p_3),
+            trim($request->cppt_p_4),
+        ]);
+
+        $planning = implode("\r\n", $planningParts);
+        
+        DB::beginTransaction();
+        try {
+            /* ==========================
+            * 1. UPDATE CPPT
+            * ========================== */
+            DB::table('medicalrecord.cppt')
+                ->where('ID', $IDCPPT)
+                ->where('STATUS', 1)
+                ->update([
+                    'TANGGAL'      => $request->tgl,
+                    'SUBYEKTIF'    => $request->cppt_s,
+                    'OBYEKTIF'     => $request->cppt_o,
+                    'ASSESMENT'    => $request->cppt_a,
+                    'PLANNING'     => $planning,
+                    'INSTRUKSI'    => $cppt_i,
+                    'STATUS'       => 1,
+                ]);
+
+            /* ==========================
+            * 2. UPDATE EMR FORM KFR
+            * ========================== */
+            DB::table('simrspku_klaim.emr_form_kfr')
+                ->where('id_cppt', $IDCPPT)
+                ->where('status', 1)
+                ->update([
+                    'user'        => auth()->id(),
+                    'updated_at'  => now()
+                ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Data KFR & CPPT berhasil di-update'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message'=> $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'id_cppt' => 'required|integer'
+        ]);
+
+        DB::beginTransaction();
+        try {
+
+            // cek data
+            $form = DB::table('simrspku_klaim.emr_form_kfr')
+                ->where('id_cppt', $request->id_cppt)
+                ->where('status', 1)
+                ->first();
+
+            if (!$form) {
+                throw new \Exception('Data Form KFR tidak ditemukan');
+            }
+
+            $now = now();
+
+            /* ==========================
+            * 1. Soft Delete EMR FORM KFR
+            * ========================== */
+            DB::table('simrspku_klaim.emr_form_kfr')
+                ->where('id_cppt', $request->id_cppt)
+                ->update([
+                    'user'       => auth()->id(),
+                    'status'     => 0,
+                    'deleted_at' => $now
+                ]);
+
+            /* ==========================
+            * 2. Soft Delete CPPT
+            * ========================== */
+            DB::table('medicalrecord.cppt')
+                ->where('ID', $request->id_cppt)
+                ->update([
+                    'STATUS'     => 0
+                ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message'=> 'Form KFR & CPPT berhasil dihapus'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message'=> $e->getMessage()
+            ], 500);
+        }
+    }
 
     public static function setImgWord(TemplateProcessor $templateProcessor, string $key, string $imagePath, int $targetWidth)
     {

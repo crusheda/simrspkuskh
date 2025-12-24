@@ -14,6 +14,7 @@ use App\Http\Controllers\Display\BedController;
 use App\Http\Controllers\Display\AntrianPoliController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
+use App\Http\Controllers\EMR\ApiNewRehabMedikController;
 use App\Http\Controllers\EMR\ApiMatriksController;
 use App\Http\Controllers\EMR\ApiKonsulController;
 use App\Http\Controllers\EMR\ApiUploadController;
@@ -77,28 +78,35 @@ Route::group(['middleware' => ['web', 'auth']], function() {
 
     // EMR
         // REHABILITASI MEDIK
-            // FORM KFR
-            Route::post('emr', [EMRController::class, 'table'])->name('api.emr');
-            Route::get('emr/ruangan/{id}', [EMRController::class, 'ruangan'])->name('api.ruangan');
-            Route::get('emr/{NORM}/fkfr/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKfr'])->name('api.emr.fkfr.get');
-            Route::post('emr/fkfr/formbaru', [ApiRehabMedikController::class, 'simpanFormKfrBaru'])->name('api.emr.fkfr.simpanformbaru');
-            Route::post('emr/fkfr/formlama', [ApiRehabMedikController::class, 'simpanFormKfrLama'])->name('api.emr.fkfr.simpanformlama');
-            Route::get('emr/fkfr/{id}', [ApiRehabMedikController::class, 'getFormKfrByGroup'])->name('api.emr.fkfr.getFormKfrByGroup');
-            Route::delete('emr/fkfr/{NOMOR}/hapus/{USER}', [ApiRehabMedikController::class, 'hapusFormKfr'])->name('api.emr.fkfr.hapusFormKfr');
-            Route::delete('emr/fkfr/{NOMOR}/hapus/{USER}/all/{GROUP}', [ApiRehabMedikController::class, 'hapusFormKfrAll'])->name('api.emr.fkfr.hapusFormKfrAll');
-            Route::get('emr/fkfr/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormKfr'])->name('api.emr.fkfr.preview');
-            // JP - JADWAL PELAYANAN
-            Route::get('emr/{NORM}/jp/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormJp'])->name('api.emr.jp.get');
-            Route::get('emr/jp/{id}', [ApiRehabMedikController::class, 'getFormJpByGroup'])->name('api.emr.fkfr.getFormJpByGroup');
-            Route::get('emr/jp/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormJp'])->name('api.emr.jp.preview');
-            Route::post('emr/jp', [ApiRehabMedikController::class, 'simpanJp'])->name('api.emr.jp.simpanJp');
-            Route::delete('emr/jp/hapus/{id}', [ApiRehabMedikController::class, 'hapusFormJp'])->name('api.emr.jp.hapusFormJp');
-            // KS - REKOMENDASI DOKTER
-            Route::get('emr/{NORM}/ks/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKs'])->name('api.emr.ks.get');
-            Route::get('emr/ks/{id}', [ApiRehabMedikController::class, 'getFormKsByGroup'])->name('api.emr.fkfr.getFormKsByGroup');
-            Route::get('emr/ks/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormKs'])->name('api.emr.ks.preview');
-            Route::post('emr/ks', [ApiRehabMedikController::class, 'simpanKs'])->name('api.emr.ks.simpan');
-            Route::delete('emr/ks/hapus/{id}', [ApiRehabMedikController::class, 'hapusFormKs'])->name('api.emr.ks.hapus');
+            // OLD REHAB MEDIK
+                // FORM KFR
+                Route::post('emr', [EMRController::class, 'table'])->name('api.emr');
+                Route::get('emr/ruangan/{id}', [EMRController::class, 'ruangan'])->name('api.ruangan');
+                Route::get('emr/{NORM}/fkfr/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKfr'])->name('api.emr.fkfr.get');
+                Route::post('emr/fkfr/formbaru', [ApiRehabMedikController::class, 'simpanFormKfrBaru'])->name('api.emr.fkfr.simpanformbaru');
+                Route::post('emr/fkfr/formlama', [ApiRehabMedikController::class, 'simpanFormKfrLama'])->name('api.emr.fkfr.simpanformlama');
+                Route::get('emr/fkfr/{id}', [ApiRehabMedikController::class, 'getFormKfrByGroup'])->name('api.emr.fkfr.getFormKfrByGroup');
+                Route::delete('emr/fkfr/{NOMOR}/hapus/{USER}', [ApiRehabMedikController::class, 'hapusFormKfr'])->name('api.emr.fkfr.hapusFormKfr');
+                Route::delete('emr/fkfr/{NOMOR}/hapus/{USER}/all/{GROUP}', [ApiRehabMedikController::class, 'hapusFormKfrAll'])->name('api.emr.fkfr.hapusFormKfrAll');
+                Route::get('emr/fkfr/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormKfr'])->name('api.emr.fkfr.preview');
+                // JP - JADWAL PELAYANAN
+                Route::get('emr/{NORM}/jp/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormJp'])->name('api.emr.jp.get');
+                Route::get('emr/jp/{id}', [ApiRehabMedikController::class, 'getFormJpByGroup'])->name('api.emr.fkfr.getFormJpByGroup');
+                Route::get('emr/jp/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormJp'])->name('api.emr.jp.preview');
+                Route::post('emr/jp', [ApiRehabMedikController::class, 'simpanJp'])->name('api.emr.jp.simpanJp');
+                Route::delete('emr/jp/hapus/{id}', [ApiRehabMedikController::class, 'hapusFormJp'])->name('api.emr.jp.hapusFormJp');
+                // KS - REKOMENDASI DOKTER
+                Route::get('emr/{NORM}/ks/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKs'])->name('api.emr.ks.get');
+                Route::get('emr/ks/{id}', [ApiRehabMedikController::class, 'getFormKsByGroup'])->name('api.emr.fkfr.getFormKsByGroup');
+                Route::get('emr/ks/{KUNJUNGAN}/preview/{GROUP}', [ApiRehabMedikController::class, 'compileFormKs'])->name('api.emr.ks.preview');
+                Route::post('emr/ks', [ApiRehabMedikController::class, 'simpanKs'])->name('api.emr.ks.simpan');
+                Route::delete('emr/ks/hapus/{id}', [ApiRehabMedikController::class, 'hapusFormKs'])->name('api.emr.ks.hapus');
+            // NEW REHAB MEDIK
+                // FORM KFR
+                Route::get('emr/kfr/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'get'])->name('api.emr.kfr.get');
+                Route::post('emr/kfr/store', [ApiNewRehabMedikController::class, 'store'])->name('api.emr.kfr.store');
+                Route::put('emr/kfr/update/{IDCPPT}', [ApiNewRehabMedikController::class, 'update'])->name('api.emr.kfr.update');
+                Route::post('emr/kfr/destroy', [ApiNewRehabMedikController::class, 'destroy'])->name('api.emr.kfr.destroy');
             // RIS
             Route::get('dcom/{filename}', [RISController::class, 'getDCOM'])->name('api.emr.ris.getDCOM');
 
