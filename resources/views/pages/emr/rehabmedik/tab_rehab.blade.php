@@ -36,6 +36,7 @@
 
             if (target === '#frjkfr') {
                 loadFormKfr();
+                loadCpptKfr();
                 console.log('masuk form kfr');
             } else if (target === '#pterapi') {
                 console.log('masuk form program terapi');
@@ -57,12 +58,16 @@
                     $('#btn-kosongi-form-kfr').prop('hidden', false);
                     $('#btn-simpan-form-kfr').prop('hidden', false);
                     $('#btn-update-form-kfr').prop('hidden', true);
+                    $('#btn-generate-form-kfr').prop('hidden', true);
+                    $('#btn-lihat-form-kfr').prop('hidden', true);
                     $('#btn-hapus-form-kfr').prop('hidden', true);
                     return;
                 }
                 $('#btn-kosongi-form-kfr').prop('hidden', true);
                 $('#btn-simpan-form-kfr').prop('hidden', true);
                 $('#btn-update-form-kfr').prop('hidden', false);
+                $('#btn-generate-form-kfr').prop('hidden', false);
+                $('#btn-lihat-form-kfr').prop('hidden', false);
                 $('#btn-hapus-form-kfr').prop('hidden', false);
 
                 $('#id_cppt_kfr').val(res.id_cppt);

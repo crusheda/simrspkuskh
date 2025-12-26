@@ -101,6 +101,16 @@ class ApiNewRehabMedikController extends Controller
     //     return [true, $log, $result];
     // }
 
+    public function getSection($text, $label)
+    {
+        $safeLabel = preg_quote($label, '/');
+
+        $pattern = "/{$safeLabel}:\s*\n(.*?)(?:\n{2,}|$)/s";
+        preg_match($pattern, $text, $m);
+
+        return isset($m[1]) ? trim($m[1]) : '';
+    }
+
     public function get($KUNJUNGAN)
     {
         $data = DB::table('simrspku_klaim.emr_form_kfr AS kfr')
@@ -124,14 +134,18 @@ class ApiNewRehabMedikController extends Controller
             ]);
         }
 
-        // === pecah PLANNING ===
-        $planning = explode("\n", $data->PLANNING);
+        // Normalisasi line break
+        $planningText = preg_replace("/\r?\n/", "\n", $data->PLANNING);
 
-        // === mapping INSTRUKSI → select + textarea ===
+        // Ambil tiap bagian planning
+        $p1 = $this->getSection($planningText, 'Goal of Treatment');
+        $p2 = $this->getSection($planningText, 'Tindakan/Program Rehabilitasi Medik');
+        $p3 = $this->getSection($planningText, 'Edukasi');
+        $p4 = $this->getSection($planningText, 'Frekuensi Kunjungan');
+
+        // Mapping instruksi
         $instruksi_text = trim($data->INSTRUKSI);
-
-        $cppt_i = 0;
-        $cppt_i_rtl = '';
+        $cppt_i = 0; $cppt_i_rtl = '';
 
         if (str_starts_with($instruksi_text, "Evaluasi")) {
             $cppt_i = 1;
@@ -151,13 +165,47 @@ class ApiNewRehabMedikController extends Controller
                 's' => $data->SUBYEKTIF,
                 'o' => $data->OBYEKTIF,
                 'a' => $data->ASSESMENT,
-                'p1'=> $planning[0] ?? '',
-                'p2'=> $planning[1] ?? '',
-                'p3'=> $planning[2] ?? '',
-                'p4'=> $planning[3] ?? '',
-                'cppt_i'      => $cppt_i,
-                'cppt_i_rtl'  => $cppt_i_rtl,
+                'p1'=> $p1,
+                'p2'=> $p2,
+                'p3'=> $p3,
+                'p4'=> $p4,
+                'cppt_i'     => $cppt_i,
+                'cppt_i_rtl' => $cppt_i_rtl,
             ]
+        ]);
+    }
+
+    function getCppt($KUNJUNGAN) {
+        $data = DB::table('medicalrecord.cppt AS cppt')
+            ->leftJoin('master.dokter as dr', function($join) {
+                $join->on('dr.ID', '=', 'cppt.TENAGA_MEDIS')
+                    ->where('dr.STATUS', '=', 1);
+            })
+            ->leftJoin('aplikasi.pengguna as pe', function($join) {
+                $join->on('pe.ID', '=', 'cppt.OLEH')
+                    ->where('pe.STATUS', '=', 1);
+            })
+            ->where('cppt.KUNJUNGAN', $KUNJUNGAN)
+            ->where('cppt.STATUS', 1)
+            ->select(
+                'cppt.ID AS ID_CPPT',
+                'cppt.TANGGAL',
+                'cppt.SUBYEKTIF',
+                'cppt.OBYEKTIF',
+                'cppt.ASSESMENT',
+                'cppt.PLANNING',
+                'cppt.INSTRUKSI',
+                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAUSER'),
+            )
+            ->orderBy('cppt.TANGGAL', 'DESC')
+            ->get();
+
+        // print_r($data); exit;
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
         ]);
     }
 
@@ -166,6 +214,8 @@ class ApiNewRehabMedikController extends Controller
         $validator = Validator::make($request->all(), [
             'rm'           => 'required|integer',
             'kunjungan'    => 'required',
+            'sep'          => 'required',
+            'tgl_sep'      => 'required|date',
             'tgl'          => 'required|date',
 
             'cppt_s'       => 'required',
@@ -190,7 +240,6 @@ class ApiNewRehabMedikController extends Controller
 
         DB::beginTransaction();
         try {
-
             $kunjungan = $request->kunjungan;
             $dokter = DB::table('master.dokter as dr')
                         ->leftJoin('aplikasi.pengguna as pe', function($join) {
@@ -222,6 +271,19 @@ class ApiNewRehabMedikController extends Controller
                 $cppt_i = "";
             }
 
+            $planning =
+                "Goal of Treatment:\n" .
+                $request->cppt_p_1 . "\n\n" .
+
+                "Tindakan/Program Rehabilitasi Medik:\n" .
+                $request->cppt_p_2 . "\n\n" .
+
+                "Edukasi:\n" .
+                $request->cppt_p_3 . "\n\n" .
+
+                "Frekuensi Kunjungan:\n" .
+                $request->cppt_p_4;
+
             /* ==========================
             * 1. INSERT CPPT
             * ========================== */
@@ -231,11 +293,7 @@ class ApiNewRehabMedikController extends Controller
                 'SUBYEKTIF'    => $request->cppt_s,
                 'OBYEKTIF'     => $request->cppt_o,
                 'ASSESMENT'    => $request->cppt_a,
-                'PLANNING'     =>
-                    $request->cppt_p_1 . "\n" .
-                    $request->cppt_p_2 . "\n" .
-                    $request->cppt_p_3 . "\n" .
-                    $request->cppt_p_4,
+                'PLANNING'     => $planning,
                 'INSTRUKSI'    => $cppt_i,
                 'JENIS'        => 1,
                 'TENAGA_MEDIS' => $dokter->ID,
@@ -251,6 +309,8 @@ class ApiNewRehabMedikController extends Controller
                 'group'         => 1,
                 'nomor_init'    => $kunjungan,
                 'nomor'         => $kunjungan,
+                'sep'           => $request->sep,
+                'tgl_sep'       => $request->tgl_sep,
                 'tgl_init'      => now()->toDateString(),
                 'tgl'           => now()->toDateString(),
                 'rm'            => $request->rm,
@@ -263,6 +323,56 @@ class ApiNewRehabMedikController extends Controller
                 'created_at'    => now(),
                 'updated_at'    => now()
             ]);
+
+            /* ==========================
+            * 3. BANGUN DATA UNTUK PDF (tanpa query ulang)
+            * ========================== */
+            $dataPasien = DB::table('master.pasien')
+                        ->select(
+                            'TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+                            DB::raw('master.getCariUmur(now(),TANGGAL_LAHIR) AS UMURPASIEN'),
+                            DB::raw('master.getNamaLengkap(NORM) AS NAMAPASIEN'),
+                            DB::raw('master.getAlamatPasienCustom(NORM) AS ALAMATPASIEN'),
+                        )
+                        ->where('NORM',$request->rm)
+                        ->where('STATUS', true)
+                        ->first();
+
+            if (!$dataPasien) {
+                return response()->json(['error' => 'Data Pasien tidak ditemukan.'], 404);
+            }
+
+            $show = (object)[
+                'TGLSEP'         => $request->tgl_sep,
+                'KUNJUNGAN'      => $kunjungan,
+                'GROUP'          => 1,
+                'TANGGAL'        => now()->toDateString(),
+                'NORM'           => $request->rm,
+                'NAMAPASIEN'     => $dataPasien->NAMAPASIEN ?? '',
+                'NAMADOKTER'     => $dokter->NAMADOKTER,
+                'TGLLAHIRPASIEN' => $dataPasien->TGLLAHIRPASIEN ?? '',
+                'UMURPASIEN'     => $dataPasien->UMURPASIEN ?? '',
+                'ALAMATPASIEN'   => $dataPasien->ALAMATPASIEN ?? '',
+                'SUBYEKTIF'      => $request->cppt_s,
+                'OBYEKTIF'       => $request->cppt_o,
+                'ASSESMENT'      => $request->cppt_a,
+                'PLANNING1'      => $request->cppt_p_1,
+                'PLANNING2'      => $request->cppt_p_2,
+                'PLANNING3'      => $request->cppt_p_3,
+                'PLANNING4'      => $request->cppt_p_4,
+                'INSTRUKSI'      => $cppt_i,
+                'PATH_TTE_DOKTER'=> $ttd_pegawai->signature_path,
+            ];
+
+            /* 4. KIRIM LANGSUNG KE GENERATOR */
+            $generateForm = $this->generateFormKfr($show);
+
+            if (!$generateForm) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Gagal generate Form KFR'
+                ], 500);
+            }
 
             DB::commit();
 
@@ -279,6 +389,202 @@ class ApiNewRehabMedikController extends Controller
                 'message'=> $e->getMessage()
             ], 500);
         }
+    }
+
+    function generateFormKfr(object $show)
+    {
+        $getTgl = Carbon::parse($show->TGLSEP);
+        $tgl = $getTgl->isoFormat('DD');
+        $bulan = $getTgl->isoFormat('MM');
+        $tahun = $getTgl->isoFormat('YYYY');
+
+        $path = 'files/rehabmedik/formlayanankfr/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show->KUNJUNGAN.'-1';
+
+        $verify = klaim_file::where('nomor',$show->KUNJUNGAN)
+                            ->where('jenis',11)
+                            ->where('sub_jenis',1) // FORM KFR
+                            ->where('status',true)
+                            ->whereNull('deleted_at')
+                            ->orderBy('id','DESC')
+                            ->first();
+
+        if (!$verify) {
+            $post = new klaim_file;
+            $post->jenis = 11;
+            $post->sub_jenis = 1;
+            $post->ref = $show->GROUP;
+            $post->nomor = $show->KUNJUNGAN;
+            $post->title = $show->KUNJUNGAN.'-1.pdf';
+            $post->filename = $path.'.pdf';
+            $post->nama_tambahan = 'Formulir Layanan KFR';
+            $post->status = true;
+            $post->user = Auth::user()->ID;
+            $post->created_at = now();
+            $post->updated_at = now();
+            $post->save();
+        } else {
+            $verify->user = Auth::user()->ID;
+            $verify->updated_at = now();
+            $verify->save();
+        }
+
+        $output = storage_path().'/app/public/'.$path;
+
+        // Pastikan folder tujuan ada
+        $outputDir = dirname($output);
+        if (!File::exists($outputDir)) {
+            File::makeDirectory($outputDir, 0755, true); // true = recursive
+        }
+
+        $data = [
+            'TANGGAL' => Carbon::parse($show->TANGGAL)->translatedFormat('d F Y'),
+            'NORM' => $show->NORM,
+            'NAMAPASIEN' => $show->NAMAPASIEN,
+            'NAMADOKTER' => $show->NAMADOKTER,
+            'TGLLAHIRPASIEN' => Carbon::parse($show->TGLLAHIRPASIEN)->translatedFormat('d F Y'),
+            'UMURPASIEN' => $show->UMURPASIEN,
+            'ALAMATPASIEN' => $show->ALAMATPASIEN,
+            'SUBYEKTIF' => $show->SUBYEKTIF,
+            'OBYEKTIF' => $show->OBYEKTIF,
+            'ASSESMENT' => $show->ASSESMENT,
+            'PLANNING1' => $show->PLANNING1,
+            'PLANNING2' => $show->PLANNING2,
+            'PLANNING3' => $show->PLANNING3,
+            'PLANNING4' => $show->PLANNING4,
+            'INSTRUKSI' => $show->INSTRUKSI,
+        ];
+
+        $templateProcessor = new TemplateProcessor(public_path('/doc/input/rehabmedik/cetakNewFormKFR.docx'));
+
+        try {
+            $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->PATH_TTE_DOKTER, 170);
+            // if ($cap) {
+            //     $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
+            // }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
+
+        foreach ($data as $key => $value) {
+            $templateProcessor->setValue($key, $value);
+        }
+
+        $outputWord = $output.'.docx';
+        $templateProcessor->saveAs($outputWord);
+
+        [$success, $log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+
+        if (!$success) {
+            return response()->json("Gagal membuat PDF Formulir KFR (Periksa File/Instal Ulang Libre Office di Server)", 500);
+        }
+
+        if (File::exists($outputWord)) {
+            File::delete($outputWord);
+        }
+
+        if (file_exists($output.'.pdf')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function generateUlangFormKfr($kunjungan)
+    {
+        $show = DB::table('simrspku_klaim.emr_form_kfr as kfr')
+            ->join('medicalrecord.cppt as cppt','cppt.ID','=','kfr.id_cppt')
+            ->leftJoin('master.pasien as ps','ps.NORM','=','kfr.rm')
+            ->select([
+                'kfr.group as GROUP',
+                'kfr.nomor as KUNJUNGAN',
+                'kfr.tgl as TANGGAL',
+                'kfr.tgl_sep as TGLSEP',
+                'kfr.ttd_dokter as PATH_TTE_DOKTER',
+                'kfr.rm as NORM',
+                DB::raw('master.getNamaLengkap(kfr.rm) as NAMAPASIEN'),
+                DB::raw('master.getAlamatPasienCustom(kfr.rm) as ALAMATPASIEN'),
+                DB::raw('master.getNamaLengkapPegawai(kfr.nip_dokter) as NAMADOKTER'),
+                DB::raw('master.getCariUmur(kfr.tgl, ps.TANGGAL_LAHIR) as UMURPASIEN'),
+                'ps.TANGGAL_LAHIR as TGLLAHIRPASIEN',
+                'cppt.SUBYEKTIF',
+                'cppt.OBYEKTIF',
+                'cppt.ASSESMENT',
+                'cppt.PLANNING',
+                'cppt.INSTRUKSI',
+            ])
+            ->where('kfr.nomor',$kunjungan)
+            ->where('kfr.status',1)
+            ->first();
+
+        if (!$show) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data Form KFR tidak ditemukan'
+            ], 404);
+        }
+
+        // Normalisasi line break
+        $planningText = preg_replace("/\r?\n/", "\n", $show->PLANNING);
+
+        // Ambil tiap bagian planning
+        $show->PLANNING1 = $this->getSection($planningText, 'Goal of Treatment');
+        $show->PLANNING2 = $this->getSection($planningText, 'Tindakan/Program Rehabilitasi Medik');
+        $show->PLANNING3 = $this->getSection($planningText, 'Edukasi');
+        $show->PLANNING4 = $this->getSection($planningText, 'Frekuensi Kunjungan');
+
+        $success = $this->generateFormKfr($show);
+
+        if (!$success) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal generate Form KFR'
+            ], 500);
+        }
+
+        print_r($success); exit;
+
+        // buat URL PDF
+        $tgl = Carbon::parse($show->TGLSEP)->isoFormat('DD');
+        $bulan = Carbon::parse($show->TGLSEP)->isoFormat('MM');
+        $tahun = Carbon::parse($show->TGLSEP)->isoFormat('YYYY');
+
+        $relative = "files/rehabmedik/formlayanankfr/$tahun/$bulan/$tgl/{$show->KUNJUNGAN}-1.pdf";
+
+        return response()->json([
+            'success' => true,
+            'message' => 'PDF berhasil dibuat',
+            'pdf_url' => asset('storage/'.$relative)
+        ]);
+    }
+
+    function lihatFormKfr($KUNJUNGAN)
+    {
+        $getGroup = DB::table('simrspku_klaim.emr_form_kfr')
+            ->where('nomor',$KUNJUNGAN)
+            ->where('status',1)
+            ->whereNull('deleted_at')
+            ->orderBy('id','DESC')
+            ->value('group');
+
+        $show = DB::table('simrspku_klaim.klaim_file')
+            ->where('nomor',$KUNJUNGAN)
+            ->where('ref',$getGroup)
+            ->where('jenis',11)
+            ->where('sub_jenis',1)
+            ->where('status',1)
+            ->whereNull('deleted_at')
+            ->orderBy('id','DESC')
+            ->first();
+
+        $output = storage_path().'/app/public/'.$show->filename;
+
+        if (file_exists($output.'.pdf')) {
+            return true;
+        }
+
+        return response()->file($output, [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 
     public function update(Request $request, $IDCPPT)
@@ -324,7 +630,7 @@ class ApiNewRehabMedikController extends Controller
         ]);
 
         $planning = implode("\r\n", $planningParts);
-        
+
         DB::beginTransaction();
         try {
             /* ==========================

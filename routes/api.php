@@ -104,6 +104,9 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             // NEW REHAB MEDIK
                 // FORM KFR
                 Route::get('emr/kfr/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'get'])->name('api.emr.kfr.get');
+                Route::get('emr/kfr/{KUNJUNGAN}/show', [ApiNewRehabMedikController::class, 'lihatFormKfr'])->name('api.emr.kfr.lihatFormKfr');
+                Route::get('emr/kfr/{KUNJUNGAN}/cppt', [ApiNewRehabMedikController::class, 'getCppt'])->name('api.emr.kfr.getCppt');
+                Route::get('emr/kfr/{KUNJUNGAN}/generate', [ApiNewRehabMedikController::class, 'generateUlangFormKfr'])->name('api.emr.kfr.generateUlangFormKfr');
                 Route::post('emr/kfr/store', [ApiNewRehabMedikController::class, 'store'])->name('api.emr.kfr.store');
                 Route::put('emr/kfr/update/{IDCPPT}', [ApiNewRehabMedikController::class, 'update'])->name('api.emr.kfr.update');
                 Route::post('emr/kfr/destroy', [ApiNewRehabMedikController::class, 'destroy'])->name('api.emr.kfr.destroy');
