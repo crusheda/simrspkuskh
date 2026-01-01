@@ -12,6 +12,11 @@ use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
 use App\Http\Controllers\Display\BedController;
 use App\Http\Controllers\Display\AntrianPoliController;
+use App\Http\Controllers\Display\Farmasi\AntrianController as AntrianFarmasiController;
+use App\Http\Controllers\Display\Farmasi\LoketController as LoketFarmasiController;
+use App\Http\Controllers\Display\Farmasi\DisplayController as DisplayFarmasiController;
+use App\Http\Controllers\Display\Farmasi\JenisAntrianController as JenisAntrianFarmasiController;
+use App\Http\Controllers\Display\Farmasi\LoketMasterController as LoketMasterFarmasiController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\EMR\ApiNewRehabMedikController;
@@ -41,7 +46,7 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
     // DISPLAY
         // TEMPAT TIDUR
             Route::get('display/tt', [BedController::class, 'getDisplayTt'])->name('api.display.tt');
-        // TEMPAT TIDUR
+        // POLI
             Route::post('display/antrian/poli', [AntrianPoliController::class, 'getDisplayAntrianPoli'])->name('api.display.antrian.poli');
             Route::post('display/antrian/poli/update', [AntrianPoliController::class, 'updatePanggilanAntrian'])->name('api.display.antrian.update');
 

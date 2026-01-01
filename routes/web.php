@@ -16,6 +16,11 @@ use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
 use App\Http\Controllers\Pelayanan\Penunjang\RISController;
 use App\Http\Controllers\Display\BedController;
 use App\Http\Controllers\Display\AntrianPoliController;
+use App\Http\Controllers\Display\Farmasi\AntrianController as AntrianFarmasiController;
+use App\Http\Controllers\Display\Farmasi\LoketController as LoketFarmasiController;
+use App\Http\Controllers\Display\Farmasi\DisplayController as DisplayFarmasiController;
+use App\Http\Controllers\Display\Farmasi\JenisAntrianController as JenisAntrianFarmasiController;
+use App\Http\Controllers\Display\Farmasi\LoketMasterController as LoketMasterFarmasiController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\IGD\ModulMatrixController;
 use App\Http\Controllers\Monitoring\MonitoringController;
@@ -58,6 +63,36 @@ Route::group(['middleware' => ['web', 'auth']], function() {
         Route::get('display/bed', [BedController::class, 'index'])->name('display.bed.index');
         // ANTRIAN POLI
         Route::get('display/antrian/poli', [AntrianPoliController::class, 'index'])->name('display.antrian.poli.index');
+        // FARMASI
+        Route::prefix('display/antrian/farmasi')
+            ->name('display.antrian.farmasi.')
+            ->group(function () {
+
+                // JENIS ANTRIAN
+                Route::get('jenis-antrian', [JenisAntrianFarmasiController::class, 'index'])->name('jenis.index');
+                Route::post('jenis-antrian', [JenisAntrianFarmasiController::class, 'store'])->name('jenis.store');
+                Route::patch('jenis-antrian/{id}/toggle', [JenisAntrianFarmasiController::class, 'toggle'])->name('jenis.toggle');
+
+                // LOKET MASTER
+                Route::get('loket-master', [LoketMasterFarmasiController::class, 'index'])->name('loket.master');
+                Route::post('loket-master', [LoketMasterFarmasiController::class, 'store'])->name('loket.store');
+                Route::patch('loket-master/{id}/toggle', [LoketMasterFarmasiController::class, 'toggle'])->name('loket.toggle');
+                Route::patch('loket-master/{id}', [LoketMasterFarmasiController::class, 'update'])->name('loket.update');
+
+                // AMBIL ANTRIAN
+                Route::get('ambil-antrian', [AntrianFarmasiController::class, 'ambil'])->name('ambil.index');
+                Route::post('ambil-antrian/ajax', [AntrianFarmasiController::class, 'ambilAjax'])->name('ambil.ajax');
+
+                // PANGGILAN
+                Route::get('loket-antrian', [LoketFarmasiController::class, 'index'])->name('panggil.index');
+                Route::post('loket/{loketId}/panggil', [LoketFarmasiController::class, 'panggil'])->name('panggil.panggil');
+                Route::get('loket-antrian/data', [LoketFarmasiController::class, 'data'])->name('panggil.data');
+
+                // DISPLAY
+                Route::get('display', [DisplayFarmasiController::class, 'index'])->name('display.index');
+                Route::get('display/data', [DisplayFarmasiController::class, 'data'])->name('display.data');
+                Route::post('display/{logId}/tampil', [DisplayFarmasiController::class, 'tampil'])->name('display.tampil');
+        });
 
     // SETTING - PROFIL
     Route::get('setting/profil', [ProfilController::class, 'index'])->name('profil');
