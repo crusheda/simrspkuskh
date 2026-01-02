@@ -56,7 +56,7 @@
         <h2 class="text-center mt-3 mb-4">Display Tempat Tidur Rawat Inap</h2>
 
         <!-- Progress Bar -->
-        <div class="progress mb-3 ms-3 me-3" style="height:7px; position: sticky; top:0; z-index:9999;">
+        <div class="progress mb-3 ms-3 me-3" style="height:7px; position: sticky; top:0;">
             <div id="refreshProgress" class="progress-bar bg-brand-color-3" role="progressbar" style="width: 0%;"></div>
         </div>
 
