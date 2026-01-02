@@ -287,6 +287,13 @@
     </div>
 
     <script>
+        // INIT VARIABLE
+        const kunjungan = '{{ $list["KUNJUNGAN"] }}';
+        const rm = '{{ $list["show"]->NORM ?? '' }}';
+        const tgl_sep = '{{ $list["show"]->TGLSEP }}';
+        const sep = '{{ $list["show"]->NOSEP }}';
+        const tgl_kfr = '{{ now()->format('Y-m-d H:i:s') }}';
+
         $(document).ready(function() {
             // console.log("{{ $list['tte_pegawai'] }}");
             if ("{{ $list['tte_pegawai'] }}" != true) {

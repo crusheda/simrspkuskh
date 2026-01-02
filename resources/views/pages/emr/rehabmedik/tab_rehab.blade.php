@@ -37,6 +37,7 @@
             if (target === '#frjkfr') {
                 loadFormKfr();
                 loadCpptKfr();
+                loadRiwayatKfr();
                 console.log('masuk form kfr');
             } else if (target === '#pterapi') {
                 console.log('masuk form program terapi');
@@ -47,42 +48,69 @@
     });
 
     function loadFormKfr() {
-        kunjungan = $('#kunjungan_kfr').val();
         $.ajax({
             url: '/api/emr/kfr/' + kunjungan,
             type: 'GET',
             success: function(res) {
 
-                if (!res.status) {
-                    Swal.fire('Info', res.message, 'info');
+                if (!res.status) { // Jika Tidak Ada Data Kunjungan / Form KFR
+                    // Swal.fire('Info', res.message, 'info');
                     $('#btn-kosongi-form-kfr').prop('hidden', false);
                     $('#btn-simpan-form-kfr').prop('hidden', false);
                     $('#btn-update-form-kfr').prop('hidden', true);
                     $('#btn-generate-form-kfr').prop('hidden', true);
                     $('#btn-lihat-form-kfr').prop('hidden', true);
                     $('#btn-hapus-form-kfr').prop('hidden', true);
+                    $('#btn-list-form-kfr-lama').prop('hidden', false);
                     return;
                 }
-                $('#btn-kosongi-form-kfr').prop('hidden', true);
-                $('#btn-simpan-form-kfr').prop('hidden', true);
-                $('#btn-update-form-kfr').prop('hidden', false);
-                $('#btn-generate-form-kfr').prop('hidden', false);
-                $('#btn-lihat-form-kfr').prop('hidden', false);
-                $('#btn-hapus-form-kfr').prop('hidden', false);
 
-                $('#id_cppt_kfr').val(res.id_cppt);
+                if (res.kunjungan_init !== kunjungan) { // Jika Kunjungan / Form KFR Tidak UTAMA
+                    Swal.fire('Info', 'Form KFR ini berasal dari kunjungan sebelumnya. Silakan sinkronisasi data jika ingin menggunakannya pada kunjungan ini.', 'info');
+                    $('#btn-kosongi-form-kfr').prop('hidden', true);
+                    $('#btn-simpan-form-kfr').prop('hidden', true);
+                    $('#btn-update-form-kfr').prop('hidden', true);
+                    $('#btn-generate-form-kfr').prop('hidden', true);
+                    $('#btn-lihat-form-kfr').prop('hidden', false);
+                    $('#btn-hapus-form-kfr').prop('hidden', true);
+                    $('#btn-list-form-kfr-lama').prop('hidden', false);
 
-                $('#cppt_s').val(res.data.s);
-                $('#cppt_o').val(res.data.o);
-                $('#cppt_a').val(res.data.a);
+                    $('#id_cppt_kfr').val(res.id_cppt);
 
-                $('#cppt_p_1').val(res.data.p1);
-                $('#cppt_p_2').val(res.data.p2);
-                $('#cppt_p_3').val(res.data.p3);
-                $('#cppt_p_4').val(res.data.p4);
+                    $('#cppt_s').val(res.data.s).prop('disabled', true);
+                    $('#cppt_o').val(res.data.o).prop('disabled', true);
+                    $('#cppt_a').val(res.data.a).prop('disabled', true);
 
-                $('#cppt_i').val(res.data.cppt_i).trigger('change');
-                $('#cppt_i_rtl').val(res.data.cppt_i_rtl);
+                    $('#cppt_p_1').val(res.data.p1).prop('disabled', true);
+                    $('#cppt_p_2').val(res.data.p2).prop('disabled', true);
+                    $('#cppt_p_3').val(res.data.p3).prop('disabled', true);
+                    $('#cppt_p_4').val(res.data.p4).prop('disabled', true);
+
+                    $('#cppt_i').val(res.data.cppt_i).trigger('change').prop('disabled', true);
+                    $('#cppt_i_rtl').val(res.data.cppt_i_rtl).prop('disabled', true);
+                } else { // Jika Kunjungan / Form KFR Adalah Form UTAMA
+                    $('#btn-kosongi-form-kfr').prop('hidden', true);
+                    $('#btn-simpan-form-kfr').prop('hidden', true);
+                    $('#btn-update-form-kfr').prop('hidden', false);
+                    $('#btn-generate-form-kfr').prop('hidden', false);
+                    $('#btn-lihat-form-kfr').prop('hidden', false);
+                    $('#btn-hapus-form-kfr').prop('hidden', false);
+                    $('#btn-list-form-kfr-lama').prop('hidden', true);
+
+                    $('#id_cppt_kfr').val(res.id_cppt);
+
+                    $('#cppt_s').val(res.data.s);
+                    $('#cppt_o').val(res.data.o);
+                    $('#cppt_a').val(res.data.a);
+
+                    $('#cppt_p_1').val(res.data.p1);
+                    $('#cppt_p_2').val(res.data.p2);
+                    $('#cppt_p_3').val(res.data.p3);
+                    $('#cppt_p_4').val(res.data.p4);
+
+                    $('#cppt_i').val(res.data.cppt_i).trigger('change');
+                    $('#cppt_i_rtl').val(res.data.cppt_i_rtl);
+                }
             }
         });
     }

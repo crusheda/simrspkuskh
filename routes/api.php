@@ -103,10 +103,13 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 Route::delete('emr/ks/hapus/{id}', [ApiRehabMedikController::class, 'hapusFormKs'])->name('api.emr.ks.hapus');
             // NEW REHAB MEDIK
                 // FORM KFR
+                Route::get('emr/kfr/rm/{NORM}/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'getByRM'])->name('api.emr.kfr.getByRM');
+                Route::get('emr/kfr/rm/{NORM}/{KUNJUNGAN}/{TGLSEP}', [ApiNewRehabMedikController::class, 'getByRMnTgl'])->name('api.emr.kfr.getByRMnTgl');
                 Route::get('emr/kfr/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'get'])->name('api.emr.kfr.get');
                 Route::get('emr/kfr/{KUNJUNGAN}/show', [ApiNewRehabMedikController::class, 'lihatFormKfr'])->name('api.emr.kfr.lihatFormKfr');
                 Route::get('emr/kfr/{KUNJUNGAN}/cppt', [ApiNewRehabMedikController::class, 'getCppt'])->name('api.emr.kfr.getCppt');
                 Route::get('emr/kfr/{KUNJUNGAN}/generate', [ApiNewRehabMedikController::class, 'generateUlangFormKfr'])->name('api.emr.kfr.generateUlangFormKfr');
+                Route::post('emr/kfr/sync', [ApiNewRehabMedikController::class, 'syncFormLama'])->name('api.emr.kfr.syncFormLama');
                 Route::post('emr/kfr/store', [ApiNewRehabMedikController::class, 'store'])->name('api.emr.kfr.store');
                 Route::put('emr/kfr/update/{IDCPPT}', [ApiNewRehabMedikController::class, 'update'])->name('api.emr.kfr.update');
                 Route::post('emr/kfr/destroy', [ApiNewRehabMedikController::class, 'destroy'])->name('api.emr.kfr.destroy');

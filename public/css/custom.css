@@ -31,3 +31,7 @@ canvas {
     from { transform: rotate(0deg); }
     to   { transform: rotate(360deg); }
 }
+.list-group-item-action:hover {
+    cursor: pointer;
+    /* background-color: #f5f7fb; */
+}
