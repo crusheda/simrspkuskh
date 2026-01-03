@@ -3,18 +3,27 @@
 @section('content')
     <div class="container-fluid">
 
-    <div id="menu" class="row text-center">
-        <h2 class="mb-4 fw-bold">Silakan Pilih Layanan</h2>
+    <div id="menu" class="menu-wrapper">
+        <div class="card menu-card shadow-lg border-0">
+            <div class="card-body text-center p-5">
 
-        @foreach($jenis as $j)
-        <div class="col-md-4 mb-4">
-            <button class="card shadow border-0 w-100 py-5 btn-ambil"
-                    data-id="{{ $j->id }}">
-                <i class="ph-clipboard-text display-4 text-primary"></i>
-                <h3 class="mt-3">{{ $j->nama }}</h3>
-            </button>
+                <h2 class="fw-bold mb-5">Silakan Pilih Layanan</h2>
+
+                <div class="row justify-content-center">
+                    @foreach($jenis as $j)
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <button
+                                class="btn btn-light w-100 btn-ambil py-5"
+                                data-id="{{ $j->id }}">
+                                <i class="ph-clipboard-text text-primary display-4"></i>
+                                <h3 class="mt-4 fw-bold">{{ $j->nama }}</h3>
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+
+            </div>
         </div>
-        @endforeach
     </div>
 
     {{-- TAMPIL NOMOR --}}
@@ -45,6 +54,39 @@
     </div>
 
 <style>
+    .menu-wrapper {
+        min-height: calc(100vh - 120px); /* sesuaikan header */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .menu-card {
+        width: 100%;
+        max-width: 1100px;
+        border-radius: 24px;
+    }
+
+    .btn-ambil {
+        border-radius: 18px;
+        min-height: 220px;
+        transition: all 0.25s ease;
+        font-size: 1.25rem;
+    }
+
+    .btn-ambil i {
+        font-size: 4rem;
+    }
+
+    .btn-ambil:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+
+    .btn-ambil:active {
+        transform: scale(0.97);
+    }
+
     /* SEMBUNYI SAAT LAYAR */
     .print-only {
         display: none;
@@ -78,7 +120,7 @@
         btn.addEventListener('click', () => {
             const id = btn.dataset.id;
 
-            fetch('{{ route("display.antrian.farmasi.ambil.ajax") }}', {
+            fetch('{{ route("api.display.antrian.farmasi.ambil.ajax") }}', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -107,12 +149,12 @@
 
                 setTimeout(() => {
                     window.print();
-                }, 500);
+                }, 300);
 
                 // KEMBALI KE MENU
                 setTimeout(() => {
                     location.reload();
-                }, 5000);
+                }, 3000);
             });
         });
     });

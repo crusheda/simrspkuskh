@@ -4,7 +4,7 @@
 <h4 class="mb-4">Pemanggilan Antrian</h4>
 
 {{-- PILIH LOKET --}}
-<form method="GET" action="{{ route('display.antrian.farmasi.panggil.index') }}" class="mb-4">
+<form method="GET" action="{{ route('api.display.antrian.farmasi.panggil.index') }}" class="mb-4">
     <select name="loket_id" class="form-select" onchange="this.form.submit()" required>
         <option value="">-- Pilih Loket --</option>
         @foreach($lokets as $l)
@@ -46,7 +46,7 @@
                         @endif
                     </td>
                     <td>
-                        <form method="POST" action="{{ route('display.antrian.farmasi.panggil.panggil', request('loket_id')) }}">
+                        <form method="POST" action="{{ route('api.display.antrian.farmasi.panggil.panggil', request('loket_id')) }}">
                             @csrf
                             <input type="hidden" name="antrian_id" value="{{ $a->id }}">
                             <button class="btn btn-primary btn-sm"
@@ -67,7 +67,7 @@
 const loketId = "{{ request('loket_id') }}";
 
 function loadAntrian() {
-    fetch("{{ route('display.antrian.farmasi.panggil.data') }}?loket_id=" + loketId)
+    fetch("{{ route('api.display.antrian.farmasi.panggil.data') }}?loket_id=" + loketId)
         .then(res => res.json())
         .then(data => {
             let html = '';
@@ -90,7 +90,7 @@ function loadAntrian() {
                     <td>${a.jenis_antrian}</td>
                     <td>${statusBadge}</td>
                     <td>
-                        <form method="POST" action="/loket/${loketId}/panggil">
+                        <form method="POST" action="loket/${loketId}/panggil">
                             @csrf
                             <input type="hidden" name="antrian_id" value="${a.id}">
                             <button class="btn btn-primary btn-sm" ${disabled}>

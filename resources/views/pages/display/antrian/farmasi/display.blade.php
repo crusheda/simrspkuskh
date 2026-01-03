@@ -34,31 +34,33 @@
         <div class="row">
             {{-- ANTRIAN AKTIF --}}
             <div class="col-md-8">
-                <div class="card shadow-lg text-center p-4">
+                <div class="card shadow-lg text-center p-4 h-100 d-flex flex-column">
                     <h2 class="fw-bold mb-3">Antrian Farmasi</h2>
 
-                    <div class="display-1 fw-bold" id="nomor">---</div>
-
-                    <h4 class="mt-2" id="loket">Menunggu</h4>
+                    <div class="current-number" id="nomor">---</div>
+                    <div class="current-loket" id="loket">Menunggu</div>
 
                     {{-- RIWAYAT --}}
                     <div class="row mt-4" id="history"></div>
-
-                    <h4 class="text-danger mt-4" id="sisa"></h4>
                 </div>
             </div>
 
             {{-- PANEL SAMPING --}}
             <div class="col-md-4">
-                <div class="card shadow-lg p-4 h-100">
-                    <h5>Informasi</h5>
-                    <p class="text-muted">
-                        Mohon menunggu hingga nomor Anda dipanggil.
-                    </p>
+                <div class="card shadow-lg p-3 h-100 d-flex flex-column">
+                    {{-- SLIDER POSTER --}}
+                    <div class="poster-wrapper flex-grow-1">
+                        <img id="poster" src="{{ asset('poster/informasi_farmasi1.jpg') }}" alt="Informasi Farmasi">
+                    </div>
+                </div>
+            </div>
+            {{-- RUNNING TEXT --}}
+            <div class="running-text mt-3">
+                <div class="running-inner">
+                    • Mohon menunggu hingga nomor Anda dipanggil •
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -73,8 +75,20 @@
 }
 
 .history-card {
-    background: #f1f3f5;
-    border-radius: 15px;
+    background: linear-gradient(135deg, #f8fafc, #eef2f7);
+    border-radius: 18px;
+    box-shadow: 0 8px 18px rgba(0,0,0,.08);
+}
+
+.history-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.history-loket {
+    font-size: 1.1rem;
+    color: #4b5563;
 }
 
 .display-gate {
@@ -89,11 +103,78 @@
 
 .gate-card {
     background: white;
-    padding: 40px 50px;
+    padding: 40px 50px 25px;
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(0,0,0,.15);
     text-align: center;
     max-width: 420px;
+}
+.current-number {
+    font-size: 6rem;
+    font-weight: 800;
+    letter-spacing: 4px;
+    color: #1f2937;
+}
+
+.current-number {
+    animation: pop 0.4s ease;
+}
+
+@keyframes pop {
+    0% { transform: scale(0.95); opacity: 0.6; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.current-loket {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.card.shadow-lg.text-center.p-3 {
+    border-radius: 24px;
+    padding-bottom: 12px !important;
+}
+
+#history {
+    margin-top: 30px;
+}
+
+/* ===== POSTER ===== */
+.poster-wrapper {
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.poster-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: opacity .6s ease;
+}
+
+/* ===== RUNNING TEXT ===== */
+.running-text {
+    background: #111827;
+    color: #fff;
+    padding: 10px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.running-inner {
+    white-space: nowrap;
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 15s linear infinite;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
 }
 
 </style>
@@ -125,6 +206,26 @@
         speechSynthesis.speak(unlock);
     }
 
+    /* ===== SLIDER POSTER ===== */
+    const posters = [
+        '{{ asset("poster/informasi_farmasi1.jpg") }}',
+        '{{ asset("poster/informasi_farmasi2.jpg") }}'
+    ];
+
+    let posterIndex = 0;
+    const posterEl = document.getElementById('poster');
+
+    setInterval(() => {
+        posterEl.style.opacity = 0;
+
+        setTimeout(() => {
+            posterIndex = (posterIndex + 1) % posters.length;
+            posterEl.src = posters[posterIndex];
+            posterEl.style.opacity = 1;
+        }, 500);
+
+    }, 8000); // ganti poster tiap 8 detik
+
     /* ================= FULLSCREEN ================= */
     function toggleFullscreen() {
         const el = document.getElementById('display-area');
@@ -148,7 +249,7 @@
     function fetchData() {
         if (isCalling) return;
 
-        fetch('{{ url("/display/data") }}')
+        fetch('{{ url("api/display/antrian/farmasi/display/data") }}')
             .then(r => r.json())
             .then(res => {
                 if (!res.current) return;
@@ -167,7 +268,7 @@
                 renderHistory(res.history);
 
                 playAudio(nomor, res.current.nama_loket, () => {
-                    fetch('{{ url("/display") }}/' + res.current.log_id + '/tampil', {
+                    fetch('{{ url("api/display/antrian/farmasi/display") }}/' + res.current.log_id + '/tampil', {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -190,9 +291,10 @@
 
             html += `
             <div class="col-md-6 mb-2">
-                <div class="history-card p-3 text-center">
-                    <h5>${nomor}</h5>
-                    <small>Loket ${h.nama_loket}</small>
+                <div class="history-card p-4 text-center">
+                    <h4 class="fw-bold mb-3">Sudah Dipanggil</h4>
+                    <div class="history-number">${nomor}</div>
+                    <div class="history-loket">Loket ${h.nama_loket}</div>
                 </div>
             </div>`;
         });
