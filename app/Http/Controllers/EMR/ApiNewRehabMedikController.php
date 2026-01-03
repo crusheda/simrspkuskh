@@ -5,12 +5,10 @@ namespace App\Http\Controllers\EMR;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
+use App\Models\simrspku_klaim\emr_form_kfr;
 use App\Models\simrspku_klaim\klaim_verifikasi;
 use App\Models\simrspku_klaim\klaim_file;
 use App\Models\Pengguna;
-use App\Models\simrspku_klaim\form_kfr;
-use App\Models\simrspku_klaim\form_kfr_jp;
-use App\Models\simrspku_klaim\form_kfr_ks;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
@@ -177,7 +175,7 @@ class ApiNewRehabMedikController extends Controller
         ]);
     }
 
-    function getByRM($NORM, $KUNJUNGAN)
+    function getByRM($NORM, $KUNJUNGAN) // LOAD GUNAKAN FORM LAMA
     {
         $data = DB::table('simrspku_klaim.emr_form_kfr AS kfr')
             ->select(
@@ -204,15 +202,22 @@ class ApiNewRehabMedikController extends Controller
             ->orderBy('kfr.tgl_sep', 'DESC')
             ->get();
 
+        if ($data->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data Form KFR Tidak Ditemukan'
+            ]);
+        }
+
         return response()->json([
             'status' => true,
             'data' => $data
         ]);
     }
 
-    function getByRMnTgl($NORM, $KUNJUNGAN, $TGLSEP)
+    function getByRMnTgl($NORM, $KUNJUNGAN, $TGLSEP) // LOAD RIWAYAT GRID KANAN
     {
-        $data = DB::table('simrspku_klaim.emr_form_kfr AS kfr')
+        $show = DB::table('simrspku_klaim.emr_form_kfr AS kfr')
             ->select(
                 'kfr.group',
                 'kfr.nomor_init',
@@ -237,6 +242,30 @@ class ApiNewRehabMedikController extends Controller
             )
             ->orderBy('kfr.tgl_sep', 'DESC')
             ->get();
+
+        if ($show->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data Form KFR Tidak Ditemukan'
+            ]);
+        }
+
+        $formKfr = emr_form_kfr::where('rm', $NORM)
+            ->where('nomor', $KUNJUNGAN)
+            ->whereDate('tgl_sep', $TGLSEP)
+            ->where('status', 1)
+            ->whereNull('deleted_at')
+            ->first();
+
+        // print_r($formKfr); die();
+
+        $data = [
+            'rm' => $NORM,
+            'kunjungan' => $KUNJUNGAN,
+            'tglsep' => $TGLSEP,
+            'form' => $formKfr,
+            'show' => $show
+        ];
 
         return response()->json([
             'status' => true,
@@ -278,31 +307,246 @@ class ApiNewRehabMedikController extends Controller
 
     function syncFormLama(Request $request)
     {
-        print_r('Sync Form KFR Lama on progress...');
-        die();
+        $now = Carbon::now();
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nomor_init'        => 'required',
+                'nomor_kunjungan'   => 'required',
+                'rm'                => 'required',
+                'sep'               => 'required',
+                'tgl_sep'           => 'required',
+                'tgl_kfr'           => 'required',
+            ],
+            [
+                'nomor_init.required'        => 'Nomor Init Kunjungan wajib terkirim.',
+                'nomor_kunjungan.required'   => 'Nomor Kunjungan saat ini wajib terkirim.',
+                'rm.required'                => 'Nomor RM wajib terkirim.',
+                'sep.required'               => 'Nomor SEP wajib terkirim.',
+                'tgl_sep.required'           => 'Tanggal SEP wajib terkirim.',
+                'tgl_kfr.required'           => 'Tanggal KFR wajib terkirim.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message'=> $validator->errors()->first()
+            ], 422);
+        }
+
+        $dokter = DB::table('master.dokter as dr')
+                    ->leftJoin('aplikasi.pengguna as pe', function($join) {
+                        $join->on('pe.NIP', '=', 'dr.NIP')
+                            ->where('pe.STATUS', '=', 1);
+                    })
+                    ->select('dr.ID', 'pe.NAMA AS DOKTER', 'dr.NIP', DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'))
+                    ->where('pe.ID', auth()->id())
+                    ->where('dr.STATUS', 1)
+                    ->first();
+
+        if (!$dokter) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data dokter tidak ditemukan untuk user ini'
+            ], 404);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $formLama = emr_form_kfr::where('rm', $request->rm)
+                ->where('nomor_init', $request->nomor_init)
+                ->where('nomor', $request->nomor_init)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->latest('id')
+                ->first();
+
+            if (!$formLama) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Form KFR Lama tidak ditemukan / telah terhapus'
+                ], 404);
+            }
+
+            $cpptLama = DB::table('medicalrecord.cppt')
+                            ->where('ID', $formLama->id_cppt)
+                            ->where('KUNJUNGAN', $formLama->nomor_init)
+                            ->where('STATUS', 1)
+                            ->orderBy('id','desc')
+                            ->first();
+
+            if (!$cpptLama) {
+                DB::rollBack();
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'CPPT Lama tidak ditemukan / telah terhapus'
+                ], 404);
+            }
+
+            // INSERT NEW CPPT WITH OLD DATA CPPT
+            $id_cppt = DB::table('medicalrecord.cppt')->insertGetId([
+                'KUNJUNGAN'    => $request->nomor_kunjungan,
+                'TANGGAL'      => now()->toDateString(),
+                'SUBYEKTIF'    => $cpptLama->SUBYEKTIF,
+                'OBYEKTIF'     => $cpptLama->OBYEKTIF,
+                'ASSESMENT'    => $cpptLama->ASSESMENT,
+                'PLANNING'     => $cpptLama->PLANNING,
+                'INSTRUKSI'    => $cpptLama->INSTRUKSI,
+                'JENIS'        => $cpptLama->JENIS,
+                'TENAGA_MEDIS' => $cpptLama->TENAGA_MEDIS,
+                'OLEH'         => auth()->id(),
+                'STATUS'       => 1,
+            ]);
+
+            // Clone model
+            $formBaru = $formLama->replicate();
+
+            // Change Value
+            $formBaru->id_cppt = $id_cppt;
+            $formBaru->nomor = $request->nomor_kunjungan;
+            $formBaru->sep = $request->sep;
+            $formBaru->tgl_sep = $request->tgl_sep;
+            $formBaru->tgl = $request->tgl_kfr;
+            $formBaru->created_at = $now;
+            $formBaru->updated_at = $now;
+
+            // Simpan sebagai baris baru
+            $formBaru->save();
+
+            // SAVING INTO KLAIM_FILE WITH FUNCTION GENERATEFORMKFR
+            $dataPasien = DB::table('master.pasien')
+                        ->select(
+                            'TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+                            DB::raw('master.getCariUmur(now(),TANGGAL_LAHIR) AS UMURPASIEN'),
+                            DB::raw('master.getNamaLengkap(NORM) AS NAMAPASIEN'),
+                            DB::raw('master.getAlamatPasienCustom(NORM) AS ALAMATPASIEN'),
+                        )
+                        ->where('NORM',$request->rm)
+                        ->where('STATUS', true)
+                        ->first();
+
+            if (!$dataPasien) {
+                return response()->json(['error' => 'Data Pasien tidak ditemukan.'], 404);
+            }
+
+            // Normalisasi line break
+            $planningText = preg_replace("/\r?\n/", "\n", $cpptLama->PLANNING);
+
+            // Ambil tiap bagian planning
+            $p1 = $this->getSection($planningText, 'Goal of Treatment');
+            $p2 = $this->getSection($planningText, 'Tindakan/Program Rehabilitasi Medik');
+            $p3 = $this->getSection($planningText, 'Edukasi');
+            $p4 = $this->getSection($planningText, 'Frekuensi Kunjungan');
+
+            $show = (object)[
+                'TGLSEP'         => $request->tgl_sep,
+                'KUNJUNGAN'      => $request->nomor_kunjungan,
+                'GROUP'          => $formLama->group,
+                'TANGGAL'        => now()->toDateString(),
+                'NORM'           => $formLama->rm,
+                'NAMAPASIEN'     => $dataPasien->NAMAPASIEN ?? '',
+                'NAMADOKTER'     => $dokter->NAMADOKTER,
+                'TGLLAHIRPASIEN' => $dataPasien->TGLLAHIRPASIEN ?? '',
+                'UMURPASIEN'     => $dataPasien->UMURPASIEN ?? '',
+                'ALAMATPASIEN'   => $dataPasien->ALAMATPASIEN ?? '',
+                'SUBYEKTIF'      => $cpptLama->SUBYEKTIF,
+                'OBYEKTIF'       => $cpptLama->OBYEKTIF,
+                'ASSESMENT'      => $cpptLama->ASSESMENT,
+                'PLANNING1'      => $p1,
+                'PLANNING2'      => $p2,
+                'PLANNING3'      => $p3,
+                'PLANNING4'      => $p4,
+                'INSTRUKSI'      => $cpptLama->INSTRUKSI,
+                'PATH_TTE_DOKTER'=> $formLama->ttd_dokter,
+            ];
+
+            /* 4. KIRIM LANGSUNG KE GENERATOR */
+            $generateForm = $this->generateFormKfr($show);
+
+            if (!$generateForm) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Gagal generate Form KFR'
+                ], 500);
+            }
+
+            /* KIRIM LANGSUNG KE GENERATOR */
+            // $generateUlangForm = $this->generateUlangFormKfr($request->nomor_kunjungan);
+
+            // if (!$generateUlangForm) {
+            //     return response()->json([
+            //         'status' => false,
+            //         'message'=> 'Gagal generate PDF untuk Form KFR kunjungan ini'
+            //     ], 500);
+            // }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message'=> 'Form KFR & CPPT berhasil tersimpan dan telah digabungkan'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message'=> $e->getMessage()
+            ], 500);
+        }
     }
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'rm'           => 'required|integer',
-            'kunjungan'    => 'required',
-            'sep'          => 'required',
-            'tgl_sep'      => 'required|date',
-            'tgl'          => 'required|date',
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'rm'           => 'required|integer',
+                'kunjungan'    => 'required',
+                'sep'          => 'required',
+                'tgl_sep'      => 'required|date',
+                'tgl'          => 'required|date',
 
-            'cppt_s'       => 'required',
-            'cppt_o'       => 'required',
-            'cppt_a'       => 'required',
+                'cppt_s'       => 'required',
+                'cppt_o'       => 'required',
+                'cppt_a'       => 'required',
 
-            'cppt_p_1'     => 'required',
-            'cppt_p_2'     => 'required',
-            'cppt_p_3'     => 'required',
-            'cppt_p_4'     => 'required',
+                'cppt_p_1'     => 'required',
+                'cppt_p_2'     => 'required',
+                'cppt_p_3'     => 'required',
+                'cppt_p_4'     => 'required',
 
-            'cppt_i'       => 'required|in:1,2,3',
-            'cppt_i_rtl'   => 'required',
-        ]);
+                'cppt_i'       => 'required|in:1,2,3',
+                'cppt_i_rtl'   => 'required',
+            ],
+            [
+                'rm.required'        => 'Nomor RM wajib diisi.',
+                'rm.integer'         => 'Nomor RM harus berupa angka.',
+                'kunjungan.required' => 'Kunjungan wajib diisi.',
+                'sep.required'       => 'SEP wajib diisi.',
+                'tgl_sep.required'   => 'Tanggal SEP wajib diisi.',
+                'tgl_sep.date'       => 'Tanggal SEP tidak valid.',
+                'tgl.required'       => 'Tanggal wajib diisi.',
+                'tgl.date'           => 'Tanggal tidak valid.',
+
+                'cppt_s.required'    => 'Isian Subyektif wajib diisi.',
+                'cppt_o.required'    => 'Isian Obyektif wajib diisi.',
+                'cppt_a.required'    => 'Isian Asesment wajib diisi.',
+
+                'cppt_p_1.required'  => 'Planning (Goal of Treatment) wajib diisi.',
+                'cppt_p_2.required'  => 'Planning (Tindakan/Program Rehabilitasi Medik) wajib diisi.',
+                'cppt_p_3.required'  => 'Planning (Edukasi) wajib diisi.',
+                'cppt_p_4.required'  => 'Planning (Frekuensi Kunjungan) wajib diisi.',
+
+                'cppt_i.required'    => 'Pilihan Rencana Tindak Lanjut wajib diisi.',
+                'cppt_i.in'          => 'Pilihan Rencana Tindak Lanjut tidak valid.',
+                'cppt_i_rtl.required'=> 'Isian Rencana Tindak Lanjut wajib diisi.',
+            ]
+        );
 
         if ($validator->fails()) {
             return response()->json([
@@ -377,9 +621,17 @@ class ApiNewRehabMedikController extends Controller
             /* ==========================
             * 2. INSERT EMR FORM KFR
             * ========================== */
+            // GET LAST GROUP
+            $lastGroup = DB::table('simrspku_klaim.emr_form_kfr')
+                            ->where('nomor_init', $kunjungan)
+                            ->where('status', 1)
+                            ->whereNull('deleted_at')
+                            ->orderBy('group', 'DESC')
+                            ->first();
+            $newGroup = $lastGroup ? $lastGroup->group + 1 : 1;
             DB::table('simrspku_klaim.emr_form_kfr')->insert([
                 'id_cppt'       => $id_cppt,
-                'group'         => 1,
+                'group'         => $newGroup,
                 'nomor_init'    => $kunjungan,
                 'nomor'         => $kunjungan,
                 'sep'           => $request->sep,
@@ -418,7 +670,7 @@ class ApiNewRehabMedikController extends Controller
             $show = (object)[
                 'TGLSEP'         => $request->tgl_sep,
                 'KUNJUNGAN'      => $kunjungan,
-                'GROUP'          => 1,
+                'GROUP'          => $newGroup,
                 'TANGGAL'        => now()->toDateString(),
                 'NORM'           => $request->rm,
                 'NAMAPASIEN'     => $dataPasien->NAMAPASIEN ?? '',
@@ -662,22 +914,43 @@ class ApiNewRehabMedikController extends Controller
 
     public function update(Request $request, $IDCPPT)
     {
-        $validator = Validator::make($request->all(), [
-            'kunjungan'    => 'required',
-            'tgl'          => 'required|date',
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'kunjungan'    => 'required',
+                'tgl'          => 'required|date',
 
-            'cppt_s'       => 'required',
-            'cppt_o'       => 'required',
-            'cppt_a'       => 'required',
+                'cppt_s'       => 'required',
+                'cppt_o'       => 'required',
+                'cppt_a'       => 'required',
 
-            'cppt_p_1'     => 'required',
-            'cppt_p_2'     => 'required',
-            'cppt_p_3'     => 'required',
-            'cppt_p_4'     => 'required',
+                'cppt_p_1'     => 'required',
+                'cppt_p_2'     => 'required',
+                'cppt_p_3'     => 'required',
+                'cppt_p_4'     => 'required',
 
-            'cppt_i'       => 'required|in:1,2,3',
-            'cppt_i_rtl'   => 'required',
-        ]);
+                'cppt_i'       => 'required|in:1,2,3',
+                'cppt_i_rtl'   => 'required',
+            ],
+            [
+                'kunjungan.required' => 'Kunjungan wajib diisi.',
+                'tgl.required'       => 'Tanggal wajib diisi.',
+                'tgl.date'           => 'Tanggal tidak valid.',
+
+                'cppt_s.required'    => 'Isian Subyektif wajib diisi.',
+                'cppt_o.required'    => 'Isian Obyektif wajib diisi.',
+                'cppt_a.required'    => 'Isian Asesment wajib diisi.',
+
+                'cppt_p_1.required'  => 'Planning (Goal of Treatment) wajib diisi.',
+                'cppt_p_2.required'  => 'Planning (Tindakan/Program Rehabilitasi Medik) wajib diisi.',
+                'cppt_p_3.required'  => 'Planning (Edukasi) wajib diisi.',
+                'cppt_p_4.required'  => 'Planning (Frekuensi Kunjungan) wajib diisi.',
+
+                'cppt_i.required'    => 'Pilihan Rencana Tindak Lanjut wajib diisi.',
+                'cppt_i.in'          => 'Pilihan Rencana Tindak Lanjut tidak valid.',
+                'cppt_i_rtl.required'=> 'Isian Rencana Tindak Lanjut wajib diisi.',
+            ]
+        );
 
         if ($validator->fails()) {
             return response()->json([
@@ -820,10 +1093,23 @@ class ApiNewRehabMedikController extends Controller
             $now = now();
 
             /* ==========================
-            * 1. Soft Delete EMR FORM KFR
+            * 1. Hapus file klaim_file FORM KFR & Reset Status to 0
+            * ========================== */
+            DB::table('simrspku_klaim.klaim_file')
+                ->where('nomor', $form->nomor)
+                ->where('status', 1)
+                ->update([
+                    'user_deleted'      => auth()->id(),
+                    'status'            => 0,
+                    'deleted_at'        => $now
+                ]);
+
+            /* ==========================
+            * 2. Soft Delete EMR FORM KFR & Reset Status to 0
             * ========================== */
             DB::table('simrspku_klaim.emr_form_kfr')
                 ->where('id_cppt', $request->id_cppt)
+                ->where('status', 1)
                 ->update([
                     'user'       => auth()->id(),
                     'status'     => 0,
@@ -831,10 +1117,11 @@ class ApiNewRehabMedikController extends Controller
                 ]);
 
             /* ==========================
-            * 2. Soft Delete CPPT
+            * 3. Delete CPPT & Reset Status to 0
             * ========================== */
             DB::table('medicalrecord.cppt')
                 ->where('ID', $request->id_cppt)
+                ->where('STATUS', 1)
                 ->update([
                     'STATUS'     => 0
                 ]);
