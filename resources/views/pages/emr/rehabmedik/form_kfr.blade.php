@@ -1,9 +1,13 @@
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-7">
         <div class="card table-card border shadow-none">
             <div class="card-header d-flex align-items-center justify-content-between p-3">
                 <h5 class="card-title mb-0"><i class="fas fa-file-signature me-1"></i> Formulir Rawat Jalan KFR <span class="badge bg-danger ms-1" id="form-kfr-utama" hidden>UTAMA</span></h5>
-                <button class="btn btn-info btn-sm" onclick="showListFormKfr()" id="btn-list-form-kfr-lama" hidden disabled><i class="ph-duotone ph-file-search me-1"></i> Gunakan Form Lama</button>
+                <div class="btn-group">
+                    <button class="btn btn-info btn-sm" onclick="showListFormKfr()" id="btn-list-form-kfr-lama" hidden disabled><i class="ph-duotone ph-file-search me-1"></i> Gunakan Form Lama</button>
+                    <button class="btn btn-light-info btn-sm" onclick="loadCpptKfr()" id="btn-refresh-riwayat-cppt" data-bs-toggle="tooltip" title="Refresh Riwayat CPPT"><i class="fas fa-sync"></i></button>
+                    <button class="btn btn-light-warning btn-sm" onclick="loadRiwayatKfr()" id="btn-refresh-riwayat-form-kfr" data-bs-toggle="tooltip" title="Refresh Riwayat Formulir KFR"><i class="fas fa-sync"></i></button>
+                </div>
             </div>
 
             {{-- INIT VALUE --}}
@@ -86,40 +90,44 @@
                 </div>
             </div>
         </div>
-        <div class="card table-card border shadow-none">
-            <div class="card-header d-flex align-items-center justify-content-between p-3">
-                <h5 class="card-title mb-0"><i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT Kunjungan Ini</h5>
-                <button class="btn btn-light-warning btn-sm" onclick="loadCpptKfr()" id="btn-refresh-riwayat-cppt" data-bs-toggle="tooltip" title="Refresh CPPT"><i class="fas fa-sync"></i></button>
-            </div>
-            <div class="card-body p-3" id="load-riwayat-cppt-kfr">
-                <div class="d-flex justify-content-center">
-                    <div class="spinner-grow spinner-grow-sm me-2" role="status">
-                        <span class="sr-only">Loading...</span>
-                    </div> <a class="align-middle">Mengambil Data Riwayat..</a>
+    </div>
+    <div class="col-md-5">
+        <div class="accordion card" id="collapse-riwayat-form-kfr">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading-riwayat-form-kfr">
+                    <button class="accordion-button text-dark" style="background-color: #fef9ea" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-form-kfr" aria-expanded="true" aria-controls="collapseOne">
+                        <i class="fas fa-sort-alpha-down me-1"></i> Riwayat Formulir KFR <span class="badge text-bg-dark ms-1">By.NORM</span>
+                    </button>
+                </h2>
+                <div id="btn-collapse-riwayat-form-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-form-kfr" data-bs-parent="#collapse-riwayat-form-kfr">
+                    <div class="accordion-body rounded-bottom p-3" style="max-height: 613px; overflow-y: auto;">
+                        <div id="load-riwayat-form-kfr">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-grow spinner-grow-sm me-2" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div> <a class="align-middle">Memproses Data Riwayat..</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card table-card border shadow-none">
-            <div class="card-header d-flex align-items-center justify-content-between p-3">
-                <h5 class="card-title mb-0"><i class="fas fa-sort-alpha-down me-1"></i> Riwayat Formulir <span class="badge text-bg-dark ms-1">By.NORM</span></h5>
-                <button class="btn btn-light-warning btn-sm" onclick="loadRiwayatKfr()" id="btn-refresh-riwayat-form-kfr" data-bs-toggle="tooltip" title="Refresh Riwayat Formulir"><i class="fas fa-sync"></i></button>
-                {{-- <div class="dropdown">
-                    <a class="avtar avtar-xs btn-light-secondary dropdown-toggle arrow-none" href="javascript: void(0);"
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="ph-duotone ph-dots-three-outline-vertical"></i></a>
-                    <div class="dropdown-menu dropdown-menu-end" style="">
-                        <a class="dropdown-item" href="javascript: void(0);"><s>Semua Formulir Pasien</s></a>
-                    </div>
-                </div> --}}
-            </div>
-            <div class="rounded-bottom p-3" style="max-height: 613px; overflow-y: auto;">
-                <div id="load-riwayat-form-kfr">
-                    <div class="d-flex justify-content-center">
-                        <div class="spinner-grow spinner-grow-sm me-2" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div> <a class="align-middle">Memproses Data Riwayat..</a>
+        <div class="accordion card" id="collapse-riwayat-cppt-kfr">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading-riwayat-cppt-kfr">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-cppt-kfr" aria-expanded="true" aria-controls="collapseOne">
+                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge text-bg-dark ms-1">By.KUNJUNGAN</span>
+                    </button>
+                </h2>
+                <div id="btn-collapse-riwayat-cppt-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-cppt-kfr" data-bs-parent="#collapse-riwayat-cppt-kfr">
+                    <div class="accordion-body rounded-bottom p-3" style="max-height: 613px; overflow-y: auto;">
+                        <div id="load-riwayat-cppt-kfr">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-grow spinner-grow-sm me-2" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div> <a class="align-middle">Mengambil Data Riwayat..</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -159,7 +167,7 @@
                 <div id="list-form-kfr"></div>
             </div>
             <div class="modal-footer d-flex justify-content-between align-items-center">
-                <h6 class="m-0">Klik <span class="badge text-bg-primary">Baris Formulir</span> pada Daftar di atas<br>Untuk menghubungkan formulir utama ke Kunjungan ini</h6>
+                <h6 class="m-0">Klik <span class="badge text-bg-secondary">Baris Formulir</span> pada Daftar di atas<br>Untuk menghubungkan formulir utama ke Kunjungan ini</h6>
                 <div>
                     <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i> Tutup</button>
                     <button type="button" class="btn btn-warning" onclick="showListFormKfr()"><i class="fas fa-sync me-1"></i> Refresh</button>
@@ -265,7 +273,7 @@
                         .append(`<div class="d-flex justify-content-center">
                                     <center><a class="align-middle">${res.message}</a></center>
                                 </div>`);
-                    $('#btn-list-form-kfr-lama').prop('hidden', true).prop('disabled', true);
+                    $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', true).removeClass('btn-secondary btn-info').addClass('btn-secondary');
                     return;
                 }
                 $('#load-riwayat-form-kfr').empty();
@@ -284,7 +292,14 @@
                         minute: '2-digit'
                     });
 
-                    content += `<li class="list-group-item list-group-item-action" data-id="${item.nomor_init}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Pilih Formulir">
+                    var utama = '';
+                    if (res.data && res.data.form) {
+                        if (res.data.form.nomor_init == item.nomor) {
+                            utama = '<span class="badge bg-danger">UTAMA</span>';
+                        }
+                    }
+
+                    content += `<li class="list-group-item list-group-item-action" data-id="${item.nomor_init}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Berkas Formulir">
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0">
                                                 <div class="avtar avtar-s border"> KFR </div>
@@ -292,7 +307,7 @@
                                             <div class="flex-grow-1 ms-3">
                                                 <div class="row g-1">
                                                     <div class="col-6">
-                                                        <h6 class="mb-1">SEP<b class="text-info">#</b>${item.sep} ${item.nomor_init == kunjungan?'<span class="badge bg-primary">SAAT INI</span>':''}</h6>
+                                                        <h6 class="mb-1">SEP<b class="text-info">#</b>${item.sep} ${item.nomor == kunjungan?'<span class="badge bg-primary">SAAT INI</span>':''} ${utama}</h6>
                                                         <p class="text-muted mb-0"><small><b class="text-danger">DPJP</b>: <u>${item.nama_dokter}</u></small></p>
                                                     </div>
                                                     <div class="col-6 text-end">
@@ -306,17 +321,46 @@
 
                 });
                 content += `</ul>`;
-                if (res.form) {
-                    console.log(res.form);
-                    if (res.form.nomor_init != kunjungan) {
-                        $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', true);
+                if (res.data && res.data.form) {
+                    if (res.data.form.nomor_init != kunjungan) {
+                        $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', true).removeClass('btn-secondary btn-info').addClass('btn-secondary');
                     } else {
-                        $('#btn-list-form-kfr-lama').prop('hidden', true).prop('disabled', true);
+                        $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', true).removeClass('btn-secondary btn-info').addClass('btn-secondary');
                     }
                 } else {
-                    $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', false);
+                    $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', false).removeClass('btn-secondary btn-info').addClass('btn-info');
                 }
                 $('#load-riwayat-form-kfr').append(content);
+
+                // JIKA LIST DIKLIK
+                $('#load-riwayat-form-kfr').on('click', '.list-group-item', function () {
+
+                    const nomor_init = $(this).data('id');
+                    if (res.data && res.data.form) {
+                        if (res.data.form.nomor_init == kunjungan) {
+                            Swal.fire({title: 'Maaf!!', text: 'Formulir yang dipilih adalah formulir pada kunjungan saat ini', icon: 'info', timer: 5000, timerProgressBar: true});
+                            return;
+                        }
+                    }
+                    $('#showListFormKfr').modal('hide');
+
+                    Swal.fire({
+                        title: 'Hubungkan Formulir?',
+                        text: `Anda akan menghubungkan Kunjungan saat ini dengan Formulir pada Kunjungan: ${nomor_init}`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, gunakan',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+
+                        if (result.isConfirmed) {
+                            syncFormKfrLama(nomor_init);
+                        } else {
+                            $('#showListFormKfr').modal('show');
+                        }
+
+                    });
+                });
             },
             error: function (xhr) {
                 Swal.fire(
@@ -324,7 +368,7 @@
                     xhr.responseJSON?.message ?? 'Terjadi kesalahan / Gagal memanggil Function loadRiwayatKfr',
                     'error'
                 );
-                $('#btn-list-form-kfr-lama').prop('hidden', true).prop('disabled', true);
+                $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', true).removeClass('btn-secondary btn-info').addClass('btn-secondary');
             },
             complete: function () {
                 // always reset button (baik success maupun error)
@@ -541,15 +585,6 @@
                     .removeClass('fa-save')
                     .addClass('fa-sync fa-spin');
 
-                let steps = [
-                    "Memproses data...",
-                    "Menyimpan data...",
-                    "Memverifikasi data...",
-                    "Menyiapkan dokumen..."
-                ];
-
-                let index = 0;
-
                 Swal.fire({
                     title: 'Menyimpan Data...',
                     text: 'Mohon menunggu hingga proses selesai',
@@ -558,15 +593,6 @@
                     showCancelButton: false,
                     didOpen: () => {
                         Swal.showLoading();
-
-                        window.progressTimer = setInterval(() => {
-                            index++;
-                            if (index < steps.length) {
-                                Swal.update({
-                                    html: `<b>${steps[index]}</b>`
-                                });
-                            }
-                        }, 1200);
                     }
                 });
             },
@@ -741,61 +767,123 @@
             text: 'Data yang dihapus tidak dapat dikembalikan.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Ya, hapus',
-            cancelButtonText: 'Batal'
+            showDenyButton: true,
+            confirmButtonText: 'Hapus Hanya Form KFR Ini',
+            denyButtonText: 'Hapus Semua Form KFR di Group',
+            cancelButtonText: 'Batal Hapus'
         }).then((result) => {
 
-            if (!result.isConfirmed) return;
+            // if (!result.isConfirmed) return;
 
-            $.ajax({
-                url  : '/api/emr/kfr/destroy',
-                type : 'POST',
-                data : {
-                    id_cppt: $('#id_cppt_kfr').val(),
-                    _token : $('meta[name="csrf-token"]').attr('content')
-                },
-                beforeSend: function () {
-                    Swal.fire({
-                        title: 'Menghapus Data...',
-                        text: 'Mohon menunggu',
-                        allowOutsideClick: false,
-                        didOpen: () => Swal.showLoading()
-                    });
-                },
-                success: function(res){
-                    if (!res.status) {
-                        Swal.fire({title: 'Maaf!', text: res.message, icon: 'warning', timer: 5000, timerProgressBar: true});
-                        return;
-                    }
+            if (result.isConfirmed) {
+                hapusFormKfr();
+            }
+            else if (result.isDenied) {
+                hapusFormKfrGroup();
+            }
 
-                    Swal.fire({
-                        title: 'Proses Hapus Berhasil!',
-                        text: res.message,
-                        icon: 'success',
-                        timer: 5000,
-                        timerProgressBar: true
-                    });
+        });
+    }
 
-                    kosongiFormKfr();
-                    loadFormKfr();
-                    loadCpptKfr();
-                    loadRiwayatKfr();
-
-                    $('#id_cppt_kfr').val('');
-                    $('#btn-kosongi-form-kfr').prop('hidden', false);
-                    $('#btn-simpan-form-kfr').prop('hidden', false);
-                    $('#btn-update-form-kfr').prop('hidden', true);
-                    $('#btn-hapus-form-kfr').prop('hidden', true);
-                },
-                error: function(xhr){
-                    Swal.fire(
-                        'Gagal',
-                        xhr.responseJSON?.message ?? 'Terjadi kesalahan',
-                        'error'
-                    );
+    function hapusFormKfr() {
+        $.ajax({
+            url  : '/api/emr/kfr/destroy',
+            type : 'POST',
+            data : {
+                id_cppt: $('#id_cppt_kfr').val(),
+                _token : $('meta[name="csrf-token"]').attr('content')
+            },
+            beforeSend: function () {
+                Swal.fire({
+                    title: 'Proses Menghapus Data',
+                    text: 'Menghapus Data Form ini...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+            },
+            success: function(res){
+                if (!res.status) {
+                    Swal.fire({title: 'Maaf!', text: res.message, icon: 'warning', timer: 5000, timerProgressBar: true});
+                    return;
                 }
-            });
 
+                Swal.fire({
+                    title: 'Proses Hapus Berhasil!',
+                    text: res.message,
+                    icon: 'success',
+                    timer: 5000,
+                    timerProgressBar: true
+                });
+
+                kosongiFormKfr();
+                loadFormKfr();
+                loadCpptKfr();
+                loadRiwayatKfr();
+
+                $('#id_cppt_kfr').val('');
+                $('#btn-kosongi-form-kfr').prop('hidden', false);
+                $('#btn-simpan-form-kfr').prop('hidden', false);
+                $('#btn-update-form-kfr').prop('hidden', true);
+                $('#btn-hapus-form-kfr').prop('hidden', true);
+            },
+            error: function(xhr){
+                Swal.fire(
+                    'Gagal',
+                    xhr.responseJSON?.message ?? 'Terjadi kesalahan',
+                    'error'
+                );
+            }
+        });
+    }
+
+    function hapusFormKfrGroup() {
+        $.ajax({
+            url  : '/api/emr/kfr/destroy/all',
+            type : 'POST',
+            data : {
+                id_cppt: $('#id_cppt_kfr').val(),
+                _token : $('meta[name="csrf-token"]').attr('content')
+            },
+            beforeSend: function () {
+                Swal.fire({
+                    title: 'Proses Menghapus Data',
+                    text: 'Menghapus Data Semua Form di Group...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+            },
+            success: function(res){
+                if (!res.status) {
+                    Swal.fire({title: 'Maaf!', text: res.message, icon: 'warning', timer: 5000, timerProgressBar: true});
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Proses Hapus Berhasil!',
+                    text: res.message,
+                    icon: 'success',
+                    timer: 5000,
+                    timerProgressBar: true
+                });
+
+                kosongiFormKfr();
+                loadFormKfr();
+                loadCpptKfr();
+                loadRiwayatKfr();
+
+                $('#id_cppt_kfr').val('');
+                $('#btn-kosongi-form-kfr').prop('hidden', false);
+                $('#btn-simpan-form-kfr').prop('hidden', false);
+                $('#btn-update-form-kfr').prop('hidden', true);
+                $('#btn-hapus-form-kfr').prop('hidden', true);
+            },
+            error: function(xhr){
+                Swal.fire(
+                    'Gagal',
+                    xhr.responseJSON?.message ?? 'Terjadi kesalahan',
+                    'error'
+                );
+            }
         });
     }
 

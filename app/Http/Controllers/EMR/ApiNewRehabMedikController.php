@@ -221,25 +221,27 @@ class ApiNewRehabMedikController extends Controller
             ->select(
                 'kfr.group',
                 'kfr.nomor_init',
+                'kfr.nomor',
                 DB::raw("LPAD(kfr.rm, 8, '0') as rm"),
                 DB::raw("DATE_FORMAT(kfr.tgl_init, '%e %M %Y') as tgl_init"),
                 'kfr.nama_dokter',
                 'kfr.sep',
                 'kfr.tgl_sep',
-                DB::raw("MIN(kfr.created_at) AS created_at")
+                'kfr.created_at'
+                // DB::raw("MIN(kfr.created_at) AS created_at")
             )
             ->where('kfr.rm', $NORM)
             ->whereNull('kfr.deleted_at')
             ->whereDate('kfr.tgl_sep', '<=', $TGLSEP)
-            ->groupBy(
-                'kfr.group',
-                'kfr.nomor_init',
-                DB::raw("LPAD(kfr.rm, 8, '0')"),
-                DB::raw("DATE_FORMAT(kfr.tgl_init, '%e %M %Y')"),
-                'kfr.nama_dokter',
-                'kfr.sep',
-                'kfr.tgl_sep'
-            )
+            // ->groupBy(
+            //     'kfr.group',
+            //     'kfr.nomor_init',
+            //     DB::raw("LPAD(kfr.rm, 8, '0')"),
+            //     DB::raw("DATE_FORMAT(kfr.tgl_init, '%e %M %Y')"),
+            //     'kfr.nama_dokter',
+            //     'kfr.sep',
+            //     'kfr.tgl_sep'
+            // )
             ->orderBy('kfr.tgl_sep', 'DESC')
             ->get();
 
@@ -389,7 +391,7 @@ class ApiNewRehabMedikController extends Controller
             // INSERT NEW CPPT WITH OLD DATA CPPT
             $id_cppt = DB::table('medicalrecord.cppt')->insertGetId([
                 'KUNJUNGAN'    => $request->nomor_kunjungan,
-                'TANGGAL'      => now()->toDateString(),
+                'TANGGAL'      => now(),
                 'SUBYEKTIF'    => $cpptLama->SUBYEKTIF,
                 'OBYEKTIF'     => $cpptLama->OBYEKTIF,
                 'ASSESMENT'    => $cpptLama->ASSESMENT,

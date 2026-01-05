@@ -118,6 +118,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 Route::post('emr/kfr/store', [ApiNewRehabMedikController::class, 'store'])->name('api.emr.kfr.store');
                 Route::put('emr/kfr/update/{IDCPPT}', [ApiNewRehabMedikController::class, 'update'])->name('api.emr.kfr.update');
                 Route::post('emr/kfr/destroy', [ApiNewRehabMedikController::class, 'destroy'])->name('api.emr.kfr.destroy');
+                Route::post('emr/kfr/destroy/all', [ApiNewRehabMedikController::class, 'destroyAll'])->name('api.emr.kfr.destroyAll');
             // RIS
             Route::get('dcom/{filename}', [RISController::class, 'getDCOM'])->name('api.emr.ris.getDCOM');
 
