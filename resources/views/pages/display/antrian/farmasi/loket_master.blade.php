@@ -18,7 +18,7 @@
         <h5 class="mb-0">Tambah Loket</h5>
     </div>
     <div class="card-body">
-        <form method="POST" action="{{ route('display.antrian.farmasi.loket.master') }}">
+        <form method="POST" action="{{ route('api.display.antrian.farmasi.loket.master') }}">
             @csrf
 
             <div class="row g-3">
@@ -112,7 +112,7 @@
                         <button class="btn btn-sm btn-info mb-1" data-bs-toggle="modal" data-bs-target="#editLoket{{ $l->id }}">
                             Edit
                         </button>
-                        <form method="POST" action="{{ route('display.antrian.farmasi.loket.toggle', $l->id) }}">
+                        <form method="POST" action="{{ route('api.display.antrian.farmasi.loket.toggle', $l->id) }}">
                             @csrf
                             @method('PATCH')
                             <button class="btn btn-sm btn-warning">
@@ -124,7 +124,7 @@
                 <div class="modal fade" id="editLoket{{ $l->id }}" tabindex="-1">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <form method="POST" action="{{ route('display.antrian.farmasi.loket.update', $l->id) }}">
+                            <form method="POST" action="{{ route('api.display.antrian.farmasi.loket.update', $l->id) }}">
                                 @csrf
                                 @method('PATCH')
 

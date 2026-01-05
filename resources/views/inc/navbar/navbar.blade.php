@@ -66,7 +66,7 @@
                 @endcan
                 @can('display_antrian_farmasi')
                 <li class="pc-item pc-hasmenu pc-trigger
-                    {{ request()->routeIs('display.antrian.farmasi.*') ? 'active' : '' }}">
+                    {{ request()->routeIs('api.display.antrian.farmasi.*') ? 'active' : '' }}">
 
                     <a href="#!" class="pc-link">
                         <span class="pc-micon">
@@ -83,32 +83,32 @@
                     </a>
 
                     <ul class="pc-submenu">
-                        <li class="pc-item {{ request()->routeIs('display.antrian.farmasi.jenis.index') ? 'active' : '' }}">
-                            <a class="pc-link" href="{{ route('display.antrian.farmasi.jenis.index') }}">
+                        <li class="pc-item {{ request()->routeIs('api.display.antrian.farmasi.jenis.index') ? 'active' : '' }}">
+                            <a class="pc-link" href="{{ route('api.display.antrian.farmasi.jenis.index') }}">
                                 Jenis Antrian
                             </a>
                         </li>
 
-                        <li class="pc-item {{ request()->routeIs('display.antrian.farmasi.loket.master') ? 'active' : '' }}">
-                            <a class="pc-link" href="{{ route('display.antrian.farmasi.loket.master') }}">
+                        <li class="pc-item {{ request()->routeIs('api.display.antrian.farmasi.loket.master') ? 'active' : '' }}">
+                            <a class="pc-link" href="{{ route('api.display.antrian.farmasi.loket.master') }}">
                                 Loket Antrian
                             </a>
                         </li>
 
-                        <li class="pc-item {{ request()->routeIs('display.antrian.farmasi.ambil.index') ? 'active' : '' }}">
-                            <a class="pc-link" href="{{ route('display.antrian.farmasi.ambil.index') }}">
+                        <li class="pc-item {{ request()->routeIs('api.display.antrian.farmasi.ambil.index') ? 'active' : '' }}">
+                            <a class="pc-link" href="{{ route('api.display.antrian.farmasi.ambil.index') }}">
                                 Ambil Antrian
                             </a>
                         </li>
 
-                        <li class="pc-item {{ request()->routeIs('display.antrian.farmasi.panggil.index') ? 'active' : '' }}">
-                            <a class="pc-link" href="{{ route('display.antrian.farmasi.panggil.index') }}">
+                        <li class="pc-item {{ request()->routeIs('api.display.antrian.farmasi.panggil.index') ? 'active' : '' }}">
+                            <a class="pc-link" href="{{ route('api.display.antrian.farmasi.panggil.index') }}">
                                 Pemanggilan Antrian
                             </a>
                         </li>
 
-                        <li class="pc-item {{ request()->routeIs('display.antrian.farmasi.display.index') ? 'active' : '' }}">
-                            <a class="pc-link" href="{{ route('display.antrian.farmasi.display.index') }}">
+                        <li class="pc-item {{ request()->routeIs('api.display.antrian.farmasi.display.index') ? 'active' : '' }}">
+                            <a class="pc-link" href="{{ route('api.display.antrian.farmasi.display.index') }}">
                                 Display Antrian
                             </a>
                         </li>
