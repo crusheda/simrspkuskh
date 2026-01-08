@@ -149,7 +149,8 @@
                 <h6 class="m-0">Silakan Generate Ulang<br>Apabila Formulir Gagal Dimuat</h6>
                 <div>
                     <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i> Tutup</button>
-                    <button type="button" class="btn btn-warning" onclick="generateFormKfr()"><i class="fas fa-paper-plane me-1"></i> Generate Ulang Formulir</button>
+                    <button type="button" class="btn btn-warning" onclick="generateFormKfr()" id="btn-generate-ulang-form-kfr" hidden><i class="fas fa-paper-plane me-1"></i> Generate Ulang Formulir</button>
+                    <button type="button" class="btn btn-success" id="btn-get-form-utama-kfr" hidden><i class="fas fa-external-link-alt me-1"></i> Lihat Isian Form KFR <span class="badge bg-danger text-white ms-1">Utama</span></button>
                 </div>
             </div>
         </div>
@@ -179,7 +180,8 @@
 
 <script>
     $(document).ready(function() {
-
+        // aktifkan saat pertama kali load
+        // aktifkanTabsDariHash();
     });
 
     function nl(v){
@@ -299,7 +301,7 @@
                         }
                     }
 
-                    content += `<li class="list-group-item list-group-item-action" data-id="${item.nomor_init}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Berkas Formulir">
+                    content += `<li class="list-group-item list-group-item-action" data-id="${item.nomor}" data-init="${item.nomor_init}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Berkas Formulir">
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0">
                                                 <div class="avtar avtar-s border"> KFR </div>
@@ -335,31 +337,38 @@
                 // JIKA LIST DIKLIK
                 $('#load-riwayat-form-kfr').on('click', '.list-group-item', function () {
 
-                    const nomor_init = $(this).data('id');
+                    const nomor_kunjungan = $(this).data('id');
+                    const nomor_kunjungan_init = $(this).data('init');
                     if (res.data && res.data.form) {
                         if (res.data.form.nomor_init == kunjungan) {
                             Swal.fire({title: 'Maaf!!', text: 'Formulir yang dipilih adalah formulir pada kunjungan saat ini', icon: 'info', timer: 5000, timerProgressBar: true});
                             return;
+                        } else if (nomor_kunjungan == kunjungan) {
+                            showFormKfr();
+                            return;
+                        } else {
+                            showFormKfr(nomor_kunjungan,nomor_kunjungan_init);
+                            return;
                         }
                     }
-                    $('#showListFormKfr').modal('hide');
+                    // $('#showListFormKfr').modal('hide');
 
-                    Swal.fire({
-                        title: 'Hubungkan Formulir?',
-                        text: `Anda akan menghubungkan Kunjungan saat ini dengan Formulir pada Kunjungan: ${nomor_init}`,
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, gunakan',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
+                    // Swal.fire({
+                    //     title: 'Hubungkan Formulir?',
+                    //     text: `Anda akan menghubungkan Kunjungan saat ini dengan Formulir pada Kunjungan: ${nomor_kunjungan}`,
+                    //     icon: 'question',
+                    //     showCancelButton: true,
+                    //     confirmButtonText: 'Ya, gunakan',
+                    //     cancelButtonText: 'Batal'
+                    // }).then((result) => {
 
-                        if (result.isConfirmed) {
-                            syncFormKfrLama(nomor_init);
-                        } else {
-                            $('#showListFormKfr').modal('show');
-                        }
+                    //     if (result.isConfirmed) {
 
-                    });
+                    //     } else {
+                            // $('#showListFormKfr').modal('show');
+                    //     }
+
+                    // });
                 });
             },
             error: function (xhr) {
@@ -664,11 +673,16 @@
         });
     }
 
-    function showFormKfr() {
-        $('#show-id-formKFR').text(kunjungan);
+    function showFormKfr(pushkunjungan,pushkunjunganinit) {
+        var generate = 0;
+        if (!pushkunjungan && !pushkunjunganinit) {
+            pushkunjungan = kunjungan;
+            generate = 1;
+        }
+        $('#show-id-formKFR').text(pushkunjungan);
         $('#btn-lihat-form-kfr').prop('disabled',true).find('i').removeClass('fa-book-open').addClass('fa-sync fa-spin');
 
-        fetch("/api/emr/kfr/"+kunjungan+"/show")
+        fetch("/api/emr/kfr/"+pushkunjungan+"/show")
         .then(response => {
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
@@ -681,6 +695,18 @@
 
             // Tampilkan ke iframe dalam modal
             $('#cetak-formkfr').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+            if (generate == 0) {
+                $('#btn-generate-ulang-form-kfr').prop('hidden',true);
+                if (pushkunjunganinit == pushkunjungan) {
+                    $('#btn-get-form-utama-kfr').prop('hidden',false).on('click', function () {
+                        window.location.href = `/emr/${pushkunjunganinit}#fmrehab#frjkfr`;
+                    });
+                }
+            } else {
+                $('#show-id-formKFR').empty().html(pushkunjungan+' <span class="badge bg-primary me-1">SAAT INI</span>');
+                $('#btn-generate-ulang-form-kfr').prop('hidden',false);
+                $('#btn-get-form-utama-kfr').prop('hidden',true);
+            }
             $('#showFormKfr').modal('show');
             $('#btn-lihat-form-kfr').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-book-open');
         })
@@ -898,4 +924,34 @@
         $('#cppt_i').val('0').trigger('change');
         $('#cppt_i_rtl').val('');
     }
+
+    // function aktifkanTabsDariHash() {
+    //     const hash = window.location.hash; // contoh: #frehab#formlayanankfr
+    //     if (!hash) return;
+
+    //     // pecah jadi array ['frehab', 'formlayanankfr']
+    //     const ids = hash.split('#').filter(Boolean);
+
+    //     ids.forEach((id, index) => {
+    //         const selector = '#' + id;
+    //         const $tabBtn = $('[data-bs-target="' + selector + '"]');
+
+    //         if ($tabBtn.length) {
+    //             const tab = new bootstrap.Tab($tabBtn[0]);
+    //             tab.show();
+
+    //             // jalankan validasi sesuai target
+    //             if (selector === '#frehab' || selector === '#formlayanankfr') {
+    //                 validPageFormKfr();
+    //                 console.log('jalan kfr');
+    //             } else if (selector === '#formjadwalpelayanan') {
+    //                 validPageFormJp();
+    //                 console.log('jalan jp');
+    //             } else if (selector === '#formkonsulkfr') {
+    //                 validPageFormKs();
+    //                 console.log('jalan ks');
+    //             }
+    //         }
+    //     });
+    // }
 </script>

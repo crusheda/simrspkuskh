@@ -65,8 +65,7 @@
                 </li>
                 @endcan
                 @can('display_antrian_farmasi')
-                <li class="pc-item pc-hasmenu pc-trigger
-                    {{ request()->routeIs('api.display.antrian.farmasi.*') ? 'active' : '' }}">
+                <li class="pc-item pc-hasmenu {{ request()->routeIs('api.display.antrian.farmasi.*') ? 'pc-trigger' : '' }}">
 
                     <a href="#!" class="pc-link">
                         <span class="pc-micon">

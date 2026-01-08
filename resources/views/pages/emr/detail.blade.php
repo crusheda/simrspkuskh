@@ -295,6 +295,9 @@
         const tgl_kfr = '{{ now()->format('Y-m-d H:i:s') }}';
 
         $(document).ready(function() {
+            // aktifkan saat pertama kali load
+            aktifkanTabsDariHash();
+
             // console.log("{{ $list['tte_pegawai'] }}");
             if ("{{ $list['tte_pegawai'] }}" != true) {
                 // kalau ada tanda tangan pegawai
@@ -322,5 +325,44 @@
             $('[data-bs-toggle="tooltip"]').tooltip();
             $('.nav-link').prop('disabled', false);
         });
+
+        function aktifkanTabsDariHash() {
+            const hash = window.location.hash; // contoh: #frehab#formlayanankfr
+            if (!hash) return;
+
+            // pecah jadi array ['frehab', 'formlayanankfr']
+            const ids = hash.split('#').filter(Boolean);
+
+            ids.forEach((id, index) => {
+                const selector = '#' + id;
+                const $tabBtn = $('[data-bs-target="' + selector + '"]');
+
+                if ($tabBtn.length) {
+                    const tab = new bootstrap.Tab($tabBtn[0]);
+                    tab.show();
+
+                    // jalankan validasi sesuai target
+                    if (selector === '#frehab' || selector === '#formlayanankfr') {
+                        validPageFormKfr();
+                        // console.log('jalan kfr');
+                    } else if (selector === '#formjadwalpelayanan') {
+                        validPageFormJp();
+                        // console.log('jalan jp');
+                    } else if (selector === '#formkonsulkfr') {
+                        validPageFormKs();
+                        // console.log('jalan ks');
+                    } else if (selector === '#fmrehab' || selector === 'frjkfr') {
+                        // console.log('masuk form kfr');
+                        loadFormKfr();
+                        loadCpptKfr();
+                        loadRiwayatKfr();
+                    } else if (selector === 'pterapi') {
+                        // console.log('masuk form program terapi');
+                    } else {
+                        console.log('tab lain');
+                    }
+                }
+            });
+        }
     </script>
 @endsection

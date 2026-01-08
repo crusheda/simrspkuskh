@@ -627,9 +627,6 @@
         choices = null;
 
     $(document).ready(function() {
-        // aktifkan saat pertama kali load
-        aktifkanTabsDariHash();
-
         // SELECT FUNCTION FILTER FORM LAMA KFR
         var selectFormKFRLama = document.getElementById('filterformLamaKfr');
         choices = new Choices(selectFormKFRLama, {
@@ -704,36 +701,6 @@
             }
         });
     });
-
-    function aktifkanTabsDariHash() {
-        const hash = window.location.hash; // contoh: #frehab#formlayanankfr
-        if (!hash) return;
-
-        // pecah jadi array ['frehab', 'formlayanankfr']
-        const ids = hash.split('#').filter(Boolean);
-
-        ids.forEach((id, index) => {
-            const selector = '#' + id;
-            const $tabBtn = $('[data-bs-target="' + selector + '"]');
-
-            if ($tabBtn.length) {
-                const tab = new bootstrap.Tab($tabBtn[0]);
-                tab.show();
-
-                // jalankan validasi sesuai target
-                if (selector === '#frehab' || selector === '#formlayanankfr') {
-                    validPageFormKfr();
-                    console.log('jalan kfr');
-                } else if (selector === '#formjadwalpelayanan') {
-                    validPageFormJp();
-                    console.log('jalan jp');
-                } else if (selector === '#formkonsulkfr') {
-                    validPageFormKs();
-                    console.log('jalan ks');
-                }
-            }
-        });
-    }
 
     function resizeCanvasPixelRatio(canvas, width = 500, height = 200) {
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
