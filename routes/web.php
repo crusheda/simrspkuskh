@@ -27,6 +27,7 @@ use App\Http\Controllers\Monitoring\MonitoringController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Jasper\JasperController;
 use App\Http\Controllers\Jasper\JasperReportsController;
+use App\Modules\AiKlaim\Controllers\AiKlaimController;
 
 // STARTING CREATIONS
 // Route::get('/', function () {
@@ -48,6 +49,10 @@ Route::get('/lupapassword', [LupaPasswordController::class, 'index'])->name('lup
 Route::post('/lupapassword/update', [LupaPasswordController::class, 'update'])->name('lupapassword.update');
 Auth::routes(['register' => false]); // Cannot Access /register
 Route::group(['middleware' => ['web', 'auth']], function() {
+
+    Route::get('ai-klaim', [AiKlaimController::class, 'index']);
+    Route::post('ai-klaim/tanya', [AiKlaimController::class, 'tanya']);
+    
     // DASHBOARD
     Route::get('/', function () { return redirect()->route('dashboard'); });
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

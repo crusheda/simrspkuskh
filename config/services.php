@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'ollama' => [
+        'url' => env('OLLAMA_URL'),
+        'model' => env('OLLAMA_MODEL', 'mistral'),
+    ],
+
 ];
