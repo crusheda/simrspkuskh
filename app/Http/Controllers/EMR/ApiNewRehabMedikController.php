@@ -67,7 +67,7 @@ class ApiNewRehabMedikController extends Controller
             return [false, $log, $result];
         }
 
-        return [true, $outputPdf];
+        return [true, $outputPdf, $result];
     }
 
     // CONTROLLER FOR LIBRE OFFICE ON WINDOWS SERVER
