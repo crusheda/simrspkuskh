@@ -722,13 +722,15 @@ class ApiMonitoringController extends Controller
         function showTtdResumeRj($kunjungan)
         {
             $getRESUMERJ = DB::table('pendaftaran.kunjungan AS pk')
-                    ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-                    ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
-                    ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR')
-                    ->where('pk.NOMOR',$kunjungan)
-                    ->first();
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR')
+                ->where('pk.NOMOR',$kunjungan)
+                ->first();
 
             $show = DB::select('CALL simrspku_klaim.CetakResumeRJ(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
+
+            $isExist = false; // default false
 
             if ($show) {
                 $getTgl = Carbon::parse($show[0]->TGLPERIKSA);
@@ -737,31 +739,40 @@ class ApiMonitoringController extends Controller
                 $tahun = $getTgl->isoFormat('YYYY');
 
                 $path = 'files/resume/RJ/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
-                $output = storage_path().'/app/public/'.$path;
+                $output = storage_path('app/public/'.$path.'.pdf');
 
-                if (file_exists($output.'.pdf')) {
-                    $verify = klaim_file::where('nomor', $kunjungan)
+                if (file_exists($output)) {
+                    // cek di DB, termasuk soft deleted atau status = 0
+                    $verify = klaim_file::withTrashed()
+                        ->where('nomor', $kunjungan)
                         ->where('jenis', 2)
-                        ->where('status', true)
                         ->first();
 
-                    if (!$verify) {
-                        $post = new klaim_file;
-                        $post->jenis = 2;
-                        $post->nomor = $kunjungan;
-                        $post->title = $kunjungan.'.pdf';
-                        $post->filename = $path.'.pdf';
-                        $post->status = true;
-                        $post->user = Auth::user()->ID;
-                        $post->save();
+                    if (!$verify || !$verify->status) {
+                        // hapus file karena database sudah tidak valid
+                        @unlink($output);
+                        DB::table('simrspku_klaim.tanda_tangan')
+                            ->where('kunjungan', $kunjungan)
+                            ->whereNull('deleted_at')
+                            ->update(['deleted_at' => now()]);
+                        $isExist = false;
+                    } else {
+                        // file valid, simpan jika belum ada
+                        if (!$verify) {
+                            $post = new klaim_file;
+                            $post->jenis = 2;
+                            $post->nomor = $kunjungan;
+                            $post->title = $kunjungan.'.pdf';
+                            $post->filename = $path.'.pdf';
+                            $post->status = true;
+                            $post->user = Auth::user()->ID;
+                            $post->save();
+                        }
+                        $isExist = true;
                     }
-
-                    $isExist = true;
                 } else {
                     $isExist = false;
                 }
-            } else {
-                $isExist = false;
             }
 
             $data = [
@@ -776,6 +787,7 @@ class ApiMonitoringController extends Controller
         {
             $existing = DB::table('simrspku_klaim.tanda_tangan')
                 ->where('kunjungan', $request->nama)
+                ->whereNull('deleted_at')
                 ->first();
 
             if ($existing) {
