@@ -20,84 +20,84 @@ use Auth, Storage;
 class ApiNewRehabMedikController extends Controller
 {
     // CONTROLLER FOR LIBRE OFFICE ON LINUX SERVER
-    // public function libreOffice($input, $output)
-    // {
-    //     $soffice = env('LIBREOFFICE_PATH', '/usr/bin/soffice');
-
-    //     // Path absolut
-    //     $input  = realpath($input);
-    //     $output = realpath($output);
-
-    //     if (!$input || !$output) {
-    //         \Log::error('Path input/output tidak valid', compact('input','output'));
-    //         return [false, [], -1];
-    //     }
-
-    //     // Environment aman untuk www-data
-    //     putenv('HOME=/tmp');
-    //     putenv('XDG_CACHE_HOME=/tmp');
-
-    //     // Profile unik per proses (ANTI TABRAKAN)
-    //     $profile = '/tmp/lo_' . uniqid();
-
-    //     // Command convert
-    //     $cmd = sprintf(
-    //         '%s --headless --nologo --nofirststartwizard ' .
-    //         '-env:UserInstallation=file://%s ' .
-    //         '--convert-to pdf %s --outdir %s 2>&1',
-    //         escapeshellcmd($soffice),
-    //         escapeshellarg($profile),
-    //         escapeshellarg($input),
-    //         escapeshellarg($output)
-    //     );
-
-    //     exec($cmd, $log, $result);
-
-    //     $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
-
-    //     // Cleanup profile
-    //     exec('rm -rf ' . escapeshellarg($profile));
-
-    //     if ($result !== 0 || !file_exists($outputPdf)) {
-    //         \Log::error('LibreOffice Linux gagal konversi', [
-    //             'cmd' => $cmd,
-    //             'log' => $log,
-    //             'result' => $result,
-    //         ]);
-    //         return [false, $log, $result];
-    //     }
-
-    //     return [true, $outputPdf];
-    // }
-
-    // CONTROLLER FOR LIBRE OFFICE ON WINDOWS SERVER
     public function libreOffice($input, $output)
     {
-        // LINK DOWNLOAD LIBRE OFFICE = https://www.libreoffice.org/download/download
-        // Ambil path dari .env (lebih fleksibel kalau update LibreOffice)
-        $soffice = env('LIBREOFFICE_PATH', 'C:/Program Files/LibreOffice/program/soffice.exe');
-        $soffice = '"'.$soffice.'"';
+        $soffice = env('LIBREOFFICE_PATH', '/usr/bin/soffice');
 
-        // 🔹 Kill proses lama dulu (biar tidak nyangkut)
-        exec('taskkill /IM soffice.bin /F 2> NUL');
+        // Path absolut
+        $input  = realpath($input);
+        $output = realpath($output);
 
-        // Jalankan konversi
-        $cmd = $soffice . ' --headless --convert-to pdf ' . escapeshellarg($input) . ' --outdir ' . escapeshellarg($output);
+        if (!$input || !$output) {
+            \Log::error('Path input/output tidak valid', compact('input','output'));
+            return [false, [], -1];
+        }
+
+        // Environment aman untuk www-data
+        putenv('HOME=/tmp');
+        putenv('XDG_CACHE_HOME=/tmp');
+
+        // Profile unik per proses (ANTI TABRAKAN)
+        $profile = '/tmp/lo_' . uniqid();
+
+        // Command convert
+        $cmd = sprintf(
+            '%s --headless --nologo --nofirststartwizard ' .
+            '-env:UserInstallation=file://%s ' .
+            '--convert-to pdf %s --outdir %s 2>&1',
+            escapeshellcmd($soffice),
+            escapeshellarg($profile),
+            escapeshellarg($input),
+            escapeshellarg($output)
+        );
+
         exec($cmd, $log, $result);
 
-        // 🔹 Cek hasil
         $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
+
+        // Cleanup profile
+        exec('rm -rf ' . escapeshellarg($profile));
+
         if ($result !== 0 || !file_exists($outputPdf)) {
-            \Log::error('LibreOffice gagal konversi', [
+            \Log::error('LibreOffice Linux gagal konversi', [
                 'cmd' => $cmd,
                 'log' => $log,
-                'result' => $result
+                'result' => $result,
             ]);
             return [false, $log, $result];
         }
 
-        return [true, $log, $result];
+        return [true, $outputPdf];
     }
+
+    // CONTROLLER FOR LIBRE OFFICE ON WINDOWS SERVER
+    // public function libreOffice($input, $output)
+    // {
+    //     // LINK DOWNLOAD LIBRE OFFICE = https://www.libreoffice.org/download/download
+    //     // Ambil path dari .env (lebih fleksibel kalau update LibreOffice)
+    //     $soffice = env('LIBREOFFICE_PATH', 'C:/Program Files/LibreOffice/program/soffice.exe');
+    //     $soffice = '"'.$soffice.'"';
+
+    //     // 🔹 Kill proses lama dulu (biar tidak nyangkut)
+    //     exec('taskkill /IM soffice.bin /F 2> NUL');
+
+    //     // Jalankan konversi
+    //     $cmd = $soffice . ' --headless --convert-to pdf ' . escapeshellarg($input) . ' --outdir ' . escapeshellarg($output);
+    //     exec($cmd, $log, $result);
+
+    //     // 🔹 Cek hasil
+    //     $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
+    //     if ($result !== 0 || !file_exists($outputPdf)) {
+    //         \Log::error('LibreOffice gagal konversi', [
+    //             'cmd' => $cmd,
+    //             'log' => $log,
+    //             'result' => $result
+    //         ]);
+    //         return [false, $log, $result];
+    //     }
+
+    //     return [true, $log, $result];
+    // }
 
     public function getSection($text, $label)
     {
