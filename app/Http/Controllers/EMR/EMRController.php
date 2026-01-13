@@ -18,35 +18,37 @@ class EMRController extends Controller
     // INDEX
     function index()
     {
+        // print_r(Auth::user()->NIP);
+        // die();
         $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
-        $dr = DB::table('master.dokter AS dr')
-                ->select(
-                    'dr.id',
-                    'dr.NIP',
-                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
-                    'ref.DESKRIPSI'
-                )
-                ->leftJoin('master.pegawai AS pg','pg.NIP','=','dr.NIP')
-                ->leftJoin('master.referensi AS ref', function($join) {
-                    $join->on('ref.ID','=','pg.SMF')
-                        ->where('ref.JENIS', '26');
-                })
-                ->leftJoin('master.dokter_ruangan AS dru','dru.DOKTER','=','dr.ID')
-                ->where('dr.STATUS','1')
-                ->where('dru.STATUS','1')
-                ->where(function ($query) {
-                    $query->where('dru.RUANGAN', 'LIKE', '1020101%');
-                })
-                // ->orderByRaw("CASE WHEN ref.ID = '0' THEN 1 ELSE 0 END")
-                ->orderBy('ref.DESKRIPSI','ASC')
-                ->groupBy('dr.id','dr.NIP','NAMADOKTER')
-                ->get();
+        // $dr = DB::table('master.dokter AS dr')
+        //         ->select(
+        //             'dr.id',
+        //             'dr.NIP',
+        //             DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+        //             'ref.DESKRIPSI'
+        //         )
+        //         ->leftJoin('master.pegawai AS pg','pg.NIP','=','dr.NIP')
+        //         ->leftJoin('master.referensi AS ref', function($join) {
+        //             $join->on('ref.ID','=','pg.SMF')
+        //                 ->where('ref.JENIS', '26');
+        //         })
+        //         ->leftJoin('master.dokter_ruangan AS dru','dru.DOKTER','=','dr.ID')
+        //         ->where('dr.STATUS','1')
+        //         ->where('dru.STATUS','1')
+        //         ->where(function ($query) {
+        //             $query->where('dru.RUANGAN', 'LIKE', '1020101%');
+        //         })
+        //         // ->orderByRaw("CASE WHEN ref.ID = '0' THEN 1 ELSE 0 END")
+        //         ->orderBy('ref.DESKRIPSI','ASC')
+        //         ->groupBy('dr.id','dr.NIP','NAMADOKTER')
+        //         ->get();
 
         $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')->where('nip',Auth::user()->NIP)->whereNull('deleted_at')->exists();
 
         $data = [
             'yearMonth' => $yearMonth,
-            'dr' => $dr,
+            // 'dr' => $dr,
             'tte_pegawai' => $tte_pegawai,
         ];
 
@@ -186,6 +188,50 @@ class EMRController extends Controller
         return response()->json($ruangan, 200);
     }
 
+    function dpjp($ruangan)
+    {
+        $show = DB::table('master.dokter_ruangan AS dru')
+                ->join('master.dokter as dr', function($join) {
+                    $join->on('dr.ID','=','dru.DOKTER')
+                        ->where('dr.STATUS', 1);
+                })
+                ->join('master.pegawai AS pg', function($join) {
+                    $join->on('pg.NIP','=','dr.NIP')
+                        ->where('pg.STATUS', 1);
+                })
+                ->join('master.referensi AS ref', function($join) {
+                    $join->on('ref.ID','=','pg.SMF')
+                        ->where('ref.JENIS', '26');
+                })
+                ->select(
+                    'dr.ID',
+                    'dr.NIP',
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                    DB::raw('MIN(dru.RUANGAN) AS RUANGAN'),
+                    'ref.DESKRIPSI'
+                )
+                ->when($ruangan != 5, function ($query) use ($ruangan) {
+                    $query->where('dru.RUANGAN', $ruangan);
+                })
+                ->where('dru.STATUS',1)
+                ->orderBy('ref.DESKRIPSI','ASC')
+                ->groupBy('dr.ID','dr.NIP','ref.DESKRIPSI')
+                ->get();
+
+        if ($show->isEmpty()) {
+            return response()->json('Tidak ada DPJP yang sesuai pada Ruangan Tersebut!', 404);
+        }
+
+        $user = Auth::user()->NIP;
+
+        $data = [
+            'show' => $show,
+            'user' => $user,
+        ];
+
+        return response()->json($data, 200);
+    }
+
     function table(Request $request)
     {
         $user = auth()->user();
@@ -277,8 +323,8 @@ class EMRController extends Controller
                     $query->where('pk.STATUS', $status);
                             // ->where('pp.STATUS', $status);
                 })
-                ->when($dpjp != 0, function ($query) use ($dpjp) {
-                    // Hanya menambahkan where jika $dpjp bukan 0
+                ->when($dpjp != 0 && $dpjp != 5, function ($query) use ($dpjp) {
+                    // Hanya menambahkan where jika $dpjp bukan 0 dan bukan 5
                     $query->where('dr.NIP', $dpjp);
                 })
                 ->orderBy('pk.MASUK','DESC')

@@ -18,22 +18,22 @@
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label class="form-label"><i><b>Subjective</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_s" rows="2" class="form-control"></textarea>
+                            <textarea id="cppt_s" rows="2" class="form-control" placeholder="..."></textarea>
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label"><i><b>Objective</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_o" rows="2" class="form-control"></textarea>
+                            <textarea id="cppt_o" rows="2" class="form-control" placeholder="..."></textarea>
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label"><i><b>Assessment</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_a" rows="2" class="form-control"></textarea>
+                            <textarea id="cppt_a" rows="2" class="form-control" placeholder="..."></textarea>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="card table-card border shadow-none">
                             <div class="card-body p-3">
                                 <div class="form-group">
-                                    <label class="form-label"><i><b>Planning</b></i> <a class="text-danger">*</a></label>
+                                    <label class="form-label"><i><b>Planning</b></i></label>
                                     <input id="cppt_p_1" class="form-control mb-3" placeholder="Goal of Treatment">
                                     <input id="cppt_p_2" class="form-control mb-3" placeholder="Tindakan/Program Rehabilitasi Medik">
                                     <input id="cppt_p_3" class="form-control mb-3" placeholder="Edukasi">
@@ -50,12 +50,12 @@
                         <div class="form-group">
                             <label class="form-label"><b>Rencana Tindak Lanjut</b> <a class="text-danger">*</a></label>
                             <select class="form-select mb-2" id="cppt_i">
-                                <option value="0">Pilih</option>
+                                <option value="0">Pilih Tindak Lanjut</option>
                                 <option value="1">Evaluasi</option>
                                 <option value="2">Rujuk</option>
                                 <option value="3">Selesai</option>
                             </select>
-                            <textarea id="cppt_i_rtl" rows="3" class="form-control" placeholder="Tuliskan Rencana Tindak Lanjut"></textarea>
+                            <textarea id="cppt_i_rtl" rows="3" class="form-control" placeholder="Tuliskan Rencana Tindak Lanjut (Wajib Diisi)"></textarea>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -195,13 +195,15 @@
                             <span class="sr-only">Loading...</span>
                         </div> <a class="align-middle">Memproses Data Riwayat..</a>
                     </div>`);
-        $('#btn-refresh-riwayat-cppt').prop('disabled', true).find('i').addClass('fa-spin');
         $.ajax({
             url: `/api/emr/kfr/${kunjungan}/cppt`,
             type: 'GET',
+            beforeSend: function () {
+                $('#btn-refresh-riwayat-cppt').prop('disabled', true).find('i').addClass('fa-spin');
+            },
             success: function(res) {
                 if (!res.status) {
-                    Swal.fire('Info', res.message, 'info');
+                    // Swal.fire('Info', res.message, 'info');
                     $('#load-riwayat-cppt-kfr').empty()
                         .append(`<div class="d-flex justify-content-center">
                                     <center><a class="align-middle">Data CPPT Tidak Ditemukan</a></center>
@@ -239,7 +241,6 @@
                                 </div>`;
                     $('#load-riwayat-cppt-kfr').append(card);
                 });
-                $('#btn-refresh-riwayat-cppt').prop('disabled', false).find('i').removeClass('fa-spin');
             },
             error: function (xhr) {
                 Swal.fire(
@@ -247,6 +248,16 @@
                     xhr.responseJSON?.message ?? 'Terjadi kesalahan',
                     'error'
                 );
+            },
+            complete: function () {
+                // always reset button (baik success maupun error)
+                $('#btn-refresh-riwayat-cppt').prop('disabled', false).find('i').removeClass('fa-spin');
+                // Showing Tooltip
+                $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                $('.tooltip').remove();
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    trigger : 'hover'
+                })
             }
         });
     }
@@ -278,8 +289,8 @@
                     $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', true).removeClass('btn-secondary btn-info').addClass('btn-secondary');
                     return;
                 }
-                $('#load-riwayat-form-kfr').empty();
-                let content = `<ul class="list-group list-group-flush ">`;
+                let content = ``;
+                content += `<ul class="list-group list-group-flush ">`;
                 res.data.show.forEach((item, index) => {
                     let tanggalKunj = new Date(item.tgl_sep).toLocaleDateString('id-ID', {
                         day: 'numeric',
@@ -323,6 +334,8 @@
 
                 });
                 content += `</ul>`;
+                $('#load-riwayat-form-kfr').empty().append(content);
+
                 if (res.data && res.data.form) {
                     if (res.data.form.nomor_init != kunjungan) {
                         $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', true).removeClass('btn-secondary btn-info').addClass('btn-secondary');
@@ -332,7 +345,6 @@
                 } else {
                     $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', false).removeClass('btn-secondary btn-info').addClass('btn-info');
                 }
-                $('#load-riwayat-form-kfr').append(content);
 
                 // JIKA LIST DIKLIK
                 $('#load-riwayat-form-kfr').on('click', '.list-group-item', function () {

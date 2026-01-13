@@ -29,7 +29,7 @@
             <div class="card-header p-2">
                 <div class="d-sm-flex align-items-center justify-content-between ms-2">
                     <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Table Kunjungan Pasien <span class="ms-2 f-14 px-2 badge bg-light-secondary">Total : <a id="jumlah_data">0 Data</a></span></h5>
-                    <a class="btn btn-link-info btn-sm text-end" href="javascript: void(0);" onclick="tataCara()"><i class="fas fa-info-circle text-info me-2"></i> <s>Tata Cara Penggunaan</s></a>
+                    {{-- <a class="btn btn-link-info btn-sm text-end" href="javascript: void(0);" onclick="tataCara()"><i class="fas fa-info-circle text-info me-2"></i> <s>Tata Cara Penggunaan</s></a> --}}
                     {{-- <button class="btn btn-link-info btn-sm rounded me-1 mb-1 mt-1" type="button" data-bs-toggle="collapse" data-bs-target="#filter-collapse" aria-expanded="false" aria-controls="collapseExample">Filter <i class="ph-duotone ph-caret-down ms-1"></i></button> --}}
                 </div>
             </div>
@@ -49,7 +49,7 @@
                     <div class="col-md-2 mb-3">
                         <div class="form-group">
                             <label class="form-label">Ruangan</label>
-                            <select id="filter_ruang" class="form-control" disabled><option value="5" selected>...</option></select>
+                            <select id="filter_ruang" class="form-control" onchange="getDPJP()" disabled><option value="5" selected>...</option></select>
                         </div>
                     </div>
                     <div class="col-md-2 mb-3">
@@ -75,19 +75,12 @@
                     <div class="col-md-3 mb-3">
                         <div class="form-group">
                             <label class="form-label">DPJP</label>
-                            <select class="form-control" id="filter_dpjp">
-                                <option value="">Pilih Dokter</option>
-                                @if ($list['dr'])
-                                    @foreach ($list['dr'] as $item)
-                                        <option value="{{ $item->NIP }}">{{ $item->NAMADOKTER }} ({{ $item->DESKRIPSI }})</option>
-                                    @endforeach
-                                @endif
-                            </select>
+                            <select class="form-control" id="filter_dpjp" disabled><option value="5" selected>...</option></select>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="d-sm-flex align-items-center justify-content-between">
-                            <button class="btn btn-light-secondary" href="javascript: void(0);" id="clear_text" onclick="clearFilter()"><i class="ph-duotone ph-eraser me-1"></i> Reset</button>
+                            <button class="btn btn-secondary" href="javascript: void(0);" id="clear_text" onclick="clearFilter()"><i class="ph-duotone ph-eraser me-1"></i> Kosongkan Filter</button>
                             <button class="btn btn-primary" id="tombol-tampilkan" onclick="filter()" disabled><i class="ph-duotone ph-sort-ascending me-1"></i> Refresh Table</button>
                         </div>
                     </div>
@@ -160,6 +153,7 @@
 {{-- MODAL ENDED --}}
 
 <script>
+    let dpjpChoices;
     $(document).ready(function() {
         if ("{{ $list['tte_pegawai'] }}" != true) {
             // kalau tidak ada tanda tangan pegawai
@@ -213,8 +207,10 @@
         );
 
         // SELECT CHOICES
-        elm = $('#filter_dpjp')[0];
-        choices = new Choices(elm);
+        dpjpChoices = new Choices('#filter_dpjp', {
+            shouldSort: false,
+            allowHTML: true
+        });
 
         // // ENTER TAMPILKAN
         // $('#filter_rawat, #filter_bulan, #filter_dpjp').on('keydown', function (e) {
@@ -253,10 +249,53 @@
                             <option value="${pouch.ID}">${pouch.DESKRIPSI}</option>
                         `);
                     });
+                    getDPJP();
                     // $("#filter_ruang").val(up).change();
                 }
             })
         }
+    }
+
+    function getDPJP() {
+        let idRuangPerawatan = $('#filter_ruang').val();
+        $.ajax({
+            url: `/api/emr/ruangan/${idRuangPerawatan}/dpjp`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                dpjpChoices.enable();
+                dpjpChoices.removeActiveItems();
+                dpjpChoices.clearChoices();
+                dpjpChoices.setChoices([
+                    { value: '5', label: 'Semua Dokter', selected: true }
+                ], 'value', 'label', false);
+
+                res.show.forEach(pouch => {
+                    dpjpChoices.setChoices([
+                        {
+                            value: pouch.NIP,
+                            label: `${pouch.NAMADOKTER} (${pouch.DESKRIPSI})`
+                        }
+                    ], 'value', 'label', false);
+                });
+
+                if (idRuangPerawatan == 5 && res.user) {
+                    dpjpChoices.setChoiceByValue(res.user);
+                }
+            },
+            error: function (xhr) {
+                Swal.fire(
+                    'Gagal',
+                    xhr.responseJSON?.message ?? 'Terjadi kesalahan / Gagal memanggil Function!',
+                    'error'
+                );
+                dpjpChoices.disable();
+                dpjpChoices.clearChoices();
+                dpjpChoices.setChoices([
+                    { value: '0', label: 'Tidak Ada Dokter', selected: true }
+                ], 'value', 'label', false);
+            },
+        })
     }
 
     function filter() {
@@ -295,11 +334,14 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
+            beforeSend: function () {
+                $('#jumlah_data').empty().html(`<i class="fas fa-sync fa-spin ms-1"></i>`);
+            },
             success: function(res) {
                 $("#tampil-tbody").empty();
+                $('#jumlah_data').empty().text(res.show.length + ' Data');
                 if (res.show && Array.isArray(res.show)) {
                     res.show.forEach(item => {
-                        $('#jumlah_data').text(res.show.length + ' Data');
                         if (item.STATUS == 1) {
                             status = 'Pasien berada di ruangan ini / sedang dilayani';
                         } else {
@@ -356,7 +398,6 @@
                                     </tr>`;
                         $('#tampil-tbody').append(content);
                     })
-                    console.log('sampai sini');
                 }
                 // VANILLA TABLE
                 window.dataTable = new simpleDatatables.DataTable("#vantable", {
@@ -399,6 +440,7 @@
                 console.error('Terjadi kesalahan:', error);
                 // Bisa juga tampilkan alert
                 alert('Gagal mengambil data. Coba lagi.');
+                $('#jumlah_data').empty().text('0 Data');
                 $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fas fa-sync fa-spin').addClass('ph-duotone ph-sort-ascending').css('font-size', '');
             }
         })
@@ -419,8 +461,9 @@
         $("#filter_rawat").val('5');
         $("#filter_ruang").val('5').prop('disabled',true);
 
-        choices.removeActiveItems();      // hapus semua yang aktif
-        choices.setChoiceByValue('');     // pilih option kosong (value="")
+        dpjpChoices.disable();
+        dpjpChoices.removeActiveItems();      // hapus semua yang aktif
+        dpjpChoices.setChoiceByValue('5');    // pilih option kosong (value="5") => Semua Dokter
 
         // EMPTY TABLE AND HIDE DIV
         $("#tampil-tbody").empty();

@@ -2,7 +2,7 @@
     <div class="col-md-8">
         <div class="card table-card border shadow-none">
             <div class="card-header d-flex align-items-center justify-content-between p-3">
-                <h5 class="card-title mb-0">Program Terapi</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Program Terapi</h5>
                 <div>
                     <select class="form-select form-select-sm" id="jns_program_terapi">
                         <option value="0">Pilih Program Terapi</option>

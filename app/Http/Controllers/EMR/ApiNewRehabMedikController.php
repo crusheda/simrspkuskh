@@ -301,6 +301,13 @@ class ApiNewRehabMedikController extends Controller
             ->orderBy('cppt.TANGGAL', 'DESC')
             ->get();
 
+        if ($data->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data CPPT tidak ditemukan untuk kunjungan ini'
+            ]);
+        }
+
         return response()->json([
             'status' => true,
             'data' => $data
@@ -535,14 +542,14 @@ class ApiNewRehabMedikController extends Controller
                 'tgl.required'       => 'Tanggal wajib diisi.',
                 'tgl.date'           => 'Tanggal tidak valid.',
 
-                'cppt_s.required'    => 'Isian Subyektif wajib diisi.',
-                'cppt_o.required'    => 'Isian Obyektif wajib diisi.',
-                'cppt_a.required'    => 'Isian Asesment wajib diisi.',
+                'cppt_s.required'    => 'Isian Subjective wajib diisi.',
+                'cppt_o.required'    => 'Isian Objective wajib diisi.',
+                'cppt_a.required'    => 'Isian Assessment wajib diisi.',
 
-                'cppt_p_1.required'  => 'Planning (Goal of Treatment) wajib diisi.',
-                'cppt_p_2.required'  => 'Planning (Tindakan/Program Rehabilitasi Medik) wajib diisi.',
-                'cppt_p_3.required'  => 'Planning (Edukasi) wajib diisi.',
-                'cppt_p_4.required'  => 'Planning (Frekuensi Kunjungan) wajib diisi.',
+                'cppt_p_1.required'  => 'Isian Planning (Goal of Treatment) wajib diisi.',
+                'cppt_p_2.required'  => 'Isian Planning (Tindakan/Program Rehabilitasi Medik) wajib diisi.',
+                'cppt_p_3.required'  => 'Isian Planning (Edukasi) wajib diisi.',
+                'cppt_p_4.required'  => 'Isian Planning (Frekuensi Kunjungan) wajib diisi.',
 
                 'cppt_i.required'    => 'Pilihan Rencana Tindak Lanjut wajib diisi.',
                 'cppt_i.in'          => 'Pilihan Rencana Tindak Lanjut tidak valid.',
