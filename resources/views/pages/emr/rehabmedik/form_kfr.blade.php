@@ -362,6 +362,9 @@
                             showFormKfr(nomor_kunjungan,nomor_kunjungan_init);
                             return;
                         }
+                    } else {
+                        showFormKfr(nomor_kunjungan,nomor_kunjungan_init);
+                        return;
                     }
                     // $('#showListFormKfr').modal('hide');
 
@@ -577,6 +580,8 @@
             sep         : sep,
             tgl_sep     : tgl_sep,
             tgl         : tgl_kfr,
+            tgl_masuk   : tgl_masuk,
+            tgl_keluar  : tgl_keluar,
 
             cppt_s      : $('#cppt_s').val(),
             cppt_o      : $('#cppt_o').val(),
@@ -740,6 +745,8 @@
             id_cppt    : $('#id_cppt_kfr').val(),
             kunjungan  : kunjungan,
             tgl        : tgl_kfr,
+            tgl_masuk  : tgl_masuk,
+            tgl_keluar : tgl_keluar,
 
             cppt_s     : $('#cppt_s').val(),
             cppt_o     : $('#cppt_o').val(),

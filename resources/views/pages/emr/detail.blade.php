@@ -293,6 +293,8 @@
         const tgl_sep = '{{ $list["show"]->TGLSEP }}';
         const sep = '{{ $list["show"]->NOSEP }}';
         const tgl_kfr = '{{ now()->format('Y-m-d H:i:s') }}';
+        const tgl_masuk = '{{ $list["show"]->MASUK }}';
+        const tgl_keluar = '{{ $list["show"]->KELUAR }}';
 
         $(document).ready(function() {
             // aktifkan saat pertama kali load
