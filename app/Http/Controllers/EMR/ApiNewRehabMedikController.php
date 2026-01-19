@@ -19,85 +19,88 @@ use Auth, Storage;
 
 class ApiNewRehabMedikController extends Controller
 {
+    // ====================================================================================================================================
+    // ==========================================================  GENERATOR PDF  =========================================================
+    // ====================================================================================================================================
     // CONTROLLER FOR LIBRE OFFICE ON LINUX SERVER
-    // public function libreOffice($input, $output)
-    // {
-    //     $soffice = env('LIBREOFFICE_PATH', '/usr/bin/soffice');
-
-    //     // Path absolut
-    //     $input  = realpath($input);
-    //     $output = realpath($output);
-
-    //     if (!$input || !$output) {
-    //         \Log::error('Path input/output tidak valid', compact('input','output'));
-    //         return [false, [], -1];
-    //     }
-
-    //     // Environment aman untuk www-data
-    //     putenv('HOME=/tmp');
-    //     putenv('XDG_CACHE_HOME=/tmp');
-
-    //     // Profile unik per proses (ANTI TABRAKAN)
-    //     $profile = '/tmp/lo_' . uniqid();
-
-    //     // Command convert
-    //     $cmd = sprintf(
-    //         '%s --headless --nologo --nofirststartwizard ' .
-    //         '-env:UserInstallation=file://%s ' .
-    //         '--convert-to pdf %s --outdir %s 2>&1',
-    //         escapeshellcmd($soffice),
-    //         escapeshellarg($profile),
-    //         escapeshellarg($input),
-    //         escapeshellarg($output)
-    //     );
-
-    //     exec($cmd, $log, $result);
-
-    //     $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
-
-    //     // Cleanup profile
-    //     exec('rm -rf ' . escapeshellarg($profile));
-
-    //     if ($result !== 0 || !file_exists($outputPdf)) {
-    //         \Log::error('LibreOffice Linux gagal konversi', [
-    //             'cmd' => $cmd,
-    //             'log' => $log,
-    //             'result' => $result,
-    //         ]);
-    //         return [false, $log, $result];
-    //     }
-
-    //     return [true, $outputPdf, $result];
-    // }
-
-    // CONTROLLER FOR LIBRE OFFICE ON WINDOWS SERVER
     public function libreOffice($input, $output)
     {
-        // LINK DOWNLOAD LIBRE OFFICE = https://www.libreoffice.org/download/download
-        // Ambil path dari .env (lebih fleksibel kalau update LibreOffice)
-        $soffice = env('LIBREOFFICE_PATH', 'C:/Program Files/LibreOffice/program/soffice.exe');
-        $soffice = '"'.$soffice.'"';
+        $soffice = env('LIBREOFFICE_PATH', '/usr/bin/soffice');
 
-        // 🔹 Kill proses lama dulu (biar tidak nyangkut)
-        exec('taskkill /IM soffice.bin /F 2> NUL');
+        // Path absolut
+        $input  = realpath($input);
+        $output = realpath($output);
 
-        // Jalankan konversi
-        $cmd = $soffice . ' --headless --convert-to pdf ' . escapeshellarg($input) . ' --outdir ' . escapeshellarg($output);
+        if (!$input || !$output) {
+            \Log::error('Path input/output tidak valid', compact('input','output'));
+            return [false, [], -1];
+        }
+
+        // Environment aman untuk www-data
+        putenv('HOME=/tmp');
+        putenv('XDG_CACHE_HOME=/tmp');
+
+        // Profile unik per proses (ANTI TABRAKAN)
+        $profile = '/tmp/lo_' . uniqid();
+
+        // Command convert
+        $cmd = sprintf(
+            '%s --headless --nologo --nofirststartwizard ' .
+            '-env:UserInstallation=file://%s ' .
+            '--convert-to pdf %s --outdir %s 2>&1',
+            escapeshellcmd($soffice),
+            escapeshellarg($profile),
+            escapeshellarg($input),
+            escapeshellarg($output)
+        );
+
         exec($cmd, $log, $result);
 
-        // 🔹 Cek hasil
         $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
+
+        // Cleanup profile
+        exec('rm -rf ' . escapeshellarg($profile));
+
         if ($result !== 0 || !file_exists($outputPdf)) {
-            \Log::error('LibreOffice gagal konversi', [
+            \Log::error('LibreOffice Linux gagal konversi', [
                 'cmd' => $cmd,
                 'log' => $log,
-                'result' => $result
+                'result' => $result,
             ]);
             return [false, $log, $result];
         }
 
-        return [true, $log, $result];
+        return [true, $outputPdf, $result];
     }
+
+    // CONTROLLER FOR LIBRE OFFICE ON WINDOWS SERVER
+    // public function libreOffice($input, $output)
+    // {
+    //     // LINK DOWNLOAD LIBRE OFFICE = https://www.libreoffice.org/download/download
+    //     // Ambil path dari .env (lebih fleksibel kalau update LibreOffice)
+    //     $soffice = env('LIBREOFFICE_PATH', 'C:/Program Files/LibreOffice/program/soffice.exe');
+    //     $soffice = '"'.$soffice.'"';
+
+    //     // 🔹 Kill proses lama dulu (biar tidak nyangkut)
+    //     exec('taskkill /IM soffice.bin /F 2> NUL');
+
+    //     // Jalankan konversi
+    //     $cmd = $soffice . ' --headless --convert-to pdf ' . escapeshellarg($input) . ' --outdir ' . escapeshellarg($output);
+    //     exec($cmd, $log, $result);
+
+    //     // 🔹 Cek hasil
+    //     $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
+    //     if ($result !== 0 || !file_exists($outputPdf)) {
+    //         \Log::error('LibreOffice gagal konversi', [
+    //             'cmd' => $cmd,
+    //             'log' => $log,
+    //             'result' => $result
+    //         ]);
+    //         return [false, $log, $result];
+    //     }
+
+    //     return [true, $log, $result];
+    // }
 
     public function getSection($text, $label)
     {
@@ -109,6 +112,9 @@ class ApiNewRehabMedikController extends Controller
         return isset($m[1]) ? trim($m[1]) : '';
     }
 
+    // ====================================================================================================================================
+    // ==================================================  FORMULIR RAWAT JALAN KFR  ======================================================
+    // ====================================================================================================================================
     public function get($KUNJUNGAN)
     {
         $data = DB::table('simrspku_klaim.emr_form_kfr AS kfr')
@@ -131,6 +137,17 @@ class ApiNewRehabMedikController extends Controller
                 'status' => false,
                 'message'=> 'Data tidak ditemukan'
             ]);
+        }
+
+        $JumlahData = DB::table('simrspku_klaim.emr_form_kfr AS kfr')
+            ->join('medicalrecord.cppt AS cppt', 'cppt.ID', '=', 'kfr.id_cppt')
+            ->where('kfr.nomor_init', $data->KUNJUNGAN)
+            ->where('kfr.status', 1)
+            ->count();
+
+        $hiddenDelete = true;
+        if ($JumlahData <= 1) {
+            $hiddenDelete = false;
         }
 
         // Normalisasi line break
@@ -161,6 +178,7 @@ class ApiNewRehabMedikController extends Controller
             'status' => true,
             'kunjungan_init' => $data->KUNJUNGAN,
             'id_cppt' => $data->ID_CPPT,
+            'hidden_delete' => $hiddenDelete,
             'data' => [
                 's' => $data->SUBYEKTIF,
                 'o' => $data->OBYEKTIF,
@@ -180,6 +198,7 @@ class ApiNewRehabMedikController extends Controller
         $data = DB::table('simrspku_klaim.emr_form_kfr AS kfr')
             ->select(
                 'kfr.group',
+                'kfr.queue',
                 'kfr.nomor_init',
                 DB::raw("LPAD(kfr.rm, 8, '0') as rm"),
                 DB::raw("DATE_FORMAT(kfr.tgl_init, '%e %M %Y') as tgl_init"),
@@ -189,6 +208,7 @@ class ApiNewRehabMedikController extends Controller
                 DB::raw("MIN(kfr.created_at) AS created_at")
             )
             ->where('kfr.rm', $NORM)
+            ->whereColumn('kfr.nomor_init', 'kfr.nomor')
             ->whereNull('kfr.deleted_at')
             ->groupBy(
                 'kfr.group',
@@ -220,6 +240,7 @@ class ApiNewRehabMedikController extends Controller
         $show = DB::table('simrspku_klaim.emr_form_kfr AS kfr')
             ->select(
                 'kfr.group',
+                'kfr.queue',
                 'kfr.nomor_init',
                 'kfr.nomor',
                 DB::raw("LPAD(kfr.rm, 8, '0') as rm"),
@@ -326,6 +347,8 @@ class ApiNewRehabMedikController extends Controller
                 'sep'               => 'required',
                 'tgl_sep'           => 'required',
                 'tgl_kfr'           => 'required',
+                'tgl_masuk'         => 'required',
+                'tgl_keluar'        => 'required',
             ],
             [
                 'nomor_init.required'        => 'Nomor Init Kunjungan wajib terkirim.',
@@ -334,6 +357,8 @@ class ApiNewRehabMedikController extends Controller
                 'sep.required'               => 'Nomor SEP wajib terkirim.',
                 'tgl_sep.required'           => 'Tanggal SEP wajib terkirim.',
                 'tgl_kfr.required'           => 'Tanggal KFR wajib terkirim.',
+                'tgl_masuk.required'         => 'Tanggal Masuk Kunjungan wajib terkirim.',
+                'tgl_keluar.required'        => 'Tanggal Keluar Kunjungan wajib terkirim.',
             ]
         );
 
@@ -361,15 +386,40 @@ class ApiNewRehabMedikController extends Controller
             ], 404);
         }
 
+        $ttd_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
+            ->where('ttp.nip', $dokter->NIP)
+            ->where('status', 1)
+            ->inRandomOrder()
+            ->first();
+
+        if (!$ttd_pegawai) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data Tandatangan dokter tidak ditemukan untuk user ini'
+            ], 404);
+        }
+
         DB::beginTransaction();
 
         try {
+            $tglPush = now()->toTimeString();
+            $tglMasuk  = Carbon::parse($request->tgl_masuk);
+            if ($request->filled('tgl_keluar')) {
+                $tglKeluar = Carbon::parse($request->tgl_keluar);
+
+                if ($tglMasuk->isSameDay($tglKeluar)) {
+                    $tglPush = $tglMasuk->toDateString() . ' ' . now()->toTimeString();
+                }
+            } else {
+                $tglPush = $tglMasuk->toDateString() . ' ' . now()->toTimeString();
+            }
+
             $formLama = emr_form_kfr::where('rm', $request->rm)
                 ->where('nomor_init', $request->nomor_init)
-                ->where('nomor', $request->nomor_init)
+                // ->where('nomor', $request->nomor_init)
                 ->where('status', 1)
                 ->whereNull('deleted_at')
-                ->latest('id')
+                ->latest('queue')
                 ->first();
 
             if (!$formLama) {
@@ -382,7 +432,8 @@ class ApiNewRehabMedikController extends Controller
 
             $cpptLama = DB::table('medicalrecord.cppt')
                             ->where('ID', $formLama->id_cppt)
-                            ->where('KUNJUNGAN', $formLama->nomor_init)
+                            // ->where('KUNJUNGAN', $formLama->nomor_init)
+                            ->where('KUNJUNGAN', $formLama->nomor)
                             ->where('STATUS', 1)
                             ->orderBy('id','desc')
                             ->first();
@@ -395,10 +446,18 @@ class ApiNewRehabMedikController extends Controller
                 ], 404);
             }
 
+            // GET LAST QUEUE
+            $lastQueue = DB::table('simrspku_klaim.emr_form_kfr')
+                        ->where('group', $formLama->group)
+                        ->where('nomor_init', $request->nomor_init)
+                        ->where('status', 1)
+                        ->whereNull('deleted_at')
+                        ->max('queue');
+
             // INSERT NEW CPPT WITH OLD DATA CPPT
             $id_cppt = DB::table('medicalrecord.cppt')->insertGetId([
                 'KUNJUNGAN'    => $request->nomor_kunjungan,
-                'TANGGAL'      => now(),
+                'TANGGAL'      => $tglPush,
                 'SUBYEKTIF'    => $cpptLama->SUBYEKTIF,
                 'OBYEKTIF'     => $cpptLama->OBYEKTIF,
                 'ASSESMENT'    => $cpptLama->ASSESMENT,
@@ -415,10 +474,15 @@ class ApiNewRehabMedikController extends Controller
 
             // Change Value
             $formBaru->id_cppt = $id_cppt;
+            $formBaru->queue = $lastQueue + 1;
             $formBaru->nomor = $request->nomor_kunjungan;
             $formBaru->sep = $request->sep;
             $formBaru->tgl_sep = $request->tgl_sep;
-            $formBaru->tgl = $request->tgl_kfr;
+            $formBaru->tgl = $tglPush;
+            $formBaru->id_ttd_dokter = $ttd_pegawai->id;
+            $formBaru->ttd_dokter = $ttd_pegawai->signature_path;
+            $formBaru->nip_dokter = $ttd_pegawai->nip;
+            $formBaru->nama_dokter = $dokter->NAMADOKTER;
             $formBaru->created_at = $now;
             $formBaru->updated_at = $now;
 
@@ -454,7 +518,7 @@ class ApiNewRehabMedikController extends Controller
                 'TGLSEP'         => $request->tgl_sep,
                 'KUNJUNGAN'      => $request->nomor_kunjungan,
                 'GROUP'          => $formLama->group,
-                'TANGGAL'        => now()->toDateString(),
+                'TANGGAL'        => $tglPush,
                 'NORM'           => $formLama->rm,
                 'NAMAPASIEN'     => $dataPasien->NAMAPASIEN ?? '',
                 'NAMADOKTER'     => $dokter->NAMADOKTER,
@@ -469,7 +533,7 @@ class ApiNewRehabMedikController extends Controller
                 'PLANNING3'      => $p3,
                 'PLANNING4'      => $p4,
                 'INSTRUKSI'      => $cpptLama->INSTRUKSI,
-                'PATH_TTE_DOKTER'=> $formLama->ttd_dokter,
+                'PATH_TTE_DOKTER'=> $ttd_pegawai->signature_path,
             ];
 
             /* 4. KIRIM LANGSUNG KE GENERATOR */
@@ -509,6 +573,87 @@ class ApiNewRehabMedikController extends Controller
         }
     }
 
+    function unsyncFormLama(Request $request)
+    {
+        $now = Carbon::now();
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nomor_kunjungan'   => 'required',
+            ],
+            [
+                'nomor_kunjungan.required'   => 'Nomor Kunjungan saat ini wajib terkirim.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message'=> $validator->errors()->first()
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $form = DB::table('simrspku_klaim.emr_form_kfr')
+                ->where('nomor', $request->nomor_kunjungan)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->update([
+                    'status' => 0,
+                    'deleted_at' => now()
+                ]);
+
+            $form = DB::table('simrspku_klaim.emr_form_kfr')
+                ->where('nomor', $request->nomor_kunjungan)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->orderByDesc('id')
+                ->first();
+
+            if ($form) {
+                $cppt = DB::table('medicalrecord.cppt')
+                    ->where('ID', $form->id_cppt)
+                    ->where('STATUS', 1)
+                    ->update([
+                        'STATUS' => 0,
+                    ]);
+
+                DB::table('simrspku_klaim.emr_form_kfr')
+                    ->where('id', $form->id)
+                    ->update([
+                        'status'     => 0,
+                        'deleted_at' => now()
+                    ]);
+            }
+
+            $file = DB::table('simrspku_klaim.klaim_file')
+                ->where('nomor', $request->nomor_kunjungan)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->update([
+                    'status' => 0,
+                    'deleted_at' => now()
+                ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message'=> 'Form KFR, CPPT, & Berkas Klaim telah berhasil terhapus dan telah terputus hubungan dengan Form KFR Utama'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message'=> $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make(
@@ -519,6 +664,8 @@ class ApiNewRehabMedikController extends Controller
                 'sep'          => 'required',
                 'tgl_sep'      => 'required|date',
                 'tgl'          => 'required|date',
+                'tgl_masuk'    => 'required',
+                'tgl_keluar'   => 'required',
 
                 'cppt_s'       => 'required',
                 'cppt_o'       => 'required',
@@ -541,6 +688,8 @@ class ApiNewRehabMedikController extends Controller
                 'tgl_sep.date'       => 'Tanggal SEP tidak valid.',
                 'tgl.required'       => 'Tanggal wajib diisi.',
                 'tgl.date'           => 'Tanggal tidak valid.',
+                'tgl_masuk.required' => 'Tanggal Masuk Kunjungan wajib terkirim.',
+                'tgl_keluar.required'=> 'Tanggal Keluar Kunjungan wajib terkirim.',
 
                 'cppt_s.required'    => 'Isian Subjective wajib diisi.',
                 'cppt_o.required'    => 'Isian Objective wajib diisi.',
@@ -565,13 +714,15 @@ class ApiNewRehabMedikController extends Controller
         }
 
         $tglPush = now()->toTimeString();
+        $tglMasuk  = Carbon::parse($request->tgl_masuk);
         if ($request->filled('tgl_keluar')) {
-            $tglMasuk  = Carbon::parse($request->tgl_masuk);
             $tglKeluar = Carbon::parse($request->tgl_keluar);
 
             if ($tglMasuk->isSameDay($tglKeluar)) {
                 $tglPush = $tglMasuk->toDateString() . ' ' . now()->toTimeString();
             }
+        } else {
+            $tglPush = $tglMasuk->toDateString() . ' ' . now()->toTimeString();
         }
 
         DB::beginTransaction();
@@ -596,6 +747,10 @@ class ApiNewRehabMedikController extends Controller
                 ->where('status', 1)
                 ->inRandomOrder()
                 ->first();
+
+            if (!$ttd_pegawai) {
+                throw new \Exception('Data TTD dokter tidak ditemukan untuk user ini');
+            }
 
             if ($request->cppt_i == 1) {
                 $cppt_i = "Evaluasi :\n".$request->cppt_i_rtl;
@@ -625,7 +780,7 @@ class ApiNewRehabMedikController extends Controller
             * ========================== */
             $id_cppt = DB::table('medicalrecord.cppt')->insertGetId([
                 'KUNJUNGAN'    => $kunjungan,
-                'TANGGAL'      => $request->tgl,
+                'TANGGAL'      => $tglPush,
                 'SUBYEKTIF'    => $request->cppt_s,
                 'OBYEKTIF'     => $request->cppt_o,
                 'ASSESMENT'    => $request->cppt_a,
@@ -641,21 +796,23 @@ class ApiNewRehabMedikController extends Controller
             * 2. INSERT EMR FORM KFR
             * ========================== */
             // GET LAST GROUP
-            $lastGroup = DB::table('simrspku_klaim.emr_form_kfr')
-                            ->where('nomor_init', $kunjungan)
-                            ->where('status', 1)
-                            ->whereNull('deleted_at')
-                            ->orderBy('group', 'DESC')
-                            ->first();
-            $newGroup = $lastGroup ? $lastGroup->group + 1 : 1;
+            // $lastGroup = DB::table('simrspku_klaim.emr_form_kfr')
+            //                 ->where('nomor_init', $kunjungan)
+            //                 ->where('rm', $request->rm)
+            //                 ->where('status', 1)
+            //                 ->whereNull('deleted_at')
+            //                 ->orderBy('group', 'DESC')
+            //                 ->first();
+            // $newGroup = $lastGroup ? $lastGroup->group + 1 : 1;
             DB::table('simrspku_klaim.emr_form_kfr')->insert([
                 'id_cppt'       => $id_cppt,
-                'group'         => $newGroup,
+                'group'         => 1,
+                'queue'         => 1,
                 'nomor_init'    => $kunjungan,
                 'nomor'         => $kunjungan,
                 'sep'           => $request->sep,
                 'tgl_sep'       => $request->tgl_sep,
-                'tgl_init'      => $tglPush,
+                'tgl_init'      => $request->tgl,
                 'tgl'           => $tglPush,
                 'rm'            => $request->rm,
                 'id_ttd_dokter' => $ttd_pegawai->id,
@@ -689,7 +846,7 @@ class ApiNewRehabMedikController extends Controller
             $show = (object)[
                 'TGLSEP'         => $request->tgl_sep,
                 'KUNJUNGAN'      => $kunjungan,
-                'GROUP'          => $newGroup,
+                'GROUP'          => 1,
                 'TANGGAL'        => $tglPush,
                 'NORM'           => $request->rm,
                 'NAMAPASIEN'     => $dataPasien->NAMAPASIEN ?? '',
@@ -835,6 +992,60 @@ class ApiNewRehabMedikController extends Controller
 
     function generateUlangFormKfr($kunjungan)
     {
+        $showInit = DB::table('simrspku_klaim.emr_form_kfr as kfr')
+            ->where('kfr.nomor',$kunjungan)
+            ->where('kfr.status',1)
+            ->first();
+
+        if (!$showInit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data Form KFR tidak ditemukan'
+            ], 404);
+        }
+
+        $ttd_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+                ->where('nip', Auth::user()->NIP)
+                ->where('status', 1)
+                ->inRandomOrder()
+                ->first();
+
+        if (!$ttd_pegawai) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data TTD dokter tidak ditemukan untuk user ini'
+            ], 404);
+        }
+
+        $dokter = DB::table('master.dokter as dr')
+                    ->leftJoin('aplikasi.pengguna as pe', function($join) {
+                        $join->on('pe.NIP', '=', 'dr.NIP')
+                            ->where('pe.STATUS', '=', 1);
+                    })
+                    ->select('dr.ID', 'pe.NAMA AS DOKTER', 'dr.NIP', DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'))
+                    ->where('pe.ID', auth()->id())
+                    ->where('dr.STATUS', 1)
+                    ->first();
+
+        if (!$dokter) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data dokter tidak ditemukan untuk user ini'
+            ], 404);
+        }
+
+        // UPDATE TTD DOKTER
+        $updated = DB::table('simrspku_klaim.emr_form_kfr')
+                    ->where('nomor', $kunjungan)
+                    ->where('status', 1)
+                    ->update([
+                        'id_ttd_dokter' => $ttd_pegawai->id,
+                        'ttd_dokter'    => $ttd_pegawai->signature_path,
+                        'nip_dokter'    => $ttd_pegawai->nip,
+                        'nama_dokter'   => $dokter->NAMADOKTER,
+                        'updated_at'    => now(),
+                    ]);
+
         $show = DB::table('simrspku_klaim.emr_form_kfr as kfr')
             ->join('medicalrecord.cppt as cppt','cppt.ID','=','kfr.id_cppt')
             ->leftJoin('master.pasien as ps','ps.NORM','=','kfr.rm')
@@ -856,16 +1067,9 @@ class ApiNewRehabMedikController extends Controller
                 'cppt.PLANNING',
                 'cppt.INSTRUKSI',
             ])
-            ->where('kfr.nomor',$kunjungan)
-            ->where('kfr.status',1)
+            ->where('kfr.nomor', $kunjungan)
+            ->where('kfr.status', 1)
             ->first();
-
-        if (!$show) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data Form KFR tidak ditemukan'
-            ], 404);
-        }
 
         // Normalisasi line break
         $planningText = preg_replace("/\r?\n/", "\n", $show->PLANNING);
@@ -920,15 +1124,26 @@ class ApiNewRehabMedikController extends Controller
             ->orderBy('id','DESC')
             ->first();
 
-        $output = storage_path().'/app/public/'.$show->filename;
-
-        if (file_exists($output.'.pdf')) {
-            return true;
+        if (!$show) {
+            abort(404);
         }
 
-        return response()->file($output, [
-            'Content-Type' => 'application/pdf',
+        $path = storage_path('app/public/'.$show->filename);
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        return response()->file($path, [
+            'Content-Type'  => 'application/pdf',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma'        => 'no-cache',
+            'Expires'       => '0',
         ]);
+
+        // return response()->file($output, [
+        //     'Content-Type' => 'application/pdf',
+        // ]);
     }
 
     public function update(Request $request, $IDCPPT)
@@ -938,6 +1153,8 @@ class ApiNewRehabMedikController extends Controller
             [
                 'kunjungan'    => 'required',
                 'tgl'          => 'required|date',
+                'tgl_masuk'    => 'required',
+                'tgl_keluar'   => 'required',
 
                 'cppt_s'       => 'required',
                 'cppt_o'       => 'required',
@@ -955,6 +1172,8 @@ class ApiNewRehabMedikController extends Controller
                 'kunjungan.required' => 'Kunjungan wajib diisi.',
                 'tgl.required'       => 'Tanggal wajib diisi.',
                 'tgl.date'           => 'Tanggal tidak valid.',
+                'tgl_masuk.required' => 'Tanggal Masuk Kunjungan wajib terkirim.',
+                'tgl_keluar.required'=> 'Tanggal Keluar Kunjungan wajib terkirim.',
 
                 'cppt_s.required'    => 'Isian Subyektif wajib diisi.',
                 'cppt_o.required'    => 'Isian Obyektif wajib diisi.',
@@ -979,13 +1198,15 @@ class ApiNewRehabMedikController extends Controller
         }
 
         $tglPush = now()->toTimeString();
+        $tglMasuk  = Carbon::parse($request->tgl_masuk);
         if ($request->filled('tgl_keluar')) {
-            $tglMasuk  = Carbon::parse($request->tgl_masuk);
             $tglKeluar = Carbon::parse($request->tgl_keluar);
 
             if ($tglMasuk->isSameDay($tglKeluar)) {
                 $tglPush = $tglMasuk->toDateString() . ' ' . now()->toTimeString();
             }
+        } else {
+            $tglPush = $tglMasuk->toDateString() . ' ' . now()->toTimeString();
         }
 
         // === Build INSTRUKSI sesuai pilihan ===
@@ -1067,10 +1288,13 @@ class ApiNewRehabMedikController extends Controller
                 ->where('id_cppt', $IDCPPT)
                 ->where('status', 1)
                 ->update([
-                    'user'        => auth()->id(),
-                    'updated_at'  => now(),
-                    'ttd_dokter'  => $ttd_pegawai->signature_path,
-                    'nama_dokter' => $dokter->NAMADOKTER,
+                    'tgl'           => $tglPush,
+                    'user'          => auth()->id(),
+                    'updated_at'    => now(),
+                    'id_ttd_dokter' => $ttd_pegawai->id,
+                    'ttd_dokter'    => $ttd_pegawai->signature_path,
+                    'nip_dokter'    => $ttd_pegawai->nip,
+                    'nama_dokter'   => $dokter->NAMADOKTER,
                 ]);
 
             /* 4. KIRIM LANGSUNG KE GENERATOR */
@@ -1172,6 +1396,56 @@ class ApiNewRehabMedikController extends Controller
         }
     }
 
+    // ====================================================================================================================================
+    // ===================================================  FORMULIR PROGRAM TERAPI  ======================================================
+    // ====================================================================================================================================
+    public function getProgram($KUNJUNGAN)
+    {
+        $validasi = emr_form_kfr::where('nomor',$KUNJUNGAN)->where('status',1)->whereNull('deleted_at')->latest('id')->first();
+
+        if (!$validasi) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Formulir KFR tidak ditemukan untuk kunjungan ini. Silakan melakukan pengisian pada Tab Formulir Rawat Jalan KFR terlebih dahulu'
+            ]);
+        }
+
+        $data = DB::table('simrspku_klaim.emr_form_terapi AS ft')
+            ->join('medicalrecord.cppt AS cppt', 'cppt.ID', '=', 'ft.id_cppt')
+            ->where('ft.nomor', $KUNJUNGAN)
+            ->where('ft.status', 1)
+            ->select(
+                'ft.nomor AS KUNJUNGAN',
+                'cppt.ID AS ID_CPPT',
+                'cppt.SUBYEKTIF',
+                'cppt.OBYEKTIF',
+                'cppt.ASSESMENT',
+                'cppt.PLANNING as PROCEDURE',
+                'cppt.INSTRUKSI'
+            )
+            ->first();
+
+        if (!$data) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data Formulir Program tidak ditemukan'
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => [
+                's' => $data->SUBYEKTIF,
+                'o' => $data->OBYEKTIF,
+                'a' => $data->ASSESMENT,
+                'p' => $data->PROCEDURE,
+            ]
+        ], 200);
+    }
+
+    // ====================================================================================================================================
+    // =============================================================  ADD ONS  ============================================================
+    // ====================================================================================================================================
     public static function setImgWord(TemplateProcessor $templateProcessor, string $key, string $imagePath, int $targetWidth)
     {
         if (!file_exists($imagePath)) {

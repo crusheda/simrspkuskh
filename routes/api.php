@@ -148,10 +148,13 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 Route::get('emr/kfr/{KUNJUNGAN}/cppt', [ApiNewRehabMedikController::class, 'getCppt'])->name('api.emr.kfr.getCppt');
                 Route::get('emr/kfr/{KUNJUNGAN}/generate', [ApiNewRehabMedikController::class, 'generateUlangFormKfr'])->name('api.emr.kfr.generateUlangFormKfr');
                 Route::post('emr/kfr/sync', [ApiNewRehabMedikController::class, 'syncFormLama'])->name('api.emr.kfr.syncFormLama');
+                Route::post('emr/kfr/unsync', [ApiNewRehabMedikController::class, 'unsyncFormLama'])->name('api.emr.kfr.unsyncFormLama');
                 Route::post('emr/kfr/store', [ApiNewRehabMedikController::class, 'store'])->name('api.emr.kfr.store');
                 Route::put('emr/kfr/update/{IDCPPT}', [ApiNewRehabMedikController::class, 'update'])->name('api.emr.kfr.update');
                 Route::post('emr/kfr/destroy', [ApiNewRehabMedikController::class, 'destroy'])->name('api.emr.kfr.destroy');
                 Route::post('emr/kfr/destroy/all', [ApiNewRehabMedikController::class, 'destroyAll'])->name('api.emr.kfr.destroyAll');
+                // PROGRAM TERAPI
+                Route::get('emr/pterapi/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'getProgram'])->name('api.emr.kfr.getProgram');
             // RIS
             Route::get('dcom/{filename}', [RISController::class, 'getDCOM'])->name('api.emr.ris.getDCOM');
 

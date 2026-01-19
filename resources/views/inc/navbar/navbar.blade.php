@@ -128,23 +128,23 @@
                         <i class="ph-duotone ph-gauge"></i>
                     </li>
                 @endif
-                @can('setting_jabatan')
-                    <li class="pc-item {{ request()->routeIs('roles') ? 'active' : '' }}">
-                        <a href="{{ route('roles') }}" class="pc-link">
-                            <span class="pc-micon">
-                                <i class="ph-duotone ph-tree-structure"></i>
-                            </span>
-                            <span class="pc-mtext" data-i18n="Jabatan">Jabatan</span>
-                        </a>
-                    </li>
-                @endcan
                 @can('setting_akses')
                     <li class="pc-item {{ request()->routeIs('permissions') ? 'active' : '' }}">
                         <a href="{{ route('permissions') }}" class="pc-link">
                             <span class="pc-micon">
                                 <i class="ph-duotone ph-user-gear"></i>
                             </span>
-                            <span class="pc-mtext" data-i18n="Akses">Akses</span>
+                            <span class="pc-mtext" data-i18n="Akses">Akses x Jabatan</span>
+                        </a>
+                    </li>
+                @endcan
+                @can('setting_jabatan')
+                    <li class="pc-item {{ request()->routeIs('roles') ? 'active' : '' }}">
+                        <a href="{{ route('roles') }}" class="pc-link">
+                            <span class="pc-micon">
+                                <i class="ph-duotone ph-tree-structure"></i>
+                            </span>
+                            <span class="pc-mtext" data-i18n="Jabatan">Jabatan x Pengguna</span>
                         </a>
                     </li>
                 @endcan

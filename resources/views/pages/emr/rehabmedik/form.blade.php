@@ -247,7 +247,7 @@
                                     </button>
                                 </div>
                                 <div class="col-sm-auto btn-page">
-                                    <button class="btn btn-primary" onclick="simpanFormulirKfrBaru()">
+                                    <button class="btn btn-primary" onclick="simpanFormulirKfrBaru()" disabled>
                                         <i class="fas fa-save me-1"></i> Simpan Formulir Baru
                                     </button>
                                 </div>

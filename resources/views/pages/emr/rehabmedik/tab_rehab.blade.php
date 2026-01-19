@@ -38,13 +38,13 @@
             // console.log(tabId);
 
             if (tabId === 'tab-frjkfr') {
-                console.log('masuk form kfr');
+                // console.log('masuk form kfr');
                 loadFormKfr();
                 loadCpptKfr();
                 loadRiwayatKfr();
             }
             else if (tabId === 'tab-pterapi') {
-                console.log('masuk form program terapi');
+                loadFormProgramTerapi();
             }
             else {
                 console.log('tab lain');
@@ -63,9 +63,23 @@
                     $('#btn-simpan-form-kfr').prop('hidden', false);
                     $('#form-kfr-utama').prop('hidden', true);
                     $('#btn-update-form-kfr').prop('hidden', true);
+                    $('#btn-buka-update-form-kfr').prop('hidden', true);
+                    $('#btn-tutup-update-form-kfr').prop('hidden', true);
                     $('#btn-generate-form-kfr').prop('hidden', true);
                     $('#btn-lihat-form-kfr').prop('hidden', true);
-                    $('#btn-hapus-form-kfr').prop('hidden', true);
+                    $('#btn-unsync-form-lama').prop('hidden', true);
+                    $('#btn-hapus-form-kfr').prop('hidden', true).prop('disabled', true);
+
+                    $('#id_cppt_kfr').val('');
+                    $('#cppt_s').val('').prop('disabled', false);
+                    $('#cppt_o').val('').prop('disabled', false);
+                    $('#cppt_a').val('').prop('disabled', false);
+                    $('#cppt_p_1').val('').prop('disabled', false);
+                    $('#cppt_p_2').val('').prop('disabled', false);
+                    $('#cppt_p_3').val('').prop('disabled', false);
+                    $('#cppt_p_4').val('').prop('disabled', false);
+                    $('#cppt_i').val('0').trigger('change').prop('disabled', false);
+                    $('#cppt_i_rtl').val('').prop('disabled', false);
                     return;
                 }
 
@@ -75,9 +89,12 @@
                     $('#btn-simpan-form-kfr').prop('hidden', true);
                     $('#form-kfr-utama').prop('hidden', true);
                     $('#btn-update-form-kfr').prop('hidden', true);
+                    $('#btn-buka-update-form-kfr').prop('hidden', false);
+                    $('#btn-tutup-update-form-kfr').prop('hidden', true);
                     $('#btn-generate-form-kfr').prop('hidden', true);
                     $('#btn-lihat-form-kfr').prop('hidden', false);
-                    $('#btn-hapus-form-kfr').prop('hidden', true);
+                    $('#btn-unsync-form-lama').prop('hidden', false);
+                    $('#btn-hapus-form-kfr').prop('hidden', true).prop('disabled', true);
 
                     $('#id_cppt_kfr').val(res.id_cppt);
 
@@ -97,9 +114,17 @@
                     $('#btn-simpan-form-kfr').prop('hidden', true);
                     $('#form-kfr-utama').prop('hidden', false);
                     $('#btn-update-form-kfr').prop('hidden', false);
+                    $('#btn-buka-update-form-kfr').prop('hidden', true);
+                    $('#btn-tutup-update-form-kfr').prop('hidden', true);
                     $('#btn-generate-form-kfr').prop('hidden', false);
                     $('#btn-lihat-form-kfr').prop('hidden', false);
-                    $('#btn-hapus-form-kfr').prop('hidden', false);
+                    $('#btn-unsync-form-lama').prop('hidden', true);
+
+                    if (!res.hidden_delete) {
+                        $('#btn-hapus-form-kfr').prop('hidden', false).prop('disabled', false);
+                    } else {
+                        $('#btn-hapus-form-kfr').prop('hidden', false).prop('disabled', true);
+                    }
 
                     $('#id_cppt_kfr').val(res.id_cppt);
 
@@ -115,6 +140,33 @@
                     $('#cppt_i').val(res.data.cppt_i).trigger('change');
                     $('#cppt_i_rtl').val(res.data.cppt_i_rtl);
                 }
+            }
+        });
+    }
+
+    function loadFormProgramTerapi() {
+        $.ajax({
+            url: '/api/emr/pterapi/' + kunjungan,
+            type: 'GET',
+            success: function(res) {
+                if (!res.status) {
+                    Swal.fire({
+                        title: 'Ahh Maaf!',
+                        text: res.message,
+                        icon: 'warning',
+                        timer: 10000,
+                        timerProgressBar: true
+                    });
+                }
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    title: 'Pesan Error!',
+                    text: xhr.responseJSON?.message || 'Telah terjadi kesalahan pada saat pengambilan Data Program Terapi',
+                    icon: 'error',
+                    timer: 5000,
+                    timerProgressBar: true
+                });
             }
         });
     }
