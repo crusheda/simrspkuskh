@@ -44,7 +44,10 @@
                 loadRiwayatKfr();
             }
             else if (tabId === 'tab-pterapi') {
+                batalUpdateFormProgramTerapi();
                 loadFormProgramTerapi();
+                loadCpptProgramTerapi();
+                loadRiwayatProgramTerapi();
             }
             else {
                 console.log('tab lain');
@@ -157,14 +160,26 @@
                         timer: 10000,
                         timerProgressBar: true
                     });
+                    $('#btn-kosongi-form-program-terapi').prop('disabled', true).prop('hidden', false);
+                    $('#btn-simpan-form-program-Terapi').prop('disabled', true).prop('hidden', false);
+                    return;
                 }
+
+                $('#btn-kosongi-form-program-terapi').prop('disabled', false).prop('hidden', false);
+                $('#btn-simpan-form-program-Terapi').prop('disabled', false).prop('hidden', false);
+
+                // $('#cppt_s_t').val(res.data.s);
+                // $('#cppt_o_t').val(res.data.o);
+                // $('#cppt_a_t').val(res.data.a);
+                // $('#cppt_p_t').val(res.data.p);
+
             },
             error: function(xhr) {
                 Swal.fire({
                     title: 'Pesan Error!',
                     text: xhr.responseJSON?.message || 'Telah terjadi kesalahan pada saat pengambilan Data Program Terapi',
                     icon: 'error',
-                    timer: 5000,
+                    timer: 10000,
                     timerProgressBar: true
                 });
             }

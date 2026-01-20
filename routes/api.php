@@ -154,7 +154,14 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 Route::post('emr/kfr/destroy', [ApiNewRehabMedikController::class, 'destroy'])->name('api.emr.kfr.destroy');
                 Route::post('emr/kfr/destroy/all', [ApiNewRehabMedikController::class, 'destroyAll'])->name('api.emr.kfr.destroyAll');
                 // PROGRAM TERAPI
-                Route::get('emr/pterapi/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'getProgram'])->name('api.emr.kfr.getProgram');
+                Route::get('emr/pterapi/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'getProgram'])->name('api.emr.pterapi.getProgram');
+                Route::get('emr/pterapi/{KUNJUNGAN}/cppt', [ApiNewRehabMedikController::class, 'getCpptProgram'])->name('api.emr.pterapi.getCpptProgram');
+                Route::get('emr/pterapi/{KUNJUNGAN}/riwayat', [ApiNewRehabMedikController::class, 'getRiwayatProgram'])->name('api.emr.pterapi.getRiwayatProgram');
+                Route::get('emr/pterapi/get/{KUNJUNGAN}/{GROUP}/{QUEUE}', [ApiNewRehabMedikController::class, 'getProgramEdit'])->name('api.emr.pterapi.getProgramEdit');
+                Route::put('emr/pterapi/update', [ApiNewRehabMedikController::class, 'updateProgramTerapi'])->name('api.emr.pterapi.updateProgramTerapi');
+                Route::get('emr/pterapi/{KUNJUNGAN}/{GROUP}/{QUEUE}', [ApiNewRehabMedikController::class, 'lihatFormProgramTerapi'])->name('api.emr.pterapi.lihatFormProgramTerapi');
+                Route::post('emr/pterapi/store', [ApiNewRehabMedikController::class, 'storeProgram'])->name('api.emr.pterapi.storeProgram');
+                Route::post('emr/pterapi/destroy', [ApiNewRehabMedikController::class, 'destroyProgram'])->name('api.emr.pterapi.destroyProgram');
             // RIS
             Route::get('dcom/{filename}', [RISController::class, 'getDCOM'])->name('api.emr.ris.getDCOM');
 

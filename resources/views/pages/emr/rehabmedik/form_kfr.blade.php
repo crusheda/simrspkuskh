@@ -766,9 +766,7 @@
         $('#show-id-formKFR').text(pushkunjungan);
         $('#btn-lihat-form-kfr').prop('disabled',true).find('i').removeClass('fa-book-open').addClass('fa-sync fa-spin');
 
-        fetch("/api/emr/kfr/"+pushkunjungan+"/show", {
-            cache: "no-store"
-        })
+        fetch("/api/emr/kfr/"+pushkunjungan+"/show") // ,{cache: "no-store"}
         .then(response => {
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');

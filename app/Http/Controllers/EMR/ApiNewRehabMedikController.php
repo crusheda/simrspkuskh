@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use App\Models\simrspku_klaim\emr_form_kfr;
+use App\Models\simrspku_klaim\emr_form_terapi;
 use App\Models\simrspku_klaim\klaim_verifikasi;
 use App\Models\simrspku_klaim\klaim_file;
 use App\Models\Pengguna;
@@ -1047,7 +1048,11 @@ class ApiNewRehabMedikController extends Controller
                     ]);
 
         $show = DB::table('simrspku_klaim.emr_form_kfr as kfr')
-            ->join('medicalrecord.cppt as cppt','cppt.ID','=','kfr.id_cppt')
+            ->join('medicalrecord.cppt as cppt', function($join) {
+                $join->on('cppt.ID','=','kfr.id_cppt')
+                    ->where('cppt.STATUS', '=', 1);
+            })
+            // ->join('medicalrecord.cppt as cppt','cppt.ID','=','kfr.id_cppt')
             ->leftJoin('master.pasien as ps','ps.NORM','=','kfr.rm')
             ->select([
                 'kfr.group as GROUP',
@@ -1069,7 +1074,15 @@ class ApiNewRehabMedikController extends Controller
             ])
             ->where('kfr.nomor', $kunjungan)
             ->where('kfr.status', 1)
+            ->whereNull('kfr.deleted_at')
             ->first();
+
+        if (!$show) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Periksa kembali data Form Program Terapi dan CPPT yang bersangkutan'
+            ], 500);
+        }
 
         // Normalisasi line break
         $planningText = preg_replace("/\r?\n/", "\n", $show->PLANNING);
@@ -1410,39 +1423,1057 @@ class ApiNewRehabMedikController extends Controller
             ]);
         }
 
-        $data = DB::table('simrspku_klaim.emr_form_terapi AS ft')
-            ->join('medicalrecord.cppt AS cppt', 'cppt.ID', '=', 'ft.id_cppt')
-            ->where('ft.nomor', $KUNJUNGAN)
-            ->where('ft.status', 1)
-            ->select(
-                'ft.nomor AS KUNJUNGAN',
-                'cppt.ID AS ID_CPPT',
-                'cppt.SUBYEKTIF',
-                'cppt.OBYEKTIF',
-                'cppt.ASSESMENT',
-                'cppt.PLANNING as PROCEDURE',
-                'cppt.INSTRUKSI'
-            )
-            ->first();
+        // $data = DB::table('simrspku_klaim.emr_form_terapi AS ft')
+        //     ->join('medicalrecord.cppt AS cppt', 'cppt.ID', '=', 'ft.id_cppt')
+        //     ->where('ft.nomor', $KUNJUNGAN)
+        //     ->where('ft.status', 1)
+        //     ->select(
+        //         'ft.nomor AS KUNJUNGAN',
+        //         'cppt.ID AS ID_CPPT',
+        //         'cppt.SUBYEKTIF',
+        //         'cppt.OBYEKTIF',
+        //         'cppt.ASSESMENT',
+        //         'cppt.PLANNING as PROCEDURE',
+        //         'cppt.INSTRUKSI'
+        //     )
+        //     ->first();
+
+        // if (!$data) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'nullData' => 'pterapi',
+        //         'message'=> 'Data Formulir Program tidak ditemukan'
+        //     ]);
+        // }
+
+        return response()->json([
+            'status' => true,
+            'data' => $validasi
+            // 'data' => [
+            //     's' => $data->SUBYEKTIF,
+            //     'o' => $data->OBYEKTIF,
+            //     'a' => $data->ASSESMENT,
+            //     'p' => $data->PROCEDURE,
+            // ]
+        ], 200);
+    }
+
+    function getRiwayatProgram($KUNJUNGAN)
+    {
+        $data = DB::table('simrspku_klaim.emr_form_terapi AS ftr')
+            ->leftJoin('aplikasi.pengguna AS pu', 'pu.ID', '=', 'ftr.user')
+            ->select('ftr.*', 'pu.NAMA AS nama_user',DB::raw('master.getNamaLengkapPegawai(pu.NIP) AS nama_lengkap_user'))
+            ->where('ftr.status', 1)
+            ->whereNull('ftr.deleted_at')
+            ->orderBy('ftr.created_at', 'DESC')
+            ->get();
 
         if (!$data) {
             return response()->json([
                 'status' => false,
-                'message'=> 'Data Formulir Program tidak ditemukan'
+                'message'=> 'Data Formulir Program Terapi tidak ditemukan pada kunjungan ini'
             ]);
         }
 
         return response()->json([
             'status' => true,
-            'data' => [
-                's' => $data->SUBYEKTIF,
-                'o' => $data->OBYEKTIF,
-                'a' => $data->ASSESMENT,
-                'p' => $data->PROCEDURE,
-            ]
+            'data' => $data
         ], 200);
     }
 
+    function getCpptProgram($KUNJUNGAN) {
+        $data = DB::table('medicalrecord.cppt AS cppt')
+            ->leftJoin('master.dokter as dr', function($join) {
+                $join->on('dr.ID', '=', 'cppt.TENAGA_MEDIS')
+                    ->where('dr.STATUS', '=', 1);
+            })
+            ->leftJoin('aplikasi.pengguna as pe', function($join) {
+                $join->on('pe.ID', '=', 'cppt.OLEH')
+                    ->where('pe.STATUS', '=', 1);
+            })
+            ->where('cppt.KUNJUNGAN', $KUNJUNGAN)
+            ->where('cppt.STATUS', 1)
+            ->select(
+                'cppt.ID AS ID_CPPT',
+                'cppt.TANGGAL',
+                'cppt.SUBYEKTIF',
+                'cppt.OBYEKTIF',
+                'cppt.ASSESMENT',
+                'cppt.PLANNING',
+                'cppt.INSTRUKSI',
+                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAUSER'),
+            )
+            ->orderBy('cppt.TANGGAL', 'DESC')
+            ->get();
+
+        if ($data->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data CPPT tidak ditemukan untuk kunjungan ini'
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function getProgramEdit($KUNJUNGAN, $GROUP, $QUEUE)
+    {
+        $data = DB::table('simrspku_klaim.emr_form_terapi AS ftr')
+            ->join('medicalrecord.cppt AS cppt', function($join) {
+                $join->on('cppt.ID', '=', 'ftr.id_cppt')
+                    ->where('cppt.STATUS', '=', 1);
+            })
+            ->select(
+                'ftr.nomor AS KUNJUNGAN',
+                'cppt.ID AS ID_CPPT',
+                'cppt.SUBYEKTIF',
+                'cppt.OBYEKTIF',
+                'cppt.ASSESMENT',
+                'cppt.PLANNING as PROCEDURE'
+            )
+            ->where('ftr.group', $GROUP)
+            ->where('ftr.queue', $QUEUE)
+            ->where('ftr.status', 1)
+            ->whereNull('ftr.deleted_at')
+            ->orderBy('ftr.created_at', 'DESC')
+            ->first();
+
+        if (!$data) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data Formulir Program Terapi tidak ditemukan pada kunjungan ini'
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $data,
+            'kunjungan' => $KUNJUNGAN,
+            'group' => $GROUP,
+            'queue' => $QUEUE,
+        ], 200);
+    }
+
+    function storeProgram(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'rm'           => 'required|integer',
+                'kunjungan'    => 'required',
+                'sep'          => 'required',
+                'tgl_sep'      => 'required|date',
+                'tgl'          => 'required|date',
+                'tgl_masuk'    => 'required',
+                'tgl_keluar'   => 'required',
+
+                'cppt_s_t'     => 'required',
+                'cppt_o_t'     => 'required',
+                'cppt_a_t'     => 'required',
+                'cppt_p_t'     => 'required',
+            ],
+            [
+                'rm.required'        => 'Nomor RM wajib diisi.',
+                'rm.integer'         => 'Nomor RM harus berupa angka.',
+                'kunjungan.required' => 'Kunjungan wajib diisi.',
+                'sep.required'       => 'SEP wajib diisi.',
+                'tgl_sep.required'   => 'Tanggal SEP wajib diisi.',
+                'tgl_sep.date'       => 'Tanggal SEP tidak valid.',
+                'tgl.required'       => 'Tanggal wajib diisi.',
+                'tgl.date'           => 'Tanggal tidak valid.',
+                'tgl_masuk.required' => 'Tanggal Masuk Kunjungan wajib terkirim.',
+                'tgl_keluar.required'=> 'Tanggal Keluar Kunjungan wajib terkirim.',
+
+                'cppt_s_t.required'  => 'Isian Subjective wajib diisi.',
+                'cppt_o_t.required'  => 'Isian Objective wajib diisi.',
+                'cppt_a_t.required'  => 'Isian Assessment wajib diisi.',
+                'cppt_p_t.required'  => 'Isian Procedure wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message'=> $validator->errors()->first()
+            ], 422);
+        }
+
+        $tglPush = now()->toTimeString();
+        $tglMasuk  = Carbon::parse($request->tgl_masuk);
+        if ($request->filled('tgl_keluar')) {
+            $tglKeluar = Carbon::parse($request->tgl_keluar);
+
+            if ($tglMasuk->isSameDay($tglKeluar)) {
+                $tglPush = $tglMasuk->toDateString() . ' ' . now()->toTimeString();
+            }
+        } else {
+            $tglPush = $tglMasuk->toDateString() . ' ' . now()->toTimeString();
+        }
+
+        DB::beginTransaction();
+        try {
+            $kunjungan = $request->kunjungan;
+
+            // GET GROUP KUNJUNGAN
+            $getKFR = emr_form_kfr::where('nomor',$kunjungan)->where('status',1)->whereNull('deleted_at')->first();
+
+            if (!$getKFR) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Form KFR Tidak ditemukan untuk kunjungan ini. Wajib mengisi Form KFR terlebih dahulu.'
+                ], 404);
+            }
+
+            $dokter = DB::table('master.dokter as dr')
+                        ->leftJoin('aplikasi.pengguna as pe', function($join) {
+                            $join->on('pe.NIP', '=', 'dr.NIP')
+                                ->where('pe.STATUS', '=', 1);
+                        })
+                        ->select('dr.ID', 'pe.NAMA AS DOKTER', 'dr.NIP', DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'))
+                        ->where('pe.NIP', $getKFR->nip_dokter)
+                        ->where('dr.STATUS', 1)
+                        ->first();
+
+            if (!$dokter) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Data dokter tidak ditemukan untuk user ini'
+                ], 404);
+            }
+
+            // GET TTD DOKTER
+            $ttd_pegawai_dr = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+                ->where('nip', $dokter->NIP)
+                ->where('status', 1)
+                ->inRandomOrder()
+                ->first();
+
+            if (!$ttd_pegawai_dr) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Data TTD dokter tidak ditemukan untuk user ini'
+                ], 404);
+            }
+
+            // GET TTD TERAPIS
+            $ttd_pegawai_tr = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+                ->where('nip', Auth::user()->NIP)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->inRandomOrder()
+                ->first();
+
+            if (!$ttd_pegawai_tr) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Data TTD tim tidak ditemukan untuk user ini'
+                ], 404);
+            }
+
+            // GET ROLE TIM (1:DR, 2:FT, 3:OT, 4:TW)
+            $role = Auth::user()->getRoleNames()->first();
+            $jenis = 0;
+            if ($role == 'dokterspesialis') {
+                $jenis = 1;
+            } else if($role == 'fisioterapis') {
+                $jenis = 2;
+            } else if($role == 'okupasiterapi') {
+                $jenis = 3;
+            } else if($role == 'terapiwicara') {
+                $jenis = 4;
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Hak Akses Anda tidak valid untuk mengisi Form Program Terapi'
+                ], 404);
+            }
+
+            $tim = DB::table('aplikasi.pengguna as pe')
+                        ->select('pe.ID', 'pe.NIP', DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMATIM'))
+                        ->where('pe.NIP', Auth::user()->NIP)
+                        ->where('pe.STATUS', 1)
+                        ->first();
+
+            if (!$tim) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Data Akun tim tidak ditemukan'
+                ], 404);
+            }
+
+            // GET DATA PASIEN
+            $dataPasien = DB::table('master.pasien')
+                        ->select(
+                            'TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+                            DB::raw('master.getCariUmur(now(),TANGGAL_LAHIR) AS UMURPASIEN'),
+                            DB::raw('master.getNamaLengkap(NORM) AS NAMAPASIEN'),
+                            DB::raw('master.getAlamatPasienCustom(NORM) AS ALAMATPASIEN'),
+                        )
+                        ->where('NORM',$request->rm)
+                        ->where('STATUS', true)
+                        ->first();
+
+            if (!$dataPasien) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Data Pasien tidak ditemukan'
+                ], 404);
+            }
+
+            /* ==========================
+            * 1. INSERT CPPT
+            * ========================== */
+            $id_cppt = DB::table('medicalrecord.cppt')->insertGetId([
+                'KUNJUNGAN'    => $kunjungan,
+                'TANGGAL'      => $tglPush,
+                'SUBYEKTIF'    => $request->cppt_s_t,
+                'OBYEKTIF'     => $request->cppt_o_t,
+                'ASSESMENT'    => $request->cppt_a_t,
+                'PLANNING'     => $request->cppt_p_t,
+                'INSTRUKSI'    => '-',
+                'JENIS'        => 1,
+                'TENAGA_MEDIS' => $dokter->ID,
+                'OLEH'         => auth()->id(),
+                'STATUS'       => 1,
+            ]);
+
+            /* ==========================
+            * 2. INSERT EMR FORM PROGRAM TERAPI
+            * ========================== */
+            $verify = emr_form_terapi::where('nomor',$kunjungan)
+                                ->where('group',$getKFR->group)
+                                ->where('jenis',$jenis)
+                                ->where('status',1)
+                                ->whereNull('deleted_at')
+                                ->count();
+            $kode = $verify + 1;
+            DB::table('simrspku_klaim.emr_form_terapi')->insert([
+                'id_cppt'       => $id_cppt,
+                'group'         => $getKFR->group,
+                'queue'         => $kode,
+                'jenis'         => $jenis,
+                'nomor'         => $getKFR->nomor,
+                'sep'           => $request->sep,
+                'tgl_sep'       => $request->tgl_sep,
+                'tgl'           => $tglPush,
+                'rm'            => $request->rm,
+
+                'id_ttd_dokter' => $ttd_pegawai_dr->id,
+                'ttd_dokter'    => $ttd_pegawai_dr->signature_path,
+                'nip_dokter'    => $ttd_pegawai_dr->nip,
+                'nama_dokter'   => $dokter->NAMADOKTER,
+
+                'id_ttd_tim'    => $ttd_pegawai_tr->id,
+                'ttd_tim'       => $ttd_pegawai_tr->signature_path,
+                'nip_tim'       => $ttd_pegawai_tr->nip,
+                'nama_tim'      => $tim->NAMATIM,
+
+                'user'          => auth()->id(),
+                'status'        => 1,
+                'created_at'    => now(),
+                'updated_at'    => now()
+            ]);
+
+            /* ==========================
+            * 3. BANGUN DATA UNTUK PDF (tanpa query ulang)
+            * ========================== */
+            $show = (object)[
+                'TGLSEP'            => $request->tgl_sep,
+                'KUNJUNGAN'         => $kunjungan,
+                'GROUP'             => $getKFR->group,
+                'QUEUE'             => $kode,
+                'TANGGAL'           => $tglPush,
+                'NORM'              => $request->rm,
+                'NAMAPASIEN'        => $dataPasien->NAMAPASIEN ?? '',
+                'NAMADOKTER'        => $dokter->NAMADOKTER,
+                'NAMATIM'           => $tim->NAMATIM,
+                'TGLLAHIRPASIEN'    => $dataPasien->TGLLAHIRPASIEN ?? '',
+                'UMURPASIEN'        => $dataPasien->UMURPASIEN ?? '',
+                'ALAMATPASIEN'      => $dataPasien->ALAMATPASIEN ?? '',
+                'SUBYEKTIF'         => $request->cppt_s_t,
+                'OBYEKTIF'          => $request->cppt_o_t,
+                'ASSESMENT'         => $request->cppt_a_t,
+                'PROCEDURE'         => $request->cppt_p_t,
+                'PATH_TTE_DOKTER'   => $ttd_pegawai_dr->signature_path,
+                'PATH_TTE_TIM'      => $ttd_pegawai_tr->signature_path,
+            ];
+
+            /* 4. KIRIM LANGSUNG KE GENERATOR */
+            $generateForm = $this->generateFormProgramTerapi($show);
+
+            if (!$generateForm) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Gagal generate Form Program Terapi'
+                ], 500);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message'=> 'Form Program Terapi & CPPT berhasil disimpan'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message'=> $e->getMessage()
+            ], 500);
+        }
+    }
+
+    function updateProgramTerapi(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'rm'           => 'required|integer',
+                'kunjungan'    => 'required',
+                'queue'     => 'required',
+                'sep'          => 'required',
+                'tgl_sep'      => 'required|date',
+                'tgl'          => 'required|date',
+                'tgl_masuk'    => 'required',
+                'tgl_keluar'   => 'required',
+
+                'cppt_s_t'     => 'required',
+                'cppt_o_t'     => 'required',
+                'cppt_a_t'     => 'required',
+                'cppt_p_t'     => 'required',
+            ],
+            [
+                'rm.required'        => 'Nomor RM wajib diisi.',
+                'rm.integer'         => 'Nomor RM harus berupa angka.',
+                'kunjungan.required' => 'Kunjungan wajib diisi.',
+                'queue.required'     => 'Queue wajib terkirim.',
+                'sep.required'       => 'SEP wajib diisi.',
+                'tgl_sep.required'   => 'Tanggal SEP wajib diisi.',
+                'tgl_sep.date'       => 'Tanggal SEP tidak valid.',
+                'tgl.required'       => 'Tanggal wajib diisi.',
+                'tgl.date'           => 'Tanggal tidak valid.',
+                'tgl_masuk.required' => 'Tanggal Masuk Kunjungan wajib terkirim.',
+                'tgl_keluar.required'=> 'Tanggal Keluar Kunjungan wajib terkirim.',
+
+                'cppt_s_t.required'  => 'Isian Subjective wajib diisi.',
+                'cppt_o_t.required'  => 'Isian Objective wajib diisi.',
+                'cppt_a_t.required'  => 'Isian Assessment wajib diisi.',
+                'cppt_p_t.required'  => 'Isian Procedure wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message'=> $validator->errors()->first()
+            ], 422);
+        }
+
+        $tglPush = now()->toTimeString();
+        $tglMasuk  = Carbon::parse($request->tgl_masuk);
+        if ($request->filled('tgl_keluar')) {
+            $tglKeluar = Carbon::parse($request->tgl_keluar);
+
+            if ($tglMasuk->isSameDay($tglKeluar)) {
+                $tglPush = $tglMasuk->toDateString() . ' ' . now()->toTimeString();
+            }
+        } else {
+            $tglPush = $tglMasuk->toDateString() . ' ' . now()->toTimeString();
+        }
+
+        // GET GROUP KUNJUNGAN
+        $getKFR = emr_form_kfr::where('nomor',$request->kunjungan)->where('status',1)->whereNull('deleted_at')->first();
+
+        if (!$getKFR) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Form KFR Tidak ditemukan untuk kunjungan ini. Wajib mengisi Form KFR terlebih dahulu.'
+            ], 404);
+        }
+
+        $dokter = DB::table('master.dokter as dr')
+                    ->leftJoin('aplikasi.pengguna as pe', function($join) {
+                        $join->on('pe.NIP', '=', 'dr.NIP')
+                            ->where('pe.STATUS', '=', 1);
+                    })
+                    ->select('dr.ID', 'pe.NAMA AS DOKTER', 'dr.NIP', DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'))
+                    ->where('pe.NIP', $getKFR->nip_dokter)
+                    ->where('dr.STATUS', 1)
+                    ->first();
+
+        if (!$dokter) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data dokter tidak ditemukan untuk user ini'
+            ], 404);
+        }
+
+        // GET TTD DOKTER
+        $ttd_pegawai_dr = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+            ->where('nip', $dokter->NIP)
+            ->where('status', 1)
+            ->inRandomOrder()
+            ->first();
+
+        if (!$ttd_pegawai_dr) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data TTD dokter tidak ditemukan untuk user ini'
+            ], 404);
+        }
+
+        // GET TTD TERAPIS
+        $ttd_pegawai_tr = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+            ->where('nip', Auth::user()->NIP)
+            ->where('status', 1)
+            ->whereNull('deleted_at')
+            ->inRandomOrder()
+            ->first();
+
+        if (!$ttd_pegawai_tr) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data TTD tim tidak ditemukan untuk user ini'
+            ], 404);
+        }
+
+        // GET ROLE TIM (1:DR, 2:FT, 3:OT, 4:TW)
+        $role = Auth::user()->getRoleNames()->first();
+        $jenis = 0;
+        if ($role == 'dokterspesialis') {
+            $jenis = 1;
+        } else if($role == 'fisioterapis') {
+            $jenis = 2;
+        } else if($role == 'okupasiterapi') {
+            $jenis = 3;
+        } else if($role == 'terapiwicara') {
+            $jenis = 4;
+        } else {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Hak Akses Anda tidak valid untuk mengisi Form Program Terapi'
+            ], 404);
+        }
+
+        $tim = DB::table('aplikasi.pengguna as pe')
+                    ->select('pe.ID', 'pe.NIP', DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMATIM'))
+                    ->where('pe.NIP', Auth::user()->NIP)
+                    ->where('pe.STATUS', 1)
+                    ->first();
+
+        if (!$tim) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data Akun tim tidak ditemukan'
+            ], 404);
+        }
+
+        // GET DATA PASIEN
+        $dataPasien = DB::table('master.pasien')
+                    ->select(
+                        'TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+                        DB::raw('master.getCariUmur(now(),TANGGAL_LAHIR) AS UMURPASIEN'),
+                        DB::raw('master.getNamaLengkap(NORM) AS NAMAPASIEN'),
+                        DB::raw('master.getAlamatPasienCustom(NORM) AS ALAMATPASIEN'),
+                    )
+                    ->where('NORM',$request->rm)
+                    ->where('STATUS', true)
+                    ->first();
+
+        if (!$dataPasien) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data Pasien tidak ditemukan'
+            ], 404);
+        }
+
+        DB::beginTransaction();
+        try {
+            $getFtr = emr_form_terapi::where('nomor',$request->kunjungan)
+                                ->where('group',$getKFR->group)
+                                ->where('queue',$request->queue)
+                                ->where('status',1)
+                                ->whereNull('deleted_at')
+                                ->first();
+            if (!$getFtr) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Data Form Program Terapi tidak ditemukan untuk diupdate'
+                ], 404);
+            }
+
+            /* ==========================
+            * 1. UPDATE CPPT
+            * ========================== */
+            DB::table('medicalrecord.cppt')->where('ID', $getFtr->id_cppt)->update([
+                'TANGGAL'      => $tglPush,
+                'SUBYEKTIF'    => $request->cppt_s_t,
+                'OBYEKTIF'     => $request->cppt_o_t,
+                'ASSESMENT'    => $request->cppt_a_t,
+                'PLANNING'     => $request->cppt_p_t,
+                'INSTRUKSI'    => '-',
+                'STATUS'       => 1,
+            ]);
+
+            /* ==========================
+            * 2. UPDATE EMR FORM PROGRAM TERAPI
+            * ========================== */
+            DB::table('simrspku_klaim.emr_form_terapi')->where('id_cppt', $getFtr->id_cppt)->update([
+                'jenis'         => $jenis,
+                'sep'           => $request->sep,
+                'tgl_sep'       => $request->tgl_sep,
+                'tgl'           => $tglPush,
+
+                'id_ttd_dokter' => $ttd_pegawai_dr->id,
+                'ttd_dokter'    => $ttd_pegawai_dr->signature_path,
+                'nip_dokter'    => $ttd_pegawai_dr->nip,
+                'nama_dokter'   => $dokter->NAMADOKTER,
+
+                'id_ttd_tim'    => $ttd_pegawai_tr->id,
+                'ttd_tim'       => $ttd_pegawai_tr->signature_path,
+                'nip_tim'       => $ttd_pegawai_tr->nip,
+                'nama_tim'      => $tim->NAMATIM,
+
+                'user'          => auth()->id(),
+                'updated_at'    => now()
+            ]);
+
+            /* ==========================
+            * 3. BANGUN DATA UNTUK PDF (tanpa query ulang)
+            * ========================== */
+            $show = (object)[
+                'TGLSEP'            => $request->tgl_sep,
+                'KUNJUNGAN'         => $kunjungan,
+                'GROUP'             => $getKFR->group,
+                'QUEUE'             => $kode,
+                'TANGGAL'           => $tglPush,
+                'NORM'              => $request->rm,
+                'NAMAPASIEN'        => $dataPasien->NAMAPASIEN ?? '',
+                'NAMADOKTER'        => $dokter->NAMADOKTER,
+                'NAMATIM'           => $tim->NAMATIM,
+                'TGLLAHIRPASIEN'    => $dataPasien->TGLLAHIRPASIEN ?? '',
+                'UMURPASIEN'        => $dataPasien->UMURPASIEN ?? '',
+                'ALAMATPASIEN'      => $dataPasien->ALAMATPASIEN ?? '',
+                'SUBYEKTIF'         => $request->cppt_s_t,
+                'OBYEKTIF'          => $request->cppt_o_t,
+                'ASSESMENT'         => $request->cppt_a_t,
+                'PROCEDURE'         => $request->cppt_p_t,
+                'PATH_TTE_DOKTER'   => $ttd_pegawai_dr->signature_path,
+                'PATH_TTE_TIM'      => $ttd_pegawai_tr->signature_path,
+            ];
+
+            /* 4. KIRIM LANGSUNG KE GENERATOR */
+            $generateForm = $this->generateFormProgramTerapi($show);
+
+            if (!$generateForm) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Gagal generate Form Program Terapi'
+                ], 500);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Data Form Program Terapi & CPPT berhasil di-update'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message'=> $e->getMessage()
+            ], 500);
+        }
+    }
+
+    function generateFormProgramTerapi(object $show)
+    {
+        $getTgl = Carbon::parse($show->TGLSEP);
+        $tgl = $getTgl->isoFormat('DD');
+        $bulan = $getTgl->isoFormat('MM');
+        $tahun = $getTgl->isoFormat('YYYY');
+
+        $path = 'files/rehabmedik/formprogramterapi/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show->KUNJUNGAN.'-'.$show->QUEUE;
+
+        $post = new klaim_file;
+        $post->jenis = 11;
+        $post->sub_jenis = 2;
+        $post->kode = $show->QUEUE;
+        $post->ref = $show->GROUP;
+        $post->nomor = $show->KUNJUNGAN;
+        $post->title = $show->KUNJUNGAN.'-'.$show->QUEUE.'.pdf';
+        $post->filename = $path.'.pdf';
+        $post->nama_tambahan = 'Formulir Program Terapi '.$show->QUEUE;
+        $post->status = true;
+        $post->user = Auth::user()->ID;
+        $post->created_at = now();
+        $post->updated_at = now();
+        $post->save();
+
+        $output = storage_path().'/app/public/'.$path;
+
+        // Pastikan folder tujuan ada
+        $outputDir = dirname($output);
+        if (!File::exists($outputDir)) {
+            File::makeDirectory($outputDir, 0755, true); // true = recursive
+        }
+
+        $data = [
+            'TANGGAL' => Carbon::parse($show->TANGGAL)->translatedFormat('d F Y'),
+            'NORM' => $show->NORM,
+            'NAMAPASIEN' => $show->NAMAPASIEN,
+            'NAMADOKTER' => $show->NAMADOKTER,
+            'NAMATIM' => $show->NAMATIM,
+            'TGLLAHIRPASIEN' => Carbon::parse($show->TGLLAHIRPASIEN)->translatedFormat('d F Y'),
+            'UMURPASIEN' => $show->UMURPASIEN,
+            'ALAMATPASIEN' => $show->ALAMATPASIEN,
+            'SUBYEKTIF' => $show->SUBYEKTIF,
+            'OBYEKTIF' => $show->OBYEKTIF,
+            'ASSESMENT' => $show->ASSESMENT,
+            'PROCEDURE' => $show->PROCEDURE,
+        ];
+
+        $templateProcessor = new TemplateProcessor(public_path('/doc/input/rehabmedik/cetakNewFormProgramTerapi.docx'));
+
+        try {
+            $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->PATH_TTE_DOKTER, 170);
+            // if ($cap) {
+            //     $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
+            // }
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
+
+        try {
+            $this->setImgWord($templateProcessor, 'PATH_TTE_TIM', storage_path()."/app/public/".$show->PATH_TTE_TIM, 170);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
+
+        foreach ($data as $key => $value) {
+            $templateProcessor->setValue($key, $value);
+        }
+
+        $outputWord = $output.'.docx';
+        $templateProcessor->saveAs($outputWord);
+
+        [$success, $log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+
+        if (!$success) {
+            return response()->json("Gagal membuat PDF Formulir KFR (Periksa File/Instal Ulang Libre Office di Server)", 500);
+        }
+
+        if (File::exists($outputWord)) {
+            File::delete($outputWord);
+        }
+
+        if (file_exists($output.'.pdf')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function generateUlangFormProgramTerapi($kunjungan,$queue)
+    {
+        $showInit = DB::table('simrspku_klaim.emr_form_terapi')
+            ->where('nomor',$kunjungan)
+            ->where('queue',$queue)
+            ->where('status',1)
+            ->first();
+
+        if (!$showInit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data Form Program Terapi tidak ditemukan'
+            ], 404);
+        }
+
+        $dokter = DB::table('master.dokter as dr')
+                    ->leftJoin('aplikasi.pengguna as pe', function($join) {
+                        $join->on('pe.NIP', '=', 'dr.NIP')
+                            ->where('pe.STATUS', '=', 1);
+                    })
+                    ->select('dr.ID', 'pe.NAMA AS DOKTER', 'dr.NIP', DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'))
+                    ->where('pe.NIP', $showInit->nip_dokter)
+                    ->where('dr.STATUS', 1)
+                    ->first();
+
+        if (!$dokter) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data dokter tidak ditemukan untuk user ini'
+            ], 404);
+        }
+
+        // GET TTD DOKTER
+        $ttd_pegawai_dr = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+            ->where('nip', $dokter->NIP)
+            ->where('status', 1)
+            ->inRandomOrder()
+            ->first();
+
+        if (!$ttd_pegawai_dr) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data TTD dokter tidak ditemukan untuk user ini'
+            ], 404);
+        }
+
+        // GET TTD TERAPIS
+        $ttd_pegawai_tr = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+            ->where('nip', $showInit->nip_tim)
+            ->where('status', 1)
+            ->whereNull('deleted_at')
+            ->inRandomOrder()
+            ->first();
+
+        if (!$ttd_pegawai_tr) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data TTD tim tidak ditemukan untuk user ini'
+            ], 404);
+        }
+
+        $tim = DB::table('aplikasi.pengguna as pe')
+                    ->select('pe.ID', 'pe.NIP', DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMATIM'))
+                    ->where('pe.NIP', $showInit->nip_tim)
+                    ->where('pe.STATUS', 1)
+                    ->first();
+
+        if (!$tim) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data Akun tim tidak ditemukan'
+            ], 404);
+        }
+
+        // UPDATE TTD DOKTER & TIM
+        $updated = DB::table('simrspku_klaim.emr_form_terapi')
+                    ->where('nomor', $kunjungan)
+                    ->where('queue', $queue)
+                    ->where('status', 1)
+                    ->whereNull('deleted_at')
+                    ->update([
+                        'id_ttd_dokter' => $ttd_pegawai_dr->id,
+                        'ttd_dokter'    => $ttd_pegawai_dr->signature_path,
+                        'nip_dokter'    => $ttd_pegawai_dr->nip,
+                        'nama_dokter'   => $dokter->NAMADOKTER,
+                        'id_ttd_tim' => $ttd_pegawai_tr->id,
+                        'ttd_tim'    => $ttd_pegawai_tr->signature_path,
+                        'nip_tim'    => $ttd_pegawai_tr->nip,
+                        'nama_tim'   => $tim->NAMATIM,
+                        'updated_at'    => now(),
+                    ]);
+
+        $show = DB::table('simrspku_klaim.emr_form_terapi as ptr')
+            ->join('medicalrecord.cppt as cppt', function($join) {
+                $join->on('cppt.ID','=','ptr.id_cppt')
+                    ->where('cppt.STATUS', '=', 1);
+            })
+            // ->join('medicalrecord.cppt as cppt','cppt.ID','=','ptr.id_cppt')
+            ->leftJoin('master.pasien as ps','ps.NORM','=','ptr.rm')
+            ->select([
+                'ptr.group as GROUP',
+                'ptr.queue as QUEUE',
+                'ptr.nomor as KUNJUNGAN',
+                'ptr.tgl as TANGGAL',
+                'ptr.tgl_sep as TGLSEP',
+                'ptr.ttd_dokter as PATH_TTE_DOKTER',
+                'ptr.ttd_tim as PATH_TTE_TIM',
+                'ptr.rm as NORM',
+                DB::raw('master.getNamaLengkap(ptr.rm) as NAMAPASIEN'),
+                DB::raw('master.getAlamatPasienCustom(ptr.rm) as ALAMATPASIEN'),
+                DB::raw('master.getNamaLengkapPegawai(ptr.nip_dokter) as NAMADOKTER'),
+                DB::raw('master.getCariUmur(ptr.tgl, ps.TANGGAL_LAHIR) as UMURPASIEN'),
+                'ps.TANGGAL_LAHIR as TGLLAHIRPASIEN',
+                'cppt.SUBYEKTIF',
+                'cppt.OBYEKTIF',
+                'cppt.ASSESMENT',
+                'cppt.PLANNING as PROCEDURE',
+            ])
+            ->where('ptr.nomor', $kunjungan)
+            ->where('ptr.queue', $queue)
+            ->where('ptr.status', 1)
+            ->whereNull('ptr.deleted_at')
+            ->first();
+
+        if (!$show) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Periksa kembali data Form Program Terapi dan CPPT yang bersangkutan'
+            ], 500);
+        }
+
+        // // Normalisasi line break
+        // $planningText = preg_replace("/\r?\n/", "\n", $show->PLANNING);
+
+        $success = $this->generateFormProgramTerapi($show);
+
+        if (!$success) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal generate Form Program Terapi'
+            ], 500);
+        }
+
+        // buat URL PDF
+        $url = klaim_file::where('nomor',$show->KUNJUNGAN)
+                            ->where('jenis',11)
+                            ->where('sub_jenis',2) // FORM PROGRAM TERAPI
+                            ->where('kode',$showInit->queue)
+                            ->where('ref',$showInit->group)
+                            ->where('status',true)
+                            ->whereNull('deleted_at')
+                            ->orderBy('id','DESC')
+                            ->first();
+
+        // $tgl = Carbon::parse($show->TGLSEP)->isoFormat('DD');
+        // $bulan = Carbon::parse($show->TGLSEP)->isoFormat('MM');
+        // $tahun = Carbon::parse($show->TGLSEP)->isoFormat('YYYY');
+
+        // $relative = "files/rehabmedik/formprogramterapi/$tahun/$bulan/$tgl/{$show->KUNJUNGAN}-1.pdf";
+
+        return response()->json([
+            'success' => true,
+            'message' => 'PDF berhasil dibuat',
+            'pdf_url' => asset('storage/'.$url->filename)
+        ]);
+    }
+
+    function lihatFormProgramTerapi($KUNJUNGAN,$GROUP,$QUEUE)
+    {
+        $show = DB::table('simrspku_klaim.klaim_file')
+            ->where('nomor',$KUNJUNGAN)
+            ->where('kode',$QUEUE)
+            ->where('ref',$GROUP)
+            ->where('jenis',11)
+            ->where('sub_jenis',2) // FORM PROGRAM TERAPI
+            ->where('status',1)
+            ->whereNull('deleted_at')
+            ->orderBy('id','DESC')
+            ->first();
+
+        if (!$show) {
+            abort(404);
+        }
+
+        $path = storage_path('app/public/'.$show->filename);
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        return response()->file($path, [
+            'Content-Type'  => 'application/pdf',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma'        => 'no-cache',
+            'Expires'       => '0',
+        ]);
+
+        // return response()->file($output, [
+        //     'Content-Type' => 'application/pdf',
+        // ]);
+    }
+
+    function destroyProgram(Request $request)
+    {
+        $request->validate([
+            'kunjungan' => 'required',
+            'queue' => 'required',
+        ]);
+
+        DB::beginTransaction();
+        try {
+
+            // cek data
+            $form = DB::table('simrspku_klaim.emr_form_terapi')
+                ->where('nomor', $request->kunjungan)
+                ->where('queue', $request->queue)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (!$form) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Data Form Program Terapi tidak ditemukan'
+                ], 404);
+            }
+
+            $now = now();
+
+            /* ==========================
+            * 1. Hapus file klaim_file FORM PROGRAM TERAPI & Reset Status to 0
+            * ========================== */
+            DB::table('simrspku_klaim.klaim_file')
+                ->where('nomor', $form->nomor)
+                ->where('sub_jenis', 2) // FORM PROGRAM TERAPI
+                ->where('kode', $form->queue)
+                ->where('ref', $form->group)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->update([
+                    'user_deleted'      => auth()->id(),
+                    'status'            => 0,
+                    'deleted_at'        => $now
+                ]);
+
+            /* ==========================
+            * 2. Soft Delete EMR FORM PROGRAM TERAPI & Reset Status to 0
+            * ========================== */
+            DB::table('simrspku_klaim.emr_form_terapi')
+                ->where('nomor', $form->nomor)
+                ->where('group', $form->group)
+                ->where('queue', $form->queue)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->update([
+                    'user'       => auth()->id(),
+                    'status'     => 0,
+                    'deleted_at' => $now
+                ]);
+
+            /* ==========================
+            * 3. Delete CPPT & Reset Status to 0
+            * ========================== */
+            DB::table('medicalrecord.cppt')
+                ->where('ID', $form->id_cppt)
+                ->where('STATUS', 1)
+                ->update([
+                    'STATUS'     => 0
+                ]);
+
+            // $output = storage_path('app/public/'.$klaim_file->filename);
+            // if (file_exists($output)) {
+            //     File::delete($output);
+            // }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message'=> 'Form Program Terapi & CPPT berhasil terhapus'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message'=> $e->getMessage()
+            ], 500);
+        }
+    }
     // ====================================================================================================================================
     // =============================================================  ADD ONS  ============================================================
     // ====================================================================================================================================
