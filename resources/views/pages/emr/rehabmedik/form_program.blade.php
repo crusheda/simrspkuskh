@@ -1,12 +1,12 @@
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-7">
         <div class="card table-card border shadow-none">
             <div class="card-header d-flex align-items-center justify-content-between p-3">
                 <h5 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Program Terapi</h5>
                 <div>
                     <a><i class="fas fa-exclamation-circle me-1"></i><i>Anda masuk sebagai <b><u class="text-primary">{{ Auth::user()->NAMA }}</u> (NIP#{{ Auth::user()->NIP }})</b></i></a>
                     <button class="btn btn-light-primary btn-sm ms-2" onclick="loadCpptProgramTerapi()" id="btn-refresh-riwayat-cppt-program" data-bs-toggle="tooltip" title="Refresh Riwayat CPPT"><i class="fas fa-sync"></i></button>
-                    <button class="btn btn-light-warning btn-sm" onclick="loadRiwayatProgramTerapi()" id="btn-refresh-riwayat-form-program" data-bs-toggle="tooltip" title="Refresh Riwayat Formulir Program Terapi"><i class="fas fa-sync"></i></button>
+                    <button class="btn btn-light text-muted btn-sm" style="background-color: #f3e3f5" onclick="loadRiwayatProgramTerapi()" id="btn-refresh-riwayat-form-program" data-bs-toggle="tooltip" title="Refresh Riwayat Formulir Program Terapi"><i class="fas fa-sync"></i></button>
                 </div>
             </div>
             <div class="card-body p-3">
@@ -15,25 +15,25 @@
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
                             <label class="form-label"><i><b>Subjective</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_s_t" rows="3" class="form-control" placeholder="..."></textarea>
+                            <textarea id="cppt_s_t" rows="4" class="form-control" placeholder="..."></textarea>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
                             <label class="form-label"><i><b>Objective</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_o_t" rows="3" class="form-control" placeholder="..."></textarea>
+                            <textarea id="cppt_o_t" rows="4" class="form-control" placeholder="..."></textarea>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
                             <label class="form-label"><i><b>Assessment</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_a_t" rows="3" class="form-control" placeholder="..."></textarea>
+                            <textarea id="cppt_a_t" rows="4" class="form-control" placeholder="..."></textarea>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label"><i><b>Procedure</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_p_t" rows="3" class="form-control" placeholder="..."></textarea>
+                            <textarea id="cppt_p_t" rows="4" class="form-control" placeholder="..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                         <button class="btn btn-primary" onclick="storeFormProgramTerapi()" id="btn-simpan-form-program-Terapi" hidden>
                             <i class="fas fa-save me-1"></i> Simpan Formulir Baru
                         </button>
-                        <button class="btn btn-light-dark" onclick="batalUpdateFormProgramTerapi()" id="btn-batal-update-form-program-terapi" data-bs-toggle="tooltip" title="Batal Perubahan/Update Form" hidden>
+                        <button class="btn btn-light-dark" onclick="batalUpdateFormProgramTerapi()" id="btn-batal-update-form-program-terapi" data-bs-toggle="tooltip" title="Batalkan" hidden>
                             <i class="fas fa-reply me-1"></i>
                         </button>
                         <button class="btn btn-success" onclick="updateFormProgramTerapi()" id="btn-update-form-program-Terapi" data-bs-toggle="tooltip" title="Perbarui Formulir & TTE Program Terapi" hidden>
@@ -69,7 +69,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-5">
         <div class="accordion card" id="collapse-riwayat-program-kfr">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-program-kfr">
@@ -94,7 +94,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-cppt-program-kfr">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-cppt-program-kfr" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge text-bg-dark ms-1">By.KUNJUNGAN</span>
+                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge text-bg-dark ms-1" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.KUNJUNGAN</span>
                     </button>
                 </h2>
                 <div id="btn-collapse-riwayat-cppt-program-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-cppt-program-kfr" data-bs-parent="#collapse-riwayat-cppt-program-kfr">
@@ -211,7 +211,7 @@
                         </div> <a class="align-middle">Memproses Data Riwayat..</a>
                     </div>`);
         $.ajax({
-            url: `/api/emr/pterapi/${kunjungan}/cppt`,
+            url: `/api/emr/pterapi/${rm}/cppt/${kunjungan}/${sep}/${tgl_sep_date}`,
             type: 'GET',
             beforeSend: function () {
                 $('#btn-refresh-riwayat-cppt').prop('disabled', true).find('i').addClass('fa-spin');
@@ -230,26 +230,57 @@
                 data.forEach((item, index) => {
                     let tanggal = new Date(item.TANGGAL).toLocaleDateString('id-ID', {
                         day: '2-digit',
-                        month: 'long',
+                        month: 'short',
                         year: 'numeric',
                         hour: '2-digit',
                         minute: '2-digit'
                     });
+                    let tanggalDaftar = new Date(item.TGLPENDAFTARAN).toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    });
 
-                    let card = `<div class="accordion card" id="heading${item.ID_CPPT}">
+                    let card = `<div class="accordion card" id="headingpterapi${item.ID_CPPT}">
                                     <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${item.ID_CPPT}" aria-expanded="true" aria-controls="collapseOne">
-                                                <b class="text-pink-900">${tanggal}</b><i class="fas fa-arrow-right text-primary ms-2 me-2"></i><b>CPPT Oleh <u>${item.NAMAUSER}</u></b>
+                                        <h2 class="accordion-header position-relative">
+                                            <button class="accordion-button collapsed text-start"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#collapseptr${item.ID_CPPT}">
+                                                <div class="d-flex flex-column w-100 min-w-0 pe-5">
+                                                    <div class="text-truncate w-100">
+                                                        ${kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
+                                                        <b class="text-teal-900" data-bs-toggle="tooltip" title="Nama Ruangan">${item.NAMARUANGAN}</b>
+                                                        <i class="fas fa-angle-right mx-1"></i>
+                                                        <b class="text-pink-900" data-bs-toggle="tooltip" title="Tgl. Pendaftaran Kunjungan">${tanggalDaftar}</b>
+                                                        <i class="fas fa-angle-right mx-1"></i>
+                                                        <b class="text-purple-900" data-bs-toggle="tooltip" title="Nama Dokter DPJP">${item.NAMADPJP}</b>
+                                                    </div>
+                                                    <div class="small mt-1 text-truncate w-100">
+                                                        <b data-bs-toggle="tooltip" title="Nama User Input CPPT"><i class="fas fa-user-md text-primary me-1"></i>
+                                                        CPPT Oleh <u>${item.NAMAUSER}</u></b> —
+                                                        <b data-bs-toggle="tooltip" title="Tanggal Input CPPT">Pada Tgl. ${tanggal} WIB</b>
+                                                    </div>
+                                                </div>
                                             </button>
+                                            <div class="position-absolute top-50 end-0 translate-middle-y me-5 d-flex gap-1" style="z-index: 3;">
+                                                <button class="btn btn-sm btn-warning"
+                                                        id="btn-copy-cppt-form-program-terapi-${item.ID_CPPT}"
+                                                        onclick="event.stopPropagation(); copyCpptFormProgramTerapi(${item.ID_CPPT});"
+                                                        data-bs-toggle="tooltip"
+                                                        title="Copy CPPT">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
                                         </h2>
-                                        <div id="collapse${item.ID_CPPT}" class="accordion-collapse collapse" data-bs-parent="#heading${item.ID_CPPT}">
+                                        <div id="collapseptr${item.ID_CPPT}" class="accordion-collapse collapse" data-bs-parent="#headingpterapi${item.ID_CPPT}">
                                             <div class="accordion-body">
                                                 <p style="white-space: pre-line"><b class="text-primary">Subjective:</b><br>${item.SUBYEKTIF?nl(item.SUBYEKTIF):'-'}</p>
                                                 <p style="white-space: pre-line"><b class="text-primary">Objective:</b><br>${item.OBYEKTIF?nl(item.OBYEKTIF):'-'}</p>
                                                 <p style="white-space: pre-line"><b class="text-primary">Assessment:</b><br>${item.ASSESMENT?nl(item.ASSESMENT):'-'}</p>
-                                                <p style="white-space: pre-line"><b class="text-primary">Procedure:</b><br>${item.PLANNING?nl(item.PLANNING):'-'}</p>
-                                                <p style="white-space: pre-line"><b class="text-primary">Instruksi / RTL:</b><br>${item.INSTRUKSI?nl(item.INSTRUKSI):'-'}</p>
+                                                <p style="white-space: pre-line"><b class="text-primary">Planning:</b><br>${item.PLANNING?nl(item.PLANNING):'-'}</p>
+                                                <p style="white-space: pre-line"><b class="text-primary">Rencana Tindak Lanjut:</b><br>${item.INSTRUKSI?nl(item.INSTRUKSI):'-'}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -275,6 +306,62 @@
                 })
             }
         });
+    }
+
+    function copyCpptFormProgramTerapi(IDCPPT) {
+        const btn = $('#btn-copy-cppt-form-program-terapi-' + IDCPPT);
+        // const tgl_sep_date = tgl_sep.substring(0, 10);
+        $.ajax({
+            url: `/api/emr/pterapi/${kunjungan}/cppt/${IDCPPT}/copy`,
+            type: 'GET',
+            beforeSend: function () {
+                btn.prop('disabled', true)
+                    .find('i')
+                    .removeClass('fa-copy')
+                    .addClass('fa-sync fa-spin');
+            },
+            success: function(res) {
+                if (!res.status) {
+                    Swal.fire({title: 'Maaf!', text: res.message, icon: 'warning', timer: 5000, timerProgressBar: true});
+                    btn.prop('disabled', false)
+                        .find('i')
+                        .removeClass('fa-sync fa-spin')
+                        .addClass('fa-copy');
+                    $('#btn-batal-update-form-program-terapi').prop('hidden', true);
+                    $('#btn-update-form-program-Terapi').prop('hidden', true);
+                    $('#btn-lihat-form-program-terapi').removeData('kunjungan group queue').prop('hidden', true);
+                    loadFormProgramTerapi();
+                    return;
+                }
+
+                $('#kode_program_terapi').val('');
+                $('#cppt_s_t').val(htmlToTextarea(res.data.SUBYEKTIF));
+                $('#cppt_o_t').val(htmlToTextarea(res.data.OBYEKTIF));
+                $('#cppt_a_t').val(htmlToTextarea(res.data.ASSESMENT));
+                $('#cppt_p_t').val(htmlToTextarea(res.data.PROCEDURE));
+
+                $('#btn-batal-update-form-program-terapi').prop('hidden', false);
+                $('#btn-update-form-program-Terapi').prop('hidden', true);
+                $('#btn-lihat-form-program-terapi').removeData('kunjungan group queue').prop('hidden', true);
+                $('#btn-kosongi-form-program-terapi').prop('disabled', false).prop('hidden', false);
+                $('#btn-simpan-form-program-Terapi').prop('disabled', false).prop('hidden', false);
+                
+            }, error: function (xhr) {
+                Swal.fire(
+                    'Gagal',
+                    xhr.responseJSON?.message ?? 'Terjadi kesalahan',
+                    'error'
+                );
+            },
+            complete: function () {
+                // always reset button (baik success maupun error)
+                btn.prop('disabled', false)
+                    .find('i')
+                    .removeClass('fa-sync fa-spin')
+                    .addClass('fa-copy');
+                // loadCpptProgramTerapi();
+            }
+        })
     }
 
     function loadRiwayatProgramTerapi() {// RIWAYAT DI GRID KANAN

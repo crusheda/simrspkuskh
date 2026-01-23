@@ -37,7 +37,7 @@
                                 <div class="form-group">
                                     <label class="form-label"><i><b>Planning</b></i></label>
                                     <input id="cppt_p_1" class="form-control mb-3" placeholder="Goal of Treatment">
-                                    <input id="cppt_p_2" class="form-control mb-3" placeholder="Tindakan/Program Rehabilitasi Medik">
+                                    <textarea id="cppt_p_2" rows="2" class="form-control mb-3" placeholder="Tindakan/Program Rehabilitasi Medik"></textarea>
                                     <input id="cppt_p_3" class="form-control mb-3" placeholder="Edukasi">
                                     <input id="cppt_p_4" class="form-control" placeholder="Frekuensi Kunjungan">
                                 </div>
@@ -87,7 +87,7 @@
                                 <button class="btn btn-success" onclick="updateFormKfr()" id="btn-update-form-kfr" data-bs-toggle="tooltip" title="Perbarui Formulir & TTE" hidden>
                                     <i class="fas fa-edit me-1"></i> Update Formulir
                                 </button>
-                                <button class="btn btn-light-dark" onclick="loadFormKfr()" id="btn-tutup-update-form-kfr" data-bs-toggle="tooltip" title="Batal Perubahan/Update Form" hidden>
+                                <button class="btn btn-light-dark" onclick="loadFormKfr()" id="btn-tutup-update-form-kfr" data-bs-toggle="tooltip" title="Batalkan" hidden>
                                     <i class="fas fa-reply me-1"></i>
                                 </button>
                                 <button class="btn btn-dark" onclick="bukaUpdateFormKfr()" id="btn-buka-update-form-kfr" data-bs-toggle="tooltip" title="Buat Form Baru di Group Yang Sama" hidden>
@@ -126,7 +126,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-cppt-kfr">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-cppt-kfr" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge text-bg-dark ms-1">By.KUNJUNGAN</span>
+                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge text-bg-dark ms-1" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.KUNJUNGAN</span>
                     </button>
                 </h2>
                 <div id="btn-collapse-riwayat-cppt-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-cppt-kfr" data-bs-parent="#collapse-riwayat-cppt-kfr">
@@ -197,6 +197,40 @@
     function nl(v){
         return (v ?? '').replaceAll("\r\n", "\n");
     }
+    
+    // function decodeHtml(html) {
+    //     const txt = document.createElement("textarea");
+    //     txt.innerHTML = html;
+    //     return txt.value;
+    // }
+
+    function htmlToTextarea(html) {
+        if (!html) return '';
+
+        // 1. decode HTML entities
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = html;
+        const decoded = textarea.value;
+
+        // 2. parsing HTML
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = decoded;
+
+        let lines = [];
+
+        wrapper.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const text = node.textContent.trim();
+                if (text) lines.push(text);
+            }
+            else if (node.nodeType === Node.ELEMENT_NODE) {
+                const text = node.textContent.trim();
+                if (text) lines.push(text);
+            }
+        });
+
+        return lines.join('\n');
+    }
 
     function loadCpptKfr() {
         $('#load-riwayat-cppt-kfr').empty()
@@ -206,7 +240,7 @@
                         </div> <a class="align-middle">Memproses Data Riwayat..</a>
                     </div>`);
         $.ajax({
-            url: `/api/emr/kfr/${kunjungan}/cppt`,
+            url: `/api/emr/kfr/${rm}/cppt/${kunjungan}/${sep}/${tgl_sep_date}`,
             type: 'GET',
             beforeSend: function () {
                 $('#btn-refresh-riwayat-cppt').prop('disabled', true).find('i').addClass('fa-spin');
@@ -225,20 +259,60 @@
                 data.forEach((item, index) => {
                     let tanggal = new Date(item.TANGGAL).toLocaleDateString('id-ID', {
                         day: '2-digit',
-                        month: 'long',
+                        month: 'short',
                         year: 'numeric',
                         hour: '2-digit',
                         minute: '2-digit'
                     });
+                    let tanggalDaftar = new Date(item.TGLPENDAFTARAN).toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    });
 
-                    let card = `<div class="accordion card" id="heading${item.ID_CPPT}">
+                    starForm = '';
+                    btnHide = '';
+                    if (res.form) {
+                        if (item.ID_CPPT == res.form.id_cppt) {
+                            starForm = `<span class="badge bg-danger me-1" data-bs-toggle="tooltip" title="CPPT Formulir KFR Saat Ini"><i class="fas fa-star"></i></span>`;
+                            btnHide = 'disabled';
+                        }
+                    }
+                    let card = `<div class="accordion card" id="headingkfr${item.ID_CPPT}">
                                     <div class="accordion-item">
-                                        <h2 class="accordion-header">
-                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${item.ID_CPPT}" aria-expanded="true" aria-controls="collapseOne">
-                                                <b class="text-pink-900">${tanggal}</b><i class="fas fa-arrow-right text-primary ms-2 me-2"></i><b>CPPT Oleh <u>${item.NAMAUSER}</u></b>
+                                        <h2 class="accordion-header position-relative">
+                                            <button class="accordion-button collapsed text-start"
+                                                    type="button"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#collapsekfr${item.ID_CPPT}">
+                                                <div class="d-flex flex-column w-100 min-w-0 pe-5">
+                                                    <div class="text-truncate w-100">
+                                                        ${starForm}
+                                                        ${kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
+                                                        <b class="text-teal-900" data-bs-toggle="tooltip" title="Nama Ruangan">${item.NAMARUANGAN}</b>
+                                                        <i class="fas fa-angle-right mx-1"></i>
+                                                        <b class="text-pink-900" data-bs-toggle="tooltip" title="Tgl. Pendaftaran Kunjungan">${tanggalDaftar}</b>
+                                                        <i class="fas fa-angle-right mx-1"></i>
+                                                        <b class="text-purple-900" data-bs-toggle="tooltip" title="Nama Dokter DPJP">${item.NAMADPJP}</b>
+                                                    </div>
+                                                    <div class="small mt-1 text-truncate w-100">
+                                                        <b data-bs-toggle="tooltip" title="Nama User Input CPPT"><i class="fas fa-user-md text-primary me-1"></i>
+                                                        CPPT Oleh <u>${item.NAMAUSER}</u></b> —
+                                                        <b data-bs-toggle="tooltip" title="Tanggal Input CPPT">Pada Tgl. ${tanggal} WIB</b>
+                                                    </div>
+                                                </div>
                                             </button>
+                                            <div class="position-absolute top-50 end-0 translate-middle-y me-5 d-flex gap-1" style="z-index: 3;">
+                                                <button class="btn btn-sm btn-warning"
+                                                        id="btn-copy-cppt-form-kfr-${item.ID_CPPT}"
+                                                        onclick="event.stopPropagation(); copyCpptFormKfr(${item.ID_CPPT});"
+                                                        data-bs-toggle="tooltip"
+                                                        title="Copy CPPT" ${btnHide}>
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
                                         </h2>
-                                        <div id="collapse${item.ID_CPPT}" class="accordion-collapse collapse" data-bs-parent="#heading${item.ID_CPPT}">
+                                        <div id="collapsekfr${item.ID_CPPT}" class="accordion-collapse collapse" data-bs-parent="#headingkfr${item.ID_CPPT}">
                                             <div class="accordion-body">
                                                 <p style="white-space: pre-line"><b class="text-primary">Subjective:</b><br>${item.SUBYEKTIF?nl(item.SUBYEKTIF):'-'}</p>
                                                 <p style="white-space: pre-line"><b class="text-primary">Objective:</b><br>${item.OBYEKTIF?nl(item.OBYEKTIF):'-'}</p>
@@ -272,6 +346,102 @@
         });
     }
 
+    function copyCpptFormKfr(IDCPPT) {
+        const btn = $('#btn-copy-cppt-form-kfr-' + IDCPPT);
+        // const tgl_sep_date = tgl_sep.substring(0, 10);
+        $.ajax({
+            url: `/api/emr/kfr/${kunjungan}/cppt/${IDCPPT}/copy`,
+            type: 'GET',
+            beforeSend: function () {
+                btn.prop('disabled', true)
+                    .find('i')
+                    .addClass('fa-spin');
+            },
+            success: function(res) {
+                if (!res.status) {
+                    Swal.fire({title: 'Maaf!', text: res.message, icon: 'warning', timer: 5000, timerProgressBar: true});
+                    btn.prop('disabled', false)
+                        .find('i')
+                        .removeClass('fa-sync fa-spin')
+                        .addClass('fa-copy');
+                    loadFormKfr();
+                    return;
+                }
+
+                // Isi Form CPPT KFR
+                if (!res.data.PLANNING) {
+                    $('#cppt_s').val(htmlToTextarea(res.data.SUBYEKTIF));
+                    $('#cppt_o').val(htmlToTextarea(res.data.OBYEKTIF));
+                    $('#cppt_a').val(htmlToTextarea(res.data.ASSESMENT));
+                    $('#cppt_p_1').val(htmlToTextarea(res.data.PLANNING1));
+                    $('#cppt_p_2').val(htmlToTextarea(res.data.PLANNING2));
+                    $('#cppt_p_3').val(htmlToTextarea(res.data.PLANNING3));
+                    $('#cppt_p_4').val(htmlToTextarea(res.data.PLANNING4));
+                    $('#cppt_i').val(res.data.CPPT_I).trigger('change');
+                    $('#cppt_i_rtl').val(htmlToTextarea(res.data.CPPT_I_RTL));
+                } else {
+                    $('#cppt_s').val(htmlToTextarea(res.data.SUBYEKTIF));
+                    $('#cppt_o').val(htmlToTextarea(res.data.OBYEKTIF));
+                    $('#cppt_a').val(htmlToTextarea(res.data.ASSESMENT));
+                    $('#cppt_p_1').val('');
+                    $('#cppt_p_2').val(htmlToTextarea(res.data.PLANNING));
+                    $('#cppt_p_3').val('');
+                    $('#cppt_p_4').val('');
+                    $('#cppt_i').val(res.data.CPPT_I).trigger('change');
+                    $('#cppt_i_rtl').val(htmlToTextarea(res.data.CPPT_I_RTL));
+                }
+
+                // Atur Tombol dan Hidden Input
+                if (res.form) {
+                    if (res.form.nomor_init !== kunjungan) { // Jika Kunjungan / Form KFR Tidak UTAMA
+                        $('#btn-kosongi-form-kfr').prop('hidden', true);
+                        $('#btn-simpan-form-kfr').prop('hidden', true);
+                        $('#form-kfr-utama').prop('hidden', true);
+                        $('#btn-update-form-kfr').prop('hidden', true);
+                        $('#btn-buka-update-form-kfr').prop('hidden', false);
+                        $('#btn-generate-form-kfr').prop('hidden', true);
+                        $('#btn-lihat-form-kfr').prop('hidden', false);
+                        $('#btn-unsync-form-lama').prop('hidden', false);
+                        $('#btn-hapus-form-kfr').prop('hidden', true).prop('disabled', true);
+    
+                        $('#id_cppt_kfr').val(res.form.id_cppt);
+                    } else { // Jika Kunjungan / Form KFR Adalah Form UTAMA
+                        $('#btn-kosongi-form-kfr').prop('hidden', true);
+                        $('#btn-simpan-form-kfr').prop('hidden', true);
+                        $('#form-kfr-utama').prop('hidden', false);
+                        $('#btn-update-form-kfr').prop('hidden', false);
+                        $('#btn-buka-update-form-kfr').prop('hidden', true);
+                        $('#btn-generate-form-kfr').prop('hidden', false);
+                        $('#btn-lihat-form-kfr').prop('hidden', false);
+                        $('#btn-unsync-form-lama').prop('hidden', true);
+    
+                        if (!res.hidden_delete) {
+                            $('#btn-hapus-form-kfr').prop('hidden', false).prop('disabled', false);
+                        } else {
+                            $('#btn-hapus-form-kfr').prop('hidden', false).prop('disabled', true);
+                        }
+    
+                        $('#id_cppt_kfr').val(res.form.id_cppt);
+                    }
+                }
+                $('#btn-tutup-update-form-kfr').prop('hidden', false);
+            }, error: function (xhr) {
+                Swal.fire(
+                    'Gagal',
+                    xhr.responseJSON?.message ?? 'Terjadi kesalahan',
+                    'error'
+                );
+            },
+            complete: function () {
+                // always reset button (baik success maupun error)
+                btn.prop('disabled', false)
+                    .find('i')
+                    .removeClass('fa-sync fa-spin')
+                    .addClass('fa-copy');
+            }
+        })
+    }
+
     function loadRiwayatKfr() { // RIWAYAT DI GRID KANAN
         $('#load-riwayat-form-kfr').empty()
             .append(`<div class="d-flex justify-content-center">
@@ -280,7 +450,7 @@
                         </div> <a class="align-middle">Memproses Data Riwayat..</a>
                     </div>`);
         const btn = $('#btn-refresh-riwayat-form-kfr');
-        const tgl_sep_date = tgl_sep.substring(0, 10);
+        // const tgl_sep_date = tgl_sep.substring(0, 10);
         $.ajax({
             url: `/api/emr/kfr/rm/${rm}/${kunjungan}/${tgl_sep_date}`,
             type: 'GET',
@@ -376,18 +546,15 @@
                     const nomor_kunjungan_init = $(this).data('init');
 
                     // ===== LOGIC ASLI KAMU (TIDAK DIUBAH) =====
-                    if (res.data && res.data.form) {
-                        if (res.data.form.nomor_init == kunjungan) {
-                            showFormKfr();
-                            return;
-                        } else if (nomor_kunjungan == kunjungan) {
+                    if (nomor_kunjungan == kunjungan) {
+                        if (nomor_kunjungan_init == kunjungan) { // JIKA FORM YANG DIKLIK ADALAH FORM KUNJUNGAN SAAT INI UTAMA
                             showFormKfr();
                             return;
                         } else {
-                            showFormKfr(nomor_kunjungan, nomor_kunjungan_init);
+                            showFormKfr(); // JIKA FORM YANG DIKLIK ADALAH FORM KUNJUNGAN SAAT INI TAPI BUKAN UTAMA
                             return;
                         }
-                    } else {
+                    } else { // JIKA FORM YANG DIKLIK ADALAH FORM KUNJUNGAN SEBELUMNYA
                         showFormKfr(nomor_kunjungan, nomor_kunjungan_init);
                         return;
                     }

@@ -145,7 +145,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 Route::get('emr/kfr/rm/{NORM}/{KUNJUNGAN}/{TGLSEP}', [ApiNewRehabMedikController::class, 'getByRMnTgl'])->name('api.emr.kfr.getByRMnTgl');
                 Route::get('emr/kfr/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'get'])->name('api.emr.kfr.get');
                 Route::get('emr/kfr/{KUNJUNGAN}/show', [ApiNewRehabMedikController::class, 'lihatFormKfr'])->name('api.emr.kfr.lihatFormKfr');
-                Route::get('emr/kfr/{KUNJUNGAN}/cppt', [ApiNewRehabMedikController::class, 'getCppt'])->name('api.emr.kfr.getCppt');
+                Route::get('emr/kfr/{KUNJUNGAN}/cppt/{IDCPPT}/copy', [ApiNewRehabMedikController::class, 'copyCpptKfr'])->name('api.emr.kfr.copyCppt');
+                Route::get('emr/kfr/{RM}/cppt/{KUNJUNGAN}/{SEP}/{TGLSEP}', [ApiNewRehabMedikController::class, 'getCppt'])->name('api.emr.kfr.getCppt');
                 Route::get('emr/kfr/{KUNJUNGAN}/generate', [ApiNewRehabMedikController::class, 'generateUlangFormKfr'])->name('api.emr.kfr.generateUlangFormKfr');
                 Route::post('emr/kfr/sync', [ApiNewRehabMedikController::class, 'syncFormLama'])->name('api.emr.kfr.syncFormLama');
                 Route::post('emr/kfr/unsync', [ApiNewRehabMedikController::class, 'unsyncFormLama'])->name('api.emr.kfr.unsyncFormLama');
@@ -155,8 +156,9 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 Route::post('emr/kfr/destroy/all', [ApiNewRehabMedikController::class, 'destroyAll'])->name('api.emr.kfr.destroyAll');
                 // PROGRAM TERAPI
                 Route::get('emr/pterapi/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'getProgram'])->name('api.emr.pterapi.getProgram');
-                Route::get('emr/pterapi/{KUNJUNGAN}/cppt', [ApiNewRehabMedikController::class, 'getCpptProgram'])->name('api.emr.pterapi.getCpptProgram');
+                Route::get('emr/pterapi/{RM}/cppt/{KUNJUNGAN}/{SEP}/{TGLSEP}', [ApiNewRehabMedikController::class, 'getCpptProgram'])->name('api.emr.pterapi.getCpptProgram');
                 Route::get('emr/pterapi/{KUNJUNGAN}/riwayat', [ApiNewRehabMedikController::class, 'getRiwayatProgram'])->name('api.emr.pterapi.getRiwayatProgram');
+                Route::get('emr/pterapi/{KUNJUNGAN}/cppt/{IDCPPT}/copy', [ApiNewRehabMedikController::class, 'copyCpptProgram'])->name('api.emr.pterapi.copyCpptProgram');
                 Route::get('emr/pterapi/get/{KUNJUNGAN}/{GROUP}/{QUEUE}', [ApiNewRehabMedikController::class, 'getProgramEdit'])->name('api.emr.pterapi.getProgramEdit');
                 Route::put('emr/pterapi/update', [ApiNewRehabMedikController::class, 'updateProgramTerapi'])->name('api.emr.pterapi.updateProgramTerapi');
                 Route::get('emr/pterapi/{KUNJUNGAN}/{GROUP}/{QUEUE}', [ApiNewRehabMedikController::class, 'lihatFormProgramTerapi'])->name('api.emr.pterapi.lihatFormProgramTerapi');

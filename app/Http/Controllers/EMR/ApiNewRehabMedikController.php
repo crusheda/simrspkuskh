@@ -113,6 +113,20 @@ class ApiNewRehabMedikController extends Controller
         return isset($m[1]) ? trim($m[1]) : '';
     }
 
+    private function getSectionCopyCppt(string $text, string $title): ?string
+    {
+        $pattern = sprintf(
+            '/%s\s*:\s*(.*?)(?=\n[A-Z][^:\n]{2,50}\s*:|\z)/is',
+            preg_quote($title, '/')
+        );
+
+        if (preg_match($pattern, $text, $match)) {
+            return trim($match[1]);
+        }
+
+        return null;
+    }
+
     // ====================================================================================================================================
     // ==================================================  FORMULIR RAWAT JALAN KFR  ======================================================
     // ====================================================================================================================================
@@ -297,27 +311,67 @@ class ApiNewRehabMedikController extends Controller
         ]);
     }
 
-    function getCppt($KUNJUNGAN) {
+    function getCppt($RM, $KUNJUNGAN, $SEP, $TGLSEP)
+    {
+        $tgl = DB::table('pendaftaran.kunjungan')->where('NOMOR', $KUNJUNGAN)->where('STATUS','!=',0)->first();
+
+        if ($tgl) {
+            if ($tgl->KELUAR != null) {
+                $tglpush = $tgl->KELUAR;
+            } else {
+                $tglpush = $TGLSEP;
+            }
+        } else {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data Kunjungan tidak ditemukan untuk kunjungan ini'
+            ]);
+        }
+        
+        $formKfr = emr_form_kfr::where('nomor', $KUNJUNGAN)
+            ->where('status', 1)
+            ->whereNull('deleted_at')
+            ->first();
+
         $data = DB::table('medicalrecord.cppt AS cppt')
-            ->leftJoin('master.dokter as dr', function($join) {
-                $join->on('dr.ID', '=', 'cppt.TENAGA_MEDIS')
-                    ->where('dr.STATUS', '=', 1);
+            // ->leftJoin('master.dokter as dr', function($join) {
+            //     $join->on('dr.ID', '=', 'cppt.TENAGA_MEDIS')
+            //         ->where('dr.STATUS', '=', 1);
+            // })
+            ->leftJoin('master.pegawai as pg', function($join) {
+                $join->on('pg.ID', '=', 'cppt.TENAGA_MEDIS')
+                    ->where('pg.STATUS', '=', 1);
             })
             ->leftJoin('aplikasi.pengguna as pe', function($join) {
                 $join->on('pe.ID', '=', 'cppt.OLEH')
                     ->where('pe.STATUS', '=', 1);
             })
-            ->where('cppt.KUNJUNGAN', $KUNJUNGAN)
+            ->join('pendaftaran.kunjungan as kj','kj.NOMOR','=','cppt.KUNJUNGAN')
+            ->join('pendaftaran.pendaftaran as pf', function($join) use ($RM) {
+                $join->on('pf.NOMOR','=','kj.NOPEN')
+                    ->where('pf.NORM', $RM);
+            })
+            ->join('pendaftaran.penjamin AS pj','pj.NOPEN','=','pf.NOMOR')
+            ->join('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+            ->leftJoin('master.dokter AS dpjp','dpjp.ID','=','kj.DPJP')
+            ->leftJoin('master.ruangan AS ru','ru.ID','=','kj.RUANGAN')
+            // ->where('cppt.KUNJUNGAN', $KUNJUNGAN)
             ->where('cppt.STATUS', 1)
+            ->where('kj.RUANGAN',$tgl->RUANGAN)
+            ->whereDate('cppt.TANGGAL', '<=', $tglpush)
             ->select(
+                'pf.TANGGAL as TGLPENDAFTARAN',
+                'ru.DESKRIPSI AS NAMARUANGAN',
                 'cppt.ID AS ID_CPPT',
+                'cppt.KUNJUNGAN',
                 'cppt.TANGGAL',
                 'cppt.SUBYEKTIF',
                 'cppt.OBYEKTIF',
                 'cppt.ASSESMENT',
                 'cppt.PLANNING',
                 'cppt.INSTRUKSI',
-                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                DB::raw('master.getNamaLengkapPegawai(pg.NIP) AS NAMADOKTER'),
+                DB::raw('master.getNamaLengkapPegawai(dpjp.NIP) AS NAMADPJP'),
                 DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAUSER'),
             )
             ->orderBy('cppt.TANGGAL', 'DESC')
@@ -332,7 +386,116 @@ class ApiNewRehabMedikController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $data
+            'data' => $data,
+            'form' => $formKfr
+        ]);
+    }
+
+    function copyCpptKfr($KUNJUNGAN, $IDCPPT)
+    {
+        $formKfr = emr_form_kfr::where('nomor', $KUNJUNGAN)
+            ->where('status', 1)
+            ->whereNull('deleted_at')
+            ->first();
+
+        $JumlahData = DB::table('simrspku_klaim.emr_form_kfr AS kfr')
+            ->join('medicalrecord.cppt AS cppt', 'cppt.ID', '=', 'kfr.id_cppt')
+            ->where('kfr.nomor_init', $KUNJUNGAN)
+            ->where('kfr.status', 1)
+            ->count();
+
+        $hiddenDelete = true;
+        if ($JumlahData <= 1) {
+            $hiddenDelete = false;
+        }
+
+        $data = DB::table('medicalrecord.cppt AS cppt')
+            ->select(
+                'cppt.ID AS ID_CPPT',
+                'cppt.SUBYEKTIF',
+                'cppt.OBYEKTIF',
+                'cppt.ASSESMENT',
+                'cppt.PLANNING',
+                'cppt.INSTRUKSI'
+            )
+            ->where('cppt.ID', $IDCPPT)
+            ->where('cppt.STATUS', 1)
+            ->first();
+        
+        if (!$data) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data CPPT tidak ditemukan atau telah terhapus'
+            ], 404);
+        }
+
+        // Mapping
+        $planningHeaders = [
+            'Goal of Treatment',
+            'Tindakan/Program Rehabilitasi Medik',
+            'Edukasi',
+            'Frekuensi Kunjungan',
+        ];
+        
+        $planningRaw = $data->PLANNING ?? '';
+
+        // Hilangkan HTML (AMAN untuk data lama)
+        $planningText = trim(
+            preg_replace("/\r?\n/", "\n", strip_tags($planningRaw))
+        );
+
+        $hasAllSections = true;
+
+        foreach ($planningHeaders as $header) {
+            if (!preg_match('/' . preg_quote($header, '/') . '\s*:/i', $planningText)) {
+                $hasAllSections = false;
+                break;
+            }
+        }
+
+
+        // Mapping Planning & instruksi
+        $instruksi_text = trim($data->INSTRUKSI);
+        $cppt_i = 0; 
+        $cppt_i_rtl = '';
+
+        if ($hasAllSections) {
+            $data->PLANNING1 = $this->getSection($planningText, 'Goal of Treatment');
+            $data->PLANNING2 = $this->getSection($planningText, 'Tindakan/Program Rehabilitasi Medik');
+            $data->PLANNING3 = $this->getSection($planningText, 'Edukasi');
+            $data->PLANNING4 = $this->getSection($planningText, 'Frekuensi Kunjungan');
+
+            $data->PLANNING = null;
+            // unset($data->PLANNING); // optional, kalau mau dipisah full
+
+            if (str_starts_with($instruksi_text, "Evaluasi")) {
+                $cppt_i = 1;
+                $cppt_i_rtl = trim(str_replace("Evaluasi :", "", $instruksi_text));
+            } elseif (str_starts_with($instruksi_text, "Rujuk")) {
+                $cppt_i = 2;
+                $cppt_i_rtl = trim(str_replace("Rujuk :", "", $instruksi_text));
+            } elseif (str_starts_with($instruksi_text, "Selesai")) {
+                $cppt_i = 3;
+                $cppt_i_rtl = trim(str_replace("Selesai :", "", $instruksi_text));
+            }
+        } else {
+            // Tidak dipecah → kirim apa adanya
+            $data->PLANNING1 = null;
+            $data->PLANNING2 = null;
+            $data->PLANNING3 = null;
+            $data->PLANNING4 = null;
+
+            $cppt_i_rtl = $data->INSTRUKSI;
+        }
+        
+        $data->CPPT_I = $cppt_i;
+        $data->CPPT_I_RTL = $cppt_i_rtl;
+
+        return response()->json([
+            'status' => true,
+            'data' => $data,
+            'form' => $formKfr,
+            'hidden_delete' => $hiddenDelete
         ]);
     }
 
@@ -1468,7 +1631,7 @@ class ApiNewRehabMedikController extends Controller
             ->orderBy('ftr.created_at', 'DESC')
             ->get();
 
-        if (!$data) {
+        if ($data->isEmpty()) {
             return response()->json([
                 'status' => false,
                 'message'=> 'Data Formulir Program Terapi tidak ditemukan pada kunjungan ini'
@@ -1481,19 +1644,53 @@ class ApiNewRehabMedikController extends Controller
         ], 200);
     }
 
-    function getCpptProgram($KUNJUNGAN) {
+    function getCpptProgram($RM, $KUNJUNGAN, $SEP, $TGLSEP) 
+    {
+        $tgl = DB::table('pendaftaran.kunjungan')->where('NOMOR', $KUNJUNGAN)->where('STATUS','!=',0)->first();
+
+        if ($tgl) {
+            if ($tgl->KELUAR != null) {
+                $tglpush = $tgl->KELUAR;
+            } else {
+                $tglpush = $TGLSEP;
+            }
+        } else {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data Kunjungan tidak ditemukan untuk kunjungan ini'
+            ]);
+        }
+
         $data = DB::table('medicalrecord.cppt AS cppt')
-            ->leftJoin('master.dokter as dr', function($join) {
-                $join->on('dr.ID', '=', 'cppt.TENAGA_MEDIS')
-                    ->where('dr.STATUS', '=', 1);
+            // ->leftJoin('master.dokter as dr', function($join) {
+            //     $join->on('dr.ID', '=', 'cppt.TENAGA_MEDIS')
+            //         ->where('dr.STATUS', '=', 1);
+            // })
+            ->leftJoin('master.pegawai as pg', function($join) {
+                $join->on('pg.ID', '=', 'cppt.TENAGA_MEDIS')
+                    ->where('pg.STATUS', '=', 1);
             })
             ->leftJoin('aplikasi.pengguna as pe', function($join) {
                 $join->on('pe.ID', '=', 'cppt.OLEH')
                     ->where('pe.STATUS', '=', 1);
             })
-            ->where('cppt.KUNJUNGAN', $KUNJUNGAN)
+            ->join('pendaftaran.kunjungan as kj','kj.NOMOR','=','cppt.KUNJUNGAN')
+            ->join('pendaftaran.pendaftaran as pf', function($join) use ($RM) {
+                $join->on('pf.NOMOR','=','kj.NOPEN')
+                    ->where('pf.NORM', $RM);
+            })
+            ->join('pendaftaran.penjamin AS pj','pj.NOPEN','=','pf.NOMOR')
+            ->join('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+            ->leftJoin('master.dokter AS dpjp','dpjp.ID','=','kj.DPJP')
+            ->leftJoin('master.ruangan AS ru','ru.ID','=','kj.RUANGAN')
+            // ->where('cppt.KUNJUNGAN', $KUNJUNGAN)
             ->where('cppt.STATUS', 1)
+            ->where('kj.RUANGAN',$tgl->RUANGAN)
+            ->whereDate('cppt.TANGGAL', '<=', $tglpush)
             ->select(
+                'pf.TANGGAL as TGLPENDAFTARAN',
+                'ru.DESKRIPSI AS NAMARUANGAN',
+                'cppt.KUNJUNGAN',
                 'cppt.ID AS ID_CPPT',
                 'cppt.TANGGAL',
                 'cppt.SUBYEKTIF',
@@ -1501,7 +1698,8 @@ class ApiNewRehabMedikController extends Controller
                 'cppt.ASSESMENT',
                 'cppt.PLANNING',
                 'cppt.INSTRUKSI',
-                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                DB::raw('master.getNamaLengkapPegawai(pg.NIP) AS NAMADOKTER'),
+                DB::raw('master.getNamaLengkapPegawai(dpjp.NIP) AS NAMADPJP'),
                 DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAUSER'),
             )
             ->orderBy('cppt.TANGGAL', 'DESC')
@@ -1512,6 +1710,34 @@ class ApiNewRehabMedikController extends Controller
                 'status' => false,
                 'message'=> 'Data CPPT tidak ditemukan untuk kunjungan ini'
             ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function copyCpptProgram($KUNJUNGAN,$IDCPPT)
+    {
+        $data = DB::table('medicalrecord.cppt AS cppt')
+            ->select(
+                'cppt.ID AS ID_CPPT',
+                'cppt.KUNJUNGAN',
+                'cppt.SUBYEKTIF',
+                'cppt.OBYEKTIF',
+                'cppt.ASSESMENT',
+                'cppt.PLANNING AS PROCEDURE'
+            )
+            ->where('cppt.ID', $IDCPPT)
+            ->where('cppt.STATUS', 1)
+            ->first();
+        
+        if (!$data) {
+            return response()->json([
+                'status' => false,
+                'message'=> 'Data CPPT tidak ditemukan atau telah terhapus'
+            ], 404);
         }
 
         return response()->json([
@@ -2364,13 +2590,19 @@ class ApiNewRehabMedikController extends Controller
             ->first();
 
         if (!$show) {
-            abort(404);
+            return response()->json([
+                'status' => false,
+                'message'=> 'Berkas Klaim Form Program Terapi tidak ditemukan'
+            ], 404);
         }
 
         $path = storage_path('app/public/'.$show->filename);
 
         if (!file_exists($path)) {
-            abort(404);
+            return response()->json([
+                'status' => false,
+                'message'=> 'File Berkas Klaim Form Program Terapi tidak ditemukan di server'
+            ], 404);
         }
 
         return response()->file($path, [

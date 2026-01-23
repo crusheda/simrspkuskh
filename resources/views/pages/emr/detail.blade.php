@@ -295,6 +295,7 @@
         const tgl_kfr = '{{ now()->format('Y-m-d H:i:s') }}';
         const tgl_masuk = '{{ $list["show"]->MASUK }}';
         const tgl_keluar = '{{ $list["show"]->KELUAR }}';
+        const tgl_sep_date = tgl_sep.substring(0, 10);
 
         $(document).ready(function() {
             // aktifkan saat pertama kali load
