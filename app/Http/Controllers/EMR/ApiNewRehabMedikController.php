@@ -327,7 +327,7 @@ class ApiNewRehabMedikController extends Controller
                 'message'=> 'Data Kunjungan tidak ditemukan untuk kunjungan ini'
             ]);
         }
-        
+
         $formKfr = emr_form_kfr::where('nomor', $KUNJUNGAN)
             ->where('status', 1)
             ->whereNull('deleted_at')
@@ -338,14 +338,16 @@ class ApiNewRehabMedikController extends Controller
             //     $join->on('dr.ID', '=', 'cppt.TENAGA_MEDIS')
             //         ->where('dr.STATUS', '=', 1);
             // })
-            ->leftJoin('master.pegawai as pg', function($join) {
-                $join->on('pg.ID', '=', 'cppt.TENAGA_MEDIS')
-                    ->where('pg.STATUS', '=', 1);
-            })
-            ->leftJoin('aplikasi.pengguna as pe', function($join) {
-                $join->on('pe.ID', '=', 'cppt.OLEH')
-                    ->where('pe.STATUS', '=', 1);
-            })
+            // ->leftJoin('master.pegawai as pg', function($join) {
+            //     $join->on('pg.ID', '=', 'cppt.TENAGA_MEDIS')
+            //         ->where('pg.STATUS', '=', 1);
+            // })
+            // ->leftJoin('aplikasi.pengguna as pe', function($join) {
+            //     $join->on('pe.ID', '=', 'cppt.OLEH')
+            //         ->where('pe.STATUS', '=', 1);
+            // })
+            ->leftJoin('master.pegawai as pg','pg.ID', '=', 'cppt.TENAGA_MEDIS')
+            ->leftJoin('aplikasi.pengguna as pe','pe.ID', '=', 'cppt.OLEH')
             ->join('pendaftaran.kunjungan as kj','kj.NOMOR','=','cppt.KUNJUNGAN')
             ->join('pendaftaran.pendaftaran as pf', function($join) use ($RM) {
                 $join->on('pf.NOMOR','=','kj.NOPEN')
@@ -421,7 +423,7 @@ class ApiNewRehabMedikController extends Controller
             ->where('cppt.ID', $IDCPPT)
             ->where('cppt.STATUS', 1)
             ->first();
-        
+
         if (!$data) {
             return response()->json([
                 'status' => false,
@@ -436,7 +438,7 @@ class ApiNewRehabMedikController extends Controller
             'Edukasi',
             'Frekuensi Kunjungan',
         ];
-        
+
         $planningRaw = $data->PLANNING ?? '';
 
         // Hilangkan HTML (AMAN untuk data lama)
@@ -456,7 +458,7 @@ class ApiNewRehabMedikController extends Controller
 
         // Mapping Planning & instruksi
         $instruksi_text = trim($data->INSTRUKSI);
-        $cppt_i = 0; 
+        $cppt_i = 0;
         $cppt_i_rtl = '';
 
         if ($hasAllSections) {
@@ -487,7 +489,7 @@ class ApiNewRehabMedikController extends Controller
 
             $cppt_i_rtl = $data->INSTRUKSI;
         }
-        
+
         $data->CPPT_I = $cppt_i;
         $data->CPPT_I_RTL = $cppt_i_rtl;
 
@@ -1644,7 +1646,7 @@ class ApiNewRehabMedikController extends Controller
         ], 200);
     }
 
-    function getCpptProgram($RM, $KUNJUNGAN, $SEP, $TGLSEP) 
+    function getCpptProgram($RM, $KUNJUNGAN, $SEP, $TGLSEP)
     {
         $tgl = DB::table('pendaftaran.kunjungan')->where('NOMOR', $KUNJUNGAN)->where('STATUS','!=',0)->first();
 
@@ -1666,14 +1668,16 @@ class ApiNewRehabMedikController extends Controller
             //     $join->on('dr.ID', '=', 'cppt.TENAGA_MEDIS')
             //         ->where('dr.STATUS', '=', 1);
             // })
-            ->leftJoin('master.pegawai as pg', function($join) {
-                $join->on('pg.ID', '=', 'cppt.TENAGA_MEDIS')
-                    ->where('pg.STATUS', '=', 1);
-            })
-            ->leftJoin('aplikasi.pengguna as pe', function($join) {
-                $join->on('pe.ID', '=', 'cppt.OLEH')
-                    ->where('pe.STATUS', '=', 1);
-            })
+            // ->leftJoin('master.pegawai as pg', function($join) {
+            //     $join->on('pg.ID', '=', 'cppt.TENAGA_MEDIS')
+            //         ->where('pg.STATUS', '=', 1);
+            // })
+            // ->leftJoin('aplikasi.pengguna as pe', function($join) {
+            //     $join->on('pe.ID', '=', 'cppt.OLEH')
+            //         ->where('pe.STATUS', '=', 1);
+            // })
+            ->leftJoin('master.pegawai as pg','pg.ID', '=', 'cppt.TENAGA_MEDIS')
+            ->leftJoin('aplikasi.pengguna as pe','pe.ID', '=', 'cppt.OLEH')
             ->join('pendaftaran.kunjungan as kj','kj.NOMOR','=','cppt.KUNJUNGAN')
             ->join('pendaftaran.pendaftaran as pf', function($join) use ($RM) {
                 $join->on('pf.NOMOR','=','kj.NOPEN')
@@ -1732,7 +1736,7 @@ class ApiNewRehabMedikController extends Controller
             ->where('cppt.ID', $IDCPPT)
             ->where('cppt.STATUS', 1)
             ->first();
-        
+
         if (!$data) {
             return response()->json([
                 'status' => false,
