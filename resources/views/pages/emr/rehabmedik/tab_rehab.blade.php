@@ -151,6 +151,10 @@
         $.ajax({
             url: '/api/emr/pterapi/' + kunjungan,
             type: 'GET',
+            beforeSend: function() {
+                $('#btn-kosongi-form-program-terapi').prop('disabled', true).prop('hidden', false);
+                $('#btn-simpan-form-program-Terapi').prop('disabled', true).prop('hidden', false);
+            },
             success: function(res) {
                 if (!res.status) {
                     Swal.fire({

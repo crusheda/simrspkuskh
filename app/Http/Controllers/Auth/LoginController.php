@@ -37,6 +37,14 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        try {
+            DB::connection('db_aplikasi')->getPdo();
+        } catch (\Throwable $e) {
+            return back()->withErrors([
+                'name' => 'Server database sedang tidak aktif.'
+            ]);
+        }
+
         // Validasi input login (username dan password)
         $this->validateLogin($request);
 
@@ -51,7 +59,21 @@ class LoginController extends Controller
         // $credentials = $request->only($this->username(), 'password');
 
         // Gunakan DB untuk mengambil data pengguna berdasarkan username LOGIN
-        $user = Pengguna::where('LOGIN', $request->name)->first();
+        try {
+            // QUERY KE DATABASE
+            $user = Pengguna::where('LOGIN', $request->name)->first();
+        } catch (QueryException | PDOException $e) {
+
+            // KHUSUS JIKA DATABASE TIDAK TERHUBUNG
+            if (str_contains($e->getMessage(), 'SQLSTATE[HY000]')) {
+                return back()->withErrors([
+                    'name' => 'Server database sedang tidak aktif. Silakan hubungi administrator.'
+                ]);
+            }
+
+            // Error DB lain → lempar ulang
+            throw $e;
+        }
         // $user = DB::table('aplikasi.pengguna')->where('LOGIN', $credentials[$this->username()])->first();
 
         // Verifikasi password

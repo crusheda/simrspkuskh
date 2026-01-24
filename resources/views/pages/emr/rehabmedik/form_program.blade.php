@@ -55,7 +55,7 @@
                         </button>
                     </div>
                     <div class="col-sm-auto btn-page">
-                        <button class="btn btn-primary" onclick="storeFormProgramTerapi()" id="btn-simpan-form-program-Terapi" hidden>
+                        <button class="btn btn-primary" onclick="storeFormProgramTerapi()" id="btn-simpan-form-program-Terapi" disabled hidden>
                             <i class="fas fa-save me-1"></i> Simpan Formulir Baru
                         </button>
                         <button class="btn btn-light-dark" onclick="batalUpdateFormProgramTerapi()" id="btn-batal-update-form-program-terapi" data-bs-toggle="tooltip" title="Batalkan" hidden>
@@ -345,7 +345,7 @@
                 $('#btn-lihat-form-program-terapi').removeData('kunjungan group queue').prop('hidden', true);
                 $('#btn-kosongi-form-program-terapi').prop('disabled', false).prop('hidden', false);
                 $('#btn-simpan-form-program-Terapi').prop('disabled', false).prop('hidden', false);
-                
+
             }, error: function (xhr) {
                 Swal.fire(
                     'Gagal',

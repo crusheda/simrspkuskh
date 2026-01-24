@@ -197,7 +197,7 @@
     function nl(v){
         return (v ?? '').replaceAll("\r\n", "\n");
     }
-    
+
     // function decodeHtml(html) {
     //     const txt = document.createElement("textarea");
     //     txt.innerHTML = html;
@@ -403,7 +403,7 @@
                         $('#btn-lihat-form-kfr').prop('hidden', false);
                         $('#btn-unsync-form-lama').prop('hidden', false);
                         $('#btn-hapus-form-kfr').prop('hidden', true).prop('disabled', true);
-    
+
                         $('#id_cppt_kfr').val(res.form.id_cppt);
                     } else { // Jika Kunjungan / Form KFR Adalah Form UTAMA
                         $('#btn-kosongi-form-kfr').prop('hidden', true);
@@ -414,13 +414,13 @@
                         $('#btn-generate-form-kfr').prop('hidden', false);
                         $('#btn-lihat-form-kfr').prop('hidden', false);
                         $('#btn-unsync-form-lama').prop('hidden', true);
-    
+
                         if (!res.hidden_delete) {
                             $('#btn-hapus-form-kfr').prop('hidden', false).prop('disabled', false);
                         } else {
                             $('#btn-hapus-form-kfr').prop('hidden', false).prop('disabled', true);
                         }
-    
+
                         $('#id_cppt_kfr').val(res.form.id_cppt);
                     }
                 }
@@ -488,7 +488,7 @@
                     var utama = '';
                     if (res.data && res.data.form) {
                         if (res.data.form.nomor_init == item.nomor) {
-                            utama = '<span class="badge bg-danger">UTAMA</span>';
+                            utama = '<span class="badge bg-danger"><i class="fas fa-star me-1"></i> FORM UTAMA</span>';
                         }
                     }
 
@@ -501,7 +501,8 @@
                                                 <div class="row g-1">
                                                     <div class="col-6">
                                                         <h6 class="mb-1">SEP<b class="text-info">#</b>${item.sep} ${item.nomor == kunjungan?'<span class="badge bg-primary">SAAT INI</span>':''} ${utama}</h6>
-                                                        <p class="text-muted mb-0"><small><b class="text-danger">DPJP</b>: <u>${item.nama_dokter}</u></small></p>
+                                                        <p class="text-muted mb-0"><small><b class="text-danger">DPJP</b>: <u>${item.nama_dokter}</u> (${item.nip_dokter})</small></p>
+                                                        <p class="text-muted mb-0"><small><b class="text-warning">Tgl.Form</b>: <b class="me-1">${item.tgl}</b> ${item.bertemu_dokter === 1 ? '<span class="badge rounded-pill text-bg-success">Bertemu Dokter</span>' : '<span class="badge rounded-pill text-bg-danger">Tidak Bertemu Dokter</span>'}</small></p>
                                                     </div>
                                                     <div class="col-6 text-end">
                                                         <h6 class="mb-1">Kunjungan/SEP Tgl. <span class="badge text-bg-secondary ms-1">${tanggalKunj}</span></h6>
@@ -663,14 +664,25 @@
                         title: 'Hubungkan Formulir?',
                         text: `Anda akan menghubungkan Kunjungan saat ini dengan Formulir pada Kunjungan: ${nomor_init}`,
                         icon: 'question',
+                        showConfirmButton: true,
+                        showDenyButton: true,
                         showCancelButton: true,
-                        confirmButtonText: 'Ya, gunakan',
-                        cancelButtonText: 'Batal'
+                        confirmButtonText: '<i class="fas fa-user-md me-1"></i> Bertemu Dokter',
+                        denyButtonText: '<i class="fas fa-user-slash me-1"></i> Tidak Bertemu Dokter',
+                        cancelButtonText: '<i class="fas fa-times me-1"></i> Batal',
+                        confirmButtonColor: '#28a745', // hijau
+                        denyButtonColor: '#dc3545',    // merah
+                        cancelButtonColor: '#6c757d'
                     }).then((result) => {
 
                         if (result.isConfirmed) {
-                            syncFormKfrLama(nomor_init);
+                            syncFormKfrLama(nomor_init, 1); // bertemu dokter
+
+                        } else if (result.isDenied) {
+                            syncFormKfrLama(nomor_init, 0); // tidak bertemu dokter
+
                         } else {
+                            // cancel
                             $('#showListFormKfr').modal('show');
                         }
 
@@ -700,7 +712,7 @@
         });
     }
 
-    function syncFormKfrLama(nomor_init) {
+    function syncFormKfrLama(nomor_init, bertemu_dokter) {
         $.ajax({
             url: '/api/emr/kfr/sync',
             type: 'POST',
@@ -713,6 +725,7 @@
                 tgl_kfr: tgl_kfr,
                 tgl_masuk   : tgl_masuk,
                 tgl_keluar  : tgl_keluar,
+                bertemu_dokter: bertemu_dokter,
                 _token: '{{ csrf_token() }}'
             },
             beforeSend: function () {

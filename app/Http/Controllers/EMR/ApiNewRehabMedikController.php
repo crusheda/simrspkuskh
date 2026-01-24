@@ -24,84 +24,84 @@ class ApiNewRehabMedikController extends Controller
     // ==========================================================  GENERATOR PDF  =========================================================
     // ====================================================================================================================================
     // CONTROLLER FOR LIBRE OFFICE ON LINUX SERVER
-    public function libreOffice($input, $output)
-    {
-        $soffice = env('LIBREOFFICE_PATH', '/usr/bin/soffice');
-
-        // Path absolut
-        $input  = realpath($input);
-        $output = realpath($output);
-
-        if (!$input || !$output) {
-            \Log::error('Path input/output tidak valid', compact('input','output'));
-            return [false, [], -1];
-        }
-
-        // Environment aman untuk www-data
-        putenv('HOME=/tmp');
-        putenv('XDG_CACHE_HOME=/tmp');
-
-        // Profile unik per proses (ANTI TABRAKAN)
-        $profile = '/tmp/lo_' . uniqid();
-
-        // Command convert
-        $cmd = sprintf(
-            '%s --headless --nologo --nofirststartwizard ' .
-            '-env:UserInstallation=file://%s ' .
-            '--convert-to pdf %s --outdir %s 2>&1',
-            escapeshellcmd($soffice),
-            escapeshellarg($profile),
-            escapeshellarg($input),
-            escapeshellarg($output)
-        );
-
-        exec($cmd, $log, $result);
-
-        $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
-
-        // Cleanup profile
-        exec('rm -rf ' . escapeshellarg($profile));
-
-        if ($result !== 0 || !file_exists($outputPdf)) {
-            \Log::error('LibreOffice Linux gagal konversi', [
-                'cmd' => $cmd,
-                'log' => $log,
-                'result' => $result,
-            ]);
-            return [false, $log, $result];
-        }
-
-        return [true, $outputPdf, $result];
-    }
-
-    // CONTROLLER FOR LIBRE OFFICE ON WINDOWS SERVER
     // public function libreOffice($input, $output)
     // {
-    //     // LINK DOWNLOAD LIBRE OFFICE = https://www.libreoffice.org/download/download
-    //     // Ambil path dari .env (lebih fleksibel kalau update LibreOffice)
-    //     $soffice = env('LIBREOFFICE_PATH', 'C:/Program Files/LibreOffice/program/soffice.exe');
-    //     $soffice = '"'.$soffice.'"';
+    //     $soffice = env('LIBREOFFICE_PATH', '/usr/bin/soffice');
 
-    //     // 🔹 Kill proses lama dulu (biar tidak nyangkut)
-    //     exec('taskkill /IM soffice.bin /F 2> NUL');
+    //     // Path absolut
+    //     $input  = realpath($input);
+    //     $output = realpath($output);
 
-    //     // Jalankan konversi
-    //     $cmd = $soffice . ' --headless --convert-to pdf ' . escapeshellarg($input) . ' --outdir ' . escapeshellarg($output);
+    //     if (!$input || !$output) {
+    //         \Log::error('Path input/output tidak valid', compact('input','output'));
+    //         return [false, [], -1];
+    //     }
+
+    //     // Environment aman untuk www-data
+    //     putenv('HOME=/tmp');
+    //     putenv('XDG_CACHE_HOME=/tmp');
+
+    //     // Profile unik per proses (ANTI TABRAKAN)
+    //     $profile = '/tmp/lo_' . uniqid();
+
+    //     // Command convert
+    //     $cmd = sprintf(
+    //         '%s --headless --nologo --nofirststartwizard ' .
+    //         '-env:UserInstallation=file://%s ' .
+    //         '--convert-to pdf %s --outdir %s 2>&1',
+    //         escapeshellcmd($soffice),
+    //         escapeshellarg($profile),
+    //         escapeshellarg($input),
+    //         escapeshellarg($output)
+    //     );
+
     //     exec($cmd, $log, $result);
 
-    //     // 🔹 Cek hasil
     //     $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
+
+    //     // Cleanup profile
+    //     exec('rm -rf ' . escapeshellarg($profile));
+
     //     if ($result !== 0 || !file_exists($outputPdf)) {
-    //         \Log::error('LibreOffice gagal konversi', [
+    //         \Log::error('LibreOffice Linux gagal konversi', [
     //             'cmd' => $cmd,
     //             'log' => $log,
-    //             'result' => $result
+    //             'result' => $result,
     //         ]);
     //         return [false, $log, $result];
     //     }
 
-    //     return [true, $log, $result];
+    //     return [true, $outputPdf, $result];
     // }
+
+    // CONTROLLER FOR LIBRE OFFICE ON WINDOWS SERVER
+    public function libreOffice($input, $output)
+    {
+        // LINK DOWNLOAD LIBRE OFFICE = https://www.libreoffice.org/download/download
+        // Ambil path dari .env (lebih fleksibel kalau update LibreOffice)
+        $soffice = env('LIBREOFFICE_PATH', 'C:/Program Files/LibreOffice/program/soffice.exe');
+        $soffice = '"'.$soffice.'"';
+
+        // 🔹 Kill proses lama dulu (biar tidak nyangkut)
+        exec('taskkill /IM soffice.bin /F 2> NUL');
+
+        // Jalankan konversi
+        $cmd = $soffice . ' --headless --convert-to pdf ' . escapeshellarg($input) . ' --outdir ' . escapeshellarg($output);
+        exec($cmd, $log, $result);
+
+        // 🔹 Cek hasil
+        $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
+        if ($result !== 0 || !file_exists($outputPdf)) {
+            \Log::error('LibreOffice gagal konversi', [
+                'cmd' => $cmd,
+                'log' => $log,
+                'result' => $result
+            ]);
+            return [false, $log, $result];
+        }
+
+        return [true, $log, $result];
+    }
 
     public function getSection($text, $label)
     {
@@ -260,9 +260,12 @@ class ApiNewRehabMedikController extends Controller
                 'kfr.nomor',
                 DB::raw("LPAD(kfr.rm, 8, '0') as rm"),
                 DB::raw("DATE_FORMAT(kfr.tgl_init, '%e %M %Y') as tgl_init"),
+                'kfr.nip_dokter',
                 'kfr.nama_dokter',
                 'kfr.sep',
                 'kfr.tgl_sep',
+                'kfr.tgl',
+                'kfr.bertemu_dokter',
                 'kfr.created_at'
                 // DB::raw("MIN(kfr.created_at) AS created_at")
             )
@@ -515,6 +518,7 @@ class ApiNewRehabMedikController extends Controller
                 'tgl_kfr'           => 'required',
                 'tgl_masuk'         => 'required',
                 'tgl_keluar'        => 'required',
+                'bertemu_dokter'    => 'required',
             ],
             [
                 'nomor_init.required'        => 'Nomor Init Kunjungan wajib terkirim.',
@@ -525,6 +529,7 @@ class ApiNewRehabMedikController extends Controller
                 'tgl_kfr.required'           => 'Tanggal KFR wajib terkirim.',
                 'tgl_masuk.required'         => 'Tanggal Masuk Kunjungan wajib terkirim.',
                 'tgl_keluar.required'        => 'Tanggal Keluar Kunjungan wajib terkirim.',
+                'bertemu_dokter.required'    => 'Status bertemu dokter wajib terkirim.',
             ]
         );
 
@@ -596,6 +601,13 @@ class ApiNewRehabMedikController extends Controller
                 ], 404);
             }
 
+            // PERTEMUAN DOKTER
+            if ($request->bertemu_dokter) { // TRUE = BERTEMU DOKTER
+                $tglForm = $tglPush;
+            } else { // FALSE = TIDAK BERTEMU DOKTER
+                $tglForm = $formLama->tgl; // PAKAI TGL LAMA
+            }
+
             $cpptLama = DB::table('medicalrecord.cppt')
                             ->where('ID', $formLama->id_cppt)
                             // ->where('KUNJUNGAN', $formLama->nomor_init)
@@ -644,11 +656,12 @@ class ApiNewRehabMedikController extends Controller
             $formBaru->nomor = $request->nomor_kunjungan;
             $formBaru->sep = $request->sep;
             $formBaru->tgl_sep = $request->tgl_sep;
-            $formBaru->tgl = $tglPush;
+            $formBaru->tgl = $tglForm;
             $formBaru->id_ttd_dokter = $ttd_pegawai->id;
             $formBaru->ttd_dokter = $ttd_pegawai->signature_path;
             $formBaru->nip_dokter = $ttd_pegawai->nip;
             $formBaru->nama_dokter = $dokter->NAMADOKTER;
+            $formBaru->bertemu_dokter = $request->bertemu_dokter;
             $formBaru->created_at = $now;
             $formBaru->updated_at = $now;
 
@@ -684,7 +697,7 @@ class ApiNewRehabMedikController extends Controller
                 'TGLSEP'         => $request->tgl_sep,
                 'KUNJUNGAN'      => $request->nomor_kunjungan,
                 'GROUP'          => $formLama->group,
-                'TANGGAL'        => $tglPush,
+                'TANGGAL'        => $tglForm,
                 'NORM'           => $formLama->rm,
                 'NAMAPASIEN'     => $dataPasien->NAMAPASIEN ?? '',
                 'NAMADOKTER'     => $dokter->NAMADOKTER,
@@ -985,6 +998,7 @@ class ApiNewRehabMedikController extends Controller
                 'ttd_dokter'    => $ttd_pegawai->signature_path,
                 'nip_dokter'    => $ttd_pegawai->nip,
                 'nama_dokter'   => $dokter->NAMADOKTER,
+                'bertemu_dokter'=> 1,
                 'status'        => 1,
                 'user'          => auth()->id(),
                 'created_at'    => now(),
@@ -1466,7 +1480,7 @@ class ApiNewRehabMedikController extends Controller
                 ->where('id_cppt', $IDCPPT)
                 ->where('status', 1)
                 ->update([
-                    'tgl'           => $tglPush,
+                    // 'tgl'           => $tglPush,
                     'user'          => auth()->id(),
                     'updated_at'    => now(),
                     'id_ttd_dokter' => $ttd_pegawai->id,
@@ -1628,6 +1642,7 @@ class ApiNewRehabMedikController extends Controller
         $data = DB::table('simrspku_klaim.emr_form_terapi AS ftr')
             ->leftJoin('aplikasi.pengguna AS pu', 'pu.ID', '=', 'ftr.user')
             ->select('ftr.*', 'pu.NAMA AS nama_user',DB::raw('master.getNamaLengkapPegawai(pu.NIP) AS nama_lengkap_user'))
+            ->where('ftr.nomor', $KUNJUNGAN)
             ->where('ftr.status', 1)
             ->whereNull('ftr.deleted_at')
             ->orderBy('ftr.created_at', 'DESC')
@@ -1976,7 +1991,7 @@ class ApiNewRehabMedikController extends Controller
             * ========================== */
             $verify = emr_form_terapi::where('nomor',$kunjungan)
                                 ->where('group',$getKFR->group)
-                                ->where('jenis',$jenis)
+                                // ->where('jenis',$jenis)
                                 ->where('status',1)
                                 ->whereNull('deleted_at')
                                 ->count();
@@ -2066,7 +2081,7 @@ class ApiNewRehabMedikController extends Controller
             [
                 'rm'           => 'required|integer',
                 'kunjungan'    => 'required',
-                'queue'     => 'required',
+                'queue'        => 'required',
                 'sep'          => 'required',
                 'tgl_sep'      => 'required|date',
                 'tgl'          => 'required|date',
@@ -2280,8 +2295,8 @@ class ApiNewRehabMedikController extends Controller
             $show = (object)[
                 'TGLSEP'            => $request->tgl_sep,
                 'KUNJUNGAN'         => $kunjungan,
-                'GROUP'             => $getKFR->group,
-                'QUEUE'             => $kode,
+                'GROUP'             => $getFtr->group,
+                'QUEUE'             => $getFtr->kode,
                 'TANGGAL'           => $tglPush,
                 'NORM'              => $request->rm,
                 'NAMAPASIEN'        => $dataPasien->NAMAPASIEN ?? '',
