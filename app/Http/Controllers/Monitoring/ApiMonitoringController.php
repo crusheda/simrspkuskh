@@ -37,6 +37,9 @@ class ApiMonitoringController extends Controller
         // Berkas = 1 = Berkas Masih Ada Catatan
         // Berkas = 2 = Berkas Sudah Lengkap
 
+        // print_r($dpjp);
+        // die();
+
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
 
         // SUB QUERY FROM ANY TABEL
@@ -151,19 +154,30 @@ class ApiMonitoringController extends Controller
 
                 // FILTER RUANGAN
                 ->when(in_array($rawat, [1, 2, 3]), function ($query) use ($rawat) {
-                    $prefix = '';
-                    switch ($rawat) {
-                        case 1:
-                            $prefix = '1020101%'; // RAJAL
-                            break;
-                        case 2:
-                            $prefix = '1020201%'; // RADAR
-                            break;
-                        case 3:
-                            $prefix = '1020301%'; // RANAP
-                            break;
-                    }
-                    $query->where('pk.RUANGAN', 'LIKE', $prefix);
+                    // $prefix = '';
+                    // switch ($rawat) {
+                    //     case 1:
+                    //         $prefix = '1020101%'; // RAJAL
+                    //         break;
+                    //     case 2:
+                    //         $prefix = '1020201%'; // RADAR
+                    //         break;
+                    //     case 3:
+                    //         $prefix = '1020301%'; // RANAP
+                    //         break;
+                    // }
+                    // $query->where('pk.RUANGAN', 'LIKE', $prefix);
+                    $map = [
+                        1 => ['1020101%', '1020702%'], // RAJAL (dengan REHAB MEDIK)
+                        2 => ['1020201%'],            // RADAR
+                        3 => ['1020301%'],            // RANAP
+                    ];
+
+                    $query->where(function ($q) use ($map, $rawat) {
+                        foreach ($map[$rawat] as $prefix) {
+                            $q->orWhere('pk.RUANGAN', 'LIKE', $prefix);
+                        }
+                    });
                 })
                 ->when($rawat == 5, function ($query) {
                     $query->where(function ($q) {
@@ -724,7 +738,7 @@ class ApiMonitoringController extends Controller
             $getRESUMERJ = DB::table('pendaftaran.kunjungan AS pk')
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                 ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
-                ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR')
+                ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR','pk.RUANGAN AS RUANGAN','pk.DPJP','pp.TANGGAL AS TGLPERIKSA')
                 ->where('pk.NOMOR',$kunjungan)
                 ->first();
 
@@ -777,6 +791,7 @@ class ApiMonitoringController extends Controller
 
             $data = [
                 'show' => $show,
+                'resume' => $getRESUMERJ,
                 'isExist' => $isExist,
             ];
 
@@ -817,7 +832,7 @@ class ApiMonitoringController extends Controller
 
             return response()->json([
                 'success' => true,
-                // 'id' => $pasien->kunjungan
+                'kunjungan' => $request->nama
             ]);
         }
 
@@ -827,7 +842,8 @@ class ApiMonitoringController extends Controller
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                 ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
                 ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
-                ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR','pk.RUANGAN AS RUANGAN','pk.DPJP','pp.TANGGAL AS TGLPERIKSA')
+                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR','pk.RUANGAN AS RUANGAN','pk.DPJP','dr.NIP AS NIPDOKTER','pp.TANGGAL AS TGLPERIKSA')
                 ->where('pk.NOMOR',$kunjungan)
                 ->first();
 
@@ -860,15 +876,23 @@ class ApiMonitoringController extends Controller
                                 ->where('dr.ID',$getRESUMERJ->DPJP)
                                 ->where('dr.STATUS',1)
                                 ->first();
-                $getTtdLast = DB::table('simrspku_klaim.tanda_tangan AS ttd')
-                                ->where('ttd.user',$getIDUser->ID)
-                                ->whereNull('deleted_at')
-                                ->first();
-                if ($getTtdLast) {
-                    $imagePath2 = storage_path()."/app/public/".$getTtdLast->signature_path;
+                if (str_starts_with($getRESUMERJ->RUANGAN, '1020702')) { // Khusus Rehab Medik
+                    $getTtd = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
+                        ->where('ttp.nip', $getRESUMERJ->NIPDOKTER)
+                        ->where('status', 1)
+                        ->inRandomOrder()
+                        ->first();
+                } else {
+                    $getTtd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
+                                    ->where('ttd.user',$getIDUser->ID)
+                                    ->whereNull('deleted_at')
+                                    ->first();
+                }
+                if ($getTtd) {
+                    $imagePath2 = storage_path()."/app/public/".$getTtd->signature_path;
                     DB::table('simrspku_klaim.tanda_tangan')->insert([
                         'kunjungan' => $kunjungan,
-                        'signature_path' => $getTtdLast->signature_path,
+                        'signature_path' => $getTtd->signature_path,
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now(),
                         'user' => Auth::user()->ID,

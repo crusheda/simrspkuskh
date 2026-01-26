@@ -367,8 +367,8 @@
                 <div id="canvas"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="clear" class="btn btn-link-danger"><i class="fa fa-erase me-1 align-middle"></i> Kosongkan</button>
-                <button type="button" class="btn btn-primary" id="btn-store-tte-resume" onclick="storeTTDrj()" disabled><i class="fa fa-save me-1 align-middle"></i> Simpan</button>
+                <button type="button" id="clear" class="btn btn-link-danger me-1"><i class="fa fa-erase me-1 align-middle"></i> Kosongkan</button>
+                <button type="button" class="btn btn-primary me-1" id="btn-store-tte-resume" onclick="storeTTDrj()" disabled><i class="fa fa-save me-1 align-middle"></i> Simpan</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times me-1 align-middle"></i> Tutup</button>
             </div>
         </div>
@@ -388,8 +388,8 @@
             <div class="modal-footer d-flex justify-content-between align-items-center">
                 <h6 class="m-0">Hapus Dokumen <b class="text-danger">HANYA BERLAKU</b><br>Jika Berkas Klaim <mark>Belum Diverifikasi</mark></h6>
                 <div>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-danger" onclick="hapusTtdResume()">Hapus Dokumen (Hapus TTD)</button>
+                    <button type="button" class="btn btn-secondary me-1" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i> Tutup</button>
+                    <button type="button" class="btn btn-danger" onclick="hapusTtdResume()"><i class="fas fa-trash me-1"></i> Hapus Dokumen (Hapus TTD)</button>
                 </div>
             </div>
         </div>
@@ -406,7 +406,7 @@
                 <div id="cetak-skdp"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i> Tutup</button>
                 {{-- <button type="button" class="btn btn-primary"></button> --}}
             </div>
         </div>
@@ -423,7 +423,7 @@
                 <div id="cetak-sep"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i> Tutup</button>
             </div>
         </div>
     </div>
@@ -460,7 +460,7 @@
             </div>
             <div class="modal-footer">
                 <div id="btn-refresh-catatan"></div>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-secondary ms-1" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i> Tutup</button>
             </div>
         </div>
     </div>
@@ -877,8 +877,6 @@
     }
 
     function showTTDrj(kunjungan) {
-        $("#tampil-ttd-rj").empty().append(`<hr><h5><i class="fas fa-sync fa-spin me-1"></i> Memuat Data Resume Medis</h5><hr>`);
-        $('#btn-store-tte-resume').prop('disabled',true);
         if (!isDokter) {
             iziToast.error({
                 title: 'Maaf!',
@@ -887,15 +885,32 @@
             });
             return;
         }
-        // console.log($(this).find('i'));
-        $('#show-id-ttd-rj').text(kunjungan);
-        $('#ttdrj'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
         $.ajax({
             url: "/api/pasien/"+kunjungan+"/ttdRj",
             type: 'GET',
             dataType: 'json',
+            beforeSend: function() {
+                $("#tampil-ttd-rj").empty().append(`<hr><h5><i class="fas fa-sync fa-spin me-1"></i> Memuat Data Resume Medis</h5><hr>`);
+                $('#btn-store-tte-resume').prop('disabled',true);
+                $('#ttdrj'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+            },
             success: function(res) {
                 $("#tampil-ttd-rj").empty();
+                $('#show-id-ttd-rj').text(kunjungan);
+
+                if (res.resume && res.resume.RUANGAN) {
+                    let ruangan = res.resume.RUANGAN;
+
+                    // LIKE '1020702%'
+                    if (ruangan.startsWith('1020702')) { // KHUSUS REHAB MEDIK LANGSUNG GENERATE
+                        $('#btn-showResume-'+kunjungan).empty().append(`<button type="button" class="btn btn-sm btn-icon btn-link-warning" id="resumerj`+kunjungan+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+kunjungan+`')">
+                                                                        <i class="fas fa-times fs-5 text-warning"></i>
+                                                                    </button>`);
+                        showResumeRj(kunjungan);
+                        return;
+                    }
+                }
+
                 $('#show-nama-ttd-rj').text(res.show[0].NAMAPASIEN);
                 content = ``;
                 if (res.show.length != 0) {
@@ -975,54 +990,63 @@
                     $('#btn-store-tte-resume').prop('disabled',true);
                     $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
                 }
+
+                $('#canvas').empty().append(`
+                <div class="row">
+                    <input type="hidden" id="idstorettd" value="${kunjungan}">
+
+                    <div class="col-12 col-md-5 mb-3 d-flex justify-content-center align-items-center">
+                        <canvas id="signature-pad" style="border:1px solid #ccc; width: 100%; height: 200px;"></canvas>
+                    </div>
+
+                    <div class="col-12 col-md-7">
+                        <strong>Keterangan:</strong><br>
+                        1. Gunakan perangkat layar sentuh seperti smartphone, tablet, atau laptop dengan touchpad. <br>
+                        2. Jika menggunakan komputer, pastikan memiliki mouse atau stylus (jika tersedia).<br>
+                        3. Arahkan kursor atau sentuh layar pada area canvas yang tersedia.<br>
+                        4. Gambar tanda tangan seperti pada dokumen fisik.<br>
+                        5. Gunakan tombol “Clear” atau “Hapus” jika ingin mengulang tanda tangan.<br>
+                        6. Klik tombol “Simpan”.<br>
+                    </div>
+                </div>
+                `);
+                canvas = $('#signature-pad')[0];
+                signaturePad = new SignaturePad(canvas);
+
+                // Saat submit form
+                // $('form').on('submit', function () {
+                //     if (!signaturePad.isEmpty()) {
+                //         var dataURL = signaturePad.toDataURL('image/png');
+                //         $('#signature-input').val(dataURL);
+                //     }
+                // });
+
+                // Tampilkan modal
+                $('#showTTDrj').modal('show');
+
+                // Resize canvas saat modal benar-benar muncul
+                $('#showTTDrj').off('shown.bs.modal').on('shown.bs.modal', function () {
+                    $(this).find('button').focus();
+                    resizeCanvas();
+                });
+
+                // Juga tetap lakukan resize saat window di-resize
+                $(window).off('resize').on('resize', resizeCanvas);
+
+                $('#clear').on('click', function () {
+                    signaturePad.clear();
+                });
+            }, complete: function() {
+                $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+            }, error: function(xhr, status, error) {
+                console.error('Terjadi kesalahan:', error);
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Gagal mengambil data. Coba lagi.',
+                    position: 'topRight'
+                });
             }
         })
-
-        $('#canvas').empty().append(`
-        <div class="row">
-            <input type="hidden" id="idstorettd" value="${kunjungan}">
-
-            <div class="col-12 col-md-5 mb-3 d-flex justify-content-center align-items-center">
-                <canvas id="signature-pad" style="border:1px solid #ccc; width: 100%; height: 200px;"></canvas>
-            </div>
-
-            <div class="col-12 col-md-7">
-                <strong>Keterangan:</strong><br>
-                1. Gunakan perangkat layar sentuh seperti smartphone, tablet, atau laptop dengan touchpad. <br>
-                2. Jika menggunakan komputer, pastikan memiliki mouse atau stylus (jika tersedia).<br>
-                3. Arahkan kursor atau sentuh layar pada area canvas yang tersedia.<br>
-                4. Gambar tanda tangan seperti pada dokumen fisik.<br>
-                5. Gunakan tombol “Clear” atau “Hapus” jika ingin mengulang tanda tangan.<br>
-                6. Klik tombol “Simpan”.<br>
-            </div>
-        </div>
-        `);
-        canvas = $('#signature-pad')[0];
-        signaturePad = new SignaturePad(canvas);
-
-        // Saat submit form
-        // $('form').on('submit', function () {
-        //     if (!signaturePad.isEmpty()) {
-        //         var dataURL = signaturePad.toDataURL('image/png');
-        //         $('#signature-input').val(dataURL);
-        //     }
-        // });
-
-        // Tampilkan modal
-        $('#showTTDrj').modal('show');
-
-        // Resize canvas saat modal benar-benar muncul
-        $('#showTTDrj').off('shown.bs.modal').on('shown.bs.modal', function () {
-            $(this).find('button').focus();
-            resizeCanvas();
-        });
-
-        // Juga tetap lakukan resize saat window di-resize
-        $(window).off('resize').on('resize', resizeCanvas);
-
-        $('#clear').on('click', function () {
-            signaturePad.clear();
-        });
     }
 
     function resizeCanvas()
@@ -1041,7 +1065,11 @@
             const signature = signaturePad.toDataURL('image/png');
 
             if (!nama || signaturePad.isEmpty()) {
-                alert("Nama dan tanda tangan wajib diisi.");
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Tandatangan Resume Medis wajib diisi.',
+                    position: 'topRight'
+                });
                 return;
             }
             $.ajax({
@@ -1052,6 +1080,9 @@
                 },
                 data: JSON.stringify({ nama: nama, signature: signature }),
                 contentType: 'application/json',
+                beforeSend: function() {
+                    $('#btn-store-tte-resume').prop('disabled',true).html(`<i class="fas fa-sync fa-spin me-1"></i> Menyimpan...`);
+                },
                 success: function(data) {
                     if (data.success) {
                         iziToast.success({
@@ -1059,28 +1090,24 @@
                             message: 'TTE telah berhasil disimpan.',
                             position: 'topRight'
                         });
-                        // Swal.fire({
-                        //     icon: 'success',
-                        //     title: 'Yeayy!',
-                        //     text: 'TTE telah berhasil disimpan.',
-                        //     showConfirmButton: false,
-                        //     showCancelButton: false,
-                        //     allowOutsideClick: true,
-                        //     allowEscapeKey: true,
-                        //     timer: 5000,
-                        //     timerProgressBar: true,
-                        //     backdrop: `rgba(26,27,41,0.8)`,
-                        // });
-                        $('#showTTDrj').modal('hide');
-                        filter();
-                        // refreshResume();
+                        $('#btn-showResume-'+data.kunjungan).empty().append(`<button type="button" class="btn btn-sm btn-icon btn-link-success" id="resumerj`+data.kunjungan+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+data.kunjungan+`')">
+                                                                        <i class="fas fa-check text-success"></i>
+                                                                    </button>`);
+                        // filter();
                     } else {
-                        alert("Gagal menyimpan data");
+                        iziToast.error({
+                            title: 'Maaf!',
+                            message: 'Gagal menyimpan data TTE.',
+                            position: 'topRight'
+                        });
                     }
+                },
+                complete: function() {
+                    $('#showTTDrj').modal('hide');
+                    $('#btn-store-tte-resume').prop('disabled',false).html(`<i class="fa fa-save me-1 align-middle"></i> Simpan`);
                 },
                 error: function(xhr, status, error) {
                     console.error(error);
-                    // alert("Error saat mengirim data.");
                     Swal.fire({
                         icon: 'warning',
                         title: 'Gagal Memproses Data!',
@@ -1093,7 +1120,7 @@
     function showResumeRj(kunjungan) {
         $('#idShowResumeRj').val(kunjungan);
         $('#show-id-resumeRj').text(kunjungan);
-        $('#resumerj'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+        $('#resumerj'+kunjungan).find('i').removeClass('fa-check fa-times').addClass('fa-sync fa-spin');
 
         fetch("/api/pasien/"+kunjungan+"/resumeRj")
         .then(response => {
@@ -1103,13 +1130,34 @@
             return response.blob();
         })
         .then(blob => {
-            // Buat object URL dari blob
             const fileURL = URL.createObjectURL(blob);
 
-            // Tampilkan ke iframe dalam modal
-            $('#cetak-resumerj').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
             $('#showResumeRj').modal('show');
-            $('#resumerj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+
+            $('#cetak-resumerj').append(`<div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Memuat Dokumen Resume Medis...</span>
+                                            </div>`);
+
+            const iframe = document.createElement('iframe');
+            iframe.src = fileURL;
+            iframe.width = "100%";
+            iframe.height = "500px";
+            iframe.frameBorder = "0";
+
+            iframe.onload = function () {
+                // 🔥 BARU di sini button diganti
+                $('#btn-showResume-' + kunjungan).html(`
+                    <button type="button"
+                            class="btn btn-sm btn-icon btn-link-success"
+                            id="resumerj${kunjungan}"
+                            title="Lihat Resume Medis"
+                            onclick="showResumeRj('${kunjungan}')">
+                        <i class="fas fa-check text-success"></i>
+                    </button>
+                `);
+            };
+
+            $('#cetak-resumerj').empty().append(iframe);
         })
         .catch(error => {
             iziToast.error({
