@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\File;
 use PhpOffice\PhpWord\TemplateProcessor;
 use PHPJasper\PHPJasper;
+use App\Services\LibreOfficeService;
 use Carbon\Carbon;
 use Auth, Storage;
 
@@ -23,56 +24,65 @@ class ApiNewRehabMedikController extends Controller
     // ====================================================================================================================================
     // ==========================================================  GENERATOR PDF  =========================================================
     // ====================================================================================================================================
-    // CONTROLLER FOR LIBRE OFFICE ON LINUX SERVER
-    public function libreOffice($input, $output)
+    protected LibreOfficeService $libreOffice;
+
+    public function __construct(LibreOfficeService $libreOffice)
     {
-        $soffice = env('LIBREOFFICE_PATH', '/usr/bin/soffice');
-
-        // Path absolut
-        $input  = realpath($input);
-        $output = realpath($output);
-
-        if (!$input || !$output) {
-            \Log::error('Path input/output tidak valid', compact('input','output'));
-            return [false, [], -1];
-        }
-
-        // Environment aman untuk www-data
-        putenv('HOME=/tmp');
-        putenv('XDG_CACHE_HOME=/tmp');
-
-        // Profile unik per proses (ANTI TABRAKAN)
-        $profile = '/tmp/lo_' . uniqid();
-
-        // Command convert
-        $cmd = sprintf(
-            '%s --headless --nologo --nofirststartwizard ' .
-            '-env:UserInstallation=file://%s ' .
-            '--convert-to pdf %s --outdir %s 2>&1',
-            escapeshellcmd($soffice),
-            escapeshellarg($profile),
-            escapeshellarg($input),
-            escapeshellarg($output)
-        );
-
-        exec($cmd, $log, $result);
-
-        $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
-
-        // Cleanup profile
-        exec('rm -rf ' . escapeshellarg($profile));
-
-        if ($result !== 0 || !file_exists($outputPdf)) {
-            \Log::error('LibreOffice Linux gagal konversi', [
-                'cmd' => $cmd,
-                'log' => $log,
-                'result' => $result,
-            ]);
-            return [false, $log, $result];
-        }
-
-        return [true, $outputPdf, $result];
+        $this->libreOffice = $libreOffice;
     }
+    // ====================================================================================================================================
+    // ====================================================================================================================================
+
+    // CONTROLLER FOR LIBRE OFFICE ON LINUX SERVER
+    // public function libreOffice($input, $output)
+    // {
+    //     $soffice = env('LIBREOFFICE_PATH', '/usr/bin/soffice');
+
+    //     // Path absolut
+    //     $input  = realpath($input);
+    //     $output = realpath($output);
+
+    //     if (!$input || !$output) {
+    //         \Log::error('Path input/output tidak valid', compact('input','output'));
+    //         return [false, [], -1];
+    //     }
+
+    //     // Environment aman untuk www-data
+    //     putenv('HOME=/tmp');
+    //     putenv('XDG_CACHE_HOME=/tmp');
+
+    //     // Profile unik per proses (ANTI TABRAKAN)
+    //     $profile = '/tmp/lo_' . uniqid();
+
+    //     // Command convert
+    //     $cmd = sprintf(
+    //         '%s --headless --nologo --nofirststartwizard ' .
+    //         '-env:UserInstallation=file://%s ' .
+    //         '--convert-to pdf %s --outdir %s 2>&1',
+    //         escapeshellcmd($soffice),
+    //         escapeshellarg($profile),
+    //         escapeshellarg($input),
+    //         escapeshellarg($output)
+    //     );
+
+    //     exec($cmd, $log, $result);
+
+    //     $outputPdf = $output . '/' . pathinfo($input, PATHINFO_FILENAME) . '.pdf';
+
+    //     // Cleanup profile
+    //     exec('rm -rf ' . escapeshellarg($profile));
+
+    //     if ($result !== 0 || !file_exists($outputPdf)) {
+    //         \Log::error('LibreOffice Linux gagal konversi', [
+    //             'cmd' => $cmd,
+    //             'log' => $log,
+    //             'result' => $result,
+    //         ]);
+    //         return [false, $log, $result];
+    //     }
+
+    //     return [true, $outputPdf, $result];
+    // }
 
     // CONTROLLER FOR LIBRE OFFICE ON WINDOWS SERVER
     // public function libreOffice($input, $output)
@@ -844,7 +854,6 @@ class ApiNewRehabMedikController extends Controller
                 'tgl_sep'      => 'required|date',
                 'tgl'          => 'required|date',
                 'tgl_masuk'    => 'required',
-                'tgl_keluar'   => 'required',
 
                 'cppt_s'       => 'required',
                 'cppt_o'       => 'required',
@@ -868,7 +877,6 @@ class ApiNewRehabMedikController extends Controller
                 'tgl.required'       => 'Tanggal wajib diisi.',
                 'tgl.date'           => 'Tanggal tidak valid.',
                 'tgl_masuk.required' => 'Tanggal Masuk Kunjungan wajib terkirim.',
-                'tgl_keluar.required'=> 'Tanggal Keluar Kunjungan wajib terkirim.',
 
                 'cppt_s.required'    => 'Isian Subjective wajib diisi.',
                 'cppt_o.required'    => 'Isian Objective wajib diisi.',
@@ -1153,7 +1161,7 @@ class ApiNewRehabMedikController extends Controller
         $outputWord = $output.'.docx';
         $templateProcessor->saveAs($outputWord);
 
-        [$success, $log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+        [$success, $log, $result] = $this->libreOffice->generatePdf($outputWord, dirname($outputWord));
 
         if (!$success) {
             return response()->json("Gagal membuat PDF Formulir KFR (Periksa File/Instal Ulang Libre Office di Server)", 500);
@@ -1346,7 +1354,6 @@ class ApiNewRehabMedikController extends Controller
                 'kunjungan'    => 'required',
                 'tgl'          => 'required|date',
                 'tgl_masuk'    => 'required',
-                'tgl_keluar'   => 'required',
 
                 'cppt_s'       => 'required',
                 'cppt_o'       => 'required',
@@ -1365,7 +1372,6 @@ class ApiNewRehabMedikController extends Controller
                 'tgl.required'       => 'Tanggal wajib diisi.',
                 'tgl.date'           => 'Tanggal tidak valid.',
                 'tgl_masuk.required' => 'Tanggal Masuk Kunjungan wajib terkirim.',
-                'tgl_keluar.required'=> 'Tanggal Keluar Kunjungan wajib terkirim.',
 
                 'cppt_s.required'    => 'Isian Subyektif wajib diisi.',
                 'cppt_o.required'    => 'Isian Obyektif wajib diisi.',
@@ -1814,7 +1820,6 @@ class ApiNewRehabMedikController extends Controller
                 'tgl_sep'      => 'required|date',
                 'tgl'          => 'required|date',
                 'tgl_masuk'    => 'required',
-                'tgl_keluar'   => 'required',
 
                 'cppt_s_t'     => 'required',
                 'cppt_o_t'     => 'required',
@@ -1831,7 +1836,6 @@ class ApiNewRehabMedikController extends Controller
                 'tgl.required'       => 'Tanggal wajib diisi.',
                 'tgl.date'           => 'Tanggal tidak valid.',
                 'tgl_masuk.required' => 'Tanggal Masuk Kunjungan wajib terkirim.',
-                'tgl_keluar.required'=> 'Tanggal Keluar Kunjungan wajib terkirim.',
 
                 'cppt_s_t.required'  => 'Isian Subjective wajib diisi.',
                 'cppt_o_t.required'  => 'Isian Objective wajib diisi.',
@@ -2086,7 +2090,6 @@ class ApiNewRehabMedikController extends Controller
                 'tgl_sep'      => 'required|date',
                 'tgl'          => 'required|date',
                 'tgl_masuk'    => 'required',
-                'tgl_keluar'   => 'required',
 
                 'cppt_s_t'     => 'required',
                 'cppt_o_t'     => 'required',
@@ -2104,7 +2107,6 @@ class ApiNewRehabMedikController extends Controller
                 'tgl.required'       => 'Tanggal wajib diisi.',
                 'tgl.date'           => 'Tanggal tidak valid.',
                 'tgl_masuk.required' => 'Tanggal Masuk Kunjungan wajib terkirim.',
-                'tgl_keluar.required'=> 'Tanggal Keluar Kunjungan wajib terkirim.',
 
                 'cppt_s_t.required'  => 'Isian Subjective wajib diisi.',
                 'cppt_o_t.required'  => 'Isian Objective wajib diisi.',
@@ -2411,7 +2413,7 @@ class ApiNewRehabMedikController extends Controller
         $outputWord = $output.'.docx';
         $templateProcessor->saveAs($outputWord);
 
-        [$success, $log, $result] = $this->libreOffice($outputWord, dirname($outputWord));
+        [$success, $log, $result] = $this->libreOffice->generatePdf($outputWord, dirname($outputWord));
 
         if (!$success) {
             return response()->json("Gagal membuat PDF Formulir KFR (Periksa File/Instal Ulang Libre Office di Server)", 500);

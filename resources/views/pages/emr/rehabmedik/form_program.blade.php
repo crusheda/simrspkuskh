@@ -185,6 +185,7 @@
                 loadFormProgramTerapi();
                 loadCpptProgramTerapi();
                 loadRiwayatProgramTerapi();
+                kosongiFormProgramTerapi();
             },
             error: function (xhr) {
                 Swal.fire(
@@ -693,6 +694,7 @@
                 loadFormProgramTerapi();
                 loadCpptProgramTerapi();
                 loadRiwayatProgramTerapi();
+                kosongiFormProgramTerapi();
             },
             error: function (xhr) {
                 Swal.fire(

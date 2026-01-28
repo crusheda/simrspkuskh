@@ -88,7 +88,7 @@
                         </button>
                     </li>
                     @if (Str::startsWith($list['show']->IDRUANGAN, '10207'))
-                        <li class="nav-item" role="presentation">
+                        <li class="nav-item" role="presentation" hidden> <!-- TIDAK DIPAKAI LAGI -->
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frehab" role="tab"
                                 aria-selected="false" tabindex="-1" id="tab-frehab" disabled>
                                 <i class="ph-duotone ph-archive-tray me-2"></i> Program Rehab Medik
@@ -259,7 +259,7 @@
                 </div>
             </div>
         </div>
-        <div class="tab-content">
+        <div class="tab-content" hidden> <!-- TIDAK DIPAKAI LAGI -->
             <div class="tab-pane" id="frehab" role="tabpanel">
                 @include('pages.emr.rehabmedik.form')
             </div>

@@ -20,24 +20,24 @@
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label class="form-label"><i><b>Subjective</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_s" rows="2" class="form-control" placeholder="..."></textarea>
+                            <textarea id="cppt_s" rows="3" class="form-control" placeholder="..."></textarea>
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label"><i><b>Objective</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_o" rows="2" class="form-control" placeholder="..."></textarea>
+                            <textarea id="cppt_o" rows="3" class="form-control" placeholder="..."></textarea>
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label"><i><b>Assessment</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_a" rows="2" class="form-control" placeholder="..."></textarea>
+                            <textarea id="cppt_a" rows="3" class="form-control" placeholder="..."></textarea>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="card table-card border shadow-none">
                             <div class="card-body p-3">
                                 <div class="form-group">
-                                    <label class="form-label"><i><b>Planning</b></i></label>
+                                    <label class="form-label"><i><b>Planning</b></i> <a class="text-danger">*</a></label>
                                     <input id="cppt_p_1" class="form-control mb-3" placeholder="Goal of Treatment">
-                                    <textarea id="cppt_p_2" rows="2" class="form-control mb-3" placeholder="Tindakan/Program Rehabilitasi Medik"></textarea>
+                                    <textarea id="cppt_p_2" rows="4" class="form-control mb-3" placeholder="Tindakan/Program Rehabilitasi Medik"></textarea>
                                     <input id="cppt_p_3" class="form-control mb-3" placeholder="Edukasi">
                                     <input id="cppt_p_4" class="form-control" placeholder="Frekuensi Kunjungan">
                                 </div>
@@ -1102,8 +1102,8 @@
             text: 'Data yang dihapus tidak dapat dikembalikan.',
             icon: 'warning',
             showCancelButton: true,
-            showDenyButton: true,
-            confirmButtonText: 'Hapus Hanya Form KFR Ini',
+            showDenyButton: false,
+            confirmButtonText: 'Hapus Form KFR Ini',
             denyButtonText: 'Hapus Semua Form KFR di Group',
             cancelButtonText: 'Batal Hapus'
         }).then((result) => {
