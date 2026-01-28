@@ -142,6 +142,7 @@ class EMRController extends Controller
                         ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
                     })
                     ->where('pp.NORM',$show->NORM)
+                    ->where('pp.STATUS', '!=', 0)
                     ->orderBy('pp.TANGGAL','DESC')
                     ->get();
 

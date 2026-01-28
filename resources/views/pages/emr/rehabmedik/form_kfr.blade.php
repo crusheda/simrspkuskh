@@ -240,7 +240,11 @@
                         </div> <a class="align-middle">Memproses Data Riwayat..</a>
                     </div>`);
         $.ajax({
-            url: `/api/emr/kfr/${rm}/cppt/${kunjungan}/${sep}/${tgl_sep_date}`,
+            url: `/api/emr/kfr/${rm}/cppt/${kunjungan}/${
+                tgl_sep_date
+                    ?? tgl_keluar?.substring(0, 10)
+                    ?? tgl_masuk?.substring(0, 10)
+            }`,
             type: 'GET',
             beforeSend: function () {
                 $('#btn-refresh-riwayat-cppt').prop('disabled', true).find('i').addClass('fa-spin');
@@ -452,7 +456,11 @@
         const btn = $('#btn-refresh-riwayat-form-kfr');
         // const tgl_sep_date = tgl_sep.substring(0, 10);
         $.ajax({
-            url: `/api/emr/kfr/rm/${rm}/${kunjungan}/${tgl_sep_date}`,
+            url: `/api/emr/kfr/rm/${rm}/${kunjungan}/${
+                tgl_sep_date
+                    ?? tgl_keluar?.substring(0, 10)
+                    ?? tgl_masuk?.substring(0, 10)
+            }`,
             type: 'GET',
             beforeSend: function () {
                 btn.prop('disabled', true)
@@ -500,7 +508,7 @@
                                             <div class="flex-grow-1 ms-3">
                                                 <div class="row g-1">
                                                     <div class="col-6">
-                                                        <h6 class="mb-1">SEP<b class="text-info">#</b>${item.sep} ${item.nomor == kunjungan?'<span class="badge bg-primary">SAAT INI</span>':''} ${utama}</h6>
+                                                        <h6 class="mb-1">${item.sep !=0 ?'SEP<b class="text-info">#</b>'+item.sep:'KUNJUNGAN <b class="text-danger">TANPA SEP</b>'} ${item.nomor == kunjungan?'<span class="badge bg-primary">SAAT INI</span>':''} ${utama}</h6>
                                                         <p class="text-muted mb-0"><small><b class="text-danger">DPJP</b>: <u>${item.nama_dokter}</u> (${item.nip_dokter})</small></p>
                                                         <p class="text-muted mb-0"><small><b class="text-warning">Tgl.Form</b>: <b class="me-1">${item.tgl}</b> ${item.bertemu_dokter === 1 ? '<span class="badge rounded-pill text-bg-success">Bertemu Dokter</span>' : '<span class="badge rounded-pill text-bg-danger">Tidak Bertemu Dokter</span>'}</small></p>
                                                     </div>
@@ -720,8 +728,8 @@
                 nomor_init: nomor_init,
                 nomor_kunjungan: kunjungan,
                 rm: rm,
-                sep: sep,
-                tgl_sep: tgl_sep,
+                sep: sep ?? 0,
+                tgl_sep: tgl_sep ?? tgl_masuk,
                 tgl_kfr: tgl_kfr,
                 tgl_masuk   : tgl_masuk,
                 tgl_keluar  : tgl_keluar,
@@ -824,8 +832,8 @@
             _token      : $('meta[name="csrf-token"]').attr('content'),
             rm          : rm,
             kunjungan   : kunjungan,
-            sep         : sep,
-            tgl_sep     : tgl_sep,
+            sep         : sep ?? 0,
+            tgl_sep     : tgl_sep ?? tgl_masuk,
             tgl         : tgl_kfr,
             tgl_masuk   : tgl_masuk,
             tgl_keluar  : tgl_keluar,

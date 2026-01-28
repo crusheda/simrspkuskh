@@ -61,7 +61,7 @@
                         <button class="btn btn-light-dark" onclick="batalUpdateFormProgramTerapi()" id="btn-batal-update-form-program-terapi" data-bs-toggle="tooltip" title="Batalkan" hidden>
                             <i class="fas fa-reply me-1"></i>
                         </button>
-                        <button class="btn btn-success" onclick="updateFormProgramTerapi()" id="btn-update-form-program-Terapi" data-bs-toggle="tooltip" title="Perbarui Formulir & TTE Program Terapi" hidden>
+                        <button class="btn btn-success" onclick="prosesEditProgramTerapi()" id="btn-update-form-program-Terapi" data-bs-toggle="tooltip" title="Perbarui Formulir & TTE Program Terapi" hidden>
                             <i class="fas fa-edit me-1"></i> Update Formulir
                         </button>
                     </div>
@@ -147,8 +147,8 @@
             _token      : $('meta[name="csrf-token"]').attr('content'),
             rm          : rm,
             kunjungan   : kunjungan,
-            sep         : sep,
-            tgl_sep     : tgl_sep,
+            sep         : sep ?? 0,
+            tgl_sep     : tgl_sep ?? tgl_masuk,
             tgl         : tgl_kfr,
             tgl_masuk   : tgl_masuk,
             tgl_keluar  : tgl_keluar,
@@ -212,7 +212,11 @@
                         </div> <a class="align-middle">Memproses Data Riwayat..</a>
                     </div>`);
         $.ajax({
-            url: `/api/emr/pterapi/${rm}/cppt/${kunjungan}/${sep}/${tgl_sep_date}`,
+            url: `/api/emr/pterapi/${rm}/cppt/${kunjungan}/${
+                tgl_sep_date
+                    ?? tgl_keluar?.substring(0, 10)
+                    ?? tgl_masuk?.substring(0, 10)
+            }`,
             type: 'GET',
             beforeSend: function () {
                 $('#btn-refresh-riwayat-cppt').prop('disabled', true).find('i').addClass('fa-spin');
@@ -576,7 +580,6 @@
 
     function editFormProgramTerapi(kunjungan, group, queue) {
         const btn = $('#btn-edit-form-ptr[data-queue="' + queue + '"]');
-        $('#kode_program_terapi').val(queue);
         kosongiFormProgramTerapi();
         $.ajax({
             url: `/api/emr/pterapi/get/${kunjungan}/${group}/${queue}`,
@@ -604,6 +607,8 @@
                     $('#btn-simpan-form-program-Terapi').prop('disabled', false).prop('hidden', false);
                     return;
                 }
+
+                $('#kode_program_terapi').val(queue);
 
                 $('#cppt_s_t').val(res.data.SUBYEKTIF);
                 $('#cppt_o_t').val(res.data.OBYEKTIF);
@@ -648,8 +653,8 @@
             rm          : rm,
             kunjungan   : kunjungan,
             queue       : $('#kode_program_terapi').val(),
-            sep         : sep,
-            tgl_sep     : tgl_sep,
+            sep         : sep ?? 0,
+            tgl_sep     : tgl_sep ?? tgl_masuk,
             tgl         : tgl_kfr,
             tgl_masuk   : tgl_masuk,
             tgl_keluar  : tgl_keluar,

@@ -56,8 +56,8 @@
                                         <p class="text-muted mb-0">DPJP</p>
                                     </div> --}}
                                     <div class="col-6 col-xxl-5 border border-top-0 border-bottom-0 text-start">
-                                        <p class="text-truncate text-muted mb-0 ms-3"><b>Masuk :</b>&nbsp;&nbsp;{{ \Carbon\Carbon::parse($list['show']->MASUK)->format('d M Y H.i') . ' WIB' }}</p>
-                                        <p class="text-truncate text-muted mb-0 ms-3"><b>Keluar :</b>&nbsp;&nbsp;{{ $list['show']->KELUAR?\Carbon\Carbon::parse($list['show']->KELUAR)->format('d M Y H.i') . ' WIB':'-' }}</p>
+                                        <p class="text-truncate text-muted mb-0 ms-3"><b>Masuk :</b>&nbsp;&nbsp;{{ \Carbon\Carbon::parse($list['show']->MASUK)->locale('id')->translatedFormat('d M Y H.i') . ' WIB' }}</p>
+                                        <p class="text-truncate text-muted mb-0 ms-3"><b>Keluar :</b>&nbsp;&nbsp;{{ $list['show']->KELUAR?\Carbon\Carbon::parse($list['show']->KELUAR)->locale('id')->translatedFormat('d M Y H.i') . ' WIB':'-' }}</p>
                                     </div>
                                     <div class="col-2 col-xxl-2">
                                         <p class="text-muted mb-0" style="font-size: 12px">Status</p>
@@ -234,7 +234,7 @@
                                                                 @if ($item->STATUSDAFTAR == 2)
                                                                     Selesai
                                                                 @else
-                                                                    Non Aktif
+                                                                    Non Aktif/Batal
                                                                 @endif
                                                             @endif
                                                         </p>
@@ -288,14 +288,14 @@
 
     <script>
         // INIT VARIABLE
-        const kunjungan = '{{ $list["KUNJUNGAN"] }}';
-        const rm = '{{ $list["show"]->NORM ?? '' }}';
-        const tgl_sep = '{{ $list["show"]->TGLSEP }}';
-        const sep = '{{ $list["show"]->NOSEP }}';
-        const tgl_kfr = '{{ now()->format('Y-m-d H:i:s') }}';
-        const tgl_masuk = '{{ $list["show"]->MASUK }}';
-        const tgl_keluar = '{{ $list["show"]->KELUAR }}';
-        const tgl_sep_date = tgl_sep.substring(0, 10);
+        const kunjungan = @json($list["KUNJUNGAN"]);
+        const rm = @json($list["show"]->NORM);
+        const tgl_sep = @json($list["show"]->TGLSEP);
+        const sep = @json($list["show"]->NOSEP);
+        const tgl_kfr = @json(now()->format('Y-m-d H:i:s'));
+        const tgl_masuk = @json($list["show"]->MASUK);
+        const tgl_keluar = @json($list['show']->KELUAR);
+        const tgl_sep_date = tgl_sep?tgl_sep.substring(0, 10):null;
 
         $(document).ready(function() {
             // aktifkan saat pertama kali load

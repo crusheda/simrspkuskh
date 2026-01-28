@@ -260,7 +260,7 @@ class ApiNewRehabMedikController extends Controller
         ]);
     }
 
-    function getByRMnTgl($NORM, $KUNJUNGAN, $TGLSEP) // LOAD RIWAYAT GRID KANAN
+    function getByRMnTgl($NORM, $KUNJUNGAN, $TGLS) // LOAD RIWAYAT GRID KANAN
     {
         $show = DB::table('simrspku_klaim.emr_form_kfr AS kfr')
             ->select(
@@ -281,7 +281,7 @@ class ApiNewRehabMedikController extends Controller
             )
             ->where('kfr.rm', $NORM)
             ->whereNull('kfr.deleted_at')
-            ->whereDate('kfr.tgl_sep', '<=', $TGLSEP)
+            ->whereDate('kfr.tgl_sep', '<=', $TGLS)
             // ->groupBy(
             //     'kfr.group',
             //     'kfr.nomor_init',
@@ -303,7 +303,7 @@ class ApiNewRehabMedikController extends Controller
 
         $formKfr = emr_form_kfr::where('rm', $NORM)
             ->where('nomor', $KUNJUNGAN)
-            ->whereDate('tgl_sep', $TGLSEP)
+            // ->whereDate('tgl_sep', $TGLS)
             ->where('status', 1)
             ->whereNull('deleted_at')
             ->first();
@@ -313,7 +313,7 @@ class ApiNewRehabMedikController extends Controller
         $data = [
             'rm' => $NORM,
             'kunjungan' => $KUNJUNGAN,
-            'tglsep' => $TGLSEP,
+            'tglsep' => $TGLS,
             'form' => $formKfr,
             'show' => $show
         ];
@@ -324,7 +324,7 @@ class ApiNewRehabMedikController extends Controller
         ]);
     }
 
-    function getCppt($RM, $KUNJUNGAN, $SEP, $TGLSEP)
+    function getCppt($RM, $KUNJUNGAN, $TGLS)
     {
         $tgl = DB::table('pendaftaran.kunjungan')->where('NOMOR', $KUNJUNGAN)->where('STATUS','!=',0)->first();
 
@@ -332,7 +332,7 @@ class ApiNewRehabMedikController extends Controller
             if ($tgl->KELUAR != null) {
                 $tglpush = $tgl->KELUAR;
             } else {
-                $tglpush = $TGLSEP;
+                $tglpush = $TGLS;
             }
         } else {
             return response()->json([
@@ -366,8 +366,8 @@ class ApiNewRehabMedikController extends Controller
                 $join->on('pf.NOMOR','=','kj.NOPEN')
                     ->where('pf.NORM', $RM);
             })
-            ->join('pendaftaran.penjamin AS pj','pj.NOPEN','=','pf.NOMOR')
-            ->join('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+            ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pf.NOMOR')
+            ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
             ->leftJoin('master.dokter AS dpjp','dpjp.ID','=','kj.DPJP')
             ->leftJoin('master.ruangan AS ru','ru.ID','=','kj.RUANGAN')
             // ->where('cppt.KUNJUNGAN', $KUNJUNGAN)
@@ -527,7 +527,6 @@ class ApiNewRehabMedikController extends Controller
                 'tgl_sep'           => 'required',
                 'tgl_kfr'           => 'required',
                 'tgl_masuk'         => 'required',
-                'tgl_keluar'        => 'required',
                 'bertemu_dokter'    => 'required',
             ],
             [
@@ -538,7 +537,6 @@ class ApiNewRehabMedikController extends Controller
                 'tgl_sep.required'           => 'Tanggal SEP wajib terkirim.',
                 'tgl_kfr.required'           => 'Tanggal KFR wajib terkirim.',
                 'tgl_masuk.required'         => 'Tanggal Masuk Kunjungan wajib terkirim.',
-                'tgl_keluar.required'        => 'Tanggal Keluar Kunjungan wajib terkirim.',
                 'bertemu_dokter.required'    => 'Status bertemu dokter wajib terkirim.',
             ]
         );
@@ -1667,7 +1665,7 @@ class ApiNewRehabMedikController extends Controller
         ], 200);
     }
 
-    function getCpptProgram($RM, $KUNJUNGAN, $SEP, $TGLSEP)
+    function getCpptProgram($RM, $KUNJUNGAN, $TGLS)
     {
         $tgl = DB::table('pendaftaran.kunjungan')->where('NOMOR', $KUNJUNGAN)->where('STATUS','!=',0)->first();
 
@@ -1675,7 +1673,7 @@ class ApiNewRehabMedikController extends Controller
             if ($tgl->KELUAR != null) {
                 $tglpush = $tgl->KELUAR;
             } else {
-                $tglpush = $TGLSEP;
+                $tglpush = $TGLS;
             }
         } else {
             return response()->json([
@@ -1704,8 +1702,8 @@ class ApiNewRehabMedikController extends Controller
                 $join->on('pf.NOMOR','=','kj.NOPEN')
                     ->where('pf.NORM', $RM);
             })
-            ->join('pendaftaran.penjamin AS pj','pj.NOPEN','=','pf.NOMOR')
-            ->join('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+            ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pf.NOMOR')
+            ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
             ->leftJoin('master.dokter AS dpjp','dpjp.ID','=','kj.DPJP')
             ->leftJoin('master.ruangan AS ru','ru.ID','=','kj.RUANGAN')
             // ->where('cppt.KUNJUNGAN', $KUNJUNGAN)
@@ -2296,9 +2294,9 @@ class ApiNewRehabMedikController extends Controller
             * ========================== */
             $show = (object)[
                 'TGLSEP'            => $request->tgl_sep,
-                'KUNJUNGAN'         => $kunjungan,
-                'GROUP'             => $getFtr->group,
-                'QUEUE'             => $getFtr->kode,
+                'KUNJUNGAN'         => $request->kunjungan,
+                'GROUP'             => $getKFR->group,
+                'QUEUE'             => $getFtr->queue,
                 'TANGGAL'           => $tglPush,
                 'NORM'              => $request->rm,
                 'NAMAPASIEN'        => $dataPasien->NAMAPASIEN ?? '',
@@ -2351,20 +2349,36 @@ class ApiNewRehabMedikController extends Controller
 
         $path = 'files/rehabmedik/formprogramterapi/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$show->KUNJUNGAN.'-'.$show->QUEUE;
 
-        $post = new klaim_file;
-        $post->jenis = 11;
-        $post->sub_jenis = 2;
-        $post->kode = $show->QUEUE;
-        $post->ref = $show->GROUP;
-        $post->nomor = $show->KUNJUNGAN;
-        $post->title = $show->KUNJUNGAN.'-'.$show->QUEUE.'.pdf';
-        $post->filename = $path.'.pdf';
-        $post->nama_tambahan = 'Formulir Program Terapi '.$show->QUEUE;
-        $post->status = true;
-        $post->user = Auth::user()->ID;
-        $post->created_at = now();
-        $post->updated_at = now();
-        $post->save();
+        $verify = klaim_file::where('nomor',$show->KUNJUNGAN)
+                            ->where('jenis',11)
+                            ->where('sub_jenis',2) // FORM PROGRAM TERAPI
+                            ->where('kode',$show->QUEUE)
+                            ->where('ref',$show->GROUP)
+                            ->where('status',true)
+                            ->whereNull('deleted_at')
+                            ->orderBy('id','DESC')
+                            ->first();
+
+        if (!$verify) {
+            $post = new klaim_file;
+            $post->jenis = 11;
+            $post->sub_jenis = 2;
+            $post->kode = $show->QUEUE;
+            $post->ref = $show->GROUP;
+            $post->nomor = $show->KUNJUNGAN;
+            $post->title = $show->KUNJUNGAN.'-'.$show->QUEUE.'.pdf';
+            $post->filename = $path.'.pdf';
+            $post->nama_tambahan = 'Formulir Program Terapi '.$show->QUEUE;
+            $post->status = true;
+            $post->user = Auth::user()->ID;
+            $post->created_at = now();
+            $post->updated_at = now();
+            $post->save();
+        } else {
+            $verify->user = Auth::user()->ID;
+            $verify->updated_at = now();
+            $verify->save();
+        }
 
         $output = storage_path().'/app/public/'.$path;
 
@@ -2430,7 +2444,7 @@ class ApiNewRehabMedikController extends Controller
         return false;
     }
 
-    function generateUlangFormProgramTerapi($kunjungan,$queue)
+    function generateUlangFormProgramTerapi($kunjungan,$queue) // belum dipakai
     {
         $showInit = DB::table('simrspku_klaim.emr_form_terapi')
             ->where('nomor',$kunjungan)
