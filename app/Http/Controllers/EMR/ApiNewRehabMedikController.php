@@ -1716,7 +1716,7 @@ class ApiNewRehabMedikController extends Controller
     {
         $data = DB::table('simrspku_klaim.emr_form_terapi AS ftr')
             ->leftJoin('aplikasi.pengguna AS pu', 'pu.ID', '=', 'ftr.user')
-            ->select('ftr.*', 'pu.NAMA AS nama_user',DB::raw('master.getNamaLengkapPegawai(pu.NIP) AS nama_lengkap_user'))
+            ->select('ftr.*','pu.NAMA AS nama_user',DB::raw('master.getNamaLengkapPegawai(pu.NIP) AS nama_lengkap_user'))
             ->where('ftr.nomor', $KUNJUNGAN)
             ->where('ftr.status', 1)
             ->whereNull('ftr.deleted_at')

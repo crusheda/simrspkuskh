@@ -444,10 +444,10 @@
                                                 </div>
                                             </div>
                                             <div class="flex-shrink-2 ms-4 d-flex flex-column gap-1">
-                                                <button class="btn btn-sm btn-outline-warning" data-queue="${item.queue}" id="btn-edit-form-ptr" onclick="event.stopPropagation(); editFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ubah Form Program Terapi">
+                                                <button class="btn btn-sm btn-outline-warning" data-queue="${item.queue}" id="btn-edit-form-ptr" onclick="event.stopPropagation(); editFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ubah Form Program Terapi" ${item.user != @json(auth()->user()->ID) ? "disabled" : ""}>
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-danger" data-queue="${item.queue}" id="btn-delete-form-ptr" onclick="event.stopPropagation(); deleteFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hapus Form Program Terapi">
+                                                <button class="btn btn-sm btn-outline-danger" data-queue="${item.queue}" id="btn-delete-form-ptr" onclick="event.stopPropagation(); deleteFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hapus Form Program Terapi" ${item.user != @json(auth()->user()->ID) ? "disabled" : ""}>
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>

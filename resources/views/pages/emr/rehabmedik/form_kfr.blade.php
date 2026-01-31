@@ -4,7 +4,7 @@
             <div class="card-header d-flex align-items-center justify-content-between p-3">
                 <h5 class="card-title mb-0"><i class="fas fa-file-signature me-1"></i> Formulir Rawat Jalan KFR <span class="badge bg-danger ms-1" id="form-kfr-utama" hidden>UTAMA</span></h5>
                 <div class="btn-group">
-                    @role(['admin','dokterspesialis'])
+                    @role(['admin','dokterspesialis','fisioterapis','okupasiterapi','terapiwicara'])
                         <button class="btn btn-info btn-sm" onclick="showListFormKfr()" id="btn-list-form-kfr-lama" hidden disabled><i class="ph-duotone ph-file-search me-1"></i> Gunakan Form Lama</button>
                     @endrole
                     <button class="btn btn-light-primary btn-sm" onclick="loadCpptKfr()" id="btn-refresh-riwayat-cppt" data-bs-toggle="tooltip" title="Refresh Riwayat CPPT"><i class="fas fa-sync"></i></button>
@@ -48,7 +48,7 @@
             </div>
             <div class="card-body p-3 pt-0">
                 <div class="row">
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label class="form-label"><b>Rencana Tindak Lanjut</b> <a class="text-danger">*</a></label>
                             <select class="form-select mb-2" id="cppt_i">
@@ -66,7 +66,7 @@
                         </div>
                     </div>
                     @role(['admin','dokterspesialis'])
-                    <div class="col-md-12">
+                    <div class="col-md-12 mt-3">
                         <div class="row align-items-center justify-content-between g-3">
                             <div class="col-sm-auto">
                                 <button class="btn btn-warning me-2" onclick="kosongiFormKfr()" id="btn-kosongi-form-kfr" hidden>
@@ -219,10 +219,10 @@
             const val = $(this).val();
             if (val === '1') {
                 $('#inp_cppt_i_rtl').prop('hidden', false);
-                $('#cppt_i_tgl').prop('required', true);
+                $('#cppt_i_tgl').prop('required', true).prop('disabled', false);
             } else {
                 $('#inp_cppt_i_rtl').prop('hidden', true);
-                $('#cppt_i_tgl').prop('required', false);
+                $('#cppt_i_tgl').prop('required', false).prop('disabled', true);
 
                 filterTglCpptRtl?.clear();
             }

@@ -322,7 +322,7 @@
                 if (document.referrer) {
                     window.history.back();
                 } else {
-                    window.location.href = "{{ route('klaim.index') }}"; // fallback ke klaim
+                    window.location.href = "{{ route('emr.index') }}"; // fallback ke klaim
                 }
             });
             $('[data-bs-toggle="tooltip"]').tooltip();

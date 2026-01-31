@@ -221,6 +221,8 @@
         // });
 
         // filter();
+        // alert(@json(auth()->user()->roles->first()?->name));
+        // alert(@json(auth()->user()->roles->pluck('name')));
         getRuangan();
     });
 
