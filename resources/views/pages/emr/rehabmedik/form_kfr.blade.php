@@ -57,6 +57,11 @@
                                 <option value="2">Rujuk</option>
                                 <option value="3">Selesai</option>
                             </select>
+                            <div class="input-group mb-2" id="inp_cppt_i_rtl" hidden>
+                                <span class="input-group-text"><i class="feather icon-calendar"></i></span>
+                                <input type="text" id="cppt_i_tgl" class="form-control" placeholder="Kontrol kembali ke Rumah Sakit pada Tanggal : ...">
+                                {{-- <button type="button" id="clear_tgl_i_rtl" class="btn btn-secondary">Kosongkan</button> --}}
+                            </div>
                             <textarea id="cppt_i_rtl" rows="3" class="form-control" placeholder="Tuliskan Rencana Tindak Lanjut (Wajib Diisi)"></textarea>
                         </div>
                     </div>
@@ -189,20 +194,48 @@
 </div>
 
 <script>
+    let filterTglCpptRtl = null;
     $(document).ready(function() {
         // aktifkan saat pertama kali load
         // aktifkanTabsDariHash();
+
+        const today = new Date(); // Hari ini
+        // const fiveYearsAgo = new Date();
+        const fiveYearsLater = new Date();
+        // fiveYearsAgo.setFullYear(today.getFullYear() - 5); // 5 tahun ke belakang
+        fiveYearsLater.setFullYear(today.getFullYear() + 5); // 5 tahun ke depan
+        filterTglCpptRtl = $("#cppt_i_tgl").flatpickr(
+            {
+                // enableTime: true,
+                // dateFormat: "Y-m-d H:i",
+                minDate: today, // Mulai dari hari ini
+                maxDate: fiveYearsLater,  // Sampai 5 tahun setelah hari ini
+                dateFormat: 'Y-m-d',
+                // defaultDate: today
+            }
+        );
+
+        $("#cppt_i").on("change", function () {
+            const val = $(this).val();
+            if (val === '1') {
+                $('#inp_cppt_i_rtl').prop('hidden', false);
+                $('#cppt_i_tgl').prop('required', true);
+            } else {
+                $('#inp_cppt_i_rtl').prop('hidden', true);
+                $('#cppt_i_tgl').prop('required', false);
+
+                filterTglCpptRtl?.clear();
+            }
+        });
+
+        $("#clear_tgl_i_rtl").on("click", function () {
+            filterTglCpptRtl?.clear(); // reset value flatpickr
+        });
     });
 
     function nl(v){
         return (v ?? '').replaceAll("\r\n", "\n");
     }
-
-    // function decodeHtml(html) {
-    //     const txt = document.createElement("textarea");
-    //     txt.innerHTML = html;
-    //     return txt.value;
-    // }
 
     function htmlToTextarea(html) {
         if (!html) return '';
@@ -393,6 +426,20 @@
                     $('#cppt_p_4').val('');
                     $('#cppt_i').val(res.data.CPPT_I).trigger('change');
                     $('#cppt_i_rtl').val(htmlToTextarea(res.data.CPPT_I_RTL));
+                }
+
+                if (res.data.CPPT_I == 1) {
+                    $('#inp_cppt_i_rtl').prop('hidden', false);
+                    $('#cppt_i_tgl').prop('required', true);
+                    if (res.data.CPPT_I_TGL) {
+                        filterTglCpptRtl?.setDate(res.data.CPPT_I_TGL, true);
+                    } else {
+                        filterTglCpptRtl?.clear();
+                    }
+                } else {
+                    $('#inp_cppt_i_rtl').prop('hidden', true);
+                    $('#cppt_i_tgl').prop('required', false);
+                    filterTglCpptRtl?.clear();
                 }
 
                 // Atur Tombol dan Hidden Input
@@ -853,6 +900,7 @@
             cppt_p_4    : $('#cppt_p_4').val(),
 
             cppt_i      : $('#cppt_i').val(),
+            cppt_i_tgl  : $('#cppt_i_tgl').val(),
             cppt_i_rtl  : $('#cppt_i_rtl').val(),
         };
 
@@ -1044,6 +1092,7 @@
             cppt_p_4   : $('#cppt_p_4').val(),
 
             cppt_i     : $('#cppt_i').val(),
+            cppt_i_tgl : $('#cppt_i_tgl').val(),
             cppt_i_rtl : $('#cppt_i_rtl').val(),
         };
 
@@ -1097,6 +1146,8 @@
         $('#cppt_p_4').prop('disabled', false);
         $('#cppt_i').prop('disabled', false);
         $('#cppt_i_rtl').prop('disabled', false);
+        $('#inp_cppt_i_rtl').prop('hidden', false);
+        $('#cppt_i_tgl').prop('disabled',false);
 
         $('#btn-update-form-kfr').prop('hidden', false);
         $('#btn-tutup-update-form-kfr').prop('hidden', false);
@@ -1239,6 +1290,7 @@
         $('#cppt_p_3').val('');
         $('#cppt_p_4').val('');
         $('#cppt_i').val('0').trigger('change');
+        $('#cppt_i_tgl').val('');
         $('#cppt_i_rtl').val('');
     }
 

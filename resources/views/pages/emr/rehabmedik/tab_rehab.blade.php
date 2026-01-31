@@ -82,6 +82,9 @@
                     $('#cppt_p_3').val('').prop('disabled', false);
                     $('#cppt_p_4').val('').prop('disabled', false);
                     $('#cppt_i').val('0').trigger('change').prop('disabled', false);
+                    $('#inp_cppt_i_rtl').prop('hidden', true);
+                    $('#cppt_i_tgl').prop('required', false).prop('disabled',true);
+                    filterTglCpptRtl?.clear();
                     $('#cppt_i_rtl').val('').prop('disabled', false);
                     return;
                 }
@@ -111,6 +114,14 @@
                     $('#cppt_p_4').val(res.data.p4).prop('disabled', true);
 
                     $('#cppt_i').val(res.data.cppt_i).trigger('change').prop('disabled', true);
+                    if (res.data.cppt_i == 1) {
+                        $('#inp_cppt_i_rtl').prop('hidden', false);
+                        $('#cppt_i_tgl').prop('required', true).prop('disabled',true);
+                    } else {
+                        $('#inp_cppt_i_rtl').prop('hidden', true);
+                        $('#cppt_i_tgl').prop('required', false).prop('disabled',true);
+                        filterTglCpptRtl?.clear();
+                    }
                     $('#cppt_i_rtl').val(res.data.cppt_i_rtl).prop('disabled', true);
                 } else { // Jika Kunjungan / Form KFR Adalah Form UTAMA
                     $('#btn-kosongi-form-kfr').prop('hidden', true);
@@ -140,8 +151,24 @@
                     $('#cppt_p_3').val(res.data.p3);
                     $('#cppt_p_4').val(res.data.p4);
 
-                    $('#cppt_i').val(res.data.cppt_i).trigger('change');
+                    $('#cppt_i').val(res.data.cppt_i).trigger('change').prop('disabled', false);
+                    if (res.data.cppt_i == 1) {
+                        $('#inp_cppt_i_rtl').prop('hidden', false);
+                        $('#cppt_i_tgl').prop('required', true).prop('disabled',false);
+                    } else {
+                        $('#inp_cppt_i_rtl').prop('hidden', true);
+                        $('#cppt_i_tgl').prop('required', false).prop('disabled',true);
+                    }
                     $('#cppt_i_rtl').val(res.data.cppt_i_rtl);
+                }
+            }, complete: function(res) {
+                // pastikan data ada dan input terlihat
+                if (res.responseJSON?.data?.cppt_i_tgl) {
+                    setTimeout(() => {
+                        filterTglCpptRtl?.setDate(res.responseJSON.data.cppt_i_tgl, true);
+                    }, 10); // delay kecil supaya input visible dulu
+                } else {
+                    filterTglCpptRtl?.clear();
                 }
             }
         });
