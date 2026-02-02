@@ -40,7 +40,8 @@ class ApiKonsulController extends Controller
             ->leftJoin('pendaftaran.kunjungan AS pk', 'pk.NOMOR', '=', 'kon.KUNJUNGAN')
             ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'kon.TUJUAN')
             ->leftJoin('master.dokter AS dr', 'dr.ID', '=', 'pk.DPJP')
-            ->where('kon.KUNJUNGAN', $NOMOR);
+            ->where('kon.KUNJUNGAN', $NOMOR)
+            ->where('kon.STATUS', '!=', '0');
 
         // Query dari database simrspku_klaim.konsul
         $query2 = DB::table('simrspku_klaim.konsul AS kon')
@@ -197,8 +198,6 @@ class ApiKonsulController extends Controller
     }
     public function store(Request $request)
     {
-        // print_r($request->all());
-        // die();
         $validated = $request->validate([
             'alasan' => 'required|string',
             'permintaan' => 'required|string',
@@ -206,53 +205,79 @@ class ApiKonsulController extends Controller
             'dokter' => 'required|string',
             'kunjungan' => 'required|string',
         ]);
+
         $now = Carbon::now();
-
         $kunjungan = $request->input('kunjungan');
+        $isHariIni = $request->input('konsul_hari_ini', 0);
 
-        // Hitung sudah berapa konsul untuk kunjungan ini
-        $jumlahKonsul = DB::table('simrspku_klaim.konsul AS kon')
-                ->where('kon.KUNJUNGAN', $kunjungan)
+        // Ambil 9 digit dari KUNJUNGAN mulai dari digit ke-3
+        $kunjunganPart = substr($kunjungan, 0, 9);
+
+        // Format tanggal yymmdd
+        $tanggalPart = $now->format('ymd');
+
+        // Hitung nomor urut
+        if ($isHariIni) {
+            $jumlahKonsul = DB::table('pendaftaran.konsul')
+                ->where('KUNJUNGAN', $kunjungan)
+                ->whereDate('TANGGAL', $now->toDateString())
                 ->count();
+        } else {
+            $jumlahKonsul = DB::table('simrspku_klaim.konsul')
+                ->where('KUNJUNGAN', $kunjungan)
+                ->count();
+        }
+        $nomorUrutPart = str_pad($jumlahKonsul + 1, 4, '0', STR_PAD_LEFT);
 
-        // Nomor urut baru = jumlah konsul + 1
-        $nomorUrut = $jumlahKonsul + 1;
+        $nomorKonsul = '10' . $kunjunganPart . $tanggalPart . $nomorUrutPart;
 
-        // Format nomor urut 2 digit, contoh "01", "12"
-        $urutFormatted = str_pad($nomorUrut, 2, '0', STR_PAD_LEFT);
-
-        // Gabungkan nomor kunjungan + nomor urut
-        $nomorKonsul = $kunjungan . $urutFormatted;
-
-        $asal = DB::table('pendaftaran.kunjungan AS pk')
-            ->select(
-                'pk.*'
-            )
-            ->where('pk.NOMOR', $kunjungan)
+        // Ambil DOKTER_ASAL dari kunjungan
+        $asal = DB::table('pendaftaran.kunjungan')
+            ->where('NOMOR', $kunjungan)
             ->first();
 
-        // Simpan ke database
-        DB::table('simrspku_klaim.konsul')->insert([
-            'NOMOR' => $nomorKonsul,
-            'KUNJUNGAN' => $request->input('kunjungan'),
-            'TANGGAL' => $now,
-            'DOKTER_ASAL' => $asal ? $asal->DPJP : null,
-            'DOKTER_TUJUAN' => $request->input('dokter'),
-            'ALASAN' => $request->input('alasan'),
-            'PERMINTAAN_TINDAKAN' => $request->input('permintaan'),
-            'TUJUAN' => $request->input('tujuan'),
-            'OLEH' => $request->input('oleh'),
-            'KONSULTASI' => $request->input('layanan_konsultasi', 0),
-            'RAWAT_BERSAMA' => $request->input('layanan_rawat_bersama', 0),
-            'ALIH_RAWAT' => $request->input('layanan_alih_rawat', 0),
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
+        if ($isHariIni) {
+            // STATUS_RENCANA_OPERASI jika tujuan mengandung kode 10208
+            $statusRencanaOperasi = str_contains($request->tujuan, '10208') ? 1 : 0;
 
-        return Response::json(array(
-            'message' => 'Konsul Berhasil ditambahkan',
-            'code' => 201,
-        ));
+            DB::table('pendaftaran.konsul')->insert([
+                'NOMOR' => $nomorKonsul,
+                'KUNJUNGAN' => $kunjungan,
+                'TANGGAL' => $now,
+                'DOKTER_ASAL' => $asal?->DPJP ?? 0,
+                'DOKTER_TUJUAN' => $request->dokter,
+                'ALASAN' => $request->alasan,
+                'PERMINTAAN_TINDAKAN' => $request->permintaan,
+                'STATUS_RENCANA_OPERASI' => $statusRencanaOperasi,
+                'KODE_REQUEST_OPERASI' => '',
+                'TUJUAN' => $request->tujuan,
+                'OLEH' => $request->oleh,
+                'STATUS' => 1,
+            ]);
+        } else {
+            // Insert ke simrspku_klaim.konsul
+            DB::table('simrspku_klaim.konsul')->insert([
+                'NOMOR' => $nomorKonsul,
+                'KUNJUNGAN' => $kunjungan,
+                'TANGGAL' => $now,
+                'DOKTER_ASAL' => $asal?->DPJP ?? 0,
+                'DOKTER_TUJUAN' => $request->dokter,
+                'ALASAN' => $request->alasan,
+                'PERMINTAAN_TINDAKAN' => $request->permintaan,
+                'TUJUAN' => $request->tujuan,
+                'OLEH' => $request->oleh,
+                'KONSULTASI' => $request->input('layanan_konsultasi', 0),
+                'RAWAT_BERSAMA' => $request->input('layanan_rawat_bersama', 0),
+                'ALIH_RAWAT' => $request->input('layanan_alih_rawat', 0),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Konsul berhasil ditambahkan',
+            'code' => 201
+        ]);
     }
     public function listRuangan()
     {
@@ -273,21 +298,44 @@ class ApiKonsulController extends Controller
         return response()->json($data, 200);
     }
 
-    public function dokterByRuangan($id)
+    public function dokterByRuangan(Request $request, $id)
     {
-        $data = DB::table('master.dokter_ruangan AS mdr')
+        $konsulHariIni = $request->boolean('konsul_hari_ini');
+
+        $hariAngka = Carbon::now()->dayOfWeekIso;
+
+        $query = DB::table('master.dokter_ruangan AS mdr')
             ->select(
                 'dok.ID AS ID',
                 DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER')
             )
-            ->leftJoin('master.dokter AS dok','dok.ID','=','mdr.DOKTER')
-            ->leftJoin('master.pegawai AS peg','peg.NIP','=','dok.NIP')
+            ->join('master.dokter AS dok','dok.ID','=','mdr.DOKTER')
+            ->join('master.pegawai AS peg','peg.NIP','=','dok.NIP')
             ->where('mdr.STATUS', 1)
             ->where('dok.STATUS', 1)
-            ->where('mdr.RUANGAN', $id)
+            ->where('mdr.RUANGAN', $id);
+
+        // 🔥 FILTER KHUSUS JIKA KONSUL HARI INI
+        if ($konsulHariIni) {
+            $query
+                ->join('penjamin_rs.dpjp AS dpjp', function ($join) {
+                    $join->on('dpjp.DPJP_RS', '=', 'dok.ID')
+                        ->where('dpjp.STATUS', 1);
+                })
+                ->join('regonline.jadwal_dokter_hfis AS jd', function ($join) use ($hariAngka) {
+                    $join->on('jd.KD_DOKTER', '=', 'dpjp.DPJP_PENJAMIN')
+                        ->where('jd.STATUS', 1)
+                        ->where(function ($q) use ($hariAngka) {
+                            $q->where('jd.HARI', $hariAngka);
+                        });
+                });
+        }
+
+        $data = $query
+            ->groupBy('dok.ID', 'dok.NIP')
+            ->orderBy('NAMADOKTER')
             ->get();
-        // print_r($data);
-        // die();
+
         return response()->json($data, 200);
     }
 
@@ -517,27 +565,49 @@ class ApiKonsulController extends Controller
     }
     public function batal($nomor)
     {
+        // Cek di simrspku_klaim.konsul
         $konsul = DB::table('simrspku_klaim.konsul')
             ->where('NOMOR', $nomor)
             ->whereNull('deleted_at')
             ->first();
 
+        $tabel = 'simrspku_klaim.konsul';
+
+        // Jika tidak ditemukan, cek di pendaftaran.konsul
         if (!$konsul) {
-            return response()->json(['message' => 'Konsul tidak ditemukan atau sudah dibatalkan.'], 404);
+            $konsul = DB::table('pendaftaran.konsul')
+                ->where('NOMOR', $nomor)
+                ->first();
+
+            if (!$konsul) {
+                return response()->json(['message' => 'Konsul tidak ditemukan atau sudah dibatalkan.'], 404);
+            }
+
+            $tabel = 'pendaftaran.konsul';
         }
 
-        // Pastikan belum dijawab
-        $sudahDijawab = DB::table('simrspku_klaim.jawaban_konsul')
-            ->where('KONSUL_NOMOR', $nomor)
-            ->exists();
+        // Pastikan belum dijawab (hanya untuk tabel simrspku_klaim)
+        if ($tabel === 'simrspku_klaim.konsul') {
+            $sudahDijawab = DB::table('simrspku_klaim.jawaban_konsul')
+                ->where('KONSUL_NOMOR', $nomor)
+                ->exists();
 
-        if ($sudahDijawab) {
-            return response()->json(['message' => 'Konsul sudah dijawab, tidak dapat dibatalkan.'], 400);
+            if ($sudahDijawab) {
+                return response()->json(['message' => 'Konsul sudah dijawab, tidak dapat dibatalkan.'], 400);
+            }
         }
 
-        DB::table('simrspku_klaim.konsul')
-            ->where('NOMOR', $nomor)
-            ->update(['deleted_at' => Carbon::now()]);
+        // Lakukan pembatalan
+        if ($tabel === 'simrspku_klaim.konsul') {
+            DB::table($tabel)
+                ->where('NOMOR', $nomor)
+                ->update(['deleted_at' => Carbon::now()]);
+        } else {
+            // Untuk pendaftaran.konsul, bisa pakai STATUS = 0
+            DB::table($tabel)
+                ->where('NOMOR', $nomor)
+                ->update(['STATUS' => 0]);
+        }
 
         return response()->json(['message' => 'Konsul berhasil dibatalkan.']);
     }

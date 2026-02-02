@@ -118,7 +118,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body row g-3">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <label class="form-label">Layanan yang Diminta</label>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="layanan_konsultasi" id="layanan_konsultasi" value="1">
@@ -131,6 +131,18 @@
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="layanan_alih_rawat" id="layanan_alih_rawat" value="1">
                             <label class="form-check-label" for="layanan_alih_rawat">Alih Rawat</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Waktu Konsul</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="konsul_hari_ini" name="konsul_hari_ini" value="1">
+                            <label class="form-check-label" for="konsul_hari_ini">
+                                Konsul Hari Ini
+                            </label>
+                        </div>
+                        <div class="form-check" style="color: red;">
+                            * Ceklist jika konsul di hari yang sama
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -456,6 +468,7 @@
             layanan_konsultasi: $('#layanan_konsultasi').is(':checked') ? 1 : 0,
             layanan_rawat_bersama: $('#layanan_rawat_bersama').is(':checked') ? 1 : 0,
             layanan_alih_rawat: $('#layanan_alih_rawat').is(':checked') ? 1 : 0,
+            konsul_hari_ini: $('#konsul_hari_ini').is(':checked') ? 1 : 0,
             alasan: $('textarea[name="alasan"]').val(),
             permintaan: $('textarea[name="permintaan"]').val(),
             tujuan: $('select[name="tujuan"]').val(),
@@ -508,8 +521,20 @@
 
     // Saat ruangan dipilih, ambil dokter
     $('#select-ruangan').on('change', function () {
+        $('#select-dokter').html('<option value="">-- Pilih Dokter --</option>');
         const ruanganId = $(this).val();
         loadDokterByRuangan(ruanganId);
+    });
+
+    $('#konsul_hari_ini').on('change', function () {
+        // Reset dokter
+        $('#select-dokter').html('<option value="">-- Pilih Dokter --</option>');
+
+        // Kalau ruangan sudah dipilih, reload dokter
+        const ruanganId = $('#select-ruangan').val();
+        if (ruanganId) {
+            loadDokterByRuangan(ruanganId);
+        }
     });
 
     function loadRuangan() {
@@ -535,15 +560,24 @@
         $.ajax({
             url: `/api/emr/konsulk/ruangan/dokter/${ruanganId}`,
             type: 'GET',
+            data: {
+                konsul_hari_ini: $('#konsul_hari_ini').is(':checked') ? 1 : 0
+            },
             success: function (data) {
                 let options = '<option value="">-- Pilih Dokter --</option>';
-                data.forEach(function (dokter) {
-                    options += `<option value="${dokter.ID}">${dokter.NAMADOKTER}</option>`;
-                });
+
+                if (data.length === 0) {
+                    options += '<option value="">-- Tidak ada dokter --</option>';
+                } else {
+                    data.forEach(function (dokter) {
+                        options += `<option value="${dokter.ID}">${dokter.NAMADOKTER}</option>`;
+                    });
+                }
+
                 $('#select-dokter').html(options);
             },
             error: function () {
-                $('#select-dokter').html('<option value="">-- Tidak ada dokter --</option>');
+                $('#select-dokter').html('<option value="">-- Gagal memuat dokter --</option>');
             }
         });
     }
