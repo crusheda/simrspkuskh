@@ -2050,6 +2050,7 @@ class ApiNewRehabMedikController extends Controller
                 $nakes = $dokter->ID;
             } else {
                 $nakes = DB::table('master.pegawai')->where('NIP',Auth::user()->NIP)->where('STATUS',1)->first();
+                $nakes = $nakes->ID;
             }
             if (!$nakes) {
                 return response()->json([
