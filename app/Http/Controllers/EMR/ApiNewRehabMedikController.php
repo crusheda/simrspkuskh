@@ -2049,7 +2049,7 @@ class ApiNewRehabMedikController extends Controller
             if ($jenis == 1) {
                 $nakes = $dokter->ID;
             } else {
-                $nakes = DB::table('master.perawat')->where('NIP',Auth::user()->NIP)->where('STATUS',1)->first();
+                $nakes = DB::table('master.pegawai')->where('NIP',Auth::user()->NIP)->where('STATUS',1)->first();
             }
             if (!$nakes) {
                 return response()->json([
