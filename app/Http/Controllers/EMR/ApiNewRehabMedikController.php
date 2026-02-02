@@ -1998,11 +1998,11 @@ class ApiNewRehabMedikController extends Controller
             if ($role == 'dokterspesialis') {
                 $jenis = 1;
             } else if($role == 'fisioterapis') {
-                $jenis = 2;
+                $jenis = 10;
             } else if($role == 'okupasiterapi') {
-                $jenis = 3;
+                $jenis = 12;
             } else if($role == 'terapiwicara') {
-                $jenis = 4;
+                $jenis = 11;
             } else {
                 return response()->json([
                     'status' => false,
@@ -2045,6 +2045,19 @@ class ApiNewRehabMedikController extends Controller
             /* ==========================
             * 1. INSERT CPPT
             * ========================== */
+            $nakes = null;
+            if ($jenis == 1) {
+                $nakes = $dokter->ID;
+            } else {
+                $nakes = DB::table('master.perawat')->where('NIP',Auth::user()->NIP)->where('STATUS',1)->first();
+            }
+            if (!$nakes) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Data Tenaga Medis tidak ditemukan. Silakan Hubungi Admin.'
+                ], 404);
+            }
+
             $id_cppt = DB::table('medicalrecord.cppt')->insertGetId([
                 'KUNJUNGAN'    => $kunjungan,
                 'TANGGAL'      => $tglPush,
@@ -2053,8 +2066,8 @@ class ApiNewRehabMedikController extends Controller
                 'ASSESMENT'    => $request->cppt_a_t,
                 'PLANNING'     => $request->cppt_p_t,
                 'INSTRUKSI'    => '-',
-                'JENIS'        => 1,
-                'TENAGA_MEDIS' => $dokter->ID,
+                'JENIS'        => $jenis,
+                'TENAGA_MEDIS' => $nakes,
                 'OLEH'         => auth()->id(),
                 'STATUS'       => 1,
             ]);
