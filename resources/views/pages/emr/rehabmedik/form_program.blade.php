@@ -414,11 +414,11 @@
                     jenis = '';
                     if (item.jenis == 1) {
                         jenis = 'Dokter Spesialis';
-                    } else if (item.jenis == 2) {
+                    } else if (item.jenis == 10) {
                         jenis = 'Fisioterapi';
-                    } else if (item.jenis == 3) {
+                    } else if (item.jenis == 12) {
                         jenis = 'Okupasi Terapi';
-                    } else if (item.jenis == 4) {
+                    } else if (item.jenis == 11) {
                         jenis = 'Terapi Wicara';
                     } else {
                         jenis = 'Lainnya';
