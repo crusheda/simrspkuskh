@@ -2279,11 +2279,11 @@ class ApiNewRehabMedikController extends Controller
         if ($role == 'dokterspesialis') {
             $jenis = 1;
         } else if($role == 'fisioterapis') {
-            $jenis = 2;
+            $jenis = 10;
         } else if($role == 'okupasiterapi') {
-            $jenis = 3;
+            $jenis = 12;
         } else if($role == 'terapiwicara') {
-            $jenis = 4;
+            $jenis = 11;
         } else {
             return response()->json([
                 'status' => false,
