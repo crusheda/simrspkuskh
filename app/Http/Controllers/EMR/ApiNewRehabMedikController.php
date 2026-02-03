@@ -2712,17 +2712,104 @@ class ApiNewRehabMedikController extends Controller
         if (!$show) {
             return response()->json([
                 'status' => false,
-                'message'=> 'Berkas Klaim Form Program Terapi tidak ditemukan'
+                'message'=> 'Berkas Klaim Form Program Terapi tidak ditemukan atau terhapus dari server.'
             ], 404);
         }
 
         $path = storage_path('app/public/'.$show->filename);
 
         if (!file_exists($path)) {
-            return response()->json([
-                'status' => false,
-                'message'=> 'File Berkas Klaim Form Program Terapi tidak ditemukan di server'
-            ], 404);
+            // GET FORM FIRST
+            $form = DB::table('simrspku_klaim.emr_form_terapi')
+                ->where('nomor',$KUNJUNGAN)
+                ->where('queue',$QUEUE)
+                ->where('group',$GROUP)
+                ->where('status',1)
+                ->whereNull('deleted_at')
+                ->orderBy('id','DESC')
+                ->first();
+
+            if (!$form) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Berkas Form Program Terapi tidak ditemukan atau terhapus.'
+                ], 404);
+            }
+
+            // GET DATA PASIEN
+            $dataPasien = DB::table('master.pasien')
+                        ->select(
+                            'TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+                            DB::raw('master.getCariUmur(now(),TANGGAL_LAHIR) AS UMURPASIEN'),
+                            DB::raw('master.getNamaLengkap(NORM) AS NAMAPASIEN'),
+                            DB::raw('master.getAlamatPasienCustom(NORM) AS ALAMATPASIEN'),
+                        )
+                        ->where('NORM',$form->rm)
+                        ->where('STATUS', true)
+                        ->first();
+
+            // GET DOKTER
+            $dokter = DB::table('master.dokter as dr')
+                        ->leftJoin('aplikasi.pengguna as pe', function($join) {
+                            $join->on('pe.NIP', '=', 'dr.NIP')
+                                ->where('pe.STATUS', '=', 1);
+                        })
+                        ->select('dr.ID', 'pe.NAMA AS DOKTER', 'dr.NIP', DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'))
+                        ->where('pe.NIP', $form->nip_dokter)
+                        ->first();
+
+            // GET TIM
+            $tim = DB::table('aplikasi.pengguna as pe')
+                        ->select('pe.ID', 'pe.NIP', DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMATIM'))
+                        ->where('pe.NIP', $form->nip_tim)
+                        ->first();
+
+            // GET TTD DOKTER
+            // $ttd_pegawai_dr = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+            //     ->where('nip', $dokter->NIP)
+            //     ->where('status', 1)
+            //     ->inRandomOrder()
+            //     ->first();
+
+            // GET TTD TERAPIS
+            // $ttd_pegawai_tr = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+            //     ->where('nip', Auth::user()->NIP)
+            //     ->where('status', 1)
+            //     ->whereNull('deleted_at')
+            //     ->inRandomOrder()
+            //     ->first();
+
+            // GET CPPT
+            $cppt = DB::table('medicalrecord.cppt')->where('ID', $form->id_cppt)->first();
+
+            $show = (object)[
+                'TGLSEP'            => $form->tgl_sep,
+                'KUNJUNGAN'         => $form->nomor,
+                'GROUP'             => $form->group,
+                'QUEUE'             => $form->queue,
+                'TANGGAL'           => $form->tgl,
+                'NORM'              => $form->rm,
+                'NAMAPASIEN'        => $dataPasien->NAMAPASIEN ?? '',
+                'NAMADOKTER'        => $dokter->NAMADOKTER,
+                'NAMATIM'           => $tim->NAMATIM,
+                'TGLLAHIRPASIEN'    => $dataPasien->TGLLAHIRPASIEN ?? '',
+                'UMURPASIEN'        => $dataPasien->UMURPASIEN ?? '',
+                'ALAMATPASIEN'      => $dataPasien->ALAMATPASIEN ?? '',
+                'SUBYEKTIF'         => $cppt->SUBYEKTIF,
+                'OBYEKTIF'          => $cppt->OBYEKTIF,
+                'ASSESMENT'         => $cppt->ASSESMENT,
+                'PROCEDURE'         => $cppt->PLANNING,
+                'PATH_TTE_DOKTER'   => $form->ttd_dokter,
+                'PATH_TTE_TIM'      => $form->ttd_tim,
+            ];
+
+            /* 4. KIRIM LANGSUNG KE GENERATOR */
+            $generateForm = $this->generateFormProgramTerapi($show);
+
+            // return response()->json([
+            //     'status' => false,
+            //     'message'=> 'File Berkas Klaim Form Program Terapi tidak ditemukan di server'
+            // ], 404);
         }
 
         return response()->file($path, [

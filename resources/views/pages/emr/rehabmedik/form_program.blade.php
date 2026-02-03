@@ -562,9 +562,15 @@
             });
         })
         .catch(error => {
+            let message = 'Terjadi kesalahan pada sistem';
+
+            if (error.response && error.response.data && error.response.data.message) {
+                message = error.response.data.message;
+            }
+
             iziToast.error({
                 title: 'Maaf!',
-                message: 'Data Formulir Program Terapi tidak ditemukan atau belum digenerate.',
+                message: message,
                 position: 'topRight'
             });
             $('#iframe-pdf-ftr').on('load', function () {

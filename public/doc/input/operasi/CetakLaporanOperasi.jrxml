@@ -6,15 +6,6 @@
 	<property name="ireport.y" value="144"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="OPR-RSWS"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.unit." value="cm"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="cm"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="cm"/>
-	<property name="com.jaspersoft.studio.unit.topMargin" value="cm"/>
-	<property name="com.jaspersoft.studio.unit.bottomMargin" value="cm"/>
-	<property name="com.jaspersoft.studio.unit.leftMargin" value="cm"/>
-	<property name="com.jaspersoft.studio.unit.rightMargin" value="cm"/>
-	<property name="com.jaspersoft.studio.unit.columnWidth" value="cm"/>
-	<property name="com.jaspersoft.studio.unit.columnSpacing" value="cm"/>
 	<parameter name="PID" class="java.lang.String"/>
 	<parameter name="CETAK_HEADER" class="java.lang.String">
 		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
@@ -1170,9 +1161,9 @@
 				<text><![CDATA[Laporan Operasi]]></text>
 			</staticText>
 		</band>
-		<band height="24">
+		<band height="340">
 			<textField>
-				<reportElement x="0" y="0" width="519" height="24" uuid="e913b497-102b-4f54-9c0f-ca59dfd20010"/>
+				<reportElement x="0" y="0" width="519" height="340" uuid="e913b497-102b-4f54-9c0f-ca59dfd20010"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.5"/>
 					<leftPen lineWidth="0.5"/>
@@ -1189,7 +1180,7 @@
 	<pageFooter>
 		<band height="29">
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="ElementGroupHeight" x="1" y="0" width="518" height="29" uuid="6001e860-20b3-4f5f-8ee7-f707d52b9d60">
+				<reportElement stretchType="ElementGroupHeight" x="0" y="0" width="519" height="29" uuid="6001e860-20b3-4f5f-8ee7-f707d52b9d60">
 					<printWhenExpression><![CDATA[$P{TTE}.trim().equalsIgnoreCase( "" ) || $P{TTE} == null ? false : true]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -1270,7 +1261,7 @@
 					<leftPen lineWidth="0.75"/>
 					<bottomPen lineWidth="0.75"/>
 				</box>
-				<text><![CDATA[Implan :]]></text>
+				<text><![CDATA[]]></text>
 			</staticText>
 		</band>
 	</summary>
