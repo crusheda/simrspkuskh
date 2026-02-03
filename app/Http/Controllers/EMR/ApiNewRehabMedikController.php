@@ -2804,7 +2804,16 @@ class ApiNewRehabMedikController extends Controller
             ];
 
             /* 4. KIRIM LANGSUNG KE GENERATOR */
-            $generateForm = $this->generateFormProgramTerapi($show);
+            // $generateForm = $this->generateFormProgramTerapi($show);
+
+            try {
+                $generateForm = $this->generateFormProgramTerapi($show);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => $e->getMessage()
+                ], 500);
+            }
 
             // return response()->json([
             //     'status' => false,
