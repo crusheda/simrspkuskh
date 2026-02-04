@@ -57,7 +57,7 @@
                                 <option value="2">Rujuk</option>
                                 <option value="3">Selesai</option>
                             </select>
-                            <div class="input-group mb-2" id="inp_cppt_i_rtl" hidden>
+                            <div class="input-group mb-2" id="inp_cppt_i_rtl">
                                 <span class="input-group-text"><i class="feather icon-calendar"></i></span>
                                 <input type="text" id="cppt_i_tgl" class="form-control" placeholder="Kontrol kembali ke Rumah Sakit pada Tanggal : ...">
                                 {{-- <button type="button" id="clear_tgl_i_rtl" class="btn btn-secondary">Kosongkan</button> --}}
@@ -72,7 +72,7 @@
                                 <button class="btn btn-warning me-2" onclick="kosongiFormKfr()" id="btn-kosongi-form-kfr" hidden>
                                     <i  class="fas fa-edit me-1"></i> Kosongkan Formulir
                                 </button>
-                                <button class="btn btn-danger me-2" onclick="deleteFormKfr()" id="btn-hapus-form-kfr" data-bs-toggle="tooltip" title="Hapus Formulir KFR" hidden>
+                                <button class="btn btn-danger me-2" onclick="deleteFormKfr()" id="btn-hapus-form-kfr" data-bs-toggle="tooltip" title="Hapus Formulir KFR Utama" hidden>
                                     <i class="fas fa-trash"></i>
                                 </button>
                                 <button class="btn btn-warning me-2" onclick="generateFormKfr()" id="btn-generate-form-kfr" data-bs-toggle="tooltip" title="Generate Ulang Formulir KFR" hidden>
@@ -131,7 +131,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-cppt-kfr">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-cppt-kfr" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge text-bg-dark ms-1" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.KUNJUNGAN</span>
+                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge text-bg-dark ms-1" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.NORM</span>
                     </button>
                 </h2>
                 <div id="btn-collapse-riwayat-cppt-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-cppt-kfr" data-bs-parent="#collapse-riwayat-cppt-kfr">
@@ -315,6 +315,24 @@
                             btnHide = 'disabled';
                         }
                     }
+
+                    if (item.JENIS_CPPT == 1) {
+                        jeniscppt = 'Dokter Spesialis';
+                    } else {
+                        if (item.JENIS_CPPT == 10) {
+                            jeniscppt = 'Fisioterapis';
+                        } else {
+                            if (item.JENIS_CPPT == 11) {
+                                jeniscppt = 'Terapi Wicara';
+                            } else {
+                                if (item.JENIS_CPPT == 12) {
+                                    jeniscppt = 'Okupasi Terapis';
+                                } else {
+                                    jeniscppt = '';
+                                }
+                            }
+                        }
+                    }
                     let card = `<div class="accordion card" id="headingkfr${item.ID_CPPT}">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header position-relative">
@@ -334,8 +352,12 @@
                                                     </div>
                                                     <div class="small mt-1 text-truncate w-100">
                                                         <b data-bs-toggle="tooltip" title="Nama User Input CPPT"><i class="fas fa-user-md text-primary me-1"></i>
-                                                        CPPT Oleh <u>${item.NAMAUSER}</u></b> —
-                                                        <b data-bs-toggle="tooltip" title="Tanggal Input CPPT">Pada Tgl. ${tanggal} WIB</b>
+                                                        CPPT <b class="text-blue-900">${jeniscppt}</b> Oleh <u>${item.NAMAUSER}</u></b>
+                                                    </div>
+                                                    <div class="small mt-1 text-truncate w-100">
+                                                        <b data-bs-toggle="tooltip" title="Tanggal Input CPPT"><i class="fas fa-calendar-check text-orange-400 me-1"></i>
+                                                            Ditambahkan Tgl. ${tanggal} WIB
+                                                        </b>
                                                     </div>
                                                 </div>
                                             </button>
@@ -556,8 +578,8 @@
                                                 <div class="row g-1">
                                                     <div class="col-6">
                                                         <h6 class="mb-1">${item.sep !=0 ?'SEP<b class="text-info">#</b>'+item.sep:'KUNJUNGAN <b class="text-danger">TANPA SEP</b>'} ${item.nomor == kunjungan?'<span class="badge bg-primary">SAAT INI</span>':''} ${utama}</h6>
-                                                        <p class="text-muted mb-0"><small><b class="text-danger">DPJP</b>: <u>${item.nama_dokter}</u> (${item.nip_dokter})</small></p>
-                                                        <p class="text-muted mb-0"><small><b class="text-warning">Tgl.Form</b>: <b class="me-1">${item.tgl}</b> ${item.bertemu_dokter === 1 ? '<span class="badge rounded-pill text-bg-success">Bertemu Dokter</span>' : '<span class="badge rounded-pill text-bg-danger">Tidak Bertemu Dokter</span>'}</small></p>
+                                                        <p class="text-muted mb-0"><small><b class="text-red-900">DPJP</b>: <u>${item.nama_dokter}</u> (${item.nip_dokter})</small></p>
+                                                        <p class="text-muted mb-0"><small><b class="text-purple-900">Tgl.Form</b>: <b class="me-1">${item.tgl}</b> ${item.bertemu_dokter === 1 ? '<span class="badge rounded-pill text-bg-success">Bertemu Dokter</span>' : '<span class="badge rounded-pill text-bg-danger">Tidak Bertemu Dokter</span>'}</small></p>
                                                     </div>
                                                     <div class="col-6 text-end">
                                                         <h6 class="mb-1">Kunjungan/SEP Tgl. <span class="badge text-bg-secondary ms-1">${tanggalKunj}</span></h6>

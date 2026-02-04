@@ -94,7 +94,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-cppt-program-kfr">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-cppt-program-kfr" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge text-bg-dark ms-1" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.KUNJUNGAN</span>
+                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge text-bg-dark ms-1" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.NORM</span>
                     </button>
                 </h2>
                 <div id="btn-collapse-riwayat-cppt-program-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-cppt-program-kfr" data-bs-parent="#collapse-riwayat-cppt-program-kfr">
@@ -246,6 +246,23 @@
                         year: 'numeric'
                     });
 
+                    if (item.JENIS_CPPT == 1) {
+                        jeniscppt = 'Dokter Spesialis';
+                    } else {
+                        if (item.JENIS_CPPT == 10) {
+                            jeniscppt = 'Fisioterapis';
+                        } else {
+                            if (item.JENIS_CPPT == 11) {
+                                jeniscppt = 'Terapi Wicara';
+                            } else {
+                                if (item.JENIS_CPPT == 12) {
+                                    jeniscppt = 'Okupasi Terapis';
+                                } else {
+                                    jeniscppt = '';
+                                }
+                            }
+                        }
+                    }
                     let card = `<div class="accordion card" id="headingpterapi${item.ID_CPPT}">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header position-relative">
@@ -264,8 +281,12 @@
                                                     </div>
                                                     <div class="small mt-1 text-truncate w-100">
                                                         <b data-bs-toggle="tooltip" title="Nama User Input CPPT"><i class="fas fa-user-md text-primary me-1"></i>
-                                                        CPPT Oleh <u>${item.NAMAUSER}</u></b> —
-                                                        <b data-bs-toggle="tooltip" title="Tanggal Input CPPT">Pada Tgl. ${tanggal} WIB</b>
+                                                        CPPT <b class="text-blue-900">${jeniscppt}</b> Oleh <u>${item.NAMAUSER}</u></b>
+                                                    </div>
+                                                    <div class="small mt-1 text-truncate w-100">
+                                                        <b data-bs-toggle="tooltip" title="Tanggal Input CPPT"><i class="fas fa-calendar-check text-orange-400 me-1"></i>
+                                                            Ditambahkan Tgl. ${tanggal} WIB
+                                                        </b>
                                                     </div>
                                                 </div>
                                             </button>
@@ -432,7 +453,7 @@
                                             <div class="flex-grow-1 ms-3">
                                                 <div class="row g-1">
                                                     <div class="col-6">
-                                                        <h6 class="mb-1">PROGRAM TERAPI <b class="text-info">#</b> ${jenis}</h6>
+                                                        <h6 class="mb-1">PROGRAM TERAPI <b class="text-info">#</b> <b class="text-red-900">${jenis}</b></h6>
                                                         <p class="text-muted mb-0"><small><b class="text-danger">DPJP</b>: <u>${item.nama_dokter}</u></small></p>
                                                         <p class="text-muted mb-0"><small><b class="text-primary">TIM</b>: ${item.nama_tim}</small></p>
                                                     </div>

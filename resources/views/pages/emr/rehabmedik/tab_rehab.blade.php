@@ -117,6 +117,7 @@
                     if (res.data.cppt_i == 1) {
                         $('#inp_cppt_i_rtl').prop('hidden', false);
                         $('#cppt_i_tgl').prop('required', true).prop('disabled',true);
+                        // filterTglCpptRtl?.setDate(res.data.cppt_i_tgl, true);
                     } else {
                         $('#inp_cppt_i_rtl').prop('hidden', true);
                         $('#cppt_i_tgl').prop('required', false).prop('disabled',true);
@@ -155,18 +156,21 @@
                     if (res.data.cppt_i == 1) {
                         $('#inp_cppt_i_rtl').prop('hidden', false);
                         $('#cppt_i_tgl').prop('required', true).prop('disabled',false);
+                        // filterTglCpptRtl?.setDate(res.data.cppt_i_tgl, true);
                     } else {
                         $('#inp_cppt_i_rtl').prop('hidden', true);
                         $('#cppt_i_tgl').prop('required', false).prop('disabled',true);
+                        filterTglCpptRtl?.clear();
                     }
                     $('#cppt_i_rtl').val(res.data.cppt_i_rtl);
                 }
             }, complete: function(res) {
                 // pastikan data ada dan input terlihat
                 if (res.responseJSON?.data?.cppt_i_tgl) {
-                    setTimeout(() => {
-                        filterTglCpptRtl?.setDate(res.responseJSON.data.cppt_i_tgl, true);
-                    }, 10); // delay kecil supaya input visible dulu
+                    filterTglCpptRtl?.set('minDate', null);
+                    filterTglCpptRtl?.setDate(res.responseJSON.data.cppt_i_tgl, true);
+                    // setTimeout(() => {
+                    // }, 10); // delay kecil supaya input visible dulu
                 } else {
                     filterTglCpptRtl?.clear();
                 }

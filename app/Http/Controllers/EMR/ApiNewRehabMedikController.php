@@ -398,6 +398,7 @@ class ApiNewRehabMedikController extends Controller
                 'pf.TANGGAL as TGLPENDAFTARAN',
                 'ru.DESKRIPSI AS NAMARUANGAN',
                 'cppt.ID AS ID_CPPT',
+                'cppt.JENIS AS JENIS_CPPT',
                 'cppt.KUNJUNGAN',
                 'cppt.TANGGAL',
                 'cppt.SUBYEKTIF',
@@ -591,13 +592,29 @@ class ApiNewRehabMedikController extends Controller
             ], 422);
         }
 
+        $formLama = emr_form_kfr::where('rm', $request->rm)
+            ->where('nomor_init', $request->nomor_init)
+            // ->where('nomor', $request->nomor_init)
+            ->where('status', 1)
+            ->whereNull('deleted_at')
+            ->latest('queue')
+            ->first();
+
+        if (!$formLama) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message'=> 'Form KFR Lama tidak ditemukan / telah terhapus'
+            ], 404);
+        }
+
         $dokter = DB::table('master.dokter as dr')
                     ->leftJoin('aplikasi.pengguna as pe', function($join) {
                         $join->on('pe.NIP', '=', 'dr.NIP')
                             ->where('pe.STATUS', '=', 1);
                     })
                     ->select('dr.ID', 'pe.NAMA AS DOKTER', 'dr.NIP', DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'))
-                    ->where('pe.ID', auth()->id())
+                    ->where('pe.NIP', $formLama->nip_dokter)
                     ->where('dr.STATUS', 1)
                     ->first();
 
@@ -609,7 +626,7 @@ class ApiNewRehabMedikController extends Controller
         }
 
         $ttd_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
-            ->where('ttp.nip', $dokter->NIP)
+            ->where('ttp.nip', $formLama->nip_dokter)
             ->where('status', 1)
             ->inRandomOrder()
             ->first();
@@ -634,22 +651,6 @@ class ApiNewRehabMedikController extends Controller
                 }
             } else {
                 $tglPush = $tglMasuk->toDateString() . ' ' . now()->toTimeString();
-            }
-
-            $formLama = emr_form_kfr::where('rm', $request->rm)
-                ->where('nomor_init', $request->nomor_init)
-                // ->where('nomor', $request->nomor_init)
-                ->where('status', 1)
-                ->whereNull('deleted_at')
-                ->latest('queue')
-                ->first();
-
-            if (!$formLama) {
-                DB::rollBack();
-                return response()->json([
-                    'status' => false,
-                    'message'=> 'Form KFR Lama tidak ditemukan / telah terhapus'
-                ], 404);
             }
 
             // PERTEMUAN DOKTER
@@ -826,14 +827,6 @@ class ApiNewRehabMedikController extends Controller
         DB::beginTransaction();
 
         try {
-            $form = DB::table('simrspku_klaim.emr_form_kfr')
-                ->where('nomor', $request->nomor_kunjungan)
-                ->where('status', 1)
-                ->whereNull('deleted_at')
-                ->update([
-                    'status' => 0,
-                    'deleted_at' => now()
-                ]);
 
             $form = DB::table('simrspku_klaim.emr_form_kfr')
                 ->where('nomor', $request->nomor_kunjungan)
@@ -842,24 +835,47 @@ class ApiNewRehabMedikController extends Controller
                 ->orderByDesc('id')
                 ->first();
 
-            if ($form) {
-                $cppt = DB::table('medicalrecord.cppt')
-                    ->where('ID', $form->id_cppt)
-                    ->where('STATUS', 1)
-                    ->update([
-                        'STATUS' => 0,
-                    ]);
-
-                DB::table('simrspku_klaim.emr_form_kfr')
-                    ->where('id', $form->id)
-                    ->update([
-                        'status'     => 0,
-                        'deleted_at' => now()
-                    ]);
+            if (!$form) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Form KFR tidak ditemukan atau telah terhapus oleh Sistem'
+                ], 500);
             }
 
-            $file = DB::table('simrspku_klaim.klaim_file')
+            $cppt = DB::table('medicalrecord.cppt')
+                ->where('ID', $form->id_cppt)
+                ->where('STATUS', 1)
+                ->update([
+                    'STATUS' => 0,
+                ]);
+
+            DB::table('simrspku_klaim.emr_form_kfr')
+                ->where('id', $form->id)
+                ->update([
+                    'status'     => 0,
+                    'deleted_at' => now()
+                ]);
+
+            $getFile = DB::table('simrspku_klaim.klaim_file')
                 ->where('nomor', $request->nomor_kunjungan)
+                ->where('sub_jenis', 1)
+                ->whereNull('kode')
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->get();
+
+            foreach ($getFile as $file) {
+                $path = storage_path('app/public/' . $file->filename);
+
+                if (file_exists($path)) {
+                    unlink($path);
+                }
+            }
+
+            DB::table('simrspku_klaim.klaim_file')
+                ->where('nomor', $request->nomor_kunjungan)
+                ->where('sub_jenis', 1)
+                ->whereNull('kode')
                 ->where('status', 1)
                 ->whereNull('deleted_at')
                 ->update([
@@ -1615,9 +1631,28 @@ class ApiNewRehabMedikController extends Controller
             /* ==========================
             * 1. Hapus file klaim_file FORM KFR & Reset Status to 0
             * ========================== */
+            $getFile = DB::table('simrspku_klaim.klaim_file')
+                ->where('nomor', $form->nomor)
+                ->where('sub_jenis', 1)
+                ->whereNull('kode')
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->get();
+
+            foreach ($getFile as $file) {
+                $path = storage_path('app/public/' . $file->filename);
+
+                if (file_exists($path)) {
+                    unlink($path);
+                }
+            }
+
             DB::table('simrspku_klaim.klaim_file')
                 ->where('nomor', $form->nomor)
+                ->where('sub_jenis', 1)
+                ->whereNull('kode')
                 ->where('status', 1)
+                ->whereNull('deleted_at')
                 ->update([
                     'user_deleted'      => auth()->id(),
                     'status'            => 0,
@@ -1786,6 +1821,7 @@ class ApiNewRehabMedikController extends Controller
                 'ru.DESKRIPSI AS NAMARUANGAN',
                 'cppt.KUNJUNGAN',
                 'cppt.ID AS ID_CPPT',
+                'cppt.JENIS AS JENIS_CPPT',
                 'cppt.TANGGAL',
                 'cppt.SUBYEKTIF',
                 'cppt.OBYEKTIF',
@@ -2081,8 +2117,9 @@ class ApiNewRehabMedikController extends Controller
                                 // ->where('jenis',$jenis)
                                 ->where('status',1)
                                 ->whereNull('deleted_at')
-                                ->count();
-            $kode = $verify + 1;
+                                ->latest('queue')
+                                ->first();
+            $kode = $verify ? $verify->queue + 1 : 1;
             DB::table('simrspku_klaim.emr_form_terapi')->insert([
                 'id_cppt'       => $id_cppt,
                 'group'         => $getKFR->group,
@@ -2854,17 +2891,35 @@ class ApiNewRehabMedikController extends Controller
             /* ==========================
             * 1. Hapus file klaim_file FORM PROGRAM TERAPI & Reset Status to 0
             * ========================== */
+            $files = DB::table('simrspku_klaim.klaim_file')
+                ->where('nomor', $form->nomor)
+                ->where('sub_jenis', 2)
+                ->where('kode', $form->queue)
+                ->where('ref', $form->group)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->get();
+
+            foreach ($files as $file) {
+
+                $path = storage_path('app/public/' . $file->filename);
+
+                if (file_exists($path)) {
+                    unlink($path); // hapus file fisik
+                }
+            }
+
             DB::table('simrspku_klaim.klaim_file')
                 ->where('nomor', $form->nomor)
-                ->where('sub_jenis', 2) // FORM PROGRAM TERAPI
+                ->where('sub_jenis', 2)
                 ->where('kode', $form->queue)
                 ->where('ref', $form->group)
                 ->where('status', 1)
                 ->whereNull('deleted_at')
                 ->update([
-                    'user_deleted'      => auth()->id(),
-                    'status'            => 0,
-                    'deleted_at'        => $now
+                    'user_deleted' => auth()->id(),
+                    'status'       => 0,
+                    'deleted_at'   => $now
                 ]);
 
             /* ==========================
