@@ -184,6 +184,7 @@
         <form id="formJawabKonsul">
         @csrf
         <input type="hidden" name="nomor" id="jawab-nomor">
+        <input type="hidden" name="sumber" id="jawab-sumber">
         <input type="hidden" id="aktif-kunjungan" value="{{ $list['KUNJUNGAN'] }}">
         <input type="hidden" name="KUNJUNGAN" id="jawab-kunjungan">
         <input type="hidden" name="oleh" value="{{ auth()->id() }}">
@@ -248,11 +249,13 @@
 
         $(document).on('click', '.btn-jawab', function() {
             const nomor = $(this).data('nomor');
+            const sumber  = $(this).data('sumber');
             const kunjungan = $('#aktif-kunjungan').val(); // Ambil kunjungan aktif
 
             $('#formJawabKonsul')[0].reset();
             $('#jawab-nomor').val(nomor);
             $('#jawab-kunjungan').val(kunjungan); // Set input hidden untuk form submit
+            $('#jawab-sumber').val(sumber); // ⬅️ PENTING
 
             openJawabKonsul(nomor);
             $('#modalJawabKonsul').modal('show');
@@ -395,11 +398,11 @@
                 if (Array.isArray(data) && data.length > 0) {
                     let html = '';
                     data.forEach(function(item) {
-                        const tombolJawabKonsul = (item.SUMBER != 'SIMGOS') ?`
-                            <button class="btn btn-success btn-sm btn-jawab" data-nomor="${item.NOMOR}">
+                        const tombolJawabKonsul = `
+                            <button class="btn btn-success btn-sm btn-jawab" data-nomor="${item.NOMOR}" data-sumber="${item.SUMBER}">
                                 Jawab
                             </button>
-                        `:'';
+                        `;
                         let layananList = [];
                         if (item.KONSULTASI == 1) layananList.push('<span class="badge bg-success me-1">Konsultasi</span>');
                         if (item.RAWAT_BERSAMA == 1) layananList.push('<span class="badge bg-primary me-1">Rawat Bersama</span>');
