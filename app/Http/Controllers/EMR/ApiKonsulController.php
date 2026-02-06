@@ -933,7 +933,6 @@ class ApiKonsulController extends Controller
             |------------------------------------------------------------------
             */
             if ($isSimgos) {
-                // SIMGOS
                 $getKonsul = DB::table('pendaftaran.konsul AS kon')
                     ->select(
                         'kon.*',
@@ -947,7 +946,6 @@ class ApiKonsulController extends Controller
                     ->where('kon.STATUS', '!=', '0')
                     ->first();
             } else {
-                // EMR
                 $getKonsul = DB::table('simrspku_klaim.konsul AS kon')
                     ->select(
                         'kon.*',
@@ -1006,37 +1004,42 @@ class ApiKonsulController extends Controller
 
             /*
             |------------------------------------------------------------------
-            | 5. MATIKAN FILE LAMA (JIKA KONSUL SAMA)
+            | 5. CEK FILE EXISTING
             |------------------------------------------------------------------
             */
-            $nomorKonsul = (string) $nomor; // WAJIB STRING
+            $nomorKonsul = (string) $nomor;
             $userId = auth()->id();
             $now = now();
 
-            DB::table('simrspku_klaim.klaim_file')
+            $existingFile = DB::table('simrspku_klaim.klaim_file')
                 ->where('jenis', 12)
                 ->where('nomor', $nomorKunjungan)
-                /*->where('ref', $nomorKonsul)*/
+                ->where('ref_id', $nomorKonsul)
                 ->where('status', 1)
-                ->update([
-                    'status'       => 0,
-                    'deleted_at'   => $now,
-                    'user_deleted' => $userId,
-                    'updated_at'   => $now
-                ]);
+                ->first();
+
+            $lastFileSameKunjungan = DB::table('simrspku_klaim.klaim_file')
+                ->where('jenis', 12)
+                ->where('nomor', $nomorKunjungan)
+                ->orderByDesc('ref')
+                ->first();
 
             /*
             |------------------------------------------------------------------
-            | 6. AMBIL URUTAN TERAKHIR (KUNJUNGAN SAMA)
+            | 6. TENTUKAN MODE FILE
             |------------------------------------------------------------------
             */
-            $lastFile = DB::table('simrspku_klaim.klaim_file')
-                ->where('jenis', 12)
-                ->where('nomor', $nomorKunjungan)
-                ->orderByDesc('kode')
-                ->first();
-
-            $nextUrutan = $lastFile ? ((int) $lastFile->kode + 1) : 1;
+            if ($existingFile) {
+                // overwrite file lama
+                $nextUrutan   = $existingFile->ref;
+                $fileBaseName = pathinfo($existingFile->title, PATHINFO_FILENAME);
+                $isOverwrite  = true;
+            } else {
+                // konsul berbeda → file baru
+                $nextUrutan   = $lastFileSameKunjungan ? ((int) $lastFileSameKunjungan->ref + 1) : 1;
+                $fileBaseName = $nomorKunjungan . '-' . $nextUrutan;
+                $isOverwrite  = false;
+            }
 
             /*
             |------------------------------------------------------------------
@@ -1049,8 +1052,6 @@ class ApiKonsulController extends Controller
                 $tanggal->format('Y') . '/' .
                 $tanggal->format('m') . '/' .
                 $tanggal->format('d');
-
-            $fileBaseName = $nomorKunjungan . '-' . $nextUrutan;
 
             $jasperOutput = storage_path('app/public/' . $relativePath . '/' . $fileBaseName);
 
@@ -1070,9 +1071,9 @@ class ApiKonsulController extends Controller
                 [
                     'format' => ['pdf'],
                     'params' => [
-                        'PKONSUL'    => $nomor,
-                        'PNOPEN'     => $getKonsul->NOPEN,
-                        'KONSULTASI' => $getKonsul->KONSULTASI,
+                        'PKONSUL'     => $nomor,
+                        'PNOPEN'      => $getKonsul->NOPEN,
+                        'KONSULTASI'  => $getKonsul->KONSULTASI,
                         'IMAGES_PATH' => public_path('/doc/input/konsul/'),
                         'TTD_PATH'    => storage_path('/app/public/'),
                     ],
@@ -1089,23 +1090,26 @@ class ApiKonsulController extends Controller
 
             /*
             |------------------------------------------------------------------
-            | 9. INSERT FILE BARU
+            | 9. INSERT FILE BARU (JIKA BUKAN OVERWRITE)
             |------------------------------------------------------------------
             */
-            DB::table('simrspku_klaim.klaim_file')->insert([
-                'jenis'         => 12,
-                'sub_jenis'     => null,
-                'kode'          => $nextUrutan,
-                'ref'           => $nomorKonsul,
-                'nomor'         => $nomorKunjungan,
-                'title'         => $fileBaseName . '.pdf',
-                'filename'      => $relativePath . '/' . $fileBaseName . '.pdf',
-                'nama_tambahan' => 'Form Konsul ' . $nextUrutan,
-                'user'          => $userId,
-                'status'        => 1,
-                'created_at'    => $now,
-                'updated_at'    => $now
-            ]);
+            if (!$isOverwrite) {
+                DB::table('simrspku_klaim.klaim_file')->insert([
+                    'jenis'         => 12,
+                    'sub_jenis'     => null,
+                    'kode'          => null,
+                    'ref'           => $nextUrutan,
+                    'ref_id'        => $nomorKonsul,
+                    'nomor'         => $nomorKunjungan,
+                    'title'         => $fileBaseName . '.pdf',
+                    'filename'      => $relativePath . '/' . $fileBaseName . '.pdf',
+                    'nama_tambahan' => 'Form Konsul ' . $nextUrutan,
+                    'user'          => $userId,
+                    'status'        => 1,
+                    'created_at'    => $now,
+                    'updated_at'    => $now
+                ]);
+            }
 
             DB::commit();
 
