@@ -360,8 +360,8 @@ class ApiMonitoringController extends Controller
             // $getSKDP = DB::select('CALL simrspku_klaim.CariSKDP(?)',[$getData->NOMOR]);
 
             $getSKDP = DB::table('pendaftaran.penjamin AS pj') // AMBIL DATA BERDASARKAN RIWAYAT NO.SURKON PADA KUNJUNGAN SEBELUMNYA
-                            ->leftJoin('medicalrecord.jadwal_kontrol AS jk','jk.NOMOR_REFERENSI','=','pj.NO_SURAT')
-                            ->leftJoin('pendaftaran.kunjungan AS pk','pk.NOMOR','=','jk.KUNJUNGAN')
+                            ->join('medicalrecord.jadwal_kontrol AS jk','jk.NOMOR_REFERENSI','=','pj.NO_SURAT')
+                            ->join('pendaftaran.kunjungan AS pk','pk.NOMOR','=','jk.KUNJUNGAN')
                             ->select(
                                 'pj.NOPEN',
                                 'pj.NO_SURAT',
