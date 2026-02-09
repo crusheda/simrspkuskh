@@ -367,18 +367,18 @@ class ApiNewRehabMedikController extends Controller
             ->first();
 
         $data = DB::table('medicalrecord.cppt AS cppt')
-            // ->leftJoin('master.dokter as dr', function($join) {
-            //     $join->on('dr.ID', '=', 'cppt.TENAGA_MEDIS')
-            //         ->where('dr.STATUS', '=', 1);
-            // })
-            // ->leftJoin('master.pegawai as pg', function($join) {
-            //     $join->on('pg.ID', '=', 'cppt.TENAGA_MEDIS')
-            //         ->where('pg.STATUS', '=', 1);
-            // })
-            // ->leftJoin('aplikasi.pengguna as pe', function($join) {
-            //     $join->on('pe.ID', '=', 'cppt.OLEH')
-            //         ->where('pe.STATUS', '=', 1);
-            // })
+            // JOIN EMR_FORM_TERAPI
+            ->leftJoin('simrspku_klaim.emr_form_terapi as eft', function($join){
+                $join->on('eft.id_cppt','=','cppt.ID')
+                    ->whereNull('eft.deleted_at')
+                    ->where('eft.status',1);
+            })
+            // JOIN EMR_FORM_KFR
+            ->leftJoin('simrspku_klaim.emr_form_kfr as ekf', function($join){
+                $join->on('ekf.id_cppt','=','cppt.ID')
+                    ->whereNull('ekf.deleted_at')
+                    ->where('ekf.status',1);
+            })
             ->leftJoin('master.pegawai as pg','pg.ID', '=', 'cppt.TENAGA_MEDIS')
             ->leftJoin('aplikasi.pengguna as pe','pe.ID', '=', 'cppt.OLEH')
             ->join('pendaftaran.kunjungan as kj','kj.NOMOR','=','cppt.KUNJUNGAN')
@@ -406,6 +406,8 @@ class ApiNewRehabMedikController extends Controller
                 'cppt.ASSESMENT',
                 'cppt.PLANNING',
                 'cppt.INSTRUKSI',
+                DB::raw('IF(eft.id IS NULL, 0, 1) as IS_TERAPI'),
+                DB::raw('IF(ekf.id IS NULL, 0, 1) as IS_KFR'),
                 DB::raw('master.getNamaLengkapPegawai(pg.NIP) AS NAMADOKTER'),
                 DB::raw('master.getNamaLengkapPegawai(dpjp.NIP) AS NAMADPJP'),
                 DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAUSER'),
@@ -1788,19 +1790,24 @@ class ApiNewRehabMedikController extends Controller
             ]);
         }
 
+        $formKfr = emr_form_kfr::where('nomor', $KUNJUNGAN)
+            ->where('status', 1)
+            ->whereNull('deleted_at')
+            ->first();
+
         $data = DB::table('medicalrecord.cppt AS cppt')
-            // ->leftJoin('master.dokter as dr', function($join) {
-            //     $join->on('dr.ID', '=', 'cppt.TENAGA_MEDIS')
-            //         ->where('dr.STATUS', '=', 1);
-            // })
-            // ->leftJoin('master.pegawai as pg', function($join) {
-            //     $join->on('pg.ID', '=', 'cppt.TENAGA_MEDIS')
-            //         ->where('pg.STATUS', '=', 1);
-            // })
-            // ->leftJoin('aplikasi.pengguna as pe', function($join) {
-            //     $join->on('pe.ID', '=', 'cppt.OLEH')
-            //         ->where('pe.STATUS', '=', 1);
-            // })
+            // JOIN EMR_FORM_TERAPI
+            ->leftJoin('simrspku_klaim.emr_form_terapi as eft', function($join){
+                $join->on('eft.id_cppt','=','cppt.ID')
+                    ->whereNull('eft.deleted_at')
+                    ->where('eft.status',1);
+            })
+            // JOIN EMR_FORM_KFR
+            ->leftJoin('simrspku_klaim.emr_form_kfr as ekf', function($join){
+                $join->on('ekf.id_cppt','=','cppt.ID')
+                    ->whereNull('ekf.deleted_at')
+                    ->where('ekf.status',1);
+            })
             ->leftJoin('master.pegawai as pg','pg.ID', '=', 'cppt.TENAGA_MEDIS')
             ->leftJoin('aplikasi.pengguna as pe','pe.ID', '=', 'cppt.OLEH')
             ->join('pendaftaran.kunjungan as kj','kj.NOMOR','=','cppt.KUNJUNGAN')
@@ -1828,11 +1835,19 @@ class ApiNewRehabMedikController extends Controller
                 'cppt.ASSESMENT',
                 'cppt.PLANNING',
                 'cppt.INSTRUKSI',
+                DB::raw('IF(eft.id IS NULL, 0, 1) as IS_TERAPI'),
+                DB::raw('IF(ekf.id IS NULL, 0, 1) as IS_KFR'),
+                // DB::raw('IF(eft.id IS NULL, 0, 1) as IS_SIRMED'),
                 DB::raw('master.getNamaLengkapPegawai(pg.NIP) AS NAMADOKTER'),
                 DB::raw('master.getNamaLengkapPegawai(dpjp.NIP) AS NAMADPJP'),
                 DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAUSER'),
             )
             ->orderBy('cppt.TANGGAL', 'DESC')
+
+            // urutkan supaya CPPT yg sudah KFR / Terapi muncul dulu
+            ->orderByRaw('(IF(ekf.id IS NULL,0,1)+IF(eft.id IS NULL,0,1)) DESC')
+            ->orderBy('cppt.TANGGAL','DESC')
+
             ->get();
 
         if ($data->isEmpty()) {
@@ -1844,7 +1859,8 @@ class ApiNewRehabMedikController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $data
+            'data' => $data,
+            'form' => $formKfr
         ]);
     }
 

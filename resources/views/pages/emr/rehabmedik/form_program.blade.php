@@ -263,6 +263,40 @@
                             }
                         }
                     }
+
+                    // starForm = '';
+                    // if (res.form) {
+                    //     if (item.ID_CPPT == res.form.id_cppt) {
+                    //         starForm = `<span class="badge bg-danger me-1" data-bs-toggle="tooltip" title="CPPT Formulir KFR Saat Ini"><i class="fas fa-star"></i></span>`;
+                    //     }
+                    // }
+
+                    let badgeSistem = '';
+
+                    // KFR
+                    if(item.IS_KFR == 1){
+                        badgeSistem += `
+                            <span class="badge bg-primary me-1" data-bs-toggle="tooltip" title="CPPT Form Rajal KFR">
+                                <i class="fas fa-file-signature"></i>
+                            </span>`;
+                    }
+
+                    // Terapi
+                    if(item.IS_TERAPI == 1){
+                        badgeSistem += `
+                            <span class="badge bg-warning me-1" data-bs-toggle="tooltip" title="CPPT Form Program Terapi">
+                                <i class="fas fa-dumbbell"></i>
+                            </span>`;
+                    }
+
+                    // Kalau dua-duanya TIDAK ada → SIMGOS
+                    if(item.IS_KFR == 0 && item.IS_TERAPI == 0){
+                        badgeSistem += `
+                            <span class="badge bg-secondary me-1" data-bs-toggle="tooltip" title="CPPT dari SIMGOS">
+                                <i class="fas fa-database"></i>
+                            </span>`;
+                    }
+
                     let card = `<div class="accordion card" id="headingpterapi${item.ID_CPPT}">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header position-relative">
@@ -272,6 +306,7 @@
                                                     data-bs-target="#collapseptr${item.ID_CPPT}">
                                                 <div class="d-flex flex-column w-100 min-w-0 pe-5">
                                                     <div class="text-truncate w-100">
+                                                        ${badgeSistem}
                                                         ${kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
                                                         <b class="text-teal-900" data-bs-toggle="tooltip" title="Nama Ruangan">${item.NAMARUANGAN}</b>
                                                         <i class="fas fa-angle-right mx-1"></i>
