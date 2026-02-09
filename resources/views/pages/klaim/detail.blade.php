@@ -1081,10 +1081,19 @@
 
         // AJAX FETCH
         fetch("/api/pasien/"+kunjungan+"/operasi")
-        .then(response => {
+        .then(async response => {
             if (!response.ok) {
-                throw new Error('File tidak ditemukan atau gagal diambil.');
+
+                let msg = 'Terjadi kesalahan';
+
+                try {
+                    const err = await response.json();
+                    msg = err.message ?? msg;
+                } catch(e) {}
+
+                throw new Error(msg);
             }
+
             return response.blob();
         })
         .then(blob => {
@@ -1098,10 +1107,12 @@
         .catch(error => {
             iziToast.error({
                 title: 'Maaf!',
-                message: 'Data Laporan Operasi tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                message: error.message,
                 position: 'topRight'
             });
+
             console.error(error);
+
             $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
             $('#ck_operasi').prop('checked', false).prop('disabled',false);
         });

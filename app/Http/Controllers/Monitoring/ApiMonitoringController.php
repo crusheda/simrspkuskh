@@ -1969,165 +1969,173 @@ class ApiMonitoringController extends Controller
 
         function compileOperasi($kunjungan)
         {
-            $getSEP = DB::table('pendaftaran.kunjungan AS pk')
-                    ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-                    ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
-                    ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.MASUK AS TANGGALMASUK')
-                    ->where('pk.NOMOR',$kunjungan)
-                    ->first();
-            // $getSEP = DB::table('pendaftaran.kunjungan AS pk')
-            //         ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-            //         // ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
-            //         ->select('pp.NOMOR AS NOPEN')
-            //         ->where('pk.NOMOR',$kunjungan)
-            //         ->first();
-
-            $getTgl = Carbon::parse($getSEP->TANGGALMASUK);
-            $tgl = $getTgl->isoFormat('DD');
-            $bulan = $getTgl->isoFormat('MM');
-            $tahun = $getTgl->isoFormat('YYYY');
-            // $tgl = '23';
-            // $bulan = '05';
-            // $tahun = '2023';
-
-            $show = DB::table('pendaftaran.kunjungan AS pk')
-                    ->leftJoin('pendaftaran.konsul AS ks','pk.REF','=','ks.NOMOR')
-                    ->leftJoin('medicalrecord.operasi AS op','pk.NOMOR','=','op.KUNJUNGAN')
-                    ->select('op.ID AS PID', 'op.KUNJUNGAN')
-                    ->where('pk.NOPEN', $getSEP->NOPEN)
-                    ->where('pk.RUANGAN', '=', '102080101')
-                    ->get();
-
-            if ($show->isEmpty()) {
-                return response()->json($getSEP, 400);
-            }
-            // print_r($show);
-            // die();
-            // Kelompokkan data berdasarkan PID dan gabungkan KUNJUNGAN dalam satu string
-            $groupedData = $show->groupBy('PID')->map(function ($group) {
-                return $group->pluck('KUNJUNGAN')->unique()->implode(',');
-            });
-
-            // Inisialisasi objek PHPJasper
-            $jasper = new PHPJasper;
-
-            // Tentukan path untuk input dan output file
-            $input = public_path().'/doc/input/operasi/CetakLaporanOperasi.jrxml'; // Ganti dengan path file .jrxml yang sesuai
-            $tempPaths = [];
-
-            // Proses setiap PID
-            foreach ($groupedData as $PID  => $KUNJUNGAN) {
-                $path = 'files/operasi/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan.'/laporan_'.$PID;
-                $getOp = DB::table('medicalrecord.operasi AS op')
-                        ->leftJoin('master.dokter AS dok','dok.ID','=','op.DOKTER')
-                        ->leftJoin('medicalrecord.pelaksana_operasi AS podok', function($join) {
-                            $join->on('podok.OPERASI_ID','=','op.ID')
-                                ->where('podok.STATUS', '!=', 0);
-                        })
-                        ->leftJoin('master.pegawai AS pg','podok.PELAKSANA','=','pg.ID')
-                        ->selectRaw(
-                            'op.ID AS PID,
-                            pg.NIP AS NIP_DOKTER1,
-                            pg.NIP AS NIP_DOKTER1,
-                            dok.NIP AS NIPDOKTER2,
-                            master.getPelaksanaOperasi(?, ?) as NAMADOKTEROPERATOR',
-                            [$PID, 1]
-                        )
-                        // ->select('op.ID AS PID','dok.NIP AS NIPDOKTER2', DB::raw("master.getPelaksanaOperasi({$PID},1) as NAMADOKTEROPERATOR"))
-                        ->where('op.ID', $PID)
+            try {
+                $getSEP = DB::table('pendaftaran.kunjungan AS pk')
+                        ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                        ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                        ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.MASUK AS TANGGALMASUK')
+                        ->where('pk.NOMOR',$kunjungan)
                         ->first();
+                // $getSEP = DB::table('pendaftaran.kunjungan AS pk')
+                //         ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                //         // ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                //         ->select('pp.NOMOR AS NOPEN')
+                //         ->where('pk.NOMOR',$kunjungan)
+                //         ->first();
 
-                // print_r($getOp);
+                $getTgl = Carbon::parse($getSEP->TANGGALMASUK);
+                $tgl = $getTgl->isoFormat('DD');
+                $bulan = $getTgl->isoFormat('MM');
+                $tahun = $getTgl->isoFormat('YYYY');
+                // $tgl = '23';
+                // $bulan = '05';
+                // $tahun = '2023';
+
+                $show = DB::table('pendaftaran.kunjungan AS pk')
+                        ->leftJoin('pendaftaran.konsul AS ks','pk.REF','=','ks.NOMOR')
+                        ->leftJoin('medicalrecord.operasi AS op','pk.NOMOR','=','op.KUNJUNGAN')
+                        ->select('op.ID AS PID', 'op.KUNJUNGAN')
+                        ->where('pk.NOPEN', $getSEP->NOPEN)
+                        ->where('pk.RUANGAN', '=', '102080101')
+                        ->get();
+
+                if ($show->isEmpty()) {
+                    throw new \Exception('Data Laporan operasi tidak ditemukan pada kunjungan ini');
+                }
+                // print_r($show);
                 // die();
-                $nipDokter = $getOp->NIP_DOKTER1
-                            ?? $getOp->NIPDOKTER2
-                            ?? null;
-                $ttd_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
-                            ->when($nipDokter, function($q) use ($nipDokter){
-                                $q->where('ttp.nip', $nipDokter);
+                // Kelompokkan data berdasarkan PID dan gabungkan KUNJUNGAN dalam satu string
+                $groupedData = $show->groupBy('PID')->map(function ($group) {
+                    return $group->pluck('KUNJUNGAN')->unique()->implode(',');
+                });
+
+                // Inisialisasi objek PHPJasper
+                $jasper = new PHPJasper;
+
+                // Tentukan path untuk input dan output file
+                $input = public_path().'/doc/input/operasi/CetakLaporanOperasi.jrxml'; // Ganti dengan path file .jrxml yang sesuai
+                $tempPaths = [];
+
+                // Proses setiap PID
+                foreach ($groupedData as $PID  => $KUNJUNGAN) {
+                    $path = 'files/operasi/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan.'/laporan_'.$PID;
+                    $getOp = DB::table('medicalrecord.operasi AS op')
+                            ->leftJoin('master.dokter AS dok','dok.ID','=','op.DOKTER')
+                            ->leftJoin('medicalrecord.pelaksana_operasi AS podok', function($join) {
+                                $join->on('podok.OPERASI_ID','=','op.ID')
+                                    ->where('podok.STATUS', '!=', 0);
                             })
-                            ->where('status', 1)
-                            ->inRandomOrder()
+                            ->leftJoin('master.pegawai AS pg','podok.PELAKSANA','=','pg.ID')
+                            ->selectRaw(
+                                'op.ID AS PID,
+                                pg.NIP AS NIP_DOKTER1,
+                                pg.NIP AS NIP_DOKTER1,
+                                dok.NIP AS NIPDOKTER2,
+                                master.getPelaksanaOperasi(?, ?) as NAMADOKTEROPERATOR',
+                                [$PID, 1]
+                            )
+                            // ->select('op.ID AS PID','dok.NIP AS NIPDOKTER2', DB::raw("master.getPelaksanaOperasi({$PID},1) as NAMADOKTEROPERATOR"))
+                            ->where('op.ID', $PID)
                             ->first();
 
-                if (!$ttd_pegawai) {
-                    throw new \Exception('Data TTD dokter tidak ditemukan untuk laporan operasi ini');
+                    // print_r($getOp);
+                    // die();
+                    $nipDokter = $getOp->NIP_DOKTER1
+                                ?? $getOp->NIPDOKTER2
+                                ?? null;
+                    $ttd_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
+                                ->when($nipDokter, function($q) use ($nipDokter){
+                                    $q->where('ttp.nip', $nipDokter);
+                                })
+                                ->where('status', 1)
+                                ->inRandomOrder()
+                                ->first();
+
+                    if (!$ttd_pegawai) {
+                        throw new \Exception('Data TTD dokter tidak ditemukan untuk laporan operasi ini');
+                    }
+
+                    $output = storage_path().'/app/public/'.$path;
+                    // $outputPath = storage_path("app/reports/laporan_{$PNOMOR}");
+
+                    $outputDir = dirname($output);
+                    if (!File::exists($outputDir)) {
+                        File::makeDirectory($outputDir, 0755, true); // true = recursive
+                    }
+
+                    $options = [
+                        'format' => ['pdf'],
+                        'params' => [
+                            'PID' => $PID,      // Kirim data PNOMOR ke report
+                            'IMAGES_PATH' => public_path() . "/doc/input/operasi/",  // Ganti dengan path gambar jika ada
+                            'IMAGES_PATH2' => storage_path()."/app/public/".$ttd_pegawai->signature_path,
+                        ],
+                        'db_connection' => [
+                            'driver'   => config('database.connections.db_custom.driver'),
+                            'host'     => config('database.connections.db_custom.host'),
+                            'port'     => config('database.connections.db_custom.port'),
+                            'username' => config('database.connections.db_custom.username'),
+                            'password' => config('database.connections.db_custom.password'),
+                            'database' => config('database.connections.db_custom.database'),
+                        ],
+                    ];
+
+                    // Proses JasperReport untuk setiap PNOMOR
+                    $jasper->process($input, $output, $options)->execute();
+                    $tempPaths[] = "{$output}.pdf"; // Simpan path PDF sementara
                 }
 
-                $output = storage_path().'/app/public/'.$path;
-                // $outputPath = storage_path("app/reports/laporan_{$PNOMOR}");
-
-                $outputDir = dirname($output);
-                if (!File::exists($outputDir)) {
-                    File::makeDirectory($outputDir, 0755, true); // true = recursive
+                // Gabungkan semua PDF yang dihasilkan
+                $pathMerged = 'files/operasi/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
+                $outputMerged = storage_path().'/app/public/'.$pathMerged;
+                $outputDirMerged = dirname($outputMerged);
+                if (!File::exists($outputDirMerged)) {
+                    File::makeDirectory($outputDirMerged, 0755, true); // true = recursive
                 }
 
-                $options = [
-                    'format' => ['pdf'],
-                    'params' => [
-                        'PID' => $PID,      // Kirim data PNOMOR ke report
-                        'IMAGES_PATH' => public_path() . "/doc/input/operasi/",  // Ganti dengan path gambar jika ada
-                        'IMAGES_PATH2' => storage_path()."/app/public/".$ttd_pegawai->signature_path,
-                    ],
-                    'db_connection' => [
-                        'driver'   => config('database.connections.db_custom.driver'),
-                        'host'     => config('database.connections.db_custom.host'),
-                        'port'     => config('database.connections.db_custom.port'),
-                        'username' => config('database.connections.db_custom.username'),
-                        'password' => config('database.connections.db_custom.password'),
-                        'database' => config('database.connections.db_custom.database'),
-                    ],
-                ];
-
-                // Proses JasperReport untuk setiap PNOMOR
-                $jasper->process($input, $output, $options)->execute();
-                $tempPaths[] = "{$output}.pdf"; // Simpan path PDF sementara
-            }
-
-            // Gabungkan semua PDF yang dihasilkan
-            $pathMerged = 'files/operasi/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
-            $outputMerged = storage_path().'/app/public/'.$pathMerged;
-            $outputDirMerged = dirname($outputMerged);
-            if (!File::exists($outputDirMerged)) {
-                File::makeDirectory($outputDirMerged, 0755, true); // true = recursive
-            }
-
-            // SAVE TO DB
-            $verify = klaim_file::where('nomor',$kunjungan)->where('jenis',5)->where('status',true)->first();
-            if (!$verify) {
-                $post = new klaim_file;
-                $post->jenis = 9;
-                $post->nomor = $kunjungan;
-                $post->title = $kunjungan.'.pdf';
-                $post->filename = $pathMerged.'.pdf';
-                $post->status = true;
-                $post->user = Auth::user()->ID;
-                $post->save();
-            }
-
-            $pdf = new Fpdi();
-
-            // Gabungkan setiap file PDF hasil proses untuk setiap PNOMOR
-            foreach ($tempPaths as $file) {
-                $pageCount = $pdf->setSourceFile($file);
-                for ($page = 1; $page <= $pageCount; $page++) {
-                    $tpl = $pdf->importPage($page);
-                    $size = $pdf->getTemplateSize($tpl);
-                    $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
-                    $pdf->useTemplate($tpl);
+                // SAVE TO DB
+                $verify = klaim_file::where('nomor',$kunjungan)->where('jenis',5)->where('status',true)->first();
+                if (!$verify) {
+                    $post = new klaim_file;
+                    $post->jenis = 9;
+                    $post->nomor = $kunjungan;
+                    $post->title = $kunjungan.'.pdf';
+                    $post->filename = $pathMerged.'.pdf';
+                    $post->status = true;
+                    $post->user = Auth::user()->ID;
+                    $post->save();
                 }
-            }
 
-            // Simpan file PDF gabungan
-            $pdf->Output('F', $outputMerged.'.pdf');
-            $output = storage_path().'/app/public/files/operasi/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
-            if (File::exists($output)) {
-                File::deleteDirectory($output);
-            }
+                $pdf = new Fpdi();
 
-            return response()->file($outputMerged.'.pdf',[
-                'Content-Type' => 'application/pdf',
-            ]);
+                // Gabungkan setiap file PDF hasil proses untuk setiap PNOMOR
+                foreach ($tempPaths as $file) {
+                    $pageCount = $pdf->setSourceFile($file);
+                    for ($page = 1; $page <= $pageCount; $page++) {
+                        $tpl = $pdf->importPage($page);
+                        $size = $pdf->getTemplateSize($tpl);
+                        $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                        $pdf->useTemplate($tpl);
+                    }
+                }
+
+                // Simpan file PDF gabungan
+                $pdf->Output('F', $outputMerged.'.pdf');
+                $output = storage_path().'/app/public/files/operasi/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
+                if (File::exists($output)) {
+                    File::deleteDirectory($output);
+                }
+
+                return response()->file($outputMerged.'.pdf',[
+                    'Content-Type' => 'application/pdf',
+                ]);
+            } catch (\Throwable $e) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ], 400);
+            }
         }
 
         function hapusTtdResumeRj($KUNJUNGAN)
