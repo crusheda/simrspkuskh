@@ -1999,7 +1999,7 @@ class ApiMonitoringController extends Controller
                     ->get();
 
             if ($show->isEmpty()) {
-                return response()->json($data, 400);
+                return response()->json($getSEP, 400);
             }
             // print_r($show);
             // die();
@@ -2018,6 +2018,42 @@ class ApiMonitoringController extends Controller
             // Proses setiap PID
             foreach ($groupedData as $PID  => $KUNJUNGAN) {
                 $path = 'files/operasi/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan.'/laporan_'.$PID;
+                $getOp = DB::table('medicalrecord.operasi AS op')
+                        ->leftJoin('master.dokter AS dok','dok.ID','=','op.DOKTER')
+                        ->leftJoin('medicalrecord.pelaksana_operasi AS podok', function($join) {
+                            $join->on('podok.OPERASI_ID','=','op.ID')
+                                ->where('podok.STATUS', '!=', 0);
+                        })
+                        ->leftJoin('master.pegawai AS pg','podok.PELAKSANA','=','pg.ID')
+                        ->selectRaw(
+                            'op.ID AS PID,
+                            pg.NIP AS NIP_DOKTER1,
+                            pg.NIP AS NIP_DOKTER1,
+                            dok.NIP AS NIPDOKTER2,
+                            master.getPelaksanaOperasi(?, ?) as NAMADOKTEROPERATOR',
+                            [$PID, 1]
+                        )
+                        // ->select('op.ID AS PID','dok.NIP AS NIPDOKTER2', DB::raw("master.getPelaksanaOperasi({$PID},1) as NAMADOKTEROPERATOR"))
+                        ->where('op.ID', $PID)
+                        ->first();
+
+                // print_r($getOp);
+                // die();
+                $nipDokter = $getOp->NIP_DOKTER1
+                            ?? $getOp->NIPDOKTER2
+                            ?? null;
+                $ttd_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
+                            ->when($nipDokter, function($q) use ($nipDokter){
+                                $q->where('ttp.nip', $nipDokter);
+                            })
+                            ->where('status', 1)
+                            ->inRandomOrder()
+                            ->first();
+
+                if (!$ttd_pegawai) {
+                    throw new \Exception('Data TTD dokter tidak ditemukan untuk laporan operasi ini');
+                }
+
                 $output = storage_path().'/app/public/'.$path;
                 // $outputPath = storage_path("app/reports/laporan_{$PNOMOR}");
 
@@ -2031,6 +2067,7 @@ class ApiMonitoringController extends Controller
                     'params' => [
                         'PID' => $PID,      // Kirim data PNOMOR ke report
                         'IMAGES_PATH' => public_path() . "/doc/input/operasi/",  // Ganti dengan path gambar jika ada
+                        'IMAGES_PATH2' => storage_path()."/app/public/".$ttd_pegawai->signature_path,
                     ],
                     'db_connection' => [
                         'driver'   => config('database.connections.db_custom.driver'),

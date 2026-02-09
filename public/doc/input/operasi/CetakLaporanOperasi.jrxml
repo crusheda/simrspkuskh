@@ -17,6 +17,7 @@
 	<parameter name="PNIP" class="java.lang.String"/>
 	<parameter name="TTE" class="java.lang.String"/>
 	<parameter name="DS_CONFIG" class="java.lang.String"/>
+	<parameter name="IMAGES_PATH2" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[call simrspku_klaim.CetakLapOperasi($P{PID})]]>
 	</queryString>
@@ -1263,6 +1264,14 @@
 				</box>
 				<text><![CDATA[]]></text>
 			</staticText>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+				<reportElement x="420" y="25" width="100" height="60" uuid="5d855425-a5bc-4f8d-927f-ad770a986903"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{IMAGES_PATH2}]]></imageExpression>
+			</image>
 		</band>
 	</summary>
 </jasperReport>
