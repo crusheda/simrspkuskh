@@ -1891,6 +1891,7 @@ class ApiNewRehabMedikController extends Controller
                 'cppt.ASSESMENT',
                 'cppt.PLANNING as PROCEDURE'
             )
+            ->where('ftr.nomor', $KUNJUNGAN)
             ->where('ftr.group', $GROUP)
             ->where('ftr.queue', $QUEUE)
             ->where('ftr.status', 1)
