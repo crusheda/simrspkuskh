@@ -1551,13 +1551,35 @@ class ApiMonitoringController extends Controller
                     ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                     ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
                     ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pp.NOMOR')
-                    ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','tp.TAGIHAN AS TAGIHAN','tp.STATUS AS STATUS','pk.MASUK AS TANGGALMASUK')
+                    ->select(
+                        'pj.NOMOR AS NOSEP',
+                        'pp.NOMOR AS NOPEN',
+                        'tp.TAGIHAN',
+                        'pk.MASUK AS TANGGALMASUK'
+                    )
                     ->where('pk.NOMOR',$kunjungan)
-                    ->where(function ($query) {
-                        $query->where('tp.STATUS', '=', '1')
-                                ->orWhere('tp.UTAMA', '=', '1');
+                    ->where(function ($q) {
+                        $q->where('tp.STATUS',1)
+                        ->orWhere('tp.UTAMA',1);
                     })
                     ->first();
+
+            if (!$getSEP) {
+                return response()->json([
+                    'message' => 'Data SEP / Tagihan tidak ditemukan'
+                ], 404);
+            }
+
+            $listNopen = DB::table('pembayaran.tagihan_pendaftaran')
+                    ->where('TAGIHAN', $getSEP->TAGIHAN)
+                    ->where('STATUS',1)
+                    ->pluck('PENDAFTARAN');
+
+            if ($listNopen->isEmpty()) {
+                return response()->json([
+                    'message' => 'Tidak ditemukan pendaftaran dalam tagihan'
+                ], 404);
+            }
 
             $getTgl = Carbon::parse($getSEP->TANGGALMASUK);
             $tgl = $getTgl->isoFormat('DD');
@@ -1568,14 +1590,18 @@ class ApiMonitoringController extends Controller
                         ->leftJoin('pendaftaran.kunjungan AS k', 'k.NOPEN', '=', 'pd.NOMOR')
                         ->leftJoin('layanan.tindakan_medis AS tm','tm.KUNJUNGAN','=','k.NOMOR')
                         ->select('k.NOMOR AS NOMOR', 'tm.ID AS TINDAKAN')
-                        ->where('pd.NOMOR', $getSEP->NOPEN)
+                        ->whereIn('pd.NOMOR', $listNopen)
                         ->where('k.RUANGAN', '=', '102040101')
                         ->where('tm.STATUS',1)
                         ->get();
-            // print_r($show);
-            // die();
+
             if ($show->isEmpty()) {
-                return response()->json($data, 400);
+                if ($show->isEmpty()) {
+                    return response()->json([
+                        'message' => 'Tidak ada tindakan lab aktif'
+                    ], 404);
+                }
+                // return response()->json($data, 400);
             }
 
             // Kelompokkan data berdasarkan PNOMOR dan gabungkan PTINDAKAN dalam satu string
