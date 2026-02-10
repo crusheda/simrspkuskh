@@ -1322,7 +1322,9 @@
                 const bulan = res.bulan;
                 const kunjungan = res.kunjungan;
                 const sep = res.sep;
-                const fileURL = `/api/klaim/${tahun}/${bulan}/${kunjungan}/pdf/${sep}`;
+                // const fileURL = `/api/klaim/${tahun}/${bulan}/${kunjungan}/pdf/${sep}`;
+                const fileURL = `/api/klaim/${tahun}/${bulan}/${kunjungan}/pdf/${sep}?t=` + new Date().getTime();
+
                 // $('#preview').empty();
                 verify();
                 $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
