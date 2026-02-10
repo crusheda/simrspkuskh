@@ -174,7 +174,12 @@
             </div>
             <div class="card-body align-middle" id="preview">
                 @if ($list['klaim'])
-                    <iframe src="/api/klaim/{{ $list['klaim']->tahun }}/{{ $list['klaim']->bulan }}/{{ $list['klaim']->nomor }}/pdf/{{ $list['klaim']->sep }}" width="100%" height="500px" frameborder="0"></iframe>
+                    <iframe
+                        src="/api/klaim/{{ $list['klaim']->tahun }}/{{ $list['klaim']->bulan }}/{{ $list['klaim']->nomor }}/pdf/{{ $list['klaim']->sep }}?t={{ time() }}"
+                        width="100%"
+                        height="500px"
+                        frameborder="0">
+                    </iframe>
                 @else
                     Area ini akan menampilkan Preview Berkas Klaim yang dipilih
                 @endif
