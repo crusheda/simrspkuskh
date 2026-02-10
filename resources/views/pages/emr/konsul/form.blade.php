@@ -263,9 +263,21 @@
 
         $(document).on('click', '.btn-batal', function () {
             const nomor = $(this).data('nomor');
-            if (confirm('Apakah Anda yakin ingin membatalkan konsul ini?')) {
-                batalKonsul(nomor);
-            }
+            // if (confirm('Apakah Anda yakin ingin membatalkan konsul ini?')) {
+            //     batalKonsul(nomor);
+            // }
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: 'Apakah Anda yakin ingin membatalkan konsul ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Batalkan',
+                cancelButtonText: 'Tidak'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    batalKonsul(nomor);
+                }
+            });
         });
 
         // $(document).on('click', '.btn-cetak', function () {
@@ -492,12 +504,22 @@
                 $('#modalTambahKonsul').modal('hide');
                 $('#formTambahKonsul')[0].reset();
                 tampilKonsul(formData.kunjungan); // Refresh data tabel
-                alert('Konsul berhasil ditambahkan');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: 'Konsul berhasil ditambahkan',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
             },
             error: function (xhr) {
                 // alert('Gagal menyimpan data. Silakan coba lagi.');
                 console.error('Error:', xhr.responseText);
-                alert('Gagal menyimpan data: ' + xhr.responseText);
+                iziToast.error({
+                    title: 'Gagal',
+                    message: xhr.responseJSON?.message || 'Gagal menyimpan data',
+                    position: 'topRight'
+                });
             }
         });
     });
@@ -552,7 +574,11 @@
                 $('#select-ruangan').html(options);
             },
             error: function () {
-                alert('Gagal memuat data ruangan');
+                iziToast.error({
+                    title: 'Error',
+                    message: 'Gagal memuat data ruangan',
+                    position: 'topRight'
+                });
             }
         });
     }
@@ -619,12 +645,22 @@
             type: 'POST',
             data: $(this).serialize(),
             success: function(res) {
-                alert(res.message);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: res.message,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
                 $('#btn-simpan-knslx').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-save');
                 $('#modalJawabKonsul').modal('hide');
             },
                 error: function(xhr) {
-                alert('Gagal menyimpan jawaban konsul: ' + xhr.responseText);
+                iziToast.error({
+                    title: 'Gagal',
+                    message: xhr.responseJSON?.message || 'Gagal menyimpan jawaban konsul',
+                    position: 'topRight'
+                });
                 $('#btn-simpan-knslx').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-save');
             }
         });
@@ -638,12 +674,20 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(res) {
-                alert('Konsul berhasil dibatalkan.');
+                iziToast.success({
+                    title: 'Berhasil',
+                    message: 'Konsul berhasil dibatalkan',
+                    position: 'topRight'
+                });
                 tampilKonsul("{{ $list['KUNJUNGAN'] }}"); // Refresh riwayat
             },
             error: function(xhr) {
                 console.error(xhr.responseText);
-                alert('Gagal membatalkan konsul.');
+                iziToast.error({
+                    title: 'Gagal',
+                    message: 'Gagal membatalkan konsul',
+                    position: 'topRight'
+                });
             }
         });
     }

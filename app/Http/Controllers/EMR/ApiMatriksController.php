@@ -31,7 +31,7 @@ class ApiMatriksController extends Controller
     {
         $now = Carbon::now();
 
-        // Validasi input radio (boleh null, tapi jika ada harus 1, 2, atau 3)
+        // 1️⃣ Validasi dasar
         $validated = $request->validate([
             'nomor' => 'required|string',
             'no1a' => 'nullable|in:0,1,2,3',
@@ -49,22 +49,38 @@ class ApiMatriksController extends Controller
             'no8'  => 'nullable|in:0,1,2,3',
         ]);
 
-        // Bersihkan nilai default kosong menjadi 0 jika tidak ada
+        // 2️⃣ Validasi bisnis: minimal satu pilihan ≠ 0
         $fields = [
-            'no1a', 'no1b', 'no1c', 'no1d', 'no1e',
-            'no2a', 'no2b', 'no3', 'no4', 'no5',
-            'no6', 'no7', 'no8'
+            'no1a','no1b','no1c','no1d','no1e',
+            'no2a','no2b',
+            'no3','no4','no5','no6','no7','no8'
         ];
 
-        $dataInsert = ['nomor' => $request->nomor];
+        $hasValue = false;
+        foreach ($fields as $field) {
+            if ($request->filled($field) && $request->input($field) != '0') {
+                $hasValue = true;
+                break;
+            }
+        }
+
+        if (!$hasValue) {
+            return response()->json([
+                'message' => 'Minimal satu pilihan harus diisi'
+            ], 422);
+        }
+
+        // 3️⃣ Siapkan data simpan
+        $dataInsert = [
+            'nomor' => $request->nomor,
+            'updated_at' => $now
+        ];
 
         foreach ($fields as $field) {
             $dataInsert[$field] = $request->input($field, '0');
         }
 
-        $dataInsert['updated_at'] = $now;
-
-        // Cek apakah data sudah ada (update) atau baru (insert)
+        // 4️⃣ Insert / Update
         $existing = DB::table('simrspku_klaim.matriks')
             ->where('nomor', $request->nomor)
             ->first();
@@ -78,10 +94,12 @@ class ApiMatriksController extends Controller
             DB::table('simrspku_klaim.matriks')->insert($dataInsert);
         }
 
+        // 5️⃣ Response sukses
         return response()->json([
-            'message' => 'Data berhasil disimpan.'
+            'message' => 'Data berhasil disimpan'
         ], 200);
     }
+
     function compileMatriks($NOMOR)
     {
         $kunjungan = $NOMOR;

@@ -92,7 +92,7 @@
     </div>
 
     <div class="mt-3 text-end">
-        <button type="submit" class="btn btn-primary" onclick="simpanForm()"><i class="fas fa-save me-1"></i> Simpan </button>
+        <button type="button" class="btn btn-primary" onclick="simpanForm()"><i class="fas fa-save me-1"></i> Simpan </button>
     </div>
 
 <!-- JavaScript -->
@@ -166,32 +166,39 @@
     }
 
     function simpanForm() {
+
+        // 1️⃣ Validasi frontend
+        const checkedRadio = $('input[type=radio]:checked').length;
+        if (checkedRadio === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data belum lengkap',
+                text: 'Silakan pilih minimal satu opsi sebelum menyimpan'
+            });
+            return;
+        }
+
         const payload = {};
 
-        // Ambil semua radio yang dicek
+        // 2️⃣ Ambil radio terpilih
         $('input[type=radio]:checked').each(function () {
-            const name = $(this).attr('name');
-            const value = $(this).val();
-            payload[name] = value;
+            payload[$(this).attr('name')] = $(this).val();
         });
 
-        // Tambahkan field `nomor` dari input hidden
-        payload['nomor'] = $('input[name="nomorMatriks"]').val();
+        payload.nomor = $('#nomorMatriks').val();
 
-        // Tambahkan nilai default "0" jika radio tidak dipilih
+        // 3️⃣ Default 0
         const fields = [
             'no1a','no1b','no1c','no1d','no1e',
             'no2a','no2b',
             'no3','no4','no5','no6','no7','no8'
         ];
 
-        fields.forEach(function (key) {
-            if (!(key in payload)) {
-                payload[key] = '0';
-            }
+        fields.forEach(f => {
+            if (!(f in payload)) payload[f] = '0';
         });
 
-        // AJAX POST
+        // 4️⃣ AJAX
         $.ajax({
             url: '/api/emr/matriks',
             method: 'POST',
@@ -202,16 +209,29 @@
             },
             data: JSON.stringify(payload),
             success: function (res) {
-                alert('Data berhasil disimpan!');
-                console.log(res);
-                tampilForm(nomor);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: res.message,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                tampilForm(payload.nomor);
             },
             error: function (xhr) {
-                alert('Gagal menyimpan data:\n' + xhr.responseText);
-                console.error('Error detail:', xhr);
+                let msg = 'Gagal menyimpan data';
+
+                if (xhr.status === 422 && xhr.responseJSON?.message) {
+                    msg = xhr.responseJSON.message;
+                }
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Validasi gagal',
+                    text: msg
+                });
             }
         });
     }
-
 
 </script>
