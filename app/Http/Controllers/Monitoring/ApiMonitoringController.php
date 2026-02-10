@@ -359,7 +359,7 @@ class ApiMonitoringController extends Controller
 
             // $getSKDP = DB::select('CALL simrspku_klaim.CariSKDP(?)',[$getData->NOMOR]);
 
-            $getSKDP = DB::table('pendaftaran.penjamin AS pj') // AMBIL DATA BERDASARKAN RIWAYAT NO.SURKON PADA KUNJUNGAN SEBELUMNYA
+            $getSKDP = DB::table('pendaftaran.penjamin AS pj') // AMBIL DATA BERDASARKAN RIWAYAT NO.SURKON PADA KUNJUNGAN SEBELUMNYA (DAFTAR PASIENNYA LEWAT QRCODE SURKON)
                             ->join('medicalrecord.jadwal_kontrol AS jk','jk.NOMOR_REFERENSI','=','pj.NO_SURAT')
                             ->join('pendaftaran.kunjungan AS pk','pk.NOMOR','=','jk.KUNJUNGAN')
                             ->select(
@@ -372,8 +372,7 @@ class ApiMonitoringController extends Controller
                             ->whereNotNull('pj.NO_SURAT')
                             ->where('pj.NO_SURAT', '!=', '')
                             ->first();
-            // print_r($getSKDP);
-            // die();
+
             if (!$getSKDP) { // AMBIL DATA KUNJUNGAN DARI KUNJUNGAN PASIEN SEBELUMNYA (DENGAN RUANGAN YANG SAMA)
                 $getSKDP = DB::table('pendaftaran.pendaftaran AS pp')
                             ->join('pendaftaran.kunjungan AS pk', function($join) use ($getData) {
@@ -395,6 +394,8 @@ class ApiMonitoringController extends Controller
                             ->first();
 
                 $tgl_kunjungan = Carbon::parse($getData->TANGGAL)->format('Y-m-d');
+                // print_r($getSKDP);
+                // die();
 
                 // Jika rawat inap, cek lagi apakah ada kunjungan rawat inap setelah kunjungan baseline
                 // if ($getSKDP) {
@@ -443,8 +444,8 @@ class ApiMonitoringController extends Controller
                 }
             }
 
-            if (!$getSKDP) { // JIKA SKDP memang tidak ditemukan di DB
-                return response()->json('SKDP Tidak Ditemukan atau Belum Diterbitkan', 400);
+            if (!$getSKDP) { // JIKA SKDP memang tidak ditemukan di DB, ada kemungkinan pasien didaftar tanpa menggunakan /menghubungkan SKDP, di menu 'Ubah Penjamin'
+                return response()->json('SKDP Tidak Ditemukan atau Belum Diterbitkan. Pastikan Pendaftaran Pasien telah terhubung dengan Surat Kontrol (SKDP) sebelumnya di menu Ubah Penjamin Simgos.', 400);
             }
 
             // print_r($getData->NORM.' - '.$getData->NOMOR.' - '.$getData->TANGGAL);
@@ -602,6 +603,9 @@ class ApiMonitoringController extends Controller
 
             return response()->file($output.'.pdf',[
                 'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'        => 'no-cache',
+                'Expires'       => '0',
             ]);
         }
 
@@ -729,6 +733,9 @@ class ApiMonitoringController extends Controller
 
             return response()->file($output.'.pdf',[
                 'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'        => 'no-cache',
+                'Expires'       => '0',
             ]);
         }
 
@@ -1025,6 +1032,9 @@ class ApiMonitoringController extends Controller
 
             return response()->file($output.'.pdf',[
                 'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'        => 'no-cache',
+                'Expires'       => '0',
             ]);
         }
 
@@ -1102,6 +1112,9 @@ class ApiMonitoringController extends Controller
 
             return response()->file($output.'.pdf',[
                 'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'        => 'no-cache',
+                'Expires'       => '0',
             ]);
         }
 
@@ -1221,6 +1234,9 @@ class ApiMonitoringController extends Controller
 
             return response()->file($outputMerged.'.pdf',[
                 'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'        => 'no-cache',
+                'Expires'       => '0',
             ]);
         }
 
@@ -1523,6 +1539,9 @@ class ApiMonitoringController extends Controller
 
             return response()->file($output.'.pdf',[
                 'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'        => 'no-cache',
+                'Expires'       => '0',
             ]);
         }
 
@@ -1696,6 +1715,9 @@ class ApiMonitoringController extends Controller
 
             return response()->file($outputMerged.'.pdf',[
                 'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'        => 'no-cache',
+                'Expires'       => '0',
             ]);
         }
 
@@ -1866,6 +1888,9 @@ class ApiMonitoringController extends Controller
 
             return response()->file($outputMerged.'.pdf',[
                 'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'        => 'no-cache',
+                'Expires'       => '0',
             ]);
         }
 
@@ -1964,6 +1989,9 @@ class ApiMonitoringController extends Controller
 
             return response()->file($output.'.pdf',[
                 'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'        => 'no-cache',
+                'Expires'       => '0',
             ]);
         }
 
@@ -2128,6 +2156,9 @@ class ApiMonitoringController extends Controller
 
                 return response()->file($outputMerged.'.pdf',[
                     'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'        => 'no-cache',
+                'Expires'       => '0',
                 ]);
             } catch (\Throwable $e) {
 

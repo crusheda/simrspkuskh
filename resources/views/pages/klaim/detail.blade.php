@@ -1127,7 +1127,7 @@
         `);
 
         // AJAX FETCH
-        fetch("/api/klaim/upload/"+id+"/show")
+        fetch("/api/klaim/upload/"+id+"/show") // ,{cache: "no-store"}
         .then(response => {
             if (!response.ok) {
                 throw new Error('File tidak ditemukan atau gagal diambil.');
