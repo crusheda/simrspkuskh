@@ -189,6 +189,20 @@ class EMRController extends Controller
         return response()->json($ruangan, 200);
     }
 
+    function penjamin()
+    {
+        $show = DB::table('master.referensi')
+                ->where('JENIS',10)
+                ->where('STATUS',1)
+                ->orderBy('ID','ASC')
+                ->get();
+
+        if (!$show) {
+            return response()->json('Tidak ada Penjamin yang tersedia!', 404);
+        }
+        return response()->json($show, 200);
+    }
+
     function dpjp($ruangan)
     {
         $show = DB::table('master.dokter_ruangan AS dru')
@@ -244,6 +258,7 @@ class EMRController extends Controller
         $ruang   = $request->ruang;
         $status = (int) $request->status;
         $rawat = (int) $request->rawat;
+        $penjamin = (int) $request->penjamin;
 
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
 
@@ -252,26 +267,53 @@ class EMRController extends Controller
                 ->select(
                     'pk.*',
                     'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
-                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
                     'ru.DESKRIPSI AS NAMARUANGAN',
+                    // DB::raw('kjs.noSEP AS NOSEP'),
+                    // DB::raw('kjs.tglSEP AS TGLSEP'),
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
-                )
-                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                );
+                if (in_array($penjamin,[0,2])) {
+                    $show->addSelect(
+                        DB::raw('kjs.noSEP AS NOSEP'),
+                        DB::raw('kjs.tglSEP AS TGLSEP')
+                    );
+                } else {
+                    $show->addSelect(
+                        DB::raw('"" AS NOSEP'),
+                        DB::raw('NULL AS TGLSEP')
+                    );
+                }
+        $show = $show->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->when($penjamin != 0, function ($query) use ($penjamin) {
+                    $query->join('pendaftaran.penjamin AS pj', function($join) use ($penjamin) {
+                        $join->on('pj.NOPEN','=','pp.NOMOR')
+                            ->where('pj.JENIS', $penjamin);
+                    });
+                }, function ($query) {
+                    $query->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR');
+                })
                 ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
                 ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
-                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                // ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
                 ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
                 ->leftJoin('aplikasi.pengguna','aplikasi.pengguna.ID','=','pk.DITERIMA_OLEH')
-                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                ->join('master.ruangan AS ru', function($join){
+                    $join->on('ru.ID','=','pk.RUANGAN')
+                        ->where('ru.STATUS', 1);
+                })
                 ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                // KHUSUS $penjamin = 2 / BPJS
+                ->when($penjamin == 2, function ($query) {
+                    $query->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR');
+                })
+
                 ->where(function ($query) use ($tgls,$tgle) {
                     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                 })
-                ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
+                // ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 // ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
-                ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
+                // ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
                 // ->where('jk.STATUS', 1) // STATUS RENCANA KONTROL AKTIF
 
                 // FILTER JENIS PERAWATAN

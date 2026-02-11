@@ -35,7 +35,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="row p-3">
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-3 mb-3">
                         <div class="form-group">
                             <label class="form-label">Jenis Perawatan</label>
                             <select id="filter_rawat" class="form-control" onchange="getRuangan()">
@@ -46,13 +46,13 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-6 mb-3">
                         <div class="form-group">
                             <label class="form-label">Ruangan</label>
                             <select id="filter_ruang" class="form-control" onchange="getDPJP()" disabled><option value="5" selected>...</option></select>
                         </div>
                     </div>
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-3 mb-3">
                         <div class="form-group">
                             <label class="form-label">Status Kunjungan</label>
                             <select class="form-control" id="filter_status">
@@ -63,7 +63,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-4 mb-3">
                         <div class="form-group">
                             <label class="form-label">Rentang Tgl Kunjungan</label>
                             <div class="input-group">
@@ -72,10 +72,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-5 mb-3">
                         <div class="form-group">
                             <label class="form-label">DPJP</label>
                             <select class="form-control" id="filter_dpjp" disabled><option value="5" selected>...</option></select>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Jenis Penjamin</label>
+                            <select id="filter_penjamin" class="form-control" disabled><option value="0" selected>...</option></select>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -224,6 +230,7 @@
         // alert(@json(auth()->user()->roles->first()?->name));
         // alert(@json(auth()->user()->roles->pluck('name')));
         getRuangan();
+        getPenjamin();
     });
 
     // function-function
@@ -253,9 +260,43 @@
                     });
                     getDPJP();
                     // $("#filter_ruang").val(up).change();
-                }
+                },
+                error: function (xhr) {
+                    Swal.fire(
+                        'Gagal',
+                        xhr.responseJSON?.message ?? 'Terjadi kesalahan / Gagal memanggil Function!',
+                        'error'
+                    );
+                },
             })
         }
+    }
+
+    function getPenjamin() {
+        $.ajax({
+            url: `/api/emr/penjamin`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                $('#filter_penjamin').prop('disabled',false);
+                $("#filter_penjamin").find('option').remove();
+                // $("#filter_penjamin").append(`
+                //     <option value="0" selected>Semua Penjamin</option>
+                // `);
+                res.forEach(pouch => {
+                    $("#filter_penjamin").append(`
+                        <option value="${pouch.ID}" ${pouch.ID == 2 ? 'selected' : ''}>${pouch.DESKRIPSI}</option>
+                    `);
+                });
+            },
+            error: function (xhr) {
+                Swal.fire(
+                    'Gagal',
+                    xhr.responseJSON?.message ?? 'Terjadi kesalahan / Gagal memanggil Function!',
+                    'error'
+                );
+            },
+        })
     }
 
     function getDPJP() {
@@ -313,6 +354,7 @@
         var status = $("#filter_status").val();
         var tgl = $("#filter_tgl").val();
         var dpjp = $("#filter_dpjp").val() ? $("#filter_dpjp").val() : '0'; // JIKA DPJP KOSONG = 0
+        var penjamin = $("#filter_penjamin").val();
         var exTgl = tgl.split(' to ');
         if (exTgl.length == 2) { // SPLIT FROM = "2024-01-01 to 2025-01-01"
             tgls = exTgl[0];
@@ -332,6 +374,7 @@
                 tgls: tgls,
                 tgle: tgle,
                 dpjp: dpjp,
+                penjamin: penjamin,
             },
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -461,6 +504,7 @@
         // CHANGE FILTER VALUE
         $("#filter_status").val('1');
         $("#filter_rawat").val('5');
+        $("#filter_penjamin").val('2');
         $("#filter_ruang").val('5').prop('disabled',true);
 
         dpjpChoices.disable();

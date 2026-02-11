@@ -118,6 +118,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             // OLD REHAB MEDIK
                 // FORM KFR
                 Route::post('emr', [EMRController::class, 'table'])->name('api.emr');
+                Route::get('emr/penjamin', [EMRController::class, 'penjamin'])->name('api.penjamin');
                 Route::get('emr/ruangan/{id}', [EMRController::class, 'ruangan'])->name('api.ruangan');
                 Route::get('emr/ruangan/{ruangan}/dpjp', [EMRController::class, 'dpjp'])->name('api.dpjp');
                 Route::get('emr/{NORM}/fkfr/{KUNJUNGAN}', [ApiRehabMedikController::class, 'getFormKfr'])->name('api.emr.fkfr.get');
