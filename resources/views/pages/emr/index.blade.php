@@ -96,7 +96,7 @@
                         <thead>
                             <tr>
                                 <th style="width: 90%;">KUNJUNGAN PASIEN</th>
-                                <th style="width: 30%;" class="text-end">TGL KUNJUNGAN</th>
+                                <th style="width: 30%;" class="text-start">TGL KUNJUNGAN</th>
                             </tr>
                         </thead>
                         <tbody id="tampil-tbody">
@@ -193,8 +193,6 @@
                 }
             });
         }
-        // BUTTON FILTER READY
-        $('#tombol-tampilkan').prop('disabled', false);
 
         // FLATPICKR DATE
         const today = new Date(); // Hari ini
@@ -231,6 +229,10 @@
         // alert(@json(auth()->user()->roles->pluck('name')));
         getRuangan();
         getPenjamin();
+        // filter();
+        
+        // BUTTON FILTER READY
+        $('#tombol-tampilkan').prop('disabled', false);
     });
 
     // function-function
@@ -280,9 +282,9 @@
             success: function(res) {
                 $('#filter_penjamin').prop('disabled',false);
                 $("#filter_penjamin").find('option').remove();
-                // $("#filter_penjamin").append(`
-                //     <option value="0" selected>Semua Penjamin</option>
-                // `);
+                $("#filter_penjamin").append(`
+                    <option value="0" selected>Semua Penjamin</option>
+                `);
                 res.forEach(pouch => {
                     $("#filter_penjamin").append(`
                         <option value="${pouch.ID}" ${pouch.ID == 2 ? 'selected' : ''}>${pouch.DESKRIPSI}</option>
@@ -419,6 +421,15 @@
                                             <i class="fas fa-times fs-5 text-secondary"></i>
                                         </button>`;
                         }
+                        if (item.JENISPENJAMIN == 1) {
+                            clrTxPj = 'text-pink-900';
+                        } else {
+                            if (item.JENISPENJAMIN == 2) {
+                                clrTxPj = 'text-blue-900';
+                            } else {
+                                clrTxPj = 'text-orange-900';
+                            }
+                        }
                         content = ``;
                         content += `<tr class="clickable" data-href="/emr/${item.NOMOR}">
                                         <td class="ps-3">
@@ -427,7 +438,7 @@
                                             <a class="mb-2 text-dark" href="javascript: void(0);">
                                                 <code>
                                                     Ruangan <b class="text-pink-900">${item.NAMARUANGAN}</b> | <b class="text-teal-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Registrasi">${item.NOPEN}</b>
-                                                    | <b class="text-indigo-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b>
+                                                    | <b class="text-indigo-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b> | <b class="${clrTxPj}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jenis Penjamin Pasien">${item.NAMAPENJAMIN}</b>
                                                 </code>
                                             </a><br>
                                             <a class="mb-2 text-dark" href="javascript: void(0);" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan"><code>${status}</code></a>
@@ -448,7 +459,7 @@
                 window.dataTable = new simpleDatatables.DataTable("#vantable", {
                     sortable: true,
                     searchable: true,
-                    perPage: 10,
+                    perPage: 15,
                     perPageSelect: [10, 20, 50, 100, 300, 500],
                     fixedColumns: true,
                     firstLast: true,

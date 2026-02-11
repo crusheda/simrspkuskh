@@ -259,6 +259,7 @@ class EMRController extends Controller
         $status = (int) $request->status;
         $rawat = (int) $request->rawat;
         $penjamin = (int) $request->penjamin;
+        // $penjamin = 1;
 
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
 
@@ -268,6 +269,8 @@ class EMRController extends Controller
                     'pk.*',
                     'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
                     'ru.DESKRIPSI AS NAMARUANGAN',
+                    'pj.JENIS AS JENISPENJAMIN',
+                    'ref.DESKRIPSI AS NAMAPENJAMIN',
                     // DB::raw('kjs.noSEP AS NOSEP'),
                     // DB::raw('kjs.tglSEP AS TGLSEP'),
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
@@ -293,9 +296,14 @@ class EMRController extends Controller
                 }, function ($query) {
                     $query->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR');
                 })
+                ->join('master.referensi AS ref', function($join){
+                    $join->on('ref.ID','=','pj.JENIS')
+                        ->where('ref.STATUS', 1)
+                        ->where('ref.JENIS', 10);
+                })
                 ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
                 ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
-                // ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
                 ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
                 ->leftJoin('aplikasi.pengguna','aplikasi.pengguna.ID','=','pk.DITERIMA_OLEH')
                 ->join('master.ruangan AS ru', function($join){
@@ -304,9 +312,9 @@ class EMRController extends Controller
                 })
                 ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
                 // KHUSUS $penjamin = 2 / BPJS
-                ->when($penjamin == 2, function ($query) {
-                    $query->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR');
-                })
+                // ->when($penjamin == 2, function ($query) {
+                //     $query->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR');
+                // })
 
                 ->where(function ($query) use ($tgls,$tgle) {
                     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
@@ -371,6 +379,7 @@ class EMRController extends Controller
                     $query->where('dr.NIP', $dpjp);
                 })
                 ->orderBy('pk.MASUK','DESC')
+                ->distinct()
                 ->get();
 
         $data = [
