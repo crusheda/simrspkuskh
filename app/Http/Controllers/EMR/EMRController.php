@@ -269,7 +269,7 @@ class EMRController extends Controller
                 ->where(function ($query) use ($tgls,$tgle) {
                     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                 })
-                ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
+                // ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 // ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
                 ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
                 // ->where('jk.STATUS', 1) // STATUS RENCANA KONTROL AKTIF
