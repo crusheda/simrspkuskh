@@ -492,10 +492,11 @@
                     window.location.href = url;
                 });
             }, error: function(xhr, status, error) {
-                // Gagal: tangani error di sini
-                console.error('Terjadi kesalahan:', error);
-                // Bisa juga tampilkan alert
-                alert('Gagal mengambil data. Coba lagi.');
+                Swal.fire(
+                    'Gagal',
+                    xhr.responseJSON?.message ?? 'Terjadi kesalahan saat pengambilan data',
+                    'error'
+                );
                 $('#jumlah_data').empty().text('0 Data');
                 $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fas fa-sync fa-spin').addClass('ph-duotone ph-sort-ascending').css('font-size', '');
             }

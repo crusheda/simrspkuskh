@@ -303,7 +303,11 @@ class EMRController extends Controller
                 })
                 ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
                 ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
-                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                ->leftJoin('bpjs.kunjungan AS kjs', function($join){
+                    $join->on('kjs.noSEP','=','pj.NOMOR')
+                        ->where('kjs.STATUS', 1)
+                        ->where('kjs.noSEP','!=',''); // di table bpjs.kunjungan ada kolom noSEP yg kosong / ''
+                })
                 ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
                 ->leftJoin('aplikasi.pengguna','aplikasi.pengguna.ID','=','pk.DITERIMA_OLEH')
                 ->join('master.ruangan AS ru', function($join){
@@ -382,6 +386,8 @@ class EMRController extends Controller
                 ->distinct()
                 ->get();
 
+                // print_r($show);
+                // die();
         $data = [
             'show' => $show,
             'time' => $time,
