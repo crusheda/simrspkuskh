@@ -2455,8 +2455,6 @@ class ApiNewRehabMedikController extends Controller
 
             /* 4. KIRIM LANGSUNG KE GENERATOR */
             $generateForm = $this->generateFormProgramTerapi($show);
-            // print_r($generateForm);
-            // die();
 
             if (!$generateForm) {
                 return response()->json([
@@ -2554,7 +2552,7 @@ class ApiNewRehabMedikController extends Controller
                 $templateProcessor,
                 'PATH_TTE_DOKTER',
                 $pathDokter,
-                170
+                150
             );
 
             // $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->PATH_TTE_DOKTER, 170);
@@ -2572,7 +2570,7 @@ class ApiNewRehabMedikController extends Controller
                 $templateProcessor,
                 'PATH_TTE_TIM',
                 $pathTim,
-                170
+                150
             );
 
             // $this->setImgWord($templateProcessor, 'PATH_TTE_TIM', storage_path()."/app/public/".$show->PATH_TTE_TIM, 170);

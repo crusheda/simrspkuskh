@@ -42,10 +42,12 @@ class LibreOfficeService
 
         $cmd = sprintf(
             '%s --headless --nologo --nofirststartwizard ' .
-            '-env:UserInstallation=file://%s ' .
+            // '-env:UserInstallation=file://%s ' .
+            '-env:UserInstallation=file:///%s ' .
             '--convert-to pdf %s --outdir %s 2>&1',
             escapeshellcmd($soffice),
-            escapeshellarg($profile),
+            // escapeshellarg($profile),
+            ltrim($profile,'/'),
             escapeshellarg($input),
             escapeshellarg($output)
         );
