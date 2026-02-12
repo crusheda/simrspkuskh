@@ -2452,8 +2452,11 @@ class ApiNewRehabMedikController extends Controller
                 'PATH_TTE_TIM'      => $ttd_pegawai_tr->signature_path,
             ];
 
+
             /* 4. KIRIM LANGSUNG KE GENERATOR */
             $generateForm = $this->generateFormProgramTerapi($show);
+            // print_r($generateForm);
+            // die();
 
             if (!$generateForm) {
                 return response()->json([
@@ -2545,7 +2548,16 @@ class ApiNewRehabMedikController extends Controller
         $templateProcessor = new TemplateProcessor(public_path('/doc/input/rehabmedik/cetakNewFormProgramTerapi.docx'));
 
         try {
-            $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->PATH_TTE_DOKTER, 170);
+            $pathDokter = Storage::disk('public')->path($show->PATH_TTE_DOKTER);
+
+            $this->setImgWord(
+                $templateProcessor,
+                'PATH_TTE_DOKTER',
+                $pathDokter,
+                170
+            );
+
+            // $this->setImgWord($templateProcessor, 'PATH_TTE_DOKTER', storage_path()."/app/public/".$show->PATH_TTE_DOKTER, 170);
             // if ($cap) {
             //     $this->setImgWord($templateProcessor, 'CAP', $cap, 150);
             // }
@@ -2554,7 +2566,16 @@ class ApiNewRehabMedikController extends Controller
         }
 
         try {
-            $this->setImgWord($templateProcessor, 'PATH_TTE_TIM', storage_path()."/app/public/".$show->PATH_TTE_TIM, 170);
+            $pathTim = Storage::disk('public')->path($show->PATH_TTE_TIM);
+
+            $this->setImgWord(
+                $templateProcessor,
+                'PATH_TTE_TIM',
+                $pathTim,
+                170
+            );
+
+            // $this->setImgWord($templateProcessor, 'PATH_TTE_TIM', storage_path()."/app/public/".$show->PATH_TTE_TIM, 170);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 422);
         }

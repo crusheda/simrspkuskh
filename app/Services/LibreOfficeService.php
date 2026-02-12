@@ -23,6 +23,11 @@ class LibreOfficeService
         $soffice = env('LIBREOFFICE_PATH', '/usr/bin/soffice');
 
         $input  = realpath($input);
+
+        if (!is_dir($output)) {
+            mkdir($output, 0755, true);
+        }
+
         $output = realpath($output);
 
         if (!$input || !$output) {
@@ -44,6 +49,8 @@ class LibreOfficeService
             escapeshellarg($input),
             escapeshellarg($output)
         );
+
+        Log::info('LibreOffice CMD', compact('cmd'));
 
         exec($cmd, $log, $result);
 
