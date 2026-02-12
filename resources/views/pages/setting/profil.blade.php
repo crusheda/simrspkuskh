@@ -208,6 +208,7 @@
                                             <strong>Hal yang perlu diperhatikan:</strong>
                                             <p class="mb-0">
                                                 <ol>
+                                                    <li><mark><b>TANDA TANGAN HARUS FULL RAPAT ATAS BAWAH</b></mark> (<i><b>Memenuhi bagian atas sampai bawah, untuk bagian kiri dan kanan opsional</b></i>), tidak menyisakan <b>SPACE Kosong</b> di bagian Atas maupun Bawah TTE</li>
                                                     <li>Tanda tangan wajib diisi minimal 1x ttd atau dapat juga bervariasi (Lebih dari 1x ttd)</li>
                                                     <li>Perubahan tanda tangan dapat dilakukan pada masing-masing variasi yang tersedia</li>
                                                     <li>Tanda tangan baru tidak akan berpengaruh pada laporan yang sudah dibuat</li>
@@ -428,7 +429,7 @@
                 if (!canvas) continue;
 
                 padUsers[i] = new SignaturePad(canvas);
-                resizeCanvasResponsive(canvas);
+                resizeCanvasResponsive(canvas, padUsers[i]);
 
                 padUsers[i].onBegin = function () {
                     $('#placeholder-ttd-user-' + i).hide();
@@ -441,30 +442,34 @@
                 $('#placeholder-ttd-user-' + idx).show();
             });
 
+            $(window).off('resize.user');
             $(window).on('resize.user', function () {
                 for (let i = 1; i <= 6; i++) {
                     const canvas = document.getElementById('signature-pad-user-' + i);
-                    if (canvas) resizeCanvasResponsive(canvas);
+                    if (canvas) resizeCanvasResponsive(canvas, padUsers[i]);
                 }
             });
         }
 
-        function resizeCanvasResponsive(canvas) {
+        function resizeCanvasResponsive(canvas, pad) {
             const ratio = Math.max(window.devicePixelRatio || 1, 1);
 
-            // ambil lebar parent (max 500px)
+            // simpan dulu konten lama
+            const data = pad.toData();
+
             const parentWidth = canvas.parentElement.offsetWidth;
             const width = parentWidth > 500 ? 500 : parentWidth;
             const height = 200;
 
-            // CSS size (tampilan)
             canvas.style.width = width + "px";
             canvas.style.height = height + "px";
 
-            // buffer internal (supaya tajam & koordinat sesuai)
             canvas.width = width * ratio;
             canvas.height = height * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
+
+            // restore konten lama
+            pad.fromData(data);
         }
 
         function storeTTDpeg() {
