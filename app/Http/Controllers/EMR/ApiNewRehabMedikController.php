@@ -137,6 +137,13 @@ class ApiNewRehabMedikController extends Controller
         return null;
     }
 
+    public function escapeDocx(?string $text): string
+    {
+        if (!$text) return '';
+        // ENT_XML1 untuk escape karakter XML Contoh (&, <, >, dll)
+        return htmlspecialchars($text, ENT_XML1, 'UTF-8');
+    }
+
     // ====================================================================================================================================
     // ==================================================  FORMULIR RAWAT JALAN KFR  ======================================================
     // ====================================================================================================================================
@@ -1228,7 +1235,7 @@ class ApiNewRehabMedikController extends Controller
         }
 
         foreach ($data as $key => $value) {
-            $templateProcessor->setValue($key, $value);
+            $templateProcessor->setValue($key, $this->escapeDocx($value));
         }
 
         $outputWord = $output.'.docx';
@@ -2579,7 +2586,7 @@ class ApiNewRehabMedikController extends Controller
         }
 
         foreach ($data as $key => $value) {
-            $templateProcessor->setValue($key, $value);
+            $templateProcessor->setValue($key, $this->escapeDocx($value));
         }
 
         $outputWord = $output.'.docx';
