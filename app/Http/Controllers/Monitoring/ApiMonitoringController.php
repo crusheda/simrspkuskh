@@ -1097,10 +1097,18 @@ class ApiMonitoringController extends Controller
                     ->where('dr.STATUS',1)
                     ->first();
 
-                $getTtd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
-                    ->where('ttd.user',$getIDUser->ID ?? null)
-                    ->whereNull('deleted_at')
-                    ->first();
+                if (str_starts_with($getRESUMERJ->RUANGAN, '1020702')) { // Khusus Rehab Medik
+                    $getTtd = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
+                        ->where('ttp.nip', $getRESUMERJ->NIPDOKTER)
+                        ->where('status', 1)
+                        ->inRandomOrder()
+                        ->first();
+                } else {
+                    $getTtd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
+                                    ->where('ttd.user',$getIDUser->ID)
+                                    ->whereNull('deleted_at')
+                                    ->first();
+                }
 
                 if ($getTtd) {
                     $imagePath2 = storage_path()."/app/public/".$getTtd->signature_path;
