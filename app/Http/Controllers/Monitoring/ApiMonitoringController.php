@@ -843,7 +843,7 @@ class ApiMonitoringController extends Controller
             ]);
         }
 
-        function compileResumeRj($kunjungan)
+        function compileResumeRjjj($kunjungan)
         {
             $getRESUMERJ = DB::table('pendaftaran.kunjungan AS pk')
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
@@ -868,7 +868,12 @@ class ApiMonitoringController extends Controller
             // $instruksi  = $this->cleanText($show[0]->INSTRUKSI);
 
             // $NAMA_OBAT = collect($obat)->pluck('NAMAOBAT')->implode(', ');
-
+            $konsul = DB::table('pendaftaran.konsul as kon')
+                    ->where('kon.KUNJUNGAN',$kunjungan)
+                    ->where('kon.STATUS','!=','0')
+                    ->get();
+            // print_r($konsul);
+            // die();
             // ----------------------------------------------------------------------
             $ttd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
                 ->where('ttd.kunjungan',$kunjungan)
@@ -1035,6 +1040,252 @@ class ApiMonitoringController extends Controller
                 'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
                 'Pragma'        => 'no-cache',
                 'Expires'       => '0',
+            ]);
+        }
+        function compileResumeRj($kunjungan)
+        {
+            $getRESUMERJ = DB::table('pendaftaran.kunjungan AS pk')
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                ->select(
+                    'pj.NOMOR AS NOSEP',
+                    'pp.NOMOR AS NOPEN',
+                    'pk.NOMOR AS NOMOR',
+                    'pk.RUANGAN AS RUANGAN',
+                    'pk.DPJP',
+                    'dr.NIP AS NIPDOKTER',
+                    'pp.TANGGAL AS TGLPERIKSA'
+                )
+                ->where('pk.NOMOR',$kunjungan)
+                ->first();
+
+            if (!$getRESUMERJ) {
+                return response()->json(['message'=>'Data tidak ditemukan'],404);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Ambil Data Konsul
+            |--------------------------------------------------------------------------
+            */
+            $konsul = DB::table('pendaftaran.konsul as kon')
+                ->leftJoin('pendaftaran.kunjungan as pk','pk.REF','=','kon.NOMOR')
+                ->select('pk.NOMOR AS KUNJUNGAN')
+                ->where('kon.KUNJUNGAN',$kunjungan)
+                ->where('kon.STATUS','!=','0')
+                ->get();
+            /*
+            |--------------------------------------------------------------------------
+            | Ambil TTD
+            |--------------------------------------------------------------------------
+            */
+            $ttd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
+                ->where('ttd.kunjungan',$kunjungan)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if ($ttd) {
+                $imagePath2 = storage_path()."/app/public/".$ttd->signature_path;
+            } else {
+
+                $getIDUser = DB::table('master.dokter AS dr')
+                    ->leftJoin('aplikasi.pengguna AS pe','pe.NIP','=','dr.NIP')
+                    ->select('pe.ID')
+                    ->where('dr.ID',$getRESUMERJ->DPJP)
+                    ->where('dr.STATUS',1)
+                    ->first();
+
+                $getTtd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
+                    ->where('ttd.user',$getIDUser->ID ?? null)
+                    ->whereNull('deleted_at')
+                    ->first();
+
+                if ($getTtd) {
+                    $imagePath2 = storage_path()."/app/public/".$getTtd->signature_path;
+
+                    DB::table('simrspku_klaim.tanda_tangan')->insert([
+                        'kunjungan' => $kunjungan,
+                        'signature_path' => $getTtd->signature_path,
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                        'user' => Auth::user()->ID,
+                    ]);
+                } else {
+                    $imagePath2 = null;
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Path & Folder
+            |--------------------------------------------------------------------------
+            */
+            $getTgl = Carbon::parse($getRESUMERJ->TGLPERIKSA);
+            $tgl = $getTgl->isoFormat('DD');
+            $bulan = $getTgl->isoFormat('MM');
+            $tahun = $getTgl->isoFormat('YYYY');
+
+            $path = 'files/resume/RJ/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
+            $output = storage_path().'/app/public/'.$path;
+
+            if (!File::exists(dirname($output))) {
+                File::makeDirectory(dirname($output),0755,true);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Tentukan Template
+            |--------------------------------------------------------------------------
+            */
+            if (str_starts_with($getRESUMERJ->RUANGAN, '1020201')) {
+                $input = public_path().'/doc/input/resumeRD/CetakResumeRadar.jrxml';
+                $baseParams = [
+                    'PNOPEN' => $getRESUMERJ->NOPEN,
+                    'IMAGES_PATH' => public_path()."/doc/input/resumeRD/",
+                    'IMAGES_PATH2' => $imagePath2,
+                ];
+            } else {
+                $input = public_path().'/doc/input/resumeRJ/CetakResumeRJ.jrxml';
+                $baseParams = [
+                    'PNOPEN' => $getRESUMERJ->NOPEN,
+                    'PKUNJUNGAN' => $getRESUMERJ->NOMOR,
+                    'IMAGES_PATH' => public_path()."/doc/input/resumeRJ/",
+                    'IMAGES_PATH2' => $imagePath2,
+                ];
+            }
+
+            $jasper = new PHPJasper;
+            $tempPaths = [];
+
+            /*
+            |--------------------------------------------------------------------------
+            | 1️⃣ Generate Resume Utama
+            |--------------------------------------------------------------------------
+            */
+            $mainOutput = $output.'_main';
+
+            $jasper->process(
+                $input,
+                $mainOutput,
+                [
+                    'format'=>['pdf'],
+                    'params'=>$baseParams,
+                    'db_connection' => [
+                        'driver'   => config('database.connections.db_custom.driver'),
+                        'host'     => config('database.connections.db_custom.host'),
+                        'port'     => config('database.connections.db_custom.port'),
+                        'username' => config('database.connections.db_custom.username'),
+                        'password' => config('database.connections.db_custom.password'),
+                        'database' => config('database.connections.db_custom.database'),
+                    ],
+                ]
+            )->execute();
+
+            $tempPaths[] = $mainOutput.'.pdf';
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | 2️⃣ Generate Resume Konsul (Jika Ada)
+            |--------------------------------------------------------------------------
+            */
+            if (!$konsul->isEmpty()) {
+
+                foreach ($konsul as $item) {
+
+                    $konsulOutput = $output.'_konsul_'.$item->KUNJUNGAN;
+
+                    $paramsKonsul = $baseParams;
+
+                    if (isset($paramsKonsul['PKUNJUNGAN'])) {
+                        $paramsKonsul['PKUNJUNGAN'] = $item->KUNJUNGAN;
+                    }
+
+                    $jasper->process(
+                        $input,
+                        $konsulOutput,
+                        [
+                            'format'=>['pdf'],
+                            'params'=>$paramsKonsul,
+                            'db_connection' => [
+                                'driver'   => config('database.connections.db_custom.driver'),
+                                'host'     => config('database.connections.db_custom.host'),
+                                'port'     => config('database.connections.db_custom.port'),
+                                'username' => config('database.connections.db_custom.username'),
+                                'password' => config('database.connections.db_custom.password'),
+                                'database' => config('database.connections.db_custom.database'),
+                            ],
+                        ]
+                    )->execute();
+
+                    $tempPaths[] = $konsulOutput.'.pdf';
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | 3️⃣ Merge Semua PDF
+            |--------------------------------------------------------------------------
+            */
+            $pdf = new \setasign\Fpdi\Fpdi();
+
+            foreach ($tempPaths as $file) {
+
+                $pageCount = $pdf->setSourceFile($file);
+
+                for ($page = 1; $page <= $pageCount; $page++) {
+                    $tpl = $pdf->importPage($page);
+                    $size = $pdf->getTemplateSize($tpl);
+                    $pdf->AddPage($size['orientation'],[$size['width'],$size['height']]);
+                    $pdf->useTemplate($tpl);
+                }
+            }
+
+            $pdf->Output('F',$output.'.pdf');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | 4️⃣ Hapus File Temporary
+            |--------------------------------------------------------------------------
+            */
+            foreach ($tempPaths as $file) {
+                if (File::exists($file)) {
+                    File::delete($file);
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | 5️⃣ Simpan ke klaim_file jika belum ada
+            |--------------------------------------------------------------------------
+            */
+            $verify = klaim_file::where('nomor',$kunjungan)
+                ->where('jenis',2)
+                ->where('status',true)
+                ->first();
+
+            if (!$verify) {
+                $post = new klaim_file;
+                $post->jenis = 2;
+                $post->nomor = $kunjungan;
+                $post->title = $kunjungan.'.pdf';
+                $post->filename = $path.'.pdf';
+                $post->status = true;
+                $post->user = Auth::user()->ID;
+                $post->save();
+            }
+
+            return response()->file($output.'.pdf',[
+                'Content-Type'=>'application/pdf',
+                'Cache-Control'=>'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'=>'no-cache',
+                'Expires'=>'0',
             ]);
         }
 
