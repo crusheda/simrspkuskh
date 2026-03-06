@@ -1125,7 +1125,10 @@
         fetch("/api/pasien/"+kunjungan+"/resumeRj")
         .then(response => {
             if (!response.ok) {
-                throw new Error('File tidak ditemukan atau gagal diambil.');
+                return response.json().then(err => {
+                    throw new Error(err.message);
+                });
+                // throw new Error('File tidak ditemukan atau gagal diambil.');
             }
             return response.blob();
         })
@@ -1162,7 +1165,7 @@
         .catch(error => {
             iziToast.error({
                 title: 'Maaf!',
-                message: 'Data Resume tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                message: error.message ?? 'Data Resume tidak ditemukan atau belum dibuatkan oleh Simgos.',
                 position: 'topRight'
             });
             console.error(error);
