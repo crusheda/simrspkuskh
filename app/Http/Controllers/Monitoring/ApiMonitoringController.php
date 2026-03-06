@@ -1062,7 +1062,7 @@ class ApiMonitoringController extends Controller
                 ->first();
 
             if (!$getRESUMERJ) {
-                return response()->json(['message'=>'Data tidak ditemukan'],404);
+                return response()->json(['message'=>'Data Resume Utama tidak ditemukan'],404);
             }
 
             /*
@@ -1072,7 +1072,8 @@ class ApiMonitoringController extends Controller
             */
             $konsul = DB::table('pendaftaran.konsul as kon')
                 ->leftJoin('pendaftaran.kunjungan as pk','pk.REF','=','kon.NOMOR')
-                ->select('pk.NOMOR AS KUNJUNGAN')
+                ->leftJoin('master.dokter as md','md.ID','=','pk.DPJP')
+                ->select('pk.NOMOR AS KUNJUNGAN', 'pk.DPJP AS DPJP', 'pk.RUANGAN AS RUANGAN', 'md.NIP AS NIPDOKTER')
                 ->where('kon.KUNJUNGAN',$kunjungan)
                 ->where('kon.STATUS','!=','0')
                 ->get();
@@ -1083,7 +1084,7 @@ class ApiMonitoringController extends Controller
             */
             $ttd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
                 ->where('ttd.kunjungan',$kunjungan)
-                ->whereNull('deleted_at')
+                ->whereNull('ttd.deleted_at')
                 ->first();
 
             if ($ttd) {
@@ -1100,13 +1101,13 @@ class ApiMonitoringController extends Controller
                 if (str_starts_with($getRESUMERJ->RUANGAN, '1020702')) { // Khusus Rehab Medik
                     $getTtd = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
                         ->where('ttp.nip', $getRESUMERJ->NIPDOKTER)
-                        ->where('status', 1)
+                        ->where('ttp.status', 1)
                         ->inRandomOrder()
                         ->first();
                 } else {
                     $getTtd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
                                     ->where('ttd.user',$getIDUser->ID)
-                                    ->whereNull('deleted_at')
+                                    ->whereNull('ttd.deleted_at')
                                     ->first();
                 }
 
@@ -1121,7 +1122,10 @@ class ApiMonitoringController extends Controller
                         'user' => Auth::user()->ID,
                     ]);
                 } else {
-                    $imagePath2 = null;
+                    return response()->json([
+                        'message' => 'Tanda tangan Dokter DPJP pada Resume Utama tidak ditemukan.'
+                    ], 404);
+                    // $imagePath2 = null;
                 }
             }
 
@@ -1210,6 +1214,53 @@ class ApiMonitoringController extends Controller
 
                     if (isset($paramsKonsul['PKUNJUNGAN'])) {
                         $paramsKonsul['PKUNJUNGAN'] = $item->KUNJUNGAN;
+
+                        $ttd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
+                            ->where('ttd.kunjungan',$item->KUNJUNGAN)
+                            ->whereNull('ttd.deleted_at')
+                            ->first();
+
+                        if ($ttd) {
+                            $imagePath2 = storage_path()."/app/public/".$ttd->signature_path;
+                        } else {
+
+                            $getIDUser = DB::table('master.dokter AS dr')
+                                ->leftJoin('aplikasi.pengguna AS pe','pe.NIP','=','dr.NIP')
+                                ->select('pe.ID')
+                                ->where('dr.ID',$konsul->DPJP)
+                                ->where('dr.STATUS',1)
+                                ->first();
+
+                            if (str_starts_with($konsul->RUANGAN, '1020702')) { // Khusus Rehab Medik
+                                $getTtd = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
+                                    ->where('ttp.nip', $konsul->NIPDOKTER)
+                                    ->where('ttp.status', 1)
+                                    ->inRandomOrder()
+                                    ->first();
+                            } else {
+                                $getTtd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
+                                                ->where('ttd.user',$getIDUser->ID)
+                                                ->whereNull('ttd.deleted_at')
+                                                ->first();
+                            }
+
+                            if ($getTtd) {
+                                $imagePath2 = storage_path()."/app/public/".$getTtd->signature_path;
+
+                                DB::table('simrspku_klaim.tanda_tangan')->insert([
+                                    'kunjungan' => $kunjungan,
+                                    'signature_path' => $getTtd->signature_path,
+                                    'created_at' => Carbon::now(),
+                                    'updated_at' => Carbon::now(),
+                                    'user' => Auth::user()->ID,
+                                ]);
+                            } else {
+                                return response()->json([
+                                    'message' => 'Tanda tangan Dokter DPJP pada Resume Konsul tidak ditemukan.'
+                                ], 404);
+                            }
+                        }
+                        $paramsKonsul['IMAGES_PATH2'] = $imagePath2;
                     }
 
                     $jasper->process(
