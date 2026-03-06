@@ -1227,13 +1227,13 @@ class ApiMonitoringController extends Controller
                             $getIDUser = DB::table('master.dokter AS dr')
                                 ->leftJoin('aplikasi.pengguna AS pe','pe.NIP','=','dr.NIP')
                                 ->select('pe.ID')
-                                ->where('dr.ID',$konsul->DPJP)
+                                ->where('dr.ID',$item->DPJP)
                                 ->where('dr.STATUS',1)
                                 ->first();
 
-                            if (str_starts_with($konsul->RUANGAN, '1020702')) { // Khusus Rehab Medik
+                            if (str_starts_with($item->RUANGAN, '1020702')) { // Khusus Rehab Medik
                                 $getTtd = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
-                                    ->where('ttp.nip', $konsul->NIPDOKTER)
+                                    ->where('ttp.nip', $item->NIPDOKTER)
                                     ->where('ttp.status', 1)
                                     ->inRandomOrder()
                                     ->first();
