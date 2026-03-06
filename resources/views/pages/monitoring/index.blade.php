@@ -1123,13 +1123,21 @@
         $('#resumerj'+kunjungan).find('i').removeClass('fa-check fa-times').addClass('fa-sync fa-spin');
 
         fetch("/api/pasien/"+kunjungan+"/resumeRj")
-        .then(response => {
+        .then(async response => {
             if (!response.ok) {
-                return response.json().then(err => {
-                    throw new Error(err.message);
-                });
-                // throw new Error('File tidak ditemukan atau gagal diambil.');
+
+                let message = 'Data Resume tidak ditemukan atau belum dibuatkan oleh Simgos.';
+
+                try {
+                    const err = await response.json();
+                    if (err.message) {
+                        message = err.message;
+                    }
+                } catch (e) {}
+
+                throw new Error(message);
             }
+
             return response.blob();
         })
         .then(blob => {
@@ -1163,11 +1171,14 @@
             $('#cetak-resumerj').empty().append(iframe);
         })
         .catch(error => {
+            const message = error?.message || 'Data Resume tidak ditemukan atau belum dibuatkan oleh Simgos.';
+
             iziToast.error({
                 title: 'Maaf!',
-                message: error.message ?? 'Data Resume tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                message: message,
                 position: 'topRight'
             });
+
             console.error(error);
         });
     }
