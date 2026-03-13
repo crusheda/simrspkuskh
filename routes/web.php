@@ -28,6 +28,7 @@ use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Jasper\JasperController;
 use App\Http\Controllers\Jasper\JasperReportsController;
 use App\Modules\AiKlaim\Controllers\AiKlaimController;
+use App\Http\Controllers\Display\RatingController;
 
 // STARTING CREATIONS
 // Route::get('/', function () {
@@ -52,7 +53,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
 
     Route::get('ai-klaim', [AiKlaimController::class, 'index']);
     Route::post('ai-klaim/tanya', [AiKlaimController::class, 'tanya']);
-    
+
     // DASHBOARD
     Route::get('/', function () { return redirect()->route('dashboard'); });
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -70,6 +71,9 @@ Route::group(['middleware' => ['web', 'auth']], function() {
         Route::get('display/antrian/poli', [AntrianPoliController::class, 'index'])->name('display.antrian.poli.index');
         // FARMASI
         Route::get('display', [DisplayFarmasiController::class, 'index'])->name('display.antrian.farmasi.display.index');
+        // RATING
+        Route::get('display/rating', [RatingController::class, 'index'])->name('display.rating.index');
+        Route::get('display/rating/laporan/{bulan}', [RatingController::class, 'laporan'])->name('display.rating.laporan');
 
     // SETTING - PROFIL
     Route::get('setting/profil', [ProfilController::class, 'index'])->name('profil');

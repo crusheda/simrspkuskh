@@ -30,6 +30,7 @@ use App\Http\Controllers\Monitoring\ApiMonitoringController;
 use App\Http\Controllers\Pelayanan\Penunjang\RISController;
 use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
 use App\Http\Controllers\Pelayanan\Pasien\ApiResumeMedisController;
+use App\Http\Controllers\Display\RatingController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -49,6 +50,9 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
         // POLI
             Route::post('display/antrian/poli', [AntrianPoliController::class, 'getDisplayAntrianPoli'])->name('api.display.antrian.poli');
             Route::post('display/antrian/poli/update', [AntrianPoliController::class, 'updatePanggilanAntrian'])->name('api.display.antrian.update');
+
+        // RATING
+            Route::post('rating', [RatingController::class,'store'])->name('api.rating.store');
 
 //API PRIVATE
 Route::group(['middleware' => ['web', 'auth']], function() {

@@ -64,6 +64,16 @@
                     </a>
                 </li>
                 @endcan
+                @can('display_rating')
+                <li class="pc-item {{ request()->routeIs('display.rating.index') ? 'active' : '' }}">
+                    <a href="{{ route('display.rating.index') }}" class="pc-link">
+                        <span class="pc-micon">
+                            <i class="ph-duotone ph-smiley"></i>
+                        </span>
+                        <span class="pc-mtext" data-i18n="Antrian">Rating</span>
+                    </a>
+                </li>
+                @endcan
                 @can('display_antrian_farmasi')
                 <li class="pc-item pc-hasmenu {{ request()->routeIs('api.display.antrian.farmasi.*') ? 'pc-trigger' : '' }}">
 
