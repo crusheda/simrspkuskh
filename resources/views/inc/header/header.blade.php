@@ -367,6 +367,12 @@
                     </div>
                 </li> --}}
 
+                <li class="pc-h-item">
+                    <a class="pc-head-link" href="javascript:void(0);" onclick="fullscreenPage()">
+                        <i class="ph-duotone ph-corners-out"></i>
+                    </a>
+                </li>
+
                 {{-- DATA PC THEME = LIGHT / DARK --}}
                 <li class="dropdown pc-h-item d-none d-md-inline-flex">
                     <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false"

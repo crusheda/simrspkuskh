@@ -51,6 +51,58 @@
             localStorage.setItem("theme", theme);
             setLogoByTheme(theme); // update logo juga
         }
+
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+
+            $('#installBtn').show();
+        });
+
+        $('#installBtn').click(async () => {
+
+            deferredPrompt.prompt();
+
+            const { outcome } = await deferredPrompt.userChoice;
+
+            if (outcome === 'accepted') {
+                console.log('User accepted install');
+            }
+
+            deferredPrompt = null;
+        });
+
+        function fullscreenPage() {
+
+            let elem = document.documentElement; // seluruh halaman
+
+            if (!document.fullscreenElement) {
+
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { // Safari
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { // IE11
+                    elem.msRequestFullscreen();
+                } else {
+                    document.body.classList.toggle("fake-fullscreen");
+                }
+
+            } else {
+
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+
+            }
+
+        }
     </script>
     {{-- DATA PC THEME END --}}
 

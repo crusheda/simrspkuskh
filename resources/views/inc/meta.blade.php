@@ -10,3 +10,9 @@
 <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('images/logo/logo.png') }}">
 <link rel="icon" href="{{ asset('images/logo/logo.png') }}" type="image/x-icon" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0d6efd">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
