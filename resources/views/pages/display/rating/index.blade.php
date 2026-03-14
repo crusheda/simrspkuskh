@@ -149,11 +149,10 @@
         const elem = $("#myDiv")[0];
 
         $("#openFullscreenBtn").on("click", function() {
-            if (elem.requestFullscreen) {elem.requestFullscreen()};
-            else if (elem.mozRequestFullScreen) {elem.mozRequestFullScreen()};
-            else if (elem.webkitRequestFullscreen) {elem.webkitRequestFullscreen()};
-            else if (elem.msRequestFullscreen) {elem.msRequestFullscreen()};
-            else {document.body.classList.toggle("fake-fullscreen");}
+            if (elem.requestFullscreen) {elem.requestFullscreen()}
+            else if (elem.mozRequestFullScreen) {elem.mozRequestFullScreen()}
+            else if (elem.webkitRequestFullscreen) {elem.webkitRequestFullscreen()}
+            else {elem.msRequestFullscreen()}
         });
 
         $('#bulan_laporan').on('change', function () {

@@ -69,5 +69,47 @@
     @include('inc.footer')
     @include('inc.js')
 
+    <script>
+        // RUNNING SERVICE WORKER
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/sw.js')
+                .then(function(registration) {
+                    console.log('Service Worker registered:', registration.scope);
+                })
+                .catch(function(error) {
+                    console.log('Service Worker registration failed:', error);
+                });
+            });
+        }
+
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+
+            console.log("Install available");
+
+            e.preventDefault();
+            deferredPrompt = e;
+
+            document.getElementById("installBtn").style.display = "block";
+
+        });
+
+        document.getElementById("installBtn").addEventListener("click", async () => {
+
+            if (!deferredPrompt) return;
+
+            deferredPrompt.prompt();
+
+            const { outcome } = await deferredPrompt.userChoice;
+
+            console.log(outcome);
+
+            deferredPrompt = null;
+
+        });
+    </script>
+
 </body>
 </html>

@@ -52,28 +52,6 @@
             setLogoByTheme(theme); // update logo juga
         }
 
-        let deferredPrompt;
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-
-            $('#installBtn').show();
-        });
-
-        $('#installBtn').click(async () => {
-
-            deferredPrompt.prompt();
-
-            const { outcome } = await deferredPrompt.userChoice;
-
-            if (outcome === 'accepted') {
-                console.log('User accepted install');
-            }
-
-            deferredPrompt = null;
-        });
-
         function fullscreenPage() {
 
             let elem = document.documentElement; // seluruh halaman
