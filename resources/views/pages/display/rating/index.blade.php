@@ -95,35 +95,48 @@
 
         <div class="emot-rating mb-5 d-flex justify-content-center gap-5">
 
-            <div class="emot-item">
+            {{-- DIPAKAI --}}
+            <div class="emot-item" hidden>
+                <span class="emot" data-rating="5">😍</span>
+                <div><b>PUAS</b></div>
+                <div class="emot-count mt-3" id="count-5" hidden>{{ $rating[5] ?? 0 }}</div>
+            </div>
+            <div class="emot-item" hidden>
+                <span class="emot" data-rating="1">😡</span>
+                <div><b>TIDAK PUAS</b></div>
+                <div class="emot-count mt-3" id="count-1" hidden>{{ $rating[1] ?? 0 }}</div>
+            </div>
+
+            {{-- TIDAK DIPAKAI --}}
+            {{-- <div class="emot-item" hidden>
                 <span class="emot" data-rating="5">😍</span>
                 <div><b>Sangat Baik</b></div>
                 <div class="emot-count mt-3" id="count-5" hidden>{{ $rating[5] ?? 0 }}</div>
-            </div>
+            </div> --}}
 
-            <div class="emot-item">
+            <div class="emot-item" hidden>
                 <span class="emot" data-rating="4">😊</span>
                 <div><b>Baik</b></div>
                 <div class="emot-count mt-3" id="count-4" hidden>{{ $rating[4] ?? 0 }}</div>
             </div>
 
-            <div class="emot-item">
+            <div class="emot-item" hidden>
                 <span class="emot" data-rating="3">😐</span>
                 <div><b>Cukup</b></div>
                 <div class="emot-count mt-3" id="count-3" hidden>{{ $rating[3] ?? 0 }}</div>
             </div>
 
-            <div class="emot-item">
+            <div class="emot-item" hidden>
                 <span class="emot" data-rating="2">😕</span>
                 <div><b>Kurang</b></div>
                 <div class="emot-count mt-3" id="count-2" hidden>{{ $rating[2] ?? 0 }}</div>
             </div>
 
-            <div class="emot-item">
+            {{-- <div class="emot-item" hidden>
                 <span class="emot" data-rating="1">😡</span>
                 <div><b>Sangat Kurang</b></div>
                 <div class="emot-count mt-3" id="count-1" hidden>{{ $rating[1] ?? 0 }}</div>
-            </div>
+            </div> --}}
 
         </div>
 
