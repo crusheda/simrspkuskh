@@ -96,12 +96,12 @@
         <div class="emot-rating mb-5 d-flex justify-content-center gap-5">
 
             {{-- DIPAKAI --}}
-            <div class="emot-item" hidden>
+            <div class="emot-item">
                 <span class="emot" data-rating="5">😍</span>
                 <div><b>PUAS</b></div>
                 <div class="emot-count mt-3" id="count-5" hidden>{{ $rating[5] ?? 0 }}</div>
             </div>
-            <div class="emot-item" hidden>
+            <div class="emot-item">
                 <span class="emot" data-rating="1">😡</span>
                 <div><b>TIDAK PUAS</b></div>
                 <div class="emot-count mt-3" id="count-1" hidden>{{ $rating[1] ?? 0 }}</div>
