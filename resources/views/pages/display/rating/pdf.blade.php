@@ -67,7 +67,8 @@
                         <td><center>{{ $no++ }}</center></td>
                         <td><center>{{ $row->rating }}</center></td>
                         @if ($row->rating == 5)
-                            <td><center>Sangat Baik</center></td>
+                            <td><center>Puas</center></td>
+                            {{-- <td><center>Sangat Baik</center></td> --}}
                         @else
                             @if ($row->rating == 4)
                                 <td><center>Baik</center></td>
@@ -78,7 +79,8 @@
                                     @if ($row->rating == 2)
                                         <td><center>Kurang</center></td>
                                     @else
-                                        <td><center>Sangat Kurang</center></td>
+                                        <td><center>Tidak Puas</center></td>
+                                        {{-- <td><center>Sangat Kurang</center></td> --}}
                                     @endif
                                 @endif
                             @endif

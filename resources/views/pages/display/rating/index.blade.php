@@ -91,19 +91,19 @@
     </div>
     <div class="container-fluid py-3 card" id="myDiv">
 
-        <h2 class="mt-4 mb-4 text-center">Bagaimana pengalaman Anda di Rumah Sakit Kami?</h2>
+        <h2 class="mt-4 mb-4 text-center">Bagaimana pengalaman Anda di <b class="text-primary">Rumah Sakit</b> Kami?</h2>
 
-        <div class="emot-rating mb-5 d-flex justify-content-center gap-5">
+        <div class="emot-rating mb-5 d-flex justify-content-center" style="gap: 6.5rem !important">
 
             {{-- DIPAKAI --}}
             <div class="emot-item">
-                <span class="emot" data-rating="5">😍</span>
-                <div><b>PUAS</b></div>
+                <span class="emot" data-rating="5">😊</span> {{-- 😍 --}}
+                <div style="font-size:15pt"><b class="text-success">PUAS</b></div>
                 <div class="emot-count mt-3" id="count-5" hidden>{{ $rating[5] ?? 0 }}</div>
             </div>
             <div class="emot-item">
-                <span class="emot" data-rating="1">😡</span>
-                <div><b>TIDAK PUAS</b></div>
+                <span class="emot" data-rating="1">😕</span> {{-- 😡 --}}
+                <div style="font-size:15pt"><b class="text-danger">TIDAK PUAS</b></div>
                 <div class="emot-count mt-3" id="count-1" hidden>{{ $rating[1] ?? 0 }}</div>
             </div>
 
