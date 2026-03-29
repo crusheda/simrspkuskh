@@ -5,7 +5,7 @@
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frjkfr" role="tab"
                         aria-selected="false" tabindex="-1" id="tab-frjkfr" disabled>
-                        <i class="ph-duotone ph-files me-2"></i> Formulir Rawat Jalan KFR
+                        <i class="ph-duotone ph-files me-2"></i> Formulir Rawat Jalan
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -14,6 +14,12 @@
                         <i class="ph-duotone ph-files me-2"></i> Program Terapi
                     </button>
                 </li>
+                {{-- <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#jpkfr" role="tab"
+                        aria-selected="false" tabindex="-1" id="tab-jpkfr" disabled>
+                        <i class="ph-duotone ph-files me-2"></i> Jadwal Pelayanan
+                    </button>
+                </li> --}}
             @endif
         </ul>
     </div>
@@ -28,6 +34,11 @@
         @include('pages.emr.rehabmedik.form_program')
     </div>
 </div>
+{{-- <div class="tab-content">
+    <div class="tab-pane" id="jpkfr" role="tabpanel">
+        @include('pages.emr.rehabmedik.form_jadwal')
+    </div>
+</div> --}}
 
 <script>
     $(document).ready(function() {
@@ -49,6 +60,9 @@
                 loadCpptProgramTerapi();
                 loadRiwayatProgramTerapi();
             }
+            // else if (tabId === 'tab-jpkfr') {
+            //     loadFormJadwalPelayanan();
+            // }
             else {
                 console.log('tab lain');
             }
@@ -220,4 +234,35 @@
             }
         });
     }
+
+    // function loadFormJadwalPelayanan() {
+    //     $.ajax({
+    //         url: '/api/emr/kfr/jadwal/' + kunjungan,
+    //         type: 'GET',
+    //         beforeSend: function() {
+
+    //         },
+    //         success: function(res) {
+    //             if (!res.status) {
+    //                 Swal.fire({
+    //                     title: 'Ahh Maaf!',
+    //                     text: res.message,
+    //                     icon: 'warning',
+    //                     timer: 10000,
+    //                     timerProgressBar: true
+    //                 });
+    //                 return;
+    //             }
+    //         },
+    //         error: function(xhr) {
+    //             Swal.fire({
+    //                 title: 'Pesan Error!',
+    //                 text: xhr.responseJSON?.message || 'Telah terjadi kesalahan pada saat pengambilan Data Program Terapi',
+    //                 icon: 'error',
+    //                 timer: 10000,
+    //                 timerProgressBar: true
+    //             });
+    //         }
+    //     });
+    // }
 </script>

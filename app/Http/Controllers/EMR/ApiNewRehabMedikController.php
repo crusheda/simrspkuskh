@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use App\Models\simrspku_klaim\emr_form_kfr;
 use App\Models\simrspku_klaim\emr_form_terapi;
+use App\Models\simrspku_klaim\emr_form_jadwal;
 use App\Models\simrspku_klaim\klaim_verifikasi;
 use App\Models\simrspku_klaim\klaim_file;
 use App\Models\Pengguna;
@@ -3011,6 +3012,56 @@ class ApiNewRehabMedikController extends Controller
             ], 500);
         }
     }
+
+    // ====================================================================================================================================
+    // ===================================================  FORMULIR PROGRAM TERAPI  ======================================================
+    // ====================================================================================================================================
+    function getJadwalPelayanan($KUNJUNGAN)
+    {
+        $validasi = emr_form_kfr::where('nomor',$KUNJUNGAN)->where('status',1)->whereNull('deleted_at')->latest('id')->first();
+
+        if (!$validasi) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Formulir KFR tidak ditemukan untuk kunjungan ini. Silakan melakukan pengisian pada Tab Formulir Rawat Jalan terlebih dahulu'
+            ]);
+        }
+
+        $data = DB::table('simrspku_klaim.emr_form_terapi AS ft')
+            ->join('medicalrecord.cppt AS cppt', 'cppt.ID', '=', 'ft.id_cppt')
+            ->where('ft.nomor', $KUNJUNGAN)
+            ->where('ft.status', 1)
+            ->select(
+                'ft.nomor AS KUNJUNGAN',
+                'cppt.ID AS ID_CPPT',
+                'cppt.SUBYEKTIF',
+                'cppt.OBYEKTIF',
+                'cppt.ASSESMENT',
+                'cppt.PLANNING as PROCEDURE',
+                'cppt.INSTRUKSI'
+            )
+            ->first();
+
+        if (!$data) {
+            return response()->json([
+                'status' => false,
+                'nullData' => 'pterapi',
+                'message'=> 'Data Formulir Program tidak ditemukan'
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $validasi
+            // 'data' => [
+            //     's' => $data->SUBYEKTIF,
+            //     'o' => $data->OBYEKTIF,
+            //     'a' => $data->ASSESMENT,
+            //     'p' => $data->PROCEDURE,
+            // ]
+        ], 200);
+    }
+
     // ====================================================================================================================================
     // =============================================================  ADD ONS  ============================================================
     // ====================================================================================================================================

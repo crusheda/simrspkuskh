@@ -169,6 +169,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 Route::get('emr/pterapi/{KUNJUNGAN}/{GROUP}/{QUEUE}', [ApiNewRehabMedikController::class, 'lihatFormProgramTerapi'])->name('api.emr.pterapi.lihatFormProgramTerapi');
                 Route::post('emr/pterapi/store', [ApiNewRehabMedikController::class, 'storeProgram'])->name('api.emr.pterapi.storeProgram');
                 Route::post('emr/pterapi/destroy', [ApiNewRehabMedikController::class, 'destroyProgram'])->name('api.emr.pterapi.destroyProgram');
+                // JADWAL PELAYANAN
+                Route::get('emr/kfr/jadwal/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'getJadwalPelayanan'])->name('api.emr.kfr.jadwal.getJadwalPelayanan');
             // RIS
             Route::get('dcom/{filename}', [RISController::class, 'getDCOM'])->name('api.emr.ris.getDCOM');
 
