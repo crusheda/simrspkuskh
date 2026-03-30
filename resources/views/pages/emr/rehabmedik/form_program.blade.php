@@ -1,8 +1,25 @@
 <div class="row">
+    <div class="col-md-12" id="formJPel" hidden>
+        <div class="card table-card border shadow-none">
+            <div class="card-header d-flex align-items-center justify-content-between p-3">
+                <h5 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Form <b class="text-primary">Jadwal Pelayanan Pasien</b></h5>
+                <div>
+                    Pengisian Formulir ini <b class="text-danger">Hanya Sekali Per Kunjungan</b>, Pastikan Data <b class="text-success">Sudah Benar Sebelum Menyimpan</b>!
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between p-3">
+                <button class="btn btn-info btn-sm" onclick="lihatFormJadwalPelayanan()" id="btn-cetak-form-jp" data-bs-toggle="tooltip" title="Lihat Formulir Jadwal Pelayanan Program Terapi" disabled><i class="ti ti-file-invoice me-1"></i> Cetak Form</button>
+                <div>
+                    <button class="btn btn-danger btn-sm" onclick="hapusFormJadwalPelayanan()" id="btn-hapus-form-jp" data-bs-toggle="tooltip" title="Hapus Formulir Jadwal Pelayanan" disabled><i class="ti ti-trash me-1"></i> Hapus Form</button>
+                    <button class="btn btn-success btn-sm" onclick="ttdPasienJadwalPelayanan()" id="btn-submit-form-jp" data-bs-toggle="tooltip" title="Tanda Tangan Jadwal Pelayanan Program Terapi" disabled><i class="ti ti-writing-sign me-1"></i> Tanda Tangan Pasien</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="col-md-7">
         <div class="card table-card border shadow-none">
             <div class="card-header d-flex align-items-center justify-content-between p-3">
-                <h5 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Program Terapi</h5>
+                <h5 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Form <b class="text-primary">Program Terapi</b></h5>
                 <div>
                     <a><i class="fas fa-exclamation-circle me-1"></i><i>Anda masuk sebagai <b><u class="text-primary">{{ Auth::user()->NAMA }}</u> (NIP#{{ Auth::user()->NIP }})</b></i></a>
                     <button class="btn btn-light-primary btn-sm ms-2" onclick="loadCpptProgramTerapi()" id="btn-refresh-riwayat-cppt-program" data-bs-toggle="tooltip" title="Refresh Riwayat CPPT"><i class="fas fa-sync"></i></button>
@@ -113,6 +130,24 @@
     </div>
 </div>
 
+{{-- MODAL --}}
+<div class="modal fade" id="modalPreviewJpel" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Preview <b class="text-primary">Jadwal Pelayanan Terapi</b> (<a id="showTxModalPJPel"><i class="fas fa-sync fa-spin ms-1 me-1"></i></a>)
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div id="prevFormJadwalPelayanan"></div>
+            </div>
+            <div class="col-12 text-center p-4 pt-0" id="btn-footer-preview-jp">
+                <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="showFormProgramTerapi" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showFormPTerapiLabel">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
@@ -134,10 +169,50 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalTTDPasien" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tanda Tangan Pasien</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body text-center">
+                <div class="border rounded position-relative" style="width:100%; max-width:500px; margin:auto;">
+                    <canvas id="signature-pad-pasien"></canvas>
+                    {{-- <span id="placeholder-ttd-pasien" class="position-absolute top-50 start-50 translate-middle text-muted">
+                        Silakan tanda tangan
+                    </span> --}}
+                </div>
+
+                <div class="mt-3 d-flex justify-content-center gap-2">
+                    <button class="btn btn-warning btn-sm" id="clear-ttd-pasien">
+                        <i class="ti ti-eraser"></i> Hapus
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button class="btn btn-primary" id="save-ttd-pasien" onclick="saveFormJadwalPelayanan()">
+                    <i class="ti ti-device-floppy"></i> Simpan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-    $(document).ready(function() {
+    let padPasien;
 
+    $(document).ready(function() {
+        // tombol clear ttd pasien
+        $('#clear-ttd-pasien').on('click', function () {
+            if (padPasien) {
+                padPasien.clear();
+                $('#placeholder-ttd-pasien').show();
+            }
+        });
     });
 
     function storeFormProgramTerapi() {
@@ -160,7 +235,7 @@
         };
 
         $.ajax({
-            url: "{{ route('api.emr.pterapi.storeProgram') }}",
+            url: "/api/emr/pterapi/store",
             type: "POST",
             data: data,
             beforeSend: function () {
@@ -876,5 +951,187 @@
         $('#cppt_o_t').val('');
         $('#cppt_a_t').val('');
         $('#cppt_p_t').val('');
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------
+    // --------------------------  TTD PASIEN JADWAL PELAYANAN  ------------------------------
+    // ---------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------
+
+    function ttdPasienJadwalPelayanan() {
+        $('#modalTTDPasien').modal('show');
+
+        setTimeout(() => {
+            const canvas = document.getElementById('signature-pad-pasien');
+
+            padPasien = new SignaturePad(canvas);
+
+            resizeCanvasPasien(canvas, padPasien);
+
+            padPasien.onBegin = function () {
+                $('#placeholder-ttd-pasien').hide();
+            };
+        }, 200);
+    }
+
+    // resize canvas
+    function resizeCanvasPasien(canvas, pad) {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+        const width = canvas.parentElement.offsetWidth;
+        const height = 200;
+
+        canvas.width = width * ratio;
+        canvas.height = height * ratio;
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+
+        canvas.getContext("2d").scale(ratio, ratio);
+    }
+
+    function saveFormJadwalPelayanan() {
+
+        if (!padPasien || padPasien.isEmpty()) {
+            alert('Tanda tangan pasien tidak boleh kosong');
+            return;
+        }
+
+        const image = padPasien.toDataURL('image/png');
+
+        $('#save-ttd-pasien').prop('disabled', true);
+
+        $.ajax({
+            url: "{{ route('api.emr.jadwal.storeFormJadwalPelayanan') }}",
+            method: "POST",
+            contentType: "application/json",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify({
+                kunjungan: kunjungan,
+                rm: rm,
+                image: image,
+                sep: sep,
+                tgl_sep: tgl_sep_date,
+                tgl: tgl_masuk
+            }),
+            success: function (res) {
+                iziToast.success({
+                    title: 'Berhasil',
+                    message: 'TTD Pasien berhasil disimpan',
+                    position: 'topRight'
+                });
+
+                $('#modalTTDPasien').modal('hide');
+
+                // optional: simpan ke hidden input
+                $('#ttd_pasien_path').val(res.path);
+                $('#ttd_pasien_id').val(res.id);
+            },
+            complete: function () {
+                $('#save-ttd-pasien').prop('disabled', false);
+            },
+            error: function(xhr){
+                iziToast.error({
+                    title: 'Proses Gagal',
+                    message: xhr.responseJSON?.message ?? 'Terjadi kesalahan',
+                    position: 'topRight'
+                });
+            }
+        });
+    }
+
+    function lihatFormJadwalPelayanan() {
+
+        const modalEl = document.getElementById('modalPreviewJpel');
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+
+        $('#prevFormJadwalPelayanan').html(`
+            <div class="spinner-grow"></div> Memuat Formulir...
+        `);
+
+        fetch("/api/emr/jadwal/" + encodeURIComponent(kunjungan) + "/preview")
+        .then(async response => {
+
+            if (!response.ok) {
+                let msg = 'Formulir tidak ditemukan';
+
+                try {
+                    const err = await response.json();
+                    msg = err.message ?? msg;
+                } catch(e) {}
+
+                throw new Error(msg);
+            }
+
+            return response.blob();
+        })
+        .then(blob => {
+            const fileURL = URL.createObjectURL(blob);
+
+            $('#showTxModalPJPel').text(kunjungan);
+
+            $('#prevFormJadwalPelayanan').html(`
+                <iframe src="${fileURL}" width="100%" height="500px" frameborder="0" class="rounded"></iframe>
+            `);
+        })
+        .catch(error => {
+            iziToast.error({
+                title: 'Maaf!',
+                message: error.message,
+                position: 'topRight'
+            });
+
+            $('#prevFormJadwalPelayanan').html(`
+                <div class="text-danger text-center p-3">
+                    ${error.message}
+                </div>
+            `);
+
+            console.error(error);
+        });
+    }
+
+    function hapusFormJadwalPelayanan() {
+        Swal.fire({
+            title: 'Hapus Formulir Jadwal Pelayanan?',
+            text: 'Data yang dihapus tidak dapat dikembalikan.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Hapus',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (!result.isConfirmed) return;
+
+            $.ajax({
+                url: "/api/emr/jadwal/hapus/" + encodeURIComponent(kunjungan),
+                method: "DELETE",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (res) {
+                    iziToast.success({
+                        title: 'Berhasil',
+                        message: res.message,
+                        position: 'topRight'
+                    });
+
+                    $('#ttd_pasien_path').val('');
+                    $('#ttd_pasien_id').val('');
+                },
+                error: function(xhr){
+                    iziToast.error({
+                        title: 'Proses Gagal',
+                        message: xhr.responseJSON?.message ?? 'Terjadi kesalahan',
+                        position: 'topRight'
+                    });
+                }, complete: function () {
+                    $('#modalPreviewJpel').modal('hide');
+                    loadFormJadwalPelayanan();
+                }
+            });
+        });
     }
 </script>

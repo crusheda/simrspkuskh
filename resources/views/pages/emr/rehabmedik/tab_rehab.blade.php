@@ -56,6 +56,7 @@
             }
             else if (tabId === 'tab-pterapi') {
                 batalUpdateFormProgramTerapi();
+                loadFormJadwalPelayanan();
                 loadFormProgramTerapi();
                 loadCpptProgramTerapi();
                 loadRiwayatProgramTerapi();
@@ -235,34 +236,50 @@
         });
     }
 
-    // function loadFormJadwalPelayanan() {
-    //     $.ajax({
-    //         url: '/api/emr/kfr/jadwal/' + kunjungan,
-    //         type: 'GET',
-    //         beforeSend: function() {
+    function loadFormJadwalPelayanan() {
+        $.ajax({
+            url: `/api/emr/jadwal/${kunjungan}`,
+            type: 'GET',
+            beforeSend: function() {
 
-    //         },
-    //         success: function(res) {
-    //             if (!res.status) {
-    //                 Swal.fire({
-    //                     title: 'Ahh Maaf!',
-    //                     text: res.message,
-    //                     icon: 'warning',
-    //                     timer: 10000,
-    //                     timerProgressBar: true
-    //                 });
-    //                 return;
-    //             }
-    //         },
-    //         error: function(xhr) {
-    //             Swal.fire({
-    //                 title: 'Pesan Error!',
-    //                 text: xhr.responseJSON?.message || 'Telah terjadi kesalahan pada saat pengambilan Data Program Terapi',
-    //                 icon: 'error',
-    //                 timer: 10000,
-    //                 timerProgressBar: true
-    //             });
-    //         }
-    //     });
-    // }
+            },
+            success: function(res) {
+                if (!res.status) {
+                    // Swal.fire({
+                    //     title: 'Ahh Maaf!',
+                    //     text: res.message,
+                    //     icon: 'warning',
+                    //     timer: 10000,
+                    //     timerProgressBar: true
+                    // });
+                    return;
+                }
+
+                if (res.terapi == 0) {
+                    $('#formJPel').prop('hidden', true);
+                } else {
+                    $('#formJPel').prop('hidden', false);
+                }
+
+                if (res.data) {
+                    $('#btn-cetak-form-jp').prop('disabled', false);
+                    $('#btn-hapus-form-jp').prop('disabled', false);
+                    $('#btn-submit-form-jp').prop('disabled', true);
+                } else {
+                    $('#btn-cetak-form-jp').prop('disabled', true);
+                    $('#btn-hapus-form-jp').prop('disabled', true);
+                    $('#btn-submit-form-jp').prop('disabled', false);
+                }
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    title: 'Pesan Error!',
+                    text: xhr.responseJSON?.message || 'Telah terjadi kesalahan pada saat pengambilan Data Program Terapi',
+                    icon: 'error',
+                    timer: 10000,
+                    timerProgressBar: true
+                });
+            }
+        });
+    }
 </script>
