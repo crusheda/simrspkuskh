@@ -3180,7 +3180,7 @@ class ApiNewRehabMedikController extends Controller
             }
 
             $doubleCheck = DB::table('simrspku_klaim.emr_form_jadwal')
-                            ->where('nomor', $show->KUNJUNGAN)
+                            ->where('nomor', $kunjungan)
                             ->where('queue', $formKfr->QUEUE)
                             ->where('group', $formKfr->GROUP)
                             ->where('status', 1)
