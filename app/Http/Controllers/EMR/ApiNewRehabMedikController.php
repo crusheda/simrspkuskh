@@ -3181,16 +3181,16 @@ class ApiNewRehabMedikController extends Controller
 
             $doubleCheck = DB::table('simrspku_klaim.emr_form_jadwal')
                             ->where('nomor', $kunjungan)
-                            ->where('queue', $formKfr->QUEUE)
-                            ->where('group', $formKfr->GROUP)
+                            ->where('queue', $formKfr->queue)
+                            ->where('group', $formKfr->group)
                             ->where('status', 1)
                             ->whereNull('deleted_at')
                             ->first();
             // $doubleCheck = klaim_file::where('nomor',$show->KUNJUNGAN)
             //                 ->where('jenis',11)
             //                 ->where('sub_jenis',3) // FORM JADWAL PELAYANAN TERAPI
-            //                 ->where('kode',$formKfr->QUEUE)
-            //                 ->where('ref',$formKfr->GROUP)
+            //                 ->where('kode',$formKfr->queue)
+            //                 ->where('ref',$formKfr->group)
             //                 ->where('status',true)
             //                 ->whereNull('deleted_at')
             //                 ->orderBy('id','DESC')
