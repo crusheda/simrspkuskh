@@ -1031,6 +1031,7 @@
             },
             complete: function () {
                 $('#save-ttd-pasien').prop('disabled', false);
+                loadFormJadwalPelayanan();
             },
             error: function(xhr){
                 iziToast.error({
