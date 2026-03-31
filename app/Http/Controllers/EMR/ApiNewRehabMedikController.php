@@ -3416,7 +3416,7 @@ class ApiNewRehabMedikController extends Controller
                     $templateProcessor,
                     "TTD_PASIEN#$no",
                     Storage::disk('public')->path($item->ttd_pasien),
-                    50
+                    80
                 );
             } else {
                 $templateProcessor->setValue("TTD_PASIEN#$no", '');
