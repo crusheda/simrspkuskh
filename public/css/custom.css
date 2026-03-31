@@ -109,3 +109,21 @@ canvas {
     z-index:999999;
     background:white;
 }
+
+/* SPINNING TABLER ICONS */
+.ti-spin {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+.ti-spin-slow {
+    display: inline-block;
+    animation: spin 2s linear infinite;
+}
+.ti-spin-reverse {
+    display: inline-block;
+    animation: spin 1s linear infinite reverse;
+}
+.ti-spin-reverse-slow {
+    display: inline-block;
+    animation: spin 2s linear infinite reverse;
+}

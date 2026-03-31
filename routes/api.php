@@ -173,6 +173,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 Route::get('emr/jadwal/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'getFormJadwalPelayanan'])->name('api.emr.jadwal.getFormJadwalPelayanan');
                 Route::get('emr/jadwal/{KUNJUNGAN}/preview', [ApiNewRehabMedikController::class, 'previewFormJadwalPelayanan'])->name('api.emr.jadwal.previewFormJadwalPelayanan');
                 Route::post('emr/jadwal/ttd-pasien', [ApiNewRehabMedikController::class, 'storeFormJadwalPelayanan'])->name('api.emr.jadwal.storeFormJadwalPelayanan');
+                Route::post('emr/jadwal/regenerate', [ApiNewRehabMedikController::class, 'regenerateFormJadwalPelayanan'])->name('api.emr.jadwal.regenerateFormJadwalPelayanan');
                 Route::delete('emr/jadwal/hapus/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'destroyFormJadwalPelayanan'])->name('api.emr.jadwal.destroyFormJadwalPelayanan');
             // RIS
             Route::get('dcom/{filename}', [RISController::class, 'getDCOM'])->name('api.emr.ris.getDCOM');

@@ -8,7 +8,10 @@
                 </div>
             </div>
             <div class="card-footer d-flex align-items-center justify-content-between p-3">
-                <button class="btn btn-info btn-sm" onclick="lihatFormJadwalPelayanan()" id="btn-cetak-form-jp" data-bs-toggle="tooltip" title="Lihat Formulir Jadwal Pelayanan Program Terapi" disabled><i class="ti ti-file-invoice me-1"></i> Cetak Form</button>
+                <div>
+                    <button class="btn btn-info btn-sm" onclick="lihatFormJadwalPelayanan()" id="btn-cetak-form-jp" data-bs-toggle="tooltip" title="Lihat Formulir Jadwal Pelayanan Program Terapi" disabled><i class="ti ti-file-invoice me-1"></i> Cetak Form</button>
+                    <button class="btn btn-warning btn-sm" onclick="generateUlangFormJadwalPelayanan()" id="btn-generate-form-jp" data-bs-toggle="tooltip" title="Generate Ulang Formulir Jadwal Pelayanan Program Terapi" disabled><i class="ti ti-file-symlink me-1"></i> Generate Ulang</button>
+                </div>
                 <div>
                     <button class="btn btn-danger btn-sm" onclick="hapusFormJadwalPelayanan()" id="btn-hapus-form-jp" data-bs-toggle="tooltip" title="Hapus Formulir Jadwal Pelayanan" disabled><i class="ti ti-trash me-1"></i> Hapus Form</button>
                     <button class="btn btn-success btn-sm" onclick="ttdPasienJadwalPelayanan()" id="btn-submit-form-jp" data-bs-toggle="tooltip" title="Tanda Tangan Jadwal Pelayanan Program Terapi" disabled><i class="ti ti-writing-sign me-1"></i> Tanda Tangan Pasien</button>
@@ -142,7 +145,8 @@
             <div class="modal-body">
                 <div id="prevFormJadwalPelayanan"></div>
             </div>
-            <div class="col-12 text-center p-4 pt-0" id="btn-footer-preview-jp">
+            <div class="modal-footer d-flex justify-content-between align-items-center">
+                <button class="btn btn-warning" onclick="generateUlangFormJadwalPelayanan()" data-bs-toggle="tooltip" title="Generate Ulang Formulir Jadwal Pelayanan Program Terapi"><i class="ti ti-file-symlink me-1"></i> Generate Ulang</button>
                 <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
             </div>
         </div>
@@ -1020,7 +1024,7 @@
             success: function (res) {
                 iziToast.success({
                     title: 'Berhasil',
-                    message: 'TTD Pasien berhasil disimpan',
+                    message: 'Form Jadwal Pelayanan Terapi berhasil disimpan',
                     position: 'topRight'
                 });
 
@@ -1041,6 +1045,69 @@
                 $('#save-ttd-pasien').prop('disabled', false);
                 loadFormJadwalPelayanan();
             }
+        });
+    }
+
+    function generateUlangFormJadwalPelayanan() {
+        const btn = $('#btn-generate-form-jp');
+        $('#modalTTDPasien').modal('hide');
+        $('#modalPreviewJpel').modal('hide');
+
+        Swal.fire({
+            title: 'Generate Ulang Formulir',
+            text: 'Form Jadwal Pelayanan yang sudah ada akan digantikan dengan yang baru beserta isiannya. Data sebelumnya tidak dapat dikembalikan.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Generate Ulang',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (!result.isConfirmed) return;
+
+            $.ajax({
+                url: "/api/emr/jadwal/regenerate",
+                method: "POST",
+                contentType: "application/json",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: JSON.stringify({
+                    kunjungan: kunjungan,
+                    rm: rm,
+                    sep: sep,
+                    tgl_sep: tgl_sep_date,
+                    tgl: tgl_masuk
+                }),
+                beforeSend: function () {
+                    btn.prop('disabled', true)
+                        .find('i')
+                        .addClass('ti-loader-quarter ti-spin')
+                        .removeClass('ti-file-symlink');
+                },
+                success: function (res) {
+                    iziToast.success({
+                        title: 'Proses Berhasil!',
+                        message: res.message,
+                        position: 'topRight'
+                    });
+
+                    lihatFormJadwalPelayanan();
+                },
+                error: function(xhr){
+                    iziToast.error({
+                        title: 'Proses Gagal!',
+                        message: xhr.responseJSON?.message ?? 'Terjadi kesalahan',
+                        position: 'topRight'
+                    });
+                },
+                complete: function () {
+                    btn.prop('disabled', false)
+                        .find('i')
+                        .removeClass('ti-loader-quarter ti-spin')
+                        .addClass('ti-file-symlink');
+
+                    loadFormJadwalPelayanan();
+                }
+            });
         });
     }
 
@@ -1098,8 +1165,8 @@
 
     function hapusFormJadwalPelayanan() {
         Swal.fire({
-            title: 'Hapus Formulir Jadwal Pelayanan?',
-            text: 'Data yang dihapus tidak dapat dikembalikan.',
+            title: 'Hapus Formulir?',
+            text: 'Data Formulir yang dihapus tidak dapat dikembalikan.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Hapus',

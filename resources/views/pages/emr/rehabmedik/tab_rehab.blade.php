@@ -264,10 +264,12 @@
                 if (res.data) {
                     $('#btn-cetak-form-jp').prop('disabled', false);
                     $('#btn-hapus-form-jp').prop('disabled', false);
+                    $('#btn-generate-form-jp').prop('disabled', false);
                     $('#btn-submit-form-jp').prop('disabled', true);
                 } else {
                     $('#btn-cetak-form-jp').prop('disabled', true);
                     $('#btn-hapus-form-jp').prop('disabled', true);
+                    $('#btn-generate-form-jp').prop('disabled', true);
                     $('#btn-submit-form-jp').prop('disabled', false);
                 }
             },
