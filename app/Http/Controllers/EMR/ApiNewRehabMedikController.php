@@ -3314,11 +3314,18 @@ class ApiNewRehabMedikController extends Controller
             // ==========================
             // GENERATE PDF
             // ==========================
-            $result = $this->generateFormJadwalPelayanan($data);
+            DB::afterCommit(function () use ($data) {
+                try {
+                    $this->generateFormJadwalPelayanan($data);
+                } catch (\Exception $e) {
+                    \Log::error('Generate PDF gagal: '.$e->getMessage());
+                }
+            });
+            // $result = $this->generateFormJadwalPelayanan($data);
 
-            if (!$result) {
-                throw new \Exception('Generate PDF gagal');
-            }
+            // if (!$result) {
+            //     throw new \Exception('Generate PDF gagal');
+            // }
 
             // ==========================
             DB::commit();
@@ -3353,14 +3360,19 @@ class ApiNewRehabMedikController extends Controller
         // AMBIL SEMUA DATA JADWAL
         // ==========================
         $jadwalList = DB::table('simrspku_klaim.emr_form_jadwal')
-            ->where('nomor', $show->KUNJUNGAN)
+            // ->where('nomor', $show->KUNJUNGAN)
+            ->where('rm', $show->RM)
             ->where('group', $show->GROUP)
-            ->where('queue', '<=', $show->QUEUE)
+            // ->where('queue', '<=', $show->QUEUE)
             ->where('status', 1)
             ->whereNull('deleted_at')
             ->orderBy('queue', 'ASC')
             ->limit(8)
             ->get();
+
+        // print_r($show);
+        // print_r($jadwalList);
+        // die();
 
         if ($jadwalList->isEmpty()) {
             throw new \Exception('Data jadwal kosong');
@@ -3404,7 +3416,7 @@ class ApiNewRehabMedikController extends Controller
                     $templateProcessor,
                     "TTD_PASIEN#$no",
                     Storage::disk('public')->path($item->ttd_pasien),
-                    25
+                    50
                 );
             } else {
                 $templateProcessor->setValue("TTD_PASIEN#$no", '');
@@ -3418,7 +3430,7 @@ class ApiNewRehabMedikController extends Controller
                     $templateProcessor,
                     "TTD_DOKTER#$no",
                     Storage::disk('public')->path($item->ttd_dokter),
-                    25
+                    50
                 );
             } else {
                 $templateProcessor->setValue("TTD_DOKTER#$no", '');
@@ -3432,7 +3444,7 @@ class ApiNewRehabMedikController extends Controller
                     $templateProcessor,
                     "TTD_TERAPIS1#$no",
                     Storage::disk('public')->path($item->ttd_terapis1),
-                    25
+                    50
                 );
             } else {
                 $templateProcessor->setValue("TTD_TERAPIS1#$no", '');
@@ -3446,7 +3458,7 @@ class ApiNewRehabMedikController extends Controller
                     $templateProcessor,
                     "TTD_TERAPIS2#$no",
                     Storage::disk('public')->path($item->ttd_terapis2),
-                    25
+                    50
                 );
             } else {
                 $templateProcessor->setValue("TTD_TERAPIS2#$no", '');
@@ -3458,7 +3470,7 @@ class ApiNewRehabMedikController extends Controller
                 $templateProcessor,
                 'TTD_DOKTER_PEMERIKSA',
                 Storage::disk('public')->path($show->PATH_TTD_DOKTER_PEMERIKSA),
-                25
+                50
             );
         }
 

@@ -275,6 +275,7 @@
                     .find('i')
                     .removeClass('fa-sync fa-spin')
                     .addClass('fa-save');
+                loadFormJadwalPelayanan();
             }
         });
     }
@@ -1029,16 +1030,16 @@
                 $('#ttd_pasien_path').val(res.path);
                 $('#ttd_pasien_id').val(res.id);
             },
-            complete: function () {
-                $('#save-ttd-pasien').prop('disabled', false);
-                loadFormJadwalPelayanan();
-            },
             error: function(xhr){
                 iziToast.error({
                     title: 'Proses Gagal',
                     message: xhr.responseJSON?.message ?? 'Terjadi kesalahan',
                     position: 'topRight'
                 });
+            },
+            complete: function () {
+                $('#save-ttd-pasien').prop('disabled', false);
+                loadFormJadwalPelayanan();
             }
         });
     }
