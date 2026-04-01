@@ -457,11 +457,13 @@
             type: 'GET',
             dataType: 'json',
             success: function(res) {
-                if (res && res.data) {
-                    $('#input-jawaban').val(res.data.JAWABAN || '-');
-                    $('#input-anjuran').val(res.data.ANJURAN || '-');
-                    $('#input-tgljawab').val(formatTanggal(res.data.TANGGAL) || '-');
-                    $('#input-dokterjawab').val(`${res.data.NIP || ''} - ${res.data.JAWABDOKTER || ''}`);
+                if (res && res.data && res.data.length > 0) {
+                    let data = res.data[0];
+
+                    $('#input-jawaban').val(data.JAWABAN || '-');
+                    $('#input-anjuran').val(data.ANJURAN || '-');
+                    $('#input-tgljawab').val(formatTanggal(data.TANGGAL) || '-');
+                    $('#input-dokterjawab').val(`${data.NIP || ''} - ${data.JAWABDOKTER || ''}`);
                 } else {
                     kosongkanJawabanKonsul();
                 }
@@ -478,6 +480,18 @@
 
     $('#formTambahKonsul').submit(function (e) {
         e.preventDefault();
+
+        const konsultasi = $('#layanan_konsultasi').is(':checked');
+        const rawat = $('#layanan_rawat_bersama').is(':checked');
+        const alih = $('#layanan_alih_rawat').is(':checked');
+        if (!konsultasi && !rawat && !alih) {
+            iziToast.warning({
+                title: 'Peringatan',
+                message: 'Pilih minimal satu layanan (Konsultasi / Rawat Bersama / Alih Rawat)',
+                position: 'topRight'
+            });
+            return;
+        }
 
         const formData = {
             layanan_konsultasi: $('#layanan_konsultasi').is(':checked') ? 1 : 0,

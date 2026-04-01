@@ -191,7 +191,7 @@ class ApiKonsulController extends Controller
             ->leftJoin('master.dokter AS dr','dr.ID','=','jk.DOKTER')
             ->where('kon.NOMOR', $NOMOR)
             ->whereNull('deleted_at');
-        // print_r($jawaban);
+        // print_r($query1);
         // die();
         $data = $query1->unionAll($query2)->get();
         return response()->json($data, 200);
@@ -341,15 +341,29 @@ class ApiKonsulController extends Controller
 
     public function getJawabKonsul($nomor)
     {
-        $jawaban = DB::table('simrspku_klaim.jawaban_konsul AS jk')
+        $query1 = DB::table('pendaftaran.jawaban_konsul AS jk')
             ->select(
-                'jk.*',
+                'jk.JAWABAN',
+                'jk.ANJURAN',
+                'jk.TANGGAL',
                 'dr.NIP AS NIP',
                 DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS JAWABDOKTER')
             )
             ->leftJoin('master.dokter AS dr','dr.ID','=','jk.DOKTER')
-            ->where('KONSUL_NOMOR', $nomor)
-            ->first();
+            ->where('KONSUL_NOMOR', $nomor);
+
+        $query2 = DB::table('simrspku_klaim.jawaban_konsul AS jk')
+            ->select(
+                'jk.JAWABAN',
+                'jk.ANJURAN',
+                'jk.TANGGAL',
+                'dr.NIP AS NIP',
+                DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS JAWABDOKTER')
+            )
+            ->leftJoin('master.dokter AS dr','dr.ID','=','jk.DOKTER')
+            ->where('KONSUL_NOMOR', $nomor);
+
+        $jawaban = $query1->unionAll($query2)->get();
 
         return response()->json([
             'success' => true,
@@ -951,8 +965,8 @@ class ApiKonsulController extends Controller
                         'kon.*',
                         'pk.NOPEN',
                         'kon.KONSULTASI',
-                        'kon.STATUS_RAWAT_BERSAMA AS RAWAT_BERSAMA',
-                        'kon.STATUS_ALIH_RAWAT AS ALIH_RAWAT'
+                        'kon.RAWAT_BERSAMA AS RAWAT_BERSAMA',
+                        'kon.ALIH_RAWAT AS ALIH_RAWAT'
                     )
                     ->leftJoin('pendaftaran.kunjungan AS pk', 'pk.NOMOR', '=', 'kon.KUNJUNGAN')
                     ->where('kon.NOMOR', $nomor)
