@@ -3721,7 +3721,7 @@ class ApiNewRehabMedikController extends Controller
                 'TGLSEP'    => $request->tgl_sep ?? $request->tgl,
 
                 'DIAG_MEDIS' => $formKfr->diag_medis ?? '',
-                'PERMINTAAN_TERAPI' => $permintaan_terapi ?? '',
+                'PERMINTAAN_TERAPI' => $permintaanTerapi ?? '',
                 'PROGRAM1' => $formTerapi[0]->program_terapi ?? '',
                 'PROGRAM2' => $formTerapi[1]->program_terapi ?? '',
 
