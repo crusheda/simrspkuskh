@@ -3364,6 +3364,7 @@ class ApiNewRehabMedikController extends Controller
             ->where('rm', $show->RM)
             ->where('group', $show->GROUP)
             // ->where('queue', '<=', $show->QUEUE)
+            ->where('tgl_sep','<=', $show->TGLSEP)
             ->where('status', 1)
             ->whereNull('deleted_at')
             ->orderBy('queue', 'ASC')
