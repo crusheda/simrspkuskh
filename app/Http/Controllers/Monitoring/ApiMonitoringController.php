@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Monitoring;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\simrspku_klaim\klaim_file;
 use App\Models\simrspku_klaim\klaim_verifikasi;
@@ -1085,12 +1086,19 @@ class ApiMonitoringController extends Controller
             $ttd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
                 ->where('ttd.kunjungan',$kunjungan)
                 ->whereNull('ttd.deleted_at')
+                ->orderBy('ttd.id','desc')
                 ->first();
 
-            if ($ttd) {
-                $imagePath2 = storage_path()."/app/public/".$ttd->signature_path;
-            } else {
+            $imagePath2 = null;
 
+            if ($ttd) {
+                if (Str::startsWith($ttd->signature_path, 'signatures/pegawai')) {
+                    // TTD PEGAWAI
+                    $imagePath2 = storage_path()."/app/public/".$ttd->signature_path;
+                }
+            }
+
+            if ($imagePath2 == null) {
                 $getIDUser = DB::table('master.dokter AS dr')
                     ->leftJoin('aplikasi.pengguna AS pe','pe.NIP','=','dr.NIP')
                     ->select('pe.ID')
@@ -1125,10 +1133,10 @@ class ApiMonitoringController extends Controller
                     return response()->json([
                         'message' => 'Tanda tangan Dokter DPJP pada Resume Utama tidak ditemukan.'
                     ], 404);
-                    // $imagePath2 = null;
                 }
+            } else {
+                return response()->json(['message'=>'Gagal memproses Tanda Tangan di Resume Medis'],404);
             }
-
 
             /*
             |--------------------------------------------------------------------------
