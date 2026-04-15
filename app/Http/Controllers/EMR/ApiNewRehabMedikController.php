@@ -3367,7 +3367,8 @@ class ApiNewRehabMedikController extends Controller
             ->where('tgl_sep','<=', $show->TGLSEP)
             ->where('status', 1)
             ->whereNull('deleted_at')
-            ->orderBy('queue', 'ASC')
+            // ->orderBy('queue', 'ASC')
+            ->orderBy('tgl', 'ASC')
             ->limit(8)
             ->get();
 
