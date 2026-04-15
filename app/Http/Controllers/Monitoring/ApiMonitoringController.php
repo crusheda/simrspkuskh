@@ -1134,8 +1134,6 @@ class ApiMonitoringController extends Controller
                         'message' => 'Tanda tangan Dokter DPJP pada Resume Utama tidak ditemukan.'
                     ], 404);
                 }
-            } else {
-                return response()->json(['message'=>'Gagal memproses Tanda Tangan di Resume Medis'],404);
             }
 
             /*
