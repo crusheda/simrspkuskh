@@ -2278,7 +2278,7 @@ class ApiMonitoringController extends Controller
                 return response()->json('Data tidak ditemukan', 400);
             }
             $show = DB::select('CALL simrspku_klaim.CetakTriage(?)',[$getData->PID]);
-            if ($show->isEmpty()) {
+            if (empty($show)) {
                 return response()->json('Triage tidak ditemukan', 400);
             }
             // ----------------------------------------------------------------------
