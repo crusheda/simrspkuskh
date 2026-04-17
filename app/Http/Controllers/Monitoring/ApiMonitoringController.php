@@ -2274,7 +2274,7 @@ class ApiMonitoringController extends Controller
                             ->where('pk.NOMOR', $kunjungan)
                             ->where('tr.STATUS', 2)
                             ->first();
-            $show = DB::select('CALL simrspku_klaim.CetakTriage(?)',[$getData->PID]);
+            $show = DB::select('CALL simrspku_klaim.CetakTriage(?)',[$getData->ID]);
             if ($show->isEmpty()) {
                 return response()->json($data, 400);
             }
