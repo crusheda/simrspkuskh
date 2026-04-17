@@ -1,8 +1,12 @@
 <!doctype html>
 <html lang="en">
 <head>
-    {{-- DATA PC THEME START --}}
     <script>
+    (function() {
+
+        var sidebarState = localStorage.getItem('sidebar');
+        var savedTheme = localStorage.getItem("theme") || "light";
+
         function setLogoByTheme(theme) {
             const logo = document.getElementById("app-logo");
             if (!logo) return;
@@ -14,21 +18,35 @@
             }
         }
 
-        (function() {
-            var savedTheme = localStorage.getItem("theme") || "light"; // default dark
-            console.log('Saved Theme : '+savedTheme);
+        var observer = new MutationObserver(function(mutations, me) {
 
-            // pasang theme ke body juga
-            // gunakan MutationObserver untuk tunggu body muncul
-            var observer = new MutationObserver(function(mutations, me) {
-                if (document.body) {
-                    document.body.setAttribute("data-pc-theme", savedTheme);
-                    setLogoByTheme(savedTheme); // update logo juga
-                    me.disconnect(); // stop observer
+            // ===== APPLY SIDEBAR =====
+            if (sidebarState === 'minimize') {
+                var sidebar = document.querySelector('.pc-sidebar');
+                if (sidebar) {
+                    sidebar.classList.add('pc-sidebar-hide');
                 }
-            });
-            observer.observe(document.documentElement, {childList: true});
-        })();
+            }
+
+            // ===== APPLY THEME =====
+            if (document.body) {
+                document.body.setAttribute("data-pc-theme", savedTheme);
+                setLogoByTheme(savedTheme);
+            }
+
+            // stop kalau semua sudah siap
+            if (document.body && document.querySelector('.pc-sidebar')) {
+                me.disconnect();
+            }
+
+        });
+
+        observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+        });
+
+    })();
     </script>
 
     <title>Sistem Informasi Rekam Medis</title>
@@ -68,6 +86,24 @@
 
     @include('inc.footer')
     @include('inc.js')
+
+    <script>
+    $(function() {
+
+        $('#sidebar-hide, #mobile-collapse').on('click', function() {
+
+            setTimeout(function() {
+                if ($('.pc-sidebar').hasClass('pc-sidebar-hide')) {
+                    localStorage.setItem('sidebar', 'minimize');
+                } else {
+                    localStorage.setItem('sidebar', 'open');
+                }
+            }, 50);
+
+        });
+
+    });
+    </script>
 
     <script>
         // RUNNING SERVICE WORKER

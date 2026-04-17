@@ -2,6 +2,31 @@
 <html lang="en">
 <head>
 
+    <script>
+    (function() {
+        var state = localStorage.getItem('sidebar');
+
+        if (state !== 'minimize') return;
+
+        var observer = new MutationObserver(function(mutations, me) {
+
+            var sidebar = document.querySelector('.pc-sidebar');
+
+            if (sidebar) {
+
+                sidebar.classList.add('pc-sidebar-hide');
+
+                me.disconnect();
+            }
+
+        });
+
+        observer.observe(document.documentElement, {
+            childList: true
+        });
+    })();
+    </script>
+
     <title>Sistem Informasi Rekam Medis</title>
 
     @include('inc.meta')
@@ -48,6 +73,24 @@
 
     <!-- Required Js -->
     @include('inc.js')
+
+    <script>
+    $(function() {
+
+        $('#sidebar-hide, #mobile-collapse').on('click', function() {
+
+            setTimeout(function() {
+                if ($('.pc-sidebar').hasClass('pc-sidebar-hide')) {
+                    localStorage.setItem('sidebar', 'minimize');
+                } else {
+                    localStorage.setItem('sidebar', 'open');
+                }
+            }, 50);
+
+        });
+
+    });
+    </script>
 
     <script>
         function showLoader() {
