@@ -2274,9 +2274,12 @@ class ApiMonitoringController extends Controller
                             ->where('pk.NOMOR', $kunjungan)
                             ->where('tr.STATUS', 2)
                             ->first();
-            $show = DB::select('CALL simrspku_klaim.CetakTriage(?)',[$getData->ID]);
+            if (!$getData) {
+                return response()->json('Data tidak ditemukan', 400);
+            }
+            $show = DB::select('CALL simrspku_klaim.CetakTriage(?)',[$getData->PID]);
             if ($show->isEmpty()) {
-                return response()->json($data, 400);
+                return response()->json('Triage tidak ditemukan', 400);
             }
             // ----------------------------------------------------------------------
             $getTgl = Carbon::parse($getData->TANGGALMASUK);
