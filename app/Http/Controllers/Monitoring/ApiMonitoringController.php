@@ -2254,11 +2254,13 @@ class ApiMonitoringController extends Controller
                             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                             ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
                             ->leftJoin('medicalrecord.triage AS tr','tr.KUNJUNGAN','=','pk.NOMOR')
+                            ->leftJoin('aplikasi.pengguna AS us','us.ID','=','tr.OLEH')
                             ->leftJoin('master.pasien AS ps','pp.NORM','=','ps.NORM')
                             ->select(
                                 'pj.NOMOR AS NOSEP',
                                 'pk.MASUK AS TANGGALMASUK',
                                 'tr.ID AS PID',
+                                'us.NIP AS NIP',
                                 DB::raw("
                                     CASE
                                         WHEN JSON_UNQUOTE(JSON_EXTRACT(tr.OBGYN, '$.USIA_GESTASI')) != ''
@@ -2274,12 +2276,56 @@ class ApiMonitoringController extends Controller
                             ->where('pk.NOMOR', $kunjungan)
                             ->where('tr.STATUS', 2)
                             ->first();
+            // print_r($getData);
+            // die();
             if (!$getData) {
                 return response()->json('Data tidak ditemukan', 400);
             }
             $show = DB::select('CALL simrspku_klaim.CetakTriage(?)',[$getData->PID]);
-            if (empty($show)) {
+            if (empty($getData)) {
                 return response()->json('Triage tidak ditemukan', 400);
+            }
+            // ----------------------------------------------------------------------
+            //GENERATE QR CODE
+            $generator = new DNS2D();
+            $dokter = $getData->NIP;
+
+            // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
+            $image = $generator->getBarcodePNG($dokter, 'QRCODE');
+            // print_r($generator);
+            // die();
+
+            // Decode base64 jadi binary PNG
+            $decodedImage = base64_decode($image);
+            $token = Crypt::encrypt($getData->NIP);
+            $titleQrcode = Crypt::encrypt($getData->NIP).'.png';
+            $verif = klaim_qrcode_pegawai::where('nomor',$getData->NIP)->first();
+
+            // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
+            $pathQrcode = 'files/qrcode/' . $titleQrcode;
+            $outputQrcode = storage_path('app/public/' . $pathQrcode);
+            $outputQrcodeMerged = dirname($outputQrcode);
+            if (!File::exists($outputQrcodeMerged)) {
+                File::makeDirectory($outputQrcodeMerged, 0755, true); // true = recursive
+            }
+
+            // SAVE TO DB
+            if (!$verif) {
+                file_put_contents($outputQrcode, $decodedImage);
+                $post = new klaim_qrcode_pegawai;
+                $post->token = $token;
+                $post->nomor = $getData->NIP;
+                $post->title = $titleQrcode;
+                $post->filename = $pathQrcode;
+                $post->save();
+            } else {
+                if (!Storage::disk('public')->exists($verif->filename)) {
+                    file_put_contents($outputQrcode, $decodedImage);
+                    $verif->token = $token;
+                    $verif->title = $titleQrcode;
+                    $verif->filename = $pathQrcode;
+                    $verif->save();
+                }
             }
             // ----------------------------------------------------------------------
             $getTgl = Carbon::parse($getData->TANGGALMASUK);
@@ -2325,6 +2371,7 @@ class ApiMonitoringController extends Controller
                 'params' => [
                     'PID' => $getData->PID,
                     'IMAGES_PATH' => public_path()."/doc/input/triage/",
+                    'QRCODE_PATH' => storage_path()."/app/public/",
                 ],
                 'db_connection' => [
                     'driver'   => config('database.connections.db_custom.driver'),

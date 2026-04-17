@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LembarTriageDewasa" language="groovy" pageWidth="595" pageHeight="927" columnWidth="546" leftMargin="24" rightMargin="25" topMargin="13" bottomMargin="20" uuid="27be4418-27a1-4d08-aafd-4fbd41db6f33">
 	<property name="ireport.zoom" value="1.2100000000000295"/>
 	<property name="ireport.x" value="0"/>
@@ -93,6 +93,7 @@
 	<parameter name="PID" class="java.lang.String"/>
 	<parameter name="REQUEST_REPORT_ID" class="java.lang.String"/>
 	<parameter name="PNIP" class="java.lang.String"/>
+	<parameter name="QRCODE_PATH" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[call simrspku_klaim.CetakTriage($P{PID})]]>
 	</queryString>
@@ -442,6 +443,11 @@
 	<field name="TANGGAL_FINAL" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="TGLMASUK"/>
 		<property name="com.jaspersoft.studio.field.label" value="TGLMASUK"/>
+	</field>
+	<field name="QR1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="KRITERIA"/>
+		<property name="com.jaspersoft.studio.field.label" value="KRITERIA"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="triage"/>
 	</field>
 	<background>
 		<band height="15" splitType="Stretch"/>
@@ -4364,9 +4370,9 @@ KRITIS]]></text>
 				<text><![CDATA[:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="301" y="22" width="97" height="36" uuid="bf2b8c34-5790-422d-8212-28b9eae3aee5">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
+				<reportElement stretchType="RelativeToTallestObject" x="301" y="22" width="97" height="10" uuid="bf2b8c34-5790-422d-8212-28b9eae3aee5">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box leftPadding="2" bottomPadding="2">
 					<topPen lineWidth="0.0"/>
@@ -4375,8 +4381,9 @@ KRITIS]]></text>
 					<rightPen lineWidth="0.0"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="8"/>
+					<font fontName="Arial" size="6"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{PETUGAS_TRG}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="291" y="58" width="10" height="10" uuid="58c05258-0eca-48a8-bc17-c5cf405aac2f">
@@ -4512,6 +4519,14 @@ KRITIS]]></text>
 				</textElement>
 				<text><![CDATA[Tgl & Jam]]></text>
 			</staticText>
+			<image>
+				<reportElement x="334" y="32" width="27" height="26" uuid="ef41884a-c147-4f0b-a8d2-ded0da65990d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{QR1} != null]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{QRCODE_PATH} + $F{QR1}]]></imageExpression>
+			</image>
 		</band>
 	</detail>
 </jasperReport>
