@@ -388,6 +388,7 @@
     var editorCatatanTambah; // global variable
     var editorCatatanEdit; // global variable
     $(document).ready(function() {
+        $('.pc-sidebar').removeClass('pc-sidebar-hide').addClass('pc-sidebar-hide');
         const listCheckbox = [
             '#ck_individual',
             '#ck_resume',
@@ -453,7 +454,6 @@
             type: 'GET',
             dataType: 'json',
             success: function(res) {
-                console.log(res.file);
                 // REFRESH HALAMAN
                 if (!res.show) {
                     $('#alert_verif').empty();
@@ -640,7 +640,7 @@
                                             </div>
                                             <a class="text-nowrap mt-1" style="margin-left:auto;">${item.nama_tambahan}</a>
                                         </div>`;
-                            console.log('muncul');
+                            // console.log('muncul');
                         }
                     });
                     $('#dokumen_tambahan').append(tambahan);
@@ -648,7 +648,7 @@
                     // DOKUMEN REHABILITASI MEDIK
                     $('#dokumen_rehab').empty();
                     rehab = ``;
-                    console.log(res.file);
+                    // console.log(res.file);
                     res.file.forEach(item => {
                         if (item.jenis == 11) {
                             rehab += `<div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0"  style="justify-content: space-between;">

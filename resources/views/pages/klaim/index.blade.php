@@ -159,6 +159,7 @@
 {{-- MODAL ENDED --}}
 <script>
     $(document).ready(function() {
+        $('.pc-sidebar').removeClass('pc-sidebar-hide').addClass('pc-sidebar-hide');
         // TABLE
         // const dataTable = new simpleDatatables.DataTable('#vantable', { sortable: false });
         // SELECT CHOICES
