@@ -17,6 +17,15 @@
 
             <div class="card-body p-3 pb-0">
                 <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div class="alert alert-secondary border mb-0">
+                            <i class="ph-duotone ph-arrow-bend-down-right me-1"></i> Pastikan untuk mengisi formulir dengan lengkap dan akurat. Formulir ini akan digunakan sebagai acuan dalam perencanaan dan pelaksanaan program rehabilitasi medik pasien. <br>
+                            <i class="ph-duotone ph-arrow-bend-down-right me-1"></i> Isian dengan tanda (<a class="text-danger">*</a>) wajib diisi. Jangan lupa untuk menyimpan formulir setelah selesai mengisi. <br>
+                            <i class="ph-duotone ph-arrow-bend-down-right me-1"></i> Apabila ingin menggunakan formulir KFR dari kunjungan sebelumnya, silakan klik tombol <button class="btn btn-info btn-sm p-0 ps-1 pe-1" disabled><i class="ph-duotone ph-file-search me-1"></i> Gunakan Form Lama</button> di atas, lalu pilih formulir yang ingin digunakan. <br>
+                            <i class="ph-duotone ph-arrow-bend-down-right me-1"></i> Setelah memilih formulir lama, pastikan untuk meninjau kembali isian formulir tersebut dan melakukan update jika diperlukan, agar sesuai dengan kondisi pasien saat ini. <br>
+                            <i class="ph-duotone ph-arrow-bend-down-right me-1"></i> Pengisian Formulir KFR <span class="badge text-bg-danger p-1">UTAMA</span> Periode pertama/baru dapat langsung <strong class="text-warning"><u>Copy CPPT</u></strong> atau melakukan pengisian baru di formulir di bawah ini, lalu Klik tombol <button class="btn btn-primary btn-sm p-0 ps-1 pe-1" disabled><i class="fas fa-save me-1"></i> Simpan Formulir Baru</button>
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label class="form-label"><i><b>Subjective</b></i> <a class="text-danger">*</a></label>
