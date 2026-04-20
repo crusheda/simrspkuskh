@@ -1058,17 +1058,17 @@ class ApiNewRehabMedikController extends Controller
             * 2. INSERT EMR FORM KFR
             * ========================== */
             // GET LAST GROUP
-            // $lastGroup = DB::table('simrspku_klaim.emr_form_kfr')
-            //                 ->where('nomor_init', $kunjungan)
-            //                 ->where('rm', $request->rm)
-            //                 ->where('status', 1)
-            //                 ->whereNull('deleted_at')
-            //                 ->orderBy('group', 'DESC')
-            //                 ->first();
-            // $newGroup = $lastGroup ? $lastGroup->group + 1 : 1;
+            $lastGroup = DB::table('simrspku_klaim.emr_form_kfr')
+                            // ->where('nomor_init', $kunjungan)
+                            ->where('rm', $request->rm)
+                            ->where('status', 1)
+                            ->whereNull('deleted_at')
+                            ->orderBy('group', 'DESC')
+                            ->first();
+            $newGroup = $lastGroup ? $lastGroup->group + 1 : 1;
             DB::table('simrspku_klaim.emr_form_kfr')->insert([
                 'id_cppt'       => $id_cppt,
-                'group'         => 1,
+                'group'         => $newGroup,
                 'queue'         => 1,
                 'nomor_init'    => $kunjungan,
                 'nomor'         => $kunjungan,
