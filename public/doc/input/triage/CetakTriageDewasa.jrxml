@@ -1974,7 +1974,7 @@
 				<text><![CDATA[KETERANGAN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="69" y="0" width="220" height="30" uuid="bad034be-28d7-4bec-8cca-903816653e0d"/>
+				<reportElement x="69" y="0" width="477" height="30" uuid="bad034be-28d7-4bec-8cca-903816653e0d"/>
 				<box topPadding="3">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -1984,23 +1984,10 @@
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="Arial" size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[PETUGAS TRIAGE PRIMER]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="289" y="0" width="257" height="30" uuid="55f5dd6f-c4db-4e55-ab20-968551c705da"/>
-				<box topPadding="3">
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="0.75"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font fontName="Arial" size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[PETUGAS TRIAGE SEKUNDER]]></text>
+				<text><![CDATA[PETUGAS TRIAGE]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="69" y="15" width="220" height="11" uuid="4fbfe906-f855-4a9a-9512-14ca55562b3d">
+				<reportElement x="69" y="15" width="476" height="11" uuid="4fbfe906-f855-4a9a-9512-14ca55562b3d">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
 				<box leftPadding="2">
@@ -2240,7 +2227,7 @@
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{RESUSITASI}==1 ?"√":""]]></textFieldExpression>
 			</textField>
@@ -2256,7 +2243,7 @@
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{EMERGENCY}==1 ?"√":""]]></textFieldExpression>
 			</textField>
@@ -2272,7 +2259,7 @@
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{URGENT}==1 ?"√":""]]></textFieldExpression>
 			</textField>
@@ -2288,7 +2275,7 @@
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{LESS_URGENT}==1 ?"√":""]]></textFieldExpression>
 			</textField>
@@ -2304,7 +2291,7 @@
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NON_URGENT}==1 ?"√":""]]></textFieldExpression>
 			</textField>
@@ -4197,20 +4184,7 @@ KRITIS]]></text>
 		</band>
 		<band height="70">
 			<staticText>
-				<reportElement x="400" y="20" width="146" height="50" uuid="138c5d1e-0002-4c25-bd4a-4153f7e8cb75"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="0.75"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="249" y="20" width="151" height="50" uuid="bd9b8f80-4ce2-44dc-baf3-44983cdc925d"/>
+				<reportElement x="249" y="20" width="297" height="50" uuid="bd9b8f80-4ce2-44dc-baf3-44983cdc925d"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -4430,95 +4404,6 @@ KRITIS]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{TANGGAL_FINAL}==null ? $F{DATANG_TANGGAL} + " " + $F{DATANG_JAM} : $F{TANGGAL_FINAL}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="453" y="58" width="91" height="10" uuid="7fc21c80-e3cd-40d9-8b8c-b72eb1f2acd8">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
-				</reportElement>
-				<box leftPadding="2" bottomPadding="2">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{TANGGAL_FINAL}==null ? $F{DATANG_TANGGAL} + " " + $F{DATANG_JAM} : $F{TANGGAL_FINAL}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="443" y="22" width="10" height="36" uuid="619d0f54-29f7-428d-81ab-2c7cc0f0c54b">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
-				</reportElement>
-				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="443" y="58" width="10" height="10" uuid="4ad8928b-cea0-42f1-9d88-4e35c85ce02b">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
-				</reportElement>
-				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="403" y="22" width="40" height="36" uuid="4dbdd0e7-c20a-4d65-9c50-76b1babffbf1">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
-				</reportElement>
-				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Perawat]]></text>
-			</staticText>
-			<textField isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="453" y="22" width="91" height="36" uuid="9d1b8453-8058-4c0a-8abc-4ba9eba1bb3d">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
-				</reportElement>
-				<box leftPadding="2" bottomPadding="2">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-			</textField>
-			<staticText>
-				<reportElement x="403" y="58" width="40" height="10" uuid="8b94a1ec-9d18-4b08-8fbb-06a3be328534">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
-				</reportElement>
-				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Tgl & Jam]]></text>
-			</staticText>
 			<image>
 				<reportElement x="334" y="32" width="27" height="26" uuid="ef41884a-c147-4f0b-a8d2-ded0da65990d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
