@@ -144,7 +144,7 @@ class ApiMatriksController extends Controller
             $post->nomor = $kunjungan;
             $post->title = $kunjungan.'-'.($validasi+1).'.pdf';
             $post->filename = $path.'.pdf';
-            $post->nama_tambahan = 'matriks';
+            $post->nama_tambahan = 'Matriks';
             $post->status = true;
             $post->user = Auth::user()->ID;
             $post->save();

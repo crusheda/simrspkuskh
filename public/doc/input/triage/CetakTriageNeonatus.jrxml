@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LembarTriageDewasa" language="groovy" pageWidth="595" pageHeight="927" columnWidth="546" leftMargin="24" rightMargin="25" topMargin="13" bottomMargin="20" uuid="27be4418-27a1-4d08-aafd-4fbd41db6f33">
 	<property name="ireport.zoom" value="1.2100000000000295"/>
 	<property name="ireport.x" value="0"/>
@@ -93,6 +93,7 @@
 	<parameter name="PID" class="java.lang.String"/>
 	<parameter name="REQUEST_REPORT_ID" class="java.lang.String"/>
 	<parameter name="PNIP" class="java.lang.String"/>
+	<parameter name="QRCODE_PATH" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[call medicalrecord.CetakTriage($P{PID})]]>
 	</queryString>
@@ -443,6 +444,11 @@
 		<property name="com.jaspersoft.studio.field.name" value="TGLMASUK"/>
 		<property name="com.jaspersoft.studio.field.label" value="TGLMASUK"/>
 	</field>
+	<field name="QR1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NOMOR"/>
+		<property name="com.jaspersoft.studio.field.label" value="NOPEN"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="pendaftaran"/>
+	</field>
 	<background>
 		<band height="15" splitType="Stretch"/>
 	</background>
@@ -487,7 +493,7 @@
 				</textElement>
 				<text><![CDATA[Nama Pasien]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="380" y="70" width="166" height="17" uuid="751a1982-a868-49ee-a57e-a053ac8d18c5"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0"/>
@@ -515,7 +521,7 @@
 				</textElement>
 				<text><![CDATA[No. RM]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="380" y="104" width="166" height="17" uuid="17ecb363-94ed-4a1f-9244-4ed10753fcb3"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0"/>
@@ -543,7 +549,7 @@
 				</textElement>
 				<text><![CDATA[Tanggal Lahir]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="380" y="87" width="166" height="17" uuid="aed832a7-c675-4acf-966a-a5f7c280d233">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -697,7 +703,7 @@
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="380" y="121" width="166" height="17" uuid="9d66a6cd-17f5-46da-9536-4bdd216a9b04"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0"/>
@@ -740,7 +746,7 @@
 				</textElement>
 				<text><![CDATA[Cara Datang]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="73" y="5" width="8" height="8" uuid="ffcb0c56-94b4-48f5-9d28-01678dd4ee5c">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -786,7 +792,7 @@
 				</textElement>
 				<text><![CDATA[Rujukan dari :]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="73" y="20" width="8" height="8" uuid="78f5c6ab-2fa8-4a2c-acce-0d719fbbcd18">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -802,7 +808,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DATANG_JENIS}=="2" ?"√":""]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="139" y="20" width="8" height="8" uuid="a8cf432f-79b1-4568-b025-f54481137321">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -833,7 +839,7 @@
 				</textElement>
 				<text><![CDATA[Dokter Praktek]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="139" y="33" width="8" height="8" uuid="0bc483b2-c798-43d1-9ef9-833d02afcf8c">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -864,7 +870,7 @@
 				</textElement>
 				<text><![CDATA[Puskesmas]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="302" y="20" width="8" height="8" uuid="f8d8ac09-679e-4207-af54-e344b607f2f4">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -895,7 +901,7 @@
 				</textElement>
 				<text><![CDATA[Klinik]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="302" y="33" width="8" height="8" uuid="8fd681c8-445e-4aeb-8bbb-b7bbbd725c51">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -971,7 +977,7 @@
 				</textElement>
 				<text><![CDATA[Alat Transportasi]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="189" y="4" width="145" height="11" uuid="935cf570-aba3-4fd2-aadd-925a988fcf33">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -986,7 +992,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DATANG_PENGANTAR}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="450" y="4" width="96" height="11" uuid="aac1f326-42b8-479b-81e1-e73591703d75">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -1016,7 +1022,7 @@
 				</textElement>
 				<text><![CDATA[Dikirim oleh Polisi dari :]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="73" y="48" width="8" height="8" uuid="28d6d2f5-2760-4462-9a24-8762a129a8d0">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -1032,7 +1038,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DATANG_JENIS}=="3" ?"√":""]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="173" y="47" width="145" height="11" uuid="44f629c1-9afa-48a2-8389-15aa22e55352">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -1047,7 +1053,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DATANG_KEPOLISIAN}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="360" y="48" width="8" height="8" uuid="a7a4ffb7-5c96-455a-97da-00db783191df">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -1078,7 +1084,7 @@
 				</textElement>
 				<text><![CDATA[Disertai Permintaan Visum et Repertum ]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="420" y="20" width="8" height="8" uuid="556a86ec-95f4-498f-984b-b8dac50d8c43">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -1094,7 +1100,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DATANG_SISRUTE}=="1" ? "√":""]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="420" y="33" width="8" height="8" uuid="7505663c-d92c-41f1-87d1-105541e00ec0">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -1138,7 +1144,7 @@
 				</textElement>
 				<text><![CDATA[Macam Kasus]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="73" y="8" width="8" height="8" uuid="02fc6a01-7b7f-4f87-b690-e27add81672b">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -1184,7 +1190,7 @@
 				</textElement>
 				<text><![CDATA[Non Trauma]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="73" y="22" width="8" height="8" uuid="082cfdde-1f01-44a8-907e-eb77b267c05d">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -1245,7 +1251,7 @@
 				</textElement>
 				<text><![CDATA[KLL]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="144" y="8" width="8" height="8" uuid="f52fe244-f54c-4dd2-8994-b7e69266207a">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -1261,7 +1267,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{KASUS_LAKA_LANTAS}=="1" ? "√":""]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="183" y="8" width="8" height="8" uuid="811a1a0d-81f3-470a-8ebe-da91146e5d53">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -1292,7 +1298,7 @@
 				</textElement>
 				<text><![CDATA[Kecelakaan Kerja]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="276" y="8" width="8" height="8" uuid="9abb941e-0d08-417d-8b63-afb023b11369">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -1353,7 +1359,7 @@
 				</textElement>
 				<text><![CDATA[Tidak Ada]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="385" y="21" width="8" height="8" uuid="9a3c7752-502a-4699-a079-b045212015cb">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -1384,7 +1390,7 @@
 				</textElement>
 				<text><![CDATA[Ada]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="385" y="34" width="8" height="8" uuid="6fc3d100-65b8-42a9-a88b-f3004ee9697e">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -1400,7 +1406,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{KASUS_ENDEMIS}=="0" ? "√":""]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="419" y="20" width="127" height="11" uuid="00b976eb-5c56-414d-b2b9-edcf50bd09b2">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -1462,7 +1468,7 @@
 				</textElement>
 				<text><![CDATA[Triage Tanggal :]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="70" y="8" width="60" height="11" uuid="d3b3ac30-8d69-405e-b0fd-72d42b6f66e8">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -1477,7 +1483,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DATANG_TANGGAL}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="160" y="8" width="60" height="11" uuid="97948f09-3a18-4881-ab3d-8fffb87deda7">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -1567,7 +1573,7 @@
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="145" y="19" width="124" height="42" uuid="b379cad6-2d08-4650-ba7b-1ff69995f052">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -1597,7 +1603,7 @@
 				</textElement>
 				<text><![CDATA[Anamnese Terpimpin]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="145" y="62" width="124" height="38" uuid="871054b1-1a8d-4d47-bd85-b0127f54f9ea">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -1642,7 +1648,7 @@
 				</textElement>
 				<text><![CDATA[TANDA VITAL (VITAL SIGN)]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="470" y="21" width="40" height="11" uuid="e5d0eb81-d937-47a1-a6f0-46e334a0a93b">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -1657,7 +1663,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{TV_SISTOLE} + " / " + $F{TV_DIASTOLE}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="470" y="34" width="40" height="11" uuid="011cd2de-a385-4f64-b4e5-d0efbe24a112">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -1672,7 +1678,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{TV_FREK_NAFAS}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="470" y="60" width="40" height="11" uuid="bbe5b702-165c-43cc-b27b-27de8e4f5e1e">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -1687,7 +1693,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{TV_SUHU}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="470" y="47" width="40" height="11" uuid="7a92270d-63e4-4656-b09c-82c5fd7723e7">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -1702,7 +1708,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{TV_FREK_NADI}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="470" y="73" width="40" height="11" uuid="84dec742-6c9c-488b-9d11-c3308277d40f">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -1943,7 +1949,7 @@
 				</textElement>
 				<text><![CDATA[<sup>o</sup>C]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="510" y="73" width="36" height="11" uuid="b2fc7a09-c3d6-4ab4-9be5-19013d70fd0e">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -2005,7 +2011,7 @@
 				</textElement>
 				<text><![CDATA[PETUGAS TRIAGE SEKUNDER]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="69" y="13" width="220" height="11" uuid="4fbfe906-f855-4a9a-9512-14ca55562b3d">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -2052,7 +2058,7 @@
 				</textElement>
 				<text><![CDATA[KEBUTUHAN KHUSUS]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="73" y="4" width="8" height="8" uuid="cade3a12-2604-45c7-abaf-e74f8934c6f7">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2098,7 +2104,7 @@
 				</textElement>
 				<text><![CDATA[AIRBORNE]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="73" y="15" width="8" height="8" uuid="86abb7c1-749e-4caf-98ca-566ab351ca32">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2114,7 +2120,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DEKONTAMINAN}=="" ? "":"√"]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="159" y="2" width="385" height="11" uuid="51efc583-cc00-48fb-8f31-e1c3148bc1d9">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -2129,7 +2135,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{AIRBORNE}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement x="159" y="13" width="385" height="11" uuid="db6f17f1-b54e-4c40-ada5-63e9ba806f24">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -2238,7 +2244,7 @@
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="107" y="14" width="16" height="13" backcolor="#FFFFFF" uuid="dccd8c09-5cbc-4a6c-af8d-07876179f13b">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2250,11 +2256,11 @@
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{RESUSITASI}==1 ?"√":""]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="193" y="14" width="16" height="13" backcolor="#FFFFFF" uuid="4c9d3848-a1f1-42ae-851e-ad6410e3aafe">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2266,11 +2272,11 @@
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{EMERGENCY}==1 ?"√":""]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="288" y="14" width="16" height="13" backcolor="#FFFFFF" uuid="1431e865-9303-407c-8e33-4baef2ad002e">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2282,11 +2288,11 @@
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{URGENT}==1 ?"√":""]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="365" y="14" width="16" height="13" backcolor="#FFFFFF" uuid="edb227b0-06bd-4fa1-8541-e09f470324f9">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2298,11 +2304,11 @@
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{LESS_URGENT}==1 ?"√":""]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="434" y="14" width="16" height="13" backcolor="#FFFFFF" uuid="7b8fdfde-1c73-466a-834d-68a573ac5359">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2314,7 +2320,7 @@
 					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{NON_URGENT}==1 ?"√":""]]></textFieldExpression>
 			</textField>
@@ -2428,7 +2434,7 @@
 				<text><![CDATA[Sumbatan
 (obstruction)]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="147" y="5" width="8" height="8" backcolor="#FFFFFF" uuid="f7415867-521f-444b-8305-54ba1c6e6de6">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2458,7 +2464,7 @@
 				</textElement>
 				<text><![CDATA[Stridor]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="237" y="5" width="8" height="8" backcolor="#FFFFFF" uuid="a5de5b07-5f88-433a-9dd0-37ff548cd34a">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2490,7 +2496,7 @@
 Corpal tanpa tanda
 gangguan pernafasan]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="327" y="5" width="8" height="8" backcolor="#FFFFFF" uuid="d6f963de-fa31-4d3d-9c39-b0aebc3903a2">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2521,7 +2527,7 @@ gangguan pernafasan]]></text>
 				<text><![CDATA[Bebas
 (patent)]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="396" y="5" width="8" height="8" backcolor="#FFFFFF" uuid="2da75279-1aa0-4c85-a40d-6a1a33e3ff9a">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2552,7 +2558,7 @@ gangguan pernafasan]]></text>
 				<text><![CDATA[Bebas
 (patent)]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="465" y="5" width="8" height="8" backcolor="#FFFFFF" uuid="467a2c0b-ccf5-4f40-8734-314f7e68e140">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2679,7 +2685,7 @@ gangguan pernafasan]]></text>
 				<text><![CDATA[Apneu / 
 megap-megap]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="147" y="11" width="8" height="8" backcolor="#FFFFFF" uuid="837666cf-597f-4bf7-9441-0b8aee998be0">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2709,7 +2715,7 @@ megap-megap]]></text>
 				</textElement>
 				<text><![CDATA[Frek. Nafas <9x/mnt atau >68x/menit]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="147" y="31" width="8" height="8" backcolor="#FFFFFF" uuid="64a41efb-0271-47a3-a857-fd0c7190ca3a">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2739,7 +2745,7 @@ megap-megap]]></text>
 				</textElement>
 				<text><![CDATA[Sianosis sentral, menetap dengan O<sup>2</sup>]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="147" y="51" width="8" height="8" backcolor="#FFFFFF" uuid="f1e08a56-c382-4405-ab5b-04dd31f385ce">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2754,7 +2760,7 @@ megap-megap]]></text>
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="236" y="31" width="8" height="8" backcolor="#FFFFFF" uuid="3be7797c-b4aa-487b-a34c-67802896e49a">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2769,7 +2775,7 @@ megap-megap]]></text>
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="236" y="51" width="8" height="8" backcolor="#FFFFFF" uuid="702e5ebc-753b-4f37-a87a-5329e3dd0d0f">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2815,7 +2821,7 @@ megap-megap]]></text>
 				</textElement>
 				<text><![CDATA[Sianosis sentral, menetap dengan O<sup>2</sup>]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="236" y="11" width="8" height="8" backcolor="#FFFFFF" uuid="952f7281-42b5-44c7-8daa-22e3fb85c875">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2861,7 +2867,7 @@ megap-megap]]></text>
 				<text><![CDATA[Frek. Nafas
 54 – 67x/mnt]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="327" y="31" width="8" height="8" backcolor="#FFFFFF" uuid="f3f6a6be-0131-4ce8-931d-4c7581885e7a">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2892,7 +2898,7 @@ megap-megap]]></text>
 				<text><![CDATA[Saturasi oksigen 
 : 93 – 95%]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="327" y="11" width="8" height="8" backcolor="#FFFFFF" uuid="ea2daf0d-e800-4b1d-8ff9-7b771ee19ba6">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2907,7 +2913,7 @@ megap-megap]]></text>
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="396" y="12" width="8" height="8" backcolor="#FFFFFF" uuid="2fcff27e-2c69-4fa5-85d7-75724d8cf69c">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2956,7 +2962,7 @@ Frek. Nafas
 Frek. Nafas
 40-60x/mnt]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="465" y="12" width="8" height="8" backcolor="#FFFFFF" uuid="40889ed4-1cb6-4292-97c3-6aabe62e582a">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -2986,7 +2992,7 @@ Frek. Nafas
 				</textElement>
 				<text><![CDATA[Tidak Ada Napas]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="534" y="12" width="8" height="8" backcolor="#FFFFFF" uuid="4a79b6e7-e9a1-4d96-a69b-a94631902f3b">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3062,7 +3068,7 @@ Frek. Nafas
 				<text><![CDATA[Saturasi Oksigen 
 <= 88%]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="147" y="71" width="8" height="8" backcolor="#FFFFFF" uuid="9df571ca-9ef8-422f-9778-fbaf87ae113c">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3201,7 +3207,7 @@ Frek. Nafas
 				<text><![CDATA[Henti jantung
 (Cardiac Arrest)]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="147" y="32" width="8" height="8" backcolor="#FFFFFF" uuid="9678cc1d-33c4-4da3-96bb-fa3d796a6a1b">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3216,7 +3222,7 @@ Frek. Nafas
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="147" y="52" width="8" height="8" backcolor="#FFFFFF" uuid="6f8cb8cb-f83c-47b9-bafb-455a469af06a">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3263,7 +3269,7 @@ Frek. Nafas
 				<text><![CDATA[Frek. Nadi 
 <60x/mnt >190x/mnt]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="147" y="12" width="8" height="8" backcolor="#FFFFFF" uuid="e452bb85-8a0e-4a32-ba92-e37c68551908">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3278,7 +3284,7 @@ Frek. Nafas
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="147" y="86" width="8" height="8" backcolor="#FFFFFF" uuid="3803d2f2-b34e-4e81-8224-f6ee4bf9a8ab">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3308,7 +3314,7 @@ Frek. Nafas
 				</textElement>
 				<text><![CDATA[Akral Dingin (Clammy)]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="236" y="74" width="8" height="8" backcolor="#FFFFFF" uuid="63f20f7e-ced6-4926-aa2c-213e563f0ef2">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3323,7 +3329,7 @@ Frek. Nafas
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="236" y="86" width="8" height="8" backcolor="#FFFFFF" uuid="ea4caccb-9190-4a28-ab9b-df4e76fe62c1">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3338,7 +3344,7 @@ Frek. Nafas
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="236" y="35" width="8" height="8" backcolor="#FFFFFF" uuid="75ea923e-5316-48f3-8cb7-5596f49776ab">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3412,7 +3418,7 @@ Frek. Nafas
 				</textElement>
 				<text><![CDATA[Akral Dingin (Clammy)]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="236" y="12" width="8" height="8" backcolor="#FFFFFF" uuid="06601d17-16c0-4329-8a2c-4003fcb44c01">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3440,7 +3446,7 @@ Frek. Nafas
 				</textElement>
 				<text><![CDATA[Diaphoresis]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="236" y="106" width="8" height="8" backcolor="#FFFFFF" uuid="d074aca8-745f-4c45-9b0c-1299d16ba244">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3455,7 +3461,7 @@ Frek. Nafas
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="327" y="32" width="8" height="8" backcolor="#FFFFFF" uuid="7a5fa82e-f82a-4455-ad63-38aeaa2dab94">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3502,7 +3508,7 @@ Frek. Nafas
 				<text><![CDATA[Frek. Nadi (HR)
 65 - 89 x/mnt]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="327" y="12" width="8" height="8" backcolor="#FFFFFF" uuid="431d7bb5-d42d-4c1e-883e-ca35cb1c49ec">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3534,7 +3540,7 @@ Frek. Nafas
 Frek Nadi (HR)
 90-160x/mnt]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="396" y="12" width="8" height="8" backcolor="#FFFFFF" uuid="b57d8fc0-3bdd-45d1-b44d-b232330147e0">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3566,7 +3572,7 @@ Frek Nadi (HR)
 Frek Nadi (HR)
 90-160x/mnt]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="465" y="12" width="8" height="8" backcolor="#FFFFFF" uuid="33fb8ce9-185e-45bf-a2ea-0155b6f6b497">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3596,7 +3602,7 @@ Frek Nadi (HR)
 				</textElement>
 				<text><![CDATA[Tidak Ada Nadi]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="534" y="12" width="8" height="8" backcolor="#FFFFFF" uuid="849284b8-c3f9-4493-9026-4ee8dab1abf7">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3639,7 +3645,7 @@ Frek Nadi (HR)
 				</textElement>
 				<text><![CDATA[Pucat (Pale)]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="147" y="74" width="8" height="8" backcolor="#FFFFFF" uuid="cb5bc264-0f25-4254-bf00-fc68d41141aa">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3719,7 +3725,7 @@ Frek Nadi (HR)
 				<text><![CDATA[Telapak tangan
 sangat pucat]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="327" y="97" width="8" height="8" backcolor="#FFFFFF" uuid="44c38795-ddb9-4b1c-9167-2336695c582e">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3734,7 +3740,7 @@ sangat pucat]]></text>
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="327" y="74" width="8" height="8" backcolor="#FFFFFF" uuid="21b4d8fb-0877-40ae-aabe-44ede07b8ec4">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3764,7 +3770,7 @@ sangat pucat]]></text>
 				</textElement>
 				<text><![CDATA[CRT >3 detik]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="147" y="120" width="8" height="8" backcolor="#FFFFFF" uuid="d76d026e-0cf7-4d10-9ace-4addf0c36686">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3792,7 +3798,7 @@ sangat pucat]]></text>
 				</textElement>
 				<text><![CDATA[CRT >3 detik]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="237" y="120" width="8" height="8" backcolor="#FFFFFF" uuid="c2c62d5f-9713-4b87-bb3b-f6f30231df42">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3918,7 +3924,7 @@ sangat pucat]]></text>
 				</textElement>
 				<text><![CDATA[GCS <= 9]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="147" y="6" width="8" height="8" backcolor="#FFFFFF" uuid="d28d9a2d-e236-42e4-91af-2df266bb970e">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3948,7 +3954,7 @@ sangat pucat]]></text>
 				</textElement>
 				<text><![CDATA[GCS:14]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="327" y="6" width="8" height="8" backcolor="#FFFFFF" uuid="82ac2995-2db8-4674-81a8-6a3332302458">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -3978,7 +3984,7 @@ sangat pucat]]></text>
 				</textElement>
 				<text><![CDATA[GCS 15]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="396" y="6" width="8" height="8" backcolor="#FFFFFF" uuid="4e47dd62-7f7b-4d98-adfb-31da97d1c1a3">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -4008,7 +4014,7 @@ sangat pucat]]></text>
 				</textElement>
 				<text><![CDATA[GCS 15]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="465" y="6" width="8" height="8" backcolor="#FFFFFF" uuid="b2086742-d4fc-4abb-987f-4c533c44d36d">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -4039,7 +4045,7 @@ sangat pucat]]></text>
 				<text><![CDATA[Pupil Midriasis
 Total]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="534" y="6" width="8" height="8" backcolor="#FFFFFF" uuid="343c3b7b-3c5d-4ed8-90ac-e5ecb463a585">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -4069,7 +4075,7 @@ Total]]></text>
 				</textElement>
 				<text><![CDATA[Kaku Mayat]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="534" y="26" width="8" height="8" backcolor="#FFFFFF" uuid="c35be3c0-6180-446d-a6ce-424bfbdd5f41">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -4097,7 +4103,7 @@ Total]]></text>
 				</textElement>
 				<text><![CDATA[GCS 9-13]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="237" y="17" width="8" height="8" backcolor="#FFFFFF" uuid="63e4e48e-fedb-4418-a1e7-1a173f8d4c9e">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -4125,7 +4131,7 @@ Total]]></text>
 				</textElement>
 				<text><![CDATA[Pupil unisokor]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="237" y="28" width="8" height="8" backcolor="#FFFFFF" uuid="1b1a45ae-79d5-492f-98c4-666d67083b4e">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -4140,7 +4146,7 @@ Total]]></text>
 					<font fontName="DejaVu Sans" size="8" isBold="true"/>
 				</textElement>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="237" y="6" width="8" height="8" backcolor="#FFFFFF" uuid="000c41a4-ca5e-490a-b11f-b652ce9927de">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -4446,7 +4452,7 @@ HITAM]]></text>
 				<text><![CDATA[RUANG
 RESUSITASI]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="130" y="19" width="22" height="18" backcolor="#FFFFFF" uuid="2f0e580a-9f66-4351-b547-6b32e937fef2">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -4478,7 +4484,7 @@ RESUSITASI]]></text>
 				<text><![CDATA[RUANG
 KRITIS]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="218" y="18" width="22" height="18" backcolor="#FFFFFF" uuid="562f5890-0f84-44c5-b5dc-c22b221a02f4">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -4494,7 +4500,7 @@ KRITIS]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{EMERGENCY}==1 ?"√":""]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="304" y="11" width="22" height="18" backcolor="#FFFFFF" uuid="fa7670d6-9c12-4701-bb0b-ca747072e11a">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -4510,7 +4516,7 @@ KRITIS]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PLAN}==2 ?"√":""]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="434" y="11" width="22" height="18" backcolor="#FFFFFF" uuid="6f1a495f-ebac-400c-afde-ed0a88cb3510">
 					<property name="com.jaspersoft.studio.unit.width" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
@@ -4526,7 +4532,7 @@ KRITIS]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PLAN}==3 ?"√":""]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement mode="Opaque" x="519" y="11" width="22" height="18" backcolor="#FFFFFF" uuid="b98d6eaf-4670-4ab7-9b71-1e68c0433a73"/>
 				<box>
 					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
@@ -4544,20 +4550,7 @@ KRITIS]]></text>
 	<summary>
 		<band height="70">
 			<staticText>
-				<reportElement x="400" y="20" width="146" height="50" uuid="00e253d2-bde7-48af-a429-5a832677a5a2"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="0.75"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="8" isBold="true"/>
-				</textElement>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="249" y="20" width="151" height="50" uuid="0bf2a5ce-5523-44fc-ae3d-bd089d67a413"/>
+				<reportElement x="249" y="20" width="297" height="50" uuid="0bf2a5ce-5523-44fc-ae3d-bd089d67a413"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -4656,7 +4649,7 @@ KRITIS]]></text>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="100" y="4" width="144" height="33" uuid="3c0d53f9-9e47-4414-ad00-e724f9eb4141">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -4671,7 +4664,7 @@ KRITIS]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{KRITERIA}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="100" y="37" width="144" height="31" uuid="f11c4b09-7a1f-4ff0-9254-0047497baa94">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 				</reportElement>
@@ -4716,8 +4709,8 @@ KRITIS]]></text>
 				</textElement>
 				<text><![CDATA[:]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="301" y="22" width="97" height="36" uuid="ef99e3a5-3847-4570-82b5-14ad917835b1">
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="301" y="22" width="241" height="36" uuid="ef99e3a5-3847-4570-82b5-14ad917835b1">
 					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
@@ -4730,6 +4723,7 @@ KRITIS]]></text>
 				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font fontName="Arial" size="8"/>
 				</textElement>
+				<textFieldExpression><![CDATA[$F{PETUGAS_TRG}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="291" y="58" width="10" height="10" uuid="047a7c3a-504f-4dfd-a2d6-caf4fb39129a">
@@ -4761,8 +4755,8 @@ KRITIS]]></text>
 				</textElement>
 				<text><![CDATA[Tgl & Jam]]></text>
 			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="301" y="58" width="97" height="10" uuid="1fba6e51-d259-4b2c-99f2-1b4d12586d2e">
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="301" y="58" width="241" height="10" uuid="1fba6e51-d259-4b2c-99f2-1b4d12586d2e">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box leftPadding="2" bottomPadding="2">
@@ -4776,95 +4770,14 @@ KRITIS]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{TANGGAL_FINAL}==null ? $F{DATANG_TANGGAL} + " " + $F{DATANG_JAM} : $F{TANGGAL_FINAL}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="453" y="58" width="91" height="10" uuid="4645526a-2345-4984-9fac-cd798ad72ded">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
+			<image>
+				<reportElement x="334" y="32" width="27" height="26" uuid="5de8eb8a-3d7b-418e-87ac-4340af799c2f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{QR1} != null]]></printWhenExpression>
 				</reportElement>
-				<box leftPadding="2" bottomPadding="2">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{TANGGAL_FINAL}==null ? $F{DATANG_TANGGAL} + " " + $F{DATANG_JAM} : $F{TANGGAL_FINAL}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="443" y="22" width="10" height="36" uuid="981bd18d-f960-4685-9b38-bbd2ad20cdac">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
-				</reportElement>
-				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="443" y="58" width="10" height="10" uuid="dde59cbf-f9b0-45f0-b748-5d647d235c11">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
-				</reportElement>
-				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="403" y="22" width="40" height="36" uuid="9e05b4b1-eab2-43ff-a7b5-63d130f2c52c">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
-				</reportElement>
-				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Perawat]]></text>
-			</staticText>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="453" y="22" width="91" height="36" uuid="e464a412-1520-400c-a574-83b40d6e55bf">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
-				</reportElement>
-				<box leftPadding="2" bottomPadding="2">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-			</textField>
-			<staticText>
-				<reportElement x="403" y="58" width="40" height="10" uuid="bbf86dc3-f80f-488e-811e-aafbca1696ee">
-					<property name="com.jaspersoft.studio.unit.height" value="cm"/>
-				</reportElement>
-				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Top">
-					<font fontName="Arial" size="7" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Tgl & Jam]]></text>
-			</staticText>
+				<imageExpression><![CDATA[$P{QRCODE_PATH} + $F{QR1}]]></imageExpression>
+			</image>
 		</band>
 	</summary>
 </jasperReport>
