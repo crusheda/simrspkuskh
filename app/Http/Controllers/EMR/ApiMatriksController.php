@@ -94,6 +94,9 @@ class ApiMatriksController extends Controller
             DB::table('simrspku_klaim.matriks')->insert($dataInsert);
         }
 
+        // AUTO COMPILE PDF
+        $pdfPath = $this->compileMatriks($request->nomor);
+
         // 5️⃣ Response sukses
         return response()->json([
             'message' => 'Data berhasil disimpan'
@@ -182,7 +185,34 @@ class ApiMatriksController extends Controller
             $options
         )->execute();
 
-        return response()->file($output.'.pdf',[
+        // return response()->file($output.'.pdf',[
+        //     'Content-Type' => 'application/pdf',
+        // ]);
+        return asset('storage/'.$path.'.pdf');
+    }
+
+    public function previewMatriks($NOMOR)
+    {
+        $file = klaim_file::where('nomor', $NOMOR)
+            ->where('nama_tambahan', 'matriks')
+            ->where('status', true)
+            ->first();
+
+        if (!$file) {
+            return response()->json([
+                'message' => 'PDF tidak ditemukan'
+            ], 404);
+        }
+
+        $fullPath = storage_path('app/public/' . $file->filename);
+
+        if (!File::exists($fullPath)) {
+            return response()->json([
+                'message' => 'File tidak ditemukan'
+            ], 404);
+        }
+
+        return response()->file($fullPath, [
             'Content-Type' => 'application/pdf',
         ]);
     }

@@ -179,9 +179,15 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('dcom/{filename}', [RISController::class, 'getDCOM'])->name('api.emr.ris.getDCOM');
 
     //MATRIKS
-    Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');
-    Route::post('emr/matriks', [ApiMatriksController::class, 'store'])->name('api.emr.matriks.store');
-    Route::get('emr/{NOMOR}/matriks', [ApiMatriksController::class, 'compileMatriks'])->name('api.emr.matriks.preview');
+    // Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');
+    // Route::post('emr/matriks', [ApiMatriksController::class, 'store'])->name('api.emr.matriks.store');
+    // Route::get('emr/{NOMOR}/matriks', [ApiMatriksController::class, 'compileMatriks'])->name('api.emr.matriks.preview');
+    Route::prefix('emr/matriks')->group(function () {
+        Route::get('{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');
+        Route::post('/', [ApiMatriksController::class, 'store'])->name('api.emr.matriks.store');
+        Route::get('{NOMOR}/preview', [ApiMatriksController::class, 'previewMatriks'])->name('api.emr.matriks.preview');
+    });
+
     //KONSUL
     Route::get('emr/konsul/{NOMOR}', [ApiKonsulController::class, 'showKonsul'])->name('api.emr.konsul.show');
     Route::get('emr/konsul/masuk/{NOMOR}', [ApiKonsulController::class, 'masukKonsul'])->name('api.emr.konsul.masuk.show');
