@@ -624,7 +624,9 @@ class ApiNewRehabMedikController extends Controller
                             ->where('pe.STATUS', '=', 1);
                     })
                     ->select('dr.ID', 'pe.NAMA AS DOKTER', 'dr.NIP', DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'))
-                    ->where('pe.NIP', $formLama->nip_dokter)
+                    // ->where('pe.NIP', $formLama->nip_dokter)
+                    ->where('pe.ID', auth()->id())
+                    // ->where('dr.NIP', Auth::user()->NIP)
                     ->where('dr.STATUS', 1)
                     ->first();
 
@@ -636,7 +638,8 @@ class ApiNewRehabMedikController extends Controller
         }
 
         $ttd_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
-            ->where('ttp.nip', $formLama->nip_dokter)
+            // ->where('ttp.nip', $formLama->nip_dokter)
+            ->where('ttp.nip', $dokter->NIP)
             ->where('status', 1)
             ->inRandomOrder()
             ->first();
@@ -704,7 +707,8 @@ class ApiNewRehabMedikController extends Controller
                 'PLANNING'     => $cpptLama->PLANNING,
                 'INSTRUKSI'    => $cpptLama->INSTRUKSI,
                 'JENIS'        => $cpptLama->JENIS,
-                'TENAGA_MEDIS' => $cpptLama->TENAGA_MEDIS,
+                // 'TENAGA_MEDIS' => $cpptLama->TENAGA_MEDIS,
+                'TENAGA_MEDIS' => $dokter->ID,
                 'OLEH'         => auth()->id(),
                 'STATUS'       => 1,
             ]);
@@ -1555,6 +1559,10 @@ class ApiNewRehabMedikController extends Controller
             ->inRandomOrder()
             ->first();
 
+        if (!$ttd_pegawai) {
+            throw new \Exception('Data TTD dokter tidak ditemukan untuk user ini');
+        }
+
         DB::beginTransaction();
         try {
             /* ==========================
@@ -1570,6 +1578,7 @@ class ApiNewRehabMedikController extends Controller
                     'ASSESMENT'    => $request->cppt_a,
                     'PLANNING'     => $planning,
                     'INSTRUKSI'    => $cppt_i,
+                    'TENAGA_MEDIS' => $dokter->ID,
                     'STATUS'       => 1,
                 ]);
 
