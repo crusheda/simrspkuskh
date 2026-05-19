@@ -1666,7 +1666,7 @@ class ApiNewRehabMedikController extends Controller
                         'tgl_init'          => $getKunj->tgl_sep,
                         'tgl'               => $getKunj->tgl_sep,
                         'bertemu_dokter'    => 1,
-                        'user'              => auth()->id(),
+                        // 'user'              => auth()->id(),
                         'updated_at'        => now(),
                     ]);
                     
@@ -1679,7 +1679,7 @@ class ApiNewRehabMedikController extends Controller
                     ->update([
                         'group'             => $getDataFirst->group + 1,
                         'tgl'               => $getKunj->tgl_sep,
-                        'user'              => auth()->id(),
+                        // 'user'              => auth()->id(),
                         'updated_at'        => now(),
                     ]);
                     
@@ -1742,7 +1742,7 @@ class ApiNewRehabMedikController extends Controller
                                 'tgl_init'          => $getKunjGroupOld->tgl_init,
                                 'tgl'               => $getKunjGroupOld->tgl,
                                 'bertemu_dokter'    => 1,
-                                'user'              => auth()->id(),
+                                // 'user'              => auth()->id(),
                                 'updated_at'        => now(),
                             ]);
                     
@@ -1755,7 +1755,7 @@ class ApiNewRehabMedikController extends Controller
                             ->update([
                                 'group'             => $getKunjGroupOld->group,
                                 'tgl'               => $getKunjGroupOld->tgl,
-                                'user'              => auth()->id(),
+                                // 'user'              => auth()->id(),
                                 'updated_at'        => now(),
                             ]);
                     
