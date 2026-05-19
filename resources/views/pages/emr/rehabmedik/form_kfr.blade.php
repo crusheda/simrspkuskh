@@ -785,6 +785,12 @@
                 tab.show();
                 
                 generateUlangFormJadwalPelayanan();
+
+                // AFTER THAT
+                loadFormJadwalPelayanan();
+                loadFormProgramTerapi();
+                loadCpptProgramTerapi();
+                loadRiwayatProgramTerapi();
             },
             error: function (xhr) {
                 Swal.fire(
