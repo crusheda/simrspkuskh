@@ -2328,21 +2328,14 @@ class ApiNewRehabMedikController extends Controller
                 'message'=> 'Data TTD dokter tidak ditemukan untuk user ini'
             ], 404);
         }
-
+        
         // GET TTD TERAPIS
-        $ttd_pegawai_tr = DB::table('simrspku_klaim.tanda_tangan_pegawai')
-            ->where('nip', Auth::user()->NIP)
-            ->where('status', 1)
-            ->whereNull('deleted_at')
-            ->inRandomOrder()
-            ->first();
-
-        if (!$ttd_pegawai_tr) {
-            return response()->json([
-                'status' => false,
-                'message'=> 'Data TTD tim tidak ditemukan untuk user ini'
-            ], 404);
-        }
+        // $ttd_pegawai_tr = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+        //     ->where('nip', Auth::user()->NIP)
+        //     ->where('status', 1)
+        //     ->whereNull('deleted_at')
+        //     ->inRandomOrder()
+        //     ->first();
 
         // GET ROLE TIM (1:DR, 2:FT, 3:OT, 4:TW)
         $role = Auth::user()->getRoleNames()->first();
@@ -2362,18 +2355,11 @@ class ApiNewRehabMedikController extends Controller
             ], 404);
         }
 
-        $tim = DB::table('aplikasi.pengguna as pe')
-                    ->select('pe.ID', 'pe.NIP', DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMATIM'))
-                    ->where('pe.NIP', Auth::user()->NIP)
-                    ->where('pe.STATUS', 1)
-                    ->first();
-
-        if (!$tim) {
-            return response()->json([
-                'status' => false,
-                'message'=> 'Data Akun tim tidak ditemukan'
-            ], 404);
-        }
+        // $tim = DB::table('aplikasi.pengguna as pe')
+        //             ->select('pe.ID', 'pe.NIP', DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMATIM'))
+        //             ->where('pe.NIP', Auth::user()->NIP)
+        //             ->where('pe.STATUS', 1)
+        //             ->first();
 
         // GET DATA PASIEN
         $dataPasien = DB::table('master.pasien')
@@ -2409,6 +2395,46 @@ class ApiNewRehabMedikController extends Controller
                 ], 404);
             }
 
+            // ADMIN OR ELSE
+            $isAdmin = Auth::user()->hasRole(['admin']);
+            
+            $nipTim = $isAdmin
+                ? $getFtr->nip_tim
+                : Auth::user()->NIP;
+
+            // GET TTD TERAPIS
+            $ttd_pegawai_tr = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+                ->where('nip', $nipTim)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->inRandomOrder()
+                ->first();
+
+            if (!$ttd_pegawai_tr) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Data TTD tim tidak ditemukan untuk user ini'
+                ], 404);
+            }
+            
+            // GET TTD TIM
+            $tim = DB::table('aplikasi.pengguna as pe')
+                ->select(
+                    'pe.ID',
+                    'pe.NIP',
+                    DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMATIM')
+                )
+                ->where('pe.NIP', $nipTim)
+                ->where('pe.STATUS', 1)
+                ->first();
+                
+            if (!$tim) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Data Akun tim tidak ditemukan'
+                ], 404);
+            }
+            
             /* ==========================
             * 1. UPDATE CPPT
             * ========================== */
@@ -3689,8 +3715,8 @@ class ApiNewRehabMedikController extends Controller
             $formJadwals = DB::table('simrspku_klaim.emr_form_jadwal')
                 ->where('nomor', $kunjungan)
                 ->where('rm', $request->rm)
-                ->where('status', 1)
-                ->whereNull('deleted_at')
+                // ->where('status', 1)
+                // ->whereNull('deleted_at')
                 ->orderByDesc('id')
                 ->get();
 

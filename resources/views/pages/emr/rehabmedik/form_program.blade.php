@@ -560,6 +560,10 @@
                         jenis = 'Lainnya';
                     }
 
+                    var admin = @json(Auth::user()->hasRole(['admin']));
+                    var userId = @json(auth()->user()->ID);
+
+                    let btnDis = (admin || item.user == userId) ? '' : 'disabled';
                     content += `<li class="list-group-item list-group-item-action ftr-item" data-id="${item.nomor}" data-group="${item.group}" data-queue="${item.queue}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Berkas Formulir">
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="GROUP - PROGRAM. KE XX">
@@ -580,10 +584,10 @@
                                                 </div>
                                             </div>
                                             <div class="flex-shrink-2 ms-4 d-flex flex-column gap-1">
-                                                <button class="btn btn-sm btn-outline-warning" data-queue="${item.queue}" id="btn-edit-form-ptr" onclick="event.stopPropagation(); editFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ubah Form Program Terapi" ${item.user != @json(auth()->user()->ID) ? "disabled" : ""}>
+                                                <button class="btn btn-sm btn-outline-warning" data-queue="${item.queue}" id="btn-edit-form-ptr" onclick="event.stopPropagation(); editFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ubah Form Program Terapi" ${btnDis}>
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-danger" data-queue="${item.queue}" id="btn-delete-form-ptr" onclick="event.stopPropagation(); deleteFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hapus Form Program Terapi" ${item.user != @json(auth()->user()->ID) ? "disabled" : ""}>
+                                                <button class="btn btn-sm btn-outline-danger" data-queue="${item.queue}" id="btn-delete-form-ptr" onclick="event.stopPropagation(); deleteFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hapus Form Program Terapi" ${btnDis}>
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
