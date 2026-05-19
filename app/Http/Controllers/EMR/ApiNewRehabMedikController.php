@@ -3691,12 +3691,12 @@ class ApiNewRehabMedikController extends Controller
                 ->where('rm', $request->rm)
                 ->where('status', 1)
                 ->whereNull('deleted_at')
-                ->orderBy('id', 'DESC')
+                ->orderByDesc('id')
                 ->get();
 
-            $formJadwal = $formJadwals->first(); // data terbaru
+            $formJadwalFinal = $formJadwals->first(); // data terbaru
 
-            // Jika ada data duplikat
+            // Jika ada data lama
             if ($formJadwals->count() > 1) {
 
                 $duplicateForms = $formJadwals->skip(1);
@@ -3715,7 +3715,7 @@ class ApiNewRehabMedikController extends Controller
                         'updated_at' => now(),
                     ]);
 
-                // Soft delete file lama berdasarkan queue + group
+                // Soft delete file lama
                 foreach ($duplicateForms as $oldForm) {
 
                     DB::table('simrspku_klaim.klaim_file')
@@ -3735,27 +3735,20 @@ class ApiNewRehabMedikController extends Controller
                 }
             }
 
-            $formJadwalFinal = DB::table('simrspku_klaim.emr_form_jadwal')
-                        ->where('nomor', $kunjungan)
-                        ->where('rm', $request->rm)
-                        ->where('group', $formKfr->group)
-                        ->where('queue', $formKfr->queue)
-                        ->where('status', 1)
-                        ->whereNull('deleted_at')
-                        ->orderByDesc('id')
-                        ->first();
+            // ==========================
+            // UPDATE DATA TERBARU
+            // ==========================
 
-            DB::table('simrspku_klaim.emr_form_jadwal')->updateOrInsert(
-                [
-                    'nomor' => $kunjungan,
-                    'rm'    => $request->rm,
-                    'group' => $formKfr->group,
-                    'queue' => $formKfr->queue,
-                ],
-                [
+            DB::table('simrspku_klaim.emr_form_jadwal')
+                ->where('id', $formJadwalFinal->id)
+                ->update([
+
                     'tgl'   => $request->tgl,
                     'sep'   => $request->sep,
                     'tgl_sep'=> $request->tgl_sep ?? $request->tgl,
+
+                    'group' => $formKfr->group,
+                    'queue' => $formKfr->queue,
 
                     'diag_medis'        => $formKfr->diag_medis,
                     'permintaan_terapi' => $permintaanTerapi,
@@ -3770,17 +3763,17 @@ class ApiNewRehabMedikController extends Controller
                     'nip_terapis1' => $formTerapi[0]->nip_tim ?? '',
                     'nip_terapis2' => $formTerapi[1]->nip_tim ?? '',
                     'nip_dpjp'     => $formKfr->nip_dokter,
+
                     'ttd_dokter'   => $ttd_dokter->signature_path ?? '',
                     'ttd_terapis1' => $formTerapi[0]->ttd_terapis ?? '',
                     'ttd_terapis2' => $formTerapi[1]->ttd_terapis ?? '',
                     'ttd_dpjp'     => $ttd_dokter->signature_path ?? '',
-                    'nama_dpjp'    => $formKfr->nama_dokter,
+
+                    'nama_dpjp' => $formKfr->nama_dokter,
 
                     'user' => auth()->id(),
-                    'status' => 1,
                     'updated_at' => now()
-                ]
-            );
+                ]);
 
             $data = (object)[
                 'KUNJUNGAN' => $kunjungan,
