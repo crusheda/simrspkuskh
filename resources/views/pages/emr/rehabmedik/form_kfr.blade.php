@@ -776,7 +776,14 @@
                     message: res.message,
                     position: 'topRight'
                 });
+
                 loadRiwayatKfr();
+
+                // PINDAH TAB
+                const triggerEl = document.querySelector('#tab-pterapi');
+                const tab = new bootstrap.Tab(triggerEl);
+                tab.show();
+                
                 generateUlangFormJadwalPelayanan();
             },
             error: function (xhr) {
@@ -787,7 +794,7 @@
                 );
             },
             complete: function () {
-
+                // $('.modal').modal('hide');
             }
         })
     }
