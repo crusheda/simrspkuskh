@@ -1670,10 +1670,23 @@ class ApiNewRehabMedikController extends Controller
                         'updated_at'        => now(),
                     ]);
                     
-                // KLAIM FILE
+                // EMR FORM TERAPI
+                DB::table('simrspku_klaim.emr_form_terapi')
+                    ->where('rm', $NORM)
+                    ->where('nomor', $KUNJUNGAN)
+                    ->where('status', 1)
+                    ->whereNull('deleted_at')
+                    ->update([
+                        'group'             => $getDataFirst->group + 1,
+                        'tgl'               => $getKunj->tgl_sep,
+                        'user'              => auth()->id(),
+                        'updated_at'        => now(),
+                    ]);
+                    
+                // KLAIM FILE FORM KFR & FORM TERAPI
                 DB::table('simrspku_klaim.klaim_file')
                     ->where('jenis', 11)
-                    ->where('sub_jenis', 1) // FORM KFR
+                    ->whereIn('sub_jenis', [1, 2]) // KODE FORM
                     ->where('nomor', $KUNJUNGAN)
                     ->where('status', 1)
                     ->whereNull('deleted_at')
@@ -1682,6 +1695,20 @@ class ApiNewRehabMedikController extends Controller
                         'user'          => auth()->id(),
                         'updated_at'    => now(),
                     ]);
+                    
+                // KLAIM FILE FORM JADWAL PELAYANAN
+                // DB::table('simrspku_klaim.klaim_file')
+                //     ->where('jenis', 11)
+                //     ->where('sub_jenis', 3)
+                //     ->where('nomor', $KUNJUNGAN)
+                //     ->where('status', 1)
+                //     ->whereNull('deleted_at')
+                //     ->update([
+                //         'ref'           => $getDataFirst->group + 1,
+                //         'kode'          => 1, // NEW GROUP = NEW QUEUE
+                //         'user'          => auth()->id(),
+                //         'updated_at'    => now(),
+                //     ]);
 
             } else {
                 if ($KODE == 0) { // Lanjut GROUP Sebelumnya
@@ -1717,6 +1744,32 @@ class ApiNewRehabMedikController extends Controller
                                 'bertemu_dokter'    => 1,
                                 'user'              => auth()->id(),
                                 'updated_at'        => now(),
+                            ]);
+                    
+                        // EMR FORM TERAPI
+                        DB::table('simrspku_klaim.emr_form_terapi')
+                            ->where('rm', $NORM)
+                            ->where('nomor', $KUNJUNGAN)
+                            ->where('status', 1)
+                            ->whereNull('deleted_at')
+                            ->update([
+                                'group'             => $getKunjGroupOld->group,
+                                'tgl'               => $getKunjGroupOld->tgl,
+                                'user'              => auth()->id(),
+                                'updated_at'        => now(),
+                            ]);
+                    
+                        // KLAIM FILE FORM KFR & FORM TERAPI
+                        DB::table('simrspku_klaim.klaim_file')
+                            ->where('jenis', 11)
+                            ->whereIn('sub_jenis', [1, 2]) // KODE FORM
+                            ->where('nomor', $KUNJUNGAN)
+                            ->where('status', 1)
+                            ->whereNull('deleted_at')
+                            ->update([
+                                'ref'           => $getKunjGroupOld->group,
+                                'user'          => auth()->id(),
+                                'updated_at'    => now(),
                             ]);
                     } else {
                         return response()->json([
@@ -3679,33 +3732,67 @@ class ApiNewRehabMedikController extends Controller
         $verify = klaim_file::where('nomor',$show->KUNJUNGAN)
                             ->where('jenis',11)
                             ->where('sub_jenis',3) // FORM JADWAL PELAYANAN TERAPI
-                            ->where('kode',$show->QUEUE)
-                            ->where('ref',$show->GROUP)
+                            // ->where('kode',$show->QUEUE)
+                            // ->where('ref',$show->GROUP)
                             ->where('status',true)
                             ->whereNull('deleted_at')
                             ->orderBy('id','DESC')
                             ->first();
+        if ($verify) {
 
-        if (!$verify) {
-            $post = new klaim_file;
-            $post->jenis = 11;
-            $post->sub_jenis = 3; // FORM JADWAL PELAYANAN TERAPI
-            $post->kode = $show->QUEUE;
-            $post->ref = $show->GROUP;
-            $post->nomor = $show->KUNJUNGAN;
-            $post->title = $show->KUNJUNGAN.'-'.$show->QUEUE.'.pdf';
-            $post->filename = $path.'.pdf';
-            $post->nama_tambahan = 'Formulir Jadwal Pelayanan Terapi';
-            $post->status = true;
-            $post->user = Auth::user()->ID;
-            $post->created_at = now();
-            $post->updated_at = now();
-            $post->save();
-        } else {
-            $verify->user = Auth::user()->ID;
+            // Hapus file fisik lama
+            $oldFile = storage_path('app/public/' . $verify->filename);
+
+            if (File::exists($oldFile)) {
+                File::delete($oldFile);
+            }
+
+            // Soft delete data lama
+            $verify->status = 0;
+            $verify->deleted_at = now();
+            $verify->user_deleted = Auth::user()->ID;
             $verify->updated_at = now();
             $verify->save();
         }
+
+        /* =========================================
+        * BUAT DATA KLAIM_FILE BARU
+        * ========================================= */
+        $post = new klaim_file;
+        $post->jenis = 11;
+        $post->sub_jenis = 3; // FORM JADWAL PELAYANAN TERAPI
+        $post->kode = $show->QUEUE;
+        $post->ref = $show->GROUP;
+        $post->nomor = $show->KUNJUNGAN;
+        $post->title = $show->KUNJUNGAN . '-' . $show->QUEUE . '.pdf';
+        $post->filename = $path . '.pdf';
+        $post->nama_tambahan = 'Formulir Jadwal Pelayanan Terapi';
+        $post->status = true;
+        $post->user = Auth::user()->ID;
+        $post->created_at = now();
+        $post->updated_at = now();
+        $post->save();
+
+        // if (!$verify) {
+        //     $post = new klaim_file;
+        //     $post->jenis = 11;
+        //     $post->sub_jenis = 3; // FORM JADWAL PELAYANAN TERAPI
+        //     $post->kode = $show->QUEUE;
+        //     $post->ref = $show->GROUP;
+        //     $post->nomor = $show->KUNJUNGAN;
+        //     $post->title = $show->KUNJUNGAN.'-'.$show->QUEUE.'.pdf';
+        //     $post->filename = $path.'.pdf';
+        //     $post->nama_tambahan = 'Formulir Jadwal Pelayanan Terapi';
+        //     $post->status = true;
+        //     $post->user = Auth::user()->ID;
+        //     $post->created_at = now();
+        //     $post->updated_at = now();
+        //     $post->save();
+        // } else {
+        //     $verify->user = Auth::user()->ID;
+        //     $verify->updated_at = now();
+        //     $verify->save();
+        // }
 
         $output = storage_path().'/app/public/'.$path;
 
