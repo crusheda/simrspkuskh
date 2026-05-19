@@ -157,6 +157,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 Route::post('emr/kfr/unsync', [ApiNewRehabMedikController::class, 'unsyncFormLama'])->name('api.emr.kfr.unsyncFormLama');
                 Route::post('emr/kfr/store', [ApiNewRehabMedikController::class, 'store'])->name('api.emr.kfr.store');
                 Route::put('emr/kfr/update/{IDCPPT}', [ApiNewRehabMedikController::class, 'update'])->name('api.emr.kfr.update');
+                Route::get('emr/kfr/ubah/{KUNJUNGAN}/{NORM}/{KODE}', [ApiNewRehabMedikController::class, 'ubah'])->name('api.emr.kfr.ubah'); // Ubah Group & Periode Kunjungan
                 Route::post('emr/kfr/destroy', [ApiNewRehabMedikController::class, 'destroy'])->name('api.emr.kfr.destroy');
                 Route::post('emr/kfr/destroy/all', [ApiNewRehabMedikController::class, 'destroyAll'])->name('api.emr.kfr.destroyAll');
                 // PROGRAM TERAPI

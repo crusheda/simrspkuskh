@@ -574,6 +574,7 @@
                     .addClass('fa-spin');
             },
             success: function(res) {
+                var admin = @json(Auth::user()->hasRole(['admin']));
                 if (!res.status) {
                     // Swal.fire('Info', res.message, 'info');
                     $('#load-riwayat-form-kfr').empty()
@@ -606,10 +607,44 @@
                         }
                     }
 
+                    // <div class="avtar avtar-s border kfr-avatar"> ${item.group} <i class="ti ti-minus"></i> ${item.queue} </div>
                     content += `<li class="list-group-item list-group-item-action kfr-item" data-id="${item.nomor}" data-init="${item.nomor_init}" data-group="${item.group}" data-queue="${item.queue}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Berkas Formulir">
                                         <div class="d-flex align-items-center">
-                                            <div class="flex-shrink-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="GROUP - KUNJ. KE XX">
-                                                <div class="avtar avtar-s border kfr-avatar"> ${item.group} <i class="ti ti-minus"></i> ${item.queue} </div>
+                                            <div class="flex-shrink-0" data-bs-toggle="tooltip" data-bs-placement="top" title="GROUP - KUNJ. KE XX">
+                                                ${item.nomor == kunjungan && item.bertemu_dokter == 1 && admin == true
+                                                    ? `<div class="dropdown" onclick="event.stopPropagation();">
+
+                                                            <div 
+                                                                class="avtar avtar-s border border-primary kfr-avatar"
+                                                                data-bs-toggle="dropdown"
+                                                                data-bs-auto-close="true"
+                                                                aria-expanded="false"
+                                                                style="cursor:pointer;"
+                                                                id="icoGQ${item.nomor}"
+                                                            >
+                                                                ${item.group} <i class="ti ti-minus"></i> ${item.queue}
+                                                            </div>
+
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+
+                                                                <li>
+                                                                    <button
+                                                                        type="button"
+                                                                        class="dropdown-item"
+                                                                        onclick="showUbahGroupKunjungan('${item.nomor}')"
+                                                                        data-rm="${rm}"
+                                                                        data-group="${item.group}"
+                                                                        data-queue="${item.queue}"
+                                                                    >
+                                                                        Ubah Nomor Group & Periode Kunjungan
+                                                                    </button>
+                                                                </li>
+
+                                                            </ul>
+
+                                                        </div>`
+                                                    : `<div class="avtar avtar-s border kfr-avatar" onclick="event.stopPropagation();" id="icoGQ`+item.nomor+`"> `+item.group+` <i class="ti ti-minus"></i> `+item.queue+` </div>` }
+                                                
                                             </div>
                                             <div class="flex-grow-1 ms-3">
                                                 <div class="row g-1">
@@ -696,6 +731,65 @@
                 })
             }
         });
+    }
+
+    function showUbahGroupKunjungan(NOKUNJ) {
+        Swal.fire({
+            title: 'Ubah Group & Kunjungan Formulir?',
+            text: `Anda akan melakukan perubahan pada Group dan Periode Kunjungan saat ini pada No.Kunjungan: ${NOKUNJ}`,
+            icon: 'question',
+            showConfirmButton: true,
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: '<i class="fas fa-angle-left me-1"></i> Buat GROUP Baru',
+            denyButtonText: 'Lanjut GROUP Sebelumnya <i class="fas fa-angle-right ms-1"></i>',
+            cancelButtonText: '<i class="fas fa-times me-1"></i> Batal',
+            confirmButtonColor: '#28a745', // hijau
+            denyButtonColor: '#dc3545',    // merah
+            cancelButtonColor: '#6c757d'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                ubahGroupKunjungan(NOKUNJ,rm, 1); // Buat Group Baru
+
+            } else if (result.isDenied) {
+                ubahGroupKunjungan(NOKUNJ,rm, 0); // Lanjut GROUP Sebelumnya
+
+            } else {
+                // cancel
+                loadRiwayatKfr();
+            }
+
+        });
+    }
+
+    function ubahGroupKunjungan(NOKUNJ,NORM,KODE) {
+        $.ajax({
+            url: `/api/emr/kfr/ubah/${NOKUNJ}/${NORM}/${KODE}`,
+            type: 'GET',
+            beforeSend: function () {
+
+            },
+            success: function(res) {
+                iziToast.success({
+                    title: 'Proses Berhasil!',
+                    message: res.message,
+                    position: 'topRight'
+                });
+                loadRiwayatKfr();
+                generateUlangFormJadwalPelayanan();
+            },
+            error: function (xhr) {
+                Swal.fire(
+                    'Gagal',
+                    xhr.responseJSON?.message ?? 'Terjadi kesalahan / Gagal memanggil Function',
+                    'error'
+                );
+            },
+            complete: function () {
+
+            }
+        })
     }
 
     function showListFormKfr() { // KETIKA KLIK TOMBOL GUNAKAN FORM LAMA

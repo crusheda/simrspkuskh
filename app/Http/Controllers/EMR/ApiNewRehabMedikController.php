@@ -1626,6 +1626,139 @@ class ApiNewRehabMedikController extends Controller
         }
     }
 
+    function ubah($KUNJUNGAN, $NORM, $KODE) // PENYESUAIAN GROUP & PERIODE KUNJUNGAN
+    {
+        // 1 = Buat Group Baru
+        // 0 = Lanjut GROUP Sebelumnya
+
+        DB::beginTransaction();
+        try {
+            /* ==========================
+            * 1. UPDATE EMR FORM KFR & KLAIM FILE
+            * ========================== */
+            $getDataFirst = DB::table('simrspku_klaim.emr_form_kfr')->where('rm', $NORM)->where('status', 1)->whereNull('deleted_at')->orderByDesc('group')->first();
+            if (!$getDataFirst) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Data Kunjungan pada No. RM ini tidak ditemukan. Mohon periksa semua kunjungan dari pasien ini'
+                ], 422);
+            }
+
+            $getKunj = DB::table('simrspku_klaim.emr_form_kfr')->where('nomor', $KUNJUNGAN)->where('status', 1)->whereNull('deleted_at')->first();
+            if (!$getKunj) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Data Kunjungan saat ini tidak ditemukan / telah terhapus. mohon refresh data riwayat sekali lagi'
+                ], 422);
+            }
+            
+            if ($KODE == 1) { // Buat Group Baru
+                // EMR FORM KFR
+                DB::table('simrspku_klaim.emr_form_kfr')
+                    ->where('rm', $NORM)
+                    ->where('nomor', $KUNJUNGAN)
+                    ->where('status', 1)
+                    ->whereNull('deleted_at')
+                    ->update([
+                        'group'             => $getDataFirst->group + 1,
+                        'queue'             => 1, // NEW GROUP = NEW QUEUE
+                        'nomor_init'        => $KUNJUNGAN,
+                        'tgl_init'          => $getKunj->tgl_sep,
+                        'tgl'               => $getKunj->tgl_sep,
+                        'bertemu_dokter'    => 1,
+                        'user'              => auth()->id(),
+                        'updated_at'        => now(),
+                    ]);
+                    
+                // KLAIM FILE
+                DB::table('simrspku_klaim.klaim_file')
+                    ->where('jenis', 11)
+                    ->where('sub_jenis', 1) // FORM KFR
+                    ->where('nomor', $KUNJUNGAN)
+                    ->where('status', 1)
+                    ->whereNull('deleted_at')
+                    ->update([
+                        'ref'           => $getDataFirst->group + 1,
+                        'user'          => auth()->id(),
+                        'updated_at'    => now(),
+                    ]);
+
+            } else {
+                if ($KODE == 0) { // Lanjut GROUP Sebelumnya
+                    $gOld = $getKunj->group - 1;
+                    if ($gOld != 0) {
+                        $getKunjGroupOld = DB::table('simrspku_klaim.emr_form_kfr')
+                                                ->where('rm',$NORM)
+                                                ->where('group', $gOld)
+                                                ->where('status', 1)
+                                                ->whereNull('deleted_at')
+                                                ->orderByDesc('queue')
+                                                ->orderByDesc('id')
+                                                ->first();
+
+                        if (!$getKunjGroupOld) {
+                            return response()->json([
+                                'status' => false,
+                                'message'=> 'Data Form Kunjungan KFR Lama pasien ini tidak ditemukan atau telah terhapus. mohon periksa riwayat Form KFR pada RM Pasien ini'
+                            ], 422);
+                        }
+                                                
+                        DB::table('simrspku_klaim.emr_form_kfr')
+                            ->where('rm', $NORM)
+                            ->where('nomor', $KUNJUNGAN)
+                            ->where('status', 1)
+                            ->whereNull('deleted_at')
+                            ->update([
+                                'group'             => $getKunjGroupOld->group,
+                                'queue'             => $getKunjGroupOld->queue + 1,
+                                'nomor_init'        => $getKunjGroupOld->nomor_init,
+                                'tgl_init'          => $getKunjGroupOld->tgl_init,
+                                'tgl'               => $getKunjGroupOld->tgl,
+                                'bertemu_dokter'    => 1,
+                                'user'              => auth()->id(),
+                                'updated_at'        => now(),
+                            ]);
+                    } else {
+                        return response()->json([
+                            'status' => false,
+                            'message'=> 'Data Kunjungan saat ini adalah kunjungan pertama pasien yang tercatat di SIRMED alias GROUP pertama'
+                        ], 422);
+                    }
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message'=> 'KODE SISTEM tidak terkirim saat menjalankan proses perubahan Group'
+                    ], 422);
+                }
+            }
+
+            DB::commit();
+
+            /* 3. KIRIM LANGSUNG KE GENERATOR */
+            $generateUlangForm = $this->generateUlangFormKfr($KUNJUNGAN);
+
+            if (!$generateUlangForm['success']) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> $generateUlangForm['message'] ?? 'Gagal memperbarui Group Form KFR'
+                ], 422);
+            }
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Data GROUP & Periode Kunjungan berhasil diperbarui'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message'=> $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function destroy(Request $request)
     {
         $request->validate([
@@ -2458,6 +2591,7 @@ class ApiNewRehabMedikController extends Controller
             * 2. UPDATE EMR FORM PROGRAM TERAPI
             * ========================== */
             $jenisAdm = $jenis == 99 ? $getFtr->jenis : $jenis;
+            $userAdm = $jenis == 99 ? $getFtr->user : auth()->id();
             DB::table('simrspku_klaim.emr_form_terapi')->where('id_cppt', $getFtr->id_cppt)->update([
                 'jenis'         => $jenisAdm,
                 'sep'           => $request->sep,
@@ -2474,7 +2608,7 @@ class ApiNewRehabMedikController extends Controller
                 'nip_tim'       => $ttd_pegawai_tr->nip,
                 'nama_tim'      => $tim->NAMATIM,
 
-                'user'          => auth()->id(),
+                'user'          => $userAdm,
                 'updated_at'    => now()
             ]);
 
