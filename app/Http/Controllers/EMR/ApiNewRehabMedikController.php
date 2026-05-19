@@ -3678,26 +3678,84 @@ class ApiNewRehabMedikController extends Controller
                 ], 404);
             }
 
-            $formJadwal = DB::table('simrspku_klaim.emr_form_jadwal')
+            // $formJadwal = DB::table('simrspku_klaim.emr_form_jadwal')
+            //     ->where('nomor', $kunjungan)
+            //     ->where('rm', $request->rm)
+            //     ->where('status', 1)
+            //     ->whereNull('deleted_at')
+            //     ->orderBy('id', 'DESC')
+            //     ->first();
+
+            $formJadwals = DB::table('simrspku_klaim.emr_form_jadwal')
                 ->where('nomor', $kunjungan)
                 ->where('rm', $request->rm)
                 ->where('status', 1)
                 ->whereNull('deleted_at')
                 ->orderBy('id', 'DESC')
-                ->first();
+                ->get();
+
+            $formJadwal = $formJadwals->first(); // data terbaru
+
+            // Jika ada data duplikat
+            if ($formJadwals->count() > 1) {
+
+                $duplicateForms = $formJadwals->skip(1);
+
+                $duplicateIds = $duplicateForms
+                    ->pluck('id')
+                    ->toArray();
+
+                // Soft delete form lama
+                DB::table('simrspku_klaim.emr_form_jadwal')
+                    ->whereIn('id', $duplicateIds)
+                    ->update([
+                        'status'     => 0,
+                        'deleted_at' => now(),
+                        'user'       => auth()->id(),
+                        'updated_at' => now(),
+                    ]);
+
+                // Soft delete file lama berdasarkan queue + group
+                foreach ($duplicateForms as $oldForm) {
+
+                    DB::table('simrspku_klaim.klaim_file')
+                        ->where('nomor', $kunjungan)
+                        ->where('jenis', 11)
+                        ->where('sub_jenis', 3)
+                        ->where('kode', $oldForm->queue)
+                        ->where('ref', $oldForm->group)
+                        ->where('status', 1)
+                        ->whereNull('deleted_at')
+                        ->update([
+                            'status'       => 0,
+                            'deleted_at'   => now(),
+                            'user_deleted' => auth()->id(),
+                            'updated_at'   => now(),
+                        ]);
+                }
+            }
+
+            $formJadwalFinal = DB::table('simrspku_klaim.emr_form_jadwal')
+                        ->where('nomor', $kunjungan)
+                        ->where('rm', $request->rm)
+                        ->where('group', $formKfr->group)
+                        ->where('queue', $formKfr->queue)
+                        ->where('status', 1)
+                        ->whereNull('deleted_at')
+                        ->orderByDesc('id')
+                        ->first();
 
             DB::table('simrspku_klaim.emr_form_jadwal')->updateOrInsert(
                 [
                     'nomor' => $kunjungan,
                     'rm'    => $request->rm,
+                    'group' => $formKfr->group,
+                    'queue' => $formKfr->queue,
                 ],
                 [
                     'tgl'   => $request->tgl,
                     'sep'   => $request->sep,
                     'tgl_sep'=> $request->tgl_sep ?? $request->tgl,
-                    
-                    'group' => $formKfr->group,
-                    'queue' => $formKfr->queue,
 
                     'diag_medis'        => $formKfr->diag_medis,
                     'permintaan_terapi' => $permintaanTerapi,
@@ -3705,8 +3763,8 @@ class ApiNewRehabMedikController extends Controller
                     'program_terapis1' => $formTerapi[0]->program_terapi ?? '',
                     'program_terapis2' => $formTerapi[1]->program_terapi ?? '',
 
-                    'id_ttd_pasien' => $formJadwal->id_ttd_pasien ?? null,
-                    'ttd_pasien'    => $formJadwal->ttd_pasien ?? null,
+                    'id_ttd_pasien' => $formJadwalFinal->id_ttd_pasien ?? null,
+                    'ttd_pasien'    => $formJadwalFinal->ttd_pasien ?? null,
 
                     'nip_dokter'   => $formKfr->nip_dokter,
                     'nip_terapis1' => $formTerapi[0]->nip_tim ?? '',
@@ -3743,7 +3801,7 @@ class ApiNewRehabMedikController extends Controller
                 'UMURPASIEN' => $dataPasien->UMURPASIEN ?? '',
                 'ALAMATPASIEN' => $dataPasien->ALAMATPASIEN ?? '',
 
-                'PATH_TTD_PASIEN'  => $formJadwal->ttd_pasien ?? '',
+                'PATH_TTD_PASIEN'  => $formJadwalFinal->ttd_pasien ?? '',
                 'PATH_TTD_DOKTER'  => $ttd_dokter->signature_path ?? '',
                 'PATH_TTD_TERAPIS1'     => $formTerapi[0]->ttd_terapis ?? '',
                 'PATH_TTD_TERAPIS2'     => $formTerapi[1]->ttd_terapis ?? null,
