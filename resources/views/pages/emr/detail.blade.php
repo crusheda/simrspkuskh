@@ -107,12 +107,14 @@
                             <i class="ph-duotone ph-files me-2"></i> Form Konsul
                         </a>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="" data-bs-toggle="tab" href="#fmatriks" role="tab"
-                            aria-selected="false" tabindex="-1" id="tab-fmatriks" disabled>
-                            <i class="ph-duotone ph-film-script me-2"></i> Matriks
-                        </a>
-                    </li>
+                    @if (Str::startsWith($list['show']->IDRUANGAN, '10202'))
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="" data-bs-toggle="tab" href="#fmatriks" role="tab"
+                                aria-selected="false" tabindex="-1" id="tab-fmatriks" disabled>
+                                <i class="ph-duotone ph-film-script me-2"></i> Matriks
+                            </a>
+                        </li>
+                    @endif
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="" data-bs-toggle="tab" href="#fuploads" role="tab"
                             aria-selected="false" tabindex="-1" id="tab-fuploads" disabled>

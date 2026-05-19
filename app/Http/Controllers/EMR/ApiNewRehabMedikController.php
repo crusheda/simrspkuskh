@@ -624,8 +624,8 @@ class ApiNewRehabMedikController extends Controller
                             ->where('pe.STATUS', '=', 1);
                     })
                     ->select('dr.ID', 'pe.NAMA AS DOKTER', 'dr.NIP', DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'))
-                    // ->where('pe.NIP', $formLama->nip_dokter)
-                    ->where('pe.ID', auth()->id())
+                    ->where('pe.NIP', $formLama->nip_dokter)
+                    // ->where('pe.ID', auth()->id())
                     // ->where('dr.NIP', Auth::user()->NIP)
                     ->where('dr.STATUS', 1)
                     ->first();

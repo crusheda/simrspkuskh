@@ -1,4 +1,4 @@
-
+@if (Str::startsWith($list['show']->IDRUANGAN, '10202'))
     <input type="hidden" name="nomorMatriks" id="nomorMatriks" value="{{ $list['KUNJUNGAN'] }}">
 
     <div class="card">
@@ -94,6 +94,8 @@
     <div class="mt-3 text-end">
         <button type="button" class="btn btn-primary" onclick="simpanForm()"><i class="fas fa-save me-1"></i> Simpan </button>
     </div>
+
+@endif
 
 <!-- JavaScript -->
 <script>
