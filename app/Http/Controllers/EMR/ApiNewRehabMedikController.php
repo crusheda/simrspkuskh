@@ -3948,6 +3948,13 @@ class ApiNewRehabMedikController extends Controller
                 ->orderByDesc('id')
                 ->get();
 
+            if ($formJadwals->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Form Jadwal Pelayanan Tidak Ditemukan, gagal mengenerate Berkas Form Baru'
+                ], 404);
+            }
+
             $formJadwalFinal = $formJadwals->first(); // data terbaru
 
             // Jika ada data lama
