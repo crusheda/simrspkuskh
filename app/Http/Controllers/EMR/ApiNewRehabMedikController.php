@@ -3190,8 +3190,8 @@ class ApiNewRehabMedikController extends Controller
 
             $doubleCheck = DB::table('simrspku_klaim.emr_form_jadwal')
                             ->where('nomor', $kunjungan)
-                            ->where('queue', $formKfr->queue)
-                            ->where('group', $formKfr->group)
+                            // ->where('queue', $formKfr->queue)
+                            // ->where('group', $formKfr->group)
                             ->where('status', 1)
                             ->whereNull('deleted_at')
                             ->first();
@@ -3206,7 +3206,7 @@ class ApiNewRehabMedikController extends Controller
             //                 ->first();
 
             if ($doubleCheck) {
-                throw new \Exception('Form Jadwal Pelayanan untuk kunjungan ini sudah pernah dibuat sebelumnya. Mohon cek pada daftar file klaim untuk kunjungan ini atau Cetak Form Jadwal Pelayanan dengan data yang sudah ada sebelumnya');
+                throw new \Exception('Form Jadwal Pelayanan untuk kunjungan ini sudah pernah dibuat sebelumnya. Silakan menggunakan Form Jadwal Pelayanan dengan data yang sudah ada sebelumnya atau dapat mengenerate ulang form jadwal pelayanan baru.');
             }
 
             $planningText = preg_replace("/\r?\n/", "\n", $formKfr->PLANNING ?? '');
@@ -3689,14 +3689,15 @@ class ApiNewRehabMedikController extends Controller
             DB::table('simrspku_klaim.emr_form_jadwal')->updateOrInsert(
                 [
                     'nomor' => $kunjungan,
-                    'group' => $formKfr->group,
-                    'queue' => $formKfr->queue,
+                    'rm'    => $request->rm,
                 ],
                 [
                     'tgl'   => $request->tgl,
                     'sep'   => $request->sep,
                     'tgl_sep'=> $request->tgl_sep ?? $request->tgl,
-                    'rm'    => $request->rm,
+                    
+                    'group' => $formKfr->group,
+                    'queue' => $formKfr->queue,
 
                     'diag_medis'        => $formKfr->diag_medis,
                     'permintaan_terapi' => $permintaanTerapi,
