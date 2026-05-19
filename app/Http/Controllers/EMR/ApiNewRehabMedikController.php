@@ -2276,6 +2276,9 @@ class ApiNewRehabMedikController extends Controller
             ], 422);
         }
 
+        // ADMIN OR ELSE
+        $isAdmin = Auth::user()->hasRole(['admin']);
+
         $tglPush = now()->toTimeString();
         $tglMasuk  = Carbon::parse($request->tgl_masuk);
         if ($request->filled('tgl_keluar')) {
@@ -2349,10 +2352,15 @@ class ApiNewRehabMedikController extends Controller
         } else if($role == 'terapiwicara') {
             $jenis = 11;
         } else {
-            return response()->json([
-                'status' => false,
-                'message'=> 'Hak Akses Anda tidak valid untuk mengisi Form Program Terapi'
-            ], 404);
+            if ($isAdmin) {
+                $jenis = 99;
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message'=> 'Hak Akses Anda tidak valid untuk mengisi Form Program Terapi'
+                ], 404);
+            }
+            
         }
 
         // $tim = DB::table('aplikasi.pengguna as pe')
@@ -2388,15 +2396,13 @@ class ApiNewRehabMedikController extends Controller
                                 ->where('status',1)
                                 ->whereNull('deleted_at')
                                 ->first();
+
             if (!$getFtr) {
                 return response()->json([
                     'status' => false,
                     'message'=> 'Data Form Program Terapi tidak ditemukan untuk diupdate'
                 ], 404);
             }
-
-            // ADMIN OR ELSE
-            $isAdmin = Auth::user()->hasRole(['admin']);
             
             $nipTim = $isAdmin
                 ? $getFtr->nip_tim
@@ -2451,8 +2457,9 @@ class ApiNewRehabMedikController extends Controller
             /* ==========================
             * 2. UPDATE EMR FORM PROGRAM TERAPI
             * ========================== */
+            $jenisAdm = $jenis == 99 ? $getFtr->jenis : $jenis;
             DB::table('simrspku_klaim.emr_form_terapi')->where('id_cppt', $getFtr->id_cppt)->update([
-                'jenis'         => $jenis,
+                'jenis'         => $jenisAdm,
                 'sep'           => $request->sep,
                 'tgl_sep'       => $request->tgl_sep,
                 'tgl'           => $tglPush,
