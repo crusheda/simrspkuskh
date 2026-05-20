@@ -1075,7 +1075,7 @@ class ApiMonitoringController extends Controller
             $konsul = DB::table('pendaftaran.konsul as kon')
                 ->leftJoin('pendaftaran.kunjungan as pk','pk.REF','=','kon.NOMOR')
                 ->leftJoin('master.dokter as md','md.ID','=','pk.DPJP')
-                ->select('pk.NOMOR AS KUNJUNGAN', 'pk.DPJP AS DPJP', 'pk.RUANGAN AS RUANGAN', 'md.NIP AS NIPDOKTER')
+                ->select('pk.NOMOR AS KUNJUNGAN', 'pk.DPJP AS DPJP', 'pk.RUANGAN AS RUANGAN', DB::raw('master.getNamaLengkapPegawai(md.NIP) AS NAMADOKTER'), 'md.NIP AS NIPDOKTER')
                 ->where('kon.KUNJUNGAN',$kunjungan)
                 ->where('kon.STATUS','!=','0')
                 ->get();
@@ -1132,7 +1132,7 @@ class ApiMonitoringController extends Controller
                     ]);
                 } else {
                     return response()->json([
-                        'message' => 'Tanda tangan Dokter DPJP pada Resume Utama tidak ditemukan.'
+                        'message' => "Tanda tangan Dokter DPJP ({$getRESUMERJ->NAMADOKTER}) pada Resume Utama tidak ditemukan."
                     ], 404);
                 }
             }
@@ -1263,7 +1263,7 @@ class ApiMonitoringController extends Controller
                                 ]);
                             } else {
                                 return response()->json([
-                                    'message' => 'Tanda tangan Dokter DPJP pada Resume Konsul tidak ditemukan.'
+                                    'message' => "Tanda tangan Dokter DPJP ({$item->NAMADOKTER}) pada Resume Konsul tidak ditemukan."
                                 ], 404);
                             }
                         }
