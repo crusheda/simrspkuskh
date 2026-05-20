@@ -446,16 +446,18 @@ class ApiMonitoringController extends Controller
             }
 
             if (!$getSKDP) { // JIKA SKDP memang tidak ditemukan di DB, ada kemungkinan pasien didaftar tanpa menggunakan /menghubungkan SKDP, di menu 'Ubah Penjamin'
-                return response()->json('SKDP Tidak Ditemukan atau Belum Diterbitkan. Pastikan Pendaftaran Pasien telah terhubung dengan Surat Kontrol (SKDP) sebelumnya di menu Ubah Penjamin Simgos.', 400);
+                return response()->json('SKDP Tidak Ditemukan atau Belum Diterbitkan, pastikan Pendaftaran Pasien telah terhubung dengan Surat Kontrol (SKDP) sebelumnya di menu Ubah Penjamin Simgos.', 400);
             }
 
             // print_r($getData->NORM.' - '.$getData->NOMOR.' - '.$getData->TANGGAL);
-            // print_r($getSKDP);
-            // die();
 
             $cetakSKDP = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$getSKDP->NOMOR]);
-            // print_r($cetakSKDP);
-            // die();
+            
+            if (empty($cetakSKDP) || !isset($cetakSKDP[0])) {
+                return response()->json([
+                    'message' => 'Data SKDP untuk kunjungan ini tidak ditemukan saat proses cetak SKDP, pastikan SKDP sudah diterbitkan dengan benar pada kunjungan sebelumnya.'
+                ], 400);
+            }
 
             // ----------------------------------------------------------------------
             $getTgl = Carbon::parse($getData->TANGGAL);
@@ -476,15 +478,22 @@ class ApiMonitoringController extends Controller
             //GENERATE QR CODE
             $generator = new DNS2D();
             $skdp = $cetakSKDP[0]->NOSURAT;
+            
+            if (empty($skdp)) {
+                return response()->json([
+                    'message' => 'Nomor Surat SKDP tidak ditemukan untuk kunjungan pasien ini, pastikan SKDP sudah diterbitkan dengan benar pada kunjungan sebelumnya dan nomor suratnya sudah terisi dengan benar di SIMRS'
+                ], 404);
+            }
+            $skdp = trim($skdp); // Hapus spasi di awal/akhir jika ada
 
             // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
             $image = $generator->getBarcodePNG($skdp, 'QRCODE');
 
             // Decode base64 jadi binary PNG
             $decodedImage = base64_decode($image);
-            $token = Crypt::encrypt($cetakSKDP[0]->NOSURAT);
-            $titleQrcode = Crypt::encrypt($cetakSKDP[0]->NOSURAT).'.png';
-            $verif = klaim_qrcode_pegawai::where('nomor',$cetakSKDP[0]->SURAT)->first();
+            $token = Crypt::encrypt($skdp);
+            $titleQrcode = Crypt::encrypt($skdp).'.png';
+            $verif = klaim_qrcode_pegawai::where('nomor',$skdp)->first();
 
             // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
             $pathQrcode = 'files/qrcode/' . $titleQrcode;
@@ -499,7 +508,7 @@ class ApiMonitoringController extends Controller
                 file_put_contents($outputQrcode, $decodedImage);
                 $post = new klaim_qrcode_pegawai;
                 $post->token = $token;
-                $post->nomor = $cetakSKDP[0]->SURAT;
+                $post->nomor = $skdp;
                 $post->title = $titleQrcode;
                 $post->filename = $pathQrcode;
                 $post->save();
@@ -517,6 +526,12 @@ class ApiMonitoringController extends Controller
             $generator2 = new DNS2D();
             $skdp2 = $cetakSKDP[0]->NOBPJS;
 
+            if (empty($skdp2)) {
+                return response()->json([
+                    'message' => 'Nomor BPJS tidak ditemukan pada kunjungan pasien ini, pastikan nomor BPJS sudah terdaftar dan terhubung dengan benar pada pendaftaran pasien'
+                ], 404);
+            }
+
             // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
             $image2 = $generator2->getBarcodePNG($skdp2, 'QRCODE');
             // print_r($generator);
@@ -524,9 +539,9 @@ class ApiMonitoringController extends Controller
 
             // Decode base64 jadi binary PNG
             $decodedImage2 = base64_decode($image2);
-            $token2 = Crypt::encrypt($cetakSKDP[0]->NOBPJS);
-            $titleQrcode2 = Crypt::encrypt($cetakSKDP[0]->NOBPJS).'.png';
-            $verif2 = klaim_qrcode::where('nomor',$cetakSKDP[0]->NOBPJS)->where('jenis',3)->first();
+            $token2 = Crypt::encrypt($skdp2);
+            $titleQrcode2 = Crypt::encrypt($skdp2).'.png';
+            $verif2 = klaim_qrcode::where('nomor',$skdp2)->where('jenis',3)->first();
 
             // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
             $pathQrcode2 = 'files/qrcode/' . $titleQrcode2;
@@ -538,7 +553,7 @@ class ApiMonitoringController extends Controller
                 $post = new klaim_qrcode;
                 $post->token = $token2;
                 $post->jenis = 3;
-                $post->nomor = $cetakSKDP[0]->NOBPJS;
+                $post->nomor = $skdp2;
                 $post->title = $titleQrcode2;
                 $post->filename = $pathQrcode2;
                 $post->save();
