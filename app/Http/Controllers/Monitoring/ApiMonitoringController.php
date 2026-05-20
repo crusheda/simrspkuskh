@@ -1056,6 +1056,7 @@ class ApiMonitoringController extends Controller
                     'pk.NOMOR AS NOMOR',
                     'pk.RUANGAN AS RUANGAN',
                     'pk.DPJP',
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
                     'dr.NIP AS NIPDOKTER',
                     'pp.TANGGAL AS TGLPERIKSA'
                 )

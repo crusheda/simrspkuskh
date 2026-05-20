@@ -828,29 +828,41 @@
 
         // AJAX FETCH
         fetch("/api/pasien/"+kunjungan+"/resumeRj")
-        .then(response => {
+        .then(async response => {
+            // JIKA ERROR
             if (!response.ok) {
-                throw new Error('File tidak ditemukan atau gagal diambil.');
+                let errMsg = 'File tidak ditemukan atau gagal diambil.';
+                try {
+                    const err = await response.json();
+                    if (err.message) {
+                        errMsg = err.message;
+                    }
+                } catch (e) {}
+                throw new Error(errMsg);
             }
+            // JIKA SUKSES PDF
             return response.blob();
         })
         .then(blob => {
-            // Buat object URL dari blob
             const fileURL = URL.createObjectURL(blob);
-
-            // Tampilkan ke iframe dalam modal
-            $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-            $('#ck_resume').prop('disabled',false);
+            $('#preview').empty().html(`
+                <iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>
+            `);
+            $('#ck_resume').prop('disabled', false);
         })
         .catch(error => {
             iziToast.error({
                 title: 'Maaf!',
-                message: 'Data Resume tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                message: error.message ?? "Data Resume tidak ditemukan atau belum dibuatkan oleh Simgos",
                 position: 'topRight'
             });
             console.error(error);
-            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-            $('#ck_resume').prop('checked', false).prop('disabled',false);
+            $('#preview').empty().append(`
+                Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+            `);
+            $('#ck_resume')
+                .prop('checked', false)
+                .prop('disabled', false);
         });
     }
 
@@ -865,10 +877,19 @@
 
         // AJAX FETCH
         fetch("/api/pasien/"+kunjungan+"/skdp")
-        .then(response => {
+        .then(async response => {
+            // JIKA ERROR
             if (!response.ok) {
-                throw new Error('File tidak ditemukan atau gagal diambil.');
+                let errMsg = 'File tidak ditemukan atau gagal diambil.';
+                try {
+                    const err = await response.json();
+                    if (err.message) {
+                        errMsg = err.message;
+                    }
+                } catch (e) {}
+                throw new Error(errMsg);
             }
+            // JIKA SUKSES PDF
             return response.blob();
         })
         .then(blob => {
@@ -882,7 +903,7 @@
         .catch(error => {
             iziToast.error({
                 title: 'Maaf!',
-                message: 'Data SKDP tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                message: error.message ?? "Data SKDP tidak ditemukan atau belum dibuatkan oleh Simgos.",
                 position: 'topRight'
             });
             console.error(error);
@@ -919,7 +940,7 @@
         .catch(error => {
             iziToast.error({
                 title: 'Maaf!',
-                message: 'Data Billing tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                message: error.message ?? "Data Billing tidak ditemukan atau belum dibuatkan oleh Simgos.",
                 position: 'topRight'
             });
             console.error(error);
@@ -956,7 +977,7 @@
         .catch(error => {
             iziToast.error({
                 title: 'Maaf!',
-                message: 'Data Individual tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                message: error.message ?? "Data Individual tidak ditemukan atau belum dibuatkan oleh Simgos.",
                 position: 'topRight'
             });
             console.error(error);
@@ -993,7 +1014,7 @@
         .catch(error => {
             iziToast.error({
                 title: 'Maaf!',
-                message: 'Data Hasil Laboratorium tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                message: error.message ?? "Data Hasil Laboratorium tidak ditemukan atau belum dibuatkan oleh Simgos.",
                 position: 'topRight'
             });
             console.error(error);
@@ -1030,7 +1051,7 @@
         .catch(error => {
             iziToast.error({
                 title: 'Maaf!',
-                message: 'Data Hasil Radiologi tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                message: error.message ?? "Data Hasil Radiologi tidak ditemukan atau belum dibuatkan oleh Simgos.",
                 position: 'topRight'
             });
             console.error(error);
@@ -1067,7 +1088,7 @@
         .catch(error => {
             iziToast.error({
                 title: 'Maaf!',
-                message: 'Data Triage IGD tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                message: error.message ?? "Data Triage IGD tidak ditemukan atau belum dibuatkan oleh Simgos.",
                 position: 'topRight'
             });
             console.error(error);
@@ -1112,7 +1133,7 @@
         .catch(error => {
             iziToast.error({
                 title: 'Maaf!',
-                message: error.message,
+                message: error.message ?? "Data Operasi tidak ditemukan atau belum dibuatkan oleh Simgos.",
                 position: 'topRight'
             });
 
@@ -1149,7 +1170,7 @@
         .catch(error => {
             iziToast.error({
                 title: 'Maaf!',
-                message: 'Berkas Upload Tambahan tidak ditemukan atau gagal ditampilkan.',
+                message: error.message ?? "Berkas Upload Tambahan tidak ditemukan atau gagal ditampilkan.",
                 position: 'topRight'
             });
             console.error(error);
@@ -1171,13 +1192,13 @@
         save.append('file',filesAdded[0]);
         save.append('kunjungan',$('#id_upload').val());
         save.append('nama_tambahan',$('#nama_tambahan').val());
-        save.append('user',"{{ Auth::user()->ID }}");
+        save.append('user',@json(Auth::user()->ID));
 
         $.ajax({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: "{{ route('api.klaim.upload') }}",
+            url: "/api/klaim/upload",
             method: 'POST',
             data: save,
             cache: false,
@@ -1203,11 +1224,15 @@
                     let response = JSON.parse(xhr.responseText);
                     iziToast.error({
                         title: 'Maaf!',
-                        message: response.message,
+                        message: response.message ?? "Terjadi kesalahan saat mengunggah berkas.",
                         position: 'topRight'
                     });
                 } catch (e) {
-                    alert('Terjadi kesalahan: ' + error);
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: error.message ?? "Terjadi kesalahan saat mengunggah berkas.",
+                        position: 'topRight'
+                    });
                 }
                 $('#btn-upload-proses').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-upload');
             }
