@@ -4121,17 +4121,39 @@ class ApiNewRehabMedikController extends Controller
         try {
             $now = now();
 
-            $verify = DB::table('simrspku_klaim.emr_form_jadwal')
-                ->where('nomor', $KUNJUNGAN)
-                ->where('status', 1)
-                ->whereNull('deleted_at')
-                ->orderBy('id', 'DESC')
-                ->first();
+            // $verify = DB::table('simrspku_klaim.emr_form_jadwal')
+            //     ->where('nomor', $KUNJUNGAN)
+            //     ->where('status', 1)
+            //     ->whereNull('deleted_at')
+            //     ->orderBy('id', 'DESC')
+            //     ->first();
+
+            $verify = DB::table('simrspku_klaim.emr_form_jadwal as efj')
+                        ->leftJoin('aplikasi.pengguna as pe', function ($join) {
+                            $join->on('pe.ID', '=', 'efj.user')
+                                ->where('pe.STATUS', 1);
+                        })
+                        ->select(
+                            'efj.*',
+                            DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAUSER')
+                        )
+                        ->where('efj.nomor', $KUNJUNGAN)
+                        ->where('efj.status', 1)
+                        ->whereNull('efj.deleted_at')
+                        ->latest('efj.id')
+                        ->first();
+
+            if (!$verify) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Form Jadwal Pelayanan tidak ditemukan atau sudah dihapus'
+                ], 404);
+            }
 
             if ($verify->user != auth()->id()) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Anda tidak memiliki izin untuk menghapus form ini. Hanya user (' . Auth::user()->NAMA . ') yang membuat form ini yang dapat menghapusnya.'
+                    'message' => 'Anda tidak memiliki izin untuk menghapus form ini. Hanya user (' . $verify->NAMAUSER . ') yang membuat form ini yang dapat menghapusnya.'
                 ], 403);
             }
 
