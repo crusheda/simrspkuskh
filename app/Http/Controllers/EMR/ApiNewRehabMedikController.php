@@ -1651,7 +1651,7 @@ class ApiNewRehabMedikController extends Controller
                     'message'=> 'Data Kunjungan saat ini tidak ditemukan / telah terhapus. mohon refresh data riwayat sekali lagi'
                 ], 422);
             }
-            
+
             if ($KODE == 1) { // Buat Group Baru
                 // EMR FORM KFR
                 DB::table('simrspku_klaim.emr_form_kfr')
@@ -1669,7 +1669,7 @@ class ApiNewRehabMedikController extends Controller
                         // 'user'              => auth()->id(),
                         'updated_at'        => now(),
                     ]);
-                    
+
                 // EMR FORM TERAPI
                 DB::table('simrspku_klaim.emr_form_terapi')
                     ->where('rm', $NORM)
@@ -1682,7 +1682,7 @@ class ApiNewRehabMedikController extends Controller
                         // 'user'              => auth()->id(),
                         'updated_at'        => now(),
                     ]);
-                    
+
                 // KLAIM FILE FORM KFR & FORM TERAPI
                 DB::table('simrspku_klaim.klaim_file')
                     ->where('jenis', 11)
@@ -1695,7 +1695,7 @@ class ApiNewRehabMedikController extends Controller
                         'user'          => auth()->id(),
                         'updated_at'    => now(),
                     ]);
-                    
+
                 // KLAIM FILE FORM JADWAL PELAYANAN
                 // DB::table('simrspku_klaim.klaim_file')
                 //     ->where('jenis', 11)
@@ -1729,7 +1729,7 @@ class ApiNewRehabMedikController extends Controller
                                 'message'=> 'Data Form Kunjungan KFR Lama pasien ini tidak ditemukan atau telah terhapus. mohon periksa riwayat Form KFR pada RM Pasien ini'
                             ], 422);
                         }
-                                                
+
                         DB::table('simrspku_klaim.emr_form_kfr')
                             ->where('rm', $NORM)
                             ->where('nomor', $KUNJUNGAN)
@@ -1745,7 +1745,7 @@ class ApiNewRehabMedikController extends Controller
                                 // 'user'              => auth()->id(),
                                 'updated_at'        => now(),
                             ]);
-                    
+
                         // EMR FORM TERAPI
                         DB::table('simrspku_klaim.emr_form_terapi')
                             ->where('rm', $NORM)
@@ -1758,7 +1758,7 @@ class ApiNewRehabMedikController extends Controller
                                 // 'user'              => auth()->id(),
                                 'updated_at'        => now(),
                             ]);
-                    
+
                         // KLAIM FILE FORM KFR & FORM TERAPI
                         DB::table('simrspku_klaim.klaim_file')
                             ->where('jenis', 11)
@@ -2517,7 +2517,7 @@ class ApiNewRehabMedikController extends Controller
                 'message'=> 'Data TTD dokter tidak ditemukan untuk user ini'
             ], 404);
         }
-        
+
         // GET TTD TERAPIS
         // $ttd_pegawai_tr = DB::table('simrspku_klaim.tanda_tangan_pegawai')
         //     ->where('nip', Auth::user()->NIP)
@@ -2546,7 +2546,7 @@ class ApiNewRehabMedikController extends Controller
                     'message'=> 'Hak Akses Anda tidak valid untuk mengisi Form Program Terapi'
                 ], 404);
             }
-            
+
         }
 
         // $tim = DB::table('aplikasi.pengguna as pe')
@@ -2589,7 +2589,7 @@ class ApiNewRehabMedikController extends Controller
                     'message'=> 'Data Form Program Terapi tidak ditemukan untuk diupdate'
                 ], 404);
             }
-            
+
             $nipTim = $isAdmin
                 ? $getFtr->nip_tim
                 : Auth::user()->NIP;
@@ -2608,7 +2608,7 @@ class ApiNewRehabMedikController extends Controller
                     'message'=> 'Data TTD tim tidak ditemukan untuk user ini'
                 ], 404);
             }
-            
+
             // GET TTD TIM
             $tim = DB::table('aplikasi.pengguna as pe')
                 ->select(
@@ -2619,14 +2619,14 @@ class ApiNewRehabMedikController extends Controller
                 ->where('pe.NIP', $nipTim)
                 ->where('pe.STATUS', 1)
                 ->first();
-                
+
             if (!$tim) {
                 return response()->json([
                     'status' => false,
                     'message'=> 'Data Akun tim tidak ditemukan'
                 ], 404);
             }
-            
+
             /* ==========================
             * 1. UPDATE CPPT
             * ========================== */
@@ -3247,11 +3247,20 @@ class ApiNewRehabMedikController extends Controller
     // ====================================================================================================================================
     function getFormJadwalPelayanan($KUNJUNGAN)
     {
-        $data = emr_form_jadwal::where('nomor', $KUNJUNGAN)
-                ->where('status', 1)
-                ->whereNull('deleted_at')
-                ->orderBy('id', 'DESC')
-                ->first();
+        $data = DB::table('simrspku_klaim.emr_form_jadwal as efj')
+                    ->leftJoin('aplikasi.pengguna as pe', function ($join) {
+                        $join->on('pe.ID', '=', 'efj.user')
+                            ->where('pe.STATUS', 1);
+                    })
+                    ->select(
+                        'efj.*',
+                        DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAUSER')
+                    )
+                    ->where('efj.nomor', $KUNJUNGAN)
+                    ->where('efj.status', 1)
+                    ->whereNull('efj.deleted_at')
+                    ->latest('efj.id')
+                    ->first();
 
         $terapi = emr_form_terapi::where('nomor', $KUNJUNGAN)
                 ->where('status', 1)
@@ -4122,7 +4131,7 @@ class ApiNewRehabMedikController extends Controller
             if ($verify->user != auth()->id()) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Anda tidak memiliki izin untuk menghapus form ini. Hanya user yang membuat form ini yang dapat menghapusnya.'
+                    'message' => 'Anda tidak memiliki izin untuk menghapus form ini. Hanya user (' . Auth::user()->NAMA . ') yang membuat form ini yang dapat menghapusnya.'
                 ], 403);
             }
 

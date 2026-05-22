@@ -262,11 +262,13 @@
                 }
 
                 if (res.data) {
+                    $('#showTxUserForm').empty().html('Digenerate Oleh <b>' + res.data.NAMAUSER + '</b>');
                     $('#btn-cetak-form-jp').prop('disabled', false);
                     $('#btn-hapus-form-jp').prop('disabled', false);
                     $('#btn-generate-form-jp').prop('disabled', false);
                     $('#btn-submit-form-jp').prop('disabled', true);
                 } else {
+                    $('#showTxUserForm').text('');
                     $('#btn-cetak-form-jp').prop('disabled', true);
                     $('#btn-hapus-form-jp').prop('disabled', true);
                     $('#btn-generate-form-jp').prop('disabled', true);

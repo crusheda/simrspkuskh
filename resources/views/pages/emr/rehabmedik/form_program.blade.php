@@ -147,7 +147,10 @@
             </div>
             <div class="modal-footer d-flex justify-content-between align-items-center">
                 <button class="btn btn-warning" onclick="generateUlangFormJadwalPelayanan()" data-bs-toggle="tooltip" title="Generate Ulang Formulir Jadwal Pelayanan Program Terapi"><i class="ti ti-file-symlink me-1"></i> Generate Ulang</button>
-                <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
+                <div>
+                    <a id="showTxUserForm" class="me-2"></a>
+                    <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
+                </div>
             </div>
         </div>
     </div>
