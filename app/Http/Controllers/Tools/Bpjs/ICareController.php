@@ -77,6 +77,8 @@ class ICareController extends Controller
             'upstream connect error',
             'connection termination',
             'connection was reset',
+            'connection reset by peer',
+            'recv failure',
             'ssl_read',
             'timeout',
             'timed out',
@@ -143,6 +145,8 @@ class ICareController extends Controller
             // Koneksi terputus
             elseif (
                 str_contains($messageLower, 'connection was reset') ||
+                str_contains($messageLower, 'connection reset by peer') ||
+                str_contains($messageLower, 'recv failure') ||
                 str_contains($messageLower, 'ssl_read')
             ) {
                 $message = 'Koneksi ke layanan iCare BPJS terputus. Silakan coba beberapa saat lagi.';
