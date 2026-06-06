@@ -40,4 +40,18 @@ return [
         'model' => env('OLLAMA_MODEL', 'mistral'),
     ],
 
+    'bpjs' => [
+        'base_url' => env('BPJS_BASE_URL', 'https://apijkn.bpjs-kesehatan.go.id/'),
+        'base_url_dev' => env('BPJS_DEV_BASE_URL', 'https://apijkn-dev.bpjs-kesehatan.go.id/'),
+        'services_name_vclaim' => env('BPJS_SERVICE_NAME_VCLAIM', 'vclaim-rest'),
+        'services_name_icare' => env('BPJS_SERVICE_NAME_ICARE', 'ihs'),
+        'services_name_antrean' => env('BPJS_SERVICE_NAME_ANTREAN', 'antreanrs'),
+    ],
+
+    'rs' => [
+        'base_url' => env('URL_PUBLIC_RS', 'http://192.168.253.30:1137/api/'),
+        'username' => env('RS_USERNAME'),
+        'password' => env('RS_PASSWORD'),
+    ],
+
 ];

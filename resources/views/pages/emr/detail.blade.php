@@ -36,6 +36,19 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-auto">
+                        <div class="d-flex align-items-center btn btn-outline-warning" id="btn-icare" onclick="showICare()">
+                            <div class="flex-shrink-0 me-3">
+                                <i class="fas fa-clipboard-list align-middle"></i>
+                                {{-- <div class="btn btn-icon btn-link-secondary avtar">
+                                </div> --}}
+                            </div>
+                            <div class="flex-grow-1 align-items-left">
+                                <small>Lihat<br><a style="font-size: 15px">i-Care</a></small>
+                                {{-- <h6 class="mb-0">Sebelumnya</h6> --}}
+                            </div>
+                        </div>
+                    </div>
                     <div class="col">
                         <div class="row justify-content-between d-flex align-items-center p-2">
                             <div class="col-md-4 col-xl-5">
@@ -288,6 +301,24 @@
         </div>
     </div>
 
+    {{-- MODAL STARTED --}}
+    <div id="modalICare" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="catatanLabel" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><span class="badge text-bg-info">i-Care</span> <a id="show-id-icare" class="text-dark ms-1"></a></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="show-icare"></div>
+                <div class="modal-footer">
+                    <div id="btn-refresh-catatan"></div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- MODAL ENDED --}}
+
     <script>
         // INIT VARIABLE
         const kunjungan = @json($list["KUNJUNGAN"]);
@@ -330,6 +361,52 @@
             $('[data-bs-toggle="tooltip"]').tooltip();
             $('.nav-link').prop('disabled', false);
         });
+
+        function showICare() {
+            const btn = $('#btn-icare');
+            $.ajax({
+                url: `/api/emr/bpjs/icare/${rm}`,
+                type: 'GET',
+                beforeSend: function () {
+                    btn.addClass('disabled')
+                        .find('i')
+                        .removeClass('fa-clipboard-list')
+                        .addClass('fa-sync fa-spin');
+                },
+                success: function(res) {
+                    if (res.status) {
+                        $('#show-icare').empty().append(`<iframe
+                                                            src="${res.url}"
+                                                            width="100%"
+                                                            height="800"
+                                                            frameborder="0">
+                                                        </iframe>`);
+                        $('#show-id-icare').empty().html('NO BPJS PESERTA : <b class="text-success">'+res.no_kartu+'</b>' ?? '');
+                        $('#modalICare').modal('show');
+                    } else {
+                        Swal.fire(
+                            'Gagal',
+                            res.message ?? 'Terjadi kegagalan saat menampilkan data pasien',
+                            'error'
+                        );
+                    }
+
+                }, error: function (xhr) {
+                    Swal.fire(
+                        'Gagal',
+                        xhr.responseJSON?.message ?? 'Terjadi kesalahan saat memproses data',
+                        'error'
+                    );
+                },
+                complete: function () {
+                    // always reset button (baik success maupun error)
+                    btn.removeClass('disabled')
+                        .find('i')
+                        .removeClass('fa-sync fa-spin')
+                        .addClass('fa-clipboard-list');
+                }
+            });
+        }
 
         function aktifkanTabsDariHash() {
             const hash = window.location.hash; // contoh: #frehab#formlayanankfr

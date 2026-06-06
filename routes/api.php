@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 // INITIALIZATION
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ApiDashboardController;
+use App\Http\Controllers\Tools\Bpjs\ICareController;
 use App\Http\Controllers\Log\BerkasController;
 use App\Http\Controllers\Setting\ProfilController;
 use App\Http\Controllers\Setting\RolesController;
@@ -42,7 +43,7 @@ Route::get('/surkon/table', [App\Http\Controllers\Simgos\RegOnline\surkonControl
 // CONTOH BRIDGING SIMGOS
 Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController::class, 'table'])->name('simgos.kunjungan.pasien');
 
-//-----------------------------------------------------------------    A  P  I    -----------------------------------------------------------------
+//---------------------------------------------------------------    A  P  I    L  O  K  A  L    -----------------------------------------------------------------
 //API PUBLIC
     // DISPLAY
         // TEMPAT TIDUR
@@ -118,6 +119,9 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 });
 
     // EMR
+        // I - CARE
+        Route::get('emr/bpjs/icare/{RM}', [ICareController::class, 'getICare'])->name('api.emr.bpjs.icare');
+
         // REHABILITASI MEDIK
             // OLD REHAB MEDIK
                 // FORM KFR
