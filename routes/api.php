@@ -121,6 +121,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     // EMR
         // I - CARE
         Route::get('emr/bpjs/icare/{RM}', [ICareController::class, 'getICare'])->name('api.emr.bpjs.icare');
+        Route::get('emr/bpjs/icare/auto/{RM}', [ICareController::class, 'apiICare'])->name('api.emr.bpjs.icare.auto');
 
         // REHABILITASI MEDIK
             // OLD REHAB MEDIK

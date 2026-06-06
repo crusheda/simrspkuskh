@@ -452,7 +452,7 @@ class ApiMonitoringController extends Controller
             // print_r($getData->NORM.' - '.$getData->NOMOR.' - '.$getData->TANGGAL);
 
             $cetakSKDP = DB::select('CALL simrspku_klaim.RencanaKontrolCustom(?)',[$getSKDP->NOMOR]);
-            
+
             if (empty($cetakSKDP) || !isset($cetakSKDP[0])) {
                 return response()->json([
                     'message' => 'Data SKDP untuk kunjungan ini tidak ditemukan saat proses cetak SKDP, pastikan SKDP sudah diterbitkan dengan benar pada kunjungan sebelumnya.'
@@ -478,7 +478,7 @@ class ApiMonitoringController extends Controller
             //GENERATE QR CODE
             $generator = new DNS2D();
             $skdp = $cetakSKDP[0]->NOSURAT;
-            
+
             if (empty($skdp)) {
                 return response()->json([
                     'message' => 'Nomor Surat SKDP tidak ditemukan untuk kunjungan pasien ini, pastikan SKDP sudah diterbitkan dengan benar pada kunjungan sebelumnya dan nomor suratnya sudah terisi dengan benar di SIMRS'
