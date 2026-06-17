@@ -281,6 +281,20 @@
                 $('#dttable').DataTable().clear().destroy();
                 if (res.show && Array.isArray(res.show)) {
                     res.show.forEach(item => {
+                        let badgeKonsul = '';
+                        let addOnKonsul = null;
+                        if (item.JENIS_KUNJUNGAN == 'UTAMA') {
+                            badgeKonsul = '<span class="badge bg-primary p-1">UTAMA</span>';
+                        } else {
+                            if (item.JENIS_KUNJUNGAN == 'KONSUL') {
+                                badgeKonsul = '<span class="badge bg-danger p-1">KONSUL</span>';
+                                if (item.RUANGAN_KONSUL && item.DOKTER_KONSUL) {
+                                    addOnKonsul = `<span class="badge bg-light-danger">Dari Ruangan ${item.RUANGAN_KONSUL}&nbsp;&nbsp;-&nbsp;&nbsp;${item.DOKTER_KONSUL}</span>`;
+                                }
+                            } else {
+                                badgeKonsul = '<span class="badge bg-light-dark">TIDAK DITEMUKAN</span>';
+                            }
+                        }
                         $('#jumlah_claim').text(res.show.length + ' Data');
                         if (item.NOSEP) {
                             valSEP = item.NOSEP.substring(8, 12); // 0624
@@ -333,7 +347,9 @@
                         content += `">
                                         <td>
                                             <h5 class="mb-1"><a href="javascript: void(0);"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Surat Elegibilitas Peserta">${SEP}</b></a></h5>
-                                            <p class="text-sm text-muted mb-0">RM.${item.NORM} - <b class="text-primary">${item.NAMAPASIEN}</b><br>${item.NAMARUANGAN} - ${item.NAMADOKTER}</p>
+                                            <p class="text-sm text-muted mb-0">RM.${item.NORM} - <b class="text-primary">${item.NAMAPASIEN}</b><br>${item.NAMARUANGAN} - ${item.NAMADOKTER}<br>
+                                                Jenis Kunjungan :&nbsp;${badgeKonsul} ${addOnKonsul ?? ''}
+                                            </p>
                                         </td>
                                         <td class="text-end align-middle">
                                             <a href="javascript: void(0);" class="text-muted">${item.MASUK}</a>

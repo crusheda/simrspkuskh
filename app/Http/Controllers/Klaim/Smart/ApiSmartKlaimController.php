@@ -32,6 +32,31 @@ class ApiSmartKlaimController extends Controller
                     ->select(
                         'pk.*',
                         'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
+
+                        // KONSUL / UTAMA
+                        DB::raw("
+                            CASE
+                                WHEN pkonsul.NOMOR IS NOT NULL THEN 'KONSUL'
+                                ELSE 'UTAMA'
+                            END AS JENIS_KUNJUNGAN
+                        "),
+                        // IF KONSUL ? DARI RUANGAN MANA
+                        DB::raw("
+                            CASE
+                                WHEN pkonsul.NOMOR IS NOT NULL
+                                THEN ru_asal.DESKRIPSI
+                                ELSE NULL
+                            END AS RUANGAN_KONSUL
+                        "),
+                        // IF KONSUL ? DARI SIAPA
+                        DB::raw("
+                            CASE
+                                WHEN pkonsul.NOMOR IS NOT NULL
+                                THEN master.getNamaLengkapPegawai(dr_asal.NIP)
+                                ELSE NULL
+                            END AS DOKTER_KONSUL
+                        "),
+
                         'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
                         'ru.DESKRIPSI AS NAMARUANGAN',
                         DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
@@ -51,6 +76,19 @@ class ApiSmartKlaimController extends Controller
                         ) AS CATATAN")
                     )
                     ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+
+                    // ambil data konsul / utama
+                    ->leftJoin('pendaftaran.konsul AS pkonsul','pkonsul.NOMOR','=','pk.REF')
+
+                    // ambil kunjungan asal konsul
+                    ->leftJoin('pendaftaran.kunjungan AS pk_asal','pk_asal.NOMOR','=','pkonsul.KUNJUNGAN')
+
+                    // ambil nama dokter asal
+                    ->leftJoin('master.dokter AS dr_asal','dr_asal.ID','=','pkonsul.DOKTER_ASAL')
+
+                    // ambil nama ruangan asal
+                    ->leftJoin('master.ruangan AS ru_asal','ru_asal.ID','=','pk_asal.RUANGAN')
+
                     ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
                     ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
                     ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
