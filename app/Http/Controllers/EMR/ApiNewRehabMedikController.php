@@ -114,11 +114,23 @@ class ApiNewRehabMedikController extends Controller
     //     return [true, $log, $result];
     // }
 
-    public function getSection($text, $label)
+    // BACKUP
+    // public function getSection($text, $label)
+    // {
+    //     $safeLabel = preg_quote($label, '/');
+
+    //     $pattern = "/{$safeLabel}:\s*\n(.*?)(?:\n{2,}|$)/s";
+    //     preg_match($pattern, $text, $m);
+
+    //     return isset($m[1]) ? trim($m[1]) : '';
+    // }
+
+    public function getSection($text, $label) // KHUSUS FORM KFR
     {
         $safeLabel = preg_quote($label, '/');
 
-        $pattern = "/{$safeLabel}:\s*\n(.*?)(?:\n{2,}|$)/s";
+        $pattern = "/{$safeLabel}:\s*\n(.*?)(?=\n(?:Goal of Treatment|Tindakan\/Program Rehabilitasi Medik|Edukasi|Frekuensi Kunjungan):|\z)/s";
+
         preg_match($pattern, $text, $m);
 
         return isset($m[1]) ? trim($m[1]) : '';
