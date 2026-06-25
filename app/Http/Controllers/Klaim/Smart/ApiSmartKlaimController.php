@@ -134,7 +134,8 @@ class ApiSmartKlaimController extends Controller
                         $query->where(function ($q) {
                             $q->where('pk.RUANGAN', 'LIKE', '1020101%')
                                 ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
-                                ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020301%')
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
                         });
                     })
 
@@ -741,10 +742,11 @@ class ApiSmartKlaimController extends Controller
                     ->where(function ($query) {
                         $query->where('pk.RUANGAN', 'LIKE', '1020101%')
                                 ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
-                                ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020301%')
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
                     })
-                    ->where('pk.BARU', 1) // KUNJUNGAN BARU
-                    ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
+                    // ->where('pk.BARU', 1) // KUNJUNGAN BARU
+                    // ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                     ->where('pj.NOMOR', $sep)
                     ->orderBy('pk.MASUK','ASC')
                     ->first();
