@@ -738,7 +738,7 @@ class ApiSmartKlaimController extends Controller
     {
         $show = DB::table('pendaftaran.penjamin AS pj')
                     ->leftJoin('pendaftaran.kunjungan AS pk','pk.NOPEN','=','pj.NOPEN')
-                    ->select('pk.NOMOR')
+                    ->select('pk.NOMOR','pk.STATUS')
                     ->where(function ($query) {
                         $query->where('pk.RUANGAN', 'LIKE', '1020101%')
                                 ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
@@ -754,11 +754,16 @@ class ApiSmartKlaimController extends Controller
         // print_r($show);
         // die();
         if ($show) {
-            $data = [
-                'message' => 'No. SEP '.$sep.' Ditemukan',
-                'kunjungan' => $show->NOMOR,
-            ];
-            $status = 200;
+            if ($show->STATUS == 0) {
+                $data = 'Kunjungan dengan No. SEP '.$sep.' telah dibatalkan';
+                $status = 400;
+            } else {
+                $data = [
+                    'message' => 'No. SEP '.$sep.' Ditemukan',
+                    'kunjungan' => $show->NOMOR,
+                ];
+                $status = 200;
+            }
         } else {
             $data = 'No. SEP '.$sep.' Tidak Ditemukan';
             $status = 400;

@@ -26,8 +26,12 @@
 <div class="row gy-4">
     <div class="col-xl-8">
         <div class="card">
-            <div class="card-header align-items-center">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Claim Table <span class="ms-2 f-14 px-2 badge bg-light-secondary rounded-pill" id="jumlah_claim">0 Data</span></h5>
+                {{-- <div class="btn-group">
+                    <button class="btn btn-sm btn-light-warning"><i class="fas fa-sync"></i></button>
+                    <button class="btn btn-sm btn-light-danger"><i class="fas fa-sync"></i></button>
+                </div> --}}
             </div>
             <div class="card-body p-0 table-body">
                 <div class="table-responsive pb-3">
@@ -63,7 +67,7 @@
                 <h5><i class="ti ti-list-search text-primary me-1"></i> Pencarian No.SEP</h5>
                 <div class="input-group my-3 mb-0">
                     <input type="text" class="form-control" placeholder="Masukkan No.SEP Pasien" id="sep_px"/>
-                    <button class="btn btn-outline-secondary" type="button" id="btn-cari" onclick="cariSep()"><i class="fas fa-search align-middle me-1"></i> Cari</button>
+                    <button class="btn btn-secondary" type="button" id="btn-cari" onclick="cariSep()"><i class="fas fa-search align-middle me-1"></i> Cari</button>
                 </div>
             </div>
         </div>
