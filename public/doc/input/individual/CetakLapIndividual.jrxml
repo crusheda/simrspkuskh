@@ -15,7 +15,7 @@
 	</parameter>
 	<parameter name="PKELAS" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[CALL inacbg.CetakLapIndividual5($P{PNOPEN},$P{PKELAS})]]>
+		<![CDATA[CALL simrspku_klaim.CetakLapIndividual5($P{PNOPEN},$P{PKELAS})]]>
 	</queryString>
 	<field name="KODERS" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="KODE"/>
@@ -536,7 +536,11 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{BERATLAHIR}==null?"-":$F{BERATLAHIR}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{BERATLAHIR} == null
+|| $F{BERATLAHIR}.trim().isEmpty()
+|| "null".equalsIgnoreCase($F{BERATLAHIR})
+    ? "-"
+    : $F{BERATLAHIR}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="113" y="169" width="11" height="11" uuid="ea547340-3e1a-43b7-8d5f-3415f6740aa0"/>

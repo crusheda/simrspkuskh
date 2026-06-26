@@ -1379,7 +1379,7 @@ class ApiMonitoringController extends Controller
                     ->where('pk.NOMOR',$kunjungan)
                     ->first();
             // $show = DB::select('CALL simrspku_klaim.CetakLapIndividual5(?,?)',[$getSEP->NOPEN,3]);
-            if (empty($getSEP)) {
+            if (!$getSEP) {
                 return response()->json('SEP Tidak ditemukan. Periksa data kunjungan sekali lagi.', 400);
             }
             $CETAK_HEADER = "1";
@@ -1412,6 +1412,7 @@ class ApiMonitoringController extends Controller
                 File::makeDirectory($outputDir, 0755, true); // true = recursive
             }
 
+
             $options = [
                 'format' => ['pdf'],
                 'params' => [
@@ -1431,6 +1432,7 @@ class ApiMonitoringController extends Controller
 
             // print_r($options);
             // die();
+
 
             $jasper = new PHPJasper;
 
