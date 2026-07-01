@@ -1127,7 +1127,7 @@ class ApiNewRehabMedikController extends Controller
             $show = (object)[
                 'TGLSEP'         => $request->tgl_sep,
                 'KUNJUNGAN'      => $kunjungan,
-                'GROUP'          => 1,
+                'GROUP'          => $newGroup,
                 'TANGGAL'        => $tglPush,
                 'NORM'           => $request->rm,
                 'NAMAPASIEN'     => $dataPasien->NAMAPASIEN ?? '',

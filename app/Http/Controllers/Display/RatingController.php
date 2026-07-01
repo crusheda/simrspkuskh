@@ -53,6 +53,9 @@ class RatingController extends Controller
             $nama_bulan = date('F', mktime(0, 0, 0, $bulan, 10));
         }
 
+        // print_r($data);
+        // die();
+
         $pdf = Pdf::loadView('pages.display.rating.pdf', [
             'rating' => $data,
             'bulan' => $nama_bulan
