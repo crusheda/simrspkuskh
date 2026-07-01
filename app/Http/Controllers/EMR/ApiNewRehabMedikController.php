@@ -1295,47 +1295,23 @@ class ApiNewRehabMedikController extends Controller
             ];
         }
 
-        // $ttd_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')
-        //         ->where('nip', Auth::user()->NIP)
-        //         ->where('status', 1)
-        //         ->inRandomOrder()
-        //         ->first();
+        $klaimFile = DB::table('simrspku_klaim.klaim_file')
+            ->where('nomor',$kunjungan)
+            // ->where('ref',$showInit->group)
+            ->where('jenis',11)
+            ->where('sub_jenis',1)
+            ->where('status',1)
+            ->whereNull('deleted_at')
+            ->orderBy('id','DESC')
+            ->first();
 
-        // if (!$ttd_pegawai) {
-        //     return [
-        //         'success' => false,
-        //         'message' => 'Data TTD dokter tidak ditemukan untuk user ini'
-        //     ];
-        // }
-
-        // $dokter = DB::table('master.dokter as dr')
-        //             ->leftJoin('aplikasi.pengguna as pe', function($join) {
-        //                 $join->on('pe.NIP', '=', 'dr.NIP')
-        //                     ->where('pe.STATUS', '=', 1);
-        //             })
-        //             ->select('dr.ID', 'pe.NAMA AS DOKTER', 'dr.NIP', DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'))
-        //             ->where('pe.ID', auth()->id())
-        //             ->where('dr.STATUS', 1)
-        //             ->first();
-
-        // if (!$dokter) {
-        //     return [
-        //         'success' => false,
-        //         'message' => 'Data dokter tidak ditemukan untuk user ini'
-        //     ];
-        // }
-
-        // // UPDATE TTD DOKTER
-        // $updated = DB::table('simrspku_klaim.emr_form_kfr')
-        //             ->where('nomor', $kunjungan)
-        //             ->where('status', 1)
-        //             ->update([
-        //                 'id_ttd_dokter' => $ttd_pegawai->id,
-        //                 'ttd_dokter'    => $ttd_pegawai->signature_path,
-        //                 'nip_dokter'    => $ttd_pegawai->nip,
-        //                 'nama_dokter'   => $dokter->NAMADOKTER,
-        //                 'updated_at'    => now(),
-        //             ]);
+        if ($klaimFile && $showInit->group != $klaimFile->ref) {
+            DB::table('simrspku_klaim.klaim_file')
+                ->where('id', $klaimFile->id)
+                ->update([
+                    'ref' => $showInit->group
+                ]);
+        }
 
         $show = DB::table('simrspku_klaim.emr_form_kfr as kfr')
             ->join('medicalrecord.cppt as cppt', function($join) {
