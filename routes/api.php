@@ -184,6 +184,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             // RIS
             Route::get('dcom/{filename}', [RISController::class, 'getDCOM'])->name('api.emr.ris.getDCOM');
 
+        // PENGKAJIAN
+
     //MATRIKS
     // Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');
     // Route::post('emr/matriks', [ApiMatriksController::class, 'store'])->name('api.emr.matriks.store');

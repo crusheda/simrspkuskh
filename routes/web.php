@@ -92,12 +92,15 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             // RIS - RADIOLOGI
             Route::get('pelayanan/ris', [RISController::class, 'indexRIS'])->name('pelayanan.ris.index');
 
-    // RME
+    // EMR
     Route::get('emr', [EMRController::class, 'index'])->name('emr.index');
     Route::get('emr/{KUNJUNGAN}', [EMRController::class, 'detail'])->name('emr.detail');
         // IGD
             // FORM MATRIX
             Route::get('rme/igd/matrix', [ModulMatrixController::class, 'index'])->name('rme.igd.matrix.index');
+
+        // FORM PENGKAJIAN
+        Route::get('erm/form/pengkajian/{form}', [EMRController::class, 'loadFormPengkajian'])->name('emr.form.pengkajian');
 
     // DIGITAL
         // MONITORING

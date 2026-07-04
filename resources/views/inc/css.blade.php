@@ -16,6 +16,8 @@
 <link rel="stylesheet" href="{{ asset('css/style.css') }}" id="main-style-link" />
 <link rel="stylesheet" href="{{ asset('css/custom.css') }}" />
 <link rel="stylesheet" href="{{ asset('css/style-preset.css') }}" />
+<link rel="stylesheet" href="{{ asset('css/uikit.css') }}" />
+
 <link rel="stylesheet" href="{{ asset('css/iziToast.css') }}" />
 <!-- data tables css -->
 <link rel="stylesheet" href="{{ asset('css/plugins/style.css') }}" />

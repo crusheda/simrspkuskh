@@ -107,3 +107,10 @@
 <script>
     preset_change('preset-1');
 </script> --}}
+
+
+    <script>
+        if (!!document.querySelector('.customer-body')) {
+            new SimpleBar(document.querySelector('.customer-body'));
+        }
+    </script>

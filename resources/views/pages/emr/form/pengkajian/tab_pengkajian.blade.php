@@ -1,0 +1,396 @@
+<style>
+    .list-group-item {
+        border: 0px;
+    }
+    .form-search #compo-menu-search {
+        max-width: 100% !important;
+    }
+</style>
+<div class="row">
+    <div class="col-xl-3">
+        <a href="#" class="d-inline-flex align-items-center d-xl-none btn btn-dark w-100 mb-4" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_component">
+            <i class="ti ti-menu-2 me-2"></i> Menu Form Pengkajian
+        </a>
+        <div class="offcanvas-xl offcanvas-start component-offcanvas" tabindex="-1" id="offcanvas_component">
+            <div class="offcanvas-header">
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#offcanvas_component" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body p-0" style="display: block;">
+                <div class="card component-list-card position-xl-fixed sidebar-menu border-0 rounded">
+                    <div class="card-header p-3">
+                        <div class="form-search" style="display: block;">
+                            <i class="ph-duotone ph-magnifying-glass icon-search"></i>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="compo-menu-search"
+                                placeholder="Cari Nama Formulir..."
+                                autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="card-body p-0 menu-scroll">
+                        <ul class="list-group list-group-flush">
+
+                            <li class="list-group-item menu-group-title p-2" data-group="awal">
+                                <h5 class="mt-2 ms-3">PENGKAJIAN AWAL</h5>
+                            </li>
+
+                            <!-- Gawat Darurat -->
+                            <li>
+                                <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-gd" data-group="awal">
+                                    Form Pengkajian Gawat Darurat
+                                </a>
+                            </li>
+
+                            <!-- Rawat Jalan -->
+                            <li>
+                                <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center menu-collapse menu-parent"
+                                data-bs-toggle="collapse"
+                                href="#submenuRajal"
+                                role="button" data-group="awal">
+                                    <span>Form Pengkajian Rawat Jalan</span>
+                                    <i class="ti ti-chevron-down submenu-icon"></i>
+                                </a>
+                                <div class="collapse submenu" id="submenuRajal">
+                                    <ul class="list-group list-group-flush">
+                                        <li>
+                                            <a href="javascript:void(0);"
+                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            data-form="pengkajian-rajal-dewasa"
+                                            data-group="awal">
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Dewasa
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);"
+                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            data-form="pengkajian-rajal-anak"
+                                            data-group="awal">
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Anak
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);"
+                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            data-form="pengkajian-rajal-psikiatri"
+                                            data-group="awal">
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Psikiatri
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);"
+                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            data-form="pengkajian-rajal-geriatri"
+                                            data-group="awal">
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Geriatri
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);"
+                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            data-form="pengkajian-rajal-obsgyn"
+                                            data-group="awal">
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Obsgyn
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <!-- Rawat Inap -->
+                            <li>
+                                <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center menu-collapse menu-parent"
+                                data-bs-toggle="collapse"
+                                href="#submenuRanap"
+                                role="button"
+                                data-group="awal">
+                                    <span>Form Pengkajian Rawat Inap</span>
+                                    <i class="ti ti-chevron-down submenu-icon"></i>
+                                </a>
+                                <div class="collapse submenu" id="submenuRanap">
+                                    <ul class="list-group list-group-flush">
+                                        <li>
+                                            <a href="javascript:void(0);"
+                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            data-form="pengkajian-ranap-dewasa-anak"
+                                            data-group="awal">
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Dewasa dan Anak
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);"
+                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            data-form="pengkajian-ranap-neonatus"
+                                            data-group="awal">
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Neonatus
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);"
+                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            data-form="pengkajian-ranap-obsgyn"
+                                            data-group="awal">
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Obstetri dan Ginekologi
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="list-group-item menu-group-title p-2" data-group="khusus">
+                                <h5 class="mt-2 ms-3">PENGKAJIAN KHUSUS</h5>
+                            </li>
+
+                            <li>
+                                <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-remaja" data-group="khusus">
+                                    Form Pengkajian Remaja
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-terminal" data-group="khusus">
+                                    Form Pengkajian Terminal
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-nyeri-kronik" data-group="khusus">
+                                    Form Pengkajian Nyeri Kronik
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-sistem-imun-terganggu" data-group="khusus">
+                                    Form Pengkajian Sistem Imun Terganggu
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-kecanduan-obat-terlarang" data-group="khusus">
+                                    Form Pengkajian Kecanduan Obat Terlarang
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-korban-kekerasan" data-group="khusus">
+                                    Form Pengkajian Korban Kekerasan
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-penyakit-menular" data-group="khusus">
+                                    Form Pengkajian Penyakit Menular
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-lanjutan" data-group="khusus">
+                                    Form Pengkajian Lanjutan
+                                </a>
+                            </li>
+
+                            {{-- <li>
+                                <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#submenuKhusus" role="button">
+                                    <span>Pengkajian Khusus</span>
+                                    <i class="ti ti-chevron-down"></i>
+                                </a>
+                                <div class="collapse" id="submenuKhusus">
+                                    <div class="list-group list-group-flush">
+                                        <a href="javascript:void(0);" class="list-group-item list-group-item-action ps-5 menu-form" data-form="pengkajian-khusus-remaja">
+                                            Form Remaja
+                                        </a>
+                                        <a href="javascript:void(0);" class="list-group-item list-group-item-action ps-5 menu-form" data-form="pengkajian-khusus-terminal">
+                                            Form Terminal
+                                        </a>
+                                        <a href="javascript:void(0);" class="list-group-item list-group-item-action ps-5 menu-form" data-form="pengkajian-khusus-nyeri-kronik">
+                                            Form Nyeri Kronik
+                                        </a>
+                                        <a href="javascript:void(0);" class="list-group-item list-group-item-action ps-5 menu-form" data-form="pengkajian-khusus-sistem-imun-terganggu">
+                                            Form Sistem Imun Terganggu
+                                        </a>
+                                        <a href="javascript:void(0);" class="list-group-item list-group-item-action ps-5 menu-form" data-form="pengkajian-khusus-kecanduan-obat-terlarang">
+                                            Form Kecanduan Obat Terlarang / Alkhohol
+                                        </a>
+                                        <a href="javascript:void(0);" class="list-group-item list-group-item-action ps-5 menu-form" data-form="pengkajian-khusus-korban-kekerasan">
+                                            Form Korban Kekerasan
+                                        </a>
+                                        <a href="javascript:void(0);" class="list-group-item list-group-item-action ps-5 menu-form" data-form="pengkajian-khusus-penyakit-menular">
+                                            Form Penyakit Menular
+                                        </a>
+                                        <a href="javascript:void(0);" class="list-group-item list-group-item-action ps-5 menu-form" data-form="pengkajian-khusus-lanjutan">
+                                            Form Lanjutan
+                                        </a>
+                                    </div>
+                                </div>
+                            </li> --}}
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-9">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body" id="formContent">
+                        <div class="text-center">
+                            Silakan pilih form.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        // Menandai menu aktif jika URL sama (opsional)
+        let pageUrl = window.location.href.split(/[?#]/)[0];
+
+        $('.component-list-card a').each(function () {
+            if ($(this).attr('href') !== '' && this.href === pageUrl) {
+                $(this).addClass('active');
+            }
+        });
+
+        // ==========================
+        // SEARCH MENU FORM
+        // ==========================
+        $('#compo-menu-search').on('input', function () {
+
+            const keyword = $(this).val().trim().toLowerCase();
+
+            // reset
+            $('.menu-group-title').hide();
+            $('.menu-item').closest('li').hide();
+            $('.menu-collapse').closest('li').hide();
+            $('.menu-child').closest('li').hide();
+
+            $('.submenu').removeClass('show');
+
+            // jika kosong
+            if(keyword === ''){
+
+                $('.menu-group-title').show();
+                $('.menu-item').closest('li').show();
+                $('.menu-collapse').closest('li').show();
+                $('.menu-child').closest('li').show();
+
+                $('.submenu').removeClass('show');
+
+                $('.submenu-icon')
+                    .removeClass('ti-chevron-up')
+                    .addClass('ti-chevron-down');
+
+                return;
+            }
+
+            // ==========================
+            // MENU BIASA
+            // ==========================
+            $('.menu-item').each(function(){
+                let text = $(this).text().trim().toLowerCase();
+
+                if(text.includes(keyword)){
+                    $(this).closest('li').show();
+                    let group = $(this).data('group');
+                    $('.menu-group-title[data-group="'+group+'"]').show();
+                }
+            });
+
+            // ==========================
+            // SUBMENU
+            // ==========================
+            $('.menu-child').each(function(){
+                let text = $(this).text().trim().toLowerCase();
+
+                if(text.includes(keyword)){
+                    $(this).closest('li').show();
+                    let submenu = $(this).closest('.submenu');
+
+                    // tampilkan submenu
+                    submenu.addClass('show');
+
+                    // parent menu tampil
+                    let parent = submenu.prev('.menu-collapse');
+                    parent.closest('li').show();
+
+                    // ubah icon
+                    parent
+                        .find('.submenu-icon')
+                        .removeClass('ti-chevron-down')
+                        .addClass('ti-chevron-up');
+
+                    let group = $(this).data('group');
+
+                    $('.menu-group-title[data-group="'+group+'"]').show();
+                }
+            });
+        });
+
+        // DINAMIK SUBMENU ICON
+        $('.submenu').on('show.bs.collapse', function () {
+            $(this)
+                .prev('a')
+                .find('.submenu-icon')
+                .removeClass('ti-chevron-down')
+                .addClass('ti-chevron-up');
+        });
+
+        $('.submenu').on('hide.bs.collapse', function () {
+            $(this)
+                .prev('a')
+                .find('.submenu-icon')
+                .removeClass('ti-chevron-up')
+                .addClass('ti-chevron-down');
+        });
+
+        // ==========================
+        // CLICK MENU FORM
+        // ==========================
+        $(document).on('click', '.menu-item, .menu-child', function(e){
+            e.preventDefault();
+            $('.menu-item, .menu-child').removeClass('active');
+            $(this).addClass('active');
+            loadForm($(this).data('form'));
+        });
+
+    });
+
+    // ==========================
+    // LOAD FORM AJAX
+    // ==========================
+    function loadForm(form)
+    {
+        $('#formContent').html(`
+            <div class="d-flex flex-column align-items-center justify-content-center py-5">
+                <div class="spinner-border text-primary mb-3"></div>
+                <h6 class="mb-1">
+                    Memuat Form...
+                </h6>
+                <small class="text-muted">
+                    Mohon tunggu sebentar...
+                </small>
+            </div>
+        `);
+
+        $.ajax({
+            url: '/erm/form/pengkajian/' + form,
+            type: 'GET',
+            success: function (html) {
+                $('#formContent').html(html);
+            },
+            error: function () {
+                $('#formContent').html(`
+                    <div class="alert alert-danger mb-0">
+                        <strong>Gagal!</strong><br>
+                        Form tidak dapat dimuat.
+                    </div>
+                `);
+            }
+        });
+    }
+</script>

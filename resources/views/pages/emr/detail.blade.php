@@ -128,6 +128,14 @@
                             </a>
                         </li>
                     @endif
+                    @hasrole('admin')
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fpengkajian" role="tab"
+                            aria-selected="false" tabindex="-1" id="tab-fpengkajian" disabled>
+                            <i class="ph-duotone ph-user-list me-2"></i> Form Pengkajian
+                        </button>
+                    </li>
+                    @endhasrole
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="" data-bs-toggle="tab" href="#fuploads" role="tab"
                             aria-selected="false" tabindex="-1" id="tab-fuploads" disabled>
@@ -277,6 +285,11 @@
         <div class="tab-content" hidden> <!-- TIDAK DIPAKAI LAGI -->
             <div class="tab-pane" id="frehab" role="tabpanel">
                 @include('pages.emr.rehabmedik.form')
+            </div>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane" id="fpengkajian" role="tabpanel">
+                @include('pages.emr.form.pengkajian.tab_pengkajian')
             </div>
         </div>
         <div class="tab-content">
@@ -440,6 +453,8 @@
                         loadRiwayatKfr();
                     } else if (selector === 'pterapi') {
                         // console.log('masuk form program terapi');
+                    } else if (selector === 'fpengkajian') {
+                        // console.log('masuk form pengkajian');
                     } else {
                         console.log('tab lain');
                     }
