@@ -246,7 +246,6 @@
 
         if (control) {
             control.addEventListener('click', function () {
-                $('#show-loader').props('disabled',true);
                 if (!elem.classList.contains('is-active')) {
                     clearInterval(fadeInInterval);
                     clearInterval(fadeOutInterval);
@@ -281,6 +280,7 @@
                                 elem.style.opacity = newValue;
                             }, timing);
                         };
+                        $('#show-loader').prop('disabled',true);
                         elem.fadeOut(3);
                     }, 4000);
                 }
