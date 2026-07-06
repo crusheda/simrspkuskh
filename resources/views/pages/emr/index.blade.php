@@ -86,7 +86,7 @@
                     </div>
                     <div class="col-md-12">
                         <div class="d-sm-flex align-items-center justify-content-between">
-                            <button class="btn btn-secondary" href="javascript: void(0);" id="clear_text" onclick="clearFilter()"><i class="ph-duotone ph-eraser me-1"></i> Kosongkan Filter</button>
+                            <button class="btn btn-light-secondary" href="javascript: void(0);" id="clear_text" onclick="clearFilter()"><i class="ph-duotone ph-eraser me-1"></i> Kosongkan Filter</button>
                             <button class="btn btn-primary" id="tombol-tampilkan" onclick="filter()" disabled><i class="ph-duotone ph-sort-ascending me-1"></i> Refresh Table</button>
                         </div>
                     </div>
@@ -95,7 +95,8 @@
                     <table class="table mb-0 table-hover table-display" id="vantable">
                         <thead>
                             <tr>
-                                <th style="width: 90%;">KUNJUNGAN PASIEN</th>
+                                <th class="kolom-antrian" hidden>ANTRIAN</th>
+                                <th style="width: 85%;">KUNJUNGAN PASIEN</th>
                                 <th style="width: 30%;" class="text-start">TGL KUNJUNGAN</th>
                             </tr>
                         </thead>
@@ -230,7 +231,7 @@
         getRuangan();
         getPenjamin();
         // filter();
-        
+
         // BUTTON FILTER READY
         $('#tombol-tampilkan').prop('disabled', false);
     });
@@ -388,14 +389,15 @@
                 $("#tampil-tbody").empty();
                 $('#jumlah_data').empty().text(res.show.length + ' Data');
                 if (res.show && Array.isArray(res.show)) {
+                    content = ``;
                     res.show.forEach(item => {
                         if (item.STATUS == 1) {
-                            status = 'Pasien berada di ruangan ini / sedang dilayani';
+                            status = '<span class="badge bg-light-warning text-dark p-0" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Pasien berada di ruangan ini / sedang dilayani</span>';
                         } else {
                             if (item.STATUS == 2) {
-                                status = 'Kunjungan Selesai';
+                                status = '<span class="badge bg-light-success text-dark p-0" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Kunjungan Selesai</span>';
                             } else {
-                                status = 'Kunjungan Dibatalkan';
+                                status = '<span class="badge bg-light-danger text-dark p-0" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Kunjungan Dibatalkan</span>';
                             }
                         }
                         if (item.NOSEP) {
@@ -430,30 +432,82 @@
                                 clrTxPj = 'text-orange-900';
                             }
                         }
-                        content = ``;
+
+                        if (item.POS_ANTRIAN && item.NOMOR_ANTRIAN) {
+                            const nomorAntrian = item.NOMOR_ANTRIAN
+                                ? String(item.NOMOR_ANTRIAN).padStart(3, '0')
+                                : '-';
+
+                            antrian = `
+                                <span class="badge bg-light-secondary" style="font-size: 35pt;width:100%;">
+                                    ${item.POS_ANTRIAN ?? '-'}-${nomorAntrian}
+                                </span>
+                            `;
+                        } else {
+                            antrian = ``;
+                        }
+
                         content += `<tr class="clickable" data-href="/emr/${item.NOMOR}">
+
+                                        <!-- Nomor Antrian -->
+                                        <td class="text-center align-middle kolom-antrian" hidden>${antrian}</td>
+
+                                        <!-- Informasi Pasien -->
                                         <td class="ps-3">
-                                            <h4 class="mb-1"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis">RM.${item.NORM}</b> - <b class="text-primary">${item.NAMAPASIEN}</b></h4>
-                                            <a class="mb-0 text-dark" href="javascript: void(0);"><b>DPJP</b> : ${item.NAMADOKTER}</a><br>
-                                            <a class="mb-2 text-dark" href="javascript: void(0);">
-                                                <code>
-                                                    Ruangan <b class="text-pink-900">${item.NAMARUANGAN}</b> | <b class="text-teal-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Registrasi">${item.NOPEN}</b>
-                                                    | <b class="text-indigo-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b> | <b class="${clrTxPj}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jenis Penjamin Pasien">${item.NAMAPENJAMIN}</b>
-                                                </code>
+                                            <h4 class="mb-1">
+                                                <b data-bs-toggle="tooltip" data-bs-placement="top" title="Nomor Rekam Medis">
+                                                    RM.${item.NORM}
+                                                </b>
+                                                -
+                                                <b class="text-primary">${item.NAMAPASIEN}</b>
+                                            </h4>
+
+                                            <a class="text-dark" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" title="Nomor Rekam Medis">
+                                                <b>DPJP</b> : ${item.NAMADOKTER}
                                             </a><br>
-                                            <a class="mb-2 text-dark" href="javascript: void(0);" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan"><code>${status}</code></a>
+
+                                            <code>
+                                                Ruangan <b class="text-pink-900">${item.NAMARUANGAN}</b> |
+                                                <b class="text-indigo-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b> |
+                                                <b class="${clrTxPj}">${item.NAMAPENJAMIN}</b>
+                                            </code>
+
+                                            <br>
+
+                                            ${status}
                                         </td>
+
+                                        <!-- Waktu -->
                                         <td class="text-start align-middle">
-                                            <button type="button" class="btn btn-link-info btn-sm mb-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Waktu Pasien Diterima Di Ruangan" onclick="event.stopPropagation();">
-                                                Masuk <span class="badge bg-light text-dark ms-2">${item.MASUK}</span>
-                                            </button><br>
-                                            <button type="button" class="btn btn-link-danger btn-sm mb-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Waktu Pasien Difinalkan/Dipulangkan" onclick="event.stopPropagation();">
-                                                Keluar <span class="badge bg-light text-dark ms-2">${item.KELUAR?item.KELUAR:'-'}</span>
+                                            <button type="button" class="btn btn-link-info btn-sm mb-0"
+                                                onclick="event.stopPropagation();">
+                                                Masuk
+                                                <span class="badge bg-light text-dark ms-2">
+                                                    ${item.MASUK}
+                                                </span>
+                                            </button>
+
+                                            <br>
+
+                                            <button type="button" class="btn btn-link-danger btn-sm mb-0"
+                                                onclick="event.stopPropagation();">
+                                                Keluar
+                                                <span class="badge bg-light text-dark ms-2">
+                                                    ${item.KELUAR ?? '-'}
+                                                </span>
                                             </button>
                                         </td>
+
                                     </tr>`;
-                        $('#tampil-tbody').append(content);
                     })
+
+                    $('#tampil-tbody').append(content);
+
+                    if (rawat == 5 || rawat == 1) {
+                        $('.kolom-antrian').prop('hidden',false);
+                    } else {
+                        $('.kolom-antrian').prop('hidden',true);
+                    }
                 }
                 // VANILLA TABLE
                 window.dataTable = new simpleDatatables.DataTable("#vantable", {
@@ -474,7 +528,8 @@
                         // { select: 0, sort: "asc" },
                         // { select: 1, sort: "desc" },
                         { select: 0, sortable: false },
-                        { select: 1, sort: 'desc' },
+                        { select: 1, sortable: false },
+                        { select: 2, sort: 'desc' },
                         // { select: 2, sortable: false },
                         // { select: 3, sortable: false }
                     ]

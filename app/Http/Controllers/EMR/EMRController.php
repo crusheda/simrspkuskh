@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\EMR;
 
 use App\Http\Controllers\Controller;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use App\Models\simrspku_klaim\klaim_verifikasi;
@@ -268,6 +269,7 @@ class EMRController extends Controller
                 ->select(
                     'pk.*',
                     'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
+                    'ar.POS AS POS_ANTRIAN','ar.NOMOR AS NOMOR_ANTRIAN','ar.JENIS AS JENIS_ANTRIAN',
                     'ru.DESKRIPSI AS NAMARUANGAN',
                     'pj.JENIS AS JENISPENJAMIN',
                     'ref.DESKRIPSI AS NAMAPENJAMIN',
@@ -295,6 +297,11 @@ class EMRController extends Controller
                     });
                 }, function ($query) {
                     $query->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR');
+                })
+                ->leftJoin('pendaftaran.antrian_ruangan AS ar', function($join){
+                    $join->on('ar.REF','=','pp.NOMOR')
+                        ->where('ar.NOMOR', '!=', 0)
+                        ->where('ar.JENIS', 1); // RAWAT JALAN
                 })
                 ->join('master.referensi AS ref', function($join){
                     $join->on('ref.ID','=','pj.JENIS')
