@@ -859,205 +859,206 @@ class ApiMonitoringController extends Controller
             ]);
         }
 
-        function compileResumeRjjj($kunjungan)
-        {
-            $getRESUMERJ = DB::table('pendaftaran.kunjungan AS pk')
-                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-                ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
-                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
-                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
-                ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR','pk.RUANGAN AS RUANGAN','pk.DPJP','dr.NIP AS NIPDOKTER','pp.TANGGAL AS TGLPERIKSA')
-                ->where('pk.NOMOR',$kunjungan)
-                ->first();
+        // function compileResumeRjjj($kunjungan)
+        // {
+        //     $getRESUMERJ = DB::table('pendaftaran.kunjungan AS pk')
+        //         ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+        //         ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+        //         ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+        //         ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+        //         ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','pk.NOMOR AS NOMOR','pk.RUANGAN AS RUANGAN','pk.DPJP','dr.NIP AS NIPDOKTER','pp.TANGGAL AS TGLPERIKSA')
+        //         ->where('pk.NOMOR',$kunjungan)
+        //         ->first();
 
-            // $show = DB::select('CALL simrspku_klaim.CetakResumeRJ(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
-            // $obat = DB::select('CALL simrspku_klaim.CetakObatRJ(?)',[$getRESUMERJ->NOPEN]);
+        //     // $show = DB::select('CALL simrspku_klaim.CetakResumeRJ(?,?)',[$getRESUMERJ->NOPEN,$getRESUMERJ->NOMOR]);
+        //     // $obat = DB::select('CALL simrspku_klaim.CetakObatRJ(?)',[$getRESUMERJ->NOPEN]);
 
-            // if (empty($show)) {
-            //     return response()->json($data, 400);
-            // }
-            // $keluhan    = $this->cleanText($show[0]->KELUHAN);
-            // $assesment  = $this->cleanText($show[0]->ASSESMENT);
-            // $subyektif  = $this->cleanText($show[0]->SUBYEKTIF);
-            // $obyektif   = $this->cleanText($show[0]->OBYEKTIF);
-            // $planning   = $this->cleanText($show[0]->PLANNING);
-            // $instruksi  = $this->cleanText($show[0]->INSTRUKSI);
+        //     // if (empty($show)) {
+        //     //     return response()->json($data, 400);
+        //     // }
+        //     // $keluhan    = $this->cleanText($show[0]->KELUHAN);
+        //     // $assesment  = $this->cleanText($show[0]->ASSESMENT);
+        //     // $subyektif  = $this->cleanText($show[0]->SUBYEKTIF);
+        //     // $obyektif   = $this->cleanText($show[0]->OBYEKTIF);
+        //     // $planning   = $this->cleanText($show[0]->PLANNING);
+        //     // $instruksi  = $this->cleanText($show[0]->INSTRUKSI);
 
-            // $NAMA_OBAT = collect($obat)->pluck('NAMAOBAT')->implode(', ');
-            $konsul = DB::table('pendaftaran.konsul as kon')
-                    ->where('kon.KUNJUNGAN',$kunjungan)
-                    ->where('kon.STATUS','!=','0')
-                    ->get();
-            // print_r($konsul);
-            // die();
-            // ----------------------------------------------------------------------
-            $ttd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
-                ->where('ttd.kunjungan',$kunjungan)
-                ->whereNull('deleted_at')
-                ->first();
-            if ($ttd) {
-                $imagePath2 = storage_path()."/app/public/".$ttd->signature_path;
-            } else {
-                $getIDUser = DB::table('master.dokter AS dr')
-                                ->leftJoin('aplikasi.pengguna AS pe','pe.NIP','=','dr.NIP')
-                                ->select('pe.ID')
-                                ->where('dr.ID',$getRESUMERJ->DPJP)
-                                ->where('dr.STATUS',1)
-                                ->first();
-                if (str_starts_with($getRESUMERJ->RUANGAN, '1020702')) { // Khusus Rehab Medik
-                    $getTtd = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
-                        ->where('ttp.nip', $getRESUMERJ->NIPDOKTER)
-                        ->where('status', 1)
-                        ->inRandomOrder()
-                        ->first();
-                } else {
-                    $getTtd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
-                                    ->where('ttd.user',$getIDUser->ID)
-                                    ->whereNull('deleted_at')
-                                    ->first();
-                }
-                if ($getTtd) {
-                    $imagePath2 = storage_path()."/app/public/".$getTtd->signature_path;
-                    DB::table('simrspku_klaim.tanda_tangan')->insert([
-                        'kunjungan' => $kunjungan,
-                        'signature_path' => $getTtd->signature_path,
-                        'created_at' => Carbon::now(),
-                        'updated_at' => Carbon::now(),
-                        'user' => Auth::user()->ID,
-                    ]);
-                } else {
-                    $imagePath2 = null;
-                }
-            }
+        //     // $NAMA_OBAT = collect($obat)->pluck('NAMAOBAT')->implode(', ');
+        //     $konsul = DB::table('pendaftaran.konsul as kon')
+        //             ->where('kon.KUNJUNGAN',$kunjungan)
+        //             ->where('kon.STATUS','!=','0')
+        //             ->get();
+        //     // print_r($konsul);
+        //     // die();
+        //     // ----------------------------------------------------------------------
+        //     $ttd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
+        //         ->where('ttd.kunjungan',$kunjungan)
+        //         ->whereNull('deleted_at')
+        //         ->first();
+        //     if ($ttd) {
+        //         $imagePath2 = storage_path()."/app/public/".$ttd->signature_path;
+        //     } else {
+        //         $getIDUser = DB::table('master.dokter AS dr')
+        //                         ->leftJoin('aplikasi.pengguna AS pe','pe.NIP','=','dr.NIP')
+        //                         ->select('pe.ID')
+        //                         ->where('dr.ID',$getRESUMERJ->DPJP)
+        //                         ->where('dr.STATUS',1)
+        //                         ->first();
+        //         if (str_starts_with($getRESUMERJ->RUANGAN, '1020702')) { // Khusus Rehab Medik
+        //             $getTtd = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
+        //                 ->where('ttp.nip', $getRESUMERJ->NIPDOKTER)
+        //                 ->where('status', 1)
+        //                 ->inRandomOrder()
+        //                 ->first();
+        //         } else {
+        //             $getTtd = DB::table('simrspku_klaim.tanda_tangan AS ttd')
+        //                             ->where('ttd.user',$getIDUser->ID)
+        //                             ->whereNull('deleted_at')
+        //                             ->first();
+        //         }
+        //         if ($getTtd) {
+        //             $imagePath2 = storage_path()."/app/public/".$getTtd->signature_path;
+        //             DB::table('simrspku_klaim.tanda_tangan')->insert([
+        //                 'kunjungan' => $kunjungan,
+        //                 'signature_path' => $getTtd->signature_path,
+        //                 'created_at' => Carbon::now(),
+        //                 'updated_at' => Carbon::now(),
+        //                 'user' => Auth::user()->ID,
+        //             ]);
+        //         } else {
+        //             $imagePath2 = null;
+        //         }
+        //     }
 
-            // ----------------------------------------------------------------------
-            $getTgl = Carbon::parse($getRESUMERJ->TGLPERIKSA);
-            $tgl = $getTgl->isoFormat('DD');
-            $bulan = $getTgl->isoFormat('MM');
-            $tahun = $getTgl->isoFormat('YYYY');
+        //     // ----------------------------------------------------------------------
+        //     $getTgl = Carbon::parse($getRESUMERJ->TGLPERIKSA);
+        //     $tgl = $getTgl->isoFormat('DD');
+        //     $bulan = $getTgl->isoFormat('MM');
+        //     $tahun = $getTgl->isoFormat('YYYY');
 
-            // ----------------------------------------------------------------------
-            $path = 'files/resume/RJ/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
-            $output = storage_path().'/app/public/'.$path;
+        //     // ----------------------------------------------------------------------
+        //     $path = 'files/resume/RJ/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
+        //     $output = storage_path().'/app/public/'.$path;
 
-            // cek di DB
-            $verify = klaim_file::where('nomor', $kunjungan)
-                ->where('jenis', 2)
-                ->where('status', true)
-                ->first();
+        //     // cek di DB
+        //     $verify = klaim_file::where('nomor', $kunjungan)
+        //         ->where('jenis', 2)
+        //         ->where('status', true)
+        //         ->first();
 
-            // if (file_exists($output.'.pdf')) {
-            //     if (!$verify) {
-            //         $post = new klaim_file;
-            //         $post->jenis = 2;
-            //         $post->nomor = $kunjungan;
-            //         $post->title = $kunjungan.'.pdf';
-            //         $post->filename = $path.'.pdf';
-            //         $post->status = true;
-            //         $post->user = Auth::user()->ID;
-            //         $post->save();
-            //     }
+        //     // if (file_exists($output.'.pdf')) {
+        //     //     if (!$verify) {
+        //     //         $post = new klaim_file;
+        //     //         $post->jenis = 2;
+        //     //         $post->nomor = $kunjungan;
+        //     //         $post->title = $kunjungan.'.pdf';
+        //     //         $post->filename = $path.'.pdf';
+        //     //         $post->status = true;
+        //     //         $post->user = Auth::user()->ID;
+        //     //         $post->save();
+        //     //     }
 
-            //     return response()->file($output.'.pdf',[
-            //         'Content-Type' => 'application/pdf',
-            //     ]);
-            // }
+        //     //     return response()->file($output.'.pdf',[
+        //     //         'Content-Type' => 'application/pdf',
+        //     //     ]);
+        //     // }
 
-            if (!$verify) {
-                $post = new klaim_file;
-                $post->jenis = 2;
-                $post->nomor = $kunjungan;
-                $post->title = $kunjungan.'.pdf';
-                $post->filename = $path.'.pdf';
-                $post->status = true;
-                $post->user = Auth::user()->ID;
-                $post->save();
-            }
+        //     if (!$verify) {
+        //         $post = new klaim_file;
+        //         $post->jenis = 2;
+        //         $post->nomor = $kunjungan;
+        //         $post->title = $kunjungan.'.pdf';
+        //         $post->filename = $path.'.pdf';
+        //         $post->status = true;
+        //         $post->user = Auth::user()->ID;
+        //         $post->save();
+        //     }
 
-            // Pastikan folder tujuan ada
-            $outputDir = dirname($output);
-            if (!File::exists($outputDir)) {
-                File::makeDirectory($outputDir, 0755, true); // true = recursive
-            }
+        //     // Pastikan folder tujuan ada
+        //     $outputDir = dirname($output);
+        //     if (!File::exists($outputDir)) {
+        //         File::makeDirectory($outputDir, 0755, true); // true = recursive
+        //     }
 
-            // print_r($getRESUMERJ);
-            // die();
+        //     // print_r($getRESUMERJ);
+        //     // die();
 
-            // ----------------------------------------------------------------------
-            if (str_starts_with($getRESUMERJ->RUANGAN, '1020201')) {
-                $input = public_path().'/doc/input/resumeRD/CetakResumeRadar.jrxml';
-                $options = [
-                    'format' => ['pdf'],
-                    'params' => [
-                        'PNOPEN' => $getRESUMERJ->NOPEN,
-                        'IMAGES_PATH' => public_path()."/doc/input/resumeRD/",
-                        'IMAGES_PATH2' => $imagePath2,
-                    ],
-                    'db_connection' => [
-                        'driver'   => config('database.connections.db_custom.driver'),
-                        'host'     => config('database.connections.db_custom.host'),
-                        'port'     => config('database.connections.db_custom.port'),
-                        'username' => config('database.connections.db_custom.username'),
-                        'password' => config('database.connections.db_custom.password'),
-                        'database' => config('database.connections.db_custom.database'),
-                    ],
-                    // 'db_connection' => [
-                    //     'driver'   => 'mysql',
-                    //     'host'     => env('DB_HOST'),
-                    //     'port'     => env('DB_PORT'),
-                    //     'username' => env('DB_USERNAME'),
-                    //     'password' => env('DB_PASSWORD'),
-                    //     'database' => env('DB_DATABASE_CUSTOM'),
-                    // ],
-                ];
-            } else {
-                $input = public_path().'/doc/input/resumeRJ/CetakResumeRJ.jrxml';
-                $options = [
-                    'format' => ['pdf'],
-                    'params' => [
-                        'PNOPEN' => $getRESUMERJ->NOPEN,
-                        'PKUNJUNGAN' => $getRESUMERJ->NOMOR,
-                        'COBA' => 'KRINCING RT 14/06 KRINCING RT. 0 RW. 0 Kel/Desa. KRINCING Kec. INI HANYA CONTOH. KRINCING RT 14/06 KRINCING RT. 0 RW. 0 Kel/Desa. KRINCING Kec. SELESAIIIIIII',
-                        'IMAGES_PATH' => public_path()."/doc/input/resumeRJ/",
-                        'IMAGES_PATH2' => $imagePath2,
-                    ],
-                    'db_connection' => [
-                        'driver'   => config('database.connections.db_custom.driver'),
-                        'host'     => config('database.connections.db_custom.host'),
-                        'port'     => config('database.connections.db_custom.port'),
-                        'username' => config('database.connections.db_custom.username'),
-                        'password' => config('database.connections.db_custom.password'),
-                        'database' => config('database.connections.db_custom.database'),
-                    ],
-                    // 'db_connection' => [
-                    //     'driver'   => 'mysql',
-                    //     'host'     => env('DB_HOST'),
-                    //     'port'     => env('DB_PORT'),
-                    //     'username' => env('DB_USERNAME'),
-                    //     'password' => env('DB_PASSWORD'),
-                    //     'database' => env('DB_DATABASE_CUSTOM'),
-                    // ],
-                ];
-            }
+        //     // ----------------------------------------------------------------------
+        //     if (str_starts_with($getRESUMERJ->RUANGAN, '1020201')) {
+        //         $input = public_path().'/doc/input/resumeRD/CetakResumeRadar.jrxml';
+        //         $options = [
+        //             'format' => ['pdf'],
+        //             'params' => [
+        //                 'PNOPEN' => $getRESUMERJ->NOPEN,
+        //                 'IMAGES_PATH' => public_path()."/doc/input/resumeRD/",
+        //                 'IMAGES_PATH2' => $imagePath2,
+        //             ],
+        //             'db_connection' => [
+        //                 'driver'   => config('database.connections.db_custom.driver'),
+        //                 'host'     => config('database.connections.db_custom.host'),
+        //                 'port'     => config('database.connections.db_custom.port'),
+        //                 'username' => config('database.connections.db_custom.username'),
+        //                 'password' => config('database.connections.db_custom.password'),
+        //                 'database' => config('database.connections.db_custom.database'),
+        //             ],
+        //             // 'db_connection' => [
+        //             //     'driver'   => 'mysql',
+        //             //     'host'     => env('DB_HOST'),
+        //             //     'port'     => env('DB_PORT'),
+        //             //     'username' => env('DB_USERNAME'),
+        //             //     'password' => env('DB_PASSWORD'),
+        //             //     'database' => env('DB_DATABASE_CUSTOM'),
+        //             // ],
+        //         ];
+        //     } else {
+        //         $input = public_path().'/doc/input/resumeRJ/CetakResumeRJ.jrxml';
+        //         $options = [
+        //             'format' => ['pdf'],
+        //             'params' => [
+        //                 'PNOPEN' => $getRESUMERJ->NOPEN,
+        //                 'PKUNJUNGAN' => $getRESUMERJ->NOMOR,
+        //                 'COBA' => 'KRINCING RT 14/06 KRINCING RT. 0 RW. 0 Kel/Desa. KRINCING Kec. INI HANYA CONTOH. KRINCING RT 14/06 KRINCING RT. 0 RW. 0 Kel/Desa. KRINCING Kec. SELESAIIIIIII',
+        //                 'IMAGES_PATH' => public_path()."/doc/input/resumeRJ/",
+        //                 'IMAGES_PATH2' => $imagePath2,
+        //             ],
+        //             'db_connection' => [
+        //                 'driver'   => config('database.connections.db_custom.driver'),
+        //                 'host'     => config('database.connections.db_custom.host'),
+        //                 'port'     => config('database.connections.db_custom.port'),
+        //                 'username' => config('database.connections.db_custom.username'),
+        //                 'password' => config('database.connections.db_custom.password'),
+        //                 'database' => config('database.connections.db_custom.database'),
+        //             ],
+        //             // 'db_connection' => [
+        //             //     'driver'   => 'mysql',
+        //             //     'host'     => env('DB_HOST'),
+        //             //     'port'     => env('DB_PORT'),
+        //             //     'username' => env('DB_USERNAME'),
+        //             //     'password' => env('DB_PASSWORD'),
+        //             //     'database' => env('DB_DATABASE_CUSTOM'),
+        //             // ],
+        //         ];
+        //     }
 
-            // print_r($options);
-            // die();
+        //     // print_r($options);
+        //     // die();
 
-            $jasper = new PHPJasper;
+        //     $jasper = new PHPJasper;
 
-            $jasper->process(
-                $input,
-                $output,
-                $options
-            )->execute();
+        //     $jasper->process(
+        //         $input,
+        //         $output,
+        //         $options
+        //     )->execute();
 
-            return response()->file($output.'.pdf',[
-                'Content-Type' => 'application/pdf',
-                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
-                'Pragma'        => 'no-cache',
-                'Expires'       => '0',
-            ]);
-        }
+        //     return response()->file($output.'.pdf',[
+        //         'Content-Type' => 'application/pdf',
+        //         'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        //         'Pragma'        => 'no-cache',
+        //         'Expires'       => '0',
+        //     ]);
+        // }
+
         function compileResumeRj($kunjungan)
         {
             $getRESUMERJ = DB::table('pendaftaran.kunjungan AS pk')
@@ -1114,6 +1115,17 @@ class ApiMonitoringController extends Controller
                 }
             }
 
+            $ruanganKhusus = ['1020702', '102010103'];
+
+            $isKhusus = false;
+
+            foreach ($ruanganKhusus as $ruangan) {
+                if (str_starts_with($getRESUMERJ->RUANGAN, $ruangan)) {
+                    $isKhusus = true;
+                    break;
+                }
+            }
+
             if ($imagePath2 == null) {
                 $getIDUser = DB::table('master.dokter AS dr')
                     ->leftJoin('aplikasi.pengguna AS pe','pe.NIP','=','dr.NIP')
@@ -1122,7 +1134,7 @@ class ApiMonitoringController extends Controller
                     ->where('dr.STATUS',1)
                     ->first();
 
-                if (str_starts_with($getRESUMERJ->RUANGAN, '1020702')) { // Khusus Rehab Medik
+                if ($isKhusus) { // Khusus Rehab Medik & Poli Tertentu
                     $getTtd = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
                         ->where('ttp.nip', $getRESUMERJ->NIPDOKTER)
                         ->where('ttp.status', 1)
@@ -1253,7 +1265,7 @@ class ApiMonitoringController extends Controller
                                 ->where('dr.STATUS',1)
                                 ->first();
 
-                            if (str_starts_with($item->RUANGAN, '1020702')) { // Khusus Rehab Medik
+                            if ($isKhusus) { // Khusus Rehab Medik dan Poli Tertentu
                                 $getTtd = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
                                     ->where('ttp.nip', $item->NIPDOKTER)
                                     ->where('ttp.status', 1)

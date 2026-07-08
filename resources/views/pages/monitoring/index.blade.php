@@ -902,7 +902,7 @@
                     let ruangan = res.resume.RUANGAN;
 
                     // LIKE '1020702%'
-                    if (ruangan.startsWith('1020702')) { // KHUSUS REHAB MEDIK LANGSUNG GENERATE
+                    if (ruangan.startsWith('1020702') || ruangan.startsWith('102010103')) { // KHUSUS REHAB MEDIK LANGSUNG GENERATE
                         $('#btn-showResume-'+kunjungan).empty().append(`<button type="button" class="btn btn-sm btn-icon btn-link-warning" id="resumerj`+kunjungan+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+kunjungan+`')">
                                                                         <i class="fas fa-times fs-5 text-warning"></i>
                                                                     </button>`);
