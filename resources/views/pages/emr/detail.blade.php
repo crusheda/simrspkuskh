@@ -455,7 +455,7 @@
                                             class="avtar avtar-xs btn btn-light-${item.NOKUNJUNGAN == kunjungan? 'warning':'info'} flex-shrink-0 me-2"
                                             data-bs-toggle="tooltip"
                                             title="Lihat Detail Kunjungan"
-                                            onclick="window.location.href='/emr/detail/${item.NOKUNJUNGAN}'">
+                                            onclick="window.location.href='/emr/${item.NOKUNJUNGAN}'">
                                             <i class="ph-duotone ph-stethoscope"></i>
                                         </button>
                                     </div>
