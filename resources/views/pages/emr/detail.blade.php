@@ -224,18 +224,13 @@
                         <div class="card">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <h5>Riwayat Kunjungan</h5>
-                                <div class="dropdown">
-                                    <a class="avtar avtar-xs btn-link-secondary dropdown-toggle arrow-none" href="javascript: void(0);"
-                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="ph-duotone ph-dots-three-outline-vertical"></i></a>
-                                    <div class="dropdown-menu dropdown-menu-end" style="">
-                                        <a class="dropdown-item" href="javascript: void(0);"><s>Selengkapnya</s></a>
-                                    </div>
-                                </div>
+                                <button class="btn btn-sm btn-light-warning" onclick="loadRiwayatKunjunganPasien()" id="btn-refresh-riwayat-kunjungan"
+                                    data-bs-toggle="tooltip" title="Refresh Riwayat Kunjungan Pasien"><i class="fas fa-sync"></i></button>
                             </div>
                             <div style="max-height: 420px; overflow-y: auto;" class="rounded-bottom">
-                                <ul class="list-group list-group-flush">
-                                    @if ($list['riwayat']->isNotEmpty())
+                                <ul class="list-group list-group-flush" id="load-riwayat-kunjungan-pasien">
+                                    <li class="list-group-item"><center><i class="fas fa-sync fa-spin me-1"></i> Menginisialisasi Riwayat Kunjungan</center></li>
+                                    {{-- @if ($list['riwayat']->isNotEmpty())
                                         @foreach ($list['riwayat'] as $item)
                                             <li class="list-group-item">
                                                 <div class="d-flex align-items-center">
@@ -274,7 +269,7 @@
                                                 <span class="text-muted">Tidak ada kunjungan terakhir</span>
                                             </div>
                                         </li>
-                                    @endif
+                                    @endif --}}
                                 </ul>
                             </div>
                         </div>
@@ -373,6 +368,8 @@
             });
             $('[data-bs-toggle="tooltip"]').tooltip();
             $('.nav-link').prop('disabled', false);
+
+            loadRiwayatKunjunganPasien();
         });
 
         function showICare() {
@@ -417,6 +414,97 @@
                         .find('i')
                         .removeClass('fa-sync fa-spin')
                         .addClass('fa-clipboard-list');
+                }
+            });
+        }
+
+        function loadRiwayatKunjunganPasien() { // RIWAYAT DI GRID KANAN
+            const btn = $('#btn-refresh-riwayat-kunjungan');
+
+            $.ajax({
+                url: `/api/emr/riwayat/kunjungan/${rm}`,
+                type: 'GET',
+                beforeSend: function () {
+                    btn.prop('disabled', true)
+                        .find('i')
+                        .addClass('fa-spin');
+                    $('#load-riwayat-kunjungan-pasien').empty().append(`
+                        <li class="list-group-item"><center><i class="fas fa-sync fa-spin me-1"></i> Memuat Data Kunjungan</center></li>
+                    `);
+                },
+                success: function(res) {
+                    content = ``;
+
+                    res.show.forEach((item, index) => {
+
+                        let statusdaftar = '';
+
+                        if (item.STATUSDAFTAR == 1) {
+                            statusdaftar = '<badge class="badge rounded-pill text-bg-success">Aktif</badge>';
+                        } else if (item.STATUSDAFTAR == 2) {
+                            statusdaftar = '<badge class="badge rounded-pill text-bg-primary">Selesai</badge>';
+                        } else {
+                            statusdaftar = '<badge class="badge rounded-pill text-bg-danger">Non Aktif/Batal</badge>';
+                        }
+
+                        content += `
+                            <li class="list-group-item border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <button
+                                            class="avtar avtar-xs btn btn-light-${item.NOKUNJUNGAN == kunjungan? 'warning':'info'} flex-shrink-0 me-2"
+                                            data-bs-toggle="tooltip"
+                                            title="Lihat Detail Kunjungan"
+                                            onclick="window.location.href='/emr/detail/${item.NOKUNJUNGAN}'">
+                                            <i class="ph-duotone ph-stethoscope"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="flex-grow-1 mx-2">
+                                        <h6 class="mb-0">${item.NAMARUANGAN} ${item.NOKUNJUNGAN == kunjungan? `<badge class="badge text-bg-warning p-1">SAAT INI</badge>` : ``}</h6>
+                                        <p class="mb-0">${item.NAMADOKTER.length > 25 ? item.NAMADOKTER.substring(0,25) + '...' : item.NAMADOKTER}</p>
+                                    </div>
+
+                                    <div class="flex-shrink-0">
+                                        <p class="mb-0 text-end" style="font-size:12px" data-bs-toggle="tooltip" title="Status Kunjungan">
+                                            Status : ${statusdaftar}
+                                        </p>
+
+                                        <span class="badge bg-light-dark"
+                                            style="font-size:12px"
+                                            data-bs-toggle="tooltip"
+                                            title="${dayjs(item.TGLDAFTAR).fromNow()}">
+                                            ${dayjs(item.TGLDAFTAR).format('DD MMMM YYYY, HH:mm WIB')}
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                        `;
+                    });
+
+                    content += `</ul>`;
+
+                    $('#load-riwayat-kunjungan-pasien').empty().append(content);
+                },
+                error: function (xhr) {
+                    Swal.fire(
+                        'Gagal',
+                        xhr.responseJSON?.message ?? 'Terjadi kesalahan / Gagal memanggil Function loadRiwayatKfr',
+                        'error'
+                    );
+                },
+                complete: function () {
+                    // always reset button (baik success maupun error)
+                    btn.prop('disabled', false)
+                        .find('i')
+                        .removeClass('fa-spin');
+
+                    // Showing Tooltip
+                    $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                    $('.tooltip').remove();
+                    $('[data-bs-toggle="tooltip"]').tooltip({
+                        trigger : 'hover'
+                    })
                 }
             });
         }

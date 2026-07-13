@@ -39,6 +39,17 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
+{{-- DAYJS --}}
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/localizedFormat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/locale/id.js"></script>
+<script>
+    dayjs.extend(dayjs_plugin_relativeTime);
+    dayjs.extend(dayjs_plugin_localizedFormat);
+    dayjs.locale('id');
+</script>
+
 {{-- MANUAL JQUERY / JAVASCRIPT --}}
     {{-- DATA PC THEME START --}}
     <script>

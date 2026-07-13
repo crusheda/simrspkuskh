@@ -120,6 +120,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
 
     // EMR
         // I - CARE
+        Route::get('emr/riwayat/kunjungan/{RM}', [EMRController::class, 'getRiwayatKunjungan'])->name('api.emr.riwayat.kunjungan');
         Route::get('emr/bpjs/icare/{RM}', [ICareController::class, 'getICare'])->name('api.emr.bpjs.icare');
         Route::get('emr/bpjs/icare/auto/{RM}', [ICareController::class, 'apiICare'])->name('api.emr.bpjs.icare.auto');
 
