@@ -31,8 +31,8 @@ use App\Modules\AiKlaim\Controllers\AiKlaimController;
 use App\Http\Controllers\Display\RatingController;
 
 // STARTING CREATIONS
-// Route::get('/', function () {
-//     return view('welcome');
+// Route::get('/new', function () {
+//     return view('pages.dashboard.index-new');
 // });
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
