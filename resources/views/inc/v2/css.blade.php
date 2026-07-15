@@ -28,3 +28,5 @@
 <link rel="stylesheet" href="{{ asset('v2/fonts/fontawesome.css') }}">
 <!-- [Material Icons] https://fonts.google.com/icons -->
 <link rel="stylesheet" href="{{ asset('v2/fonts/material.css') }}">
+
+<script src="{{ asset('js/jquery.min.js') }}"></script>

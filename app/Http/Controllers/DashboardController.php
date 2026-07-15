@@ -11,7 +11,7 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    function index()
+    function index() // SIRMED v.1
     {
         $yearMonth = Carbon::now()->isoFormat('YYYY-MM-DD');
 
@@ -22,7 +22,7 @@ class DashboardController extends Controller
         return view('pages.dashboard.index')->with('list', $data);
     }
 
-    function indexV2()
+    function indexV2() // SIRMED v.2
     {
         $yearMonth = Carbon::now()->isoFormat('YYYY-MM-DD');
 

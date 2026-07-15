@@ -54,6 +54,9 @@ Route::group(['prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
 Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
     Route::get('dashboard', [DashboardController::class, 'indexV2'])->name('v2.dashboard');
 
+    // DIGITAL
+        // MEICAL RECORD
+        Route::get('emr', [EMRController::class, 'indexV2'])->name('v2.emr');
 
 });
 

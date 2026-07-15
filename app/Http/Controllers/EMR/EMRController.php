@@ -17,33 +17,9 @@ use Auth, Storage;
 class EMRController extends Controller
 {
     // INDEX
-    function index()
+    function index() // SIRMED v.1
     {
-        // print_r(Auth::user()->NIP);
-        // die();
         $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
-        // $dr = DB::table('master.dokter AS dr')
-        //         ->select(
-        //             'dr.id',
-        //             'dr.NIP',
-        //             DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
-        //             'ref.DESKRIPSI'
-        //         )
-        //         ->leftJoin('master.pegawai AS pg','pg.NIP','=','dr.NIP')
-        //         ->leftJoin('master.referensi AS ref', function($join) {
-        //             $join->on('ref.ID','=','pg.SMF')
-        //                 ->where('ref.JENIS', '26');
-        //         })
-        //         ->leftJoin('master.dokter_ruangan AS dru','dru.DOKTER','=','dr.ID')
-        //         ->where('dr.STATUS','1')
-        //         ->where('dru.STATUS','1')
-        //         ->where(function ($query) {
-        //             $query->where('dru.RUANGAN', 'LIKE', '1020101%');
-        //         })
-        //         // ->orderByRaw("CASE WHEN ref.ID = '0' THEN 1 ELSE 0 END")
-        //         ->orderBy('ref.DESKRIPSI','ASC')
-        //         ->groupBy('dr.id','dr.NIP','NAMADOKTER')
-        //         ->get();
 
         $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')->where('nip',Auth::user()->NIP)->whereNull('deleted_at')->exists();
 
@@ -54,6 +30,21 @@ class EMRController extends Controller
         ];
 
         return view('pages.emr.index')->with('list', $data);
+    }
+
+    function indexV2() // SIRMED v.2
+    {
+        $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
+
+        $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')->where('nip',Auth::user()->NIP)->whereNull('deleted_at')->exists();
+
+        $data = [
+            'yearMonth' => $yearMonth,
+            // 'dr' => $dr,
+            'tte_pegawai' => $tte_pegawai,
+        ];
+
+        return view('pages.v2.medicalrecord.index')->with('list', $data);
     }
 
     function detail($KUNJUNGAN)

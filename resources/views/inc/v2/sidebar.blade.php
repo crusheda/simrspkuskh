@@ -7,7 +7,7 @@
     <div class="app-navbar-tabs" data-simplebar>
         <ul class="nav" id="appMenubarTabs" role="tablist" aria-orientation="vertical">
             <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Publik">
-                <a class="menu-link active" href="#publikTab" role="tab" aria-controls="publikTab"
+                <a class="menu-link" href="#publikTab" role="tab" aria-controls="publikTab"
                     aria-selected="true" data-bs-toggle="tab">
                     <i class="ri-home-line fs-24"></i>
                 </a>
@@ -16,18 +16,7 @@
             <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Digital">
                 <a class="menu-link" href="#digitalTab" role="tab" aria-controls="digitalTab"
                     aria-selected="false" data-bs-toggle="tab">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M18 8C18 11.3137 15.3137 14 12 14C8.68629 14 6 11.3137 6 8C6 4.68629 8.68629 2 12 2C15.3137 2 18 4.68629 18 8Z"
-                            stroke="var(--bs-heading-color)" stroke-width="2" />
-                        <path
-                            d="M6.5 10.189C3.91216 10.855 2 13.2042 2 15.9999C2 19.3136 4.68629 21.9999 8 21.9999C11.3137 21.9999 14 19.3136 14 15.9999C14 15.2452 13.8607 14.5231 13.6063 13.8578"
-                            stroke="var(--bs-heading-color)" stroke-width="2" />
-                        <path opacity="0.5"
-                            d="M12 20.4722C13.0615 21.4222 14.4633 21.9999 16 21.9999C19.3137 21.9999 22 19.3136 22 15.9999C22 13.2042 20.0878 10.855 17.5 10.189"
-                            stroke="var(--bs-heading-color)" stroke-width="2" />
-                    </svg>
+                    <i class="ri-health-book-line fs-24"></i>
                 </a>
             </li>
             {{-- <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Dashboard">
@@ -86,7 +75,7 @@
                                 <span class="menu-label">Publik</span>
                             </li>
                             <li class="menu-item">
-                                <a class="menu-link" href="index.html" role="button">
+                                <a class="menu-link" href="{{ route('v2.dashboard') }}" role="button">
                                     <i class="ri-dashboard-line"></i>
                                     <span class="menu-label">Dashboard</span>
                                 </a>
@@ -112,9 +101,9 @@
                                 <span class="menu-label">Digital</span>
                             </li>
                             <li class="menu-item">
-                                <a class="menu-link" href="authentication/login-basic.html">
-                                    <i class="fi fi-rr-unlock"></i>
-                                    <span class="menu-label">Electronic Medical Record</span>
+                                <a class="menu-link" href="{{ route('v2.emr') }}">
+                                    <i class="ri-nurse-line"></i>
+                                    <span class="menu-label">Medical Record</span>
                                 </a>
                             </li>
                             <li class="menu-item">
