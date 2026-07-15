@@ -1,0 +1,24 @@
+<footer class="footer-wrapper bg-body">
+    <div class="container-fluid">
+        <div class="row g-2">
+            <div class="col-lg-6 col-md-7 text-center text-md-start">
+                <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a
+                        href="javascript:void(0);">LayoutDrop</a>.</p>
+            </div>
+            <div class="col-lg-6 col-md-5">
+                <ul
+                    class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
+                    <li>
+                        <a class="text-body" href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a class="text-body" href="javascript:void(0);">Faq's</a>
+                    </li>
+                    <li>
+                        <a class="text-body" href="javascript:void(0);">Support</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>

@@ -22,6 +22,17 @@ class DashboardController extends Controller
         return view('pages.dashboard.index')->with('list', $data);
     }
 
+    function indexV2()
+    {
+        $yearMonth = Carbon::now()->isoFormat('YYYY-MM-DD');
+
+        $data = [
+            'yearMonth' => $yearMonth,
+        ];
+
+        return view('pages.v2.dashboard.index')->with('list', $data);
+    }
+
     function clearCache()
     {
         \Artisan::call('view:clear');

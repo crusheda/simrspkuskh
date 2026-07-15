@@ -32,7 +32,7 @@ use App\Http\Controllers\Display\RatingController;
 
 // STARTING CREATIONS
 // Route::get('/new', function () {
-//     return view('pages.dashboard.index-new');
+//     return view('pages.v2.dashboard.index');
 // });
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -44,6 +44,18 @@ Route::get('report', [PasienController::class, 'report'])->name('report.jrxml.bu
 Route::get('view', [PasienController::class, 'view'])->name('report.jrxml.view');
 Route::get('full', [PasienController::class, 'fullJasper'])->name('report.jrxml.full');
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// NEW SIRMED VERSI 2
+Route::group(['prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
+    Route::get('/', function () { return redirect()->route('v2.dashboard'); });
+
+});
+
+Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
+    Route::get('dashboard', [DashboardController::class, 'indexV2'])->name('v2.dashboard');
+
+
+});
 
 // AUTHENTICATION LARAVEL (AUTH UI BOOTSTRAP + SPATIE ROLES PERMISSIONS)
 Route::get('/lupapassword', [LupaPasswordController::class, 'index'])->name('lupapassword.index');
