@@ -304,12 +304,9 @@
 		   CURRENT PAGE
 		============================= */
 
-		var currentPage = window.location.pathname
-			.split('https://nexlink.layoutdrop.com/')
-			.pop()
-			.replace(/\.(php|html|htm)$/i, '');
+        const currentPage = window.location.pathname.replace(/\/$/, '');
 
-		if (!currentPage) currentPage = 'index';
+		if (!currentPage) currentPage = 'v2/dashboard';
 
 		// reset
 		$('.app-navbar a').removeClass('active open');
@@ -317,19 +314,23 @@
 		$('.app-menubar-tabs .menu-link').removeClass('active');
 		$('.app-tab-content .tab-pane').removeClass('active show');
 
-		var $activeLink = $('.app-navbar a').filter(function () {
+        const $activeLink = $('.app-navbar a').filter(function () {
 
-			var href = $(this).attr('href');
-			if (!href || href === '#' || href.startsWith('http')) return false;
+            const href = $(this).attr('href');
+            if (!href)
+                return false;
 
-			var linkPage = href
-				.split('https://nexlink.layoutdrop.com/')
-				.pop()
-				.replace(/\.(php|html|htm)$/i, '');
+            // abaikan tab bootstrap
+            if (href.startsWith('#'))
+                return false;
 
-			return linkPage === currentPage;
+            // abaikan javascript
+            if (href.startsWith('javascript'))
+                return false;
+            const url = new URL(href, window.location.origin);
+            return url.pathname.replace(/\/$/, '') === currentPage;
 
-		}).first();
+        }).first();
 
 		if ($activeLink.length) {
 

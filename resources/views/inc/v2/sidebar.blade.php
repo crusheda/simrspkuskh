@@ -8,7 +8,7 @@
         <ul class="nav" id="appMenubarTabs" role="tablist" aria-orientation="vertical">
             <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Publik">
                 <a class="menu-link" href="#publikTab" role="tab" aria-controls="publikTab"
-                    aria-selected="true" data-bs-toggle="tab">
+                    aria-selected="false" data-bs-toggle="tab">
                     <i class="ri-home-line fs-24"></i>
                 </a>
             </li>
