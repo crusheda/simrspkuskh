@@ -5,6 +5,10 @@
 <script src="{{ asset('v2/libs/apexcharts/apexcharts.min.js') }}"></script>
 <script src="{{ asset('v2/libs/datatables/datatables.min.js') }}"></script>
 <script src="{{ asset('v2/js/dashboard/dashboard.js') }}"></script>
-<script src="{{ asset('v2/js/plugins/todolist.js') }}"></script>
+{{-- <script src="{{ asset('v2/js/plugins/todolist.js') }}"></script> --}}
+<script src="{{ asset('v2/libs/tagify/tagify.js') }}"></script>
+<script src="{{ asset('v2/js/plugins/tagify.js') }}"></script>
 <script src="{{ asset('v2/js/appSettings.js') }}"></script>
 <script src="{{ asset('v2/js/main.js') }}"></script>
+<script src="{{ asset('js/plugins/choices.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>

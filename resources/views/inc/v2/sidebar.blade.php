@@ -102,7 +102,7 @@
                             </li>
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ route('v2.emr') }}">
-                                    <i class="ri-nurse-line"></i>
+                                    <i class="ri-nurse-line fs-20"></i>
                                     <span class="menu-label">Medical Record</span>
                                 </a>
                             </li>

@@ -371,7 +371,7 @@
 
                     <div class="col-12">
                         <div class="card overflow-hidden bg-primary border-0 ovarlay-primary-gradient"
-                            style="background-image: url(v2/images/wind.gif); background-position: center; background-size: cover;">
+                            style="background-image: url(/v2/images/wind.gif); background-position: center; background-size: cover;">
                             <div
                                 class="card-header pb-0 border-0 d-flex align-items-center justify-content-between z-1 position-relative">
                                 <h6 class="card-title mb-0 text-white">Total Earning</h6>

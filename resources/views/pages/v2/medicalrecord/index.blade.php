@@ -1,166 +1,128 @@
 @extends('layouts.v2.index')
 
 @section('content')
-<!-- [ breadcrumb ] start -->
-<div class="page-header">
-    <div class="page-block">
-        <div class="row align-items-center">
-            <div class="col-md-12">
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="ti ti-home"></i></a></li>
-                    <li class="breadcrumb-item"><a href="javascript: void(0);">Electronic</a></li>
-                    <li class="breadcrumb-item" aria-current="page">EMR</li>
-                </ul>
-            </div>
-            <div class="col-md-12">
-                <div class="page-header-title">
-                    <h2 class="mb-0">Electronic <b class="text-primary">Medical Record</b></h2>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- [ breadcrumb ] end -->
 
-<!-- [ Main Content ] start -->
-<div class="row gy-4">
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-header p-2">
-                <div class="d-sm-flex align-items-center justify-content-between ms-2">
-                    <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Table Kunjungan Pasien <span class="ms-2 f-14 px-2 badge bg-light-secondary">Total : <a id="jumlah_data">0 Data</a></span></h5>
-                    {{-- <a class="btn btn-link-info btn-sm text-end" href="javascript: void(0);" onclick="tataCara()"><i class="fas fa-info-circle text-info me-2"></i> <s>Tata Cara Penggunaan</s></a> --}}
-                    {{-- <button class="btn btn-link-info btn-sm rounded me-1 mb-1 mt-1" type="button" data-bs-toggle="collapse" data-bs-target="#filter-collapse" aria-expanded="false" aria-controls="collapseExample">Filter <i class="ph-duotone ph-caret-down ms-1"></i></button> --}}
+<div class="container-fluid">
+
+    <!-- [ breadcrumb ] start -->
+    <div class="app-page-head d-flex align-items-center justify-content-between">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="{{ route('v2.dashboard') }}">
+                        <i class="fi fi-rr-home"></i>
+                    </a>
+                </li>
+                <li class="breadcrumb-item" aria-current="page">Digital</li>
+                <li class="breadcrumb-item active" aria-current="page">Medical Record</li>
+            </ol>
+        </nav>
+    </div>
+    <!-- [ breadcrumb ] end -->
+
+    <!-- [ main content ] start -->
+    <div class="row gy-4">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header p-2">
+                    <div class="d-sm-flex align-items-center justify-content-between ms-2">
+                        <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Table Kunjungan Pasien <span class="ms-2 f-14 px-2 badge bg-light-secondary">Total : <a id="jumlah_data">0 Data</a></span></h5>
+                        {{-- <a class="btn btn-link-info btn-sm text-end" href="javascript: void(0);" onclick="tataCara()"><i class="fas fa-info-circle text-info me-2"></i> <s>Tata Cara Penggunaan</s></a> --}}
+                        {{-- <button class="btn btn-link-info btn-sm rounded me-1 mb-1 mt-1" type="button" data-bs-toggle="collapse" data-bs-target="#filter-collapse" aria-expanded="false" aria-controls="collapseExample">Filter <i class="ph-duotone ph-caret-down ms-1"></i></button> --}}
+                    </div>
                 </div>
-            </div>
-            <div class="card-body p-0">
-                <div class="row p-3">
-                    <div class="col-md-3 mb-3">
-                        <div class="form-group">
-                            <label class="form-label">Jenis Perawatan</label>
-                            <select id="filter_rawat" class="form-control" onchange="getRuangan()">
-                                <option value="5">Semua Perawatan</option>
-                                <option value="1" selected>Rawat Jalan</option>
-                                <option value="2">Rawat Darurat (Tanpa Inap)</option>
-                                <option value="3">Rawat Inap</option>
-                            </select>
+                <div class="card-body p-0">
+                    <div class="row p-3">
+                        <div class="col-md-3 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Jenis Perawatan</label>
+                                <select id="filter_rawat" class="form-control" onchange="getRuangan()">
+                                    <option value="5">Semua Perawatan</option>
+                                    <option value="1" selected>Rawat Jalan</option>
+                                    <option value="2">Rawat Darurat (Tanpa Inap)</option>
+                                    <option value="3">Rawat Inap</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <label class="form-label">Ruangan</label>
-                            <select id="filter_ruang" class="form-control" onchange="getDPJP()" disabled><option value="5" selected>...</option></select>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Ruangan</label>
+                                <select id="filter_ruang" class="form-control" onchange="getDPJP()" disabled><option value="5" selected>...</option></select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="form-group">
-                            <label class="form-label">Status Kunjungan</label>
-                            <select class="form-control" id="filter_status">
-                                <option value="5">Semua Kunjungan</option>
-                                <option value="0">Batal Kunjungan</option>
-                                <option value="1" selected>Sedang Dilayani</option>
-                                <option value="2">Selesai Kunjungan</option>
-                            </select>
+                        <div class="col-md-3 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Status Kunjungan</label>
+                                <select class="form-control" id="filter_status">
+                                    <option value="5">Semua Kunjungan</option>
+                                    <option value="0">Batal Kunjungan</option>
+                                    <option value="1" selected>Sedang Dilayani</option>
+                                    <option value="2">Selesai Kunjungan</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="form-group">
-                            <label class="form-label">Rentang Tgl Kunjungan</label>
-                            <div class="input-group">
-                                <input type="text" id="filter_tgl" class="form-control flatpickr-input active" placeholder="Pilih Rentang Tanggal" readonly="readonly">
-                                <span class="input-group-text"><i class="feather icon-calendar"></i></span>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Rentang Tgl Kunjungan</label>
+                                <div class="input-group">
+                                    <input type="text" id="filter_tgl" class="form-control flatpickr-input active" placeholder="Pilih Rentang Tanggal" readonly="readonly">
+                                    <span class="input-group-text"><i class="feather icon-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">DPJP</label>
+                                <input id="filter_dpjp" class="form-control">
+                                {{-- <input class='form-control tagify-users-list' value='Sophia Hall, Olivia Clark'> --}}
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Jenis Penjamin</label>
+                                <select id="filter_penjamin" class="form-control" disabled><option value="0" selected>...</option></select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="d-sm-flex align-items-center justify-content-between">
+                                <button class="btn btn-light-secondary" href="javascript: void(0);" id="clear_text" onclick="clearFilter()"><i class="ph-duotone ph-eraser me-1"></i> Kosongkan Filter</button>
+                                <button class="btn btn-primary" id="tombol-tampilkan" onclick="filter()" disabled><i class="ph-duotone ph-sort-ascending me-1"></i> Refresh Table</button>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5 mb-3">
-                        <div class="form-group">
-                            <label class="form-label">DPJP</label>
-                            <select class="form-control" id="filter_dpjp" disabled><option value="5" selected>...</option></select>
-                        </div>
+                    <div class="table-responsive border-top" id="show_table" hidden>
+                        <table class="table mb-0 table-hover table-display" id="vantable">
+                            <thead>
+                                <tr>
+                                    <th class="kolom-antrian" hidden>ANTRIAN</th>
+                                    <th style="width: 85%;">KUNJUNGAN PASIEN</th>
+                                    <th style="width: 30%;" class="text-start">TGL KUNJUNGAN</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tampil-tbody">
+                                <tr style='font-size:13px'>
+                                    <td colspan="5">
+                                        <center>
+                                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="form-group">
-                            <label class="form-label">Jenis Penjamin</label>
-                            <select id="filter_penjamin" class="form-control" disabled><option value="0" selected>...</option></select>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="d-sm-flex align-items-center justify-content-between">
-                            <button class="btn btn-light-secondary" href="javascript: void(0);" id="clear_text" onclick="clearFilter()"><i class="ph-duotone ph-eraser me-1"></i> Kosongkan Filter</button>
-                            <button class="btn btn-primary" id="tombol-tampilkan" onclick="filter()" disabled><i class="ph-duotone ph-sort-ascending me-1"></i> Refresh Table</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-responsive border-top" id="show_table" hidden>
-                    <table class="table mb-0 table-hover table-display" id="vantable">
-                        <thead>
-                            <tr>
-                                <th class="kolom-antrian" hidden>ANTRIAN</th>
-                                <th style="width: 85%;">KUNJUNGAN PASIEN</th>
-                                <th style="width: 30%;" class="text-start">TGL KUNJUNGAN</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tampil-tbody">
-                            <tr style='font-size:13px'>
-                                <td colspan="5">
-                                    <center>
-                                        <div class="spinner-border spinner-border-sm" role="status"></div>
-                                    </center>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
+            {{-- <div class="text-end">
+                <a href="ecom_product.html" class="btn btn-link-secondary d-inline-flex align-items-center"><i class="ti ti-chevron-left me-2"></i> Back to Shopping</a>
+            </div> --}}
         </div>
-        {{-- <div class="text-end">
-            <a href="ecom_product.html" class="btn btn-link-secondary d-inline-flex align-items-center"><i class="ti ti-chevron-left me-2"></i> Back to Shopping</a>
-        </div> --}}
     </div>
+    <!-- [ main content ] end -->
+
 </div>
 
-{{-- MODAL STARTED --}}
-{{-- <div id="catatan" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="catatanLabel">
-    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="catatanLabel"><span class="badge text-bg-secondary">CATATAN</span> | IDKUNJUNGAN : <a id="show-id-catatan" class="text-primary"></a></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-3">
-                <small><i class="fas fa-sort-amount-down me-1"></i> <a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> catatan pertama kali ditambahkan</b></a></small>
-                <div class="table-responsive mt-2">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%;" class="text-center">AKSI</th>
-                                <th style="width: 25%;">NAMA PENGGUNA</th>
-                                <th style="width: 65%;">DESKRIPSI CATATAN</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tampil-catatan">
-                            <tr>
-                                <td colspan="15">
-                                    <center>
-                                        <div class="spinner-border spinner-border-sm" role="status"></div>
-                                    </center>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div id="btn-refresh-catatan"></div>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-            </div>
-        </div>
-    </div>
-</div> --}}
-{{-- MODAL ENDED --}}
-
 <script>
-    let dpjpChoices;
+    let tagifyDPJP = null;
     $(document).ready(function() {
         if ("{{ $list['tte_pegawai'] }}" != true) {
             // kalau tidak ada tanda tangan pegawai
@@ -212,10 +174,27 @@
         );
 
         // SELECT CHOICES
-        dpjpChoices = new Choices('#filter_dpjp', {
-            shouldSort: false,
-            allowHTML: true
-        });
+        // const input = document.querySelector('#filter_dpjp');
+
+        // dpjpTagify = new Tagify(input, {
+        //     enforceWhitelist: true,
+        //     tagTextProp: 'name',
+        //     skipInvalid: true,
+
+        //     dropdown: {
+        //         enabled: 0,
+        //         closeOnSelect: true,
+        //         classname: 'users-list',
+        //         searchKeys: ['name', 'spesialis']
+        //     },
+
+        //     templates: {
+        //         tag: tagTemplate,
+        //         dropdownItem: dropdownItemTemplate
+        //     },
+
+        //     whitelist: []
+        // });
 
         // // ENTER TAMPILKAN
         // $('#filter_rawat, #filter_bulan, #filter_dpjp').on('keydown', function (e) {
@@ -237,6 +216,42 @@
     });
 
     // function-function
+    // function tagTemplate(tagData) {
+    //     return `
+    //     <tag
+    //         class="tagify__tag"
+    //         title="${tagData.name}"
+    //         ${this.getAttributes(tagData)}
+    //         contenteditable="false">
+
+    //         <x class="tagify__tag__removeBtn"></x>
+
+    //         <div>
+    //             <span class="tagify__tag-text">
+    //                 ${tagData.name}
+    //                 ${tagData.spesialis ? `(${tagData.spesialis})` : ''}
+    //             </span>
+    //         </div>
+
+    //     </tag>
+    //     `;
+    // }
+
+    // function dropdownItemTemplate(tagData) {
+    //     return `
+    //         <div
+    //             ${this.getAttributes(tagData)}
+    //             class="tagify__dropdown__item">
+
+    //             <span class="fw-medium">
+    //                 ${tagData.name}
+    //                 ${tagData.spesialis ? `<span class="text-muted">(${tagData.spesialis})</span>` : ''}
+    //             </span>
+
+    //         </div>
+    //     `;
+    // }
+
     function getRuangan() {
         idRuang = $('#filter_rawat').val();
         if (idRuang == 5) {
@@ -304,44 +319,129 @@
 
     function getDPJP() {
         let idRuangPerawatan = $('#filter_ruang').val();
+
         $.ajax({
             url: `/api/emr/ruangan/${idRuangPerawatan}/dpjp`,
             type: 'GET',
             dataType: 'json',
-            success: function(res) {
-                dpjpChoices.enable();
-                dpjpChoices.removeActiveItems();
-                dpjpChoices.clearChoices();
-                dpjpChoices.setChoices([
-                    { value: '5', label: 'Semua Dokter', selected: true }
-                ], 'value', 'label', false);
 
-                res.show.forEach(pouch => {
-                    dpjpChoices.setChoices([
-                        {
-                            value: pouch.NIP,
-                            label: `${pouch.NAMADOKTER} (${pouch.DESKRIPSI})`
+            success: function (res) {
+
+                let input = document.querySelector('#filter_dpjp');
+
+                // buat data whitelist
+                let whitelist = res.show.map(item => ({
+                    value: item.ID,
+                    name: item.NAMADOKTER,
+                    description: item.DESKRIPSI,
+                    nip: item.NIP
+                }));
+
+                // jika sudah pernah dibuat destroy dulu
+                if (tagifyDPJP) {
+                    tagifyDPJP.destroy();
+                }
+
+                tagifyDPJP = new Tagify(input, {
+                    tagTextProp: 'name',
+
+                    enforceWhitelist: true,
+                    skipInvalid: true,
+
+                    whitelist: whitelist,
+
+                    dropdown: {
+                        enabled: 1,
+                        closeOnSelect: true,
+                        searchKeys: [
+                            'name',
+                            'description',
+                            'nip'
+                        ]
+                    },
+
+                    templates: {
+
+                        tag: function(tagData) {
+                            return `
+                                <tag title="${tagData.nip}"
+                                    contenteditable="false"
+                                    spellcheck="false"
+                                    class="tagify__tag">
+
+                                    <x title="Remove"
+                                    class="tagify__tag__removeBtn">
+                                    </x>
+
+                                    <div>
+                                        <span class="tagify__tag-text">
+                                            ${tagData.name}
+                                        </span>
+                                        <small class="ms-1 text-muted">
+                                            (${tagData.description})
+                                        </small>
+                                    </div>
+
+                                </tag>
+                            `;
+                        },
+
+
+                        dropdownItem: function(tagData) {
+                            return `
+                                <div class="tagify__dropdown__item"
+                                    tabindex="0">
+
+                                    <strong>
+                                        ${tagData.name}
+                                    </strong>
+
+                                    <br>
+
+                                    <small>
+                                        ${tagData.description}
+                                        | NIP: ${tagData.nip}
+                                    </small>
+
+                                </div>
+                            `;
                         }
-                    ], 'value', 'label', false);
+                    }
                 });
 
-                if (idRuangPerawatan == 5 && res.user) {
-                    dpjpChoices.setChoiceByValue(res.user);
-                }
+
+                // event ketika pilih dokter
+                tagifyDPJP.on('add', function(e){
+
+                    console.log("DPJP dipilih:", e.detail.data);
+
+                    /*
+                    hasil:
+                    {
+                        value: 21,
+                        name: "dr. IDA FARIDA NUROHMAH, Sp. A",
+                        description: "Anak",
+                        nip:"2111422"
+                    }
+                    */
+
+                });
+
+
+                // event hapus
+                tagifyDPJP.on('remove', function(e){
+
+                    console.log("DPJP dihapus:", e.detail.data);
+
+                });
+
+
             },
-            error: function (xhr) {
-                Swal.fire(
-                    'Gagal',
-                    xhr.responseJSON?.message ?? 'Terjadi kesalahan / Gagal memanggil Function!',
-                    'error'
-                );
-                dpjpChoices.disable();
-                dpjpChoices.clearChoices();
-                dpjpChoices.setChoices([
-                    { value: '0', label: 'Tidak Ada Dokter', selected: true }
-                ], 'value', 'label', false);
-            },
-        })
+
+            error: function(xhr){
+                console.error(xhr.responseText);
+            }
+        });
     }
 
     function filter() {
