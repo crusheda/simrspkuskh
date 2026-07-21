@@ -29,7 +29,7 @@
 
 <link rel="stylesheet" href="{{ asset('v2/libs/flaticon/css/all/all.css') }}">
 <link rel="stylesheet" href="{{ asset('v2/libs/lucide/lucide.css') }}">
-{{-- <link rel="stylesheet" href="{{ asset('v2/libs/fontawesome/css/all.min.css') }}"> --}}
+<link rel="stylesheet" href="{{ asset('v2/libs/fontawesome/css/all.min.css') }}">
 <link rel="stylesheet" href="{{ asset('v2/libs/simplebar/simplebar.css') }}">
 <link rel="stylesheet" href="{{ asset('v2/libs/node-waves/waves.css') }}">
 <link rel="stylesheet" href="{{ asset('v2/libs/bootstrap-select/css/bootstrap-select.min.css') }}">
@@ -38,6 +38,8 @@
 <link rel="stylesheet" href="{{ asset('v2/libs/datatables/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('v2/libs/tagify/tagify.css') }}">
 <link rel="stylesheet" href="{{ asset('v2/css/styles.css') }}">
+
+<script src="{{ asset('js/jquery.min.js') }}"></script>
 {{-- <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}" /> --}}
 {{-- <link rel="stylesheet" href="{{ asset('v2/css/styles-ui.css') }}"> --}}
 
@@ -53,5 +55,6 @@
 <link rel="stylesheet" href="{{ asset('v2/fonts/fontawesome.css') }}">
 <!-- [Material Icons] https://fonts.google.com/icons -->
 <link rel="stylesheet" href="{{ asset('v2/fonts/material.css') }}">
-
-<script src="{{ asset('js/jquery.min.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('css/select2.min.css') }}" />
+{{-- <link rel="stylesheet" href="{{ asset('css/plugins/style.css') }}"> --}}
+{{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-datatables/10.0.0/style.min.css"> --}}

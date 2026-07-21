@@ -12,3 +12,4 @@
 <script src="{{ asset('v2/js/main.js') }}"></script>
 <script src="{{ asset('js/plugins/choices.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script src="{{ asset('js/plugins/simple-datatables.js') }}"></script>
