@@ -157,34 +157,43 @@ class EMRController extends Controller
     function getRiwayatKunjungan($NORM)
     {
         $riwayat = DB::table('pendaftaran.kunjungan AS pk')
-                ->select(
-                    'pk.NOMOR AS NOKUNJUNGAN','pp.TANGGAL AS TGLDAFTAR',
-                    'pp.STATUS AS STATUSDAFTAR','pk.STATUS AS STATUSKUNJUNGAN',
-                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
-                    'ru.DESKRIPSI AS NAMARUANGAN',
-                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
-                )
-                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
-                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
-                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
-                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
-                ->where(function ($q) {
-                    $q->where('pk.RUANGAN', 'LIKE', '1020101%')
+            ->select(
+                'pk.NOMOR AS NOKUNJUNGAN',
+                'pp.TANGGAL AS TGLDAFTAR',
+                'pp.STATUS AS STATUSDAFTAR',
+                'pk.STATUS AS STATUSKUNJUNGAN',
+                'kjs.noSEP AS NOSEP',
+                'kjs.tglSEP AS TGLSEP',
+                'ru.DESKRIPSI AS NAMARUANGAN',
+                DB::raw("
+                    master.getNamaLengkapPegawai(
+                        CASE
+                            WHEN dr.NIP IS NULL OR dr.NIP = 0 OR dr.NIP = ''
+                            THEN pj.DPJP_LAYANAN
+                            ELSE dr.NIP
+                        END
+                    ) AS NAMADOKTER
+                "),
+            )
+            ->leftJoin('pendaftaran.pendaftaran AS pp', 'pp.NOMOR', '=', 'pk.NOPEN')
+            ->leftJoin('pendaftaran.penjamin AS pj', 'pj.NOPEN', '=', 'pp.NOMOR')
+            ->leftJoin('bpjs.kunjungan AS kjs', 'kjs.noSEP', '=', 'pj.NOMOR')
+            ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'pk.RUANGAN')
+            ->leftJoin('master.dokter AS dr', 'dr.ID', '=', 'pk.DPJP')
+            ->where(function ($q) {
+                $q->where('pk.RUANGAN', 'LIKE', '1020101%')
                     ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
                     ->orWhere('pk.RUANGAN', 'LIKE', '1020301%')
                     ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
-                })
-                ->where('pp.NORM',$NORM)
-                ->where('pp.STATUS', '!=', 0)
-                ->orderBy('pp.TANGGAL','DESC')
-                ->get();
+            })
+            ->where('pp.NORM', $NORM)
+            ->where('pp.STATUS', '!=', 0)
+            ->orderBy('pp.TANGGAL', 'DESC')
+            ->get();
 
-        $data = [
+        return response()->json([
             'show' => $riwayat,
-        ];
-
-        return response()->json($data, 200);
+        ], 200);
     }
 
     function ruangan($id)

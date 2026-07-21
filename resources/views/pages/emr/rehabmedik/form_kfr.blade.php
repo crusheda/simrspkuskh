@@ -614,7 +614,7 @@
                                                 ${item.nomor == kunjungan && item.bertemu_dokter == 1 && admin == true
                                                     ? `<div class="dropdown" onclick="event.stopPropagation();">
 
-                                                            <div 
+                                                            <div
                                                                 class="avtar avtar-s border border-primary kfr-avatar"
                                                                 data-bs-toggle="dropdown"
                                                                 data-bs-auto-close="true"
@@ -644,7 +644,7 @@
 
                                                         </div>`
                                                     : `<div class="avtar avtar-s border kfr-avatar" onclick="event.stopPropagation();" id="icoGQ`+item.nomor+`"> `+item.group+` <i class="ti ti-minus"></i> `+item.queue+` </div>` }
-                                                
+
                                             </div>
                                             <div class="flex-grow-1 ms-3">
                                                 <div class="row g-1">
@@ -783,7 +783,7 @@
                 const triggerEl = document.querySelector('#tab-pterapi');
                 const tab = new bootstrap.Tab(triggerEl);
                 tab.show();
-                
+
                 generateUlangFormJadwalPelayanan();
 
                 // AFTER THAT
@@ -832,7 +832,13 @@
                     return;
                 }
                 $('#list-form-kfr').empty();
+
                 let content = `<ul class="list-group list-group-flush ">`;
+                var admin = @json(Auth::user()->hasRole(['admin']));
+
+                // Ambil nilai group terbesar
+                const maxGroup = Math.max(...res.data.map(item => Number(item.group)));
+
                 res.data.forEach((item, index) => {
                     let tanggalKunj = new Date(item.tgl_sep).toLocaleDateString('id-ID', {
                         day: 'numeric',
@@ -847,10 +853,10 @@
                         minute: '2-digit'
                     });
 
-                    content += `<li class="list-group-item list-group-item-action" data-id="${item.nomor_init}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Klik Untuk Gunakan Formulir">
+                    content += `<li class="list-group-item list-group-item-action" data-id="${item.nomor_init}" data-group="${item.group}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Klik Untuk Gunakan Formulir">
                                         <div class="d-flex align-items-center">
                                             <div class="flex-shrink-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="NOMOR GROUP FORM KFR">
-                                                <div class="avtar avtar-s bg-dark text-white"> ${item.group} </div>
+                                                <div class="avtar avtar-s bg-${maxGroup==item.group?'success':'dark'} text-white"> ${item.group} </div>
                                             </div>
                                             <div class="flex-grow-1 ms-3">
                                                 <div class="row g-1">
@@ -859,7 +865,7 @@
                                                         <p class="text-muted mb-0"><small><b class="text-danger">DPJP</b>: <u>${item.nama_dokter}</u></small></p>
                                                     </div>
                                                     <div class="col-6 text-end">
-                                                        <h6 class="mb-1">Kunjungan/SEP Tgl. <span class="badge text-bg-secondary ms-1">${tanggalKunj}</span></h6>
+                                                        <h6 class="mb-1">Kunjungan/SEP Tgl. <span class="badge text-bg-${maxGroup==item.group?'success':'secondary'} ms-1">${tanggalKunj}</span></h6>
                                                         <p class="text-muted mb-0"><small>Formulir dibuat pada ${tanggalDibuat}</small></p>
                                                     </div>
                                                 </div>
@@ -875,11 +881,25 @@
                 $('#list-form-kfr').on('click', '.list-group-item', function () {
 
                     const nomor_init = $(this).data('id');
+                    let groupCard = $(this).data('group');
+
+                    $('#showListFormKfr').modal('hide');
+
                     if (nomor_init == kunjungan) {
                         Swal.fire({title: 'Maaf!!', text: 'Formulir yang dipilih adalah formulir pada kunjungan saat ini', icon: 'info', timer: 5000, timerProgressBar: true});
                         return;
                     }
-                    $('#showListFormKfr').modal('hide');
+
+                    if (groupCard != maxGroup) {
+                        Swal.fire({title: 'Maaf!!', text: 'Formulir yang dipilih tidak sesuai urutan, pilih formulir paling akhir dalam urutan group yang tersedia', icon: 'warning', showConfirmButton: true, timer: 5000, timerProgressBar: true}).then((result) => {
+                            if (result.isConfirmed) {
+                                $('#showListFormKfr').modal('show');
+                            } else {
+                                $('#showListFormKfr').modal('show');
+                            }
+                        });
+                        return;
+                    }
 
                     Swal.fire({
                         title: 'Hubungkan Formulir?',

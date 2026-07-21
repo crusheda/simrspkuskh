@@ -230,46 +230,6 @@
                             <div style="max-height: 420px; overflow-y: auto;" class="rounded-bottom">
                                 <ul class="list-group list-group-flush" id="load-riwayat-kunjungan-pasien">
                                     <li class="list-group-item"><center><i class="fas fa-sync fa-spin me-1"></i> Menginisialisasi Riwayat Kunjungan</center></li>
-                                    {{-- @if ($list['riwayat']->isNotEmpty())
-                                        @foreach ($list['riwayat'] as $item)
-                                            <li class="list-group-item">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-shrink-0">
-                                                        <button class="avtar avtar-xs btn btn-light-secondary flex-shrink-0 me-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail Kunjungan"
-                                                            onclick="window.location.href='{{ route('emr.detail', ['KUNJUNGAN' => $item->NOKUNJUNGAN]) }}'">
-                                                            <i class="ph-duotone ph-stethoscope"></i>
-                                                        </button>
-                                                    </div>
-                                                    <div class="flex-grow-1 mx-2">
-                                                        <h6 class="mb-0">{{ $item->NAMARUANGAN }}</h6>
-                                                        <p class="mb-0">{{ Str::limit($item->NAMADOKTER, 25, '...') }}</p>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <p class="mb-0 text-end" style="font-size: 12px; cursor: pointer">
-                                                            @if ($item->STATUSDAFTAR == 1)
-                                                                Aktif
-                                                            @else
-                                                                @if ($item->STATUSDAFTAR == 2)
-                                                                    Selesai
-                                                                @else
-                                                                    Non Aktif/Batal
-                                                                @endif
-                                                            @endif
-                                                        </p>
-                                                        <span class="mt-0 badge bg-light-dark" style="font-size: 10px; cursor: pointer" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ \Carbon\Carbon::parse($item->TGLDAFTAR)->translatedFormat('d F Y') }}">
-                                                            {{ \Carbon\Carbon::parse($item->TGLDAFTAR)->diffForHumans() }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        @endforeach
-                                    @else
-                                        <li class="list-group-item">
-                                            <div class="d-flex align-items-center text-center">
-                                                <span class="text-muted">Tidak ada kunjungan terakhir</span>
-                                            </div>
-                                        </li>
-                                    @endif --}}
                                 </ul>
                             </div>
                         </div>
@@ -438,6 +398,7 @@
                     res.show.forEach((item, index) => {
 
                         let statusdaftar = '';
+                        let dokter = '...';
 
                         if (item.STATUSDAFTAR == 1) {
                             statusdaftar = '<badge class="badge rounded-pill text-bg-success">Aktif</badge>';
@@ -445,6 +406,14 @@
                             statusdaftar = '<badge class="badge rounded-pill text-bg-primary">Selesai</badge>';
                         } else {
                             statusdaftar = '<badge class="badge rounded-pill text-bg-danger">Non Aktif/Batal</badge>';
+                        }
+
+                        if (item.NAMADOKTER) {
+                            if (item.NAMADOKTER.length > 25) {
+                                dokter = item.NAMADOKTER.substring(0,25) + '...';
+                            } else {
+                                dokter = item.NAMADOKTER;
+                            }
                         }
 
                         content += `
@@ -462,7 +431,7 @@
 
                                     <div class="flex-grow-1 mx-2">
                                         <h6 class="mb-0">${item.NAMARUANGAN} ${item.NOKUNJUNGAN == kunjungan? `<badge class="badge text-bg-warning p-1">SAAT INI</badge>` : ``}</h6>
-                                        <p class="mb-0">${item.NAMADOKTER.length > 25 ? item.NAMADOKTER.substring(0,25) + '...' : item.NAMADOKTER}</p>
+                                        <p class="mb-0">${dokter}</p>
                                     </div>
 
                                     <div class="flex-shrink-0">
@@ -483,6 +452,8 @@
                     });
 
                     content += `</ul>`;
+
+                    console.log(content);
 
                     $('#load-riwayat-kunjungan-pasien').empty().append(content);
                 },
