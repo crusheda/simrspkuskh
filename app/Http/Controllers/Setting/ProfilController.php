@@ -11,6 +11,7 @@ use Auth, Storage;
 
 class ProfilController extends Controller
 {
+    // SIRMED v.1
     function index()
     {
         $show = DB::table('aplikasi.pengguna AS ap')
@@ -38,6 +39,37 @@ class ProfilController extends Controller
         ];
 
         return view('pages.setting.profil')->with('list', $data);
+    }
+
+    // SIRMED v.2
+    function indexV2()
+    {
+        $show = DB::table('aplikasi.pengguna AS ap')
+                    ->leftJoin('master.pegawai AS pg','pg.NIP','=','ap.NIP')
+                    ->leftJoin('pegawai.kontak_pegawai AS kp', function($join) {
+                        $join->on('kp.NIP','=','pg.NIP')
+                                ->where('kp.STATUS', '=', 1);
+                    })
+                    ->leftJoin('master.referensi AS ref', function($join) {
+                        $join->on('ref.ID', '=', 'kp.JENIS')
+                                ->where('ref.JENIS', '=', 8);
+                    })
+                    ->select(
+                        'pg.*',
+                        'kp.NOMOR AS NOHP',
+                        'ref.DESKRIPSI AS JENISNOHP',
+                        DB::raw('master.getNamaLengkapPegawai(pg.NIP) AS NAMALENGKAP'),
+                        'pg.nama AS NAMA'
+                    )
+                    ->where('ap.ID', Auth::user()->ID)
+                    ->where('pg.STATUS', 1)
+                    ->first();
+
+        $data = [
+            'show' => $show,
+        ];
+
+        return view('pages.v2.setting.profil')->with('list', $data);
     }
 
     //TTD RESUME

@@ -361,12 +361,11 @@
                                 status = '<span class="badge bg-light-danger text-dark p-0" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Kunjungan Dibatalkan</span>';
                             }
                         }
+                        sepNF = false;
                         if (item.NOSEP) {
                             valSEP = item.NOSEP.substring(8, 12); // 0624
                             parts = item.TGLSEP.split("-"); // hasil: ['08', '06', '2024'] || e.g. 2024-01-12 00:00:00
                             valTGLSEP = parts[1]+parts[0].slice(-2); // '0624'
-                            // console.log(valSEP);
-                            // console.log(valTGLSEP);
                             if (valSEP == valTGLSEP) {
                                 SEP = '<b class="text-purple-700">'+item.NOSEP+'</b>';
                                 btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-success" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
@@ -378,19 +377,21 @@
                                                 <i class="fas fa-check fs-5 text-danger"></i>
                                             </button>`;
                             }
+                            sepNF = false;
                         } else {
                             SEP = '<b class="text-secondary">SEP Tidak Ditemukan</b>';
                             btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan">
                                             <i class="fas fa-times fs-5 text-secondary"></i>
                                         </button>`;
+                            sepNF = true;
                         }
                         if (item.JENISPENJAMIN == 1) {
-                            clrTxPj = 'text-pink-900';
+                            clrTxPj = 'text-emerald';
                         } else {
                             if (item.JENISPENJAMIN == 2) {
-                                clrTxPj = 'text-blue-900';
+                                clrTxPj = 'text-blue';
                             } else {
-                                clrTxPj = 'text-orange-900';
+                                clrTxPj = 'text-orange';
                             }
                         }
 
@@ -417,7 +418,7 @@
                                         <td class="ps-3">
                                             <h4 class="mb-1">
                                                 <b data-bs-toggle="tooltip" data-bs-placement="top" title="Nomor Rekam Medis">
-                                                    RM.${item.NORM}
+                                                    RM. ${item.NORM}
                                                 </b>
                                                 -
                                                 <b class="text-primary">${item.NAMAPASIEN}</b>
@@ -427,11 +428,11 @@
                                                 <b>DPJP</b> : ${item.NAMADOKTER}
                                             </a><br>
 
-                                            <code>
-                                                Ruangan <b class="text-pink-900">${item.NAMARUANGAN}</b> |
-                                                <b class="text-indigo-900" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b> |
+                                            <b>
+                                                Ruangan <b class="text-pink">${item.NAMARUANGAN}</b> |
+                                                <b ${sepNF?'hidden':''}><b class="text-lavender" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b> |</b>
                                                 <b class="${clrTxPj}">${item.NAMAPENJAMIN}</b>
-                                            </code>
+                                            </b>
 
                                             <br>
 

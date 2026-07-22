@@ -54,8 +54,13 @@ Route::group(['prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
 Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
     Route::get('dashboard', [DashboardController::class, 'indexV2'])->name('v2.dashboard');
 
+    // SETTING - PROFIL
+        Route::get('setting/profil', [ProfilController::class, 'indexV2'])->name('v2.profil');
+        // Route::get('setting/roles', [RolesController::class, 'index'])->name('roles');
+        // Route::get('setting/permissions', [PermissionsController::class, 'index'])->name('permissions');
+
     // DIGITAL
-        // MEICAL RECORD
+        // MEDICAL RECORD
         Route::get('emr', [EMRController::class, 'indexV2'])->name('v2.emr');
 
 });

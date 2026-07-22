@@ -40,6 +40,7 @@
 <link rel="stylesheet" href="{{ asset('v2/css/styles.css') }}">
 
 <script src="{{ asset('js/jquery.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
 {{-- <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}" /> --}}
 {{-- <link rel="stylesheet" href="{{ asset('v2/css/styles-ui.css') }}"> --}}
 
@@ -58,3 +59,12 @@
 <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}" />
 {{-- <link rel="stylesheet" href="{{ asset('css/plugins/style.css') }}"> --}}
 {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-datatables/10.0.0/style.min.css"> --}}
+
+<style>
+    canvas {
+    width: 200px;
+    height: 200px;
+    touch-action: none; /* penting untuk mencegah scroll saat tanda tangan */
+    pointer-events: auto !important;
+}
+</style>

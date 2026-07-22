@@ -791,6 +791,7 @@ progress {
   padding-left: calc(var(--bs-gutter-x) * 0.5);
   margin-right: auto;
   margin-left: auto;
+  margin-top: 1rem !important;
 }
 
 @media (min-width: 576px) {
@@ -843,6 +844,10 @@ progress {
   padding-right: calc(var(--bs-gutter-x) * 0.5);
   padding-left: calc(var(--bs-gutter-x) * 0.5);
   margin-top: var(--bs-gutter-y);
+}
+
+.row > [class*="col"] > .card {
+    height: auto !important;
 }
 
 .col {
@@ -5147,7 +5152,7 @@ textarea.form-control-lg {
 
 .list-group {
   --bs-list-group-color: var(--bs-heading-color);
-  --bs-list-group-bg: var(--bs-body-bg);
+  /* --bs-list-group-bg: var(--bs-body-bg); */
   --bs-list-group-border-color: var(--bs-border-color);
   --bs-list-group-border-width: var(--bs-border-width);
   --bs-list-group-border-radius: var(--bs-border-radius);
@@ -21244,3 +21249,87 @@ span.flatpickr-weekday {
 .choices__placeholder {
   opacity: 0.5;
 }
+
+/* COLORED TEXT */
+/* ===== Basic Colors ===== */
+.text-white { color: #ffffff !important; }
+.text-black { color: #000000 !important; }
+.text-gray { color: #6c757d !important; }
+.text-lightgray { color: #adb5bd !important; }
+.text-darkgray { color: #495057 !important; }
+
+/* ===== Red ===== */
+.text-red { color: #dc3545 !important; }
+.text-darkred { color: #8b0000 !important; }
+.text-lightred { color: #ff6b6b !important; }
+.text-crimson { color: #dc143c !important; }
+
+/* ===== Pink ===== */
+.text-pink { color: #e83e8c !important; }
+.text-hotpink { color: #ff69b4 !important; }
+.text-lightpink { color: #ffb6c1 !important; }
+.text-deeppink { color: #ff1493 !important; }
+
+/* ===== Purple ===== */
+.text-purple { color: #6f42c1 !important; }
+.text-indigo { color: #6610f2 !important; }
+.text-violet { color: #8a2be2 !important; }
+.text-lavender { color: #b57edc !important; }
+
+/* ===== Blue ===== */
+.text-blue { color: #0d6efd !important; }
+.text-skyblue { color: #0dcaf0 !important; }
+.text-lightblue { color: #87cefa !important; }
+.text-darkblue { color: #0b5ed7 !important; }
+.text-navy { color: #03407D !important; }
+.text-cyan { color: #17a2b8 !important; }
+.text-teal { color: #20c997 !important; }
+
+/* ===== Green ===== */
+.text-green { color: #198754 !important; }
+.text-lightgreen { color: #90ee90 !important; }
+.text-lime { color: #32cd32 !important; }
+.text-darkgreen { color: #006400 !important; }
+.text-emerald { color: #10b981 !important; }
+.text-mint { color: #3eb489 !important; }
+
+/* ===== Yellow ===== */
+.text-yellow { color: #ffc107 !important; }
+.text-gold { color: #ffd700 !important; }
+.text-khaki { color: #f0e68c !important; }
+.text-amber { color: #ffbf00 !important; }
+
+/* ===== Orange ===== */
+.text-orange { color: #fd7e14 !important; }
+.text-darkorange { color: #ff8c00 !important; }
+.text-coral { color: #ff7f50 !important; }
+.text-peach { color: #ffb07c !important; }
+
+/* ===== Brown ===== */
+.text-brown { color: #8b4513 !important; }
+.text-chocolate { color: #d2691e !important; }
+.text-tan { color: #d2b48c !important; }
+
+/* ===== Neutral ===== */
+.text-silver { color: #c0c0c0 !important; }
+.text-charcoal { color: #36454f !important; }
+.text-slate { color: #708090 !important; }
+
+/* ===== Fancy Colors ===== */
+.text-turquoise { color: #40e0d0 !important; }
+.text-aqua { color: #00ffff !important; }
+.text-olive { color: #808000 !important; }
+.text-maroon { color: #800000 !important; }
+.text-magenta { color: #ff00ff !important; }
+.text-plum { color: #dda0dd !important; }
+.text-orchid { color: #da70d6 !important; }
+.text-salmon { color: #fa8072 !important; }
+.text-tomato { color: #ff6347 !important; }
+.text-ivory { color: #fffff0 !important; }
+.text-beige { color: #f5f5dc !important; }
+.text-azure { color: #007fff !important; }
+.text-rose { color: #ff007f !important; }
+.text-ruby { color: #e0115f !important; }
+.text-wine { color: #722f37 !important; }
+.text-bronze { color: #cd7f32 !important; }
+.text-copper { color: #b87333 !important; }

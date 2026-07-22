@@ -1,38 +1,44 @@
 (() => {
     'use strict';
-	
-	const APP_SIDEBAR_BREAKPOINT = 1191;
-	var docEl = document.documentElement;
 
-	// App settings default
-	let appSettings = {
-		appTheme: 'light',
-		appSidebar: 'full',
-		appColor: 'blue',
-	};
+    const APP_SIDEBAR_BREAKPOINT = 1191;
+    const docEl = document.documentElement;
 
-	// Update settings
-	function setAppSettings(newSettings = {}) {
-		appSettings = {
-			...appSettings,
-			...newSettings
-		};
-		applySettings();
-	}
+    let appSettings = {
+        appTheme: 'light',
+        appSidebar: 'full',
+        appColor: 'blue',
+    };
 
-	// Apply settings to DOM
-	function applySettings() {
-		docEl.setAttribute("data-bs-theme", appSettings.appTheme);
+    function setAppSettings(newSettings = {}) {
+        appSettings = {
+            ...appSettings,
+            ...newSettings
+        };
 
-		if (window.innerWidth >= APP_SIDEBAR_BREAKPOINT) {
-			docEl.setAttribute("data-app-sidebar", appSettings.appSidebar);
-		}
+        applySettings();
+    }
 
-		docEl.setAttribute("data-color-theme", appSettings.appColor);
-	}
+    function applySettings() {
 
-	// Initialize
-	document.addEventListener("DOMContentLoaded", applySettings);
-	window.setAppSettings = setAppSettings;
+        docEl.setAttribute('data-bs-theme', appSettings.appTheme);
+
+        // Desktop
+        if (window.innerWidth >= APP_SIDEBAR_BREAKPOINT) {
+            docEl.setAttribute('data-app-sidebar', appSettings.appSidebar);
+        }
+        // Mobile
+        else {
+            docEl.setAttribute('data-app-sidebar', 'mini-hover');
+        }
+
+        docEl.setAttribute('data-color-theme', appSettings.appColor);
+    }
+
+    document.addEventListener('DOMContentLoaded', applySettings);
+
+    window.addEventListener('resize', applySettings);
+
+    window.setAppSettings = setAppSettings;
 
 })();

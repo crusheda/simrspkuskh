@@ -17,19 +17,45 @@
 		if (!appTogglers.length || !appMenubar) return;
 
 		appTogglers.forEach(toggler => {
-			toggler.addEventListener('click', () => {
-				toggler.classList.toggle('active');
-				appMenubar.classList.toggle('open');
+    toggler.addEventListener('click', () => {
 
-				if (window.innerWidth >= 1280) {
-					const current = docEl.getAttribute('data-app-sidebar');
-					docEl.setAttribute(
-						'data-app-sidebar',
-						current === 'full' ? 'mini' : 'full'
-					);
-				}
-			});
-		});
+        toggler.classList.toggle('active');
+        appMenubar.classList.toggle('open');
+
+
+        if (window.innerWidth >= 1280) {
+
+            const current = docEl.getAttribute('data-app-sidebar');
+
+            docEl.setAttribute(
+                'data-app-sidebar',
+                current === 'full' ? 'mini' : 'full'
+            );
+
+
+        } else {
+
+            // MOBILE
+            if (appMenubar.classList.contains('open')) {
+
+                docEl.setAttribute(
+                    'data-app-sidebar',
+                    'full'
+                );
+
+            } else {
+
+                docEl.setAttribute(
+                    'data-app-sidebar',
+                    'mini-hover'
+                );
+
+            }
+
+        }
+
+    });
+});
 
 		appMenubar.addEventListener('mouseenter', () => {
 			if (docEl.getAttribute('data-app-sidebar') === 'mini') {
@@ -304,7 +330,7 @@
 		   CURRENT PAGE
 		============================= */
 
-        const currentPage = window.location.pathname.replace(/\/$/, '');
+        let currentPage = window.location.pathname.replace(/\/$/, '');
 
 		if (!currentPage) currentPage = 'v2/dashboard';
 
@@ -332,40 +358,91 @@
 
         }).first();
 
-		if ($activeLink.length) {
+        const hasActiveMenu = $activeLink.length > 0;
+        const APP_SIDEBAR_BREAKPOINT = 1191;
+        const isMobile = window.innerWidth < APP_SIDEBAR_BREAKPOINT;
 
-			// sidebar active
-			$activeLink.addClass('active');
-			$activeLink.parent('li').addClass('active');
+        if (isMobile) {
 
-			// parent menu open
-			$activeLink
-				.parents('.menu-inner').show()
-				.prev('a').addClass('open active');
+            // Mobile selalu menggunakan mini-hover
+            $('html').attr('data-app-sidebar', 'mini-hover');
+            $('#appMenubar').removeClass('open');
 
-			/* =============================
-			   TAB SYNC (IMPORTANT PART)
-			============================= */
-			var $tabPane = $activeLink.closest('.tab-pane');
+        } else {
 
-			if ($tabPane.length) {
-				$tabPane.addClass('active show');
+            // Desktop
+            $('html').attr('data-app-sidebar', hasActiveMenu ? 'full' : 'mini');
+            $('#appMenubar').toggleClass('open', hasActiveMenu);
 
-				var tabId = $tabPane.attr('id');
-				$('.app-menubar-tabs .menu-link[href="#' + tabId + '"]')
-					.addClass('active');
-			}
-		}else {
-			var $firstTab = $('.app-menubar-tabs .menu-link').first();
-			var firstTabId = $firstTab.attr('href');
+        }
 
-			$firstTab.addClass('active');
-			$(firstTabId).addClass('active show');
+        if (hasActiveMenu) {
 
-			var $firstMenu = $(firstTabId).find('.app-navbar a').first();
-			$firstMenu.addClass('open active');
-			$firstMenu.next('.menu-inner').show();
-		}
+            $activeLink.addClass('active');
+            $activeLink.parent('li').addClass('active');
+
+            $activeLink
+                .parents('.menu-inner')
+                .show()
+                .prev('a')
+                .addClass('open active');
+
+            const $tabPane = $activeLink.closest('.tab-pane');
+
+            if ($tabPane.length) {
+                $tabPane.addClass('active show');
+
+                const tabId = $tabPane.attr('id');
+                $('.app-menubar-tabs .menu-link[href="#' + tabId + '"]')
+                    .addClass('active');
+            }
+
+        } else {
+
+            // Tetap tampilkan tab pertama agar konten sidebar tidak kosong
+            const $firstTab = $('.app-menubar-tabs .menu-link').first();
+
+            if ($firstTab.length) {
+                $firstTab.addClass('active');
+                $($firstTab.attr('href')).addClass('active show');
+            }
+
+        }
+		// if ($activeLink.length) {
+
+        //     $('#appMenubar').addClass('open');
+
+		// 	// sidebar active
+		// 	$activeLink.addClass('active');
+		// 	$activeLink.parent('li').addClass('active');
+
+		// 	// parent menu open
+		// 	$activeLink
+		// 		.parents('.menu-inner').show()
+		// 		.prev('a').addClass('open active');
+
+		// 	/* =============================
+		// 	   TAB SYNC (IMPORTANT PART)
+		// 	============================= */
+		// 	var $tabPane = $activeLink.closest('.tab-pane');
+
+		// 	if ($tabPane.length) {
+		// 		$tabPane.addClass('active show');
+
+		// 		var tabId = $tabPane.attr('id');
+		// 		$('.app-menubar-tabs .menu-link[href="#' + tabId + '"]')
+		// 			.addClass('active');
+		// 	}
+        // } else {
+        //     // Route tidak ditemukan pada sidebar
+        //     // Pastikan sidebar tetap collapse
+
+        //     $('#appMenubar').removeClass('open');
+
+        //     // Tidak ada tab maupun menu yang aktif
+        //     $('.app-menubar-tabs .menu-link').removeClass('active');
+        //     $('.app-tab-content .tab-pane').removeClass('active show');
+        // }
 	};
 
 

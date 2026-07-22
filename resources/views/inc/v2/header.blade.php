@@ -257,7 +257,7 @@
                         <div class="dropdown-divider my-1"></div>
                     </li>
                     <li>
-                        <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profil') }}">
+                        <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('v2.profil') }}">
                             <i class="fi fi-rr-user scale-1x"></i> Lihat Profil
                         </a>
                     </li>

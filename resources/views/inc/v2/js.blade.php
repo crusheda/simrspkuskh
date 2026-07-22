@@ -12,4 +12,16 @@
 <script src="{{ asset('v2/js/main.js') }}"></script>
 <script src="{{ asset('js/plugins/choices.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"></script>
 <script src="{{ asset('js/plugins/simple-datatables.js') }}"></script>
+
+{{-- DAYJS --}}
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/localizedFormat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/locale/id.js"></script>
+<script>
+    dayjs.extend(dayjs_plugin_relativeTime);
+    dayjs.extend(dayjs_plugin_localizedFormat);
+    dayjs.locale('id');
+</script>
