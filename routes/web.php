@@ -62,6 +62,7 @@ Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'v2', 'as' => ''], fu
     // DIGITAL
         // MEDICAL RECORD
         Route::get('emr', [EMRController::class, 'indexV2'])->name('v2.emr');
+        Route::get('emr/{KUNJUNGAN}', [EMRController::class, 'detailV2'])->name('v2.emr.detail');
 
 });
 

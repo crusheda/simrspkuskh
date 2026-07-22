@@ -353,12 +353,12 @@
                     content = ``;
                     res.show.forEach(item => {
                         if (item.STATUS == 1) {
-                            status = '<span class="badge bg-light-warning text-dark p-0" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Pasien berada di ruangan ini / sedang dilayani</span>';
+                            status = '<span class="badge bg-warning-subtle text-dark border border-warning-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Pasien berada di ruangan ini / sedang dilayani</span>';
                         } else {
                             if (item.STATUS == 2) {
-                                status = '<span class="badge bg-light-success text-dark p-0" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Kunjungan Selesai</span>';
+                                status = '<span class="badge bg-success-subtle text-dark border border-success-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Kunjungan Selesai</span>';
                             } else {
-                                status = '<span class="badge bg-light-danger text-dark p-0" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Kunjungan Dibatalkan</span>';
+                                status = '<span class="badge bg-danger-subtle text-dark border border-danger-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Kunjungan Dibatalkan</span>';
                             }
                         }
                         sepNF = false;
@@ -401,7 +401,7 @@
                                 : '-';
 
                             antrian = `
-                                <span class="badge bg-secondary-subtle text-secondary" style="font-size: 35pt;width:100%;height:auto;">
+                                <span class="badge bg-light-subtle border border-primary-subtle text-secondary shadow-lg" style="font-size: 35pt;width:100%;height:auto;">
                                     ${item.POS_ANTRIAN ?? '-'}-${nomorAntrian}
                                 </span>
                             `;
@@ -409,7 +409,7 @@
                             antrian = ``;
                         }
 
-                        content += `<tr class="clickable" data-href="/emr/${item.NOMOR}">
+                        content += `<tr class="clickable" data-href="/v2/emr/${item.NOMOR}">
 
                                         <!-- Nomor Antrian -->
                                         <td class="text-center align-middle kolom-antrian" hidden>${antrian}</td>
@@ -424,15 +424,15 @@
                                                 <b class="text-primary">${item.NAMAPASIEN}</b>
                                             </h4>
 
-                                            <a class="text-dark" href="javascript:void(0)" data-bs-toggle="tooltip" data-bs-placement="top" title="Dokter Penanggung Jawab Pasien">
+                                            <a class="text-dark" href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" title="Dokter Penanggung Jawab Pasien">
                                                 <b>DPJP</b> : ${item.NAMADOKTER}
                                             </a><br>
 
-                                            <b>
-                                                Ruangan <b class="text-pink">${item.NAMARUANGAN}</b> |
-                                                <b ${sepNF?'hidden':''}><b class="text-lavender" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b> |</b>
+                                            <a class="fw-medium text-dark" href="javascript:void(0);">
+                                                Ruangan <b class="text-pink">${item.NAMARUANGAN}</b> <i class="ri-subtract-line"></i>
+                                                <b ${sepNF?'hidden':''}><b class="text-lavender" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b> <i class="ri-subtract-line"></i></b>
                                                 <b class="${clrTxPj}">${item.NAMAPENJAMIN}</b>
-                                            </b>
+                                            </a>
 
                                             <br>
 

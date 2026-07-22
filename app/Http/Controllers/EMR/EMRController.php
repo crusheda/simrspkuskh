@@ -32,21 +32,6 @@ class EMRController extends Controller
         return view('pages.emr.index')->with('list', $data);
     }
 
-    function indexV2() // SIRMED v.2
-    {
-        $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
-
-        $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')->where('nip',Auth::user()->NIP)->whereNull('deleted_at')->exists();
-
-        $data = [
-            'yearMonth' => $yearMonth,
-            // 'dr' => $dr,
-            'tte_pegawai' => $tte_pegawai,
-        ];
-
-        return view('pages.v2.medicalrecord.index')->with('list', $data);
-    }
-
     function detail($KUNJUNGAN)
     {
         $show = DB::table('pendaftaran.kunjungan AS pk')
@@ -148,6 +133,104 @@ class EMRController extends Controller
             ];
 
             return view('pages.emr.detail')->with('list', $data);
+        } else {
+            return redirect()->back()->withErrors('Kunjungan '.$KUNJUNGAN.' Tidak Ditemukan');
+        }
+    }
+
+    function indexV2() // SIRMED v.2
+    {
+        $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
+
+        $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')->where('nip',Auth::user()->NIP)->whereNull('deleted_at')->exists();
+
+        $data = [
+            'yearMonth' => $yearMonth,
+            // 'dr' => $dr,
+            'tte_pegawai' => $tte_pegawai,
+        ];
+
+        return view('pages.v2.medicalrecord.index')->with('list', $data);
+    }
+
+    function detailV2($KUNJUNGAN)
+    {
+        $show = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(
+                    'pk.*',
+                    'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
+                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
+                    'kjs.noKartu AS NOBPJS',
+                    'ru.ID AS IDRUANGAN',
+                    'ru.DESKRIPSI AS NAMARUANGAN',
+                    'kips.NOMOR AS NIKPASIEN',
+                    'ps.NAMA AS NAMALENGKAPPASIEN',
+                    'ps.PANGGILAN AS PANGGILANPASIEN',
+                    'ps.TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+                    'kps.NOMOR AS NOHPPASIEN',
+                    'kgs.NAMA AS KELUARGAPASIEN',
+                    DB::raw("
+                        IF(
+                            ps.JENIS_KELAMIN = 1,
+                            'LAKI-LAKI',
+                            IF(
+                                ps.JENIS_KELAMIN = 2,
+                                'PEREMPUAN',
+                                'TIDAK DIKETAHUI'
+                            )
+                        ) AS JKPASIEN
+                    "),
+                    DB::raw("
+                        IF(
+                            kgs.JENIS_KELAMIN = 1,
+                            'LAKI-LAKI',
+                            IF(
+                                kgs.JENIS_KELAMIN = 2,
+                                'PEREMPUAN',
+                                'TIDAK DIKETAHUI'
+                            )
+                        ) AS JKKELUARGAPASIEN
+                    "),
+                    DB::raw("(
+                        SELECT DESKRIPSI
+                        FROM master.referensi AS refkgs
+                        WHERE refkgs.ID = kgs.SHDK
+                        AND refkgs.JENIS = 7
+                    ) AS STKELUARGAPASIEN"),
+                    DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
+                    DB::raw('master.getAlamatPasienCustom(ps.NORM) AS ALAMATPASIEN'),
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                    DB::raw('master.getCariUmur(pp.TANGGAL,ps.TANGGAL_LAHIR) AS UMURPASIEN'),
+                    DB::raw("(
+                        SELECT DESKRIPSI
+                        FROM master.wilayah AS wil
+                        WHERE wil.ID = ps.TEMPAT_LAHIR
+                    ) AS TLPASIEN"),
+                )
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
+                ->leftJoin('master.kontak_pasien AS kps','ps.NORM','=','kps.NORM')
+                ->leftJoin('master.keluarga_pasien AS kgs','ps.NORM','=','kgs.NORM')
+                ->leftJoin('master.kartu_identitas_pasien AS kips','ps.NORM','=','kips.NORM')
+                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                ->where('pk.NOMOR',$KUNJUNGAN)
+                ->first();
+
+        if ($show) {
+
+            $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')->where('nip',Auth::user()->NIP)->whereNull('deleted_at')->exists();
+
+            $data = [
+                'show' => $show,
+                // 'riwayat' => $riwayat,
+                'KUNJUNGAN' => $KUNJUNGAN,
+                'tte_pegawai' => $tte_pegawai,
+            ];
+
+            return view('pages.v2.medicalrecord.detail.index')->with('list', $data);
         } else {
             return redirect()->back()->withErrors('Kunjungan '.$KUNJUNGAN.' Tidak Ditemukan');
         }

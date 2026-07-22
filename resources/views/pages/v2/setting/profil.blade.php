@@ -116,12 +116,12 @@
                 <div class="card-body">
                     <form>
                         <div class="row mb-3">
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <label class="form-label">NIP (<b class="text-yellow">Terisi Otomatis</b>)</label>
                                 <input type="number" class="form-control" value="{{ Auth::user()->NIP }}"
                                     disabled>
                             </div>
-                            <div class="col-md-10">
+                            <div class="col-md-9">
                                 <label class="form-label">Nama Lengkap + Gelar</label>
                                 <input type="text" class="form-control"
                                     value="{{ $list['show']->NAMALENGKAP ?? $list['show']->NAMA }}" disabled>
@@ -138,12 +138,12 @@
                                 <input type="tel" class="form-control" value="{{ $list['show']->NOHP }}"
                                     disabled>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label class="form-label">Tempat Lahir</label>
                                 <input type="text" class="form-control"
                                     value="{{ $list['show']->TEMPAT_LAHIR }}" disabled>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <label class="form-label">Tanggal Lahir</label>
                                 <input type="date" class="form-control"
                                     value="{{ $list['show']->TANGGAL_LAHIR }}" disabled>
