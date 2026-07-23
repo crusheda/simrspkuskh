@@ -5,19 +5,20 @@
 <div class="container-fluid">
 
     <!-- [ breadcrumb ] start -->
-    <div class="app-page-head d-flex align-items-center justify-content-between">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                    <a href="{{ route('v2.dashboard') }}">
-                        <i class="fi fi-rr-home"></i>
-                    </a>
-                </li>
-                <li class="breadcrumb-item" aria-current="page">Setting</li>
-                <li class="breadcrumb-item active" aria-current="page">Profil Pengguna</li>
-            </ol>
-        </nav>
-    </div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb px-3 py-2 bg-primary-subtle rounded-3">
+            <li class="breadcrumb-item">
+                <a class="link-primary" href="{{ route('v2.dashboard') }}">
+                    <i class="fi fi-rr-home"></i>
+                </a>
+            </li>
+            <li class="breadcrumb-item"><a class="link-primary fw-medium text-decoration-none" href="javascript:void(0);">Setting</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Profil Pengguna</li>
+        </ol>
+
+        <ol class="breadcrumb mb-0">
+        </ol>
+    </nav>
     <!-- [ breadcrumb ] end -->
 
     <!-- [ Main Content ] start -->

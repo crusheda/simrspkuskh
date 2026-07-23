@@ -2,18 +2,18 @@
     <div class="col-md-12" id="formJPel" hidden>
         <div class="card table-card border shadow-none">
             <div class="card-header d-flex align-items-center justify-content-between p-3">
-                <h5 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Form <b class="text-primary">Jadwal Pelayanan Pasien</b></h5>
+                <h5 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Form <b class="text-success">Jadwal Pelayanan Pasien</b></h5>
                 <div>
-                    Pengisian Formulir ini <b class="text-danger">Hanya Sekali Per Kunjungan</b>, Pastikan Data <b class="text-success">Sudah Benar Sebelum Menyimpan</b>!
+                    Pengisian Formulir ini <b class="text-danger">Hanya Sekali Pada Setiap Kunjungan</b>, Pastikan Data <b class="text-success">Sudah Benar Sebelum Menyimpan</b>!
                 </div>
             </div>
             <div class="card-footer d-flex align-items-center justify-content-between p-3">
                 <div>
-                    <button class="btn btn-info btn-sm" onclick="lihatFormJadwalPelayanan()" id="btn-cetak-form-jp" data-bs-toggle="tooltip" title="Lihat Formulir Jadwal Pelayanan Program Terapi" disabled><i class="ti ti-file-invoice me-1"></i> Cetak Form</button>
-                    <button class="btn btn-warning btn-sm" onclick="generateUlangFormJadwalPelayanan()" id="btn-generate-form-jp" data-bs-toggle="tooltip" title="Generate Ulang Formulir Jadwal Pelayanan Program Terapi" disabled><i class="ti ti-file-symlink me-1"></i> Generate Ulang</button>
+                    <button class="btn btn-subtle-info waves-effect waves-light btn-sm" onclick="lihatFormJadwalPelayanan()" id="btn-cetak-form-jp" data-bs-toggle="tooltip" title="Lihat Formulir Jadwal Pelayanan Program Terapi" disabled><i class="ti ti-file-invoice me-1"></i> Cetak Form</button>
+                    <button class="btn btn-outline-warning border-dashed waves-effect waves-light btn-sm" onclick="generateUlangFormJadwalPelayanan()" id="btn-generate-form-jp" data-bs-toggle="tooltip" title="Generate Ulang Formulir Jadwal Pelayanan Program Terapi" disabled><i class="ti ti-file-symlink me-1"></i> Generate Ulang</button>
                 </div>
                 <div>
-                    <button class="btn btn-danger btn-sm" onclick="hapusFormJadwalPelayanan()" id="btn-hapus-form-jp" data-bs-toggle="tooltip" title="Hapus Formulir Jadwal Pelayanan" disabled><i class="ti ti-trash me-1"></i> Hapus Form</button>
+                    <button class="btn btn-subtle-danger btn-sm" onclick="hapusFormJadwalPelayanan()" id="btn-hapus-form-jp" data-bs-toggle="tooltip" title="Hapus Formulir Jadwal Pelayanan" disabled><i class="ti ti-trash me-1"></i> Hapus Form</button>
                     <button class="btn btn-success btn-sm" onclick="ttdPasienJadwalPelayanan()" id="btn-submit-form-jp" data-bs-toggle="tooltip" title="Tanda Tangan Jadwal Pelayanan Program Terapi" disabled><i class="ti ti-writing-sign me-1"></i> Tanda Tangan Pasien</button>
                 </div>
             </div>
@@ -25,8 +25,8 @@
                 <h5 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Form <b class="text-primary">Program Terapi</b></h5>
                 <div>
                     <a><i class="fas fa-exclamation-circle me-1"></i><i>Anda masuk sebagai <b><u class="text-primary">{{ Auth::user()->NAMA }}</u> (NIP#{{ Auth::user()->NIP }})</b></i></a>
-                    <button class="btn btn-light-primary btn-sm ms-2" onclick="loadCpptProgramTerapi()" id="btn-refresh-riwayat-cppt-program" data-bs-toggle="tooltip" title="Refresh Riwayat CPPT"><i class="fas fa-sync"></i></button>
-                    <button class="btn btn-light text-muted btn-sm" style="background-color: #f3e3f5" onclick="loadRiwayatProgramTerapi()" id="btn-refresh-riwayat-form-program" data-bs-toggle="tooltip" title="Refresh Riwayat Formulir Program Terapi"><i class="fas fa-sync"></i></button>
+                    <button class="btn btn-subtle-primary btn-sm ms-2" onclick="loadCpptProgramTerapi()" id="btn-refresh-riwayat-cppt-program" data-bs-toggle="tooltip" title="Refresh Riwayat CPPT"><i class="fas fa-sync"></i></button>
+                    <button class="btn btn-subtle-success btn-sm" onclick="loadRiwayatProgramTerapi()" id="btn-refresh-riwayat-form-program" data-bs-toggle="tooltip" title="Refresh Riwayat Formulir Program Terapi"><i class="fas fa-sync"></i></button>
                 </div>
             </div>
             <div class="card-body p-3">
@@ -61,7 +61,7 @@
             <div class="card-footer p-3">
                 <div class="row align-items-center justify-content-between g-3">
                     <div class="col-sm-auto">
-                        <button class="btn btn-warning me-2" onclick="kosongiFormProgramTerapi()" id="btn-kosongi-form-program-terapi" hidden>
+                        <button class="btn btn-outline-warning border-dashed waves-effect waves-light me-2" onclick="kosongiFormProgramTerapi()" id="btn-kosongi-form-program-terapi" hidden>
                             <i  class="fas fa-edit me-1"></i> Kosongkan Formulir
                         </button>
                         {{-- <button class="btn btn-danger me-2" onclick="deleteFormProgramTerapi()" id="btn-hapus-form-program-terapi" data-bs-toggle="tooltip" title="Hapus Formulir Program Terapi" hidden>
@@ -78,7 +78,7 @@
                         <button class="btn btn-primary" onclick="storeFormProgramTerapi()" id="btn-simpan-form-program-Terapi" disabled hidden>
                             <i class="fas fa-save me-1"></i> Simpan Formulir Baru
                         </button>
-                        <button class="btn btn-light-dark" onclick="batalUpdateFormProgramTerapi()" id="btn-batal-update-form-program-terapi" data-bs-toggle="tooltip" title="Batalkan" hidden>
+                        <button class="btn btn-subtle-dark" onclick="batalUpdateFormProgramTerapi()" id="btn-batal-update-form-program-terapi" data-bs-toggle="tooltip" title="Batalkan" hidden>
                             <i class="fas fa-reply me-1"></i>
                         </button>
                         <button class="btn btn-success" onclick="prosesEditProgramTerapi()" id="btn-update-form-program-Terapi" data-bs-toggle="tooltip" title="Perbarui Formulir & TTE Program Terapi" hidden>
@@ -93,8 +93,8 @@
         <div class="accordion card" id="collapse-riwayat-program-kfr">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-program-kfr">
-                    <button class="accordion-button text-dark" style="background-color: #f3e3f5" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-program-kfr" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fas fa-sort-alpha-down me-1"></i> Riwayat Program Terapi <span class="badge text-bg-dark ms-1">By.KUNJUNGAN</span>
+                    <button class="accordion-button bg-success-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-program-kfr" aria-expanded="true" aria-controls="collapseOne">
+                        <i class="fas fa-sort-alpha-down me-1"></i> Riwayat Program Terapi <span class="badge bg-secondary-subtle text-secondary ms-1" data-bs-toggle="tooltip" title="Riwayat Program Terapi Diurutkan Dari Data Terbaru Khusus Hanya Kunjungan Saat Ini">By.KUNJUNGAN</span>
                     </button>
                 </h2>
                 <div id="btn-collapse-riwayat-program-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-program-kfr" data-bs-parent="#collapse-riwayat-program-kfr">
@@ -113,8 +113,8 @@
         <div class="accordion card" id="collapse-riwayat-cppt-program-kfr">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-cppt-program-kfr">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-cppt-program-kfr" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge text-bg-dark ms-1" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.NORM</span>
+                    <button class="accordion-button bg-primary-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-cppt-program-kfr" aria-expanded="true" aria-controls="collapseOne">
+                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge bg-secondary-subtle text-secondary ms-1" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.NORM</span>
                     </button>
                 </h2>
                 <div id="btn-collapse-riwayat-cppt-program-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-cppt-program-kfr" data-bs-parent="#collapse-riwayat-cppt-program-kfr">
@@ -139,17 +139,17 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
-                    Preview <b class="text-primary">Jadwal Pelayanan Terapi</b> (<a id="showTxModalPJPel"><i class="fas fa-sync fa-spin ms-1 me-1"></i></a>)
+                    Preview <b class="text-primary">Jadwal Pelayanan Terapi</b> (<a id="showTxModalPJPel"><i class="fas fa-sync fa-spin ms-1 me-1 fs-15"></i></a>)
                 </h5>
             </div>
             <div class="modal-body">
                 <div id="prevFormJadwalPelayanan"></div>
             </div>
             <div class="modal-footer d-flex justify-content-between align-items-center">
-                <button class="btn btn-warning" onclick="generateUlangFormJadwalPelayanan()" data-bs-toggle="tooltip" title="Generate Ulang Formulir Jadwal Pelayanan Program Terapi"><i class="ti ti-file-symlink me-1"></i> Generate Ulang</button>
+                <button class="btn btn-outline-warning border-dashed waves-effect waves-light" onclick="generateUlangFormJadwalPelayanan()" data-bs-toggle="tooltip" title="Generate Ulang Formulir Jadwal Pelayanan Program Terapi"><i class="ti ti-file-symlink me-1"></i> Generate Ulang</button>
                 <div>
-                    <a id="showTxUserForm" class="me-2"></a>
-                    <button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
+                    <a id="showTxUserForm" class="text-dark me-2"></a>
+                    <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Tutup</button>
                 </div>
             </div>
         </div>
@@ -302,7 +302,7 @@
             }`,
             type: 'GET',
             beforeSend: function () {
-                $('#btn-refresh-riwayat-cppt').prop('disabled', true).find('i').addClass('fa-spin');
+                $('#btn-refresh-riwayat-cppt-program').prop('disabled', true).find('i').addClass('fa-spin');
             },
             success: function(res) {
                 if (!res.status) {
@@ -359,7 +359,7 @@
                     // KFR
                     if(item.IS_KFR == 1){
                         badgeSistem += `
-                            <span class="badge bg-primary me-1" data-bs-toggle="tooltip" title="CPPT Form Rajal KFR">
+                            <span class="badge bg-primary badge-sm me-1" data-bs-toggle="tooltip" title="CPPT Form Rajal KFR">
                                 <i class="fas fa-file-signature"></i>
                             </span>`;
                     }
@@ -367,7 +367,7 @@
                     // Terapi
                     if(item.IS_TERAPI == 1){
                         badgeSistem += `
-                            <span class="badge bg-warning me-1" data-bs-toggle="tooltip" title="CPPT Form Program Terapi">
+                            <span class="badge bg-warning badge-sm me-1" data-bs-toggle="tooltip" title="CPPT Form Program Terapi">
                                 <i class="fas fa-dumbbell"></i>
                             </span>`;
                     }
@@ -375,7 +375,7 @@
                     // Kalau dua-duanya TIDAK ada → SIMGOS
                     if(item.IS_KFR == 0 && item.IS_TERAPI == 0){
                         badgeSistem += `
-                            <span class="badge bg-secondary me-1" data-bs-toggle="tooltip" title="CPPT dari SIMGOS">
+                            <span class="badge bg-secondary badge-sm me-1" data-bs-toggle="tooltip" title="CPPT dari SIMGOS">
                                 <i class="fas fa-database"></i>
                             </span>`;
                     }
@@ -390,7 +390,7 @@
                                                 <div class="d-flex flex-column w-100 min-w-0 pe-5">
                                                     <div class="text-truncate w-100">
                                                         ${badgeSistem}
-                                                        ${kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
+                                                        ${kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success badge-sm me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
                                                         <b class="text-teal-900" data-bs-toggle="tooltip" title="Nama Ruangan">${item.NAMARUANGAN}</b>
                                                         <i class="fas fa-angle-right mx-1"></i>
                                                         <b class="text-pink-900" data-bs-toggle="tooltip" title="Tgl. Pendaftaran Kunjungan">${tanggalDaftar}</b>
@@ -441,7 +441,7 @@
             },
             complete: function () {
                 // always reset button (baik success maupun error)
-                $('#btn-refresh-riwayat-cppt').prop('disabled', false).find('i').removeClass('fa-spin');
+                $('#btn-refresh-riwayat-cppt-program').prop('disabled', false).find('i').removeClass('fa-spin');
                 // Showing Tooltip
                 $('[data-bs-toggle="tooltip"]').tooltip('dispose');
                 $('.tooltip').remove();
@@ -567,10 +567,10 @@
                     var userId = @json(auth()->user()->ID);
 
                     let btnDis = (admin || item.user == userId) ? '' : 'disabled';
-                    content += `<li class="list-group-item list-group-item-action ftr-item" data-id="${item.nomor}" data-group="${item.group}" data-queue="${item.queue}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Berkas Formulir">
-                                        <div class="d-flex align-items-center">
+                    content += `<li class="list-group-item list-group-item-action ftr-item" data-id="${item.nomor}" data-group="${item.group}" data-queue="${item.queue}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Berkas Formulir" style="cursor:pointer;">
+                                        <div class="d-flex align-items-center gap-2">
                                             <div class="flex-shrink-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="GROUP - PROGRAM. KE XX">
-                                                <div class="avtar avtar-s border ftr-avatar"> ${item.group} <i class="ti ti-minus"></i> ${item.queue} </div>
+                                                <div class="badge bg-light-subtle border border-primary-subtle text-secondary shadow-lg fs-25 h-100"> ${item.group} <i class="ti ti-minus"></i> ${item.queue} </div>
                                             </div>
                                             <div class="flex-grow-1 ms-3">
                                                 <div class="row g-1">
@@ -1125,7 +1125,9 @@
         modal.show();
 
         $('#prevFormJadwalPelayanan').html(`
-            <div class="spinner-grow"></div> Memuat Formulir...
+            <div class="spinner-grow spinner-grow-sm me-2" role="status">
+                <span class="sr-only">Loading...</span>
+            </div> <a class="align-middle">Memuat Data Formulir..</a>
         `);
 
         fetch("/api/emr/jadwal/" + encodeURIComponent(kunjungan) + "/preview")

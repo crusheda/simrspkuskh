@@ -1,23 +1,26 @@
 @extends('layouts.v2.index')
 
+@section('title','Detail Kunjungan Pasien')
+
 @section('content')
 
 <div class="container-fluid">
 
     <!-- [ breadcrumb ] start -->
-    <div class="app-page-head d-flex align-items-center justify-content-between">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item">
-                    <a href="{{ route('v2.dashboard') }}">
-                        <i class="fi fi-rr-home"></i>
-                    </a>
-                </li>
-                <li class="breadcrumb-item" aria-current="page">Digital</li>
-                <li class="breadcrumb-item active" aria-current="page">Medical Record</li>
-            </ol>
-        </nav>
-    </div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb px-3 py-2 bg-primary-subtle rounded-3">
+            <li class="breadcrumb-item">
+                <a class="link-primary" href="{{ route('v2.dashboard') }}">
+                    <i class="fi fi-rr-home"></i>
+                </a>
+            </li>
+            <li class="breadcrumb-item"><a class="link-primary fw-medium text-decoration-none" href="javascript:void(0);">Digital</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Medical Record</li>
+        </ol>
+
+        <ol class="breadcrumb mb-0">
+        </ol>
+    </nav>
     <!-- [ breadcrumb ] end -->
 
     <!-- [ main content ] start -->
@@ -26,7 +29,7 @@
             <div class="card">
                 <div class="card-header p-2">
                     <div class="d-sm-flex align-items-center justify-content-between ms-2">
-                        <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Table Kunjungan Pasien <span class="ms-2 f-14 px-2 badge bg-light-secondary">Total : <a id="jumlah_data">0 Data</a></span></h5>
+                        <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Table Kunjungan Pasien <span class="ms-2 f-14 px-2 badge bg-secondary-subtle text-secondary">Total : <a id="jumlah_data">0 Data</a></span></h5>
                         {{-- <a class="btn btn-link-info btn-sm text-end" href="javascript: void(0);" onclick="tataCara()"><i class="fas fa-info-circle text-info me-2"></i> <s>Tata Cara Penggunaan</s></a> --}}
                         {{-- <button class="btn btn-link-info btn-sm rounded me-1 mb-1 mt-1" type="button" data-bs-toggle="collapse" data-bs-target="#filter-collapse" aria-expanded="false" aria-controls="collapseExample">Filter <i class="ph-duotone ph-caret-down ms-1"></i></button> --}}
                     </div>
@@ -93,7 +96,7 @@
                         <table class="table mb-0 table-hover table-display" id="vantable">
                             <thead>
                                 <tr>
-                                    <th class="kolom-antrian" hidden>ANTRIAN</th>
+                                    <th class="kolom-antrian">ANTRIAN</th>
                                     <th>KUNJUNGAN PASIEN</th>
                                     <th class="text-start">WAKTU BERKUNJUNG</th>
                                 </tr>
@@ -122,6 +125,7 @@
 
 <script>
     let dpjpChoices = null;
+    let tableEMR = null;
     $(document).ready(function() {
         if ("{{ $list['tte_pegawai'] }}" != true) {
             // kalau tidak ada tanda tangan pegawai
@@ -306,8 +310,8 @@
     }
 
     function filter() {
-        if (window.dataTable) {
-            window.dataTable.destroy();
+        if (tableEMR) {
+            tableEMR.destroy();
         }
         $('#tombol-tampilkan').prop('disabled',true).find('i').removeClass('ph-duotone ph-sort-ascending').addClass('fas fa-sync fa-spin').css('font-size', '15px');
         $('#show_table').prop('hidden',false);
@@ -395,24 +399,27 @@
                             }
                         }
 
-                        if (item.POS_ANTRIAN && item.NOMOR_ANTRIAN) {
-                            const nomorAntrian = item.NOMOR_ANTRIAN
-                                ? String(item.NOMOR_ANTRIAN).padStart(3, '0')
-                                : '-';
+                        const showAntrian =
+                            item.RUANGAN?.startsWith('10201') ||
+                            item.RUANGAN?.startsWith('10207');
+
+                        if (showAntrian && item.POS_ANTRIAN && item.NOMOR_ANTRIAN) {
+                            const nomorAntrian = String(item.NOMOR_ANTRIAN).padStart(3, '0');
 
                             antrian = `
-                                <span class="badge bg-light-subtle border border-primary-subtle text-secondary shadow-lg" style="font-size: 35pt;width:100%;height:auto;">
-                                    ${item.POS_ANTRIAN ?? '-'}-${nomorAntrian}
+                                <span class="badge bg-light-subtle border border-primary-subtle text-secondary shadow-lg"
+                                    style="font-size:35pt;width:100%;height:auto;cursor:pointer;">
+                                    ${item.POS_ANTRIAN}-${nomorAntrian}
                                 </span>
                             `;
                         } else {
-                            antrian = ``;
+                            antrian = '';
                         }
 
-                        content += `<tr class="clickable" data-href="/v2/emr/${item.NOMOR}">
+                        content += `<tr class="clickable" data-href="/v2/emr/${item.NOMOR}" style="cursor:pointer;">
 
                                         <!-- Nomor Antrian -->
-                                        <td class="text-center align-middle kolom-antrian" hidden>${antrian}</td>
+                                        <td class="text-center align-middle kolom-antrian">${antrian}</td>
 
                                         <!-- Informasi Pasien -->
                                         <td class="ps-3">
@@ -465,14 +472,14 @@
 
                     $('#tampil-tbody').append(content);
 
-                    if (rawat == 5 || rawat == 1) {
-                        $('.kolom-antrian').prop('hidden',false);
-                    } else {
-                        $('.kolom-antrian').prop('hidden',true);
-                    }
+                    // if (rawat == 5 || rawat == 1) {
+                    //     $('.kolom-antrian').prop('hidden',false);
+                    // } else {
+                    //     $('.kolom-antrian').prop('hidden',true);
+                    // }
                 }
                 // VANILLA TABLE
-                window.dataTable = $('#vantable').DataTable({
+                tableEMR = $('#vantable').DataTable({
                     processing: true,
                     pageLength: 10,
                     lengthMenu: [
@@ -498,6 +505,9 @@
                         }
                     ],
                 });
+
+                tableEMR.column(0).visible(rawat == 1 || rawat == 5);
+
                 // Showing Tooltip
                 $('[data-bs-toggle="tooltip"]').tooltip('dispose');
                 $('.tooltip').remove();
@@ -507,8 +517,7 @@
                 // TOMBOL FILTER TAMPILKAN
                 $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fas fa-sync fa-spin').addClass('ph-duotone ph-sort-ascending').css('font-size', '');
                 $(document).on('click', '.clickable', function() {
-                    var url = $(this).data('href');
-                    window.location.href = url;
+                    window.location.href = $(this).data('href');
                 });
             }, error: function(xhr, status, error) {
                 Swal.fire(
@@ -518,6 +527,17 @@
                 );
                 $('#jumlah_data').empty().text('0 Data');
                 $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fas fa-sync fa-spin').addClass('ph-duotone ph-sort-ascending').css('font-size', '');
+            }, complete: function() {
+                const cache = JSON.parse(sessionStorage.getItem('emr_filter'));
+
+                if (cache) {
+                    setTimeout(function () {
+                        window.scrollTo({
+                            top: cache.scroll || 0,
+                            behavior: 'instant'
+                        });
+                    }, 100);
+                }
             }
         })
     }

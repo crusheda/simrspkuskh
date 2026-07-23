@@ -14,12 +14,6 @@
                         <i class="ph-duotone ph-files me-2"></i> Program Terapi
                     </button>
                 </li>
-                {{-- <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#jpkfr" role="tab"
-                        aria-selected="false" tabindex="-1" id="tab-jpkfr" disabled>
-                        <i class="ph-duotone ph-files me-2"></i> Jadwal Pelayanan
-                    </button>
-                </li> --}}
             @endif
         </ul>
     </div>

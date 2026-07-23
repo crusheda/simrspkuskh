@@ -2,7 +2,7 @@
     <div class="col-md-7">
         <div class="card table-card border shadow-none">
             <div class="card-header d-flex align-items-center justify-content-between p-3">
-                <h5 class="card-title mb-0"><i class="fas fa-file-signature me-1"></i> Formulir Rawat Jalan KFR <span class="badge bg-danger badge-sm ms-1" id="form-kfr-utama" hidden>UTAMA</span></h5>
+                <h5 class="card-title mb-0"><i class="fas fa-file-signature me-1"></i> Formulir <b class="text-teal">Rawat Jalan KFR</b> <span class="badge bg-danger badge-sm ms-1" id="form-kfr-utama" hidden>UTAMA</span></h5>
                 <div class="btn-group">
                     @role(['admin','dokterspesialis','fisioterapis','okupasiterapi','terapiwicara'])
                         <button class="btn btn-info btn-sm" onclick="showListFormKfr()" id="btn-list-form-kfr-lama" hidden disabled><i class="ph-duotone ph-file-search me-1"></i> Gunakan Form Lama</button>
@@ -120,7 +120,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-form-kfr">
                     <button class="accordion-button text-dark bg-warning-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-form-kfr" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fas fa-sort-alpha-down me-1"></i> Riwayat Formulir KFR <span class="badge text-bg-dark ms-1">By.NORM</span>
+                        <i class="fas fa-sort-alpha-down me-1"></i> Riwayat Formulir KFR <span class="badge bg-secondary-subtle text-secondary ms-1" data-bs-toggle="tooltip" title="Riwayat Form KFR Diurutkan Dari Data Terbaru Dimulai Dari Kunjungan Saat Ini">By.NORM</span>
                     </button>
                 </h2>
                 <div id="btn-collapse-riwayat-form-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-form-kfr" data-bs-parent="#collapse-riwayat-form-kfr">
@@ -140,7 +140,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-cppt-kfr">
                     <button class="accordion-button text-dark bg-primary-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-cppt-kfr" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge text-bg-dark ms-1" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.NORM</span>
+                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge bg-secondary-subtle text-secondary ms-1" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.NORM</span>
                     </button>
                 </h2>
                 <div id="btn-collapse-riwayat-cppt-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-cppt-kfr" data-bs-parent="#collapse-riwayat-cppt-kfr">
@@ -320,7 +320,7 @@
                     btnHide = '';
                     if (res.form) {
                         if (item.ID_CPPT == res.form.id_cppt) {
-                            starForm = `<span class="badge bg-danger me-1" data-bs-toggle="tooltip" title="CPPT Formulir KFR Saat Ini"><i class="fas fa-star"></i></span>`;
+                            starForm = `<span class="badge bg-danger badge-sm me-1" data-bs-toggle="tooltip" title="CPPT Formulir KFR Saat Ini"><i class="fas fa-star"></i></span>`;
                             btnHide = 'disabled';
                         }
                     }
@@ -348,7 +348,7 @@
                     // KFR
                     if(item.IS_KFR == 1){
                         badgeSistem += `
-                            <span class="badge bg-primary me-1" data-bs-toggle="tooltip" title="CPPT Form KFR">
+                            <span class="badge bg-primary badge-sm me-1" data-bs-toggle="tooltip" title="CPPT Form KFR">
                                 <i class="fas fa-file-signature"></i>
                             </span>`;
                     }
@@ -356,7 +356,7 @@
                     // Terapi
                     if(item.IS_TERAPI == 1){
                         badgeSistem += `
-                            <span class="badge bg-warning me-1" data-bs-toggle="tooltip" title="CPPT Form Program Terapi">
+                            <span class="badge bg-warning badge-sm me-1" data-bs-toggle="tooltip" title="CPPT Form Program Terapi">
                                 <i class="fas fa-dumbbell"></i>
                             </span>`;
                     }
@@ -364,7 +364,7 @@
                     // Kalau dua-duanya TIDAK ada → SIMGOS
                     if(item.IS_KFR == 0 && item.IS_TERAPI == 0){
                         badgeSistem += `
-                            <span class="badge bg-secondary me-1" data-bs-toggle="tooltip" title="CPPT SIMGOS">
+                            <span class="badge bg-secondary badge-sm me-1" data-bs-toggle="tooltip" title="CPPT SIMGOS">
                                 <i class="fas fa-database"></i>
                             </span>`;
                     }
@@ -380,7 +380,7 @@
                                                     <div class="text-truncate w-100">
                                                         ${badgeSistem}
                                                         ${starForm}
-                                                        ${kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
+                                                        ${kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success badge-sm me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
                                                         <b class="text-teal-900" data-bs-toggle="tooltip" title="Nama Ruangan">${item.NAMARUANGAN}</b>
                                                         <i class="fas fa-angle-right mx-1"></i>
                                                         <b class="text-pink-900" data-bs-toggle="tooltip" title="Tgl. Pendaftaran Kunjungan">${tanggalDaftar}</b>
@@ -603,26 +603,25 @@
                     var utama = '';
                     if (res.data && res.data.form) {
                         if (res.data.form.nomor_init == item.nomor) {
-                            utama = '<span class="badge bg-danger"><i class="fas fa-star me-1"></i> FORM UTAMA</span>';
+                            utama = '<span class="badge bg-danger badge-sm"><i class="fas fa-star me-1"></i> FORM UTAMA</span>';
                         }
                     }
 
-                    // <div class="avtar avtar-s border kfr-avatar"> ${item.group} <i class="ti ti-minus"></i> ${item.queue} </div>
-                    content += `<li class="list-group-item list-group-item-action kfr-item" data-id="${item.nomor}" data-init="${item.nomor_init}" data-group="${item.group}" data-queue="${item.queue}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Berkas Formulir">
-                                        <div class="d-flex align-items-center">
+                    content += `<li class="list-group-item list-group-item-action kfr-item" data-id="${item.nomor}" data-init="${item.nomor_init}" data-group="${item.group}" data-queue="${item.queue}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Berkas Formulir" style="cursor:pointer;">
+                                        <div class="d-flex align-items-center gap-2">
                                             <div class="flex-shrink-0" data-bs-toggle="tooltip" data-bs-placement="top" title="GROUP - KUNJ. KE XX">
                                                 ${item.nomor == kunjungan && item.bertemu_dokter == 1 && admin == true
                                                     ? `<div class="dropdown" onclick="event.stopPropagation();">
 
                                                             <div
-                                                                class="avtar avtar-s border border-primary kfr-avatar"
+                                                                class="badge bg-light-subtle border border-success-subtle text-success shadow-lg fs-25 h-100"
                                                                 data-bs-toggle="dropdown"
                                                                 data-bs-auto-close="true"
                                                                 aria-expanded="false"
                                                                 style="cursor:pointer;"
                                                                 id="icoGQ${item.nomor}"
                                                             >
-                                                                ${item.group} <i class="ti ti-minus"></i> ${item.queue}
+                                                                ${item.group} <i class="ti ti-minus text-pink"></i> ${item.queue}
                                                             </div>
 
                                                             <ul class="dropdown-menu dropdown-menu-end">
@@ -643,15 +642,15 @@
                                                             </ul>
 
                                                         </div>`
-                                                    : `<div class="avtar avtar-s border kfr-avatar" onclick="event.stopPropagation();" id="icoGQ`+item.nomor+`"> `+item.group+` <i class="ti ti-minus"></i> `+item.queue+` </div>` }
+                                                    : `<div class="badge bg-light-subtle border border-primary-subtle text-secondary shadow-lg fs-25 h-100" onclick="event.stopPropagation();" id="icoGQ`+item.nomor+`"> `+item.group+` <i class="ti ti-minus text-pink"></i> `+item.queue+` </div>` }
 
                                             </div>
                                             <div class="flex-grow-1 ms-3">
                                                 <div class="row g-1">
                                                     <div class="col-6">
-                                                        <h6 class="mb-1">${item.sep !=0 ?'SEP<b class="text-info">#</b>'+item.sep:'KUNJUNGAN <b class="text-danger">TANPA SEP</b>'} ${item.nomor == kunjungan?'<span class="badge bg-primary">SAAT INI</span>':''} ${utama}</h6>
+                                                        <h6 class="mb-1">${item.sep !=0 ?'SEP<b class="text-info">#</b>'+item.sep:'KUNJUNGAN <b class="text-danger">TANPA SEP</b>'} ${item.nomor == kunjungan?'<span class="badge bg-primary badge-sm">SAAT INI</span>':''} ${utama}</h6>
                                                         <p class="text-muted mb-0"><small><b class="text-red-900">DPJP</b>: <u>${item.nama_dokter}</u> (${item.nip_dokter})</small></p>
-                                                        <p class="text-muted mb-0"><small><b class="text-purple-900">Tgl.Form</b>: <b class="me-1">${item.tgl}</b> ${item.bertemu_dokter === 1 ? '<span class="badge rounded-pill text-bg-success">Bertemu Dokter</span>' : '<span class="badge rounded-pill text-bg-danger">Tidak Bertemu Dokter</span>'}</small></p>
+                                                        <p class="text-muted mb-0"><small><b class="text-purple-900">Tgl.Form</b>: <b class="me-1">${item.tgl}</b> ${item.bertemu_dokter === 1 ? '<span class="badge bg-success-subtle text-success border-success badge-sm">Bertemu Dokter</span>' : '<span class="badge bg-danger-subtle text-danger border-danger badge-sm">Tidak Bertemu Dokter</span>'}</small></p>
                                                     </div>
                                                     <div class="col-6 text-end">
                                                         <h6 class="mb-1">Kunjungan/SEP Tgl. <span class="badge text-bg-secondary ms-1">${tanggalKunj}</span></h6>
