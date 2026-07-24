@@ -57,6 +57,8 @@
 <!-- [Material Icons] https://fonts.google.com/icons -->
 <link rel="stylesheet" href="{{ asset('v2/fonts/material.css') }}">
 <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}" />
+
+<link rel="stylesheet" href="{{ asset('css/iziToast.css') }}" />
 {{-- <link rel="stylesheet" href="{{ asset('css/plugins/style.css') }}"> --}}
 {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-datatables/10.0.0/style.min.css"> --}}
 

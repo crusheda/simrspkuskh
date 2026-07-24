@@ -16,7 +16,7 @@ use Auth, Storage;
 
 class SmartKlaimController extends Controller
 {
-    // INDEX
+    // SIRMED v.1
     function index()
     {
         $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
@@ -92,6 +92,84 @@ class SmartKlaimController extends Controller
 
         return view('pages.klaim.detail')->with('list', $data);
     }
+
+    // SIRMED v.2
+    function indexV2()
+    {
+        $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
+        $dr = DB::table('master.dokter AS dr')
+                ->select(
+                    'dr.id',
+                    'dr.NIP',
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                    'ref.DESKRIPSI'
+                )
+                ->leftJoin('master.pegawai AS pg','pg.NIP','=','dr.NIP')
+                ->leftJoin('master.referensi AS ref', function($join) {
+                    $join->on('ref.ID','=','pg.SMF')
+                        ->where('ref.JENIS', '26');
+                })
+                ->leftJoin('master.dokter_ruangan AS dru','dru.DOKTER','=','dr.ID')
+                ->where('dr.STATUS','1')
+                ->where('dru.STATUS','1')
+                ->where(function ($query) {
+                    $query->where('dru.RUANGAN', 'LIKE', '1020101%');
+                })
+                // ->orderByRaw("CASE WHEN ref.ID = '0' THEN 1 ELSE 0 END")
+                ->orderBy('ref.DESKRIPSI','ASC')
+                ->groupBy('dr.id','dr.NIP','NAMADOKTER')
+                ->get();
+
+        $data = [
+            'yearMonth' => $yearMonth,
+            'dr' => $dr,
+        ];
+
+        return view('pages.v2.smartclaim.index')->with('list', $data);
+    }
+
+    function showV2($KUNJUNGAN)
+    {
+        $klaim = klaim_verifikasi::where('nomor',$KUNJUNGAN)->where('status',true)->first();
+        $show = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(
+                    'pk.*',
+                    'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
+                    'ru.DESKRIPSI AS NAMARUANGAN',
+                    'kjs.noKartu AS NOBPJS',
+                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
+                    DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                    DB::raw("
+                        IF(
+                            ps.JENIS_KELAMIN = 1,
+                            'LAKI-LAKI',
+                            IF(
+                                ps.JENIS_KELAMIN = 2,
+                                'PEREMPUAN',
+                                'TIDAK DIKETAHUI'
+                            )
+                        ) AS JKPASIEN
+                    ")
+                )
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
+                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                ->where('pk.NOMOR', $KUNJUNGAN)
+                ->first();
+
+        $data = [
+            'klaim' => $klaim,
+            'show' => $show,
+            'KUNJUNGAN' => $KUNJUNGAN,
+        ];
+
+        return view('pages.v2.smartclaim.detail.index')->with('list', $data);
+    }
+
     function showFarmasi($KUNJUNGAN)
     {
         $klaim = klaim_farmasi_verifikasi::where('nomor',$KUNJUNGAN)->where('status',true)->first();

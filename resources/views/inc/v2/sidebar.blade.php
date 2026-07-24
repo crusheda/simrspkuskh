@@ -107,14 +107,14 @@
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a class="menu-link" href="authentication/login-basic.html">
-                                    <i class="fi fi-rr-unlock"></i>
+                                <a class="menu-link" href="javascript:void(0);">
+                                    <i class="ri-line-chart-fill fs-20"></i>
                                     <span class="menu-label">Monitoring</span>
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a class="menu-link" href="authentication/login-basic.html">
-                                    <i class="fi fi-rr-unlock"></i>
+                                <a class="menu-link" href="{{ route('v2.smartclaim') }}">
+                                    <i class="ri-file-lock-line fs-20"></i>
                                     <span class="menu-label">Smart Claim</span>
                                 </a>
                             </li>
