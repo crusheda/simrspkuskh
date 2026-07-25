@@ -1,5 +1,7 @@
 @extends('layouts.v2.index')
 
+@section('title','Dashboard')
+
 @section('content')
 
     <div class="container-fluid">
