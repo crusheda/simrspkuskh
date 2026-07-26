@@ -25,53 +25,45 @@
     <meta name="twitter:description" content="Sistem Manajemen Rumah Sakit PKU Muhammadiyah Sukoharjo">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>@yield('title', 'SIRMED')</title>
+    <title>@yield('title', 'Autentikasi SIRMED')</title>
 
+    <!-- begin::NexLink Favicon Tags -->
     <link rel="icon" type="image/png" href="{{ asset('images/logo/logo.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/logo/logo.png') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @include('inc.v2.css')
+    <!-- begin::NexLink Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <!-- end::NexLink Google Fonts -->
 
-    <script>
-        const originalTitle = document.title + "   •   Sistem Informasi Rekam Medis   •   RS PKU Muhammadiyah Sukoharjo   •   ";
-        let index = 0;
+    <!-- begin::NexLink Required Stylesheet -->
+    <link rel="stylesheet" href="{{ asset('v2/libs/flaticon/css/all/all.css') }}">
+    <link rel="stylesheet" href="{{ asset('v2/libs/lucide/lucide.css') }}">
+    <link rel="stylesheet" href="{{ asset('v2/libs/fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('v2/libs/simplebar/simplebar.css') }}">
+    <link rel="stylesheet" href="{{ asset('v2/libs/node-waves/waves.css') }}">
+    <link rel="stylesheet" href="{{ asset('v2/libs/bootstrap-select/css/bootstrap-select.min.css') }}">
+    <!-- end::NexLink Required Stylesheet -->
 
-        setInterval(() => {
-            document.title =
-                originalTitle.substring(index) +
-                originalTitle.substring(0, index);
+    <!-- begin::NexLink CSS Stylesheet -->
+    <link rel="stylesheet" href="{{ asset('v2/css/styles.css') }}">
+    <!-- end::NexLink CSS Stylesheet -->
 
-            index++;
-
-            if (index >= originalTitle.length) {
-                index = 0;
-            }
-        }, 250);
-    </script>
 </head>
 
 <body>
     <div class="page-layout">
 
-        <!-- Logout Form -->
-        <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
-            {{ csrf_field() }}
-        </form>
-
-        @include('inc.v2.header')
-        @include('inc.v2.sidebar')
-
-            <main class="app-wrapper">
-                @yield('content')
-            </main>
-
-        @include('inc.v2.footer')
+        @yield('content')
 
     </div>
-
-    @include('inc.v2.js')
-
+    <!-- begin::NexLink Page Scripts -->
+    <script src="{{ asset('v2/libs/global/global.min.js') }}"></script>
+    <script src="{{ asset('v2/js/appSettings.js') }}"></script>
+    <script src="{{ asset('v2/js/main.js') }}"></script>
+    <!-- end::NexLink Page Scripts -->
 </body>
-</html>
 
+</html>
