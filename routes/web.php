@@ -65,6 +65,9 @@ Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'v2', 'as' => ''], fu
             Route::get('emr', [EMRController::class, 'indexV2'])->name('v2.emr');
             Route::get('emr/{KUNJUNGAN}', [EMRController::class, 'detailV2'])->name('v2.emr.detail');
 
+        // MONITORING
+        Route::get('monitoring', [MonitoringController::class, 'indexV2'])->name('v2.monitoring');
+
         // SMART KLAIM
             Route::get('klaim', [SmartKlaimController::class, 'indexV2'])->name('v2.smartclaim');
             Route::get('klaim/{KUNJUNGAN}', [SmartKlaimController::class, 'showV2'])->name('v2.smartclaim.show');

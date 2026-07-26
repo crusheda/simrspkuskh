@@ -1,0 +1,1339 @@
+@extends('layouts.v2.index')
+
+@section('title','Digital Monitoring')
+
+@section('content')
+
+<div class="container-fluid">
+
+    <!-- [ breadcrumb ] start -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb px-3 py-2 bg-primary-subtle rounded-3">
+            <li class="breadcrumb-item">
+                <a class="link-primary" href="{{ route('v2.dashboard') }}">
+                    <i class="fi fi-rr-home"></i>
+                </a>
+            </li>
+            <li class="breadcrumb-item"><a class="link-primary fw-medium text-decoration-none" href="javascript:void(0);">Digital</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Monitoring</li>
+        </ol>
+
+        <ol class="breadcrumb mb-0">
+        </ol>
+    </nav>
+    <!-- [ breadcrumb ] end -->
+
+    <!-- [ Main Content ] start -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-3">
+                <div class="card-header p-2 px-3">
+                    <div class="d-sm-flex align-items-center justify-content-between ms-2">
+                        <h6 class="mt-2"><i class="fas fa-filter text-primary me-2"></i> Filter</h6>
+                        <a class="btn btn-action-info waves-effect waves-light text-end" href="javascript: void(0);" onclick="tataCara()"><i class="fas fa-info-circle text-info me-2"></i> Tata Cara Penggunaan</a>
+                    </div>
+                </div>
+                <div class="card-body pt-3">
+                    <div class="row">
+                        <div class="col-md-2 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Jenis Perawatan</label>
+                                <select class="form-control" id="filter_rawat">
+                                    <option value="5">Semua Perawatan</option>
+                                    <option value="1" selected>Rawat Jalan</option>
+                                    <option value="2">Rawat Darurat (Tanpa Inap)</option>
+                                    <option value="3">Rawat Inap</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Status Kunjungan</label>
+                                <select class="form-control" id="filter_status">
+                                    <option value="5">Semua Kunjungan</option>
+                                    <option value="0">Batal Kunjungan</option>
+                                    <option value="1" selected>Sedang Dilayani</option>
+                                    <option value="2">Selesai Kunjungan</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="@if(auth()->user()->hasAnyRole(['dokterspesialis'])) col-md-6 @else col-md-2 @endif mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Rentang Tgl Kunjungan</label>
+                                <div class="input-group">
+                                    <input type="text" id="filter_tgl" class="form-control flatpickr-input active" placeholder="Pilih Rentang Tanggal" readonly="readonly">
+                                    <span class="input-group-text"><i class="feather icon-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3" @if(auth()->user()->hasAnyRole(['dokterspesialis'])) hidden @endif>
+                            <div class="form-group">
+                                <label class="form-label">DPJP</label>
+                                <select class="form-control" id="filter_dpjp">
+                                    <option value="">Pilih Dokter</option>
+                                    @if ($list['dr'])
+                                        @foreach ($list['dr'] as $item)
+                                            <option value="{{ $item->NIP }}">{{ $item->NAMADOKTER }} ({{ $item->DESKRIPSI }})</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Status Berkas Klaim</label>
+                                <select class="form-control" id="filter_berkas">
+                                    <option value="5" selected>Semua Status</option>
+                                    <option value="0">Berkas Belum Lengkap</option>
+                                    <option value="1">Berkas Masih Ada Catatan</option>
+                                    <option value="2">Berkas Sudah Lengkap</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between p-3">
+                    <div class="text-start">
+                        <h6 class="text-muted ms-2 mt-3">Tekan tombol <span class="badge text-bg-primary">Tampilkan</span> untuk menampilkan <mark>Tabel Kunjungan</mark></h6>
+                    </div>
+                    <div class="text-end btn-page mb-0">
+                        <a class="btn btn-outline-warning border-dashed waves-effect waves-light me-2" id="clear_text" href="javascript: void(0);" onclick="clearFilter()">Kosongkan</a>
+                        <button type="button" class="btn btn-shadow btn-primary " onclick="filter()" data-bs-toggle="tooltip"
+                        data-bs-offset="0,4" data-bs-placement="bottom" data-bs-html="true" title="Menampilkan Data Kunjungan"
+                        id="tombol-tampilkan"><i class="fas fa-filter align-middle me-2"></i> Tampilkan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12" id="showTable" hidden>
+            <div class="card">
+                <div class="card-header p-3">
+                    <div class="d-sm-flex align-items-center justify-content-between ms-2">
+                        <h6 class="mt-2"><i class="fas fa-table text-primary me-2"></i> Tabel</h6>
+                        <div class="dropdown">
+                            <h6 class="mt-2">Waktu Update <a id="show-time" class="text-primary"><div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div></a></h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-1 pb-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="dttable">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2"><center>Kunjungan Pasien</center></th>
+                                    <th rowspan="2">Tanggal Kunjungan</th>
+                                    <th colspan="6"><center>Monitoring</center></th>
+                                </tr>
+                                <tr>
+                                    <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Monitoring Tindakan">TDKN</th>
+                                    <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Monitoring Pengisian CPPT">CPPT</th>
+                                    {{-- <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Monitoring Pengisian Diagnosa Dokter">ICD</th> --}}
+                                    <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tanda Tangan Elektronik SIRMED">TTE</th>
+                                    <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Surat Rencana Kontrol">SKDP</th>
+                                    <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Surat Eligibilitas Peserta">SEP</th>
+                                    <th data-bs-toggle="tooltip" data-bs-placement="bottom" title="Catatan Berkas Klaim">CAT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tampil-tbody">
+                                <tr style='font-size:13px'>
+                                    <td colspan="15">
+                                        <center>
+                                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- MODAL STARTED --}}
+    <div id="showTataCara" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showInformasiLabel">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tata Cara Penggunaan - Digital <b class="text-primary">Monitoring</b></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h6><span class="badge rounded-pill text-bg-primary">Filter Data</span></h6>
+                            <ol>
+                                <li><mark>Jenis Perawatan</mark>
+                                    <ul>
+                                        <li>Semua Perawatan = Data yang ditampilkan mencakup semua jenis perawatan dari kunjungan RJ, RD, maupun RI</li>
+                                        <li>Rawat Jalan = Data yang ditampilkan hanya kunjungan Rawat Jalan (<b>Tanpa Rawat Inap</b>)</li>
+                                        <li>Rawat Darurat = Data yang ditampilkan hanya kunjungan Rawat Darurat (<b>Tanpa Rawat Inap</b>)</li>
+                                        <li>Rawat Inap = Data yang ditampilkan hanya kunjungan Rawat Inap</li>
+                                    </ul>
+                                </li>
+                                <li><mark>Status Kunjungan</mark>
+                                    <ul>
+                                        <li>Semua Kunjungan = Data yang ditampilkan mencakup semua status kunjungan yang sudah batal periksa, kunjungan
+                                            yang sedang dilayani, maupun kunjungan yang telah selesai dilayani</li>
+                                        <li>Batal Kunjungan = Data yang ditampilkan hanya kunjungan pasien yang telah batal periksa</li>
+                                        <li>Sedang Dilayani = Data yang ditampilkan hanya kunjungan pasien yang sedang dilayani di ruangan</li>
+                                        <li>Selesai Kunjungan = Data yang ditampilkan hanya kunjungan pasien yang telah selesai dilayani</li>
+                                    </ul>
+                                </li>
+                                <li><mark>Rentang Tgl Kunjungan</mark> <br>
+                                    <a><i class="ti ti-corner-down-right me-1"></i> Pengambilan data kunjungan ditentukan oleh Tgl Masuk/Diterima Pasien ke Ruangan</a>
+                                    <ul>
+                                        <li>Hanya 1 Tanggal (Satuan) = Data yang ditampilkan hanya kunjungan pada hari itu saja</li>
+                                        <li>Rentang Tanggal (Dari - Sampai) = Data yang ditampilkan mencakup kunjungan dari Tgl <b>xx</b> ke Tgl <b>xx</b></li>
+                                    </ul>
+                                </li>
+                                <li><mark>Status Berkas Klaim</mark>
+                                    <ul>
+                                        <li>Semua Status = Data yang ditampilkan mencakup semua data Kunjungan Pasien yang belum lengkap
+                                            (tidak ada / masih ada catatan) dan sudah lengkap</li>
+                                        <li>Berkas Belum Lengkap = Data yang ditampilkan hanya kunjungan dengan berkas yang belum belum lengkap (<b>Tanpa catatan</b>)</li>
+                                        <li>Berkas Masih Ada Catatan = Data yang ditampilkan hanya kunjungan dengan berkas yang belum belum lengkap (<b>Ada catatan yang belum terselesaikan</b>)</li>
+                                        <li>Berkas Sudah Lengkap = Data yang ditampilkan hanya kunjungan dengan berkas yang sudah lengkap (<b>Tidak ada catatan / semua catatan terselesaikan</b>)</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                            <h6><span class="badge rounded-pill text-bg-dark">Indikator Monitoring Berkas</span></h6>
+                            <ol>
+                                <li>Tindakan Pemeriksaan
+                                    <ul>
+                                        <li><i class="fas fa-check text-success"></i> = Tindakan sudah terisi</li>
+                                        <li><i class="fas fa-times text-danger"></i> = Tindakan belum terisi / tidak ditemukan</li>
+                                    </ul>
+                                </li>
+                                <li>CPPT (Catatan Perkembangan Pasien Terintegrasi)
+                                    <ul>
+                                        <li><i class="fas fa-check text-success"></i> = CPPT sudah terisi</li>
+                                        <li><i class="fas fa-times text-danger"></i> = CPPT belum terisi / tidak ditemukan</li>
+                                    </ul>
+                                </li>
+                                <li>TTE (Tanda Tangan Elektronik)
+                                    <ul>
+                                        <li><i class="fas fa-check text-success"></i> = Resume sudah terisi TTE = Generate berkas Resume Medis dengan TTE</li>
+                                        <li><i class="fas fa-times text-warning"></i> = Resume belum terisi TTE = Membuka Form TTE</li>
+                                    </ul>
+                                </li>
+                                <li>SKDP (Surat Kontrol Dokter yang Merawat)
+                                    <ul>
+                                        <li><i class="fas fa-check text-success"></i> = Pasien periksa menggunakan SKDP</li>
+                                        <li><i class="fas fa-times text-warning"></i> = Tidak menggunakan SKDP / SKDP tidak ditemukan</li>
+                                    </ul>
+                                </li>
+                                <li>SEP (Surat Eligibilitas Peserta)
+                                    <ul>
+                                        <li><i class="fas fa-check text-success"></i> = Generate berkas SEP Pasien</li>
+                                    </ul>
+                                </li>
+                                <li>Catatan Berkas (Dari Tim Asuransi)
+                                    <ul>
+                                        <li><i class="fas fa-check-double text-success"></i> = Semua catatan telah terselesaikan</li>
+                                        <li><i class="fas fa-times text-danger"></i> = Terdapat catatan yang masih belum terselesaikan</li>
+                                        <li><i class="fas fa-check text-success"></i> = Tidak ada catatan / catatan tidak ditemukan pada berkas tersebut</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                            <footer class="blockquote-footer text-end mb-0">Diperbarui oleh Admin pada <cite title="Source Title">Senin, 7 Juli 2025</cite> </footer>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="showTindakan" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showTindakanLabel">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="showTindakanLabel"><span class="badge text-bg-secondary">DAFTAR TINDAKAN</span> | IDKUNJUNGAN : <a id="show-id-tindakan" class="text-primary"></a></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <small><a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> datarecord Tindakan pertama kali dimasukkan saat kunjungan pada tanggal tsb</b></a></small>
+                    <div class="table-responsive mt-2">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">TANGGAL</th>
+                                    <th style="width: 40%;">NAMA TINDAKAN</th>
+                                    <th style="width: 30%;">PETUGAS MEDIS</th>
+                                    <th style="width: 20%;">USER INPUT</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tampil-tindakan">
+                                <tr>
+                                    <td colspan="15">
+                                        <center>
+                                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {{-- <a href="#!" class="tooltip-test" data-bs-toggle="tooltip" title="Tooltip" data-container="#showCppt">that link</a> --}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    {{-- <button type="button" class="btn btn-primary"></button> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="showCppt" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showCpptLabel">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="showCpptLabel"><span class="badge text-bg-secondary">CPPT</span> | NORM.<a id="show-norm-cppt" class="text-primary"></a> | IDKUNJUNGAN : <a id="show-id-cppt" class="text-primary"></a></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <small><a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> datarecord CPPT pertama kali saat kunjungan pada tanggal tsb</b></a></small>
+                    <div class="table-responsive mt-2">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">TANGGAL</th>
+                                    <th style="width: 40%;">CATATAN</th>
+                                    <th style="width: 20%;">PPA</th>
+                                    <th style="width: 10%;">JENIS</th>
+                                    <th style="width: 20%;">VERIFIKASI</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tampil-cppt">
+                                <tr>
+                                    <td colspan="15">
+                                        <center>
+                                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {{-- <a href="#!" class="tooltip-test" data-bs-toggle="tooltip" title="Tooltip" data-container="#showCppt">that link</a> --}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    {{-- <button type="button" class="btn btn-primary"></button> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="showTTDrj" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showTTDLabelRj">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="showTTDLabelRj"><span class="badge text-bg-secondary">TANDA TANGAN RESUME MEDIS</span> | IDKUNJUNGAN : <a id="show-id-ttd-rj" class="text-primary"></a></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <h3>RESUME MEDIS <mark>An/<a id="show-nama-ttd-rj" class="text-primary"></a></mark></h3>
+                    {{-- <div class="table-responsive mt-2">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <td>Tenggal/Waktu Masuk</td>
+                                    <td>:</td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody id="tampil-ttd-rj">
+                                <tr>
+                                    <td colspan="15">
+                                        <center>
+                                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> --}}
+                    <div id="tampil-ttd-rj"><hr><h5><i class="fas fa-sync fa-spin me-1"></i> Mengambil Data</h5><hr></div>
+                    {{-- <a href="#!" class="tooltip-test" data-bs-toggle="tooltip" title="Tooltip" data-container="#showCppt">that link</a> --}}
+                    <div id="canvas"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="clear" class="btn btn-link-danger me-1"><i class="fa fa-erase me-1 align-middle"></i> Kosongkan</button>
+                    <button type="button" class="btn btn-primary me-1" id="btn-store-tte-resume" onclick="storeTTDrj()" disabled><i class="fa fa-save me-1 align-middle"></i> Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-times me-1 align-middle"></i> Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="showResumeRj" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showResumeLabelRj">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <input type="text" class="form-control" id="idShowResumeRj" hidden>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="showResumeLabelRj"><span class="badge text-bg-secondary">RESUME MEDIS</span> | IDKUNJUNGAN : <a id="show-id-resumeRj" class="text-primary"></a></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <div id="cetak-resumerj"></div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between align-items-center">
+                    <h6 class="m-0">Hapus Dokumen <b class="text-danger">HANYA BERLAKU</b><br>Jika Berkas Klaim <mark>Belum Diverifikasi</mark></h6>
+                    <div>
+                        <button type="button" class="btn btn-secondary me-1" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i> Tutup</button>
+                        <button type="button" class="btn btn-danger" onclick="hapusTtdResume()"><i class="fas fa-trash me-1"></i> Hapus Dokumen (Hapus TTD)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="showSKDP" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showSKDPLabel">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="showSKDPLabel"><span class="badge text-bg-secondary">SURAT RENCANA KONTROL</span> | IDKUNJUNGAN : <a id="show-id-skdp" class="text-primary"></a></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <div id="cetak-skdp"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i> Tutup</button>
+                    {{-- <button type="button" class="btn btn-primary"></button> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="showSEP" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showSEPLabel">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="showSEPLabel"><span class="badge text-bg-secondary">SEP</span> | IDKUNJUNGAN : <a id="show-id-sep" class="text-primary"></a></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <div id="cetak-sep"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i> Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="catatan" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="catatanLabel">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="catatanLabel"><span class="badge text-bg-secondary">CATATAN</span> | IDKUNJUNGAN : <a id="show-id-catatan" class="text-primary"></a></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <small><i class="fas fa-sort-amount-down me-1"></i> <a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> catatan pertama kali ditambahkan</b></a></small>
+                    <div class="table-responsive mt-2">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;" class="text-center">AKSI</th>
+                                    <th style="width: 25%;">NAMA PENGGUNA</th>
+                                    <th style="width: 65%;">DESKRIPSI CATATAN</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tampil-catatan">
+                                <tr>
+                                    <td colspan="15">
+                                        <center>
+                                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div id="btn-refresh-catatan"></div>
+                    <button type="button" class="btn btn-secondary ms-1" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i> Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- MODAL ENDED --}}
+    <script>
+        let canvas;
+        let signaturePad;
+        const isDokter = @json(auth()->user()->hasAnyRole(['dokterspesialis','admin']));
+
+        $(document).ready(function() {
+            // FLATPICKR DATE
+            const today = new Date(); // Hari ini
+            const fiveYearsAgo = new Date();
+            fiveYearsAgo.setFullYear(today.getFullYear() - 5); // 5 tahun ke belakang
+            $("#filter_tgl").flatpickr(
+                {
+                    // enableTime: true,
+                    // dateFormat: "Y-m-d H:i",
+                    mode: 'range',
+                    minDate: fiveYearsAgo, // Mulai dari 5 tahun yang lalu
+                    maxDate: today,        // Sampai hari ini
+                    dateFormat: 'Y-m-d',
+                    defaultDate: [today,today]
+                }
+            );
+
+            // SELECT CHOICES
+            elm = $('#filter_dpjp')[0];
+            choices = new Choices(elm);
+        });
+
+        // function-function
+        function tataCara() {
+            $('#showTataCara').modal('show');
+        }
+
+        function filter() {
+            $('#showTable').prop('hidden',false);
+            $('#tombol-tampilkan').prop('disabled',true).find('i').removeClass('fa-filter').addClass('fa-sync fa-spin');
+            $("#show-time").empty().html('<div class="ms-2 spinner-border text-primary spinner-border-sm" role="status"></div>');
+            $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
+            // Initialize
+            var rawat = $("#filter_rawat").val();
+            var status = $("#filter_status").val();
+            var tgl = $("#filter_tgl").val();
+            var berkas = $("#filter_berkas").val();
+            var dpjp = $("#filter_dpjp").val() ? $("#filter_dpjp").val() : '0'; // JIKA DPJP KOSONG = 0
+            var exTgl = tgl.split(' to ');
+            if (exTgl.length == 2) { // SPLIT FROM = "2024-01-01 to 2025-01-01"
+                tgls = exTgl[0];
+                tgle = exTgl[1];
+            } else { // SPLIT FROM = "2024-01-01"
+                tgls = exTgl[0];
+                tgle = exTgl[0];
+            }
+            // Process
+            $.ajax({
+                url: '/api/monitoring',
+                type: 'POST',
+                data: {
+                    rawat: rawat,
+                    status: status,
+                    tgls: tgls,
+                    tgle: tgle,
+                    dpjp: dpjp,
+                    berkas: berkas,
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(res) {
+                    // $("#list").empty();
+                    $("#show-time").empty().text(res.time);
+                    $("#tampil-tbody").empty();
+                    $('#dttable').DataTable().clear().destroy();
+                    res.show.forEach(item => {
+                        console.log(item);
+                        if (item.STATUS == 1) {
+                            status = '<span class="badge bg-warning-subtle text-dark border border-warning-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Pasien berada di ruangan ini / sedang dilayani</span>';
+                        } else {
+                            if (item.STATUS == 2) {
+                                status = '<span class="badge bg-success-subtle text-dark border border-success-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Kunjungan Selesai</span>';
+                            } else {
+                                status = '<span class="badge bg-danger-subtle text-dark border border-danger-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Kunjungan Dibatalkan</span>';
+                            }
+                        }
+                        content = ``;
+
+                        // START VERIFIKASI SEP
+                        sepNF = false;
+                        if (item.NOSEP) {
+                            valSEP = item.NOSEP.substring(8, 12); // 0624
+                            parts = item.TGLSEP.split("-"); // hasil: ['08', '06', '2024'] || e.g. 2024-01-12 00:00:00
+                            valTGLSEP = parts[1]+parts[0].slice(-2); // '0624'
+                            if (valSEP == valTGLSEP) {
+                                SEP = '<b class="text-purple-700">'+item.NOSEP+'</b>';
+                                btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-success" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
+                                                <i class="fas fa-check text-success"></i>
+                                            </button>`;
+                            } else {
+                                SEP = '<b class="text-danger">Tanggal SEP Tidak Sesuai!</b>';
+                                btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-danger" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="No.SEP tidak sesuai dengan Tanggal SEP" onclick="showSEP('`+item.NOMOR+`')">
+                                                <i class="fas fa-check fs-5 text-danger"></i>
+                                            </button>`;
+                            }
+                            sepNF = false;
+                        } else {
+                            SEP = '<b class="text-secondary">SEP Tidak Ditemukan</b>';
+                            btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan">
+                                            <i class="fas fa-times fs-5 text-secondary"></i>
+                                        </button>`;
+                            sepNF = true;
+                        }
+                        // END VERIFIKASI SEP
+
+                        // VERIFIKASI CATATAN
+                        if (item.CATATAN == 2) {
+                            colCat = 'success';
+                            icoCat = 'check-double';
+                            txCat = 'Semua Catatan Terselesaikan';
+                        } else {
+                            if (item.CATATAN == 1) {
+                                colCat = 'danger';
+                                icoCat = 'times';
+                                txCat = 'Lihat Catatan Yang Belum Terselesaikan';
+                            } else {
+                                colCat = 'success';
+                                icoCat = 'check';
+                                txCat = 'Catatan tidak ditemukan';
+                            }
+                        }
+
+                        if (item.JENISPENJAMIN == 1) {
+                            clrTxPj = 'text-emerald';
+                        } else {
+                            if (item.JENISPENJAMIN == 2) {
+                                clrTxPj = 'text-blue';
+                            } else {
+                                clrTxPj = 'text-orange';
+                            }
+                        }
+
+                        content += `<tr>
+                                        <td class="ps-3">
+                                            <h4 class="mb-1">
+                                                <b data-bs-toggle="tooltip" data-bs-placement="top" title="Nomor Rekam Medis">
+                                                    RM. ${item.NORM}
+                                                </b>
+                                                -
+                                                <b class="text-primary">${item.NAMAPASIEN}</b>
+                                            </h4>
+
+                                            <a class="text-dark" href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" title="Dokter Penanggung Jawab Pasien">
+                                                <b>DPJP</b> : ${item.NAMADOKTER}
+                                            </a><br>
+
+                                            <a class="fw-medium text-dark" href="javascript:void(0);">
+                                                Ruangan <b class="text-pink">${item.NAMARUANGAN}</b> <i class="ri-subtract-line"></i>
+                                                <b ${sepNF?'hidden':''}><b class="text-lavender" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b> <i class="ri-subtract-line"></i></b>
+                                                <b class="${clrTxPj}">${item.NAMAPENJAMIN}</b>
+                                            </a>
+
+                                            <br>
+
+                                            ${status}
+                                        </td>
+                                        <td class="text-start align-middle">
+                                            <button type="button" class="btn btn-link-info btn-sm mb-0"
+                                                onclick="event.stopPropagation();">
+                                                Masuk
+                                                <span class="badge bg-light text-dark ms-2">
+                                                    ${item.MASUK}
+                                                </span>
+                                            </button>
+
+                                            <br>
+
+                                            <button type="button" class="btn btn-link-danger btn-sm mb-0"
+                                                onclick="event.stopPropagation();">
+                                                Keluar
+                                                <span class="badge bg-light text-dark ms-2">
+                                                    ${item.KELUAR ?? '-'}
+                                                </span>
+                                            </button>
+                                        </td>
+                                        <td>${item.TGLTINDAKAN?`
+                                            <button type="button" class="btn btn-sm btn-icon btn-action-success waves-effect waves-light" id="tdk`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Tindakan" onclick="showTindakan('`+item.NOMOR+`')">
+                                                <i class="fas fa-check text-success"></i>
+                                            </button>`:`
+                                            <button type="button" class="btn btn-sm btn-icon btn-action-danger waves-effect waves-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tindakan tidak ditemukan/belum terisi">
+                                                <i class="fas fa-times fs-5 text-danger"></i>
+                                            </button>`}
+                                        </td>
+                                        <td>${item.TGLCPPT?`
+                                            <button type="button" class="btn btn-sm btn-icon btn-action-success waves-effect waves-light" id="cppt`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat CPPT" onclick="showCppt('`+item.NOMOR+`')">
+                                                <i class="fas fa-check text-success"></i>
+                                            </button>`:`
+                                            <button type="button" class="btn btn-sm btn-icon btn-action-danger waves-effect waves-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="CPPT tidak ditemukan/belum terisi">
+                                                <i class="fas fa-times fs-5 text-danger"></i>
+                                            </button>`}
+                                        </td>
+                                        <td id="btn-showResume-`+item.NOMOR+`">${item.TGLTTD?`
+                                            <button type="button" class="btn btn-sm btn-icon btn-action-success waves-effect waves-light" id="resumerj`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+item.NOMOR+`')">
+                                                <i class="fas fa-check text-success"></i>
+                                            </button>`:`
+                                            <button type="button" class="btn btn-sm btn-icon btn-action-warning waves-effect waves-light" id="ttdrj`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Dokumen belum ditandatangani" onclick="showTTDrj('`+item.NOMOR+`')">
+                                                <i class="fas fa-times fs-5 text-warning"></i>
+                                            </button>`}
+                                        </td>
+                                        <td>${item.NOMORBOOKING?`
+                                            <button type="button" class="btn btn-sm btn-icon btn-action-success waves-effect waves-light" id="skdp`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SKDP" onclick="showSKDP('`+item.NOMOR+`')">
+                                                <i class="fas fa-check text-success"></i>
+                                            </button>`:`
+                                            <button type="button" class="btn btn-sm btn-icon btn-action-warning waves-effect waves-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SKDP tidak ditemukan">
+                                                <i class="fas fa-times fs-5 text-warning"></i>
+                                            </button>`}
+                                        </td>
+                                        <td>${btnSEP}</td>
+                                        <td>${item.TGLCATATAN?`
+                                            <button type="button" class="btn btn-sm btn-icon btn-action-${colCat} waves-effect waves-light" id="catatan`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="${txCat}" onclick="showCatatan('`+item.NOMOR+`')">
+                                                <i class="fas fa-${icoCat} text-${colCat}"></i>
+                                            </button>`:`
+                                            <button type="button" class="btn btn-sm btn-icon btn-action-${colCat} waves-effect waves-light" data-bs-toggle="tooltip" data-bs-placement="bottom" title="${txCat}">
+                                                <i class="fas fa-${icoCat} fs-5 text-${colCat}"></i>
+                                            </button>`}
+                                        </td>
+                                    </tr>`;
+                        $('#tampil-tbody').append(content);
+                    })
+                    // Showing Tooltip
+                    $('[data-bs-toggle="tooltip"]').tooltip({
+                        trigger : 'hover'
+                    })
+                    var table = $('#dttable').DataTable({
+                        // dom: 'Bfrtip',
+                        order: [
+                            [1, "desc"]
+                        ],
+                        bAutoWidth: false,
+                        aoColumns : [
+                            { sWidth: '65%' },
+                            { sWidth: '17%' },
+                            { sWidth: '3%' },
+                            { sWidth: '3%' },
+                            { sWidth: '3%' },
+                            { sWidth: '3%' },
+                            { sWidth: '3%' },
+                            { sWidth: '3%' },
+                        ],
+                        columnDefs: [
+                            // { visible: false, targets: [7] },
+                            { targets: [0], sortable: false },
+                            { targets: [1], sortable: false },
+                        ],
+                        displayLength: 20,
+                        lengthChange: true,
+                        lengthMenu: [20, 50, 75, 100, 250, 500, 1000, 3000, 7000, 15000, 50000, 100000],
+                        buttons: ['excel', 'pdf'] // 'copy','colvis'
+                    });
+                    $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
+                }, error: function(xhr, status, error) {
+                    // Gagal: tangani error di sini
+                    console.error('Terjadi kesalahan:', error);
+                    // Bisa juga tampilkan alert
+                    alert('Gagal mengambil data. Coba lagi.');
+                    $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
+                }
+            })
+        }
+
+        function showTindakan(kunjungan) {
+            // console.log($(this).find('i'));
+            $('#show-id-tindakan').text(kunjungan);
+            $('#tdk'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+            $.ajax({
+                url: "/api/pasien/"+kunjungan+"/tindakan",
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $("#tampil-tindakan").empty();
+                    if (res.show.length != 0) {
+                        res.show.forEach(item => {
+                            content = ``;
+                            content += `<tr>
+                                            <td class="custom-column">${item.TANGGAL}</td>
+                                            <td class="custom-column">${item.NAMATINDAKAN}<br><span class="badge rounded-pill text-bg-primary">Kategori : ${item.JENISTINDAKAN}</span>&nbsp;<span class="badge rounded-pill text-bg-secondary">ID#${item.ID}</span></td>
+                                            <td class="custom-column">${item.TENAGAMEDIS?'<b class="text-gray-800">'+item.TENAGAMEDIS+'</b>':'<b class="text-danger">Paramedis belum terisi/Tidak Ditemukan</b>'}</td>
+                                            <td class="custom-column">${item.NAMAUSER?'Dimasukkan Oleh<br><b class="text-pink-900">'+item.NAMAUSER+'</b>':'-'}</td>
+                                        </tr>
+                            `;
+                            $('#tampil-tindakan').append(content);
+                        })
+                        $('#showTindakan').modal('show');
+                        $('#tdk'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                    } else {
+                        // Swal.fire({
+                        //     position: "top-end",
+                        //     icon: "error",
+                        //     title: "CPPT Belum Terisi",
+                        //     showConfirmButton: false,
+                        //     timer: 1500,
+                        //     backdrop: `
+                        //         rgba(0,0,123,0.4)
+                        //         url("/images/nyan-cat.gif")
+                        //         left top
+                        //         no-repeat
+                        //     `
+                        // });
+                        iziToast.error({
+                            title: 'Maaf!',
+                            message: 'Data Tindakan tidak ditemukan / belum diisi',
+                            position: 'topRight'
+                        });
+                    }
+                }
+            })
+        }
+
+        function showCppt(kunjungan) {
+            // console.log($(this).find('i'));
+            $('#show-id-cppt').text(kunjungan);
+            $('#cppt'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+            $.ajax({
+                url: "/api/pasien/"+kunjungan+"/cppt",
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $("#tampil-cppt").empty();
+                    $('#show-norm-cppt').text(res.pen.NORM);
+                    if (res.show.length != 0) {
+                        res.show.forEach(item => {
+                            content = ``;
+                            content += `<tr>
+                                            <td class="custom-column">${item.TANGGAL}</td>
+                                            <td class="custom-column">${item.CATATAN}<br>${item.INSTRUKSI?"<b>I/ : </b>"+item.INSTRUKSI:''}</td>
+                                            <td class="custom-column">${item.PPA}<br><span class="badge rounded-pill text-bg-primary">${item.JNSPPA}</span></td>
+                                            <td class="custom-column">${item.TBAK_SBAR?item.TBAK_SBAR:'-'}</td>
+                                            <td class="custom-column">${item.VERIFIKASI?'Diverifkasi Oleh<br><b class="text-success">'+item.VERIFIKATOR+'</b><br>Pada '+item.TGLVERIFIKASI:'Belum Diverifikasi'}</td>
+                                        </tr>
+                            `;
+                            $('#tampil-cppt').append(content);
+                        })
+                        $('#showCppt').modal('show');
+                        $('#cppt'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                    } else {
+                        // Swal.fire({
+                        //     position: "top-end",
+                        //     icon: "error",
+                        //     title: "CPPT Belum Terisi",
+                        //     showConfirmButton: false,
+                        //     timer: 1500,
+                        //     backdrop: `
+                        //         rgba(0,0,123,0.4)
+                        //         url("/images/nyan-cat.gif")
+                        //         left top
+                        //         no-repeat
+                        //     `
+                        // });
+                        iziToast.error({
+                            title: 'Maaf!',
+                            message: 'Data CPPT tidak ditemukan / belum diisi',
+                            position: 'topRight'
+                        });
+                    }
+                }
+            })
+        }
+
+        function showCatatan(kunjungan) {
+            $("#tampil-catatan").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
+            // console.log($(this).find('i'));
+            $('#show-id-catatan').text(kunjungan);
+            $('#catatan'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+            $.ajax({
+                url: "/api/klaim/"+kunjungan+"/catatan",
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    if (res.show.length != 0) {
+                        $('#tampil-catatan').empty();
+                        content = ``;
+                        res.show.forEach(item => {
+                            content += `<tr>
+                                            <td class="custom-column">`;
+                                            if (!res.klaim || res.klaim.verif == 0) {
+                                                if (item.solved == 0) {
+                                content += `        <button class="btn btn-link-success" onclick="selesaiCatatan('${item.id}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tombol Apabila Catatan telah diselesaikan">Selesai <i class="ti ti-thumb-up ms-1"></i></button>`;
+                                                } else {
+                                content += `        <button class="btn btn-link-danger" onclick="batalSelesaiCatatan('${item.id}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tombol Apabila Batal Menyelesaikan Catatan">Batalkan <i class="ti ti-thumb-down ms-1"></i></button>`;
+                                                }
+                                            } else {
+                            content += `        <button class="btn btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Berkas telah diverifikasi dan catatan telah diselesaikan"><i class="ti ti-thumb-up"></i></button>`;
+                                            }
+                            content += `    </td>`;
+                            content += `    <td class="custom-column">Ditambahkan Pada <span class="badge text-bg-info p-1">${item.updated_at}</span><br>Oleh <b>${item.NAMAPEGAWAI}</b></td>`;
+                            content += `    <td class="custom-column">`;
+                                            if (item.solved == 0) {
+                            content += `        <span class="badge text-bg-danger p-1">Belum Terselesaikan</span><br>`;
+                                            } else {
+                            content += `        <span class="badge text-bg-success p-1">Terselesaikan</span><br>`;
+                                            }
+                            content += `    ${item.deskripsi}</td>`;
+                            content += `</tr>`;
+                        })
+                        $('#tampil-catatan').append(content);
+                        $('#btn-refresh-catatan').empty().append(`<button type="button" class="btn btn-warning" onclick="showCatatan('${kunjungan}')">Refresh</button>`);
+                        $('#catatan').modal('show');
+                        $('#catatan'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                    } else {
+                        iziToast.error({
+                            title: 'Maaf!',
+                            message: 'Data Catatan tidak ditemukan / belum diisi',
+                            position: 'topRight'
+                        });
+                        $('#catatan'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                    }
+                    // Showing Tooltip
+                    $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                    $('[data-bs-toggle="tooltip"]').tooltip({
+                        trigger : 'hover'
+                    })
+                }
+            })
+        }
+
+        function selesaiCatatan(id) {
+            $.ajax({
+                url: "/api/klaim/catatan/"+id+"/solved",
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    showCatatan(res.nomor);
+                }
+            })
+        }
+
+        function batalSelesaiCatatan(id) {
+            $.ajax({
+                url: "/api/klaim/catatan/"+id+"/unsolved",
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    showCatatan(res.nomor);
+                }
+            })
+        }
+
+        function showTTDrj(kunjungan) {
+            if (!isDokter) {
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Anda tidak memiliki Akses untuk melakukan TTE pada Resume Medis.',
+                    position: 'topRight'
+                });
+                return;
+            }
+            $.ajax({
+                url: "/api/pasien/"+kunjungan+"/ttdRj",
+                type: 'GET',
+                dataType: 'json',
+                beforeSend: function() {
+                    $("#tampil-ttd-rj").empty().append(`<hr><h5><i class="fas fa-sync fa-spin me-1"></i> Memuat Data Resume Medis</h5><hr>`);
+                    $('#btn-store-tte-resume').prop('disabled',true);
+                    $('#ttdrj'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+                },
+                success: function(res) {
+                    $("#tampil-ttd-rj").empty();
+                    $('#show-id-ttd-rj').text(kunjungan);
+
+                    if (res.resume && res.resume.RUANGAN) {
+                        let ruangan = res.resume.RUANGAN;
+
+                        // LIKE '1020702%'
+                        if (ruangan.startsWith('1020702') || ruangan.startsWith('102010103')) { // KHUSUS REHAB MEDIK LANGSUNG GENERATE
+                            $('#btn-showResume-'+kunjungan).empty().append(`<button type="button" class="btn btn-sm btn-icon btn-link-warning" id="resumerj`+kunjungan+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+kunjungan+`')">
+                                                                            <i class="fas fa-times fs-5 text-warning"></i>
+                                                                        </button>`);
+                            showResumeRj(kunjungan);
+                            return;
+                        }
+                    }
+
+                    $('#show-nama-ttd-rj').text(res.show[0].NAMAPASIEN);
+                    content = ``;
+                    if (res.show.length != 0) {
+                        if (res.isExist) {
+                            $('#showTTDrj').modal('hide');
+                            $('#btn-showResume-'+kunjungan).empty().append(`<button type="button" class="btn btn-sm btn-icon btn-link-success" id="resumerj`+kunjungan+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+kunjungan+`')">
+                                                                            <i class="fas fa-check text-success"></i>
+                                                                        </button>`);
+                            iziToast.success({
+                                title: 'Pesan Berhasil!',
+                                message: 'Resume Medis telah ada / ditandatangani. Mohon menunggu proses sampai Dokumen ditampilkan.',
+                                position: 'topRight'
+                            });
+                            $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                            showResumeRj(kunjungan);
+                        } else {
+                            content += `<div class="d-flex align-items-center table-responsive">
+                                            <table class="table table-striped table-bordered" style="text-align: center; width: 100%;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="m-5 p-2" style="width: 35%;">Tanggal / Waktu Masuk</td>
+                                                        <td style="width: 35%">Nomor Rekam Medis</td>
+                                                        <td rowspan="2">Klinik Tujuan</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="p-2">${res.show[0].TGLMASUK}</td>
+                                                        <td class="p-2">${res.show[0].NORM}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="p-2">Nama Pasien</td>
+                                                        <td class="p-2">Tanggal Lahir / Jenis Kelamin</td>
+                                                        <td rowspan="2" class="p-2">${res.show[0].UNIT}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="p-2">${res.show[0].NAMAPASIEN}</td>
+                                                        <td class="p-2">${res.show[0].TANGGAL_LAHIR}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="d-flex">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="m-5 p-2" style="width: 25%"><b>Subyektif (S)</b></td>
+                                                        <td style="white-space: normal; word-break: break-word;">${res.show[0].SUBYEKTIF}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="m-5 p-2" style="width: 25%"><b>Obyektif (O)</b></td>
+                                                        <td style="white-space: normal; word-break: break-word;">${res.show[0].OBYEKTIF}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="m-5 p-2" style="width: 25%"><b>Assesment (A)</b></td>
+                                                        <td style="white-space: normal; word-break: break-word;">${res.show[0].ASSESMENT}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="m-5 p-2" style="width: 25%"><b>Planning (P)</b></td>
+                                                        <td style="white-space: normal; word-break: break-word;">${res.show[0].PLANNING}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="m-5 p-2" style="width: 25%"><b>Instruksi (I)</b></td>
+                                                        <td style="white-space: normal; word-break: break-word;">${res.show[0].INSTRUKSI}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>`;
+                            $('#tampil-ttd-rj').append(content);
+                            $('#btn-store-tte-resume').prop('disabled',false);
+                            $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                        }
+                    } else {
+                        iziToast.error({
+                            title: 'Maaf!',
+                            message: 'Data tidak ditemukan / belum diisi',
+                            position: 'topRight'
+                        });
+                        $('#btn-store-tte-resume').prop('disabled',true);
+                        $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                    }
+
+                    $('#canvas').empty().append(`
+                    <div class="row">
+                        <input type="hidden" id="idstorettd" value="${kunjungan}">
+
+                        <div class="col-12 col-md-5 mb-3 d-flex justify-content-center align-items-center">
+                            <canvas id="signature-pad" style="border:1px solid #ccc; width: 100%; height: 200px;"></canvas>
+                        </div>
+
+                        <div class="col-12 col-md-7">
+                            <strong>Keterangan:</strong><br>
+                            1. Gunakan perangkat layar sentuh seperti smartphone, tablet, atau laptop dengan touchpad. <br>
+                            2. Jika menggunakan komputer, pastikan memiliki mouse atau stylus (jika tersedia).<br>
+                            3. Arahkan kursor atau sentuh layar pada area canvas yang tersedia.<br>
+                            4. Gambar tanda tangan seperti pada dokumen fisik.<br>
+                            5. Gunakan tombol “Clear” atau “Hapus” jika ingin mengulang tanda tangan.<br>
+                            6. Klik tombol “Simpan”.<br>
+                        </div>
+                    </div>
+                    `);
+                    canvas = $('#signature-pad')[0];
+                    signaturePad = new SignaturePad(canvas);
+
+                    // Saat submit form
+                    // $('form').on('submit', function () {
+                    //     if (!signaturePad.isEmpty()) {
+                    //         var dataURL = signaturePad.toDataURL('image/png');
+                    //         $('#signature-input').val(dataURL);
+                    //     }
+                    // });
+
+                    // Tampilkan modal
+                    $('#showTTDrj').modal('show');
+
+                    // Resize canvas saat modal benar-benar muncul
+                    $('#showTTDrj').off('shown.bs.modal').on('shown.bs.modal', function () {
+                        $(this).find('button').focus();
+                        resizeCanvas();
+                    });
+
+                    // Juga tetap lakukan resize saat window di-resize
+                    $(window).off('resize').on('resize', resizeCanvas);
+
+                    $('#clear').on('click', function () {
+                        signaturePad.clear();
+                    });
+                }, complete: function() {
+                    $('#ttdrj'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+                }, error: function(xhr, status, error) {
+                    console.error('Terjadi kesalahan:', error);
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: 'Gagal mengambil data. Coba lagi.',
+                        position: 'topRight'
+                    });
+                }
+            })
+        }
+
+        function resizeCanvas()
+        {
+            var ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext('2d').scale(ratio, ratio);
+            signaturePad.clear(); // Reset tanda tangan
+        }
+
+        function storeTTDrj()
+        {
+            id_user = '{{ Auth::user()->id }}';
+            const nama = document.getElementById('idstorettd').value.trim();
+                const signature = signaturePad.toDataURL('image/png');
+
+                if (!nama || signaturePad.isEmpty()) {
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: 'Tandatangan Resume Medis wajib diisi.',
+                        position: 'topRight'
+                    });
+                    return;
+                }
+                $.ajax({
+                    url: "{{ route('api.pasien.storeTtdResumeRj') }}", // Ganti dengan URL rute yang sesuai
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: JSON.stringify({ nama: nama, signature: signature }),
+                    contentType: 'application/json',
+                    beforeSend: function() {
+                        $('#btn-store-tte-resume').prop('disabled',true).html(`<i class="fas fa-sync fa-spin me-1"></i> Menyimpan...`);
+                    },
+                    success: function(data) {
+                        if (data.success) {
+                            iziToast.success({
+                                title: 'Yeayy!',
+                                message: 'TTE telah berhasil disimpan.',
+                                position: 'topRight'
+                            });
+                            $('#btn-showResume-'+data.kunjungan).empty().append(`<button type="button" class="btn btn-sm btn-icon btn-link-success" id="resumerj`+data.kunjungan+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Resume Medis" onclick="showResumeRj('`+data.kunjungan+`')">
+                                                                            <i class="fas fa-check text-success"></i>
+                                                                        </button>`);
+                            // filter();
+                        } else {
+                            iziToast.error({
+                                title: 'Maaf!',
+                                message: 'Gagal menyimpan data TTE.',
+                                position: 'topRight'
+                            });
+                        }
+                    },
+                    complete: function() {
+                        $('#showTTDrj').modal('hide');
+                        $('#btn-store-tte-resume').prop('disabled',false).html(`<i class="fa fa-save me-1 align-middle"></i> Simpan`);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Gagal Memproses Data!',
+                            text: error.message || 'Dokumen telah ditandatangani.',
+                        });
+                    }
+                });
+        }
+
+        function showResumeRj(kunjungan) {
+            $('#idShowResumeRj').val(kunjungan);
+            $('#show-id-resumeRj').text(kunjungan);
+            $('#resumerj'+kunjungan).find('i').removeClass('fa-check fa-times').addClass('fa-sync fa-spin');
+
+            fetch("/api/pasien/"+kunjungan+"/resumeRj")
+            .then(async response => {
+                if (!response.ok) {
+
+                    let message = 'Data Resume tidak ditemukan atau belum dibuatkan oleh Simgos.';
+
+                    try {
+                        const err = await response.json();
+                        if (err.message) {
+                            message = err.message;
+                        }
+                    } catch (e) {}
+
+                    throw new Error(message);
+                }
+
+                return response.blob();
+            })
+            .then(blob => {
+                const fileURL = URL.createObjectURL(blob);
+
+                $('#showResumeRj').modal('show');
+
+                $('#cetak-resumerj').append(`<div class="spinner-border text-primary" role="status">
+                                                    <span class="visually-hidden">Memuat Dokumen Resume Medis...</span>
+                                                </div>`);
+
+                const iframe = document.createElement('iframe');
+                iframe.src = fileURL;
+                iframe.width = "100%";
+                iframe.height = "500px";
+                iframe.frameBorder = "0";
+
+                iframe.onload = function () {
+                    // 🔥 BARU di sini button diganti
+                    $('#btn-showResume-' + kunjungan).html(`
+                        <button type="button"
+                                class="btn btn-sm btn-icon btn-link-success"
+                                id="resumerj${kunjungan}"
+                                title="Lihat Resume Medis"
+                                onclick="showResumeRj('${kunjungan}')">
+                            <i class="fas fa-check text-success"></i>
+                        </button>
+                    `);
+                };
+
+                $('#cetak-resumerj').empty().append(iframe);
+            })
+            .catch(error => {
+                const message = error?.message || 'Data Resume tidak ditemukan atau belum dibuatkan oleh Simgos.';
+
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: message,
+                    position: 'topRight'
+                });
+
+                console.error(error);
+            });
+        }
+
+        function hapusTtdResume() {
+            var kunjungan = $('#idShowResumeRj').val();
+            $.ajax({
+                url: "/api/pasien/"+kunjungan+"/hapusTtdResumeRj",
+                type: 'DELETE',
+                dataType: 'json',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(res) {
+                    if (res.status == 200) {
+                        iziToast.success({
+                            title: 'Pesan Berhasil!',
+                            message: res.message,
+                            position: 'topRight'
+                        });
+                        $('#showResumeRj').modal('hide');
+                        $('#btn-showResume-'+kunjungan).empty().append(`<button type="button" class="btn btn-sm btn-icon btn-link-warning" id="ttdrj`+kunjungan+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Dokumen belum ditandatangani" onclick="showTTDrj('`+kunjungan+`')">
+                                                                                <i class="fas fa-times fs-5 text-warning"></i>
+                                                                            </button>`);
+                        // filter();
+                    } else {
+                        iziToast.error({
+                            title: 'Maaf!',
+                            message: res.message,
+                            position: 'topRight'
+                        });
+                    }
+                }, error: function(xhr, status, error) {
+                    console.error('Terjadi kesalahan:', error);
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: 'Gagal menghapus TTE Resume Medis. Coba lagi.',
+                        position: 'topRight'
+                    });
+                }
+            })
+        }
+
+        function showSKDP(kunjungan) {
+            $('#show-id-skdp').text(kunjungan);
+            $('#skdp'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+
+            fetch("/api/pasien/"+kunjungan+"/skdp")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('File tidak ditemukan atau gagal diambil.');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Buat object URL dari blob
+                const fileURL = URL.createObjectURL(blob);
+
+                // Tampilkan ke iframe dalam modal
+                $('#cetak-skdp').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+                $('#showSKDP').modal('show');
+                $('#skdp'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+            })
+            .catch(error => {
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Data SKDP tidak ditemukan atau belum dibuatkan oleh Simgos.',
+                    position: 'topRight'
+                });
+                console.error(error);
+            });
+        }
+
+        function showSEP(kunjungan) {
+            $('#show-id-sep').text(kunjungan);
+            $('#sep'+kunjungan).find('i').removeClass('fa-check').addClass('fa-sync fa-spin');
+
+            fetch("/api/pasien/"+kunjungan+"/sep")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('File tidak ditemukan atau gagal diambil.');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Buat object URL dari blob
+                const fileURL = URL.createObjectURL(blob);
+
+                // Tampilkan ke iframe dalam modal
+                $('#cetak-sep').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+                $('#showSEP').modal('show');
+                $('#sep'+kunjungan).find('i').removeClass('fa-sync fa-spin').addClass('fa-check');
+            })
+            .catch(error => {
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: 'Data SEP tidak ditemukan atau belum digenerate.',
+                    position: 'topRight'
+                });
+                console.error(error);
+            });
+        }
+
+        function showKlaim(kunjungan) {
+            iziToast.success({
+                title: 'Yeayy!',
+                message: 'Tombol ini nantinya akan memunculkan Berkas Klaim Pasien secara instan dan efektif dengan Nomor Kunjungan '+kunjungan,
+                position: 'topRight'
+            });
+        }
+
+        function clearFilter() {
+            // GET TODAY DATE
+            const today = new Date(); // Hari ini
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // bulan dimulai dari 0
+            const dd = String(today.getDate()).padStart(2, '0');
+
+            // CHANGE FILTER VALUE
+            $("#filter_status").val('1');
+
+            choices.removeActiveItems();      // hapus semua yang aktif
+            choices.setChoiceByValue('');     // pilih option kosong (value="")
+
+            // $('#filter_tgl').val(`${yyyy}-${mm}-${dd}`).trigger('change'); // update select
+            // $("#filter_tgl").val().change();
+
+            // EMPTY TABLE AND HIDE DIV
+            $("#tampil-tbody").empty();
+            $('#showTable').prop('hidden',true);
+        }
+    </script>
+@endsection

@@ -44,38 +44,100 @@ class ApiMonitoringController extends Controller
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
 
         // SUB QUERY FROM ANY TABEL
-        $subTindakan = DB::table(DB::raw('
-            (
-                SELECT *,
-                    ROW_NUMBER() OVER (PARTITION BY KUNJUNGAN ORDER BY TANGGAL DESC) AS rn
-                FROM layanan.tindakan_medis
-                WHERE STATUS = 1
-            ) AS td
-        '))->where('td.rn', 1); // hanya baris TINDAKAN terakhir per kunjungan
-        $subCppt = DB::table(DB::raw('
-            (
-                SELECT *,
-                    ROW_NUMBER() OVER (PARTITION BY KUNJUNGAN ORDER BY TANGGAL DESC) AS rn
-                FROM medicalrecord.cppt
-                WHERE STATUS = 1
-            ) AS cp
-        '))->where('cp.rn', 1); // hanya baris CPPT terakhir per kunjungan
-        $subTTD = DB::table(DB::raw('
-            (
-                SELECT *,
-                    ROW_NUMBER() OVER (PARTITION BY KUNJUNGAN ORDER BY created_at DESC) AS rn
-                FROM simrspku_klaim.tanda_tangan
-                WHERE deleted_at IS null
-            ) AS ttd
-        '))->where('ttd.rn', 1); // hanya baris TTD terakhir per kunjungan
-        $subCatatan = DB::table(DB::raw('
-            (
-                SELECT *,
-                    ROW_NUMBER() OVER (PARTITION BY nomor ORDER BY created_at DESC) AS rn
-                FROM simrspku_klaim.klaim_verifikasi_catatan
-                WHERE deleted_at IS null AND status = 1
-            ) AS cat
-        '))->where('cat.rn', 1);
+        // $subTindakan = DB::table(DB::raw('
+        //     (
+        //         SELECT *,
+        //             ROW_NUMBER() OVER (PARTITION BY KUNJUNGAN ORDER BY TANGGAL DESC) AS rn
+        //         FROM layanan.tindakan_medis
+        //         WHERE STATUS = 1
+        //     ) AS td
+        // '))->where('td.rn', 1); // hanya baris TINDAKAN terakhir per kunjungan
+        // $subCppt = DB::table(DB::raw('
+        //     (
+        //         SELECT *,
+        //             ROW_NUMBER() OVER (PARTITION BY KUNJUNGAN ORDER BY TANGGAL DESC) AS rn
+        //         FROM medicalrecord.cppt
+        //         WHERE STATUS = 1
+        //     ) AS cp
+        // '))->where('cp.rn', 1); // hanya baris CPPT terakhir per kunjungan
+        // $subTTD = DB::table(DB::raw('
+        //     (
+        //         SELECT *,
+        //             ROW_NUMBER() OVER (PARTITION BY KUNJUNGAN ORDER BY created_at DESC) AS rn
+        //         FROM simrspku_klaim.tanda_tangan
+        //         WHERE deleted_at IS null
+        //     ) AS ttd
+        // '))->where('ttd.rn', 1); // hanya baris TTD terakhir per kunjungan
+        // $subCatatan = DB::table(DB::raw('
+        //     (
+        //         SELECT *,
+        //             ROW_NUMBER() OVER (PARTITION BY nomor ORDER BY created_at DESC) AS rn
+        //         FROM simrspku_klaim.klaim_verifikasi_catatan
+        //         WHERE deleted_at IS null AND status = 1
+        //     ) AS cat
+        // '))->where('cat.rn', 1);
+
+        // ===============================
+        // TINDAKAN TERAKHIR
+        // ===============================
+        $subTindakan = DB::table('layanan.tindakan_medis')
+            ->select(
+                'KUNJUNGAN',
+                DB::raw('MAX(TANGGAL) AS TANGGAL')
+            )
+            ->where('STATUS', 1)
+            ->groupBy('KUNJUNGAN');
+
+        // ===============================
+        // CPPT TERAKHIR
+        // ===============================
+        $subCppt = DB::table('medicalrecord.cppt')
+            ->select(
+                'KUNJUNGAN',
+                DB::raw('MAX(TANGGAL) AS TANGGAL')
+            )
+            ->where('STATUS', 1)
+            ->groupBy('KUNJUNGAN');
+
+        // ===============================
+        // TANDA TANGAN TERAKHIR
+        // ===============================
+        $subTTD = DB::table('simrspku_klaim.tanda_tangan')
+            ->select(
+                'KUNJUNGAN',
+                DB::raw('MAX(created_at) AS created_at')
+            )
+            ->whereNull('deleted_at')
+            ->groupBy('KUNJUNGAN');
+
+        // ===============================
+        // CATATAN TERAKHIR
+        // ===============================
+        $lastCatatan = DB::table('simrspku_klaim.klaim_verifikasi_catatan')
+            ->select(
+                'nomor',
+                DB::raw('MAX(created_at) AS created_at')
+            )
+            ->whereNull('deleted_at')
+            ->where('status',1)
+            ->groupBy('nomor');
+        $subCatatan = DB::table('simrspku_klaim.klaim_verifikasi_catatan as cat')
+            ->joinSub($lastCatatan,'last',function($join){
+
+                $join->on('cat.nomor','=','last.nomor')
+                    ->on('cat.created_at','=','last.created_at');
+
+            })
+            ->select(
+                'cat.nomor',
+                'cat.created_at AS updated_at',
+                'cat.solved',
+                'cat.status'
+            );
+
+        // ===============================
+        // STATUS CATATAN
+        // ===============================
         $subCatatanAgg = DB::table('simrspku_klaim.klaim_verifikasi_catatan') // subquery yang menghitung status catatan per nomor
             ->select('nomor', DB::raw('
                 CASE
@@ -88,6 +150,7 @@ class ApiMonitoringController extends Controller
             ->whereNull('deleted_at')
             ->where('status', 1)
             ->groupBy('nomor');
+
         // MAIN QUERY
         $show = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(
@@ -100,6 +163,8 @@ class ApiMonitoringController extends Controller
                     'cp.TANGGAL AS TGLCPPT',
                     'td.TANGGAL AS TGLTINDAKAN',
                     'pj.NO_SURAT AS NOMORBOOKING',
+                    'pj.JENIS AS JENISPENJAMIN',
+                    'ref.DESKRIPSI AS NAMAPENJAMIN',
                     // 'jk.NOMOR AS NOSURKON','jk.NOMOR_BOOKING AS NOMORBOOKING',
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
@@ -133,6 +198,11 @@ class ApiMonitoringController extends Controller
                 })
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                ->join('master.referensi AS ref', function($join){
+                    $join->on('ref.ID','=','pj.JENIS')
+                        ->where('ref.STATUS', 1)
+                        ->where('ref.JENIS', 10);
+                })
                 ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
                 ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
                 ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')

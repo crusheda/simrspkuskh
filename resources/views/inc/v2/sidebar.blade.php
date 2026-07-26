@@ -94,36 +94,44 @@
                         </ul>
                     </nav>
                 </div>
+                @canany(['emr', 'monitoring', 'smart_claim', 'smart_claim_farmasi'])
                 <div class="tab-pane fade" id="digitalTab" role="tabpanel" tabindex="0">
                     <nav class="app-navbar" data-simplebar>
                         <ul class="side-menubar">
                             <li class="menu-heading">
                                 <span class="menu-label">Digital</span>
                             </li>
+                            @can('emr')
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ route('v2.emr') }}">
                                     <i class="ri-nurse-line fs-20"></i>
                                     <span class="menu-label">Medical Record</span>
                                 </a>
                             </li>
+                            @endcan
+                            @can('monitoring')
                             <li class="menu-item">
-                                <a class="menu-link" href="javascript:void(0);">
+                                <a class="menu-link" href="{{ route('v2.monitoring') }}">
                                     <i class="ri-line-chart-fill fs-20"></i>
                                     <span class="menu-label">Monitoring</span>
                                 </a>
                             </li>
+                            @endcan
+                            @canany(['smart_claim', 'smart_claim_farmasi'])
                             <li class="menu-item">
                                 <a class="menu-link" href="{{ route('v2.smartclaim') }}">
                                     <i class="ri-file-lock-line fs-20"></i>
                                     <span class="menu-label">Smart Claim</span>
                                 </a>
                             </li>
+                            @endcanany
                             {{-- <li>
                                 <div class="menu-divider"></div>
                             </li> --}}
                         </ul>
                     </nav>
                 </div>
+                @endcanany
             </div>
             {{-- <div class="card card-gradient mx-3 d-none d-xl-block">
                 <div class="card-body">

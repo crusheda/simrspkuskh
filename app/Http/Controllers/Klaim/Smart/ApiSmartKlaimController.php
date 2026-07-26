@@ -26,8 +26,22 @@ class ApiSmartKlaimController extends Controller
             return response()->json("Pilih tanggal / bulan terlebih dahulu.", 401);
         }
 
+        $subCatatanAgg = DB::table('simrspku_klaim.klaim_verifikasi_catatan')
+            ->select(
+                'nomor',
+                DB::raw("
+                    CASE
+                        WHEN SUM(CASE WHEN status = 1 AND solved = 0 THEN 1 ELSE 0 END) > 0 THEN 1
+                        WHEN SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) > 0 THEN 2
+                        ELSE 0
+                    END AS catatan_status
+                ")
+            )
+            ->whereNull('deleted_at')
+            ->where('status',1)
+            ->groupBy('nomor');
+
         // MAIN QUERY
-            // NON REHABILITASI MEDIK
             $show = DB::table('pendaftaran.kunjungan AS pk')
                     ->select(
                         'pk.*',
@@ -57,24 +71,30 @@ class ApiSmartKlaimController extends Controller
                             END AS DOKTER_KONSUL
                         "),
 
-                        'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
+                        'kjs.noSEP AS NOSEP',
+                        'kjs.tglSEP AS TGLSEP',
                         'ru.DESKRIPSI AS NAMARUANGAN',
                         DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                         DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
                         'kv.id AS IDKLAIM','kv.verif AS STATUSVERIF','kv.verif_tgl AS TGLVERIF',DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAVERIF'),
+                        'catagg.catatan_status AS CATATAN'
                         // DB::raw('CASE WHEN kvc.id IS NOT NULL THEN true ELSE false END AS CATATAN')
-                        DB::raw("(
-                            SELECT
-                                CASE
-                                    WHEN COUNT(*) = 0 THEN 0
-                                    WHEN SUM(CASE WHEN kvc.status = true THEN 1 ELSE 0 END) = 0 THEN 0
-                                    WHEN SUM(CASE WHEN kvc.status = true AND kvc.solved = 0 THEN 1 ELSE 0 END) > 0 THEN 1
-                                    ELSE 2
-                                END
-                            FROM simrspku_klaim.klaim_verifikasi_catatan AS kvc
-                            WHERE kvc.nomor = pk.NOMOR
-                        ) AS CATATAN")
+                        // DB::raw("(
+                        //     SELECT
+                        //         CASE
+                        //             WHEN COUNT(*) = 0 THEN 0
+                        //             WHEN SUM(CASE WHEN kvc.status = true THEN 1 ELSE 0 END) = 0 THEN 0
+                        //             WHEN SUM(CASE WHEN kvc.status = true AND kvc.solved = 0 THEN 1 ELSE 0 END) > 0 THEN 1
+                        //             ELSE 2
+                        //         END
+                        //     FROM simrspku_klaim.klaim_verifikasi_catatan AS kvc
+                        //     WHERE kvc.nomor = pk.NOMOR
+                        // ) AS CATATAN")
                     )
+                    ->leftJoinSub($subCatatanAgg,'catagg',function($join){
+                        $join->on('catagg.nomor','=','pk.NOMOR');
+                    })
+
                     ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
 
                     // ambil data konsul / utama
@@ -90,9 +110,13 @@ class ApiSmartKlaimController extends Controller
                     ->leftJoin('master.ruangan AS ru_asal','ru_asal.ID','=','pk_asal.RUANGAN')
 
                     ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
-                    ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
-                    ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
-                    ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                    // ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
+                    // ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
+                    ->join('bpjs.kunjungan AS kjs', function ($join) {
+                        $join->on('kjs.noSEP', '=', 'pj.NOMOR')
+                            ->whereNotNull('pj.NOMOR')
+                            ->where('pj.NOMOR', '<>', '');
+                    })
                     ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
                     ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
                     ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
