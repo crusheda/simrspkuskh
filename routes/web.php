@@ -16,11 +16,7 @@ use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
 use App\Http\Controllers\Pelayanan\Penunjang\RISController;
 use App\Http\Controllers\Display\BedController;
 use App\Http\Controllers\Display\AntrianPoliController;
-use App\Http\Controllers\Display\Farmasi\AntrianController as AntrianFarmasiController;
-use App\Http\Controllers\Display\Farmasi\LoketController as LoketFarmasiController;
-use App\Http\Controllers\Display\Farmasi\DisplayController as DisplayFarmasiController;
-use App\Http\Controllers\Display\Farmasi\JenisAntrianController as JenisAntrianFarmasiController;
-use App\Http\Controllers\Display\Farmasi\LoketMasterController as LoketMasterFarmasiController;
+use App\Http\Controllers\Display\AntrianAdmisiController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\IGD\ModulMatrixController;
 use App\Http\Controllers\Monitoring\MonitoringController;
@@ -98,6 +94,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
         Route::get('display/bed', [BedController::class, 'index'])->name('display.bed.index');
         // ANTRIAN POLI
         Route::get('display/antrian/poli', [AntrianPoliController::class, 'index'])->name('display.antrian.poli.index');
+        // ANTRIAN POLI
+        Route::get('display/antrian/admisi', [AntrianAdmisiController::class, 'index'])->name('display.antrian.admisi.index');
         // FARMASI
         Route::get('display', [DisplayFarmasiController::class, 'index'])->name('display.antrian.farmasi.display.index');
         // RATING

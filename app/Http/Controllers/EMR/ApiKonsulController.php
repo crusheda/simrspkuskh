@@ -1026,14 +1026,14 @@ class ApiKonsulController extends Controller
             $now = now();
 
             $existingFile = DB::table('simrspku_klaim.klaim_file')
-                ->where('jenis', 12)
+                ->where('jenis', 13)
                 ->where('nomor', $nomorKunjungan)
                 ->where('ref_id', $nomorKonsul)
                 ->where('status', 1)
                 ->first();
 
             $lastFileSameKunjungan = DB::table('simrspku_klaim.klaim_file')
-                ->where('jenis', 12)
+                ->where('jenis', 13)
                 ->where('nomor', $nomorKunjungan)
                 ->orderByDesc('ref')
                 ->first();
@@ -1075,7 +1075,50 @@ class ApiKonsulController extends Controller
 
             /*
             |------------------------------------------------------------------
-            | 8. JASPER
+            | 7. PATH FILE
+            |------------------------------------------------------------------
+            */
+            $cetakkonsul = DB::table('simrspku_klaim.konsul as kon')
+                        ->leftJoin('simrspku_klaim.jawaban_konsul as jk', 'jk.KONSUL_NOMOR', '=', 'kon.NOMOR')
+                        ->leftJoin('pendaftaran.kunjungan as pk', 'pk.NOMOR', '=', 'kon.KUNJUNGAN')
+                        ->leftJoin('master.dokter as dok', 'dok.ID', '=', 'kon.DOKTER_ASAL')
+                        ->leftJoin('master.dokter as dk', 'dk.ID', '=', 'jk.DOKTER')
+                        ->leftJoin('simrspku_klaim.tanda_tangan_pegawai as ttd', function ($join) {
+                            $join->on('ttd.nip', '=', 'dok.NIP')
+                                ->whereNull('ttd.deleted_at');
+                        })
+                        ->leftJoin('simrspku_klaim.tanda_tangan_pegawai as ttd2', function ($join) {
+                            $join->on('ttd2.nip', '=', 'dk.NIP')
+                                ->whereNull('ttd2.deleted_at');
+                        })
+                        ->select([
+                            'kon.NOMOR as KONSUL',
+                            'dok.NIP as DOKTER_ASAL',
+                            'dk.NIP as DOKTER_TUJUAN',
+                            'ttd.signature_path as TTD_DOKTER_ASAL',
+                            'ttd2.signature_path as TTD_DOKTER_TUJUAN',
+                        ])
+                        ->where('kon.NOMOR', $nomor)
+                        ->first();
+
+            $ttd1 = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
+                            ->where('ttp.nip', $cetakkonsul->DOKTER_ASAL)
+                            ->where('ttp.status', 1)
+                            ->inRandomOrder()
+                            ->first();
+
+            $ttd2 = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp2')
+                            ->where('ttp2.nip', $cetakkonsul->DOKTER_TUJUAN)
+                            ->where('ttp2.status', 1)
+                            ->inRandomOrder()
+                            ->first();
+
+            $imagepath1 = storage_path()."/app/public/".$ttd1->signature_path;
+            $imagepath2 = storage_path()."/app/public/".$ttd2->signature_path;
+
+            /*
+            |------------------------------------------------------------------
+            | 9. JASPER
             |------------------------------------------------------------------
             */
             $jasper = new PHPJasper;
@@ -1089,7 +1132,8 @@ class ApiKonsulController extends Controller
                         'PNOPEN'      => $getKonsul->NOPEN,
                         'KONSULTASI'  => $getKonsul->KONSULTASI,
                         'IMAGES_PATH' => public_path('/doc/input/konsul/'),
-                        'TTD_PATH'    => storage_path('/app/public/'),
+                        'TTD_PATH_1'  => $imagepath1,
+                        'TTD_PATH_2'  => $imagepath2,
                     ],
                     'db_connection' => [
                         'driver'   => config('database.connections.db_custom.driver'),
@@ -1109,7 +1153,7 @@ class ApiKonsulController extends Controller
             */
             if (!$isOverwrite) {
                 DB::table('simrspku_klaim.klaim_file')->insert([
-                    'jenis'         => 12,
+                    'jenis'         => 13,
                     'sub_jenis'     => null,
                     'kode'          => null,
                     'ref'           => $nextUrutan,

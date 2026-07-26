@@ -13,11 +13,7 @@ use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
 use App\Http\Controllers\Display\BedController;
 use App\Http\Controllers\Display\AntrianPoliController;
-use App\Http\Controllers\Display\Farmasi\AntrianController as AntrianFarmasiController;
-use App\Http\Controllers\Display\Farmasi\LoketController as LoketFarmasiController;
-use App\Http\Controllers\Display\Farmasi\DisplayController as DisplayFarmasiController;
-use App\Http\Controllers\Display\Farmasi\JenisAntrianController as JenisAntrianFarmasiController;
-use App\Http\Controllers\Display\Farmasi\LoketMasterController as LoketMasterFarmasiController;
+use App\Http\Controllers\Display\AntrianAdmisiController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\EMR\ApiNewRehabMedikController;
@@ -52,6 +48,10 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
             Route::post('display/antrian/poli', [AntrianPoliController::class, 'getDisplayAntrianPoli'])->name('api.display.antrian.poli');
             Route::post('display/antrian/poli/update', [AntrianPoliController::class, 'updatePanggilanAntrian'])->name('api.display.antrian.update');
 
+        // ADMISI
+            Route::post('display/antrian/admisi', [AntrianAdmisiController::class, 'getDisplayAntrianAdmisi'])->name('api.display.antrian.admisi');
+            Route::post('display/antrian/admisi/update', [AntrianAdmisiController::class, 'updatePanggilanAntrian'])->name('api.display.antrian.admisi.update');
+
         // RATING
             Route::post('rating', [RatingController::class,'store'])->name('api.rating.store');
 
@@ -85,38 +85,6 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('roles/user/{id}/show', [RolesController::class, 'showRolesUser'])->name('roles.user.show');
             Route::post('roles/user/update', [RolesController::class, 'updateRolesUser'])->name('roles.user.update');
             Route::delete('roles/user/{id}/delete', [RolesController::class, 'deleteRolesUser'])->name('roles.user.delete');
-
-    // DISPLAY
-        // FARMASI
-                Route::prefix('display/antrian/farmasi')
-                    ->name('api.display.antrian.farmasi.')
-                    ->group(function () {
-
-                        // JENIS ANTRIAN
-                        Route::get('jenis-antrian', [JenisAntrianFarmasiController::class, 'index'])->name('jenis.index');
-                        Route::post('jenis-antrian', [JenisAntrianFarmasiController::class, 'store'])->name('jenis.store');
-                        Route::patch('jenis-antrian-toggle/{id}', [JenisAntrianFarmasiController::class, 'toggle'])->name('jenis.toggle');
-
-                        // LOKET MASTER
-                        Route::get('loket-master', [LoketMasterFarmasiController::class, 'index'])->name('loket.master');
-                        Route::post('loket-master', [LoketMasterFarmasiController::class, 'store'])->name('loket.store');
-                        Route::patch('loket-master/{id}/toggle', [LoketMasterFarmasiController::class, 'toggle'])->name('loket.toggle');
-                        Route::patch('loket-master/{id}', [LoketMasterFarmasiController::class, 'update'])->name('loket.update');
-
-                        // AMBIL ANTRIAN
-                        Route::get('ambil-antrian', [AntrianFarmasiController::class, 'ambil'])->name('ambil.index');
-                        Route::post('ambil-antrian/ajax', [AntrianFarmasiController::class, 'ambilAjax'])->name('ambil.ajax');
-
-                        // PANGGILAN
-                        Route::get('loket-antrian', [LoketFarmasiController::class, 'index'])->name('panggil.index');
-                        Route::post('loket/{loketId}/panggil', [LoketFarmasiController::class, 'panggil'])->name('panggil.panggil');
-                        Route::get('loket-antrian/data', [LoketFarmasiController::class, 'data'])->name('panggil.data');
-
-                        // DISPLAY
-                        Route::get('display', [DisplayFarmasiController::class, 'index'])->name('display.index');
-                        Route::get('display/data', [DisplayFarmasiController::class, 'data'])->name('display.data');
-                        Route::post('display/{logId}/tampil', [DisplayFarmasiController::class, 'tampil'])->name('display.tampil');
-                });
 
     // EMR
         // I - CARE
