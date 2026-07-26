@@ -11,8 +11,9 @@
 	<parameter name="IMAGES_PATH" class="java.lang.String"/>
 	<parameter name="PKONSUL" class="java.lang.String"/>
 	<parameter name="PNOPEN" class="java.lang.String"/>
-	<parameter name="TTD_PATH" class="java.lang.String"/>
+	<parameter name="TTD_PATH_1" class="java.lang.String"/>
 	<parameter name="KONSULTASI" class="java.lang.String"/>
+	<parameter name="TTD_PATH_2" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[CALL simrspku_klaim.CetakKonsul($P{PKONSUL})]]>
 	</queryString>
@@ -33,8 +34,6 @@
 	<field name="JAM_JAWAB" class="java.lang.String"/>
 	<field name="JAWABAN" class="java.lang.String"/>
 	<field name="ANJURAN" class="java.lang.String"/>
-	<field name="TTD_DOKTER_ASAL" class="java.lang.String"/>
-	<field name="TTD_DOKTER_TUJUAN" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -125,9 +124,9 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 				</staticText>
 				<image hAlign="Center" vAlign="Middle">
 					<reportElement x="391" y="351" width="133" height="50" uuid="e0f51bd0-25c8-48b0-a3bd-c9dd43db8267">
-						<printWhenExpression><![CDATA[$F{TTD_DOKTER_ASAL} != null]]></printWhenExpression>
+						<printWhenExpression><![CDATA[$P{TTD_PATH_1} != null]]></printWhenExpression>
 					</reportElement>
-					<imageExpression><![CDATA[$P{TTD_PATH} + $F{TTD_DOKTER_ASAL}]]></imageExpression>
+					<imageExpression><![CDATA[$P{TTD_PATH_1}]]></imageExpression>
 				</image>
 				<staticText>
 					<reportElement x="43" y="72" width="90" height="15" forecolor="#000000" uuid="a1ba1f3f-58de-467a-a46b-9c320832820b"/>
@@ -291,9 +290,9 @@ Email. pku.sukoharjo@gmail.com | Website. www.rspkusukoharjo.com
 			</frame>
 			<image hAlign="Center" vAlign="Middle">
 				<reportElement x="389" y="298" width="133" height="50" uuid="0f9bdaf0-b8ee-475f-860b-565568af0e07">
-					<printWhenExpression><![CDATA[$F{TTD_DOKTER_TUJUAN} != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{TTD_PATH_2} != null]]></printWhenExpression>
 				</reportElement>
-				<imageExpression><![CDATA[$P{TTD_PATH} + $F{TTD_DOKTER_TUJUAN}]]></imageExpression>
+				<imageExpression><![CDATA[$P{TTD_PATH_2}]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement x="120" y="185" width="450" height="85" forecolor="#000000" uuid="82ec1f4b-f193-4f0e-b2e3-da9c7e71953e"/>
