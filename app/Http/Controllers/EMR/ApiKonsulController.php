@@ -1055,6 +1055,7 @@ class ApiKonsulController extends Controller
                 $isOverwrite  = false;
             }
 
+
             /*
             |------------------------------------------------------------------
             | 7. PATH FILE
@@ -1078,8 +1079,10 @@ class ApiKonsulController extends Controller
             | 7. PATH FILE
             |------------------------------------------------------------------
             */
-            $cetakkonsul = DB::table('simrspku_klaim.konsul as kon')
-                        ->leftJoin('simrspku_klaim.jawaban_konsul as jk', 'jk.KONSUL_NOMOR', '=', 'kon.NOMOR')
+            $schema = $isSimgos ? 'pendaftaran' : 'simrspku_klaim';
+
+            $cetakkonsul = DB::table("$schema.konsul as kon")
+                        ->leftJoin("$schema.jawaban_konsul as jk", 'jk.KONSUL_NOMOR', '=', 'kon.NOMOR')
                         ->leftJoin('pendaftaran.kunjungan as pk', 'pk.NOMOR', '=', 'kon.KUNJUNGAN')
                         ->leftJoin('master.dokter as dok', 'dok.ID', '=', 'kon.DOKTER_ASAL')
                         ->leftJoin('master.dokter as dk', 'dk.ID', '=', 'jk.DOKTER')
@@ -1100,7 +1103,8 @@ class ApiKonsulController extends Controller
                         ])
                         ->where('kon.NOMOR', $nomor)
                         ->first();
-
+            // print_r($cetakkonsul);
+            // die();
             $ttd1 = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttp')
                             ->where('ttp.nip', $cetakkonsul->DOKTER_ASAL)
                             ->where('ttp.status', 1)
