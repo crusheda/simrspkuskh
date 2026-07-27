@@ -91,6 +91,18 @@
                                     <span class="badge badge-sm text-bg-success">+12%</span>
                                 </a>
                             </li> --}}
+                            <li>
+                                <div class="menu-divider"></div>
+                            </li>
+                            <li class="menu-heading">
+                                <span class="menu-label">Display</span>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link" href="{{ route('v2.display.antrian.poli') }}" role="button">
+                                    <i class="ri-dashboard-line"></i>
+                                    <span class="menu-label">Antrian Poliklinik</span>
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                 </div>

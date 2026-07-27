@@ -49,7 +49,21 @@ Route::group(['prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
 });
 
 Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
-    Route::get('dashboard', [DashboardController::class, 'indexV2'])->name('v2.dashboard');
+    // PUBLIK
+        Route::get('dashboard', [DashboardController::class, 'indexV2'])->name('v2.dashboard');
+
+    // DISPLAY
+        // TT - BED
+        Route::get('display/bed', [BedController::class, 'indexV2'])->name('v2.display.bed');
+        // ANTRIAN POLI
+        Route::get('display/antrian/poli', [AntrianPoliController::class, 'indexV2'])->name('v2.display.antrian.poli');
+        // ANTRIAN POLI
+        Route::get('display/antrian/admisi', [AntrianAdmisiController::class, 'indexV2'])->name('v2.display.antrian.admisi');
+        // FARMASI
+        Route::get('display', [DisplayFarmasiController::class, 'indexV2'])->name('v2.display.antrian.farmasi.display');
+        // RATING
+        Route::get('display/rating', [RatingController::class, 'indexV2'])->name('v2.display.rating');
+        Route::get('display/rating/laporan/{bulan}', [RatingController::class, 'laporanV2'])->name('v2.display.rating.laporan');
 
     // SETTING - PROFIL
         Route::get('setting/profil', [ProfilController::class, 'indexV2'])->name('v2.profil');

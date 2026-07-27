@@ -42,6 +42,38 @@ class AntrianPoliController extends Controller
         return view('pages.display.antrian.poli.index')->with('list', $data);
     }
 
+    function indexV2()
+    {
+        $poli = DB::table('master.ruangan AS ru')
+            ->select('ru.ID AS IDRUANGAN','ru.DESKRIPSI AS NAMARUANGAN')
+            ->where(function ($query) {
+                $query->where('ru.ID', 'LIKE', '1020101%')
+                    ->orWhere('ru.ID', 'LIKE', '1020702%');
+            })
+            ->where('ru.JENIS',5)
+            ->where('ru.STATUS',1)
+            ->get();
+
+        $dokter = DB::table('penjamin_rs.dpjp as dpjp')
+            ->leftJoin('master.dokter as md','md.ID','=','dpjp.DPJP_RS')
+            ->leftJoin('aplikasi.pengguna as pe','pe.NIP','=','md.NIP')
+            ->select('dpjp.DPJP_RS as ID_DPJP_SIMRS','dpjp.DPJP_PENJAMIN as ID_DPJP_BPJS',DB::raw('master.getNamaLengkapPegawai(md.NIP) AS NAMADOKTER'))
+            ->where('dpjp.STATUS',1)
+            ->get();
+
+        $mapDokterPoli = DB::table('master.dokter_ruangan')->select('DOKTER','RUANGAN')->where('STATUS',1)->get();
+
+        $data = [
+            'poli' => $poli,
+            'dokter' => $dokter,
+            'mapDokterPoli' => $mapDokterPoli,
+        ];
+
+        // print_r($data);
+        // die();
+        return view('pages.v2.display.antrian.poli.index')->with('list', $data);
+    }
+
     function getDisplayAntrianPoli(Request $request)
     {
         $debug = '';

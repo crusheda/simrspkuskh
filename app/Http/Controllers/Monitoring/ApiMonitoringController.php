@@ -1773,9 +1773,6 @@ class ApiMonitoringController extends Controller
                 ])
                 ->first();
 
-            // print_r($show);
-            // die();
-
             //-----------------------------------------------------------------------
             //GENERATE QR CODE
             $generator = new DNS2D();
@@ -1783,8 +1780,6 @@ class ApiMonitoringController extends Controller
 
             // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
             $image = $generator->getBarcodePNG($pegawai, 'QRCODE');
-            // print_r($generator);
-            // die();
 
             if ($show && $show->NIP) {
                 // Decode base64 jadi binary PNG
@@ -1823,21 +1818,17 @@ class ApiMonitoringController extends Controller
 
             //GENERATE QR CODE
             $generator2 = new DNS2D();
-            // $nama = $show->NAMA_KELUARGA_PASIEN ? $show->NAMA_KELUARGA_PASIEN : $show->NAMALENGKAP;
             $pasien = $show->RM .'-'.$show->NAMALENGKAP;
 
             // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
             $image2 = $generator2->getBarcodePNG($pasien, 'QRCODE');
-            // print_r($generator);
-            // die();
 
             // Decode base64 jadi binary PNG
             $decodedImage2 = base64_decode($image2);
             $token2 = Crypt::encrypt($show->RM);
             $titleQrcode2 = Crypt::encrypt($show->RM).'.png';
             $verif2 = klaim_qrcode::where('nomor',$show->RM)->where('jenis',1)->first();
-            // print_r($titleQrcode2);
-            // die();
+
             // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
             $pathQrcode2 = 'files/qrcode/' . $titleQrcode2;
             $outputQrcode2 = storage_path('app/public/' . $pathQrcode2);
@@ -1903,31 +1894,6 @@ class ApiMonitoringController extends Controller
                 'QRCODE_PATH' => storage_path() . "/app/public/",
             ];
 
-            //CEK PAKAI PARAMETER LANGSUNG
-            // if ($getSEP) {
-            //     $show = DB::select('CALL simrspku_klaim.CetakRincianPasienPerDokterCustom(?, ?)', [$getSEP->TAGIHAN, $getSEP->STATUS]);
-            //     $firstShow = $show[0] ?? null;
-
-            //     if ($firstShow) {
-            //         $showArray = (array) $firstShow;
-
-            //         if (isset($showArray['TANGGALBAYAR'])) {
-            //             $tgl = $showArray['TANGGALBAYAR'];
-            //             if ($tgl instanceof \DateTime) {
-            //                 $showArray['TANGGALBAYAR'] = $tgl->format('Y-m-d H:i:s');
-            //             } else {
-            //                 $timestamp = strtotime($tgl);
-            //                 if ($timestamp !== false) {
-            //                     $showArray['TANGGALBAYAR'] = date('Y-m-d H:i:s', $timestamp);
-            //                 }
-            //             }
-            //         }
-
-            //         $params = array_merge($params, $showArray);
-            //         $params = array_map(fn($v) => $v === null ? '' : $v, $params);
-            //     }
-            // }
-
             $options = [
                 'format' => ['pdf'],
                 'params' => $params,
@@ -1940,8 +1906,6 @@ class ApiMonitoringController extends Controller
                     'database' => config('database.connections.db_custom.database'),
                 ],
             ];
-            // print_r($options);
-            // die();
 
             $jasper = new PHPJasper;
 
