@@ -76,7 +76,7 @@
                         <div class="col-md-5 mb-3">
                             <div class="form-group">
                                 <label class="form-label">DPJP</label>
-                            <select class="form-select" id="filter_dpjp" disabled><option value="5" selected>...</option></select>
+                                <select class="form-select" id="filter_dpjp" disabled><option value="5" selected>...</option></select>
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">

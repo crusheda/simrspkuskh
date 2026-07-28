@@ -8,7 +8,7 @@
 </style>
 <div class="row">
     <div class="col-xl-3">
-        <a href="#" class="d-inline-flex align-items-center d-xl-none btn btn-dark w-100 mb-4" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_component">
+        <a href="#" class="d-inline-flex align-items-center d-xl-none btn btn-dark w-100 mb-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_component">
             <i class="ti ti-menu-2 me-2"></i> Menu Form Pengkajian
         </a>
         <div class="offcanvas-xl offcanvas-start component-offcanvas" tabindex="-1" id="offcanvas_component">
@@ -170,7 +170,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
-                    <div class="card-body" id="formContent">
+                    <div class="card-body p-3" id="formContent">
                         <div class="text-center">
                             Silakan pilih form.
                         </div>
