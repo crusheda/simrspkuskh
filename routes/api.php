@@ -40,6 +40,11 @@ Route::get('/surkon/table', [App\Http\Controllers\Simgos\RegOnline\surkonControl
 Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController::class, 'table'])->name('simgos.kunjungan.pasien');
 
 //---------------------------------------------------------------    A  P  I    L  O  K  A  L    -----------------------------------------------------------------
+Route::group(['prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
+
+});
+
+// SIRMED v.1
 //API PUBLIC
     // DISPLAY
         // TEMPAT TIDUR
