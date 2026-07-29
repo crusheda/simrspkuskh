@@ -123,27 +123,12 @@
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-2">
-                                    <h6>Keluhan Utama</h6>
-                                    <textarea class="form-control" name="ku" rows="2"></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <h6>Riwayat Penyakit Sekarang</h6>
-                                    <textarea class="form-control" name="rps" rows="2"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <div class="card card-body border border-dashed border-warning mb-1">
+                        <div class="card card-body border border-dashed border-warning mb-3">
                             <div class="row">
+                                <h5>I. Pengkajian <b class="text-warning">Primary Survey</b></h5>
                                 <div class="col-md-6">
                                     <div class="mb-2">
-                                        <h6>Pengkajian Primary Survey</h6>
+                                        <h6>Primary Survey</h6>
                                         <div class="form-group">
                                             <div class="form-check form-check-inline mb-2">
                                                 <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pps" value="1">
@@ -259,7 +244,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="mb-3">
+                                    <div class="">
                                         <h6>Neorologi ( D )</h6>
                                         <div class="row">
                                             <div class="col-md-6">
@@ -326,7 +311,82 @@
                                                             <input type="text" class="form-control form-control-sm" name="gcs_t">
                                                         </div>
                                                     </div>
-
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="mt-3">
+                                <div class="col-md-12">
+                                    <div class="d-flex align-items-center gap-3 mb-3">
+                                        <h6 class="mb-0">Status Reproduksi</h6>
+                                        <div class="form-check m-0">
+                                            <input class="form-check-input single-checkbox" type="checkbox" name="sr" value="1">
+                                            <label class="form-check-label" for="sr1">
+                                                Kasus Obstetri Ginekologi
+                                            </label>
+                                        </div>
+                                        <div class="form-check m-0">
+                                            <input class="form-check-input single-checkbox" type="checkbox" name="sr" value="2">
+                                            <label class="form-check-label" for="sr2">
+                                                Tidak
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center gap-2 mb-2">
+                                                    <div class="form-check m-0">
+                                                        <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="1">
+                                                    </div>
+                                                    <label class="form-label mb-0" for="hpht">
+                                                        HPHT
+                                                    </label>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" class="form-control" name="sr_hpht">
+                                                    </div>
+                                                    <label class="form-label mb-0" for="siklus">
+                                                        Siklus
+                                                    </label>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" class="form-control" name="sr_siklus">
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex align-items-center gap-2 mb-2">
+                                                    <div class="form-check m-0">
+                                                        <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="2">
+                                                    </div>
+                                                    <label class="form-label mb-0" for="kb">
+                                                        KB
+                                                    </label>
+                                                    <input type="text" class="form-control" name="sr_kb">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center gap-2 mb-3">
+                                                    <div class="form-check m-0">
+                                                        <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="4">
+                                                    </div>
+                                                    <label class="form-label mb-0">
+                                                        Hamil
+                                                    </label>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="input-group-text">Gravida</span>
+                                                        <input type="text" class="form-control" name="sr_grv">
+                                                        <span class="input-group-text">Paritas</span>
+                                                        <input type="text" class="form-control" name="sr_prt">
+                                                        <span class="input-group-text">Abortus</span>
+                                                        <input type="text" class="form-control" name="sr_abr">
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="form-check m-0">
+                                                        <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="3">
+                                                    </div>
+                                                    <label class="form-label mb-0">
+                                                        Tidak Hamil
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
@@ -334,80 +394,180 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <div class="card card-body border border-dashed border-success mb-1">
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <h6 class="mb-0">Status Reproduksi</h6>
-                                <div class="form-check m-0">
-                                    <input class="form-check-input single-checkbox" type="checkbox" name="sr" value="1">
-                                    <label class="form-check-label" for="sr1">
-                                        Kasus Obstetri Ginekologi
-                                    </label>
+                        <div class="card card-body border border-dashed border-success mb-0">
+                            <div class="row">
+                                <h5>II. Pengkajian <b class="text-success">Secondary Survey</b></h5>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        <h6>Keluhan Utama</h6>
+                                        <textarea class="form-control" name="ku" rows="2"></textarea>
+                                    </div>
                                 </div>
-                                <div class="form-check m-0">
-                                    <input class="form-check-input single-checkbox" type="checkbox" name="sr" value="2">
-                                    <label class="form-check-label" for="sr2">
-                                        Tidak
-                                    </label>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        <h6>Riwayat Penyakit Sekarang</h6>
+                                        <textarea class="form-control" name="rps" rows="2"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        <h6>Riwayat Penyakit Dahulu</h6>
+                                        <textarea class="form-control" name="rpd" rows="2"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        <h6>Riwayat Alergi</h6>
+                                        <textarea class="form-control" name="ra" rows="2"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <div class="form-group">
+                                        <h6>Pemeriksaan Fisik</h6>
+                                        <textarea class="form-control" name="pf" rows="3"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <h6>Riwayat Penggunaan Obat</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover table-display mb-1">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Nama Obat</th>
+                                                    <th>Dosis</th>
+                                                    <th>Cara Pemberian</th>
+                                                    <th>Tanggal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>xxx</td>
+                                                    <td>aaa</td>
+                                                    <td>bbb</td>
+                                                    <td>ccc</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group mb-2">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="d-flex align-items-center gap-2 mb-2">
-                                            <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="1">
-                                            </div>
-                                            <label class="form-label mb-0" for="hpht">
-                                                HPHT
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <input type="text" class="form-control" name="sr_hpht">
-                                            </div>
-                                            <label class="form-label mb-0" for="siklus">
-                                                Siklus
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <input type="text" class="form-control" name="sr_siklus">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2 mb-3">
-                                            <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="2">
-                                            </div>
-                                            <label class="form-label mb-0" for="kb">
-                                                KB
-                                            </label>
-                                            <input type="text" class="form-control" name="sr_kb">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="d-flex align-items-center gap-2 mb-3">
-                                            <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="4">
-                                            </div>
-                                            <label class="form-label mb-0">
-                                                Hamil
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <span class="input-group-text">Gravida</span>
-                                                <input type="text" class="form-control" name="sr_grv">
-                                                <span class="input-group-text">Paritas</span>
-                                                <input type="text" class="form-control" name="sr_prt">
-                                                <span class="input-group-text">Abortus</span>
-                                                <input type="text" class="form-control" name="sr_abr">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="3">
-                                            </div>
-                                            <label class="form-label mb-0">
-                                                Tidak Hamil
-                                            </label>
-                                        </div>
-                                    </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <div class="card card-body border border-dashed border-info mb-0">
+                            <div class="mb-3">
+                                <h6>Pemeriksaan Penunjang Laboratorium</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover table-display">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Jenis Pemeriksaan</th>
+                                                <th>Parameter</th>
+                                                <th>Hasil</th>
+                                                <th>Satuan</th>
+                                                <th>Nilai Normal</th>
+                                                <th>Keterangan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>xxx</td>
+                                                <td>aaa</td>
+                                                <td>bbb</td>
+                                                <td>ccc</td>
+                                                <td>ddd</td>
+                                                <td>eee</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div>
+                                <h6>Pemeriksaan Penunjang Radiologi</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover table-display mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Jenis Pemeriksaan</th>
+                                                <th>Parameter</th>
+                                                <th>Hasil</th>
+                                                <th>Satuan</th>
+                                                <th>Nilai Normal</th>
+                                                <th>Keterangan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>xxx</td>
+                                                <td>aaa</td>
+                                                <td>bbb</td>
+                                                <td>ccc</td>
+                                                <td>ddd</td>
+                                                <td>eee</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <div class="form-group">
+                            <h6>Diagnosa Kerja</h6>
+                            <textarea class="form-control" name="dk" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <div class="form-group">
+                            <h6>Perencanaan Terapi</h6>
+                            <textarea class="form-control" name="pt" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <div class="form-group">
+                            <h6>Hasil Lapor DPJP</h6>
+                            <textarea class="form-control" name="hld" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <h6>Tindak Lanjut Asuhan</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label class="form-label">Cara Keluar</label>
+                                    <select class="form-control" name="tla_ck">
+                                        <option value="">Pilih</option>
+                                        @if ($list['cara_keluar'])
+                                            @foreach ($list['cara_keluar'] as $item)
+                                                <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label class="form-label">Keadaan Keluar</label>
+                                    <select class="form-control" name="tla_kk">
+                                        <option value="">Pilih</option>
+                                        @if ($list['keadaan_keluar'])
+                                            @foreach ($list['keadaan_keluar'] as $item)
+                                                <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">Diagnosa Akhir</label>
+                                    <input type="text" class="form-control" name="tla_da">
                                 </div>
                             </div>
                         </div>

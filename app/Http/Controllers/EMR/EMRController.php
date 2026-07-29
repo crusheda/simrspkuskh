@@ -14,6 +14,10 @@ use PHPJasper\PHPJasper;
 use Carbon\Carbon;
 use Auth, Storage;
 
+// CONTROLLER FORM
+use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
+use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
+
 class EMRController extends Controller
 {
     // INDEX
@@ -521,51 +525,60 @@ class EMRController extends Controller
 
     public function loadFormPengkajian($form)
     {
-        switch ($form) {
-            // PENGKAJIAN AWAL
-                // GAWAT DARURAT
-                case 'pengkajian-gd':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.gawat-darurat.index');
+        // switch ($form) {
+        //     // PENGKAJIAN AWAL
+        //         // GAWAT DARURAT
+        //         case 'pengkajian-gd':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.gawat-darurat.index');
 
-                // RAWAT JALAN
-                case 'pengkajian-rajal-dewasa':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.dewasa.index');
-                case 'pengkajian-rajal-anak':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.anak.index');
-                case 'pengkajian-rajal-psikiatri':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.psikiatri.index');
-                case 'pengkajian-rajal-geriatri':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.geriatri.index');
-                case 'pengkajian-rajal-obsgyn':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.obsgyn.index');
+        //         // RAWAT JALAN
+        //         case 'pengkajian-rajal-dewasa':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.dewasa.index');
+        //         case 'pengkajian-rajal-anak':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.anak.index');
+        //         case 'pengkajian-rajal-psikiatri':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.psikiatri.index');
+        //         case 'pengkajian-rajal-geriatri':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.geriatri.index');
+        //         case 'pengkajian-rajal-obsgyn':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.obsgyn.index');
 
-                // RAWAT INAP
-                case 'pengkajian-ranap-dewasa-anak':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa-anak.index');
-                case 'pengkajian-ranap-neonatus':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.neonatus.index');
-                case 'pengkajian-ranap-obsgyn':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.obsgyn.index');
+        //         // RAWAT INAP
+        //         case 'pengkajian-ranap-dewasa-anak':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa-anak.index');
+        //         case 'pengkajian-ranap-neonatus':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.neonatus.index');
+        //         case 'pengkajian-ranap-obsgyn':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.obsgyn.index');
 
-            // PENGKAJIAN KHUSUS
-                case 'pengkajian-khusus-remaja':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.remaja.index');
-                case 'pengkajian-khusus-terminal':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.terminal.index');
-                case 'pengkajian-khusus-nyeri-kronik':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.nyeri-kronik.index');
-                case 'pengkajian-khusus-sistem-imun-terganggu':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.sistem-imun-terganggu.index');
-                case 'pengkajian-khusus-kecanduan-obat-terlarang':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.kecanduan-obat-terlarang.index');
-                case 'pengkajian-khusus-korban-kekerasan':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.korban-kekerasan.index');
-                case 'pengkajian-khusus-penyakit-menular':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.penyakit-menular.index');
-                case 'pengkajian-khusus-lanjutan':
-                    return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.lanjutan.index');
-            default:
-                abort(404);
-        }
+        //     // PENGKAJIAN KHUSUS
+        //         case 'pengkajian-khusus-remaja':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.remaja.index');
+        //         case 'pengkajian-khusus-terminal':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.terminal.index');
+        //         case 'pengkajian-khusus-nyeri-kronik':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.nyeri-kronik.index');
+        //         case 'pengkajian-khusus-sistem-imun-terganggu':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.sistem-imun-terganggu.index');
+        //         case 'pengkajian-khusus-kecanduan-obat-terlarang':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.kecanduan-obat-terlarang.index');
+        //         case 'pengkajian-khusus-korban-kekerasan':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.korban-kekerasan.index');
+        //         case 'pengkajian-khusus-penyakit-menular':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.penyakit-menular.index');
+        //         case 'pengkajian-khusus-lanjutan':
+        //             return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.lanjutan.index');
+        //     default:
+        //         abort(404);
+        // }
+
+        $controllers = [
+            'pengkajian-gd'             => PengkajianGawatDaruratController::class,
+            'pengkajian-rajal-dewasa'   => PengkajianRawatJalanDewasaController::class,
+        ];
+
+        abort_unless(isset($controllers[$form]), 404);
+
+        return app($controllers[$form])->index(request());
     }
 }
