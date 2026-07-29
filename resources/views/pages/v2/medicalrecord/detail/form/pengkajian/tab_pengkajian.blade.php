@@ -33,7 +33,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="card-body p-0 menu-scroll">
+                    <div class="card-body p-0 menu-scroll" id="pengkajianMenu">
                         <div class="list-group">
 
                             <div class="list-group-item menu-group-title p-2" data-group="awal">
@@ -183,6 +183,7 @@
 <script>
     $(function () {
         // Menandai menu aktif jika URL sama (opsional)
+        const menu = $('#pengkajianMenu');
         let pageUrl = window.location.href.split(/[?#]/)[0];
 
         $('.component-list-card a').each(function () {
@@ -199,8 +200,8 @@
             const keyword = $(this).val().trim().toLowerCase();
 
             // reset
-            $('.menu-group-title').hide();
-            $('.menu-item').hide();
+            menu.find('.menu-group-title').hide();
+            menu.find('.menu-item').hide();
             $('.menu-wrapper').hide();
             $('.menu-child').hide();
 
@@ -216,7 +217,7 @@
             if (keyword === '') {
 
                 $('.menu-group-title').show();
-                $('.menu-item').show();
+                menu.find('.menu-item').show();
                 $('.menu-wrapper').show();
                 $('.menu-child').show();
 
@@ -226,7 +227,7 @@
             // ==========================
             // MENU TANPA SUBMENU
             // ==========================
-            $('.menu-item').each(function () {
+            menu.find('.menu-item').each(function () {
 
                 const text = $(this).text().trim().toLowerCase();
 
@@ -283,12 +284,22 @@
         // ==========================
         // CLICK MENU FORM
         // ==========================
-        $(document).on('click', '.menu-item, .menu-child', function(e){
-            e.preventDefault();
-            $('.menu-item, .menu-child').removeClass('active');
-            $(this).addClass('active');
-            loadForm($(this).data('form'));
-        });
+        $(document).on(
+            'click',
+            '#pengkajianMenu .menu-item, #pengkajianMenu .menu-child',
+            function (e) {
+
+                e.preventDefault();
+
+                $('#pengkajianMenu')
+                    .find('.menu-item, .menu-child')
+                    .removeClass('active');
+
+                $(this).addClass('active');
+
+                loadForm($(this).data('form'));
+            }
+        );
 
         // START INPUT SEARCH JS
         const searchInput = $('#compo-menu-search');

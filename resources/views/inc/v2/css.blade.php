@@ -38,6 +38,7 @@
 <link rel="stylesheet" href="{{ asset('v2/libs/datatables/datatables.min.css') }}">
 <link rel="stylesheet" href="{{ asset('v2/libs/tagify/tagify.css') }}">
 <link rel="stylesheet" href="{{ asset('v2/css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('v2/css/custom.css') }}">
 
 <script src="{{ asset('js/jquery.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
