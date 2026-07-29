@@ -2353,8 +2353,8 @@ progress {
 }
 
 .form-control-sm {
-  min-height: calc(1.6em + 1rem + calc(var(--bs-border-width) * 2));
-  padding: 0.5rem 0.8rem;
+  /* min-height: calc(1.6em + 1rem + calc(var(--bs-border-width) * 2)); */
+  padding: 0.2rem 0.8rem;
   font-size: 0.8125rem;
   border-radius: 8px;
 }
