@@ -35,6 +35,7 @@
                         <p>Sign in to access your secure admin dashboard.</p>
                     </div> --}}
                     <form method="POST" action="{{ route('login') }}">
+                        @csrf
                         <div class="mb-4" data-validate="Username is required">
                             <label class="form-label" for="loginEmail">Username</label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" placeholder="Tuliskan Username Simgos" value="{{ old('name') }}" autocomplete="name" autofocus required>

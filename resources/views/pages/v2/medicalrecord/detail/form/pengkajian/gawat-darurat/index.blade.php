@@ -21,11 +21,13 @@
         // Saat collapse dibuka
         $('.multi-collapse').on('shown.bs.collapse', function () {
             updateButton();
+            $(this).find('.form-content').scrollTop(0);
         });
 
         // Saat collapse ditutup
         $('.multi-collapse').on('hidden.bs.collapse', function () {
             updateButton();
+            $(this).find('.form-content').scrollTop(0);
         });
 
         // Hanya memperbolehkan checkbox dipilih salah satu saja

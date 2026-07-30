@@ -1,5 +1,6 @@
 <div class="form-wrapper">
     <div class="form-content">
+        <h1 class="display-6 mb-4 fs-27"><center>PENGKAJIAN MEDIS (<a class="text-danger">Diisi Oleh Dokter IGD</a>)</center></h1>
         <div class="row">
             <div class="col-md-12 mb-3">
                 <div class="row row-cols-1 row-cols-md-5 g-3">
@@ -559,9 +560,9 @@
         </div>
     </div>
     <div class="form-footer">
-        <button class="btn btn-secondary">
+        {{-- <button class="btn btn-secondary">
             <i class="ri-close-line me-1"></i> Batal
-        </button>
+        </button> --}}
         <button class="btn btn-danger">
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
