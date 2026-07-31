@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class PengkajianRawatJalanDewasaController extends Controller
 {
-    function index()
+    function index($kunjungan)
     {
         return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.dewasa.index');
     }

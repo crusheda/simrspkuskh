@@ -14,6 +14,7 @@
 </div>
 
 <script>
+    const NOKUNJ = @json($list["kunjungan"]);
     $(document).ready(function() {
         // Jalankan saat pertama kali halaman dibuka
         updateButton();

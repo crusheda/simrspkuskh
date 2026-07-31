@@ -11,7 +11,7 @@ use Auth, Storage;
 
 class PengkajianGawatDaruratController extends Controller
 {
-    function index()
+    function index($kunjungan)
     {
         $cara_keluar = DB::table('master.referensi')
                 ->select('ID','DESKRIPSI')
@@ -28,6 +28,7 @@ class PengkajianGawatDaruratController extends Controller
                 ->get();
 
         $data = [
+            'kunjungan' => $kunjungan,
             'cara_keluar' => $cara_keluar,
             'keadaan_keluar' => $keadaan_keluar,
         ];

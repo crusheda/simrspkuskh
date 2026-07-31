@@ -523,7 +523,7 @@ class EMRController extends Controller
         return response()->json($data, 200);
     }
 
-    public function loadFormPengkajian($form)
+    public function loadFormPengkajian($form, $kunjungan)
     {
         // switch ($form) {
         //     // PENGKAJIAN AWAL
@@ -579,6 +579,6 @@ class EMRController extends Controller
 
         abort_unless(isset($controllers[$form]), 404);
 
-        return app($controllers[$form])->index(request());
+        return app($controllers[$form])->index($kunjungan);
     }
 }

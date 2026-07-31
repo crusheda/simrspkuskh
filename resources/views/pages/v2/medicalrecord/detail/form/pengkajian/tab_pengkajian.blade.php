@@ -333,7 +333,7 @@
         `);
 
         $.ajax({
-            url: '/erm/form/pengkajian/' + form,
+            url: `/v2/erm/form/${form}/${kunjungan}`,
             type: 'GET',
             success: function (html) {
                 $('#formContent').html(html);
