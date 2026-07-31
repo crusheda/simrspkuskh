@@ -348,4 +348,33 @@
             }
         });
     }
+
+    // ==========================
+    // GET VALUE FORM BY NAME
+    // ==========================
+    function getFormDataByName($wrapper, additionalData = {}) {
+        const data = { ...additionalData };
+
+        $wrapper.find('[name]').each(function () {
+            const $field = $(this);
+            const name = this.name;
+            const type = (this.type || '').toLowerCase();
+
+            if (type === 'checkbox') {
+                if (!(name in data)) {
+                    data[name] = null;
+                }
+
+                if ($field.is(':checked')) {
+                    data[name] = $field.val();
+                }
+
+                return;
+            }
+
+            data[name] = $field.val();
+        });
+
+        return data;
+    }
 </script>

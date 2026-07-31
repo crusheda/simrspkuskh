@@ -188,6 +188,17 @@
                             </div>
                         </div>
                         <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <h6>Tingkat Kesadaran</h6>
+                                <select class="form-control" name="tks">
+                                    <option value="">Pilih</option>
+                                    @if ($list['tingkat_kesadaran'])
+                                        @foreach ($list['tingkat_kesadaran'] as $item)
+                                            <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
                             <div class="mb-3">
                                 <h6>Pernafasan (Breathing)</h6>
                                 <div class="form-group">
@@ -563,7 +574,7 @@
         {{-- <button class="btn btn-secondary">
             <i class="ri-close-line me-1"></i> Batal
         </button> --}}
-        <button class="btn btn-danger">
+        <button class="btn btn-danger" onclick="saveDataPengkajianGdD(this)">
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
     </div>
@@ -573,4 +584,48 @@
     $(document).ready(function() {
 
     })
+
+    function saveDataPengkajianGdD(btn) {
+        const $button = $(btn);
+        const $section = $('#gd_dokter');
+
+        const data = getFormDataByName($section, {
+            NOKUNJ: $section.data('kunjungan')
+        });
+
+        $.ajax({
+            url: '/api/emr/form/pengkajian/gd/dr/simpan',
+            type: 'POST',
+            data: data,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+
+            beforeSend: function () {
+                // $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan...');
+            },
+
+            success: function (response) {
+                alert(response.message || 'Data berhasil disimpan.');
+            },
+
+            error: function (xhr) {
+                let message = 'Data gagal disimpan.';
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors)
+                        .flat()
+                        .join('\n');
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+
+                alert(message);
+            },
+
+            complete: function () {
+                // $button.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Pengkajian');
+            }
+        });
+    }
 </script>

@@ -15,6 +15,7 @@ use App\Http\Controllers\Display\BedController;
 use App\Http\Controllers\Display\AntrianPoliController;
 use App\Http\Controllers\Display\AntrianAdmisiController;
 use App\Http\Controllers\EMR\EMRController;
+use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\EMR\ApiNewRehabMedikController;
 use App\Http\Controllers\EMR\ApiMatriksController;
@@ -158,9 +159,13 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             // RIS
             Route::get('dcom/{filename}', [RISController::class, 'getDCOM'])->name('api.emr.ris.getDCOM');
 
-        // PENGKAJIAN
+        // FORM
+            // PENGKAJIAN
+                // GAWAT DARURAT
+                Route::post('emr/form/pengkajian/gd/dr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormDokter'])->name('api.emr.form.pengkajian.gd.dr.simpan');
+                Route::post('emr/form/pengkajian/gd/pr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormPerawat'])->name('api.emr.form.pengkajian.gd.pr.simpan');
 
-    //MATRIKS
+    // MATRIKS
     // Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');
     // Route::post('emr/matriks', [ApiMatriksController::class, 'store'])->name('api.emr.matriks.store');
     // Route::get('emr/{NOMOR}/matriks', [ApiMatriksController::class, 'compileMatriks'])->name('api.emr.matriks.preview');
@@ -170,7 +175,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
         Route::get('{NOMOR}/preview', [ApiMatriksController::class, 'previewMatriks'])->name('api.emr.matriks.preview');
     });
 
-    //KONSUL
+    // KONSUL
     Route::get('emr/konsul/{NOMOR}', [ApiKonsulController::class, 'showKonsul'])->name('api.emr.konsul.show');
     Route::get('emr/konsul/masuk/{NOMOR}', [ApiKonsulController::class, 'masukKonsul'])->name('api.emr.konsul.masuk.show');
     Route::get('emr/konsul/jawaban/{NOMOR}', [ApiKonsulController::class, 'getJawabanKonsul'])->name('api.emr.konsul.jawaban.show');
