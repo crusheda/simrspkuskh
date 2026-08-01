@@ -1314,19 +1314,19 @@
                         <div class="col-md-6 mb-3">
                             <div class="input-group input-group-sm flex-grow-1">
                                 <span class="input-group-text">Usia</span>
-                                <input type="text" class="form-control" name="rj_usia" placeholder="Terisi otomatis oleh sistem"> {{-- Usia --}}
+                                <input type="text" class="form-control" name="rj_usia" placeholder="Terisi otomatis oleh sistem" data-hd-required> {{-- Usia --}}
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="input-group input-group-sm flex-grow-1">
                                 <span class="input-group-text">Jenis Kelamin</span>
-                                <input type="text" class="form-control" name="rj_jk" placeholder="Terisi otomatis oleh sistem"> {{-- Jenis Kelamin --}}
+                                <input type="text" class="form-control" name="rj_jk" placeholder="Terisi otomatis oleh sistem" data-hd-required> {{-- Jenis Kelamin --}}
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Diagnosa</label>
-                                <select class="form-select form-select-sm" name="rj_hd_1">
+                                <select class="form-select form-select-sm" name="rj_hd_1" data-hd-required data-hd-score>
                                     <option value="">Pilih</option>
                                     <option value="4">Kelainan neurogis (meningitis) enchepalitis kejang dan atau gelisah</option>
                                     <option value="3">Gangguan perilaku / spikiatri</option>
@@ -1336,7 +1336,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label">Gangguan Kognitif</label>
-                                <select class="form-select form-select-sm" name="rj_hd_2">
+                                <select class="form-select form-select-sm" name="rj_hd_2" data-hd-required data-hd-score>
                                     <option value="">Pilih</option>
                                     <option value="3">Belum punya kontrol diri / gelisah</option>
                                     <option value="2">Lupa akan kondisi sakitnya / kadang gelisah</option>
@@ -1345,7 +1345,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label">Faktor Lingkungan</label>
-                                <select class="form-select form-select-sm" name="rj_hd_3">
+                                <select class="form-select form-select-sm" name="rj_hd_3" data-hd-required data-hd-score>
                                     <option value="">Pilih</option>
                                     <option value="4">Riwayat jatuh / pasien ditempatkan di tempat tidur dewasa</option>
                                     <option value="3">Pasien menggunakan alat bantu, ditempatkan dikursi / pangkuan</option>
@@ -1355,7 +1355,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label">Respon Terhadap Tindakan Operasi (Anastesi Sedasi)</label>
-                                <select class="form-select form-select-sm" name="rj_hd_4">
+                                <select class="form-select form-select-sm" name="rj_hd_4" data-hd-required data-hd-score>
                                     <option value="">Pilih</option>
                                     <option value="3">Dalam 24 jam</option>
                                     <option value="2">Dalam 48 jam</option>
@@ -1366,24 +1366,22 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Penggunaan Obat</label>
-                                <select class="form-select form-select-sm" name="rj_hd_5">
+                                <select class="form-select form-select-sm" name="rj_hd_5" data-hd-required data-hd-score>
                                     <option value="">Pilih</option>
                                     <option value="3">Penggunaan multiple sedative (obat), hypnosi, barbiturate, antidrepesan, pencahar, diuretic, narcose</option>
                                     <option value="2">Penggunaan obat salah satu diatas</option>
                                     <option value="1">Obat lain / tidak menggunakan obat salah satu diatas</option>
                                 </select>
                             </div>
-                            <div id="skor_rj_hd" class="mb-3">
+                            <div id="skor_rj_hd" class="mb-3" hidden>
                                 <div class="alert alert-success mb-0 d-inline-flex align-items-center">
                                     <div class="me-4 flex-shrink-0">
-                                        <h1 class="display-1 fw-bold mb-0">0</h1>
+                                        <h1 class="display-1 fw-bold mb-0" id="nilai_rj_hd">0</h1>
                                     </div>
                                     <div>
                                         <h5 class="mb-1 fw-bold">Skor Risiko Jatuh</h5>
-                                        <div class="fw-bold text-success">Kategori Ringan</div>
-                                        <small class="text-muted">
-                                            Monitoring & evaluasi setelah 7 hari perawatan
-                                        </small>
+                                        <div class="fw-bold text-success" id="kategori_rj_hd"></div>
+                                        <small class="text-muted" id="keterangan_rj_hd"></small>
                                     </div>
                                 </div>
                             </div>
@@ -1411,7 +1409,7 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Riwayat Jatuh (Baru Saja / 3 Bulan Terakhir)</label>
-                                <select class="form-select" name="rj_sm_1">
+                                <select class="form-select" name="rj_sm_1" data-sm-required>
                                     <option value="">Pilih</option>
                                     <option value="1">Tidak</option> {{-- 0 --}}
                                     <option value="2">Ya</option> {{-- 25 --}}
@@ -1419,7 +1417,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label">Diagnosa Lain / Diagnosa Sekunder</label>
-                                <select class="form-select" name="rj_sm_2">
+                                <select class="form-select" name="rj_sm_2" data-sm-required>
                                     <option value="">Pilih</option>
                                     <option value="1">Tidak</option> {{-- 0 --}}
                                     <option value="2">Ya</option> {{-- 15 --}}
@@ -1427,7 +1425,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label">Menggunakan Alat Bantu</label>
-                                <select class="form-select" name="rj_sm_3">
+                                <select class="form-select" name="rj_sm_3" data-sm-required>
                                     <option value="">Pilih</option>
                                     <option value="1">Tidak ada, bed rest</option> {{-- 0 --}}
                                     <option value="2">Tongkat, alat penopang, walker</option> {{-- 15 --}}
@@ -1436,7 +1434,7 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label">Penggunaan Obat Yang Bisa Mempengaruhi Keseimbangan (Heparin, Diuretik, Anti Hipertensi, Anestesi, Anti Depresan dll)</label>
-                                <select class="form-select" name="rj_sm_4">
+                                <select class="form-select" name="rj_sm_4" data-sm-required>
                                     <option value="">Pilih</option>
                                     <option value="1">Tidak</option> {{-- 0 --}}
                                     <option value="2">Ya</option> {{-- 20 --}}
@@ -1446,7 +1444,7 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label">Gaya Berjalan</label>
-                                <select class="form-select" name="rj_sm_5">
+                                <select class="form-select" name="rj_sm_5" data-sm-required>
                                     <option value="">Pilih</option>
                                     <option value="1">Lemah</option> {{-- 10 --}}
                                     <option value="2">Terganggu</option> {{-- 20 --}}
@@ -1454,23 +1452,21 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label class="form-label">Kesadaran</label>
-                                <select class="form-select" name="rj_sm_6">
+                                <select class="form-select" name="rj_sm_6" data-sm-required>
                                     <option value="">Pilih</option>
                                     <option value="1">Baik</option> {{-- 0 --}}
                                     <option value="2">Lupa / pelupa</option> {{-- 15 --}}
                                 </select>
                             </div>
-                            <div id="skor_rj_sm">
+                            <div id="skor_rj_sm" hidden>
                                 <div class="alert alert-success mb-0 d-inline-flex align-items-center">
                                     <div class="me-4 flex-shrink-0">
-                                        <h1 class="display-1 fw-bold mb-0">0</h1>
+                                        <h1 class="display-1 fw-bold mb-0" id="nilai_rj_sm">0</h1>
                                     </div>
                                     <div>
                                         <h5 class="mb-1 fw-bold">Skor Risiko Jatuh</h5>
-                                        <div class="fw-bold text-success">Kategori Ringan</div>
-                                        <small class="text-muted">
-                                            Monitoring & evaluasi setelah 7 hari perawatan
-                                        </small>
+                                        <div class="fw-bold text-success" id="kategori_rj_sm"></div>
+                                        <small class="text-muted" id="keterangan_rj_sm"></small>
                                     </div>
                                 </div>
                             </div>
@@ -1553,17 +1549,15 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div id="skor_sgd" class="mb-3">
+                            <div id="skor_sgd" class="mb-3" hidden>
                                 <div class="alert alert-success mb-0 d-inline-flex align-items-center">
                                     <div class="me-4 flex-shrink-0">
-                                        <h1 class="display-1 fw-bold mb-0">0</h1>
+                                        <h1 class="display-1 fw-bold mb-0" id="nilai_sgd">0</h1>
                                     </div>
                                     <div>
                                         <h5 class="mb-1 fw-bold">Skor Skrining Gizi</h5>
-                                        <div class="fw-bold text-success">Risiko Ringan</div>
-                                        <small class="text-muted">
-                                            Monitoring & evaluasi setelah 7 hari perawatan
-                                        </small>
+                                        <div class="fw-bold text-success" id="kategori_sgd">Risiko Ringan</div>
+                                        <small class="text-muted" id="keterangan_sgd"></small>
                                     </div>
                                 </div>
                             </div>
@@ -1651,17 +1645,15 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div id="skor_sga">
+                            <div id="skor_sga" hidden>
                                 <div class="alert alert-success mb-0 d-inline-flex align-items-center">
                                     <div class="me-4 flex-shrink-0">
-                                        <h1 class="display-1 fw-bold mb-0">0</h1>
+                                        <h1 class="display-1 fw-bold mb-0" id="nilai_sga">0</h1>
                                     </div>
                                     <div>
                                         <h5 class="mb-1 fw-bold">Skor Skrining Gizi</h5>
-                                        <div class="fw-bold text-success">Risiko Ringan</div>
-                                        <small class="text-muted">
-                                            Monitoring & evaluasi setelah 7 hari perawatan
-                                        </small>
+                                        <div class="fw-bold text-success" id="kategori_sga"></div>
+                                        <small class="text-muted" id="keterangan_sga"></small>
                                     </div>
                                 </div>
                             </div>
@@ -2195,12 +2187,278 @@
 
 <script>
     $(document).ready(function() {
+        const $section = $('#gd_perawat');
 
+        // Event delegation: tetap berjalan walaupun isi accordion dirender ulang
+        $section.on('change input', '[data-hd-required]', function () {
+            hitungSkorHumptyDumpty($section);
+        });
+        $section.on('change', '[data-sm-required]', function () {
+            hitungSkorMorse($section);
+        });
+        $section.on('change input', '[name="sgd1"], [name="sgd1_c"], [name="sgd2"]', function () {
+            hitungSkorSkriningGizi($section);
+        });
+        $section.on('change', 'input[name="sga1"], input[name="sga2"], input[name="sga3"], input[name="sga4"]', function () {
+            hitungSkorStrongKid($section);
+        });
+
+        hitungSkorHumptyDumpty($section);
+        hitungSkorMorse($section);
+        hitungSkorSkriningGizi($section);
+        hitungSkorStrongKid($section);
     })
+
+    // RESIKO JATUH HUMPTY DUMPTY
+    function hitungSkorHumptyDumpty($section) {
+        const $requiredFields = $section.find('[data-hd-required]');
+        const $scoreFields = $section.find('[data-hd-score]');
+
+        // Selector selalu dibatasi di dalam #gd_perawat
+        const $scoreBox = $section.find('#skor_rj_hd');
+        const $nilai = $section.find('#nilai_rj_hd');
+        const $kategori = $section.find('#kategori_rj_hd');
+        const $keterangan = $section.find('#keterangan_rj_hd');
+
+        const semuaTerisi = $requiredFields.toArray().every(function (field) {
+            return $.trim($(field).val()) !== '';
+        });
+
+        if (!semuaTerisi) {
+            $scoreBox.prop('hidden', true);
+            return;
+        }
+
+        let skor = 0;
+
+        $scoreFields.each(function () {
+            skor += Number($(this).val());
+        });
+
+        const isHighRisk = skor >= 12;
+        const kategori = isHighRisk
+            ? 'High Risk Dumpty'
+            : 'Low Humpty Dumpty';
+
+        $nilai.text(skor);
+
+        $kategori
+            .text(kategori)
+            .removeClass('text-success text-danger')
+            .addClass(isHighRisk ? 'text-danger' : 'text-success');
+
+        $keterangan.text(
+            isHighRisk
+                ? 'Lakukan pencegahan risiko jatuh sesuai prosedur.'
+                : 'Monitoring dan evaluasi risiko jatuh sesuai prosedur.'
+        );
+
+        $scoreBox
+            .find('.alert')
+            .removeClass('alert-success alert-danger')
+            .addClass(isHighRisk ? 'alert-danger' : 'alert-success');
+
+        $scoreBox.prop('hidden', false);
+    }
+
+    function hitungSkorMorse($section) {
+        const $fields = $section.find('[data-sm-required]');
+        const $scoreBox = $section.find('#skor_rj_sm');
+
+        const semuaTerisi = $fields.toArray().every(function (field) {
+            return $.trim($(field).val()) !== '';
+        });
+
+        // Hasil hanya muncul jika seluruh penilaian Morse sudah diisi
+        if (!semuaTerisi) {
+            $scoreBox.prop('hidden', true);
+            return;
+        }
+
+        // Mapping: name field => value option => skor Morse
+        const scoreMap = {
+            rj_sm_1: { 1: 0, 2: 25 },         // Riwayat jatuh
+            rj_sm_2: { 1: 0, 2: 15 },         // Diagnosa sekunder
+            rj_sm_3: { 1: 0, 2: 15, 3: 30 },  // Alat bantu
+            rj_sm_4: { 1: 0, 2: 20 },         // Obat
+            rj_sm_5: { 1: 10, 2: 20 },        // Gaya berjalan
+            rj_sm_6: { 1: 0, 2: 15 }          // Kesadaran
+        };
+
+        let skor = 0;
+
+        $fields.each(function () {
+            const name = this.name;
+            const value = $(this).val();
+
+            skor += scoreMap[name][value];
+        });
+
+        let kategori;
+        let alertClass;
+        let textClass;
+        let keterangan;
+
+        if (skor >= 45) {
+            kategori = 'Risiko Tinggi';
+            alertClass = 'alert-danger';
+            textClass = 'text-danger';
+            keterangan = 'Lakukan pencegahan risiko jatuh risiko tinggi.';
+        } else if (skor >= 25) {
+            kategori = 'Risiko Sedang';
+            alertClass = 'alert-warning';
+            textClass = 'text-warning';
+            keterangan = 'Lakukan pencegahan risiko jatuh risiko sedang.';
+        } else {
+            kategori = 'Risiko Rendah';
+            alertClass = 'alert-success';
+            textClass = 'text-success';
+            keterangan = 'Monitoring dan evaluasi sesuai prosedur.';
+        }
+
+        $section.find('#nilai_rj_sm').text(skor);
+
+        $section.find('#kategori_rj_sm')
+            .text(kategori)
+            .removeClass('text-success text-warning text-danger')
+            .addClass(textClass);
+
+        $section.find('#keterangan_rj_sm').text(keterangan);
+
+        $scoreBox.find('.alert')
+            .removeClass('alert-success alert-warning alert-danger')
+            .addClass(alertClass);
+
+        $scoreBox.prop('hidden', false);
+    }
+
+    function hitungSkorSkriningGizi($section) {
+        const sgd1 = $section.find('input[name="sgd1"]:checked').val();
+        const sgd1c = $section.find('input[name="sgd1_c"]:checked').val();
+        const sgd2 = $section.find('input[name="sgd2"]:checked').val();
+        const sgd3 = $.trim($section.find('[name="sgd3"]').val());
+
+        const $scoreBox = $section.find('#skor_sgd');
+
+        // Jumlah perubahan berat badan hanya wajib bila sgd1 = Ya
+        const jumlahBeratBadanWajib = sgd1 === '1';
+
+        const semuaTerisi =
+            sgd1 !== undefined &&
+            sgd2 !== undefined &&
+            // sgd3 !== '' &&
+            (!jumlahBeratBadanWajib || sgd1c !== undefined);
+
+        if (!semuaTerisi) {
+            $scoreBox.prop('hidden', true);
+            return;
+        }
+
+        // Jika tidak ada perubahan berat badan, sgd1_c tidak dihitung.
+        const skor =
+            Number(sgd1) +
+            Number(sgd2) +
+            (jumlahBeratBadanWajib ? Number(sgd1c) : 0);
+
+        let kategori;
+        let alertClass;
+        let textClass;
+        let keterangan;
+
+        if (skor >= 4) {
+            kategori = 'Risiko Berat';
+            alertClass = 'alert-danger';
+            textClass = 'text-danger';
+            keterangan = 'Perlu tindak lanjut skrining gizi sesuai prosedur.';
+        } else if (skor >= 2) {
+            kategori = 'Risiko Sedang';
+            alertClass = 'alert-warning';
+            textClass = 'text-warning';
+            keterangan = 'Lakukan monitoring dan evaluasi status gizi.';
+        } else {
+            kategori = 'Risiko Ringan';
+            alertClass = 'alert-success';
+            textClass = 'text-success';
+            keterangan = 'Monitoring dan evaluasi berkala.';
+        }
+
+        $section.find('#nilai_sgd').text(skor);
+
+        $section.find('#kategori_sgd')
+            .text(kategori)
+            .removeClass('text-success text-warning text-danger')
+            .addClass(textClass);
+
+        $section.find('#keterangan_sgd').text(keterangan);
+
+        $scoreBox.find('.alert')
+            .removeClass('alert-success alert-warning alert-danger')
+            .addClass(alertClass);
+
+        $scoreBox.prop('hidden', false);
+    }
+
+    function hitungSkorStrongKid($section) {
+        const fieldNames = ['sga1', 'sga2', 'sga3', 'sga4'];
+        const $scoreBox = $section.find('#skor_sga');
+
+        const nilai = fieldNames.map(function (name) {
+            return $section.find('input[name="' + name + '"]:checked').val();
+        });
+
+        // Skor hanya tampil jika keempat pertanyaan sudah dijawab
+        if (nilai.some(function (value) {
+            return value === undefined;
+        })) {
+            $scoreBox.prop('hidden', true);
+            return;
+        }
+
+        const skor = nilai.reduce(function (total, value) {
+            return total + Number(value);
+        }, 0);
+
+        let kategori;
+        let alertClass;
+        let textClass;
+        let keterangan;
+
+        if (skor >= 3) {
+            kategori = 'Risiko Tinggi';
+            alertClass = 'alert-danger';
+            textClass = 'text-danger';
+            keterangan = 'Perlu asesmen dan tindak lanjut gizi lebih lanjut.';
+        } else if (skor === 2) {
+            kategori = 'Risiko Sedang';
+            alertClass = 'alert-warning';
+            textClass = 'text-warning';
+            keterangan = 'Lakukan monitoring status gizi sesuai prosedur.';
+        } else {
+            // Skor 0 atau 1
+            kategori = 'Tidak Berisiko';
+            alertClass = 'alert-success';
+            textClass = 'text-success';
+            keterangan = 'Monitoring dan evaluasi berkala.';
+        }
+
+        $section.find('#nilai_sga').text(skor);
+
+        $section.find('#kategori_sga')
+            .text(kategori)
+            .removeClass('text-success text-warning text-danger')
+            .addClass(textClass);
+
+        $section.find('#keterangan_sga').text(keterangan);
+
+        $scoreBox.find('.alert')
+            .removeClass('alert-success alert-warning alert-danger')
+            .addClass(alertClass);
+
+        $scoreBox.prop('hidden', false);
+    }
 
     function saveDataPengkajianGdP(btn) {
         const $button = $(btn);
-        const $section = $('#gd_perawat');
 
         const data = getFormDataByName($section, {
             NOKUNJ: $section.data('kunjungan')
