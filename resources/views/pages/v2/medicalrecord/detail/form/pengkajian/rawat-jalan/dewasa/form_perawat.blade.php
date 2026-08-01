@@ -310,118 +310,137 @@
         </div>
         <div class="col-md-12">
             <div class="card card-body border border-dashed border-success mb-3">
-                <div class="mb-3">
-                    <h6 class="mb-3">SKRINING NYERI</h6>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="row align-items-start">
-                                <div class="col-md-5 text-center">
-                                    <img src="{{ asset('images/erm/skrining_nyeri.png') }}"
-                                        alt="Indikator Penilaian Nyeri"
-                                        class="img-fluid mb-3"
-                                        style="max-width: 400rm;width:auto;">
-                                    <h6 class="text-start">Skor</h6>
-                                    <div class="d-flex align-items-center gap-2 mb-2">
-                                        <div class="form-check mb-0 flex-shrink-0">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sn_skor" value="1">
-                                            <label class="form-check-label ms-1">
-                                                Numerik
-                                            </label>
-                                        </div>
-                                        <input type="text" class="form-control form-control-sm flex-grow-1" name="sn_skor_n" placeholder="">
+                <h6 class="mb-3">SKRINING NYERI</h6>
+
+                <!-- Baris 1 -->
+                <div class="row mb-3 align-items-center">
+
+                    <div class="col-md-4">
+                        <div class="row align-items-center">
+                            <label class="col-md-4 col-form-label fw-bold">Nyeri</label>
+
+                            <div class="col-md-8">
+                                <div class="d-flex gap-4">
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="sn_nyeri" id="nyeriYa" value="1">
+                                        <label class="form-check-label" for="nyeriYa">Ya</label>
                                     </div>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="form-check mb-0 flex-shrink-0">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sn_skor" value="2">
-                                            <label class="form-check-label ms-1">
-                                                Wong Beker
-                                            </label>
-                                        </div>
-                                        <input type="text" class="form-control form-control-sm flex-grow-1" name="sn_skor_w" placeholder="">
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio"
+                                            name="sn_nyeri" id="nyeriTidak" value="0" checked>
+                                        <label class="form-check-label" for="nyeriTidak">Tidak</label>
                                     </div>
-                                </div>
-                                <div class="col-md-7">
-                                    <div class="form-group mb-3 mt-3">
-                                        <h6>Nyeri</h6>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="sn_n" value="1">
-                                            <label class="form-check-label"> Tidak </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="sn_n" value="2">
-                                            <label class="form-check-label"> Nyeri Akut </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="sn_n" value="3">
-                                            <label class="form-check-label"> Nyeri Kronis </label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <h6>Nyeri hilang dengan :</h6>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sn_h" value="1">
-                                            <label class="form-check-label"> Minum obat </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sn_h" value="2">
-                                            <label class="form-check-label"> Istirahat </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sn_h" value="3">
-                                            <label class="form-check-label"> Mendengar musik </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sn_h" value="4">
-                                            <label class="form-check-label"> Berubah posisi tidur </label>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="form-check mb-0 flex-shrink-0">
-                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sn_h" value="5">
-                                                <label class="form-check-label ms-1">
-                                                    Lain-lain
-                                                </label>
-                                            </div>
-                                            <input type="text" class="form-control form-control-sm flex-grow-1" name="sn_h_lain" placeholder="">
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center gap-3 mb-2">
-                                <h6 class="mb-0">P : </h6>
-                                <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
-                                    <input type="text" class="form-control" name="sn_p">
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="row align-items-center">
+                            <label class="col-md-2 col-form-label fw-bold">Onset</label>
+
+                            <div class="col-md-10">
+                                <div class="d-flex gap-4">
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="sn_onset" id="onsetAkut" value="Akut">
+                                        <label class="form-check-label" for="onsetAkut">Akut</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio"name="sn_onset" id="onsetKronis" value="Kronis">
+                                        <label class="form-check-label" for="onsetKronis">Kronis</label>
+                                    </div>
+
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center gap-3 mb-2">
-                                <h6 class="mb-0">Q : </h6>
-                                <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
-                                    <input type="text" class="form-control" name="sn_q">
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center gap-3 mb-2">
-                                <h6 class="mb-0">R : </h6>
-                                <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
-                                    <input type="text" class="form-control" name="sn_r">
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center gap-3 mb-2">
-                                <h6 class="mb-0">S : </h6>
-                                <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
-                                    <input type="text" class="form-control" name="sn_s">
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center gap-3 mb-2">
-                                <h6 class="mb-0">T : </h6>
-                                <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
-                                    <input type="text" class="form-control" name="sn_t">
-                                </div>
-                            </div>
-                            <h6 class="mt-3">Jika Nyeri : Lanjutkan dengan assesment nyeri</h6>
                         </div>
                     </div>
                 </div>
+
+                <!-- Baris 2 -->
+                <div class="row mb-3 align-items-center">
+
+                    <div class="col-md-4">
+                        <div class="row align-items-center">
+                            <label class="col-md-4 col-form-label fw-bold">Skala Nyeri</label>
+
+                            <div class="col-md-8">
+                                <select class="form-select" name="sn_skala">
+                                    @for($i=0;$i<=10;$i++)
+                                        <option value="{{ $i }}">{{ $i }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="row align-items-center">
+                            <label class="col-md-2 col-form-label fw-bold">Metode</label>
+                            <div class="col-md-10">
+                                <div class="d-flex gap-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="sn_metode" value="NRS">
+                                        <label class="form-check-label">NRS</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="sn_metode" value="BPS">
+                                        <label class="form-check-label">BPS</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="sn_metode" value="NIPS">
+                                        <label class="form-check-label">NIPS</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="sn_metode" value="FLACC">
+                                        <label class="form-check-label">FLACC</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="sn_metode" value="VAS">
+                                        <label class="form-check-label">VAS</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Baris 3 -->
+                <div class="row mb-2 align-items-center">
+                    <label class="col-md-2 col-form-label fw-bold">Pencetus</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" name="sn_pencetus" placeholder="[ Pencetus ]">
+                    </div>
+                </div>
+
+                <!-- Baris 4 -->
+                <div class="row mb-2 align-items-center">
+                    <label class="col-md-2 col-form-label fw-bold">Gambaran</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" name="sn_gambaran" placeholder="[ Gambaran ]">
+                    </div>
+                </div>
+
+                <!-- Baris 5 -->
+                <div class="row mb-2 align-items-center">
+                    <label class="col-md-2 col-form-label fw-bold">Durasi</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" name="sn_durasi" placeholder="[ Durasi ]">
+                    </div>
+                </div>
+
+                <!-- Baris 6 -->
+                <div class="row align-items-center">
+                    <label class="col-md-2 col-form-label fw-bold">Lokasi</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" name="sn_lokasi" placeholder="[ Lokasi ]">
+                    </div>
+                </div>
+
             </div>
         </div>
         <div class="col-md-12 mb-3">
@@ -576,12 +595,33 @@
                                     <label class="fw-bold"> Adakah perubahan berat badan signifikan dalam 3 bulan terakhir? </label>
                                     <div class="mt-2">
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input gizi" type="radio" name="bb_turun" value="1">
+                                            <input class="form-check-input gizi" type="radio" name="bb_turun" id="bb_turun1" value="1">
                                             <label class="form-check-label">Ya</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input gizi" type="radio" name="bb_turun" value="0" checked>
+                                            <input class="form-check-input gizi" type="radio" name="bb_turun" id="bb_turun2" value="0" checked>
                                             <label class="form-check-label">Tidak</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-4" id="perubahan_berat">
+                                    <label class="fw-bold"> Jumlah perubahan berat badan </label>
+                                    <div class="mt-2">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input gizi" type="radio" name="bb_ubah" id="bb_ubah1" value="0" checked>
+                                            <label class="form-check-label">0,5 - 5 kg (1)</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input gizi" type="radio" name="bb_ubah" id="bb_ubah2" value="1">
+                                            <label class="form-check-label">> 5 - 10 kg (2)</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input gizi" type="radio" name="bb_ubah" id="bb_ubah3" value="2">
+                                            <label class="form-check-label">> 10 - 15 kg (3)</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input gizi" type="radio" name="bb_ubah" id="bb_ubah4" value="3">
+                                            <label class="form-check-label">> 15 kg (4)</label>
                                         </div>
                                     </div>
                                 </div>
@@ -590,7 +630,7 @@
                                     <label class="fw-bold"> Intake makanan kurang karena tidak ada nafsu makan? </label>
                                     <div class="mt-2">
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input gizi" type="radio" name="nafsu_makan" value="1">
+                                            <input class="form-check-input gizi" type="radio" name="nafsu_makan" value="0">
                                             <label class="form-check-label">Ya</label>
                                         </div>
                                         <div class="form-check form-check-inline">
@@ -610,7 +650,7 @@
                             <div class="col-md-3">
                                 <div class="form-content text-center">
                                     <h4 id="total_gizi"class="display-2 fw-bold">0</h4>
-                                    <label id="status_gizi"class="text-success fw-bold">Risiko Ringan</label>
+                                    <label id="status_gizi"class="text-success fw-bold">Risiko Ringan</label><br>
                                     <small id="evaluasi_gizi" class="text-muted"> Monitoring &amp; evaluasi setelah 7 hari perawatan</small>
                                 </div>
                             </div>
@@ -967,6 +1007,7 @@
         $('#nk_lain').hide();
         $('#terapi_oral').hide();
         $('#terapi_iv').hide();
+        $('#perubahan_berat').hide();
 
         // Status Psikologi
         $('#pse_7').change(function () {
@@ -1055,6 +1096,27 @@
 
         });
 
+        // Saat pilihan berubah
+        $('input[name="bb_turun"]').on('change', function () {
+            togglePerubahanBerat();
+        });
+
+        function togglePerubahanBerat() {
+            if ($('input[name="bb_turun"]:checked').val() == '1') {
+                // Ya
+                $('#perubahan_berat').slideDown();
+            } else {
+                // Tidak
+                $('#perubahan_berat').slideUp();
+
+                // Hapus pilihan sebelumnya
+                $('input[name="bb_ubah"]').prop('checked', false);
+
+                // Hapus pilihan sebelumnya
+                $('input[name="bb_turun"]').val() == '0';
+            }
+        }
+
     });
 
     function hitungSkor(){
@@ -1105,6 +1167,7 @@
         let skor = 0;
 
         skor += Number($("input[name='bb_turun']:checked").val());
+        skor += Number($("input[name='bb_ubah']:checked").val());
         skor += Number($("input[name='nafsu_makan']:checked").val());
 
         $("#total_gizi").text(skor);
@@ -1113,13 +1176,13 @@
         let evaluasi = "";
         let warna = "";
 
-        if(skor == 0){
+        if(skor <= 1){
 
             status = "Risiko Ringan";
             evaluasi = "Monitoring & evaluasi setelah 7 hari perawatan";
             warna = "text-success";
 
-        }else if(skor == 1){
+        }else if(skor <= 3){
 
             status = "Risiko Sedang";
             evaluasi = "Monitoring & evaluasi setelah 3 hari perawatan";

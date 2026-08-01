@@ -246,9 +246,11 @@
                                         <label class="form-label fw-bold">Jenis Ruang Perawatan</label>
                                         <select class="form-control" id="pri_ruang">
                                             <option value="">Pilih Jenis Ruang Perawatan</option>
-                                            <option value="1">Perawatan Biasa</option>
-                                            <option value="2">Perawatan Intensive</option>
-                                            <option value="3">Perawatan Isolasi</option>
+                                            {{-- @foreach ($list['jenis_ruang'] as $item)
+                                                <option value="{{ $item->ID }}">
+                                                    {{ $item->DESKRIPSI }}
+                                                </option>
+                                            @endforeach --}}
                                         </select>
                                     </div>
                                 </div>
@@ -257,10 +259,11 @@
                                         <label class="form-label fw-bold">Jenis Perawatan</label>
                                         <select class="form-control" id="pri_perawatan">
                                             <option value="">Pilih Jenis Perawatan</option>
-                                            <option value="1">Preventif (Mencegah)</option>
-                                            <option value="2">Kuratif (Menolong)</option>
-                                            <option value="3">Rehabilitatif (Rehabilitasi)</option>
-                                            <option value="4">Paliatif (Meredakan)</option>
+                                            {{-- @foreach ($list['jenis_perawatan'] as $item)
+                                                <option value="{{ $item->ID }}">
+                                                    {{ $item->DESKRIPSI }}
+                                                </option>
+                                            @endforeach --}}
                                         </select>
                                     </div>
                                 </div>
@@ -281,12 +284,13 @@
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label fw-bold">DPJP</label>
-                                    <input type="text" class="form-control" id="pri_dpjp" placeholder="Dokter Otomatis">
+                                    <input type="text" class="form-control" id="pri_dpjp" value="{{ $list['show']->NAMADOKTER ?? '' }}" readonly>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
+                        <hr>
                         <div class="col-md-3">
                             <label class="form-label fw-bold">Dirujuk Ke</label>
                         </div>
