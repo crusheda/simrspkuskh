@@ -16,6 +16,7 @@ use App\Http\Controllers\Display\AntrianPoliController;
 use App\Http\Controllers\Display\AntrianAdmisiController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
+use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\EMR\ApiNewRehabMedikController;
 use App\Http\Controllers\EMR\ApiMatriksController;
@@ -164,6 +165,9 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 // GAWAT DARURAT
                 Route::post('emr/form/pengkajian/gd/dr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormDokter'])->name('api.emr.form.pengkajian.gd.dr.simpan');
                 Route::post('emr/form/pengkajian/gd/pr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormPerawat'])->name('api.emr.form.pengkajian.gd.pr.simpan');
+                // RAWAT JALAN DEWASA
+                Route::post('emr/form/pengkajian/gd/dr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormDokter'])->name('api.emr.form.pengkajian.rjd.dr.simpan');
+                Route::post('emr/form/pengkajian/gd/pr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormPerawat'])->name('api.emr.form.pengkajian.rjd.pr.simpan');
 
     // MATRIKS
     // Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');

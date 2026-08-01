@@ -15,16 +15,16 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="an_auto">
-                                <label class="form-check-label" for="an_auto">
+                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="1" checked="">
+                                <label class="form-check-label">
                                     Autoanamnesis
                                 </label>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="an_allo">
-                                <label class="form-check-label" for="an_allo">
+                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="2">
+                                <label class="form-check-label">
                                     Alloanamnesis
                                 </label>
                             </div>
@@ -246,11 +246,11 @@
                                         <label class="form-label fw-bold">Jenis Ruang Perawatan</label>
                                         <select class="form-control" id="pri_ruang">
                                             <option value="">Pilih Jenis Ruang Perawatan</option>
-                                            {{-- @foreach ($list['jenis_ruang'] as $item)
+                                            @foreach ($list['jenis_ruang'] as $item)
                                                 <option value="{{ $item->ID }}">
                                                     {{ $item->DESKRIPSI }}
                                                 </option>
-                                            @endforeach --}}
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -259,11 +259,11 @@
                                         <label class="form-label fw-bold">Jenis Perawatan</label>
                                         <select class="form-control" id="pri_perawatan">
                                             <option value="">Pilih Jenis Perawatan</option>
-                                            {{-- @foreach ($list['jenis_perawatan'] as $item)
+                                            @foreach ($list['jenis_perawatan'] as $item)
                                                 <option value="{{ $item->ID }}">
                                                     {{ $item->DESKRIPSI }}
                                                 </option>
-                                            @endforeach --}}
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -284,7 +284,7 @@
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label fw-bold">DPJP</label>
-                                    <input type="text" class="form-control" id="pri_dpjp" value="{{ $list['show']->NAMADOKTER ?? '' }}" readonly>
+                                    <input type="text" class="form-control" id="pri_dpjp" value="{{ $list['dpjp']->NAMADOKTER ?? '' }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -410,4 +410,47 @@
         );
 
     });
+    function saveDataPengkajianRJD(btn) {
+        const $button = $(btn);
+        const $section = $('#gd_dokter');
+
+        const data = getFormDataByName($section, {
+            NOKUNJ: $section.data('kunjungan')
+        });
+
+        $.ajax({
+            url: '/api/emr/form/pengkajian/rjd/dr/simpan',
+            type: 'POST',
+            data: data,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+
+            beforeSend: function () {
+                // $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan...');
+            },
+
+            success: function (response) {
+                alert(response.message || 'Data berhasil disimpan.');
+            },
+
+            error: function (xhr) {
+                let message = 'Data gagal disimpan.';
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors)
+                        .flat()
+                        .join('\n');
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+
+                alert(message);
+            },
+
+            complete: function () {
+                // $button.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Pengkajian');
+            }
+        });
+    };
 </script>
