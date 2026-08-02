@@ -166,8 +166,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 Route::post('emr/form/pengkajian/gd/dr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormDokter'])->name('api.emr.form.pengkajian.gd.dr.simpan');
                 Route::post('emr/form/pengkajian/gd/pr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormPerawat'])->name('api.emr.form.pengkajian.gd.pr.simpan');
                 // RAWAT JALAN DEWASA
-                Route::post('emr/form/pengkajian/gd/dr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormDokter'])->name('api.emr.form.pengkajian.rjd.dr.simpan');
-                Route::post('emr/form/pengkajian/gd/pr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormPerawat'])->name('api.emr.form.pengkajian.rjd.pr.simpan');
+                Route::post('emr/form/pengkajian/rjd/dr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormDokter'])->name('api.emr.form.pengkajian.rjd.dr.simpan');
+                Route::post('emr/form/pengkajian/rjd/pr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormPerawat'])->name('api.emr.form.pengkajian.rjd.pr.simpan');
 
     // MATRIKS
     // Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');

@@ -46,8 +46,114 @@ class PengkajianRawatJalanDewasaController extends Controller
 
     function simpanFormDokter(Request $request)
     {
-        print_r($request->all());
-        die();
+        // print_r($request->all());
+        // die();
+
+        DB::beginTransaction();
+
+        try {
+
+            // ==========================
+            // ANAMNESIS DIPEROLEH
+            // ==========================
+            DB::table('medicalrecord.anamnesis_diperoleh')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'AUTOANAMNESIS' => ($request->anam == 1) ? 1 : 0,
+                    'ALLOANAMNESIS' => ($request->anam == 2) ? 1 : 0,
+                    'DARI'          => $request->anamnesis_oleh,
+                    'OLEH'          => auth()->id(),
+                    'STATUS'        => 1,
+                    'TANGGAL'       => now()
+                ]
+            );
+
+            // ==========================
+            // KELUHAN UTAMA
+            // ==========================
+            DB::table('medicalrecord.keluhan_utama')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'DESKRIPSI'    => $request->keluhan_utama,
+                    'SNOMED_CT_ID' => 0,
+                    'OLEH'         => auth()->id(),
+                    'STATUS'       => 1,
+                    'TANGGAL'      => now()
+                ]
+            );
+
+            // ==========================
+            // Riwayat Penyakit Sekarang
+            // ==========================
+            DB::table('medicalrecord.anamnesis')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'PENDAFTARAN'  => DB::table('pendaftaran.kunjungan')->where('NOMOR', $request->NOKUNJ)->value('NOPEN'),
+                    'DESKRIPSI'    => $request->rps,
+                    'SNOMED_CT_ID' => 0,
+                    'OLEH'         => auth()->id(),
+                    'STATUS'       => 1,
+                    'TANGGAL'      => now()
+                ]
+            );
+
+            // ==========================
+            // Riwayat Penyakit Dahulu
+            // ==========================
+            DB::table('medicalrecord.rpp')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'DESKRIPSI'    => $request->rpd,
+                    'SNOMED_CT_ID' => 0,
+                    'OLEH'         => auth()->id(),
+                    'STATUS'       => 1,
+                    'TANGGAL'      => now()
+                ]
+            );
+
+            // ==========================
+            // Riwayat Penyakit Dahulu
+            // ==========================
+            if ($request->ra == 1) {
+                DB::table('medicalrecord.riwayat_alergi')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'JENIS'        => $request->ra_jenis,
+                        'DESKRIPSI'    => $request->ra_des,
+                        'OLEH'         => auth()->id(),
+                        'STATUS'       => 1,
+                        'TANGGAL'      => now()
+                    ]
+                );
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Berhasil disimpan'
+            ]);
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+
+        }
     }
 
     function simpanFormPerawat(Request $request)

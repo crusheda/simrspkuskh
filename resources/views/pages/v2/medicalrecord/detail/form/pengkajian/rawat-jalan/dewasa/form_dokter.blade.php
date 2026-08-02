@@ -30,21 +30,21 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <input type="text" class="form-control" id="anamnesis_oleh" placeholder="Oleh.....">
+                            <input type="text" class="form-control" name="anamnesis_oleh" id="anamnesis_oleh" placeholder="Oleh.....">
                         </div>
                     </div>
                     <div class="row align-items-center" id="anamnesis">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Keluhan Utama</label>
-                            <textarea class="form-control" id="keluhan_utama" rows="3"></textarea>
+                            <textarea class="form-control" name="keluhan_utama" id="keluhan_utama" rows="3"></textarea>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Riwayat Penyakit Sekarang</label>
-                            <textarea class="form-control" id="rps" rows="3"></textarea>
+                            <textarea class="form-control" name="rps" id="rps" rows="3"></textarea>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Riwayat Penyakit Dahulu</label>
-                            <textarea class="form-control" id="rpd" rows="3"></textarea>
+                            <textarea class="form-control" name="rpd" id="rpd" rows="3"></textarea>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Riwayat Alergi</label>
@@ -52,7 +52,7 @@
                                 <div class="col-md-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="ra" id="ra_tidak" value="0">
-                                        <label class="form-check-label" for="ra_tidak">
+                                        <label class="form-check-label">
                                             Tidak
                                         </label>
                                     </div>
@@ -60,13 +60,21 @@
                                 <div class="col-md-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="ra" id="ra_ya" value="1">
-                                        <label class="form-check-label" for="ra_ya">
+                                        <label class="form-check-label">
                                             Ya
                                         </label>
                                     </div>
                                 </div>
                             </div>
-                            <textarea class="form-control" id="ra_des" rows="3" placeholder="Sebutkan...."></textarea>
+                            <div class="form-group mb-2">
+                                <select class="form-control" name="ra_jenis" id="ra_jenis">
+                                    <option value="">Pilih Jenis Alergi</option>
+                                    <option value="1">Obat</option>
+                                    <option value="2">Makanan</option>
+                                    <option value="3">Udara</option>
+                                </select>
+                            </div>
+                            <textarea class="form-control" name="ra_des" id="ra_des" rows="3" placeholder="Sebutkan...."></textarea>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Riwayat Penggunaan Obat</label>
@@ -74,7 +82,7 @@
                                 <div class="col-md-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="rpo" id="rpo_tidak" value="0">
-                                        <label class="form-check-label" for="rpo_tidak">
+                                        <label class="form-check-label">
                                             Tidak
                                         </label>
                                     </div>
@@ -83,13 +91,13 @@
                                 <div class="col-md-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="rpo" id="rpo_ya" value="1">
-                                        <label class="form-check-label" for="rpo_ya">
+                                        <label class="form-check-label">
                                             Ya
                                         </label>
                                     </div>
                                 </div>
                             </div>
-                            <textarea class="form-control" id="rpo_des" rows="3" placeholder="Sebutkan...."></textarea>
+                            <textarea class="form-control" name="rpo_des" id="rpo_des" rows="3" placeholder="Sebutkan...."></textarea>
                         </div>
                     </div>
 
@@ -101,13 +109,13 @@
                     <div class="row align-items-center" id="pemeriksaan_fisik">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Pemeriksaan Fisik</label>
-                            <textarea class="form-control" id="pfisik" rows="3"></textarea>
+                            <textarea class="form-control" name="pfisik" id="pfisik" rows="3"></textarea>
                         </div>
                     </div>
                     <div class="row align-items-center" id="pemeriksaan_penunjang">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Pemeriksaan Penunjang</label>
-                            <textarea class="form-control" id="penunjang" rows="3"></textarea>
+                            <textarea class="form-control" name="penunjang" id="penunjang" rows="3"></textarea>
                         </div>
                     </div>
 
@@ -119,13 +127,13 @@
                     <div class="row align-items-center" id="diagnosis">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Diagnosis</label>
-                            <textarea class="form-control" id="diagnosis" rows="3"></textarea>
+                            <textarea class="form-control" name="diagnosis" id="diagnosis" rows="3"></textarea>
                         </div>
                     </div>
                     <div class="row align-items-center" id="tolok_ukur">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Tolok Ukur / Sasaran yang Dicapai</label>
-                            <textarea class="form-control" id="tu" rows="3"></textarea>
+                            <textarea class="form-control" name="tu" id="tu" rows="3"></textarea>
                         </div>
                     </div>
 
@@ -137,7 +145,7 @@
                     <div class="row align-items-center" id="terapi_tindakan">
                         <div class="col-md-12">
                             <label class="form-label fw-bold">Terapi / Tindakan</label>
-                            <textarea class="form-control" id="terapi" rows="3"></textarea>
+                            <textarea class="form-control" name="terapi_tind" id="terapi_tind" rows="3"></textarea>
                         </div>
                     </div>
                 </div>
@@ -151,24 +159,24 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" id="me_1">
-                                            <label class="form-check-label" for="checkPrimary"> Tanda dan gejala suatu penyakit </label>
+                                            <input class="form-check-input check-primary" type="checkbox" name="me_1" id="me_1">
+                                            <label class="form-check-label"> Tanda dan gejala suatu penyakit </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" id="me_2">
-                                            <label class="form-check-label" for="checkPrimary"> Hasil pemeriksaan </label>
+                                            <input class="form-check-input check-primary" type="checkbox" name="me_2" id="me_2">
+                                            <label class="form-check-label"> Hasil pemeriksaan </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" id="me_3">
-                                            <label class="form-check-label" for="checkPrimary"> Diagnosis </label>
+                                            <input class="form-check-input check-primary" type="checkbox" name="me_3" id="me_3">
+                                            <label class="form-check-label"> Diagnosis </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" id="me_4">
-                                            <label class="form-check-label" for="checkPrimary"> Rencana penatalaksanaan penyakit </label>
+                                            <input class="form-check-input check-primary" type="checkbox" name="me_4" id="me_4">
+                                            <label class="form-check-label"> Rencana penatalaksanaan penyakit </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" id="me_5">
-                                            <label class="form-check-label" for="checkPrimary"> Tindakan dan tujuan terapi </label>
+                                            <input class="form-check-input check-primary" type="checkbox" name="me_5" id="me_5">
+                                            <label class="form-check-label"> Tindakan dan tujuan terapi </label>
                                         </div>
                                     </div>
                                 </div>
@@ -180,12 +188,12 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" id="sie_1">
-                                            <label class="form-check-label" for="checkPrimary"> Leaflet </label>
+                                            <input class="form-check-input check-primary" type="checkbox" name="sie_1" id="sie_1">
+                                            <label class="form-check-label"> Leaflet </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" id="sie_2">
-                                            <label class="form-check-label" for="checkPrimary"> Lisan </label>
+                                            <input class="form-check-input check-primary" type="checkbox" name="sie_2" id="sie_2">
+                                            <label class="form-check-label"> Lisan </label>
                                         </div>
                                     </div>
                                 </div>
@@ -197,12 +205,12 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" id="eval_1">
-                                            <label class="form-check-label" for="checkPrimary"> Sudah Mengerti </label>
+                                            <input class="form-check-input check-primary" type="checkbox" name="eval_1" id="eval_1">
+                                            <label class="form-check-label"> Sudah Mengerti </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" id="eval_2">
-                                            <label class="form-check-label" for="checkPrimary"> Re - Edukasi </label>
+                                            <input class="form-check-input check-primary" type="checkbox" name="eval_2" id="eval_2">
+                                            <label class="form-check-label"> Re - Edukasi </label>
                                         </div>
                                     </div>
                                 </div>
@@ -219,8 +227,8 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tl" id="tl_mrs" value="0">
-                                <label class="form-check-label" for="tl_mrs">
+                                <input class="form-check-input" type="radio" name="tl" id="tl_mrs" value="2">
+                                <label class="form-check-label">
                                     MRS
                                 </label>
                             </div>
@@ -228,7 +236,7 @@
                         <div class="col-md-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="tl" id="tl_pulang" value="1">
-                                <label class="form-check-label" for="tl_pulang">
+                                <label class="form-check-label">
                                     Pulang
                                 </label>
                             </div>
@@ -244,7 +252,7 @@
                                 <div class="col-md-4 mb-3">
                                     <div class="form-group">
                                         <label class="form-label fw-bold">Jenis Ruang Perawatan</label>
-                                        <select class="form-control" id="pri_ruang">
+                                        <select class="form-control" name="pri_ruang" id="pri_ruang">
                                             <option value="">Pilih Jenis Ruang Perawatan</option>
                                             @foreach ($list['jenis_ruang'] as $item)
                                                 <option value="{{ $item->ID }}">
@@ -257,7 +265,7 @@
                                 <div class="col-md-4 mb-3">
                                     <div class="form-group">
                                         <label class="form-label fw-bold">Jenis Perawatan</label>
-                                        <select class="form-control" id="pri_perawatan">
+                                        <select class="form-control" name="pri_perawatan id="pri_perawatan">
                                             <option value="">Pilih Jenis Perawatan</option>
                                             @foreach ($list['jenis_perawatan'] as $item)
                                                 <option value="{{ $item->ID }}">
@@ -270,21 +278,21 @@
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label fw-bold">Tanggal</label>
                                     <div class="input-group">
-                                        <input type="text" id="pri_tgl" class="form-control flatpickr-input active" placeholder="Pilih Rentang Tanggal" readonly="readonly">
+                                        <input type="text" name="pri_tgl" id="pri_tgl" class="form-control flatpickr-input active" placeholder="Pilih Rentang Tanggal" readonly="readonly">
                                         <span class="input-group-text"><i class="feather icon-calendar"></i></span>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Indikasi</label>
-                                    <textarea class="form-control" id="pri_indikasi" rows="3"></textarea>
+                                    <textarea class="form-control" name="pri_indikasi" id="pri_indikasi" rows="3"></textarea>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Keterangan</label>
-                                    <textarea class="form-control" id="pri_ket" rows="3"></textarea>
+                                    <textarea class="form-control" name="pri_ket" id="pri_ket" rows="3"></textarea>
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label fw-bold">DPJP</label>
-                                    <input type="text" class="form-control" id="pri_dpjp" value="{{ $list['dpjp']->NAMADOKTER ?? '' }}" readonly>
+                                    <input type="text" class="form-control" name="pri_dpjp" id="pri_dpjp" value="{{ $list['dpjp']->NAMADOKTER ?? '' }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -329,7 +337,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="text" class="form-control" id="rujuk_mana" placeholder="Sebutkan....">
+                                    <input type="text" class="form-control" name="rujuk_mana" id="rujuk_mana" placeholder="Sebutkan....">
                                 </div>
                             </div>
                         </div>
@@ -342,7 +350,7 @@
         <button class="btn btn-secondary">
             <i class="ri-close-line me-1"></i> Batal
         </button>
-        <button class="btn btn-danger">
+        <button class="btn btn-danger"  onclick="saveDataPengkajianRJD(this)">
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
     </div>
@@ -352,6 +360,7 @@
     $(document).ready(function () {
 
         // Sembunyikan textarea saat pertama kali
+        $('#ra_jenis').hide();
         $('#ra_des').hide();
         $('#rpo_des').hide();
         $('#pri').hide();
@@ -361,7 +370,9 @@
         $('input[name="ra"]').change(function () {
             if ($('#ra_ya').is(':checked')) {
                 $('#ra_des').slideDown();
+                $('#ra_jenis').slideDown();
             } else {
+                $('#ra_jenis').slideUp().val('');
                 $('#ra_des').slideUp().val('');
             }
         });
@@ -412,7 +423,7 @@
     });
     function saveDataPengkajianRJD(btn) {
         const $button = $(btn);
-        const $section = $('#gd_dokter');
+        const $section = $('#rjd_dokter');
 
         const data = getFormDataByName($section, {
             NOKUNJ: $section.data('kunjungan')
@@ -431,7 +442,12 @@
             },
 
             success: function (response) {
-                alert(response.message || 'Data berhasil disimpan.');
+                // alert(response.message || 'Data berhasil disimpan.');
+                iziToast.success({
+                    title: 'Pesan Berhasil!',
+                    message: 'Data berhasil disimpan.',
+                    position: 'topRight'
+                });
             },
 
             error: function (xhr) {
