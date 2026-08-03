@@ -66,15 +66,41 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group mb-2">
-                                <select class="form-control" name="ra_jenis" id="ra_jenis">
-                                    <option value="">Pilih Jenis Alergi</option>
-                                    <option value="1">Obat</option>
-                                    <option value="2">Makanan</option>
-                                    <option value="3">Udara</option>
-                                </select>
+                            <div class="card card-body border border-dashed border-primary mb-1" id="divRiwayatAlergi">
+                                <div class="card border">
+                                    <div class="card-body p-2">
+                                        <div class="row g-2">
+                                            <div class="col-md-4">
+                                                <select class="form-select form-select-sm" id="ra_jenis">
+                                                    <option value="">Jenis</option>
+                                                    <option value="1">Obat</option>
+                                                    <option value="2">Makanan</option>
+                                                    <option value="3">Udara</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" id="ra_des" class="form-control form-control-sm" placeholder="Deskripsi">
+                                            </div>
+                                            <div class="col-md-2 d-grid">
+                                                <button class="btn btn-success btn-sm" id="btnTambahAlergi" type="button">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table class="table table-bordered table-sm mt-2" id="tblAlergi">
+                                    <thead>
+                                    <tr>
+                                        <th width="40">No</th>
+                                        <th>Jenis</th>
+                                        <th>Deskripsi</th>
+                                        <th width="70">Aksi</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
                             </div>
-                            <textarea class="form-control" name="ra_des" id="ra_des" rows="3" placeholder="Sebutkan...."></textarea>
                         </div>
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Riwayat Penggunaan Obat</label>
@@ -414,39 +440,43 @@
 </div>
 
 <script>
-    let obat = [];
+    var alergi = window.alergi || [];
+    window.alergi = alergi;
+
+    var obat = window.obat || [];
+    window.obat = obat;
 
     $(document).ready(function () {
 
         // Sembunyikan textarea saat pertama kali
-        $('#ra_jenis').hide();
-        $('#ra_des').hide();
-        $('#divRiwayatObat').hide();
+        // $('#ra_jenis').hide();
+        // $('#ra_des').hide();
+        // $('#divRiwayatObat').hide();
         $('#pri').hide();
         $('#rujuk_mana').hide();
 
-        // Riwayat Alergi
-        $('input[name="ra"]').change(function () {
-            if ($('#ra_ya').is(':checked')) {
-                $('#ra_des').slideDown();
-                $('#ra_jenis').slideDown();
-            } else {
-                $('#ra_jenis').slideUp().val('');
-                $('#ra_des').slideUp().val('');
-            }
-        });
+        // // Riwayat Alergi
+        // $('input[name="ra"]').change(function () {
+        //     if ($('#ra_ya').is(':checked')) {
+        //         $('#ra_des').slideDown();
+        //         $('#ra_jenis').slideDown();
+        //     } else {
+        //         $('#ra_jenis').slideUp().val('');
+        //         $('#ra_des').slideUp().val('');
+        //     }
+        // });
 
-        // Riwayat Penggunaan Obat
-        $('input[name="rpo"]').change(function () {
-            if ($('#rpo_ya').is(':checked')) {
-                $('#divRiwayatObat').slideDown();
-            } else {
-                $('#divRiwayatObat').slideUp();
-                obat = [];
-                tampilObat();
-                // $('#obat').slideUp().val('');
-            }
-        });
+        // // Riwayat Penggunaan Obat
+        // $('input[name="rpo"]').change(function () {
+        //     if ($('#rpo_ya').is(':checked')) {
+        //         $('#divRiwayatObat').slideDown();
+        //     } else {
+        //         $('#divRiwayatObat').slideUp();
+        //         obat = [];
+        //         tampilObat();
+        //         // $('#obat').slideUp().val('');
+        //     }
+        // });
 
         // Perencanaan Rawat Inap
         $('input[name="tl"]').change(function () {
@@ -481,8 +511,86 @@
                 defaultDate: [today]
             }
         );
-
     });
+
+    function initRiwayatAlergi() {
+        const val = $('input[name="ra"]:checked').val();
+        if (val == '1') {
+            $('#divRiwayatAlergi').show();
+        } else {
+            $('#divRiwayatAlergi').hide();
+        }
+    }
+
+    function initRiwayatObat() {
+        // console.log("initRiwayatObat dipanggil");
+        // console.log("checked :", $('input[name="rpo"]:checked').val());
+        const val = $('input[name="rpo"]:checked').val();
+        if (val == '1') {
+            $('#divRiwayatObat').show();
+        } else {
+            $('#divRiwayatObat').hide();
+        }
+    }
+
+    $(function () {
+        initRiwayatAlergi();
+        initRiwayatObat();
+    });
+
+    $(document).on('change', 'input[name="ra"]', function () {
+        if ($(this).val() == '1') {
+            $('#divRiwayatAlergi').slideDown();
+        } else {
+            $('#divRiwayatAlergi').slideUp();
+        }
+    });
+
+    $(document).on('change', 'input[name="rpo"]', function () {
+        if ($(this).val() == '1') {
+            $('#divRiwayatObat').slideDown();
+        } else {
+            $('#divRiwayatObat').slideUp();
+            tampilObat();
+        }
+    });
+
+    $("#btnTambahAlergi").click(function(){
+        if($("#ra_jenis").val()=="" || $("#ra_des").val()=="")
+            return;
+        alergi.push({
+            jenis_id : $("#ra_jenis").val(),
+            jenis    : $("#ra_jenis option:selected").text(),
+            deskripsi: $("#ra_des").val()
+        });
+        tampilAlergi();
+        $("#ra_jenis").val("");
+        $("#ra_des").val("");
+    });
+
+    function tampilAlergi(){
+        let html="";
+        $.each(alergi,function(i,v){
+            html+=`
+            <tr>
+                <td>${i+1}</td>
+                <td>${v.jenis}</td>
+                <td>${v.deskripsi}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" onclick="hapusAlergi(${i})">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            `;
+        });
+        $("#tblAlergi tbody").html(html);
+    }
+
+    function hapusAlergi(i){
+        alergi.splice(i,1);
+        tampilAlergi();
+    }
 
     $("#btnTambahObat").click(function(){
 
@@ -490,19 +598,14 @@
             alert("Nama obat belum diisi");
             return;
         }
-
         obat.push({
-
             nama:$("#nama_obat").val(),
             dosis:$("#dosis").val(),
             frekuensi:$("#frekuensi").val(),
             rute:$("#rute").val(),
             lama:$("#lama").val()
-
         });
-
         tampilObat();
-
         $("#nama_obat").val("");
         $("#dosis").val("");
         $("#frekuensi").val($("#frekuensi").data("default"));
@@ -512,11 +615,8 @@
     });
 
     function tampilObat(){
-
         let html="";
-
         $.each(obat,function(i,v){
-
             html+=`
             <tr>
                 <td>${i+1}</td>
@@ -532,19 +632,13 @@
                 </td>
             </tr>
             `;
-
         });
-
         $("#tblObat tbody").html(html);
-
     }
 
     function hapusObat(i){
-
         obat.splice(i,1);
-
         tampilObat();
-
     }
 
     function saveDataPengkajianRJD(btn) {
@@ -556,6 +650,7 @@
         });
 
         data.obat = obat;
+        data.alergi = alergi;
 
         $.ajax({
             url: '/api/v2/emr/form/pengkajian/rjd/dr/simpan',

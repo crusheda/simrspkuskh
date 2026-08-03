@@ -128,19 +128,20 @@ class PengkajianRawatJalanDewasaController extends Controller
 
             // Riwayat Alergi
             if ($request->ra == 1) {
-                DB::table('medicalrecord.riwayat_alergi')->updateOrInsert(
-                    [
-                        'KUNJUNGAN' => $request->NOKUNJ
-                    ],
-                    [
-                        'JENIS'        => $request->ra_jenis,
-                        'DESKRIPSI'    => $request->ra_des,
-                        'OLEH'         => auth()->id(),
-                        'STATUS'       => 1,
-                        'TANGGAL'      => now()
-                    ]
-                );
-            }
+                DB::table('medicalrecord.riwayat_alergi')
+                    ->where('KUNJUNGAN',$request->NOKUNJ)
+                    ->delete();
+                foreach($request->alergi as $a){
+                    DB::table('medicalrecord.riwayat_alergi')->insert([
+                        'KUNJUNGAN'=>$request->NOKUNJ,
+                        'JENIS'=>$a['jenis_id'],
+                        'DESKRIPSI'=>$a['deskripsi'],
+                        'OLEH'=>auth()->id(),
+                        'STATUS'=>1,
+                        'TANGGAL'=>now()
+                    ]);
+                };
+            };
 
             //Riwayat Penggunaan Obat
             if ($request->rpo == 1 && !empty($request->obat)) {
@@ -161,6 +162,20 @@ class PengkajianRawatJalanDewasaController extends Controller
                     ]);
                 }
             }
+
+            // Riwayat Pemeriksaan Fisik
+            DB::table('medicalrecord.pemeriksaan_fisik')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'PENDAFTARAN'  => DB::table('pendaftaran.kunjungan')->where('NOMOR', $request->NOKUNJ)->value('NOPEN'),
+                    'DESKRIPSI'    => $request->pfisik,
+                    'OLEH'         => auth()->id(),
+                    'STATUS'       => 1,
+                    'TANGGAL'      => now()
+                ]
+            );
 
             DB::commit();
 
