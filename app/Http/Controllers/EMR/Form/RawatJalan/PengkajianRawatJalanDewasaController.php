@@ -33,11 +33,26 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->where('pk.NOMOR', $kunjungan)
             ->first();
 
+        $frekuensi = DB::table('master.frekuensi_aturan_resep')
+                ->select('ID','FREKUENSI')
+                ->where('STATUS',1)
+                ->orderBy('ID','ASC')
+                ->get();
+
+        $rute = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',217)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
         $data = [
             'kunjungan' => $kunjungan,
             'jenis_ruang' => $jenis_ruang,
             'jenis_perawatan' => $jenis_perawatan,
             'dpjp' => $dpjp,
+            'frekuensi' => $frekuensi,
+            'rute' => $rute,
         ];
         // print_r($data);
         // die();
@@ -53,9 +68,7 @@ class PengkajianRawatJalanDewasaController extends Controller
 
         try {
 
-            // ==========================
             // ANAMNESIS DIPEROLEH
-            // ==========================
             DB::table('medicalrecord.anamnesis_diperoleh')->updateOrInsert(
                 [
                     'KUNJUNGAN' => $request->NOKUNJ
@@ -70,9 +83,7 @@ class PengkajianRawatJalanDewasaController extends Controller
                 ]
             );
 
-            // ==========================
             // KELUHAN UTAMA
-            // ==========================
             DB::table('medicalrecord.keluhan_utama')->updateOrInsert(
                 [
                     'KUNJUNGAN' => $request->NOKUNJ
@@ -86,9 +97,7 @@ class PengkajianRawatJalanDewasaController extends Controller
                 ]
             );
 
-            // ==========================
             // Riwayat Penyakit Sekarang
-            // ==========================
             DB::table('medicalrecord.anamnesis')->updateOrInsert(
                 [
                     'KUNJUNGAN' => $request->NOKUNJ
@@ -103,9 +112,7 @@ class PengkajianRawatJalanDewasaController extends Controller
                 ]
             );
 
-            // ==========================
             // Riwayat Penyakit Dahulu
-            // ==========================
             DB::table('medicalrecord.rpp')->updateOrInsert(
                 [
                     'KUNJUNGAN' => $request->NOKUNJ
@@ -119,9 +126,7 @@ class PengkajianRawatJalanDewasaController extends Controller
                 ]
             );
 
-            // ==========================
-            // Riwayat Penyakit Dahulu
-            // ==========================
+            // Riwayat Alergi
             if ($request->ra == 1) {
                 DB::table('medicalrecord.riwayat_alergi')->updateOrInsert(
                     [
@@ -135,6 +140,26 @@ class PengkajianRawatJalanDewasaController extends Controller
                         'TANGGAL'      => now()
                     ]
                 );
+            }
+
+            //Riwayat Penggunaan Obat
+            if ($request->rpo == 1 && !empty($request->obat)) {
+                DB::table('medicalrecord.riwayat_pemberian_obat')
+                    ->where('KUNJUNGAN', $request->NOKUNJ)
+                    ->delete();
+                foreach ($request->obat as $o) {
+                    DB::table('medicalrecord.riwayat_pemberian_obat')->insert([
+                        'KUNJUNGAN' => $request->NOKUNJ,
+                        'OBAT' => $o['nama'],
+                        'DOSIS' => $o['dosis'],
+                        'FREKUENSI' => $o['frekuensi'],
+                        'RUTE' => $o['rute'],
+                        'LAMA_PENGGUNAAN' => $o['lama'],
+                        'OLEH' => auth()->id(),
+                        'STATUS' => 1,
+                        'TANGGAL' => now()
+                    ]);
+                }
             }
 
             DB::commit();

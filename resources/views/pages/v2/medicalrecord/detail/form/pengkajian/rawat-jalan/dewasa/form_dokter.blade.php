@@ -46,12 +46,12 @@
                             <label class="form-label fw-bold">Riwayat Penyakit Dahulu</label>
                             <textarea class="form-control" name="rpd" id="rpd" rows="3"></textarea>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Riwayat Alergi</label>
                             <div class="row mb-2">
                                 <div class="col-md-3">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="ra" id="ra_tidak" value="0">
+                                        <input class="form-check-input" type="radio" name="ra" id="ra_tidak" value="0" checked>
                                         <label class="form-check-label">
                                             Tidak
                                         </label>
@@ -76,12 +76,12 @@
                             </div>
                             <textarea class="form-control" name="ra_des" id="ra_des" rows="3" placeholder="Sebutkan...."></textarea>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Riwayat Penggunaan Obat</label>
                             <div class="row mb-2">
                                 <div class="col-md-3">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="rpo" id="rpo_tidak" value="0">
+                                        <input class="form-check-input" type="radio" name="rpo" id="rpo_tidak" value="0" checked>
                                         <label class="form-check-label">
                                             Tidak
                                         </label>
@@ -97,7 +97,64 @@
                                     </div>
                                 </div>
                             </div>
-                            <textarea class="form-control" name="rpo_des" id="rpo_des" rows="3" placeholder="Sebutkan...."></textarea>
+                            <div class="card card-body border border-dashed border-primary mb-1" id="divRiwayatObat">
+                                <div class="card border mb-2">
+                                    <div class="card-body p-2">
+                                        <div class="row g-2">
+                                            <div class="col-md-12">
+                                                <input type="text" class="form-control form-control" id="nama_obat" placeholder="Nama Obat">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control form-control" id="dosis" placeholder="Dosis">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <select class="form-select" id="frekuensi" data-default="{{ $list['frekuensi']->firstWhere('FREKUENSI','-')->ID }}">
+                                                    @foreach ($list['frekuensi'] as $item)
+                                                        <option value="{{ $item->ID }}" {{ $item->FREKUENSI == '-' ? 'selected' : '' }}>
+                                                            {{ $item->FREKUENSI }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <select class="form-select" id="rute" data-default="{{ $list['rute']->firstWhere('DESKRIPSI','-')->ID }}">
+                                                    {{-- <option value="">Rute</option> --}}
+                                                    @foreach ($list['rute'] as $item)
+                                                        <option value="{{ $item->ID }}" {{ $item->DESKRIPSI == '-' ? 'selected' : '' }}>
+                                                            {{ $item->DESKRIPSI }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="text" class="form-control form-control" id="lama" placeholder="Lama Penggunaan">
+                                            </div>
+                                            <div class="col-md-2 d-grid">
+                                                <button type="button" class="btn btn-success btn" id="btnTambahObat">
+                                                    <i class="fa fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table align-middle" id="tblObat">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Nama Obat</th>
+                                                <th>Dosis</th>
+                                                <th>Frekuensi</th>
+                                                <th>Rute</th>
+                                                <th>Lama</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -357,12 +414,14 @@
 </div>
 
 <script>
+    let obat = [];
+
     $(document).ready(function () {
 
         // Sembunyikan textarea saat pertama kali
         $('#ra_jenis').hide();
         $('#ra_des').hide();
-        $('#rpo_des').hide();
+        $('#divRiwayatObat').hide();
         $('#pri').hide();
         $('#rujuk_mana').hide();
 
@@ -380,9 +439,12 @@
         // Riwayat Penggunaan Obat
         $('input[name="rpo"]').change(function () {
             if ($('#rpo_ya').is(':checked')) {
-                $('#rpo_des').slideDown();
+                $('#divRiwayatObat').slideDown();
             } else {
-                $('#rpo_des').slideUp().val('');
+                $('#divRiwayatObat').slideUp();
+                obat = [];
+                tampilObat();
+                // $('#obat').slideUp().val('');
             }
         });
 
@@ -421,6 +483,70 @@
         );
 
     });
+
+    $("#btnTambahObat").click(function(){
+
+        if($("#nama_obat").val()==""){
+            alert("Nama obat belum diisi");
+            return;
+        }
+
+        obat.push({
+
+            nama:$("#nama_obat").val(),
+            dosis:$("#dosis").val(),
+            frekuensi:$("#frekuensi").val(),
+            rute:$("#rute").val(),
+            lama:$("#lama").val()
+
+        });
+
+        tampilObat();
+
+        $("#nama_obat").val("");
+        $("#dosis").val("");
+        $("#frekuensi").val($("#frekuensi").data("default"));
+        $("#rute").val($("#rute").data("default"));
+        $("#lama").val("");
+
+    });
+
+    function tampilObat(){
+
+        let html="";
+
+        $.each(obat,function(i,v){
+
+            html+=`
+            <tr>
+                <td>${i+1}</td>
+                <td>${v.nama}</td>
+                <td>${v.dosis}</td>
+                <td>${v.frekuensi}</td>
+                <td>${v.rute}</td>
+                <td>${v.lama}</td>
+                <td class="text-center">
+                    <button class="btn btn-danger btn-sm" onclick="hapusObat(${i})">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            `;
+
+        });
+
+        $("#tblObat tbody").html(html);
+
+    }
+
+    function hapusObat(i){
+
+        obat.splice(i,1);
+
+        tampilObat();
+
+    }
+
     function saveDataPengkajianRJD(btn) {
         const $button = $(btn);
         const $section = $('#rjd_dokter');
@@ -429,8 +555,10 @@
             NOKUNJ: $section.data('kunjungan')
         });
 
+        data.obat = obat;
+
         $.ajax({
-            url: '/api/emr/form/pengkajian/rjd/dr/simpan',
+            url: '/api/v2/emr/form/pengkajian/rjd/dr/simpan',
             type: 'POST',
             data: data,
             headers: {
