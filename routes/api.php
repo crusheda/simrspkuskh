@@ -15,6 +15,7 @@ use App\Http\Controllers\Display\BedController;
 use App\Http\Controllers\Display\AntrianPoliController;
 use App\Http\Controllers\Display\AntrianAdmisiController;
 use App\Http\Controllers\EMR\EMRController;
+use App\Http\Controllers\EMR\Form\AddOnPengkajianController;
 use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
@@ -58,6 +59,12 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     Route::post('emr/form/pengkajian/rjd/dr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormDokter']);
                     //PERAWAT
                     Route::post('emr/form/pengkajian/rjd/pr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormPerawat']);
+
+            // ADD ON
+                // RIWAYAT PENGGUNAAN / PEMBERIAN OBAT
+                    Route::get('emr/pengkajian/riwayat_pemberian_obat/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatPemberianObat']);
+                    Route::post('emr/pengkajian/riwayat_pemberian_obat/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanRiwayatPemberianObat']);
+                    Route::delete('emr/pengkajian/riwayat_pemberian_obat/{kunjungan}/hapus/{id}', [AddOnPengkajianController::class, 'hapusRiwayatPenggunaanObat']);
 });
 
 // SIRMED v.1

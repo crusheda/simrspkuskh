@@ -20,6 +20,13 @@ class PengkajianGawatDaruratController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
+        $riw_alergi = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',180)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
         $cara_keluar = DB::table('master.referensi')
                 ->select('ID','DESKRIPSI')
                 ->where('JENIS',45)
@@ -34,11 +41,27 @@ class PengkajianGawatDaruratController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
+        $frekuensi_obat = DB::table('master.frekuensi_aturan_resep')
+                ->select('ID','FREKUENSI')
+                ->where('STATUS',1)
+                ->orderBy('ID','ASC')
+                ->get();
+
+        $rute_obat = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',217)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
         $data = [
             'kunjungan' => $kunjungan,
             'tingkat_kesadaran' => $tingkat_kesadaran,
+            'riwayat_alergi' => $riw_alergi,
             'cara_keluar' => $cara_keluar,
             'keadaan_keluar' => $keadaan_keluar,
+            'frekuensi_obat' => $frekuensi_obat,
+            'rute_obat' => $rute_obat
         ];
 
         return view('pages.v2.medicalrecord.detail.form.pengkajian.gawat-darurat.index')->with('list',$data);
@@ -53,7 +76,7 @@ class PengkajianGawatDaruratController extends Controller
                             'RISIKO_PENULARAN_INFEKSI'
                         )
                         ->where('KUNJUNGAN', $KUNJUNGAN)
-                        ->where('STATUS', 1)
+                        ->whereIn('STATUS', [1,2])
                         ->first();
 
             $anamnesis_diperoleh = DB::table('medicalrecord.anamnesis_diperoleh')
@@ -161,11 +184,141 @@ class PengkajianGawatDaruratController extends Controller
                     [
                         'AUTOANAMNESIS' => ($request->anam == 1) ? 1 : 0,
                         'ALLOANAMNESIS' => ($request->anam == 2) ? 1 : 0,
+                        'DARI'          => "",
                         'OLEH'          => auth()->id(),
                         'STATUS'        => 1,
                         'TANGGAL'       => now()
                     ]
                 );
+
+                // ==========================
+                // PRIMARY SURVEY - TTV
+                // ==========================
+                DB::table('medicalrecord.tanda-vital')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'KEADAAN_UMUM'          => $request->keu,
+                        'KESADARAN'             => "",
+                        'SISTOLIK'              => $request->td_up,
+                        'DIASTOLIK'             => $request->td_down,
+                        'FREKUENSI_NADI'        => $request->nadi,
+                        'SUHU'                  => $request->suhu,
+                        'SATURASI_O2'           => $request->spo2,
+                        'TINGKAT_KESADARAN'     => $request->tks,
+                        'FREKUENSI_NAFAS'       => $request->fr,
+                        'FREKUENSI_NAFAS_CB'    => $request->fr_cb,
+                        'PUPIL'                 => $request->pupil,
+                        'DIAMETER_PUPIL_UP'     => $request->dia_up,
+                        'DIAMETER_PUPIL_DOWN'   => $request->dia_down,
+                        'RC_UP'                 => $request->rc_up,
+                        'RC_DOWN'               => $request->rc_down,
+                        'VAS'                   => $request->vas,
+                        'EYE'                   => $request->gcs_e,
+                        'MOTORIK'               => $request->gcs_v,
+                        'VERBAL'                => $request->gcs_m,
+                        'GCS'                   => $request->gcs_t,
+                        'JALAN_NAFAS'           => $request->jn,
+                        'ALAT_BANTU_NAFAS'      => $request->abn,
+                        'KULIT'                 => $request->kulit,
+                        'OLEH'                  => auth()->id(),
+                        'STATUS'                => 1,
+                        'TANGGAL'               => now()
+                    ]
+                );
+
+                // ==========================
+                // PRIMARY SURVEY - STATUS REPRODUKSI
+                // ==========================
+                DB::table('medicalrecord.status_reproduksi')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'KASUS_OBSTETRI_GINEKOLOGI' => $request->sr,
+                        'HPHT'                      => $request->sr_hpht,
+                        'SIKLUS'                    => $request->sr_siklus,
+                        'KB'                        => $request->sr_kb,
+                        'STATUS_REPRODUKSI'         => $request->sr_hamil,
+                        'HAMIL_GRAVIDA'             => $request->sr_grv,
+                        'HAMIL_PARITAS'             => $request->sr_prt,
+                        'HAMIL_ABORTUS'             => $request->sr_abr,
+                        'OLEH'                      => auth()->id(),
+                        'STATUS'                    => 1,
+                        'TANGGAL'                   => now()
+                    ]
+                );
+
+                // ==========================
+                // SECONDARY SURVEY
+                // ==========================
+                    // KELUHAN UTAMA
+                    DB::table('medicalrecord.keluhan_utama')->updateOrInsert(
+                        [
+                            'KUNJUNGAN'     => $request->NOKUNJ
+                        ],
+                        [
+                            'DESKRIPSI'     => $request->ku,
+                            'SNOMED_CT_ID'  => 0,
+                            'TANGGAL'       => now(),
+                            'OLEH'          => auth()->id(),
+                            'STATUS'        => 1,
+                        ]
+                    );
+                    // RIWAYAT PENYAKIT SEKARANG (TABEL ANAMNESIS)
+                    DB::table('medicalrecord.riwayat_penyakit_sekarang')->updateOrInsert(
+                        [
+                            'KUNJUNGAN'     => $request->NOKUNJ,
+                            'PENDAFTARAN'     => $getDataKunjungan->NOPEN
+                        ],
+                        [
+                            'SNOMED_CT_ID'  => 0,
+                            'DESKRIPSI'     => $request->rps,
+                            'TANGGAL'       => now(),
+                            'OLEH'          => auth()->id(),
+                            'STATUS'        => 1,
+                        ]
+                    );
+                    // RIWAYAT PENYAKIT DAHULU (TABEL RPP) - update all field
+                    DB::table('medicalrecord.rpp')->updateOrInsert(
+                        [
+                            'KUNJUNGAN'     => $request->NOKUNJ
+                        ],
+                        [
+                            'SNOMED_CT_ID'  => 0,
+                            'DESKRIPSI'     => $request->rpd,
+                            'TANGGAL'       => now(),
+                            'OLEH'          => auth()->id(),
+                            'STATUS'        => 1,
+                        ]
+                    );
+                    // PEMERIKSAAN FISIK (TABEL PEMERIKSAAN_FISIK)
+                    DB::table('medicalrecord.pemeriksaan_fisik')->updateOrInsert(
+                        [
+                            'KUNJUNGAN'     => $request->NOKUNJ,
+                            'PENDAFTARAN'     => $getDataKunjungan->NOPEN
+                        ],
+                        [
+                            'DESKRIPSI'     => $request->pf,
+                            'TANGGAL'       => now(),
+                            'OLEH'          => auth()->id(),
+                            'STATUS'        => 1,
+                        ]
+                    );
+                    // RIWAYAT ALERGI (TABEL RIWAYAT_ALERGI)
+                    DB::table('medicalrecord.riwayat_alergi')->updateOrInsert(
+                        [
+                            'KUNJUNGAN'     => $request->NOKUNJ
+                        ],
+                        [
+                            'JENIS'  => $request->ra_cb, // REF JENIS = 180
+                            'DESKRIPSI'     => $request->ra,
+                            'TANGGAL'       => now(),
+                            'OLEH'          => auth()->id(),
+                            'STATUS'        => 1,
+                        ]
+                    );
 
                 // DB::rollBack();
                 DB::commit();

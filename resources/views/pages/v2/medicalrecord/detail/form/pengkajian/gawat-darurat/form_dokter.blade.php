@@ -122,10 +122,11 @@
                     <div class="row">
                         <h5>I. Pengkajian <b class="text-warning">Primary Survey</b></h5>
                         <div class="col-md-6">
-                            <div class="mb-2">
-                                <h6>Primary Survey</h6>
+                            <div class="mb-3">
+                                <h6>Keadaan Umum</h6>
                                 <div class="form-group">
-                                    <div class="form-check form-check-inline mb-2">
+                                    <input type="text" class="form-control" name="keu" placeholder="">
+                                    {{-- <div class="form-check form-check-inline mb-2">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pps" value="1">
                                         <label class="form-check-label"> Baik </label>
                                     </div>
@@ -136,7 +137,7 @@
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pps" value="3">
                                         <label class="form-check-label"> Lemah </label>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                             <div class="mb-2">
@@ -159,14 +160,14 @@
                             <div class="mb-3">
                                 <h6>Sirkulasi ( C )</h6>
                                 <div class="form-group">
-                                    <label class="form-label">Nadi</label>
+                                    <label class="form-label">Frekuensi Nadi</label>
                                     <div class="input-group input-group-sm mb-2">
                                         <input type="text" class="form-control" name="nadi">
                                         <div class="input-group-text">X/menit, Reguler / Ireguler</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Tekanan Darah</label>
+                                    <label class="form-label">Tekanan Darah (Sistolik / Diastolik) mmHg</label>
                                     <div class="input-group input-group-sm mb-2">
                                         <input type="text" class="form-control" name="td_up">
                                         <div class="input-group-text"> / </div>
@@ -204,7 +205,7 @@
                             <div class="mb-3">
                                 <h6>Pernafasan (Breathing)</h6>
                                 <div class="form-group">
-                                    <label class="form-label">Frekuensi</label>
+                                    <label class="form-label">Frekuensi Nafas</label>
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="input-group input-group-sm flex-grow-1">
                                             <input type="text" class="form-control" name="fr">
@@ -290,27 +291,44 @@
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <h6>Kulit</h6>
-                            <div class="form-group">
-                                <div class="form-check form-check-inline mb-2">
-                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="1">
-                                    <label class="form-check-label"> Normal </label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Alat Bantu Nafas</h6>
+                                    <div class="form-group">
+                                        <div class="form-check form-check-inline mb-2">
+                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="2">
+                                            <label class="form-check-label"> Ya </label>
+                                        </div>
+                                        <div class="form-check form-check-inline mb-2">
+                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="0">
+                                            <label class="form-check-label"> Tidak </label>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-check form-check-inline mb-2">
-                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value=2">
-                                    <label class="form-check-label"> Jaundice </label>
-                                </div>
-                                <div class="form-check form-check-inline mb-2">
-                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="3">
-                                    <label class="form-check-label"> Akral Dingin </label>
-                                </div>
-                                <div class="form-check form-check-inline mb-2">
-                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="4">
-                                    <label class="form-check-label"> Sianotik </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="5">
-                                    <label class="form-check-label"> Berkeringat </label>
+                                <div class="col-md-6">
+                                    <h6>Kulit</h6>
+                                    <div class="form-group">
+                                        <div class="form-check form-check-inline mb-2">
+                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="1">
+                                            <label class="form-check-label"> Normal </label>
+                                        </div>
+                                        <div class="form-check form-check-inline mb-2">
+                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="2">
+                                            <label class="form-check-label"> Jaundice </label>
+                                        </div>
+                                        <div class="form-check form-check-inline mb-2">
+                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="3">
+                                            <label class="form-check-label"> Akral Dingin </label>
+                                        </div>
+                                        <div class="form-check form-check-inline mb-2">
+                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="4">
+                                            <label class="form-check-label"> Sianotik </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="5">
+                                            <label class="form-check-label"> Berkeringat </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -319,15 +337,15 @@
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <h6 class="mb-0">Status Reproduksi</h6>
                                 <div class="form-check m-0">
-                                    <input class="form-check-input single-checkbox" type="checkbox" name="sr" value="1">
-                                    <label class="form-check-label" for="sr1">
-                                        Kasus Obstetri Ginekologi
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="sr" value="1" checked="">
+                                    <label class="form-check-label" for="sr2">
+                                        Tidak
                                     </label>
                                 </div>
                                 <div class="form-check m-0">
                                     <input class="form-check-input single-checkbox" type="checkbox" name="sr" value="2">
-                                    <label class="form-check-label" for="sr2">
-                                        Tidak
+                                    <label class="form-check-label" for="sr1">
+                                        Kasus Obstetri Ginekologi
                                     </label>
                                 </div>
                             </div>
@@ -338,13 +356,13 @@
                                             <div class="form-check m-0">
                                                 <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="1">
                                             </div>
-                                            <label class="form-label mb-0 me-2" for="hpht">
+                                            <label class="form-label mb-0 me-2">
                                                 HPHT
                                             </label>
                                             <div class="input-group input-group-sm">
                                                 <input type="text" class="form-control" name="sr_hpht">
                                             </div>
-                                            <label class="form-label mb-0 ms-2 me-2" for="siklus">
+                                            <label class="form-label mb-0 ms-2 me-2">
                                                 Siklus
                                             </label>
                                             <div class="input-group input-group-sm">
@@ -415,37 +433,84 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
-                                <h6>Riwayat Alergi</h6>
-                                <textarea class="form-control" name="ra" rows="2"></textarea>
+                                <h6>Pemeriksaan Fisik</h6>
+                                <textarea class="form-control" name="pf" rows="2"></textarea>
                             </div>
                         </div>
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-6 mb-3">
                             <div class="form-group">
-                                <h6>Pemeriksaan Fisik</h6>
-                                <textarea class="form-control" name="pf" rows="3"></textarea>
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <h6 class="flex-shrink-0 mb-0">Riwayat Alergi</h6>
+                                    <select class="form-select form-select-sm flex-grow-1" name="ra_cb">
+                                        <option value="">Pilih Jenis Alergi</option>
+                                        @if ($list['riwayat_alergi'])
+                                            @foreach ($list['riwayat_alergi'] as $item)
+                                                <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                                <textarea class="form-control" name="ra" rows="2"></textarea>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <h6>Riwayat Penggunaan Obat</h6>
+                            <div class="row g-2 mb-2">
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" name="rpo_nama_obat" placeholder="Masukkan Nama Obat">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" name="rpo_dosis" placeholder="Masukkan Dosis">
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-select" name="rpo_frekuensi">
+                                        @foreach ($list['frekuensi_obat'] as $item)
+                                            <option value="{{ $item->ID }}" {{ $item->FREKUENSI == '-' ? 'selected' : '' }}>
+                                                {{ $item->FREKUENSI }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-select" name="rpo_rute">
+                                        @foreach ($list['rute_obat'] as $item)
+                                            <option value="{{ $item->ID }}" {{ $item->DESKRIPSI == '-' ? 'selected' : '' }}>
+                                                {{ $item->DESKRIPSI }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" name="rpo_lama" placeholder="Tuliskan Lama Penggunaan Obat">
+                                </div>
+                                <div class="col-md-2 d-grid">
+                                    <div class="btn-group">
+                                        <button class="btn btn-success" id="btnTambahObat" onclick="tambahPenggunaanObat()">
+                                            <i class="ri-add-box-line me-1"></i> Tambah Obat
+                                        </button>
+                                        <button class="btn btn-subtle-warning" id="btnRefreshObat" onclick="getPenggunaanObat()">
+                                            <i class="ri-refresh-line"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="table-responsive">
-                                <table class="table table-striped table-hover table-display mb-1">
+                                <table class="table table-bordered table align-middle mb-1">
                                     <thead>
                                         <tr>
                                             <th>No</th>
                                             <th>Nama Obat</th>
                                             <th>Dosis</th>
-                                            <th>Cara Pemberian</th>
-                                            <th>Tanggal</th>
+                                            <th>Frekuensi (Keterangan)</th>
+                                            <th>Rute Pemberian</th>
+                                            <th>Lama Penggunaan</th>
+                                            <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>xxx</td>
-                                            <td>aaa</td>
-                                            <td>bbb</td>
-                                            <td>ccc</td>
-                                        </tr>
+                                    <tbody id="tblObatBody">
+                                        {{-- <tr>
+                                            <td colspan="7" class="text-center">Tidak ada data</td>
+                                        </tr> --}}
                                     </tbody>
                                 </table>
                             </div>
@@ -585,7 +650,7 @@
 <script>
     $(document).ready(function() {
         getDataPengkajianGdD();
-        console.log($('input[name="anam"]').length);
+        getPenggunaanObat();
     })
 
     function getDataPengkajianGdD() {
@@ -628,15 +693,6 @@
     }
 
     function saveDataPengkajianGdD(btn) {
-        console.log($('input[name="rpi"]:checked').length);
-        console.log($('input[name="rpi"]:checked').val());
-
-        console.log($('input[name="rpi"]:checked'));
-        $('input[name="rpi"]:checked').each(function () {
-            console.log(this);
-            console.log(this.value);
-            console.log($(this).val());
-        });
         const $button = $(btn);
         const $section = $('#gd_dokter');
 
@@ -653,7 +709,7 @@
             },
 
             beforeSend: function () {
-                // $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan...');
+                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan Formulir...');
             },
 
             success: function (response) {
@@ -675,7 +731,152 @@
             },
 
             complete: function () {
-                // $button.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Pengkajian');
+                $button.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Pengkajian');
+            }
+        });
+    }
+
+    // ADD ON ---------------------------------------------------------------------------------------------------------------------------------------------------
+    function getPenggunaanObat() {
+        const $button = $('#btnRefreshObat');
+        const kunjungan = $('#gd_dokter').data('kunjungan');
+        $.ajax({
+            url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}`,
+            type: 'GET',
+            beforeSend: function () {
+                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
+                $("#tblObatBody").html(`<tr><td colspan="7" class="text-center"><i class="ri-refresh-line ri-spin me-1"></i> Memproses data...</td></tr>`);
+            },
+            success: function (res) {
+                let html = '';
+                if (res.length > 0) {
+                    $.each(res, function (i, v) {
+                        html += `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td>${v.OBAT}</td>
+                            <td>${v.DOSIS}</td>
+                            <td>${v.FREKUENSI_NAMA} ${v.FREKUENSI_KETERANGAN ? `(${v.FREKUENSI_KETERANGAN})` : ''}</td>
+                            <td>${v.RUTE_NAMA}</td>
+                            <td>${v.LAMA_PENGGUNAAN}</td>
+                            <td class="text-center">
+                                <button class="btn btn-danger btn-sm" onclick="hapusPenggunaanObat(${v.ID})">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        `;
+                    });
+                } else {
+                    html = `
+                    <tr>
+                        <td colspan="7" class="text-center">Tidak ada data</td>
+                    </tr>
+                    `;
+                }
+                $("#tblObatBody").html(html);
+            },
+            error: function (xhr) {
+                let message = 'Data gagal disimpan.';
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors)
+                        .flat()
+                        .join('\n');
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                alert(message);
+            },
+            complete: function () {
+                $button.prop('disabled', false).html('<i class="ri-refresh-line"></i>');
+            }
+        });
+    }
+
+    function tambahPenggunaanObat() {
+        const $button = $('#btnTambahObat');
+        let nama_obat = $("input[name='rpo_nama_obat']").val();
+        let dosis = $("input[name='rpo_dosis']").val();
+        let frekuensi = $("select[name='rpo_frekuensi']").val();
+        let rute = $("select[name='rpo_rute']").val();
+        let lama = $("input[name='rpo_lama']").val();
+
+        $.ajax({
+            url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}/simpan`,
+            type: 'POST',
+            data: {
+                'nama_obat': nama_obat,
+                'dosis': dosis,
+                'frekuensi': frekuensi,
+                'rute': rute,
+                'lama': lama
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+
+            beforeSend: function () {
+                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan...');
+            },
+
+            success: function (res) {
+                iziToast.success({
+                    title: 'Proses Berhasil!',
+                    message: res.message || 'Data berhasil disimpan.',
+                    position: 'topRight'
+                });
+                getPenggunaanObat();
+            },
+
+            error: function (xhr) {
+                let message = 'Data gagal disimpan.';
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors)
+                        .flat()
+                        .join('\n');
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+
+                alert(message);
+            },
+
+            complete: function () {
+                $button.prop('disabled', false).html('<i class="ri-add-box-line me-1"></i> Tambah Obat');
+            }
+        });
+    }
+
+    function hapusPenggunaanObat(id){
+        const kunjungan = $('#gd_dokter').data('kunjungan');
+        $.ajax({
+            url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}/hapus/${id}`,
+            type: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (res) {
+                iziToast.success({
+                    title: 'Proses Berhasil!',
+                    message: res.message || 'Data berhasil dihapus.',
+                    position: 'topRight'
+                });
+                getPenggunaanObat();
+            },
+            error: function (xhr) {
+                let message = 'Data gagal dihapus.';
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors)
+                        .flat()
+                        .join('\n');
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+
+                alert(message);
             }
         });
     }
