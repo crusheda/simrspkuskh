@@ -65,14 +65,16 @@
             <div class="col-md-12 mb-3">
                 <div class="form-group">
                     <h6>Kriteria ATS (<i>Australasian Triage Scale</i>)</h6>
-                    <select class="form-control" id="ats">
+                    <input type="text" class="form-control" name="ats" placeholder="Masukkan Kriteria ATS">
+                    {{-- <input type="text" class="form-control" name="ats" placeholder="Masukkan Kriteria ATS"> --}}
+                    {{-- <select class="form-control" id="ats">
                         <option value="">Pilih Kriteria ATS</option>
                         <option value="1">ATS 1 (Merah) - Segera</option>
                         <option value="2">ATS 2 (Kuning) - ≤ 10 Menit</option>
                         <option value="3">ATS 3 (Kuning) - ≤ 10 Menit</option>
                         <option value="4">ATS 4 (Hijau) - ≤ 30 Menit</option>
                         <option value="5">ATS 5 (Hijau) - ≤ 120 Menit</option>
-                    </select>
+                    </select> --}}
                 </div>
             </div>
             <div class="col-md-12 mb-3">
@@ -106,7 +108,7 @@
                 <h6>Anamnesis</h6>
                 <div class="form-group">
                     <div class="form-check mb-2">
-                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="1" checked="">
+                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="1">
                         <label class="form-check-label"> Autoanamnesis (tanya jawab langsung dengan pasien) </label>
                     </div>
                     <div class="form-check">
@@ -243,7 +245,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group mb-2">
-                                            <label class="form-label">Diameter</label>
+                                            <label class="form-label">Diameter Pupil</label>
                                             <div class="input-group input-group-sm mb-2">
                                                 <input type="text" class="form-control" name="dia_up">
                                                 <div class="input-group-text"> mm / </div>
@@ -251,7 +253,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group mb-2">
-                                            <label class="form-label">RC</label>
+                                            <label class="form-label">RC (Refleks Cahaya)</label>
                                             <div class="input-group input-group-sm mb-2">
                                                 <input type="text" class="form-control" name="rc_up">
                                                 <div class="input-group-text"> / </div>
@@ -259,7 +261,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="form-label">VAS</label>
+                                            <label class="form-label">VAS (Visual Analog Scale)</label>
                                             <input type="text" class="form-control" name="vas">
                                         </div>
                                     </div>
@@ -582,8 +584,48 @@
 
 <script>
     $(document).ready(function() {
-
+        getDataPengkajianGdD();
     })
+
+    function getDataPengkajianGdD() {
+        $kunjungan = $('#gd_dokter').data('kunjungan');
+        $.ajax({
+            url: `/api/v2/emr/form/pengkajian/gd/dr/${$kunjungan}`,
+            type: 'GET',
+            beforeSend: function () {
+
+            },
+            success: function (res) {
+                // KRITERIA ATS
+                $('input[name="ats"]').val(res.data.triage.KRITERIA);
+
+                // RISIKO PENULARAN INFEKSI
+                $('input[name="rpi"]').val(res.data.triage.RISIKO_PENULARAN_INFEKSI);
+
+                // ANAMNESIS
+                let anam = null;
+                if (res.data.anamnesis_diperoleh.AUTOANAMNESIS == 1) { anam = 1; }
+                else if (res.data.anamnesis_diperoleh.ALLOANAMNESIS == 1) { anam = 2; }
+                if (anam !== null) { $(`input[name="anam"][value="${anam}"]`).prop('checked', true); }
+
+            },
+            error: function (xhr) {
+                let message = 'Data gagal disimpan.';
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors)
+                        .flat()
+                        .join('\n');
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                alert(message);
+            },
+            complete: function () {
+
+            }
+        });
+    }
 
     function saveDataPengkajianGdD(btn) {
         const $button = $(btn);
@@ -594,7 +636,7 @@
         });
 
         $.ajax({
-            url: '/api/emr/form/pengkajian/gd/dr/simpan',
+            url: '/api/v2/emr/form/pengkajian/gd/dr/simpan',
             type: 'POST',
             data: data,
             headers: {

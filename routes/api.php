@@ -43,7 +43,19 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
 
 //---------------------------------------------------------------    A  P  I    L  O  K  A  L    -----------------------------------------------------------------
 Route::group(['prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
+    // DIGITAL
+        // MEDICAL RECORD
+            // FORM PENGKAJIAN
+                // GAWAT DARURAT
+                    // DOKTER
+                    Route::get('emr/form/pengkajian/gd/dr/{kunjungan}', [PengkajianGawatDaruratController::class, 'getFormDokter']);
+                    Route::post('emr/form/pengkajian/gd/dr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormDokter']);
+                    // PERAWAT
+                    Route::post('emr/form/pengkajian/gd/pr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormPerawat']);
 
+                // RAWAT JALAN DEWASA
+                Route::post('emr/form/pengkajian/rjd/dr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormDokter']);
+                Route::post('emr/form/pengkajian/rjd/pr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormPerawat']);
 });
 
 // SIRMED v.1
@@ -159,15 +171,6 @@ Route::group(['middleware' => ['web', 'auth']], function() {
                 Route::delete('emr/jadwal/hapus/{KUNJUNGAN}', [ApiNewRehabMedikController::class, 'destroyFormJadwalPelayanan'])->name('api.emr.jadwal.destroyFormJadwalPelayanan');
             // RIS
             Route::get('dcom/{filename}', [RISController::class, 'getDCOM'])->name('api.emr.ris.getDCOM');
-
-        // FORM
-            // PENGKAJIAN
-                // GAWAT DARURAT
-                Route::post('emr/form/pengkajian/gd/dr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormDokter'])->name('api.emr.form.pengkajian.gd.dr.simpan');
-                Route::post('emr/form/pengkajian/gd/pr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormPerawat'])->name('api.emr.form.pengkajian.gd.pr.simpan');
-                // RAWAT JALAN DEWASA
-                Route::post('emr/form/pengkajian/rjd/dr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormDokter'])->name('api.emr.form.pengkajian.rjd.dr.simpan');
-                Route::post('emr/form/pengkajian/rjd/pr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormPerawat'])->name('api.emr.form.pengkajian.rjd.pr.simpan');
 
     // MATRIKS
     // Route::get('emr/matriks/{NOMOR}', [ApiMatriksController::class, 'showMatriks'])->name('api.emr.matriks.show');
