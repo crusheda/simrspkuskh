@@ -46,6 +46,9 @@ class PengkajianRawatJalanDewasaController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
+        $lab = $this->hasilLab($kunjungan);
+        // dd($lab);
+
         $data = [
             'kunjungan' => $kunjungan,
             'jenis_ruang' => $jenis_ruang,
@@ -53,6 +56,7 @@ class PengkajianRawatJalanDewasaController extends Controller
             'dpjp' => $dpjp,
             'frekuensi' => $frekuensi,
             'rute' => $rute,
+            'lab' => $lab,
         ];
         // print_r($data);
         // die();
@@ -200,5 +204,77 @@ class PengkajianRawatJalanDewasaController extends Controller
     {
         print_r($request->all());
         die();
+    }
+
+    public function hasilLab($nomor) {
+        $data = DB::select("
+            SELECT LPAD(p.NORM, 8, '0') AS NORM,
+            master.getNamaLengkap(p.NORM) AS NAMALENGKAP,
+            CONCAT(rjk.DESKRIPSI, ' / ', DATE_FORMAT(p.TANGGAL_LAHIR, '%d-%m-%Y')) AS JKTGLLAHIR,
+
+            master.getNamaLengkapPegawai(mp.NIP) AS DOKTER,
+            mp.NIP AS NIPDPJP,
+            master.getNamaLengkapPegawai(mpasal.NIP) AS DOKTERASAL,
+            master.getNamaLengkapPegawai(mpper.NIP) AS ANALIS,
+
+            pk.NOPEN,
+            pk.MASUK AS TGLREG,
+            hlab.TANGGAL AS TANGGALHASIL,
+            chl.CATATAN,
+
+            r.DESKRIPSI AS UNITPENGANTAR,
+            ks.ALASAN AS DIAGNOSA,
+
+            tm.KUNJUNGAN,
+
+            ggl.DESKRIPSI AS GROUPLAB,
+            kgl.DESKRIPSI AS KLPLAB,
+
+            mt.NAMA AS NAMATINDAKAN,
+            ptl.PARAMETER,
+
+            IFNULL(hlab.NILAI_NORMAL, ptl.NILAI_RUJUKAN) AS NILAI_RUJUKAN,
+            hlab.HASIL,
+            IFNULL(hlab.SATUAN, sl.DESKRIPSI) AS SATUAN,
+            hlab.KETERANGAN
+
+            FROM layanan.hasil_lab hlab
+
+            JOIN layanan.tindakan_medis tm ON hlab.TINDAKAN_MEDIS = tm.ID
+            LEFT JOIN layanan.catatan_hasil_lab chl ON tm.KUNJUNGAN = chl.KUNJUNGAN
+            LEFT JOIN master.dokter dok ON chl.DOKTER = dok.ID
+            LEFT JOIN master.pegawai mp ON dok.NIP = mp.NIP
+            LEFT JOIN layanan.petugas_tindakan_medis ptm ON ptm.TINDAKAN_MEDIS = tm.ID AND ptm.JENIS = 6 AND ptm.KE = 1 AND ptm.STATUS <> 0
+            LEFT JOIN master.pegawai mpper ON ptm.MEDIS = mpper.ID
+
+            JOIN master.parameter_tindakan_lab ptl ON hlab.PARAMETER_TINDAKAN = ptl.ID
+            LEFT JOIN master.referensi sl ON ptl.SATUAN = sl.ID AND sl.JENIS = 35
+
+            JOIN master.tindakan mt ON ptl.TINDAKAN = mt.ID
+            LEFT JOIN master.mapping_group_pemeriksaan mgp ON mt.ID = mgp.PEMERIKSAAN AND mgp.STATUS = 1
+            LEFT JOIN master.group_pemeriksaan kgl ON mgp.GROUP_PEMERIKSAAN_ID = kgl.ID AND kgl.JENIS = 8 AND kgl.STATUS = 1
+            LEFT JOIN master.group_pemeriksaan ggl ON ggl.KODE = LEFT(kgl.KODE, 2) AND ggl.JENIS = 8 AND ggl.STATUS = 1
+
+            JOIN pendaftaran.kunjungan pk ON tm.KUNJUNGAN = pk.NOMOR
+
+            JOIN pendaftaran.pendaftaran pp ON pk.NOPEN = pp.NOMOR
+
+            JOIN master.pasien p ON pp.NORM = p.NORM
+            LEFT JOIN master.referensi rjk ON p.JENIS_KELAMIN = rjk.ID AND rjk.JENIS = 2
+            LEFT JOIN layanan.order_lab ks ON pk.REF = ks.NOMOR
+            LEFT JOIN pendaftaran.kunjungan kj ON ks.KUNJUNGAN = kj.NOMOR
+            LEFT JOIN master.ruangan r ON kj.RUANGAN = r.ID AND r.JENIS = 5
+            LEFT JOIN master.dokter dokasal ON ks.DOKTER_ASAL = dokasal.ID
+            LEFT JOIN master.pegawai mpasal ON dokasal.NIP = mpasal.NIP
+
+            WHERE kj.NOMOR = ?
+            AND hlab.STATUS = 1 AND hlab.HASIL IS NOT NULL AND hlab.HASIL <> ''
+
+            ORDER BY ggl.ID,
+            kgl.ID,
+            mt.ID,
+            ptl.INDEKS ", [$nomor]);
+
+            return $data;
     }
 }
