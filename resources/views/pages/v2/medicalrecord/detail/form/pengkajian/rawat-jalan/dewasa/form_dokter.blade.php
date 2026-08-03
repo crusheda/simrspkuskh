@@ -198,7 +198,39 @@
                     <div class="row align-items-center" id="pemeriksaan_penunjang">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Pemeriksaan Penunjang</label>
-                            <textarea class="form-control" name="penunjang" id="penunjang" rows="3"></textarea>
+                            <div class="card card-body border border-dashed border-info mb-0">
+                                <div class="mb-3">
+                                    <h6>Pemeriksaan Penunjang Laboratorium</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover table-display">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Jenis Pemeriksaan</th>
+                                                    <th>Parameter</th>
+                                                    <th>Hasil</th>
+                                                    <th>Satuan</th>
+                                                    <th>Nilai Normal</th>
+                                                    <th>Keterangan</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($list['lab'] as $key => $item)
+                                                <tr>
+                                                    <td>{{ $key + 1 }}</td>
+                                                    <td>{{ $item->NAMATINDAKAN }}</td>
+                                                    <td>{{ $item->PARAMETER }}</td>
+                                                    <td>{{ $item->HASIL }}</td>
+                                                    <td>{{ $item->SATUAN }}</td>
+                                                    <td>{{ $item->NILAI_RUJUKAN }}</td>
+                                                    <td>{{ $item->KETERANGAN }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
