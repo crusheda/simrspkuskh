@@ -116,6 +116,40 @@ class PengkajianGawatDaruratController extends Controller
             DB::beginTransaction();
 
             try {
+                $getDataDokter = DB::table('master.dokter as dr')
+                            ->leftJoin('aplikasi.pengguna as pe', function($join) {
+                                $join->on('pe.NIP', '=', 'dr.NIP')
+                                    ->where('pe.STATUS', '=', 1);
+                            })
+                            ->select('dr.ID')
+                            ->where('pe.ID', auth()->id())
+                            ->where('dr.STATUS', 1)
+                            ->first();
+
+                $getDataKunjungan = DB::table('pendaftaran.kunjungan as pk')
+                                    ->join('pendaftaran.pendaftaran as pp', 'pp.NOMOR','=','pk.NOPEN')
+                                    ->select('pp.NORM', 'pp.NOMOR as NOPEN')
+                                    ->where('pk.NOMOR', $request->NOKUNJ)
+                                    ->first();
+
+                // ==========================
+                // TRIAGE
+                // ==========================
+                DB::table('medicalrecord.triage')->updateOrInsert(
+                    [
+                        'NORM'      => $getDataKunjungan->NORM,
+                        'KUNJUNGAN' => $request->NOKUNJ,
+                        'NOPEN'     => $getDataKunjungan->NOPEN,
+                    ],
+                    [
+                        'KRITERIA'      => $request->ats,
+                        'RISIKO_PENULARAN_INFEKSI' => $request->rpi,
+                        'DOKTER_ID'     => $getDataDokter->ID ?? 0,
+                        'OLEH'          => auth()->id(),
+                        'STATUS'        => 2,
+                        'TANGGAL'       => now()
+                    ]
+                );
 
                 // ==========================
                 // ANAMNESIS DIPEROLEH

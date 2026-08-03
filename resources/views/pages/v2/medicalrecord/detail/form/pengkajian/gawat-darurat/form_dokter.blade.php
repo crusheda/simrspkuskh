@@ -585,6 +585,7 @@
 <script>
     $(document).ready(function() {
         getDataPengkajianGdD();
+        console.log($('input[name="anam"]').length);
     })
 
     function getDataPengkajianGdD() {
@@ -597,17 +598,16 @@
             },
             success: function (res) {
                 // KRITERIA ATS
-                $('input[name="ats"]').val(res.data.triage.KRITERIA);
+                $('input[name="ats"]').val(res.data.triage?.KRITERIA);
 
                 // RISIKO PENULARAN INFEKSI
-                $('input[name="rpi"]').val(res.data.triage.RISIKO_PENULARAN_INFEKSI);
+                $(`input[name="rpi"][value="${res.data.triage?.RISIKO_PENULARAN_INFEKSI}"]`).prop('checked', true);
 
                 // ANAMNESIS
                 let anam = null;
-                if (res.data.anamnesis_diperoleh.AUTOANAMNESIS == 1) { anam = 1; }
-                else if (res.data.anamnesis_diperoleh.ALLOANAMNESIS == 1) { anam = 2; }
+                if (res.data.anamnesis_diperoleh?.AUTOANAMNESIS == 1) { anam = 1; }
+                else if (res.data.anamnesis_diperoleh?.ALLOANAMNESIS == 1) { anam = 2; }
                 if (anam !== null) { $(`input[name="anam"][value="${anam}"]`).prop('checked', true); }
-
             },
             error: function (xhr) {
                 let message = 'Data gagal disimpan.';
@@ -628,6 +628,15 @@
     }
 
     function saveDataPengkajianGdD(btn) {
+        console.log($('input[name="rpi"]:checked').length);
+        console.log($('input[name="rpi"]:checked').val());
+
+        console.log($('input[name="rpi"]:checked'));
+        $('input[name="rpi"]:checked').each(function () {
+            console.log(this);
+            console.log(this.value);
+            console.log($(this).val());
+        });
         const $button = $(btn);
         const $section = $('#gd_dokter');
 
