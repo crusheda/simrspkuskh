@@ -62,6 +62,7 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
 
             // ADD ON
                 // RIWAYAT PENGGUNAAN / PEMBERIAN OBAT
+                    Route::get('emr/pengkajian/riwayat_pemberian_obat/obat', [AddOnPengkajianController::class, 'cariObat']);
                     Route::get('emr/pengkajian/riwayat_pemberian_obat/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatPemberianObat']);
                     Route::post('emr/pengkajian/riwayat_pemberian_obat/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanRiwayatPemberianObat']);
                     Route::delete('emr/pengkajian/riwayat_pemberian_obat/{kunjungan}/hapus/{id}', [AddOnPengkajianController::class, 'hapusRiwayatPenggunaanObat']);

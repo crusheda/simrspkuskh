@@ -28,3 +28,7 @@
     dayjs.extend(dayjs_plugin_localizedFormat);
     dayjs.locale('id');
 </script>
+
+{{-- AUTOCOMPLETE --}}
+<script src="{{ asset('v2/libs/@tarekraafat/autocomplete.js/autoComplete.min.js') }}"></script>
+{{-- <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.9/dist/autoComplete.min.js"></script> --}}

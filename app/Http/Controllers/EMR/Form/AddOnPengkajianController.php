@@ -11,6 +11,37 @@ use Auth, Storage;
 
 class AddOnPengkajianController extends Controller
 {
+    public function cariObat(Request $request)
+    {
+        $keyword = trim($request->get('q', ''));
+
+        if (mb_strlen($keyword) < 2) {
+            return response()->json([]);
+        }
+
+        $obat = DB::table('inventory.barang as ib')
+            ->leftJoin('inventory.satuan as is', 'ib.SATUAN', '=', 'is.ID')
+            ->leftJoin('inventory.kategori as ik', 'ib.KATEGORI', '=', 'ik.ID')
+            ->select('ib.ID', 'ib.NAMA', 'ib.STOK', 'is.NAMA as SATUAN', 'is.DESKRIPSI as KET_SATUAN', 'ik.NAMA as KATEGORI')
+            ->where('ib.NAMA', 'like', '%' . $keyword . '%')
+            ->orderBy('ib.NAMA')
+            ->where('ib.STATUS', 1)
+            ->limit(15)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->ID,
+                    'nama' => $item->NAMA,
+                    'stok' => $item->STOK,
+                    'satuan' => $item->SATUAN,
+                    'ket_satuan' => $item->KET_SATUAN,
+                    'kategori' => $item->KATEGORI,
+                ];
+            });
+
+        return response()->json($obat);
+    }
+
     function getRiwayatPemberianObat($kunjungan)
     {
         $data = DB::table('medicalrecord.riwayat_pemberian_obat as rpo')

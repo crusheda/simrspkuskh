@@ -3,9 +3,14 @@
 namespace App\Http\Controllers\EMR\Form\GawatDarurat;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpWord\TemplateProcessor;
+use App\Services\LibreOfficeService;
+use PHPJasper\PHPJasper;
 use Carbon\Carbon;
 use Auth, Storage;
 
@@ -136,6 +141,23 @@ class PengkajianGawatDaruratController extends Controller
 
         function simpanFormDokter(Request $request)
         {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'NOKUNJ'    => 'required',
+            ],
+            [
+                'NOKUNJ.required'        => 'Kunjungan wajib diisi.',
+            ]
+        );
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message'=> $validator->errors()->first()
+                ], 422);
+            }
+
             DB::beginTransaction();
 
             try {

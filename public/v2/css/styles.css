@@ -2021,7 +2021,8 @@ progress {
   width: 100%;
   margin-bottom: 1rem;
   vertical-align: middle;
-  border-color: var(--bs-table-border-color);
+  /* border-color: var(--bs-table-border-color); */
+  border-color: #d7d7dc;
 }
 .table > :not(caption) > * > * {
   padding: 10px 14px;
@@ -2271,7 +2272,8 @@ progress {
   appearance: none;
   background-color: var(--bs-body-bg);
   background-clip: padding-box;
-  border: var(--bs-border-width) solid var(--bs-border-color);
+  /* border: var(--bs-border-width) solid var(--bs-border-color); */
+  border: var(--bs-border-width) solid #d7d7dc;
   border-radius: var(--bs-border-radius);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
@@ -2424,7 +2426,8 @@ textarea.form-control-lg {
   background-repeat: no-repeat;
   background-position: right 1.2rem center;
   background-size: 16px 12px;
-  border: var(--bs-border-width) solid var(--bs-border-color);
+  /* border: var(--bs-border-width) solid var(--bs-border-color); */
+  border: var(--bs-border-width) solid #d7d7dc;
   border-radius: var(--bs-border-radius);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
@@ -2506,7 +2509,8 @@ textarea.form-control-lg {
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  border: var(--bs-border-width) solid var(--bs-border-color);
+  /* border: var(--bs-border-width) solid var(--bs-border-color); */
+  border: var(--bs-border-width) solid #d7d7dc;
   print-color-adjust: exact;
 }
 .form-check-input[type=checkbox] {

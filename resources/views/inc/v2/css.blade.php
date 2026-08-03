@@ -60,6 +60,11 @@
 <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}" />
 
 <link rel="stylesheet" href="{{ asset('css/iziToast.css') }}" />
+{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script> --}}
+
+<link rel="stylesheet" href="{{ asset('v2/libs/@tarekraafat/autocomplete.js/css/autoComplete.css') }}">
+{{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.9/dist/css/autoComplete.min.css"> --}}
+
 {{-- <link rel="stylesheet" href="{{ asset('css/plugins/style.css') }}"> --}}
 {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-datatables/10.0.0/style.min.css"> --}}
 

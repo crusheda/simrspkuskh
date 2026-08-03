@@ -457,7 +457,7 @@
                             <h6>Riwayat Penggunaan Obat</h6>
                             <div class="row g-2 mb-2">
                                 <div class="col-md-12">
-                                    <input type="text" class="form-control" name="rpo_nama_obat" placeholder="Masukkan Nama Obat">
+                                    <input type="text" class="form-control" name="rpo_nama_obat" id="rpo_nama_obat" placeholder="Masukkan Nama Obat">
                                 </div>
                                 <div class="col-md-6">
                                     <input type="text" class="form-control" name="rpo_dosis" placeholder="Masukkan Dosis">
@@ -486,7 +486,7 @@
                                 <div class="col-md-2 d-grid">
                                     <div class="btn-group">
                                         <button class="btn btn-success" id="btnTambahObat" onclick="tambahPenggunaanObat()">
-                                            <i class="ri-add-box-line me-1"></i> Tambah Obat
+                                            <i class="ri-add-box-line"></i>
                                         </button>
                                         <button class="btn btn-subtle-warning" id="btnRefreshObat" onclick="getPenggunaanObat()">
                                             <i class="ri-refresh-line"></i>
@@ -637,10 +637,10 @@
             </div>
         </div>
     </div>
-    <div class="form-footer">
-        {{-- <button class="btn btn-secondary">
-            <i class="ri-close-line me-1"></i> Batal
-        </button> --}}
+    <div class="form-footer d-flex justify-content-between">
+        <button type="button" class="btn btn-subtle-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat CPPT" onclick="showCppt('{{ $list['kunjungan'] }}')">
+            <i class="ri-booklet-line me-1"></i> Lihat CPPT
+        </button>
         <button class="btn btn-danger" onclick="saveDataPengkajianGdD(this)">
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
@@ -649,6 +649,80 @@
 
 <script>
     $(document).ready(function() {
+        const $inputObat = $('[name="rpo_nama_obat"]');
+        // const $inputBarangId = $('[name="rpo_barang_id"]');
+
+        if (!$inputObat.length ) {
+            return;
+        }
+
+        new autoComplete({
+            selector: '[name="rpo_nama_obat"]',
+            placeHolder: 'Masukkan Nama Obat',
+            threshold: 2,
+            debounce: 300,
+
+            data: {
+                src: async function (query) {
+                    try {
+                        return await $.ajax({
+                            url: "/api/v2/emr/pengkajian/riwayat_pemberian_obat/obat",
+                            type: 'GET',
+                            dataType: 'json',
+                            data: {
+                                q: query
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Gagal mengambil data obat:', error);
+                        return [];
+                    }
+                },
+
+                keys: ['nama'],
+                cache: false
+            },
+
+            resultsList: {
+                maxResults: 15,
+                noResults: true
+            },
+
+            resultItem: {
+                highlight: true,
+
+                element: function (item, data) {
+                    const obat = data.value;
+
+                    // .text() lebih aman daripada memasukkan data database ke HTML langsung
+                    $(item)
+                        .empty()
+                        .append(
+                            $('<strong>').text(obat.nama),
+                            $('<small>')
+                                .addClass('d-block text-muted')
+                                .text(`Kategori: ${obat.kategori ?? '-'}  |  Satuan: ${obat.ket_satuan ?? '-'}${obat.satuan ? ' ('+obat.satuan+')' : '-'}`)
+                        );
+                }
+            },
+
+            events: {
+                input: {
+                    selection: function (event) {
+                        const obat = event.detail.selection.value;
+
+                        $inputObat.val(obat.nama);
+                        // $inputBarangId.val(obat.id);
+                    }
+                }
+            }
+        });
+
+        // Bila teks diganti manual, jangan gunakan ID obat pilihan sebelumnya.
+        // $inputObat.on('input', function () {
+        //     $inputBarangId.val('');
+        // });
+
         getDataPengkajianGdD();
         getPenggunaanObat();
     })
@@ -817,7 +891,7 @@
             },
 
             beforeSend: function () {
-                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan...');
+                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
             },
 
             success: function (res) {
@@ -844,7 +918,7 @@
             },
 
             complete: function () {
-                $button.prop('disabled', false).html('<i class="ri-add-box-line me-1"></i> Tambah Obat');
+                $button.prop('disabled', false).html('<i class="ri-add-box-line"></i>');
             }
         });
     }

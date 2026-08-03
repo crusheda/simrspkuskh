@@ -180,6 +180,48 @@
         </div>
     </div>
 </div>
+
+<div id="showCppt" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="showCpptLabel">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="showCpptLabel"><span class="badge text-bg-secondary">CPPT</span> | NORM.<a id="show-norm-cppt" class="text-primary"></a> | IDKUNJUNGAN : <a id="show-id-cppt" class="text-primary"></a></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3">
+                <small><a><b>Tabel di bawah diurutkan berdasarkan <mark>TANGGAL</mark> datarecord CPPT pertama kali saat kunjungan pada tanggal tsb</b></a></small>
+                <div class="table-responsive mt-2">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%;">TANGGAL</th>
+                                <th style="width: 40%;">CATATAN</th>
+                                <th style="width: 20%;">PPA</th>
+                                <th style="width: 10%;">JENIS</th>
+                                <th style="width: 20%;">VERIFIKASI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tampil-cppt">
+                            <tr>
+                                <td colspan="15">
+                                    <center>
+                                        <div class="spinner-border spinner-border-sm" role="status"></div>
+                                    </center>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {{-- <a href="#!" class="tooltip-test" data-bs-toggle="tooltip" title="Tooltip" data-container="#showCppt">that link</a> --}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                {{-- <button type="button" class="btn btn-primary"></button> --}}
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(function () {
         // Menandai menu aktif jika URL sama (opsional)
@@ -376,5 +418,42 @@
         });
 
         return data;
+    }
+
+    // ==========================
+    // GET CPPT
+    // ==========================
+    function showCppt(kjg) {
+        $('#show-id-cppt').text(kjg);
+        $.ajax({
+            url: "/api/pasien/"+kjg+"/cppt",
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                $("#tampil-cppt").empty();
+                $('#show-norm-cppt').text(res.pen.NORM);
+                if (res.show.length != 0) {
+                    res.show.forEach(item => {
+                        content = ``;
+                        content += `<tr>
+                                        <td class="custom-column">${item.TANGGAL}</td>
+                                        <td class="custom-column">${item.CATATAN}<br>${item.INSTRUKSI?"<b>I/ : </b>"+item.INSTRUKSI:''}</td>
+                                        <td class="custom-column">${item.PPA}<br><span class="badge rounded-pill text-bg-primary">${item.JNSPPA}</span></td>
+                                        <td class="custom-column">${item.TBAK_SBAR?item.TBAK_SBAR:'-'}</td>
+                                        <td class="custom-column">${item.VERIFIKASI?'Diverifkasi Oleh<br><b class="text-success">'+item.VERIFIKATOR+'</b><br>Pada '+item.TGLVERIFIKASI:'Belum Diverifikasi'}</td>
+                                    </tr>
+                        `;
+                        $('#tampil-cppt').append(content);
+                    })
+                    $('#showCppt').modal('show');
+                } else {
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: 'Data CPPT tidak ditemukan / belum diisi',
+                        position: 'topRight'
+                    });
+                }
+            }
+        })
     }
 </script>
