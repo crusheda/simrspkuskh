@@ -402,18 +402,28 @@
             const name = this.name;
             const type = (this.type || '').toLowerCase();
 
+            // Radio
+            if (type === 'radio') {
+                if ($field.is(':checked')) {
+                    data[name] = $field.val();
+                }
+                return;
+            }
+
+            // Checkbox
             if (type === 'checkbox') {
                 if (!(name in data)) {
                     data[name] = null;
                 }
 
                 if ($field.is(':checked')) {
-                    data[name] = $field.val();
+                    data[name] = $field.val() || 1;
                 }
 
                 return;
             }
 
+            // Input biasa, select, textarea
             data[name] = $field.val();
         });
 

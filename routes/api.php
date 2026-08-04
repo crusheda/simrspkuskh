@@ -61,11 +61,24 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     Route::post('emr/form/pengkajian/rjd/pr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormPerawat']);
 
             // ADD ON
+                // RIWAYAT ALERGI
+                    Route::get('emr/pengkajian/riwayat_alergi/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatAlergi']);
+                    Route::post('emr/pengkajian/riwayat_alergi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanRiwayatAlergi']);
+                    Route::delete('emr/pengkajian/riwayat_alergi/{kunjungan}/hapus/{id}', [AddOnPengkajianController::class, 'hapusRiwayatAlergi']);
                 // RIWAYAT PENGGUNAAN / PEMBERIAN OBAT
                     Route::get('emr/pengkajian/riwayat_pemberian_obat/obat', [AddOnPengkajianController::class, 'cariObat']);
                     Route::get('emr/pengkajian/riwayat_pemberian_obat/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatPemberianObat']);
                     Route::post('emr/pengkajian/riwayat_pemberian_obat/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanRiwayatPemberianObat']);
                     Route::delete('emr/pengkajian/riwayat_pemberian_obat/{kunjungan}/hapus/{id}', [AddOnPengkajianController::class, 'hapusRiwayatPenggunaanObat']);
+                // PEMERIKSAAN PENUNJANG
+                    // LABORAT
+                        Route::get('emr/pengkajian/lab/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatLab']);
+                    // RADIOLOGI
+                        Route::get('emr/pengkajian/rad/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatRad']);
+                // DIAGNOSIS
+                    Route::get('emr/pengkajian/diagnosis/{kunjungan}', [AddOnPengkajianController::class, 'getDiagnosis']);
+                    Route::post('emr/pengkajian/diagnosis/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanDiagnosis']);
+                    Route::delete('emr/pengkajian/diagnosis/{kunjungan}/hapus/{id}', [AddOnPengkajianController::class, 'hapusDiagnosis']);
 });
 
 // SIRMED v.1

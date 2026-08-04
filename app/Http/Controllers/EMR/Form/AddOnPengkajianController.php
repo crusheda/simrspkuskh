@@ -11,6 +11,46 @@ use Auth, Storage;
 
 class AddOnPengkajianController extends Controller
 {
+    function getRiwayatAlergi($kunjungan)
+    {
+        $data = DB::table('medicalrecord.riwayat_alergi as ra')
+            ->leftJoin('master.referensi as ref', function($join){
+                $join->on('ra.JENIS', '=', 'ref.ID')
+                    ->where('ref.JENIS',180)
+                    ->where('ref.STATUS',1);
+            })
+            ->select('ra.*', 'ref.DESKRIPSI as JENIS_ALERGI')
+            ->where('ra.KUNJUNGAN', $kunjungan)
+            ->where('ra.STATUS', 1)
+            ->get();
+
+        return response()->json($data);
+    }
+
+    function simpanRiwayatAlergi(Request $request, $KUNJUNGAN)
+    {
+        DB::table('medicalrecord.riwayat_alergi')->insert([
+            'KUNJUNGAN'         => $KUNJUNGAN,
+            'JENIS'             => $request->jenis,
+            'DESKRIPSI'         => $request->deskripsi,
+            'OLEH'              => auth()->id(),
+            'TANGGAL'           => now(),
+            'STATUS'            => 1,
+        ]);
+
+        return response()->json(['message' => 'Data riwayat alergi berhasil disimpan.'], 200);
+    }
+
+    function hapusRiwayatAlergi($KUNJUNGAN, $ID)
+    {
+        DB::table('medicalrecord.riwayat_alergi')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('ID', $ID)
+            ->update(['STATUS' => 0]);
+
+        return response()->json(['message' => 'Data riwayat alergi berhasil dihapus.'], 200);
+    }
+
     public function cariObat(Request $request)
     {
         $keyword = trim($request->get('q', ''));
@@ -67,10 +107,10 @@ class AddOnPengkajianController extends Controller
         DB::table('medicalrecord.riwayat_pemberian_obat')->insert([
             'KUNJUNGAN'         => $KUNJUNGAN,
             'OBAT'              => $request->nama_obat,
-            'DOSIS'             => $request->dosis,
-            'FREKUENSI'         => $request->frekuensi,
-            'RUTE'              => $request->rute,
-            'LAMA_PENGGUNAAN'   => $request->lama,
+            // 'DOSIS'             => $request->dosis,
+            // 'FREKUENSI'         => $request->frekuensi,
+            // 'RUTE'              => $request->rute,
+            // 'LAMA_PENGGUNAAN'   => $request->lama,
             'OLEH'              => auth()->id(),
             'TANGGAL'           => now(),
             'STATUS'            => 1,
@@ -87,5 +127,186 @@ class AddOnPengkajianController extends Controller
             ->update(['STATUS' => 0]);
 
         return response()->json(['message' => 'Data riwayat pemberian obat berhasil dihapus.'], 200);
+    }
+
+    //Hasil Lab
+    function getRiwayatLab($kunjungan) {
+        $data = DB::select("
+            SELECT LPAD(p.NORM, 8, '0') AS NORM,
+            master.getNamaLengkap(p.NORM) AS NAMALENGKAP,
+            CONCAT(rjk.DESKRIPSI, ' / ', DATE_FORMAT(p.TANGGAL_LAHIR, '%d-%m-%Y')) AS JKTGLLAHIR,
+
+            master.getNamaLengkapPegawai(mp.NIP) AS DOKTER,
+            mp.NIP AS NIPDPJP,
+            master.getNamaLengkapPegawai(mpasal.NIP) AS DOKTERASAL,
+            master.getNamaLengkapPegawai(mpper.NIP) AS ANALIS,
+
+            pk.NOPEN,
+            pk.MASUK AS TGLREG,
+            hlab.TANGGAL AS TANGGALHASIL,
+            chl.CATATAN,
+
+            r.DESKRIPSI AS UNITPENGANTAR,
+            ks.ALASAN AS DIAGNOSA,
+
+            tm.KUNJUNGAN,
+
+            ggl.DESKRIPSI AS GROUPLAB,
+            kgl.DESKRIPSI AS KLPLAB,
+
+            mt.NAMA AS NAMATINDAKAN,
+            ptl.PARAMETER,
+
+            IFNULL(hlab.NILAI_NORMAL, ptl.NILAI_RUJUKAN) AS NILAI_RUJUKAN,
+            hlab.HASIL,
+            IFNULL(hlab.SATUAN, sl.DESKRIPSI) AS SATUAN,
+            hlab.KETERANGAN
+
+            FROM layanan.hasil_lab hlab
+
+            JOIN layanan.tindakan_medis tm ON hlab.TINDAKAN_MEDIS = tm.ID
+            LEFT JOIN layanan.catatan_hasil_lab chl ON tm.KUNJUNGAN = chl.KUNJUNGAN
+            LEFT JOIN master.dokter dok ON chl.DOKTER = dok.ID
+            LEFT JOIN master.pegawai mp ON dok.NIP = mp.NIP
+            LEFT JOIN layanan.petugas_tindakan_medis ptm ON ptm.TINDAKAN_MEDIS = tm.ID AND ptm.JENIS = 6 AND ptm.KE = 1 AND ptm.STATUS <> 0
+            LEFT JOIN master.pegawai mpper ON ptm.MEDIS = mpper.ID
+
+            JOIN master.parameter_tindakan_lab ptl ON hlab.PARAMETER_TINDAKAN = ptl.ID
+            LEFT JOIN master.referensi sl ON ptl.SATUAN = sl.ID AND sl.JENIS = 35
+
+            JOIN master.tindakan mt ON ptl.TINDAKAN = mt.ID
+            LEFT JOIN master.mapping_group_pemeriksaan mgp ON mt.ID = mgp.PEMERIKSAAN AND mgp.STATUS = 1
+            LEFT JOIN master.group_pemeriksaan kgl ON mgp.GROUP_PEMERIKSAAN_ID = kgl.ID AND kgl.JENIS = 8 AND kgl.STATUS = 1
+            LEFT JOIN master.group_pemeriksaan ggl ON ggl.KODE = LEFT(kgl.KODE, 2) AND ggl.JENIS = 8 AND ggl.STATUS = 1
+
+            JOIN pendaftaran.kunjungan pk ON tm.KUNJUNGAN = pk.NOMOR
+
+            JOIN pendaftaran.pendaftaran pp ON pk.NOPEN = pp.NOMOR
+
+            JOIN master.pasien p ON pp.NORM = p.NORM
+            LEFT JOIN master.referensi rjk ON p.JENIS_KELAMIN = rjk.ID AND rjk.JENIS = 2
+            LEFT JOIN layanan.order_lab ks ON pk.REF = ks.NOMOR
+            LEFT JOIN pendaftaran.kunjungan kj ON ks.KUNJUNGAN = kj.NOMOR
+            LEFT JOIN master.ruangan r ON kj.RUANGAN = r.ID AND r.JENIS = 5
+            LEFT JOIN master.dokter dokasal ON ks.DOKTER_ASAL = dokasal.ID
+            LEFT JOIN master.pegawai mpasal ON dokasal.NIP = mpasal.NIP
+
+            WHERE kj.NOMOR = ?
+            AND hlab.STATUS = 1 AND hlab.HASIL IS NOT NULL AND hlab.HASIL <> ''
+
+            ORDER BY ggl.ID,
+            kgl.ID,
+            mt.ID,
+            ptl.INDEKS ", [$kunjungan]);
+
+            return $data;
+    }
+
+    //Hasil Rad
+    function getRiwayatRad($kunjungan)
+    {
+        $data = DB::table('layanan.hasil_rad as hrad')
+            ->leftJoin('master.dokter as dok', 'hrad.DOKTER', '=', 'dok.ID')
+            ->leftJoin('master.pegawai as mp', 'dok.NIP', '=', 'mp.NIP')
+            ->join('layanan.tindakan_medis as tm', 'hrad.TINDAKAN_MEDIS', '=', 'tm.ID')
+            ->leftJoin('master.tindakan as t', 'tm.TINDAKAN', '=', 't.ID')
+            ->leftJoin('pendaftaran.kunjungan as pku', 'pku.NOMOR', '=', 'tm.KUNJUNGAN')
+            ->leftJoin('layanan.order_rad as orad', function($join){
+                $join->on('orad.NOMOR', '=', 'pku.REF')
+                    ->whereIn('orad.STATUS', [1,2]);
+            })
+            ->leftJoin('master.dokter as dokasal', 'orad.DOKTER_ASAL', '=', 'dokasal.ID')
+            ->leftJoin('layanan.petugas_tindakan_medis as ptm', function($join){
+                $join->on('ptm.TINDAKAN_MEDIS', '=', 'tm.ID')
+                    ->where('ptm.JENIS', 3)
+                    ->where('ptm.KE', 1)
+                    ->where('ptm.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.perawat as prad', 'ptm.MEDIS', '=', 'prad.ID')
+            ->join('pendaftaran.kunjungan as pk', 'tm.KUNJUNGAN', '=', 'pk.NOMOR')
+            ->leftJoin('layanan.order_rad as ks', 'pk.REF', '=', 'ks.NOMOR')
+            ->leftJoin('pendaftaran.kunjungan as kj', 'ks.KUNJUNGAN', '=', 'kj.NOMOR')
+            ->leftJoin('master.ruangan as r', function($join){
+                $join->on('kj.RUANGAN', '=', 'r.ID')
+                    ->where('r.JENIS', 5);
+            })
+            ->join('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
+            ->join('master.pasien as p', 'pp.NORM', '=', 'p.NORM')
+            ->leftJoin('master.referensi as rjk', function($join){
+                $join->on('p.JENIS_KELAMIN', '=', 'rjk.ID')
+                    ->where('rjk.JENIS', 2);
+            })
+            ->select([
+                DB::raw("DATE_FORMAT(SYSDATE(),'%d-%m-%Y %H:%i:%s') AS TGLSKRG"),
+                DB::raw("LPAD(p.NORM,8,'0') AS NORM"),
+                DB::raw("master.getNamaLengkap(p.NORM) AS NAMALENGKAP"),
+                DB::raw("CONCAT(rjk.DESKRIPSI,' / ',DATE_FORMAT(p.TANGGAL_LAHIR,'%d-%m-%Y')) AS JKTGLALHIR"),
+            'hrad.TANGGAL',
+                'hrad.KLINIS',
+                'hrad.KESAN',
+                'hrad.USUL',
+                'hrad.HASIL',
+                'hrad.BTK',
+            DB::raw("master.getNamaLengkapPegawai(mp.NIP) AS DOKTER"),
+                'mp.NIP AS NIPDOKTER',
+            'pk.NOPEN',
+                'pk.MASUK AS TGLREG',
+            't.NAMA AS NAMATINDAKAN',
+                'r.DESKRIPSI AS UNITPENGANTAR',
+                'orad.ALASAN AS DIAGNOSA',
+            'p.ALAMAT',
+            DB::raw("master.getNamaLengkapPegawai(dokasal.NIP) AS DOKTERASAL"),
+                DB::raw("master.getNamaLengkapPegawai(prad.NIP) AS RADIOGRAFER"),
+            ])
+
+            ->whereIn('tm.STATUS', [1,2])
+            ->where('hrad.STATUS', '!=', 0)
+            ->where('kj.NOMOR', $kunjungan)
+
+            ->orderBy('t.ID')
+            ->get();
+
+        return $data;
+    }
+
+    function getDiagnosis($kunjungan)
+    {
+        $nopen = DB::table('pendaftaran.kunjungan')->where('NOMOR', $kunjungan)->value('NOPEN');
+
+        $data = DB::table('medicalrecord.diagnosa as diag')
+            ->select('diag.ID','diag.DIAGNOSA', DB::raw("CASE WHEN diag.UTAMA = 1 THEN 'UTAMA' ELSE 'SEKUNDER' END AS UTAMA"))
+            ->where('diag.NOPEN', $nopen)
+            ->where('diag.STATUS', 1)
+            ->get();
+
+        return response()->json($data);
+    }
+
+    function simpanDiagnosis(Request $request, $KUNJUNGAN)
+    {
+        $nopen = DB::table('pendaftaran.kunjungan')->where('NOMOR', $KUNJUNGAN)->value('NOPEN');
+
+        DB::table('medicalrecord.diagnosa')->insert([
+            'NOPEN'             => $nopen,
+            'UTAMA'             => ($request->utama == 1) ? 1 : 0,
+            'DIAGNOSA'          => $request->diagnosa,
+            'KODE'              => '',
+            'OLEH'              => auth()->id(),
+            'TANGGAL'           => now(),
+            'STATUS'            => 1,
+        ]);
+
+        return response()->json(['message' => 'Data diagnosa berhasil disimpan.'], 200);
+    }
+
+    function hapusDiagnosis($KUNJUNGAN, $ID)
+    {
+        $nopen = DB::table('pendaftaran.kunjungan')->where('NOMOR', $KUNJUNGAN)->value('NOPEN');
+        DB::table('medicalrecord.diagnosa')
+            ->where('NOPEN', $nopen)
+            ->where('ID', $ID)
+            ->update(['STATUS' => 0]);
+
+        return response()->json(['message' => 'Data diagnosa berhasil dihapus.'], 200);
     }
 }
