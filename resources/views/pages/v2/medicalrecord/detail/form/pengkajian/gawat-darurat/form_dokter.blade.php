@@ -3,78 +3,333 @@
         <h1 class="display-6 mb-4 fs-27"><center>PENGKAJIAN MEDIS (<a class="text-danger">Diisi Oleh Dokter IGD</a>)</center></h1>
         <div class="row">
             <div class="col-md-12 mb-3">
-                <div class="row row-cols-1 row-cols-md-5 g-3">
-                    <div class="col">
-                        <div class="alert alert-danger">
-                            <h6>ATS 1 (Merah) - Segera</h6>
-                            <ul class="mb-0">
-                                <li>Obstruksi jalan nafas</li>
-                                <li>Henti nafas / henti jantung</li>
-                                <li>Distres nafas berat</li>
-                                <li>Gangguan hemodinamik berat</li>
-                                <li>GCS < 8</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="alert alert-warning">
-                            <h6>ATS 2 (Kuning) - ≤ 10 Menit</h6>
-                            <ul class="mb-0">
-                                <li>Resiko obstruksi jalan nafas</li>
-                                <li>Distres nafas sedang</li>
-                                <li>Gangguan hemodinamik sedang</li>
-                                <li>GCS 9 - 12</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="alert alert-warning">
-                            <h6>ATS 3 (Kuning) - ≤ 30 Menit</h6>
-                            <ul class="mb-0">
-                                <li>Resiko obstruksi jalan nafas</li>
-                                <li>Distres nafas sedang</li>
-                                <li>Gangguan hemodinamik sedang</li>
-                                <li>GCS 9 - 12</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="alert alert-success">
-                            <h6>ATS 4 (Hijau) - ≤ 60 Menit</h6>
-                            <ul class="mb-0">
-                                <li>Resiko obstruksi jalan nafas</li>
-                                <li>Distres nafas sedang</li>
-                                <li>Gangguan hemodinamik sedang</li>
-                                <li>GCS 9 - 12</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="alert alert-success">
-                            <h6>ATS 5 (Hijau) - ≤ 120 Menit</h6>
-                            <ul class="mb-0">
-                                <li>Resiko obstruksi jalan nafas</li>
-                                <li>Distres nafas sedang</li>
-                                <li>Gangguan hemodinamik sedang</li>
-                                <li>GCS 9 - 12</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-0">
+                        <tbody>
+                            <tr>
+                                <th class="fw-bold">PEMERIKSAAN (<i>Examination</i>)</th>
+                                <th class="text-center table-info">Resusitasi (P1)</th>
+                                <th class="text-center table-danger">Emergency (P2)</th>
+                                <th class="text-center table-warning">Urgent (P3)</th>
+                                <th class="text-center table-success">Less Urgent (P4)</th>
+                                <th class="text-center table-light">Non Urgent (P5)</th>
+                                <th class="text-center table-secondary">DOA</th>
+                            </tr>
+                            <tr>
+                                <th class="fw-bold">KESADARAN (<i>Disability</i>)</th>
+                                <td>Tidak Sadar</td>
+                                <td>Tidak Sadar</td>
+                                <td>Sadar</td>
+                                <td>Sadar</td>
+                                <td>Sadar</td>
+                                <td>Pupil Midriasis Total Kaku Mayat</td>
+                            </tr>
+                            <tr>
+                                <th class="fw-bold">JALAN NAFAS (<i>Airway</i>)</th>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_jn_1">
+                                        <label class="form-check-label"> Sumbatan jalan nafas total </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_jn_2">
+                                        <label class="form-check-label"> Sumbatan jalan nafas parsial </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_jn_3_1">
+                                        <label class="form-check-label"> Sumbatan jalan nafas bebas </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_jn_3_2">
+                                        <label class="form-check-label"> Corpus Allienum tanda-tanda gangguan nafas </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_jn_4">
+                                        <label class="form-check-label"> Jalan nafas bebas </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_jn_5">
+                                        <label class="form-check-label"> Jalan nafas bebas </label>
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th class="fw-bold">PERNAFASAN (<i>Breathing</i>)</th>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_1_1">
+                                        <label class="form-check-label"> Henti Nafas </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_1_2">
+                                        <label class="form-check-label"> Nafas tidak adekuat > 40 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_1_3">
+                                        <label class="form-check-label"> Gasping (< 12 x/menit) </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_2_1">
+                                        <label class="form-check-label"> Distress pernafasan </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_2_2">
+                                        <label class="form-check-label"> Frekuensi pernafasan 24 - 31 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_2_3">
+                                        <label class="form-check-label"> Wheezing </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_2_4">
+                                        <label class="form-check-label"> Ronchi </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_2_5">
+                                        <label class="form-check-label"> Gurgling </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_3_1">
+                                        <label class="form-check-label"> Retraksi / nafas cuping hidung </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_3_2">
+                                        <label class="form-check-label"> Frekuensi pernafasan 24 - 31 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_3_3">
+                                        <label class="form-check-label"> Wheezing </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_3_4">
+                                        <label class="form-check-label"> Ronchi </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_4_1">
+                                        <label class="form-check-label"> Retraksi / nafas cuping hidung </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_4_2">
+                                        <label class="form-check-label"> Frekuensi pernafasan 21 - 23 x/menit </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_5_1">
+                                        <label class="form-check-label"> Tidak ada retraksi </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_5_2">
+                                        <label class="form-check-label"> Frekuensi pernafasan 12 - 20 x/menit </label>
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th class="fw-bold">SIRKULASI (<i>Circulation</i>)</th>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_1">
+                                        <label class="form-check-label"> Nadi tidak teraba </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_1">
+                                        <label class="form-check-label"> Nadi sangat lemah </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_2">
+                                        <label class="form-check-label"> Nyeri berat </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_3">
+                                        <label class="form-check-label"> Irama nadi tidak teratur </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_4">
+                                        <label class="form-check-label"> Nadi < 50 atau > 150 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_5">
+                                        <label class="form-check-label"> Sianotik </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_6">
+                                        <label class="form-check-label"> Pucat </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_7">
+                                        <label class="form-check-label"> Akral dingin </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_8">
+                                        <label class="form-check-label"> Keringat dingin </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_9">
+                                        <label class="form-check-label"> TDS < 80 atau > 180 mmHg </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_10">
+                                        <label class="form-check-label"> SpO2 < 90% </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_1">
+                                        <label class="form-check-label"> Nadi teraba lemah </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_2">
+                                        <label class="form-check-label"> Nyeri sedang </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_3">
+                                        <label class="form-check-label"> Irama nadi tidak teratur </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_4">
+                                        <label class="form-check-label"> Nadi 50 - 59 atau 101 - 150 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_5">
+                                        <label class="form-check-label"> Warna kulit normal </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_6">
+                                        <label class="form-check-label"> TDS 80 - 100 atau 150 - 180 mmHg </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_7">
+                                        <label class="form-check-label"> SpO2 > 95% </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_1">
+                                        <label class="form-check-label"> Nadi teraba kuat </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_2">
+                                        <label class="form-check-label"> Nyeri ringan </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_3">
+                                        <label class="form-check-label"> Irama nadi teratur </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_4">
+                                        <label class="form-check-label"> Nadi 60 - 100 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_5">
+                                        <label class="form-check-label"> Akral hangat </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_6">
+                                        <label class="form-check-label"> TDS > 100 atau < 150 mmHg </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_7">
+                                        <label class="form-check-label"> SpO2 > 95% </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_1">
+                                        <label class="form-check-label"> Nadi teraba kuat </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_2">
+                                        <label class="form-check-label"> Tidak ada nyeri </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_3">
+                                        <label class="form-check-label"> Irama nadi teratur </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_4">
+                                        <label class="form-check-label"> Nadi 60 - 100 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_5">
+                                        <label class="form-check-label"> Akral hangat </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_6">
+                                        <label class="form-check-label"> TDS 100, 150 mmHg </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_7">
+                                        <label class="form-check-label"> SpO2 > 95% </label>
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th class="fw-bold">PLAN</th>
+                                <td colspan="2" class="text-center table-danger">
+                                    <h6>ZONA MERAH</h6>
+                                    <div class="form-group">
+                                        <div class="form-check form-check-inline mb-2">
+                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="ats_p" value="1">
+                                            <label class="form-check-label"> Ruang Resusitasi </label>
+                                        </div>
+                                        <div class="form-check form-check-inline mb-2">
+                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="ats_p" value="2">
+                                            <label class="form-check-label"> Ruang Kritis </label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center align-middle table-warning">
+                                    <div class="form-check d-flex justify-content-center align-items-center gap-2 mb-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="ats_p" value="3">
+                                        <label class="form-check-label mb-0">
+                                            <h6 class="mb-0">ZONA KUNING</h6>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td colspan="2" class="text-center align-middle table-success">
+                                    <div class="form-check d-flex justify-content-center align-items-center gap-2 mb-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="ats_p" value="4">
+                                        <label class="form-check-label mb-0">
+                                            <h6 class="mb-0">ZONA HIJAU</h6>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td class="text-center align-middle table-secondary">
+                                    <div class="form-check d-flex justify-content-center align-items-center gap-2 mb-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="ats_p" value="5">
+                                        <label class="form-check-label mb-0">
+                                            <h6 class="mb-0">ZONA HITAM</h6>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="col-md-12 mb-3">
                 <div class="form-group">
                     <h6>Kriteria ATS (<i>Australasian Triage Scale</i>)</h6>
                     <input type="text" class="form-control" name="ats" placeholder="Masukkan Kriteria ATS">
-                    {{-- <input type="text" class="form-control" name="ats" placeholder="Masukkan Kriteria ATS"> --}}
-                    {{-- <select class="form-control" id="ats">
-                        <option value="">Pilih Kriteria ATS</option>
-                        <option value="1">ATS 1 (Merah) - Segera</option>
-                        <option value="2">ATS 2 (Kuning) - ≤ 10 Menit</option>
-                        <option value="3">ATS 3 (Kuning) - ≤ 10 Menit</option>
-                        <option value="4">ATS 4 (Hijau) - ≤ 30 Menit</option>
-                        <option value="5">ATS 5 (Hijau) - ≤ 120 Menit</option>
-                    </select> --}}
                 </div>
             </div>
             <div class="col-md-12 mb-3">
@@ -107,41 +362,29 @@
             <div class="col-md-12 mb-3">
                 <h6>Anamnesis</h6>
                 <div class="form-group">
-                    <div class="form-check mb-2">
+                    <div class="form-check form-check-inline mb-2">
                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="1">
-                        <label class="form-check-label"> Autoanamnesis (tanya jawab langsung dengan pasien) </label>
+                        <label class="form-check-label"> Autoanamnesis </label>
                     </div>
-                    <div class="form-check">
+                    <div class="form-check form-check-inline">
                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="2">
-                        <label class="form-check-label"> Alloanamnesis (tanya jawab dengan keluarga atau orang lain) </label>
+                        <label class="form-check-label"> Alloanamnesis </label>
                     </div>
                 </div>
             </div>
             <div class="col-md-12 mb-3">
                 <div class="card card-body border border-dashed border-warning mb-3">
                     <div class="row">
-                        <h5>I. Pengkajian <b class="text-warning">Primary Survey</b></h5>
+                        <h5>I. Primary <b class="text-warning">Survey</b></h5>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <h6>Keadaan Umum</h6>
                                 <div class="form-group">
                                     <input type="text" class="form-control" name="keu" placeholder="">
-                                    {{-- <div class="form-check form-check-inline mb-2">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pps" value="1">
-                                        <label class="form-check-label"> Baik </label>
-                                    </div>
-                                    <div class="form-check form-check-inline mb-2">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pps" value="2">
-                                        <label class="form-check-label"> Sedang </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pps" value="3">
-                                        <label class="form-check-label"> Lemah </label>
-                                    </div> --}}
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <h6>Jalan Nafas (<i>Airways</i>)</h6>
+                                <h6>Jalan Nafas ( <b class="text-warning">A</b> )</h6>
                                 <div class="form-group">
                                     <div class="form-check form-check-inline mb-2">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="1">
@@ -158,7 +401,31 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <h6>Sirkulasi ( C )</h6>
+                                <h6>Pernafasan ( <b class="text-warning">B</b> )</h6>
+                                <div class="form-group">
+                                    <label class="form-label">Frekuensi Nafas</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="input-group input-group-sm flex-grow-1">
+                                            <input type="text" class="form-control" name="fr">
+                                            <span class="input-group-text">X/menit</span>
+                                        </div>
+                                        <div class="form-check m-0">
+                                            <input class="form-check-input single-checkbox" type="checkbox" name="fr_cb" value="1" checked="">
+                                            <label class="form-check-label">
+                                                Simetris
+                                            </label>
+                                        </div>
+                                        <div class="form-check m-0">
+                                            <input class="form-check-input single-checkbox" type="checkbox" name="fr_cb" value="2">
+                                            <label class="form-check-label">
+                                                Asimetris
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <h6>Sirkulasi ( <b class="text-warning">C</b> )</h6>
                                 <div class="form-group">
                                     <label class="form-label">Frekuensi Nadi</label>
                                     <div class="input-group input-group-sm mb-2">
@@ -167,11 +434,12 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Tekanan Darah (Sistolik / Diastolik) mmHg</label>
+                                    <label class="form-label">Tekanan Darah (mmHg)</label>
                                     <div class="input-group input-group-sm mb-2">
                                         <input type="text" class="form-control" name="td_up">
                                         <div class="input-group-text"> / </div>
                                         <input type="text" class="form-control" name="td_down">
+                                        <div class="input-group-text"> mmHg </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -191,142 +459,114 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <h6>Tingkat Kesadaran</h6>
-                                <select class="form-control" name="tks">
-                                    <option value="">Pilih</option>
-                                    @if ($list['tingkat_kesadaran'])
-                                        @foreach ($list['tingkat_kesadaran'] as $item)
-                                            <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <h6>Pernafasan (Breathing)</h6>
-                                <div class="form-group">
-                                    <label class="form-label">Frekuensi Nafas</label>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="input-group input-group-sm flex-grow-1">
-                                            <input type="text" class="form-control" name="fr">
-                                            <span class="input-group-text">X/menit</span>
-                                        </div>
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="fr_cb" value="1">
-                                            <label class="form-check-label">
-                                                Simetris
-                                            </label>
-                                        </div>
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="fr_cb" value="2">
-                                            <label class="form-check-label">
-                                                Asimetris
-                                            </label>
-                                        </div>
+                            <h6>Neorologi ( <b class="text-warning">D</b> )</h6>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Tingkat Kesadaran</label>
+                                        <select class="form-control" name="tks">
+                                            <option value="">Pilih</option>
+                                            @if ($list['tingkat_kesadaran'])
+                                                @foreach ($list['tingkat_kesadaran'] as $item)
+                                                    <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="">
-                                <h6>Neorologi ( D )</h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <div class="d-flex align-items-center gap-3">
-                                                <label class="form-label mb-0">Pupil</label>
-
-                                                <div class="form-check m-0">
-                                                    <input class="form-check-input single-checkbox" type="checkbox" name="pupil" value="1">
-                                                    <label class="form-check-label">Isokor</label>
-                                                </div>
-
-                                                <div class="form-check m-0">
-                                                    <input class="form-check-input single-checkbox" type="checkbox" name="pupil" value="2">
-                                                    <label class="form-check-label">Anisokor</label>
-                                                </div>
+                                <div class="col-md-12">
+                                    <div class="d-flex align-items-center column-gap-5 row-gap-3 flex-wrap mb-3">
+                                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <label class="form-label mb-0">Pupil</label>
+                                            <div class="form-check m-0">
+                                                <input class="form-check-input single-checkbox" type="checkbox" name="pupil" value="1">
+                                                <label class="form-check-label"> Isokor </label>
+                                            </div>
+                                            <div class="form-check m-0">
+                                                <input class="form-check-input single-checkbox" type="checkbox" name="pupil" value="2">
+                                                <label class="form-check-label"> Anisokor </label>
                                             </div>
                                         </div>
-                                        <div class="form-group mb-2">
-                                            <label class="form-label">Diameter Pupil</label>
-                                            <div class="input-group input-group-sm mb-2">
+                                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <label class="form-label mb-0"> Diameter Pupil </label>
+                                            <div class="input-group input-group-sm" style="width: 180px;">
                                                 <input type="text" class="form-control" name="dia_up">
                                                 <div class="input-group-text"> mm / </div>
                                                 <input type="text" class="form-control" name="dia_down">
                                             </div>
                                         </div>
-                                        <div class="form-group mb-2">
-                                            <label class="form-label">RC (Refleks Cahaya)</label>
-                                            <div class="input-group input-group-sm mb-2">
+                                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <label class="form-label mb-0"> RC (Refleks Cahaya) </label>
+                                            <div class="input-group input-group-sm" style="width: 130px;">
                                                 <input type="text" class="form-control" name="rc_up">
                                                 <div class="input-group-text"> / </div>
                                                 <input type="text" class="form-control" name="rc_down">
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-label">GCS (<i>Glasgow Coma Scale</i>)</label>
+                                        <div class="d-flex align-items-center column-gap-3 row-gap-3 flex-wrap mb-3">
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <label class="form-check-label">Eye</label>
+                                                <input type="text" class="form-control form-control-sm" name="gcs_e" style="width: 60px; flex: 0 0 60px;" placeholder="">
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <label class="form-check-label">Verbal</label>
+                                                <input type="text" class="form-control form-control-sm" name="gcs_v" style="width: 60px; flex: 0 0 60px;" placeholder="">
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <label class="form-check-label">Move</label>
+                                                <input type="text" class="form-control form-control-sm" name="gcs_m" style="width: 60px; flex: 0 0 60px;" placeholder="">
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <label class="form-check-label">Total</label>
+                                                <input type="text" class="form-control form-control-sm" name="gcs_t" style="width: 60px; flex: 0 0 60px;" placeholder="" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">VAS (<i>Visual Analog Scale</i>)</label>
+                                        <input type="text" class="form-control" name="vas">
+                                    </div>
+                                    <div class="mb-3">
+                                        <h6>Alat Bantu Nafas</h6>
                                         <div class="form-group">
-                                            <label class="form-label">VAS (Visual Analog Scale)</label>
-                                            <input type="text" class="form-control" name="vas">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6>GCS</h6>
-                                        <div class="form-group mb-2">
-                                            <div class="d-flex align-items-center gap-2 mb-2">
-                                                <label class="form-check-label flex-shrink-0">Eye</label>
-                                                <input type="text" class="form-control form-control-sm flex-grow-1" name="gcs_e" placeholder="">
+                                            <div class="form-check form-check-inline mb-2">
+                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="2">
+                                                <label class="form-check-label"> Ya </label>
                                             </div>
-                                            <div class="d-flex align-items-center gap-2 mb-2">
-                                                <label class="form-check-label flex-shrink-0">Verbal</label>
-                                                <input type="text" class="form-control form-control-sm flex-grow-1" name="gcs_v" placeholder="">
-                                            </div>
-                                            <div class="d-flex align-items-center gap-2 mb-2">
-                                                <label class="form-check-label flex-shrink-0">Move</label>
-                                                <input type="text" class="form-control form-control-sm flex-grow-1" name="gcs_m" placeholder="">
-                                            </div>
-                                            <div class="d-flex align-items-center gap-2 mb-2">
-                                                <label class="form-check-label flex-shrink-0">Total</label>
-                                                <input type="text" class="form-control form-control-sm flex-grow-1" name="gcs_t" placeholder="">
+                                            <div class="form-check form-check-inline mb-2">
+                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="0">
+                                                <label class="form-check-label"> Tidak </label>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6>Alat Bantu Nafas</h6>
-                                    <div class="form-group">
-                                        <div class="form-check form-check-inline mb-2">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="2">
-                                            <label class="form-check-label"> Ya </label>
-                                        </div>
-                                        <div class="form-check form-check-inline mb-2">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="0">
-                                            <label class="form-check-label"> Tidak </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Kulit</h6>
-                                    <div class="form-group">
-                                        <div class="form-check form-check-inline mb-2">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="1">
-                                            <label class="form-check-label"> Normal </label>
-                                        </div>
-                                        <div class="form-check form-check-inline mb-2">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="2">
-                                            <label class="form-check-label"> Jaundice </label>
-                                        </div>
-                                        <div class="form-check form-check-inline mb-2">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="3">
-                                            <label class="form-check-label"> Akral Dingin </label>
-                                        </div>
-                                        <div class="form-check form-check-inline mb-2">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="4">
-                                            <label class="form-check-label"> Sianotik </label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="5">
-                                            <label class="form-check-label"> Berkeringat </label>
+                                    <div class="mb-3">
+                                        <h6>Kulit</h6>
+                                        <div class="form-group">
+                                            <div class="form-check form-check-inline mb-2">
+                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="1">
+                                                <label class="form-check-label"> Normal </label>
+                                            </div>
+                                            <div class="form-check form-check-inline mb-2">
+                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="2">
+                                                <label class="form-check-label"> Jaundice </label>
+                                            </div>
+                                            <div class="form-check form-check-inline mb-2">
+                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="3">
+                                                <label class="form-check-label"> Akral Dingin </label>
+                                            </div>
+                                            <div class="form-check form-check-inline mb-2">
+                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="4">
+                                                <label class="form-check-label"> Sianotik </label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="5">
+                                                <label class="form-check-label"> Berkeringat </label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -412,7 +652,7 @@
                 </div>
                 <div class="card card-body border border-dashed border-success mb-0">
                     <div class="row">
-                        <h5>II. Pengkajian <b class="text-success">Secondary Survey</b></h5>
+                        <h5>II. Secondary <b class="text-success">Survey</b></h5>
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <h6>Keluhan Utama</h6>

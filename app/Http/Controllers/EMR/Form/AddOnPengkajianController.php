@@ -51,6 +51,49 @@ class AddOnPengkajianController extends Controller
         return response()->json(['message' => 'Data riwayat alergi berhasil dihapus.'], 200);
     }
 
+    public function cariPPK(Request $request)
+    {
+        $keyword = trim($request->get('q', ''));
+
+        if (mb_strlen($keyword) < 2) {
+            return response()->json([]);
+        }
+
+        $ppk = DB::table('master.ppk as p')
+            ->leftJoin('master.referensi as r', function ($join) {
+                $join->on('r.ID', '=', 'p.JENIS')
+                    ->where('r.JENIS', 11)
+                    ->where('r.STATUS', 1);
+            })
+            ->select(
+                'p.ID',
+                'r.DESKRIPSI as JENIS',
+                'p.NAMA',
+                'p.ALAMAT',
+                'p.DESWILAYAH as WILAYAH'
+            )
+            ->where('p.STATUS', 1)
+            ->where(function ($query) use ($keyword) {
+                $query->where('p.NAMA', 'LIKE', "%{$keyword}%")
+                    ->orWhere('p.ALAMAT', 'LIKE', "%{$keyword}%")
+                    ->orWhere('p.DESWILAYAH', 'LIKE', "%{$keyword}%");
+            })
+            ->orderBy('p.NAMA')
+            ->limit(15)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id'      => $item->ID,
+                    'jenis'   => $item->JENIS,
+                    'nama'    => $item->NAMA,
+                    'alamat'  => $item->ALAMAT,
+                    'wilayah' => $item->WILAYAH,
+                ];
+            });
+
+        return response()->json($ppk);
+    }
+
     public function cariObat(Request $request)
     {
         $keyword = trim($request->get('q', ''));

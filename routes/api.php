@@ -61,6 +61,8 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     Route::post('emr/form/pengkajian/rjd/pr/simpan', [PengkajianRawatJalanDewasaController::class, 'simpanFormPerawat']);
 
             // ADD ON
+                // ASAL RUJUKAN / PPK
+                    Route::get('emr/pengkajian/asal_rujukan_ppk', [AddOnPengkajianController::class, 'cariPPK']);
                 // RIWAYAT ALERGI
                     Route::get('emr/pengkajian/riwayat_alergi/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatAlergi']);
                     Route::post('emr/pengkajian/riwayat_alergi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanRiwayatAlergi']);
