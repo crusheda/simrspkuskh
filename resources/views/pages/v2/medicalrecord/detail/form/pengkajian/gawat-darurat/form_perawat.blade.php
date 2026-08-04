@@ -2,127 +2,126 @@
     <div class="form-content">
         <h1 class="display-6 mb-4 fs-27"><center>PENGKAJIAN KEPERAWATAN</center></h1>
         <div class="row">
+            <div class="col-md-12">
+                <h6 class="mb-2 flex-shrink-0">Cara Kedatangan</h6>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <div class="form-check mb-0 flex-shrink-0">
+                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="dd_ck" value="1">
+                                <label class="form-check-label ms-1">
+                                    Datang sendiri, diantar oleh
+                                </label>
+                            </div>
+                            <input type="text" class="form-control form-control-sm" name="dd_ck_p" placeholder="Masukkan Nama Pengantar">
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <div class="form-check mb-0 flex-shrink-0">
+                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="dd_ck" value="2">
+                                <label class="form-check-label ms-1">
+                                    Rujukan dari
+                                </label>
+                            </div>
+                            <input type="text" class="form-control form-control-sm" name="dd_ck_k" id="dd_ck_k" placeholder="Tuliskan Asal Rujukan">
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <div class="form-check mb-0 flex-shrink-0">
+                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="dd_ck" value="3">
+                                <label class="form-check-label ms-1">
+                                    Dikirim oleh Polisi dari
+                                </label>
+                            </div>
+                            <input type="text" class="form-control form-control-sm" name="dd_ck_a" placeholder="Masukkan Unit Kepolisian">
+                            <div class="form-check mb-0 flex-shrink-0">
+                                <input class="form-check-input check-primary" type="checkbox" name="dd_ck_a_v" >
+                                <label class="form-check-label ms-1">
+                                    Disertai permintaan visum et repertum
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <div class="mb-0 flex-shrink-0">
+                                <label class="form-label">Tgl. Kedatangan</label>
+                            </div>
+                            <input type="date" class="form-control form-control-sm" name="tgl_ck">
+                        </div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <div class="mb-0 flex-shrink-0">
+                                <label class="form-label">Alat Transportasi</label>
+                            </div>
+                            <input type="text" class="form-control form-control-sm" name="tr_ck">
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="col-md-12 mb-3">
-                <div class="d-flex align-items-center gap-3 mb-3">
-                    <h6 class="mb-0 flex-shrink-0">Cara Datang</h6>
-                    <div class="form-check mb-0 flex-shrink-0">
-                        <input class="form-check-input single-checkbox" type="checkbox" name="cd" value="1">
-                        <label class="form-check-label">
-                            Non Rujukan
-                        </label>
-                    </div>
-                    <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
-                        <div class="form-check mb-0 flex-shrink-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="cd" value="2">
-                            <label class="form-check-label">
-                                Rujukan
-                            </label>
-                        </div>
-                        <input type="text" class="form-control form-control-sm flex-grow-1" style="width:250px;" name="cd_dari">
-                    </div>
-                </div>
-                <div class="form-group mb-3">
-                    <h6>Transport ke IGD</h6>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="tki" value="1">
-                                <label class="form-check-label"> Ambulance </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="tki" value="2">
-                                <label class="form-check-label"> Kendaraan Umum </label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="tki" value="3">
-                                <label class="form-check-label"> Kendaraan Pribadi </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="tki" value="4">
-                                <label class="form-check-label"> Jalan </label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="tki" value="5">
-                                <label class="form-check-label"> Brankad </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="tki" value="6">
-                                <label class="form-check-label"> Kursi Roda </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group mb-3">
-                    <h6>Cara Masuk</h6>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="cm" value="1">
-                                <label class="form-check-label"> Kecelakaan Lalu Lintas </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="cm" value="2">
-                                <label class="form-check-label"> Kecelakaan Kerja </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="cm" value="3">
-                                <label class="form-check-label"> Kecelakaan Rumah Tangga </label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <div class="form-check mb-0 flex-shrink-0">
-                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="cm" value="4">
-                                    <label class="form-check-label ms-1" for="cm4">
-                                        Kecelakaan Lain-lain
-                                    </label>
+                <h6>Jenis Kasus</h6>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jks" value="1">
+                                    <label class="form-check-label fw-bold"> Trauma </label>
                                 </div>
-                                <input type="text" class="form-control form-control-sm flex-grow-1" name="cm_lain_4" placeholder="">
                             </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="form-check mb-0 flex-shrink-0">
-                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="cm" value="5">
-                                    <label class="form-check-label ms-1" for="cm4">
-                                        Bencana
-                                    </label>
+                            <div class="col-md-9">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" name="jks_kll" value="1">
+                                    <label class="form-check-label"> Kecelakaan Lalu Lintas </label>
                                 </div>
-                                <input type="text" class="form-control form-control-sm flex-grow-1" name="cm_lain_5" placeholder="">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" name="jks_kk" value="2">
+                                    <label class="form-check-label"> Kecelakaan Kerja </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary" type="checkbox" name="jks_uppa" value="3">
+                                    <label class="form-check-label"> Kasus Perempuan & Anak (UPPA) </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jks" value="0">
+                                    <label class="form-check-label fw-bold"> Non Trauma </label>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check mb-0 flex-shrink-0">
+                                        <input class="form-check-input check-primary" type="checkbox" name="jks_end" value="1">
+                                        <label class="form-check-label"> Riwayat ke Daerah Endemis </label>
+                                    </div>
+                                    <input type="text" class="form-control form-control-sm flex-grow-1" name="jks_end_dm" placeholder="Dimana ?">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="d-flex align-items-center gap-3 mb-3">
-                    <h6 class="mb-0 flex-shrink-0">Tindakan Pra Hospital</h6>
-                    <div class="form-check mb-0 flex-shrink-0">
-                        <input class="form-check-input single-checkbox" type="checkbox" name="tph" value="1">
-                        <label class="form-check-label">
-                            RJP
-                        </label>
-                    </div>
-                    <div class="form-check mb-0 flex-shrink-0">
-                        <input class="form-check-input single-checkbox" type="checkbox" name="tph" value="2">
-                        <label class="form-check-label">
-                            Oksigen
-                        </label>
-                    </div>
-                    <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
-                        <div class="form-check mb-0 flex-shrink-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="tph" value="3">
-                            <label class="form-check-label">
-                                Tindakan Medis
-                            </label>
+            </div>
+            <div class="col-md-12 mb-3">
+                <h6>Anamnese</h6>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group mb-2">
+                            <label class="form-label"> Keluhan Utama </label>
+                            <input class="form-control form-control-sm" type="text" name="anm_ku">
                         </div>
-                        <input type="text" class="form-control form-control-sm flex-grow-1" name="tph_lain">
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label class="form-label"> Terpimpin </label>
+                            <input class="form-control form-control-sm" type="text" name="anm_tp">
+                        </div>
                     </div>
                 </div>
-                <div class="form-group mb-3">
-                    <h6>Riwayat Alergi</h6>
-                    <textarea class="form-control" name="ra_p" rows="2"></textarea>
-                </div>
+            </div>
+            <div class="col-md-12 mb-3">
                 <div class="form-group mb-3">
                     <h6>Hambatan Pasien</h6>
                     <div class="row">
@@ -2188,6 +2187,103 @@
 <script>
     $(document).ready(function() {
         const $section = $('#gd_perawat');
+        const $inputPPK = $('[name="dd_ck_k"]');
+
+        if ($inputPPK.length) {
+
+            let ppkSelected = false;
+
+            const ppkAutoComplete = new autoComplete({
+                selector: '[name="dd_ck_k"]',
+                placeHolder: 'Tuliskan Asal Rujukan',
+                threshold: 2,
+                debounce: 300,
+
+                data: {
+                    src: async function (query) {
+                        try {
+                            return await $.ajax({
+                                url: "/api/v2/emr/pengkajian/asal_rujukan_ppk",
+                                type: 'GET',
+                                dataType: 'json',
+                                data: {
+                                    q: query
+                                }
+                            });
+                        } catch (error) {
+                            console.error('Gagal mengambil data PPK:', error);
+                            return [];
+                        }
+                    },
+
+                    keys: ['nama'],
+                    cache: false
+                },
+
+                resultsList: {
+                    maxResults: 15,
+                    noResults: true
+                },
+
+                resultItem: {
+                    highlight: true,
+
+                    element: function (item, data) {
+                        const ppk = data.value;
+
+                        $(item)
+                            .empty()
+                            .append(
+                                $('<strong>').text(ppk.nama),
+                                $('<small>')
+                                    .addClass('d-block text-muted')
+                                    .text(
+                                        `${ppk.jenis ?? '-'} | ${ppk.wilayah ?? '-'}`
+                                    ),
+                                $('<small>')
+                                    .addClass('d-block text-muted')
+                                    .text(
+                                        ppk.alamat ?? '-'
+                                    )
+                            );
+                    }
+                },
+
+                events: {
+                    input: {
+
+                        // User memilih salah satu PPK
+                        selection: function (event) {
+                            const ppk = event.detail.selection.value;
+
+                            ppkSelected = true;
+
+                            $inputPPK.val(ppk.nama);
+
+                            // Jika menggunakan ID PPK
+                            // $('#dd_ck_k_id').val(ppk.id);
+                        }
+                    }
+                }
+            });
+
+            // User mulai mengetik lagi setelah memilih
+            $inputPPK.on('input', function () {
+                ppkSelected = false;
+            });
+
+            // User klik di luar input
+            $inputPPK.on('blur', function () {
+                setTimeout(function () {
+                    if (!ppkSelected) {
+                        $inputPPK.val('');
+
+                        // Jika menggunakan ID PPK
+                        // $('#dd_ck_k_id').val('');
+                    }
+                }, 150);
+            });
+        }
 
         // Event delegation: tetap berjalan walaupun isi accordion dirender ulang
         $section.on('change input', '[data-hd-required]', function () {
