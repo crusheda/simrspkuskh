@@ -11,46 +11,6 @@ use Auth, Storage;
 
 class AddOnPengkajianController extends Controller
 {
-    function getRiwayatAlergi($kunjungan)
-    {
-        $data = DB::table('medicalrecord.riwayat_alergi as ra')
-            ->leftJoin('master.referensi as ref', function($join){
-                $join->on('ra.JENIS', '=', 'ref.ID')
-                    ->where('ref.JENIS',180)
-                    ->where('ref.STATUS',1);
-            })
-            ->select('ra.*', 'ref.DESKRIPSI as JENIS_ALERGI')
-            ->where('ra.KUNJUNGAN', $kunjungan)
-            ->where('ra.STATUS', 1)
-            ->get();
-
-        return response()->json($data);
-    }
-
-    function simpanRiwayatAlergi(Request $request, $KUNJUNGAN)
-    {
-        DB::table('medicalrecord.riwayat_alergi')->insert([
-            'KUNJUNGAN'         => $KUNJUNGAN,
-            'JENIS'             => $request->jenis,
-            'DESKRIPSI'         => $request->deskripsi,
-            'OLEH'              => auth()->id(),
-            'TANGGAL'           => now(),
-            'STATUS'            => 1,
-        ]);
-
-        return response()->json(['message' => 'Data riwayat alergi berhasil disimpan.'], 200);
-    }
-
-    function hapusRiwayatAlergi($KUNJUNGAN, $ID)
-    {
-        DB::table('medicalrecord.riwayat_alergi')
-            ->where('KUNJUNGAN', $KUNJUNGAN)
-            ->where('ID', $ID)
-            ->update(['STATUS' => 0]);
-
-        return response()->json(['message' => 'Data riwayat alergi berhasil dihapus.'], 200);
-    }
-
     public function cariPPK(Request $request)
     {
         $keyword = trim($request->get('q', ''));
@@ -94,6 +54,46 @@ class AddOnPengkajianController extends Controller
         return response()->json($ppk);
     }
 
+    public function getRiwayatAlergi($kunjungan)
+    {
+        $data = DB::table('medicalrecord.riwayat_alergi as ra')
+            ->leftJoin('master.referensi as ref', function($join){
+                $join->on('ra.JENIS', '=', 'ref.ID')
+                    ->where('ref.JENIS',180)
+                    ->where('ref.STATUS',1);
+            })
+            ->select('ra.*', 'ref.DESKRIPSI as JENIS_ALERGI')
+            ->where('ra.KUNJUNGAN', $kunjungan)
+            ->where('ra.STATUS', 1)
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function simpanRiwayatAlergi(Request $request, $KUNJUNGAN)
+    {
+        DB::table('medicalrecord.riwayat_alergi')->insert([
+            'KUNJUNGAN'         => $KUNJUNGAN,
+            'JENIS'             => $request->jenis,
+            'DESKRIPSI'         => $request->deskripsi,
+            'OLEH'              => auth()->id(),
+            'TANGGAL'           => now(),
+            'STATUS'            => 1,
+        ]);
+
+        return response()->json(['message' => 'Data riwayat alergi berhasil disimpan.'], 200);
+    }
+
+    public function hapusRiwayatAlergi($KUNJUNGAN, $ID)
+    {
+        DB::table('medicalrecord.riwayat_alergi')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('ID', $ID)
+            ->update(['STATUS' => 0]);
+
+        return response()->json(['message' => 'Data riwayat alergi berhasil dihapus.'], 200);
+    }
+
     public function cariObat(Request $request)
     {
         $keyword = trim($request->get('q', ''));
@@ -125,7 +125,7 @@ class AddOnPengkajianController extends Controller
         return response()->json($obat);
     }
 
-    function getRiwayatPemberianObat($kunjungan)
+    public function getRiwayatPemberianObat($kunjungan)
     {
         $data = DB::table('medicalrecord.riwayat_pemberian_obat as rpo')
             ->leftJoin('master.frekuensi_aturan_resep as far', function($join){
@@ -145,7 +145,7 @@ class AddOnPengkajianController extends Controller
         return response()->json($data);
     }
 
-    function simpanRiwayatPemberianObat(Request $request, $KUNJUNGAN)
+    public function simpanRiwayatPemberianObat(Request $request, $KUNJUNGAN)
     {
         DB::table('medicalrecord.riwayat_pemberian_obat')->insert([
             'KUNJUNGAN'         => $KUNJUNGAN,
@@ -162,7 +162,7 @@ class AddOnPengkajianController extends Controller
         return response()->json(['message' => 'Data riwayat pemberian obat berhasil disimpan.'], 200);
     }
 
-    function hapusRiwayatPenggunaanObat($KUNJUNGAN, $ID)
+    public function hapusRiwayatPenggunaanObat($KUNJUNGAN, $ID)
     {
         DB::table('medicalrecord.riwayat_pemberian_obat')
             ->where('KUNJUNGAN', $KUNJUNGAN)
@@ -173,7 +173,7 @@ class AddOnPengkajianController extends Controller
     }
 
     //Hasil Lab
-    function getRiwayatLab($kunjungan) {
+    public function getRiwayatLab($kunjungan) {
         $data = DB::select("
             SELECT LPAD(p.NORM, 8, '0') AS NORM,
             master.getNamaLengkap(p.NORM) AS NAMALENGKAP,
@@ -246,7 +246,7 @@ class AddOnPengkajianController extends Controller
     }
 
     //Hasil Rad
-    function getRiwayatRad($kunjungan)
+    public function getRiwayatRad($kunjungan)
     {
         $data = DB::table('layanan.hasil_rad as hrad')
             ->leftJoin('master.dokter as dok', 'hrad.DOKTER', '=', 'dok.ID')
@@ -312,7 +312,7 @@ class AddOnPengkajianController extends Controller
         return $data;
     }
 
-    function getDiagnosis($kunjungan)
+    public function getDiagnosis($kunjungan)
     {
         $nopen = DB::table('pendaftaran.kunjungan')->where('NOMOR', $kunjungan)->value('NOPEN');
 
@@ -325,7 +325,7 @@ class AddOnPengkajianController extends Controller
         return response()->json($data);
     }
 
-    function simpanDiagnosis(Request $request, $KUNJUNGAN)
+    public function simpanDiagnosis(Request $request, $KUNJUNGAN)
     {
         $nopen = DB::table('pendaftaran.kunjungan')->where('NOMOR', $KUNJUNGAN)->value('NOPEN');
 
@@ -342,7 +342,7 @@ class AddOnPengkajianController extends Controller
         return response()->json(['message' => 'Data diagnosa berhasil disimpan.'], 200);
     }
 
-    function hapusDiagnosis($KUNJUNGAN, $ID)
+    public function hapusDiagnosis($KUNJUNGAN, $ID)
     {
         $nopen = DB::table('pendaftaran.kunjungan')->where('NOMOR', $KUNJUNGAN)->value('NOPEN');
         DB::table('medicalrecord.diagnosa')
