@@ -143,9 +143,6 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             // FORM MATRIX
             Route::get('rme/igd/matrix', [ModulMatrixController::class, 'index'])->name('rme.igd.matrix.index');
 
-        // FORM PENGKAJIAN
-        // Route::get('erm/form/pengkajian/{form}', [EMRController::class, 'loadFormPengkajian'])->name('emr.form.pengkajian');
-
     // DIGITAL
         // MONITORING
         Route::get('monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');

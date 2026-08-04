@@ -378,6 +378,8 @@
             url: `/v2/erm/form/${form}/${kunjungan}`,
             type: 'GET',
             success: function (html) {
+                console.log(form);
+                console.log(kunjungan);
                 $('#formContent').html(html);
             },
             error: function () {
