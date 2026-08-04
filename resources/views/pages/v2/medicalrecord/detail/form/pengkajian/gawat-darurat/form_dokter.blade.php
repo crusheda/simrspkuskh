@@ -653,28 +653,28 @@
                 <div class="card card-body border border-dashed border-success mb-0">
                     <div class="row">
                         <h5>II. Secondary <b class="text-success">Survey</b></h5>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <div class="form-group">
                                 <h6>Keluhan Utama</h6>
                                 <textarea class="form-control" name="ku" rows="2"></textarea>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <div class="form-group">
                                 <h6>Riwayat Penyakit Sekarang</h6>
                                 <textarea class="form-control" name="rps" rows="2"></textarea>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <div class="form-group">
                                 <h6>Riwayat Penyakit Dahulu</h6>
                                 <textarea class="form-control" name="rpd" rows="2"></textarea>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-12 mb-3">
                             <div class="form-group">
                                 <h6>Pemeriksaan Fisik</h6>
-                                <textarea class="form-control" name="pf" rows="2"></textarea>
+                                <textarea class="form-control" name="pf" rows="3"></textarea>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -693,7 +693,7 @@
                                 <textarea class="form-control" name="ra" rows="2"></textarea>
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <h6>Riwayat Penggunaan Obat</h6>
                             <div class="row g-2 mb-2">
                                 <div class="col-md-12">
