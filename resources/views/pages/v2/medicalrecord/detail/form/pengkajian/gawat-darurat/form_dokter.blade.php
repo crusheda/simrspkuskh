@@ -704,7 +704,7 @@
                                     <div class="btn-group w-100">
                                         <button
                                             type="button"
-                                            class="btn btn-primary btn-sm"
+                                            class="btn btn-info btn-sm"
                                             id="btnTambahAlergi"
                                             onclick="tambahRiwayatAlergi()"
                                         >
@@ -723,8 +723,14 @@
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered table align-middle mb-1">
+                                    <colgroup>
+                                        <col style="width: 1%;">
+                                        <col style="width: 20%;">
+                                        <col>
+                                        <col style="width: 1%;">
+                                    </colgroup>
                                     <thead>
-                                        <tr>
+                                        <tr class="table-info">
                                             <th>No</th>
                                             <th>Jenis</th>
                                             <th>Deskripsi</th>
@@ -782,8 +788,13 @@
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered table align-middle mb-1">
+                                    <colgroup>
+                                        <col style="width: 1%;">
+                                        <col>
+                                        <col style="width: 1%;">
+                                    </colgroup>
                                     <thead>
-                                        <tr>
+                                        <tr class="table-success">
                                             <th>No</th>
                                             <th>Nama Obat</th>
                                             {{-- <th>Dosis</th>
@@ -807,11 +818,25 @@
             <div class="col-md-12 mb-3">
                 <div class="card card-body border border-dashed border-info mb-0">
                     <div class="mb-3">
-                        <h6>Pemeriksaan Penunjang Laboratorium</h6>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h6 class="mb-0">Pemeriksaan Penunjang Laboratorium</h6>
+                            <button class="btn btn-subtle-warning btn-icon btn-sm" id="btnRefreshLab" onclick="getRiwayatLab()">
+                                <i class="ri-refresh-line"></i>
+                            </button>
+                        </div>
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover table-display">
+                            <table class="table table-bordered table-display mb-0">
+                                <colgroup>
+                                    <col style="width: 1%;">
+                                    <col style="width: 20%;">
+                                    <col>
+                                    <col style="width: 5%;">
+                                    <col style="width: 5%;">
+                                    <col style="width: 10%;">
+                                    <col style="width: 20%;">
+                                </colgroup>
                                 <thead>
-                                    <tr>
+                                    <tr class="table-light">
                                         <th>No</th>
                                         <th>Jenis Pemeriksaan</th>
                                         <th>Parameter</th>
@@ -821,44 +846,48 @@
                                         <th>Keterangan</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tblLabBody">
                                     <tr>
-                                        <td>1</td>
-                                        <td>xxx</td>
-                                        <td>aaa</td>
-                                        <td>bbb</td>
-                                        <td>ccc</td>
-                                        <td>ddd</td>
-                                        <td>eee</td>
+                                        <td colspan="7" class="text-center">Belum ada data</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <div>
-                        <h6>Pemeriksaan Penunjang Radiologi</h6>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <h6 class="mb-0">Pemeriksaan Penunjang Radiologi</h6>
+                            <button class="btn btn-subtle-warning btn-icon btn-sm" id="btnRefreshRad" onclick="getRiwayatRad()">
+                                <i class="ri-refresh-line"></i>
+                            </button>
+                        </div>
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover table-display mb-0">
+                            <table class="table table-bordered table-display mb-0">
+                                <colgroup>
+                                    <col style="width: 1%;">
+                                    <col>
+                                    <col style="width: 5%;">
+                                    <col style="width: 5%;">
+                                    <col style="width: 5%;">
+                                    <col style="width: 5%;">
+                                    <col style="width: 5%;">
+                                    <col style="width: 20%;">
+                                </colgroup>
                                 <thead>
-                                    <tr>
+                                    <tr class="table-light">
                                         <th>No</th>
-                                        <th>Jenis Pemeriksaan</th>
-                                        <th>Parameter</th>
+                                        <th>Nama Tindakan</th>
+                                        <th>Klinis</th>
+                                        <th>Kesan</th>
+                                        <th>Usul</th>
                                         <th>Hasil</th>
-                                        <th>Satuan</th>
-                                        <th>Nilai Normal</th>
-                                        <th>Keterangan</th>
+                                        <th>BTK</th>
+                                        <th>Dokter</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tblRadBody">
                                     <tr>
-                                        <td>1</td>
-                                        <td>xxx</td>
-                                        <td>aaa</td>
-                                        <td>bbb</td>
-                                        <td>ccc</td>
-                                        <td>ddd</td>
-                                        <td>eee</td>
+                                        <td colspan="8" class="text-center">Belum ada data</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -867,9 +896,77 @@
                 </div>
             </div>
             <div class="col-md-12 mb-3">
-                <div class="form-group">
-                    <h6>Diagnosa Kerja</h6>
-                    <textarea class="form-control" name="dk" rows="2"></textarea>
+                <div class="card card-body border border-dashed border-danger mb-0">
+                    <div class="form-group">
+                        <h6>Diagnosis</h6>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <div class="flex-grow-1">
+                                <textarea
+                                    class="form-control form-control-sm"
+                                    name="diag_detail"
+                                    placeholder="Masukkan Diagnosa"
+                                    rows="1"
+                                ></textarea>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <div class="form-check mb-0">
+                                    <input
+                                        class="form-check-input check-primary"
+                                        type="checkbox"
+                                        name="diag_utama"
+                                        value="1"
+                                        id="diag_utama"
+                                    >
+                                    <label class="form-check-label" for="diag_utama">
+                                        Diagnosis Utama
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <div class="btn-group">
+                                    <button
+                                        type="button"
+                                        class="btn btn-success"
+                                        id="btnTambahDiagnosis"
+                                        onclick="tambahDiagnosis()"
+                                    >
+                                        <i class="ri-add-box-line"></i>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-subtle-warning"
+                                        id="btnRefreshDiagnosis"
+                                        onclick="getDiagnosis()"
+                                    >
+                                        <i class="ri-refresh-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table align-middle mb-1">
+                                <thead>
+                                    <colgroup>
+                                        <col style="width: 1%;">
+                                        <col>
+                                        <col style="width: 5%;">
+                                        <col style="width: 1%;">
+                                    </colgroup>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Diagnosis</th>
+                                        <th>Utama</th>
+                                        <th class="text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblDiagnosisBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center">Tidak ada data</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-12 mb-3">
@@ -913,12 +1010,12 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-12 mb-3">
+                    {{-- <div class="col-md-12 mb-3">
                         <div class="form-group">
                             <label class="form-label">Diagnosa Akhir</label>
                             <input type="text" class="form-control" name="tla_da">
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
@@ -1012,6 +1109,9 @@
         getDataPengkajianGdD();
         getRiwayatAlergi();
         getPenggunaanObat();
+        getRiwayatLab();
+        getRiwayatRad();
+        getDiagnosis();
     })
 
     function getDataPengkajianGdD() {
@@ -1068,29 +1168,27 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-
             beforeSend: function () {
                 $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan Formulir...');
             },
-
             success: function (response) {
                 alert(response.message || 'Data berhasil disimpan.');
             },
-
             error: function (xhr) {
                 let message = 'Data gagal disimpan.';
-
                 if (xhr.status === 422 && xhr.responseJSON?.errors) {
                     message = Object.values(xhr.responseJSON.errors)
                         .flat()
-                        .join('\n');
+                        .join('&nbsp;');
                 } else if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
                 }
-
-                alert(message);
+                iziToast.error({
+                    title: 'Validasi Gagal!',
+                    message: message,
+                    position: 'topRight'
+                });
             },
-
             complete: function () {
                 $button.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Pengkajian');
             }
@@ -1118,7 +1216,7 @@
                             <td>${v.JENIS_ALERGI}</td>
                             <td>${v.DESKRIPSI}</td>
                             <td class="text-center">
-                                <button class="btn btn-danger btn-sm" onclick="hapusRiwayatAlergi(${v.ID})">
+                                <button class="btn btn-subtle-danger waves-effect waves-light btn-icon btn-sm" onclick="hapusRiwayatAlergi(${v.ID})">
                                     <i class="ri-delete-bin-line"></i>
                                 </button>
                             </td>
@@ -1167,11 +1265,9 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-
             beforeSend: function () {
                 $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
             },
-
             success: function (res) {
                 iziToast.success({
                     title: 'Proses Berhasil!',
@@ -1182,21 +1278,21 @@
                 $("[name='ra_deskripsi']").val('');
                 getRiwayatAlergi();
             },
-
             error: function (xhr) {
                 let message = 'Data gagal disimpan.';
-
                 if (xhr.status === 422 && xhr.responseJSON?.errors) {
                     message = Object.values(xhr.responseJSON.errors)
                         .flat()
-                        .join('\n');
+                        .join('&nbsp;');
                 } else if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
                 }
-
-                alert(message);
+                iziToast.error({
+                    title: 'Validasi Gagal!',
+                    message: message,
+                    position: 'topRight'
+                });
             },
-
             complete: function () {
                 $button.prop('disabled', false).html('<i class="ri-add-box-line"></i>');
             }
@@ -1224,13 +1320,16 @@
                 if (xhr.status === 422 && xhr.responseJSON?.errors) {
                     message = Object.values(xhr.responseJSON.errors)
                         .flat()
-                        .join('\n');
+                        .join('&nbsp;');
                 } else if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
                 }
-
-                alert(message);
-            }
+                iziToast.error({
+                    title: 'Proses Hapus Gagal!',
+                    message: message,
+                    position: 'topRight'
+                });
+            },
         });
     };
 
@@ -1258,7 +1357,7 @@
                                 <td>${v.LAMA_PENGGUNAAN}</td> --}}
 
                             <td class="text-center">
-                                <button class="btn btn-danger btn-sm" onclick="hapusPenggunaanObat(${v.ID})">
+                                <button class="btn btn-subtle-danger waves-effect waves-light btn-icon btn-sm" onclick="hapusPenggunaanObat(${v.ID})">
                                     <i class="ri-delete-bin-line"></i>
                                 </button>
                             </td>
@@ -1313,11 +1412,9 @@
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-
             beforeSend: function () {
                 $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
             },
-
             success: function (res) {
                 iziToast.success({
                     title: 'Proses Berhasil!',
@@ -1326,21 +1423,22 @@
                 });
                 getPenggunaanObat();
             },
-
             error: function (xhr) {
                 let message = 'Data gagal disimpan.';
 
                 if (xhr.status === 422 && xhr.responseJSON?.errors) {
                     message = Object.values(xhr.responseJSON.errors)
                         .flat()
-                        .join('\n');
+                        .join('&nbsp;');
                 } else if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
                 }
-
-                alert(message);
+                iziToast.error({
+                    title: 'Validasi Gagal!',
+                    message: message,
+                    position: 'topRight'
+                });
             },
-
             complete: function () {
                 $button.prop('disabled', false).html('<i class="ri-add-box-line"></i>');
             }
@@ -1368,13 +1466,291 @@
                 if (xhr.status === 422 && xhr.responseJSON?.errors) {
                     message = Object.values(xhr.responseJSON.errors)
                         .flat()
+                        .join('&nbsp;');
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                iziToast.error({
+                    title: 'Proses Hapus Gagal!',
+                    message: message,
+                    position: 'topRight'
+                });
+            },
+        });
+    }
+
+
+    function getRiwayatLab() {
+        const $button = $('#btnRefreshLab');
+
+        $.ajax({
+            url: `/api/v2/emr/pengkajian/lab/${kunjungan}`,
+            type: 'GET',
+
+            beforeSend: function () {
+                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
+                $("#tblLabBody").html(`
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            <i class="ri-refresh-line ri-spin me-1"></i>
+                            Memuat data...
+                        </td>
+                    </tr>
+                `);
+            },
+
+            success: function (res) {
+                let html = '';
+                if (res.length > 0) {
+                    $.each(res, function (i, v) {
+                        html += `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td>${v.NAMATINDAKAN ?? ''}</td>
+                                <td>${v.PARAMETER ?? ''}</td>
+                                <td>${v.HASIL ?? ''}</td>
+                                <td>${v.SATUAN ?? ''}</td>
+                                <td>${v.NILAI_RUJUKAN ?? ''}</td>
+                                <td>${v.KETERANGAN ?? ''}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html = `
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                Tidak ada hasil laboratorium
+                            </td>
+                        </tr>
+                    `;
+                }
+                $("#tblLabBody").html(html);
+            },
+
+            error: function (xhr) {
+                $("#tblLabBody").html(`
+                    <tr>
+                        <td colspan="7" class="text-center text-danger">
+                            Gagal memuat data.
+                        </td>
+                    </tr>
+                `);
+                console.error(xhr);
+            },
+
+            complete: function () {
+                $button.prop('disabled', false)
+                    .html('<i class="ri-refresh-line"></i>');
+            }
+
+        });
+    };
+
+    function getRiwayatRad() {
+        const $button = $('#btnRefreshRad');
+
+        $.ajax({
+            url: `/api/v2/emr/pengkajian/rad/${kunjungan}`,
+            type: 'GET',
+
+            beforeSend: function () {
+                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
+                $("#tblRadBody").html(`
+                    <tr>
+                        <td colspan="8" class="text-center">
+                            <i class="ri-refresh-line ri-spin me-1"></i>
+                            Memuat data...
+                        </td>
+                    </tr>
+                `);
+            },
+
+            success: function (res) {
+                let html = '';
+                if (res.length > 0) {
+                    $.each(res, function (i, v) {
+                        html += `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td>${v.NAMATINDAKAN ?? ''}</td>
+                                <td>${v.KLINIS ?? ''}</td>
+                                <td>${v.KESAN ?? ''}</td>
+                                <td>${v.USUL ?? ''}</td>
+                                <td>${v.HASIL ?? ''}</td>
+                                <td>${v.BTK ?? ''}</td>
+                                <td>${v.DOKTER ?? ''}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html = `
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                Tidak ada hasil laboratorium
+                            </td>
+                        </tr>
+                    `;
+                }
+                $("#tblRadBody").html(html);
+            },
+
+            error: function (xhr) {
+                $("#tblRadBody").html(`
+                    <tr>
+                        <td colspan="7" class="text-center text-danger">
+                            Gagal memuat data.
+                        </td>
+                    </tr>
+                `);
+                console.error(xhr);
+            },
+
+            complete: function () {
+                $button.prop('disabled', false)
+                    .html('<i class="ri-refresh-line"></i>');
+            }
+
+        });
+    };
+
+    function getDiagnosis() {
+        const $button = $('#btnRefreshDiagnosis');
+
+        $.ajax({
+            url: `/api/v2/emr/pengkajian/diagnosis/${kunjungan}`,
+            type: 'GET',
+            beforeSend: function () {
+                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
+                $("#tblDiagnosisBody").html(`<tr><td colspan="4" class="text-center"><i class="ri-refresh-line ri-spin me-1"></i> Memproses data...</td></tr>`);
+            },
+            success: function (res) {
+                let html = '';
+                if (res.length > 0) {
+                    $.each(res, function (i, v) {
+                        html += `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td>${v.DIAGNOSA}</td>
+                            <td>${v.UTAMA}</td>
+                            <td class="text-center">
+                                <button class="btn btn-subtle-danger waves-effect waves-light btn-icon btn-sm" onclick="hapusDiagnosis(${v.ID})">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        `;
+                    });
+                } else {
+                    html = `
+                    <tr>
+                        <td colspan="4" class="text-center">Tidak ada data</td>
+                    </tr>
+                    `;
+                }
+                $("#tblDiagnosisBody").html(html);
+            },
+            error: function (xhr) {
+                let message = 'Data gagal disimpan.';
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors)
+                        .flat()
                         .join('\n');
                 } else if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
                 }
-
                 alert(message);
+            },
+            complete: function () {
+                $button.prop('disabled', false).html('<i class="ri-refresh-line"></i>');
             }
         });
-    }
+    };
+
+    function tambahDiagnosis() {
+        const $button = $('#btnTambahDiagnosis');
+        let utama = $("[name='diag_utama']").prop("checked") ? 1 : 0;
+        let diagnosa = $("[name='diag_detail']").val();
+
+        $.ajax({
+            url: `/api/v2/emr/pengkajian/diagnosis/${kunjungan}/simpan`,
+            type: 'POST',
+            data: {
+                'utama': utama,
+                'diagnosa': diagnosa
+            },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+
+            beforeSend: function () {
+                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
+            },
+
+            success: function (res) {
+                iziToast.success({
+                    title: 'Proses Berhasil!',
+                    message: res.message || 'Data berhasil disimpan.',
+                    position: 'topRight'
+                });
+                $("[name='diag_detail']").val('');
+                $("[name='diag_utama']").prop('checked', false);
+
+                getDiagnosis();
+            },
+            error: function (xhr) {
+                let message = 'Data gagal disimpan.';
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors)
+                        .flat()
+                        .join('<br>');
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                iziToast.error({
+                    title: 'Validasi Gagal!',
+                    message: message,
+                    position: 'topRight'
+                });
+            },
+            complete: function () {
+                $button.prop('disabled', false).html('<i class="ri-add-box-line"></i>');
+            }
+        });
+    };
+
+    function hapusDiagnosis(id){
+        $.ajax({
+            url: `/api/v2/emr/pengkajian/diagnosis/${kunjungan}/hapus/${id}`,
+            type: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (res) {
+                iziToast.success({
+                    title: 'Proses Berhasil!',
+                    message: res.message || 'Data berhasil dihapus.',
+                    position: 'topRight'
+                });
+                getDiagnosis();
+            },
+            error: function (xhr) {
+                let message = 'Data gagal dihapus.';
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors)
+                        .flat()
+                        .join('<br>');
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                iziToast.error({
+                    title: 'Proses Hapus Gagal!',
+                    message: message,
+                    position: 'topRight'
+                });
+            },
+        });
+    };
 </script>

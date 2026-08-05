@@ -22,3 +22,43 @@
     gap:.5rem;
     z-index:100;
 }
+
+/* SPINNING ICONS */
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .ti-spin {
+        display: inline-block;
+        animation: spin 1s linear infinite;
+    }
+    .ti-spin-slow {
+        display: inline-block;
+        animation: spin 2s linear infinite;
+    }
+    .ti-spin-reverse {
+        display: inline-block;
+        animation: spin 1s linear infinite reverse;
+    }
+    .ti-spin-reverse-slow {
+        display: inline-block;
+        animation: spin 2s linear infinite reverse;
+    }
+
+    .ri-spin {
+        display: inline-block;
+        animation: spin 1s linear infinite;
+    }
+    .ri-spin-slow {
+        display: inline-block;
+        animation: spin 2s linear infinite;
+    }
+    .ri-spin-reverse {
+        display: inline-block;
+        animation: spin 1s linear infinite reverse;
+    }
+    .ri-spin-reverse-slow {
+        display: inline-block;
+        animation: spin 2s linear infinite reverse;
+    }

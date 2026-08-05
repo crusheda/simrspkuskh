@@ -5,6 +5,7 @@ namespace App\Http\Controllers\EMR\Form;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Auth, Storage;
@@ -52,46 +53,6 @@ class AddOnPengkajianController extends Controller
             });
 
         return response()->json($ppk);
-    }
-
-    public function getRiwayatAlergi($kunjungan)
-    {
-        $data = DB::table('medicalrecord.riwayat_alergi as ra')
-            ->leftJoin('master.referensi as ref', function($join){
-                $join->on('ra.JENIS', '=', 'ref.ID')
-                    ->where('ref.JENIS',180)
-                    ->where('ref.STATUS',1);
-            })
-            ->select('ra.*', 'ref.DESKRIPSI as JENIS_ALERGI')
-            ->where('ra.KUNJUNGAN', $kunjungan)
-            ->where('ra.STATUS', 1)
-            ->get();
-
-        return response()->json($data);
-    }
-
-    public function simpanRiwayatAlergi(Request $request, $KUNJUNGAN)
-    {
-        DB::table('medicalrecord.riwayat_alergi')->insert([
-            'KUNJUNGAN'         => $KUNJUNGAN,
-            'JENIS'             => $request->jenis,
-            'DESKRIPSI'         => $request->deskripsi,
-            'OLEH'              => auth()->id(),
-            'TANGGAL'           => now(),
-            'STATUS'            => 1,
-        ]);
-
-        return response()->json(['message' => 'Data riwayat alergi berhasil disimpan.'], 200);
-    }
-
-    public function hapusRiwayatAlergi($KUNJUNGAN, $ID)
-    {
-        DB::table('medicalrecord.riwayat_alergi')
-            ->where('KUNJUNGAN', $KUNJUNGAN)
-            ->where('ID', $ID)
-            ->update(['STATUS' => 0]);
-
-        return response()->json(['message' => 'Data riwayat alergi berhasil dihapus.'], 200);
     }
 
     public function cariObat(Request $request)
@@ -147,6 +108,23 @@ class AddOnPengkajianController extends Controller
 
     public function simpanRiwayatPemberianObat(Request $request, $KUNJUNGAN)
     {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nama_obat' => ['required'],
+            ],
+            [
+                'nama_obat.required' => 'Nama obat wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validasi gagal.',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
         DB::table('medicalrecord.riwayat_pemberian_obat')->insert([
             'KUNJUNGAN'         => $KUNJUNGAN,
             'OBAT'              => $request->nama_obat,
@@ -170,6 +148,65 @@ class AddOnPengkajianController extends Controller
             ->update(['STATUS' => 0]);
 
         return response()->json(['message' => 'Data riwayat pemberian obat berhasil dihapus.'], 200);
+    }
+
+    public function getRiwayatAlergi($kunjungan)
+    {
+        $data = DB::table('medicalrecord.riwayat_alergi as ra')
+            ->leftJoin('master.referensi as ref', function($join){
+                $join->on('ra.JENIS', '=', 'ref.ID')
+                    ->where('ref.JENIS',180)
+                    ->where('ref.STATUS',1);
+            })
+            ->select('ra.*', 'ref.DESKRIPSI as JENIS_ALERGI')
+            ->where('ra.KUNJUNGAN', $kunjungan)
+            ->where('ra.STATUS', 1)
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function simpanRiwayatAlergi(Request $request, $KUNJUNGAN)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'jenis' => ['required'],
+                'deskripsi' => ['required'],
+            ],
+            [
+                'jenis.required' => 'Jenis alergi wajib diisi.',
+                'deskripsi.required' => 'Deskripsi alergi wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validasi gagal.',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        DB::table('medicalrecord.riwayat_alergi')->insert([
+            'KUNJUNGAN'         => $KUNJUNGAN,
+            'JENIS'             => $request->jenis,
+            'DESKRIPSI'         => $request->deskripsi,
+            'OLEH'              => auth()->id(),
+            'TANGGAL'           => now(),
+            'STATUS'            => 1,
+        ]);
+
+        return response()->json(['message' => 'Data riwayat alergi berhasil disimpan.'], 200);
+    }
+
+    public function hapusRiwayatAlergi($KUNJUNGAN, $ID)
+    {
+        DB::table('medicalrecord.riwayat_alergi')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('ID', $ID)
+            ->update(['STATUS' => 0]);
+
+        return response()->json(['message' => 'Data riwayat alergi berhasil dihapus.'], 200);
     }
 
     //Hasil Lab
@@ -327,7 +364,30 @@ class AddOnPengkajianController extends Controller
 
     public function simpanDiagnosis(Request $request, $KUNJUNGAN)
     {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'utama' => ['required'],
+                'diagnosa' => ['required'],
+            ],
+            [
+                'utama.required' => 'Status utama wajib diisi.',
+                'diagnosa.required' => 'Diagnosa wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validasi gagal.',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
         $nopen = DB::table('pendaftaran.kunjungan')->where('NOMOR', $KUNJUNGAN)->value('NOPEN');
+
+        if ($nopen === null) {
+            return response()->json(['message' => 'Kunjungan tidak ditemukan.'], 404);
+        }
 
         DB::table('medicalrecord.diagnosa')->insert([
             'NOPEN'             => $nopen,

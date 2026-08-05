@@ -122,6 +122,72 @@
                 </div>
             </div>
             <div class="col-md-12 mb-3">
+                <h6>Tanda Vital</h6>
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <div class="form-group">
+                            <label class="form-label">Tekanan Darah</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" name="tv_up">
+                                <div class="input-group-text"> / </div>
+                                <input type="text" class="form-control" name="tv_down">
+                                <div class="input-group-text"> mmHg </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="form-group">
+                            <label class="form-label">Frekuensi Nafas (RR)</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" name="tv_fr">
+                                <span class="input-group-text">X/menit</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="form-group">
+                            <label class="form-label">Frekuensi Nadi (HR)</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" name="tv_nadi">
+                                <div class="input-group-text">X/menit</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="form-group">
+                            <label class="form-label">Suhu (OC)</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" name="tv_sh">
+                                <div class="input-group-text">°C</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <div class="form-group">
+                            <label class="form-label">Skala Nyeri</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" name="tv_sn">
+                                <div class="input-group-text">%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Metode Ukur</label>
+                            <input type="text" class="form-control" name="tv_mu">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <h6>Khusus Obgyn</h6>
+
+            </div>
+            <div class="col-md-12 mb-3">
+                <h6>Kebutuhan Khusus</h6>
+
+            </div>
+            {{-- <div class="col-md-12 mb-3">
                 <div class="form-group mb-3">
                     <h6>Hambatan Pasien</h6>
                     <div class="row">
@@ -174,8 +240,8 @@
                     <h6>Keluhan Utama</h6>
                     <textarea class="form-control" name="ku_p" rows="2"></textarea>
                 </div>
-            </div>
-            <div class="col-md-12">
+            </div> --}}
+            {{-- <div class="col-md-12">
                 <div class="card card-body border border-dashed border-warning mb-3">
                     <div class="row">
                         <div class="col-md-6">
@@ -325,7 +391,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <div class="col-md-12">
                 <div class="card card-body border border-dashed border-primary mb-3">
                     <div class="row">
