@@ -441,8 +441,8 @@
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label fw-bold">DPJP</label>
-                                    <input type="text" class="form-control" value="{{ $list['dpjp']->NAMADOKTER ?? '' }}" placeholder="Nama DPJP" readonly>
-                                    <input type="hidden" name="pri_dpjp" value="{{ $list['dpjp']->ID ?? '' }}">
+                                    <input type="text" class="form-control" value="{{ $list['pasien']->NAMADOKTER ?? '' }}" placeholder="Nama DPJP" readonly>
+                                    <input type="hidden" name="pri_dpjp" value="{{ $list['pasien']->ID ?? '' }}">
                                 </div>
                             </div>
                         </div>

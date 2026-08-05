@@ -261,7 +261,7 @@
                         <div class="row mb-1 align-items-center">
                             <label class="col-md-2 col-form-label">Agama</label>
                             <div class="col-md-10">
-                                <input type="text" class="form-control" id="agama" name="agama" placeholder="Agama otomatis">
+                                <input type="text" class="form-control" id="agama" name="agama" value="{{ $list['pasien']->AGAMA ?? '' }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -323,7 +323,7 @@
                         <div class="row mb-1 align-items-center">
                             <label class="col-md-2 col-form-label">Pekerjaan</label>
                             <div class="col-md-10">
-                                <input type="text" class="form-control" id="kerja" name="kerja" placeholder="Pekerjaan otomatis">
+                                <input type="text" class="form-control" id="kerja" name="kerja" value="{{ $list['pasien']->PEKERJAAN ?? '' }}" readonly>
                             </div>
                         </div>
                     </div>
@@ -775,32 +775,32 @@
                             <label class="form-label fw-bold">Kebutuhan Edukasi</label>
                             <div class="col">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_1" id="kb_edu_1">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_1" id="kb_edu_1">
                                     <label class="form-check-label">Kondisi kesehatan dan diagnosa pasti dan penatalaksanaannya</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_2" id="kb_edu_2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_2" id="kb_edu_2">
                                     <label class="form-check-label">Teknik rehabilitasi</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_3" id="kb_edu_3">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_3" id="kb_edu_3">
                                     <label class="form-check-label">Hak dan Kewajiban Pasien</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_4" id="kb_edu_4">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_4" id="kb_edu_4">
                                     <label class="form-check-label">Proses pemberian informed consent</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_5" id="kb_edu_5">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_5" id="kb_edu_5">
                                     <label class="form-check-label">Cuci tangan dengan benar</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_6" id="kb_edu_6">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_6" id="kb_edu_6">
                                     <label class="form-check-label">Edukasi perencanaan pulang</label>
                                 </div>
                             </div>
@@ -808,32 +808,32 @@
                             <!-- Kolom 2 -->
                             <div class="col">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_7" id="kb_edu_7">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_7" id="kb_edu_7">
                                     <label class="form-check-label">Penggunaan obat secara efektif dan efek samping interaksinya</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_8" id="kb_edu_8">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_8" id="kb_edu_8">
                                     <label class="form-check-label">Manajemen Nyeri</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_9" id="kb_edu_9">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_9" id="kb_edu_9">
                                     <label class="form-check-label">Hak untuk berpartisipasi pada pelayanan</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_10" id="kb_edu_10">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_10" id="kb_edu_10">
                                     <label class="form-check-label">Penundaan pelayanan</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_11" id="kb_edu_11">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_11" id="kb_edu_11">
                                     <label class="form-check-label">Bahaya merokok</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_12" id="kb_edu_12">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_12" id="kb_edu_12">
                                     <label class="form-check-label">Lain-lainnya</label>
                                 </div>
                             </div>
@@ -841,27 +841,27 @@
                             <!-- Kolom 3 -->
                             <div class="col">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_13" id="kb_edu_13">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_13" id="kb_edu_13">
                                     <label class="form-check-label">Diet dan Nutrisi</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_14" id="kb_edu_14">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_14" id="kb_edu_14">
                                     <label class="form-check-label">Penggunaan alat medis yang aman</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_15" id="kb_edu_15">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_15" id="kb_edu_15">
                                     <label class="form-check-label">Prosedur pemeriksaan penunjang</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_16" id="kb_edu_16">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_16" id="kb_edu_16">
                                     <label class="form-check-label">Keterlambatan pelayanan</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="kb_edu_17" id="kb_edu_17">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_17" id="kb_edu_17">
                                     <label class="form-check-label">Edukasi rujukan pasien</label>
                                 </div>
 
@@ -892,38 +892,38 @@
                             <div class="col-md-6">
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_1" id="diag_1">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_1" id="diag_1">
                                     <label class="form-check-label">Bersihkan jalan nafas tidak efektif</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_2" id="diag_2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_2" id="diag_2">
                                     <label class="form-check-label">Pola nafas tidak efektif</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_3" id="diag_3">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_3" id="diag_3">
                                     <label class="form-check-label">Perfusi perifer tidak efektif</label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_4" id="diag_4">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_4" id="diag_4">
                                     <label class="form-check-label">Diare</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_5" id="diag_5">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_5" id="diag_5">
                                     <label class="form-check-label">Nyeri Akut</label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_6" id="diag_6">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_6" id="diag_6">
                                     <label class="form-check-label">Nausea</label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_7" id="diag_7">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_7" id="diag_7">
                                     <label class="form-check-label">Hipertermi</label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_8" id="diag_8">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_8" id="diag_8">
                                     <label class="form-check-label">Ansietas</label>
                                 </div>
 
@@ -933,27 +933,27 @@
                             <div class="col-md-6">
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_9" id="diag_9">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_9" id="diag_9">
                                     <label class="form-check-label">Gangguan integritas kulit / jaringan</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_10" id="diag_10">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_10" id="diag_10">
                                     <label class="form-check-label">Gangguan eliminasi urin</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_11" id="diag_11">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_11" id="diag_11">
                                     <label class="form-check-label">Intoleransi aktifitas</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_12" id="diag_12">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_12" id="diag_12">
                                     <label class="form-check-label">Gangguan mobilitas fisik</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="diag_13" id="diag_13">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_13" id="diag_13">
                                     <label class="form-check-label">Gangguan pertukaran gas</label>
                                 </div>
 
@@ -972,22 +972,22 @@
                                 <label class="form-label fw-semibold">Mandiri</label>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="tin_1" id="tin_1">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_1" id="tin_1">
                                     <label class="form-check-label" for="tin_1">Ajarkan teknik relaksasi dan nafas dalam</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="tin_2" id="tin_2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_2" id="tin_2">
                                     <label class="form-check-label" for="tin_2">Pertahankan body alignment dan posisi yang nyaman</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="tin_3" id="tin_3">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_3" id="tin_3">
                                     <label class="form-check-label" for="tin_3">Tenangkan Pasien</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="tin_4" id="tin_4">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_4" id="tin_4">
                                     <label class="form-check-label" for="tin_4">Berikan Pendidikan Kesehatan ke pasien dan keluarga</label>
                                 </div>
 
@@ -999,7 +999,7 @@
                                 <label class="form-label fw-semibold">Kolaborasi</label>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="tin_5" id="tin_5">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_5" id="tin_5">
                                     <label class="form-check-label" for="tin_5">Rawat Luka</label>
                                 </div>
 
@@ -1007,7 +1007,7 @@
                                     <label class="col-md-12 col-form-label mb-0">Pemberian Terapi :</label>
                                     <div class="col-md-4">
                                         <div class="form-check">
-                                            <input class="form-check-input check-primary" type="checkbox" name="tin_6" id="tin_6">
+                                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_6" id="tin_6">
                                             <label class="form-check-label">Oral</label>
                                         </div>
                                     </div>
@@ -1020,7 +1020,7 @@
                                 <div class="row align-items-center">
                                     <div class="col-md-4">
                                         <div class="form-check">
-                                            <input class="form-check-input check-primary" type="checkbox" name="tin_7" id="tin_7">
+                                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_7" id="tin_7">
                                             <label class="form-check-label">IV/SC/IM</label>
                                         </div>
                                     </div>

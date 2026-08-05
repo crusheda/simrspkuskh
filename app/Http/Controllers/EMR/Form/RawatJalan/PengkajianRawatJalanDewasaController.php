@@ -27,9 +27,19 @@ class PengkajianRawatJalanDewasaController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
-        $dpjp = DB::table('pendaftaran.kunjungan AS pk')
+        $pasien = DB::table('pendaftaran.kunjungan AS pk')
+            ->leftJoin('pendaftaran.pendaftaran AS pd', 'pd.NOMOR', '=', 'pk.NOPEN')
+            ->leftJoin('master.pasien AS p', 'p.NORM', '=', 'pd.NORM')
+            ->leftJoin('master.referensi AS ag', function ($join) {
+                $join->on('ag.ID', '=', 'p.AGAMA')
+                    ->where('ag.JENIS', '=', '1');
+            })
+            ->leftJoin('master.referensi AS kj', function ($join) {
+                $join->on('kj.ID', '=', 'p.PEKERJAAN')
+                    ->where('kj.JENIS', '=', '4');
+            })
             ->leftJoin('master.dokter AS dok', 'dok.ID', '=', 'pk.DPJP')
-            ->select('dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'))
+            ->select('dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'), 'ag.DESKRIPSI AS AGAMA', 'kj.DESKRIPSI AS PEKERJAAN')
             ->where('pk.NOMOR', $kunjungan)
             ->first();
 
@@ -64,7 +74,7 @@ class PengkajianRawatJalanDewasaController extends Controller
             'kunjungan' => $kunjungan,
             'jenis_ruang' => $jenis_ruang,
             'jenis_perawatan' => $jenis_perawatan,
-            'dpjp' => $dpjp,
+            'pasien' => $pasien,
             'jenis_alergi' => $jenis_alergi,
             'kesadaran' => $kesadaran,
         ];
