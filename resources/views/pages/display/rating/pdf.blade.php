@@ -36,11 +36,13 @@
 
 <body>
 
-    <center>
-        <img src="{{ public_path('images/pku/logo.png') }}" width="90">
-        <h2 style="margin-bottom: 2px">REKAP RATING PENILAIAN<br>RUMAH SAKIT PKU MUHAMMADIYAH SUKOHARJO</h2>
-        <h3 style="color:rgb(214, 66, 66)"><i>Dicetak pada {{ now()->locale('id')->format('d-m-Y H:i:s') }} WIB</i></h3>
-    </center>
+    @if (($bagian ?? 1) == 1)
+        <center>
+            <img src="{{ public_path('images/pku/logo.png') }}" width="90">
+            <h2 style="margin-bottom: 2px">REKAP RATING PENILAIAN<br>RUMAH SAKIT PKU MUHAMMADIYAH SUKOHARJO</h2>
+            <h3 style="color:rgb(214, 66, 66)"><i>Dicetak pada {{ now()->locale('id')->format('d-m-Y H:i:s') }} WIB</i></h3>
+        </center>
+    @endif
 
     <table>
         <thead>
@@ -54,7 +56,8 @@
 
         <tbody>
             @php
-                $no = 1;
+                // $no = 1;
+                $no = $nomor_awal ?? 1;
             @endphp
 
             @if ($rating->isEmpty())

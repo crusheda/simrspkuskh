@@ -2360,6 +2360,9 @@ progress {
   font-size: 0.8125rem;
   border-radius: 8px;
 }
+textarea.form-control-sm {
+    padding: 0.532rem 1.2rem;
+}
 .form-control-sm::file-selector-button {
   padding: 0.5rem 0.8rem;
   margin: -0.5rem -0.8rem;
