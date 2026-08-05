@@ -500,7 +500,7 @@
         <button class="btn btn-secondary">
             <i class="ri-close-line me-1"></i> Batal
         </button>
-        <button class="btn btn-danger"  onclick="saveDataPengkajianRJD(this)">
+        <button class="btn btn-danger" onclick="saveDataPengkajianRJDd(this)">
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
     </div>
@@ -623,7 +623,7 @@
         getDiagnosis();
     });
 
-    function saveDataPengkajianRJD(btn) {
+    function saveDataPengkajianRJDd(btn) {
         const $button = $(btn);
         const $section = $('#rjd_dokter');
 
