@@ -1258,18 +1258,18 @@
         $('#sn_lokasi').val(data.sn_lokasi);
 
         $('input[name="cara_berjalan"][value="' + data.cara_berjalan + '"]')
-            .prop('checked', true);
+            .prop('checked', true).trigger("change");
         $('input[name="faktor_risiko"][value="' + data.faktor_risiko + '"]')
-            .prop('checked', true);
+            .prop('checked', true).trigger("change");
         $('input[name="kon_obat"][value="' + data.kon_obat + '"]')
-            .prop('checked', true);
+            .prop('checked', true).trigger("change");
 
         $('input[name="bb_turun"][value="' + data.bb_turun + '"]')
             .prop('checked', true).trigger("change");
         $('input[name="bb_ubah"][value="' + data.bb_ubah + '"]')
-            .prop('checked', true);
+            .prop('checked', true).trigger("change");
         $('input[name="nafsu_makan"][value="' + data.nafsu_makan + '"]')
-            .prop('checked', true);
+            .prop('checked', true).trigger("change");
 
         $('#kondisi_khusus').val(data.kondisi_khusus);
 

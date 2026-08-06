@@ -17,6 +17,7 @@ use Auth, Storage;
 // CONTROLLER FORM
 use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
+use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanAnakController;
 
 class EMRController extends Controller
 {
@@ -575,6 +576,7 @@ class EMRController extends Controller
         $controllers = [
             'pengkajian-gd'             => PengkajianGawatDaruratController::class,
             'pengkajian-rajal-dewasa'   => PengkajianRawatJalanDewasaController::class,
+            'pengkajian-rajal-anak'     => PengkajianRawatJalanAnakController::class,
         ];
 
         abort_unless(isset($controllers[$form]), 404);
