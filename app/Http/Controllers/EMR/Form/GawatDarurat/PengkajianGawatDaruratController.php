@@ -88,7 +88,7 @@ class PengkajianGawatDaruratController extends Controller
         return view('pages.v2.medicalrecord.detail.form.pengkajian.gawat-darurat.index')->with('list',$data);
     }
 
-    // FORM DOKTET
+    // FORM DOKTER
         function getFormDokter($KUNJUNGAN)
         {
             $triage = DB::table('medicalrecord.triage')
@@ -157,15 +157,15 @@ class PengkajianGawatDaruratController extends Controller
 
         function simpanFormDokter(Request $request)
         {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'NOKUNJ'    => 'required',
-            ],
-            [
-                'NOKUNJ.required'        => 'Kunjungan wajib diisi.',
-            ]
-        );
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'NOKUNJ'    => 'required',
+                ],
+                [
+                    'NOKUNJ.required'        => 'Kunjungan wajib diisi.',
+                ]
+            );
 
             if ($validator->fails()) {
                 return response()->json([
@@ -378,6 +378,32 @@ class PengkajianGawatDaruratController extends Controller
             }
         }
 
+    // FORM PERAWAT
+    function getFormPerawat()
+    {
+        $triage = DB::table('medicalrecord.triage')
+                    ->select(
+                        'KRITERIA',
+                        'RISIKO_PENULARAN_INFEKSI'
+                    )
+                    ->where('KUNJUNGAN', $KUNJUNGAN)
+                    ->whereIn('STATUS', [1,2])
+                    ->first();
+
+        $anamnesis_diperoleh = DB::table('medicalrecord.anamnesis_diperoleh')
+                                ->where('KUNJUNGAN', $KUNJUNGAN)
+                                ->first();
+
+        $data = [
+            'triage' => $triage,
+            'anamnesis_diperoleh' => $anamnesis_diperoleh
+        ];
+
+        return response()->json([
+            'status' => true,
+            'data' => $data,
+        ]);
+    }
 
     function simpanFormPerawat(Request $request)
     {
