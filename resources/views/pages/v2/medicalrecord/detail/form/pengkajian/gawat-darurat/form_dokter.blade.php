@@ -406,7 +406,7 @@
                                     <label class="form-label">Frekuensi Nafas</label>
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="input-group input-group-sm flex-grow-1">
-                                            <input type="text" class="form-control" name="fr">
+                                            <input type="number" class="form-control" name="fr">
                                             <span class="input-group-text">X/menit</span>
                                         </div>
                                         <div class="form-check m-0">
@@ -429,30 +429,30 @@
                                 <div class="form-group">
                                     <label class="form-label">Frekuensi Nadi</label>
                                     <div class="input-group input-group-sm mb-2">
-                                        <input type="text" class="form-control" name="nadi">
+                                        <input type="number" class="form-control" name="nadi">
                                         <div class="input-group-text">X/menit, Reguler / Ireguler</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Tekanan Darah (mmHg)</label>
                                     <div class="input-group input-group-sm mb-2">
-                                        <input type="text" class="form-control" name="td_up">
+                                        <input type="number" class="form-control" name="td_up">
                                         <div class="input-group-text"> / </div>
-                                        <input type="text" class="form-control" name="td_down">
+                                        <input type="number" class="form-control" name="td_down">
                                         <div class="input-group-text"> mmHg </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Suhu</label>
                                     <div class="input-group input-group-sm mb-2">
-                                        <input type="text" class="form-control" name="suhu">
+                                        <input type="number" class="form-control" name="suhu">
                                         <div class="input-group-text">°C</div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">SpO2</label>
                                     <div class="input-group input-group-sm">
-                                        <input type="text" class="form-control" name="spo2">
+                                        <input type="number" class="form-control" name="spo2">
                                         <div class="input-group-text">%</div>
                                     </div>
                                 </div>
@@ -490,17 +490,17 @@
                                         <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                             <label class="form-label mb-0"> Diameter Pupil </label>
                                             <div class="input-group input-group-sm" style="width: 180px;">
-                                                <input type="text" class="form-control" name="dia_up">
+                                                <input type="number" class="form-control" name="dia_up">
                                                 <div class="input-group-text"> mm / </div>
-                                                <input type="text" class="form-control" name="dia_down">
+                                                <input type="number" class="form-control" name="dia_down">
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                             <label class="form-label mb-0"> RC (Refleks Cahaya) </label>
                                             <div class="input-group input-group-sm" style="width: 130px;">
-                                                <input type="text" class="form-control" name="rc_up">
+                                                <input type="number" class="form-control" name="rc_up">
                                                 <div class="input-group-text"> / </div>
-                                                <input type="text" class="form-control" name="rc_down">
+                                                <input type="number" class="form-control" name="rc_down">
                                             </div>
                                         </div>
                                     </div>
@@ -511,25 +511,25 @@
                                         <div class="d-flex align-items-center column-gap-3 row-gap-3 flex-wrap mb-3">
                                             <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                                 <label class="form-check-label">Eye</label>
-                                                <input type="text" class="form-control form-control-sm" name="gcs_e" style="width: 60px; flex: 0 0 60px;" placeholder="">
+                                                <input type="number" class="form-control form-control-sm" name="gcs_e" style="width: 70px; flex: 0 0 60px;" placeholder="">
                                             </div>
                                             <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                                 <label class="form-check-label">Verbal</label>
-                                                <input type="text" class="form-control form-control-sm" name="gcs_v" style="width: 60px; flex: 0 0 60px;" placeholder="">
+                                                <input type="number" class="form-control form-control-sm" name="gcs_v" style="width: 70px; flex: 0 0 60px;" placeholder="">
                                             </div>
                                             <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                                 <label class="form-check-label">Move</label>
-                                                <input type="text" class="form-control form-control-sm" name="gcs_m" style="width: 60px; flex: 0 0 60px;" placeholder="">
+                                                <input type="number" class="form-control form-control-sm" name="gcs_m" style="width: 70px; flex: 0 0 60px;" placeholder="">
                                             </div>
                                             <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                                 <label class="form-check-label">Total</label>
-                                                <input type="text" class="form-control form-control-sm" name="gcs_t" style="width: 60px; flex: 0 0 60px;" placeholder="" readonly>
+                                                <input type="number" class="form-control form-control-sm" name="gcs_t" style="width: 70px; flex: 0 0 60px;" placeholder="" readonly>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group mb-3">
                                         <label class="form-label">VAS (<i>Visual Analog Scale</i>)</label>
-                                        <input type="text" class="form-control" name="vas">
+                                        <input type="number" class="form-control" name="vas">
                                     </div>
                                     <div class="mb-3">
                                         <h6>Alat Bantu Nafas</h6>
@@ -1033,6 +1033,7 @@
 <script>
     $(document).ready(function() {
         const $inputObat = $('[name="rpo_nama_obat"]');
+        const $section = $('#gd_dokter');
         // const $inputBarangId = $('[name="rpo_barang_id"]');
 
         if (!$inputObat.length ) {
@@ -1106,6 +1107,14 @@
         //     $inputBarangId.val('');
         // });
 
+        $section.on(
+            'input',
+            "input[name='gcs_e'], input[name='gcs_v'], input[name='gcs_m']",
+            function () {
+                hitungGCS();
+            }
+        );
+
         getDataPengkajianGdD();
         getRiwayatAlergi();
         getPenggunaanObat();
@@ -1115,40 +1124,1084 @@
     })
 
     function getDataPengkajianGdD() {
-        $kunjungan = $('#gd_dokter').data('kunjungan');
+
+        // ============================================================
+        // FORM
+        // ============================================================
+        const $form = $('#formContent').find('.form-wrapper').has('input[name="ats_jn_1"]').first();
+
+        if (!$form.length) {
+            console.warn('Form Pengkajian Medis IGD tidak ditemukan.');
+            return;
+        }
+
+        // ============================================================
+        // HELPER
+        // ============================================================
+
+        // Set value input / textarea / select
+        function setValue(name, value) {
+            const $el = $form.find(`[name="${name}"]`);
+
+            if (!$el.length) return;
+
+            if (value === null || value === undefined || value === '') {
+                $el.val('');
+            } else {
+                // Normalisasi nilai angka
+                if ($el.attr('type') === 'number') {
+                    const normalized = String(value).replace(',', '.');
+                    const number = Number(normalized);
+
+                    if (!isNaN(number)) {
+                        value = number;
+                    }
+                }
+
+                $el.val(value);
+            }
+
+            // Trigger jika ada plugin / event yang bergantung pada change
+            $el.trigger('change');
+        }
+
+        // Checkbox biasa berdasarkan boolean / 0 / 1
+        function setCheckbox(name, checked) {
+            const $el = $form.find(`input[name="${name}"]`);
+
+            if (!$el.length) return;
+
+            $el.prop('checked', Number(checked) === 1);
+            $el.trigger('change');
+        }
+
+        // Checkbox group berdasarkan value
+        function setCheckboxValue(name, value) {
+            const $el = $form.find(`input[name="${name}"][value="${value}"]`);
+
+            if (!$el.length) return;
+
+            $el.prop('checked', true);
+            $el.trigger('change');
+        }
+
+        // Checkbox group single choice
+        function setSingleCheckbox(name, value) {
+            const $group = $form.find(`input[name="${name}"]`);
+
+            if (!$group.length) return;
+
+            $group.prop('checked', false);
+
+            if (
+                value !== null &&
+                value !== undefined &&
+                value !== ''
+            ) {
+                $group
+                    .filter(`[value="${value}"]`)
+                    .prop('checked', true)
+                    .trigger('change');
+            }
+        }
+
+        // ============================================================
+        // AJAX
+        // ============================================================
+
         $.ajax({
-            url: `/api/v2/emr/form/pengkajian/gd/dr/${$kunjungan}`,
-            type: 'GET',
+            url: `/api/v2/emr/form/pengkajian/gd/dr/${kunjungan}`,
+            type: "GET",
+            dataType: "json",
+
             beforeSend: function () {
+                console.log('Mengambil data Pengkajian Medis IGD...');
+            },
+
+            success: function (response) {
+
+                console.log('Response getDataPengkajianGdD:', response);
+
+                // ====================================================
+                // VALIDASI RESPONSE
+                // ====================================================
+
+                if (!response || response.status !== true) {
+                    console.warn(
+                        response?.message || 'Data Pengkajian Medis IGD tidak ditemukan.'
+                    );
+                    return;
+                }
+
+                const data = response.data || {};
+                const triage = data.triage || {};
+
+                // ====================================================
+                // 1. TRIAGE
+                // ====================================================
+
+                // ----------------------------------------------------
+                // KATEGORI PEMERIKSAAN
+                // ----------------------------------------------------
+
+                if (
+                    triage.KATEGORI_PEMERIKSAAN !== null &&
+                    triage.KATEGORI_PEMERIKSAAN !== undefined
+                ) {
+                    setSingleCheckbox(
+                        'ats_p',
+                        triage.KATEGORI_PEMERIKSAAN
+                    );
+                }
+
+                // ----------------------------------------------------
+                // PLAN
+                // ----------------------------------------------------
+
+                if (
+                    triage.PLAN !== null &&
+                    triage.PLAN !== undefined
+                ) {
+                    setSingleCheckbox(
+                        'ats_p',
+                        triage.PLAN
+                    );
+                }
+
+
+                // ====================================================
+                // 2. ATS - RESUSITASI / P1
+                // ====================================================
+
+                const resusitasi = triage.RESUSITASI || {};
+
+                // CHECKED
+                if (resusitasi.CHECKED !== undefined) {
+
+                    // Tidak ada checkbox khusus CHECKED pada HTML,
+                    // jadi tidak perlu di-set.
+                    console.log(
+                        'Resusitasi checked:',
+                        resusitasi.CHECKED
+                    );
+                }
+
+                // ----------------------------------------------------
+                // KESADARAN
+                // ----------------------------------------------------
+                // HTML Anda berupa teks statis:
+                // Resusitasi = Tidak Sadar
+                // sehingga tidak ada input untuk diisi.
+
+
+                // ----------------------------------------------------
+                // JALAN NAPAS - RESUSITASI
+                // ----------------------------------------------------
+
+                const resusJalanNapas =
+                    resusitasi.JALAN_NAPAS || {};
+
+                setCheckbox(
+                    'ats_jn_1',
+                    resusJalanNapas.SUMBATAN_JALAN_NAPAS_TOTAL
+                );
+
+
+                // ----------------------------------------------------
+                // PERNAPASAN - RESUSITASI
+                // ----------------------------------------------------
+
+                const resusPernapasan =
+                    resusitasi.PERNAPASAN || {};
+
+                setCheckbox(
+                    'ats_pf_1_1',
+                    resusPernapasan.HENTI_NAFAS
+                );
+
+                setCheckbox(
+                    'ats_pf_1_2',
+                    resusPernapasan.NAPAS_TIDAK_ADEKUAT_DIATAS_40_X_PER_MENIT
+                );
+
+                setCheckbox(
+                    'ats_pf_1_3',
+                    resusPernapasan.GASPING_DIBAWAH_12_X_PER_MENIT
+                );
+
+
+                // ----------------------------------------------------
+                // SIRKULASI - RESUSITASI
+                // ----------------------------------------------------
+
+                const resusSirkulasi =
+                    resusitasi.SIRKULASI || {};
+
+                setCheckbox(
+                    'ats_sr_1',
+                    resusSirkulasi.NADI_TIDAK_TERABA
+                );
+
+
+                // ====================================================
+                // 3. ATS - EMERGENCY / P2
+                // ====================================================
+
+                const emergency = triage.EMERGENCY || {};
+
+                const emergencyJalanNapas =
+                    emergency.JALAN_NAPAS || {};
+
+                setCheckbox(
+                    'ats_jn_2',
+                    emergencyJalanNapas.SUMBATAN_JALAN_NAPAS_PARSIAL
+                );
+
+
+                const emergencyPernapasan =
+                    emergency.PERNAPASAN || {};
+
+                setCheckbox(
+                    'ats_pf_2_1',
+                    emergencyPernapasan.DISTRESS_PERNAPASAN
+                );
+
+                setCheckbox(
+                    'ats_pf_2_2',
+                    emergencyPernapasan.FREKUENSI_PERNAPASAN_24_SAMPAI_31_X_PER_MENIT
+                );
+
+                setCheckbox(
+                    'ats_pf_2_3',
+                    emergencyPernapasan.WHEEZING
+                );
+
+                setCheckbox(
+                    'ats_pf_2_4',
+                    emergencyPernapasan.RONCHI
+                );
+
+                setCheckbox(
+                    'ats_pf_2_5',
+                    emergencyPernapasan.GURGLING
+                );
+
+
+                const emergencySirkulasi =
+                    emergency.SIRKULASI || {};
+
+                setCheckbox(
+                    'ats_sr_2_1',
+                    emergencySirkulasi.NADI_SANGAT_LEMAH
+                );
+
+                setCheckbox(
+                    'ats_sr_2_2',
+                    emergencySirkulasi.NYERI_BERAT
+                );
+
+                setCheckbox(
+                    'ats_sr_2_3',
+                    emergencySirkulasi.IRAMA_NADI_TIDAK_TERATUR
+                );
+
+                setCheckbox(
+                    'ats_sr_2_4',
+                    emergencySirkulasi.NADI_DIBAWAH_50_ATAU_DIATAS_150_X_PER_MENIT
+                );
+
+                setCheckbox(
+                    'ats_sr_2_5',
+                    emergencySirkulasi.SIANOTIK
+                );
+
+                setCheckbox(
+                    'ats_sr_2_6',
+                    emergencySirkulasi.PUCAT
+                );
+
+                setCheckbox(
+                    'ats_sr_2_7',
+                    emergencySirkulasi.AKRAL_DINGIN
+                );
+
+                setCheckbox(
+                    'ats_sr_2_8',
+                    emergencySirkulasi.KERINGAT_DINGIN
+                );
+
+                setCheckbox(
+                    'ats_sr_2_9',
+                    emergencySirkulasi.TDS_DIBAWAH_80_ATAU_DIATAS_180_MMHG
+                );
+
+                setCheckbox(
+                    'ats_sr_2_10',
+                    emergencySirkulasi.SPO2_DIBAWAH_90_PERSEN
+                );
+
+
+                // ====================================================
+                // 4. ATS - URGENT / P3
+                // ====================================================
+
+                const urgent = triage.URGENT || {};
+
+                const urgentJalanNapas =
+                    urgent.JALAN_NAPAS || {};
+
+                setCheckbox(
+                    'ats_jn_3_1',
+                    urgentJalanNapas.JALAN_NAPAS_BEBAS
+                );
+
+                setCheckbox(
+                    'ats_jn_3_2',
+                    urgentJalanNapas.CORPUS_ALLIENUM_TANDA2_GANGUAN_NAPAS
+                );
+
+
+                const urgentPernapasan =
+                    urgent.PERNAPASAN || {};
+
+                setCheckbox(
+                    'ats_pf_3_1',
+                    urgentPernapasan.RETRAKSI_ATAU_NAPAS_CUPING_HIDUNG
+                );
+
+                setCheckbox(
+                    'ats_pf_3_2',
+                    urgentPernapasan.FREKUENSI_PERNAPASAN_24_SAMPAI_31_X_PER_MENIT
+                );
+
+                setCheckbox(
+                    'ats_pf_3_3',
+                    urgentPernapasan.WHEEZING
+                );
+
+                setCheckbox(
+                    'ats_pf_3_4',
+                    urgentPernapasan.RONCHI
+                );
+
+
+                const urgentSirkulasi =
+                    urgent.SIRKULASI || {};
+
+                setCheckbox(
+                    'ats_sr_3_1',
+                    urgentSirkulasi.NADI_TERABA_LEMAH
+                );
+
+                setCheckbox(
+                    'ats_sr_3_2',
+                    urgentSirkulasi.NYERI_SEDANG
+                );
+
+                setCheckbox(
+                    'ats_sr_3_3',
+                    urgentSirkulasi.IRAMA_NADI_TIDAK_TERATUR
+                );
+
+                setCheckbox(
+                    'ats_sr_3_4',
+                    urgentSirkulasi.NADI_50_SAMPAI_59_ATAU_101_SAMPAI_150_X_PER_MENIT
+                );
+
+                setCheckbox(
+                    'ats_sr_3_5',
+                    urgentSirkulasi.WARNA_KULIT_NORMAL
+                );
+
+                setCheckbox(
+                    'ats_sr_3_6',
+                    urgentSirkulasi.TDS_80_SAMPAI_100_ATAU_150_SAMPAI_180_MMHG
+                );
+
+                setCheckbox(
+                    'ats_sr_3_7',
+                    urgentSirkulasi.SPO2_DIATAS_95_PERSEN
+                );
+
+
+                // ====================================================
+                // 5. ATS - LESS URGENT / P4
+                // ====================================================
+
+                const lessUrgent = triage.LESS_URGENT || {};
+
+                const lessUrgentJalanNapas =
+                    lessUrgent.JALAN_NAPAS || {};
+
+                setCheckbox(
+                    'ats_jn_4',
+                    lessUrgentJalanNapas.JALAN_NAPAS_BEBAS
+                );
+
+
+                const lessUrgentPernapasan =
+                    lessUrgent.PERNAPASAN || {};
+
+                setCheckbox(
+                    'ats_pf_4_1',
+                    lessUrgentPernapasan.RETRAKSI_ATAU_NAPAS_CUPING_HIDUNG
+                );
+
+                setCheckbox(
+                    'ats_pf_4_2',
+                    lessUrgentPernapasan.FREKUENSI_PERNAPASAN_21_SAMPAI_23_X_PER_MENIT
+                );
+
+
+                const lessUrgentSirkulasi =
+                    lessUrgent.SIRKULASI || {};
+
+                setCheckbox(
+                    'ats_sr_4_1',
+                    lessUrgentSirkulasi.NADI_TERABA_KUAT
+                );
+
+                setCheckbox(
+                    'ats_sr_4_2',
+                    lessUrgentSirkulasi.NYERI_RINGAN
+                );
+
+                setCheckbox(
+                    'ats_sr_4_3',
+                    lessUrgentSirkulasi.IRAMA_NADI_TERATUR
+                );
+
+                setCheckbox(
+                    'ats_sr_4_4',
+                    lessUrgentSirkulasi.NADI_60_SAMPAI_100_X_PER_MENIT
+                );
+
+                setCheckbox(
+                    'ats_sr_4_5',
+                    lessUrgentSirkulasi.AKRAL_HANGAT
+                );
+
+                setCheckbox(
+                    'ats_sr_4_6',
+                    lessUrgentSirkulasi.TDS_DIATAS_100_ATAU_DIBAWAH_150_MMHG
+                );
+
+                setCheckbox(
+                    'ats_sr_4_7',
+                    lessUrgentSirkulasi.SPO2_DIATAS_95_PERSEN
+                );
+
+
+                // ====================================================
+                // 6. ATS - NON URGENT / P5
+                // ====================================================
+
+                const nonUrgent = triage.NON_URGENT || {};
+
+                const nonUrgentJalanNapas =
+                    nonUrgent.JALAN_NAPAS || {};
+
+                setCheckbox(
+                    'ats_jn_5',
+                    nonUrgentJalanNapas.JALAN_NAPAS_BEBAS
+                );
+
+
+                const nonUrgentPernapasan =
+                    nonUrgent.PERNAPASAN || {};
+
+                setCheckbox(
+                    'ats_pf_5_1',
+                    nonUrgentPernapasan.TIDAK_ADA_RETRAKSI
+                );
+
+                setCheckbox(
+                    'ats_pf_5_2',
+                    nonUrgentPernapasan.FREKUENSI_PERNAPASAN_12_SAMPAI_20_X_PER_MENIT
+                );
+
+
+                const nonUrgentSirkulasi =
+                    nonUrgent.SIRKULASI || {};
+
+                setCheckbox(
+                    'ats_sr_5_1',
+                    nonUrgentSirkulasi.NADI_TERABA_KUAT
+                );
+
+                setCheckbox(
+                    'ats_sr_5_2',
+                    nonUrgentSirkulasi.TIDAK_ADA_NYERI
+                );
+
+                setCheckbox(
+                    'ats_sr_5_3',
+                    nonUrgentSirkulasi.IRAMA_NADI_TERATUR
+                );
+
+                setCheckbox(
+                    'ats_sr_5_4',
+                    nonUrgentSirkulasi.NADI_60_SAMPAI_100_X_PER_MENIT
+                );
+
+                setCheckbox(
+                    'ats_sr_5_5',
+                    nonUrgentSirkulasi.AKRAL_HANGAT
+                );
+
+                setCheckbox(
+                    'ats_sr_5_6',
+                    nonUrgentSirkulasi.TDS_100_KOMA_150_MMHG
+                );
+
+                setCheckbox(
+                    'ats_sr_5_7',
+                    nonUrgentSirkulasi.SPO2_DIATAS_95_PERSEN
+                );
+
+
+                // ====================================================
+                // 7. DOA
+                // ====================================================
+
+                const doa = triage.DOA || {};
+
+                console.log('DOA:', doa);
+
+                // Di HTML DOA tidak memiliki checkbox.
+                // Kesadaran DOA juga berupa teks statis.
+
+
+                // ====================================================
+                // 8. KRITERIA ATS
+                // ====================================================
+
+                setValue(
+                    'ats',
+                    triage.KRITERIA
+                );
+
+
+                // ====================================================
+                // 9. RISIKO PENULARAN INFEKSI
+                // ====================================================
+
+                if (
+                    triage.RISIKO_PENULARAN_INFEKSI !== null &&
+                    triage.RISIKO_PENULARAN_INFEKSI !== undefined
+                ) {
+                    setSingleCheckbox(
+                        'rpi',
+                        triage.RISIKO_PENULARAN_INFEKSI
+                    );
+                }
+
+                // ====================================================
+                // 10. ANAMNESIS DIPEROLEH
+                // ====================================================
+
+                const anamnesisDiperoleh = data.anamnesis_diperoleh || {};
+
+                if (anamnesisDiperoleh.AUTOANAMNESIS == 1) {
+                    setSingleCheckbox('anam', 1);
+                } else if (anamnesisDiperoleh.ALLOANAMNESIS == 1) {
+                    setSingleCheckbox('anam', 2);
+                }
+
+                // ====================================================
+                // 11. TANDA VITAL / PRIMARY SURVEY
+                // ====================================================
+
+                const tandaVital = data.tanda_vital || {};
+
+                // Keadaan Umum
+                setValue(
+                    'keu',
+                    tandaVital.KEADAAN_UMUM
+                );
+
+                // Tingkat Kesadaran
+                setValue(
+                    'tks',
+                    tandaVital.TINGKAT_KESADARAN
+                );
+
+
+                // Frekuensi Nafas
+                setValue(
+                    'fr',
+                    tandaVital.FREKUENSI_NAFAS
+                );
+
+                // Frekuensi Nafas - Simetris / Asimetris
+                if (tandaVital.FREKUENSI_NAFAS_CB !== null) {
+                    $('input[name="fr_cb"]')
+                        .prop('checked', false);
+
+                    $(`input[name="fr_cb"][value="${tandaVital.FREKUENSI_NAFAS_CB}"]`)
+                        .prop('checked', true);
+                }
+
+
+                // Frekuensi Nadi
+                setValue(
+                    'nadi',
+                    tandaVital.FREKUENSI_NADI
+                );
+
+                // Tekanan Darah
+                setValue(
+                    'td_up',
+                    tandaVital.SISTOLIK
+                );
+
+                setValue(
+                    'td_down',
+                    tandaVital.DISTOLIK
+                );
+
+                // Suhu
+                setValue(
+                    'suhu',
+                    tandaVital.SUHU
+                );
+
+                // SpO2
+                setValue(
+                    'spo2',
+                    tandaVital.SATURASI_O2
+                );
+
+
+                // Pupil
+                if (tandaVital.PUPIL !== null) {
+                    $('input[name="pupil"]')
+                        .prop('checked', false);
+
+                    $(`input[name="pupil"][value="${tandaVital.PUPIL}"]`)
+                        .prop('checked', true);
+                }
+
+                // Diameter pupil
+                setValue(
+                    'dia_up',
+                    tandaVital.DIAMETER_PUPIL_UP
+                );
+
+                setValue(
+                    'dia_down',
+                    tandaVital.DIAMETER_PUPIL_DOWN
+                );
+
+                // Refleks cahaya
+                setValue(
+                    'rc_up',
+                    tandaVital.RC_UP
+                );
+
+                setValue(
+                    'rc_down',
+                    tandaVital.RC_DOWN
+                );
+
+
+                // GCS
+                setValue(
+                    'gcs_e',
+                    tandaVital.EYE
+                );
+
+                setValue(
+                    'gcs_v',
+                    tandaVital.VERBAL
+                );
+
+                setValue(
+                    'gcs_m',
+                    tandaVital.MOTORIK
+                );
+
+                setValue(
+                    'gcs_t',
+                    tandaVital.GCS
+                );
+
+
+                // VAS
+                setValue(
+                    'vas',
+                    tandaVital.VAS
+                );
+
+
+                // Jalan Nafas
+                if (tandaVital.JALAN_NAFAS !== null) {
+                    $('input[name="jn"]')
+                        .prop('checked', false);
+
+                    $(`input[name="jn"][value="${tandaVital.JALAN_NAFAS}"]`)
+                        .prop('checked', true);
+                }
+
+
+                // Alat Bantu Nafas
+                if (tandaVital.ALAT_BANTU_NAFAS !== null) {
+                    $('input[name="abn"]')
+                        .prop('checked', false);
+
+                    $(`input[name="abn"][value="${tandaVital.ALAT_BANTU_NAFAS}"]`)
+                        .prop('checked', true);
+                }
+
+
+                // Kulit
+                if (tandaVital.KULIT !== null) {
+                    $('input[name="kulit"]')
+                        .prop('checked', false);
+
+                    $(`input[name="kulit"][value="${tandaVital.KULIT}"]`)
+                        .prop('checked', true);
+                }
+
+
+                // ====================================================
+                // 12. STATUS REPRODUKSI
+                // ====================================================
+
+                const statusReproduksi =
+                    data.status_reproduksi || {};
+
+                console.log(
+                    'Status reproduksi:',
+                    statusReproduksi
+                );
+
+
+                // Status kasus obstetri / ginekologi
+                //
+                // HTML:
+                // value="1" = Tidak
+                // value="2" = Kasus Obstetri Ginekologi
+                //
+                if (statusReproduksi.KASUS_OBSTETRI_GINEKOLOGI !== null) {
+
+                    $('input[name="sr"]')
+                        .prop('checked', false);
+
+                    $(
+                        `input[name="sr"][value="${statusReproduksi.KASUS_OBSTETRI_GINEKOLOGI}"]`
+                    ).prop('checked', true);
+                }
+
+
+                // Status reproduksi / Hamil
+                setValue(
+                    'sr_hamil',
+                    statusReproduksi.STATUS_REPRODUKSI
+                );
+
+
+                // HPHT
+                setValue(
+                    'sr_hpht',
+                    statusReproduksi.HPHT
+                );
+
+
+                // Siklus
+                setValue(
+                    'sr_siklus',
+                    statusReproduksi.SIKLUS
+                );
+
+
+                // KB
+                setValue(
+                    'sr_kb',
+                    statusReproduksi.KB
+                );
+
+
+                // Gravida
+                setValue(
+                    'sr_grv',
+                    statusReproduksi.HAMIL_GRAVIDA
+                );
+
+
+                // Paritas
+                setValue(
+                    'sr_prt',
+                    statusReproduksi.HAMIL_PARITAS
+                );
+
+
+                // Abortus
+                setValue(
+                    'sr_abr',
+                    statusReproduksi.HAMIL_ABORTUS
+                );
+
+
+                // ====================================================
+                // STATUS CHECKBOX STATUS REPRODUKSI
+                // ====================================================
+                //
+                // Karena database menyimpan:
+                // KASUS_OBSTETRI_GINEKOLOGI
+                // STATUS_REPRODUKSI
+                // HPHT
+                // KB
+                // HAMIL_GRAVIDA
+                // HAMIL_PARITAS
+                // HAMIL_ABORTUS
+                //
+                // maka checkbox sr_cb bisa ditentukan dari data
+                // yang memang tersimpan.
+                //
+                // value:
+                // 1 = HPHT
+                // 2 = KB
+                // 3 = Tidak Hamil
+                // 4 = Hamil
+                //
+
+                $('input[name="sr_cb"]')
+                    .prop('checked', false);
+
+
+                // HPHT
+                if (
+                    statusReproduksi.HPHT !== null &&
+                    statusReproduksi.HPHT !== ''
+                ) {
+                    $('input[name="sr_cb"][value="1"]')
+                        .prop('checked', true);
+                }
+
+
+                // KB
+                if (
+                    statusReproduksi.KB !== null &&
+                    statusReproduksi.KB !== ''
+                ) {
+                    $('input[name="sr_cb"][value="2"]')
+                        .prop('checked', true);
+                }
+
+
+                // Hamil
+                if (
+                    statusReproduksi.HAMIL_GRAVIDA !== null ||
+                    statusReproduksi.HAMIL_PARITAS !== null ||
+                    statusReproduksi.HAMIL_ABORTUS !== null
+                ) {
+                    $('input[name="sr_cb"][value="4"]')
+                        .prop('checked', true);
+                }
+
+
+                // Tidak Hamil
+                if (
+                    statusReproduksi.STATUS_REPRODUKSI !== null &&
+                    String(statusReproduksi.STATUS_REPRODUKSI) === '3'
+                ) {
+                    $('input[name="sr_cb"][value="3"]')
+                        .prop('checked', true);
+                }
+
+
+                // ====================================================
+                // 13. KELUHAN UTAMA
+                // ====================================================
+
+                const keluhanUtama =
+                    data.keluhan_utama || {};
+
+                console.log(
+                    'Keluhan utama:',
+                    keluhanUtama
+                );
+
+                setValue(
+                    'ku',
+                    keluhanUtama.DESKRIPSI
+                );
+
+
+                // ====================================================
+                // 14. ANAMNESIS / RIWAYAT PENYAKIT SEKARANG
+                // ====================================================
+
+                const anamnesis =
+                    data.anamnesis || {};
+
+                console.log(
+                    'Anamnesis:',
+                    anamnesis
+                );
+
+
+                // DESKRIPSI
+                //
+                // Controller simpan:
+                // DESKRIPSI = $request->rps
+                //
+                setValue(
+                    'rps',
+                    anamnesis.DESKRIPSI
+                );
+
+
+                // Jika nantinya menggunakan field-field tambahan
+                // dari tabel medicalrecord.anamnesis
+                setValue(
+                    'anam_khu',
+                    anamnesis.KELUHAN_UTAMA
+                );
+
+                setValue(
+                    'anam_rps',
+                    anamnesis.RPS
+                );
+
+                setValue(
+                    'anam_rpt',
+                    anamnesis.RPT
+                );
+
+                setValue(
+                    'anam_rpk',
+                    anamnesis.RPK
+                );
+
+                setValue(
+                    'anam_rl',
+                    anamnesis.RL
+                );
+
+                setValue(
+                    'anam_riwayat_alergi',
+                    anamnesis.RIWAYAT_ALERGI
+                );
+
+                setValue(
+                    'anam_reaksi_alergi',
+                    anamnesis.REAKSI_ALERGI
+                );
+
+
+                // ====================================================
+                // 15. RIWAYAT PENYAKIT DAHULU
+                // ====================================================
+
+                const rpp =
+                    data.rpp || {};
+
+                console.log(
+                    'Riwayat penyakit dahulu:',
+                    rpp
+                );
+
+
+                // Controller simpan:
+                // DESKRIPSI = $request->rpd
+                //
+                setValue(
+                    'rpd',
+                    rpp.DESKRIPSI
+                );
+
+
+                // ====================================================
+                // 16. PEMERIKSAAN FISIK
+                // ====================================================
+
+                const pemeriksaanFisik =
+                    data.pemeriksaan_fisik || {};
+
+                console.log(
+                    'Pemeriksaan fisik:',
+                    pemeriksaanFisik
+                );
+
+                setValue(
+                    'pf',
+                    pemeriksaanFisik.DESKRIPSI
+                );
+
+
+                // ====================================================
+                // 19. PERENCANAAN TERAPI
+                // ====================================================
+                //
+                // Field ini BELUM ada di JSON yang Anda kirim.
+                // Jadi hanya akan diisi jika controller nanti
+                // mengembalikan data tersebut.
+                //
+                if (data.perencanaan_terapi) {
+
+                    setValue(
+                        'pt',
+                        data.perencanaan_terapi.DESKRIPSI
+                    );
+                }
+
+
+                // ====================================================
+                // 20. HASIL LAPOR DPJP
+                // ====================================================
+                //
+                // Field ini juga belum ada di JSON saat ini.
+                //
+                if (data.hasil_lapor_dpjp) {
+
+                    setValue(
+                        'hld',
+                        data.hasil_lapor_dpjp.DESKRIPSI
+                    );
+                }
+
+
+                // ====================================================
+                // 21. TINDAK LANJUT ASUHAN
+                // ====================================================
+                //
+                // Belum tersedia pada JSON saat ini.
+                //
+                if (data.tindak_lanjut_asuhan) {
+
+                    setValue(
+                        'tla_ck',
+                        data.tindak_lanjut_asuhan.CARA
+                    );
+
+                    setValue(
+                        'tla_kk',
+                        data.tindak_lanjut_asuhan.KEADAAN
+                    );
+                }
 
             },
-            success: function (res) {
-                // KRITERIA ATS
-                $('input[name="ats"]').val(res.data.triage?.KRITERIA);
 
-                // RISIKO PENULARAN INFEKSI
-                $(`input[name="rpi"][value="${res.data.triage?.RISIKO_PENULARAN_INFEKSI}"]`).prop('checked', true);
+            error: function (xhr, status, error) {
 
-                // ANAMNESIS
-                let anam = null;
-                if (res.data.anamnesis_diperoleh?.AUTOANAMNESIS == 1) { anam = 1; }
-                else if (res.data.anamnesis_diperoleh?.ALLOANAMNESIS == 1) { anam = 2; }
-                if (anam !== null) { $(`input[name="anam"][value="${anam}"]`).prop('checked', true); }
-            },
-            error: function (xhr) {
-                let message = 'Data gagal disimpan.';
+                console.error(
+                    'Error getDataPengkajianGdD:',
+                    xhr.responseText || error
+                );
 
-                if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors)
-                        .flat()
-                        .join('\n');
-                } else if (xhr.responseJSON?.message) {
+                let message = 'Gagal mengambil data Pengkajian Medis IGD.';
+
+                if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
                 }
-                alert(message);
-            },
-            complete: function () {
 
+                console.warn(message);
+            },
+
+            complete: function () {
+                console.log('Selesai getDataPengkajianGdD');
             }
         });
     }
@@ -1171,8 +2224,21 @@
             beforeSend: function () {
                 $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan Formulir...');
             },
-            success: function (response) {
-                alert(response.message || 'Data berhasil disimpan.');
+            success: function (res) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: res.message || "Data berhasil disimpan",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    backdrop: `
+                        rgba(0,0,123,0.4)
+                        url("/images/nyan-cat.gif")
+                        left top
+                        no-repeat
+                    `
+                });
+                getDataPengkajianGdD();
             },
             error: function (xhr) {
                 let message = 'Data gagal disimpan.';
@@ -1194,6 +2260,25 @@
             }
         });
     }
+
+    // HELPER ON ---------------------------------------------------------------------------------------------------------------------------------------------------
+    function hitungGCS() {
+        const eye = parseFloat($("input[name='gcs_e']").val()) || 0;
+        const verbal = parseFloat($("input[name='gcs_v']").val()) || 0;
+        const motorik = parseFloat($("input[name='gcs_m']").val()) || 0;
+
+        const total = eye + verbal + motorik;
+
+        $("input[name='gcs_t']").val(total);
+    }
+
+    $(document).on(
+        'input',
+        "input[name='gcs_e'], input[name='gcs_v'], input[name='gcs_m']",
+        function () {
+            hitungGCS();
+        }
+    );
 
     // ADD ON ---------------------------------------------------------------------------------------------------------------------------------------------------
     function getRiwayatAlergi() {

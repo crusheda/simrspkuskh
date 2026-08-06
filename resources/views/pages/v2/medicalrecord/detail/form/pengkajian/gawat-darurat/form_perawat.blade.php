@@ -1205,7 +1205,7 @@
                             <label class="form-label">Usia Pasien</label>
                             <div class="input-group input-group-sm flex-grow-1">
                                 <select class="form-select form-select-sm" name="rj_epfra_usia" data-epfra-required data-epfra-score>
-                                    <option value="" hidden selected>Pilih</option>
+                                    <option value="">Pilih</option>
                                     @if ($list['usia'])
                                         @foreach ($list['usia'] as $item)
                                             <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
@@ -1218,7 +1218,7 @@
                             <div class="form-group">
                                 <label class="form-label">Status Mental</label>
                                 <select class="form-select form-select-sm" name="rj_epfra_1" data-epfra-required data-epfra-score>
-                                    <option value="0" data-score="0" hidden selected>Pilih</option>
+                                    <option value="" data-score="0" selected>Pilih</option>
                                     <option value="1" data-score="4">Sadar penuh dan orientasi waktu baik</option>
                                     <option value="2" data-score="13">Agitasi / Cemas</option>
                                     <option value="3" data-score="12">Sering bingung</option>
@@ -1230,7 +1230,7 @@
                             <div class="form-group">
                                 <label class="form-label">Eliminasi</label>
                                 <select class="form-select form-select-sm" name="rj_epfra_2" data-epfra-required data-epfra-score>
-                                    <option value="0" data-score="0" hidden selected>Pilih</option>
+                                    <option value="" data-score="0">Pilih</option>
                                     <option value="1" data-score="8">Mandiri untuk BAB dan BAK</option>
                                     <option value="2" data-score="12">Memakai Kateter / Ostomy</option>
                                     <option value="3" data-score="10">BAB dan BAK dengan bantuan</option>
@@ -1243,7 +1243,7 @@
                             <div class="form-group">
                                 <label class="form-label">Medikasi</label>
                                 <select class="form-select form-select-sm" name="rj_epfra_3" data-epfra-required data-epfra-score>
-                                    <option value="0" data-score="0" hidden selected>Pilih</option>
+                                    <option value="" data-score="0">Pilih</option>
                                     <option value="1" data-score="10">Tidak ada pengobatan yang diberikan</option>
                                     <option value="2" data-score="10">Obat-obatan jantung</option>
                                     <option value="3" data-score="8">Obat psikiatri termasuk benzodiazepin dan anti depresan</option>
@@ -1255,7 +1255,7 @@
                             <div class="form-group">
                                 <label class="form-label">Status Mental</label>
                                 <select class="form-select form-select-sm" name="rj_epfra_4" data-epfra-required data-epfra-score>
-                                    <option value="0" data-score="0" hidden selected>Pilih</option>
+                                    <option value="" data-score="0">Pilih</option>
                                     <option value="1" data-score="10">Bipolar / gangguan scizo affective</option>
                                     <option value="2" data-score="8">Penyalahgunaan zat terlarang dan alkohol</option>
                                     <option value="3" data-score="10">Gangguan depresi mayor</option>
@@ -1267,7 +1267,7 @@
                             <div class="form-group">
                                 <label class="form-label">Status Mental</label>
                                 <select class="form-select form-select-sm" name="rj_epfra_5" data-epfra-required data-epfra-score>
-                                    <option value="0" data-score="0" hidden selected>Pilih</option>
+                                    <option value="" data-score="0">Pilih</option>
                                     <option value="1" data-score="7">Ambulasi mandiri dan langkah stabil atau pasien imobil</option>
                                     <option value="2" data-score="8">Penggunaan alat bantu yang tepat (tongkat, walker, tripod, dll)</option>
                                     <option value="3" data-score="10">Vertigo / Hipotensi Ortostatik / Kelemahan</option>
@@ -1280,7 +1280,7 @@
                             <div class="form-group">
                                 <label class="form-label">Status Mental</label>
                                 <select class="form-select form-select-sm" name="rj_epfra_6" data-epfra-required data-epfra-score>
-                                    <option value="0" data-score="0" hidden selected>Pilih</option>
+                                    <option value="" data-score="0">Pilih</option>
                                     <option value="1" data-score="12">Hanya sedikit mendapatkan asupan makanan / minum dalam 24 jam terakhir</option>
                                     <option value="2" data-score="0">Nafsu makan baik</option>
                                 </select>
@@ -1290,7 +1290,7 @@
                             <div class="form-group">
                                 <label class="form-label">Status Mental</label>
                                 <select class="form-select form-select-sm" name="rj_epfra_7" data-epfra-required data-epfra-score>
-                                    <option value="0" data-score="0" hidden selected>Pilih</option>
+                                    <option value="" data-score="0">Pilih</option>
                                     <option value="1" data-score="8">Tidak ada gangguan tidur</option>
                                     <option value="2" data-score="12">Ada gangguan tidur yang dilaporkan keluarga pasien / staf</option>
                                 </select>
@@ -1300,7 +1300,7 @@
                             <div class="form-group">
                                 <label class="form-label">Status Mental</label>
                                 <select class="form-select form-select-sm" name="rj_epfra_8" data-epfra-required data-epfra-score>
-                                    <option value="0" data-score="0" hidden selected>Pilih</option>
+                                    <option value="" data-score="0">Pilih</option>
                                     <option value="1" data-score="8">Tidak ada riwayat jatuh</option>
                                     <option value="2" data-score="14">Ada riwayat jatuh dalam 3 bulan terakhir</option>
                                 </select>
@@ -2719,7 +2719,7 @@
         resetDatangCara($section);
         resetJenisKasus($section);
 
-        getDataPengkajianGdP();
+        // getDataPengkajianGdP();
         hitungSkorHumptyDumpty($section);
         hitungSkorMorse($section);
         hitungSkorEPFRA($section);
