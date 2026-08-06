@@ -6,14 +6,14 @@
                 <div class="form-group">
                     <label class="form-label fw-bold">Keadaan Umum</label>
                     <div class="input-group input-group-sm">
-                        <input type="text" class="form-control" name="ku">
+                        <input type="text" class="form-control" name="ku" id="ku">
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-3">
                 <div class="form-group">
                     <label class="form-label fw-bold">Tingkat Kesadaran</label>
-                    <select class="form-control" name="kesadaran">
+                    <select class="form-control" name="kesadaran" id="kesadaran">
                         <option value="">Pilih Tingkat Kesadaran</option>
                         @foreach ($list['kesadaran'] as $item)
                             <option value="{{ $item->ID }}">
@@ -51,16 +51,16 @@
                 <div class="form-group">
                     <label class="form-label fw-bold">Tekanan Darah</label>
                     <div class="input-group input-group-sm mb-2">
-                        <input type="text" class="form-control" name="td_up">
+                        <input type="text" class="form-control" name="td_up" id="td_up">
                         <div class="input-group-text"> / </div>
-                        <input type="text" class="form-control" name="td_down">
+                        <input type="text" class="form-control" name="td_down" id="td_down">
                         <div class="input-group-text"> mmHg </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label fw-bold">SpO2</label>
                     <div class="input-group input-group-sm mb-2">
-                        <input type="text" class="form-control" name="spo2">
+                        <input type="text" class="form-control" name="spo2" id="spo2">
                         <div class="input-group-text">%</div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                     <label class="form-label fw-bold">Nafas</label>
                     <div class="d-flex align-items-center gap-3 mb-2">
                         <div class="input-group input-group-sm flex-grow-1">
-                            <input type="text" class="form-control" name="nafas">
+                            <input type="text" class="form-control" name="nafas" id="nafas">
                             <span class="input-group-text">X/menit</span>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                 <div class="form-group">
                     <label class="form-label fw-bold">Suhu</label>
                     <div class="input-group input-group-sm mb-2">
-                        <input type="text" class="form-control" name="suhu">
+                        <input type="text" class="form-control" name="suhu" id="suhu">
                         <div class="input-group-text">°C</div>
                     </div>
                 </div>
@@ -87,7 +87,7 @@
                 <div class="form-group">
                     <label class="form-label fw-bold">Nadi</label>
                     <div class="input-group input-group-sm mb-2">
-                        <input type="text" class="form-control" name="nadi">
+                        <input type="text" class="form-control" name="nadi" id="nadi">
                         <div class="input-group-text">X/menit</div>
                     </div>
                 </div>
@@ -127,37 +127,37 @@
                             <label class="form-label fw-bold">Status Psikologi</label>
                             <div class="col">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="tak" id="pse_1">
+                                    <input class="form-check-input check-primary" type="checkbox" name="tak" id="tak">
                                     <label class="form-check-label"> Tidak ada kelainan </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="marah" id="pse_2">
+                                    <input class="form-check-input check-primary" type="checkbox" name="marah" id="marah">
                                     <label class="form-check-label"> Marah </label>
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="cemas" id="pse_3">
+                                    <input class="form-check-input check-primary" type="checkbox" name="cemas" id="cemas">
                                     <label class="form-check-label"> Cemas </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="takut" id="pse_4">
+                                    <input class="form-check-input check-primary" type="checkbox" name="takut" id="takut">
                                     <label class="form-check-label"> Takut </label>
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="sedih" id="pse_5">
+                                    <input class="form-check-input check-primary" type="checkbox" name="sedih" id="sedih">
                                     <label class="form-check-label"> Sedih </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="bundir" id="pse_6">
+                                    <input class="form-check-input check-primary" type="checkbox" name="bundir" id="bundir">
                                     <label class="form-check-label"> Kecenderungan bunuh diri </label>
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="psel" id="pse_7">
+                                    <input class="form-check-input check-primary" type="checkbox" name="psel" id="psel">
                                     <label class="form-check-label"> Lainnya </label>
                                 </div>
                                 <div class="form-check mb-2">
@@ -462,7 +462,7 @@
                 <div class="row mb-2 align-items-center">
                     <label class="col-md-2 col-form-label fw-bold">Pencetus</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="sn_pencetus" placeholder="[ Pencetus ]">
+                        <input type="text" class="form-control" name="sn_pencetus" id="sn_pencetus" placeholder="[ Pencetus ]">
                     </div>
                 </div>
 
@@ -470,7 +470,7 @@
                 <div class="row mb-2 align-items-center">
                     <label class="col-md-2 col-form-label fw-bold">Gambaran</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="sn_gambaran" placeholder="[ Gambaran ]">
+                        <input type="text" class="form-control" name="sn_gambaran" id="sn_gambaran" placeholder="[ Gambaran ]">
                     </div>
                 </div>
 
@@ -478,7 +478,7 @@
                 <div class="row mb-2 align-items-center">
                     <label class="col-md-2 col-form-label fw-bold">Durasi</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="sn_durasi" placeholder="[ Durasi ]">
+                        <input type="text" class="form-control" name="sn_durasi" id="sn_durasi" placeholder="[ Durasi ]">
                     </div>
                 </div>
 
@@ -486,7 +486,7 @@
                 <div class="row align-items-center">
                     <label class="col-md-2 col-form-label fw-bold">Lokasi</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" name="sn_lokasi" placeholder="[ Lokasi ]">
+                        <input type="text" class="form-control" name="sn_lokasi" id="sn_lokasi" placeholder="[ Lokasi ]">
                     </div>
                 </div>
 
@@ -1162,8 +1162,186 @@
                 $("input[name='bb_ubah'][value='0']").prop("checked", true);
             }
         }
+        loadDataPengkajianRJDp();
 
     });
+
+    function loadDataPengkajianRJDp() {
+        const kunjungan = $('#rjd_perawat').data('kunjungan');
+
+        $.ajax({
+            url: `/api/v2/emr/form/pengkajian/rjd/pr/get/${kunjungan}`,
+            type: 'GET',
+            success:function(res){
+                isiFormPengkajianRJDp(res);
+            }
+        });
+    }
+
+    function isiFormPengkajianRJDp(data){
+
+        // ======================================================
+        // TANDA VITAL
+        // ======================================================
+
+        $('#ku').val(data.ku);
+        $('#kesadaran').val(data.kesadaran);
+        $('#eye').val(data.eye);
+        $('#motorik').val(data.motorik);
+        $('#verbal').val(data.verbal);
+        $('#gcs').val(data.gcs);
+
+        $('#td_up').val(data.td_up);
+        $('#td_down').val(data.td_down);
+        $('#spo2').val(data.spo2);
+        $('#nafas').val(data.nafas);
+        $('#suhu').val(data.suhu);
+        $('#nadi').val(data.nadi);
+        $('#abn').val(data.abn);
+
+
+        // ======================================================
+        // KONDISI SOSIAL
+        // ======================================================
+
+        // Status Psikologi (Checkbox)
+        $('#tak').prop('checked', data.tak == 1);
+        $('#marah').prop('checked', data.marah == 1);
+        $('#cemas').prop('checked', data.cemas == 1);
+        $('#takut').prop('checked', data.takut == 1);
+        $('#sedih').prop('checked', data.sedih == 1);
+        $('#bundir').prop('checked', data.bundir == 1);
+
+        $('#pse_lain').val(data.pse_lain).slideDown();
+
+
+        // Status Mental
+        $('input[name="sm"][value="' + data.sm + '"]').prop('checked', true);
+
+        $('#perilaku').val(data.perilaku);
+        $('#kekerasan').val(data.kekerasan);
+
+
+        // Hubungan Sosial
+        $('input[name="hub"][value="' + data.hub + '"]').prop('checked', true);
+
+        $('input[name="tinggal"][value="' + data.tinggal + '"]').prop('checked', true);
+
+        $('#tinggal_lain').val(data.tinggal_lain);
+
+
+        // Spiritual
+        $('input[name="kbt"][value="' + data.kbt + '"]').prop('checked', true);
+
+        $('input[name="nk"][value="' + data.nk + '"]').prop('checked', true);
+
+        $('#nk_lain').val(data.nk_lain);
+
+        $('#pk').val(data.pk);
+
+
+        // Ekonomi
+        $('#hasil').val(data.hasil);
+
+        $('input[name="sn_nyeri"][value="' + data.sn_nyeri + '"]')
+            .prop('checked', true);
+
+        $('input[name="sn_onset"][value="' + data.sn_onset + '"]')
+            .prop('checked', true);
+
+        $('#sn_skala').val(data.sn_skala);
+        $('input[name="sn_metode"][value="' + data.sn_metode + '"]')
+            .prop('checked', true);
+        $('#sn_pencetus').val(data.sn_pencetus);
+        $('#sn_gambaran').val(data.sn_gambaran);
+        $('#sn_durasi').val(data.sn_durasi);
+        $('#sn_lokasi').val(data.sn_lokasi);
+
+        $('input[name="cara_berjalan"][value="' + data.cara_berjalan + '"]')
+            .prop('checked', true);
+        $('input[name="faktor_risiko"][value="' + data.faktor_risiko + '"]')
+            .prop('checked', true);
+        $('input[name="kon_obat"][value="' + data.kon_obat + '"]')
+            .prop('checked', true);
+
+        $('input[name="bb_turun"][value="' + data.bb_turun + '"]')
+            .prop('checked', true).trigger("change");
+        $('input[name="bb_ubah"][value="' + data.bb_ubah + '"]')
+            .prop('checked', true);
+        $('input[name="nafsu_makan"][value="' + data.nafsu_makan + '"]')
+            .prop('checked', true);
+
+        $('#kondisi_khusus').val(data.kondisi_khusus);
+
+        $('#skor_gizi').val(data.skor_gizi);
+        $('#status_skor').val(data.status_skor);
+
+        //EDUKASI PASIEN KELUARGA
+        // Edukasi awal
+        $("input[name='edu_1'][value='" + data.edu_1 + "']")
+            .prop('checked', true);
+
+        $("input[name='edu_2'][value='" + data.edu_2 + "']")
+            .prop('checked', true);
+
+        $("input[name='edu_3'][value='" + data.edu_3 + "']")
+            .prop('checked', true);
+
+
+        // Kebutuhan Edukasi
+        $('#kb_edu_1').prop('checked', Number(data.edukasi_diagnosa) === 1);
+        $('#kb_edu_2').prop('checked', Number(data.edukasi_rehab_medik) === 1);
+        $('#kb_edu_3').prop('checked', Number(data.edukasi_hkp) === 1);
+        $('#kb_edu_4').prop('checked', Number(data.edukasi_informed_consent) === 1);
+        $('#kb_edu_5').prop('checked', Number(data.edukasi_cuci_tangan) === 1);
+        $('#kb_edu_6').prop('checked', Number(data.edukasi_perencanaan_pulang) === 1);
+        $('#kb_edu_7').prop('checked', Number(data.edukasi_obat) === 1);
+        $('#kb_edu_8').prop('checked', Number(data.edukasi_nyeri) === 1);
+        $('#kb_edu_9').prop('checked', Number(data.edukasi_hak_partisipasi) === 1);
+        $('#kb_edu_10').prop('checked', Number(data.edukasi_penundaan) === 1);
+        $('#kb_edu_11').prop('checked', Number(data.edukasi_bahaya_merokok) === 1);
+        $('#kb_edu_13').prop('checked', Number(data.edukasi_nutrisi) === 1);
+        $('#kb_edu_14').prop('checked', Number(data.edukasi_penggunaan_alat) === 1);
+        $('#kb_edu_15').prop('checked', Number(data.edukasi_prosedure) === 1);
+        $('#kb_edu_16').prop('checked', Number(data.edukasi_keterlambatan) === 1);
+        $('#kb_edu_17').prop('checked', Number(data.edukasi_rujukan) === 1);
+        // Lainnya
+        $('#kb_edu_12').prop('checked', Number(data.status_lain) === 1);
+        $('#kb_edu_lain').val(data.kb_edu_lain);
+
+        //MASALAH KEPERAWATAN
+        $('#diag_1').prop('checked', data.diag_1 == 1);
+        $('#diag_2').prop('checked', data.diag_2 == 1);
+        $('#diag_3').prop('checked', data.diag_3 == 1);
+        $('#diag_4').prop('checked', data.diag_4 == 1);
+        $('#diag_5').prop('checked', data.diag_5 == 1);
+        $('#diag_6').prop('checked', data.diag_6 == 1);
+        $('#diag_7').prop('checked', data.diag_7 == 1);
+        $('#diag_8').prop('checked', data.diag_8 == 1);
+
+        $('#diag_9').prop('checked', data.diag_9 == 1);
+        $('#diag_10').prop('checked', data.diag_10 == 1);
+        $('#diag_11').prop('checked', data.diag_11 == 1);
+        $('#diag_12').prop('checked', data.diag_12 == 1);
+        $('#diag_13').prop('checked', data.diag_13 == 1);
+
+
+        // Tindakan
+        $('#tin_1').prop('checked', data.tin_1 == 1);
+        $('#tin_2').prop('checked', data.tin_2 == 1);
+        $('#tin_3').prop('checked', data.tin_3 == 1);
+        $('#tin_4').prop('checked', data.tin_4 == 1);
+        $('#tin_5').prop('checked', data.tin_5 == 1);
+
+        $('#tin_6').prop('checked', data.tin_6 == 1).trigger("change");;
+        $('#tin_7').prop('checked', data.tin_7 == 1).trigger("change");;
+
+
+        // Detail terapi
+        $('#terapi_oral').val(data.terapi_oral);
+        $('#terapi_iv').val(data.terapi_iv);
+
+    }
 
     function saveDataPengkajianRJDp(btn) {
         const $button = $(btn);
@@ -1228,7 +1406,7 @@
 
         total += parseInt($("input[name='cara_berjalan']:checked").val()) || 0;
         total += parseInt($("input[name='faktor_risiko']:checked").val()) || 0;
-        total += parseInt($("input[name='obat']:checked").val()) || 0;
+        total += parseInt($("input[name='kon_obat']:checked").val()) || 0;
 
         $("#total_skor").text(total);
 
