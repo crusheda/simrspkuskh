@@ -32,6 +32,20 @@ class PengkajianGawatDaruratController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
+        $usia = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',192)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $jk = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',193)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
         $cara_keluar = DB::table('master.referensi')
                 ->select('ID','DESKRIPSI')
                 ->where('JENIS',45)
@@ -64,6 +78,8 @@ class PengkajianGawatDaruratController extends Controller
             'tingkat_kesadaran' => $tingkat_kesadaran,
             'riwayat_alergi' => $riw_alergi,
             'cara_keluar' => $cara_keluar,
+            'usia' => $usia,
+            'jk' => $jk,
             'keadaan_keluar' => $keadaan_keluar,
             'frekuensi_obat' => $frekuensi_obat,
             'rute_obat' => $rute_obat

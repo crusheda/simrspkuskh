@@ -38,6 +38,17 @@
                 .not(this)
                 .prop('checked', false);
         });
+        $('.single-checkbox-bos').on('change', function () {
+            // Jika checkbox di-uncheck, langsung kembalikan ke checked
+            if (!this.checked) {
+                this.checked = true;
+                return;
+            }
+            // Uncheck pilihan lain dengan name yang sama
+            $('input.single-checkbox-bos[name="' + this.name + '"]')
+                .not(this)
+                .prop('checked', false);
+        });
     })
 
     // update btn collapse
