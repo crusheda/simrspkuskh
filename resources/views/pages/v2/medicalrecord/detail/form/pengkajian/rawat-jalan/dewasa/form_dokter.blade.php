@@ -433,11 +433,11 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Indikasi</label>
-                                    <textarea class="form-control" name="pri_indikasi" rows="3"></textarea>
+                                    <textarea class="form-control" name="pri_indikasi" id="pri_indikasi" rows="3"></textarea>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Keterangan</label>
-                                    <textarea class="form-control" name="pri_ket" rows="3"></textarea>
+                                    <textarea class="form-control" name="pri_ket" id="pri_ket" rows="3"></textarea>
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label fw-bold">DPJP</label>
@@ -616,12 +616,69 @@
                 }
             }
         });
+        loadDataPengkajianRJDd();
         getPenggunaanObat();
         getRiwayatAlergi();
         getRiwayatLab();
         getRiwayatRad();
         getDiagnosis();
     });
+
+    function loadDataPengkajianRJDd() {
+        const kunjungan = $('#rjd_dokter').data('kunjungan');
+
+        $.ajax({
+            url: `/api/v2/emr/form/pengkajian/rjd/dr/get/${kunjungan}`,
+            type: 'GET',
+            success:function(res){
+                isiFormPengkajianRJDd(res);
+            }
+        });
+    }
+
+    function isiFormPengkajianRJDd(data){
+
+        $("input[name=anam][value='"+data.anam+"']")
+            .prop("checked",true)
+            .trigger("change");
+
+        $("#anamnesis_oleh").val(data.anamnesis_oleh);
+
+        $("#keluhan_utama").val(data.keluhan_utama);
+
+        $("#rps").val(data.rps);
+
+        $("#rpd").val(data.rpd);
+
+        $("#pfisik").val(data.pfisik);
+
+        $("#terapi_tind").val(data.terapi_tind);
+
+        $("#tu").val(data.tu);
+
+        $('#me_1').prop('checked', data.me_1 == 1);
+        $('#me_2').prop('checked', data.me_2 == 1);
+        $('#me_3').prop('checked', data.me_3 == 1);
+        $('#me_4').prop('checked', data.me_4 == 1);
+        $('#me_5').prop('checked', data.me_5 == 1);
+
+        $('#sie_1').prop('checked', data.sie_1 == 1);
+        $('#sie_2').prop('checked', data.sie_2 == 1);
+
+        $('#eval_1').prop('checked', data.eval_1 == 1);
+        $('#eval_2').prop('checked', data.eval_2 == 1);
+
+        $('input[name="tl"][value="' + data.tl + '"]').prop('checked', true).trigger('change');
+        $('input[name="rujuk"][value="' + data.rujuk + '"]').prop('checked', true).trigger('change');
+        $('#rujuk_lainnya').val(data.rujuk_lainnya);
+
+        $('#pri_ruang').val(data.pri_ruang);
+        $('#pri_perawatan').val(data.pri_perawatan);
+        $('#pri_indikasi').val(data.pri_indikasi);
+        $('#pri_ket').val(data.pri_ket);
+        $('#pri_dpjp').val(data.pri_dpjp);
+
+    }
 
     function saveDataPengkajianRJDd(btn) {
         const $button = $(btn);
