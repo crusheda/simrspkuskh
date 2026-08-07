@@ -2164,11 +2164,11 @@ class ApiMonitoringController extends Controller
                     ->leftJoin('pendaftaran.kunjungan AS k', 'k.NOPEN', '=', 'pd.NOMOR')
                     ->leftJoin('layanan.tindakan_medis AS tm','tm.KUNJUNGAN','=','k.NOMOR')
                     ->select('k.NOMOR AS NOMOR', 'tm.ID AS TINDAKAN')
-                    ->where('pd.NOMOR', $getSEP->NOPEN)
+                    ->whereIn('pd.NOMOR', $listNopen)
                     ->where('k.RUANGAN', '=', '102050101')
                     ->where('tm.STATUS',1)
                     ->get();
-
+                        // dd($show);
             if ($show->isEmpty()) {
                 return response()->json([
                     'message' => 'Tidak ada tindakan Radiologi yang aktif'

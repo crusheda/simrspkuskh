@@ -346,7 +346,9 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="Arial" size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{DIAGNOSA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DIAGNOSA} == null || $F{DIAGNOSA}.toString().trim().isEmpty()
+    ? "-"
+    : $F{DIAGNOSA}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="112" y="147" width="8" height="15" uuid="242aea79-75a4-42e1-8a15-c5e61b53e9b4"/>
@@ -360,7 +362,9 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="Arial" size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{DOKTERASAL}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{DOKTERASAL} == null || $F{DOKTERASAL}.toString().trim().isEmpty()
+    ? "-"
+    : $F{DOKTERASAL}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="12" y="147" width="100" height="15" uuid="2c14e36b-f5ee-4ea6-9ce4-9e6a558512fe"/>
