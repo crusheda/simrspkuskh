@@ -224,14 +224,14 @@ class PengkajianRawatJalanAnakController extends Controller
                         'JENIS_RUANG_PERAWATAN' => $request->pri_ruang,
                         'JENIS_PERAWATAN'       => $request->pri_perawatan,
                         'INDIKASI'              => $request->pri_indikasi,
-                        'DESKRIPSI'            => $request->pri_ket,
+                        'DESKRIPSI'             => $request->pri_ket,
                         'DOKTER'                => $request->pri_dpjp,
                         'OLEH'                  => auth()->id(),
                         'STATUS'                => 1,
                         'TANGGAL'               => now()
                     ]
                 );
-            }
+            };
 
             DB::commit();
 
@@ -492,24 +492,76 @@ class PengkajianRawatJalanAnakController extends Controller
                 ],
                 [
                     'TAMPAK_KURUS' => $request->sga1 ?? 0,
-
                     'PENURUNAN_BERAT_BADAN' => $request->sga2 ?? 0,
-
                     'DIARE_INTAKE_MAKANAN' => $request->sga3 ?? 0,
-
                     'RESIKO_MALNUTRISI' => $request->sga4 ?? 0,
-
                     'SKOR' => $request->skor_sga ?? 0,
-
                     'STATUS_SKOR' => $request->status_sga ?? 0,
-
                     'OLEH' => auth()->id(),
-
                     'STATUS' => 1,
-
                     'TANGGAL' => now()
                 ]
             );
+
+            DB::table('medicalrecord.riwayat_perinatal')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'LAMA_HAMIL'      => $request->rp_lama_hamil,
+                    'SATUAN'          => $request->rp_satuan,
+                    'KOMPLIKASI'      => $request->rp_komplikasi,
+                    'KOMPLIKASI_KET'  => $request->rp_komplikasi_des,
+                    'PERSALINAN'      => $request->rp_persalinan,
+                    'PENYULIT'        => $request->rp_penyulit,
+                    'PENYULIT_KET'    => $request->rp_penyulit_des,
+                    'OLEH'            => auth()->id(),
+                    'STATUS'          => 1,
+                    'TANGGAL'         => now(),
+                ]
+            );
+
+            // ==========================
+            // Riwayat Tumbuh Kembang
+            // ==========================
+            DB::table('medicalrecord.riwayat_tumbuh_kembang')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'LK_LAHIR'      => $request->lk_lahir,
+                    'BB_LAHIR'      => $request->bb_lahir,
+                    'TB_LAHIR'      => $request->tb_lahir,
+
+                    'ASI_SAMPAI'    => $request->asi_sampai,
+                    'ASI_SATUAN'    => $request->asi_satuan,
+
+                    'SUFOR_MULAI'   => $request->sufor_mulai,
+                    'SUFOR_SATUAN'  => $request->sufor_satuan,
+
+                    'MPASI_MULAI'   => $request->mpasi_mulai,
+                    'MPASI_SATUAN'  => $request->mpasi_satuan,
+
+                    'TENGKURAP'     => $request->tengkurap,
+                    'DUDUK'         => $request->duduk,
+                    'MERANGKAK'     => $request->merangkak,
+                    'BERDIRI'       => $request->berdiri,
+                    'BERJALAN'      => $request->berjalan,
+
+                    'NEONATUS'      => $request->neonatus,
+                    'NEONATUS_KET'  => $request->neonatus_ket,
+
+                    'KELUHAN'       => $request->keluhan_tumbuh_kembang,
+
+                    'IMUNISASI'     => $request->imunisasi,
+                    'IMUNISASI_LAIN'=> $request->imunisasi_lain,
+
+                    'OLEH'          => auth()->id(),
+                    'STATUS'        => 1,
+                    'TANGGAL'       => now()
+                ]
+            );
+
 
             DB::commit();
 
@@ -715,6 +767,101 @@ class PengkajianRawatJalanAnakController extends Controller
 
         $data['skor_sga'] = $strong->SKOR ?? 0;
         $data['status_sga'] = $strong->STATUS_SKOR ?? 0;
+
+        // ==========================
+        // Riwayat Perinatal
+        // ==========================
+        $perinatal = DB::table('medicalrecord.riwayat_perinatal')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first();
+
+        $data['rp_lama_hamil'] = '';
+        $data['rp_satuan'] = 'MINGGU';
+        $data['rp_komplikasi'] = 0;
+        $data['rp_komplikasi_ket'] = '';
+        $data['rp_persalinan'] = '';
+        $data['rp_penyulit'] = 0;
+        $data['rp_penyulit_ket'] = '';
+
+        if ($perinatal) {
+
+            $data['rp_lama_hamil'] = $perinatal->LAMA_HAMIL;
+            $data['rp_satuan'] = $perinatal->SATUAN;
+
+            $data['rp_komplikasi'] = $perinatal->KOMPLIKASI;
+            $data['rp_komplikasi_ket'] = $perinatal->KOMPLIKASI_KET;
+
+            $data['rp_persalinan'] = $perinatal->PERSALINAN;
+
+            $data['rp_penyulit'] = $perinatal->PENYULIT;
+            $data['rp_penyulit_ket'] = $perinatal->PENYULIT_KET;
+        }
+
+        // ==========================
+        // Riwayat Tumbuh Kembang
+        // ==========================
+        $tumbuh = DB::table('medicalrecord.riwayat_tumbuh_kembang')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first();
+
+        $data['lk_lahir'] = '';
+        $data['bb_lahir'] = '';
+        $data['tb_lahir'] = '';
+
+        $data['asi_sampai'] = '';
+        $data['asi_satuan'] = 'BULAN';
+
+        $data['sufor_mulai'] = '';
+        $data['sufor_satuan'] = 'BULAN';
+
+        $data['mpasi_mulai'] = '';
+        $data['mpasi_satuan'] = 'BULAN';
+
+        $data['tengkurap'] = '';
+        $data['duduk'] = '';
+        $data['merangkak'] = '';
+        $data['berdiri'] = '';
+        $data['berjalan'] = '';
+
+        $data['neonatus'] = 0;
+        $data['neonatus_ket'] = '';
+
+        $data['keluhan_tumbuh_kembang'] = '';
+
+        $data['imunisasi'] = '';
+        $data['imunisasi_lain'] = '';
+
+        if ($tumbuh) {
+
+            $data['lk_lahir'] = $tumbuh->LK_LAHIR;
+            $data['bb_lahir'] = $tumbuh->BB_LAHIR;
+            $data['tb_lahir'] = $tumbuh->TB_LAHIR;
+
+            $data['asi_sampai'] = $tumbuh->ASI_SAMPAI;
+            $data['asi_satuan'] = $tumbuh->ASI_SATUAN;
+
+            $data['sufor_mulai'] = $tumbuh->SUFOR_MULAI;
+            $data['sufor_satuan'] = $tumbuh->SUFOR_SATUAN;
+
+            $data['mpasi_mulai'] = $tumbuh->MPASI_MULAI;
+            $data['mpasi_satuan'] = $tumbuh->MPASI_SATUAN;
+
+            $data['tengkurap'] = $tumbuh->TENGKURAP;
+            $data['duduk'] = $tumbuh->DUDUK;
+            $data['merangkak'] = $tumbuh->MERANGKAK;
+            $data['berdiri'] = $tumbuh->BERDIRI;
+            $data['berjalan'] = $tumbuh->BERJALAN;
+
+            $data['neonatus'] = $tumbuh->NEONATUS;
+            $data['neonatus_ket'] = $tumbuh->NEONATUS_KET;
+
+            $data['keluhan_tumbuh_kembang'] = $tumbuh->KELUHAN;
+
+            $data['imunisasi'] = $tumbuh->IMUNISASI;
+            $data['imunisasi_lain'] = $tumbuh->IMUNISASI_LAIN;
+        }
 
         return response()->json($data);
     }
