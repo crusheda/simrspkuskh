@@ -1065,824 +1065,883 @@ class PengkajianGawatDaruratController extends Controller
         }
 
     // FORM PERAWAT
-    function getFormPerawatGd()
-    {
-        $triage = DB::table('medicalrecord.triage')
-                    ->select(
-                        'KRITERIA',
-                        'RISIKO_PENULARAN_INFEKSI'
-                    )
+        public function getFormPerawatGd($KUNJUNGAN)
+        {
+            // Helper untuk mengambil 1 data berdasarkan kunjungan
+            $getData = function ($table, $columns = ['*']) use ($KUNJUNGAN) {
+                return DB::table($table)
+                    ->select($columns)
                     ->where('KUNJUNGAN', $KUNJUNGAN)
-                    ->whereIn('STATUS', [1,2])
+                    ->whereIn('STATUS', [1, 2])
+                    ->orderByDesc('ID')
                     ->first();
-
-        $anamnesis_diperoleh = DB::table('medicalrecord.anamnesis_diperoleh')
-                                ->where('KUNJUNGAN', $KUNJUNGAN)
-                                ->first();
-
-        $data = [
-            'triage' => $triage,
-            'anamnesis_diperoleh' => $anamnesis_diperoleh
-        ];
-
-        return response()->json([
-            'status' => true,
-            'data' => $data,
-        ]);
-    }
-
-    public function simpanFormPerawatGd(Request $request)
-    {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'NOKUNJ' => 'required',
-            ],
-            [
-                'NOKUNJ.required' => 'Kunjungan wajib diisi.',
-            ]
-        );
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status'  => false,
-                'message' => $validator->errors()->first()
-            ], 422);
-        }
-
-        DB::beginTransaction();
-
-        try {
+            };
 
             // ==========================================
-            // DATA KUNJUNGAN
+            // TRIAGE
             // ==========================================
-            $getDataKunjungan = DB::table('pendaftaran.kunjungan as pk')
-                ->join(
-                    'pendaftaran.pendaftaran as pp',
-                    'pp.NOMOR',
-                    '=',
-                    'pk.NOPEN'
-                )
-                ->select(
-                    'pp.NORM',
-                    'pp.NOMOR as NOPEN'
-                )
-                ->where('pk.NOMOR', $request->NOKUNJ)
-                ->first();
-
-            if (!$getDataKunjungan) {
-                DB::rollBack();
-
-                return response()->json([
-                    'status'  => false,
-                    'message' => 'Data kunjungan tidak ditemukan.'
-                ], 404);
-            }
-
-            // ==========================================
-            // CARA KEDATANGAN
-            // ==========================================
-            $jenisKedatangan = (int) $request->input('dd_ck', 0);
-
-            $kedatangan = [
-                'JENIS'             => $jenisKedatangan,
-                'TANGGAL'           => $request->input('tgl_ck'),
-                'PENGANTAR'         => '',
-                'KEPOLISIAN'        => '',
-                'ASAL_RUJUKAN'      => '',
-                'ALAT_TRANSPORTASI' => $request->input('tr_ck'),
-            ];
-
-            // Datang sendiri
-            if ($jenisKedatangan === 1) {
-
-                $kedatangan['PENGANTAR'] = $request->input('dd_ck_p');
-
-            }
-
-            // Rujukan dari
-            elseif ($jenisKedatangan === 2) {
-
-                $kedatangan['ASAL_RUJUKAN'] = $request->input('dd_ck_k');
-
-            }
-
-            // Dikirim oleh polisi
-            elseif ($jenisKedatangan === 3) {
-
-                $kedatangan['VISUM'] = $request->boolean('dd_ck_a_v') ? 1 : 0;
-                $kedatangan['KEPOLISIAN'] = $request->input('dd_ck_a');
-
-            }
-
-
-            // ==========================================
-            // JENIS KASUS
-            // ==========================================
-            $jenisKasus = $request->input('jks');
-
-            $kasus = [
-                'JENIS'            => $jenisKasus !== null && $jenisKasus !== ''
-                                        ? (int) $jenisKasus
-                                        : null,
-
-                'LAKA_LANTAS'      => 0,
-                'KECELAKAAN_KERJA' => 0,
-                'UPPA'             => 0,
-                'DIMANA'           => '',
-            ];
-
-            // Trauma
-            if ((int) $jenisKasus === 1) {
-
-                $kasus['LAKA_LANTAS'] =
-                    $request->boolean('jks_kll') ? 1 : 0;
-
-                $kasus['KECELAKAAN_KERJA'] =
-                    $request->boolean('jks_kk') ? 1 : 0;
-
-                $kasus['UPPA'] =
-                    $request->boolean('jks_uppa') ? 1 : 0;
-
-            }
-
-            // Non Trauma
-            elseif ((int) $jenisKasus === 0) {
-
-                $kasus['DIMANA'] = $request->input('jks_end_dm', '');
-
-            }
-
-            // ==========================================
-            // ANAMNESE
-            // ==========================================
-            $anamnese = [
-                'KELUHAN_UTAMA' => $request->input('anm_ku', ''),
-                'TERPIMPIN'     => $request->input('anm_tp', ''),
-            ];
-
-
-            // ==========================================
-            // TANDA VITAL
-            // ==========================================
-            $tandaVital = [
-                'SUHU'          => $request->input('tv_sh', ''),
-                'SISTOLE'       => $request->input('tv_up', ''),
-                'DIASTOLE'      => $request->input('tv_down', ''),
-                'FREK_NADI'     => $request->input('tv_nadi', ''),
-                'FREK_NAFAS'    => $request->input('tv_fr', ''),
-                'METODE_UKUR'   => $request->input('tv_mu', ''),
-                'SKALA_NYERI'   => $request->input('tv_sn', ''),
-            ];
-
-
-            // ==========================================
-            // OBGYN
-            // ==========================================
-            $obgyn = [
-                'USIA_GESTASI'       => $request->input('ko_ug', ''),
-                'KONTRAKSI_UTERUS'   => $request->input('ko_ku', ''),
-                'DETAK_JANTUNG'      => $request->input('ko_dj', ''),
-                'DILATASI_SERVIKS'   => $request->input('ko_ds', ''),
-            ];
-
-
-            // ==========================================
-            // KEBUTUHAN KHUSUS
-            // ==========================================
-            $kebutuhanKhusus = [
-                'AIRBONE'      => $request->input('kk_a', ''),
-                'DEKONTAMINAN' => $request->input('kk_d', ''),
-            ];
-
-            // ==========================================
-            // TRIAGE - CARA KEDATANGAN & JENIS KASUS
-            // ==========================================
-            DB::table('medicalrecord.triage')->updateOrInsert(
+            $triage = $getData(
+                'medicalrecord.triage',
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    // ==============================
-                    // CARA KEDATANGAN
-                    // ==============================
-                    'KEDATANGAN' => json_encode(
-                        $kedatangan,
-                        JSON_UNESCAPED_UNICODE
-                    ),
-
-                    // ==============================
-                    // JENIS KASUS
-                    // ==============================
-                    'KASUS' => json_encode(
-                        $kasus,
-                        JSON_UNESCAPED_UNICODE
-                    ),
-
-                    // ==============================
-                    // ANAMNESE
-                    // ==============================
-                    'ANAMNESE' => json_encode(
-                        $anamnese,
-                        JSON_UNESCAPED_UNICODE
-                    ),
-
-                    // ==============================
-                    // TANDA VITAL
-                    // ==============================
-                    'TANDA_VITAL' => json_encode(
-                        $tandaVital,
-                        JSON_UNESCAPED_UNICODE
-                    ),
-
-                    // ==============================
-                    // OBGYN
-                    // ==============================
-                    'OBGYN' => json_encode(
-                        $obgyn,
-                        JSON_UNESCAPED_UNICODE
-                    ),
-
-                    // ==============================
-                    // KEBUTUHAN KHUSUS
-                    // ==============================
-                    'KEBUTUHAN_KHUSUS' => json_encode(
-                        $kebutuhanKhusus,
-                        JSON_UNESCAPED_UNICODE
-                    ),
-
-                    'OLEH'   => auth()->id(),
-                    'STATUS' => 1,
-                    'TANGGAL' => now(),
+                    'KUNJUNGAN',
+                    'KEDATANGAN',
+                    'KASUS',
+                    'ANAMNESE',
+                    'TANDA_VITAL',
+                    'OBGYN',
+                    'KEBUTUHAN_KHUSUS',
+                    'KRITERIA',
+                    'RISIKO_PENULARAN_INFEKSI',
                 ]
+            );
+
+            // Decode JSON TRIAGE
+            if ($triage) {
+                $triage->KEDATANGAN = $triage->KEDATANGAN
+                    ? json_decode($triage->KEDATANGAN)
+                    : null;
+
+                $triage->KASUS = $triage->KASUS
+                    ? json_decode($triage->KASUS)
+                    : null;
+
+                $triage->ANAMNESE = $triage->ANAMNESE
+                    ? json_decode($triage->ANAMNESE)
+                    : null;
+
+                $triage->TANDA_VITAL = $triage->TANDA_VITAL
+                    ? json_decode($triage->TANDA_VITAL)
+                    : null;
+
+                $triage->OBGYN = $triage->OBGYN
+                    ? json_decode($triage->OBGYN)
+                    : null;
+
+                $triage->KEBUTUHAN_KHUSUS = $triage->KEBUTUHAN_KHUSUS
+                    ? json_decode($triage->KEBUTUHAN_KHUSUS)
+                    : null;
+            }
+
+            // ==========================================
+            // ANAMNESIS DIPEROLEH
+            // ==========================================
+            $anamnesisDiperoleh = $getData(
+                'medicalrecord.anamnesis_diperoleh'
             );
 
             // ==========================================
             // KONDISI SOSIAL
             // ==========================================
-            DB::table('medicalrecord.kondisi_sosial')->updateOrInsert(
+            $kondisiSosial = $getData(
+                'medicalrecord.kondisi_sosial',
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    // Status Psikologi
-                    'TIDAK_ADA_KELAINAN' => $request->input('tak') ? 1 : 0,
-                    'MARAH'              => $request->input('marah') ? 1 : 0,
-                    'CEMAS'              => $request->input('cemas') ? 1 : 0,
-                    'TAKUT'              => $request->input('takut') ? 1 : 0,
-                    'SEDIH'              => $request->input('sedih') ? 1 : 0,
-                    'BUNUH_DIRI'         => $request->input('bundir') ? 1 : 0,
-                    'LAINNYA'            => $request->pse_lain,
+                    'TIDAK_ADA_KELAINAN',
+                    'MARAH',
+                    'CEMAS',
+                    'TAKUT',
+                    'SEDIH',
+                    'BUNUH_DIRI',
+                    'LAINNYA',
 
-                    // Status Mental
-                    'STATUS_MENTAL'                         => $request->sm ?? 0,
-                    'MASALAH_PERILAKU'                      => $request->sm2_lain,
-                    'PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA' => $request->sm3_lain,
+                    'STATUS_MENTAL',
+                    'MASALAH_PERILAKU',
+                    'PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA',
 
-                    // Hubungan Sosial
-                    'HUBUNGAN_PASIEN_DENGAN_KELUARGA' => $request->hub ?? 0,
-                    'TEMPAT_TINGGAL'                  => $request->tinggal ?? 0,
-                    'TEMPAT_TINGGAL_LAINNYA'          => $request->tinggal_lain,
+                    'HUBUNGAN_PASIEN_DENGAN_KELUARGA',
+                    'TEMPAT_TINGGAL',
+                    'TEMPAT_TINGGAL_LAINNYA',
 
-                    // Spiritual
-                    'KEBIASAAN_BERIBADAH_TERATUR' => $request->kbt ?? 0,
-                    'NILAI_KEPERCAYAAN'           => $request->nk ?? 0,
-                    'NILAI_KEPERCAYAAN_DESKRIPSI' => $request->nk_lain,
-                    'PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA' => $request->pk,
+                    'KEBIASAAN_BERIBADAH_TERATUR',
+                    'NILAI_KEPERCAYAAN',
+                    'NILAI_KEPERCAYAAN_DESKRIPSI',
+                    'PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA',
 
-                    // Ekonomi
-                    'PENGHASILAN_PERBULAN' => $request->hasil ?? 0,
-
-                    // Audit
-                    'OLEH'    => auth()->id(),
-                    'STATUS'  => 1,
-                    'TANGGAL' => now(),
+                    'PENGHASILAN_PERBULAN',
                 ]
             );
 
             // ==========================================
-            // PENILAIAN / SKRINING NYERI
+            // PENILAIAN NYERI
             // ==========================================
-            DB::table('medicalrecord.penilaian_nyeri')->updateOrInsert(
+            $penilaianNyeri = $getData(
+                'medicalrecord.penilaian_nyeri',
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'NYERI'     => $request->sn_nyeri ?? 0,
-                    'ONSET'     => $request->sn_onset ?? null,
-                    'SKALA'     => $request->sn_skala,
-                    'METODE'    => $request->sn_metode,
-                    'PENCETUS'  => $request->sn_pencetus,
-                    'GAMBARAN'  => $request->sn_gambaran,
-                    'DURASI'    => $request->sn_durasi,
-                    'LOKASI'    => $request->sn_lokasi,
-
-                    'OLEH'      => auth()->id(),
-                    'STATUS'    => 1,
-                    'TANGGAL'   => now(),
+                    'NYERI',
+                    'ONSET',
+                    'SKALA',
+                    'METODE',
+                    'PENCETUS',
+                    'GAMBARAN',
+                    'DURASI',
+                    'LOKASI',
                 ]
             );
 
             // ==========================================
-            // SKRINING RISIKO JATUH - HUMPTY DUMPTY
+            // HUMPTY DUMPTY
             // ==========================================
-            DB::table('medicalrecord.penilaian_skala_humpty_dumpty')->updateOrInsert(
+            $humptyDumpty = $getData(
+                'medicalrecord.penilaian_skala_humpty_dumpty',
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'UMUR'                => $request->rj_usia,
-                    'JENIS_KELAMIN'       => $request->rj_jk,
-                    'DIAGNOSA'            => $request->rj_hd_1,
-                    'GANGGUAN_KONGNITIF'  => $request->rj_hd_2,
-                    'FAKTOR_LINGKUNGAN'   => $request->rj_hd_3,
-                    'RESPON'              => $request->rj_hd_4,
-                    'PENGGUNAAN_OBAT'     => $request->rj_hd_5,
-                    'TANGGAL'             => now(),
-                    'OLEH'                => auth()->id(),
-                    'STATUS'              => 1,
+                    'UMUR',
+                    'JENIS_KELAMIN',
+                    'DIAGNOSA',
+                    'GANGGUAN_KONGNITIF',
+                    'FAKTOR_LINGKUNGAN',
+                    'RESPON',
+                    'PENGGUNAAN_OBAT',
                 ]
             );
 
             // ==========================================
-            // SKRINING RISIKO JATUH - MORSE
+            // MORSE
             // ==========================================
-            DB::table('medicalrecord.penilaian_skala_morse')->updateOrInsert(
+            $morse = $getData(
+                'medicalrecord.penilaian_skala_morse',
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'RIWAYAT_JATUH' => $request->rj_sm_1,
-                    'DIAGNOSIS'     => $request->rj_sm_2,
-                    'ALAT_BANTU'    => $request->rj_sm_3,
-                    'HEPARIN'       => $request->rj_sm_4,
-                    'GAYA_BERJALAN' => $request->rj_sm_5,
-                    'KESADARAN'     => $request->rj_sm_6,
-                    'TANGGAL'       => now(),
-                    'OLEH'          => auth()->id(),
-                    'STATUS'        => 1,
+                    'RIWAYAT_JATUH',
+                    'DIAGNOSIS',
+                    'ALAT_BANTU',
+                    'HEPARIN',
+                    'GAYA_BERJALAN',
+                    'KESADARAN',
                 ]
             );
 
             // ==========================================
-            // SKRINING RISIKO JATUH - EPFRA
+            // EPFRA
             // ==========================================
-            DB::table('medicalrecord.penilaian_epfra')->updateOrInsert(
+            $epfra = $getData(
+                'medicalrecord.penilaian_epfra',
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'USIA'            => $request->rj_epfra_usia,
-                    'STATUS_MENTAL'   => $request->rj_epfra_1,
-                    'ELIMINASI'       => $request->rj_epfra_2,
-                    'MEDIKASI'        => $request->rj_epfra_3,
-                    'DIAGNOSIS'       => $request->rj_epfra_4,
-                    'AMBULASI'        => $request->rj_epfra_5,
-                    'NUTRISI'         => $request->rj_epfra_6,
-                    'GANGGUAN_TIDUR'  => $request->rj_epfra_7,
-                    'RIWAYAT_JATUH'   => $request->rj_epfra_8,
-                    'TANGGAL'         => now(),
-                    'OLEH'            => auth()->id(),
-                    'STATUS'          => 1,
+                    'USIA',
+                    'STATUS_MENTAL',
+                    'ELIMINASI',
+                    'MEDIKASI',
+                    'DIAGNOSIS',
+                    'AMBULASI',
+                    'NUTRISI',
+                    'GANGGUAN_TIDUR',
+                    'RIWAYAT_JATUH',
                 ]
             );
 
             // ==========================================
             // SKRINING GIZI - MUST
             // ==========================================
-            DB::table('medicalrecord.permasalahan_gizi')->updateOrInsert(
+            $must = $getData(
+                'medicalrecord.permasalahan_gizi',
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'BERAT_BADAN_SIGNIFIKAN' => $request->sgd1,
-                    'PERUBAHAN_BERAT_BADAN'  => $request->sgd1_c,
-                    'INTAKE_MAKANAN'         => $request->sgd2,
-                    'KONDISI_KHUSUS'         => $request->sgd3,
-                    'SKOR'                   => $request->skor_sgd,
-                    'STATUS_SKOR'            => 1,
-                    'TANGGAL'                => now(),
-                    'OLEH'                   => auth()->id(),
-                    // 'STATUS_VALIDASI'        => 0,
-                    // 'TANGGAL_VALIDASI'       => '0000-00-00 00:00:00',
-                    // 'USER_VALIDASI'          => 0,
-                    'STATUS'                 => 1,
+                    'BERAT_BADAN_SIGNIFIKAN',
+                    'PERUBAHAN_BERAT_BADAN',
+                    'INTAKE_MAKANAN',
+                    'KONDISI_KHUSUS',
+                    'SKOR',
+                    'STATUS_SKOR',
                 ]
             );
 
             // ==========================================
             // SKRINING GIZI - STRONG KID
             // ==========================================
-            DB::table('medicalrecord.penilaian_strong_kid')->updateOrInsert(
+            $strongKid = $getData(
+                'medicalrecord.penilaian_strong_kid',
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'TAMPAK_KURUS'          => $request->sga1,
-                    'PENURUNAN_BERAT_BADAN' => $request->sga2,
-                    'DIARE_INTAKE_MAKANAN'  => $request->sga3,
-                    'RESIKO_MALNUTRISI'     => $request->sga4,
-                    'SKOR'                  => $request->skor_sga,
-                    'STATUS_SKOR'           => 1,
-                    'TANGGAL'               => now(),
-                    'OLEH'                  => auth()->id(),
-                    // 'STATUS_VALIDASI'       => 0,
-                    // 'TANGGAL_VALIDASI'      => '0000-00-00 00:00:00',
-                    // 'USER_VALIDASI'         => 0,
-                    'STATUS'                => 1,
+                    'TAMPAK_KURUS',
+                    'PENURUNAN_BERAT_BADAN',
+                    'DIARE_INTAKE_MAKANAN',
+                    'RESIKO_MALNUTRISI',
+                    'SKOR',
+                    'STATUS_SKOR',
                 ]
             );
 
             // ==========================================
             // STATUS REPRODUKSI
             // ==========================================
-            DB::table('medicalrecord.status_reproduksi')->updateOrInsert(
+            $statusReproduksi = $getData(
+                'medicalrecord.status_reproduksi',
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'KASUS_OBSTETRI_GINEKOLOGI' => $request->kasus_obstetri_ginekologi,
-                    'STATUS_REPRODUKSI'          => $request->status_reproduksi,
-                    'HPHT'                       => $request->hpht,
-                    'SIKLUS'                     => $request->siklus,
-                    'KB'                         => $request->kb,
-                    'HAMIL_GRAVIDA'              => $request->hamil_gravida,
-                    'HAMIL_PARITAS'              => $request->hamil_paritas,
-                    'HAMIL_ABORTUS'              => $request->hamil_abortus,
-                    'TANGGAL'                    => now(),
-                    'OLEH'                       => auth()->id(),
-                    'STATUS'                     => 1,
+                    'KASUS_OBSTETRI_GINEKOLOGI',
+                    'STATUS_REPRODUKSI',
+                    'HPHT',
+                    'SIKLUS',
+                    'KB',
+                    'HAMIL_GRAVIDA',
+                    'HAMIL_PARITAS',
+                    'HAMIL_ABORTUS',
                 ]
             );
 
             // ==========================================
             // MASALAH KEPERAWATAN
+            // Hanya field yang ada di HTML
             // ==========================================
-
-            // Sedangkan dmk_3, dmk_6, dmk_7, dmk_9, dmk_10, dan dmk_lain tidak saya masukkan karena tabel masalah_keperawatan
-            // yang Anda berikan tidak mempunyai kolom yang sesuai.
-
-            // Catatan penting: kalau sebenarnya dmk_4 Gangguan Pernafasan ingin mewakili BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF atau
-            // POLA_NAFAS_TIDAK_EFEKTIF, tinggal ubah mapping tersebut. Dari label HTML saja memang tidak bisa ditentukan secara pasti.
-
-            DB::table('medicalrecord.masalah_keperawatan')->updateOrInsert(
+            $masalahKeperawatan = $getData(
+                'medicalrecord.masalah_keperawatan',
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    // ------------------------------------------
-                    // Masalah Keperawatan sesuai HTML
-                    // ------------------------------------------
-                    'NYERI'                         => $request->boolean('dmk_1') ? 1 : 0,
-                    'CEMAS'                         => $request->boolean('dmk_2') ? 1 : 0,
-                    'PERUBAHAN_NUTRISI'             => $request->boolean('dmk_3') ? 1 : 0,
-                    'GANGGUAN_PERNAFASAN'           => $request->boolean('dmk_4') ? 1 : 0,
-                    'GANGGUAN_PERFUSI_JARINGAN'     => $request->boolean('dmk_5') ? 1 : 0,
-                    'GANGGUAN_VOLUME_CAIRAN'        => $request->boolean('dmk_6') ? 1 : 0,
-                    'POTENSI_INFEKSI'               => $request->boolean('dmk_7') ? 1 : 0,
-                    'HIPERTEMI'                     => $request->boolean('dmk_8') ? 1 : 0,
-                    'TAKUT'                         => $request->boolean('dmk_9') ? 1 : 0,
-                    'KETIDAKEFEKTIFAN_POLA_MAKAN'  => $request->boolean('dmk_10') ? 1 : 0,
-                    'MASALAH_LAIN'                  => $request->input('dmk_lain', ''),
-
-                    'TANGGAL'                       => now(),
-                    'OLEH'                          => auth()->id(),
-                    'STATUS'                        => 1,
+                    'NYERI',
+                    'CEMAS',
+                    'PERUBAHAN_NUTRISI',
+                    'GANGGUAN_PERNAFASAN',
+                    'GANGGUAN_PERFUSI_JARINGAN',
+                    'GANGGUAN_VOLUME_CAIRAN',
+                    'POTENSI_INFEKSI',
+                    'HIPERTEMI',
+                    'TAKUT',
+                    'KETIDAKEFEKTIFAN_POLA_MAKAN',
+                    'MASALAH_LAIN',
                 ]
             );
 
             // ==========================================
             // DISCHARGE PLANNING - FAKTOR RISIKO
             // ==========================================
-            DB::table('medicalrecord.discharge_planning_faktor_risiko')->updateOrInsert(
+            $dischargeFaktorRisiko = $getData(
+                'medicalrecord.discharge_planning_faktor_risiko',
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'PASIEN_TINGGAL_SENDIRI'          => $request->input('dp_1', 0),
-                    'PASIEN_KHAWATIR_KETIKA_DIRUMAH'  => $request->input('dp_2', 0),
-                    'PASIEN_TAK_ADA_YANG_MERAWAT'     => $request->input('dp_3', 0),
-                    'PASIEN_DILANTAI_ATAS'             => $request->input('dp_4', 0),
-                    'PERAWATAN_LANJUTAN_PASIEN'        => $request->input('dp_5', 0),
-                    'PENGAJUAN_PENDAMPINGAN_PASIEN'    => $request->input('dp_7', 0),
-
-                    'TANGGAL'                           => now(),
-                    'OLEH'                              => auth()->id(),
-                    'STATUS'                            => 1,
+                    'PASIEN_TINGGAL_SENDIRI',
+                    'PASIEN_KHAWATIR_KETIKA_DIRUMAH',
+                    'PASIEN_TAK_ADA_YANG_MERAWAT',
+                    'PASIEN_DILANTAI_ATAS',
+                    'PERAWATAN_LANJUTAN_PASIEN',
+                    'PENGAJUAN_PENDAMPINGAN_PASIEN',
                 ]
             );
 
             // ==========================================
             // DISCHARGE PLANNING - SKRINING
             // ==========================================
-            DB::table('medicalrecord.discharge_planning_skrining')->updateOrInsert(
+            $dischargeSkrining = $getData(
+                'medicalrecord.discharge_planning_skrining',
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    // ------------------------------------------
-                    // Kriteria dasar
-                    // ------------------------------------------
-                    'PASIEN_PULANG'                         => $request->input('dp_6', 0),
-                    'PASIEN_MENGAJUKAN'                     => $request->input('dp_7', 0),
-                    'TIDAK_ADA_KRITERIA'                    => $request->input('dp_8', 0),
+                    'PASIEN_PULANG',
+                    'PASIEN_MENGAJUKAN',
+                    'TIDAK_ADA_KRITERIA',
 
-                    // ------------------------------------------
-                    // Kebutuhan Pelayanan Berkelanjutan (KPB)
-                    // ------------------------------------------
-                    'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_KPB' => $request->input('dp_9', 0),
+                    'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_KPB',
+                    'KPB_RAWAT_LUKA',
+                    'KPB_HIV',
+                    'KPB_TB',
+                    'KPB_DM',
+                    'KPB_DM_TERAPI_INSULIN',
+                    'KPB_STROKE',
+                    'KPB_PPOK',
+                    'KPB_CKD',
+                    'KPB_PASIEN_KEMO',
+                    'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA',
 
-                    'KPB_RAWAT_LUKA'                        => $request->boolean('dp_9_1') ? 1 : 0,
-                    'KPB_TB'                                => $request->boolean('dp_9_2') ? 1 : 0,
-                    'KPB_DM_TERAPI_INSULIN'                 => $request->boolean('dp_9_3') ? 1 : 0,
-                    'KPB_PPOK'                              => $request->boolean('dp_9_4') ? 1 : 0,
-                    'KPB_PASIEN_KEMO'                       => $request->boolean('dp_9_5') ? 1 : 0,
-                    'KPB_HIV'                               => $request->boolean('dp_9_6') ? 1 : 0,
-                    'KPB_DM'                                => $request->boolean('dp_9_7') ? 1 : 0,
-                    'KPB_STROKE'                            => $request->boolean('dp_9_8') ? 1 : 0,
-                    'KPB_CKD'                               => $request->boolean('dp_9_9') ? 1 : 0,
+                    'PENGGUNAAN_ALAT_MEDIS_PAM',
+                    'PAM_KATETER_URIN',
+                    'PAM_NGT',
+                    'PAM_TRAECHOSTOMY',
+                    'PAM_COLOSTOMY',
+                    'PAM_LAINNYA',
 
-                    // Lainnya pada "Perawatan lanjutan pasien"
-                    // dp_5_lain berasal dari field "Jika Ada, sebutkan"
-                    'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA' => $request->input('dp_5_lain', ''),
-
-                    // ------------------------------------------
-                    // Penggunaan alat medis / bantu
-                    // ------------------------------------------
-                    'PENGGUNAAN_ALAT_MEDIS_PAM'             => $request->input('dp_10', 0),
-
-                    'PAM_KATETER_URIN'                      => $request->boolean('dp_10_1') ? 1 : 0,
-                    'PAM_TRAECHOSTOMY'                      => $request->boolean('dp_10_2') ? 1 : 0,
-                    'PAM_NGT'                               => $request->boolean('dp_10_3') ? 1 : 0,
-                    'PAM_COLOSTOMY'                         => $request->boolean('dp_10_4') ? 1 : 0,
-                    'PAM_LAINNYA'                           => $request->input('dp_10_lain', ''),
-
-                    // ------------------------------------------
-                    // Skrining lanjutan
-                    // ------------------------------------------
-                    'SKRINING_LANJUTAN'                     => $request->input('dp_11', 0),
-
-                    // 1 = Konsul MPP
-                    // 2 = Edukasi
-                    'SKRINING'                              => $request->input('dp_11_skrining', 0),
-
-                    'TANGGAL'                               => now(),
-                    'OLEH'                                  => auth()->id(),
-                    'STATUS'                                => 1,
+                    'SKRINING_LANJUTAN',
+                    'SKRINING',
                 ]
             );
 
             // ==========================================
-            // COMMIT
+            // RESPONSE
             // ==========================================
-            DB::commit();
-
             return response()->json([
-                'status'  => true,
-                'message' => 'Pengkajian perawat berhasil disimpan.'
-            ], 200);
+                'status' => true,
 
-        } catch (\Throwable $e) {
-
-            DB::rollBack();
-
-            return response()->json([
-                'status'  => false,
-                'message' => 'Data pengkajian perawat gagal disimpan.',
-                'error'   => $e->getMessage(),
-            ], 500);
+                'data' => [
+                    'triage'                    => $triage,
+                    'anamnesis_diperoleh'       => $anamnesisDiperoleh,
+                    'kondisi_sosial'            => $kondisiSosial,
+                    'penilaian_nyeri'           => $penilaianNyeri,
+                    'humpty_dumpty'             => $humptyDumpty,
+                    'morse'                     => $morse,
+                    'epfra'                     => $epfra,
+                    'must'                      => $must,
+                    'strong_kid'                => $strongKid,
+                    'status_reproduksi'         => $statusReproduksi,
+                    'masalah_keperawatan'       => $masalahKeperawatan,
+                    'discharge_faktor_risiko'   => $dischargeFaktorRisiko,
+                    'discharge_skrining'        => $dischargeSkrining,
+                ],
+            ]);
         }
-    }
 
-    // Array
-    // (
-    //     [NOKUNJ] => 1020201022607290001
-    //     [dd_ck] =>
-    //     [dd_ck_p] =>
-    //     [dd_ck_k] =>
-    //     [dd_ck_a] =>
-    //     [dd_ck_a_v] =>
-    //     [tgl_ck] =>
-    //     [tr_ck] =>
-    //     [jks] =>
-    //     [jks_kll] =>
-    //     [jks_kk] =>
-    //     [jks_uppa] =>
-    //     [jks_end] =>
-    //     [jks_end_dm] =>
-    //     [anm_ku] =>
-    //     [anm_tp] =>
-    //     [tv_up] =>
-    //     [tv_down] =>
-    //     [tv_fr] =>
-    //     [tv_nadi] =>
-    //     [tv_sh] =>
-    //     [tv_sn] =>
-    //     [tv_mu] =>
-    //     [ko_ug] =>
-    //     [ko_ku] =>
-    //     [ko_dj] =>
-    //     [ko_ds] =>
-    //     [kk_a] =>
-    //     [kk_d] =>
-    //     [psi] =>
-    //     [psi_lain] =>
-    //     [sm] =>
-    //     [sm2_lain] =>
-    //     [sm3_lain] =>
-    //     [hub] =>
-    //     [tinggal] =>
-    //     [tinggal_lain] =>
-    //     [agama] =>
-    //     [kbt] =>
-    //     [nk] =>
-    //     [nk_lain] =>
-    //     [pk] =>
-    //     [kerja] =>
-    //     [hasil] =>
-    //     [sn_nyeri] => 0
-    //     [sn_onset] =>
-    //     [sn_skala] => 0
-    //     [sn_metode] =>
-    //     [sn_pencetus] =>
-    //     [sn_gambaran] =>
-    //     [sn_durasi] =>
-    //     [sn_lokasi] =>
-    //     [rj_usia] =>
-    //     [rj_jk] =>
-    //     [rj_hd_1] =>
-    //     [rj_hd_2] =>
-    //     [rj_hd_3] =>
-    //     [rj_hd_4] =>
-    //     [rj_hd_5] =>
-    //     [skor_rj_hd] => 0
-    //     [rj_sm_1] =>
-    //     [rj_sm_2] =>
-    //     [rj_sm_3] =>
-    //     [rj_sm_4] =>
-    //     [rj_sm_5] =>
-    //     [rj_sm_6] =>
-    //     [skor_rj_sm] => 0
-    //     [rj_epfra_usia] =>
-    //     [rj_epfra_1] =>
-    //     [rj_epfra_2] =>
-    //     [rj_epfra_3] =>
-    //     [rj_epfra_4] =>
-    //     [rj_epfra_5] =>
-    //     [rj_epfra_6] =>
-    //     [rj_epfra_7] =>
-    //     [rj_epfra_8] =>
-    //     [skor_rj_epfra] => 0
-    //     [sgd1] =>
-    //     [sgd1_c] =>
-    //     [sgd2] =>
-    //     [sgd3] =>
-    //     [skor_sgd] => 0
-    //     [sga1] =>
-    //     [sga2] =>
-    //     [sga3] =>
-    //     [sga4] =>
-    //     [skor_sga] => 0
-    //     [sh] => 0
-    //     [sh_g] =>
-    //     [sh_p] =>
-    //     [sh_a] =>
-    //     [sh_h] =>
-    //     [ik_1] =>
-    //     [ik_1_dt] =>
-    //     [ik_2] =>
-    //     [ik_2_dt] =>
-    //     [ik_3] =>
-    //     [ik_3_dt] =>
-    //     [ik_4] =>
-    //     [ik_4_dt] =>
-    //     [ik_5] =>
-    //     [ik_5_dt] =>
-    //     [ik_6] =>
-    //     [ik_6_dt] =>
-    //     [ik_7] =>
-    //     [ik_7_dt] =>
-    //     [ik_8] =>
-    //     [ik_8_dt] =>
-    //     [ik_9] =>
-    //     [ik_9_dt] =>
-    //     [ik_10] =>
-    //     [ik_10_dt] =>
-    //     [ik_11_inp] =>
-    //     [ik_11] =>
-    //     [ik_11_dt] =>
-    //     [ik_12] =>
-    //     [ik_12_dt] =>
-    //     [ik_13] =>
-    //     [ik_13_dt] =>
-    //     [ik_14] =>
-    //     [ik_14_dt] =>
-    //     [ik_15] =>
-    //     [ik_15_dt] =>
-    //     [tk_1] =>
-    //     [tk_1_dt] =>
-    //     [tk_2] =>
-    //     [tk_2_dt] =>
-    //     [tk_3] =>
-    //     [tk_3_dt] =>
-    //     [tk_4] =>
-    //     [tk_4_dt] =>
-    //     [tk_5] =>
-    //     [tk_5_dt] =>
-    //     [tk_6] =>
-    //     [tk_6_dt] =>
-    //     [tk_7] =>
-    //     [tk_7_dt] =>
-    //     [tk_8] =>
-    //     [tk_8_dt] =>
-    //     [tk_9_inp] =>
-    //     [tk_9] =>
-    //     [tk_9_dt] =>
-    //     [tk_10] =>
-    //     [tk_10_dt] =>
-    //     [tk_11] =>
-    //     [tk_11_dt] =>
-    //     [tk_12] =>
-    //     [tk_12_dt] =>
-    //     [tk_13] =>
-    //     [tk_13_dt] =>
-    //     [tk_14_inp] =>
-    //     [tk_14] =>
-    //     [tk_14_dt] =>
-    //     [tk_15] =>
-    //     [tk_15_dt] =>
-    //     [tk_16_inp] =>
-    //     [tk_16] =>
-    //     [tk_16_dt] =>
-    //     [tk_17_inp] =>
-    //     [tk_17] =>
-    //     [tk_17_dt] =>
-    //     [tk_18_inp] =>
-    //     [tk_18] =>
-    //     [tk_18_dt] =>
-    //     [tk_19_inp] =>
-    //     [tk_19] =>
-    //     [tk_19_dt] =>
-    //     [tk_20_inp] =>
-    //     [tk_20] =>
-    //     [tk_20_dt] =>
-    //     [tk_21] =>
-    //     [tk_21_dt] =>
-    //     [tk_22] =>
-    //     [tk_22_dt] =>
-    //     [tk_23] =>
-    //     [tk_23_dt] =>
-    //     [tk_24] =>
-    //     [tk_24_dt] =>
-    //     [tk_25] =>
-    //     [tk_25_dt] =>
-    //     [tk_26] =>
-    //     [tk_26_dt] =>
-    //     [tk_27] =>
-    //     [tk_27_dt] =>
-    //     [dmk_1] =>
-    //     [dmk_2] =>
-    //     [dmk_3] =>
-    //     [dmk_4] =>
-    //     [dmk_5] =>
-    //     [dmk_6] =>
-    //     [dmk_7] =>
-    //     [dmk_8] =>
-    //     [dmk_9] =>
-    //     [dmk_10] =>
-    //     [dmk_lain] =>
-    //     [dp_1] => 0
-    //     [dp_2] => 0
-    //     [dp_3] => 0
-    //     [dp_4] => 0
-    //     [dp_5] => 0
-    //     [dp_5_1] =>
-    //     [dp_5_2] =>
-    //     [dp_5_3] =>
-    //     [dp_5_4] =>
-    //     [dp_5_lain] =>
-    //     [dp_9] => 0
-    //     [dp_9_1] =>
-    //     [dp_9_2] =>
-    //     [dp_9_3] =>
-    //     [dp_9_4] =>
-    //     [dp_9_5] =>
-    //     [dp_9_6] =>
-    //     [dp_9_7] =>
-    //     [dp_9_8] =>
-    //     [dp_9_9] =>
-    //     [dp_6] => 0
-    //     [dp_7] => 0
-    //     [dp_8] => 0
-    //     [dp_10] => 0
-    //     [dp_10_1] =>
-    //     [dp_10_2] =>
-    //     [dp_10_3] =>
-    //     [dp_10_4] =>
-    //     [dp_10_lain] =>
-    //     [dp_11] => 0
-    //     [dp_11_skrining] =>
-    // )
+        public function simpanFormPerawatGd(Request $request)
+        {
+            $validator = Validator::make(
+                $request->all(),
+                [
+                    'NOKUNJ' => 'required',
+                ],
+                [
+                    'NOKUNJ.required' => 'Kunjungan wajib diisi.',
+                ]
+            );
 
+            if ($validator->fails()) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => $validator->errors()->first()
+                ], 422);
+            }
+
+            DB::beginTransaction();
+
+            try {
+
+                // ==========================================
+                // DATA KUNJUNGAN
+                // ==========================================
+                $getDataKunjungan = DB::table('pendaftaran.kunjungan as pk')
+                    ->join(
+                        'pendaftaran.pendaftaran as pp',
+                        'pp.NOMOR',
+                        '=',
+                        'pk.NOPEN'
+                    )
+                    ->select(
+                        'pp.NORM',
+                        'pp.NOMOR as NOPEN'
+                    )
+                    ->where('pk.NOMOR', $request->NOKUNJ)
+                    ->first();
+
+                if (!$getDataKunjungan) {
+                    DB::rollBack();
+
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Data kunjungan tidak ditemukan.'
+                    ], 404);
+                }
+
+                // ==========================================
+                // CARA KEDATANGAN
+                // ==========================================
+                $jenisKedatangan = (int) $request->dd_ck ?? 0;
+
+                if (!in_array($jenisKedatangan, [1, 2, 3])) {
+                    DB::rollBack();
+
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Jenis Cara Kedatangan Belum diisi.'
+                    ], 422);
+                }
+
+                if ($request->tgl_ck === null || $request->tr_ck === null) {
+                    DB::rollBack();
+
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Tanggal dan alat transportasi kedatangan wajib diisi.'
+                    ], 422);
+                }
+                $kedatangan = [
+                    'JENIS'             => $jenisKedatangan,
+                    'TANGGAL'           => Carbon::parse($request->tgl_ck)->format('Y-m-d H:i:s'),
+                    'PENGANTAR'         => '',
+                    'KEPOLISIAN'        => '',
+                    'ASAL_RUJUKAN'      => '',
+                    'ALAT_TRANSPORTASI' => $request->tr_ck ?? '',
+                ];
+
+                // Datang sendiri
+                if ($jenisKedatangan === 1) {
+
+                    $kedatangan['PENGANTAR'] = $request->dd_ck_p ?? '';
+
+                }
+
+                // Rujukan dari
+                elseif ($jenisKedatangan === 2) {
+
+                    $kedatangan['ASAL_RUJUKAN'] = $request->dd_ck_k ?? '';
+
+                }
+
+                // Dikirim oleh polisi
+                elseif ($jenisKedatangan === 3) {
+
+                    $kedatangan['VISUM'] = $request->boolean('dd_ck_a_v') ? 1 : 0;
+                    $kedatangan['KEPOLISIAN'] = $request->dd_ck_a ?? '';
+
+                }
+
+
+                // ==========================================
+                // JENIS KASUS
+                // ==========================================
+                $jenisKasus = $request->input('jks');
+
+                $kasus = [
+                    'JENIS'            => $jenisKasus !== null && $jenisKasus !== ''
+                                            ? (int) $jenisKasus
+                                            : '',
+
+                    'LAKA_LANTAS'      => 0,
+                    'KECELAKAAN_KERJA' => 0,
+                    'UPPA'             => 0,
+                    'DIMANA'           => '',
+                ];
+
+                // Trauma
+                if ((int) $jenisKasus === 1) {
+
+                    $kasus['LAKA_LANTAS'] =
+                        $request->boolean('jks_kll') ? 1 : 0;
+
+                    $kasus['KECELAKAAN_KERJA'] =
+                        $request->boolean('jks_kk') ? 1 : 0;
+
+                    $kasus['UPPA'] =
+                        $request->boolean('jks_uppa') ? 1 : 0;
+
+                }
+
+                // Non Trauma
+                elseif ((int) $jenisKasus === 0) {
+
+                    $kasus['DIMANA'] = $request->jks_end_dm ?? '';
+
+                }
+
+                // ==========================================
+                // ANAMNESE
+                // ==========================================
+                $anamnese = [
+                    'KELUHAN_UTAMA' => $request->anm_ku ?? '',
+                    'TERPIMPIN'     => $request->anm_tp ?? '',
+                ];
+
+
+                // ==========================================
+                // TANDA VITAL
+                // ==========================================
+                $tandaVital = [
+                    'SUHU'          => $request->tv_sh ?? '',
+                    'SISTOLE'       => $request->tv_up ?? '',
+                    'DIASTOLE'      => $request->tv_down ?? '',
+                    'FREK_NADI'     => $request->tv_nadi ?? '',
+                    'FREK_NAFAS'    => $request->tv_fr ?? '',
+                    'METODE_UKUR'   => $request->tv_mu ?? '',
+                    'SKALA_NYERI'   => $request->tv_sn ?? '',
+                ];
+
+
+                // ==========================================
+                // OBGYN
+                // ==========================================
+                $obgyn = [
+                    'USIA_GESTASI'       => $request->ko_ug ?? '',
+                    'KONTRAKSI_UTERUS'   => $request->ko_ku ?? '',
+                    'DETAK_JANTUNG'      => $request->ko_dj ?? '',
+                    'DILATASI_SERVIKS'   => $request->ko_ds ?? '',
+                ];
+
+
+                // ==========================================
+                // KEBUTUHAN KHUSUS
+                // ==========================================
+                $kebutuhanKhusus = [
+                    'AIRBONE'      => $request->kk_a ?? '',
+                    'DEKONTAMINAN' => $request->kk_d ?? '',
+                ];
+
+                // ==========================================
+                // TRIAGE - CARA KEDATANGAN & JENIS KASUS
+                // ==========================================
+                DB::table('medicalrecord.triage')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        // ==============================
+                        // CARA KEDATANGAN
+                        // ==============================
+                        'KEDATANGAN' => json_encode(
+                            $kedatangan,
+                            JSON_UNESCAPED_UNICODE
+                        ),
+
+                        // ==============================
+                        // JENIS KASUS
+                        // ==============================
+                        'KASUS' => json_encode(
+                            $kasus,
+                            JSON_UNESCAPED_UNICODE
+                        ),
+
+                        // ==============================
+                        // ANAMNESE
+                        // ==============================
+                        'ANAMNESE' => json_encode(
+                            $anamnese,
+                            JSON_UNESCAPED_UNICODE
+                        ),
+
+                        // ==============================
+                        // TANDA VITAL
+                        // ==============================
+                        'TANDA_VITAL' => json_encode(
+                            $tandaVital,
+                            JSON_UNESCAPED_UNICODE
+                        ),
+
+                        // ==============================
+                        // OBGYN
+                        // ==============================
+                        'OBGYN' => json_encode(
+                            $obgyn,
+                            JSON_UNESCAPED_UNICODE
+                        ),
+
+                        // ==============================
+                        // KEBUTUHAN KHUSUS
+                        // ==============================
+                        'KEBUTUHAN_KHUSUS' => json_encode(
+                            $kebutuhanKhusus,
+                            JSON_UNESCAPED_UNICODE
+                        ),
+
+                        'OLEH'   => auth()->id(),
+                        'STATUS' => 1,
+                        'TANGGAL' => now(),
+                    ]
+                );
+
+                // ==========================================
+                // KONDISI SOSIAL
+                // ==========================================
+                DB::table('medicalrecord.kondisi_sosial')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        // Status Psikologi
+                        'TIDAK_ADA_KELAINAN' => $request->tak ? 1 : 0,
+                        'MARAH'              => $request->marah ? 1 : 0,
+                        'CEMAS'              => $request->cemas ? 1 : 0,
+                        'TAKUT'              => $request->takut ? 1 : 0,
+                        'SEDIH'              => $request->sedih ? 1 : 0,
+                        'BUNUH_DIRI'         => $request->bundir ? 1 : 0,
+                        'LAINNYA'            => $request->pse_lain ?? '',
+
+                        // Status Mental
+                        'STATUS_MENTAL'                         => $request->sm ?? 0,
+                        'MASALAH_PERILAKU'                      => $request->sm2_lain ?? '',
+                        'PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA' => $request->sm3_lain ?? '',
+
+                        // Hubungan Sosial
+                        'HUBUNGAN_PASIEN_DENGAN_KELUARGA' => $request->hub ?? 0,
+                        'TEMPAT_TINGGAL'                  => $request->tinggal ?? 0,
+                        'TEMPAT_TINGGAL_LAINNYA'          => $request->tinggal_lain ?? '',
+
+                        // Spiritual
+                        'KEBIASAAN_BERIBADAH_TERATUR' => $request->kbt ?? 0,
+                        'NILAI_KEPERCAYAAN'           => $request->nk ?? 0,
+                        'NILAI_KEPERCAYAAN_DESKRIPSI' => $request->nk_lain ?? '',
+                        'PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA' => $request->pk ?? 0,
+
+                        // Ekonomi
+                        'PENGHASILAN_PERBULAN' => $request->hasil ?? 0,
+
+                        // Audit
+                        'OLEH'    => auth()->id(),
+                        'STATUS'  => 1,
+                        'TANGGAL' => now(),
+                    ]
+                );
+
+                // ==========================================
+                // PENILAIAN / SKRINING NYERI
+                // ==========================================
+                DB::table('medicalrecord.penilaian_nyeri')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'NYERI'     => $request->sn_nyeri ?? 0,
+                        'ONSET'     => $request->sn_onset ?? 0,
+                        'SKALA'     => $request->sn_skala ?? '',
+                        'METODE'    => $request->sn_metode ?? '',
+                        'PENCETUS'  => $request->sn_pencetus ?? '',
+                        'GAMBARAN'  => $request->sn_gambaran ?? '',
+                        'DURASI'    => $request->sn_durasi ?? '',
+                        'LOKASI'    => $request->sn_lokasi ?? '',
+
+                        'OLEH'      => auth()->id(),
+                        'STATUS'    => 1,
+                        'TANGGAL'   => now(),
+                    ]
+                );
+
+                // ==========================================
+                // SKRINING RISIKO JATUH - HUMPTY DUMPTY
+                // ==========================================
+                if ($request->rj_usia != '' || $request->rj_jk != '') {
+                    DB::table('medicalrecord.penilaian_skala_humpty_dumpty')->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $request->NOKUNJ
+                        ],
+                        [
+                            'UMUR'                => $request->rj_usia ?? 0,
+                            'JENIS_KELAMIN'       => $request->rj_jk ?? 0,
+                            'DIAGNOSA'            => $request->rj_hd_1 ?? 0,
+                            'GANGGUAN_KONGNITIF'  => $request->rj_hd_2 ?? 0,
+                            'FAKTOR_LINGKUNGAN'   => $request->rj_hd_3 ?? 0,
+                            'RESPON'              => $request->rj_hd_4 ?? 0,
+                            'PENGGUNAAN_OBAT'     => $request->rj_hd_5 ?? 0,
+                            'TANGGAL'             => now(),
+                            'OLEH'                => auth()->id(),
+                            'STATUS'              => 1,
+                        ]
+                    );
+                }
+
+                // ==========================================
+                // SKRINING RISIKO JATUH - MORSE
+                // ==========================================
+                DB::table('medicalrecord.penilaian_skala_morse')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'RIWAYAT_JATUH' => $request->rj_sm_1 ?? 0,
+                        'DIAGNOSIS'     => $request->rj_sm_2 ?? 0,
+                        'ALAT_BANTU'    => $request->rj_sm_3 ?? 0,
+                        'HEPARIN'       => $request->rj_sm_4 ?? 0,
+                        'GAYA_BERJALAN' => $request->rj_sm_5 ?? 0,
+                        'KESADARAN'     => $request->rj_sm_6 ?? 0,
+                        'TANGGAL'       => now(),
+                        'OLEH'          => auth()->id(),
+                        'STATUS'        => 1,
+                    ]
+                );
+
+                // ==========================================
+                // SKRINING RISIKO JATUH - EPFRA
+                // ==========================================
+                if ($request->rj_epfra_usia != '') {
+                    DB::table('medicalrecord.penilaian_epfra')->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $request->NOKUNJ
+                        ],
+                        [
+                            'USIA'            => $request->rj_epfra_usia ?? 0,
+                            'STATUS_MENTAL'   => $request->rj_epfra_1 ?? 0,
+                            'ELIMINASI'       => $request->rj_epfra_2 ?? 0,
+                            'MEDIKASI'        => $request->rj_epfra_3 ?? 0,
+                            'DIAGNOSIS'       => $request->rj_epfra_4 ?? 0,
+                            'AMBULASI'        => $request->rj_epfra_5 ?? 0,
+                            'NUTRISI'         => $request->rj_epfra_6 ?? 0,
+                            'GANGGUAN_TIDUR'  => $request->rj_epfra_7 ?? 0,
+                            'RIWAYAT_JATUH'   => $request->rj_epfra_8 ?? 0,
+                            'TANGGAL'         => now(),
+                            'OLEH'            => auth()->id(),
+                            'STATUS'          => 1,
+                        ]
+                    );
+                }
+
+                // ==========================================
+                // SKRINING GIZI - MUST
+                // ==========================================
+                DB::table('medicalrecord.permasalahan_gizi')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'BERAT_BADAN_SIGNIFIKAN' => $request->sgd1 ?? 0,
+                        'PERUBAHAN_BERAT_BADAN'  => $request->sgd1_c ?? 0,
+                        'INTAKE_MAKANAN'         => $request->sgd2 ?? 0,
+                        'KONDISI_KHUSUS'         => $request->sgd3 ?? 0,
+                        'SKOR'                   => $request->skor_sgd ?? 0,
+                        'STATUS_SKOR'            => 1,
+                        'TANGGAL'                => now(),
+                        'OLEH'                   => auth()->id(),
+                        // 'STATUS_VALIDASI'        => 0,
+                        // 'TANGGAL_VALIDASI'       => '0000-00-00 00:00:00',
+                        // 'USER_VALIDASI'          => 0,
+                        'STATUS'                 => 1,
+                    ]
+                );
+
+                // ==========================================
+                // SKRINING GIZI - STRONG KID
+                // ==========================================
+                DB::table('medicalrecord.penilaian_strong_kid')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'TAMPAK_KURUS'          => $request->sga1 ?? 0,
+                        'PENURUNAN_BERAT_BADAN' => $request->sga2 ?? 0,
+                        'DIARE_INTAKE_MAKANAN'  => $request->sga3 ?? 0,
+                        'RESIKO_MALNUTRISI'     => $request->sga4 ?? 0,
+                        'SKOR'                  => $request->skor_sga ?? 0,
+                        'STATUS_SKOR'           => 1,
+                        'TANGGAL'               => now(),
+                        'OLEH'                  => auth()->id(),
+                        // 'STATUS_VALIDASI'       => 0,
+                        // 'TANGGAL_VALIDASI'      => '0000-00-00 00:00:00',
+                        // 'USER_VALIDASI'         => 0,
+                        'STATUS'                => 1,
+                    ]
+                );
+
+                // ==========================================
+                // STATUS REPRODUKSI
+                // ==========================================
+                DB::table('medicalrecord.status_reproduksi')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'KASUS_OBSTETRI_GINEKOLOGI' => $request->kasus_obstetri_ginekologi ?? 0,
+                        'STATUS_REPRODUKSI'          => $request->status_reproduksi ?? 0,
+                        'HPHT'                       => $request->hpht ?? 0,
+                        'SIKLUS'                     => $request->siklus ?? 0,
+                        'KB'                         => $request->kb ?? 0,
+                        'HAMIL_GRAVIDA'              => $request->hamil_gravida ?? 0,
+                        'HAMIL_PARITAS'              => $request->hamil_paritas ?? 0,
+                        'HAMIL_ABORTUS'              => $request->hamil_abortus ?? 0,
+                        'TANGGAL'                    => now(),
+                        'OLEH'                       => auth()->id(),
+                        'STATUS'                     => 1,
+                    ]
+                );
+
+                // ==========================================
+                // MASALAH KEPERAWATAN
+                // ==========================================
+                DB::table('medicalrecord.masalah_keperawatan')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        // ------------------------------------------
+                        // Masalah Keperawatan sesuai HTML
+                        // ------------------------------------------
+                        'NYERI'                         => $request->boolean('dmk_1') ? 1 : 0,
+                        'CEMAS'                         => $request->boolean('dmk_2') ? 1 : 0,
+                        'PERUBAHAN_NUTRISI'             => $request->boolean('dmk_3') ? 1 : 0,
+                        'GANGGUAN_PERNAFASAN'           => $request->boolean('dmk_4') ? 1 : 0,
+                        'GANGGUAN_PERFUSI_JARINGAN'     => $request->boolean('dmk_5') ? 1 : 0,
+                        'GANGGUAN_VOLUME_CAIRAN'        => $request->boolean('dmk_6') ? 1 : 0,
+                        'POTENSI_INFEKSI'               => $request->boolean('dmk_7') ? 1 : 0,
+                        'HIPERTEMI'                     => $request->boolean('dmk_8') ? 1 : 0,
+                        'TAKUT'                         => $request->boolean('dmk_9') ? 1 : 0,
+                        'KETIDAKEFEKTIFAN_POLA_MAKAN'  => $request->boolean('dmk_10') ? 1 : 0,
+                        'MASALAH_LAIN'                  => $request->input('dmk_lain', '') ?? '',
+
+                        'TANGGAL'                       => now(),
+                        'OLEH'                          => auth()->id(),
+                        'STATUS'                        => 1,
+                    ]
+                );
+
+                // ==========================================
+                // DISCHARGE PLANNING - FAKTOR RISIKO
+                // ==========================================
+                DB::table('medicalrecord.discharge_planning_faktor_risiko')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'PASIEN_TINGGAL_SENDIRI'          => $request->input('dp_1', 0) ?? 0,
+                        'PASIEN_KHAWATIR_KETIKA_DIRUMAH'  => $request->input('dp_2', 0) ?? 0,
+                        'PASIEN_TAK_ADA_YANG_MERAWAT'     => $request->input('dp_3', 0) ?? 0,
+                        'PASIEN_DILANTAI_ATAS'             => $request->input('dp_4', 0) ?? 0,
+                        'PERAWATAN_LANJUTAN_PASIEN'        => $request->input('dp_5', 0) ?? 0,
+                        'PENGAJUAN_PENDAMPINGAN_PASIEN'    => 0,
+
+                        'TANGGAL'                           => now(),
+                        'OLEH'                              => auth()->id(),
+                        'STATUS'                            => 1,
+                    ]
+                );
+
+                // ==========================================
+                // DISCHARGE PLANNING - SKRINING
+                // ==========================================
+                DB::table('medicalrecord.discharge_planning_skrining')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        // ------------------------------------------
+                        // Kriteria dasar
+                        // ------------------------------------------
+                        'PASIEN_PULANG'                         => $request->input('dp_6', 0) ?? 0,
+                        'PASIEN_MENGAJUKAN'                     => $request->input('dp_7', 0) ?? 0,
+                        'TIDAK_ADA_KRITERIA'                    => $request->input('dp_8', 0) ?? 0,
+
+                        // ------------------------------------------
+                        // Kebutuhan Pelayanan Berkelanjutan (KPB)
+                        // ------------------------------------------
+                        'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_KPB' => $request->input('dp_9', 0) ?? 0,
+
+                        'KPB_RAWAT_LUKA'                        => $request->boolean('dp_9_1') ? 1 : 0,
+                        'KPB_TB'                                => $request->boolean('dp_9_2') ? 1 : 0,
+                        'KPB_DM_TERAPI_INSULIN'                 => $request->boolean('dp_9_3') ? 1 : 0,
+                        'KPB_PPOK'                              => $request->boolean('dp_9_4') ? 1 : 0,
+                        'KPB_PASIEN_KEMO'                       => $request->boolean('dp_9_5') ? 1 : 0,
+                        'KPB_HIV'                               => $request->boolean('dp_9_6') ? 1 : 0,
+                        'KPB_DM'                                => $request->boolean('dp_9_7') ? 1 : 0,
+                        'KPB_STROKE'                            => $request->boolean('dp_9_8') ? 1 : 0,
+                        'KPB_CKD'                               => $request->boolean('dp_9_9') ? 1 : 0,
+
+                        // Lainnya pada "Perawatan lanjutan pasien"
+                        // dp_5_lain berasal dari field "Jika Ada, sebutkan"
+                        'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA' => $request->input('dp_5_lain', '') ?? '',
+
+                        // ------------------------------------------
+                        // Penggunaan alat medis / bantu
+                        // ------------------------------------------
+                        'PENGGUNAAN_ALAT_MEDIS_PAM'             => $request->input('dp_10', 0) ?? 0,
+
+                        'PAM_KATETER_URIN'                      => $request->boolean('dp_10_1') ? 1 : 0,
+                        'PAM_TRAECHOSTOMY'                      => $request->boolean('dp_10_2') ? 1 : 0,
+                        'PAM_NGT'                               => $request->boolean('dp_10_3') ? 1 : 0,
+                        'PAM_COLOSTOMY'                         => $request->boolean('dp_10_4') ? 1 : 0,
+                        'PAM_LAINNYA'                           => $request->input('dp_10_lain', '') ?? '',
+
+                        // ------------------------------------------
+                        // Skrining lanjutan
+                        // ------------------------------------------
+                        'SKRINING_LANJUTAN'                     => $request->input('dp_11', 0) ?? 0,
+
+                        // 1 = Konsul MPP
+                        // 2 = Edukasi
+                        'SKRINING'                              => $request->input('dp_11_skrining', 0) ?? 0,
+
+                        'TANGGAL'                               => now(),
+                        'OLEH'                                  => auth()->id(),
+                        'STATUS'                                => 1,
+                    ]
+                );
+
+                // ==========================================
+                // COMMIT
+                // ==========================================
+                DB::commit();
+
+                return response()->json([
+                    'status'  => true,
+                    'message' => 'Pengkajian perawat berhasil disimpan.'
+                ], 200);
+
+            } catch (\Throwable $e) {
+
+                DB::rollBack();
+
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Data pengkajian perawat gagal disimpan.',
+                    'error'   => $e->getMessage(),
+                ], 500);
+            }
+        }
 }

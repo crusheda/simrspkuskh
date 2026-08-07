@@ -45,7 +45,7 @@
                             <div class="mb-0 flex-shrink-0">
                                 <label class="form-label">Tgl. Kedatangan</label>
                             </div>
-                            <input type="date" class="form-control form-control-sm" name="tgl_ck">
+                            <input type="datetime-local" class="form-control form-control-sm" name="tgl_ck">
                         </div>
                         <div class="d-flex align-items-center gap-2 mb-2">
                             <div class="mb-0 flex-shrink-0">
@@ -1704,7 +1704,7 @@
                                 <label class="form-label">Pasien/keluarga khawatir ketika kembali di rumah :</label>
                                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_2" value="0" checked="">
+                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_2" value="0">
                                         <label class="form-check-label">
                                             Tidak Ada
                                         </label>
@@ -1723,7 +1723,7 @@
                                 <label class="form-label">Pasien di rumah tidak ada yang merawat :</label>
                                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_3" value="0" checked="">
+                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_3" value="0">
                                         <label class="form-check-label">
                                             Tidak Ada
                                         </label>
@@ -1742,7 +1742,7 @@
                                 <label class="form-label">Pasien tinggal di lantai atas rumah :</label>
                                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_4" value="0" checked="">
+                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_4" value="0">
                                         <label class="form-check-label">
                                             Tidak Ada
                                         </label>
@@ -1761,7 +1761,7 @@
                                 <label class="form-label">Pasien masih ada perawatan lanjutan / penggunaan alat medis yang dilakukan di rumah :</label>
                                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_5" value="0" checked="">
+                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_5" value="0">
                                         <label class="form-check-label">
                                             Tidak Ada
                                         </label>
@@ -1821,7 +1821,7 @@
                                 <label class="form-label">Kebutuhan pelayanan berkelanjutan :</label>
                                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_9" value="0" checked="">
+                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_9" value="0">
                                         <label class="form-check-label">
                                             Tidak Ada
                                         </label>
@@ -1905,7 +1905,7 @@
                                 <label class="form-label">Pasien pulang dengan jumlah obat > 6 :</label>
                                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_6" value="0" checked="">
+                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_6" value="0">
                                         <label class="form-check-label">
                                             Tidak Ada
                                         </label>
@@ -1924,7 +1924,7 @@
                                 <label class="form-label">Pasien mengajukan permohonan pendampingan ke Rumah Sakit :</label>
                                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_7" value="0" checked="">
+                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_7" value="0">
                                         <label class="form-check-label">
                                             Tidak Ada
                                         </label>
@@ -1943,7 +1943,7 @@
                                 <label class="form-label">Tidak ada kriteria Pasien :</label>
                                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_8" value="0" checked="">
+                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_8" value="0">
                                         <label class="form-check-label">
                                             Tidak Ada
                                         </label>
@@ -1962,7 +1962,7 @@
                                 <label class="form-label">Penggunaan alat medis/bantu :</label>
                                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_10" value="0" checked="">
+                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_10" value="0">
                                         <label class="form-check-label">
                                             Tidak Ada
                                         </label>
@@ -2022,7 +2022,7 @@
                                 <label class="form-label">Skrining lanjutan :</label>
                                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_11" value="0" checked="">
+                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_11" value="0">
                                         <label class="form-check-label">
                                             Tidak Ada
                                         </label>
@@ -2514,7 +2514,7 @@
         resetDatangCara($section);
         resetJenisKasus($section);
 
-        // getDataPengkajianGdP();
+        getDataPengkajianGdP();
         hitungSkorHumptyDumpty($section);
         hitungSkorMorse($section);
         hitungSkorEPFRA($section);
@@ -3181,17 +3181,641 @@
     }
 
     function getDataPengkajianGdP() {
+        const $form = $('#formContent').find('.form-wrapper').has('input[name="dd_ck"]').first();
+
+        if (!$form.length) {
+            console.warn('Form GD Perawat tidak ditemukan.');
+            return;
+        }
+
         $.ajax({
             url: `/api/v2/emr/form/pengkajian/gd/pr/${kunjungan}`,
             type: 'GET',
+
             beforeSend: function () {
 
             },
+
             success: function (res) {
 
+                if (!res.status || !res.data) {
+                    return;
+                }
+
+                const data = res.data;
+
+                // ==========================================
+                // TRIAGE
+                // ==========================================
+                const triage = data.triage;
+
+                if (triage) {
+
+                    // ------------------------------------------
+                    // Cara Kedatangan
+                    // ------------------------------------------
+                    const kedatangan = triage.KEDATANGAN;
+
+                    if (kedatangan) {
+                        FormHelper.setSingleCheckbox($form,
+                            'dd_ck',
+                            kedatangan.JENIS
+                        );
+
+                        FormHelper.setValue($form,
+                            'tgl_ck',
+                            formatDateTimeLocal(kedatangan.TANGGAL)
+                        );
+
+                        FormHelper.setValue($form,
+                            'tr_ck',
+                            kedatangan.ALAT_TRANSPORTASI
+                        );
+
+                        FormHelper.setValue($form,
+                            'dd_ck_p',
+                            kedatangan.PENGANTAR
+                        );
+
+                        FormHelper.setValue($form,
+                            'dd_ck_k',
+                            kedatangan.ASAL_RUJUKAN
+                        );
+
+                        FormHelper.setValue($form,
+                            'dd_ck_a',
+                            kedatangan.KEPOLISIAN
+                        );
+
+                        FormHelper.setCheckbox($form,
+                            'dd_ck_a_v',
+                            kedatangan.VISUM
+                        );
+                    }
+
+                    // ------------------------------------------
+                    // Jenis Kasus
+                    // ------------------------------------------
+                    const kasus = triage.KASUS;
+
+                    if (kasus) {
+
+                        FormHelper.setSingleCheckbox($form,
+                            'jks',
+                            kasus.JENIS
+                        );
+
+                        FormHelper.setCheckbox($form,
+                            'jks_kll',
+                            kasus.LAKA_LANTAS
+                        );
+
+                        FormHelper.setCheckbox($form,
+                            'jks_kk',
+                            kasus.KECELAKAAN_KERJA
+                        );
+
+                        FormHelper.setCheckbox($form,
+                            'jks_uppa',
+                            kasus.UPPA
+                        );
+
+                        FormHelper.setValue($form,
+                            'jks_end_dm',
+                            kasus.DIMANA
+                        );
+                    }
+
+                    // ------------------------------------------
+                    // Anamnese
+                    // ------------------------------------------
+                    const anamnese = triage.ANAMNESE;
+
+                    if (anamnese) {
+                        FormHelper.setValue($form,
+                            'anm_ku',
+                            anamnese.KELUHAN_UTAMA
+                        );
+
+                        FormHelper.setValue($form,
+                            'anm_tp',
+                            anamnese.TERPIMPIN
+                        );
+                    }
+
+                    // ------------------------------------------
+                    // Tanda Vital
+                    // ------------------------------------------
+                    const tandaVital = triage.TANDA_VITAL;
+
+                    if (tandaVital) {
+                        FormHelper.setValue($form,'tv_sh', tandaVital.SUHU);
+                        FormHelper.setValue($form,'tv_up', tandaVital.SISTOLE);
+                        FormHelper.setValue($form,'tv_down', tandaVital.DIASTOLE);
+                        FormHelper.setValue($form,'tv_nadi', tandaVital.FREK_NADI);
+                        FormHelper.setValue($form,'tv_fr', tandaVital.FREK_NAFAS);
+                        FormHelper.setValue($form,'tv_mu', tandaVital.METODE_UKUR);
+                        FormHelper.setValue($form,'tv_sn', tandaVital.SKALA_NYERI);
+                    }
+
+                    // ------------------------------------------
+                    // OBGYN
+                    // ------------------------------------------
+                    const obgyn = triage.OBGYN;
+
+                    if (obgyn) {
+                        FormHelper.setValue($form,'ko_ug', obgyn.USIA_GESTASI);
+                        FormHelper.setValue($form,'ko_ku', obgyn.KONTRAKSI_UTERUS);
+                        FormHelper.setValue($form,'ko_dj', obgyn.DETAK_JANTUNG);
+                        FormHelper.setValue($form,'ko_ds', obgyn.DILATASI_SERVIKS);
+                    }
+
+                    // ------------------------------------------
+                    // Kebutuhan Khusus
+                    // ------------------------------------------
+                    const kebutuhanKhusus = triage.KEBUTUHAN_KHUSUS;
+
+                    if (kebutuhanKhusus) {
+                        FormHelper.setValue($form,'kk_a', kebutuhanKhusus.AIRBONE);
+                        FormHelper.setValue($form,'kk_d', kebutuhanKhusus.DEKONTAMINAN);
+                    }
+
+                    // ------------------------------------------
+                    // Data triage lain
+                    // ------------------------------------------
+                    FormHelper.setValue($form,'kr', triage.KRITERIA);
+                    FormHelper.setCheckbox($form,
+                        'risiko_penularan_infeksi',
+                        triage.RISIKO_PENULARAN_INFEKSI
+                    );
+                }
+
+                // ==========================================
+                // KONDISI SOSIAL
+                // ==========================================
+                const sosial = data.kondisi_sosial;
+
+                if (sosial) {
+                    FormHelper.setCheckbox($form,'tak', sosial.TIDAK_ADA_KELAINAN);
+                    FormHelper.setCheckbox($form,'marah', sosial.MARAH);
+                    FormHelper.setCheckbox($form,'cemas', sosial.CEMAS);
+                    FormHelper.setCheckbox($form,'takut', sosial.TAKUT);
+                    FormHelper.setCheckbox($form,'sedih', sosial.SEDIH);
+                    FormHelper.setCheckbox($form,'bundir', sosial.BUNUH_DIRI);
+
+                    FormHelper.setValue($form,'pse_lain', sosial.LAINNYA);
+
+                    FormHelper.setSingleCheckbox($form,
+                        'sm',
+                        sosial.STATUS_MENTAL
+                    );
+
+                    FormHelper.setValue($form,
+                        'sm2_lain',
+                        sosial.MASALAH_PERILAKU
+                    );
+
+                    FormHelper.setValue($form,
+                        'sm3_lain',
+                        sosial.PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'hub',
+                        sosial.HUBUNGAN_PASIEN_DENGAN_KELUARGA
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'tinggal',
+                        sosial.TEMPAT_TINGGAL
+                    );
+
+                    FormHelper.setValue($form,
+                        'tinggal_lain',
+                        sosial.TEMPAT_TINGGAL_LAINNYA
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'kbt',
+                        sosial.KEBIASAAN_BERIBADAH_TERATUR
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'nk',
+                        sosial.NILAI_KEPERCAYAAN
+                    );
+
+                    FormHelper.setValue($form,
+                        'nk_lain',
+                        sosial.NILAI_KEPERCAYAAN_DESKRIPSI
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'pk',
+                        sosial.PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA
+                    );
+
+                    FormHelper.setValue($form,
+                        'hasil',
+                        sosial.PENGHASILAN_PERBULAN
+                    );
+                }
+
+                // ==========================================
+                // PENILAIAN NYERI
+                // ==========================================
+                const nyeri = data.penilaian_nyeri;
+
+                if (nyeri) {
+                    FormHelper.setSingleCheckbox($form,'sn_nyeri', nyeri.NYERI);
+                    FormHelper.setSingleCheckbox($form,'sn_onset', nyeri.ONSET);
+                    FormHelper.setValue($form,'sn_skala', nyeri.SKALA);
+                    FormHelper.setValue($form,'sn_metode', nyeri.METODE);
+                    FormHelper.setValue($form,'sn_pencetus', nyeri.PENCETUS);
+                    FormHelper.setValue($form,'sn_gambaran', nyeri.GAMBARAN);
+                    FormHelper.setValue($form,'sn_durasi', nyeri.DURASI);
+                    FormHelper.setValue($form,'sn_lokasi', nyeri.LOKASI);
+                }
+
+                // ==========================================
+                // HUMPTY DUMPTY
+                // ==========================================
+                const hd = data.humpty_dumpty;
+
+                if (hd) {
+                    FormHelper.setValue($form,'rj_usia', hd.UMUR);
+                    FormHelper.setSingleCheckbox($form,'rj_jk', hd.JENIS_KELAMIN);
+
+                    FormHelper.setSingleCheckbox($form,'rj_hd_1', hd.DIAGNOSA);
+                    FormHelper.setSingleCheckbox($form,'rj_hd_2', hd.GANGGUAN_KONGNITIF);
+                    FormHelper.setSingleCheckbox($form,'rj_hd_3', hd.FAKTOR_LINGKUNGAN);
+                    FormHelper.setSingleCheckbox($form,'rj_hd_4', hd.RESPON);
+                    FormHelper.setSingleCheckbox($form,'rj_hd_5', hd.PENGGUNAAN_OBAT);
+                }
+
+                // ==========================================
+                // MORSE
+                // ==========================================
+                const morse = data.morse;
+
+                if (morse) {
+                    FormHelper.setSingleCheckbox($form,'rj_sm_1', morse.RIWAYAT_JATUH);
+                    FormHelper.setSingleCheckbox($form,'rj_sm_2', morse.DIAGNOSIS);
+                    FormHelper.setSingleCheckbox($form,'rj_sm_3', morse.ALAT_BANTU);
+                    FormHelper.setSingleCheckbox($form,'rj_sm_4', morse.HEPARIN);
+                    FormHelper.setSingleCheckbox($form,'rj_sm_5', morse.GAYA_BERJALAN);
+                    FormHelper.setSingleCheckbox($form,'rj_sm_6', morse.KESADARAN);
+                }
+
+                // ==========================================
+                // EPFRA
+                // ==========================================
+                const epfra = data.epfra;
+
+                if (epfra) {
+                    FormHelper.setValue($form,'rj_epfra_usia', epfra.USIA);
+
+                    FormHelper.setSingleCheckbox($form,
+                        'rj_epfra_1',
+                        epfra.STATUS_MENTAL
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'rj_epfra_2',
+                        epfra.ELIMINASI
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'rj_epfra_3',
+                        epfra.MEDIKASI
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'rj_epfra_4',
+                        epfra.DIAGNOSIS
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'rj_epfra_5',
+                        epfra.AMBULASI
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'rj_epfra_6',
+                        epfra.NUTRISI
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'rj_epfra_7',
+                        epfra.GANGGUAN_TIDUR
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'rj_epfra_8',
+                        epfra.RIWAYAT_JATUH
+                    );
+                }
+
+                // ==========================================
+                // MUST
+                // ==========================================
+                const must = data.must;
+
+                if (must) {
+                    FormHelper.setSingleCheckbox($form,
+                        'sgd1',
+                        must.BERAT_BADAN_SIGNIFIKAN
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'sgd1_c',
+                        must.PERUBAHAN_BERAT_BADAN
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'sgd2',
+                        must.INTAKE_MAKANAN
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'sgd3',
+                        must.KONDISI_KHUSUS
+                    );
+
+                    FormHelper.setValue($form,
+                        'skor_sgd',
+                        must.SKOR
+                    );
+                }
+
+                // ==========================================
+                // STRONG KID
+                // ==========================================
+                const strongKid = data.strong_kid;
+
+                if (strongKid) {
+                    FormHelper.setSingleCheckbox($form,
+                        'sga1',
+                        strongKid.TAMPAK_KURUS
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'sga2',
+                        strongKid.PENURUNAN_BERAT_BADAN
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'sga3',
+                        strongKid.DIARE_INTAKE_MAKANAN
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'sga4',
+                        strongKid.RESIKO_MALNUTRISI
+                    );
+
+                    FormHelper.setValue($form,
+                        'skor_sga',
+                        strongKid.SKOR
+                    );
+                }
+
+                // ==========================================
+                // STATUS REPRODUKSI
+                // ==========================================
+                const reproduksi = data.status_reproduksi;
+
+                if (reproduksi) {
+                    FormHelper.setSingleCheckbox($form,
+                        'kasus_obstetri_ginekologi',
+                        reproduksi.KASUS_OBSTETRI_GINEKOLOGI
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'status_reproduksi',
+                        reproduksi.STATUS_REPRODUKSI
+                    );
+
+                    FormHelper.setValue($form,
+                        'hpht',
+                        reproduksi.HPHT
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'siklus',
+                        reproduksi.SIKLUS
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'kb',
+                        reproduksi.KB
+                    );
+
+                    FormHelper.setValue($form,
+                        'hamil_gravida',
+                        reproduksi.HAMIL_GRAVIDA
+                    );
+
+                    FormHelper.setValue($form,
+                        'hamil_paritas',
+                        reproduksi.HAMIL_PARITAS
+                    );
+
+                    FormHelper.setValue($form,
+                        'hamil_abortus',
+                        reproduksi.HAMIL_ABORTUS
+                    );
+                }
+
+                // ==========================================
+                // MASALAH KEPERAWATAN
+                // ==========================================
+                const masalah = data.masalah_keperawatan;
+
+                if (masalah) {
+                    FormHelper.setCheckbox($form,'dmk_1', masalah.NYERI);
+                    FormHelper.setCheckbox($form,'dmk_2', masalah.CEMAS);
+                    FormHelper.setCheckbox($form,'dmk_3', masalah.PERUBAHAN_NUTRISI);
+                    FormHelper.setCheckbox($form,'dmk_4', masalah.GANGGUAN_PERNAFASAN);
+                    FormHelper.setCheckbox($form,'dmk_5', masalah.GANGGUAN_PERFUSI_JARINGAN);
+                    FormHelper.setCheckbox($form,'dmk_6', masalah.GANGGUAN_VOLUME_CAIRAN);
+                    FormHelper.setCheckbox($form,'dmk_7', masalah.POTENSI_INFEKSI);
+                    FormHelper.setCheckbox($form,'dmk_8', masalah.HIPERTEMI);
+                    FormHelper.setCheckbox($form,'dmk_9', masalah.TAKUT);
+                    FormHelper.setCheckbox($form,
+                        'dmk_10',
+                        masalah.KETIDAKEFEKTIFAN_POLA_MAKAN
+                    );
+
+                    FormHelper.setValue($form,
+                        'dmk_lain',
+                        masalah.MASALAH_LAIN
+                    );
+                }
+
+                // ==========================================
+                // DISCHARGE PLANNING - FAKTOR RISIKO
+                // ==========================================
+                const dpFaktor = data.discharge_faktor_risiko;
+
+                if (dpFaktor) {
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_1',
+                        dpFaktor.PASIEN_TINGGAL_SENDIRI
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_2',
+                        dpFaktor.PASIEN_KHAWATIR_KETIKA_DIRUMAH
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_3',
+                        dpFaktor.PASIEN_TAK_ADA_YANG_MERAWAT
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_4',
+                        dpFaktor.PASIEN_DILANTAI_ATAS
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_5',
+                        dpFaktor.PERAWATAN_LANJUTAN_PASIEN
+                    );
+                }
+
+                // ==========================================
+                // DISCHARGE PLANNING - SKRINING
+                // ==========================================
+                const dpSkrining = data.discharge_skrining;
+
+                if (dpSkrining) {
+
+                    // dp_5_lain -> KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA
+                    FormHelper.setValue($form,
+                        'dp_5_lain',
+                        dpSkrining.KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA
+                    );
+
+                    // Kriteria dasar
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_6',
+                        dpSkrining.PASIEN_PULANG
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_7',
+                        dpSkrining.PASIEN_MENGAJUKAN
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_8',
+                        dpSkrining.TIDAK_ADA_KRITERIA
+                    );
+
+                    // KPB
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_9',
+                        dpSkrining.KEBUTUHAN_PELAYANAN_BERKELANJUTAN_KPB
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_9_1',
+                        dpSkrining.KPB_RAWAT_LUKA
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_9_2',
+                        dpSkrining.KPB_TB
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_9_3',
+                        dpSkrining.KPB_DM_TERAPI_INSULIN
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_9_4',
+                        dpSkrining.KPB_PPOK
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_9_5',
+                        dpSkrining.KPB_PASIEN_KEMO
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_9_6',
+                        dpSkrining.KPB_HIV
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_9_7',
+                        dpSkrining.KPB_DM
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_9_8',
+                        dpSkrining.KPB_STROKE
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_9_9',
+                        dpSkrining.KPB_CKD
+                    );
+
+                    // Penggunaan alat medis
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_10',
+                        dpSkrining.PENGGUNAAN_ALAT_MEDIS_PAM
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_10_1',
+                        dpSkrining.PAM_KATETER_URIN
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_10_2',
+                        dpSkrining.PAM_TRAECHOSTOMY
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_10_3',
+                        dpSkrining.PAM_NGT
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_10_4',
+                        dpSkrining.PAM_COLOSTOMY
+                    );
+
+                    FormHelper.setValue($form,
+                        'dp_10_lain',
+                        dpSkrining.PAM_LAINNYA
+                    );
+
+                    // Skrining lanjutan
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_11',
+                        dpSkrining.SKRINING_LANJUTAN
+                    );
+
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_11_skrining',
+                        dpSkrining.SKRINING
+                    );
+                }
+
+                // ==========================================
+                // Jalankan ulang kalkulasi / tampilan
+                // ==========================================
+                $form.find('input, select, textarea').trigger('change');
             },
+
             error: function (xhr) {
-                let message = 'Data gagal disimpan.';
+                let message = 'Data gagal dimuat.';
 
                 if (xhr.status === 422 && xhr.responseJSON?.errors) {
                     message = Object.values(xhr.responseJSON.errors)
@@ -3200,8 +3824,10 @@
                 } else if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
                 }
+
                 alert(message);
             },
+
             complete: function () {
 
             }

@@ -1104,76 +1104,6 @@
         }
 
         // ============================================================
-        // HELPER
-        // ============================================================
-
-        // Set value input / textarea / select
-        function setValue(name, value) {
-            const $el = $form.find(`[name="${name}"]`);
-
-            if (!$el.length) return;
-
-            if (value === null || value === undefined || value === '') {
-                $el.val('');
-            } else {
-                // Normalisasi nilai angka
-                if ($el.attr('type') === 'number') {
-                    const normalized = String(value).replace(',', '.');
-                    const number = Number(normalized);
-
-                    if (!isNaN(number)) {
-                        value = number;
-                    }
-                }
-
-                $el.val(value);
-            }
-
-            // Trigger jika ada plugin / event yang bergantung pada change
-            $el.trigger('change');
-        }
-
-        // Checkbox biasa berdasarkan boolean / 0 / 1
-        function setCheckbox(name, checked) {
-            const $el = $form.find(`input[name="${name}"]`);
-
-            if (!$el.length) return;
-
-            $el.prop('checked', Number(checked) === 1);
-            $el.trigger('change');
-        }
-
-        // Checkbox group berdasarkan value
-        function setCheckboxValue(name, value) {
-            const $el = $form.find(`input[name="${name}"][value="${value}"]`);
-
-            if (!$el.length) return;
-
-            $el.prop('checked', true);
-            $el.trigger('change');
-        }
-
-        // Checkbox group single choice
-        function setSingleCheckbox(name, value) {
-            const $group = $form.find(`input[name="${name}"]`);
-
-            if (!$group.length) return;
-
-            $group.prop('checked', false);
-
-            if (
-                value !== null &&
-                value !== undefined &&
-                value !== ''
-            ) {
-                $group
-                    .filter(`[value="${value}"]`)
-                    .prop('checked', true)
-                    .trigger('change');
-            }
-        }
-
-        // ============================================================
         // AJAX
         // ============================================================
 
@@ -1216,7 +1146,8 @@
                     triage.KATEGORI_PEMERIKSAAN !== null &&
                     triage.KATEGORI_PEMERIKSAAN !== undefined
                 ) {
-                    setSingleCheckbox(
+                    FormHelper.setSingleCheckbox(
+                        $form,
                         'ats_p',
                         triage.KATEGORI_PEMERIKSAAN
                     );
@@ -1230,7 +1161,8 @@
                     triage.PLAN !== null &&
                     triage.PLAN !== undefined
                 ) {
-                    setSingleCheckbox(
+                    FormHelper.setSingleCheckbox(
+                        $form,
                         'ats_p',
                         triage.PLAN
                     );
@@ -1269,7 +1201,8 @@
                 const resusJalanNapas =
                     resusitasi.JALAN_NAPAS || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_jn_1',
                     resusJalanNapas.SUMBATAN_JALAN_NAPAS_TOTAL
                 );
@@ -1282,17 +1215,20 @@
                 const resusPernapasan =
                     resusitasi.PERNAPASAN || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_1_1',
                     resusPernapasan.HENTI_NAFAS
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_1_2',
                     resusPernapasan.NAPAS_TIDAK_ADEKUAT_DIATAS_40_X_PER_MENIT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_1_3',
                     resusPernapasan.GASPING_DIBAWAH_12_X_PER_MENIT
                 );
@@ -1305,7 +1241,8 @@
                 const resusSirkulasi =
                     resusitasi.SIRKULASI || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_1',
                     resusSirkulasi.NADI_TIDAK_TERABA
                 );
@@ -1320,7 +1257,8 @@
                 const emergencyJalanNapas =
                     emergency.JALAN_NAPAS || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_jn_2',
                     emergencyJalanNapas.SUMBATAN_JALAN_NAPAS_PARSIAL
                 );
@@ -1329,27 +1267,32 @@
                 const emergencyPernapasan =
                     emergency.PERNAPASAN || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_2_1',
                     emergencyPernapasan.DISTRESS_PERNAPASAN
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_2_2',
                     emergencyPernapasan.FREKUENSI_PERNAPASAN_24_SAMPAI_31_X_PER_MENIT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_2_3',
                     emergencyPernapasan.WHEEZING
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_2_4',
                     emergencyPernapasan.RONCHI
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_2_5',
                     emergencyPernapasan.GURGLING
                 );
@@ -1358,52 +1301,62 @@
                 const emergencySirkulasi =
                     emergency.SIRKULASI || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_2_1',
                     emergencySirkulasi.NADI_SANGAT_LEMAH
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_2_2',
                     emergencySirkulasi.NYERI_BERAT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_2_3',
                     emergencySirkulasi.IRAMA_NADI_TIDAK_TERATUR
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_2_4',
                     emergencySirkulasi.NADI_DIBAWAH_50_ATAU_DIATAS_150_X_PER_MENIT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_2_5',
                     emergencySirkulasi.SIANOTIK
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_2_6',
                     emergencySirkulasi.PUCAT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_2_7',
                     emergencySirkulasi.AKRAL_DINGIN
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_2_8',
                     emergencySirkulasi.KERINGAT_DINGIN
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_2_9',
                     emergencySirkulasi.TDS_DIBAWAH_80_ATAU_DIATAS_180_MMHG
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_2_10',
                     emergencySirkulasi.SPO2_DIBAWAH_90_PERSEN
                 );
@@ -1418,12 +1371,14 @@
                 const urgentJalanNapas =
                     urgent.JALAN_NAPAS || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_jn_3_1',
                     urgentJalanNapas.JALAN_NAPAS_BEBAS
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_jn_3_2',
                     urgentJalanNapas.CORPUS_ALLIENUM_TANDA2_GANGUAN_NAPAS
                 );
@@ -1432,22 +1387,26 @@
                 const urgentPernapasan =
                     urgent.PERNAPASAN || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_3_1',
                     urgentPernapasan.RETRAKSI_ATAU_NAPAS_CUPING_HIDUNG
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_3_2',
                     urgentPernapasan.FREKUENSI_PERNAPASAN_24_SAMPAI_31_X_PER_MENIT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_3_3',
                     urgentPernapasan.WHEEZING
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_3_4',
                     urgentPernapasan.RONCHI
                 );
@@ -1456,37 +1415,44 @@
                 const urgentSirkulasi =
                     urgent.SIRKULASI || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_3_1',
                     urgentSirkulasi.NADI_TERABA_LEMAH
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_3_2',
                     urgentSirkulasi.NYERI_SEDANG
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_3_3',
                     urgentSirkulasi.IRAMA_NADI_TIDAK_TERATUR
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_3_4',
                     urgentSirkulasi.NADI_50_SAMPAI_59_ATAU_101_SAMPAI_150_X_PER_MENIT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_3_5',
                     urgentSirkulasi.WARNA_KULIT_NORMAL
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_3_6',
                     urgentSirkulasi.TDS_80_SAMPAI_100_ATAU_150_SAMPAI_180_MMHG
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_3_7',
                     urgentSirkulasi.SPO2_DIATAS_95_PERSEN
                 );
@@ -1501,7 +1467,8 @@
                 const lessUrgentJalanNapas =
                     lessUrgent.JALAN_NAPAS || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_jn_4',
                     lessUrgentJalanNapas.JALAN_NAPAS_BEBAS
                 );
@@ -1510,12 +1477,14 @@
                 const lessUrgentPernapasan =
                     lessUrgent.PERNAPASAN || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_4_1',
                     lessUrgentPernapasan.RETRAKSI_ATAU_NAPAS_CUPING_HIDUNG
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_4_2',
                     lessUrgentPernapasan.FREKUENSI_PERNAPASAN_21_SAMPAI_23_X_PER_MENIT
                 );
@@ -1524,37 +1493,44 @@
                 const lessUrgentSirkulasi =
                     lessUrgent.SIRKULASI || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_4_1',
                     lessUrgentSirkulasi.NADI_TERABA_KUAT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_4_2',
                     lessUrgentSirkulasi.NYERI_RINGAN
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_4_3',
                     lessUrgentSirkulasi.IRAMA_NADI_TERATUR
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_4_4',
                     lessUrgentSirkulasi.NADI_60_SAMPAI_100_X_PER_MENIT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_4_5',
                     lessUrgentSirkulasi.AKRAL_HANGAT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_4_6',
                     lessUrgentSirkulasi.TDS_DIATAS_100_ATAU_DIBAWAH_150_MMHG
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_4_7',
                     lessUrgentSirkulasi.SPO2_DIATAS_95_PERSEN
                 );
@@ -1569,7 +1545,8 @@
                 const nonUrgentJalanNapas =
                     nonUrgent.JALAN_NAPAS || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_jn_5',
                     nonUrgentJalanNapas.JALAN_NAPAS_BEBAS
                 );
@@ -1578,12 +1555,14 @@
                 const nonUrgentPernapasan =
                     nonUrgent.PERNAPASAN || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_5_1',
                     nonUrgentPernapasan.TIDAK_ADA_RETRAKSI
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_pf_5_2',
                     nonUrgentPernapasan.FREKUENSI_PERNAPASAN_12_SAMPAI_20_X_PER_MENIT
                 );
@@ -1592,37 +1571,44 @@
                 const nonUrgentSirkulasi =
                     nonUrgent.SIRKULASI || {};
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_5_1',
                     nonUrgentSirkulasi.NADI_TERABA_KUAT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_5_2',
                     nonUrgentSirkulasi.TIDAK_ADA_NYERI
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_5_3',
                     nonUrgentSirkulasi.IRAMA_NADI_TERATUR
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_5_4',
                     nonUrgentSirkulasi.NADI_60_SAMPAI_100_X_PER_MENIT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_5_5',
                     nonUrgentSirkulasi.AKRAL_HANGAT
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_5_6',
                     nonUrgentSirkulasi.TDS_100_KOMA_150_MMHG
                 );
 
-                setCheckbox(
+                FormHelper.setCheckbox(
+                    $form,
                     'ats_sr_5_7',
                     nonUrgentSirkulasi.SPO2_DIATAS_95_PERSEN
                 );
@@ -1644,7 +1630,8 @@
                 // 8. KRITERIA ATS
                 // ====================================================
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'ats',
                     triage.KRITERIA
                 );
@@ -1658,7 +1645,8 @@
                     triage.RISIKO_PENULARAN_INFEKSI !== null &&
                     triage.RISIKO_PENULARAN_INFEKSI !== undefined
                 ) {
-                    setSingleCheckbox(
+                    FormHelper.setSingleCheckbox(
+                        $form,
                         'rpi',
                         triage.RISIKO_PENULARAN_INFEKSI
                     );
@@ -1671,9 +1659,9 @@
                 const anamnesisDiperoleh = data.anamnesis_diperoleh || {};
 
                 if (anamnesisDiperoleh.AUTOANAMNESIS == 1) {
-                    setSingleCheckbox('anam', 1);
+                    FormHelper.setSingleCheckbox($form,'anam', 1);
                 } else if (anamnesisDiperoleh.ALLOANAMNESIS == 1) {
-                    setSingleCheckbox('anam', 2);
+                    FormHelper.setSingleCheckbox($form,'anam', 2);
                 }
 
                 // ====================================================
@@ -1683,20 +1671,23 @@
                 const tandaVital = data.tanda_vital || {};
 
                 // Keadaan Umum
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'keu',
                     tandaVital.KEADAAN_UMUM
                 );
 
                 // Tingkat Kesadaran
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'tks',
                     tandaVital.TINGKAT_KESADARAN
                 );
 
 
                 // Frekuensi Nafas
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'fr',
                     tandaVital.FREKUENSI_NAFAS
                 );
@@ -1712,30 +1703,35 @@
 
 
                 // Frekuensi Nadi
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'nadi',
                     tandaVital.FREKUENSI_NADI
                 );
 
                 // Tekanan Darah
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'td_up',
                     tandaVital.SISTOLIK
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'td_down',
                     tandaVital.DISTOLIK
                 );
 
                 // Suhu
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'suhu',
                     tandaVital.SUHU
                 );
 
                 // SpO2
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'spo2',
                     tandaVital.SATURASI_O2
                 );
@@ -1751,52 +1747,61 @@
                 }
 
                 // Diameter pupil
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'dia_up',
                     tandaVital.DIAMETER_PUPIL_UP
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'dia_down',
                     tandaVital.DIAMETER_PUPIL_DOWN
                 );
 
                 // Refleks cahaya
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'rc_up',
                     tandaVital.RC_UP
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'rc_down',
                     tandaVital.RC_DOWN
                 );
 
 
                 // GCS
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'gcs_e',
                     tandaVital.EYE
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'gcs_v',
                     tandaVital.VERBAL
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'gcs_m',
                     tandaVital.MOTORIK
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'gcs_t',
                     tandaVital.GCS
                 );
 
 
                 // VAS
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'vas',
                     tandaVital.VAS
                 );
@@ -1863,49 +1868,56 @@
 
 
                 // Status reproduksi / Hamil
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'sr_hamil',
                     statusReproduksi.STATUS_REPRODUKSI
                 );
 
 
                 // HPHT
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'sr_hpht',
                     statusReproduksi.HPHT
                 );
 
 
                 // Siklus
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'sr_siklus',
                     statusReproduksi.SIKLUS
                 );
 
 
                 // KB
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'sr_kb',
                     statusReproduksi.KB
                 );
 
 
                 // Gravida
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'sr_grv',
                     statusReproduksi.HAMIL_GRAVIDA
                 );
 
 
                 // Paritas
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'sr_prt',
                     statusReproduksi.HAMIL_PARITAS
                 );
 
 
                 // Abortus
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'sr_abr',
                     statusReproduksi.HAMIL_ABORTUS
                 );
@@ -1991,7 +2003,8 @@
                     keluhanUtama
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'ku',
                     keluhanUtama.DESKRIPSI
                 );
@@ -2015,7 +2028,8 @@
                 // Controller simpan:
                 // DESKRIPSI = $request->rps
                 //
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'rps',
                     anamnesis.DESKRIPSI
                 );
@@ -2023,37 +2037,44 @@
 
                 // Jika nantinya menggunakan field-field tambahan
                 // dari tabel medicalrecord.anamnesis
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'anam_khu',
                     anamnesis.KELUHAN_UTAMA
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'anam_rps',
                     anamnesis.RPS
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'anam_rpt',
                     anamnesis.RPT
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'anam_rpk',
                     anamnesis.RPK
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'anam_rl',
                     anamnesis.RL
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'anam_riwayat_alergi',
                     anamnesis.RIWAYAT_ALERGI
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'anam_reaksi_alergi',
                     anamnesis.REAKSI_ALERGI
                 );
@@ -2075,7 +2096,8 @@
                 // Controller simpan:
                 // DESKRIPSI = $request->rpd
                 //
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'rpd',
                     rpp.DESKRIPSI
                 );
@@ -2093,7 +2115,8 @@
                     pemeriksaanFisik
                 );
 
-                setValue(
+                FormHelper.setValue(
+                    $form,
                     'pf',
                     pemeriksaanFisik.DESKRIPSI
                 );
@@ -2109,7 +2132,8 @@
                 //
                 if (data.perencanaan_terapi) {
 
-                    setValue(
+                    FormHelper.setValue(
+                    $form,
                         'pt',
                         data.perencanaan_terapi.DESKRIPSI
                     );
@@ -2124,7 +2148,8 @@
                 //
                 if (data.hasil_lapor_dpjp) {
 
-                    setValue(
+                    FormHelper.setValue(
+                    $form,
                         'hld',
                         data.hasil_lapor_dpjp.DESKRIPSI
                     );
@@ -2139,12 +2164,14 @@
                 //
                 if (data.tindak_lanjut_asuhan) {
 
-                    setValue(
+                    FormHelper.setValue(
+                    $form,
                         'tla_ck',
                         data.tindak_lanjut_asuhan.CARA
                     );
 
-                    setValue(
+                    FormHelper.setValue(
+                    $form,
                         'tla_kk',
                         data.tindak_lanjut_asuhan.KEADAAN
                     );

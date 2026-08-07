@@ -468,4 +468,105 @@
             }
         })
     }
+
+    // ============================================================
+    // GLOBAL FORM HELPER
+    // ============================================================
+    window.FormHelper = {
+
+        // Set value input / textarea / select
+        setValue: function ($form, name, value) {
+
+            const $el = $form.find(`[name="${name}"]`);
+
+            if (!$el.length) return;
+
+            if (value === null || value === undefined || value === '') {
+                $el.val('');
+            } else {
+
+                // Normalisasi nilai angka
+                if ($el.attr('type') === 'number') {
+
+                    const normalized = String(value).replace(',', '.');
+                    const number = Number(normalized);
+
+                    if (!isNaN(number)) {
+                        value = number;
+                    }
+                }
+
+                $el.val(value);
+            }
+
+            $el.trigger('change');
+        },
+
+
+        // Checkbox biasa berdasarkan boolean / 0 / 1
+        setCheckbox: function ($form, name, checked) {
+
+            const $el = $form.find(`input[name="${name}"]`);
+
+            if (!$el.length) return;
+
+            $el.prop('checked', Number(checked) === 1);
+
+            $el.trigger('change');
+        },
+
+
+        // Checkbox group berdasarkan value
+        setCheckboxValue: function ($form, name, value) {
+
+            const $el = $form.find(
+                `input[name="${name}"][value="${value}"]`
+            );
+
+            if (!$el.length) return;
+
+            $el.prop('checked', true);
+
+            $el.trigger('change');
+        },
+
+
+        // Checkbox group single choice
+        setSingleCheckbox: function ($form, name, value) {
+
+            const $group = $form.find(`input[name="${name}"]`);
+
+            if (!$group.length) return;
+
+            // Selalu kosongkan seluruh group terlebih dahulu
+            $group.prop('checked', false);
+
+            // Tidak ada value
+            if (value === null || value === undefined || value === '') {
+                return;
+            }
+
+            // Normalisasi agar 1 dan "1" sama
+            const normalizedValue = String(value);
+
+            // Centang SATU checkbox saja
+            $group
+                .filter(function () {
+                    return String($(this).val()) === normalizedValue;
+                })
+                .first()
+                .prop('checked', true);
+        },
+
+
+        // Format datetime untuk input type="datetime-local"
+        formatDateTimeLocal: function (value) {
+
+            if (!value) return '';
+
+            return String(value)
+                .replace(' ', 'T')
+                .substring(0, 16);
+        }
+    };
 </script>
