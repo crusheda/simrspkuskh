@@ -234,211 +234,6 @@
                     </div>
                 </div>
             </div>
-            {{-- <div class="col-md-12 mb-3">
-                <div class="form-group mb-3">
-                    <h6>Hambatan Pasien</h6>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="hpx" value="1">
-                                <label class="form-check-label"> Tidak Ada </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="hpx" value="2">
-                                <label class="form-check-label"> Ada </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="hpx" value="3">
-                                <label class="form-check-label"> Bahasa </label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="hpx" value="4">
-                                <label class="form-check-label"> Fisik </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="hpx" value="5">
-                                <label class="form-check-label"> Tuli </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="hpx" value="6">
-                                <label class="form-check-label"> Bisu </label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="hpx" value="7">
-                                <label class="form-check-label"> Buta </label>
-                            </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="form-check mb-0 flex-shrink-0">
-                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="hpx" value="8">
-                                    <label class="form-check-label ms-1" for="cm4">
-                                        Lain-lain
-                                    </label>
-                                </div>
-                                <input type="text" class="form-control form-control-sm flex-grow-1" name="hpx_lain" placeholder="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <h6>Keluhan Utama</h6>
-                    <textarea class="form-control" name="ku_p" rows="2"></textarea>
-                </div>
-            </div> --}}
-            {{-- <div class="col-md-12">
-                <div class="card card-body border border-dashed border-warning mb-3">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <h6 class="mb-0">Airway</h6>
-                                <div class="form-check mb-0 flex-shrink-0">
-                                    <input class="form-check-input single-checkbox" type="checkbox" name="ttv_airway" value="1">
-                                    <label class="form-check-label">
-                                        Normal
-                                    </label>
-                                </div>
-                                <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
-                                    <div class="form-check mb-0">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="ttv_airway" value="2">
-                                        <label class="form-check-label">
-                                            Masalah
-                                        </label>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm flex-grow-1" name="ttv_airway_lain">
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <h6>Breathing</h6>
-                                <div class="form-group">
-                                    <div class="input-group input-group-sm flex-grow-1">
-                                        <span class="input-group-text">RR</span>
-                                        <input type="text" class="form-control" name="ttv_br">
-                                        <span class="input-group-text">X/menit</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group mb-3">
-                                <h6>Pola Pernapasan</h6>
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="form-check mb-0 flex-shrink-0">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="ttv_pnafas" value="1">
-                                        <label class="form-check-label">
-                                            Normal
-                                        </label>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
-                                        <div class="form-check mb-0 flex-shrink-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="ttv_pnafas" value="2">
-                                            <label class="form-check-label">
-                                                Tidak, jelaskan
-                                            </label>
-                                        </div>
-                                        <input type="text" class="form-control form-control-sm flex-grow-1" name="ttv_pnafas_lain">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <h6>Circulation</h6>
-                                <div class="form-group">
-                                    <div class="input-group input-group-sm flex-grow-1">
-                                        <span class="input-group-text">TD</span>
-                                        <input type="text" class="form-control" name="ttv_cr">
-                                        <span class="input-group-text">mmHg</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <h6>Nadi</h6>
-                                <div class="form-group">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="input-group input-group-sm flex-grow-1">
-                                            <input type="text" class="form-control" name="ttv_nadi">
-                                            <span class="input-group-text">X/menit</span>
-                                        </div>
-                                        <div class="form-check flex-shrink-0 m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="ttv_nadi_cb" value="1">
-                                            <label class="form-check-label text-nowrap">
-                                                Teratur
-                                            </label>
-                                        </div>
-                                        <div class="form-check flex-shrink-0 m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="ttv_nadi_cb" value="2">
-                                            <label class="form-check-label text-nowrap">
-                                                Tidak Teratur
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <h6 class="mb-0">Suhu</h6>
-                                <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
-                                    <div class="input-group input-group-sm flex-grow-1">
-                                        <input type="text" class="form-control" name="ttv_sh">
-                                        <span class="input-group-text">°C</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group mb-3">
-                                <div class="d-flex align-items-center gap-3">
-                                    <h6 class="mb-0">Akral</h6>
-                                    <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="ttv_akral" value="1">
-                                        <label class="form-check-label"> Hangat </label>
-                                    </div>
-                                    <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="ttv_akral" value="2">
-                                        <label class="form-check-label"> Dingin </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group mb-3">
-                                <h6>Perdarahan/Kehilangan Cairan</h6>
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="form-check mb-0 flex-shrink-0">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="ttv_phc" value="1">
-                                        <label class="form-check-label">
-                                            Tidak
-                                        </label>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2 flex-grow-1">
-                                        <div class="form-check mb-0 flex-shrink-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="ttv_phc" value="2">
-                                            <label class="form-check-label">
-                                                Ada, jelaskan
-                                            </label>
-                                        </div>
-                                        <input type="text" class="form-control form-control-sm flex-grow-1" name="ttv_phc_lain">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <h6>Capilary</h6>
-                                <div class="form-group">
-                                    <div class="input-group input-group-sm flex-grow-1">
-                                        <input type="text" class="form-control" name="ttv_cp">
-                                        <span class="input-group-text">detik</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="">
-                                <h6>SpO2</h6>
-                                <div class="form-group">
-                                    <div class="input-group input-group-sm flex-grow-1">
-                                        <input type="text" class="form-control" name="ttv_spo2">
-                                        <span class="input-group-text">%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> --}}
             <div class="col-md-12">
                 <div class="card card-body border border-dashed border-primary mb-3">
                     <div class="row">
@@ -454,43 +249,43 @@
                                 <label class="form-label fw-bold">Status Psikologi</label>
                                 <div class="col">
                                     <div class="form-check mb-2">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="psi" value="1">
+                                        <input class="form-check-input check-primary" type="checkbox" name="tak">
                                         <label class="form-check-label" for="checkPrimary"> Tidak ada kelainan </label>
                                     </div>
                                     <div class="form-check mb-2">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="psi" value="2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="marah">
                                         <label class="form-check-label" for="checkPrimary"> Marah </label>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="form-check mb-2">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="psi" value="3">
+                                        <input class="form-check-input check-primary" type="checkbox" name="cemas">
                                         <label class="form-check-label" for="checkPrimary"> Cemas </label>
                                     </div>
                                     <div class="form-check mb-2">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="psi" value="4">
+                                        <input class="form-check-input check-primary" type="checkbox" name="takut">
                                         <label class="form-check-label" for="checkPrimary"> Takut </label>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="form-check mb-2">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="psi" value="5">
+                                        <input class="form-check-input check-primary" type="checkbox" name="sedih">
                                         <label class="form-check-label" for="checkPrimary"> Sedih </label>
                                     </div>
                                     <div class="form-check mb-2">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="psi" value="6">
+                                        <input class="form-check-input check-primary" type="checkbox" name="bundir">
                                         <label class="form-check-label" for="checkPrimary"> Kecenderungan bunuh diri </label>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
                                         <div class="form-check mb-0">
-                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="psi" value="7">
+                                            <input class="form-check-input check-primary" type="checkbox" name="psel">
                                             <label class="form-check-label">
                                                 Lainnya
                                             </label>
                                         </div>
-                                        <input type="text" class="form-control form-control-sm flex-grow-1" name="psi_lain">
+                                        <input type="text" class="form-control form-control-sm flex-grow-1" name="pse_lain">
                                     </div>
                                 </div>
                             </div>
@@ -2078,25 +1873,25 @@
                                         <div class="form-check mb-2">
                                             <input class="form-check-input" type="checkbox" name="dp_9_6" value="1">
                                             <label class="form-check-label">
-                                                NGT
+                                                HIV / AIDS
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
                                             <input class="form-check-input" type="checkbox" name="dp_9_7" value="1">
                                             <label class="form-check-label">
-                                                Colostomy
+                                                DM
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
                                             <input class="form-check-input" type="checkbox" name="dp_9_8" value="1">
                                             <label class="form-check-label">
-                                                Colostomy
+                                                Stroke
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
                                             <input class="form-check-input" type="checkbox" name="dp_9_9" value="1">
                                             <label class="form-check-label">
-                                                Colostomy
+                                                CKD
                                             </label>
                                         </div>
                                     </div>
@@ -3386,9 +3181,8 @@
     }
 
     function getDataPengkajianGdP() {
-        $kunjungan = $('#gd_dokter').data('kunjungan');
         $.ajax({
-            url: `/api/v2/emr/form/pengkajian/gd/pr/${$kunjungan}`,
+            url: `/api/v2/emr/form/pengkajian/gd/pr/${kunjungan}`,
             type: 'GET',
             beforeSend: function () {
 
@@ -3416,13 +3210,14 @@
 
     function saveDataPengkajianGdP(btn) {
         const $button = $(btn);
+        const $section = $('#gd_perawat');
 
         const data = getFormDataByName($section, {
             NOKUNJ: $section.data('kunjungan')
         });
 
         $.ajax({
-            url: '/api/emr/form/pengkajian/gd/pr/simpan',
+            url: '/api/v2/emr/form/pengkajian/gd/pr/simpan',
             type: 'POST',
             data: data,
             headers: {

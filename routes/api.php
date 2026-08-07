@@ -50,11 +50,11 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
             // FORM PENGKAJIAN
                 // GAWAT DARURAT
                     // DOKTER
-                    Route::get('emr/form/pengkajian/gd/dr/{kunjungan}', [PengkajianGawatDaruratController::class, 'getFormDokter']);
-                    Route::post('emr/form/pengkajian/gd/dr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormDokter']);
+                    Route::get('emr/form/pengkajian/gd/dr/{kunjungan}', [PengkajianGawatDaruratController::class, 'getFormDokterGd']);
+                    Route::post('emr/form/pengkajian/gd/dr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormDokterGd']);
                     // PERAWAT
-                    Route::get('emr/form/pengkajian/gd/pr/{kunjungan}', [PengkajianGawatDaruratController::class, 'getFormPerawat']);
-                    Route::post('emr/form/pengkajian/gd/pr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormPerawat']);
+                    Route::get('emr/form/pengkajian/gd/pr/{kunjungan}', [PengkajianGawatDaruratController::class, 'getFormPerawatGd']);
+                    Route::post('emr/form/pengkajian/gd/pr/simpan', [PengkajianGawatDaruratController::class, 'simpanFormPerawatGd']);
 
                 // RAWAT JALAN
                     // DEWASA

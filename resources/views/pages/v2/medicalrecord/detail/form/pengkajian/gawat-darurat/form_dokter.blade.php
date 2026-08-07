@@ -751,30 +751,6 @@
                                 <div class="col-md-10">
                                     <input type="text" class="form-control" name="rpo_nama_obat" id="rpo_nama_obat" placeholder="Masukkan Nama Obat">
                                 </div>
-                                {{-- <div class="col-md-6">
-                                    <input type="text" class="form-control" name="rpo_dosis" placeholder="Masukkan Dosis">
-                                </div>
-                                <div class="col-md-6">
-                                    <select class="form-select" name="rpo_frekuensi">
-                                        @foreach ($list['frekuensi_obat'] as $item)
-                                            <option value="{{ $item->ID }}" {{ $item->FREKUENSI == '-' ? 'selected' : '' }}>
-                                                {{ $item->FREKUENSI }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <select class="form-select" name="rpo_rute">
-                                        @foreach ($list['rute_obat'] as $item)
-                                            <option value="{{ $item->ID }}" {{ $item->DESKRIPSI == '-' ? 'selected' : '' }}>
-                                                {{ $item->DESKRIPSI }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" name="rpo_lama" placeholder="Tuliskan Lama Penggunaan Obat">
-                                </div> --}}
                                 <div class="col-md-2">
                                     <div class="btn-group w-100">
                                         <button class="btn btn-success" id="btnTambahObat" onclick="tambahPenggunaanObat()">
@@ -797,18 +773,10 @@
                                         <tr class="table-success">
                                             <th>No</th>
                                             <th>Nama Obat</th>
-                                            {{-- <th>Dosis</th>
-                                            <th>Frekuensi (Keterangan)</th>
-                                            <th>Rute Pemberian</th>
-                                            <th>Lama Penggunaan</th> --}}
                                             <th class="text-center">Aksi</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tblObatBody">
-                                        {{-- <tr>
-                                            <td colspan="7" class="text-center">Tidak ada data</td>
-                                        </tr> --}}
-                                    </tbody>
+                                    <tbody id="tblObatBody"></tbody>
                                 </table>
                             </div>
                         </div>
