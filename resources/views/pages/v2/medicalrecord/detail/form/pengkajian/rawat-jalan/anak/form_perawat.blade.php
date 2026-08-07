@@ -856,6 +856,280 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-12">
+            <div class="card card-body border border-dashed border-primary">
+                <h6 class="mb-3">RIWAYAT PERINATAL</h6>
+                <!-- Lama Hamil -->
+                <div class="row mb-3 align-items-center">
+                    <label class="col-md-3 col-form-label">Lama Hamil</label>
+                    <div class="col-md-3">
+                        <input type="number" class="form-control" id="rp_lama_hamil" name="rp_lama_hamil" placeholder="0">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="rp_satuan" name="rp_satuan">
+                            <option value="MINGGU">Minggu</option>
+                            <option value="BULAN">Bulan</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Komplikasi Kehamilan -->
+                <div class="row mb-3">
+                    <label class="col-md-3 col-form-label">
+                        Komplikasi Kehamilan
+                    </label>
+                    <div class="col-md-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="rp_komplikasi" id="rp_komplikasi_tidak" value="0" checked>
+                            <label class="form-check-label">
+                                Tidak
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="rp_komplikasi" id="rp_komplikasi_ya" value="1">
+
+                            <label class="form-check-label">
+                                Ya
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" id="rp_komplikasi_ket" name="rp_komplikasi_ket" placeholder="Jelaskan..." style="display:none;">
+                    </div>
+
+                </div>
+
+                <!-- Riwayat Persalinan -->
+                <div class="row mb-3">
+
+                    <label class="col-md-3 col-form-label">
+                        Riwayat Persalinan
+                    </label>
+                    <div class="col-md-9">
+                        <div class="d-flex flex-wrap gap-4">
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="rp_persalinan" value="1">
+                                <label class="form-check-label">
+                                    Spontan
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="rp_persalinan" value="2">
+                                <label class="form-check-label">
+                                    Sectio
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="rp_persalinan" value="3">
+                                <label class="form-check-label">
+                                    Vacuum Ekstraksi
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="rp_persalinan" value="4">
+                                <label class="form-check-label">
+                                    Forceps Ekstraksi
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Penyulit Persalinan -->
+                <div class="row">
+                    <label class="col-md-3 col-form-label">
+                        Penyulit Persalinan
+                    </label>
+                    <div class="col-md-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="rp_penyulit" id="rp_penyulit_tidak" value="0" checked>
+                            <label class="form-check-label">
+                                Tidak
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="rp_penyulit" id="rp_penyulit_ya" value="1">
+                            <label class="form-check-label">
+                                Ya
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" id="rp_penyulit_ket" name="rp_penyulit_ket" placeholder="Jelaskan..." style="display:none;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mb-3">
+            <div class="card card-body border border-dashed border-primary">
+                <h6 class="mb-3">RIWAYAT TUMBUH KEMBANG</h6>
+                <div class="row">
+                    <!-- KOLOM KIRI -->
+                    <div class="col-md-6">
+                        <div class="row mb-2 align-items-center">
+                            <label class="col-md-4 col-form-label">Lingkar Kepala Saat Lahir</label>
+                            <div class="col-md-4">
+                                <input type="number" class="form-control" name="lk_lahir" id="lk_lahir">
+                            </div>
+                            <div class="col-md-4">cm</div>
+                        </div>
+
+                        <div class="row mb-2 align-items-center">
+                            <label class="col-md-4 col-form-label">Berat Badan Saat Lahir</label>
+                            <div class="col-md-4">
+                                <input type="number" class="form-control" name="bb_lahir" id="bb_lahir">
+                            </div>
+                            <div class="col-md-4">gram</div>
+                        </div>
+
+                        <div class="row mb-2 align-items-center">
+                            <label class="col-md-4 col-form-label">Tinggi Badan Saat Lahir</label>
+                            <div class="col-md-4">
+                                <input type="number" class="form-control" name="tb_lahir" id="tb_lahir">
+                            </div>
+                            <div class="col-md-4">cm</div>
+                        </div>
+
+                        <div class="row mb-2 align-items-center">
+                            <label class="col-md-4 col-form-label">ASI Sampai Umur</label>
+                            <div class="col-md-4">
+                                <input type="number" class="form-control" name="asi_sampai" id="asi_sampai">
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" name="asi_satuan" id="asi_satuan">
+                                    <option value="BULAN">Bulan</option>
+                                    <option value="TAHUN">Tahun</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row align-items-center">
+                            <label class="col-md-4 col-form-label">Susu Formula Mulai</label>
+                            <div class="col-md-4">
+                                <input type="number" class="form-control" name="sufor_mulai" id="sufor_mulai">
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" name="sufor_satuan" id="sufor_satuan">
+                                    <option value="BULAN">Bulan</option>
+                                    <option value="TAHUN">Tahun</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row align-items-center">
+                            <label class="col-md-4 col-form-label">Makanan Tambahan</label>
+                            <div class="col-md-4">
+                                <input type="number" class="form-control" name="mpasi_mulai" id="mpasi_mulai">
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" name="mpasi_satuan" id="mpasi_satuan">
+                                    <option value="BULAN">Bulan</option>
+                                    <option value="TAHUN">Tahun</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KOLOM KANAN -->
+                    <div class="col-md-6">
+
+                        @php
+                        $milestone = [
+                            'tengkurap' => 'Tengkurap',
+                            'duduk' => 'Duduk',
+                            'merangkak' => 'Merangkak',
+                            'berdiri' => 'Berdiri',
+                            'berjalan' => 'Berjalan'
+                        ];
+                        @endphp
+
+                        @foreach($milestone as $name=>$label)
+
+                        <div class="row mb-2 align-items-center">
+                            <label class="col-md-4 col-form-label">{{ $label }}</label>
+                            <div class="col-md-5">
+                                <input type="number" class="form-control" name="{{ $name }}" id="{{ $name }}">
+                            </div>
+                            <div class="col-md-3">
+                                Bulan
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                <hr>
+                <!-- Masalah Neonatus -->
+                <div class="row">
+                    <div class="col-md-12 mb-1">
+                        Masalah Neonatus
+                    </div>
+                    <div class="col-md-6 mb-1">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="neonatus" value="0" checked>
+                            <label class="form-check-label">
+                                Tidak
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-1">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="neonatus" value="1">
+                            <label class="form-check-label">
+                                Ya
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-1">
+                        <input type="text" class="form-control" name="neonatus_ket" placeholder="Contoh : Jaundice, RDS, PJB, Kelainan Kongenital" style="display:none;">
+                    </div>
+                </div>
+                <hr>
+                <div class="mb-2">
+                    <label class="form-label">
+                        Keluhan Tumbuh Kembang Sekarang
+                    </label>
+                    <textarea class="form-control" rows="3" name="keluhan_tumbuh_kembang"></textarea>
+                </div>
+                <hr>
+                <!-- Imunisasi -->
+                <label class="form-label fw-bold">
+                    Riwayat Imunisasi
+                </label>
+                <div class="d-flex flex-wrap gap-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="imunisasi" value="1">
+                        <label class="form-check-label">
+                            Imunisasi Dasar Lengkap
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="imunisasi" value="2">
+                        <label class="form-check-label">
+                            Imunisasi Dasar Tidak Lengkap
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="imunisasi" value="3">
+                        <label class="form-check-label">
+                            Tidak Imunisasi
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="imunisasi" value="4">
+                        <label class="form-check-label">
+                            Lain-lain
+                        </label>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <input type="text" class="form-control" name="imunisasi_lain" placeholder="Jelaskan..." style="display:none;">
+                </div>
+            </div>
+        </div>
     </div>
     <div class="form-footer">
         <button class="btn btn-secondary">
@@ -1061,6 +1335,38 @@
 
     });
 
+    $(document).on('change','input[name="rp_komplikasi"]',function(){
+        if($(this).val() == "1"){
+            $("#rp_komplikasi_ket").show().focus();
+        }else{
+            $("#rp_komplikasi_ket").hide().val("");
+        }
+    });
+
+    $(document).on('change','input[name="rp_penyulit"]',function(){
+        if($(this).val() == "1"){
+            $("#rp_penyulit_ket").show().focus();
+        }else{
+            $("#rp_penyulit_ket").hide().val("");
+        }
+    });
+
+    $(document).on('change','input[name="neonatus"]',function(){
+        if($(this).val()==1){
+            $("input[name='neonatus_ket']").show().focus();
+        }else{
+            $("input[name='neonatus_ket']").hide().val('');
+        }
+    });
+
+    $(document).on('change','input[name="imunisasi"]',function(){
+        if($(this).val()==4){
+            $("input[name='imunisasi_lain']").show().focus();
+        }else{
+            $("input[name='imunisasi_lain']").hide().val('');
+        }
+    });
+
     function loadDataPengkajianRJAp() {
         const kunjungan = $('#rja_perawat').data('kunjungan');
 
@@ -1106,38 +1412,26 @@
         $('#takut').prop('checked', data.takut == 1);
         $('#sedih').prop('checked', data.sedih == 1);
         $('#bundir').prop('checked', data.bundir == 1);
-
         $('#pse_lain').val(data.pse_lain).slideDown();
-
-
         // Status Mental
         $('input[name="sm"][value="' + data.sm + '"]').prop('checked', true);
-
         $('#perilaku').val(data.perilaku);
         $('#kekerasan').val(data.kekerasan);
-
-
         // Hubungan Sosial
         $('input[name="hub"][value="' + data.hub + '"]').prop('checked', true);
-
         $('input[name="tinggal"][value="' + data.tinggal + '"]').prop('checked', true);
-
         $('#tinggal_lain').val(data.tinggal_lain);
-
-
         // Spiritual
         $('input[name="kbt"][value="' + data.kbt + '"]').prop('checked', true);
-
         $('input[name="nk"][value="' + data.nk + '"]').prop('checked', true);
-
         $('#nk_lain').val(data.nk_lain);
-
         $('#pk').val(data.pk);
-
-
         // Ekonomi
-        $('#hasil').val(data.hasil);
+        $('input[name="hasil"][value="' + data.hasil + '"]')
+            .prop('checked', true);
 
+        //SKRINING NYERI
+        $('input[name="sn_nyeri"]').prop('checked', false);
         $('input[name="sn_nyeri"][value="' + data.sn_nyeri + '"]')
             .prop('checked', true);
 
@@ -1152,6 +1446,7 @@
         $('#sn_durasi').val(data.sn_durasi);
         $('#sn_lokasi').val(data.sn_lokasi);
 
+        //RESIKO JATUH
         $('input[name="cara_berjalan"][value="' + data.cara_berjalan + '"]')
             .prop('checked', true).trigger("change");
         $('input[name="faktor_risiko"][value="' + data.faktor_risiko + '"]')
@@ -1159,26 +1454,18 @@
         $('input[name="kon_obat"][value="' + data.kon_obat + '"]')
             .prop('checked', true).trigger("change");
 
-
+        //STRONG KID
         $("input[name='sga1'][value='"+data.sga1+"']")
             .prop('checked', true);
-
         $("input[name='sga2'][value='"+data.sga2+"']")
             .prop('checked', true);
-
         $("input[name='sga3'][value='"+data.sga3+"']")
             .prop('checked', true);
-
         $("input[name='sga4'][value='"+data.sga4+"']")
             .prop('checked', true);
-
-
         $('#skor_sga_input').val(data.skor_sga);
         $('#status_sga_input').val(data.status_sga);
-
-
         $('#total_skor_sk').text(data.skor_sga);
-
         if(data.status_sga == 1){
             $('#status_skor_sk')
                 .text('Beresiko Malnutrisi')
@@ -1190,12 +1477,57 @@
                 .removeClass('text-danger')
                 .addClass('text-success');
         }
-
         $('#skor_sga').removeAttr('hidden');
 
         // Detail terapi
         $('#terapi_oral').val(data.terapi_oral);
         $('#terapi_iv').val(data.terapi_iv);
+
+        //Riwayat Perinatal
+        $("#rp_lama_hamil").val(data.rp_lama_hamil);
+        $("#rp_satuan").val(data.rp_satuan);
+        $("input[name='rp_komplikasi'][value='" + data.rp_komplikasi + "']")
+            .prop("checked", true)
+            .trigger("change");
+        $("#rp_komplikasi_ket").val(data.rp_komplikasi_ket);
+        $("input[name='rp_persalinan'][value='" + data.rp_persalinan + "']")
+            .prop("checked", true);
+        $("input[name='rp_penyulit'][value='" + data.rp_penyulit + "']")
+            .prop("checked", true)
+            .trigger("change");
+        $("#rp_penyulit_ket").val(data.rp_penyulit_ket);
+
+        // Riwayat Tumbuh Kembang
+        $("#lk_lahir").val(data.lk_lahir);
+        $("#bb_lahir").val(data.bb_lahir);
+        $("#tb_lahir").val(data.tb_lahir);
+
+        $("#asi_sampai").val(data.asi_sampai);
+        $("#asi_satuan").val(data.asi_satuan);
+
+        $("#sufor_mulai").val(data.sufor_mulai);
+        $("#sufor_satuan").val(data.sufor_satuan);
+
+        $("#mpasi_mulai").val(data.mpasi_mulai);
+        $("#mpasi_satuan").val(data.mpasi_satuan);
+
+        $("#tengkurap").val(data.tengkurap);
+        $("#duduk").val(data.duduk);
+        $("#merangkak").val(data.merangkak);
+        $("#berdiri").val(data.berdiri);
+        $("#berjalan").val(data.berjalan);
+
+        $("input[name='neonatus'][value='" + data.neonatus + "']")
+            .prop("checked", true)
+            .trigger("change");
+
+        $("input[name='imunisasi'][value='" + data.imunisasi + "']")
+            .prop("checked", true)
+            .trigger("change");
+
+        $("input[name='neonatus_ket']").val(data.neonatus_ket);
+        $("textarea[name='keluhan_tumbuh_kembang']").val(data.keluhan_tumbuh_kembang);
+        $("input[name='imunisasi_lain']").val(data.imunisasi_lain);
 
     }
 

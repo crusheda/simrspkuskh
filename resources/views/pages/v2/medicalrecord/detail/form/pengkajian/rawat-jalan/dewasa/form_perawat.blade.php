@@ -360,96 +360,66 @@
         <div class="col-md-12">
             <div class="card card-body border border-dashed border-success mb-3">
                 <h6 class="mb-3">SKRINING NYERI</h6>
-
-                <!-- Baris 1 -->
                 <div class="row mb-3 align-items-center">
-
                     <div class="col-md-4">
                         <div class="row align-items-center">
                             <label class="col-md-4 col-form-label fw-bold">Nyeri</label>
-
                             <div class="col-md-8">
                                 <div class="d-flex gap-4">
-
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="sn_nyeri" id="nyeriYa" value="1">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="sn_nyeri" value="1">
                                         <label class="form-check-label">Ya</label>
                                     </div>
-
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio"
-                                            name="sn_nyeri" id="nyeriTidak" value="0" checked>
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="sn_nyeri" value="0" checked>
                                         <label class="form-check-label">Tidak</label>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <div class="col-md-8">
                         <div class="row align-items-center">
                             <label class="col-md-2 col-form-label fw-bold">Onset</label>
-
                             <div class="col-md-10">
                                 <div class="d-flex gap-4">
-
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="sn_onset" id="onsetAkut" value="1">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="sn_onset" value="1">
                                         <label class="form-check-label" for="onsetAkut">Akut</label>
                                     </div>
-
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio"name="sn_onset" id="onsetKronis" value="2">
+                                        <input class="form-check-input single-checkbox" type="checkbox"name="sn_onset" value="2">
                                         <label class="form-check-label" for="onsetKronis">Kronis</label>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Baris 2 -->
                 <div class="row mb-3 align-items-center">
-
                     <div class="col-md-4">
                         <div class="row align-items-center">
                             <label class="col-md-4 col-form-label fw-bold">Skala Nyeri</label>
-
                             <div class="col-md-8">
-                                <select class="form-select" name="sn_skala">
-                                    @for($i=0;$i<=10;$i++)
-                                        <option value="{{ $i }}">{{ $i }}</option>
-                                    @endfor
-                                </select>
+                                <input type="number" class="form-control" name="sn_skala" placeholder="Otomatis terisi" value="0" readonly>
                             </div>
                         </div>
                     </div>
-
                     <div class="col-md-8">
                         <div class="row align-items-center">
                             <label class="col-md-2 col-form-label fw-bold">Metode</label>
                             <div class="col-md-10">
                                 <div class="d-flex gap-4">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="sn_metode" value="1">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="1">
                                         <label class="form-check-label">NRS</label>
                                     </div>
-                                    {{-- <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="sn_metode" value="2">
+                                    <div class="form-check">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="2">
                                         <label class="form-check-label">BPS</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="sn_metode" value="3">
-                                        <label class="form-check-label">NIPS</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="sn_metode" value="4">
-                                        <label class="form-check-label">FLACC</label>
-                                    </div> --}}
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="sn_metode" value="5">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="5">
                                         <label class="form-check-label">VAS</label>
                                     </div>
                                 </div>
@@ -457,7 +427,103 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="row mb-2">
+                    <div id="tampil_sn_nrs" hidden>
+                        <img src="{{ asset('images/erm/skrining_nyeri_nrs.png') }}"
+                            alt="Indikator Penilaian Nyeri"
+                            class="img-fluid mb-3"
+                            style="width: 25rem;">
+                        <div class="form-group">
+                            <label class="form-label">Geser untuk memilih Skor Nyeri</label>
+                            <input type="range" class="form-range" min="0" max="10" step="1" value="0" id="sn_nrs">
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <span>Interpretasi Skor Nyeri VAS :</span>
+                            <ul class="d-flex gap-3 mb-0 ps-0 list-unstyled">
+                                <li>0 = tidak nyeri</li>
+                                <li>1-3 = nyeri ringan</li>
+                                <li>4-6 = nyeri sedang</li>
+                                <li>7-10 = nyeri berat</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="tampil_sn_bps" hidden>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-display">
+                                <thead class="text-uppercase">
+                                    <tr class="table-light">
+                                        <th class="text-center">Indikator Penilaian</th>
+                                        <th class="text-center">Keterangan Skor</th>
+                                        <th class="text-center">Skor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th>Ekspresi Wajah</th>
+                                        <td>
+                                            <h6>1 = rileks</h6>
+                                            <h6>2 = sebagian tegang (misal: dahi mengkerut)</h6>
+                                            <h6>3 = tegang penuh (misal: kelopak mata menutup rapat)</h6>
+                                        </td>
+                                        <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ekspresi Wajah</th>
+                                        <td>
+                                            <h6>1 = rileks</h6>
+                                            <h6>2 = sebagian tegang (misal: dahi mengkerut)</h6>
+                                            <h6>3 = tegang penuh (misal: kelopak mata menutup rapat)</h6>
+                                        </td>
+                                        <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ekspresi Wajah</th>
+                                        <td>
+                                            <h6>1 = rileks</h6>
+                                            <h6>2 = sebagian tegang (misal: dahi mengkerut)</h6>
+                                            <h6>3 = tegang penuh (misal: kelopak mata menutup rapat)</h6>
+                                        </td>
+                                        <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <th colspan="3">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <span>Interpretasi Skor BPS :</span>
+                                                <ul class="d-flex gap-3 mb-0 ps-0 list-unstyled">
+                                                    <li>3 = tidak nyeri</li>
+                                                    <li>4-6 = nyeri ringan</li>
+                                                    <li>7-9 = nyeri sedang</li>
+                                                    <li>10-12 = nyeri berat</li>
+                                                </ul>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="tampil_sn_vas" hidden>
+                        <img src="{{ asset('images/erm/skrining_nyeri_vas.png') }}"
+                            alt="Indikator Penilaian Nyeri"
+                            class="img-fluid mb-3"
+                            style="width: 25rem;">
+                        <div class="form-group">
+                            <label class="form-label">Geser untuk memilih Skor Nyeri</label>
+                            <input type="range" class="form-range" min="0" max="10" step="1" value="0" id="sn_vas">
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <span>Interpretasi Skor Nyeri VAS :</span>
+                            <ul class="d-flex gap-3 mb-0 ps-0 list-unstyled">
+                                <li>0 = tidak nyeri</li>
+                                <li>1-3 = nyeri ringan</li>
+                                <li>4-6 = nyeri sedang</li>
+                                <li>7-10 = nyeri berat</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 <!-- Baris 3 -->
                 <div class="row mb-2 align-items-center">
                     <label class="col-md-2 col-form-label fw-bold">Pencetus</label>
@@ -489,7 +555,6 @@
                         <input type="text" class="form-control" name="sn_lokasi" id="sn_lokasi" placeholder="[ Lokasi ]">
                     </div>
                 </div>
-
             </div>
         </div>
         <div class="col-md-12 mb-3">
@@ -1049,7 +1114,7 @@
 
 <script>
     $(document).ready(function () {
-
+        const $section = $('#rjd_perawat');
         // Sembunyikan textarea saat pertama kali
         $('#pse_lain').hide();
         $('#sm_2_detail').hide();
@@ -1162,6 +1227,109 @@
                 $("input[name='bb_ubah'][value='0']").prop("checked", true);
             }
         }
+
+        // START SKRINING NYERI ------------------------------------------------------------------------------
+        const metodeMap = {
+            1: '#tampil_sn_nrs',
+            2: '#tampil_sn_bps',
+            3: '#tampil_sn_nips',
+            4: '#tampil_sn_flacc',
+            5: '#tampil_sn_vas'
+        };
+
+        // ==========================================
+        // PILIH METODE
+        // ==========================================
+        $section.on('change', 'input[name="sn_metode"]', function () {
+
+            const $this = $(this);
+            const metode = $this.val();
+
+            // ==========================================
+            // JIKA METODE DIPILIH
+            // ==========================================
+            if ($this.is(':checked')) {
+
+                // Pastikan hanya satu metode yang aktif
+                $section
+                    .find('input[name="sn_metode"]')
+                    .not($this)
+                    .prop('checked', false);
+
+                // Reset skor metode sebelumnya
+                resetSemuaSkor();
+
+                // Hide semua metode
+                $.each(metodeMap, function (key, selector) {
+                    $(selector).prop('hidden', true);
+                });
+
+                // Tampilkan metode yang dipilih
+                if (metodeMap[metode]) {
+                    $(metodeMap[metode]).prop('hidden', false);
+                }
+
+            } else {
+
+                // ==========================================
+                // JIKA METODE DIBATALKAN
+                // ==========================================
+
+                // Hide semua
+                $.each(metodeMap, function (key, selector) {
+                    $(selector).prop('hidden', true);
+                });
+
+                // Reset semua skor dan sn_skala kembali 0
+                resetSemuaSkor();
+            }
+        });
+
+        // ==========================================
+        // KONDISI AWAL
+        // ==========================================
+        $.each(metodeMap, function (key, selector) {
+            $(selector).prop('hidden', true);
+        });
+
+        resetSemuaSkor();
+
+        // ==========================================
+        // NRS
+        // ==========================================
+        $('#sn_nrs').on('input', function () {
+            hitungSkorNyeri('1');
+        });
+
+        // ==========================================
+        // BPS
+        // ==========================================
+        $('#tampil_sn_bps input[type="number"]').on('input', function () {
+            hitungSkorNyeri('2');
+        });
+
+        // ==========================================
+        // NIPS
+        // ==========================================
+        $('#tampil_sn_nips input[type="number"]').on('input', function () {
+            hitungSkorNyeri('3');
+        });
+
+        // ==========================================
+        // FLACC
+        // ==========================================
+        $('#tampil_sn_flacc input[type="number"]').on('input', function () {
+            hitungSkorNyeri('4');
+        });
+
+        // ==========================================
+        // VAS
+        // ==========================================
+        $('#sn_vas').on('input', function () {
+            hitungSkorNyeri('5');
+        });
+        // END SKRINING NYERI ------------------------------------------------------------------------------
+
         loadDataPengkajianRJDp();
 
     });
@@ -1243,6 +1411,8 @@
         // Ekonomi
         $('#hasil').val(data.hasil);
 
+        //SKRINING NYERI
+        $('input[name="sn_nyeri"]').prop('checked', false);
         $('input[name="sn_nyeri"][value="' + data.sn_nyeri + '"]')
             .prop('checked', true);
 
@@ -1491,5 +1661,81 @@
 
         $("#evaluasi_gizi").text(evaluasi);
 
+    }
+
+    // HITUNG SKOR SKRINING NYERI BERDASARKAN METODE
+    function getValidNumber($input) {
+
+        const value = parseFloat($input.val());
+        const min = parseFloat($input.attr('min'));
+        const max = parseFloat($input.attr('max'));
+
+        // Kosong
+        if (isNaN(value)) {
+            return 0;
+        }
+
+        // Di luar range
+        if (value < min || value > max) {
+            $input.val('');
+            return 0;
+        }
+
+        return value;
+    }
+    function hitungSkorNyeri(metode) {
+
+        let total = 0;
+
+        switch (metode) {
+
+            // NRS
+            case '1':
+                total = getValidNumber($('#sn_nrs'));
+                break;
+
+            // BPS
+            case '2':
+                $('#tampil_sn_bps input[type="number"]').each(function () {
+                    total += getValidNumber($(this));
+                });
+                break;
+
+            // NIPS
+            case '3':
+                $('#tampil_sn_nips input[type="number"]').each(function () {
+                    total += getValidNumber($(this));
+                });
+                break;
+
+            // FLACC
+            case '4':
+                $('#tampil_sn_flacc input[type="number"]').each(function () {
+                    total += getValidNumber($(this));
+                });
+                break;
+
+            // VAS
+            case '5':
+                total = getValidNumber($('#sn_vas'));
+                break;
+        }
+
+        $('input[name="sn_skala"]').val(total);
+    }
+
+    function resetSemuaSkor() {
+
+        // Reset range
+        $('#sn_nrs, #sn_vas').val(0);
+
+        // Reset semua input skor
+        $('#tampil_sn_bps input[type="number"], ' +
+        '#tampil_sn_nips input[type="number"], ' +
+        '#tampil_sn_flacc input[type="number"]'
+        ).val('');
+
+        // Kembali ke nilai default
+        $('input[name="sn_skala"]').val(0);
     }
 </script>
