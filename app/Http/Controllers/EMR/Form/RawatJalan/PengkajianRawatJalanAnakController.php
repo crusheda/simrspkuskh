@@ -171,7 +171,6 @@ class PengkajianRawatJalanAnakController extends Controller
                 ],
                 [
                     'DESKRIPSI'    => $request->terapi_tind,
-                    'TOLAK_UKUR'   => $request->tu,
                     'OLEH'         => auth()->id(),
                     'STATUS'       => 1,
                     'TANGGAL'      => now()
@@ -326,7 +325,6 @@ class PengkajianRawatJalanAnakController extends Controller
 
         if ($rencana_terapi) {
             $data['terapi_tind'] = $rencana_terapi->DESKRIPSI;
-            $data['tu'] = $rencana_terapi->TOLAK_UKUR;
         }
 
         // Tindak Lanjut Pengkajian
