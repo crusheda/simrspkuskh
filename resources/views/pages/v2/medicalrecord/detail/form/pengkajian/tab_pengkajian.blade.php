@@ -437,10 +437,14 @@
     // ==========================
     function showCppt(kjg) {
         $('#show-id-cppt').text(kjg);
+        const $btnCppt = $('.btnLihatCPPT');
         $.ajax({
             url: "/api/pasien/"+kjg+"/cppt",
             type: 'GET',
             dataType: 'json',
+            beforeSend: function() {
+                $btnCppt.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Memuat CPPT...');
+            },
             success: function(res) {
                 $("#tampil-cppt").empty();
                 $('#show-norm-cppt').text(res.pen.NORM);
@@ -448,11 +452,11 @@
                     res.show.forEach(item => {
                         content = ``;
                         content += `<tr>
-                                        <td class="custom-column">${item.TANGGAL}</td>
-                                        <td class="custom-column">${item.CATATAN}<br>${item.INSTRUKSI?"<b>I/ : </b>"+item.INSTRUKSI:''}</td>
-                                        <td class="custom-column">${item.PPA}<br><span class="badge rounded-pill text-bg-primary">${item.JNSPPA}</span></td>
-                                        <td class="custom-column">${item.TBAK_SBAR?item.TBAK_SBAR:'-'}</td>
-                                        <td class="custom-column">${item.VERIFIKASI?'Diverifkasi Oleh<br><b class="text-success">'+item.VERIFIKATOR+'</b><br>Pada '+item.TGLVERIFIKASI:'Belum Diverifikasi'}</td>
+                                        <td class="custom-column-cppt">${item.TANGGAL}</td>
+                                        <td class="custom-column-cppt">${item.CATATAN}<br>${item.INSTRUKSI?"<b>I/ : </b>"+item.INSTRUKSI:''}</td>
+                                        <td class="custom-column-cppt">${item.PPA}<br><span class="badge rounded-pill text-bg-primary">${item.JNSPPA}</span></td>
+                                        <td class="custom-column-cppt">${item.TBAK_SBAR?item.TBAK_SBAR:'-'}</td>
+                                        <td class="custom-column-cppt">${item.VERIFIKASI?'Diverifkasi Oleh<br><b class="text-success">'+item.VERIFIKATOR+'</b><br>Pada '+item.TGLVERIFIKASI:'Belum Diverifikasi'}</td>
                                     </tr>
                         `;
                         $('#tampil-cppt').append(content);
@@ -465,6 +469,25 @@
                         position: 'topRight'
                     });
                 }
+            },
+            error: function (xhr) {
+                let message = 'Data gagal ditampilkan.';
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors)
+                        .flat()
+                        .join('<br>');
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                iziToast.error({
+                    title: 'Proses Gagal!',
+                    message: message,
+                    position: 'topRight'
+                });
+            },
+            complete: function() {
+                $btnCppt.prop('disabled', false).html('<i class="ri-booklet-line me-1"></i> Lihat CPPT');
             }
         })
     }
@@ -474,31 +497,79 @@
     // ============================================================
     window.FormHelper = {
 
-        // Set value input / textarea / select
         setValue: function ($form, name, value) {
 
             const $el = $form.find(`[name="${name}"]`);
 
             if (!$el.length) return;
 
-            if (value === null || value === undefined || value === '') {
-                $el.val('');
-            } else {
+            const type = ($el.attr('type') || '').toLowerCase();
+            const tagName = $el.prop('tagName').toLowerCase();
 
-                // Normalisasi nilai angka
-                if ($el.attr('type') === 'number') {
+            // ==========================================
+            // SELECT
+            // ==========================================
+            if (tagName === 'select') {
 
-                    const normalized = String(value).replace(',', '.');
-                    const number = Number(normalized);
-
-                    if (!isNaN(number)) {
-                        value = number;
-                    }
+                // null / undefined / '' / 0 tetap dianggap
+                // sebagai value yang harus dipilih jika option tersedia
+                if (value === null || value === undefined || value === '' || Number(value) === 0) {
+                    value = '';
                 }
 
+                // Normalisasi angka agar 0 dan "0" sama
+                value = String(value);
+
                 $el.val(value);
+
+                $el.trigger('change');
+
+                return;
             }
 
+            // ==========================================
+            // VALUE KOSONG
+            // ==========================================
+            if (value === null || value === undefined || value === '') {
+
+                $el.val('');
+                $el.trigger('change');
+
+                return;
+            }
+
+            // ==========================================
+            // NUMBER
+            // ==========================================
+            if (type === 'number') {
+
+                const normalized = String(value).replace(',', '.');
+                const number = Number(normalized);
+
+                if (!isNaN(number)) {
+                    value = number;
+                }
+            }
+
+            // ==========================================
+            // TIME
+            // ==========================================
+            else if (type === 'time') {
+
+                // Contoh database:
+                // 08:30:00
+                //
+                // Menjadi:
+                // 08:30
+                value = String(value).substring(0, 5);
+            }
+
+            // ==========================================
+            // SET VALUE
+            // ==========================================
+            $el.val(value);
+
+            // Trigger event
             $el.trigger('change');
         },
 
@@ -538,26 +609,31 @@
 
             if (!$group.length) return;
 
-            // Selalu kosongkan seluruh group terlebih dahulu
-            $group.prop('checked', false);
-
-            // Tidak ada value
+            // Normalisasi value
             if (value === null || value === undefined || value === '') {
+                $group.prop('checked', false);
+                $group.trigger('change');
                 return;
             }
 
-            // Normalisasi agar 1 dan "1" sama
             const normalizedValue = String(value);
 
-            // Centang SATU checkbox saja
-            $group
-                .filter(function () {
-                    return String($(this).val()) === normalizedValue;
-                })
-                .first()
-                .prop('checked', true);
-        },
+            // Pastikan HANYA SATU yang checked
+            $group.prop('checked', false);
 
+            const $selected = $group.filter(function () {
+                return String($(this).val()) === normalizedValue;
+            }).first();
+
+            if (!$selected.length) {
+                return;
+            }
+
+            $selected.prop('checked', true);
+
+            // Trigger change HANYA pada checkbox yang terpilih
+            $selected.trigger('change');
+        },
 
         // Format datetime untuk input type="datetime-local"
         formatDateTimeLocal: function (value) {

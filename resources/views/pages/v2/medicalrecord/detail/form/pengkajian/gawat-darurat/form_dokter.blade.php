@@ -594,7 +594,7 @@
                                     <div class="col-md-6">
                                         <div class="d-flex align-items-center gap-2 mb-2">
                                             <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="1">
+                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="2">
                                             </div>
                                             <label class="form-label mb-0 me-2">
                                                 HPHT
@@ -611,7 +611,7 @@
                                         </div>
                                         <div class="d-flex align-items-center gap-2 mb-2">
                                             <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="2">
+                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="3">
                                             </div>
                                             <label class="form-label mb-0 me-2" for="kb">
                                                 KB
@@ -622,7 +622,7 @@
                                     <div class="col-md-6">
                                         <div class="d-flex align-items-center gap-2 mb-3">
                                             <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="4">
+                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="1">
                                             </div>
                                             <label class="form-label mb-0 me-2">
                                                 Hamil
@@ -638,7 +638,7 @@
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="3">
+                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="0">
                                             </div>
                                             <label class="form-label mb-0">
                                                 Tidak Hamil
@@ -989,7 +989,7 @@
         </div>
     </div>
     <div class="form-footer d-flex justify-content-between">
-        <button type="button" class="btn btn-subtle-info" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat CPPT" onclick="showCppt('{{ $list['kunjungan'] }}')">
+        <button type="button" class="btn btn-subtle-info btnLihatCPPT" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat CPPT" onclick="showCppt('{{ $list['kunjungan'] }}')">
             <i class="ri-booklet-line me-1"></i> Lihat CPPT
         </button>
         <button class="btn btn-danger" onclick="saveDataPengkajianGdD(this)">
@@ -1844,11 +1844,6 @@
                 const statusReproduksi =
                     data.status_reproduksi || {};
 
-                console.log(
-                    'Status reproduksi:',
-                    statusReproduksi
-                );
-
 
                 // Status kasus obstetri / ginekologi
                 //
@@ -1866,14 +1861,16 @@
                     ).prop('checked', true);
                 }
 
+                // Status reproduksi (0:TIDAK HAMIL; 1:HAMIL; 2:HPHT SIKLUS; 3:KB;)
+                if (statusReproduksi.STATUS_REPRODUKSI !== null) {
 
-                // Status reproduksi / Hamil
-                FormHelper.setValue(
-                    $form,
-                    'sr_hamil',
-                    statusReproduksi.STATUS_REPRODUKSI
-                );
+                    $('input[name="sr_cb"]')
+                        .prop('checked', false);
 
+                    $(
+                        `input[name="sr_cb"][value="${statusReproduksi.STATUS_REPRODUKSI}"]`
+                    ).prop('checked', true);
+                }
 
                 // HPHT
                 FormHelper.setValue(
@@ -1922,74 +1919,51 @@
                     statusReproduksi.HAMIL_ABORTUS
                 );
 
+                // // INPUT CHECKBOX STATUS REPRODUKSI
+                // $('input[name="sr_cb"]')
+                //     .prop('checked', false);
 
-                // ====================================================
-                // STATUS CHECKBOX STATUS REPRODUKSI
-                // ====================================================
-                //
-                // Karena database menyimpan:
-                // KASUS_OBSTETRI_GINEKOLOGI
-                // STATUS_REPRODUKSI
-                // HPHT
-                // KB
-                // HAMIL_GRAVIDA
-                // HAMIL_PARITAS
-                // HAMIL_ABORTUS
-                //
-                // maka checkbox sr_cb bisa ditentukan dari data
-                // yang memang tersimpan.
-                //
-                // value:
-                // 1 = HPHT
-                // 2 = KB
-                // 3 = Tidak Hamil
-                // 4 = Hamil
-                //
+                // // Tidak Hamil
+                // if (
+                //     String(statusReproduksi.STATUS_REPRODUKSI) === '0'
+                // ) {
+                //     $('input[name="sr_cb"][value="0"]')
+                //         .prop('checked', true);
+                // }
 
-                $('input[name="sr_cb"]')
-                    .prop('checked', false);
+                // // Hamil
+                // if (
+                //     statusReproduksi.HAMIL_GRAVIDA !== null &&
+                //     statusReproduksi.HAMIL_GRAVIDA !== '' ||
+                //     statusReproduksi.HAMIL_PARITAS !== null &&
+                //     statusReproduksi.HAMIL_PARITAS !== '' ||
+                //     statusReproduksi.HAMIL_ABORTUS !== null &&
+                //     statusReproduksi.HAMIL_ABORTUS !== '' ||
+                //     String(statusReproduksi.STATUS_REPRODUKSI) === '1'
+                // ) {
+                //     $('input[name="sr_cb"][value="1"]')
+                //         .prop('checked', true);
+                // }
 
+                // // HPHT
+                // if (
+                //     statusReproduksi.HPHT !== null &&
+                //     statusReproduksi.HPHT !== '' ||
+                //     String(statusReproduksi.STATUS_REPRODUKSI) === '2'
+                // ) {
+                //     $('input[name="sr_cb"][value="2"]')
+                //         .prop('checked', true);
+                // }
 
-                // HPHT
-                if (
-                    statusReproduksi.HPHT !== null &&
-                    statusReproduksi.HPHT !== ''
-                ) {
-                    $('input[name="sr_cb"][value="1"]')
-                        .prop('checked', true);
-                }
-
-
-                // KB
-                if (
-                    statusReproduksi.KB !== null &&
-                    statusReproduksi.KB !== ''
-                ) {
-                    $('input[name="sr_cb"][value="2"]')
-                        .prop('checked', true);
-                }
-
-
-                // Hamil
-                if (
-                    statusReproduksi.HAMIL_GRAVIDA !== null ||
-                    statusReproduksi.HAMIL_PARITAS !== null ||
-                    statusReproduksi.HAMIL_ABORTUS !== null
-                ) {
-                    $('input[name="sr_cb"][value="4"]')
-                        .prop('checked', true);
-                }
-
-
-                // Tidak Hamil
-                if (
-                    statusReproduksi.STATUS_REPRODUKSI !== null &&
-                    String(statusReproduksi.STATUS_REPRODUKSI) === '3'
-                ) {
-                    $('input[name="sr_cb"][value="3"]')
-                        .prop('checked', true);
-                }
-
+                // // KB
+                // if (
+                //     statusReproduksi.KB !== null &&
+                //     statusReproduksi.KB !== '' ||
+                //     String(statusReproduksi.STATUS_REPRODUKSI) === '3'
+                // ) {
+                //     $('input[name="sr_cb"][value="3"]')
+                //         .prop('checked', true);
+                // }
 
                 // ====================================================
                 // 13. KELUHAN UTAMA

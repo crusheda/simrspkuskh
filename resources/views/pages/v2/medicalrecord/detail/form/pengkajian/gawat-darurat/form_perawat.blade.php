@@ -69,15 +69,15 @@
                             </div>
                             <div class="col-md-9">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="jks_kll" value="1">
+                                    <input class="form-check-input check-primary" type="checkbox" name="jks_kll">
                                     <label class="form-check-label"> Kecelakaan Lalu Lintas </label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" name="jks_kk" value="2">
+                                    <input class="form-check-input check-primary" type="checkbox" name="jks_kk">
                                     <label class="form-check-label"> Kecelakaan Kerja </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input check-primary" type="checkbox" name="jks_uppa" value="3">
+                                    <input class="form-check-input check-primary" type="checkbox" name="jks_uppa">
                                     <label class="form-check-label"> Kasus Perempuan & Anak (UPPA) </label>
                                 </div>
                             </div>
@@ -94,7 +94,7 @@
                             <div class="col-md-9">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check mb-0 flex-shrink-0">
-                                        <input class="form-check-input check-primary" type="checkbox" name="jks_end" value="1">
+                                        <input class="form-check-input check-primary" type="checkbox" name="jks_end">
                                         <label class="form-check-label"> Riwayat ke Daerah Endemis </label>
                                     </div>
                                     <input type="text" class="form-control form-control-sm flex-grow-1" name="jks_end_dm" placeholder="Dimana ?">
@@ -128,9 +128,9 @@
                         <div class="form-group">
                             <label class="form-label">Tekanan Darah</label>
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" name="tv_up">
+                                <input type="number" class="form-control" name="tv_up">
                                 <div class="input-group-text"> / </div>
-                                <input type="text" class="form-control" name="tv_down">
+                                <input type="number" class="form-control" name="tv_down">
                                 <div class="input-group-text"> mmHg </div>
                             </div>
                         </div>
@@ -139,7 +139,7 @@
                         <div class="form-group">
                             <label class="form-label">Frekuensi Nafas (RR)</label>
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" name="tv_fr">
+                                <input type="number" class="form-control" name="tv_fr">
                                 <span class="input-group-text">X/menit</span>
                             </div>
                         </div>
@@ -148,7 +148,7 @@
                         <div class="form-group">
                             <label class="form-label">Frekuensi Nadi (HR)</label>
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" name="tv_nadi">
+                                <input type="number" class="form-control" name="tv_nadi">
                                 <div class="input-group-text">X/menit</div>
                             </div>
                         </div>
@@ -157,7 +157,7 @@
                         <div class="form-group">
                             <label class="form-label">Suhu (OC)</label>
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" name="tv_sh">
+                                <input type="number" class="form-control" name="tv_sh">
                                 <div class="input-group-text">°C</div>
                             </div>
                         </div>
@@ -166,7 +166,7 @@
                         <div class="form-group">
                             <label class="form-label">Skala Nyeri</label>
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" name="tv_sn">
+                                <input type="number" class="form-control" name="tv_sn">
                                 <div class="input-group-text">%</div>
                             </div>
                         </div>
@@ -186,7 +186,7 @@
                         <div class="form-group">
                             <label class="form-label">Usia Gestasi</label>
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" name="ko_ug">
+                                <input type="number" class="form-control" name="ko_ug">
                                 <div class="input-group-text">Minggu</div>
                             </div>
                         </div>
@@ -201,7 +201,7 @@
                         <div class="form-group">
                             <label class="form-label">Detak Jantung Janin</label>
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" name="ko_dj">
+                                <input type="number" class="form-control" name="ko_dj">
                                 <div class="input-group-text">X/menit</div>
                             </div>
                         </div>
@@ -210,7 +210,7 @@
                         <div class="form-group">
                             <label class="form-label">Dilatasi Serviks</label>
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" name="ko_ds">
+                                <input type="number" class="form-control" name="ko_ds">
                                 <div class="input-group-text">cm</div>
                             </div>
                         </div>
@@ -1326,6 +1326,7 @@
                 <div class="card card-body border border-dashed border-warning mb-3">
                     <h6 class="mb-3">Status Kehamilan</h6>
                     <div class="d-flex align-items-center gap-4">
+                        <label class="form-label flex-shrink-0">Hamil ?</label>
                         <div class="form-check mb-0">
                             <input class="form-check-input check-danger single-checkbox" type="checkbox" name="sh" value="0" checked="">
                             <label class="form-check-label">Tidak</label>
@@ -1368,88 +1369,76 @@
                     <h6 class="mb-3">Implementasi Keperawatan</h6>
                     <div class="table-responsive">
                         <table class="table table-bordered table-display">
+                            <colgroup>
+                                <col style="width: 1%;">
+                                <col>
+                            </colgroup>
                             <thead class="text-uppercase">
                                 <tr class="table-light">
-                                    <th class="text-center">Implementasi Keperawatan</th>
                                     <th class="text-center">✔</th>
-                                    <th class="text-center">TGL / JAM</th>
+                                    <th class="text-center">Implementasi Keperawatan</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Melakukan observasi TTV</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_1"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_1_dt"></td>
+                                    <td>Melakukan observasi TTV</td>
                                 </tr>
                                 <tr>
-                                    <td>Melakukan observasi keadaan umum pasien</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_2"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_2_dt"></td>
+                                    <td>Melakukan observasi keadaan umum pasien</td>
                                 </tr>
                                 <tr>
-                                    <td>Memonitor intake output</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_3"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_3_dt"></td>
+                                    <td>Memonitor intake output</td>
                                 </tr>
                                 <tr>
-                                    <td>Memonitor pernafasan : irama, pengembangan dinding dada, penggunaan otot tambahan pernafasan bunyi nafas</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_4"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_4_dt"></td>
+                                    <td>Memonitor pernafasan : irama, pengembangan dinding dada, penggunaan otot tambahan pernafasan bunyi nafas</td>
                                 </tr>
                                 <tr>
-                                    <td>Melakukan pemasangan Oximetri</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_5"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_5_dt"></td>
+                                    <td>Melakukan pemasangan Oximetri</td>
                                 </tr>
                                 <tr>
-                                    <td>Mengobservasi produk sputum, jumlah, warna, dan kekentalan</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_6"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_6_dt"></td>
+                                    <td>Mengobservasi produk sputum, jumlah, warna, dan kekentalan</td>
                                 </tr>
                                 <tr>
-                                    <td>Memberikan posisi semi fowler atau posisi miring yang nyaman</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_7"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_7_dt"></td>
+                                    <td>Memberikan posisi semi fowler atau posisi miring yang nyaman</td>
                                 </tr>
                                 <tr>
-                                    <td>Melakukan pemasangan OPA</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_8"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_8_dt"></td>
+                                    <td>Melakukan pemasangan OPA</td>
                                 </tr>
                                 <tr>
-                                    <td>Melakukan Suction bila perlu</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_9"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_9_dt"></td>
+                                    <td>Melakukan Suction bila perlu</td>
                                 </tr>
                                 <tr>
-                                    <td>Mengajarkan pasien untuk nafas dalam dan batuk efektif</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_10"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_10_dt"></td>
+                                    <td>Mengajarkan pasien untuk nafas dalam dan batuk efektif</td>
                                 </tr>
                                 <tr>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Memberikan oksigen</div> <input type="text" class="form-control form-control-sm w-auto" name="ik_11_inp"> <div class="flex-shrink-0">liter/menit</div></div></td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_11"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_11_dt"></td>
+                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Memberikan oksigen</div> <input type="text" class="form-control form-control-sm w-auto" name="ik_11_lain"> <div class="flex-shrink-0">liter/menit</div></div></td>
                                 </tr>
                                 <tr>
-                                    <td>Mengibolisasikan daerah cedera : memasang bidai / spalk / sling</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_12"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_12_dt"></td>
+                                    <td>Mengibolisasikan daerah cedera : memasang bidai / spalk / sling</td>
                                 </tr>
                                 <tr>
-                                    <td>Melakukan perawatan luka</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_13"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_13_dt"></td>
+                                    <td>Melakukan perawatan luka</td>
                                 </tr>
                                 <tr>
-                                    <td>Mengajarkan manajemen pengelolaan nyeri</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_14"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_14_dt"></td>
+                                    <td>Mengajarkan manajemen pengelolaan nyeri</td>
                                 </tr>
                                 <tr>
-                                    <td>Melakukan tindakan dengan teknik aseptic</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="ik_15"></td>
-                                    <td><input type="datetime-local" class="form-control" name="ik_15_dt"></td>
+                                    <td>Melakukan tindakan dengan teknik aseptic</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1457,148 +1446,153 @@
                     <h6 class="mb-3">Tindakan Kolaborasi</h6>
                     <div class="table-responsive">
                         <table class="table table-bordered table-display">
+                            <colgroup>
+                                <col style="width: 1%;">
+                                <col style="width: 1%;">
+                                <col>
+                            </colgroup>
                             <thead class="text-uppercase">
                                 <tr class="table-light">
-                                    <th class="text-center">Tindakan Kolaborasi</th>
                                     <th class="text-center">✔</th>
-                                    <th class="text-center">TGL / JAM</th>
+                                    <th class="text-center">Pukul</th>
+                                    <th class="text-center">Tindakan Kolaborasi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>OPA</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_1"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_1_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_1_dt"></td>
+                                    <td>OPA</td>
                                 </tr>
                                 <tr>
-                                    <td>O2</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_2"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_2_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_2_dt"></td>
+                                    <td>O2</td>
                                 </tr>
                                 <tr>
-                                    <td>Suction</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_3"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_3_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_3_dt"></td>
+                                    <td>Suction</td>
                                 </tr>
                                 <tr>
-                                    <td>Nasal kanul</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_4"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_4_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_4_dt"></td>
+                                    <td>Nasal kanul</td>
                                 </tr>
                                 <tr>
-                                    <td>Coliat neck</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_5"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_5_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_5_dt"></td>
+                                    <td>Coliat neck</td>
                                 </tr>
                                 <tr>
-                                    <td>Masker</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_6"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_6_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_6_dt"></td>
+                                    <td>Masker</td>
                                 </tr>
                                 <tr>
-                                    <td>Resusitasi</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_7"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_7_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_7_dt"></td>
+                                    <td>Resusitasi</td>
                                 </tr>
                                 <tr>
-                                    <td>Nebiizer</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_8"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_8_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_8_dt"></td>
+                                    <td>Nebiizer</td>
                                 </tr>
                                 <tr>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Infus</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_9_inp"></div></td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_9"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_9_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_9_dt"></td>
+                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Infus</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_9_lain"></div></td>
                                 </tr>
                                 <tr>
-                                    <td>Kateter urine</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_10"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_10_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_10_dt"></td>
+                                    <td>Kateter urine</td>
                                 </tr>
                                 <tr>
-                                    <td>NGT / OGT</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_11"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_11_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_11_dt"></td>
+                                    <td>NGT / OGT</td>
                                 </tr>
                                 <tr>
-                                    <td>Bilas lambung</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_12"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_12_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_12_dt"></td>
+                                    <td>Bilas lambung</td>
                                 </tr>
                                 <tr>
-                                    <td>Jahitan</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_13"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_13_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_13_dt"></td>
+                                    <td>Jahitan</td>
                                 </tr>
                                 <tr>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Rontgen</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_14_inp"></div></td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_14"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_14_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_14_dt"></td>
+                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Rontgen</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_14_lain"></div></td>
                                 </tr>
                                 <tr>
-                                    <td>CT Scan</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_15"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_15_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_15_dt"></td>
+                                    <td>CT Scan</td>
                                 </tr>
                                 <tr>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Lab. Darah</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_16_inp"></div></td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_16"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_16_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_16_dt"></td>
+                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Lab. Darah</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_16_lain"></div></td>
                                 </tr>
                                 <tr>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Lain-lain</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_17_inp"></div></td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_17"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_17_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_17_dt"></td>
+                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Lain-lain</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_17_lain"></div></td>
                                 </tr>
                                 <tr>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Hecting permanen</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_18_inp"></div> <div class="flex-shrink-0">jahitan</div></td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_18"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_18_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_18_dt"></td>
+                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Hecting permanen</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_18_lain"></div> <div class="flex-shrink-0">jahitan</div></td>
                                 </tr>
                                 <tr>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Hecting situasi</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_19_inp"></div> <div class="flex-shrink-0">jahitan</div></td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_19"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_19_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_19_dt"></td>
+                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Hecting situasi</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_19_lain"></div> <div class="flex-shrink-0">jahitan</div></td>
                                 </tr>
                                 <tr>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">ATS, skin test, hasil</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_20_inp"></div></td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_20"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_20_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_20_dt"></td>
+                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">ATS, skin test, hasil</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_20_lain"></div></td>
                                 </tr>
                                 <tr>
-                                    <td>Debridemen</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_21"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_21_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_21_dt"></td>
+                                    <td>Debridemen</td>
                                 </tr>
                                 <tr>
-                                    <td>Corpus alianum</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_22"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_22_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_22_dt"></td>
+                                    <td>Corpus alianum</td>
                                 </tr>
                                 <tr>
-                                    <td>Combustio</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_23"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_23_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_23_dt"></td>
+                                    <td>Combustio</td>
                                 </tr>
                                 <tr>
-                                    <td>Hidung</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_24"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_24_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_24_dt"></td>
+                                    <td>Hidung</td>
                                 </tr>
                                 <tr>
-                                    <td>Dekubitus</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_25"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_25_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_25_dt"></td>
+                                    <td>Dekubitus</td>
                                 </tr>
                                 <tr>
-                                    <td>Mulut</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_26"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_26_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_26_dt"></td>
+                                    <td>Mulut</td>
                                 </tr>
                                 <tr>
-                                    <td>Telinga</td>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_27"></td>
-                                    <td><input type="datetime-local" class="form-control" name="tk_27_dt"></td>
+                                    <td><input type="time" class="form-control" name="tk_27_dt"></td>
+                                    <td>Telinga</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2060,10 +2054,10 @@
             </div>
         </div>
     </div>
-    <div class="form-footer">
-        {{-- <button class="btn btn-secondary">
-            <i class="ri-close-line me-1"></i> Batal
-        </button> --}}
+    <div class="form-footer d-flex justify-content-between">
+        <button type="button" class="btn btn-subtle-info btnLihatCPPT" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat CPPT" onclick="showCppt('{{ $list['kunjungan'] }}')">
+            <i class="ri-booklet-line me-1"></i> Lihat CPPT
+        </button>
         <button class="btn btn-success" onclick="saveDataPengkajianGdP(this)">
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
@@ -2483,29 +2477,33 @@
         });
 
         // CB - Discharge Planning
-        $section.on('change', '[name^="dp_"]', function () {
+        $section.on('change', '.single-checkbox-bos', function () {
 
-            const name = $(this).attr('name');
+            // Hanya proses checkbox yang sedang checked
+            if (!this.checked) {
+                return;
+            }
 
-            // Hanya proses dp_1, dp_2, dp_3, dst.
-            // Tidak memproses dp_5_1, dp_9_1, dp_11_skrining, dll.
+            const name = this.name;
+            const value = String(this.value);
+
+            // Hanya dp_1, dp_2, dp_3, dst.
             if (!/^dp_\d+$/.test(name)) {
                 return;
             }
 
-            const targetId = '#tampil_' + name;
+            const $target = $section.find('#tampil_' + name);
 
-            if ($(this).is(':checked') && $(this).val() === '1') {
+            if (value === '1') {
 
                 // ADA
-                $section.find(targetId).prop('hidden', false);
+                $target.prop('hidden', false);
 
-            } else if ($(this).is(':checked') && $(this).val() === '0') {
+            } else {
 
                 // TIDAK ADA
-                $section.find(targetId).prop('hidden', true);
+                $target.prop('hidden', true);
 
-                // Reset semua isi detail
                 resetDischargePlanningDetail($section, name);
             }
         });
@@ -3425,16 +3423,25 @@
                 // PENILAIAN NYERI
                 // ==========================================
                 const nyeri = data.penilaian_nyeri;
+                const metodeMapSkriningNyeri = {
+                    1: '#tampil_sn_nrs',
+                    2: '#tampil_sn_bps',
+                    3: '#tampil_sn_nips',
+                    4: '#tampil_sn_flacc',
+                    5: '#tampil_sn_vas'
+                };
 
                 if (nyeri) {
                     FormHelper.setSingleCheckbox($form,'sn_nyeri', nyeri.NYERI);
                     FormHelper.setSingleCheckbox($form,'sn_onset', nyeri.ONSET);
-                    FormHelper.setValue($form,'sn_skala', nyeri.SKALA);
-                    FormHelper.setValue($form,'sn_metode', nyeri.METODE);
+                    FormHelper.setSingleCheckbox($form,'sn_metode', nyeri.METODE);
                     FormHelper.setValue($form,'sn_pencetus', nyeri.PENCETUS);
                     FormHelper.setValue($form,'sn_gambaran', nyeri.GAMBARAN);
                     FormHelper.setValue($form,'sn_durasi', nyeri.DURASI);
                     FormHelper.setValue($form,'sn_lokasi', nyeri.LOKASI);
+
+                    // $(metodeMapSkriningNyeri[metode]).prop('hidden', false);
+                    FormHelper.setValue($form,'sn_skala', nyeri.SKALA);
                 }
 
                 // ==========================================
@@ -3443,14 +3450,16 @@
                 const hd = data.humpty_dumpty;
 
                 if (hd) {
+                    $('#srj_hd').prop('checked', true);
+                    $('#tampil_srj_hd').prop('hidden', false);
                     FormHelper.setValue($form,'rj_usia', hd.UMUR);
-                    FormHelper.setSingleCheckbox($form,'rj_jk', hd.JENIS_KELAMIN);
+                    FormHelper.setValue($form,'rj_jk', hd.JENIS_KELAMIN);
 
-                    FormHelper.setSingleCheckbox($form,'rj_hd_1', hd.DIAGNOSA);
-                    FormHelper.setSingleCheckbox($form,'rj_hd_2', hd.GANGGUAN_KONGNITIF);
-                    FormHelper.setSingleCheckbox($form,'rj_hd_3', hd.FAKTOR_LINGKUNGAN);
-                    FormHelper.setSingleCheckbox($form,'rj_hd_4', hd.RESPON);
-                    FormHelper.setSingleCheckbox($form,'rj_hd_5', hd.PENGGUNAAN_OBAT);
+                    FormHelper.setValue($form,'rj_hd_1', hd.DIAGNOSA);
+                    FormHelper.setValue($form,'rj_hd_2', hd.GANGGUAN_KONGNITIF);
+                    FormHelper.setValue($form,'rj_hd_3', hd.FAKTOR_LINGKUNGAN);
+                    FormHelper.setValue($form,'rj_hd_4', hd.RESPON);
+                    FormHelper.setValue($form,'rj_hd_5', hd.PENGGUNAAN_OBAT);
                 }
 
                 // ==========================================
@@ -3459,12 +3468,14 @@
                 const morse = data.morse;
 
                 if (morse) {
-                    FormHelper.setSingleCheckbox($form,'rj_sm_1', morse.RIWAYAT_JATUH);
-                    FormHelper.setSingleCheckbox($form,'rj_sm_2', morse.DIAGNOSIS);
-                    FormHelper.setSingleCheckbox($form,'rj_sm_3', morse.ALAT_BANTU);
-                    FormHelper.setSingleCheckbox($form,'rj_sm_4', morse.HEPARIN);
-                    FormHelper.setSingleCheckbox($form,'rj_sm_5', morse.GAYA_BERJALAN);
-                    FormHelper.setSingleCheckbox($form,'rj_sm_6', morse.KESADARAN);
+                    $('#srj_sm').prop('checked', true);
+                    $('#tampil_srj_sm').prop('hidden', false);
+                    FormHelper.setValue($form,'rj_sm_1', morse.RIWAYAT_JATUH);
+                    FormHelper.setValue($form,'rj_sm_2', morse.DIAGNOSIS);
+                    FormHelper.setValue($form,'rj_sm_3', morse.ALAT_BANTU);
+                    FormHelper.setValue($form,'rj_sm_4', morse.HEPARIN);
+                    FormHelper.setValue($form,'rj_sm_5', morse.GAYA_BERJALAN);
+                    FormHelper.setValue($form,'rj_sm_6', morse.KESADARAN);
                 }
 
                 // ==========================================
@@ -3473,44 +3484,46 @@
                 const epfra = data.epfra;
 
                 if (epfra) {
+                    $('#srj_epfra').prop('checked', true);
+                    $('#tampil_srj_epfra').prop('hidden', false);
                     FormHelper.setValue($form,'rj_epfra_usia', epfra.USIA);
 
-                    FormHelper.setSingleCheckbox($form,
+                    FormHelper.setValue($form,
                         'rj_epfra_1',
                         epfra.STATUS_MENTAL
                     );
 
-                    FormHelper.setSingleCheckbox($form,
+                    FormHelper.setValue($form,
                         'rj_epfra_2',
                         epfra.ELIMINASI
                     );
 
-                    FormHelper.setSingleCheckbox($form,
+                    FormHelper.setValue($form,
                         'rj_epfra_3',
                         epfra.MEDIKASI
                     );
 
-                    FormHelper.setSingleCheckbox($form,
+                    FormHelper.setValue($form,
                         'rj_epfra_4',
                         epfra.DIAGNOSIS
                     );
 
-                    FormHelper.setSingleCheckbox($form,
+                    FormHelper.setValue($form,
                         'rj_epfra_5',
                         epfra.AMBULASI
                     );
 
-                    FormHelper.setSingleCheckbox($form,
+                    FormHelper.setValue($form,
                         'rj_epfra_6',
                         epfra.NUTRISI
                     );
 
-                    FormHelper.setSingleCheckbox($form,
+                    FormHelper.setValue($form,
                         'rj_epfra_7',
                         epfra.GANGGUAN_TIDUR
                     );
 
-                    FormHelper.setSingleCheckbox($form,
+                    FormHelper.setValue($form,
                         'rj_epfra_8',
                         epfra.RIWAYAT_JATUH
                     );
@@ -3587,44 +3600,125 @@
 
                 if (reproduksi) {
                     FormHelper.setSingleCheckbox($form,
-                        'kasus_obstetri_ginekologi',
-                        reproduksi.KASUS_OBSTETRI_GINEKOLOGI
-                    );
-
-                    FormHelper.setSingleCheckbox($form,
-                        'status_reproduksi',
+                        'sh',
                         reproduksi.STATUS_REPRODUKSI
                     );
 
                     FormHelper.setValue($form,
-                        'hpht',
-                        reproduksi.HPHT
-                    );
-
-                    FormHelper.setSingleCheckbox($form,
-                        'siklus',
-                        reproduksi.SIKLUS
-                    );
-
-                    FormHelper.setSingleCheckbox($form,
-                        'kb',
-                        reproduksi.KB
-                    );
-
-                    FormHelper.setValue($form,
-                        'hamil_gravida',
+                        'sh_g',
                         reproduksi.HAMIL_GRAVIDA
                     );
 
                     FormHelper.setValue($form,
-                        'hamil_paritas',
+                        'sh_p',
                         reproduksi.HAMIL_PARITAS
                     );
 
                     FormHelper.setValue($form,
-                        'hamil_abortus',
+                        'sh_a',
                         reproduksi.HAMIL_ABORTUS
                     );
+
+                    FormHelper.setValue($form,
+                        'sh_h',
+                        reproduksi.HPHT
+                    );
+                }
+
+                // ==========================================
+                // IMPLEMENTASI KEPERAWATAN
+                // ==========================================
+                const impkeper = data.implementasi_keperawatan;
+
+                if (impkeper) {
+                    FormHelper.setCheckbox($form,'ik_1', impkeper.IK1);
+                    FormHelper.setCheckbox($form,'ik_2', impkeper.IK2);
+                    FormHelper.setCheckbox($form,'ik_3', impkeper.IK3);
+                    FormHelper.setCheckbox($form,'ik_4', impkeper.IK4);
+                    FormHelper.setCheckbox($form,'ik_5', impkeper.IK5);
+                    FormHelper.setCheckbox($form,'ik_6', impkeper.IK6);
+                    FormHelper.setCheckbox($form,'ik_7', impkeper.IK7);
+                    FormHelper.setCheckbox($form,'ik_8', impkeper.IK8);
+                    FormHelper.setCheckbox($form,'ik_9', impkeper.IK9);
+                    FormHelper.setCheckbox($form,'ik_10', impkeper.IK10);
+                    FormHelper.setCheckbox($form,'ik_11', impkeper.IK11);
+                    FormHelper.setCheckbox($form,'ik_12', impkeper.IK12);
+                    FormHelper.setCheckbox($form,'ik_13', impkeper.IK13);
+                    FormHelper.setCheckbox($form,'ik_14', impkeper.IK14);
+                    FormHelper.setCheckbox($form,'ik_15', impkeper.IK15);
+
+                    FormHelper.setValue($form,'ik_11_lain', impkeper.IK11_LAIN);
+                }
+
+                // ==========================================
+                // TINDAKAN KOLABORASI
+                // ==========================================
+                const tinkolab = data.tindakan_kolaborasi;
+
+                if (tinkolab) {
+                    FormHelper.setCheckbox($form,'tk_1', tinkolab.TK1);
+                    FormHelper.setCheckbox($form,'tk_2', tinkolab.TK2);
+                    FormHelper.setCheckbox($form,'tk_3', tinkolab.TK3);
+                    FormHelper.setCheckbox($form,'tk_4', tinkolab.TK4);
+                    FormHelper.setCheckbox($form,'tk_5', tinkolab.TK5);
+                    FormHelper.setCheckbox($form,'tk_6', tinkolab.TK6);
+                    FormHelper.setCheckbox($form,'tk_7', tinkolab.TK7);
+                    FormHelper.setCheckbox($form,'tk_8', tinkolab.TK8);
+                    FormHelper.setCheckbox($form,'tk_9', tinkolab.TK9);
+                    FormHelper.setCheckbox($form,'tk_10', tinkolab.TK10);
+                    FormHelper.setCheckbox($form,'tk_11', tinkolab.TK11);
+                    FormHelper.setCheckbox($form,'tk_12', tinkolab.TK12);
+                    FormHelper.setCheckbox($form,'tk_13', tinkolab.TK13);
+                    FormHelper.setCheckbox($form,'tk_14', tinkolab.TK14);
+                    FormHelper.setCheckbox($form,'tk_15', tinkolab.TK15);
+                    FormHelper.setCheckbox($form,'tk_16', tinkolab.TK16);
+                    FormHelper.setCheckbox($form,'tk_17', tinkolab.TK17);
+                    FormHelper.setCheckbox($form,'tk_18', tinkolab.TK18);
+                    FormHelper.setCheckbox($form,'tk_19', tinkolab.TK19);
+                    FormHelper.setCheckbox($form,'tk_20', tinkolab.TK20);
+                    FormHelper.setCheckbox($form,'tk_21', tinkolab.TK21);
+                    FormHelper.setCheckbox($form,'tk_22', tinkolab.TK22);
+                    FormHelper.setCheckbox($form,'tk_23', tinkolab.TK23);
+                    FormHelper.setCheckbox($form,'tk_24', tinkolab.TK24);
+                    FormHelper.setCheckbox($form,'tk_25', tinkolab.TK25);
+                    FormHelper.setCheckbox($form,'tk_26', tinkolab.TK26);
+                    FormHelper.setCheckbox($form,'tk_27', tinkolab.TK27);
+
+                    FormHelper.setValue($form,'tk_9_lain', tinkolab.TK9_LAIN);
+                    FormHelper.setValue($form,'tk_14_lain', tinkolab.TK14_LAIN);
+                    FormHelper.setValue($form,'tk_16_lain', tinkolab.TK16_LAIN);
+                    FormHelper.setValue($form,'tk_17_lain', tinkolab.TK17_LAIN);
+                    FormHelper.setValue($form,'tk_18_lain', tinkolab.TK18_LAIN);
+                    FormHelper.setValue($form,'tk_19_lain', tinkolab.TK19_LAIN);
+                    FormHelper.setValue($form,'tk_20_lain', tinkolab.TK20_LAIN);
+
+                    FormHelper.setValue($form,'tk_1_dt', tinkolab.TK1_TIME);
+                    FormHelper.setValue($form,'tk_2_dt', tinkolab.TK2_TIME);
+                    FormHelper.setValue($form,'tk_3_dt', tinkolab.TK3_TIME);
+                    FormHelper.setValue($form,'tk_4_dt', tinkolab.TK4_TIME);
+                    FormHelper.setValue($form,'tk_5_dt', tinkolab.TK5_TIME);
+                    FormHelper.setValue($form,'tk_6_dt', tinkolab.TK6_TIME);
+                    FormHelper.setValue($form,'tk_7_dt', tinkolab.TK7_TIME);
+                    FormHelper.setValue($form,'tk_8_dt', tinkolab.TK8_TIME);
+                    FormHelper.setValue($form,'tk_9_dt', tinkolab.TK9_TIME);
+                    FormHelper.setValue($form,'tk_10_dt', tinkolab.TK10_TIME);
+                    FormHelper.setValue($form,'tk_11_dt', tinkolab.TK11_TIME);
+                    FormHelper.setValue($form,'tk_12_dt', tinkolab.TK12_TIME);
+                    FormHelper.setValue($form,'tk_13_dt', tinkolab.TK13_TIME);
+                    FormHelper.setValue($form,'tk_14_dt', tinkolab.TK14_TIME);
+                    FormHelper.setValue($form,'tk_15_dt', tinkolab.TK15_TIME);
+                    FormHelper.setValue($form,'tk_16_dt', tinkolab.TK16_TIME);
+                    FormHelper.setValue($form,'tk_17_dt', tinkolab.TK17_TIME);
+                    FormHelper.setValue($form,'tk_18_dt', tinkolab.TK18_TIME);
+                    FormHelper.setValue($form,'tk_19_dt', tinkolab.TK19_TIME);
+                    FormHelper.setValue($form,'tk_20_dt', tinkolab.TK20_TIME);
+                    FormHelper.setValue($form,'tk_21_dt', tinkolab.TK21_TIME);
+                    FormHelper.setValue($form,'tk_22_dt', tinkolab.TK22_TIME);
+                    FormHelper.setValue($form,'tk_23_dt', tinkolab.TK23_TIME);
+                    FormHelper.setValue($form,'tk_24_dt', tinkolab.TK24_TIME);
+                    FormHelper.setValue($form,'tk_25_dt', tinkolab.TK25_TIME);
+                    FormHelper.setValue($form,'tk_26_dt', tinkolab.TK26_TIME);
+                    FormHelper.setValue($form,'tk_27_dt', tinkolab.TK27_TIME);
                 }
 
                 // ==========================================
@@ -3811,7 +3905,7 @@
                 // ==========================================
                 // Jalankan ulang kalkulasi / tampilan
                 // ==========================================
-                $form.find('input, select, textarea').trigger('change');
+                // $form.find('input, select, textarea').trigger('change');
             },
 
             error: function (xhr) {
@@ -3851,11 +3945,24 @@
             },
 
             beforeSend: function () {
-                // $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan...');
+                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan...');
             },
 
-            success: function (response) {
-                alert(response.message || 'Data berhasil disimpan.');
+            success: function (res) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: res.message || "Data berhasil disimpan",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    backdrop: `
+                        rgba(0,0,123,0.4)
+                        url("/images/nyan-cat.gif")
+                        left top
+                        no-repeat
+                    `
+                });
+                getDataPengkajianGdP();
             },
 
             error: function (xhr) {
@@ -3873,7 +3980,7 @@
             },
 
             complete: function () {
-                // $button.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Pengkajian');
+                $button.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Pengkajian');
             }
         });
     }

@@ -62,3 +62,11 @@
         display: inline-block;
         animation: spin 2s linear infinite reverse;
     }
+
+.custom-column {
+    white-space: normal !important;
+    word-wrap: break-word;
+}
+.custom-column-cppt {
+    white-space: pre-wrap !important;
+}

@@ -583,4 +583,6 @@ class EMRController extends Controller
 
         return app($controllers[$form])->index($kunjungan);
     }
+
+    
 }
