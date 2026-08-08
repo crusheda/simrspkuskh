@@ -511,13 +511,18 @@
             // ==========================================
             if (tagName === 'select') {
 
-                // null / undefined / '' / 0 tetap dianggap
-                // sebagai value yang harus dipilih jika option tersedia
-                if (value === null || value === undefined || value === '' || Number(value) === 0) {
+                // null / undefined / '' / 0
+                // diarahkan ke option value=""
+                if (
+                    value === null ||
+                    value === undefined ||
+                    value === '' ||
+                    Number(value) === 0
+                ) {
                     value = '';
                 }
 
-                // Normalisasi angka agar 0 dan "0" sama
+                // Normalisasi value
                 value = String(value);
 
                 $el.val(value);
@@ -552,6 +557,42 @@
             }
 
             // ==========================================
+            // RANGE
+            // ==========================================
+            else if (type === 'range') {
+
+                let number = Number(
+                    String(value).replace(',', '.')
+                );
+
+                if (!isNaN(number)) {
+
+                    const min = Number($el.attr('min'));
+                    const max = Number($el.attr('max'));
+                    const step = Number($el.attr('step'));
+
+                    // Batasi berdasarkan min
+                    if (!isNaN(min)) {
+                        number = Math.max(number, min);
+                    }
+
+                    // Batasi berdasarkan max
+                    if (!isNaN(max)) {
+                        number = Math.min(number, max);
+                    }
+
+                    // Sesuaikan dengan step
+                    if (!isNaN(step) && step > 0 && !isNaN(min)) {
+                        number = min + Math.round(
+                            (number - min) / step
+                        ) * step;
+                    }
+
+                    value = number;
+                }
+            }
+
+            // ==========================================
             // TIME
             // ==========================================
             else if (type === 'time') {
@@ -572,7 +613,6 @@
             // Trigger event
             $el.trigger('change');
         },
-
 
         // Checkbox biasa berdasarkan boolean / 0 / 1
         setCheckbox: function ($form, name, checked) {

@@ -1173,6 +1173,12 @@ class PengkajianGawatDaruratController extends Controller
                     'ONSET',
                     'SKALA',
                     'METODE',
+                    'SKOR1',
+                    'SKOR2',
+                    'SKOR3',
+                    'SKOR4',
+                    'SKOR5',
+                    'SKOR6',
                     'PENCETUS',
                     'GAMBARAN',
                     'DURASI',
@@ -1415,6 +1421,13 @@ class PengkajianGawatDaruratController extends Controller
                     'PASIEN_PULANG',
                     'PASIEN_MENGAJUKAN',
                     'TIDAK_ADA_KRITERIA',
+
+                    'PERAWATAN_LANJUTAN_MEDIS',
+                    'PLM_KATETER_URIN',
+                    'PLM_NGT',
+                    'PLM_TRAECHOSTOMY',
+                    'PLM_COLOSTOMY',
+                    'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA',
 
                     'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_KPB',
                     'KPB_RAWAT_LUKA',
@@ -1756,25 +1769,70 @@ class PengkajianGawatDaruratController extends Controller
                 // ==========================================
                 // PENILAIAN / SKRINING NYERI
                 // ==========================================
-                DB::table('medicalrecord.penilaian_nyeri')->updateOrInsert(
-                    [
-                        'KUNJUNGAN' => $request->NOKUNJ
-                    ],
-                    [
-                        'NYERI'     => $request->sn_nyeri ?? 0,
-                        'ONSET'     => $request->sn_onset ?? 0,
-                        'SKALA'     => $request->sn_skala ?? 0,
-                        'METODE'    => $request->sn_metode ?? '',
-                        'PENCETUS'  => $request->sn_pencetus ?? '',
-                        'GAMBARAN'  => $request->sn_gambaran ?? '',
-                        'DURASI'    => $request->sn_durasi ?? '',
-                        'LOKASI'    => $request->sn_lokasi ?? '',
+                $dataNyeri = [
+                    'NYERI'    => $request->sn_nyeri ?? 0,
+                    'ONSET'    => $request->sn_onset ?? 0,
+                    'SKALA'    => $request->sn_skala ?? 0,
+                    'METODE'   => $request->sn_metode ?? '',
 
-                        'OLEH'      => auth()->id(),
-                        'STATUS'    => 1,
-                        'TANGGAL'   => now(),
-                    ]
-                );
+                    'SKOR1'    => 0,
+                    'SKOR2'    => 0,
+                    'SKOR3'    => 0,
+                    'SKOR4'    => 0,
+                    'SKOR5'    => 0,
+                    'SKOR6'    => 0,
+
+                    'PENCETUS' => $request->sn_pencetus ?? '',
+                    'GAMBARAN' => $request->sn_gambaran ?? '',
+                    'DURASI'   => $request->sn_durasi ?? '',
+                    'LOKASI'   => $request->sn_lokasi ?? '',
+
+                    'OLEH'     => auth()->id(),
+                    'STATUS'   => 1,
+                    'TANGGAL'  => now(),
+                ];
+                switch ((string) $request->sn_metode) {
+
+                    // BPS
+                    case '2':
+                        $dataNyeri['SKOR1'] = $request->sn_bps_1 ?? 0;
+                        $dataNyeri['SKOR2'] = $request->sn_bps_2 ?? 0;
+                        $dataNyeri['SKOR3'] = $request->sn_bps_3 ?? 0;
+                        break;
+
+                    // NIPS
+                    case '3':
+                        $dataNyeri['SKOR1'] = $request->sn_nips_1 ?? 0;
+                        $dataNyeri['SKOR2'] = $request->sn_nips_2 ?? 0;
+                        $dataNyeri['SKOR3'] = $request->sn_nips_3 ?? 0;
+                        $dataNyeri['SKOR4'] = $request->sn_nips_4 ?? 0;
+                        $dataNyeri['SKOR5'] = $request->sn_nips_5 ?? 0;
+                        $dataNyeri['SKOR6'] = $request->sn_nips_6 ?? 0;
+                        break;
+
+                    // FLACC
+                    case '4':
+                        $dataNyeri['SKOR1'] = $request->sn_flacc_1 ?? 0;
+                        $dataNyeri['SKOR2'] = $request->sn_flacc_2 ?? 0;
+                        $dataNyeri['SKOR3'] = $request->sn_flacc_3 ?? 0;
+                        $dataNyeri['SKOR4'] = $request->sn_flacc_4 ?? 0;
+                        $dataNyeri['SKOR5'] = $request->sn_flacc_5 ?? 0;
+                        break;
+
+                    // NRS / VAS
+                        // Tidak perlu SKOR1-SKOR6
+                        case '1':
+                        case '5':
+                        default:
+                        break;
+                }
+                DB::table('medicalrecord.penilaian_nyeri')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $request->NOKUNJ
+                        ],
+                        $dataNyeri
+                    );
 
                 // ==========================================
                 // SKRINING RISIKO JATUH - HUMPTY DUMPTY
@@ -2164,7 +2222,7 @@ class PengkajianGawatDaruratController extends Controller
                         'PASIEN_KHAWATIR_KETIKA_DIRUMAH'  => $request->input('dp_2', 0) ?? 0,
                         'PASIEN_TAK_ADA_YANG_MERAWAT'     => $request->input('dp_3', 0) ?? 0,
                         'PASIEN_DILANTAI_ATAS'             => $request->input('dp_4', 0) ?? 0,
-                        'PERAWATAN_LANJUTAN_PASIEN'        => $request->input('dp_5', 0) ?? 0,
+                        // 'PERAWATAN_LANJUTAN_PASIEN'        => $request->input('dp_5', 0) ?? 0,
                         'PENGAJUAN_PENDAMPINGAN_PASIEN'    => 0,
 
                         'TANGGAL'                           => now(),
@@ -2187,6 +2245,17 @@ class PengkajianGawatDaruratController extends Controller
                         'PASIEN_PULANG'                         => $request->input('dp_6', 0) ?? 0,
                         'PASIEN_MENGAJUKAN'                     => $request->input('dp_7', 0) ?? 0,
                         'TIDAK_ADA_KRITERIA'                    => $request->input('dp_8', 0) ?? 0,
+
+                        // ------------------------------------------
+                        // Pasien masih ada perawatan lanjutan / penggunaan alat medis yang dilakukan di rumah
+                        // ------------------------------------------
+                        'PERAWATAN_LANJUTAN_MEDIS'                  => $request->input('dp_5', 0) ?? 0,
+
+                        'PLM_KATETER_URIN'                          => $request->boolean('dp_5_1') ? 1 : 0,
+                        'PLM_TRAECHOSTOMY'                          => $request->boolean('dp_5_2') ? 1 : 0,
+                        'PLM_NGT'                                   => $request->boolean('dp_5_3') ? 1 : 0,
+                        'PLM_COLOSTOMY'                             => $request->boolean('dp_5_4') ? 1 : 0,
+                        'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA' => $request->input('dp_5_lain', '') ?? '',
 
                         // ------------------------------------------
                         // Kebutuhan Pelayanan Berkelanjutan (KPB)

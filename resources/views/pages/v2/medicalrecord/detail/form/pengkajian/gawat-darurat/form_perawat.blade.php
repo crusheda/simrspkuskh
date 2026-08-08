@@ -556,7 +556,7 @@
                                 style="width: 25rem;">
                             <div class="form-group">
                                 <label class="form-label">Geser untuk memilih Skor Nyeri</label>
-                                <input type="range" class="form-range" min="0" max="10" step="1" value="0" id="sn_nrs">
+                                <input type="range" class="form-range" min="0" max="10" step="1" value="0" name="sn_nrs" id="sn_nrs">
                             </div>
                             <div class="d-flex align-items-center gap-3">
                                 <span>Interpretasi Skor Nyeri VAS :</span>
@@ -586,7 +586,7 @@
                                                 <h6>2 = sebagian tegang (misal: dahi mengkerut)</h6>
                                                 <h6>3 = tegang penuh (misal: kelopak mata menutup rapat)</h6>
                                             </td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_bps_1" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
                                         </tr>
                                         <tr>
                                             <th>Ekspresi Wajah</th>
@@ -595,7 +595,7 @@
                                                 <h6>2 = sebagian tegang (misal: dahi mengkerut)</h6>
                                                 <h6>3 = tegang penuh (misal: kelopak mata menutup rapat)</h6>
                                             </td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_bps_2" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
                                         </tr>
                                         <tr>
                                             <th>Ekspresi Wajah</th>
@@ -604,7 +604,7 @@
                                                 <h6>2 = sebagian tegang (misal: dahi mengkerut)</h6>
                                                 <h6>3 = tegang penuh (misal: kelopak mata menutup rapat)</h6>
                                             </td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_bps_3" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
                                         </tr>
                                     </tbody>
                                     <tfoot class="table-light">
@@ -642,7 +642,7 @@
                                                 <h6>0 = Relaksasi</h6>
                                                 <h6>1 = Meringis</h6>
                                             </td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto"  min="0" max="1" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_nips_1" class="form-control form-control-sm mx-auto"  min="0" max="1" style="width: 100px"></td>
                                         </tr>
                                         <tr>
                                             <th>Tangisan</th>
@@ -651,7 +651,7 @@
                                                 <h6>1 = Meringis</h6>
                                                 <h6>2 = Menangis kuat</h6>
                                             </td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_nips_2" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
                                         </tr>
                                         <tr>
                                             <th>Gerakan Lengan</th>
@@ -659,7 +659,7 @@
                                                 <h6>0 = Relaksasi</h6>
                                                 <h6>1 = Fleksi / ekstensi</h6>
                                             </td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="0" max="1" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_nips_3" class="form-control form-control-sm mx-auto" min="0" max="1" style="width: 100px"></td>
                                         </tr>
                                         <tr>
                                             <th>Gerakan Tungkai</th>
@@ -667,7 +667,7 @@
                                                 <h6>0 = relaksasi</h6>
                                                 <h6>1 = Fleksi / ekstensi</h6>
                                             </td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="0" max="1" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_nips_4" class="form-control form-control-sm mx-auto" min="0" max="1" style="width: 100px"></td>
                                         </tr>
                                         <tr>
                                             <th>Status Terjaga</th>
@@ -675,7 +675,7 @@
                                                 <h6>0 = Tidur / bangun</h6>
                                                 <h6>1 = Rewel</h6>
                                             </td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="0" max="1" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_nips_5" class="form-control form-control-sm mx-auto" min="0" max="1" style="width: 100px"></td>
                                         </tr>
                                         <tr>
                                             <th>Pola Nafas</th>
@@ -683,7 +683,7 @@
                                                 <h6>0 = Relaksasi</h6>
                                                 <h6>1 = Perubahan pola nafas</h6>
                                             </td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="0" max="1" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_nips_6" class="form-control form-control-sm mx-auto" min="0" max="1" style="width: 100px"></td>
                                         </tr>
                                     </tbody>
                                     <tfoot class="table-light">
@@ -720,35 +720,35 @@
                                             <td>Tersenyum / tidak ada ekspresi khusus</td>
                                             <td>Terkadang meringis / menarik diri</td>
                                             <td>Sering menggetarkan dagu dan mengatupkan rahang</td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_flacc_1" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
                                         </tr>
                                         <tr>
                                             <th>Kaki</th>
                                             <td>Gerakan normal / relaksasi</td>
                                             <td>Tidak tenang</td>
                                             <td>Kaki dibuat menendang / menarik diri</td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_flacc_2" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
                                         </tr>
                                         <tr>
                                             <th>Aktivitas</th>
                                             <td>Tidur, posisi normal mudah bergerak</td>
                                             <td>Gerakan menggeliat, berguling, kaku</td>
                                             <td>Melengkungkan punggung / kaku / menghentak</td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_flacc_3" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
                                         </tr>
                                         <tr>
                                             <th>Menangis</th>
                                             <td>Tidak menangis (bangung / tidur)</td>
                                             <td>Mengerang, merengek-rengek</td>
                                             <td>Menangis terus-menerus, terisak, menjerit</td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_flacc_4" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
                                         </tr>
                                         <tr>
                                             <th>Bersuara</th>
                                             <td>Bersuara normal, tenang</td>
                                             <td>Tenang bila dipeluk, digendong, atau diajak bicara</td>
                                             <td>Sulit untuk ditenangkan</td>
-                                            <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
+                                            <td class="text-center"><input type="number" name="sn_flacc_5" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
                                         </tr>
                                     </tbody>
                                     <tfoot class="table-light">
@@ -766,7 +766,7 @@
                                 style="width: 25rem;">
                             <div class="form-group">
                                 <label class="form-label">Geser untuk memilih Skor Nyeri</label>
-                                <input type="range" class="form-range" min="0" max="10" step="1" value="0" id="sn_vas">
+                                <input type="range" class="form-range" min="0" max="10" step="1" value="0" name="sn_vas" id="sn_vas">
                             </div>
                             <div class="d-flex align-items-center gap-3">
                                 <span>Interpretasi Skor Nyeri VAS :</span>
@@ -1773,13 +1773,13 @@
                                     <h6>Jika Ada, sebutkan :</h6>
                                     <div class="col-md-6">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_5_1" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_5_1">
                                             <label class="form-check-label">
                                                 Kateter Urin
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_5_2" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_5_2">
                                             <label class="form-check-label">
                                                 Traechostomy
                                             </label>
@@ -1787,13 +1787,13 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_5_3" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_5_3">
                                             <label class="form-check-label">
                                                 NGT
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_5_4" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_5_4">
                                             <label class="form-check-label">
                                                 Colostomy
                                             </label>
@@ -1833,31 +1833,31 @@
                                     <h6>Jika Ada, sebutkan :</h6>
                                     <div class="col-md-6">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_9_1" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_9_1">
                                             <label class="form-check-label">
                                                 Rawat luka
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_9_2" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_9_2">
                                             <label class="form-check-label">
                                                 TB
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_9_3" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_9_3">
                                             <label class="form-check-label">
                                                 DM dengan terapi insulin
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_9_4" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_9_4">
                                             <label class="form-check-label">
                                                 PPOK
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_9_5" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_9_5">
                                             <label class="form-check-label">
                                                 Pasien kemoterapi
                                             </label>
@@ -1865,25 +1865,25 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_9_6" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_9_6">
                                             <label class="form-check-label">
                                                 HIV / AIDS
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_9_7" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_9_7">
                                             <label class="form-check-label">
                                                 DM
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_9_8" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_9_8">
                                             <label class="form-check-label">
                                                 Stroke
                                             </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" name="dp_9_9" value="1">
+                                            <input class="form-check-input" type="checkbox" name="dp_9_9">
                                             <label class="form-check-label">
                                                 CKD
                                             </label>
@@ -3442,6 +3442,29 @@
 
                     // $(metodeMapSkriningNyeri[metode]).prop('hidden', false);
                     FormHelper.setValue($form,'sn_skala', nyeri.SKALA);
+
+                    if (nyeri.METODE === 1 || nyeri.METODE === 5) {
+                        FormHelper.setValue($form, 'sn_nrs', nyeri.SKALA);
+                    } else if (nyeri.METODE === 2) {
+                        FormHelper.setValue($form, 'sn_bps_1', nyeri.SKOR1);
+                        FormHelper.setValue($form, 'sn_bps_2', nyeri.SKOR2);
+                        FormHelper.setValue($form, 'sn_bps_3', nyeri.SKOR3);
+                    } else if (nyeri.METODE === 3) {
+                        FormHelper.setValue($form, 'sn_nips_1', nyeri.SKOR1);
+                        FormHelper.setValue($form, 'sn_nips_2', nyeri.SKOR2);
+                        FormHelper.setValue($form, 'sn_nips_3', nyeri.SKOR3);
+                        FormHelper.setValue($form, 'sn_nips_4', nyeri.SKOR4);
+                        FormHelper.setValue($form, 'sn_nips_5', nyeri.SKOR5);
+                        FormHelper.setValue($form, 'sn_nips_6', nyeri.SKOR6);
+                    } else if (nyeri.METODE === 4) {
+                        FormHelper.setValue($form, 'sn_flacc_1', nyeri.SKOR1);
+                        FormHelper.setValue($form, 'sn_flacc_2', nyeri.SKOR2);
+                        FormHelper.setValue($form, 'sn_flacc_3', nyeri.SKOR3);
+                        FormHelper.setValue($form, 'sn_flacc_4', nyeri.SKOR4);
+                        FormHelper.setValue($form, 'sn_flacc_5', nyeri.SKOR5);
+                    } else if (nyeri.METODE === 5) {
+                        FormHelper.setValue($form, 'sn_vas', nyeri.SKALA);
+                    } else {}
                 }
 
                 // ==========================================
@@ -3772,11 +3795,6 @@
                         'dp_4',
                         dpFaktor.PASIEN_DILANTAI_ATAS
                     );
-
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_5',
-                        dpFaktor.PERAWATAN_LANJUTAN_PASIEN
-                    );
                 }
 
                 // ==========================================
@@ -3785,6 +3803,31 @@
                 const dpSkrining = data.discharge_skrining;
 
                 if (dpSkrining) {
+
+                    FormHelper.setSingleCheckbox($form,
+                        'dp_5',
+                        dpSkrining.PERAWATAN_LANJUTAN_MEDIS
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_5_1',
+                        dpSkrining.PLM_KATETER_URIN
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_5_2',
+                        dpSkrining.PLM_TRAECHOSTOMY
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_5_3',
+                        dpSkrining.PLM_NGT
+                    );
+
+                    FormHelper.setCheckbox($form,
+                        'dp_5_4',
+                        dpSkrining.PLM_COLOSTOMY
+                    );
 
                     // dp_5_lain -> KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA
                     FormHelper.setValue($form,
