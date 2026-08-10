@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Auth, Storage;
 
-class PengkajianRawatJalanDewasaController extends Controller
+class PengkajianRawatJalanJiwaController extends Controller
 {
     function index($kunjungan)
     {
@@ -43,19 +43,6 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->where('pk.NOMOR', $kunjungan)
             ->first();
 
-        // $frekuensi_obat = DB::table('master.frekuensi_aturan_resep')
-        //         ->select('ID','FREKUENSI')
-        //         ->where('STATUS',1)
-        //         ->orderBy('ID','ASC')
-        //         ->get();
-
-        // $rute_obat = DB::table('master.referensi')
-        //         ->select('ID','DESKRIPSI')
-        //         ->where('JENIS',217)
-        //         ->where('STATUS',1)
-        //         ->orderBy('TABEL_ID','ASC')
-        //         ->get();
-
         $jenis_alergi = DB::table('master.referensi')
                 ->select('ID','DESKRIPSI')
                 ->where('JENIS',180)
@@ -80,10 +67,10 @@ class PengkajianRawatJalanDewasaController extends Controller
         ];
         // print_r($data);
         // die();
-        return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.dewasa.index')->with('list',$data);
+        return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.jiwa.index')->with('list',$data);
     }
 
-    function simpanFormDokterRJD(Request $request)
+    function simpanFormDokterRJJ(Request $request)
     {
         // print_r($request->all());
         // die();
@@ -184,6 +171,7 @@ class PengkajianRawatJalanDewasaController extends Controller
                 ],
                 [
                     'TOLAK_UKUR'   => $request->tu,
+                    'EVALUASI'     => $request->eval,
                     'OLEH'         => auth()->id(),
                     'STATUS'       => 1,
                     'TANGGAL'      => now()
@@ -291,7 +279,7 @@ class PengkajianRawatJalanDewasaController extends Controller
         }
     }
 
-    public function getFormDokterRJD($kunjungan)
+    public function getFormDokterRJJ($kunjungan)
     {
         $data = [];
 
@@ -372,9 +360,11 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->first();
 
         $data['tu'] = '';
+        $data['eval'] = '';
 
         if ($assesment) {
             $data['tu'] = $assesment->TOLAK_UKUR;
+            $data['eval'] = $assesment->EVALUASI;
         }
 
         // Edukasi Rawat Jalan
@@ -447,7 +437,7 @@ class PengkajianRawatJalanDewasaController extends Controller
         return response()->json($data);
     }
 
-    function simpanFormPerawatRJD(Request $request)
+    function simpanFormPerawatRJJ(Request $request)
     {
         // print_r($request->all());
         // die();
@@ -585,6 +575,24 @@ class PengkajianRawatJalanDewasaController extends Controller
                 ]
             );
 
+            // PENILAIAN STRONG KID
+            DB::table('medicalrecord.penilaian_strong_kid')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'TAMPAK_KURUS' => $request->sga1 ?? 0,
+                    'PENURUNAN_BERAT_BADAN' => $request->sga2 ?? 0,
+                    'DIARE_INTAKE_MAKANAN' => $request->sga3 ?? 0,
+                    'RESIKO_MALNUTRISI' => $request->sga4 ?? 0,
+                    'SKOR' => $request->skor_sga ?? 0,
+                    'STATUS_SKOR' => $request->status_sga ?? 0,
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                    'TANGGAL' => now()
+                ]
+            );
+
             // EDUKASI PASIEN DAN KELUARGA
             DB::table('medicalrecord.edukasi_pasien_keluarga')->updateOrInsert(
                 [
@@ -630,34 +638,31 @@ class PengkajianRawatJalanDewasaController extends Controller
                 ]
             );
 
-            // MASALAH KEPERAWATAN
+            // ==========================
+            // MASALAH KEPERAWATAN JIWA
+            // ==========================
             DB::table('medicalrecord.masalah_keperawatan')->updateOrInsert(
                 [
                     'KUNJUNGAN' => $request->NOKUNJ
                 ],
                 [
-                    'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF' => $request->input('diag_1') ? 1 : 0,
-                    'POLA_NAFAS_TIDAK_EFEKTIF' => $request->input('diag_2') ? 1 : 0,
-                    'PERFUSI_PERIFER_TIDAK_EFEKTIF' => $request->input('diag_3') ? 1 : 0,
-                    'DIARE' => $request->input('diag_4') ? 1 : 0,
-                    'NYERI_AKUT' => $request->input('diag_5') ? 1 : 0,
-                    'NAUSEA' => $request->input('diag_6') ? 1 : 0,
-                    'HIPERTERMI' => $request->input('diag_7') ? 1 : 0,
-                    'ANSIETAS' => $request->input('diag_8') ? 1 : 0,
+                    'JIWA_ANSIETAS' => $request->input('diag_jiwa_1') ? 1 : 0,
+                    'JIWA_DEFISIT_PENGETAHUAN' => $request->input('diag_jiwa_2') ? 1 : 0,
+                    'JIWA_RISIKO_PERILAKU_KEKERASAN' => $request->input('diag_jiwa_3') ? 1 : 0,
+                    'JIWA_DEFISIT_PERAWATAN_DIRI' => $request->input('diag_jiwa_4') ? 1 : 0,
+                    'JIWA_HARGA_DIRI_RENDAH' => $request->input('diag_jiwa_5') ? 1 : 0,
+                    'JIWA_ISOLASI_SOSIAL' => $request->input('diag_jiwa_6') ? 1 : 0,
+                    'JIWA_KEPUTUSASAAN' => $request->input('diag_jiwa_7') ? 1 : 0,
+                    'JIWA_KOPING_TIDAK_EFEKTIF' => $request->input('diag_jiwa_8') ? 1 : 0,
+                    'JIWA_WAHAM' => $request->input('diag_jiwa_9') ? 1 : 0,
+                    'JIWA_PERILAKU_KEKERASAN' => $request->input('diag_jiwa_10') ? 1 : 0,
+                    'JIWA_GANGGUAN_PERSEPSI_SENSORI' => $request->input('diag_jiwa_11') ? 1 : 0,
+                    'JIWA_TINDAKAN_RELAKSASI' => $request->input('tin_jiwa_1') ? 1 : 0,
+                    'JIWA_TINDAKAN_BINA_HUBUNGAN_SALING_PERCAYA' => $request->input('tin_jiwa_2') ? 1 : 0,
+                    'JIWA_TINDAKAN_DISKUSI_PASIEN_KELUARGA' => $request->input('tin_jiwa_3') ? 1 : 0,
+                    'JIWA_TINDAKAN_STRATEGI_PELAKSANAAN' => $request->input('tin_jiwa_4') ? 1 : 0,
 
-                    'GANGGUAN_INTEGRITAS_KULIT_JARINGAN' => $request->input('diag_9') ? 1 : 0,
-                    'GANGGUAN_ELIMINASI_URIN' => $request->input('diag_10') ? 1 : 0,
-                    'INTOLERANSI_AKTIFITAS' => $request->input('diag_11') ? 1 : 0,
-                    'GANGGUAN_MOBILITAS_FISIK' => $request->input('diag_12') ? 1 : 0,
-                    'GANGGUAN_PERTUKARAN_GAS' => $request->input('diag_13') ? 1 : 0,
-
-                    'TINDAKAN_RELAKSASI_NAFAS_DALAM' => $request->input('tin_1') ? 1 : 0,
-                    'TINDAKAN_BODY_ALIGNMENT' => $request->input('tin_2') ? 1 : 0,
-
-                    'TINDAKAN_TENANGKAN_PASIEN' => $request->input('tin_3') ? 1 : 0,
-                    'TINDAKAN_PENDIDIKAN_KESEHATAN' => $request->input('tin_4') ? 1 : 0,
-                    'TINDAKAN_RAWAT_LUKA' => $request->input('tin_5') ? 1 : 0,
-
+                    // Gunakan field yang SUDAH ADA
                     'TERAPI_ORAL' => $request->input('tin_6') ? 1 : 0,
                     'TERAPI_ORAL_DETAIL' => $request->terapi_oral,
 
@@ -689,7 +694,7 @@ class PengkajianRawatJalanDewasaController extends Controller
         }
     }
 
-    public function getFormPerawatRJD($kunjungan)
+    public function getFormPerawatRJJ($kunjungan)
     {
         $data = [];
 
@@ -888,6 +893,22 @@ class PengkajianRawatJalanDewasaController extends Controller
         }
 
         // ======================================================
+        // PENILAIAN STRONG KID
+        // ======================================================
+        $strong = DB::table('medicalrecord.penilaian_strong_kid')
+            ->where('KUNJUNGAN',$kunjungan)
+            ->first();
+
+
+        $data['sga1'] = $strong->TAMPAK_KURUS ?? 0;
+        $data['sga2'] = $strong->PENURUNAN_BERAT_BADAN ?? 0;
+        $data['sga3'] = $strong->DIARE_INTAKE_MAKANAN ?? 0;
+        $data['sga4'] = $strong->RESIKO_MALNUTRISI ?? 0;
+
+        $data['skor_sga'] = $strong->SKOR ?? 0;
+        $data['status_sga'] = $strong->STATUS_SKOR ?? 0;
+
+        // ======================================================
         // EDUKASI PASIEN DAN KELUARGA
         // ======================================================
         $edukasi_pk = DB::table('medicalrecord.edukasi_pasien_keluarga')
@@ -971,60 +992,79 @@ class PengkajianRawatJalanDewasaController extends Controller
         // dd($edukasi_pk);
 
         // ======================================================
-        // MASALAH KEPERAWATAN
+        // MAPPING FIELD MASALAH KEPERAWATAN JIWA
         // ======================================================
         $masalah = DB::table('medicalrecord.masalah_keperawatan')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
+        $diag_jiwa_field = [
 
-        $diag_field = [
-            'diag_1'  => 'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
-            'diag_2'  => 'POLA_NAFAS_TIDAK_EFEKTIF',
-            'diag_3'  => 'PERFUSI_PERIFER_TIDAK_EFEKTIF',
-            'diag_4'  => 'DIARE',
-            'diag_5'  => 'NYERI_AKUT',
-            'diag_6'  => 'NAUSEA',
-            'diag_7'  => 'HIPERTERMI',
-            'diag_8'  => 'ANSIETAS',
+            'diag_jiwa_1'  => 'JIWA_ANSIETAS',
+            'diag_jiwa_2'  => 'JIWA_DEFISIT_PENGETAHUAN',
+            'diag_jiwa_3'  => 'JIWA_RISIKO_PERILAKU_KEKERASAN',
+            'diag_jiwa_4'  => 'JIWA_DEFISIT_PERAWATAN_DIRI',
+            'diag_jiwa_5'  => 'JIWA_HARGA_DIRI_RENDAH',
 
-            'diag_9'  => 'GANGGUAN_INTEGRITAS_KULIT_JARINGAN',
-            'diag_10' => 'GANGGUAN_ELIMINASI_URIN',
-            'diag_11' => 'INTOLERANSI_AKTIFITAS',
-            'diag_12' => 'GANGGUAN_MOBILITAS_FISIK',
-            'diag_13' => 'GANGGUAN_PERTUKARAN_GAS',
-
-            'tin_1' => 'TINDAKAN_RELAKSASI_NAFAS_DALAM',
-            'tin_2' => 'TINDAKAN_BODY_ALIGNMENT',
-            'tin_3' => 'TINDAKAN_TENANGKAN_PASIEN',
-            'tin_4' => 'TINDAKAN_PENDIDIKAN_KESEHATAN',
-            'tin_5' => 'TINDAKAN_RAWAT_LUKA',
-
-            'tin_6' => 'TERAPI_ORAL',
-            'tin_7' => 'TERAPI_IV_SC_IM',
+            'diag_jiwa_6'  => 'JIWA_ISOLASI_SOSIAL',
+            'diag_jiwa_7'  => 'JIWA_KEPUTUSASAAN',
+            'diag_jiwa_8'  => 'JIWA_KOPING_TIDAK_EFEKTIF',
+            'diag_jiwa_9'  => 'JIWA_WAHAM',
+            'diag_jiwa_10' => 'JIWA_PERILAKU_KEKERASAN',
+            'diag_jiwa_11' => 'JIWA_GANGGUAN_PERSEPSI_SENSORI',
         ];
 
+        $tin_jiwa_field = [
+            'tin_jiwa_1' => 'JIWA_TINDAKAN_RELAKSASI',
+            'tin_jiwa_2' => 'JIWA_TINDAKAN_BINA_HUBUNGAN_SALING_PERCAYA',
+            'tin_jiwa_3' => 'JIWA_TINDAKAN_DISKUSI_PASIEN_KELUARGA',
+            'tin_jiwa_4' => 'JIWA_TINDAKAN_STRATEGI_PELAKSANAAN',
+        ];
 
-        foreach ($diag_field as $key => $column) {
+        // ======================================================
+        // DEFAULT MASALAH KEPERAWATAN JIWA
+        // ======================================================
+        foreach ($diag_jiwa_field as $key => $column) {
+            $data[$key] = 0;
+        }
+        foreach ($tin_jiwa_field as $key => $column) {
             $data[$key] = 0;
         }
 
-
+        // ======================================================
+        // DEFAULT DETAIL TERAPI
+        // ======================================================
+        $data['tin_6'] = '';
+        $data['tin_7'] = '';
         $data['terapi_oral'] = '';
         $data['terapi_iv'] = '';
 
-
+        // ======================================================
+        // JIKA DATA SUDAH ADA
+        // ======================================================
         if ($masalah) {
 
-            foreach ($diag_field as $key => $column) {
-                $data[$key] = $masalah->$column;
+            // --------------------------
+            // Masalah Keperawatan Jiwa
+            // --------------------------
+            foreach ($diag_jiwa_field as $key => $column) {
+
+                $data[$key] = (int) $masalah->$column;
             }
 
+            foreach ($tin_jiwa_field as $key => $column) {
+                $data[$key] = (int) $masalah->$column;
+            }
+
+            // --------------------------
+            // Detail Terapi
+            // --------------------------
+            $data['tin_6'] = $masalah->TERAPI_ORAL;
+            $data['tin_7'] = $masalah->TERAPI_IV_SC_IM;
             $data['terapi_oral'] = $masalah->TERAPI_ORAL_DETAIL;
             $data['terapi_iv'] = $masalah->TERAPI_IV_SC_IM_DETAIL;
         }
 
         return response()->json($data);
     }
-
 }

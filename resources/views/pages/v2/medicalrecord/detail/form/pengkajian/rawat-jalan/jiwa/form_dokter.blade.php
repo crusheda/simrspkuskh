@@ -314,9 +314,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12 mb-3 d-flex flex-column">
+                        <div class="col-md-6 mb-3 d-flex flex-column">
                             <label class="form-label fw-bold">Tolok Ukur / Sasaran yang Dicapai</label>
                             <textarea class="form-control" name="tu" id="tu" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3 d-flex flex-column">
+                            <label class="form-label fw-bold">Evaluasi</label>
+                            <textarea class="form-control" name="eval" id="eval" rows="3"></textarea>
                         </div>
                     </div>
 
@@ -534,7 +538,7 @@
         <button class="btn btn-secondary">
             <i class="ri-close-line me-1"></i> Batal
         </button>
-        <button class="btn btn-danger" onclick="saveDataPengkajianRJDd(this)">
+        <button class="btn btn-danger" onclick="saveDataPengkajianRJJd(this)">
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
     </div>
@@ -650,7 +654,7 @@
                 }
             }
         });
-        loadDataPengkajianRJDd();
+        loadDataPengkajianRJJd();
         getPenggunaanObat();
         getRiwayatAlergi();
         getRiwayatLab();
@@ -658,19 +662,19 @@
         getDiagnosis();
     });
 
-    function loadDataPengkajianRJDd() {
-        const kunjungan = $('#rjd_dokter').data('kunjungan');
+    function loadDataPengkajianRJJd() {
+        const kunjungan = $('#rjj_dokter').data('kunjungan');
 
         $.ajax({
-            url: `/api/v2/emr/form/pengkajian/rjd/dr/get/${kunjungan}`,
+            url: `/api/v2/emr/form/pengkajian/rjj/dr/get/${kunjungan}`,
             type: 'GET',
             success:function(res){
-                isiFormPengkajianRJDd(res);
+                isiFormPengkajianRJJd(res);
             }
         });
     }
 
-    function isiFormPengkajianRJDd(data){
+    function isiFormPengkajianRJJd(data){
 
         $("input[name=anam][value='"+data.anam+"']")
             .prop("checked",true)
@@ -689,6 +693,8 @@
         $("#terapi_tind").val(data.terapi_tind);
 
         $("#tu").val(data.tu);
+
+        $("#eval").val(data.eval);
 
         $('#me_1').prop('checked', data.me_1 == 1);
         $('#me_2').prop('checked', data.me_2 == 1);
@@ -714,16 +720,16 @@
 
     }
 
-    function saveDataPengkajianRJDd(btn) {
+    function saveDataPengkajianRJJd(btn) {
         const $button = $(btn);
-        const $section = $('#rjd_dokter');
+        const $section = $('#rjj_dokter');
 
         const data = getFormDataByName($section, {
             NOKUNJ: $section.data('kunjungan')
         });
 
         $.ajax({
-            url: '/api/v2/emr/form/pengkajian/rjd/dr/simpan',
+            url: '/api/v2/emr/form/pengkajian/rjj/dr/simpan',
             type: 'POST',
             data: data,
             headers: {
@@ -766,7 +772,7 @@
     // ADD ON ---------------------------------------------------------------------------------------------------------------------------------------------------
     function getRiwayatAlergi() {
         const $button = $('#btnRefreshAlergi');
-        const kunjungan = $('#rjd_dokter').data('kunjungan');
+        const kunjungan = $('#rjj_dokter').data('kunjungan');
 
         $.ajax({
             url: `/api/v2/emr/pengkajian/riwayat_alergi/${kunjungan}`,
@@ -871,7 +877,7 @@
     };
 
     function hapusRiwayatAlergi(id){
-        const kunjungan = $('#rjd_dokter').data('kunjungan');
+        const kunjungan = $('#rjj_dokter').data('kunjungan');
         $.ajax({
             url: `/api/v2/emr/pengkajian/riwayat_alergi/${kunjungan}/hapus/${id}`,
             type: 'DELETE',
@@ -904,7 +910,7 @@
 
     function getPenggunaanObat() {
         const $button = $('#btnRefreshObat');
-        const kunjungan = $('#rjd_dokter').data('kunjungan');
+        const kunjungan = $('#rjj_dokter').data('kunjungan');
 
         $.ajax({
             url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}`,
@@ -1017,7 +1023,7 @@
     };
 
     function hapusPenggunaanObat(id){
-        const kunjungan = $('#rjd_dokter').data('kunjungan');
+        const kunjungan = $('#rjj_dokter').data('kunjungan');
         $.ajax({
             url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}/hapus/${id}`,
             type: 'DELETE',
@@ -1050,7 +1056,7 @@
 
     function getRiwayatLab() {
         const $button = $('#btnRefreshLab');
-        const kunjungan = $('#rjd_dokter').data('kunjungan');
+        const kunjungan = $('#rjj_dokter').data('kunjungan');
 
         $.ajax({
             url: `/api/v2/emr/pengkajian/lab/${kunjungan}`,
@@ -1117,7 +1123,7 @@
 
     function getRiwayatRad() {
         const $button = $('#btnRefreshRad');
-        const kunjungan = $('#rjd_dokter').data('kunjungan');
+        const kunjungan = $('#rjj_dokter').data('kunjungan');
 
         $.ajax({
             url: `/api/v2/emr/pengkajian/rad/${kunjungan}`,
@@ -1185,7 +1191,7 @@
 
     function getDiagnosis() {
         const $button = $('#btnRefreshDiagnosis');
-        const kunjungan = $('#rjd_dokter').data('kunjungan');
+        const kunjungan = $('#rjj_dokter').data('kunjungan');
 
         $.ajax({
             url: `/api/v2/emr/pengkajian/diagnosis/${kunjungan}`,
@@ -1291,7 +1297,7 @@
     };
 
     function hapusDiagnosis(id){
-        const kunjungan = $('#rjd_dokter').data('kunjungan');
+        const kunjungan = $('#rjj_dokter').data('kunjungan');
         $.ajax({
             url: `/api/v2/emr/pengkajian/diagnosis/${kunjungan}/hapus/${id}`,
             type: 'DELETE',

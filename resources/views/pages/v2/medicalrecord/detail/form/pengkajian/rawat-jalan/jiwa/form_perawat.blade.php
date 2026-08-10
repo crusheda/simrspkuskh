@@ -744,11 +744,11 @@
                                     <label class="fw-bold"> Intake makanan kurang karena tidak ada nafsu makan? </label>
                                     <div class="mt-2">
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input gizi" type="radio" name="nafsu_makan" value="0">
+                                            <input class="form-check-input gizi" type="radio" name="nafsu_makan" id="nafsu_makan1" value="1">
                                             <label class="form-check-label">Ya</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input gizi" type="radio" name="nafsu_makan" value="0" checked>
+                                            <input class="form-check-input gizi" type="radio" name="nafsu_makan" id="nafsu_makan2" value="0" checked>
                                             <label class="form-check-label">Tidak</label>
                                         </div>
                                     </div>
@@ -768,6 +768,136 @@
                                     <small id="evaluasi_gizi" class="text-muted"> Monitoring &amp; evaluasi setelah 7 hari perawatan</small>
                                     <input type="hidden" name="skor_gizi" id="skor_gizi" value="0">
                                     <input type="hidden" name="status_skor" id="status_skor" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mb-3">
+            <div class="card card-body border border-dashed border-primary mb-1">
+                <div class="row">
+                    <div class="col-md-12 mb-1">
+                        <div class="form-group">
+                            <h5 class="border-bottom pb-2 text-bold">
+                                <strong>Skrining Gizi Awal Status Nutrisi (Strong Kid)</strong>
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-1">
+                        <div class="row">
+                            <!-- Tampak Kurus -->
+                            <div class="col-md-9">
+                                <label class="form-label fw-bold">
+                                    Apakah pasien tampak kurus?
+                                </label>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input strong-kid" type="radio" name="sga1" id="sga1_ya" value="1">
+                                    <label class="form-check-label" for="sga1_ya">
+                                        Ya
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input strong-kid" type="radio" name="sga1" id="sga1_tidak" value="0" checked>
+                                    <label class="form-check-label" for="sga1_tidak">
+                                        Tidak
+                                    </label>
+                                </div>
+                            </div>
+                            <hr>
+                            <!-- Penurunan Berat Badan -->
+                            <div class="col-md-9">
+                                <label class="form-label fw-bold">
+                                    Apakah terjadi penurunan berat badan selama 1 bulan terakhir?
+                                </label>
+                                <ul class="mb-0">
+                                    <li>
+                                        Berdasarkan penilaian obyektif data BB atau penilaian subyektif orang tua pasien
+                                    </li>
+                                    <li>
+                                        Untuk bayi &lt; 1 tahun, BB tidak baik selama 3 bulan terakhir
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label d-block">&nbsp;</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input strong-kid" type="radio" name="sga2" id="sga2_ya" value="1">
+                                    <label class="form-check-label" for="sga2_ya">
+                                        Ya
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input strong-kid" type="radio" name="sga2" id="sga2_tidak" value="0" checked>
+                                    <label class="form-check-label" for="sga2_tidak">
+                                        Tidak
+                                    </label>
+                                </div>
+                            </div>
+                            <hr>
+                            <!-- Diare / Intake -->
+                            <div class="col-md-9">
+                                <label class="form-label fw-bold">
+                                    Apakah terdapat salah satu kondisi berikut?
+                                </label>
+                                <ul class="mb-0">
+                                    <li>
+                                        Diare &gt; 5 kali/hari dan atau muntah &gt; 3 kali/hari dalam seminggu terakhir
+                                    </li>
+                                    <li>
+                                        Asupan makanan berkurang selama seminggu terakhir
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label d-block">&nbsp;</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input strong-kid" type="radio" name="sga3" id="sga3_ya" value="1">
+                                    <label class="form-check-label" for="sga3_ya">
+                                        Ya
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input strong-kid" type="radio" name="sga3" id="sga3_tidak" value="0" checked>
+                                    <label class="form-check-label" for="sga3_tidak">
+                                        Tidak
+                                    </label>
+                                </div>
+                            </div>
+                            <hr>
+                            <!-- Resiko Malnutrisi -->
+                            <div class="col-md-9">
+                                <label class="form-label fw-bold">
+                                    Apakah terdapat penyakit atau keadaan yang mengakibatkan pasien beresiko mengalami malnutrisi?
+                                </label>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label d-block">&nbsp;</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input strong-kid" type="radio" name="sga4" id="sga4_ya" value="1">
+                                    <label class="form-check-label" for="sga4_ya">
+                                        Ya
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input strong-kid" type="radio" name="sga4" id="sga4_tidak" value="0" checked>
+                                    <label class="form-check-label" for="sga4_tidak">
+                                        Tidak
+                                    </label>
+                                </div>
+                            </div>
+                            <hr>
+                            <!-- HASIL -->
+                            <div class="col-md-9"></div>
+                            <div class="col-md-3">
+                                <div class="form-content text-center">
+                                    <h4 id="total_skor_sk" class="display-2 fw-bold text-dark">0</h4>
+                                    <label id="status_skor_sk" class="text-success fw-bold"> Tidak Beresiko Malnutrisi</label>
+                                    <input type="hidden" name="skor_sga" id="skor_sga_input" value="0">
+                                    <input type="hidden" name="status_sga" id="status_sga_input" value="0">
                                 </div>
                             </div>
                         </div>
@@ -940,161 +1070,147 @@
             </div>
         </div>
         <div class="col-md-12 mb-3">
-            <div class="card card-body border border-dashed border-warning mb-1">
+            <div class="card card-body border border-dashed border-primary">
+                <label class="form-label fw-bold">
+                    Masalah Keperawatan
+                </label>
                 <div class="row">
-                    <div class="col-md-12 mb-1">
-                        <div class="form-group">
-                            <h5 class="border-bottom pb-2 text-bold">
-                                <strong>Masalah Keperawatan </strong>
-                            </h5>
+                    <!-- Kolom Kiri -->
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_1" id="diag_jiwa_1">
+
+                            <label class="form-check-label" for="diag_jiwa_1">
+                                Ansietas
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_2" id="diag_jiwa_2">
+                            <label class="form-check-label" for="diag_jiwa_2">
+                                Defisit Pengetahuan
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_3" id="diag_jiwa_3">
+                            <label class="form-check-label" for="diag_jiwa_3">
+                                Risiko Perilaku Kekerasan
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_4" id="diag_jiwa_4">
+                            <label class="form-check-label" for="diag_jiwa_4">
+                                Defisit Perawatan Diri
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_5" id="diag_jiwa_5">
+                            <label class="form-check-label" for="diag_jiwa_5">
+                                Harga Diri Rendah
+                            </label>
                         </div>
                     </div>
-                    <div class="col-md-12 mb-3">
-                        <div class="row">
-                            <label class="form-label fw-bold">Diagnosa Keperawatan</label>
-
-                            <!-- Kolom Kiri -->
-                            <div class="col-md-6">
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_1" id="diag_1">
-                                    <label class="form-check-label">Bersihkan jalan nafas tidak efektif</label>
-                                </div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_2" id="diag_2">
-                                    <label class="form-check-label">Pola nafas tidak efektif</label>
-                                </div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_3" id="diag_3">
-                                    <label class="form-check-label">Perfusi perifer tidak efektif</label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_4" id="diag_4">
-                                    <label class="form-check-label">Diare</label>
-                                </div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_5" id="diag_5">
-                                    <label class="form-check-label">Nyeri Akut</label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_6" id="diag_6">
-                                    <label class="form-check-label">Nausea</label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_7" id="diag_7">
-                                    <label class="form-check-label">Hipertermi</label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_8" id="diag_8">
-                                    <label class="form-check-label">Ansietas</label>
-                                </div>
-
-                            </div>
-
-                            <!-- Kolom Kanan -->
-                            <div class="col-md-6">
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_9" id="diag_9">
-                                    <label class="form-check-label">Gangguan integritas kulit / jaringan</label>
-                                </div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_10" id="diag_10">
-                                    <label class="form-check-label">Gangguan eliminasi urin</label>
-                                </div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_11" id="diag_11">
-                                    <label class="form-check-label">Intoleransi aktifitas</label>
-                                </div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_12" id="diag_12">
-                                    <label class="form-check-label">Gangguan mobilitas fisik</label>
-                                </div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_13" id="diag_13">
-                                    <label class="form-check-label">Gangguan pertukaran gas</label>
-                                </div>
-
-                            </div>
+                    <!-- Kolom Tengah -->
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_6" id="diag_jiwa_6">
+                            <label class="form-check-label" for="diag_jiwa_6">
+                                Isolasi Sosial
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_7" id="diag_jiwa_7">
+                            <label class="form-check-label" for="diag_jiwa_7">
+                                Keputusasaan
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_8" id="diag_jiwa_8">
+                            <label class="form-check-label" for="diag_jiwa_8">
+                                Koping Tidak Efektif
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_9" id="diag_jiwa_9">
+                            <label class="form-check-label" for="diag_jiwa_9">
+                                Waham
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_10" id="diag_jiwa_10">
+                            <label class="form-check-label" for="diag_jiwa_10">
+                                Perilaku Kekerasan
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_11" id="diag_jiwa_11">
+                            <label class="form-check-label" for="diag_jiwa_11">
+                                Gangguan Persepsi Sensori
+                            </label>
                         </div>
                     </div>
-
-                    <!-- Perencanaan dan Tindakan -->
-                    <div class="col-md-12 mb-3">
-                        <div class="row">
-                            <label class="form-label fw-bold">Perencanaan dan Tindakan</label>
-
-                            <!-- Mandiri -->
-                            <div class="col-md-6 border-end">
-
-                                <label class="form-label fw-semibold">Mandiri</label>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_1" id="tin_1">
-                                    <label class="form-check-label" for="tin_1">Ajarkan teknik relaksasi dan nafas dalam</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mb-3">
+            <div class="card card-body border border-dashed border-primary">
+                <div class="row">
+                    <label class="form-label fw-bold">
+                        Perencanaan dan Tindakan
+                    </label>
+                    <div class="col-md-6 border-end">
+                        <label class="form-label fw-semibold">
+                            Mandiri
+                        </label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_jiwa_1" id="tin_jiwa_1">
+                            <label class="form-check-label" for="tin_jiwa_1">
+                                Ajarkan teknik relaksasi
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_jiwa_2" id="tin_jiwa_2">
+                            <label class="form-check-label" for="tin_jiwa_2">
+                                Bina Hubungan Saling Percaya
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_jiwa_3" id="tin_jiwa_3">
+                            <label class="form-check-label" for="tin_jiwa_3">
+                                Diskusikan dengan pasien / keluarga
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_jiwa_4" id="tin_jiwa_4">
+                            <label class="form-check-label" for="tin_jiwa_4">
+                                Latih Strategi Pelaksanaan
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row align-items-center mb-2">
+                            <label class="col-md-12 col-form-label mb-0">Pemberian Terapi :</label>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_6" id="tin_6">
+                                    <label class="form-check-label">Oral</label>
                                 </div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_2" id="tin_2">
-                                    <label class="form-check-label" for="tin_2">Pertahankan body alignment dan posisi yang nyaman</label>
-                                </div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_3" id="tin_3">
-                                    <label class="form-check-label" for="tin_3">Tenangkan Pasien</label>
-                                </div>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_4" id="tin_4">
-                                    <label class="form-check-label" for="tin_4">Berikan Pendidikan Kesehatan ke pasien dan keluarga</label>
-                                </div>
-
                             </div>
 
-                            <!-- Kolaborasi -->
-                            <div class="col-md-6">
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="terapi_oral" id="terapi_oral">
+                            </div>
+                        </div>
 
-                                <label class="form-label fw-semibold">Kolaborasi</label>
-
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_5" id="tin_5">
-                                    <label class="form-check-label" for="tin_5">Rawat Luka</label>
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_7" id="tin_7">
+                                    <label class="form-check-label">IV/SC/IM</label>
                                 </div>
+                            </div>
 
-                                <div class="row align-items-center mb-2">
-                                    <label class="col-md-12 col-form-label mb-0">Pemberian Terapi :</label>
-                                    <div class="col-md-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_6" id="tin_6">
-                                            <label class="form-check-label">Oral</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" name="terapi_oral" id="terapi_oral">
-                                    </div>
-                                </div>
-
-                                <div class="row align-items-center">
-                                    <div class="col-md-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_7" id="tin_7">
-                                            <label class="form-check-label">IV/SC/IM</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control" name="terapi_iv" id="terapi_iv">
-                                    </div>
-                                </div>
-
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" name="terapi_iv" id="terapi_iv">
                             </div>
                         </div>
                     </div>
@@ -1106,7 +1222,7 @@
         <button class="btn btn-secondary">
             <i class="ri-close-line me-1"></i> Batal
         </button>
-        <button class="btn btn-success" onclick="saveDataPengkajianRJDp(this)">
+        <button class="btn btn-success" onclick="saveDataPengkajianRJJp(this)">
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
     </div>
@@ -1114,7 +1230,7 @@
 
 <script>
     $(document).ready(function () {
-        const $section = $('#rjd_perawat');
+        const $section = $('#rjj_perawat');
         // Sembunyikan textarea saat pertama kali
         $('#pse_lain').hide();
         $('#sm_2_detail').hide();
@@ -1237,6 +1353,17 @@
             5: '#tampil_sn_vas'
         };
 
+        //Skor Skrining Gizi Awal
+        $(function () {
+
+            hitungStrongKid();
+
+            $(".gizi").change(function () {
+                hitungStrongKid();
+            });
+
+        });
+
         // ==========================================
         // PILIH METODE
         // ==========================================
@@ -1330,23 +1457,23 @@
         });
         // END SKRINING NYERI ------------------------------------------------------------------------------
 
-        loadDataPengkajianRJDp();
+        loadDataPengkajianRJJp();
 
     });
 
-    function loadDataPengkajianRJDp() {
-        const kunjungan = $('#rjd_perawat').data('kunjungan');
+    function loadDataPengkajianRJJp() {
+        const kunjungan = $('#rjj_perawat').data('kunjungan');
 
         $.ajax({
-            url: `/api/v2/emr/form/pengkajian/rjd/pr/get/${kunjungan}`,
+            url: `/api/v2/emr/form/pengkajian/rjj/pr/get/${kunjungan}`,
             type: 'GET',
             success:function(res){
-                isiFormPengkajianRJDp(res);
+                isiFormPengkajianRJJp(res);
             }
         });
     }
 
-    function isiFormPengkajianRJDp(data){
+    function isiFormPengkajianRJJp(data){
 
         // ======================================================
         // TANDA VITAL
@@ -1435,6 +1562,7 @@
         $('input[name="kon_obat"][value="' + data.kon_obat + '"]')
             .prop('checked', true).trigger("change");
 
+        // SKRINING GIZI
         $('input[name="bb_turun"][value="' + data.bb_turun + '"]')
             .prop('checked', true).trigger("change");
         $('input[name="bb_ubah"][value="' + data.bb_ubah + '"]')
@@ -1446,6 +1574,31 @@
 
         $('#skor_gizi').val(data.skor_gizi);
         $('#status_skor').val(data.status_skor);
+
+        //STRONG KID
+        $("input[name='sga1'][value='"+data.sga1+"']")
+            .prop('checked', true).trigger("change");
+        $("input[name='sga2'][value='"+data.sga2+"']")
+            .prop('checked', true).trigger("change");
+        $("input[name='sga3'][value='"+data.sga3+"']")
+            .prop('checked', true).trigger("change");
+        $("input[name='sga4'][value='"+data.sga4+"']")
+            .prop('checked', true).trigger("change");
+        $('#skor_sga_input').val(data.skor_sga);
+        $('#status_sga_input').val(data.status_sga);
+        $('#total_skor_sk').text(data.skor_sga);
+        if(data.status_sga == 1){
+            $('#status_skor_sk')
+                .text('Beresiko Malnutrisi')
+                .removeClass('text-success')
+                .addClass('text-danger');
+        }else{
+            $('#status_skor_sk')
+                .text('Tidak Beresiko Malnutrisi')
+                .removeClass('text-danger')
+                .addClass('text-success');
+        }
+        $('#skor_sga').removeAttr('hidden');
 
         //EDUKASI PASIEN KELUARGA
         // Edukasi awal
@@ -1480,29 +1633,21 @@
         $('#kb_edu_12').prop('checked', Number(data.status_lain) === 1);
         $('#kb_edu_lain').val(data.kb_edu_lain);
 
-        //MASALAH KEPERAWATAN
-        $('#diag_1').prop('checked', data.diag_1 == 1);
-        $('#diag_2').prop('checked', data.diag_2 == 1);
-        $('#diag_3').prop('checked', data.diag_3 == 1);
-        $('#diag_4').prop('checked', data.diag_4 == 1);
-        $('#diag_5').prop('checked', data.diag_5 == 1);
-        $('#diag_6').prop('checked', data.diag_6 == 1);
-        $('#diag_7').prop('checked', data.diag_7 == 1);
-        $('#diag_8').prop('checked', data.diag_8 == 1);
-
-        $('#diag_9').prop('checked', data.diag_9 == 1);
-        $('#diag_10').prop('checked', data.diag_10 == 1);
-        $('#diag_11').prop('checked', data.diag_11 == 1);
-        $('#diag_12').prop('checked', data.diag_12 == 1);
-        $('#diag_13').prop('checked', data.diag_13 == 1);
-
+        // Masalah Keperawatan Jiwa
+        for (let i = 1; i <= 11; i++) {
+            $('#diag_jiwa_' + i).prop(
+                'checked',
+                data['diag_jiwa_' + i] == 1
+            );
+        }
 
         // Tindakan
-        $('#tin_1').prop('checked', data.tin_1 == 1);
-        $('#tin_2').prop('checked', data.tin_2 == 1);
-        $('#tin_3').prop('checked', data.tin_3 == 1);
-        $('#tin_4').prop('checked', data.tin_4 == 1);
-        $('#tin_5').prop('checked', data.tin_5 == 1);
+        for (let i = 1; i <= 6; i++) {
+            $('#tin_jiwa_' + i).prop(
+                'checked',
+                data['tin_jiwa_' + i] == 1
+            );
+        }
 
         $('#tin_6').prop('checked', data.tin_6 == 1).trigger("change");;
         $('#tin_7').prop('checked', data.tin_7 == 1).trigger("change");;
@@ -1514,16 +1659,16 @@
 
     }
 
-    function saveDataPengkajianRJDp(btn) {
+    function saveDataPengkajianRJJp(btn) {
         const $button = $(btn);
-        const $section = $('#rjd_perawat');
+        const $section = $('#rjj_perawat');
 
         const data = getFormDataByName($section, {
             NOKUNJ: $section.data('kunjungan')
         });
 
         $.ajax({
-            url: '/api/v2/emr/form/pengkajian/rjd/pr/simpan',
+            url: '/api/v2/emr/form/pengkajian/rjj/pr/simpan',
             type: 'POST',
             data: data,
             headers: {
@@ -1663,6 +1808,62 @@
         $("#evaluasi_gizi").text(evaluasi);
 
     }
+
+    //Strong Kid
+    function hitungStrongKid()
+    {
+        let skor = 0;
+
+        // Pertanyaan 1-3
+        if ($("input[name='sga1']:checked").val() == "1") {
+            skor += 1;
+        }
+
+        if ($("input[name='sga2']:checked").val() == "1") {
+            skor += 1;
+        }
+
+        if ($("input[name='sga3']:checked").val() == "1") {
+            skor += 1;
+        }
+
+        // Pertanyaan 4 bobot 2
+        if ($("input[name='sga4']:checked").val() == "1") {
+            skor += 2;
+        }
+
+
+        let status = 0;
+        let text = "Tidak Beresiko Malnutrisi";
+
+
+        if(skor >= 2){
+            status = 1;
+            text = "Beresiko Malnutrisi";
+        }
+
+
+        // tampilkan
+        $('#total_skor_sk').text(skor);
+        $('#status_skor_sk').text(text);
+
+
+        // simpan hidden
+        $('#skor_sga_input').val(skor);
+        $('#status_sga_input').val(status);
+
+
+        // tampilkan box hasil
+        $('#skor_sga').removeAttr('hidden');
+    }
+
+
+    // trigger ketika pilih
+    $('.strong-kid').on('change', function(){
+
+        hitungStrongKid();
+
+    });
 
     // HITUNG SKOR SKRINING NYERI BERDASARKAN METODE
     function getValidNumber($input) {

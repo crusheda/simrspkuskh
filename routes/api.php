@@ -19,6 +19,7 @@ use App\Http\Controllers\EMR\Form\AddOnPengkajianController;
 use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanAnakController;
+use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanJiwaController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\EMR\ApiNewRehabMedikController;
 use App\Http\Controllers\EMR\ApiMatriksController;
@@ -71,6 +72,13 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                         //PERAWAT
                         Route::post('emr/form/pengkajian/rja/pr/simpan', [PengkajianRawatJalanAnakController::class, 'simpanFormPerawatRJA']);
                         Route::get('emr/form/pengkajian/rja/pr/get/{kunjungan}',[PengkajianRawatJalanAnakController::class, 'getFormPerawatRJA']);
+                    // JIWA
+                        //DOKTER
+                        Route::post('emr/form/pengkajian/rjj/dr/simpan', [PengkajianRawatJalanJiwaController::class, 'simpanFormDokterRJJ']);
+                        Route::get('emr/form/pengkajian/rjj/dr/get/{kunjungan}',[PengkajianRawatJalanJiwaController::class, 'getFormDokterRJJ']);
+                        //PERAWAT
+                        Route::post('emr/form/pengkajian/rjj/pr/simpan', [PengkajianRawatJalanJiwaController::class, 'simpanFormPerawatRJJ']);
+                        Route::get('emr/form/pengkajian/rjj/pr/get/{kunjungan}',[PengkajianRawatJalanJiwaController::class, 'getFormPerawatRJJ']);
 
             // ADD ON
                 // ASAL RUJUKAN / PPK

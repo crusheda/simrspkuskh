@@ -18,6 +18,7 @@ use Auth, Storage;
 use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanAnakController;
+use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanJiwaController;
 
 class EMRController extends Controller
 {
@@ -574,9 +575,10 @@ class EMRController extends Controller
         // }
 
         $controllers = [
-            'pengkajian-gd'             => PengkajianGawatDaruratController::class,
-            'pengkajian-rajal-dewasa'   => PengkajianRawatJalanDewasaController::class,
-            'pengkajian-rajal-anak'     => PengkajianRawatJalanAnakController::class,
+            'pengkajian-gd'                 => PengkajianGawatDaruratController::class,
+            'pengkajian-rajal-dewasa'       => PengkajianRawatJalanDewasaController::class,
+            'pengkajian-rajal-anak'         => PengkajianRawatJalanAnakController::class,
+            'pengkajian-rajal-psikiatri'    => PengkajianRawatJalanJiwaController::class,
         ];
 
         abort_unless(isset($controllers[$form]), 404);
