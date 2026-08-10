@@ -495,194 +495,235 @@
     // ============================================================
     // GLOBAL FORM HELPER
     // ============================================================
-    window.FormHelper = {
+    // window.FormHelper = {
 
-        setValue: function ($form, name, value) {
+    //     setValue: function ($form, name, value) {
 
-            const $el = $form.find(`[name="${name}"]`);
+    //         const $el = $form.find(`[name="${name}"]`);
 
-            if (!$el.length) return;
+    //         if (!$el.length) return;
 
-            const type = ($el.attr('type') || '').toLowerCase();
-            const tagName = $el.prop('tagName').toLowerCase();
+    //         const type = ($el.attr('type') || '').toLowerCase();
+    //         const tagName = $el.prop('tagName').toLowerCase();
 
-            // ==========================================
-            // SELECT
-            // ==========================================
-            if (tagName === 'select') {
+    //         // ==========================================
+    //         // SELECT
+    //         // ==========================================
+    //         if (tagName === 'select') {
 
-                // null / undefined / '' / 0
-                // diarahkan ke option value=""
-                if (
-                    value === null ||
-                    value === undefined ||
-                    value === '' ||
-                    Number(value) === 0
-                ) {
-                    value = '';
-                }
+    //             // null / undefined / '' / 0
+    //             // diarahkan ke option value=""
+    //             if (
+    //                 value === null ||
+    //                 value === undefined ||
+    //                 value === '' ||
+    //                 Number(value) === 0
+    //             ) {
+    //                 value = '';
+    //             }
 
-                // Normalisasi value
-                value = String(value);
+    //             // Normalisasi value
+    //             value = String(value);
 
-                $el.val(value);
+    //             $el.val(value);
 
-                $el.trigger('change');
+    //             $el.trigger('change');
 
-                return;
-            }
+    //             return;
+    //         }
 
-            // ==========================================
-            // VALUE KOSONG
-            // ==========================================
-            if (value === null || value === undefined || value === '') {
+    //         // ==========================================
+    //         // VALUE KOSONG
+    //         // ==========================================
+    //         if (value === null || value === undefined || value === '') {
 
-                $el.val('');
-                $el.trigger('change');
+    //             $el.val('');
+    //             $el.trigger('change');
 
-                return;
-            }
+    //             return;
+    //         }
 
-            // ==========================================
-            // NUMBER
-            // ==========================================
-            if (type === 'number') {
+    //         // ==========================================
+    //         // NUMBER
+    //         // ==========================================
+    //         if (type === 'number') {
 
-                const normalized = String(value).replace(',', '.');
-                const number = Number(normalized);
+    //             const normalized = String(value).replace(',', '.');
+    //             const number = Number(normalized);
 
-                if (!isNaN(number)) {
-                    value = number;
-                }
-            }
+    //             if (!isNaN(number)) {
+    //                 value = number;
+    //             }
+    //         }
 
-            // ==========================================
-            // RANGE
-            // ==========================================
-            else if (type === 'range') {
+    //         // ==========================================
+    //         // RANGE
+    //         // ==========================================
+    //         else if (type === 'range') {
 
-                let number = Number(
-                    String(value).replace(',', '.')
-                );
+    //             let number = Number(
+    //                 String(value).replace(',', '.')
+    //             );
 
-                if (!isNaN(number)) {
+    //             if (!isNaN(number)) {
 
-                    const min = Number($el.attr('min'));
-                    const max = Number($el.attr('max'));
-                    const step = Number($el.attr('step'));
+    //                 const min = Number($el.attr('min'));
+    //                 const max = Number($el.attr('max'));
+    //                 const step = Number($el.attr('step'));
 
-                    // Batasi berdasarkan min
-                    if (!isNaN(min)) {
-                        number = Math.max(number, min);
-                    }
+    //                 // Batasi berdasarkan min
+    //                 if (!isNaN(min)) {
+    //                     number = Math.max(number, min);
+    //                 }
 
-                    // Batasi berdasarkan max
-                    if (!isNaN(max)) {
-                        number = Math.min(number, max);
-                    }
+    //                 // Batasi berdasarkan max
+    //                 if (!isNaN(max)) {
+    //                     number = Math.min(number, max);
+    //                 }
 
-                    // Sesuaikan dengan step
-                    if (!isNaN(step) && step > 0 && !isNaN(min)) {
-                        number = min + Math.round(
-                            (number - min) / step
-                        ) * step;
-                    }
+    //                 // Sesuaikan dengan step
+    //                 if (!isNaN(step) && step > 0 && !isNaN(min)) {
+    //                     number = min + Math.round(
+    //                         (number - min) / step
+    //                     ) * step;
+    //                 }
 
-                    value = number;
-                }
-            }
+    //                 value = number;
+    //             }
+    //         }
 
-            // ==========================================
-            // TIME
-            // ==========================================
-            else if (type === 'time') {
+    //         // ==========================================
+    //         // TIME
+    //         // ==========================================
+    //         else if (type === 'time') {
 
-                // Contoh database:
-                // 08:30:00
-                //
-                // Menjadi:
-                // 08:30
-                value = String(value).substring(0, 5);
-            }
+    //             // Contoh database:
+    //             // 08:30:00
+    //             //
+    //             // Menjadi:
+    //             // 08:30
+    //             value = String(value).substring(0, 5);
+    //         }
 
-            // ==========================================
-            // SET VALUE
-            // ==========================================
-            $el.val(value);
+    //         // ==========================================
+    //         // SET VALUE
+    //         // ==========================================
+    //         $el.val(value);
 
-            // Trigger event
-            $el.trigger('change');
-        },
+    //         // Trigger event
+    //         $el.trigger('change');
+    //     },
 
-        // Checkbox biasa berdasarkan boolean / 0 / 1
-        setCheckbox: function ($form, name, checked) {
+    //     // Checkbox biasa berdasarkan boolean / 0 / 1
+    //     setCheckbox: function ($form, name, checked) {
 
-            const $el = $form.find(`input[name="${name}"]`);
+    //         const $el = $form.find(`input[name="${name}"]`);
 
-            if (!$el.length) return;
+    //         if (!$el.length) return;
 
-            $el.prop('checked', Number(checked) === 1);
+    //         $el.prop('checked', Number(checked) === 1);
 
-            $el.trigger('change');
-        },
-
-
-        // Checkbox group berdasarkan value
-        setCheckboxValue: function ($form, name, value) {
-
-            const $el = $form.find(
-                `input[name="${name}"][value="${value}"]`
-            );
-
-            if (!$el.length) return;
-
-            $el.prop('checked', true);
-
-            $el.trigger('change');
-        },
+    //         $el.trigger('change');
+    //     },
 
 
-        // Checkbox group single choice
-        setSingleCheckbox: function ($form, name, value) {
+    //     // Checkbox group berdasarkan value
+    //     setCheckboxValue: function ($form, name, value) {
 
-            const $group = $form.find(`input[name="${name}"]`);
+    //         const $el = $form.find(
+    //             `input[name="${name}"][value="${value}"]`
+    //         );
 
-            if (!$group.length) return;
+    //         if (!$el.length) return;
 
-            // Normalisasi value
-            if (value === null || value === undefined || value === '') {
-                $group.prop('checked', false);
-                $group.trigger('change');
-                return;
-            }
+    //         $el.prop('checked', true);
 
-            const normalizedValue = String(value);
+    //         $el.trigger('change');
+    //     },
 
-            // Pastikan HANYA SATU yang checked
-            $group.prop('checked', false);
 
-            const $selected = $group.filter(function () {
-                return String($(this).val()) === normalizedValue;
-            }).first();
+    //     // Checkbox group single choice
+    //     setSingleCheckbox: function ($form, name, value) {
 
-            if (!$selected.length) {
-                return;
-            }
+    //         const $group = $form.find(`input[name="${name}"]`);
 
-            $selected.prop('checked', true);
+    //         if (!$group.length) return;
 
-            // Trigger change HANYA pada checkbox yang terpilih
-            $selected.trigger('change');
-        },
+    //         // ==========================================
+    //         // VALUE KOSONG
+    //         // ==========================================
+    //         // Jangan mengubah checked bawaan HTML
+    //         if (value === null || value === undefined || value === '') {
+    //             return;
+    //         }
 
-        // Format datetime untuk input type="datetime-local"
-        formatDateTimeLocal: function (value) {
+    //         const normalizedValue = String(value);
 
-            if (!value) return '';
+    //         // ==========================================
+    //         // UNCHECK SEMUA
+    //         // ==========================================
+    //         $group.prop('checked', false);
 
-            return String(value)
-                .replace(' ', 'T')
-                .substring(0, 16);
-        }
-    };
+    //         // ==========================================
+    //         // CHECK SESUAI VALUE
+    //         // ==========================================
+    //         const $selected = $group.filter(function () {
+    //             return String($(this).val()) === normalizedValue;
+    //         }).first();
+
+    //         if (!$selected.length) {
+    //             return;
+    //         }
+
+    //         $selected
+    //             .prop('checked', true)
+    //             .trigger('change');
+    //     },
+
+    //     setValidNumber: function ($form, name) {
+
+    //         const $input = $form.find(`input[name="${name}"]`);
+
+    //         if (!$input.length) {
+    //             return 0;
+    //         }
+
+    //         const value = parseFloat($input.val());
+    //         const min = parseFloat($input.attr('min'));
+    //         const max = parseFloat($input.attr('max'));
+
+    //         // ==========================================
+    //         // KOSONG / BUKAN ANGKA
+    //         // ==========================================
+    //         if (isNaN(value)) {
+    //             return 0;
+    //         }
+
+    //         // ==========================================
+    //         // DI LUAR RANGE
+    //         // ==========================================
+    //         if (
+    //             (!isNaN(min) && value < min) ||
+    //             (!isNaN(max) && value > max)
+    //         ) {
+    //             $input.val('');
+    //             return 0;
+    //         }
+
+    //         // ==========================================
+    //         // VALID
+    //         // ==========================================
+    //         return value;
+    //     },
+
+    //     // Format datetime untuk input type="datetime-local"
+    //     formatDateTimeLocal: function (value) {
+
+    //         if (!value) return '';
+
+    //         return String(value)
+    //             .replace(' ', 'T')
+    //             .substring(0, 16);
+    //     }
+    // };
 </script>

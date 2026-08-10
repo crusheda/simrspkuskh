@@ -633,17 +633,6 @@ class PengkajianGawatDaruratController extends Controller
                     'KESADARAN' => 'Pupil Midriasis Total Kaku Mayat',
                 ];
 
-
-                // ==========================================
-                // RISIKO PENULARAN INFEKSI
-                // ==========================================
-                /*
-                * Kolom database RISIKO_PENULARAN_INFEKSI
-                * adalah INT, bukan JSON.
-                */
-                $risikoPenularanInfeksi = $request->input('rpi');
-
-
                 // ==========================================
                 // SIMPAN TRIAGE
                 // ==========================================
@@ -696,11 +685,6 @@ class PengkajianGawatDaruratController extends Controller
                             JSON_UNESCAPED_UNICODE
                         ),
 
-                        'RISIKO_PENULARAN_INFEKSI' =>
-                            $risikoPenularanInfeksi !== null
-                                ? (int) $risikoPenularanInfeksi
-                                : null,
-
                         'KRITERIA' =>
                             $request->input('ats'),
 
@@ -751,6 +735,7 @@ class PengkajianGawatDaruratController extends Controller
                         'SISTOLIK'              => $request->td_up,
                         'DISTOLIK'              => $request->td_down,
                         'FREKUENSI_NADI'        => $request->nadi,
+                        'FREKUENSI_NADI_CB'     => $request->fr_nadi,
                         'SUHU'                  => $request->suhu,
                         'SATURASI_O2'           => $request->spo2,
                         'TINGKAT_KESADARAN'     => $request->tks,
@@ -759,8 +744,9 @@ class PengkajianGawatDaruratController extends Controller
                         'PUPIL'                 => $request->pupil,
                         'DIAMETER_PUPIL_UP'     => $request->dia_up,
                         'DIAMETER_PUPIL_DOWN'   => $request->dia_down,
-                        'RC_UP'                 => $request->rc_up,
-                        'RC_DOWN'               => $request->rc_down,
+                        'RC'                    => $request->rc,
+                        // 'RC_UP'                 => $request->rc_up,
+                        // 'RC_DOWN'               => $request->rc_down,
                         'VAS'                   => $request->vas,
                         'EYE'                   => $request->gcs_e,
                         'MOTORIK'               => $request->gcs_v,
@@ -920,17 +906,18 @@ class PengkajianGawatDaruratController extends Controller
                     "Keadaan Umum: " . ($request->keu ?? ''),
                     "Sistolik: " . ($request->td_up ?? ''),
                     "Diastolik: " . ($request->td_down ?? ''),
-                    "Frekuensi Nadi: " . ($request->nadi ?? ''),
+                    "Frekuensi Nadi: " . ($request->nadi ?? '') .
+                                    (($request->fr_nadi !== null && $request->fr_nadi !== '')
+                                        ? " (" . $request->fr_nadi . ")"
+                                        : ""),
                     "Suhu: " . ($request->suhu ?? ''),
                     "Saturasi O2: " . ($request->spo2 ?? ''),
                     "Tingkat Kesadaran: " . ($request->tks ?? ''),
                     "Frekuensi Nafas: " . ($request->fr ?? ''),
                     "Frekuensi Nafas CB: " . ($request->fr_cb ?? ''),
                     "Pupil: " . ($request->pupil ?? ''),
-                    "Diameter Pupil Kanan: " . ($request->dia_up ?? ''),
-                    "Diameter Pupil Kiri: " . ($request->dia_down ?? ''),
-                    "Refleks Cahaya Kanan: " . ($request->rc_up ?? ''),
-                    "Refleks Cahaya Kiri: " . ($request->rc_down ?? ''),
+                    "Diameter Pupil: " . ($request->dia_up ?? '') . " mm/ " . ($request->dia_down ?? ''),
+                    "Refleks Cahaya: " . ($request->rc ?? ''),
                     "VAS: " . ($request->vas ?? ''),
                     "GCS Eye: " . ($request->gcs_e ?? ''),
                     "GCS Motorik: " . ($request->gcs_v ?? ''),
@@ -1620,6 +1607,15 @@ class PengkajianGawatDaruratController extends Controller
                 }
 
                 // ==========================================
+                // RISIKO PENULARAN INFEKSI
+                // ==========================================
+                /*
+                * Kolom database RISIKO_PENULARAN_INFEKSI
+                * adalah INT, bukan JSON.
+                */
+                $risikoPenularanInfeksi = $request->input('rpi');
+
+                // ==========================================
                 // ANAMNESE
                 // ==========================================
                 $anamnese = [
@@ -1684,6 +1680,11 @@ class PengkajianGawatDaruratController extends Controller
                             $kasus,
                             JSON_UNESCAPED_UNICODE
                         ),
+
+                        'RISIKO_PENULARAN_INFEKSI' =>
+                            $risikoPenularanInfeksi !== null
+                                ? (int) $risikoPenularanInfeksi
+                                : null,
 
                         // ==============================
                         // ANAMNESE

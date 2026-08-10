@@ -105,7 +105,34 @@
                 </div>
             </div>
             <div class="col-md-12 mb-3">
-                <h6>Anamnese</h6>
+                <div class="form-group">
+                    <h6>Resiko penularan infeksi</h6>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="rpi" value="1">
+                                <label class="form-check-label"> Batuk > 2 minggu dengan demam dan sesak nafas </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="rpi" value="2">
+                                <label class="form-check-label"> Rujukan dengan suspek (konfirmasi) airbone disease </label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="rpi" value="3">
+                                <label class="form-check-label"> Tidak berisiko penularan airbone disease </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="rpi" value="4">
+                                <label class="form-check-label"> B - 20 </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <h6>Anamnesis</h6>
                 <div class="row">
                     <div class="col">
                         <div class="form-group mb-2">
@@ -1540,11 +1567,6 @@
                                     <td><div class="d-flex gap-3"><div class="flex-shrink-0">Lab. Darah</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_16_lain"></div></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_17"></td>
-                                    <td><input type="time" class="form-control" name="tk_17_dt"></td>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Lain-lain</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_17_lain"></div></td>
-                                </tr>
-                                <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_18"></td>
                                     <td><input type="time" class="form-control" name="tk_18_dt"></td>
                                     <td><div class="d-flex gap-3"><div class="flex-shrink-0">Hecting permanen</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_18_lain"></div> <div class="flex-shrink-0">jahitan</div></td>
@@ -1593,6 +1615,11 @@
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_27"></td>
                                     <td><input type="time" class="form-control" name="tk_27_dt"></td>
                                     <td>Telinga</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_17"></td>
+                                    <td><input type="time" class="form-control" name="tk_17_dt"></td>
+                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Lain-lain</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_17_lain"></div></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1679,7 +1706,7 @@
                                 <label class="form-label">Pasien tinggal sendiri :</label>
                                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_1" value="0" checked="">
+                                        <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_1" value="0">
                                         <label class="form-check-label">
                                             Tidak Ada
                                         </label>
@@ -2065,10 +2092,10 @@
 </div>
 
 <script>
+    const $sectionGdP = $('#gd_perawat');
     $(document).ready(function() {
-        const $section = $('#gd_perawat');
 
-        $section.on('input', 'input[type="number"][min][max]', function () {
+        $sectionGdP.on('input', 'input[type="number"][min][max]', function () {
 
             const min = parseFloat(this.min);
             const max = parseFloat(this.max);
@@ -2182,7 +2209,7 @@
         // ================================
         // DATANG / RUJUKAN / POLISI
         // ================================
-        $section.on('change', '[name="dd_ck"]', function () {
+        $sectionGdP.on('change', '[name="dd_ck"]', function () {
 
             const value = $(this).val();
 
@@ -2193,15 +2220,15 @@
             }
 
             // Hanya satu pilihan dd_ck
-            $section
+            $sectionGdP
                 .find('[name="dd_ck"]')
                 .not(this)
                 .prop('checked', false);
 
-            const $pengantar = $section.find('[name="dd_ck_p"]');
-            const $rujukan   = $section.find('[name="dd_ck_k"]');
-            const $polisi    = $section.find('[name="dd_ck_a"]');
-            const $visum     = $section.find('[name="dd_ck_a_v"]');
+            const $pengantar = $sectionGdP.find('[name="dd_ck_p"]');
+            const $rujukan   = $sectionGdP.find('[name="dd_ck_k"]');
+            const $polisi    = $sectionGdP.find('[name="dd_ck_a"]');
+            const $visum     = $sectionGdP.find('[name="dd_ck_a_v"]');
 
             // Reset dan disable semuanya
             $pengantar.val('').prop('disabled', true);
@@ -2229,22 +2256,22 @@
         });
 
         // JENIS KASUS
-        $section.on('change', 'input[name="jks"]', function () {
+        $sectionGdP.on('change', 'input[name="jks"]', function () {
 
-            const $jks = $section.find('input[name="jks"]:checked');
+            const $jks = $sectionGdP.find('input[name="jks"]:checked');
 
-            const $trauma = $section.find(
+            const $trauma = $sectionGdP.find(
                 '[name="jks_kll"], [name="jks_kk"], [name="jks_uppa"]'
             );
 
-            const $nonTrauma = $section.find(
+            const $nonTrauma = $sectionGdP.find(
                 '[name="jks_end"], [name="jks_end_dm"]'
             );
 
             // Tidak ada JKS yang dipilih
             if (!$jks.length) {
 
-                resetJenisKasus($section);
+                resetJenisKasus($sectionGdP);
 
                 return;
             }
@@ -2261,11 +2288,11 @@
                     .prop('disabled', false);
 
                 // Reset + disable Non Trauma
-                $section.find('[name="jks_end"]')
+                $sectionGdP.find('[name="jks_end"]')
                     .prop('checked', false)
                     .prop('disabled', true);
 
-                $section.find('[name="jks_end_dm"]')
+                $sectionGdP.find('[name="jks_end_dm"]')
                     .val('')
                     .prop('disabled', true);
 
@@ -2281,7 +2308,7 @@
                     .prop('disabled', true);
 
                 // Aktifkan Non Trauma
-                $section.find('[name="jks_end"], [name="jks_end_dm"]')
+                $sectionGdP.find('[name="jks_end"], [name="jks_end_dm"]')
                     .prop('disabled', false);
             }
         });
@@ -2298,7 +2325,7 @@
         // ==========================================
         // PILIH METODE
         // ==========================================
-        $section.on('change', 'input[name="sn_metode"]', function () {
+        $sectionGdP.on('change', 'input[name="sn_metode"]', function () {
 
             const $this = $(this);
             const metode = $this.val();
@@ -2309,7 +2336,7 @@
             if ($this.is(':checked')) {
 
                 // Pastikan hanya satu metode yang aktif
-                $section
+                $sectionGdP
                     .find('input[name="sn_metode"]')
                     .not($this)
                     .prop('checked', false);
@@ -2390,94 +2417,94 @@
 
         // RESIKO JATUH ------------------------------------------------------------------------------
         // Event delegation: tetap berjalan walaupun isi accordion dirender ulang
-        $section.on('change input', '[data-hd-required]', function () {
-            hitungSkorHumptyDumpty($section);
+        $sectionGdP.on('change input', '[data-hd-required]', function () {
+            hitungSkorHumptyDumpty($sectionGdP);
         });
-        $section.on('change', '[data-sm-required]', function () {
-            hitungSkorMorse($section);
+        $sectionGdP.on('change', '[data-sm-required]', function () {
+            hitungSkorMorse($sectionGdP);
         });
-        $section.on('change', '[data-epfra-required]', function () {
-            hitungSkorEPFRA($section);
+        $sectionGdP.on('change', '[data-epfra-required]', function () {
+            hitungSkorEPFRA($sectionGdP);
         });
-        $section.on('change input', '[name="sgd1"], [name="sgd1_c"], [name="sgd2"]', function () {
-            hitungSkorMUST($section);
+        $sectionGdP.on('change input', '[name="sgd1"], [name="sgd1_c"], [name="sgd2"]', function () {
+            hitungSkorMUST($sectionGdP);
         });
-        $section.on('change', 'input[name="sga1"], input[name="sga2"], input[name="sga3"], input[name="sga4"]', function () {
-            hitungSkorStrongKid($section);
+        $sectionGdP.on('change', 'input[name="sga1"], input[name="sga2"], input[name="sga3"], input[name="sga4"]', function () {
+            hitungSkorStrongKid($sectionGdP);
         });
 
         // CB - SKRINING RESIKO JATUH
-        $section.on('change', '#srj_hd', function () {
+        $sectionGdP.on('change', '#srj_hd', function () {
             if ($(this).is(':checked')) {
                 // Tampilkan Humpty Dumpty
-                $section.find('#tampil_srj_hd').prop('hidden', false);
+                $sectionGdP.find('#tampil_srj_hd').prop('hidden', false);
             } else {
                 // Sembunyikan
-                $section.find('#tampil_srj_hd').prop('hidden', true);
+                $sectionGdP.find('#tampil_srj_hd').prop('hidden', true);
                 // Kembalikan semua nilai ke default
-                resetHumptyDumpty($section);
+                resetHumptyDumpty($sectionGdP);
             }
         });
-        $section.on('change', '#srj_sm', function () {
+        $sectionGdP.on('change', '#srj_sm', function () {
             if ($(this).is(':checked')) {
                 // Tampilkan Morse
-                $section.find('#tampil_srj_sm').prop('hidden', false);
+                $sectionGdP.find('#tampil_srj_sm').prop('hidden', false);
             } else {
                 // Sembunyikan
-                $section.find('#tampil_srj_sm').prop('hidden', true);
+                $sectionGdP.find('#tampil_srj_sm').prop('hidden', true);
                 // Kembalikan semua nilai ke default
-                resetMorse($section);
+                resetMorse($sectionGdP);
             }
         });
-        $section.on('change', '#srj_epfra', function () {
+        $sectionGdP.on('change', '#srj_epfra', function () {
             if ($(this).is(':checked')) {
-                $section.find('#tampil_srj_epfra') .prop('hidden', false);
+                $sectionGdP.find('#tampil_srj_epfra') .prop('hidden', false);
             } else {
-                $section.find('#tampil_srj_epfra') .prop('hidden', true);
-                resetEPFRA($section);
+                $sectionGdP.find('#tampil_srj_epfra') .prop('hidden', true);
+                resetEPFRA($sectionGdP);
             }
         });
 
         // CB - SKRINING GIZI
-        $section.on('change', '#sg_must', function () {
+        $sectionGdP.on('change', '#sg_must', function () {
             if ($(this).is(':checked')) {
                 // Tampilkan MUST
-                $section.find('#tampil_sg_must').prop('hidden', false);
+                $sectionGdP.find('#tampil_sg_must').prop('hidden', false);
             } else {
                 // Sembunyikan MUST
-                $section.find('#tampil_sg_must').prop('hidden', true);
+                $sectionGdP.find('#tampil_sg_must').prop('hidden', true);
                 // Reset data MUST
-                resetSkriningMUST($section);
+                resetSkriningMUST($sectionGdP);
             }
         });
-        $section.on('change', '#sg_sk', function () {
+        $sectionGdP.on('change', '#sg_sk', function () {
             if ($(this).is(':checked')) {
                 // Tampilkan STRONG KID
-                $section.find('#tampil_sg_sk').prop('hidden', false);
+                $sectionGdP.find('#tampil_sg_sk').prop('hidden', false);
             } else {
                 // Sembunyikan STRONG KID
-                $section.find('#tampil_sg_sk').prop('hidden', true);
+                $sectionGdP.find('#tampil_sg_sk').prop('hidden', true);
                 // Reset data STRONG KID
-                resetSkriningStrongKid($section);
+                resetSkriningStrongKid($sectionGdP);
             }
         });
 
         // CB - Status Kehamilan
-        $section.on('change', '[name="sh"]', function () {
-            const nilai = $section.find('[name="sh"]:checked').val();
+        $sectionGdP.on('change', '[name="sh"]', function () {
+            const nilai = $sectionGdP.find('[name="sh"]:checked').val();
             if (nilai === '1') {
                 // Ya -> tampilkan detail kehamilan
-                $section.find('#tampil_sh_ya').prop('hidden', false);
+                $sectionGdP.find('#tampil_sh_ya').prop('hidden', false);
             } else {
                 // Tidak -> sembunyikan detail
-                $section.find('#tampil_sh_ya').prop('hidden', true);
+                $sectionGdP.find('#tampil_sh_ya').prop('hidden', true);
                 // Reset detail kehamilan
-                resetStatusKehamilan($section);
+                resetStatusKehamilan($sectionGdP);
             }
         });
 
         // CB - Discharge Planning
-        $section.on('change', '.single-checkbox-bos', function () {
+        $sectionGdP.on('change', '.single-checkbox-bos', function () {
 
             // Hanya proses checkbox yang sedang checked
             if (!this.checked) {
@@ -2492,7 +2519,7 @@
                 return;
             }
 
-            const $target = $section.find('#tampil_' + name);
+            const $target = $sectionGdP.find('#tampil_' + name);
 
             if (value === '1') {
 
@@ -2504,66 +2531,66 @@
                 // TIDAK ADA
                 $target.prop('hidden', true);
 
-                resetDischargePlanningDetail($section, name);
+                resetDischargePlanningDetail($sectionGdP, name);
             }
         });
 
         // INIT FUNCTION ------------------------------------------------------------------------------
-        resetDatangCara($section);
-        resetJenisKasus($section);
+        resetDatangCara($sectionGdP);
+        resetJenisKasus($sectionGdP);
 
         getDataPengkajianGdP();
-        hitungSkorHumptyDumpty($section);
-        hitungSkorMorse($section);
-        hitungSkorEPFRA($section);
-        hitungSkorMUST($section);
-        hitungSkorStrongKid($section);
+        hitungSkorHumptyDumpty($sectionGdP);
+        hitungSkorMorse($sectionGdP);
+        hitungSkorEPFRA($sectionGdP);
+        hitungSkorMUST($sectionGdP);
+        hitungSkorStrongKid($sectionGdP);
     })
 
     // FUNCTION-FUNCTION AREA  /////////////////////////////////////////////////////
 
     // RESET CARA KEDATANGAN
-    function resetDatangCara($section) {
+    function resetDatangCara($sectionGdP) {
 
         // Reset pilihan utama
-        $section.find('[name="dd_ck"]')
+        $sectionGdP.find('[name="dd_ck"]')
             .prop('checked', false);
 
         // Reset dan disable input
-        $section.find('[name="dd_ck_p"]')
+        $sectionGdP.find('[name="dd_ck_p"]')
             .val('')
             .prop('disabled', true);
 
-        $section.find('[name="dd_ck_k"]')
+        $sectionGdP.find('[name="dd_ck_k"]')
             .val('')
             .prop('disabled', true);
 
-        $section.find('[name="dd_ck_a"]')
+        $sectionGdP.find('[name="dd_ck_a"]')
             .val('')
             .prop('disabled', true);
 
-        $section.find('[name="dd_ck_a_v"]')
+        $sectionGdP.find('[name="dd_ck_a_v"]')
             .prop('checked', false)
             .prop('disabled', true);
     }
 
     // RESET JENIS KASUS
-    function resetJenisKasus($section) {
+    function resetJenisKasus($sectionGdP) {
 
         // Reset pilihan Trauma
-        $section.find(
+        $sectionGdP.find(
             '[name="jks_kll"], [name="jks_kk"], [name="jks_uppa"]'
         )
             .prop('checked', false)
             .prop('disabled', true);
 
         // Reset Non Trauma
-        $section.find('[name="jks_end"]')
+        $sectionGdP.find('[name="jks_end"]')
             .prop('checked', false)
             .prop('disabled', true);
 
         // Reset keterangan
-        $section.find('[name="jks_end_dm"]')
+        $sectionGdP.find('[name="jks_end_dm"]')
             .val('')
             .prop('disabled', true);
     }
@@ -2645,15 +2672,15 @@
     }
 
     // RESIKO JATUH HUMPTY DUMPTY
-    function hitungSkorHumptyDumpty($section) {
-        const $requiredFields = $section.find('[data-hd-required]');
-        const $scoreFields = $section.find('[data-hd-score]');
+    function hitungSkorHumptyDumpty($sectionGdP) {
+        const $requiredFields = $sectionGdP.find('[data-hd-required]');
+        const $scoreFields = $sectionGdP.find('[data-hd-score]');
 
         // Selector selalu dibatasi di dalam #gd_perawat
-        const $scoreBox = $section.find('#skor_rj_hd');
-        const $nilai = $section.find('#nilai_rj_hd');
-        const $kategori = $section.find('#kategori_rj_hd');
-        const $keterangan = $section.find('#keterangan_rj_hd');
+        const $scoreBox = $sectionGdP.find('#skor_rj_hd');
+        const $nilai = $sectionGdP.find('#nilai_rj_hd');
+        const $kategori = $sectionGdP.find('#kategori_rj_hd');
+        const $keterangan = $sectionGdP.find('#keterangan_rj_hd');
 
         const semuaTerisi = $requiredFields.toArray().every(function (field) {
             return $.trim($(field).val()) !== '';
@@ -2676,7 +2703,7 @@
             : 'Low Humpty Dumpty';
 
         $nilai.text(skor);
-        $section.find('input[name="skor_rj_hd"]').val(skor);
+        $sectionGdP.find('input[name="skor_rj_hd"]').val(skor);
 
         $kategori
             .text(kategori)
@@ -2697,36 +2724,36 @@
         $scoreBox.prop('hidden', false);
     }
 
-    function resetHumptyDumpty($section) {
+    function resetHumptyDumpty($sectionGdP) {
 
         // Reset semua pilihan
-        $section.find('[data-hd-required]').val('');
+        $sectionGdP.find('[data-hd-required]').val('');
 
         // Reset nilai skor
-        $section.find('[name="skor_rj_hd"]').val(0);
+        $sectionGdP.find('[name="skor_rj_hd"]').val(0);
 
         // Reset tampilan skor
-        $section.find('#nilai_rj_hd').text(0);
+        $sectionGdP.find('#nilai_rj_hd').text(0);
 
         // Sembunyikan hasil skor
-        $section.find('#skor_rj_hd').prop('hidden', true);
+        $sectionGdP.find('#skor_rj_hd').prop('hidden', true);
 
         // Kembalikan tampilan kategori
-        $section.find('#kategori_rj_hd')
+        $sectionGdP.find('#kategori_rj_hd')
             .text('')
             .removeClass('text-success text-warning text-danger');
 
-        $section.find('#keterangan_rj_hd').text('');
+        $sectionGdP.find('#keterangan_rj_hd').text('');
 
         // Kembalikan alert ke default
-        $section.find('#skor_rj_hd .alert')
+        $sectionGdP.find('#skor_rj_hd .alert')
             .removeClass('alert-success alert-warning alert-danger')
             .addClass('alert-success');
     }
 
-    function hitungSkorMorse($section) {
-        const $fields = $section.find('[data-sm-required]');
-        const $scoreBox = $section.find('#skor_rj_sm');
+    function hitungSkorMorse($sectionGdP) {
+        const $fields = $sectionGdP.find('[data-sm-required]');
+        const $scoreBox = $sectionGdP.find('#skor_rj_sm');
 
         const semuaTerisi = $fields.toArray().every(function (field) {
             return $.trim($(field).val()) !== '';
@@ -2757,7 +2784,7 @@
             skor += scoreMap[name][value];
         });
 
-        $section.find('input[name="skor_rj_sm"]').val(skor);
+        $sectionGdP.find('input[name="skor_rj_sm"]').val(skor);
 
         let kategori;
         let alertClass;
@@ -2781,14 +2808,14 @@
             keterangan = 'Monitoring dan evaluasi sesuai prosedur.';
         }
 
-        $section.find('#nilai_rj_sm').text(skor);
+        $sectionGdP.find('#nilai_rj_sm').text(skor);
 
-        $section.find('#kategori_rj_sm')
+        $sectionGdP.find('#kategori_rj_sm')
             .text(kategori)
             .removeClass('text-success text-warning text-danger')
             .addClass(textClass);
 
-        $section.find('#keterangan_rj_sm').text(keterangan);
+        $sectionGdP.find('#keterangan_rj_sm').text(keterangan);
 
         $scoreBox.find('.alert')
             .removeClass('alert-success alert-warning alert-danger')
@@ -2797,37 +2824,37 @@
         $scoreBox.prop('hidden', false);
     }
 
-    function resetMorse($section) {
+    function resetMorse($sectionGdP) {
 
         // Reset semua pilihan
-        $section.find('[data-sm-required]').val('');
+        $sectionGdP.find('[data-sm-required]').val('');
 
         // Reset nilai skor
-        $section.find('[name="skor_rj_sm"]').val(0);
+        $sectionGdP.find('[name="skor_rj_sm"]').val(0);
 
         // Reset tampilan skor
-        $section.find('#nilai_rj_sm').text(0);
+        $sectionGdP.find('#nilai_rj_sm').text(0);
 
         // Sembunyikan hasil skor
-        $section.find('#skor_rj_sm').prop('hidden', true);
+        $sectionGdP.find('#skor_rj_sm').prop('hidden', true);
 
         // Kembalikan tampilan kategori
-        $section.find('#kategori_rj_sm')
+        $sectionGdP.find('#kategori_rj_sm')
             .text('')
             .removeClass('text-success text-warning text-danger');
 
-        $section.find('#keterangan_rj_sm').text('');
+        $sectionGdP.find('#keterangan_rj_sm').text('');
 
         // Kembalikan alert ke default
-        $section.find('#skor_rj_sm .alert')
+        $sectionGdP.find('#skor_rj_sm .alert')
             .removeClass('alert-success alert-warning alert-danger')
             .addClass('alert-success');
     }
 
-    function hitungSkorEPFRA($section) {
+    function hitungSkorEPFRA($sectionGdP) {
 
-        const $fields = $section.find('[data-epfra-required]');
-        const $scoreBox = $section.find('#skor_rj_epfra');
+        const $fields = $sectionGdP.find('[data-epfra-required]');
+        const $scoreBox = $sectionGdP.find('#skor_rj_epfra');
 
         // Semua field harus sudah dipilih
         const semuaTerisi = $fields.toArray().every(function (field) {
@@ -2839,8 +2866,8 @@
             $scoreBox.prop('hidden', true);
 
             // Reset skor
-            $section.find('input[name="skor_rj_epfra"]').val(0);
-            $section.find('#nilai_rj_epfra').text(0);
+            $sectionGdP.find('input[name="skor_rj_epfra"]').val(0);
+            $sectionGdP.find('#nilai_rj_epfra').text(0);
 
             return;
         }
@@ -2858,7 +2885,7 @@
         });
 
         // Simpan skor
-        $section
+        $sectionGdP
             .find('input[name="skor_rj_epfra"]')
             .val(skor);
 
@@ -2898,17 +2925,17 @@
         // TAMPILKAN HASIL
         // ==========================================
 
-        $section
+        $sectionGdP
             .find('#nilai_rj_epfra')
             .text(skor);
 
-        $section
+        $sectionGdP
             .find('#kategori_rj_epfra')
             .text(kategori)
             .removeClass('text-success text-warning text-danger')
             .addClass(textClass);
 
-        $section
+        $sectionGdP
             .find('#keterangan_rj_epfra')
             .text(keterangan);
 
@@ -2920,43 +2947,43 @@
         $scoreBox.prop('hidden', false);
     }
 
-    function resetEPFRA($section) {
+    function resetEPFRA($sectionGdP) {
 
         // Reset semua pilihan EPFRA
-        $section.find('[data-epfra-required]').each(function () {
+        $sectionGdP.find('[data-epfra-required]').each(function () {
             $(this).val('');
         });
 
         // Reset skor hidden
-        $section.find('[name="skor_rj_epfra"]').val(0);
+        $sectionGdP.find('[name="skor_rj_epfra"]').val(0);
 
         // Reset nilai skor
-        $section.find('#nilai_rj_epfra').text(0);
+        $sectionGdP.find('#nilai_rj_epfra').text(0);
 
         // Reset kategori
-        $section.find('#kategori_rj_epfra')
+        $sectionGdP.find('#kategori_rj_epfra')
             .text('')
             .removeClass('text-success text-warning text-danger');
 
         // Reset keterangan
-        $section.find('#keterangan_rj_epfra').text('');
+        $sectionGdP.find('#keterangan_rj_epfra').text('');
 
         // Sembunyikan kotak hasil
-        $section.find('#skor_rj_epfra').prop('hidden', true);
+        $sectionGdP.find('#skor_rj_epfra').prop('hidden', true);
 
         // Kembalikan warna alert ke default
-        $section.find('#skor_rj_epfra .alert')
+        $sectionGdP.find('#skor_rj_epfra .alert')
             .removeClass('alert-success alert-warning alert-danger')
             .addClass('alert-success');
     }
 
-    function hitungSkorMUST($section) {
-        const sgd1 = $section.find('input[name="sgd1"]:checked').val();
-        const sgd1c = $section.find('input[name="sgd1_c"]:checked').val();
-        const sgd2 = $section.find('input[name="sgd2"]:checked').val();
-        const sgd3 = $.trim($section.find('[name="sgd3"]').val());
+    function hitungSkorMUST($sectionGdP) {
+        const sgd1 = $sectionGdP.find('input[name="sgd1"]:checked').val();
+        const sgd1c = $sectionGdP.find('input[name="sgd1_c"]:checked').val();
+        const sgd2 = $sectionGdP.find('input[name="sgd2"]:checked').val();
+        const sgd3 = $.trim($sectionGdP.find('[name="sgd3"]').val());
 
-        const $scoreBox = $section.find('#skor_sgd');
+        const $scoreBox = $sectionGdP.find('#skor_sgd');
 
         // Jumlah perubahan berat badan hanya wajib bila sgd1 = Ya
         const jumlahBeratBadanWajib = sgd1 === '1';
@@ -2979,7 +3006,7 @@
             (jumlahBeratBadanWajib ? Number(sgd1c) : 0);
 
         // Simpan skor ke input agar ikut terkirim saat AJAX
-        $section.find('input[name="skor_sgd"]').val(skor);
+        $sectionGdP.find('input[name="skor_sgd"]').val(skor);
 
         let kategori;
         let alertClass;
@@ -3003,14 +3030,14 @@
             keterangan = 'Monitoring dan evaluasi berkala.';
         }
 
-        $section.find('#nilai_sgd').text(skor);
+        $sectionGdP.find('#nilai_sgd').text(skor);
 
-        $section.find('#kategori_sgd')
+        $sectionGdP.find('#kategori_sgd')
             .text(kategori)
             .removeClass('text-success text-warning text-danger')
             .addClass(textClass);
 
-        $section.find('#keterangan_sgd').text(keterangan);
+        $sectionGdP.find('#keterangan_sgd').text(keterangan);
 
         $scoreBox.find('.alert')
             .removeClass('alert-success alert-warning alert-danger')
@@ -3019,45 +3046,45 @@
         $scoreBox.prop('hidden', false);
     }
 
-    function resetSkriningMUST($section) {
+    function resetSkriningMUST($sectionGdP) {
 
         // Reset checkbox
-        $section.find('input[name="sgd1"]').prop('checked', false);
-        $section.find('input[name="sgd1_c"]').prop('checked', false);
-        $section.find('input[name="sgd2"]').prop('checked', false);
+        $sectionGdP.find('input[name="sgd1"]').prop('checked', false);
+        $sectionGdP.find('input[name="sgd1_c"]').prop('checked', false);
+        $sectionGdP.find('input[name="sgd2"]').prop('checked', false);
 
         // Reset input
-        $section.find('[name="sgd3"]').val('');
+        $sectionGdP.find('[name="sgd3"]').val('');
 
         // Reset skor
-        $section.find('[name="skor_sgd"]').val(0);
+        $sectionGdP.find('[name="skor_sgd"]').val(0);
 
         // Reset tampilan skor
-        $section.find('#nilai_sgd').text(0);
+        $sectionGdP.find('#nilai_sgd').text(0);
 
         // Reset kategori
-        $section.find('#kategori_sgd')
+        $sectionGdP.find('#kategori_sgd')
             .text('')
             .removeClass('text-success text-warning text-danger');
 
         // Reset keterangan
-        $section.find('#keterangan_sgd').text('');
+        $sectionGdP.find('#keterangan_sgd').text('');
 
         // Sembunyikan hasil skor
-        $section.find('#skor_sgd').prop('hidden', true);
+        $sectionGdP.find('#skor_sgd').prop('hidden', true);
 
         // Reset alert
-        $section.find('#skor_sgd .alert')
+        $sectionGdP.find('#skor_sgd .alert')
             .removeClass('alert-success alert-warning alert-danger')
             .addClass('alert-success');
     }
 
-    function hitungSkorStrongKid($section) {
+    function hitungSkorStrongKid($sectionGdP) {
         const fieldNames = ['sga1', 'sga2', 'sga3', 'sga4'];
-        const $scoreBox = $section.find('#skor_sga');
+        const $scoreBox = $sectionGdP.find('#skor_sga');
 
         const nilai = fieldNames.map(function (name) {
-            return $section.find('input[name="' + name + '"]:checked').val();
+            return $sectionGdP.find('input[name="' + name + '"]:checked').val();
         });
 
         // Skor hanya tampil jika keempat pertanyaan sudah dijawab
@@ -3072,7 +3099,7 @@
             return total + Number(value);
         }, 0);
 
-        $section.find('input[name="skor_sga"]').val(skor);
+        $sectionGdP.find('input[name="skor_sga"]').val(skor);
 
         let kategori;
         let alertClass;
@@ -3097,14 +3124,14 @@
             keterangan = 'Monitoring dan evaluasi berkala.';
         }
 
-        $section.find('#nilai_sga').text(skor);
+        $sectionGdP.find('#nilai_sga').text(skor);
 
-        $section.find('#kategori_sga')
+        $sectionGdP.find('#kategori_sga')
             .text(kategori)
             .removeClass('text-success text-warning text-danger')
             .addClass(textClass);
 
-        $section.find('#keterangan_sga').text(keterangan);
+        $sectionGdP.find('#keterangan_sga').text(keterangan);
 
         $scoreBox.find('.alert')
             .removeClass('alert-success alert-warning alert-danger')
@@ -3113,46 +3140,46 @@
         $scoreBox.prop('hidden', false);
     }
 
-    function resetSkriningStrongKid($section) {
+    function resetSkriningStrongKid($sectionGdP) {
         // Reset checkbox
-        $section.find('input[name="sga1"]').prop('checked', false);
-        $section.find('input[name="sga2"]').prop('checked', false);
-        $section.find('input[name="sga3"]').prop('checked', false);
-        $section.find('input[name="sga4"]').prop('checked', false);
+        $sectionGdP.find('input[name="sga1"]').prop('checked', false);
+        $sectionGdP.find('input[name="sga2"]').prop('checked', false);
+        $sectionGdP.find('input[name="sga3"]').prop('checked', false);
+        $sectionGdP.find('input[name="sga4"]').prop('checked', false);
 
         // Reset skor
-        $section.find('[name="skor_sga"]').val(0);
+        $sectionGdP.find('[name="skor_sga"]').val(0);
 
         // Reset tampilan skor
-        $section.find('#nilai_sga').text(0);
+        $sectionGdP.find('#nilai_sga').text(0);
 
         // Reset kategori
-        $section.find('#kategori_sga')
+        $sectionGdP.find('#kategori_sga')
             .text('')
             .removeClass('text-success text-warning text-danger');
 
         // Reset keterangan
-        $section.find('#keterangan_sga').text('');
+        $sectionGdP.find('#keterangan_sga').text('');
 
         // Sembunyikan hasil skor
-        $section.find('#skor_sga').prop('hidden', true);
+        $sectionGdP.find('#skor_sga').prop('hidden', true);
 
         // Reset alert
-        $section.find('#skor_sga .alert')
+        $sectionGdP.find('#skor_sga .alert')
             .removeClass('alert-success alert-warning alert-danger')
             .addClass('alert-success');
     }
 
-    function resetStatusKehamilan($section) {
+    function resetStatusKehamilan($sectionGdP) {
         // Reset input
-        $section.find('input[name="sh_g"]').val('');
-        $section.find('input[name="sh_p"]').val('');
-        $section.find('input[name="sh_a"]').val('');
-        $section.find('input[name="sh_h"]').val('');
+        $sectionGdP.find('input[name="sh_g"]').val('');
+        $sectionGdP.find('input[name="sh_p"]').val('');
+        $sectionGdP.find('input[name="sh_a"]').val('');
+        $sectionGdP.find('input[name="sh_h"]').val('');
     }
 
-    function resetDischargePlanningDetail($section, name) {
-        const $target = $section.find('#tampil_' + name);
+    function resetDischargePlanningDetail($sectionGdP, name) {
+        const $target = $sectionGdP.find('#tampil_' + name);
 
         // Reset semua checkbox di dalam card
         $target.find('input[type="checkbox"]')
@@ -3171,18 +3198,23 @@
             .val('');
 
         // Pastikan pilihan utama kembali ke "Tidak Ada"
-        $section.find(`[name="${name}"][value="0"]`)
+        $sectionGdP.find(`[name="${name}"][value="0"]`)
             .prop('checked', true);
 
-        $section.find(`[name="${name}"][value="1"]`)
+        $sectionGdP.find(`[name="${name}"][value="1"]`)
             .prop('checked', false);
     }
 
     function getDataPengkajianGdP() {
-        const $form = $('#formContent').find('.form-wrapper').has('input[name="dd_ck"]').first();
+        if (!$sectionGdP.length) {
+            console.warn('Section Pengkajian Medis IGD tidak ditemukan.');
+            return;
+        }
+
+        const $form = $sectionGdP.find('.form-wrapper').first();
 
         if (!$form.length) {
-            console.warn('Form GD Perawat tidak ditemukan.');
+            console.warn('Form Pengkajian Medis IGD tidak ditemukan.');
             return;
         }
 
@@ -3281,6 +3313,21 @@
                         FormHelper.setValue($form,
                             'jks_end_dm',
                             kasus.DIMANA
+                        );
+                    }
+
+                    // ====================================================
+                    // RISIKO PENULARAN INFEKSI
+                    // ====================================================
+
+                    if (
+                        triage.RISIKO_PENULARAN_INFEKSI !== null &&
+                        triage.RISIKO_PENULARAN_INFEKSI !== undefined
+                    ) {
+                        FormHelper.setSingleCheckbox(
+                            $form,
+                            'rpi',
+                            triage.RISIKO_PENULARAN_INFEKSI
                         );
                     }
 
@@ -3973,10 +4020,10 @@
 
     function saveDataPengkajianGdP(btn) {
         const $button = $(btn);
-        const $section = $('#gd_perawat');
+        const $sectionGdP = $('#gd_perawat');
 
-        const data = getFormDataByName($section, {
-            NOKUNJ: $section.data('kunjungan')
+        const data = getFormDataByName($sectionGdP, {
+            NOKUNJ: $sectionGdP.data('kunjungan')
         });
 
         $.ajax({

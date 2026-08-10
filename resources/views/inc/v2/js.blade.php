@@ -32,3 +32,6 @@
 {{-- AUTOCOMPLETE --}}
 <script src="{{ asset('v2/libs/@tarekraafat/autocomplete.js/autoComplete.min.js') }}"></script>
 {{-- <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.9/dist/autoComplete.min.js"></script> --}}
+
+{{-- FORM HELPER --}}
+<script src="{{ asset('v2/js/form-helper.js') }}"></script>

@@ -333,33 +333,6 @@
                 </div>
             </div>
             <div class="col-md-12 mb-3">
-                <div class="form-group">
-                    <h6>Resiko penularan infeksi</h6>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="rpi" value="1">
-                                <label class="form-check-label"> Batuk > 2 minggu dengan demam dan sesak nafas </label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="rpi" value="2">
-                                <label class="form-check-label"> Rujukan dengan suspek (konfirmasi) airbone disease </label>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-check mb-2">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="rpi" value="3">
-                                <label class="form-check-label"> Tidak berisiko penularan airbone disease </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="rpi" value="4">
-                                <label class="form-check-label"> B - 20 </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12 mb-3">
                 <h6>Anamnesis</h6>
                 <div class="form-group">
                     <div class="form-check form-check-inline mb-2">
@@ -428,9 +401,23 @@
                                 <h6>Sirkulasi ( <b class="text-warning">C</b> )</h6>
                                 <div class="form-group">
                                     <label class="form-label">Frekuensi Nadi</label>
-                                    <div class="input-group input-group-sm mb-2">
-                                        <input type="number" class="form-control" name="nadi">
-                                        <div class="input-group-text">X/menit, Reguler / Ireguler</div>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="input-group input-group-sm flex-grow-1">
+                                            <input type="number" class="form-control" name="nadi">
+                                            <span class="input-group-text">X/menit</span>
+                                        </div>
+                                        <div class="form-check m-0">
+                                            <input class="form-check-input single-checkbox" type="checkbox" name="fr_nadi" value="1">
+                                            <label class="form-check-label">
+                                                Reguler
+                                            </label>
+                                        </div>
+                                        <div class="form-check m-0">
+                                            <input class="form-check-input single-checkbox" type="checkbox" name="fr_nadi" value="2">
+                                            <label class="form-check-label">
+                                                Ireguler
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -479,7 +466,7 @@
                                         <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                             <label class="form-label mb-0">Pupil</label>
                                             <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="pupil" value="1">
+                                                <input class="form-check-input single-checkbox" type="checkbox" name="pupil" value="1" checked="">
                                                 <label class="form-check-label"> Isokor </label>
                                             </div>
                                             <div class="form-check m-0">
@@ -496,13 +483,25 @@
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <label class="form-label mb-0">RC (Refleks Cahaya)</label>
+                                            <div class="form-check m-0">
+                                                <input class="form-check-input single-checkbox" type="checkbox" name="rc" value="1">
+                                                [<label class="form-check-label"> <i class="ri-add-line"></i> </label>]
+                                            </div>
+                                            <label class="form-label mb-0"> / </label>
+                                            <div class="form-check m-0">
+                                                <input class="form-check-input single-checkbox" type="checkbox" name="rc" value="2">
+                                                [<label class="form-check-label"> <i class="ri-subtract-line"></i> </label>]
+                                            </div>
+                                        </div>
+                                        {{-- <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                             <label class="form-label mb-0"> RC (Refleks Cahaya) </label>
                                             <div class="input-group input-group-sm" style="width: 130px;">
                                                 <input type="number" class="form-control" name="rc_up">
                                                 <div class="input-group-text"> / </div>
                                                 <input type="number" class="form-control" name="rc_down">
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -511,15 +510,15 @@
                                         <div class="d-flex align-items-center column-gap-3 row-gap-3 flex-wrap mb-3">
                                             <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                                 <label class="form-check-label">Eye</label>
-                                                <input type="number" class="form-control form-control-sm" name="gcs_e" style="width: 70px; flex: 0 0 60px;" placeholder="">
+                                                <input type="number" class="form-control form-control-sm" name="gcs_e" min="1" max="4" style="width: 70px; flex: 0 0 60px;" placeholder="">
                                             </div>
                                             <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                                 <label class="form-check-label">Verbal</label>
-                                                <input type="number" class="form-control form-control-sm" name="gcs_v" style="width: 70px; flex: 0 0 60px;" placeholder="">
+                                                <input type="number" class="form-control form-control-sm" name="gcs_v" min="1" max="5" style="width: 70px; flex: 0 0 60px;" placeholder="">
                                             </div>
                                             <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                                 <label class="form-check-label">Move</label>
-                                                <input type="number" class="form-control form-control-sm" name="gcs_m" style="width: 70px; flex: 0 0 60px;" placeholder="">
+                                                <input type="number" class="form-control form-control-sm" name="gcs_m" min="1" max="6" style="width: 70px; flex: 0 0 60px;" placeholder="">
                                             </div>
                                             <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                                 <label class="form-check-label">Total</label>
@@ -999,9 +998,9 @@
 </div>
 
 <script>
+    const $sectionGdD = $('#gd_dokter');
     $(document).ready(function() {
         const $inputObat = $('[name="rpo_nama_obat"]');
-        const $section = $('#gd_dokter');
         // const $inputBarangId = $('[name="rpo_barang_id"]');
 
         if (!$inputObat.length ) {
@@ -1075,7 +1074,7 @@
         //     $inputBarangId.val('');
         // });
 
-        $section.on(
+        $sectionGdD.on(
             'input',
             "input[name='gcs_e'], input[name='gcs_v'], input[name='gcs_m']",
             function () {
@@ -1093,10 +1092,12 @@
 
     function getDataPengkajianGdD() {
 
-        // ============================================================
-        // FORM
-        // ============================================================
-        const $form = $('#formContent').find('.form-wrapper').has('input[name="ats_jn_1"]').first();
+        if (!$sectionGdD.length) {
+            console.warn('Section Pengkajian Medis IGD tidak ditemukan.');
+            return;
+        }
+
+        const $form = $sectionGdD.find('.form-wrapper').first();
 
         if (!$form.length) {
             console.warn('Form Pengkajian Medis IGD tidak ditemukan.');
@@ -1117,9 +1118,6 @@
             },
 
             success: function (response) {
-
-                console.log('Response getDataPengkajianGdD:', response);
-
                 // ====================================================
                 // VALIDASI RESPONSE
                 // ====================================================
@@ -1636,22 +1634,6 @@
                     triage.KRITERIA
                 );
 
-
-                // ====================================================
-                // 9. RISIKO PENULARAN INFEKSI
-                // ====================================================
-
-                if (
-                    triage.RISIKO_PENULARAN_INFEKSI !== null &&
-                    triage.RISIKO_PENULARAN_INFEKSI !== undefined
-                ) {
-                    FormHelper.setSingleCheckbox(
-                        $form,
-                        'rpi',
-                        triage.RISIKO_PENULARAN_INFEKSI
-                    );
-                }
-
                 // ====================================================
                 // 10. ANAMNESIS DIPEROLEH
                 // ====================================================
@@ -1693,13 +1675,18 @@
                 );
 
                 // Frekuensi Nafas - Simetris / Asimetris
-                if (tandaVital.FREKUENSI_NAFAS_CB !== null) {
-                    $('input[name="fr_cb"]')
-                        .prop('checked', false);
+                // if (tandaVital.FREKUENSI_NAFAS_CB !== null) {
+                //     $('input[name="fr_cb"]')
+                //         .prop('checked', false);
 
-                    $(`input[name="fr_cb"][value="${tandaVital.FREKUENSI_NAFAS_CB}"]`)
-                        .prop('checked', true);
-                }
+                //     $(`input[name="fr_cb"][value="${tandaVital.FREKUENSI_NAFAS_CB}"]`)
+                //         .prop('checked', true);
+                // }
+                FormHelper.setSingleCheckbox(
+                    $form,
+                    'fr_cb',
+                    tandaVital.FREKUENSI_NAFAS_CB
+                );
 
 
                 // Frekuensi Nadi
@@ -1708,6 +1695,11 @@
                     'nadi',
                     tandaVital.FREKUENSI_NADI
                 );
+                FormHelper.setSingleCheckbox(
+                    $form,
+                    'fr_nadi',
+                    tandaVital.FREKUENSI_NADI_CB
+                )
 
                 // Tekanan Darah
                 FormHelper.setValue(
@@ -1738,13 +1730,18 @@
 
 
                 // Pupil
-                if (tandaVital.PUPIL !== null) {
-                    $('input[name="pupil"]')
-                        .prop('checked', false);
+                // if (tandaVital.PUPIL !== null) {
+                //     $('input[name="pupil"]')
+                //         .prop('checked', false);
 
-                    $(`input[name="pupil"][value="${tandaVital.PUPIL}"]`)
-                        .prop('checked', true);
-                }
+                //     $(`input[name="pupil"][value="${tandaVital.PUPIL}"]`)
+                //         .prop('checked', true);
+                // }
+                FormHelper.setSingleCheckbox(
+                    $form,
+                    'pupil',
+                    tandaVital.PUPIL
+                );
 
                 // Diameter pupil
                 FormHelper.setValue(
@@ -1760,18 +1757,11 @@
                 );
 
                 // Refleks cahaya
-                FormHelper.setValue(
+                FormHelper.setSingleCheckbox(
                     $form,
-                    'rc_up',
-                    tandaVital.RC_UP
+                    'rc',
+                    tandaVital.RC
                 );
-
-                FormHelper.setValue(
-                    $form,
-                    'rc_down',
-                    tandaVital.RC_DOWN
-                );
-
 
                 // GCS
                 FormHelper.setValue(
@@ -2177,10 +2167,10 @@
 
     function saveDataPengkajianGdD(btn) {
         const $button = $(btn);
-        const $section = $('#gd_dokter');
+        const $sectionGdD = $('#gd_dokter');
 
-        const data = getFormDataByName($section, {
-            NOKUNJ: $section.data('kunjungan')
+        const data = getFormDataByName($sectionGdD, {
+            NOKUNJ: $sectionGdD.data('kunjungan')
         });
 
         $.ajax({
@@ -2232,22 +2222,15 @@
 
     // HELPER ON ---------------------------------------------------------------------------------------------------------------------------------------------------
     function hitungGCS() {
-        const eye = parseFloat($("input[name='gcs_e']").val()) || 0;
-        const verbal = parseFloat($("input[name='gcs_v']").val()) || 0;
-        const motorik = parseFloat($("input[name='gcs_m']").val()) || 0;
+        const $form = $('#formContent').find('.form-wrapper').has('input[name="ats_jn_1"]').first();
+        const eye = FormHelper.setValidNumber($form, 'gcs_e');
+        const verbal = FormHelper.setValidNumber($form, 'gcs_v');
+        const motorik = FormHelper.setValidNumber($form, 'gcs_m');
 
         const total = eye + verbal + motorik;
 
         $("input[name='gcs_t']").val(total);
     }
-
-    $(document).on(
-        'input',
-        "input[name='gcs_e'], input[name='gcs_v'], input[name='gcs_m']",
-        function () {
-            hitungGCS();
-        }
-    );
 
     // ADD ON ---------------------------------------------------------------------------------------------------------------------------------------------------
     function getRiwayatAlergi() {

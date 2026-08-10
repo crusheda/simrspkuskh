@@ -62,77 +62,77 @@
     // HELPER
     // ============================================================
 
-    // Set value input / textarea / select
-    function setValue(name, value) {
-        const $el = $form.find(`[name="${name}"]`);
+    // // Set value input / textarea / select
+    // function setValue(name, value) {
+    //     const $el = $form.find(`[name="${name}"]`);
 
-        if (!$el.length) return;
+    //     if (!$el.length) return;
 
-        if (value === null || value === undefined || value === '') {
-            $el.val('');
-        } else {
-            // Normalisasi nilai angka
-            if ($el.attr('type') === 'number') {
-                const normalized = String(value).replace(',', '.');
-                const number = Number(normalized);
+    //     if (value === null || value === undefined || value === '') {
+    //         $el.val('');
+    //     } else {
+    //         // Normalisasi nilai angka
+    //         if ($el.attr('type') === 'number') {
+    //             const normalized = String(value).replace(',', '.');
+    //             const number = Number(normalized);
 
-                if (!isNaN(number)) {
-                    value = number;
-                }
-            }
+    //             if (!isNaN(number)) {
+    //                 value = number;
+    //             }
+    //         }
 
-            $el.val(value);
-        }
+    //         $el.val(value);
+    //     }
 
-        // Trigger jika ada plugin / event yang bergantung pada change
-        $el.trigger('change');
-    }
+    //     // Trigger jika ada plugin / event yang bergantung pada change
+    //     $el.trigger('change');
+    // }
 
-    // Checkbox biasa berdasarkan boolean / 0 / 1
-    function setCheckbox(name, checked) {
-        const $el = $form.find(`input[name="${name}"]`);
+    // // Checkbox biasa berdasarkan boolean / 0 / 1
+    // function setCheckbox(name, checked) {
+    //     const $el = $form.find(`input[name="${name}"]`);
 
-        if (!$el.length) return;
+    //     if (!$el.length) return;
 
-        $el.prop('checked', Number(checked) === 1);
-        $el.trigger('change');
-    }
+    //     $el.prop('checked', Number(checked) === 1);
+    //     $el.trigger('change');
+    // }
 
-    // Checkbox group berdasarkan value
-    function setCheckboxValue(name, value) {
-        const $el = $form.find(`input[name="${name}"][value="${value}"]`);
+    // // Checkbox group berdasarkan value
+    // function setCheckboxValue(name, value) {
+    //     const $el = $form.find(`input[name="${name}"][value="${value}"]`);
 
-        if (!$el.length) return;
+    //     if (!$el.length) return;
 
-        $el.prop('checked', true);
-        $el.trigger('change');
-    }
+    //     $el.prop('checked', true);
+    //     $el.trigger('change');
+    // }
 
-    // Checkbox group single choice
-    function setSingleCheckbox(name, value) {
-        const $group = $form.find(`input[name="${name}"]`);
+    // // Checkbox group single choice
+    // function setSingleCheckbox(name, value) {
+    //     const $group = $form.find(`input[name="${name}"]`);
 
-        if (!$group.length) return;
+    //     if (!$group.length) return;
 
-        $group.prop('checked', false);
+    //     $group.prop('checked', false);
 
-        if (
-            value !== null &&
-            value !== undefined &&
-            value !== ''
-        ) {
-            $group
-                .filter(`[value="${value}"]`)
-                .prop('checked', true)
-                .trigger('change');
-        }
-    }
+    //     if (
+    //         value !== null &&
+    //         value !== undefined &&
+    //         value !== ''
+    //     ) {
+    //         $group
+    //             .filter(`[value="${value}"]`)
+    //             .prop('checked', true)
+    //             .trigger('change');
+    //     }
+    // }
 
-    function formatDateTimeLocal(value) {
-        if (!value) return '';
+    // function formatDateTimeLocal(value) {
+    //     if (!value) return '';
 
-        return String(value)
-            .replace(' ', 'T')
-            .substring(0, 16);
-    }
+    //     return String(value)
+    //         .replace(' ', 'T')
+    //         .substring(0, 16);
+    // }
 </script>

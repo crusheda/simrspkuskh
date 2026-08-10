@@ -1,0 +1,260 @@
+// ============================================================
+// GLOBAL FORM HELPER
+// ============================================================
+window.FormHelper = {
+
+    // ==========================================================
+    // SET VALUE
+    // Input, textarea, select, number, range, time
+    // ==========================================================
+    setValue: function ($form, name, value) {
+
+        const $el = $form.find(`[name="${name}"]`);
+
+        if (!$el.length) return;
+
+        const type = ($el.attr('type') || '').toLowerCase();
+        const tagName = $el.prop('tagName').toLowerCase();
+
+        // ======================================================
+        // SELECT
+        // ======================================================
+        if (tagName === 'select') {
+
+            // null, undefined, '', 0 => option value=""
+            if (
+                value === null ||
+                value === undefined ||
+                value === '' ||
+                Number(value) === 0
+            ) {
+                value = '';
+            }
+
+            $el.val(String(value)).trigger('change');
+
+            return;
+        }
+
+        // ======================================================
+        // VALUE KOSONG
+        // ======================================================
+        if (value === null || value === undefined || value === '') {
+
+            $el.val('').trigger('change');
+
+            return;
+        }
+
+        // ======================================================
+        // NUMBER
+        // ======================================================
+        if (type === 'number') {
+
+            const number = Number(
+                String(value).replace(',', '.')
+            );
+
+            if (!isNaN(number)) {
+                value = number;
+            }
+        }
+
+        // ======================================================
+        // RANGE
+        // ======================================================
+        else if (type === 'range') {
+
+            let number = Number(
+                String(value).replace(',', '.')
+            );
+
+            if (!isNaN(number)) {
+
+                const min = Number($el.attr('min'));
+                const max = Number($el.attr('max'));
+                const step = Number($el.attr('step'));
+
+                // Min
+                if (!isNaN(min)) {
+                    number = Math.max(number, min);
+                }
+
+                // Max
+                if (!isNaN(max)) {
+                    number = Math.min(number, max);
+                }
+
+                // Step
+                if (
+                    !isNaN(step) &&
+                    step > 0 &&
+                    !isNaN(min)
+                ) {
+                    number =
+                        min +
+                        Math.round((number - min) / step) * step;
+                }
+
+                value = number;
+            }
+        }
+
+        // ======================================================
+        // TIME
+        // ======================================================
+        else if (type === 'time') {
+
+            // 08:30:00 => 08:30
+            value = String(value).substring(0, 5);
+        }
+
+        // ======================================================
+        // SET
+        // ======================================================
+        $el.val(value).trigger('change');
+    },
+
+
+    // ==========================================================
+    // CHECKBOX BOOLEAN
+    // ==========================================================
+    // Contoh:
+    // FormHelper.setCheckbox($form, 'isokor', 1);
+    // ==========================================================
+    setCheckbox: function ($form, name, checked) {
+
+        const $el = $form.find(`input[name="${name}"]`);
+
+        if (!$el.length) return;
+
+        $el
+            .prop('checked', Number(checked) === 1)
+            .trigger('change');
+    },
+
+
+    // ==========================================================
+    // CHECKBOX BERDASARKAN VALUE
+    // ==========================================================
+    // Contoh:
+    // <input name="status" value="1">
+    // <input name="status" value="2">
+    //
+    // FormHelper.setCheckboxValue($form, 'status', 2);
+    // ==========================================================
+    setCheckboxValue: function ($form, name, value) {
+
+        const $group = $form.find(`input[name="${name}"]`);
+
+        if (!$group.length) return;
+
+        const normalizedValue = String(value);
+
+        $group
+            .filter(function () {
+                return String($(this).val()) === normalizedValue;
+            })
+            .first()
+            .prop('checked', true)
+            .trigger('change');
+    },
+
+
+    // ==========================================================
+    // SINGLE CHECKBOX
+    // Hanya satu pilihan berdasarkan value
+    // ==========================================================
+    // Contoh:
+    // FormHelper.setSingleCheckbox($form, 'pupil', 2);
+    // ==========================================================
+    setSingleCheckbox: function ($form, name, value) {
+
+        const $group = $form.find(`input[name="${name}"]`);
+
+        if (!$group.length) return;
+
+        // Kalau database kosong,
+        // jangan mengganggu checked bawaan HTML.
+        if (
+            value === null ||
+            value === undefined ||
+            value === ''
+        ) {
+            return;
+        }
+
+        const normalizedValue = String(value);
+
+        // Uncheck semua
+        $group.prop('checked', false);
+
+        // Check yang sesuai
+        const $selected = $group
+            .filter(function () {
+                return String($(this).val()) === normalizedValue;
+            })
+            .first();
+
+        if (!$selected.length) return;
+
+        $selected
+            .prop('checked', true)
+            .trigger('change');
+    },
+
+
+    // ==========================================================
+    // VALIDASI NUMBER BERDASARKAN MIN / MAX HTML
+    // ==========================================================
+    // Contoh:
+    // FormHelper.setValidNumber($form, 'gcs_e');
+    //
+    // <input type="number" name="gcs_e" min="1" max="4">
+    // ==========================================================
+    setValidNumber: function ($form, name) {
+
+        const $input = $form.find(`input[name="${name}"]`);
+
+        if (!$input.length) return 0;
+
+        const value = parseFloat($input.val());
+        const min = parseFloat($input.attr('min'));
+        const max = parseFloat($input.attr('max'));
+
+        // Kosong / bukan angka
+        if (isNaN(value)) {
+            return 0;
+        }
+
+        // Di luar range
+        if (
+            (!isNaN(min) && value < min) ||
+            (!isNaN(max) && value > max)
+        ) {
+            $input.val('').trigger('change');
+
+            return 0;
+        }
+
+        return value;
+    },
+
+
+    // ==========================================================
+    // FORMAT DATETIME LOCAL
+    // ==========================================================
+    // 2026-08-10 12:30:00
+    // =>
+    // 2026-08-10T12:30
+    // ==========================================================
+    formatDateTimeLocal: function (value) {
+
+        if (!value) return '';
+
+        return String(value)
+            .replace(' ', 'T')
+            .substring(0, 16);
+    }
+
+};
