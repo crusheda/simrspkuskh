@@ -101,14 +101,14 @@
                             </a>
                         </li>
                     @endif
-                    @hasrole('admin','dokterumum')
+                    @hasManyrole('admin','dokterumum')
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fpengkajian" role="tab"
                             aria-selected="false" tabindex="-1" id="tab-fpengkajian" disabled>
                             <i class="ph-duotone ph-user-list me-2"></i> Form Pengkajian
                         </button>
                     </li>
-                    @endhasrole
+                    @endhasManyrole
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="" data-bs-toggle="tab" href="#fuploads" role="tab"
                             aria-selected="false" tabindex="-1" id="tab-fuploads" disabled>
