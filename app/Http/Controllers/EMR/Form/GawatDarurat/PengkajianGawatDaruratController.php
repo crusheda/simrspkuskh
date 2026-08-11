@@ -916,7 +916,7 @@ class PengkajianGawatDaruratController extends Controller
                     "Frekuensi Nafas: " . ($request->fr ?? ''),
                     "Frekuensi Nafas CB: " . ($request->fr_cb ?? ''),
                     "Pupil: " . ($request->pupil ?? ''),
-                    "Diameter Pupil: " . ($request->dia_up ?? '') . " mm/ " . ($request->dia_down ?? ''),
+                    "Diameter Pupil: " . ($request->dia_up ?? '') . "mm / " . ($request->dia_down ?? '') . "mm",
                     "Refleks Cahaya: " . ($request->rc_up ?? '') . " / " . ($request->rc_down ?? ''),
                     "VAS: " . ($request->vas ?? ''),
                     "GCS Eye: " . ($request->gcs_e ?? ''),
@@ -1117,6 +1117,13 @@ class PengkajianGawatDaruratController extends Controller
             // ==========================================
             $anamnesisDiperoleh = $getData(
                 'medicalrecord.anamnesis_diperoleh'
+            );
+
+            // ==========================================
+            // TANDA VITAL
+            // ==========================================
+            $tandaVital = $getData(
+                'medicalrecord.tanda_vital'
             );
 
             // ==========================================
@@ -1448,6 +1455,7 @@ class PengkajianGawatDaruratController extends Controller
 
                 'data' => [
                     'triage'                    => $triage,
+                    'tanda_vital'               => $tandaVital,
                     'anamnesis_diperoleh'       => $anamnesisDiperoleh,
                     'kondisi_sosial'            => $kondisiSosial,
                     'penilaian_nyeri'           => $penilaianNyeri,
@@ -1641,9 +1649,9 @@ class PengkajianGawatDaruratController extends Controller
                     'SISTOLE'       => $request->p_td_up ?? '',
                     'DIASTOLE'      => $request->p_td_down ?? '',
                     'FREK_NADI'     => $request->p_nadi ?? '',
-                    'FREK_NAFAS'    => $request->tv_fr ?? '',
-                    'METODE_UKUR'   => $request->tv_mu ?? '',
-                    'SKALA_NYERI'   => $request->tv_sn ?? '',
+                    'FREK_NAFAS'    => $request->p_fr ?? '',
+                    'METODE_UKUR'   => $request->p_mu ?? '',
+                    'SKALA_NYERI'   => $request->p_sn ?? '',
                 ];
 
 

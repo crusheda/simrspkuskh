@@ -403,7 +403,7 @@ class AddOnPengkajianController extends Controller
                 'diagnosa' => ['required'],
             ],
             [
-                'utama.required' => 'Status utama wajib diisi.',
+                'utama.required' => 'Status Diagnosa Utama / Tidak (Sekunder) wajib diisi.',
                 'diagnosa.required' => 'Diagnosa wajib diisi.',
             ]
         );

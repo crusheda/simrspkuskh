@@ -349,24 +349,26 @@
                 <div class="card card-body border border-dashed border-warning mb-3">
                     <h5>I. Primary <b class="text-warning">Survey</b></h5>
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group mb-3">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
                                 <h6>Keadaan Umum</h6>
                                 <div class="form-group">
-                                    <input type="text" class="form-control" name="keu" placeholder="">
+                                    <textarea class="form-control" name="keu" rows="2"></textarea>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center gap-3">
-                                <h6 class="mb-0">Jalan Nafas ( <b class="text-warning">A</b> )</h6>
-                                <div class="form-check m-0">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <h6 class="mb-2">Jalan Nafas ( <b class="text-warning">A</b> )</h6>
+                                <div class="form-check mb-2">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="1">
                                     <label class="form-check-label"> Paten </label>
                                 </div>
-                                <div class="form-check m-0">
+                                <div class="form-check mb-2">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="2">
                                     <label class="form-check-label"> Obstruksi Parsial </label>
                                 </div>
-                                <div class="form-check m-0">
+                                <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="3">
                                     <label class="form-check-label"> Obstruksi Total </label>
                                 </div>
@@ -398,7 +400,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <h6>Sirkulasi ( <b class="text-warning">C</b> )</h6>
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label class="form-label">Frekuensi Nadi</label>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="input-group input-group-sm flex-grow-1">
@@ -419,7 +421,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label class="form-label">Tekanan Darah (mmHg)</label>
                                 <div class="input-group input-group-sm mb-2">
                                     <input type="number" class="form-control" name="td_up">
@@ -428,7 +430,7 @@
                                     <div class="input-group-text"> mmHg </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label class="form-label">Suhu</label>
                                 <div class="input-group input-group-sm mb-2">
                                     <input type="number" class="form-control" name="suhu">
@@ -443,7 +445,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
                             <h6>Neorologi ( <b class="text-warning">D</b> )</h6>
                             <div class="row">
                                 <div class="col-md-12">
@@ -478,6 +480,7 @@
                                                 <input type="number" class="form-control" name="dia_up">
                                                 <div class="input-group-text"> mm / </div>
                                                 <input type="number" class="form-control" name="dia_down">
+                                                <div class="input-group-text"> mm / </div>
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center gap-3">
@@ -623,7 +626,7 @@
                         </div>
                         <hr class="mt-3">
                         <div class="col-md-12">
-                            <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="d-flex align-items-center gap-3">
                                 <h6 class="mb-0">Status Reproduksi</h6>
                                 <div class="form-check m-0">
                                     <input class="form-check-input single-checkbox" type="checkbox" name="sr" value="1" checked="">
@@ -638,7 +641,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mt-3" id="tampil_sr_ya" hidden>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="d-flex align-items-center gap-2 mb-2">
@@ -702,28 +705,28 @@
                 <div class="card card-body border border-dashed border-success mb-0">
                     <div class="row">
                         <h5>II. Secondary <b class="text-success">Survey</b></h5>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <h6>Keluhan Utama</h6>
-                                <textarea class="form-control" name="ku" rows="2"></textarea>
+                                <textarea class="form-control" name="ku" rows="1"></textarea>
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <h6>Riwayat Penyakit Sekarang</h6>
-                                <textarea class="form-control" name="rps" rows="2"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <h6>Riwayat Penyakit Dahulu</h6>
-                                <textarea class="form-control" name="rpd" rows="2"></textarea>
+                                <textarea class="form-control" name="rpd" rows="1"></textarea>
                             </div>
                         </div>
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <h6>Riwayat Penyakit Sekarang</h6>
+                                <textarea class="form-control" name="rps" rows="4"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <h6>Pemeriksaan Fisik</h6>
-                                <textarea class="form-control" name="pf" rows="3"></textarea>
+                                <textarea class="form-control" name="pf" rows="4"></textarea>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3 d-flex flex-column">
@@ -1134,6 +1137,18 @@
             }
         );
 
+        // CB - Status Reproduksi
+        $sectionGdD.on('change', '[name="sr"]', function () {
+            const nilai = $sectionGdD.find('[name="sr"]:checked').val();
+            if (nilai === '2') {
+                $sectionGdD.find('#tampil_sr_ya').prop('hidden', false);
+            } else {
+                $sectionGdD.find('#tampil_sr_ya').prop('hidden', true);
+                // Reset detail kehamilan
+                resetStatusReproduksi($sectionGdD);
+            }
+        });
+
         getDataPengkajianGdD();
         getRiwayatAlergi();
         getPenggunaanObat();
@@ -1141,6 +1156,21 @@
         getRiwayatRad();
         getDiagnosis();
     })
+
+    function resetStatusReproduksi($sectionGdD) {
+        // Reset checkbox status reproduksi
+        $sectionGdD.find('input[name="sr_cb"]')
+            .prop('checked', false)
+            .prop('disabled', false);
+
+        // Reset semua value
+        $sectionGdD.find('input[name="sr_hpht"]').val('');
+        $sectionGdD.find('input[name="sr_siklus"]').val('');
+        $sectionGdD.find('input[name="sr_kb"]').val('');
+        $sectionGdD.find('input[name="sr_grv"]').val('');
+        $sectionGdD.find('input[name="sr_prt"]').val('');
+        $sectionGdD.find('input[name="sr_abr"]').val('');
+    }
 
     function getDataPengkajianGdD() {
 
@@ -1718,7 +1748,6 @@
                     tandaVital.TINGKAT_KESADARAN
                 );
 
-
                 // Frekuensi Nafas
                 FormHelper.setValue(
                     $form,
@@ -1739,7 +1768,6 @@
                     'fr_cb',
                     tandaVital.FREKUENSI_NAFAS_CB
                 );
-
 
                 // Frekuensi Nadi
                 FormHelper.setValue(
@@ -1779,7 +1807,6 @@
                     'spo2',
                     tandaVital.SATURASI_O2
                 );
-
 
                 // Pupil
                 // if (tandaVital.PUPIL !== null) {

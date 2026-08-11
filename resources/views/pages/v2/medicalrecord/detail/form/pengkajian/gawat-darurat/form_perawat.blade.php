@@ -149,412 +149,345 @@
                 </div>
             </div>
             <div class="col-md-12 mb-3">
-                <h6>Tanda Vital</h6>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group mb-3">
-                            <h6>Keadaan Umum</h6>
-                            <div class="form-group">
-                                <input type="text" class="form-control" name="p_keu" placeholder="">
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center gap-3">
-                            <h6 class="mb-0">Jalan Nafas ( <b class="text-warning">A</b> )</h6>
-                            <div class="form-check m-0">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_jn" value="1">
-                                <label class="form-check-label"> Paten </label>
-                            </div>
-                            <div class="form-check m-0">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_jn" value="2">
-                                <label class="form-check-label"> Obstruksi Parsial </label>
-                            </div>
-                            <div class="form-check m-0">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_jn" value="3">
-                                <label class="form-check-label"> Obstruksi Total </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <h6>Pernafasan ( <b class="text-warning">B</b> )</h6>
-                        <div class="form-group">
-                            <label class="form-label">Frekuensi Nafas</label>
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="input-group input-group-sm flex-grow-1">
-                                    <input type="number" class="form-control" name="p_fr">
-                                    <span class="input-group-text">X/menit</span>
-                                </div>
-                                <div class="form-check m-0">
-                                    <input class="form-check-input single-checkbox" type="checkbox" name="p_fr_cb" value="1" checked="">
-                                    <label class="form-check-label">
-                                        Simetris
-                                    </label>
-                                </div>
-                                <div class="form-check m-0">
-                                    <input class="form-check-input single-checkbox" type="checkbox" name="p_fr_cb" value="2">
-                                    <label class="form-check-label">
-                                        Asimetris
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <h6>Sirkulasi ( <b class="text-warning">C</b> )</h6>
-                        <div class="form-group">
-                            <label class="form-label">Frekuensi Nadi</label>
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="input-group input-group-sm flex-grow-1">
-                                    <input type="number" class="form-control" name="p_nadi">
-                                    <span class="input-group-text">X/menit</span>
-                                </div>
-                                <div class="form-check m-0">
-                                    <input class="form-check-input single-checkbox" type="checkbox" name="p_fr_nadi" value="1" checked="">
-                                    <label class="form-check-label">
-                                        Reguler
-                                    </label>
-                                </div>
-                                <div class="form-check m-0">
-                                    <input class="form-check-input single-checkbox" type="checkbox" name="p_fr_nadi" value="2">
-                                    <label class="form-check-label">
-                                        Ireguler
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Tekanan Darah (mmHg)</label>
-                            <div class="input-group input-group-sm mb-2">
-                                <input type="number" class="form-control" name="p_td_up">
-                                <div class="input-group-text"> / </div>
-                                <input type="number" class="form-control" name="p_td_down">
-                                <div class="input-group-text"> mmHg </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Suhu</label>
-                            <div class="input-group input-group-sm mb-2">
-                                <input type="number" class="form-control" name="p_suhu">
-                                <div class="input-group-text">°C</div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">SpO2</label>
-                            <div class="input-group input-group-sm">
-                                <input type="number" class="form-control" name="p_spo2">
-                                <div class="input-group-text">%</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <h6>Neorologi ( <b class="text-warning">D</b> )</h6>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group mb-3">
-                                    <label class="form-label">Tingkat Kesadaran</label>
-                                    <select class="form-control" name="p_tks">
-                                        <option value="">Pilih</option>
-                                        @if ($list['tingkat_kesadaran'])
-                                            @foreach ($list['tingkat_kesadaran'] as $item)
-                                                <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="d-flex align-items-center column-gap-5 row-gap-3 flex-wrap mb-3">
-                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                        <label class="form-label mb-0">Pupil</label>
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="p_pupil" value="1" checked="">
-                                            <label class="form-check-label"> Isokor </label>
-                                        </div>
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="p_pupil" value="2">
-                                            <label class="form-check-label"> Anisokor </label>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                        <label class="form-label mb-0"> Diameter Pupil </label>
-                                        <div class="input-group input-group-sm" style="width: 180px;">
-                                            <input type="number" class="form-control" name="p_dia_up">
-                                            <div class="input-group-text"> mm / </div>
-                                            <input type="number" class="form-control" name="p_dia_down">
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <label class="form-label mb-0 flex-shrink-0">
-                                            RC (Refleks Cahaya)
-                                        </label>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="form-check mb-0">
-                                                <input
-                                                    class="form-check-input single-checkbox"
-                                                    type="checkbox"
-                                                    name="p_rc_up"
-                                                    value="+"
-                                                    id="p_rc_up_plus"
-                                                >
-                                                <label class="form-check-label" for="p_rc_up_plus">
-                                                    +
-                                                </label>
-                                            </div>
-                                            <div class="form-check mb-0">
-                                                <input
-                                                    class="form-check-input single-checkbox"
-                                                    type="checkbox"
-                                                    name="p_rc_up"
-                                                    value="-"
-                                                    id="p_rc_up_minus"
-                                                >
-                                                <label class="form-check-label" for="p_rc_up_minus">
-                                                    -
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <span class="text-danger fw-bold">/</span>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="form-check mb-0">
-                                                <input
-                                                    class="form-check-input single-checkbox"
-                                                    type="checkbox"
-                                                    name="p_rc_down"
-                                                    value="+"
-                                                    id="p_rc_down_plus"
-                                                >
-                                                <label class="form-check-label" for="p_rc_down_plus">
-                                                    +
-                                                </label>
-                                            </div>
-                                            <div class="form-check mb-0">
-                                                <input
-                                                    class="form-check-input single-checkbox"
-                                                    type="checkbox"
-                                                    name="p_rc_down"
-                                                    value="-"
-                                                    id="p_rc_down_minus"
-                                                >
-                                                <label class="form-check-label" for="p_rc_down_minus">
-                                                    -
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {{-- <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                        <label class="form-label mb-0"> RC (Refleks Cahaya) </label>
-                                        <div class="input-group input-group-sm" style="width: 130px;">
-                                            <input type="number" class="form-control" name="rc_up">
-                                            <div class="input-group-text"> / </div>
-                                            <input type="number" class="form-control" name="rc_down">
-                                        </div>
-                                    </div> --}}
-                                </div>
-                            </div>
-                            <div class="col-md-12">
+                <div class="card card-body border border-dashed border-warning">
+                    <h6 class="fs-16">Tanda Vital</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group mb-3">
+                                <h6>Keadaan Umum</h6>
                                 <div class="form-group">
-                                    <label class="form-label">GCS (<i>Glasgow Coma Scale</i>)</label>
-                                    <div class="d-flex align-items-center column-gap-3 row-gap-3 flex-wrap mb-3">
-                                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                            <label class="form-check-label">Eye</label>
-                                            <input type="number" class="form-control form-control-sm" name="p_gcs_e" min="1" max="4" style="width: 70px; flex: 0 0 60px;" placeholder="">
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                            <label class="form-check-label">Verbal</label>
-                                            <input type="number" class="form-control form-control-sm" name="p_gcs_v" min="1" max="5" style="width: 70px; flex: 0 0 60px;" placeholder="">
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                            <label class="form-check-label">Move</label>
-                                            <input type="number" class="form-control form-control-sm" name="p_gcs_m" min="1" max="6" style="width: 70px; flex: 0 0 60px;" placeholder="">
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                            <label class="form-check-label">Total</label>
-                                            <input type="number" class="form-control form-control-sm" name="p_gcs_t" style="width: 70px; flex: 0 0 60px;" placeholder="" readonly>
-                                        </div>
-                                    </div>
+                                    <input type="text" class="form-control" name="p_keu" placeholder="">
                                 </div>
-                                <div class="form-group mb-3">
-                                    <label class="form-label">VAS (<i>Visual Analog Scale</i>)</label>
-                                    <input type="number" class="form-control" name="p_vas">
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <h6 class="mb-0">Jalan Nafas ( <b class="text-warning">A</b> )</h6>
+                                <div class="form-check m-0">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_jn" value="1">
+                                    <label class="form-check-label"> Paten </label>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <h6>Alat Bantu Nafas</h6>
-                                            <div class="form-group">
-                                                <div class="form-check form-check-inline mb-2">
-                                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_abn" value="2">
-                                                    <label class="form-check-label"> Ya </label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-2">
-                                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_abn" value="0">
-                                                    <label class="form-check-label"> Tidak </label>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div class="form-check m-0">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_jn" value="2">
+                                    <label class="form-check-label"> Obstruksi Parsial </label>
+                                </div>
+                                <div class="form-check m-0">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_jn" value="3">
+                                    <label class="form-check-label"> Obstruksi Total </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6>Pernafasan ( <b class="text-warning">B</b> )</h6>
+                            <div class="form-group">
+                                <label class="form-label">Frekuensi Nafas</label>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="input-group input-group-sm flex-grow-1">
+                                        <input type="number" class="form-control" name="p_fr">
+                                        <span class="input-group-text">X/menit</span>
                                     </div>
-                                    <div class="col-md-8">
-                                        <div class="mb-3">
-                                            <h6>Kulit</h6>
-                                            <div class="form-group">
-                                                <div class="form-check form-check-inline mb-2">
-                                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_kulit" value="1">
-                                                    <label class="form-check-label"> Normal </label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-2">
-                                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_kulit" value="2">
-                                                    <label class="form-check-label"> Jaundice </label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-2">
-                                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_kulit" value="3">
-                                                    <label class="form-check-label"> Akral Dingin </label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-2">
-                                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_kulit" value="4">
-                                                    <label class="form-check-label"> Sianotik </label>
-                                                </div>
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_kulit" value="5">
-                                                    <label class="form-check-label"> Berkeringat </label>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="form-check m-0">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="p_fr_cb" value="1" checked="">
+                                        <label class="form-check-label">
+                                            Simetris
+                                        </label>
+                                    </div>
+                                    <div class="form-check m-0">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="p_fr_cb" value="2">
+                                        <label class="form-check-label">
+                                            Asimetris
+                                        </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <hr class="mt-3">
-                    <div class="col-md-12">
-                        <div class="d-flex align-items-center gap-3 mb-3">
-                            <h6 class="mb-0">Status Reproduksi</h6>
-                            <div class="form-check m-0">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="p_sr" value="1" checked="">
-                                <label class="form-check-label" for="sr2">
-                                    Tidak
-                                </label>
+                        <div class="col-md-6 mb-3">
+                            <h6>Sirkulasi ( <b class="text-warning">C</b> )</h6>
+                            <div class="form-group">
+                                <label class="form-label">Frekuensi Nadi</label>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="input-group input-group-sm flex-grow-1">
+                                        <input type="number" class="form-control" name="p_nadi">
+                                        <span class="input-group-text">X/menit</span>
+                                    </div>
+                                    <div class="form-check m-0">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="p_fr_nadi" value="1" checked="">
+                                        <label class="form-check-label">
+                                            Reguler
+                                        </label>
+                                    </div>
+                                    <div class="form-check m-0">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="p_fr_nadi" value="2">
+                                        <label class="form-check-label">
+                                            Ireguler
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-check m-0">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="p_sr" value="2">
-                                <label class="form-check-label" for="sr1">
-                                    Kasus Obstetri Ginekologi
-                                </label>
+                            <div class="form-group">
+                                <label class="form-label">Tekanan Darah (mmHg)</label>
+                                <div class="input-group input-group-sm mb-2">
+                                    <input type="number" class="form-control" name="p_td_up">
+                                    <div class="input-group-text"> / </div>
+                                    <input type="number" class="form-control" name="p_td_down">
+                                    <div class="input-group-text"> mmHg </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Suhu</label>
+                                <div class="input-group input-group-sm mb-2">
+                                    <input type="number" class="form-control" name="p_suhu">
+                                    <div class="input-group-text">°C</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">SpO2</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" name="p_spo2">
+                                    <div class="input-group-text">%</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="col-md-6 mb-3">
+                            <h6>Neorologi ( <b class="text-warning">D</b> )</h6>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-center gap-2 mb-2">
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="p_sr_cb" value="2">
-                                        </div>
-                                        <label class="form-label mb-0 me-2">
-                                            HPHT
-                                        </label>
-                                        <div class="input-group input-group-sm">
-                                            <input type="text" class="form-control" name="p_sr_hpht">
-                                        </div>
-                                        <label class="form-label mb-0 ms-2 me-2">
-                                            Siklus
-                                        </label>
-                                        <div class="input-group input-group-sm">
-                                            <input type="text" class="form-control" name="p_sr_siklus">
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-2 mb-2">
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="p_sr_cb" value="3">
-                                        </div>
-                                        <label class="form-label mb-0 me-2" for="kb">
-                                            KB
-                                        </label>
-                                        <input type="text" class="form-control" name="p_sr_kb">
+                                <div class="col-md-12">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Tingkat Kesadaran</label>
+                                        <select class="form-control" name="p_tks">
+                                            <option value="">Pilih</option>
+                                            @if ($list['tingkat_kesadaran'])
+                                                @foreach ($list['tingkat_kesadaran'] as $item)
+                                                    <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="d-flex align-items-center gap-2 mb-3">
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="p_sr_cb" value="1">
+                                <div class="col-md-12">
+                                    <div class="d-flex align-items-center column-gap-5 row-gap-3 flex-wrap mb-3">
+                                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <label class="form-label mb-0">Pupil</label>
+                                            <div class="form-check m-0">
+                                                <input class="form-check-input single-checkbox" type="checkbox" name="p_pupil" value="1" checked="">
+                                                <label class="form-check-label"> Isokor </label>
+                                            </div>
+                                            <div class="form-check m-0">
+                                                <input class="form-check-input single-checkbox" type="checkbox" name="p_pupil" value="2">
+                                                <label class="form-check-label"> Anisokor </label>
+                                            </div>
                                         </div>
-                                        <label class="form-label mb-0 me-2">
-                                            Hamil
-                                        </label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text">Gravida</span>
-                                            <input type="text" class="form-control" name="p_sr_grv">
-                                            <span class="input-group-text">Paritas</span>
-                                            <input type="text" class="form-control" name="p_sr_prt">
-                                            <span class="input-group-text">Abortus</span>
-                                            <input type="text" class="form-control" name="p_sr_abr">
+                                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                            <label class="form-label mb-0"> Diameter Pupil </label>
+                                            <div class="input-group input-group-sm" style="width: 180px;">
+                                                <input type="number" class="form-control" name="p_dia_up">
+                                                <div class="input-group-text"> mm / </div>
+                                                <input type="number" class="form-control" name="p_dia_down">
+                                                <div class="input-group-text"> mm / </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <label class="form-label mb-0 flex-shrink-0">
+                                                RC (Refleks Cahaya)
+                                            </label>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="form-check mb-0">
+                                                    <input
+                                                        class="form-check-input single-checkbox"
+                                                        type="checkbox"
+                                                        name="p_rc_up"
+                                                        value="+"
+                                                        id="p_rc_up_plus"
+                                                    >
+                                                    <label class="form-check-label" for="p_rc_up_plus">
+                                                        +
+                                                    </label>
+                                                </div>
+                                                <div class="form-check mb-0">
+                                                    <input
+                                                        class="form-check-input single-checkbox"
+                                                        type="checkbox"
+                                                        name="p_rc_up"
+                                                        value="-"
+                                                        id="p_rc_up_minus"
+                                                    >
+                                                    <label class="form-check-label" for="p_rc_up_minus">
+                                                        -
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <span class="text-danger fw-bold">/</span>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="form-check mb-0">
+                                                    <input
+                                                        class="form-check-input single-checkbox"
+                                                        type="checkbox"
+                                                        name="p_rc_down"
+                                                        value="+"
+                                                        id="p_rc_down_plus"
+                                                    >
+                                                    <label class="form-check-label" for="p_rc_down_plus">
+                                                        +
+                                                    </label>
+                                                </div>
+                                                <div class="form-check mb-0">
+                                                    <input
+                                                        class="form-check-input single-checkbox"
+                                                        type="checkbox"
+                                                        name="p_rc_down"
+                                                        value="-"
+                                                        id="p_rc_down_minus"
+                                                    >
+                                                    <label class="form-check-label" for="p_rc_down_minus">
+                                                        -
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="p_sr_cb" value="0">
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="form-label">GCS (<i>Glasgow Coma Scale</i>)</label>
+                                        <div class="d-flex align-items-center column-gap-3 row-gap-3 flex-wrap mb-3">
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <label class="form-check-label">Eye</label>
+                                                <input type="number" class="form-control form-control-sm" name="p_gcs_e" min="1" max="4" style="width: 70px; flex: 0 0 60px;" placeholder="">
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <label class="form-check-label">Verbal</label>
+                                                <input type="number" class="form-control form-control-sm" name="p_gcs_v" min="1" max="5" style="width: 70px; flex: 0 0 60px;" placeholder="">
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <label class="form-check-label">Move</label>
+                                                <input type="number" class="form-control form-control-sm" name="p_gcs_m" min="1" max="6" style="width: 70px; flex: 0 0 60px;" placeholder="">
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <label class="form-check-label">Total</label>
+                                                <input type="number" class="form-control form-control-sm" name="p_gcs_t" style="width: 70px; flex: 0 0 60px;" placeholder="" readonly>
+                                            </div>
                                         </div>
-                                        <label class="form-label mb-0">
-                                            Tidak Hamil
-                                        </label>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">VAS (<i>Visual Analog Scale</i>)</label>
+                                        <input type="number" class="form-control" name="p_vas">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <h6>Alat Bantu Nafas</h6>
+                                                <div class="form-group">
+                                                    <div class="form-check form-check-inline mb-2">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_abn" value="2">
+                                                        <label class="form-check-label"> Ya </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-2">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_abn" value="0">
+                                                        <label class="form-check-label"> Tidak </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="mb-3">
+                                                <h6>Kulit</h6>
+                                                <div class="form-group">
+                                                    <div class="form-check form-check-inline mb-2">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_kulit" value="1">
+                                                        <label class="form-check-label"> Normal </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-2">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_kulit" value="2">
+                                                        <label class="form-check-label"> Jaundice </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-2">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_kulit" value="3">
+                                                        <label class="form-check-label"> Akral Dingin </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-2">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_kulit" value="4">
+                                                        <label class="form-check-label"> Sianotik </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_kulit" value="5">
+                                                        <label class="form-check-label"> Berkeringat </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group">
+                                                <h6>Skala Nyeri</h6>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="number" class="form-control" name="p_sn">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <h6>Metode Ukur</h6>
+                                                <input type="text" class="form-control" name="p_mu">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    {{-- <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Tekanan Darah</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" name="tv_up">
+                                    <div class="input-group-text"> / </div>
+                                    <input type="number" class="form-control" name="tv_down">
+                                    <div class="input-group-text"> mmHg </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Frekuensi Nafas (RR)</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" name="tv_fr">
+                                    <span class="input-group-text">X/menit</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Frekuensi Nadi (HR)</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" name="tv_nadi">
+                                    <div class="input-group-text">X/menit</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Suhu (OC)</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" name="tv_sh">
+                                    <div class="input-group-text">°C</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <div class="form-group">
+                                <label class="form-label">Skala Nyeri</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" name="tv_sn">
+                                    <div class="input-group-text">%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label">Metode Ukur</label>
+                                <input type="text" class="form-control" name="tv_mu">
+                            </div>
+                        </div>
+                    </div> --}}
                 </div>
-                {{-- <div class="row">
-                    <div class="col-md-4 mb-2">
-                        <div class="form-group">
-                            <label class="form-label">Tekanan Darah</label>
-                            <div class="input-group input-group-sm">
-                                <input type="number" class="form-control" name="tv_up">
-                                <div class="input-group-text"> / </div>
-                                <input type="number" class="form-control" name="tv_down">
-                                <div class="input-group-text"> mmHg </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="form-group">
-                            <label class="form-label">Frekuensi Nafas (RR)</label>
-                            <div class="input-group input-group-sm">
-                                <input type="number" class="form-control" name="tv_fr">
-                                <span class="input-group-text">X/menit</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="form-group">
-                            <label class="form-label">Frekuensi Nadi (HR)</label>
-                            <div class="input-group input-group-sm">
-                                <input type="number" class="form-control" name="tv_nadi">
-                                <div class="input-group-text">X/menit</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="form-group">
-                            <label class="form-label">Suhu (OC)</label>
-                            <div class="input-group input-group-sm">
-                                <input type="number" class="form-control" name="tv_sh">
-                                <div class="input-group-text">°C</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="form-group">
-                            <label class="form-label">Skala Nyeri</label>
-                            <div class="input-group input-group-sm">
-                                <input type="number" class="form-control" name="tv_sn">
-                                <div class="input-group-text">%</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="form-label">Metode Ukur</label>
-                            <input type="text" class="form-control" name="tv_mu">
-                        </div>
-                    </div>
-                </div> --}}
             </div>
             <div class="col-md-12 mb-3">
                 <h6>Khusus Obgyn</h6>
@@ -3701,16 +3634,193 @@
                     // ------------------------------------------
                     // Tanda Vital
                     // ------------------------------------------
-                    const tandaVital = triage.TANDA_VITAL;
+                    // const tandaVital = triage.TANDA_VITAL;
 
-                    if (tandaVital) {
-                        FormHelper.setValue($form,'tv_sh', tandaVital.SUHU);
-                        FormHelper.setValue($form,'tv_up', tandaVital.SISTOLE);
-                        FormHelper.setValue($form,'tv_down', tandaVital.DIASTOLE);
-                        FormHelper.setValue($form,'tv_nadi', tandaVital.FREK_NADI);
-                        FormHelper.setValue($form,'tv_fr', tandaVital.FREK_NAFAS);
-                        FormHelper.setValue($form,'tv_mu', tandaVital.METODE_UKUR);
-                        FormHelper.setValue($form,'tv_sn', tandaVital.SKALA_NYERI);
+                    // if (tandaVital) {
+                    //     FormHelper.setValue($form,'tv_sh', tandaVital.SUHU);
+                    //     FormHelper.setValue($form,'tv_up', tandaVital.SISTOLE);
+                    //     FormHelper.setValue($form,'tv_down', tandaVital.DIASTOLE);
+                    //     FormHelper.setValue($form,'tv_nadi', tandaVital.FREK_NADI);
+                    //     FormHelper.setValue($form,'tv_fr', tandaVital.FREK_NAFAS);
+                    //     FormHelper.setValue($form,'tv_mu', tandaVital.METODE_UKUR);
+                    //     FormHelper.setValue($form,'tv_sn', tandaVital.SKALA_NYERI);
+                    // }
+                    const tandaVital = data.tanda_vital || {};
+
+                    // Keadaan Umum
+                    FormHelper.setValue(
+                        $form,
+                        'p_keu',
+                        tandaVital.KEADAAN_UMUM
+                    );
+
+                    // Tingkat Kesadaran
+                    FormHelper.setValue(
+                        $form,
+                        'p_tks',
+                        tandaVital.TINGKAT_KESADARAN
+                    );
+
+                    // Frekuensi Nafas
+                    FormHelper.setValue(
+                        $form,
+                        'p_fr',
+                        tandaVital.FREKUENSI_NAFAS
+                    );
+
+                    // Frekuensi Nafas - Simetris / Asimetris
+                    // if (tandaVital.FREKUENSI_NAFAS_CB !== null) {
+                    //     $('input[name="fr_cb"]')
+                    //         .prop('checked', false);
+
+                    //     $(`input[name="fr_cb"][value="${tandaVital.FREKUENSI_NAFAS_CB}"]`)
+                    //         .prop('checked', true);
+                    // }
+                    FormHelper.setSingleCheckbox(
+                        $form,
+                        'p_fr_cb',
+                        tandaVital.FREKUENSI_NAFAS_CB
+                    );
+
+                    // Frekuensi Nadi
+                    FormHelper.setValue(
+                        $form,
+                        'p_nadi',
+                        tandaVital.FREKUENSI_NADI
+                    );
+                    FormHelper.setSingleCheckbox(
+                        $form,
+                        'p_fr_nadi',
+                        tandaVital.FREKUENSI_NADI_CB
+                    )
+
+                    // Tekanan Darah
+                    FormHelper.setValue(
+                        $form,
+                        'p_td_up',
+                        tandaVital.SISTOLIK
+                    );
+
+                    FormHelper.setValue(
+                        $form,
+                        'p_td_down',
+                        tandaVital.DISTOLIK
+                    );
+
+                    // Suhu
+                    FormHelper.setValue(
+                        $form,
+                        'p_suhu',
+                        tandaVital.SUHU
+                    );
+
+                    // SpO2
+                    FormHelper.setValue(
+                        $form,
+                        'p_spo2',
+                        tandaVital.SATURASI_O2
+                    );
+
+                    // Pupil
+                    // if (tandaVital.PUPIL !== null) {
+                    //     $('input[name="pupil"]')
+                    //         .prop('checked', false);
+
+                    //     $(`input[name="pupil"][value="${tandaVital.PUPIL}"]`)
+                    //         .prop('checked', true);
+                    // }
+                    FormHelper.setSingleCheckbox(
+                        $form,
+                        'p_pupil',
+                        tandaVital.PUPIL
+                    );
+
+                    // Diameter pupil
+                    FormHelper.setValue(
+                        $form,
+                        'p_dia_up',
+                        tandaVital.DIAMETER_PUPIL_UP
+                    );
+
+                    FormHelper.setValue(
+                        $form,
+                        'p_dia_down',
+                        tandaVital.DIAMETER_PUPIL_DOWN
+                    );
+
+                    // Refleks cahaya
+                    FormHelper.setSingleCheckbox(
+                        $form,
+                        'p_rc_up',
+                        tandaVital.RC_UP
+                    );
+                    FormHelper.setSingleCheckbox(
+                        $form,
+                        'p_rc_down',
+                        tandaVital.RC_DOWN
+                    );
+
+                    // GCS
+                    FormHelper.setValue(
+                        $form,
+                        'p_gcs_e',
+                        tandaVital.EYE
+                    );
+
+                    FormHelper.setValue(
+                        $form,
+                        'p_gcs_v',
+                        tandaVital.VERBAL
+                    );
+
+                    FormHelper.setValue(
+                        $form,
+                        'p_gcs_m',
+                        tandaVital.MOTORIK
+                    );
+
+                    FormHelper.setValue(
+                        $form,
+                        'p_gcs_t',
+                        tandaVital.GCS
+                    );
+
+
+                    // VAS
+                    FormHelper.setValue(
+                        $form,
+                        'p_vas',
+                        tandaVital.VAS
+                    );
+
+
+                    // Jalan Nafas
+                    if (tandaVital.JALAN_NAFAS !== null) {
+                        $('input[name="p_jn"]')
+                            .prop('checked', false);
+
+                        $(`input[name="p_jn"][value="${tandaVital.JALAN_NAFAS}"]`)
+                            .prop('checked', true);
+                    }
+
+
+                    // Alat Bantu Nafas
+                    if (tandaVital.ALAT_BANTU_NAFAS !== null) {
+                        $('input[name="p_abn"]')
+                            .prop('checked', false);
+
+                        $(`input[name="p_abn"][value="${tandaVital.ALAT_BANTU_NAFAS}"]`)
+                            .prop('checked', true);
+                    }
+
+
+                    // Kulit
+                    if (tandaVital.KULIT !== null) {
+                        $('input[name="p_kulit"]')
+                            .prop('checked', false);
+
+                        $(`input[name="p_kulit"][value="${tandaVital.KULIT}"]`)
+                            .prop('checked', true);
                     }
 
                     // ------------------------------------------
