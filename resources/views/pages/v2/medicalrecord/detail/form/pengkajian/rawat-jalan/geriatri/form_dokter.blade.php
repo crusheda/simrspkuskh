@@ -1,5 +1,5 @@
 <div class="form-wrapper">
-    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN AWAL RAWAT JALAN JIWA</center></h1>
+    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN AWAL RAWAT JALAN GERIATRI</center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>PENGKAJIAN MEDIS (<a class="text-danger">Diisi Oleh Dokter</a>)</center></h1>
     <div class="form-content">
         <div class="row">
@@ -314,14 +314,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3 d-flex flex-column">
-                            <label class="form-label fw-bold">Tolok Ukur / Sasaran yang Dicapai</label>
-                            <textarea class="form-control" name="tu" id="tu" rows="3"></textarea>
-                        </div>
-                        <div class="col-md-6 mb-3 d-flex flex-column">
-                            <label class="form-label fw-bold">Evaluasi</label>
-                            <textarea class="form-control" name="eval" id="eval" rows="3"></textarea>
-                        </div>
                     </div>
 
                     <div class="form-group mb-2">
@@ -333,75 +325,6 @@
                         <div class="col-md-12">
                             <label class="form-label fw-bold">Terapi / Tindakan</label>
                             <textarea class="form-control" name="terapi_tind" id="terapi_tind" rows="3"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12 mb-3">
-                <div class="card card-body border border-dashed border-warning mb-1">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="form-label fw-bold">Materi Edukasi</label>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="me_1" id="me_1">
-                                            <label class="form-check-label"> Tanda dan gejala suatu penyakit </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="me_2" id="me_2">
-                                            <label class="form-check-label"> Hasil pemeriksaan </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="me_3" id="me_3">
-                                            <label class="form-check-label"> Diagnosis </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="me_4" id="me_4">
-                                            <label class="form-check-label"> Rencana penatalaksanaan penyakit </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="me_5" id="me_5">
-                                            <label class="form-check-label"> Tindakan dan tujuan terapi </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="form-label fw-bold">Sarana Informasi / Edukasi</label>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="sie_1" id="sie_1">
-                                            <label class="form-check-label"> Leaflet </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="sie_2" id="sie_2">
-                                            <label class="form-check-label"> Lisan </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="form-label fw-bold">Evaluasi</label>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="eval_1" id="eval_1">
-                                            <label class="form-check-label"> Sudah Mengerti </label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="eval_2" id="eval_2">
-                                            <label class="form-check-label"> Re - Edukasi </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -538,7 +461,7 @@
         <button class="btn btn-secondary">
             <i class="ri-close-line me-1"></i> Batal
         </button>
-        <button class="btn btn-danger" onclick="saveDataPengkajianRJJd(this)">
+        <button class="btn btn-danger" onclick="saveDataPengkajianRJGd(this)">
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
     </div>
@@ -654,7 +577,7 @@
                 }
             }
         });
-        loadDataPengkajianRJJd();
+        loadDataPengkajianRJGd();
         getPenggunaanObat();
         getRiwayatAlergi();
         getRiwayatLab();
@@ -662,19 +585,19 @@
         getDiagnosis();
     });
 
-    function loadDataPengkajianRJJd() {
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
+    function loadDataPengkajianRJGd() {
+        const kunjungan = $('#rjg_dokter').data('kunjungan');
 
         $.ajax({
-            url: `/api/v2/emr/form/pengkajian/rjj/dr/get/${kunjungan}`,
+            url: `/api/v2/emr/form/pengkajian/rjg/dr/get/${kunjungan}`,
             type: 'GET',
             success:function(res){
-                isiFormPengkajianRJJd(res);
+                isiFormPengkajianRJGd(res);
             }
         });
     }
 
-    function isiFormPengkajianRJJd(data){
+    function isiFormPengkajianRJGd(data){
 
         $("input[name=anam][value='"+data.anam+"']")
             .prop("checked",true)
@@ -692,22 +615,6 @@
 
         $("#terapi_tind").val(data.terapi_tind);
 
-        $("#tu").val(data.tu);
-
-        $("#eval").val(data.eval);
-
-        $('#me_1').prop('checked', data.me_1 == 1);
-        $('#me_2').prop('checked', data.me_2 == 1);
-        $('#me_3').prop('checked', data.me_3 == 1);
-        $('#me_4').prop('checked', data.me_4 == 1);
-        $('#me_5').prop('checked', data.me_5 == 1);
-
-        $('#sie_1').prop('checked', data.sie_1 == 1);
-        $('#sie_2').prop('checked', data.sie_2 == 1);
-
-        $('#eval_1').prop('checked', data.eval_1 == 1);
-        $('#eval_2').prop('checked', data.eval_2 == 1);
-
         $('input[name="tl"][value="' + data.tl + '"]').prop('checked', true).trigger('change');
         $('input[name="rujuk"][value="' + data.rujuk + '"]').prop('checked', true).trigger('change');
         $('#rujuk_lainnya').val(data.rujuk_lainnya);
@@ -720,16 +627,16 @@
 
     }
 
-    function saveDataPengkajianRJJd(btn) {
+    function saveDataPengkajianRJGd(btn) {
         const $button = $(btn);
-        const $section = $('#rjj_dokter');
+        const $section = $('#rjg_dokter');
 
         const data = getFormDataByName($section, {
             NOKUNJ: $section.data('kunjungan')
         });
 
         $.ajax({
-            url: '/api/v2/emr/form/pengkajian/rjj/dr/simpan',
+            url: '/api/v2/emr/form/pengkajian/rjg/dr/simpan',
             type: 'POST',
             data: data,
             headers: {
@@ -772,7 +679,7 @@
     // ADD ON ---------------------------------------------------------------------------------------------------------------------------------------------------
     function getRiwayatAlergi() {
         const $button = $('#btnRefreshAlergi');
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
+        const kunjungan = $('#rjg_dokter').data('kunjungan');
 
         $.ajax({
             url: `/api/v2/emr/pengkajian/riwayat_alergi/${kunjungan}`,
@@ -877,7 +784,7 @@
     };
 
     function hapusRiwayatAlergi(id){
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
+        const kunjungan = $('#rjg_dokter').data('kunjungan');
         $.ajax({
             url: `/api/v2/emr/pengkajian/riwayat_alergi/${kunjungan}/hapus/${id}`,
             type: 'DELETE',
@@ -910,7 +817,7 @@
 
     function getPenggunaanObat() {
         const $button = $('#btnRefreshObat');
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
+        const kunjungan = $('#rjg_dokter').data('kunjungan');
 
         $.ajax({
             url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}`,
@@ -1023,7 +930,7 @@
     };
 
     function hapusPenggunaanObat(id){
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
+        const kunjungan = $('#rjg_dokter').data('kunjungan');
         $.ajax({
             url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}/hapus/${id}`,
             type: 'DELETE',
@@ -1056,7 +963,7 @@
 
     function getRiwayatLab() {
         const $button = $('#btnRefreshLab');
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
+        const kunjungan = $('#rjg_dokter').data('kunjungan');
 
         $.ajax({
             url: `/api/v2/emr/pengkajian/lab/${kunjungan}`,
@@ -1123,7 +1030,7 @@
 
     function getRiwayatRad() {
         const $button = $('#btnRefreshRad');
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
+        const kunjungan = $('#rjg_dokter').data('kunjungan');
 
         $.ajax({
             url: `/api/v2/emr/pengkajian/rad/${kunjungan}`,
@@ -1191,7 +1098,7 @@
 
     function getDiagnosis() {
         const $button = $('#btnRefreshDiagnosis');
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
+        const kunjungan = $('#rjg_dokter').data('kunjungan');
 
         $.ajax({
             url: `/api/v2/emr/pengkajian/diagnosis/${kunjungan}`,
@@ -1297,7 +1204,7 @@
     };
 
     function hapusDiagnosis(id){
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
+        const kunjungan = $('#rjg_dokter').data('kunjungan');
         $.ajax({
             url: `/api/v2/emr/pengkajian/diagnosis/${kunjungan}/hapus/${id}`,
             type: 'DELETE',

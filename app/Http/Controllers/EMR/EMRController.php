@@ -19,6 +19,8 @@ use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanAnakController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanJiwaController;
+use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanGeriatriController;
+use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanObsgynController;
 
 class EMRController extends Controller
 {
@@ -579,6 +581,8 @@ class EMRController extends Controller
             'pengkajian-rajal-dewasa'       => PengkajianRawatJalanDewasaController::class,
             'pengkajian-rajal-anak'         => PengkajianRawatJalanAnakController::class,
             'pengkajian-rajal-psikiatri'    => PengkajianRawatJalanJiwaController::class,
+            'pengkajian-rajal-geriatri'     => PengkajianRawatJalanGeriatriController::class,
+            'pengkajian-rajal-obsgyn'     => PengkajianRawatJalanObsgynController::class,
         ];
 
         abort_unless(isset($controllers[$form]), 404);
@@ -586,5 +590,5 @@ class EMRController extends Controller
         return app($controllers[$form])->index($kunjungan);
     }
 
-    
+
 }

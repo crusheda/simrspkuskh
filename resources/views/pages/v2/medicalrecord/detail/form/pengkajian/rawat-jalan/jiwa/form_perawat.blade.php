@@ -681,8 +681,8 @@
                             <div class="col-md-9"></div>
                             <div class="col-md-3">
                                 <div class="form-content text-center">
-                                    <h4 id="total_skor" class="display-2 fw-bold text-dark">0</h4>
-                                    <label id="status_skor" class="text-success fw-bold"> Tidak Beresiko Jatuh</label>
+                                    <h4 id="total_skor_gtg" class="display-2 fw-bold text-dark">0</h4>
+                                    <label id="status_skor_gtg" class="text-success fw-bold"> Tidak Beresiko Jatuh</label>
                                 </div>
                             </div>
                         </div>
@@ -1724,7 +1724,7 @@
         total += parseInt($("input[name='faktor_risiko']:checked").val()) || 0;
         total += parseInt($("input[name='kon_obat']:checked").val()) || 0;
 
-        $("#total_skor").text(total);
+        $("#total_skor_gtg").text(total);
 
         let status = "";
         let warna  = "";
@@ -1751,7 +1751,7 @@
                 break;
         }
 
-        $("#status_skor")
+        $("#status_skor_gtg")
             .removeClass("text-success text-primary text-warning text-danger")
             .addClass(warna)
             .text(status);
