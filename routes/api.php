@@ -20,6 +20,8 @@ use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanAnakController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanJiwaController;
+use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanGeriatriController;
+use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanObsgynController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\EMR\ApiNewRehabMedikController;
 use App\Http\Controllers\EMR\ApiMatriksController;
@@ -79,6 +81,20 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                         //PERAWAT
                         Route::post('emr/form/pengkajian/rjj/pr/simpan', [PengkajianRawatJalanJiwaController::class, 'simpanFormPerawatRJJ']);
                         Route::get('emr/form/pengkajian/rjj/pr/get/{kunjungan}',[PengkajianRawatJalanJiwaController::class, 'getFormPerawatRJJ']);
+                    // GERIATRI
+                        //DOKTER
+                        Route::post('emr/form/pengkajian/rjg/dr/simpan', [PengkajianRawatJalanGeriatriController::class, 'simpanFormDokterRJG']);
+                        Route::get('emr/form/pengkajian/rjg/dr/get/{kunjungan}',[PengkajianRawatJalanGeriatriController::class, 'getFormDokterRJG']);
+                        //PERAWAT
+                        Route::post('emr/form/pengkajian/rjg/pr/simpan', [PengkajianRawatJalanGeriatriController::class, 'simpanFormPerawatRJG']);
+                        Route::get('emr/form/pengkajian/rjg/pr/get/{kunjungan}',[PengkajianRawatJalanGeriatriController::class, 'getFormPerawatRJG']);
+                    // GERIATRI
+                        //DOKTER
+                        Route::post('emr/form/pengkajian/rjo/dr/simpan', [PengkajianRawatJalanObsgynController::class, 'simpanFormDokterRJO']);
+                        Route::get('emr/form/pengkajian/rjo/dr/get/{kunjungan}',[PengkajianRawatJalanObsgynController::class, 'getFormDokterRJO']);
+                        //PERAWAT
+                        Route::post('emr/form/pengkajian/rjo/pr/simpan', [PengkajianRawatJalanObsgynController::class, 'simpanFormPerawatRJO']);
+                        Route::get('emr/form/pengkajian/rjo/pr/get/{kunjungan}',[PengkajianRawatJalanObsgynController::class, 'getFormPerawatRJO']);
 
             // ADD ON
                 // ASAL RUJUKAN / PPK
