@@ -456,7 +456,28 @@
                     <div class="row align-items-center" id="pemeriksaan_fisik">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Pemeriksaan Fisik</label>
-                            <textarea class="form-control" name="pfisik" id="pfisik" rows="3"></textarea>
+                            <textarea class="form-control" name="pfisik" id="pfisik" rows="16"
+                            >PEMERIKSAAN FISIK
+                                Palpasi Leopold
+                                Leopold I   : __________________________________
+                                Leopold II  : __________________________________
+                                Leopold III : __________________________________
+                                Leopold IV  : __________________________________
+
+                                AUSKULTASI
+                                DJJ         : __________ x/m
+                                            Regular / Irregular
+
+                                PEMERIKSAAN LAIN
+                                            Panggul / Osborn
+
+                                EXTREMITAS
+                                _______________________________________________
+
+                                REFLEK PATELA : (________ / ________)
+                                Udem          : (________ / ________)
+
+                                *Keterangan: hapus/coret pilihan yang tidak sesuai.</textarea>
                         </div>
                     </div>
                     <div class="row align-items-center" id="pemeriksaan_penunjang">

@@ -431,6 +431,7 @@ class AddOnPengkajianController extends Controller
             'INA_GROUPER'       => 1,
             'DIAGNOSA_OLEH'     => auth()->id(),
             'OLEH'              => auth()->id(),
+            'DIAGNOSA_TANGGAL'           => now(),
             'TANGGAL'           => now(),
             'STATUS'            => 1,
         ]);
