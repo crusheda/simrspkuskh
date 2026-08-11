@@ -426,6 +426,10 @@ class AddOnPengkajianController extends Controller
             'UTAMA'             => ($request->utama == 1) ? 1 : 0,
             'DIAGNOSA'          => $request->diagnosa,
             'KODE'              => '',
+            'INACBG'            => 1,
+            'BARU'              => 1,
+            'INA_GROUPER'       => 1,
+            'DIAGNOSA_OLEH'     => auth()->id(),
             'OLEH'              => auth()->id(),
             'TANGGAL'           => now(),
             'STATUS'            => 1,
@@ -443,5 +447,203 @@ class AddOnPengkajianController extends Controller
             ->update(['STATUS' => 0]);
 
         return response()->json(['message' => 'Data diagnosa berhasil dihapus.'], 200);
+    }
+
+    public function getRiwayatObstetri($kunjungan)
+    {
+        $data = DB::table('medicalrecord.riwayat_obstetri as ro')
+
+            // Usia kehamilan
+            ->leftJoin('master.referensi as uk', function ($join) {
+                $join->on('ro.USIA_KEHAMILAN', '=', 'uk.ID')
+                    ->where('uk.JENIS', 299)
+                    ->where('uk.STATUS', 1);
+            })
+
+            // Jenis persalinan
+            ->leftJoin('master.referensi as jp', function ($join) {
+                $join->on('ro.JENIS_PERSALINAN', '=', 'jp.ID')
+                    ->where('jp.JENIS', 300)
+                    ->where('jp.STATUS', 1);
+            })
+
+            // Penyulit
+            ->leftJoin('master.referensi as py', function ($join) {
+                $join->on('ro.PENYULIT', '=', 'py.ID')
+                    ->where('py.JENIS', 301)
+                    ->where('py.STATUS', 1);
+            })
+
+            // Jenis kelamin
+            ->leftJoin('master.referensi as jk', function ($join) {
+                $join->on('ro.JENIS_KELAMIN', '=', 'jk.ID')
+                ->where('jk.JENIS', 2)
+                ->where('jk.STATUS', 1);
+            })
+
+            // Penolong
+            ->leftJoin('master.referensi as pn', function ($join) {
+                $join->on('ro.PENOLONG', '=', 'pn.ID')
+                    ->where('pn.JENIS', 303)
+                    ->where('pn.STATUS', 1);
+            })
+
+            // Tempat
+            ->leftJoin('master.referensi as tp', function ($join) {
+                $join->on('ro.TEMPAT', '=', 'tp.ID')
+                    ->where('tp.JENIS', 304)
+                    ->where('tp.STATUS', 1);
+            })
+
+            // Keadaan saat ini
+            ->leftJoin('master.referensi as ks', function ($join) {
+                $join->on('ro.KEADAAN_SAAT_INI', '=', 'ks.ID')
+                    ->where('ks.JENIS', 302)
+                    ->where('ks.STATUS', 1);
+            })
+
+            ->select(
+                'ro.*',
+
+                'uk.DESKRIPSI as USIA_KEHAMILAN_DESC',
+                'jp.DESKRIPSI as JENIS_PERSALINAN_DESC',
+                'py.DESKRIPSI as PENYULIT_DESC',
+                'jk.DESKRIPSI as JENIS_KELAMIN_DESC',
+                'pn.DESKRIPSI as PENOLONG_DESC',
+                'tp.DESKRIPSI as TEMPAT_DESC',
+                'ks.DESKRIPSI as KEADAAN_SAAT_INI_DESC'
+            )
+
+            ->where('ro.KUNJUNGAN', $kunjungan)
+            ->where('ro.STATUS', 1)
+
+            ->orderBy('ro.TAHUN', 'desc')
+            ->orderBy('ro.ID', 'desc')
+
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function simpanRiwayatObstetri(Request $request, $KUNJUNGAN)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'tahun' => ['required', 'integer', 'min:1900', 'max:2100'],
+                'usia_kehamilan' => ['required'],
+                'jenis_persalinan' => ['required'],
+                'penyulit' => ['nullable'],
+                'penolong' => ['required'],
+                'keterangan_penolong' => ['nullable'],
+                'tempat' => ['required'],
+                'keterangan_tempat' => ['nullable'],
+                'jenis_kelamin' => ['required'],
+                'berat_badan' => ['required', 'integer', 'min:0'],
+                'keadaan_saat_ini' => ['required'],
+            ],
+            [
+                'tahun.required' =>
+                    'Tahun wajib diisi.',
+
+                'usia_kehamilan.required' =>
+                    'Usia kehamilan wajib diisi.',
+
+                'jenis_persalinan.required' =>
+                    'Jenis persalinan wajib diisi.',
+
+                'penolong.required' =>
+                    'Penolong wajib diisi.',
+
+                'tempat.required' =>
+                    'Tempat persalinan wajib diisi.',
+
+                'jenis_kelamin.required' =>
+                    'Jenis kelamin wajib diisi.',
+
+                'berat_badan.required' =>
+                    'Berat badan wajib diisi.',
+
+                'keadaan_saat_ini.required' =>
+                    'Keadaan saat ini wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+
+            return response()->json([
+                'message' => 'Validasi gagal.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        DB::table('medicalrecord.riwayat_obstetri')->insert([
+
+            'KUNJUNGAN' =>
+                $KUNJUNGAN,
+
+            'TAHUN' =>
+                $request->tahun,
+
+            'USIA_KEHAMILAN' =>
+                $request->usia_kehamilan,
+
+            'JENIS_PERSALINAN' =>
+                $request->jenis_persalinan,
+
+            'PENYULIT' =>
+                $request->penyulit,
+
+            'PENOLONG' =>
+                $request->penolong,
+
+            'KETERANGAN_PENOLONG' =>
+                $request->keterangan_penolong ?? '',
+
+            'TEMPAT' =>
+                $request->tempat,
+
+            'KETERANGAN_TEMPAT' =>
+                $request->keterangan_tempat ?? '',
+
+            'JENIS_KELAMIN' =>
+                $request->jenis_kelamin,
+
+            'BERAT_BADAN' =>
+                $request->berat_badan,
+
+            'KEADAAN_SAAT_INI' =>
+                $request->keadaan_saat_ini,
+
+            'OLEH' =>
+                auth()->id(),
+
+            'STATUS' =>
+                1,
+
+            'DIBUAT_TANGGAL' =>
+                now(),
+
+        ]);
+
+        return response()->json([
+            'message' =>
+                'Data riwayat obstetri berhasil disimpan.'
+        ], 200);
+    }
+
+    public function hapusRiwayatObstetri($KUNJUNGAN, $ID)
+    {
+        DB::table('medicalrecord.riwayat_obstetri')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('ID', $ID)
+            ->update([
+                'STATUS' => 0
+            ]);
+
+        return response()->json([
+            'message' =>
+                'Data riwayat obstetri berhasil dihapus.'
+        ], 200);
     }
 }

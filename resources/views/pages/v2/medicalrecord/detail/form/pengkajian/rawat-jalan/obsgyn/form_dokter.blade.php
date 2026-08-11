@@ -47,6 +47,298 @@
                             <label class="form-label fw-bold">Riwayat Penyakit Dahulu</label>
                             <textarea class="form-control" name="rpd" id="rpd" rows="3"></textarea>
                         </div>
+                        <div class="col-md-12 mb-1">
+                            <div class="card card-body border border-dashed border-primary">
+                                <h6>Riwayat Obstetri</h6>
+                                <div class="row g-2 mb-2">
+                                    {{-- Tahun --}}
+                                    <div class="col-md-2">
+                                        <label class="form-label">Tahun</label>
+                                        <input type="number" class="form-control form-control-sm" name="obstetri_tahun" id="obstetri_tahun" min="1900" max="2100" placeholder="Tahun">
+                                    </div>
+                                    {{-- Usia Kehamilan --}}
+                                    <div class="col-md-2">
+                                        <label class="form-label">Usia Kehamilan</label>
+                                        <select class="form-select form-select-sm" name="obstetri_usia_kehamilan" id="obstetri_usia_kehamilan">
+                                            <option value="">Pilih</option>
+                                            @foreach ($list['usia_kehamilan'] as $item)
+                                                <option value="{{ $item->ID }}">
+                                                    {{ $item->DESKRIPSI }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    {{-- Jenis Persalinan --}}
+                                    <div class="col-md-2">
+                                        <label class="form-label">Persalinan</label>
+                                        <select class="form-select form-select-sm" name="obstetri_jenis_persalinan" id="obstetri_jenis_persalinan">
+                                            <option value="">Pilih</option>
+                                            @foreach ($list['jenis_persalinan'] as $item)
+                                                <option value="{{ $item->ID }}">
+                                                    {{ $item->DESKRIPSI }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    {{-- Penyulit --}}
+                                    <div class="col-md-2">
+                                        <label class="form-label">Penyulit</label>
+                                        <select class="form-select form-select-sm" name="obstetri_penyulit" id="obstetri_penyulit">
+                                            <option value="">Pilih</option>
+                                            @foreach ($list['penyulit'] as $item)
+                                                <option value="{{ $item->ID }}">
+                                                    {{ $item->DESKRIPSI }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    {{-- Jenis Kelamin --}}
+                                    <div class="col-md-2">
+                                        <label class="form-label">JK</label>
+                                        <select class="form-select form-select-sm" name="obstetri_jenis_kelamin" id="obstetri_jenis_kelamin">
+                                            <option value="">Pilih</option>
+                                            @foreach ($list['jenis_kelamin'] as $item)
+                                                <option value="{{ $item->ID }}">
+                                                    {{ $item->DESKRIPSI }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    {{-- Berat Badan --}}
+                                    <div class="col-md-2">
+                                        <label class="form-label">BB (gram)</label>
+                                        <input type="number" class="form-control form-control-sm" name="obstetri_berat_badan" id="obstetri_berat_badan" placeholder="BB">
+                                    </div>
+                                </div>
+                                <div class="row g-2 mb-2">
+                                    {{-- Penolong --}}
+                                    <div class="col-md-3">
+                                        <label class="form-label">Penolong</label>
+                                        <select class="form-select form-select-sm" name="obstetri_penolong" id="obstetri_penolong">
+                                            <option value="">Pilih</option>
+                                            @foreach ($list['penolong'] as $item)
+                                                <option value="{{ $item->ID }}">
+                                                    {{ $item->DESKRIPSI }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    {{-- Keterangan Penolong --}}
+                                    <div class="col-md-3">
+                                        <label class="form-label">Ket. Penolong</label>
+                                        <input type="text" class="form-control form-control-sm" name="obstetri_keterangan_penolong" id="obstetri_keterangan_penolong" placeholder="Keterangan">
+                                    </div>
+                                    {{-- Tempat --}}
+                                    <div class="col-md-3">
+                                        <label class="form-label">Tempat</label>
+                                        <select class="form-select form-select-sm" name="obstetri_tempat" id="obstetri_tempat">
+                                            <option value="">Pilih</option>
+                                            @foreach ($list['tempat'] as $item)
+                                                <option value="{{ $item->ID }}">
+                                                    {{ $item->DESKRIPSI }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    {{-- Keterangan Tempat --}}
+                                    <div class="col-md-3">
+                                        <label class="form-label">Ket. Tempat</label>
+                                        <input type="text" class="form-control form-control-sm" name="obstetri_keterangan_tempat" id="obstetri_keterangan_tempat" placeholder="Keterangan">
+                                    </div>
+                                </div>
+                                <div class="row g-2 mb-2">
+                                    {{-- Keadaan Saat Ini --}}
+                                    <div class="col-md-4">
+                                        <label class="form-label">Keadaan Saat Ini</label>
+                                        <select class="form-select form-select-sm" name="obstetri_keadaan_saat_ini" id="obstetri_keadaan_saat_ini">
+                                            <option value="">Pilih</option>
+                                            @foreach ($list['keadaan_sat_ini'] as $item)
+                                                <option value="{{ $item->ID }}">
+                                                    {{ $item->DESKRIPSI }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    {{-- Tombol --}}
+                                    <div class="col-md-8 d-flex align-items-end">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-success btn-sm" id="btnTambahObstetri" onclick="tambahRiwayatObstetri()">
+                                                <i class="ri-add-box-line"></i>
+                                                Tambah
+                                            </button>
+                                            <button type="button" class="btn btn-subtle-warning btn-sm" id="btnRefreshObstetri" onclick="getRiwayatObstetri()">
+                                                <i class="ri-refresh-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- Tabel --}}
+                                <div class="table-responsive mt-2">
+                                    <table class="table table-bordered table-sm align-middle mb-1">
+                                        <thead>
+                                            <tr class="table-success">
+                                                <th>No</th>
+                                                <th>Tahun</th>
+                                                <th>Usia Kehamilan</th>
+                                                <th>Persalinan</th>
+                                                <th>Penyulit</th>
+                                                <th>Penolong</th>
+                                                <th>Tempat</th>
+                                                <th>JK</th>
+                                                <th>BB</th>
+                                                <th>Keadaan Saat Ini</th>
+                                                <th class="text-center">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tblObstetriBody">
+                                            <tr>
+                                                <td colspan="11" class="text-center">
+                                                    Tidak ada data
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ====================================================== -->
+                        <!-- RIWAYAT KB DAN MENSTRUASI -->
+                        <!-- ====================================================== -->
+                        <div class="col-md-12 mb-1">
+                            <div class="card card-body border border-dashed border-primary">
+                                <label class="form-label fw-bold"> Riwayat KB dan Menstruasi </label>
+                                <!-- ========================== -->
+                                <!-- RIWAYAT KB -->
+                                <!-- ========================== -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold"> Riwayat KB </label>
+
+                                    <div class="row">
+                                        <!-- Suntik -->
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input check-primary" type="checkbox" name="kb_suntik" id="kb_suntik"
+                                                    value="1" />
+                                                <label class="form-check-label" for="kb_suntik"> Suntik </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- IUD -->
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input check-primary" type="checkbox" name="kb_iud" id="kb_iud"
+                                                    value="1" />
+                                                <label class="form-check-label" for="kb_iud"> IUD </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Pil -->
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input check-primary" type="checkbox" name="kb_pil" id="kb_pil"
+                                                    value="1" />
+                                                <label class="form-check-label" for="kb_pil"> Pil </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Kondom -->
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input check-primary" type="checkbox" name="kb_kondom" id="kb_kondom"
+                                                    value="1" />
+                                                <label class="form-check-label" for="kb_kondom"> Kondom </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Kalender -->
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input check-primary" type="checkbox" name="kb_kalender"
+                                                    id="kb_kalender" value="1" />
+                                                <label class="form-check-label" for="kb_kalender"> Kalender </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- MOW -->
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input check-primary" type="checkbox" name="kb_mow" id="kb_mow"
+                                                    value="1" />
+                                                <label class="form-check-label" for="kb_mow"> MOW </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- MOP -->
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input check-primary" type="checkbox" name="kb_mop" id="kb_mop"
+                                                    value="1" />
+                                                <label class="form-check-label" for="kb_mop"> MOP </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Implan -->
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input check-primary" type="checkbox" name="kb_implan" id="kb_implan"
+                                                    value="1" />
+                                                <label class="form-check-label" for="kb_implan"> Implan </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Keluhan KB -->
+                                    <div class="mt-2">
+                                        <label class="form-label"> Keluhan </label>
+                                        <textarea class="form-control" name="kb_keluhan" id="kb_keluhan" rows="2"
+                                            placeholder="Keluhan terkait penggunaan KB..."></textarea>
+                                    </div>
+                                </div>
+
+                                <hr class="my-3" />
+
+                                <!-- ========================== -->
+                                <!-- RIWAYAT MENSTRUASI -->
+                                <!-- ========================== -->
+                                <div>
+                                    <label class="form-label fw-semibold"> Riwayat Menstruasi </label>
+
+                                    <div class="row align-items-center">
+                                        <div class="col-md-3">
+                                            <label class="form-label mb-0"> Menarche / Teratur </label>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="menstruasi_teratur"
+                                                    id="menstruasi_teratur_ya" value="1" />
+                                                <label class="form-check-label" for="menstruasi_teratur_ya">
+                                                    Ya
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="menstruasi_teratur"
+                                                    id="menstruasi_teratur_tidak" value="0" />
+                                                <label class="form-check-label" for="menstruasi_teratur_tidak">
+                                                    Tidak
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Keluhan menstruasi -->
+                                    <div class="mt-2">
+                                        <label class="form-label"> Keluhan </label>
+
+                                        <textarea class="form-control" name="menstruasi_keluhan" id="menstruasi_keluhan" rows="2"
+                                            placeholder="Keluhan menstruasi..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-6 mb-2 d-flex flex-column">
                             <h6>Riwayat Alergi</h6>
                             <div class="row g-2 mb-2">
@@ -583,6 +875,7 @@
         getRiwayatLab();
         getRiwayatRad();
         getDiagnosis();
+        getRiwayatObstetri();
     });
 
     function loadDataPengkajianRJOd() {
@@ -624,6 +917,26 @@
         $('#pri_indikasi').val(data.pri_indikasi);
         $('#pri_ket').val(data.pri_ket);
         $('#pri_dpjp').val(data.pri_dpjp);
+
+        $('#kb_suntik').prop('checked', data.kb_suntik == 1);
+        $('#kb_iud').prop('checked', data.kb_iud == 1);
+        $('#kb_pil').prop('checked', data.kb_pil == 1);
+        $('#kb_kondom').prop('checked', data.kb_kondom == 1);
+        $('#kb_kalender').prop('checked', data.kb_kalender == 1);
+        $('#kb_mow').prop('checked', data.kb_mow == 1);
+        $('#kb_mop').prop('checked', data.kb_mop == 1);
+        $('#kb_implan').prop('checked', data.kb_implan == 1);
+
+        $('#kb_keluhan').val(data.kb_keluhan || '');
+
+        $('input[name="menstruasi_teratur"]').prop('checked', false);
+
+        if (data.menstruasi_teratur !== null && data.menstruasi_teratur !== '') {
+            $(`input[name="menstruasi_teratur"][value="${data.menstruasi_teratur}"]`)
+                .prop('checked', true);
+        }
+
+        $('#menstruasi_keluhan').val(data.menstruasi_keluhan || '');
 
     }
 
@@ -677,6 +990,200 @@
     };
 
     // ADD ON ---------------------------------------------------------------------------------------------------------------------------------------------------
+    function getRiwayatObstetri() {
+        const $button = $('#btnRefreshObstetri');
+        const kunjungan = $('#rjo_dokter').data('kunjungan');
+        $.ajax({
+            url: `/api/v2/emr/pengkajian/riwayat_obstetri/${kunjungan}`,
+            type: 'GET',
+            beforeSend: function () {
+                $button
+                    .prop('disabled', true)
+                    .html('<i class="ri-refresh-line ri-spin"></i>');
+                $('#tblObstetriBody').html(`
+                    <tr>
+                        <td colspan="11" class="text-center">
+                            <i class="ri-refresh-line ri-spin me-1"></i>
+                            Memproses data...
+                        </td>
+                    </tr>
+                `);
+            },
+            success: function (res) {
+                let html = '';
+                if (res.length > 0) {
+                    $.each(res, function (i, v) {
+                        html += `
+                            <tr>
+                                <td>${i + 1}</td>
+                                <td>${v.TAHUN ?? '-'}</td>
+                                <td>${v.USIA_KEHAMILAN_DESC ?? '-'}</td>
+                                <td>${v.JENIS_PERSALINAN_DESC ?? '-'}</td>
+                                <td>${v.PENYULIT_DESC ?? '-'}</td>
+                                <td>
+                                    ${v.PENOLONG_DESC ?? '-'}
+                                    ${v.KETERANGAN_PENOLONG
+                                        ? '<br><small>' + v.KETERANGAN_PENOLONG + '</small>'
+                                        : ''}
+                                </td>
+                                <td>
+                                    ${v.TEMPAT_DESC ?? '-'}
+                                    ${v.KETERANGAN_TEMPAT
+                                        ? '<br><small>' + v.KETERANGAN_TEMPAT + '</small>'
+                                        : ''}
+                                </td>
+                                <td>${v.JENIS_KELAMIN_DESC ?? '-'}</td>
+                                <td>${v.BERAT_BADAN ?? '-'} gr</td>
+                                <td>${v.KEADAAN_SAAT_INI_DESC ?? '-'}</td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="hapusRiwayatObstetri(${v.ID})"> <i class="ri-delete-bin-line"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html = `
+                        <tr>
+                            <td colspan="11" class="text-center">
+                                Tidak ada data
+                            </td>
+                        </tr>
+                    `;
+                }
+                $('#tblObstetriBody').html(html);
+            },
+            error: function (xhr) {
+                let message = 'Data gagal dimuat.';
+                if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                alert(message);
+            },
+            complete: function () {
+                $button
+                    .prop('disabled', false)
+                    .html('<i class="ri-refresh-line"></i>');
+            }
+        });
+    }
+
+    function tambahRiwayatObstetri() {
+        const $button = $('#btnTambahObstetri');
+        const kunjungan = $('#rjo_dokter').data('kunjungan');
+        const data = {
+            tahun: $('#obstetri_tahun').val(),
+            usia_kehamilan:
+                $('#obstetri_usia_kehamilan').val(),
+            jenis_persalinan:
+                $('#obstetri_jenis_persalinan').val(),
+            penyulit:
+                $('#obstetri_penyulit').val(),
+            penolong:
+                $('#obstetri_penolong').val(),
+            keterangan_penolong:
+                $('#obstetri_keterangan_penolong').val(),
+            tempat:
+                $('#obstetri_tempat').val(),
+            keterangan_tempat:
+                $('#obstetri_keterangan_tempat').val(),
+            jenis_kelamin:
+                $('#obstetri_jenis_kelamin').val(),
+            berat_badan:
+                $('#obstetri_berat_badan').val(),
+            keadaan_saat_ini:
+                $('#obstetri_keadaan_saat_ini').val()
+        };
+        $.ajax({
+            url: `/api/v2/emr/pengkajian/riwayat_obstetri/${kunjungan}/simpan`,
+            type: 'POST',
+            data: data,
+            headers: {
+                'X-CSRF-TOKEN':
+                    $('meta[name="csrf-token"]').attr('content')
+            },
+            beforeSend: function () {
+                $button
+                    .prop('disabled', true)
+                    .html('<i class="ri-refresh-line ri-spin"></i>');
+            },
+            success: function (res) {
+                iziToast.success({
+                    title: 'Proses Berhasil!',
+                    message:
+                        res.message ||
+                        'Data riwayat obstetri berhasil disimpan.',
+                    position: 'topRight'
+                });
+                // Reset input
+                $('#obstetri_tahun').val('');
+                $('#obstetri_usia_kehamilan').val('');
+                $('#obstetri_jenis_persalinan').val('');
+                $('#obstetri_penyulit').val('');
+                $('#obstetri_penolong').val('');
+                $('#obstetri_keterangan_penolong').val('');
+                $('#obstetri_tempat').val('');
+                $('#obstetri_keterangan_tempat').val('');
+                $('#obstetri_jenis_kelamin').val('');
+                $('#obstetri_berat_badan').val('');
+                $('#obstetri_keadaan_saat_ini').val('');
+                // Refresh tabel
+                getRiwayatObstetri();
+            },
+
+            error: function (xhr) {
+                let message = 'Data gagal disimpan.';
+                if (xhr.status === 422 &&
+                    xhr.responseJSON?.errors) {
+                    message = Object.values(
+                        xhr.responseJSON.errors
+                    )
+                    .flat()
+                    .join('\n');
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                alert(message);
+            },
+            complete: function () {
+                $button
+                    .prop('disabled', false)
+                    .html(`
+                        <i class="ri-add-box-line"></i>
+                        Tambah
+                    `);
+            }
+        });
+    }
+    function hapusRiwayatObstetri(id) {
+        const kunjungan = $('#rjo_dokter').data('kunjungan');
+        $.ajax({
+            url: `/api/v2/emr/pengkajian/riwayat_obstetri/${kunjungan}/hapus/${id}`,
+            type: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN':
+                    $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (res) {
+                iziToast.success({
+                    title: 'Proses Berhasil!',
+                    message:
+                        res.message ||
+                        'Data riwayat obstetri berhasil dihapus.',
+                    position: 'topRight'
+                });
+                getRiwayatObstetri();
+            },
+            error: function (xhr) {
+                let message = 'Data gagal dihapus.';
+                if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                alert(message);
+            }
+        });
+    }
+
     function getRiwayatAlergi() {
         const $button = $('#btnRefreshAlergi');
         const kunjungan = $('#rjo_dokter').data('kunjungan');

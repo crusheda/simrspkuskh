@@ -117,6 +117,10 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     Route::get('emr/pengkajian/diagnosis/{kunjungan}', [AddOnPengkajianController::class, 'getDiagnosis']);
                     Route::post('emr/pengkajian/diagnosis/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanDiagnosis']);
                     Route::delete('emr/pengkajian/diagnosis/{kunjungan}/hapus/{id}', [AddOnPengkajianController::class, 'hapusDiagnosis']);
+                // RIWAYAT OBSTETRI
+                    Route::get('emr/pengkajian/riwayat_obstetri/{kunjungan}',[AddOnPengkajianController::class, 'getRiwayatObstetri']);
+                    Route::post('emr/pengkajian/riwayat_obstetri/{kunjungan}/simpan',[AddOnPengkajianController::class, 'simpanRiwayatObstetri']);
+                    Route::delete('emr/pengkajian/riwayat_obstetri/{kunjungan}/hapus/{id}',[AddOnPengkajianController::class, 'hapusRiwayatObstetri']);
 });
 
 // SIRMED v.1

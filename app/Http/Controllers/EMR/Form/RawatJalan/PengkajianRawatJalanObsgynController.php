@@ -43,19 +43,6 @@ class PengkajianRawatJalanObsgynController extends Controller
             ->where('pk.NOMOR', $kunjungan)
             ->first();
 
-        // $frekuensi_obat = DB::table('master.frekuensi_aturan_resep')
-        //         ->select('ID','FREKUENSI')
-        //         ->where('STATUS',1)
-        //         ->orderBy('ID','ASC')
-        //         ->get();
-
-        // $rute_obat = DB::table('master.referensi')
-        //         ->select('ID','DESKRIPSI')
-        //         ->where('JENIS',217)
-        //         ->where('STATUS',1)
-        //         ->orderBy('TABEL_ID','ASC')
-        //         ->get();
-
         $jenis_alergi = DB::table('master.referensi')
                 ->select('ID','DESKRIPSI')
                 ->where('JENIS',180)
@@ -70,6 +57,55 @@ class PengkajianRawatJalanObsgynController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
+        $usia_kehamilan = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',299)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $jenis_persalinan = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',300)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $penyulit = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',301)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $jenis_kelamin = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',2)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $penolong = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',303)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $tempat = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',304)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $keadaan_sat_ini = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',302)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
         $data = [
             'kunjungan' => $kunjungan,
             'jenis_ruang' => $jenis_ruang,
@@ -77,7 +113,14 @@ class PengkajianRawatJalanObsgynController extends Controller
             'pasien' => $pasien,
             'jenis_alergi' => $jenis_alergi,
             'kesadaran' => $kesadaran,
-        ];
+            'usia_kehamilan' => $usia_kehamilan,
+            'jenis_persalinan' => $jenis_persalinan,
+            'penyulit' => $penyulit,
+            'jenis_kelamin' => $jenis_kelamin,
+            'penolong' => $penolong,
+            'tempat' => $tempat,
+            'keadaan_sat_ini' => $keadaan_sat_ini,
+            ];
         // print_r($data);
         // die();
         return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.obsgyn.index')->with('list',$data);
@@ -202,6 +245,7 @@ class PengkajianRawatJalanObsgynController extends Controller
                 ]
             );
 
+            // SPRI
             if($request->tl == 1){
 
                 // Ambil nomor terakhir
@@ -231,6 +275,46 @@ class PengkajianRawatJalanObsgynController extends Controller
                     ]
                 );
             }
+
+            // Riwayat Menstruasi
+            DB::table('medicalrecord.sirmed_status_reproduksi')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    // --------------------------
+                    // Riwayat KB
+                    // --------------------------
+                    'KB_SUNTIK' => $request->input('kb_suntik') ? 1 : 0,
+                    'KB_IUD' => $request->input('kb_iud') ? 1 : 0,
+                    'KB_PIL' => $request->input('kb_pil') ? 1 : 0,
+                    'KB_KONDOM' => $request->input('kb_kondom') ? 1 : 0,
+                    'KB_KALENDER' => $request->input('kb_kalender') ? 1 : 0,
+                    'KB_MOW' => $request->input('kb_mow') ? 1 : 0,
+                    'KB_MOP' => $request->input('kb_mop') ? 1 : 0,
+                    'KB_IMPLAN' => $request->input('kb_implan') ? 1 : 0,
+
+                    'KB_KELUHAN' => $request->input('kb_keluhan'),
+
+                    // --------------------------
+                    // Riwayat Menstruasi
+                    // --------------------------
+                    'MENSTRUASI_TERATUR' =>
+                        $request->has('menstruasi_teratur')
+                            ? (int) $request->input('menstruasi_teratur')
+                            : 0,
+
+                    'MENSTRUASI_KELUHAN' =>
+                        $request->input('menstruasi_keluhan'),
+
+                    // --------------------------
+                    // Audit
+                    // --------------------------
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                    'TANGGAL' => now(),
+                ]
+            );
 
             DB::commit();
 
@@ -360,6 +444,44 @@ class PengkajianRawatJalanObsgynController extends Controller
             $data['pri_dpjp'] = $perencanaan->DOKTER;
         }
         // dd($data);
+
+        $reproduksi = DB::table('medicalrecord.sirmed_status_reproduksi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+        $data['kb_suntik'] = 0;
+        $data['kb_iud'] = 0;
+        $data['kb_pil'] = 0;
+        $data['kb_kondom'] = 0;
+        $data['kb_kalender'] = 0;
+        $data['kb_mow'] = 0;
+        $data['kb_mop'] = 0;
+        $data['kb_implan'] = 0;
+
+        $data['kb_keluhan'] = '';
+
+        $data['menstruasi_teratur'] = '';
+        $data['menstruasi_keluhan'] = '';
+
+        if ($reproduksi) {
+            $data['kb_suntik'] = (int) $reproduksi->KB_SUNTIK;
+            $data['kb_iud'] = (int) $reproduksi->KB_IUD;
+            $data['kb_pil'] = (int) $reproduksi->KB_PIL;
+            $data['kb_kondom'] = (int) $reproduksi->KB_KONDOM;
+            $data['kb_kalender'] = (int) $reproduksi->KB_KALENDER;
+            $data['kb_mow'] = (int) $reproduksi->KB_MOW;
+            $data['kb_mop'] = (int) $reproduksi->KB_MOP;
+            $data['kb_implan'] = (int) $reproduksi->KB_IMPLAN;
+
+            $data['kb_keluhan'] =
+                $reproduksi->KB_KELUHAN ?? '';
+
+            $data['menstruasi_teratur'] =
+                $reproduksi->MENSTRUASI_TERATUR;
+
+            $data['menstruasi_keluhan'] =
+                $reproduksi->MENSTRUASI_KELUHAN ?? '';
+        }
 
         return response()->json($data);
     }
