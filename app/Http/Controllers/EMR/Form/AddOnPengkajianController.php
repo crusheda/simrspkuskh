@@ -354,10 +354,42 @@ class AddOnPengkajianController extends Controller
         $nopen = DB::table('pendaftaran.kunjungan')->where('NOMOR', $kunjungan)->value('NOPEN');
 
         $data = DB::table('medicalrecord.diagnosa as diag')
-            ->select('diag.ID','diag.DIAGNOSA', DB::raw("CASE WHEN diag.UTAMA = 1 THEN 'UTAMA' ELSE 'SEKUNDER' END AS UTAMA"))
-            ->where('diag.NOPEN', $nopen)
-            ->where('diag.STATUS', 1)
-            ->get();
+                ->select(
+                    'diag.ID',
+                    'diag.DIAGNOSA',
+                    DB::raw("CASE WHEN diag.UTAMA = 1 THEN 'UTAMA' ELSE 'SEKUNDER' END AS UTAMA"),
+                    'diag.KODE as KODE_DIAGNOSA',
+                    'mrc.STR as NAMA_DIAGNOSA'
+                )
+                ->leftJoin('master.mrconso as mrc', function ($join) {
+                    $join->on('diag.KODE', '=', 'mrc.CODE')
+                        ->whereNotIn('mrc.TTY', ['HT', 'PS'])
+                        ->where(function ($q) {
+
+                            // ==========================================
+                            // PRIORITAS ICD10_2020
+                            // ==========================================
+                            $q->where('mrc.SAB', 'ICD10_2020')
+
+                                // ==========================================
+                                // FALLBACK ICD10_1998
+                                // hanya jika ICD10_2020 tidak ada
+                                // ==========================================
+                                ->orWhere(function ($q) {
+                                    $q->where('mrc.SAB', 'ICD10_1998')
+                                        ->whereNotExists(function ($sub) {
+                                            $sub->select(DB::raw(1))
+                                                ->from('master.mrconso as mrc2020')
+                                                ->whereColumn('mrc2020.CODE', 'diag.KODE')
+                                                ->where('mrc2020.SAB', 'ICD10_2020')
+                                                ->whereNotIn('mrc2020.TTY', ['HT', 'PS']);
+                                        });
+                                });
+                        });
+                })
+                ->where('diag.NOPEN', $nopen)
+                ->where('diag.STATUS', 1)
+                ->get();
 
         return response()->json($data);
     }

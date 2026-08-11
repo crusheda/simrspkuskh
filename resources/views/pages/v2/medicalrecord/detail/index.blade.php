@@ -101,7 +101,7 @@
                             </a>
                         </li>
                     @endif
-                    @hasrole('admin')
+                    @hasrole('admin','dokterumum')
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fpengkajian" role="tab"
                             aria-selected="false" tabindex="-1" id="tab-fpengkajian" disabled>

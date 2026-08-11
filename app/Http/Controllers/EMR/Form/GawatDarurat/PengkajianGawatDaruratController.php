@@ -173,7 +173,7 @@ class PengkajianGawatDaruratController extends Controller
             |--------------------------------------------------------------------------
             */
             $statusReproduksi = DB::table(
-                'medicalrecord.status_reproduksi'
+                'medicalrecord.sirmed_status_reproduksi'
             )
                 ->where('KUNJUNGAN', $KUNJUNGAN)
                 ->where('STATUS', 1)
@@ -744,9 +744,8 @@ class PengkajianGawatDaruratController extends Controller
                         'PUPIL'                 => $request->pupil,
                         'DIAMETER_PUPIL_UP'     => $request->dia_up,
                         'DIAMETER_PUPIL_DOWN'   => $request->dia_down,
-                        'RC'                    => $request->rc,
-                        // 'RC_UP'                 => $request->rc_up,
-                        // 'RC_DOWN'               => $request->rc_down,
+                        'RC_UP'                 => $request->rc_up,
+                        'RC_DOWN'               => $request->rc_down,
                         'VAS'                   => $request->vas,
                         'EYE'                   => $request->gcs_e,
                         'MOTORIK'               => $request->gcs_v,
@@ -764,7 +763,7 @@ class PengkajianGawatDaruratController extends Controller
                 // ==========================
                 // PRIMARY SURVEY - STATUS REPRODUKSI
                 // ==========================
-                DB::table('medicalrecord.status_reproduksi')->updateOrInsert(
+                DB::table('medicalrecord.sirmed_status_reproduksi')->updateOrInsert(
                     [
                         'KUNJUNGAN' => $request->NOKUNJ
                     ],
@@ -839,6 +838,7 @@ class PengkajianGawatDaruratController extends Controller
                             'STATUS'        => 1,
                         ]
                     );
+
                     // PERENCANAAN TERAPI (TABEL RENCANA_TERAPI)
                     DB::table('medicalrecord.rencana_terapi')->updateOrInsert(
                         [
@@ -917,7 +917,7 @@ class PengkajianGawatDaruratController extends Controller
                     "Frekuensi Nafas CB: " . ($request->fr_cb ?? ''),
                     "Pupil: " . ($request->pupil ?? ''),
                     "Diameter Pupil: " . ($request->dia_up ?? '') . " mm/ " . ($request->dia_down ?? ''),
-                    "Refleks Cahaya: " . ($request->rc ?? ''),
+                    "Refleks Cahaya: " . ($request->rc_up ?? '') . " / " . ($request->rc_down ?? ''),
                     "VAS: " . ($request->vas ?? ''),
                     "GCS Eye: " . ($request->gcs_e ?? ''),
                     "GCS Motorik: " . ($request->gcs_v ?? ''),
@@ -1256,7 +1256,7 @@ class PengkajianGawatDaruratController extends Controller
             // STATUS REPRODUKSI
             // ==========================================
             $statusReproduksi = $getData(
-                'medicalrecord.status_reproduksi',
+                'medicalrecord.sirmed_status_reproduksi',
                 [
                     'STATUS_REPRODUKSI',
                     'HPHT',
@@ -1627,11 +1627,20 @@ class PengkajianGawatDaruratController extends Controller
                 // ==========================================
                 // TANDA VITAL
                 // ==========================================
+                // $tandaVital = [
+                //     'SUHU'          => $request->tv_sh ?? '',
+                //     'SISTOLE'       => $request->tv_up ?? '',
+                //     'DIASTOLE'      => $request->tv_down ?? '',
+                //     'FREK_NADI'     => $request->tv_nadi ?? '',
+                //     'FREK_NAFAS'    => $request->tv_fr ?? '',
+                //     'METODE_UKUR'   => $request->tv_mu ?? '',
+                //     'SKALA_NYERI'   => $request->tv_sn ?? '',
+                // ];
                 $tandaVital = [
-                    'SUHU'          => $request->tv_sh ?? '',
-                    'SISTOLE'       => $request->tv_up ?? '',
-                    'DIASTOLE'      => $request->tv_down ?? '',
-                    'FREK_NADI'     => $request->tv_nadi ?? '',
+                    'SUHU'          => $request->p_suhu ?? '',
+                    'SISTOLE'       => $request->p_td_up ?? '',
+                    'DIASTOLE'      => $request->p_td_down ?? '',
+                    'FREK_NADI'     => $request->p_nadi ?? '',
                     'FREK_NAFAS'    => $request->tv_fr ?? '',
                     'METODE_UKUR'   => $request->tv_mu ?? '',
                     'SKALA_NYERI'   => $request->tv_sn ?? '',
@@ -1721,6 +1730,44 @@ class PengkajianGawatDaruratController extends Controller
                         'OLEH'   => auth()->id(),
                         'STATUS' => 1,
                         'TANGGAL' => now(),
+                    ]
+                );
+
+                // ==========================
+                // PRIMARY SURVEY - TTV
+                // ==========================
+                DB::table('medicalrecord.tanda_vital')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'KEADAAN_UMUM'          => $request->p_keu,
+                        'KESADARAN'             => "",
+                        'SISTOLIK'              => $request->p_td_up,
+                        'DISTOLIK'              => $request->p_td_down,
+                        'FREKUENSI_NADI'        => $request->p_nadi,
+                        'FREKUENSI_NADI_CB'     => $request->p_fr_nadi,
+                        'SUHU'                  => $request->p_suhu,
+                        'SATURASI_O2'           => $request->p_spo2,
+                        'TINGKAT_KESADARAN'     => $request->p_tks,
+                        'FREKUENSI_NAFAS'       => $request->p_fr,
+                        'FREKUENSI_NAFAS_CB'    => $request->p_fr_cb,
+                        'PUPIL'                 => $request->p_pupil,
+                        'DIAMETER_PUPIL_UP'     => $request->p_dia_up,
+                        'DIAMETER_PUPIL_DOWN'   => $request->p_dia_down,
+                        'RC_UP'                 => $request->p_rc_up,
+                        'RC_DOWN'               => $request->p_rc_down,
+                        'VAS'                   => $request->p_vas,
+                        'EYE'                   => $request->p_gcs_e,
+                        'MOTORIK'               => $request->p_gcs_v,
+                        'VERBAL'                => $request->p_gcs_m,
+                        'GCS'                   => $request->p_gcs_t,
+                        'JALAN_NAFAS'           => $request->p_jn,
+                        'ALAT_BANTU_NAFAS'      => $request->p_abn,
+                        'KULIT'                 => $request->p_kulit,
+                        'OLEH'                  => auth()->id(),
+                        'STATUS'                => 1,
+                        'TANGGAL'               => now()
                     ]
                 );
 
@@ -2056,7 +2103,7 @@ class PengkajianGawatDaruratController extends Controller
                 // ==========================================
                 // STATUS REPRODUKSI
                 // ==========================================
-                DB::table('medicalrecord.status_reproduksi')->updateOrInsert(
+                DB::table('medicalrecord.sirmed_status_reproduksi')->updateOrInsert(
                     [
                         'KUNJUNGAN' => $request->NOKUNJ
                     ],
@@ -2183,7 +2230,7 @@ class PengkajianGawatDaruratController extends Controller
                 );
 
                 // ==========================================
-                // MASALAH KEPERAWATAN
+                // DIAGNOSIS KEPERAWATAN
                 // ==========================================
                 DB::table('medicalrecord.masalah_keperawatan')->updateOrInsert(
                     [
@@ -2210,6 +2257,54 @@ class PengkajianGawatDaruratController extends Controller
                         'STATUS'                        => 1,
                     ]
                 );
+                // SIMPAN JUGA KE TABEL PEMERIKSAAN_FISIK
+                $diagnosisKeperawatan = [
+                    'dmk_1'  => 'Nyeri',
+                    'dmk_2'  => 'Cemas',
+                    'dmk_3'  => 'Perubahan Nutrisi',
+                    'dmk_4'  => 'Gangguan Pernafasan',
+                    'dmk_5'  => 'Gangguan Perfusi Jaringan',
+                    'dmk_6'  => 'Gangguan Volume Cairan',
+                    'dmk_7'  => 'Potensi Infeksi',
+                    'dmk_8'  => 'Hipertermi',
+                    'dmk_9'  => 'Takut (Pada Anak)',
+                    'dmk_10' => 'Ketidak Efektifan Pola Makan',
+                ];
+
+                $diagnosisTerpilih = [];
+
+                foreach ($diagnosisKeperawatan as $field => $label) {
+                    if ($request->boolean($field)) {
+                        $diagnosisTerpilih[] = $label;
+                    }
+                }
+
+                $masalahLain = trim($request->input('dmk_lain', ''));
+
+                $deskripsi = [];
+
+                if (!empty($diagnosisTerpilih)) {
+                    $deskripsi[] = 'Diagnosis Keperawatan : ' . implode(', ', $diagnosisTerpilih);
+                }
+
+                if ($masalahLain !== '') {
+                    $deskripsi[] = 'Masalah Lain : ' . $masalahLain;
+                }
+
+                $deskripsiPemFis = implode("\n", $deskripsi);
+                DB::table('medicalrecord.pemeriksaan_fisik')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN'   => $request->NOKUNJ,
+                            'PENDAFTARAN' => $getDataKunjungan->NOPEN,
+                        ],
+                        [
+                            'TANGGAL'    => now(),
+                            'DESKRIPSI'  => $deskripsiPemFis,
+                            'OLEH'       => auth()->id(),
+                            'STATUS'     => 1,
+                        ]
+                    );
 
                 // ==========================================
                 // DISCHARGE PLANNING - FAKTOR RISIKO

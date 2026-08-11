@@ -347,105 +347,103 @@
             </div>
             <div class="col-md-12 mb-3">
                 <div class="card card-body border border-dashed border-warning mb-3">
+                    <h5>I. Primary <b class="text-warning">Survey</b></h5>
                     <div class="row">
-                        <h5>I. Primary <b class="text-warning">Survey</b></h5>
-                        <div class="col-md-6">
-                            <div class="mb-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group mb-3">
                                 <h6>Keadaan Umum</h6>
                                 <div class="form-group">
                                     <input type="text" class="form-control" name="keu" placeholder="">
                                 </div>
                             </div>
-                            <div class="mb-2">
-                                <h6>Jalan Nafas ( <b class="text-warning">A</b> )</h6>
-                                <div class="form-group">
-                                    <div class="form-check form-check-inline mb-2">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="1">
-                                        <label class="form-check-label"> Palen </label>
-                                    </div>
-                                    <div class="form-check form-check-inline mb-2">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="2">
-                                        <label class="form-check-label"> Obstruksi Parsial </label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="3">
-                                        <label class="form-check-label"> Obstruksi Total </label>
-                                    </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <h6 class="mb-0">Jalan Nafas ( <b class="text-warning">A</b> )</h6>
+                                <div class="form-check m-0">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="1">
+                                    <label class="form-check-label"> Paten </label>
+                                </div>
+                                <div class="form-check m-0">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="2">
+                                    <label class="form-check-label"> Obstruksi Parsial </label>
+                                </div>
+                                <div class="form-check m-0">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="3">
+                                    <label class="form-check-label"> Obstruksi Total </label>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <h6>Pernafasan ( <b class="text-warning">B</b> )</h6>
-                                <div class="form-group">
-                                    <label class="form-label">Frekuensi Nafas</label>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="input-group input-group-sm flex-grow-1">
-                                            <input type="number" class="form-control" name="fr">
-                                            <span class="input-group-text">X/menit</span>
-                                        </div>
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="fr_cb" value="1" checked="">
-                                            <label class="form-check-label">
-                                                Simetris
-                                            </label>
-                                        </div>
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="fr_cb" value="2">
-                                            <label class="form-check-label">
-                                                Asimetris
-                                            </label>
-                                        </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6>Pernafasan ( <b class="text-warning">B</b> )</h6>
+                            <div class="form-group">
+                                <label class="form-label">Frekuensi Nafas</label>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="input-group input-group-sm flex-grow-1">
+                                        <input type="number" class="form-control" name="fr">
+                                        <span class="input-group-text">X/menit</span>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <h6>Sirkulasi ( <b class="text-warning">C</b> )</h6>
-                                <div class="form-group">
-                                    <label class="form-label">Frekuensi Nadi</label>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="input-group input-group-sm flex-grow-1">
-                                            <input type="number" class="form-control" name="nadi">
-                                            <span class="input-group-text">X/menit</span>
-                                        </div>
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="fr_nadi" value="1">
-                                            <label class="form-check-label">
-                                                Reguler
-                                            </label>
-                                        </div>
-                                        <div class="form-check m-0">
-                                            <input class="form-check-input single-checkbox" type="checkbox" name="fr_nadi" value="2">
-                                            <label class="form-check-label">
-                                                Ireguler
-                                            </label>
-                                        </div>
+                                    <div class="form-check m-0">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="fr_cb" value="1" checked="">
+                                        <label class="form-check-label">
+                                            Simetris
+                                        </label>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Tekanan Darah (mmHg)</label>
-                                    <div class="input-group input-group-sm mb-2">
-                                        <input type="number" class="form-control" name="td_up">
-                                        <div class="input-group-text"> / </div>
-                                        <input type="number" class="form-control" name="td_down">
-                                        <div class="input-group-text"> mmHg </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Suhu</label>
-                                    <div class="input-group input-group-sm mb-2">
-                                        <input type="number" class="form-control" name="suhu">
-                                        <div class="input-group-text">°C</div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">SpO2</label>
-                                    <div class="input-group input-group-sm">
-                                        <input type="number" class="form-control" name="spo2">
-                                        <div class="input-group-text">%</div>
+                                    <div class="form-check m-0">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="fr_cb" value="2">
+                                        <label class="form-check-label">
+                                            Asimetris
+                                        </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3">
+                            <h6>Sirkulasi ( <b class="text-warning">C</b> )</h6>
+                            <div class="form-group">
+                                <label class="form-label">Frekuensi Nadi</label>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="input-group input-group-sm flex-grow-1">
+                                        <input type="number" class="form-control" name="nadi">
+                                        <span class="input-group-text">X/menit</span>
+                                    </div>
+                                    <div class="form-check m-0">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="fr_nadi" value="1" checked="">
+                                        <label class="form-check-label">
+                                            Reguler
+                                        </label>
+                                    </div>
+                                    <div class="form-check m-0">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="fr_nadi" value="2">
+                                        <label class="form-check-label">
+                                            Ireguler
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tekanan Darah (mmHg)</label>
+                                <div class="input-group input-group-sm mb-2">
+                                    <input type="number" class="form-control" name="td_up">
+                                    <div class="input-group-text"> / </div>
+                                    <input type="number" class="form-control" name="td_down">
+                                    <div class="input-group-text"> mmHg </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Suhu</label>
+                                <div class="input-group input-group-sm mb-2">
+                                    <input type="number" class="form-control" name="suhu">
+                                    <div class="input-group-text">°C</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">SpO2</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" class="form-control" name="spo2">
+                                    <div class="input-group-text">%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <h6>Neorologi ( <b class="text-warning">D</b> )</h6>
                             <div class="row">
                                 <div class="col-md-12">
@@ -482,16 +480,62 @@
                                                 <input type="number" class="form-control" name="dia_down">
                                             </div>
                                         </div>
-                                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                            <label class="form-label mb-0">RC (Refleks Cahaya)</label>
-                                            <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="rc" value="1">
-                                                [<label class="form-check-label"> <i class="ri-add-line"></i> </label>]
+                                        <div class="d-flex align-items-center gap-3">
+                                            <label class="form-label mb-0 flex-shrink-0">
+                                                RC (Refleks Cahaya)
+                                            </label>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="form-check mb-0">
+                                                    <input
+                                                        class="form-check-input single-checkbox"
+                                                        type="checkbox"
+                                                        name="rc_up"
+                                                        value="+"
+                                                        id="rc_up_plus"
+                                                    >
+                                                    <label class="form-check-label" for="rc_up_plus">
+                                                        +
+                                                    </label>
+                                                </div>
+                                                <div class="form-check mb-0">
+                                                    <input
+                                                        class="form-check-input single-checkbox"
+                                                        type="checkbox"
+                                                        name="rc_up"
+                                                        value="-"
+                                                        id="rc_up_minus"
+                                                    >
+                                                    <label class="form-check-label" for="rc_up_minus">
+                                                        -
+                                                    </label>
+                                                </div>
                                             </div>
-                                            <label class="form-label mb-0"> / </label>
-                                            <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="rc" value="2">
-                                                [<label class="form-check-label"> <i class="ri-subtract-line"></i> </label>]
+                                            <span class="text-danger fw-bold">/</span>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="form-check mb-0">
+                                                    <input
+                                                        class="form-check-input single-checkbox"
+                                                        type="checkbox"
+                                                        name="rc_down"
+                                                        value="+"
+                                                        id="rc_down_plus"
+                                                    >
+                                                    <label class="form-check-label" for="rc_down_plus">
+                                                        +
+                                                    </label>
+                                                </div>
+                                                <div class="form-check mb-0">
+                                                    <input
+                                                        class="form-check-input single-checkbox"
+                                                        type="checkbox"
+                                                        name="rc_down"
+                                                        value="-"
+                                                        id="rc_down_minus"
+                                                    >
+                                                    <label class="form-check-label" for="rc_down_minus">
+                                                        -
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                         {{-- <div class="d-flex align-items-center gap-2 flex-shrink-0">
@@ -530,41 +574,47 @@
                                         <label class="form-label">VAS (<i>Visual Analog Scale</i>)</label>
                                         <input type="number" class="form-control" name="vas">
                                     </div>
-                                    <div class="mb-3">
-                                        <h6>Alat Bantu Nafas</h6>
-                                        <div class="form-group">
-                                            <div class="form-check form-check-inline mb-2">
-                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="2">
-                                                <label class="form-check-label"> Ya </label>
-                                            </div>
-                                            <div class="form-check form-check-inline mb-2">
-                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="0">
-                                                <label class="form-check-label"> Tidak </label>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <h6>Alat Bantu Nafas</h6>
+                                                <div class="form-group">
+                                                    <div class="form-check form-check-inline mb-2">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="2">
+                                                        <label class="form-check-label"> Ya </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-2">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="0">
+                                                        <label class="form-check-label"> Tidak </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <h6>Kulit</h6>
-                                        <div class="form-group">
-                                            <div class="form-check form-check-inline mb-2">
-                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="1">
-                                                <label class="form-check-label"> Normal </label>
-                                            </div>
-                                            <div class="form-check form-check-inline mb-2">
-                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="2">
-                                                <label class="form-check-label"> Jaundice </label>
-                                            </div>
-                                            <div class="form-check form-check-inline mb-2">
-                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="3">
-                                                <label class="form-check-label"> Akral Dingin </label>
-                                            </div>
-                                            <div class="form-check form-check-inline mb-2">
-                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="4">
-                                                <label class="form-check-label"> Sianotik </label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="5">
-                                                <label class="form-check-label"> Berkeringat </label>
+                                        <div class="col-md-8">
+                                            <div class="mb-3">
+                                                <h6>Kulit</h6>
+                                                <div class="form-group">
+                                                    <div class="form-check form-check-inline mb-2">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="1">
+                                                        <label class="form-check-label"> Normal </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-2">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="2">
+                                                        <label class="form-check-label"> Jaundice </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-2">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="3">
+                                                        <label class="form-check-label"> Akral Dingin </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline mb-2">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="4">
+                                                        <label class="form-check-label"> Sianotik </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="5">
+                                                        <label class="form-check-label"> Berkeringat </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -916,19 +966,21 @@
                                     <colgroup>
                                         <col style="width: 1%;">
                                         <col>
+                                        <col style="width: 20%;">
                                         <col style="width: 5%;">
                                         <col style="width: 1%;">
                                     </colgroup>
                                     <tr>
                                         <th>No</th>
                                         <th>Diagnosis</th>
+                                        <th>Kode</th>
                                         <th>Utama</th>
                                         <th class="text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tblDiagnosisBody">
                                     <tr>
-                                        <td colspan="4" class="text-center">Tidak ada data</td>
+                                        <td colspan="5" class="text-center">Tidak ada data</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -998,7 +1050,7 @@
 </div>
 
 <script>
-    const $sectionGdD = $('#gd_dokter');
+    var $sectionGdD = $('#gd_dokter');
     $(document).ready(function() {
         const $inputObat = $('[name="rpo_nama_obat"]');
         // const $inputBarangId = $('[name="rpo_barang_id"]');
@@ -1759,8 +1811,13 @@
                 // Refleks cahaya
                 FormHelper.setSingleCheckbox(
                     $form,
-                    'rc',
-                    tandaVital.RC
+                    'rc_up',
+                    tandaVital.RC_UP
+                );
+                FormHelper.setSingleCheckbox(
+                    $form,
+                    'rc_down',
+                    tandaVital.RC_DOWN
                 );
 
                 // GCS
@@ -2622,8 +2679,8 @@
                 } else {
                     html = `
                         <tr>
-                            <td colspan="7" class="text-center">
-                                Tidak ada hasil laboratorium
+                            <td colspan="8" class="text-center">
+                                Tidak ada hasil radiologi
                             </td>
                         </tr>
                     `;
@@ -2658,7 +2715,7 @@
             type: 'GET',
             beforeSend: function () {
                 $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
-                $("#tblDiagnosisBody").html(`<tr><td colspan="4" class="text-center"><i class="ri-refresh-line ri-spin me-1"></i> Memproses data...</td></tr>`);
+                $("#tblDiagnosisBody").html(`<tr><td colspan="5" class="text-center"><i class="ri-refresh-line ri-spin me-1"></i> Memproses data...</td></tr>`);
             },
             success: function (res) {
                 let html = '';
@@ -2668,6 +2725,7 @@
                         <tr>
                             <td>${i + 1}</td>
                             <td>${v.DIAGNOSA}</td>
+                            <td>${v.KODE_DIAGNOSA ? v.KODE_DIAGNOSA : '-'}${v.NAMA_DIAGNOSA ? ' - '+v.NAMA_DIAGNOSA : ''}</td>
                             <td>${v.UTAMA}</td>
                             <td class="text-center">
                                 <button class="btn btn-subtle-danger waves-effect waves-light btn-icon btn-sm" onclick="hapusDiagnosis(${v.ID})">
@@ -2680,7 +2738,7 @@
                 } else {
                     html = `
                     <tr>
-                        <td colspan="4" class="text-center">Tidak ada data</td>
+                        <td colspan="5" class="text-center">Tidak ada data</td>
                     </tr>
                     `;
                 }
