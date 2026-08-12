@@ -476,7 +476,7 @@
                                         </div>
                                         <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                             <label class="form-label mb-0"> Diameter Pupil </label>
-                                            <div class="input-group input-group-sm" style="width: 180px;">
+                                            <div class="input-group input-group-sm" style="width: 250px;">
                                                 <input type="number" class="form-control" name="dia_up">
                                                 <div class="input-group-text"> mm / </div>
                                                 <input type="number" class="form-control" name="dia_down">
@@ -488,56 +488,28 @@
                                                 RC (Refleks Cahaya)
                                             </label>
                                             <div class="d-flex align-items-center gap-2">
-                                                <div class="form-check mb-0">
+                                                <div class="form-group mb-0">
                                                     <input
-                                                        class="form-check-input single-checkbox"
-                                                        type="checkbox"
+                                                        class="form-control"
+                                                        type="text"
                                                         name="rc_up"
-                                                        value="+"
-                                                        id="rc_up_plus"
+                                                        placeholder="..."
+                                                        maxlength="1"
+                                                        style="width:60px;"
                                                     >
-                                                    <label class="form-check-label" for="rc_up_plus">
-                                                        +
-                                                    </label>
-                                                </div>
-                                                <div class="form-check mb-0">
-                                                    <input
-                                                        class="form-check-input single-checkbox"
-                                                        type="checkbox"
-                                                        name="rc_up"
-                                                        value="-"
-                                                        id="rc_up_minus"
-                                                    >
-                                                    <label class="form-check-label" for="rc_up_minus">
-                                                        -
-                                                    </label>
                                                 </div>
                                             </div>
                                             <span class="text-danger fw-bold">/</span>
                                             <div class="d-flex align-items-center gap-2">
-                                                <div class="form-check mb-0">
+                                                <div class="form-group mb-0">
                                                     <input
-                                                        class="form-check-input single-checkbox"
-                                                        type="checkbox"
+                                                        class="form-control"
+                                                        type="text"
                                                         name="rc_down"
-                                                        value="+"
-                                                        id="rc_down_plus"
+                                                        placeholder="..."
+                                                        maxlength="1"
+                                                        style="width:60px;"
                                                     >
-                                                    <label class="form-check-label" for="rc_down_plus">
-                                                        +
-                                                    </label>
-                                                </div>
-                                                <div class="form-check mb-0">
-                                                    <input
-                                                        class="form-check-input single-checkbox"
-                                                        type="checkbox"
-                                                        name="rc_down"
-                                                        value="-"
-                                                        id="rc_down_minus"
-                                                    >
-                                                    <label class="form-check-label" for="rc_down_minus">
-                                                        -
-                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
@@ -1129,13 +1101,19 @@
         //     $inputBarangId.val('');
         // });
 
+        // HITUNG GCS
         $sectionGdD.on(
             'input',
             "input[name='gcs_e'], input[name='gcs_v'], input[name='gcs_m']",
             function () {
-                hitungGCS();
+                FormHelper.hitungGCS($sectionGdD, 'gcs');
             }
         );
+
+        // REFLEKS CAHAYA (+/-)
+        $sectionGdD.on('input', 'input[name^="rc_"]', function () {
+            this.value = this.value.replace(/[^+-]/g, '').charAt(0);
+        });
 
         // CB - Status Reproduksi
         $sectionGdD.on('change', '[name="sr"]', function () {
@@ -1836,12 +1814,12 @@
                 );
 
                 // Refleks cahaya
-                FormHelper.setSingleCheckbox(
+                FormHelper.setValue(
                     $form,
                     'rc_up',
                     tandaVital.RC_UP
                 );
-                FormHelper.setSingleCheckbox(
+                FormHelper.setValue(
                     $form,
                     'rc_down',
                     tandaVital.RC_DOWN
@@ -1953,14 +1931,12 @@
                     statusReproduksi.HPHT
                 );
 
-
                 // Siklus
                 FormHelper.setValue(
                     $form,
                     'sr_siklus',
                     statusReproduksi.SIKLUS
                 );
-
 
                 // KB
                 FormHelper.setValue(
@@ -1969,7 +1945,6 @@
                     statusReproduksi.KB
                 );
 
-
                 // Gravida
                 FormHelper.setValue(
                     $form,
@@ -1977,14 +1952,12 @@
                     statusReproduksi.HAMIL_GRAVIDA
                 );
 
-
                 // Paritas
                 FormHelper.setValue(
                     $form,
                     'sr_prt',
                     statusReproduksi.HAMIL_PARITAS
                 );
-
 
                 // Abortus
                 FormHelper.setValue(
@@ -2135,15 +2108,6 @@
                 const rpp =
                     data.rpp || {};
 
-                console.log(
-                    'Riwayat penyakit dahulu:',
-                    rpp
-                );
-
-
-                // Controller simpan:
-                // DESKRIPSI = $request->rpd
-                //
                 FormHelper.setValue(
                     $form,
                     'rpd',
@@ -2157,11 +2121,6 @@
 
                 const pemeriksaanFisik =
                     data.pemeriksaan_fisik || {};
-
-                console.log(
-                    'Pemeriksaan fisik:',
-                    pemeriksaanFisik
-                );
 
                 FormHelper.setValue(
                     $form,
@@ -2302,18 +2261,6 @@
                 $button.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Pengkajian');
             }
         });
-    }
-
-    // HELPER ON ---------------------------------------------------------------------------------------------------------------------------------------------------
-    function hitungGCS() {
-        const $form = $('#formContent').find('.form-wrapper').has('input[name="ats_jn_1"]').first();
-        const eye = FormHelper.setValidNumber($form, 'gcs_e');
-        const verbal = FormHelper.setValidNumber($form, 'gcs_v');
-        const motorik = FormHelper.setValidNumber($form, 'gcs_m');
-
-        const total = eye + verbal + motorik;
-
-        $("input[name='gcs_t']").val(total);
     }
 
     // ADD ON ---------------------------------------------------------------------------------------------------------------------------------------------------

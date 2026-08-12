@@ -76,6 +76,22 @@ class PengkajianGawatDaruratController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
+        $pasien = DB::table('pendaftaran.kunjungan AS pk')
+            ->leftJoin('pendaftaran.pendaftaran AS pd', 'pd.NOMOR', '=', 'pk.NOPEN')
+            ->leftJoin('master.pasien AS p', 'p.NORM', '=', 'pd.NORM')
+            ->leftJoin('master.referensi AS ag', function ($join) {
+                $join->on('ag.ID', '=', 'p.AGAMA')
+                    ->where('ag.JENIS', '=', '1');
+            })
+            ->leftJoin('master.referensi AS kj', function ($join) {
+                $join->on('kj.ID', '=', 'p.PEKERJAAN')
+                    ->where('kj.JENIS', '=', '4');
+            })
+            ->leftJoin('master.dokter AS dok', 'dok.ID', '=', 'pk.DPJP')
+            ->select('dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'), 'ag.DESKRIPSI AS AGAMA', 'kj.DESKRIPSI AS PEKERJAAN')
+            ->where('pk.NOMOR', $kunjungan)
+            ->first();
+
         $data = [
             'kunjungan' => $kunjungan,
             'tingkat_kesadaran' => $tingkat_kesadaran,
@@ -85,7 +101,8 @@ class PengkajianGawatDaruratController extends Controller
             'jk' => $jk,
             'keadaan_keluar' => $keadaan_keluar,
             'frekuensi_obat' => $frekuensi_obat,
-            'rute_obat' => $rute_obat
+            'rute_obat' => $rute_obat,
+            'pasien' => $pasien
         ];
 
         return view('pages.v2.medicalrecord.detail.form.pengkajian.gawat-darurat.index')->with('list',$data);
@@ -1760,11 +1777,11 @@ class PengkajianGawatDaruratController extends Controller
                         'TINGKAT_KESADARAN'     => $request->p_tks,
                         'FREKUENSI_NAFAS'       => $request->p_fr,
                         'FREKUENSI_NAFAS_CB'    => $request->p_fr_cb,
-                        'PUPIL'                 => $request->p_pupil,
-                        'DIAMETER_PUPIL_UP'     => $request->p_dia_up,
-                        'DIAMETER_PUPIL_DOWN'   => $request->p_dia_down,
-                        'RC_UP'                 => $request->p_rc_up,
-                        'RC_DOWN'               => $request->p_rc_down,
+                        // 'PUPIL'                 => $request->p_pupil,
+                        // 'DIAMETER_PUPIL_UP'     => $request->p_dia_up,
+                        // 'DIAMETER_PUPIL_DOWN'   => $request->p_dia_down,
+                        // 'RC_UP'                 => $request->p_rc_up,
+                        // 'RC_DOWN'               => $request->p_rc_down,
                         'VAS'                   => $request->p_vas,
                         'EYE'                   => $request->p_gcs_e,
                         'MOTORIK'               => $request->p_gcs_v,

@@ -16,11 +16,17 @@ use Auth, Storage;
 
 // CONTROLLER FORM
 use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
+
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanAnakController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanJiwaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanGeriatriController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanObsgynController;
+
+use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapDewasaController;
+use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapAnakController;
+use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapNeonatusController;
+use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapObsgynController;
 
 class EMRController extends Controller
 {
@@ -578,11 +584,17 @@ class EMRController extends Controller
 
         $controllers = [
             'pengkajian-gd'                 => PengkajianGawatDaruratController::class,
+
             'pengkajian-rajal-dewasa'       => PengkajianRawatJalanDewasaController::class,
             'pengkajian-rajal-anak'         => PengkajianRawatJalanAnakController::class,
             'pengkajian-rajal-psikiatri'    => PengkajianRawatJalanJiwaController::class,
             'pengkajian-rajal-geriatri'     => PengkajianRawatJalanGeriatriController::class,
-            'pengkajian-rajal-obsgyn'     => PengkajianRawatJalanObsgynController::class,
+            'pengkajian-rajal-obsgyn'       => PengkajianRawatJalanObsgynController::class,
+
+            'pengkajian-ranap-dewasa'       => PengkajianRawatInapDewasaController::class,
+            'pengkajian-ranap-anak'         => PengkajianRawatInapAnakController::class,
+            'pengkajian-ranap-neonatus'     => PengkajianRawatInapNeonatusController::class,
+            'pengkajian-ranap-obsgyn'       => PengkajianRawatInapObsgynController::class,
         ];
 
         abort_unless(isset($controllers[$form]), 404);

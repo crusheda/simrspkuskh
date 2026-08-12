@@ -201,7 +201,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <h6>Sirkulasi ( <b class="text-warning">C</b> )</h6>
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label class="form-label">Frekuensi Nadi</label>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="input-group input-group-sm flex-grow-1">
@@ -222,7 +222,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label class="form-label">Tekanan Darah (mmHg)</label>
                                 <div class="input-group input-group-sm mb-2">
                                     <input type="number" class="form-control" name="p_td_up">
@@ -231,7 +231,7 @@
                                     <div class="input-group-text"> mmHg </div>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mb-3">
                                 <label class="form-label">Suhu</label>
                                 <div class="input-group input-group-sm mb-2">
                                     <input type="number" class="form-control" name="p_suhu">
@@ -262,7 +262,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                                {{-- <div class="col-md-12">
                                     <div class="d-flex align-items-center column-gap-5 row-gap-3 flex-wrap mb-3">
                                         <div class="d-flex align-items-center gap-2 flex-shrink-0">
                                             <label class="form-label mb-0">Pupil</label>
@@ -343,7 +343,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="form-label">GCS (<i>Glasgow Coma Scale</i>)</label>
@@ -684,7 +684,7 @@
                             <div class="row mb-1 align-items-center">
                                 <label class="col-md-2 col-form-label">Agama</label>
                                 <div class="col-md-10">
-                                    <input type="text" class="form-control form-control-sm" name="agama" placeholder="Otomatis terisi oleh sistem">
+                                    <input type="text" class="form-control form-control-sm" name="agama" placeholder="Otomatis terisi oleh sistem" value="{{ $list['pasien']->AGAMA ?? '' }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -746,7 +746,7 @@
                             <div class="row mb-1 align-items-center">
                                 <label class="col-md-2 col-form-label">Pekerjaan</label>
                                 <div class="col-md-10">
-                                    <input type="text" class="form-control form-control-sm" name="kerja" placeholder="Otomatis terisi oleh sistem">
+                                    <input type="text" class="form-control form-control-sm" name="kerja" value="{{ $list['pasien']->PEKERJAAN ?? '' }}" placeholder="Otomatis terisi oleh sistem" readonly>
                                 </div>
                             </div>
                         </div>
@@ -2596,6 +2596,15 @@
             }
         });
 
+        // HITUNG GCS TANDA VITAL
+        $sectionGdP.on(
+            'input',
+            "input[name='p_gcs_e'], input[name='p_gcs_v'], input[name='p_gcs_m']",
+            function () {
+                FormHelper.hitungGCS($sectionGdP, 'p_gcs');
+            }
+        );
+
         // START SKRINING NYERI ------------------------------------------------------------------------------
         const metodeMap = {
             1: '#tampil_sn_nrs',
@@ -3719,45 +3728,6 @@
                         $form,
                         'p_spo2',
                         tandaVital.SATURASI_O2
-                    );
-
-                    // Pupil
-                    // if (tandaVital.PUPIL !== null) {
-                    //     $('input[name="pupil"]')
-                    //         .prop('checked', false);
-
-                    //     $(`input[name="pupil"][value="${tandaVital.PUPIL}"]`)
-                    //         .prop('checked', true);
-                    // }
-                    FormHelper.setSingleCheckbox(
-                        $form,
-                        'p_pupil',
-                        tandaVital.PUPIL
-                    );
-
-                    // Diameter pupil
-                    FormHelper.setValue(
-                        $form,
-                        'p_dia_up',
-                        tandaVital.DIAMETER_PUPIL_UP
-                    );
-
-                    FormHelper.setValue(
-                        $form,
-                        'p_dia_down',
-                        tandaVital.DIAMETER_PUPIL_DOWN
-                    );
-
-                    // Refleks cahaya
-                    FormHelper.setSingleCheckbox(
-                        $form,
-                        'p_rc_up',
-                        tandaVital.RC_UP
-                    );
-                    FormHelper.setSingleCheckbox(
-                        $form,
-                        'p_rc_down',
-                        tandaVital.RC_DOWN
                     );
 
                     // GCS

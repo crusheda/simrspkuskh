@@ -240,6 +240,30 @@ window.FormHelper = {
         return value;
     },
 
+    // ==========================================
+    // HITUNG GCS
+    // ==========================================
+    hitungGCS: function ($form, name) {
+
+        const eye = this.setValidNumber($form, `${name}_e`);
+        const verbal = this.setValidNumber($form, `${name}_v`);
+        const motorik = this.setValidNumber($form, `${name}_m`);
+
+        const $total = $form.find(`input[name="${name}_t"]`);
+
+        if (!$total.length) return;
+
+        // Jika salah satu belum diisi
+        if (eye === 0 && verbal === 0 && motorik === 0) {
+            $total.val('');
+            return;
+        }
+
+        // Semua valid
+        const total = eye + verbal + motorik;
+
+        $total.val(total);
+    },
 
     // ==========================================================
     // FORMAT DATETIME LOCAL

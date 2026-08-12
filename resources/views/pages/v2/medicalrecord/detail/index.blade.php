@@ -5,7 +5,7 @@
 <div class="container-fluid">
 
     <!-- [ breadcrumb ] start -->
-    <nav aria-label="breadcrumb">
+    <nav aria-label="breadcrumb" id="breadcrumb-detail-kunjungan">
         <ol class="breadcrumb px-3 py-2 bg-primary-subtle rounded-3">
             <li class="breadcrumb-item">
                 <a class="link-primary" href="{{ route('v2.dashboard') }}">
@@ -23,7 +23,7 @@
 
     <!-- [ Main Content ] start -->
     <div class="col-sm-12">
-        <div class="card mb-2">
+        <div class="card mb-2" id="btn-top-detail-kunjungan">
             <div class="card-body p-2">
                 <div class="d-flex align-items-center justify-content-between">
                     <div data-back-button class="btn btn-outline-primary shadow-lg">
@@ -301,6 +301,17 @@
         $('[data-bs-toggle="tooltip"]').tooltip();
         $('.nav-link').prop('disabled', false);
 
+        // Jalankan setiap kali berpindah tab
+        $('button[data-bs-toggle="tab"], a[data-bs-toggle="tab"]').on(
+            'shown.bs.tab',
+            function (e) {
+
+                const target = $(e.target).attr('data-bs-target') || $(e.target).attr('href');
+
+                handleTabVisibility(target);
+            }
+        );
+
         loadRiwayatKunjunganPasien();
     });
 
@@ -449,45 +460,112 @@
         });
     }
 
+    // function aktifkanTabsDariHash() {
+    //     const hash = window.location.hash; // contoh: #frehab#formlayanankfr
+    //     if (!hash) return;
+
+    //     // pecah jadi array ['frehab', 'formlayanankfr']
+    //     const ids = hash.split('#').filter(Boolean);
+
+    //     ids.forEach((id, index) => {
+    //         const selector = '#' + id;
+    //         const $tabBtn = $('[data-bs-target="' + selector + '"]');
+
+    //         if ($tabBtn.length) {
+    //             const tab = new bootstrap.Tab($tabBtn[0]);
+    //             tab.show();
+
+    //             // SHOWING TOP BUTTON & BREADCRUMB
+    //             $("#btn-top-detail-kunjungan").prop('hidden', false);
+    //             $("#breadcrumb-detail-kunjungan").prop('hidden', false);
+
+    //             // jalankan validasi sesuai target
+    //             if (selector === '#frehab' || selector === '#formlayanankfr') {
+    //                 validPageFormKfr();
+    //                 // console.log('jalan kfr');
+    //             } else if (selector === '#formjadwalpelayanan') {
+    //                 validPageFormJp();
+    //                 // console.log('jalan jp');
+    //             } else if (selector === '#formkonsulkfr') {
+    //                 validPageFormKs();
+    //                 // console.log('jalan ks');
+    //             } else if (selector === '#fmrehab' || selector === 'frjkfr') {
+    //                 // console.log('masuk form kfr');
+    //                 loadFormKfr();
+    //                 loadCpptKfr();
+    //                 loadRiwayatKfr();
+    //             } else if (selector === 'pterapi') {
+    //                 // console.log('masuk form program terapi');
+    //             } else if (selector === '#fpengkajian') {
+    //                 console.log('MASUK PENGKAJIAN');
+    //                 // HIDDEN TOP BUTTON & BREADCRUMB
+    //                 $("#btn-top-detail-kunjungan").prop('hidden', true);
+    //                 $("#breadcrumb-detail-kunjungan").prop('hidden', true);
+    //             } else {
+    //                 console.log('tab lain');
+    //             }
+    //         }
+    //     });
+    // }
+
     function aktifkanTabsDariHash() {
-        const hash = window.location.hash; // contoh: #frehab#formlayanankfr
+
+        const hash = window.location.hash;
+
         if (!hash) return;
 
-        // pecah jadi array ['frehab', 'formlayanankfr']
         const ids = hash.split('#').filter(Boolean);
 
-        ids.forEach((id, index) => {
+        ids.forEach((id) => {
+
             const selector = '#' + id;
-            const $tabBtn = $('[data-bs-target="' + selector + '"]');
+            const $tabBtn = $('[data-bs-target="' + selector + '"], a[href="' + selector + '"]');
 
             if ($tabBtn.length) {
+
                 const tab = new bootstrap.Tab($tabBtn[0]);
+
                 tab.show();
 
-                // jalankan validasi sesuai target
+                // Logic khusus lainnya tetap di sini
                 if (selector === '#frehab' || selector === '#formlayanankfr') {
+
                     validPageFormKfr();
-                    // console.log('jalan kfr');
+
                 } else if (selector === '#formjadwalpelayanan') {
+
                     validPageFormJp();
-                    // console.log('jalan jp');
+
                 } else if (selector === '#formkonsulkfr') {
+
                     validPageFormKs();
-                    // console.log('jalan ks');
-                } else if (selector === '#fmrehab' || selector === 'frjkfr') {
-                    // console.log('masuk form kfr');
+
+                } else if (selector === '#fmrehab' || selector === '#frjkfr') {
+
                     loadFormKfr();
                     loadCpptKfr();
                     loadRiwayatKfr();
-                } else if (selector === 'pterapi') {
-                    // console.log('masuk form program terapi');
-                } else if (selector === 'fpengkajian') {
-                    // console.log('masuk form pengkajian');
-                } else {
-                    console.log('tab lain');
+
+                } else if (selector === '#pterapi') {
+
+                    // Form program terapi
+
                 }
             }
         });
+    }
+
+    function handleTabVisibility(target) {
+
+        if (target === '#fpengkajian') {
+            // Form Pengkajian
+            $('#btn-top-detail-kunjungan').prop('hidden', true);
+            $('#breadcrumb-detail-kunjungan').prop('hidden', true);
+        } else {
+            // Tab lainnya
+            $('#btn-top-detail-kunjungan').prop('hidden', false);
+            $('#breadcrumb-detail-kunjungan').prop('hidden', false);
+        }
     }
 </script>
 @endsection
