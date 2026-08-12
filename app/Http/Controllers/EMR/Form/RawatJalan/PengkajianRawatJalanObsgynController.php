@@ -106,6 +106,14 @@ class PengkajianRawatJalanObsgynController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
+        $usia = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',192)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+
         $data = [
             'kunjungan' => $kunjungan,
             'jenis_ruang' => $jenis_ruang,
@@ -120,6 +128,7 @@ class PengkajianRawatJalanObsgynController extends Controller
             'penolong' => $penolong,
             'tempat' => $tempat,
             'keadaan_sat_ini' => $keadaan_sat_ini,
+            'usia' => $usia,
             ];
         // print_r($data);
         // die();
@@ -490,6 +499,7 @@ class PengkajianRawatJalanObsgynController extends Controller
     {
         // print_r($request->all());
         // die();
+        // dd($request->all());
 
         DB::beginTransaction();
 
@@ -501,6 +511,7 @@ class PengkajianRawatJalanObsgynController extends Controller
                     'KUNJUNGAN' => $request->NOKUNJ
                 ],
                 [
+                    'KELUHAN_UTAMA' => $request->anm_ku,
                     'KEADAAN_UMUM' => $request->ku,
                     'KESADARAN'    => $request->kesadaran,
                     'EYE'          => $request->eye,
@@ -589,20 +600,73 @@ class PengkajianRawatJalanObsgynController extends Controller
             );
 
             // RESIKO JATUH GET UP AND GO
-            DB::table('medicalrecord.penilaian_getup_and_go')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'CARA_BERJALAN_PASIEN' => $request->cara_berjalan ?? 0,
-                    'FAKTOR_RESIKO'        => $request->faktor_risiko ?? 0,
-                    'OBAT_YANG_DIMINUM'    => $request->kon_obat ?? 0,
+            $caraBerjalan = $request->cara_berjalan ?? 0;
+            $faktorRisiko = $request->faktor_risiko ?? 0;
+            $obatDiminum  = $request->kon_obat ?? 0;
 
-                    'OLEH'     => auth()->id(),
-                    'STATUS'   => 1,
-                    'TANGGAL'  => now(),
-                ]
-            );
+            if ($caraBerjalan == 0 && $faktorRisiko == 0 && $obatDiminum == 0) {
+                DB::table('medicalrecord.penilaian_getup_and_go')
+                    ->where('KUNJUNGAN', $request->NOKUNJ)
+                    ->delete();
+            } else {
+                DB::table('medicalrecord.penilaian_getup_and_go')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'CARA_BERJALAN_PASIEN' => $caraBerjalan,
+                        'FAKTOR_RESIKO'        => $faktorRisiko,
+                        'OBAT_YANG_DIMINUM'    => $obatDiminum,
+                        'OLEH'                 => auth()->id(),
+                        'STATUS'               => 1,
+                        'TANGGAL'              => now(),
+                    ]
+                );
+            };
+
+            $usia = $request->rj_usia ?? 0;
+            $jk   = $request->rj_jk ?? 0;
+            $hd1  = $request->rj_hd_1 ?? 0;
+            $hd2  = $request->rj_hd_2 ?? 0;
+            $hd3  = $request->rj_hd_3 ?? 0;
+            $hd4  = $request->rj_hd_4 ?? 0;
+            $hd5  = $request->rj_hd_5 ?? 0;
+
+            if (
+                $usia == 0 &&
+                $jk == 0 &&
+                $hd1 == 0 &&
+                $hd2 == 0 &&
+                $hd3 == 0 &&
+                $hd4 == 0 &&
+                $hd5 == 0
+            ) {
+                DB::table('medicalrecord.penilaian_skala_humpty_dumpty')
+                    ->where('KUNJUNGAN', $request->NOKUNJ)
+                    ->update([
+                        'STATUS' => 0,
+                        'OLEH'   => auth()->id(),
+                    ]);
+            } else {
+                DB::table('medicalrecord.penilaian_skala_humpty_dumpty')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $request->NOKUNJ
+                        ],
+                        [
+                            'UMUR'               => $usia,
+                            'JENIS_KELAMIN'      => $jk,
+                            'DIAGNOSA'           => $hd1,
+                            'GANGGUAN_KONGNITIF' => $hd2,
+                            'FAKTOR_LINGKUNGAN'  => $hd3,
+                            'RESPON'             => $hd4,
+                            'PENGGUNAAN_OBAT'    => $hd5,
+                            'OLEH'               => auth()->id(),
+                            'STATUS'             => 1,
+                            'TANGGAL'            => now(),
+                        ]
+                    );
+            }
 
             // SKRINING GIZI
             DB::table('medicalrecord.permasalahan_gizi')->updateOrInsert(
@@ -709,6 +773,88 @@ class PengkajianRawatJalanObsgynController extends Controller
                 ]
             );
 
+            // ======================================================
+            // STATUS FUNGSIONAL
+            // ======================================================
+
+            $alatBantu = $request->input('alat_bantu_fungsional');
+
+            DB::table('medicalrecord.status_fungsional')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    // Alat bantu
+                    'TANPA_ALAT_BANTU' => $alatBantu === 'tanpa' ? 1 : 0,
+                    'TONGKAT'          => $alatBantu === 'tongkat' ? 1 : 0,
+                    'KURSI_RODA'       => $alatBantu === 'kursi_roda' ? 1 : 0,
+                    'BRANKARD'         => $alatBantu === 'brankard' ? 1 : 0,
+                    'WALKER'           => $alatBantu === 'walker' ? 1 : 0,
+
+                    // Alat bantu lainnya
+                    'ALAT_BANTU' => $request->input('alat_bantu', ''),
+
+                    // Cacat tubuh
+                    'CACAT_TUBUH_TIDAK' => $request->input('cacat_tubuh') == '0' ? 1 : 0,
+                    'CACAT_TUBUH_YA'    => $request->input('cacat_tubuh') == '1' ? 1 : 0,
+
+                    // Keterangan
+                    'KET_CACAT_TUBUH' => $request->input('ket_cacat_tubuh', ''),
+
+                    'OLEH'    => auth()->id(),
+                    'STATUS'  => 1,
+                    'TANGGAL' => now(),
+                ]
+            );
+
+            // DIAGNOSIS KEPERAWATAN
+            DB::table('medicalrecord.sirmed_diagnosa_keperawatan')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'NYERI' =>
+                        $request->input('diag_keperawatan_1') ? 1 : 0,
+
+                    'GANGGUAN_PERFUSI_CEREBRAL' =>
+                        $request->input('diag_keperawatan_2') ? 1 : 0,
+
+                    'CEMAS' =>
+                        $request->input('diag_keperawatan_3') ? 1 : 0,
+
+                    'SENSORI_PERSEPSI' =>
+                        $request->input('diag_keperawatan_4') ? 1 : 0,
+
+                    'HIPERTERMI' =>
+                        $request->input('diag_keperawatan_5') ? 1 : 0,
+
+                    'KERUSAKAN_INTEGRITAS_KULIT' =>
+                        $request->input('diag_keperawatan_6') ? 1 : 0,
+
+                    'GANGGUAN_PERFUSI_JARINGAN' =>
+                        $request->input('diag_keperawatan_7') ? 1 : 0,
+
+                    'BODY_IMAGE' =>
+                        $request->input('diag_keperawatan_8') ? 1 : 0,
+
+                    'GANGGUAN_MOBILITAS_FISIK' =>
+                        $request->input('diag_keperawatan_9') ? 1 : 0,
+
+                    'KURANG_PENGETAHUAN' =>
+                        $request->input('diag_keperawatan_10') ? 1 : 0,
+
+                    'PERUBAHAN_NUTRISI_KURANG_DARI_KEBUTUHAN' =>
+                        $request->input('diag_keperawatan_11') ? 1 : 0,
+
+                    'RENCANA_ASUHAN_KEPERAWATAN' =>
+                        $request->input('rencana_asuhan_keperawatan'),
+
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                    'TANGGAL' => now(),
+                ]
+            );
+
             DB::commit();
 
             return response()->json([
@@ -740,6 +886,7 @@ class PengkajianRawatJalanObsgynController extends Controller
             ->first();
 
         // Default
+        $data['anm_ku'] = '';
         $data['ku'] = '';
         $data['kesadaran'] = '';
         $data['eye'] = '';
@@ -757,6 +904,7 @@ class PengkajianRawatJalanObsgynController extends Controller
 
         if ($tanda_vital) {
 
+            $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
             $data['ku']          = $tanda_vital->KEADAAN_UMUM;
             $data['kesadaran']   = $tanda_vital->KESADARAN;
             $data['eye']         = $tanda_vital->EYE;
@@ -897,6 +1045,20 @@ class PengkajianRawatJalanObsgynController extends Controller
             $data['kon_obat']      = $getup->OBAT_YANG_DIMINUM;
         }
 
+        $data['humpty_dumpty'] = DB::table('medicalrecord.penilaian_skala_humpty_dumpty')
+            ->select([
+                'UMUR',
+                'JENIS_KELAMIN',
+                'DIAGNOSA',
+                'GANGGUAN_KONGNITIF',
+                'FAKTOR_LINGKUNGAN',
+                'RESPON',
+                'PENGGUNAAN_OBAT',
+            ])
+            ->where('KUNJUNGAN', $kunjungan)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first();
 
         // ======================================================
         // SKRINING GIZI
@@ -924,6 +1086,111 @@ class PengkajianRawatJalanObsgynController extends Controller
 
             $data['skor_gizi']      = $gizi->SKOR;
             $data['status_skor']    = $gizi->STATUS_SKOR;
+        }
+
+        // ======================================================
+        // STATUS FUNGSIONAL
+        // ======================================================
+        $status_fungsional = DB::table('medicalrecord.status_fungsional')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first();
+
+        $data['alat_bantu_fungsional'] = '';
+        $data['alat_bantu'] = '';
+        $data['cacat_tubuh'] = '0';
+        $data['ket_cacat_tubuh'] = '';
+
+        if ($status_fungsional) {
+
+            // Tentukan radio alat bantu
+            if ($status_fungsional->TANPA_ALAT_BANTU == 1) {
+                $data['alat_bantu_fungsional'] = 'tanpa';
+
+            } elseif ($status_fungsional->TONGKAT == 1) {
+                $data['alat_bantu_fungsional'] = 'tongkat';
+
+            } elseif ($status_fungsional->KURSI_RODA == 1) {
+                $data['alat_bantu_fungsional'] = 'kursi_roda';
+
+            } elseif ($status_fungsional->BRANKARD == 1) {
+                $data['alat_bantu_fungsional'] = 'brankard';
+
+            } elseif ($status_fungsional->WALKER == 1) {
+                $data['alat_bantu_fungsional'] = 'walker';
+            }
+
+            $data['alat_bantu'] =
+                $status_fungsional->ALAT_BANTU ?? '';
+
+            // Cacat tubuh
+            $data['cacat_tubuh'] =
+                $status_fungsional->CACAT_TUBUH_YA == 1 ? '1' : '0';
+
+            $data['ket_cacat_tubuh'] =
+                $status_fungsional->KET_CACAT_TUBUH ?? '';
+        }
+
+        // ======================================================
+        // DIAGNOSIS KEPERAWATAN
+        // ======================================================
+        $diagnosa_keperawatan = DB::table('medicalrecord.sirmed_diagnosa_keperawatan')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+        $diagnosa_keperawatan_field = [
+
+            'diag_keperawatan_1' =>
+                'NYERI',
+
+            'diag_keperawatan_2' =>
+                'GANGGUAN_PERFUSI_CEREBRAL',
+
+            'diag_keperawatan_3' =>
+                'CEMAS',
+
+            'diag_keperawatan_4' =>
+                'SENSORI_PERSEPSI',
+
+            'diag_keperawatan_5' =>
+                'HIPERTERMI',
+
+            'diag_keperawatan_6' =>
+                'KERUSAKAN_INTEGRITAS_KULIT',
+
+            'diag_keperawatan_7' =>
+                'GANGGUAN_PERFUSI_JARINGAN',
+
+            'diag_keperawatan_8' =>
+                'BODY_IMAGE',
+
+            'diag_keperawatan_9' =>
+                'GANGGUAN_MOBILITAS_FISIK',
+
+            'diag_keperawatan_10' =>
+                'KURANG_PENGETAHUAN',
+
+            'diag_keperawatan_11' =>
+                'PERUBAHAN_NUTRISI_KURANG_DARI_KEBUTUHAN',
+        ];
+
+
+        foreach ($diagnosa_keperawatan_field as $key => $column) {
+            $data[$key] = 0;
+        }
+
+        $data['rencana_asuhan_keperawatan'] = '';
+
+        if ($diagnosa_keperawatan) {
+
+            foreach ($diagnosa_keperawatan_field as $key => $column) {
+
+                $data[$key] =
+                    (int) ($diagnosa_keperawatan->$column ?? 0);
+            }
+
+            $data['rencana_asuhan_keperawatan'] =
+                $diagnosa_keperawatan->RENCANA_ASUHAN_KEPERAWATAN ?? '';
         }
 
         return response()->json($data);
