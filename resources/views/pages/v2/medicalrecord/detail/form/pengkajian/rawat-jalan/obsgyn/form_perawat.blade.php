@@ -4,6 +4,12 @@
         <div class="row">
             <div class="col-md-12 mb-3">
                 <div class="form-group">
+                    <label class="form-label fw-bold"> Keluhan Utama </label>
+                    <input class="form-control form-control" type="text" name="anm_ku" id="anm_ku">
+                </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <div class="form-group">
                     <label class="form-label fw-bold">Keadaan Umum</label>
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control" name="ku" id="ku">
@@ -26,25 +32,25 @@
             <div class="col-md-2 mb-3">
                 <div class="form-group">
                     <label class="form-label fw-bold">E (Eye)</label>
-                    <input type="number" class="form-control form-control-sm" name="eye" id="eye" value="0">
+                    <input type="number" step="1" class="form-control form-control-sm" name="eye" id="eye" value="0">
                 </div>
             </div>
             <div class="col-md-2 mb-3">
                 <div class="form-group">
                     <label class="form-label fw-bold">M (Motorik)</label>
-                    <input type="number" class="form-control form-control-sm" name="motorik" id="motorik" value="0">
+                    <input type="number" step="1" class="form-control form-control-sm" name="motorik" id="motorik" value="0">
                 </div>
             </div>
             <div class="col-md-2 mb-3">
                 <div class="form-group">
                     <label class="form-label fw-bold">V (Verbal)</label>
-                    <input type="number" class="form-control form-control-sm" name="verbal" id="verbal" value="0">
+                    <input type="number" step="1" class="form-control form-control-sm" name="verbal" id="verbal" value="0">
                 </div>
             </div>
             <div class="col-md-2 mb-3">
                 <div class="form-group">
                     <label class="form-label fw-bold">GCS</label>
-                    <input type="number" class="form-control form-control-sm" name="gcs" id="gcs" value="0" readonly>
+                    <input type="number" step="1" class="form-control form-control-sm" name="gcs" id="gcs" value="0" readonly>
                 </div>
             </div>
             <div class="col-md-4 mb-3">
@@ -357,7 +363,144 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-12 mb-3">
+            <div class="card card-body border border-dashed border-primary">
 
+                <label class="form-label fw-bold">
+                    Status Fungsional
+                </label>
+
+                <!-- Alat Bantu -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                        Alat Bantu Mobilitas
+                    </label>
+
+                    <div class="row">
+
+                        <div class="col-md-3">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input check-primary"
+                                    type="radio"
+                                    name="alat_bantu_fungsional"
+                                    id="tanpa_alat_bantu"
+                                    value="tanpa">
+                                <label class="form-check-label" for="tanpa_alat_bantu">
+                                    Tanpa Alat Bantu
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input check-primary"
+                                    type="radio"
+                                    name="alat_bantu_fungsional"
+                                    id="tongkat"
+                                    value="tongkat">
+                                <label class="form-check-label" for="tongkat">
+                                    Tongkat
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input check-primary"
+                                    type="radio"
+                                    name="alat_bantu_fungsional"
+                                    id="kursi_roda"
+                                    value="kursi_roda">
+                                <label class="form-check-label" for="kursi_roda">
+                                    Kursi Roda
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input check-primary"
+                                    type="radio"
+                                    name="alat_bantu_fungsional"
+                                    id="brankard"
+                                    value="brankard">
+                                <label class="form-check-label" for="brankard">
+                                    Brankard
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input check-primary"
+                                    type="radio"
+                                    name="alat_bantu_fungsional"
+                                    id="walker"
+                                    value="walker">
+                                <label class="form-check-label" for="walker">
+                                    Walker
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-9">
+                            <input type="text"
+                                class="form-control"
+                                name="alat_bantu"
+                                id="alat_bantu"
+                                placeholder="Alat bantu lainnya...">
+                        </div>
+
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Cacat Tubuh -->
+                <div>
+                    <label class="form-label fw-semibold">
+                        Cacat Tubuh
+                    </label>
+
+                    <div class="row mb-2">
+
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input check-primary"
+                                    type="radio"
+                                    name="cacat_tubuh"
+                                    id="cacat_tubuh_tidak"
+                                    value="0">
+                                <label class="form-check-label" for="cacat_tubuh_tidak">
+                                    Tidak
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input check-primary"
+                                    type="radio"
+                                    name="cacat_tubuh"
+                                    id="cacat_tubuh_ya"
+                                    value="1">
+                                <label class="form-check-label" for="cacat_tubuh_ya">
+                                    Ya
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <textarea class="form-control"
+                            name="ket_cacat_tubuh"
+                            id="ket_cacat_tubuh"
+                            rows="2"
+                            placeholder="Keterangan cacat tubuh..."></textarea>
+                </div>
+
+            </div>
+        </div>
         <div class="col-md-12 mb-3">
             <div class="card card-body border border-dashed border-primary mb-1">
                 <div class="row">
@@ -487,7 +630,7 @@
                         <div class="row align-items-center">
                             <label class="col-md-4 col-form-label fw-bold">Skala Nyeri</label>
                             <div class="col-md-8">
-                                <input type="number" class="form-control" name="sn_skala" placeholder="Otomatis terisi" value="0" readonly>
+                                <input type="number" step="1" class="form-control" name="sn_skala" placeholder="Otomatis terisi" value="0" readonly>
                             </div>
                         </div>
                     </div>
@@ -501,12 +644,20 @@
                                         <label class="form-check-label">NRS</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="2">
-                                        <label class="form-check-label">BPS</label>
-                                    </div>
-                                    <div class="form-check">
                                         <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="5">
                                         <label class="form-check-label">VAS</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="3">
+                                        <label class="form-check-label">NIPS</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="4">
+                                        <label class="form-check-label">FLACC</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="2">
+                                        <label class="form-check-label">BPS</label>
                                     </div>
                                 </div>
                             </div>
@@ -551,7 +702,7 @@
                                             <h6>2 = sebagian tegang (misal: dahi mengkerut)</h6>
                                             <h6>3 = tegang penuh (misal: kelopak mata menutup rapat)</h6>
                                         </td>
-                                        <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
+                                        <td class="text-center"><input type="number" step="1" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
                                     </tr>
                                     <tr>
                                         <th>Ekspresi Wajah</th>
@@ -560,7 +711,7 @@
                                             <h6>2 = sebagian tegang (misal: dahi mengkerut)</h6>
                                             <h6>3 = tegang penuh (misal: kelopak mata menutup rapat)</h6>
                                         </td>
-                                        <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
+                                        <td class="text-center"><input type="number" step="1" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
                                     </tr>
                                     <tr>
                                         <th>Ekspresi Wajah</th>
@@ -569,7 +720,7 @@
                                             <h6>2 = sebagian tegang (misal: dahi mengkerut)</h6>
                                             <h6>3 = tegang penuh (misal: kelopak mata menutup rapat)</h6>
                                         </td>
-                                        <td class="text-center"><input type="number" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
+                                        <td class="text-center"><input type="number" step="1" class="form-control form-control-sm mx-auto" min="1" max="3" style="width: 100px"></td>
                                     </tr>
                                 </tbody>
                                 <tfoot class="table-light">
@@ -585,6 +736,140 @@
                                                 </ul>
                                             </div>
                                         </th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="tampil_sn_nips" hidden>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-display">
+                                <thead class="text-uppercase">
+                                    <tr class="table-light">
+                                        <th class="text-center">Indikator Penilaian</th>
+                                        <th class="text-center">Keterangan Skor</th>
+                                        <th class="text-center">Skor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th>Ekspresi Wajah</th>
+                                        <td>
+                                            <h6>0 = Relaksasi</h6>
+                                            <h6>1 = Meringis</h6>
+                                        </td>
+                                        <td class="text-center"><input type="number" step="1" name="sn_nips_1" class="form-control form-control-sm mx-auto"  min="0" max="1" style="width: 100px"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tangisan</th>
+                                        <td>
+                                            <h6>0 = Tidak menangis</h6>
+                                            <h6>1 = Meringis</h6>
+                                            <h6>2 = Menangis kuat</h6>
+                                        </td>
+                                        <td class="text-center"><input type="number" step="1" name="sn_nips_2" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Gerakan Lengan</th>
+                                        <td>
+                                            <h6>0 = Relaksasi</h6>
+                                            <h6>1 = Fleksi / ekstensi</h6>
+                                        </td>
+                                        <td class="text-center"><input type="number" step="1" name="sn_nips_3" class="form-control form-control-sm mx-auto" min="0" max="1" style="width: 100px"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Gerakan Tungkai</th>
+                                        <td>
+                                            <h6>0 = relaksasi</h6>
+                                            <h6>1 = Fleksi / ekstensi</h6>
+                                        </td>
+                                        <td class="text-center"><input type="number" step="1" name="sn_nips_4" class="form-control form-control-sm mx-auto" min="0" max="1" style="width: 100px"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Status Terjaga</th>
+                                        <td>
+                                            <h6>0 = Tidur / bangun</h6>
+                                            <h6>1 = Rewel</h6>
+                                        </td>
+                                        <td class="text-center"><input type="number" step="1" name="sn_nips_5" class="form-control form-control-sm mx-auto" min="0" max="1" style="width: 100px"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Pola Nafas</th>
+                                        <td>
+                                            <h6>0 = Relaksasi</h6>
+                                            <h6>1 = Perubahan pola nafas</h6>
+                                        </td>
+                                        <td class="text-center"><input type="number" step="1" name="sn_nips_6" class="form-control form-control-sm mx-auto" min="0" max="1" style="width: 100px"></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <th colspan="3">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <span>Keterangan :</span>
+                                                <ul class="d-flex gap-3 mb-0 ps-0 list-unstyled">
+                                                    <li>> 3 = Nyeri</li>
+                                                    <li>≤ 3 = Tidak Nyeri</li>
+                                                </ul>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="tampil_sn_flacc" hidden>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-display">
+                                <thead class="text-uppercase">
+                                    <tr class="table-light">
+                                        <th class="text-center">Indikator</th>
+                                        <th class="text-center">0</th>
+                                        <th class="text-center">1</th>
+                                        <th class="text-center">2</th>
+                                        <th class="text-center">Skor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th>Wajah</th>
+                                        <td>Tersenyum / tidak ada ekspresi khusus</td>
+                                        <td>Terkadang meringis / menarik diri</td>
+                                        <td>Sering menggetarkan dagu dan mengatupkan rahang</td>
+                                        <td class="text-center"><input type="number" step="1" name="sn_flacc_1" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Kaki</th>
+                                        <td>Gerakan normal / relaksasi</td>
+                                        <td>Tidak tenang</td>
+                                        <td>Kaki dibuat menendang / menarik diri</td>
+                                        <td class="text-center"><input type="number" step="1" name="sn_flacc_2" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Aktivitas</th>
+                                        <td>Tidur, posisi normal mudah bergerak</td>
+                                        <td>Gerakan menggeliat, berguling, kaku</td>
+                                        <td>Melengkungkan punggung / kaku / menghentak</td>
+                                        <td class="text-center"><input type="number" step="1" name="sn_flacc_3" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Menangis</th>
+                                        <td>Tidak menangis (bangung / tidur)</td>
+                                        <td>Mengerang, merengek-rengek</td>
+                                        <td>Menangis terus-menerus, terisak, menjerit</td>
+                                        <td class="text-center"><input type="number" step="1" name="sn_flacc_4" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Bersuara</th>
+                                        <td>Bersuara normal, tenang</td>
+                                        <td>Tenang bila dipeluk, digendong, atau diajak bicara</td>
+                                        <td>Sulit untuk ditenangkan</td>
+                                        <td class="text-center"><input type="number" step="1" name="sn_flacc_5" class="form-control form-control-sm mx-auto" min="0" max="2" style="width: 100px"></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <th colspan="5">Interpretasi : Skor total dari lima parameter di atas menentukan tingkat keparahan nyeri dengan skala 0 - 10. Nilai 10 menunjukan tingkat nyei yang hebat.</th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -645,14 +930,119 @@
         </div>
         <div class="col-md-12 mb-3">
             <div class="card card-body border border-dashed border-warning mb-1">
-                <div class="row">
-                    <div class="col-md-12 mb-1">
-                        <div class="form-group">
-                            <h5 class="border-bottom pb-2 text-bold">
-                                <strong>Skrining Resiko Jatuh (Get Up and Go) </strong>
-                            </h5>
+                <h6>SKRINING RESIKO JATUH</h6>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="form-check mb-0 flex-shrink-0">
+                        <input class="form-check-input check-primary" type="checkbox" id="srj_hd">
+                        <label class="form-check-label ms-1">
+                            <small class="mb-2 fw-bold">Penilaian Resiko Jatuh Anak ( Skala Humpty Dumpty)</small>
+                        </label>
+                    </div>
+                </div>
+                <div class="row" id="tampil_srj_hd" hidden>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-sm flex-grow-1">
+                            <span class="input-group-text">Usia</span>
+                            <select class="form-select form-select-sm" name="rj_usia" id="rj_usia" data-hd-required data-hd-score>
+                                <option value="">Pilih</option>
+                                @if ($list['usia'])
+                                    @foreach ($list['usia'] as $item)
+                                        <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
                         </div>
                     </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-sm flex-grow-1">
+                            <span class="input-group-text">Jenis Kelamin</span>
+                            <select class="form-select form-select-sm" name="rj_jk" id="rj_jk" data-hd-required data-hd-score>
+                                <option value="">Pilih</option>
+                                @if ($list['jenis_kelamin'])
+                                    @foreach ($list['jenis_kelamin'] as $item)
+                                        <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Diagnosa</label>
+                            <select class="form-select form-select-sm" name="rj_hd_1" id="rj_hd_1" data-hd-required data-hd-score>
+                                <option value="">Pilih</option>
+                                <option value="4">Kelainan neurogis (meningitis) enchepalitis kejang dan atau gelisah</option>
+                                <option value="3">Gangguan perilaku / spikiatri</option>
+                                <option value="2">Perubahan oksigenasi (diagnosis, respiratorik, asthma, syncope, dehidrasi, anemia, anoresia)</option>
+                                <option value="1">Diagnosis lainnya</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Gangguan Kognitif</label>
+                            <select class="form-select form-select-sm" name="rj_hd_2" id="rj_hd_2" data-hd-required data-hd-score>
+                                <option value="">Pilih</option>
+                                <option value="3">Belum punya kontrol diri / gelisah</option>
+                                <option value="2">Lupa akan kondisi sakitnya / kadang gelisah</option>
+                                <option value="1">Orientasi terhadap kemampuan diri</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Faktor Lingkungan</label>
+                            <select class="form-select form-select-sm" name="rj_hd_3" id="rj_hd_3" data-hd-required data-hd-score>
+                                <option value="">Pilih</option>
+                                <option value="4">Riwayat jatuh / pasien ditempatkan di tempat tidur dewasa</option>
+                                <option value="3">Pasien menggunakan alat bantu, ditempatkan dikursi / pangkuan</option>
+                                <option value="2">Pasien diletakkan di tempat tidur bayi / khusus anak</option>
+                                <option value="1">Area di luar rumah sakit</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Respon Terhadap Tindakan Operasi (Anastesi Sedasi)</label>
+                            <select class="form-select form-select-sm" name="rj_hd_4" id="rj_hd_4" data-hd-required data-hd-score>
+                                <option value="">Pilih</option>
+                                <option value="3">Dalam 24 jam</option>
+                                <option value="2">Dalam 48 jam</option>
+                                <option value="1">48 jam / tidak menjalani operasi</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Penggunaan Obat</label>
+                            <select class="form-select form-select-sm" name="rj_hd_5" id="rj_hd_5" data-hd-required data-hd-score>
+                                <option value="">Pilih</option>
+                                <option value="3">Penggunaan multiple sedative (obat), hypnosi, barbiturate, antidrepesan, pencahar, diuretic, narcose</option>
+                                <option value="2">Penggunaan obat salah satu diatas</option>
+                                <option value="1">Obat lain / tidak menggunakan obat salah satu diatas</option>
+                            </select>
+                        </div>
+                        <input type="number" step="1" class="form-control" name="skor_rj_hd" value="0" hidden>
+                        <div id="skor_rj_hd" class="mb-3" hidden>
+                            <div class="alert alert-success mb-0 d-inline-flex align-items-center">
+                                <div class="me-4 flex-shrink-0">
+                                    <h1 class="display-1 fw-bold mb-0" id="nilai_rj_hd">0</h1>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1 fw-bold">Skor Risiko Jatuh</h5>
+                                    <div class="fw-bold text-success" id="kategori_rj_hd"></div>
+                                    <small class="text-muted" id="keterangan_rj_hd"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <hr class="mt-0">
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="form-check mb-0 flex-shrink-0">
+                        <input class="form-check-input check-primary" type="checkbox" id="srj_gag">
+                        <label class="form-check-label ms-1">
+                            <small class="mb-2 fw-bold">Penilaian Resiko Jatuh (Get Up and Go)</small>
+                        </label>
+                    </div>
+                </div>
+                <div class="row" id="tampil_srj_gag" hidden>
                     <div class="col-md-12 mb-1">
                         <div class="row">
                             <!-- Cara Berjalan -->
@@ -773,6 +1163,96 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mb-3">
+            <div class="card card-body border border-dashed border-primary">
+                <label class="form-label fw-bold">
+                    Diagnosis Keperawatan
+                </label>
+                <div class="row">
+                    <!-- Kolom 1 -->
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_keperawatan_1" id="diag_keperawatan_1">
+                            <label class="form-check-label">
+                                Nyeri
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_keperawatan_2" id="diag_keperawatan_2">
+                            <label class="form-check-label">
+                                Gangguan Perfusi Cerebral
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_keperawatan_3" id="diag_keperawatan_3">
+                            <label class="form-check-label">
+                                Cemas
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_keperawatan_4" id="diag_keperawatan_4">
+                            <label class="form-check-label">
+                                Sensori Persepsi
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Kolom 2 -->
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_keperawatan_5" id="diag_keperawatan_5">
+                            <label class="form-check-label">
+                                Hipertermi
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_keperawatan_6" id="diag_keperawatan_6">
+                            <label class="form-check-label">
+                                Kerusakan Integritas Kulit
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_keperawatan_7" id="diag_keperawatan_7">
+                            <label class="form-check-label">
+                                Gangguan Perfusi Jaringan
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_keperawatan_8" id="diag_keperawatan_8">
+                            <label class="form-check-label">
+                                Body Image
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Kolom 3 -->
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_keperawatan_9" id="diag_keperawatan_9">
+                            <label class="form-check-label">
+                                Gangguan Mobilitas Fisik
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_keperawatan_10" id="diag_keperawatan_10">
+                            <label class="form-check-label">
+                                Kurang Pengetahuan
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_keperawatan_11" id="diag_keperawatan_11">
+                            <label class="form-check-label">
+                                Perubahan Nutrisi Kurang dari Kebutuhan
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <label class="form-label fw-semibold">
+                        Rencana Asuhan Keperawatan
+                    </label>
+                    <textarea class="form-control" name="rencana_asuhan_keperawatan" id="rencana_asuhan_keperawatan" rows="3" placeholder="Tuliskan rencana asuhan keperawatan..."></textarea>
                 </div>
             </div>
         </div>
@@ -1005,7 +1485,41 @@
         });
         // END SKRINING NYERI ------------------------------------------------------------------------------
 
+        $section.on('change input', '[data-hd-required]', function () {
+            hitungSkorHumptyDumpty($section);
+        });
+
+        $section.on('change', '#srj_hd', function () {
+            if ($(this).is(':checked')) {
+                // Tampilkan Humpty Dumpty
+                $section.find('#tampil_srj_hd').prop('hidden', false);
+            } else {
+                // Sembunyikan
+                $section.find('#tampil_srj_hd').prop('hidden', true);
+                // Kembalikan semua nilai ke default
+                resetHumptyDumpty($section);
+            }
+        });
+
+        $section.on('change', '#srj_gag', function () {
+            if ($(this).is(':checked')) {
+                // Tampilkan Morse
+                $section.find('#tampil_srj_gag').prop('hidden', false);
+            } else {
+                // Sembunyikan
+                $section.find('#tampil_srj_gag').prop('hidden', true);
+                // Kembalikan semua nilai ke default
+                $('input[name="cara_berjalan"][value="0"]')
+                    .prop('checked', true).trigger("change");
+                $('input[name="faktor_risiko"][value="0"]')
+                    .prop('checked', true).trigger("change");
+                $('input[name="kon_obat"][value="0"]')
+                    .prop('checked', true).trigger("change");
+            }
+        });
+
         loadDataPengkajianRJOp();
+        hitungSkorHumptyDumpty($section);
 
     });
 
@@ -1027,19 +1541,20 @@
         // TANDA VITAL
         // ======================================================
 
+        $('#anm_ku').val(data.anm_ku);
         $('#ku').val(data.ku);
         $('#kesadaran').val(data.kesadaran);
-        $('#eye').val(data.eye);
-        $('#motorik').val(data.motorik);
-        $('#verbal').val(data.verbal);
-        $('#gcs').val(data.gcs);
+        $('#eye').val(Number(data.eye).toFixed(0));
+        $('#motorik').val(Number(data.motorik).toFixed(0));
+        $('#verbal').val(Number(data.verbal).toFixed(0));
+        $('#gcs').val(Number(data.gcs).toFixed(0));
 
-        $('#td_up').val(data.td_up);
-        $('#td_down').val(data.td_down);
-        $('#spo2').val(data.spo2);
-        $('#nafas').val(data.nafas);
+        $('#td_up').val(parseInt(data.td_up, 10) || 0);
+        $('#td_down').val(parseInt(data.td_down, 10) || 0);
+        $('#spo2').val(parseInt(data.spo2, 10) || 0);
+        $('#nafas').val(parseInt(data.nafas, 10) || 0);
         $('#suhu').val(data.suhu);
-        $('#nadi').val(data.nadi);
+        $('#nadi').val(parseInt(data.nadi, 10) || 0);
         $('#abn').val(data.abn);
 
 
@@ -1103,13 +1618,6 @@
         $('#sn_durasi').val(data.sn_durasi);
         $('#sn_lokasi').val(data.sn_lokasi);
 
-        $('input[name="cara_berjalan"][value="' + data.cara_berjalan + '"]')
-            .prop('checked', true).trigger("change");
-        $('input[name="faktor_risiko"][value="' + data.faktor_risiko + '"]')
-            .prop('checked', true).trigger("change");
-        $('input[name="kon_obat"][value="' + data.kon_obat + '"]')
-            .prop('checked', true).trigger("change");
-
         $('input[name="bb_turun"][value="' + data.bb_turun + '"]')
             .prop('checked', true).trigger("change");
         $('input[name="bb_ubah"][value="' + data.bb_ubah + '"]')
@@ -1121,6 +1629,64 @@
 
         $('#skor_gizi').val(data.skor_gizi);
         $('#status_skor').val(data.status_skor);
+
+        $('input[name="alat_bantu_fungsional"][value="' + data.alat_bantu_fungsional + '"]')
+            .prop('checked', true);
+
+        $('#alat_bantu').val(data.alat_bantu);
+
+        $('input[name="cacat_tubuh"][value="' + data.cacat_tubuh + '"]')
+            .prop('checked', true);
+
+        $('#ket_cacat_tubuh').val(data.ket_cacat_tubuh);
+
+        // DIAGNOSIS KEPERAWATAN
+        for (let i = 1; i <= 11; i++) {
+
+            $('#diag_keperawatan_' + i).prop(
+                'checked',
+                data['diag_keperawatan_' + i] == 1
+            );
+        }
+
+        // RENCANA ASUHAN KEPERAWATAN
+        $('#rencana_asuhan_keperawatan').val(
+            data.rencana_asuhan_keperawatan || ''
+        );
+
+        // ==========================================
+        // HUMPTY DUMPTY
+        // ==========================================
+        const hd = data.humpty_dumpty;
+
+        if (hd) {
+            $('#srj_hd').prop('checked', true);
+            $('#tampil_srj_hd').prop('hidden', false);
+
+            $('#rj_usia').val(hd.UMUR).trigger("change");
+            $('#rj_jk').val(hd.JENIS_KELAMIN).trigger("change");
+            $('#rj_hd_1').val(hd.DIAGNOSA).trigger("change");
+            $('#rj_hd_2').val(hd.GANGGUAN_KONGNITIF).trigger("change");
+            $('#rj_hd_3').val(hd.FAKTOR_LINGKUNGAN).trigger("change");
+            $('#rj_hd_4').val(hd.RESPON).trigger("change");
+            $('#rj_hd_5').val(hd.PENGGUNAAN_OBAT).trigger("change");
+        }
+
+        // ==========================================
+        // MORSE
+        // ==========================================
+        const gag = data.cara_berjalan;
+
+        if (gag) {
+            $('#srj_gag').prop('checked', true);
+            $('#tampil_srj_gag').prop('hidden', false);
+            $('input[name="cara_berjalan"][value="' + data.cara_berjalan + '"]')
+                .prop('checked', true).trigger("change");
+            $('input[name="faktor_risiko"][value="' + data.faktor_risiko + '"]')
+                .prop('checked', true).trigger("change");
+            $('input[name="kon_obat"][value="' + data.kon_obat + '"]')
+                .prop('checked', true).trigger("change");
+        }
 
     }
 
@@ -1348,5 +1914,85 @@
 
         // Kembali ke nilai default
         $('input[name="sn_skala"]').val(0);
+    }
+
+    // RESIKO JATUH HUMPTY DUMPTY
+    function hitungSkorHumptyDumpty($section) {
+        const $requiredFields = $section.find('[data-hd-required]');
+        const $scoreFields = $section.find('[data-hd-score]');
+
+        // Selector selalu dibatasi di dalam #gd_perawat
+        const $scoreBox = $section.find('#skor_rj_hd');
+        const $nilai = $section.find('#nilai_rj_hd');
+        const $kategori = $section.find('#kategori_rj_hd');
+        const $keterangan = $section.find('#keterangan_rj_hd');
+
+        const semuaTerisi = $requiredFields.toArray().every(function (field) {
+            return $.trim($(field).val()) !== '';
+        });
+
+        if (!semuaTerisi) {
+            $scoreBox.prop('hidden', true);
+            return;
+        }
+
+        let skor = 0;
+
+        $scoreFields.each(function () {
+            skor += Number($(this).val());
+        });
+
+        const isHighRisk = skor >= 12;
+        const kategori = isHighRisk
+            ? 'High Risk Dumpty'
+            : 'Low Humpty Dumpty';
+
+        $nilai.text(skor);
+        $section.find('input[name="skor_rj_hd"]').val(skor);
+
+        $kategori
+            .text(kategori)
+            .removeClass('text-success text-danger')
+            .addClass(isHighRisk ? 'text-danger' : 'text-success');
+
+        $keterangan.text(
+            isHighRisk
+                ? 'Lakukan pencegahan risiko jatuh sesuai prosedur.'
+                : 'Monitoring dan evaluasi risiko jatuh sesuai prosedur.'
+        );
+
+        $scoreBox
+            .find('.alert')
+            .removeClass('alert-success alert-danger')
+            .addClass(isHighRisk ? 'alert-danger' : 'alert-success');
+
+        $scoreBox.prop('hidden', false);
+    }
+
+    function resetHumptyDumpty($section) {
+
+        // Reset semua pilihan
+        $section.find('[data-hd-required]').val('');
+
+        // Reset nilai skor
+        $section.find('[name="skor_rj_hd"]').val(0);
+
+        // Reset tampilan skor
+        $section.find('#nilai_rj_hd').text(0);
+
+        // Sembunyikan hasil skor
+        $section.find('#skor_rj_hd').prop('hidden', true);
+
+        // Kembalikan tampilan kategori
+        $section.find('#kategori_rj_hd')
+            .text('')
+            .removeClass('text-success text-warning text-danger');
+
+        $section.find('#keterangan_rj_hd').text('');
+
+        // Kembalikan alert ke default
+        $section.find('#skor_rj_hd .alert')
+            .removeClass('alert-success alert-warning alert-danger')
+            .addClass('alert-success');
     }
 </script>

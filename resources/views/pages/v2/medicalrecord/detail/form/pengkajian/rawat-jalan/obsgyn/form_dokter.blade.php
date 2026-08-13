@@ -341,26 +341,28 @@
                         </div>
                         <div class="col-md-6 mb-2 d-flex flex-column">
                             <h6>Riwayat Alergi</h6>
-                            <div class="row g-2 mb-2">
-                                <div class="col-md-12">
-                                    <select class="form-select form-select-sm" name="ra_jenis">
-                                        <option value="">Jenis Alergi</option>
-                                        @foreach ($list['jenis_alergi'] as $item)
-                                            <option value="{{ $item->ID }}">
-                                                {{ $item->DESKRIPSI }}
-                                            </option>
-                                        @endforeach
+                            <div class="row g-2 mb-2 align-items-center">
+                                <div class="col-md-3">
+                                    <select class="form-select form-select" name="ra_jenis">
+                                        <option value="" hidden>Pilih Jenis Alergi</option>
+                                        @if ($list['jenis_alergi'])
+                                            @foreach ($list['jenis_alergi'] as $item)
+                                                <option value="{{ $item->ID }}">
+                                                    {{ $item->DESKRIPSI }}
+                                                </option>
+                                            @endforeach
+                                        @endif
                                     </select>
                                 </div>
-                                <div class="col-md-9">
-                                    <textarea class="form-control" name="ra_deskripsi" placeholder="Masukkan Alergi" rows="2"></textarea>
+                                <div class="col-md-7">
+                                    <textarea class="form-control form-control" name="ra_deskripsi" placeholder="Masukkan Alergi" rows="1"></textarea>
                                 </div>
-                                <div class="col-md-3 d-flex align-items-start">
-                                    <div class="btn-group">
-                                        <button class="btn btn-success" id="btnTambahAlergi" onclick="tambahRiwayatAlergi()">
+                                <div class="col-md-2">
+                                    <div class="btn-group w-100">
+                                        <button type="button" class="btn btn-info btn-sm" id="btnTambahAlergi" onclick="tambahRiwayatAlergi()" >
                                             <i class="ri-add-box-line"></i>
                                         </button>
-                                        <button class="btn btn-subtle-warning" id="btnRefreshAlergi" onclick="getRiwayatAlergi()">
+                                        <button type="button" class="btn btn-subtle-warning btn-sm" id="btnRefreshAlergi" onclick="getRiwayatAlergi()" >
                                             <i class="ri-refresh-line"></i>
                                         </button>
                                     </div>
@@ -368,6 +370,12 @@
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-bordered table align-middle mb-1">
+                                    <colgroup>
+                                        <col style="width: 1%;">
+                                        <col style="width: 20%;">
+                                        <col>
+                                        <col style="width: 1%;">
+                                    </colgroup>
                                     <thead>
                                         <tr class="table-success">
                                             <th>No</th>
@@ -456,28 +464,23 @@
                     <div class="row align-items-center" id="pemeriksaan_fisik">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Pemeriksaan Fisik</label>
-                            <textarea class="form-control" name="pfisik" id="pfisik" rows="16"
-                            >PEMERIKSAAN FISIK
-                                Palpasi Leopold
-                                Leopold I   : __________________________________
-                                Leopold II  : __________________________________
-                                Leopold III : __________________________________
-                                Leopold IV  : __________________________________
+                            <textarea class="form-control" name="pfisik" id="pfisik" rows="16">Palpasi Leopold :
+Leopold I   :
+Leopold II  :
+Leopold III :
+Leopold IV  :
 
-                                AUSKULTASI
-                                DJJ         : __________ x/m
-                                            Regular / Irregular
+AUSKULTASI
+DJJ         :    x/m Regular / Irregular
 
-                                PEMERIKSAAN LAIN
-                                            Panggul / Osborn
+PEMERIKSAAN LAIN : Panggul / Osborn
 
-                                EXTREMITAS
-                                _______________________________________________
+EXTREMITAS :
 
-                                REFLEK PATELA : (________ / ________)
-                                Udem          : (________ / ________)
+REFLEK PATELA : (   /   )
+Uodema        : (   /   )
 
-                                *Keterangan: hapus/coret pilihan yang tidak sesuai.</textarea>
+*Keterangan: hapus pilihan yang tidak sesuai.</textarea>
                         </div>
                     </div>
                     <div class="row align-items-center" id="pemeriksaan_penunjang">
@@ -925,7 +928,9 @@
 
         $("#rpd").val(data.rpd);
 
-        $("#pfisik").val(data.pfisik);
+        if (data.pfisik) {
+            $("#pfisik").val(data.pfisik);
+        }
 
         $("#terapi_tind").val(data.terapi_tind);
 
