@@ -1,0 +1,455 @@
+/* =========================================================
+    GLOBAL
+    ========================================================= */
+
+.list-group-item {
+    border: 0;
+}
+
+.form-search #compo-menu-search {
+    max-width: 100% !important;
+}
+
+
+/*
+=========================================================
+MINIMIZE BUTTON
+=========================================================
+
+Default:
+tombol hanya boleh tampil pada desktop >= 1200px.
+*/
+
+#btn-minimize-pengkajian {
+    display: none !important;
+}
+
+
+/*
+=========================================================
+DESKTOP
+=========================================================
+*/
+
+@media (min-width: 1200px) {
+
+    /*
+    =====================================================
+    COLUMN
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col,
+    #pengkajian-content-col {
+        transition:
+            flex-basis .25s ease,
+            max-width .25s ease,
+            margin-right .25s ease;
+    }
+
+
+    /*
+    =====================================================
+    NORMAL
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+
+    #pengkajian-content-col {
+        flex: 0 0 75%;
+        max-width: 75%;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZE BUTTON - DESKTOP
+    =====================================================
+    */
+
+    #btn-minimize-pengkajian {
+        display: flex !important;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED SIDEBAR
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized {
+        flex: 0 0 80px;
+        max-width: 80px;
+        margin-right: 12px;
+    }
+
+    #pengkajian-content-col.expanded {
+        flex: 1 1 auto;
+        max-width: none;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED CARD
+    =====================================================
+
+    Hanya card-header yang terlihat.
+    */
+
+    #pengkajian-sidebar-col.minimized .sidebar-menu {
+        width: 80px;
+        overflow: hidden;
+        position: relative;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED HEADER
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized .card-header {
+        position: relative;
+
+        width: 80px;
+        min-width: 80px;
+
+        height: 58px;
+        min-height: 58px;
+
+        padding: 0 !important;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED SEARCH
+    =====================================================
+
+    Search benar-benar dihilangkan dari layout.
+    */
+
+    #pengkajian-sidebar-col.minimized .form-search {
+        display: none !important;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED CARD BODY
+    =====================================================
+
+    Body benar-benar hilang.
+
+    Bukan visibility:hidden karena visibility masih
+    mempertahankan ruang/layout.
+    */
+
+    #pengkajian-sidebar-col.minimized .card-body {
+        display: none !important;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED MENU
+    =====================================================
+
+    Tidak perlu disembunyikan dengan display:none karena
+    card-body sudah tidak ditampilkan.
+
+    visibility digunakan sebagai pengaman tambahan agar
+    tidak muncul ketika ada style lain.
+    */
+
+    #pengkajian-sidebar-col.minimized .menu-group-title,
+    #pengkajian-sidebar-col.minimized .menu-parent,
+    #pengkajian-sidebar-col.minimized .menu-child,
+    #pengkajian-sidebar-col.minimized .menu-wrapper {
+        visibility: hidden;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED SUBMENU
+    =====================================================
+
+    JANGAN mengatur:
+
+        display
+        height
+        transition
+
+    Bootstrap Collapse tetap mengontrol submenu.
+    */
+
+    #pengkajian-sidebar-col.minimized .submenu {
+        visibility: hidden;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED BUTTON
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized #btn-minimize-pengkajian {
+        display: flex !important;
+        visibility: visible !important;
+
+        position: absolute;
+        z-index: 100;
+
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        width: 80px;
+        height: 58px;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        align-items: center;
+        justify-content: center;
+
+        border: 0;
+        border-radius: 0;
+
+        background: transparent;
+        box-shadow: none;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED BUTTON ICON
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized
+    #btn-minimize-pengkajian i {
+        display: block;
+        visibility: visible;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        font-size: 24px;
+        line-height: 1;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED BUTTON HOVER
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized
+    #btn-minimize-pengkajian:hover {
+        background: var(--bs-light);
+    }
+
+
+    /*
+    =====================================================
+    HOVER MINIMIZED
+    =====================================================
+
+    Ketika cursor masuk ke area sidebar:
+
+    80px -> 300px
+    */
+
+    #pengkajian-sidebar-col.minimized:hover {
+        flex: 0 0 300px;
+        max-width: 300px;
+
+        /*
+        Sengaja tidak memakai transition pada hover
+        supaya sidebar langsung terbuka.
+        */
+        transition: none !important;
+    }
+
+
+    /*
+    =====================================================
+    HOVER CARD
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .sidebar-menu {
+        width: 300px;
+        overflow: visible;
+
+        transition: none !important;
+    }
+
+
+    /*
+    =====================================================
+    HOVER HEADER
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .card-header {
+        width: auto;
+        min-width: 0;
+
+        height: auto;
+        min-height: auto;
+
+        padding: 1rem !important;
+
+        display: flex;
+        align-items: center;
+    }
+
+
+    /*
+    =====================================================
+    HOVER SEARCH
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .form-search {
+        display: block !important;
+    }
+
+
+    /*
+    =====================================================
+    HOVER CARD BODY
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .card-body {
+        display: block !important;
+    }
+
+
+    /*
+    =====================================================
+    HOVER MENU
+    =====================================================
+
+    visibility dikembalikan.
+
+    Tidak menggunakan display agar JavaScript search
+    tetap bisa menggunakan .hide() / .show().
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .menu-group-title,
+    #pengkajian-sidebar-col.minimized:hover .menu-parent,
+    #pengkajian-sidebar-col.minimized:hover .menu-child,
+    #pengkajian-sidebar-col.minimized:hover .menu-wrapper {
+        visibility: visible;
+    }
+
+
+    /*
+    =====================================================
+    HOVER SUBMENU
+    =====================================================
+
+    Bootstrap tetap sepenuhnya mengatur Collapse.
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .submenu {
+        visibility: visible;
+    }
+
+
+    /*
+    =====================================================
+    MENU COLLAPSE
+    =====================================================
+
+    Parent menu tetap menggunakan flex seperti HTML asli.
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .menu-collapse {
+        display: flex;
+    }
+
+
+    /*
+    =====================================================
+    BUTTON KEMBALI KE HEADER
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover
+    #btn-minimize-pengkajian {
+        position: static;
+
+        width: auto;
+        height: auto;
+
+        margin-left: auto !important;
+
+        padding: .375rem .5rem !important;
+
+        background: var(--bs-light);
+        border-radius: .375rem;
+
+        visibility: visible !important;
+    }
+
+
+    /*
+    =====================================================
+    BUTTON ICON NORMAL
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover
+    #btn-minimize-pengkajian i {
+        font-size: 18px;
+    }
+
+
+    /*
+    =====================================================
+    SEARCH INPUT
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover
+    .form-search #compo-menu-search {
+        max-width: 100% !important;
+    }
+
+
+    /*
+    =====================================================
+    IMPORTANT:
+    BOOTSTRAP COLLAPSE
+    =====================================================
+
+    JANGAN override:
+
+        .collapse
+        .collapsing
+        .collapse.show
+
+    Dengan demikian Bootstrap tetap memberikan
+    transition collapse asli.
+    */
+}

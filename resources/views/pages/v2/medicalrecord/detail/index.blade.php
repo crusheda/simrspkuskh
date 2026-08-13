@@ -73,6 +73,14 @@
                             <i class="ph-duotone ph-user-switch me-2"></i> Identitas Pasien
                         </button>
                     </li>
+                    @hasanyrole(['admin','dokterumum'])
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fpengkajian" role="tab"
+                            aria-selected="false" tabindex="-1" id="tab-fpengkajian" disabled>
+                            <i class="ph-duotone ph-user-list me-2"></i> Form Pengkajian
+                        </button>
+                    </li>
+                    @endhasanyrole
                     @if (Str::startsWith($list['show']->IDRUANGAN, '10207'))
                         <li class="nav-item" role="presentation" hidden> <!-- TIDAK DIPAKAI LAGI -->
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frehab" role="tab"
@@ -101,14 +109,6 @@
                             </a>
                         </li>
                     @endif
-                    @hasanyrole(['admin','dokterumum'])
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fpengkajian" role="tab"
-                            aria-selected="false" tabindex="-1" id="tab-fpengkajian" disabled>
-                            <i class="ph-duotone ph-user-list me-2"></i> Form Pengkajian
-                        </button>
-                    </li>
-                    @endhasanyrole
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="" data-bs-toggle="tab" href="#fuploads" role="tab"
                             aria-selected="false" tabindex="-1" id="tab-fuploads" disabled>
@@ -555,7 +555,7 @@
         });
     }
 
-    function handleTabVisibility(target) {
+    function handleTabVisibility(target) { // HIDE BREADCRUMB & BACK / ICARE BUTTON
 
         if (target === '#fpengkajian') {
             // Form Pengkajian

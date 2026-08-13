@@ -32,6 +32,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @include('inc.v2.css')
+    @stack('styles')
 
     <script>
         const originalTitle = document.title + "   •   Sistem Informasi Rekam Medis   •   RS PKU Muhammadiyah Sukoharjo   •   ";

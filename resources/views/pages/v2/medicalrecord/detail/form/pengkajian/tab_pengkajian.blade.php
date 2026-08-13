@@ -1,250 +1,6 @@
-<style>
-    .list-group-item {
-    border: 0;
-}
-
-.form-search #compo-menu-search {
-    max-width: 100% !important;
-}
-
-@media (min-width: 1200px) {
-
-    #pengkajian-sidebar-col,
-    #pengkajian-content-col {
-        transition: all .25s ease;
-    }
-
-    /* =========================================================
-       NORMAL
-       ========================================================= */
-
-    #pengkajian-sidebar-col {
-        flex: 0 0 25%;
-        max-width: 25%;
-    }
-
-    #pengkajian-content-col {
-        flex: 0 0 75%;
-        max-width: 75%;
-    }
-
-    /* =========================================================
-       MINIMIZED
-       ========================================================= */
-
-    #pengkajian-sidebar-col.minimized {
-        flex: 0 0 80px;
-        max-width: 80px;
-        margin-right: 12px;
-    }
-
-    #pengkajian-content-col.expanded {
-        flex: 1 1 auto;
-        max-width: none;
-    }
-
-    /*
-     * Card tetap mempunyai tinggi sidebar asli.
-     * Jangan sembunyikan header/body dengan visibility,
-     * karena tombol berada di dalam header.
-     */
-    #pengkajian-sidebar-col.minimized .sidebar-menu {
-        width: 80px;
-        overflow: hidden;
-        position: relative;
-    }
-
-    /*
-     * Header + body tetap ada secara layout,
-     * tetapi seluruh isinya disembunyikan.
-     */
-    #pengkajian-sidebar-col.minimized .card-header {
-        position: relative;
-        min-height: 58px;
-    }
-
-    #pengkajian-sidebar-col.minimized .form-search {
-        visibility: hidden;
-    }
-
-    #pengkajian-sidebar-col.minimized .card-body {
-        visibility: hidden;
-    }
-
-    /*
-    * Semua menu tidak tampil ketika minimized.
-    */
-    #pengkajian-sidebar-col.minimized .menu-group-title,
-    #pengkajian-sidebar-col.minimized .menu-parent,
-    #pengkajian-sidebar-col.minimized .menu-child,
-    #pengkajian-sidebar-col.minimized .menu-wrapper {
-        display: none !important;
-    }
-
-    /* =========================================================
-       TOMBOL EXPAND SAAT MINIMIZED
-       ========================================================= */
-
-    #pengkajian-sidebar-col.minimized #btn-minimize-pengkajian {
-        display: flex !important;
-        visibility: visible !important;
-
-        position: absolute;
-        z-index: 100;
-
-        inset: 0;
-
-        width: 80px;
-        height: 100%;
-
-        margin: 0 !important;
-        padding: 0 !important;
-
-        align-items: center;
-        justify-content: center;
-
-        border: 0;
-        border-radius: 0;
-
-        background: transparent;
-        box-shadow: none;
-    }
-
-    /*
-     * Icon Remix
-     */
-    #pengkajian-sidebar-col.minimized #btn-minimize-pengkajian i {
-        display: block;
-        visibility: visible;
-        font-size: 24px;
-        line-height: 1;
-    }
-
-    /*
-     * Hover sedikit memberikan feedback
-     */
-    #pengkajian-sidebar-col.minimized #btn-minimize-pengkajian:hover {
-        background: var(--bs-light);
-    }
-
-    /* =========================================================
-       HOVER MINIMIZED
-       Sidebar melebar otomatis
-       ========================================================= */
-
-    #pengkajian-sidebar-col.minimized:hover {
-        flex: 0 0 300px;
-        max-width: 300px;
-
-        /* jangan animasikan saat cursor masuk */
-        transition: none !important;
-    }
-
-    #pengkajian-sidebar-col.minimized:hover .sidebar-menu {
-        width: 300px;
-        overflow: visible;
-        transition: none !important;
-    }
-
-    /*
-     * Search kembali terlihat
-     */
-    #pengkajian-sidebar-col.minimized:hover .form-search {
-        visibility: visible;
-    }
-
-    /*
-     * Body kembali terlihat
-     */
-    #pengkajian-sidebar-col.minimized:hover .card-body {
-        visibility: visible;
-    }
-
-    /*
-     * =========================================================
-     * MENU KEMBALI NORMAL
-     *
-     * PENTING:
-     * pakai !important karena kondisi minimized sebelumnya
-     * menggunakan display:none !important.
-     * =========================================================
-     */
-
-    #pengkajian-sidebar-col.minimized:hover .menu-group-title {
-        display: block !important;
-    }
-
-    #pengkajian-sidebar-col.minimized:hover .menu-parent {
-        display: block !important;
-    }
-
-    #pengkajian-sidebar-col.minimized:hover .menu-wrapper {
-        display: block !important;
-    }
-
-    #pengkajian-sidebar-col.minimized:hover .menu-child {
-        display: block !important;
-    }
-
-    /*
-     * Menu collapse harus tetap flex seperti HTML asli
-     */
-    #pengkajian-sidebar-col.minimized:hover .menu-collapse {
-        display: flex !important;
-    }
-
-    /*
-     * Jangan paksa submenu terbuka.
-     * Bootstrap tetap mengatur .collapse.
-     */
-    /* #pengkajian-sidebar-col.minimized:hover .submenu {
-        display: none !important;
-    }
-
-    #pengkajian-sidebar-col.minimized:hover .submenu.show {
-        display: block !important;
-    } */
-
-    /*
-     * Icon chevron kembali terlihat
-     */
-    /* #pengkajian-sidebar-col.minimized:hover .submenu-icon {
-        display: block !important;
-    } */
-
-    /*
-     * =========================================================
-     * TOMBOL KEMBALI KE POSISI HEADER
-     * =========================================================
-     */
-
-    #pengkajian-sidebar-col.minimized:hover #btn-minimize-pengkajian {
-        position: static;
-
-        width: auto;
-        height: auto;
-
-        margin-left: auto !important;
-        padding: .375rem .5rem !important;
-
-        background: var(--bs-light);
-        border-radius: .375rem;
-
-        visibility: visible !important;
-    }
-
-    #pengkajian-sidebar-col.minimized:hover #btn-minimize-pengkajian i {
-        font-size: 18px;
-    }
-
-    /*
-     * Header kembali normal
-     */
-    #pengkajian-sidebar-col.minimized:hover .card-header {
-        min-height: auto;
-    }
-}
-</style>
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('v2/css/folder/tab_pengkajian.css') }}">
+@endpush
 <div class="row">
     <div class="col-xl-3" id="pengkajian-sidebar-col">
         <a href="#" class="d-inline-flex align-items-center d-xl-none btn btn-dark w-100 mb-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_component">
@@ -619,21 +375,27 @@
             }
         );
 
-        $('#btn-minimize-pengkajian').on('click', function () {
+        // =========================================================
+        // SIDEBAR MINIMIZE
+        // =========================================================
+        function setSidebarMinimized(minimized) {
 
             const $sidebar = $('#pengkajian-sidebar-col');
             const $content = $('#pengkajian-content-col');
+            const $button = $('#btn-minimize-pengkajian');
 
-            const minimized = !$sidebar.hasClass('minimized');
+            if (!$sidebar.length) {
+                return;
+            }
+
+            const $icon = $button.find('i');
 
             $sidebar.toggleClass('minimized', minimized);
             $content.toggleClass('expanded', minimized);
 
-            const $icon = $(this).find('i');
-
             if (minimized) {
 
-                $(this).attr('title', 'Maximize Menu');
+                $button.attr('title', 'Maximize Menu');
 
                 $icon
                     .removeClass('ri-sidebar-fold-line')
@@ -641,12 +403,44 @@
 
             } else {
 
-                $(this).attr('title', 'Minimize Menu');
+                $button.attr('title', 'Minimize Menu');
 
                 $icon
                     .removeClass('ri-sidebar-unfold-line')
                     .addClass('ri-sidebar-fold-line');
             }
+        }
+
+
+        // =========================================================
+        // RESTORE STATE
+        // =========================================================
+
+        if (window.innerWidth >= 1200) {
+
+            const savedSidebarState =
+                localStorage.getItem('pengkajianSidebarMinimized');
+
+            setSidebarMinimized(savedSidebarState === 'true');
+        }
+
+
+        // =========================================================
+        // BUTTON
+        // =========================================================
+
+        $('#btn-minimize-pengkajian').on('click', function () {
+
+            const $sidebar = $('#pengkajian-sidebar-col');
+
+            const minimized = !$sidebar.hasClass('minimized');
+
+            setSidebarMinimized(minimized);
+
+            localStorage.setItem(
+                'pengkajianSidebarMinimized',
+                minimized ? 'true' : 'false'
+            );
         });
 
         // START INPUT SEARCH JS
@@ -798,239 +592,4 @@
             }
         })
     }
-
-    // ============================================================
-    // GLOBAL FORM HELPER
-    // ============================================================
-    // window.FormHelper = {
-
-    //     setValue: function ($form, name, value) {
-
-    //         const $el = $form.find(`[name="${name}"]`);
-
-    //         if (!$el.length) return;
-
-    //         const type = ($el.attr('type') || '').toLowerCase();
-    //         const tagName = $el.prop('tagName').toLowerCase();
-
-    //         // ==========================================
-    //         // SELECT
-    //         // ==========================================
-    //         if (tagName === 'select') {
-
-    //             // null / undefined / '' / 0
-    //             // diarahkan ke option value=""
-    //             if (
-    //                 value === null ||
-    //                 value === undefined ||
-    //                 value === '' ||
-    //                 Number(value) === 0
-    //             ) {
-    //                 value = '';
-    //             }
-
-    //             // Normalisasi value
-    //             value = String(value);
-
-    //             $el.val(value);
-
-    //             $el.trigger('change');
-
-    //             return;
-    //         }
-
-    //         // ==========================================
-    //         // VALUE KOSONG
-    //         // ==========================================
-    //         if (value === null || value === undefined || value === '') {
-
-    //             $el.val('');
-    //             $el.trigger('change');
-
-    //             return;
-    //         }
-
-    //         // ==========================================
-    //         // NUMBER
-    //         // ==========================================
-    //         if (type === 'number') {
-
-    //             const normalized = String(value).replace(',', '.');
-    //             const number = Number(normalized);
-
-    //             if (!isNaN(number)) {
-    //                 value = number;
-    //             }
-    //         }
-
-    //         // ==========================================
-    //         // RANGE
-    //         // ==========================================
-    //         else if (type === 'range') {
-
-    //             let number = Number(
-    //                 String(value).replace(',', '.')
-    //             );
-
-    //             if (!isNaN(number)) {
-
-    //                 const min = Number($el.attr('min'));
-    //                 const max = Number($el.attr('max'));
-    //                 const step = Number($el.attr('step'));
-
-    //                 // Batasi berdasarkan min
-    //                 if (!isNaN(min)) {
-    //                     number = Math.max(number, min);
-    //                 }
-
-    //                 // Batasi berdasarkan max
-    //                 if (!isNaN(max)) {
-    //                     number = Math.min(number, max);
-    //                 }
-
-    //                 // Sesuaikan dengan step
-    //                 if (!isNaN(step) && step > 0 && !isNaN(min)) {
-    //                     number = min + Math.round(
-    //                         (number - min) / step
-    //                     ) * step;
-    //                 }
-
-    //                 value = number;
-    //             }
-    //         }
-
-    //         // ==========================================
-    //         // TIME
-    //         // ==========================================
-    //         else if (type === 'time') {
-
-    //             // Contoh database:
-    //             // 08:30:00
-    //             //
-    //             // Menjadi:
-    //             // 08:30
-    //             value = String(value).substring(0, 5);
-    //         }
-
-    //         // ==========================================
-    //         // SET VALUE
-    //         // ==========================================
-    //         $el.val(value);
-
-    //         // Trigger event
-    //         $el.trigger('change');
-    //     },
-
-    //     // Checkbox biasa berdasarkan boolean / 0 / 1
-    //     setCheckbox: function ($form, name, checked) {
-
-    //         const $el = $form.find(`input[name="${name}"]`);
-
-    //         if (!$el.length) return;
-
-    //         $el.prop('checked', Number(checked) === 1);
-
-    //         $el.trigger('change');
-    //     },
-
-
-    //     // Checkbox group berdasarkan value
-    //     setCheckboxValue: function ($form, name, value) {
-
-    //         const $el = $form.find(
-    //             `input[name="${name}"][value="${value}"]`
-    //         );
-
-    //         if (!$el.length) return;
-
-    //         $el.prop('checked', true);
-
-    //         $el.trigger('change');
-    //     },
-
-
-    //     // Checkbox group single choice
-    //     setSingleCheckbox: function ($form, name, value) {
-
-    //         const $group = $form.find(`input[name="${name}"]`);
-
-    //         if (!$group.length) return;
-
-    //         // ==========================================
-    //         // VALUE KOSONG
-    //         // ==========================================
-    //         // Jangan mengubah checked bawaan HTML
-    //         if (value === null || value === undefined || value === '') {
-    //             return;
-    //         }
-
-    //         const normalizedValue = String(value);
-
-    //         // ==========================================
-    //         // UNCHECK SEMUA
-    //         // ==========================================
-    //         $group.prop('checked', false);
-
-    //         // ==========================================
-    //         // CHECK SESUAI VALUE
-    //         // ==========================================
-    //         const $selected = $group.filter(function () {
-    //             return String($(this).val()) === normalizedValue;
-    //         }).first();
-
-    //         if (!$selected.length) {
-    //             return;
-    //         }
-
-    //         $selected
-    //             .prop('checked', true)
-    //             .trigger('change');
-    //     },
-
-    //     setValidNumber: function ($form, name) {
-
-    //         const $input = $form.find(`input[name="${name}"]`);
-
-    //         if (!$input.length) {
-    //             return 0;
-    //         }
-
-    //         const value = parseFloat($input.val());
-    //         const min = parseFloat($input.attr('min'));
-    //         const max = parseFloat($input.attr('max'));
-
-    //         // ==========================================
-    //         // KOSONG / BUKAN ANGKA
-    //         // ==========================================
-    //         if (isNaN(value)) {
-    //             return 0;
-    //         }
-
-    //         // ==========================================
-    //         // DI LUAR RANGE
-    //         // ==========================================
-    //         if (
-    //             (!isNaN(min) && value < min) ||
-    //             (!isNaN(max) && value > max)
-    //         ) {
-    //             $input.val('');
-    //             return 0;
-    //         }
-
-    //         // ==========================================
-    //         // VALID
-    //         // ==========================================
-    //         return value;
-    //     },
-
-    //     // Format datetime untuk input type="datetime-local"
-    //     formatDateTimeLocal: function (value) {
-
-    //         if (!value) return '';
-
-    //         return String(value)
-    //             .replace(' ', 'T')
-    //             .substring(0, 16);
-    //     }
-    // };
 </script>
