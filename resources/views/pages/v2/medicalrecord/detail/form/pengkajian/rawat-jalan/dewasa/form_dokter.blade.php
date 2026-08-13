@@ -342,23 +342,23 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="me_1" id="me_1">
+                                            <input class="form-check-input check-primary" type="checkbox" name="me_1" id="me_1" checked>
                                             <label class="form-check-label"> Tanda dan gejala suatu penyakit </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="me_2" id="me_2">
+                                            <input class="form-check-input check-primary" type="checkbox" name="me_2" id="me_2" checked>
                                             <label class="form-check-label"> Hasil pemeriksaan </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="me_3" id="me_3">
+                                            <input class="form-check-input check-primary" type="checkbox" name="me_3" id="me_3" checked>
                                             <label class="form-check-label"> Diagnosis </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="me_4" id="me_4">
+                                            <input class="form-check-input check-primary" type="checkbox" name="me_4" id="me_4" checked>
                                             <label class="form-check-label"> Rencana penatalaksanaan penyakit </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="me_5" id="me_5">
+                                            <input class="form-check-input check-primary" type="checkbox" name="me_5" id="me_5" checked>
                                             <label class="form-check-label"> Tindakan dan tujuan terapi </label>
                                         </div>
                                     </div>
@@ -375,7 +375,7 @@
                                             <label class="form-check-label"> Leaflet </label>
                                         </div>
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="sie_2" id="sie_2">
+                                            <input class="form-check-input check-primary" type="checkbox" name="sie_2" id="sie_2" checked>
                                             <label class="form-check-label"> Lisan </label>
                                         </div>
                                     </div>
@@ -388,7 +388,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input check-primary" type="checkbox" name="eval_1" id="eval_1">
+                                            <input class="form-check-input check-primary" type="checkbox" name="eval_1" id="eval_1" checked>
                                             <label class="form-check-label"> Sudah Mengerti </label>
                                         </div>
                                         <div class="form-check mb-2">
@@ -418,7 +418,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tl" id="tl_pulang" value="2">
+                                <input class="form-check-input" type="radio" name="tl" id="tl_pulang" value="2" checked>
                                 <label class="form-check-label">
                                     Pulang
                                 </label>
@@ -670,11 +670,31 @@
         });
     }
 
+    function setValIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(value);
+        }
+    }
+
+    function setCheckedIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector)
+                .prop('checked', Number(value) === 1)
+                .trigger('change');
+        }
+    }
+
+    function setRadioIfExists(name, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $('input[name="' + name + '"][value="' + value + '"]')
+                .prop('checked', true)
+                .trigger('change');
+        }
+    }
+
     function isiFormPengkajianRJDd(data){
 
-        $("input[name=anam][value='"+data.anam+"']")
-            .prop("checked",true)
-            .trigger("change");
+        setRadioIfExists('anam', data.anam);
 
         $("#anamnesis_oleh").val(data.anamnesis_oleh);
 
@@ -690,27 +710,43 @@
 
         $("#tu").val(data.tu);
 
-        $('#me_1').prop('checked', data.me_1 == 1);
-        $('#me_2').prop('checked', data.me_2 == 1);
-        $('#me_3').prop('checked', data.me_3 == 1);
-        $('#me_4').prop('checked', data.me_4 == 1);
-        $('#me_5').prop('checked', data.me_5 == 1);
 
-        $('#sie_1').prop('checked', data.sie_1 == 1);
-        $('#sie_2').prop('checked', data.sie_2 == 1);
+        // MASALAH / EDUKASI
+        setCheckedIfExists('#me_1', data.me_1);
+        setCheckedIfExists('#me_2', data.me_2);
+        setCheckedIfExists('#me_3', data.me_3);
+        setCheckedIfExists('#me_4', data.me_4);
+        setCheckedIfExists('#me_5', data.me_5);
 
-        $('#eval_1').prop('checked', data.eval_1 == 1);
-        $('#eval_2').prop('checked', data.eval_2 == 1);
 
-        $('input[name="tl"][value="' + data.tl + '"]').prop('checked', true).trigger('change');
-        $('input[name="rujuk"][value="' + data.rujuk + '"]').prop('checked', true).trigger('change');
-        $('#rujuk_lainnya').val(data.rujuk_lainnya);
+        // SIE
+        setCheckedIfExists('#sie_1', data.sie_1);
+        setCheckedIfExists('#sie_2', data.sie_2);
 
-        $('#pri_ruang').val(data.pri_ruang);
-        $('#pri_perawatan').val(data.pri_perawatan);
-        $('#pri_indikasi').val(data.pri_indikasi);
-        $('#pri_ket').val(data.pri_ket);
-        $('#pri_dpjp').val(data.pri_dpjp);
+
+        // EVALUASI
+        setCheckedIfExists('#eval_1', data.eval_1);
+        setCheckedIfExists('#eval_2', data.eval_2);
+
+
+        // TINDAK LANJUT
+        setRadioIfExists('tl', data.tl);
+
+        setRadioIfExists('rujuk', data.rujuk);
+
+        $("#rujuk_lainnya").val(data.rujuk_lainnya);
+
+
+        // PRIORITAS
+        $("#pri_ruang").val(data.pri_ruang);
+
+        $("#pri_perawatan").val(data.pri_perawatan);
+
+        $("#pri_indikasi").val(data.pri_indikasi);
+
+        $("#pri_ket").val(data.pri_ket);
+
+        $("#pri_dpjp").val(data.pri_dpjp);
 
     }
 

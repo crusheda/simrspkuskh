@@ -300,8 +300,6 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['anam'] = 0;
-
         if ($anam) {
             if ($anam->AUTOANAMNESIS == 1) {
                 $data['anam'] = 1;
@@ -316,8 +314,6 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['keluhan_utama'] = '';
-
         if ($keluhan_utama) {
             $data['keluhan_utama'] = $keluhan_utama->DESKRIPSI;
         }
@@ -326,8 +322,6 @@ class PengkajianRawatJalanDewasaController extends Controller
         $anamnesis = DB::table('medicalrecord.anamnesis')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['rps'] = '';
 
         if ($anamnesis) {
             $data['rps'] = $anamnesis->DESKRIPSI;
@@ -338,8 +332,6 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['rpd'] = '';
-
         if ($rpp) {
             $data['rpd'] = $rpp->DESKRIPSI;
         }
@@ -348,8 +340,6 @@ class PengkajianRawatJalanDewasaController extends Controller
         $pemeriksaan_fisik = DB::table('medicalrecord.pemeriksaan_fisik')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['pfisik'] = '';
 
         if ($pemeriksaan_fisik) {
             $data['pfisik'] = $pemeriksaan_fisik->DESKRIPSI;
@@ -360,8 +350,6 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['terapi_tind'] = '';
-
         if ($rencana_terapi) {
             $data['terapi_tind'] = $rencana_terapi->DESKRIPSI;
         }
@@ -371,8 +359,6 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['tu'] = '';
-
         if ($assesment) {
             $data['tu'] = $assesment->TOLAK_UKUR;
         }
@@ -381,19 +367,6 @@ class PengkajianRawatJalanDewasaController extends Controller
         $edukasi = DB::table('medicalrecord.edukasi_rajal')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        // Default
-        $data['me_1'] = 0;
-        $data['me_2'] = 0;
-        $data['me_3'] = 0;
-        $data['me_4'] = 0;
-        $data['me_5'] = 0;
-
-        $data['sie_1'] = 0;
-        $data['sie_2'] = 0;
-
-        $data['eval_1'] = 0;
-        $data['eval_2'] = 0;
 
         if ($edukasi) {
             $data['me_1'] = $edukasi->ME_TANDA_GEJALA;
@@ -414,10 +387,6 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['tl'] = '';
-        $data['rujuk'] = '';
-        $data['rujuk_lainnya'] = '';
-
         if ($tindak_lanjut) {
             $data['tl'] = $tindak_lanjut->TINDAK_LANJUT;
             $data['rujuk'] = $tindak_lanjut->RUJUKAN;
@@ -428,12 +397,6 @@ class PengkajianRawatJalanDewasaController extends Controller
         $perencanaan = DB::table('medicalrecord.perencanaan_rawat_inap')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['pri_ruang'] = '';
-        $data['pri_perawatan'] = '';
-        $data['pri_indikasi'] = '';
-        $data['pri_ket'] = '';
-        $data['pri_dpjp'] = '';
 
         if ($perencanaan) {
             $data['pri_ruang'] = $perencanaan->JENIS_RUANG_PERAWATAN;
@@ -462,6 +425,7 @@ class PengkajianRawatJalanDewasaController extends Controller
                     'KUNJUNGAN' => $request->NOKUNJ
                 ],
                 [
+                    'KELUHAN_UTAMA'=> $request->anm_ku,
                     'KEADAAN_UMUM' => $request->ku,
                     'KESADARAN'    => $request->kesadaran,
                     'EYE'          => $request->eye,
@@ -650,6 +614,7 @@ class PengkajianRawatJalanDewasaController extends Controller
                     'INTOLERANSI_AKTIFITAS' => $request->input('diag_11') ? 1 : 0,
                     'GANGGUAN_MOBILITAS_FISIK' => $request->input('diag_12') ? 1 : 0,
                     'GANGGUAN_PERTUKARAN_GAS' => $request->input('diag_13') ? 1 : 0,
+                    'DIAGNOSA_LAIN' => $request->input('diag_lain') ? 1 : 0,
 
                     'TINDAKAN_RELAKSASI_NAFAS_DALAM' => $request->input('tin_1') ? 1 : 0,
                     'TINDAKAN_BODY_ALIGNMENT' => $request->input('tin_2') ? 1 : 0,
@@ -700,24 +665,9 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        // Default
-        $data['ku'] = '';
-        $data['kesadaran'] = '';
-        $data['eye'] = '';
-        $data['motorik'] = '';
-        $data['verbal'] = '';
-        $data['gcs'] = '';
-
-        $data['td_up'] = '';
-        $data['td_down'] = '';
-        $data['spo2'] = '';
-        $data['nafas'] = '';
-        $data['suhu'] = '';
-        $data['nadi'] = '';
-        $data['abn'] = '';
-
         if ($tanda_vital) {
 
+            $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
             $data['ku']          = $tanda_vital->KEADAAN_UMUM;
             $data['kesadaran']   = $tanda_vital->KESADARAN;
             $data['eye']         = $tanda_vital->EYE;
@@ -741,40 +691,6 @@ class PengkajianRawatJalanDewasaController extends Controller
         $kondisi_sosial = DB::table('medicalrecord.kondisi_sosial')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-
-        // Default Status Psikologi
-        $data['tak'] = 0;
-        $data['marah'] = 0;
-        $data['cemas'] = 0;
-        $data['takut'] = 0;
-        $data['sedih'] = 0;
-        $data['bundir'] = 0;
-        $data['pse_lain'] = '';
-
-
-        // Status Mental
-        $data['sm'] = 0;
-        $data['perilaku'] = '';
-        $data['kekerasan'] = '';
-
-
-        // Hubungan Sosial
-        $data['hub'] = 0;
-        $data['tinggal'] = 0;
-        $data['tinggal_lain'] = '';
-
-
-        // Spiritual
-        $data['kbt'] = 0;
-        $data['nk'] = 0;
-        $data['nk_lain'] = '';
-        $data['pk'] = '';
-
-
-        // Ekonomi
-        $data['hasil'] = 0;
-
 
         if ($kondisi_sosial) {
 
@@ -818,15 +734,6 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['sn_nyeri'] = 0;
-        $data['sn_onset'] = '';
-        $data['sn_skala'] = '';
-        $data['sn_metode'] = '';
-        $data['sn_pencetus'] = '';
-        $data['sn_gambaran'] = '';
-        $data['sn_durasi'] = '';
-        $data['sn_lokasi'] = '';
-
         if ($nyeri) {
 
             $data['sn_nyeri']    = $nyeri->NYERI;
@@ -866,16 +773,6 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-
-        $data['bb_turun'] = 0;
-        $data['bb_ubah'] = 0;
-        $data['nafsu_makan'] = 0;
-        $data['kondisi_khusus'] = '';
-
-        $data['skor_gizi'] = '';
-        $data['status_skor'] = '';
-
-
         if ($gizi) {
 
             $data['bb_turun']       = $gizi->BERAT_BADAN_SIGNIFIKAN;
@@ -893,42 +790,6 @@ class PengkajianRawatJalanDewasaController extends Controller
         $edukasi_pk = DB::table('medicalrecord.edukasi_pasien_keluarga')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-
-        // Default Edukasi Awal
-        $data['edu_1'] = 0;
-        $data['edu_2'] = 0;
-        $data['edu_3'] = 0;
-
-
-        // Kebutuhan Edukasi
-        $data['edukasi_diagnosa'] = 0;
-        $data['edukasi_rehab_medik'] = 0;
-        $data['edukasi_hkp'] = 0;
-        $data['edukasi_informed_consent'] = 0;
-
-        $data['edukasi_cuci_tangan'] = 0;
-        $data['edukasi_perencanaan_pulang'] = 0;
-
-        $data['edukasi_obat'] = 0;
-        $data['edukasi_nyeri'] = 0;
-        $data['edukasi_hak_partisipasi'] = 0;
-
-        $data['edukasi_penundaan'] = 0;
-        $data['edukasi_bahaya_merokok'] = 0;
-
-        $data['edukasi_nutrisi'] = 0;
-        $data['edukasi_penggunaan_alat'] = 0;
-        $data['edukasi_prosedure'] = 0;
-
-        $data['edukasi_keterlambatan'] = 0;
-        $data['edukasi_rujukan'] = 0;
-
-
-        // Lainnya
-        $data['status_lain'] = 0;
-        $data['kb_edu_lain'] = '';
-
 
         if ($edukasi_pk) {
 
@@ -993,6 +854,7 @@ class PengkajianRawatJalanDewasaController extends Controller
             'diag_11' => 'INTOLERANSI_AKTIFITAS',
             'diag_12' => 'GANGGUAN_MOBILITAS_FISIK',
             'diag_13' => 'GANGGUAN_PERTUKARAN_GAS',
+            'diag_lain' => 'DIAGNOSA_LAIN',
 
             'tin_1' => 'TINDAKAN_RELAKSASI_NAFAS_DALAM',
             'tin_2' => 'TINDAKAN_BODY_ALIGNMENT',
@@ -1004,15 +866,8 @@ class PengkajianRawatJalanDewasaController extends Controller
             'tin_7' => 'TERAPI_IV_SC_IM',
         ];
 
-
-        foreach ($diag_field as $key => $column) {
-            $data[$key] = 0;
-        }
-
-
         $data['terapi_oral'] = '';
         $data['terapi_iv'] = '';
-
 
         if ($masalah) {
 
