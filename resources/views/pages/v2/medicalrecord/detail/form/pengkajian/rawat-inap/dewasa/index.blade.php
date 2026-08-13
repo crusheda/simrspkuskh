@@ -6,15 +6,14 @@
 </div>
 <div class="accordion mt-3" id="gdAccordion">
     <div class="multi-collapse collapse show" data-bs-parent="#gdAccordion" id="gd_dokter" data-kunjungan="{{ $list['kunjungan'] }}">
-        @include('pages.v2.medicalrecord.detail.form.pengkajian.gawat-darurat.form_dokter')
+        @include('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa.form_dokter')
     </div>
     <div class="multi-collapse collapse" data-bs-parent="#gdAccordion" id="gd_perawat" data-kunjungan="{{ $list['kunjungan'] }}">
-        @include('pages.v2.medicalrecord.detail.form.pengkajian.gawat-darurat.form_perawat')
+        @include('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa.form_perawat')
     </div>
 </div>
 
 <script>
-    // window.NOKUNJ = @json($list['kunjungan']);
     $(document).ready(function() {
         // Jalankan saat pertama kali halaman dibuka
         updateButton();

@@ -1,6 +1,7 @@
 <div class="form-wrapper">
+    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN AWAL <b class="text-success">RAWAT DARURAT</b></center></h1>
+    <h1 class="display-6 mb-4 fs-18"><center>PENGKAJIAN KEPERAWATAN (<a class="text-success">Diisi Oleh Perawat</a>)</center></h1>
     <div class="form-content">
-        <h1 class="display-6 mb-4 fs-27"><center>PENGKAJIAN KEPERAWATAN</center></h1>
         <div class="row">
             <div class="col-md-12">
                 <h6 class="mb-2 flex-shrink-0">Cara Kedatangan</h6>
