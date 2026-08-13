@@ -1220,13 +1220,13 @@ class ApiMonitoringController extends Controller
                 if ($getTtd) {
                     $imagePath2 = storage_path()."/app/public/".$getTtd->signature_path;
 
-                    DB::table('simrspku_klaim.tanda_tangan')->insert([
-                        'kunjungan' => $kunjungan,
-                        'signature_path' => $getTtd->signature_path,
-                        'created_at' => Carbon::now(),
-                        'updated_at' => Carbon::now(),
-                        'user' => Auth::user()->ID,
-                    ]);
+                    // DB::table('simrspku_klaim.tanda_tangan')->insert([
+                    //     'kunjungan' => $kunjungan,
+                    //     'signature_path' => $getTtd->signature_path,
+                    //     'created_at' => Carbon::now(),
+                    //     'updated_at' => Carbon::now(),
+                    //     'user' => Auth::user()->ID,
+                    // ]);
                 } else {
                     return response()->json([
                         'message' => "Tanda tangan Dokter DPJP ({$getRESUMERJ->NAMADOKTER}) pada Resume Utama tidak ditemukan."
