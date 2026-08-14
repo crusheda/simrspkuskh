@@ -46,7 +46,7 @@
                             <div class="mb-0 flex-shrink-0">
                                 <label class="form-label">Tgl. Kedatangan</label>
                             </div>
-                            <input type="datetime-local" class="form-control form-control-sm" name="tgl_ck">
+                            <input type="datetime-local" class="form-control form-control-sm" name="tgl_ck" value="{{ $list['pasien']->TGL_KEDATANGAN }}">
                         </div>
                         <div class="d-flex align-items-center gap-2 mb-2">
                             <div class="mb-0 flex-shrink-0">
@@ -203,6 +203,15 @@
                         <div class="col-md-6 mb-3">
                             <h6>Sirkulasi ( <b class="text-warning">C</b> )</h6>
                             <div class="form-group mb-3">
+                                <label class="form-label">Tekanan Darah (mmHg)</label>
+                                <div class="input-group input-group-sm mb-2">
+                                    <input type="number" class="form-control" name="p_td_up">
+                                    <div class="input-group-text"> / </div>
+                                    <input type="number" class="form-control" name="p_td_down">
+                                    <div class="input-group-text"> mmHg </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
                                 <label class="form-label">Frekuensi Nadi</label>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="input-group input-group-sm flex-grow-1">
@@ -221,15 +230,6 @@
                                             Ireguler
                                         </label>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label class="form-label">Tekanan Darah (mmHg)</label>
-                                <div class="input-group input-group-sm mb-2">
-                                    <input type="number" class="form-control" name="p_td_up">
-                                    <div class="input-group-text"> / </div>
-                                    <input type="number" class="form-control" name="p_td_down">
-                                    <div class="input-group-text"> mmHg </div>
                                 </div>
                             </div>
                             <div class="form-group mb-3">
@@ -381,7 +381,7 @@
                                                         <label class="form-check-label"> Ya </label>
                                                     </div>
                                                     <div class="form-check form-check-inline mb-2">
-                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_abn" value="0">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_abn" value="0" checked="">
                                                         <label class="form-check-label"> Tidak </label>
                                                     </div>
                                                 </div>
@@ -392,7 +392,7 @@
                                                 <h6>Kulit</h6>
                                                 <div class="form-group">
                                                     <div class="form-check form-check-inline mb-2">
-                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_kulit" value="1">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="p_kulit" value="1" checked="">
                                                         <label class="form-check-label"> Normal </label>
                                                     </div>
                                                     <div class="form-check form-check-inline mb-2">

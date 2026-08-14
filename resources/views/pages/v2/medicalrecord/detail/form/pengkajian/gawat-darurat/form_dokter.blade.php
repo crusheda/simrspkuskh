@@ -402,6 +402,15 @@
                         <div class="col-md-6 mb-3">
                             <h6>Sirkulasi ( <b class="text-warning">C</b> )</h6>
                             <div class="form-group mb-3">
+                                <label class="form-label">Tekanan Darah (mmHg)</label>
+                                <div class="input-group input-group-sm mb-2">
+                                    <input type="number" class="form-control" name="td_up">
+                                    <div class="input-group-text"> / </div>
+                                    <input type="number" class="form-control" name="td_down">
+                                    <div class="input-group-text"> mmHg </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
                                 <label class="form-label">Frekuensi Nadi</label>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="input-group input-group-sm flex-grow-1">
@@ -420,15 +429,6 @@
                                             Ireguler
                                         </label>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label class="form-label">Tekanan Darah (mmHg)</label>
-                                <div class="input-group input-group-sm mb-2">
-                                    <input type="number" class="form-control" name="td_up">
-                                    <div class="input-group-text"> / </div>
-                                    <input type="number" class="form-control" name="td_down">
-                                    <div class="input-group-text"> mmHg </div>
                                 </div>
                             </div>
                             <div class="form-group mb-3">
@@ -560,7 +560,7 @@
                                                         <label class="form-check-label"> Ya </label>
                                                     </div>
                                                     <div class="form-check form-check-inline mb-2">
-                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="0">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="0" checked="">
                                                         <label class="form-check-label"> Tidak </label>
                                                     </div>
                                                 </div>
@@ -571,7 +571,7 @@
                                                 <h6>Kulit</h6>
                                                 <div class="form-group">
                                                     <div class="form-check form-check-inline mb-2">
-                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="1">
+                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="1" checked="">
                                                         <label class="form-check-label"> Normal </label>
                                                     </div>
                                                     <div class="form-check form-check-inline mb-2">
@@ -1861,33 +1861,48 @@
 
 
                 // Jalan Nafas
-                if (tandaVital.JALAN_NAFAS !== null) {
-                    $('input[name="jn"]')
-                        .prop('checked', false);
+                // if (tandaVital.JALAN_NAFAS !== null) {
+                //     $('input[name="jn"]')
+                //         .prop('checked', false);
 
-                    $(`input[name="jn"][value="${tandaVital.JALAN_NAFAS}"]`)
-                        .prop('checked', true);
-                }
+                //     $(`input[name="jn"][value="${tandaVital.JALAN_NAFAS}"]`)
+                //         .prop('checked', true);
+                // }
+                FormHelper.setSingleCheckbox(
+                    $form,
+                    'jn',
+                    tandaVital.JALAN_NAFAS
+                );
 
 
                 // Alat Bantu Nafas
-                if (tandaVital.ALAT_BANTU_NAFAS !== null) {
-                    $('input[name="abn"]')
-                        .prop('checked', false);
+                // if (tandaVital.ALAT_BANTU_NAFAS !== null) {
+                //     $('input[name="abn"]')
+                //         .prop('checked', false);
 
-                    $(`input[name="abn"][value="${tandaVital.ALAT_BANTU_NAFAS}"]`)
-                        .prop('checked', true);
-                }
+                //     $(`input[name="abn"][value="${tandaVital.ALAT_BANTU_NAFAS}"]`)
+                //         .prop('checked', true);
+                // }
+                FormHelper.setSingleCheckbox(
+                    $form,
+                    'abn',
+                    tandaVital.ALAT_BANTU_NAFAS
+                );
 
 
                 // Kulit
-                if (tandaVital.KULIT !== null) {
-                    $('input[name="kulit"]')
-                        .prop('checked', false);
+                // if (tandaVital.KULIT !== null) {
+                //     $('input[name="kulit"]')
+                //         .prop('checked', false);
 
-                    $(`input[name="kulit"][value="${tandaVital.KULIT}"]`)
-                        .prop('checked', true);
-                }
+                //     $(`input[name="kulit"][value="${tandaVital.KULIT}"]`)
+                //         .prop('checked', true);
+                // }
+                FormHelper.setSingleCheckbox(
+                    $form,
+                    'kulit',
+                    tandaVital.KULIT
+                );
 
 
                 // ====================================================
@@ -1904,26 +1919,36 @@
                 // value="1" = Tidak
                 // value="2" = Kasus Obstetri Ginekologi
                 //
-                if (statusReproduksi.KASUS_OBSTETRI_GINEKOLOGI !== null) {
+                // if (statusReproduksi.KASUS_OBSTETRI_GINEKOLOGI !== null) {
 
-                    $('input[name="sr"]')
-                        .prop('checked', false);
+                //     $('input[name="sr"]')
+                //         .prop('checked', false);
 
-                    $(
-                        `input[name="sr"][value="${statusReproduksi.KASUS_OBSTETRI_GINEKOLOGI}"]`
-                    ).prop('checked', true);
-                }
+                //     $(
+                //         `input[name="sr"][value="${statusReproduksi.KASUS_OBSTETRI_GINEKOLOGI}"]`
+                //     ).prop('checked', true);
+                // }
+                FormHelper.setSingleCheckbox(
+                    $form,
+                    'sr',
+                    statusReproduksi.KASUS_OBSTETRI_GINEKOLOGI
+                );
 
                 // Status reproduksi (0:TIDAK HAMIL; 1:HAMIL; 2:HPHT SIKLUS; 3:KB;)
-                if (statusReproduksi.STATUS_REPRODUKSI !== null) {
+                // if (statusReproduksi.STATUS_REPRODUKSI !== null) {
 
-                    $('input[name="sr_cb"]')
-                        .prop('checked', false);
+                //     $('input[name="sr_cb"]')
+                //         .prop('checked', false);
 
-                    $(
-                        `input[name="sr_cb"][value="${statusReproduksi.STATUS_REPRODUKSI}"]`
-                    ).prop('checked', true);
-                }
+                //     $(
+                //         `input[name="sr_cb"][value="${statusReproduksi.STATUS_REPRODUKSI}"]`
+                //     ).prop('checked', true);
+                // }
+                FormHelper.setSingleCheckbox(
+                    $form,
+                    'sr_cb',
+                    statusReproduksi.STATUS_REPRODUKSI
+                );
 
                 // HPHT
                 FormHelper.setValue(
@@ -2020,11 +2045,6 @@
                 const keluhanUtama =
                     data.keluhan_utama || {};
 
-                console.log(
-                    'Keluhan utama:',
-                    keluhanUtama
-                );
-
                 FormHelper.setValue(
                     $form,
                     'ku',
@@ -2038,12 +2058,6 @@
 
                 const anamnesis =
                     data.anamnesis || {};
-
-                console.log(
-                    'Anamnesis:',
-                    anamnesis
-                );
-
 
                 // DESKRIPSI
                 //

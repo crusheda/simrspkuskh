@@ -88,7 +88,7 @@ class PengkajianGawatDaruratController extends Controller
                     ->where('kj.JENIS', '=', '4');
             })
             ->leftJoin('master.dokter AS dok', 'dok.ID', '=', 'pk.DPJP')
-            ->select('dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'), 'ag.DESKRIPSI AS AGAMA', 'kj.DESKRIPSI AS PEKERJAAN')
+            ->select('pd.TANGGAL AS TGL_KEDATANGAN','dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'), 'ag.DESKRIPSI AS AGAMA', 'kj.DESKRIPSI AS PEKERJAAN')
             ->where('pk.NOMOR', $kunjungan)
             ->first();
 
