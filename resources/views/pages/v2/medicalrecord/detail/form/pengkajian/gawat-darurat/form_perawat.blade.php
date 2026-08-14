@@ -1773,137 +1773,92 @@
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_1"></td>
                                     <td><input type="time" class="form-control" name="tk_1_dt"></td>
-                                    <td>OPA</td>
+                                    <td>Terapi Oksigenasi</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_2"></td>
                                     <td><input type="time" class="form-control" name="tk_2_dt"></td>
-                                    <td>O2</td>
+                                    <td>Infus</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_3"></td>
                                     <td><input type="time" class="form-control" name="tk_3_dt"></td>
-                                    <td>Suction</td>
+                                    <td>Injeksi</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_4"></td>
                                     <td><input type="time" class="form-control" name="tk_4_dt"></td>
-                                    <td>Nasal kanul</td>
+                                    <td>NGT / OGT</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_5"></td>
                                     <td><input type="time" class="form-control" name="tk_5_dt"></td>
-                                    <td>Coliat neck</td>
+                                    <td>Kateter Urin (DC)</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_6"></td>
                                     <td><input type="time" class="form-control" name="tk_6_dt"></td>
-                                    <td>Masker</td>
+                                    <td>EKG</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_7"></td>
                                     <td><input type="time" class="form-control" name="tk_7_dt"></td>
-                                    <td>Resusitasi</td>
+                                    <td>Suction</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_8"></td>
                                     <td><input type="time" class="form-control" name="tk_8_dt"></td>
-                                    <td>Nebiizer</td>
+                                    <td>OPA</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_9"></td>
                                     <td><input type="time" class="form-control" name="tk_9_dt"></td>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Infus</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_9_lain"></div></td>
+                                    <td>Collar Neck</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_10"></td>
                                     <td><input type="time" class="form-control" name="tk_10_dt"></td>
-                                    <td>Kateter urine</td>
+                                    <td>Resusitasi</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_11"></td>
                                     <td><input type="time" class="form-control" name="tk_11_dt"></td>
-                                    <td>NGT / OGT</td>
+                                    <td>Nebulizer</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_12"></td>
                                     <td><input type="time" class="form-control" name="tk_12_dt"></td>
-                                    <td>Bilas lambung</td>
+                                    <td>Medikasi</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_13"></td>
                                     <td><input type="time" class="form-control" name="tk_13_dt"></td>
-                                    <td>Jahitan</td>
+                                    <td>Ekstraksi Corpal</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_14"></td>
                                     <td><input type="time" class="form-control" name="tk_14_dt"></td>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Rontgen</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_14_lain"></div></td>
+                                    <td>Hecting</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_15"></td>
                                     <td><input type="time" class="form-control" name="tk_15_dt"></td>
-                                    <td>CT Scan</td>
+                                    <td>Bilas Lambung</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_16"></td>
                                     <td><input type="time" class="form-control" name="tk_16_dt"></td>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Lab. Darah</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_16_lain"></div></td>
+                                    <td>Bidai</td>
                                 </tr>
                                 <tr>
                                     <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_18"></td>
                                     <td><input type="time" class="form-control" name="tk_18_dt"></td>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Hecting permanen</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_18_lain"></div> <div class="flex-shrink-0">jahitan</div></td>
+                                    <td>Tampon</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_19"></td>
-                                    <td><input type="time" class="form-control" name="tk_19_dt"></td>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Hecting situasi</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_19_lain"></div> <div class="flex-shrink-0">jahitan</div></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_20"></td>
-                                    <td><input type="time" class="form-control" name="tk_20_dt"></td>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">ATS, skin test, hasil</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_20_lain"></div></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_21"></td>
-                                    <td><input type="time" class="form-control" name="tk_21_dt"></td>
-                                    <td>Debridemen</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_22"></td>
-                                    <td><input type="time" class="form-control" name="tk_22_dt"></td>
-                                    <td>Corpus alianum</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_23"></td>
-                                    <td><input type="time" class="form-control" name="tk_23_dt"></td>
-                                    <td>Combustio</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_24"></td>
-                                    <td><input type="time" class="form-control" name="tk_24_dt"></td>
-                                    <td>Hidung</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_25"></td>
-                                    <td><input type="time" class="form-control" name="tk_25_dt"></td>
-                                    <td>Dekubitus</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_26"></td>
-                                    <td><input type="time" class="form-control" name="tk_26_dt"></td>
-                                    <td>Mulut</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_27"></td>
-                                    <td><input type="time" class="form-control" name="tk_27_dt"></td>
-                                    <td>Telinga</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_17"></td>
-                                    <td><input type="time" class="form-control" name="tk_17_dt"></td>
-                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Lain-lain</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_17_lain"></div></td>
+                                    <td class="text-center"><input class="form-check-input check-primary" type="checkbox" name="tk_99"></td>
+                                    <td><input type="time" class="form-control" name="tk_99_dt"></td>
+                                    <td><div class="d-flex gap-3"><div class="flex-shrink-0">Lain-lain</div> <input type="text" class="form-control form-control-sm w-auto" name="tk_99_lain"></div></td>
                                 </tr>
                             </tbody>
                         </table>

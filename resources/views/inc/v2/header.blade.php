@@ -66,6 +66,90 @@
                 </a>
             </div>
             <div class="vr my-3"></div>
+            <div class="dropdown text-end">
+                <button type="button"
+                    class="btn btn-icon btn-action-gray rounded-circle waves-effect waves-light position-relative"
+                    data-bs-toggle="dropdown"
+                    data-bs-auto-close="outside"
+                    aria-expanded="false"
+                    id="btnNotification">
+
+                    <svg width="24" height="25" viewBox="0 0 24 25" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+
+                        <path
+                            d="M18.7491 10.2096V9.50497C18.7491 5.63623 15.7274 2.5 12 2.5C8.27256 2.5 5.25087 5.63623 5.25087 9.50497V10.2096C5.25087 11.0552 5.00972 11.8818 4.5578 12.5854L3.45036 14.3095C2.43882 15.8843 3.21105 18.0249 4.97036 18.5229C9.57274 19.8257 14.4273 19.8257 19.0296 18.5229C20.789 18.0249 21.5612 15.8843 20.5496 14.3095L19.4422 12.5854C18.9903 11.8818 18.7491 11.0552 18.7491 10.2096Z"
+                            stroke="var(--bs-heading-color)"
+                            stroke-width="2" />
+
+                        <path opacity="0.5"
+                            d="M7.5 19.5C8.15503 21.2478 9.92246 22.5 12 22.5C14.0775 22.5 15.845 21.2478 16.5 19.5"
+                            stroke="var(--bs-heading-color)"
+                            stroke-width="2"
+                            stroke-linecap="round" />
+
+                        <path opacity="0.5"
+                            d="M12 6.5V10.5"
+                            stroke="var(--bs-heading-color)"
+                            stroke-width="2"
+                            stroke-linecap="round" />
+                    </svg>
+
+                    {{-- Badge jumlah notifikasi --}}
+                    <span id="notificationBadge"
+                        class="position-absolute top-0 end-0 p-1 mt-1 me-1 bg-primary border border-3 border-light rounded-circle" style="display: none;">
+                        <span class="visually-hidden">New alerts</span>
+                    </span>
+                </button>
+
+                <div class="dropdown-menu dropdown-menu-lg-end p-0 w-300px mt-2">
+
+                    {{-- Header --}}
+                    <div class="px-3 py-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">
+                            Notifikasi
+
+                            <span id="notificationHeaderBadge"
+                                class="badge badge-sm rounded-pill bg-primary ms-2"
+                                style="display: none;">
+                                0
+                            </span>
+                        </h6>
+                    </div>
+
+                    {{-- List --}}
+                    <div class="p-2"
+                        style="height: 300px;"
+                        data-simplebar>
+
+                        <ul id="notificationList"
+                            class="list-group list-group-hover list-group-smooth list-group-unlined">
+
+                            <li class="list-group-item text-center py-4"
+                                id="notificationLoading">
+
+                                <div class="spinner-border spinner-border-sm text-primary"
+                                    role="status">
+                                </div>
+
+                                <div class="small text-muted mt-2">
+                                    Memuat notifikasi...
+                                </div>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                    {{-- Footer --}}
+                    <div class="p-2">
+                        <a href="{{ url('/v2/notifikasi/klaim') }}" class="btn w-100 btn-primary waves-effect waves-light disabled">
+                            Lihat Semua Notifikasi
+                        </a>
+                    </div>
+
+                </div>
+            </div>
             {{-- <div class="d-flex align-items-center gap-sm-2 gap-0 px-lg-4 px-sm-2 px-1">
                 <a href="email/inbox.html"
                     class="btn btn-icon btn-action-gray rounded-circle waves-effect waves-light position-relative">

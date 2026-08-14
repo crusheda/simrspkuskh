@@ -21076,7 +21076,8 @@ span.flatpickr-weekday {
   width: 100%;
   /* background-color: #ffffff; */
   padding: 6px 7.5px 3.75px;
-  border: var(--bs-border-width) solid var(--bs-border-color);
+  /* border: var(--bs-border-width) solid var(--bs-border-color); */
+  border: var(--bs-border-width) solid #d7d7dc;
   border-radius: 8px;
   font-size: 14px;
   /* min-height: 44px; */

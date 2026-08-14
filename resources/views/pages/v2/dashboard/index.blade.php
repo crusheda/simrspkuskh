@@ -23,7 +23,7 @@
         </nav>
         <!-- [ breadcrumb ] end -->
 
-        <div class="row">
+        <div class="row" hidden>
 
             <div class="col-xxl-6 col-lg-8">
                 <div class="row">

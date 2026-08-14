@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ApiDashboardController;
 use App\Http\Controllers\Tools\Bpjs\ICareController;
 use App\Http\Controllers\Log\BerkasController;
+use App\Http\Controllers\Setting\NotifikasiController;
 use App\Http\Controllers\Setting\ProfilController;
 use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
@@ -49,6 +50,10 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
 
 //---------------------------------------------------------------    A  P  I    L  O  K  A  L    -----------------------------------------------------------------
 Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v.2
+    // SETTING
+        // NOTIFIKASI
+        Route::get('notifikasi/klaim', [NotifikasiController::class, 'notifikasiKlaim']);
+
     // DIGITAL
         // MEDICAL RECORD
             // FORM PENGKAJIAN

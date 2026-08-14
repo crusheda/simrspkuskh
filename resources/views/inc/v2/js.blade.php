@@ -1,3 +1,5 @@
+<script src="{{ asset('v2/js/notifikasi/klaim.js') }}"></script>
+
 <script src="{{ asset('v2/libs/global/global.min.js') }}"></script>
 <script src="{{ asset('v2/libs/sortable/Sortable.min.js') }}"></script>
 <script src="{{ asset('v2/libs/chartjs/chart.js') }}"></script>
