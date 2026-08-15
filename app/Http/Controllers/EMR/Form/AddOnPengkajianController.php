@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\EMR\Form;
 
 use App\Http\Controllers\Controller;
+use App\Traits\FieldEmpty;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
@@ -12,6 +13,21 @@ use Auth, Storage;
 
 class AddOnPengkajianController extends Controller
 {
+    use FieldEmpty;
+
+    // Helper untuk mengambil 1 data berdasarkan kunjungan
+    private function getData($KUNJUNGAN, $table, $columns = ['*'])
+    {
+        return DB::table($table)
+            ->select($columns)
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first();
+    }
+
+    // ======================================================================================================================= FUNCTION STARTED !!!!
+
     public function cariPPK(Request $request)
     {
         $keyword = trim($request->get('q', ''));
@@ -646,5 +662,681 @@ class AddOnPengkajianController extends Controller
             'message' =>
                 'Data riwayat obstetri berhasil dihapus.'
         ], 200);
+    }
+
+    // SKRINING - SKRINING
+    public function getSkriningNyeri($KUNJUNGAN)
+    {
+        $penilaianNyeri = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.penilaian_nyeri',
+            [
+                'NYERI',
+                'ONSET',
+                'SKALA',
+                'METODE',
+                'SKOR1',
+                'SKOR2',
+                'SKOR3',
+                'SKOR4',
+                'SKOR5',
+                'SKOR6',
+                'PENCETUS',
+                'GAMBARAN',
+                'DURASI',
+                'LOKASI',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $penilaianNyeri
+        ]);
+    }
+
+    public function simpanSkriningNyeri(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'NOKUNJ' => 'required',
+            ],
+            [
+                'NOKUNJ.required' => 'Kunjungan wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            // ==========================================
+            // PENILAIAN / SKRINING NYERI
+            // ==========================================
+            $dataNyeri = [
+                'NYERI'    => $request->sn_nyeri ?? 0,
+                'ONSET'    => $request->sn_onset ?? 0,
+                'SKALA'    => $request->sn_skala ?? 0,
+                'METODE'   => $request->sn_metode ?? '',
+
+                'SKOR1'    => 0,
+                'SKOR2'    => 0,
+                'SKOR3'    => 0,
+                'SKOR4'    => 0,
+                'SKOR5'    => 0,
+                'SKOR6'    => 0,
+
+                'PENCETUS' => $request->sn_pencetus ?? '',
+                'GAMBARAN' => $request->sn_gambaran ?? '',
+                'DURASI'   => $request->sn_durasi ?? '',
+                'LOKASI'   => $request->sn_lokasi ?? '',
+
+                'OLEH'     => auth()->id(),
+                'STATUS'   => 1,
+                'TANGGAL'  => now(),
+            ];
+            switch ((string) $request->sn_metode) {
+
+                // BPS
+                case '2':
+                    $dataNyeri['SKOR1'] = $request->sn_bps_1 ?? 0;
+                    $dataNyeri['SKOR2'] = $request->sn_bps_2 ?? 0;
+                    $dataNyeri['SKOR3'] = $request->sn_bps_3 ?? 0;
+                    break;
+
+                // NIPS
+                case '3':
+                    $dataNyeri['SKOR1'] = $request->sn_nips_1 ?? 0;
+                    $dataNyeri['SKOR2'] = $request->sn_nips_2 ?? 0;
+                    $dataNyeri['SKOR3'] = $request->sn_nips_3 ?? 0;
+                    $dataNyeri['SKOR4'] = $request->sn_nips_4 ?? 0;
+                    $dataNyeri['SKOR5'] = $request->sn_nips_5 ?? 0;
+                    $dataNyeri['SKOR6'] = $request->sn_nips_6 ?? 0;
+                    break;
+
+                // FLACC
+                case '4':
+                    $dataNyeri['SKOR1'] = $request->sn_flacc_1 ?? 0;
+                    $dataNyeri['SKOR2'] = $request->sn_flacc_2 ?? 0;
+                    $dataNyeri['SKOR3'] = $request->sn_flacc_3 ?? 0;
+                    $dataNyeri['SKOR4'] = $request->sn_flacc_4 ?? 0;
+                    $dataNyeri['SKOR5'] = $request->sn_flacc_5 ?? 0;
+                    break;
+
+                // NRS / VAS
+                    // Tidak perlu SKOR1-SKOR6
+                    case '1':
+                    case '5':
+                    default:
+                    break;
+            }
+            DB::table('medicalrecord.penilaian_nyeri')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    $dataNyeri
+                );
+
+            // ==========================================
+            // COMMIT
+            // ==========================================
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Skrining Nyeri berhasil disimpan.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Skrining Nyeri gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getSkriningResikoJatuhHumptyDumpty($KUNJUNGAN)
+    {
+        $humptyDumpty = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.penilaian_skala_humpty_dumpty',
+            [
+                'UMUR',
+                'JENIS_KELAMIN',
+                'DIAGNOSA',
+                'GANGGUAN_KONGNITIF',
+                'FAKTOR_LINGKUNGAN',
+                'RESPON',
+                'PENGGUNAAN_OBAT',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $humptyDumpty
+        ]);
+    }
+
+    public function simpanSkriningResikoJatuhHumptyDumpty(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'NOKUNJ' => 'required',
+            ],
+            [
+                'NOKUNJ.required' => 'Kunjungan wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $humptyFields = [
+                'rj_usia',
+                'rj_jk',
+                'rj_hd_1',
+                'rj_hd_2',
+                'rj_hd_3',
+                'rj_hd_4',
+                'rj_hd_5',
+            ];
+
+            if ($this->isFieldEmpty($request, $humptyFields)) {
+
+                // Semua kosong → hapus skrining lama
+                DB::table('medicalrecord.penilaian_skala_humpty_dumpty')
+                    ->where('KUNJUNGAN', $request->NOKUNJ)
+                    ->update([
+                        'OLEH'   => auth()->id(),
+                        'STATUS' => 0,
+                    ]);
+
+            } else {
+
+                DB::table('medicalrecord.penilaian_skala_humpty_dumpty')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'UMUR'               => $request->input('rj_usia') ?? 0,
+                        'JENIS_KELAMIN'      => $request->input('rj_jk') ?? 0,
+                        'DIAGNOSA'           => $request->input('rj_hd_1') ?? 0,
+                        'GANGGUAN_KONGNITIF' => $request->input('rj_hd_2') ?? 0,
+                        'FAKTOR_LINGKUNGAN'  => $request->input('rj_hd_3') ?? 0,
+                        'RESPON'             => $request->input('rj_hd_4') ?? 0,
+                        'PENGGUNAAN_OBAT'    => $request->input('rj_hd_5') ?? 0,
+                        'TANGGAL'            => now(),
+                        'OLEH'               => auth()->id(),
+                        'STATUS'             => 1,
+                    ]
+                );
+            }
+
+            // ==========================================
+            // COMMIT
+            // ==========================================
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Skrining Resiko Jatuh berhasil disimpan.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Skrining Resiko Jatuh gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getSkriningResikoJatuhSkalaMorse($KUNJUNGAN)
+    {
+        $morse = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.penilaian_skala_morse',
+            [
+                'RIWAYAT_JATUH',
+                'DIAGNOSIS',
+                'ALAT_BANTU',
+                'HEPARIN',
+                'GAYA_BERJALAN',
+                'KESADARAN',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $morse
+        ]);
+    }
+
+    public function simpanSkriningResikoJatuhSkalaMorse(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'NOKUNJ' => 'required',
+            ],
+            [
+                'NOKUNJ.required' => 'Kunjungan wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $morseFields = [
+                'rj_sm_1',
+                'rj_sm_2',
+                'rj_sm_3',
+                'rj_sm_4',
+                'rj_sm_5',
+                'rj_sm_6',
+            ];
+
+            if ($this->isFieldEmpty($request, $morseFields)) {
+
+                // Semua kosong → hapus skrining lama
+                DB::table('medicalrecord.penilaian_skala_morse')
+                    ->where('KUNJUNGAN', $request->NOKUNJ)
+                    ->update([
+                        'OLEH'   => auth()->id(),
+                        'STATUS' => 0,
+                    ]);
+
+            } else {
+
+                DB::table('medicalrecord.penilaian_skala_morse')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'RIWAYAT_JATUH' => $request->input('rj_sm_1') ?? 0,
+                        'DIAGNOSIS'     => $request->input('rj_sm_2') ?? 0,
+                        'ALAT_BANTU'    => $request->input('rj_sm_3') ?? 0,
+                        'HEPARIN'       => $request->input('rj_sm_4') ?? 0,
+                        'GAYA_BERJALAN' => $request->input('rj_sm_5') ?? 0,
+                        'KESADARAN'     => $request->input('rj_sm_6') ?? 0,
+                        'TANGGAL'       => now(),
+                        'OLEH'          => auth()->id(),
+                        'STATUS'        => 1,
+                    ]
+                );
+            }
+
+            // ==========================================
+            // COMMIT
+            // ==========================================
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Skrining Resiko Jatuh berhasil disimpan.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Skrining Resiko Jatuh gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getSkriningResikoJatuhEPFRA($KUNJUNGAN)
+    {
+        $epfra = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.penilaian_epfra',
+            [
+                'USIA',
+                'STATUS_MENTAL',
+                'ELIMINASI',
+                'MEDIKASI',
+                'DIAGNOSIS',
+                'AMBULASI',
+                'NUTRISI',
+                'GANGGUAN_TIDUR',
+                'RIWAYAT_JATUH',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $epfra
+        ]);
+    }
+
+    public function simpanSkriningResikoJatuhEPFRA(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'NOKUNJ' => 'required',
+            ],
+            [
+                'NOKUNJ.required' => 'Kunjungan wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $epfraFields = [
+                'rj_epfra_usia',
+                'rj_epfra_1',
+                'rj_epfra_2',
+                'rj_epfra_3',
+                'rj_epfra_4',
+                'rj_epfra_5',
+                'rj_epfra_6',
+                'rj_epfra_7',
+                'rj_epfra_8',
+            ];
+
+            if ($this->isFieldEmpty($request, $epfraFields)) {
+
+                // Semua kosong → hapus skrining lama
+                DB::table('medicalrecord.penilaian_epfra')
+                    ->where('KUNJUNGAN', $request->NOKUNJ)
+                    ->update([
+                        'OLEH'   => auth()->id(),
+                        'STATUS' => 0,
+                    ]);
+
+            } else {
+
+                DB::table('medicalrecord.penilaian_epfra')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'USIA'           => $request->input('rj_epfra_usia') ?? 0,
+                        'STATUS_MENTAL'  => $request->input('rj_epfra_1') ?? 0,
+                        'ELIMINASI'      => $request->input('rj_epfra_2') ?? 0,
+                        'MEDIKASI'       => $request->input('rj_epfra_3') ?? 0,
+                        'DIAGNOSIS'      => $request->input('rj_epfra_4') ?? 0,
+                        'AMBULASI'       => $request->input('rj_epfra_5') ?? 0,
+                        'NUTRISI'        => $request->input('rj_epfra_6') ?? 0,
+                        'GANGGUAN_TIDUR' => $request->input('rj_epfra_7') ?? 0,
+                        'RIWAYAT_JATUH'  => $request->input('rj_epfra_8') ?? 0,
+                        'TANGGAL'        => now(),
+                        'OLEH'           => auth()->id(),
+                        'STATUS'         => 1,
+                    ]
+                );
+            }
+
+            // ==========================================
+            // COMMIT
+            // ==========================================
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Skrining Resiko Jatuh berhasil disimpan.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Skrining Resiko Jatuh gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getSkriningGiziMust($KUNJUNGAN)
+    {
+        $must = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.permasalahan_gizi',
+            [
+                'BERAT_BADAN_SIGNIFIKAN',
+                'PERUBAHAN_BERAT_BADAN',
+                'INTAKE_MAKANAN',
+                'KONDISI_KHUSUS',
+                'SKOR',
+                'STATUS_SKOR',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $must
+        ]);
+    }
+
+    public function simpanSkriningGiziMust(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'NOKUNJ' => 'required',
+            ],
+            [
+                'NOKUNJ.required' => 'Kunjungan wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $mustFields = [
+                'sgd1',
+                'sgd1_c',
+                'sgd2',
+                'sgd3',
+            ];
+
+            if ($this->isFieldEmpty($request, $mustFields)) {
+
+                // Semua kosong → hapus skrining lama
+                DB::table('medicalrecord.permasalahan_gizi')
+                    ->where('KUNJUNGAN', $request->NOKUNJ)
+                    ->update([
+                        'OLEH'   => auth()->id(),
+                        'STATUS' => 0,
+                    ]);
+
+            } else {
+
+                DB::table('medicalrecord.permasalahan_gizi')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'BERAT_BADAN_SIGNIFIKAN' => $request->input('sgd1') ?? 0,
+                        'PERUBAHAN_BERAT_BADAN'  => $request->input('sgd1_c') ?? 0,
+                        'INTAKE_MAKANAN'         => $request->input('sgd2') ?? 0,
+                        'KONDISI_KHUSUS'         => $request->input('sgd3') ?? 0,
+                        'SKOR'                   => $request->input('skor_sgd') ?? 0,
+                        'STATUS_SKOR'            => 1,
+                        'TANGGAL'               => now(),
+                        'OLEH'                   => auth()->id(),
+                        'STATUS'                 => 1,
+                    ]
+                );
+            }
+
+            // ==========================================
+            // COMMIT
+            // ==========================================
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Skrining Gizi berhasil disimpan.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Skrining Gizi gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getSkriningGiziStrongKid($KUNJUNGAN)
+    {
+        $strongkid = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.penilaian_strong_kid',
+            [
+                'TAMPAK_KURUS',
+                'PENURUNAN_BERAT_BADAN',
+                'DIARE_INTAKE_MAKANAN',
+                'RESIKO_MALNUTRISI',
+                'SKOR',
+                'STATUS_SKOR',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $strongkid
+        ]);
+    }
+
+    public function simpanSkriningGiziStrongKid(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'NOKUNJ' => 'required',
+            ],
+            [
+                'NOKUNJ.required' => 'Kunjungan wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $strongKidFields = [
+                'sga1',
+                'sga2',
+                'sga3',
+                'sga4',
+            ];
+
+            if ($this->isFieldEmpty($request, $strongKidFields)) {
+
+                // Semua kosong → hapus skrining lama
+                DB::table('medicalrecord.penilaian_strong_kid')
+                    ->where('KUNJUNGAN', $request->NOKUNJ)
+                    ->update([
+                        'OLEH'   => auth()->id(),
+                        'STATUS' => 0,
+                    ]);
+
+            } else {
+
+                DB::table('medicalrecord.penilaian_strong_kid')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'TAMPAK_KURUS'          => $request->input('sga1') ?? 0,
+                        'PENURUNAN_BERAT_BADAN' => $request->input('sga2') ?? 0,
+                        'DIARE_INTAKE_MAKANAN'  => $request->input('sga3') ?? 0,
+                        'RESIKO_MALNUTRISI'     => $request->input('sga4') ?? 0,
+                        'SKOR'                  => $request->input('skor_sga') ?? 0,
+                        'STATUS_SKOR'           => 1,
+                        'TANGGAL'               => now(),
+                        'OLEH'                  => auth()->id(),
+                        'STATUS'                => 1,
+                    ]
+                );
+            }
+
+            // ==========================================
+            // COMMIT
+            // ==========================================
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Skrining Gizi berhasil disimpan.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Skrining Gizi gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
     }
 }

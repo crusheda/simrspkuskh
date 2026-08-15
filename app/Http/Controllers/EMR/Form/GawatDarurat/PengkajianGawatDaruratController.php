@@ -1175,108 +1175,6 @@ class PengkajianGawatDaruratController extends Controller
             );
 
             // ==========================================
-            // PENILAIAN NYERI
-            // ==========================================
-            $penilaianNyeri = $getData(
-                'medicalrecord.penilaian_nyeri',
-                [
-                    'NYERI',
-                    'ONSET',
-                    'SKALA',
-                    'METODE',
-                    'SKOR1',
-                    'SKOR2',
-                    'SKOR3',
-                    'SKOR4',
-                    'SKOR5',
-                    'SKOR6',
-                    'PENCETUS',
-                    'GAMBARAN',
-                    'DURASI',
-                    'LOKASI',
-                ]
-            );
-
-            // ==========================================
-            // HUMPTY DUMPTY
-            // ==========================================
-            $humptyDumpty = $getData(
-                'medicalrecord.penilaian_skala_humpty_dumpty',
-                [
-                    'UMUR',
-                    'JENIS_KELAMIN',
-                    'DIAGNOSA',
-                    'GANGGUAN_KONGNITIF',
-                    'FAKTOR_LINGKUNGAN',
-                    'RESPON',
-                    'PENGGUNAAN_OBAT',
-                ]
-            );
-
-            // ==========================================
-            // MORSE
-            // ==========================================
-            $morse = $getData(
-                'medicalrecord.penilaian_skala_morse',
-                [
-                    'RIWAYAT_JATUH',
-                    'DIAGNOSIS',
-                    'ALAT_BANTU',
-                    'HEPARIN',
-                    'GAYA_BERJALAN',
-                    'KESADARAN',
-                ]
-            );
-
-            // ==========================================
-            // EPFRA
-            // ==========================================
-            $epfra = $getData(
-                'medicalrecord.penilaian_epfra',
-                [
-                    'USIA',
-                    'STATUS_MENTAL',
-                    'ELIMINASI',
-                    'MEDIKASI',
-                    'DIAGNOSIS',
-                    'AMBULASI',
-                    'NUTRISI',
-                    'GANGGUAN_TIDUR',
-                    'RIWAYAT_JATUH',
-                ]
-            );
-
-            // ==========================================
-            // SKRINING GIZI - MUST
-            // ==========================================
-            $must = $getData(
-                'medicalrecord.permasalahan_gizi',
-                [
-                    'BERAT_BADAN_SIGNIFIKAN',
-                    'PERUBAHAN_BERAT_BADAN',
-                    'INTAKE_MAKANAN',
-                    'KONDISI_KHUSUS',
-                    'SKOR',
-                    'STATUS_SKOR',
-                ]
-            );
-
-            // ==========================================
-            // SKRINING GIZI - STRONG KID
-            // ==========================================
-            $strongKid = $getData(
-                'medicalrecord.penilaian_strong_kid',
-                [
-                    'TAMPAK_KURUS',
-                    'PENURUNAN_BERAT_BADAN',
-                    'DIARE_INTAKE_MAKANAN',
-                    'RESIKO_MALNUTRISI',
-                    'SKOR',
-                    'STATUS_SKOR',
-                ]
-            );
-
-            // ==========================================
             // STATUS REPRODUKSI
             // ==========================================
             $statusReproduksi = $getData(
@@ -1341,22 +1239,8 @@ class PengkajianGawatDaruratController extends Controller
                     'TK16',
                     'TK17',
                     'TK18',
-                    'TK19',
-                    'TK20',
-                    'TK21',
-                    'TK22',
-                    'TK23',
-                    'TK24',
-                    'TK25',
-                    'TK26',
-                    'TK27',
-                    'TK9_LAIN',
-                    'TK14_LAIN',
-                    'TK16_LAIN',
-                    'TK17_LAIN',
-                    'TK18_LAIN',
-                    'TK19_LAIN',
-                    'TK20_LAIN',
+                    'TK99',
+                    'TK99_LAIN',
                     'TK1_TIME',
                     'TK2_TIME',
                     'TK3_TIME',
@@ -1375,15 +1259,7 @@ class PengkajianGawatDaruratController extends Controller
                     'TK16_TIME',
                     'TK17_TIME',
                     'TK18_TIME',
-                    'TK19_TIME',
-                    'TK20_TIME',
-                    'TK21_TIME',
-                    'TK22_TIME',
-                    'TK23_TIME',
-                    'TK24_TIME',
-                    'TK25_TIME',
-                    'TK26_TIME',
-                    'TK27_TIME',
+                    'TK99_TIME',
                 ]
             );
 
@@ -1475,12 +1351,12 @@ class PengkajianGawatDaruratController extends Controller
                     'tanda_vital'               => $tandaVital,
                     'anamnesis_diperoleh'       => $anamnesisDiperoleh,
                     'kondisi_sosial'            => $kondisiSosial,
-                    'penilaian_nyeri'           => $penilaianNyeri,
-                    'humpty_dumpty'             => $humptyDumpty,
-                    'morse'                     => $morse,
-                    'epfra'                     => $epfra,
-                    'must'                      => $must,
-                    'strong_kid'                => $strongKid,
+                    // 'penilaian_nyeri'           => $penilaianNyeri,
+                    // 'humpty_dumpty'             => $humptyDumpty,
+                    // 'morse'                     => $morse,
+                    // 'epfra'                     => $epfra,
+                    // 'must'                      => $must,
+                    // 'strong_kid'                => $strongKid,
                     'status_reproduksi'         => $statusReproduksi,
                     'implementasi_keperawatan'  => $implementasiKeperawatan,
                     'tindakan_kolaborasi'       => $tindakanKolaborasi,
@@ -1840,292 +1716,6 @@ class PengkajianGawatDaruratController extends Controller
                 );
 
                 // ==========================================
-                // PENILAIAN / SKRINING NYERI
-                // ==========================================
-                $dataNyeri = [
-                    'NYERI'    => $request->sn_nyeri ?? 0,
-                    'ONSET'    => $request->sn_onset ?? 0,
-                    'SKALA'    => $request->sn_skala ?? 0,
-                    'METODE'   => $request->sn_metode ?? '',
-
-                    'SKOR1'    => 0,
-                    'SKOR2'    => 0,
-                    'SKOR3'    => 0,
-                    'SKOR4'    => 0,
-                    'SKOR5'    => 0,
-                    'SKOR6'    => 0,
-
-                    'PENCETUS' => $request->sn_pencetus ?? '',
-                    'GAMBARAN' => $request->sn_gambaran ?? '',
-                    'DURASI'   => $request->sn_durasi ?? '',
-                    'LOKASI'   => $request->sn_lokasi ?? '',
-
-                    'OLEH'     => auth()->id(),
-                    'STATUS'   => 1,
-                    'TANGGAL'  => now(),
-                ];
-                switch ((string) $request->sn_metode) {
-
-                    // BPS
-                    case '2':
-                        $dataNyeri['SKOR1'] = $request->sn_bps_1 ?? 0;
-                        $dataNyeri['SKOR2'] = $request->sn_bps_2 ?? 0;
-                        $dataNyeri['SKOR3'] = $request->sn_bps_3 ?? 0;
-                        break;
-
-                    // NIPS
-                    case '3':
-                        $dataNyeri['SKOR1'] = $request->sn_nips_1 ?? 0;
-                        $dataNyeri['SKOR2'] = $request->sn_nips_2 ?? 0;
-                        $dataNyeri['SKOR3'] = $request->sn_nips_3 ?? 0;
-                        $dataNyeri['SKOR4'] = $request->sn_nips_4 ?? 0;
-                        $dataNyeri['SKOR5'] = $request->sn_nips_5 ?? 0;
-                        $dataNyeri['SKOR6'] = $request->sn_nips_6 ?? 0;
-                        break;
-
-                    // FLACC
-                    case '4':
-                        $dataNyeri['SKOR1'] = $request->sn_flacc_1 ?? 0;
-                        $dataNyeri['SKOR2'] = $request->sn_flacc_2 ?? 0;
-                        $dataNyeri['SKOR3'] = $request->sn_flacc_3 ?? 0;
-                        $dataNyeri['SKOR4'] = $request->sn_flacc_4 ?? 0;
-                        $dataNyeri['SKOR5'] = $request->sn_flacc_5 ?? 0;
-                        break;
-
-                    // NRS / VAS
-                        // Tidak perlu SKOR1-SKOR6
-                        case '1':
-                        case '5':
-                        default:
-                        break;
-                }
-                DB::table('medicalrecord.penilaian_nyeri')
-                    ->updateOrInsert(
-                        [
-                            'KUNJUNGAN' => $request->NOKUNJ
-                        ],
-                        $dataNyeri
-                    );
-
-                // ==========================================
-                // SKRINING RISIKO JATUH - HUMPTY DUMPTY
-                // ==========================================
-                $humptyFields = [
-                    'rj_usia',
-                    'rj_jk',
-                    'rj_hd_1',
-                    'rj_hd_2',
-                    'rj_hd_3',
-                    'rj_hd_4',
-                    'rj_hd_5',
-                ];
-
-                if ($this->isFieldEmpty($request, $humptyFields)) {
-
-                    // Semua kosong → hapus skrining lama
-                    DB::table('medicalrecord.penilaian_skala_humpty_dumpty')
-                        ->where('KUNJUNGAN', $request->NOKUNJ)
-                        ->update([
-                            'OLEH'   => auth()->id(),
-                            'STATUS' => 0,
-                        ]);
-
-                } else {
-
-                    DB::table('medicalrecord.penilaian_skala_humpty_dumpty')->updateOrInsert(
-                        [
-                            'KUNJUNGAN' => $request->NOKUNJ
-                        ],
-                        [
-                            'UMUR'               => $request->input('rj_usia') ?? 0,
-                            'JENIS_KELAMIN'      => $request->input('rj_jk') ?? 0,
-                            'DIAGNOSA'           => $request->input('rj_hd_1') ?? 0,
-                            'GANGGUAN_KONGNITIF' => $request->input('rj_hd_2') ?? 0,
-                            'FAKTOR_LINGKUNGAN'  => $request->input('rj_hd_3') ?? 0,
-                            'RESPON'             => $request->input('rj_hd_4') ?? 0,
-                            'PENGGUNAAN_OBAT'    => $request->input('rj_hd_5') ?? 0,
-                            'TANGGAL'            => now(),
-                            'OLEH'               => auth()->id(),
-                            'STATUS'             => 1,
-                        ]
-                    );
-                }
-
-
-                // ==========================================
-                // SKRINING RISIKO JATUH - MORSE
-                // ==========================================
-                $morseFields = [
-                    'rj_sm_1',
-                    'rj_sm_2',
-                    'rj_sm_3',
-                    'rj_sm_4',
-                    'rj_sm_5',
-                    'rj_sm_6',
-                ];
-
-                if ($this->isFieldEmpty($request, $morseFields)) {
-
-                    // Semua kosong → hapus skrining lama
-                    DB::table('medicalrecord.penilaian_skala_morse')
-                        ->where('KUNJUNGAN', $request->NOKUNJ)
-                        ->update([
-                            'OLEH'   => auth()->id(),
-                            'STATUS' => 0,
-                        ]);
-
-                } else {
-
-                    DB::table('medicalrecord.penilaian_skala_morse')->updateOrInsert(
-                        [
-                            'KUNJUNGAN' => $request->NOKUNJ
-                        ],
-                        [
-                            'RIWAYAT_JATUH' => $request->input('rj_sm_1') ?? 0,
-                            'DIAGNOSIS'     => $request->input('rj_sm_2') ?? 0,
-                            'ALAT_BANTU'    => $request->input('rj_sm_3') ?? 0,
-                            'HEPARIN'       => $request->input('rj_sm_4') ?? 0,
-                            'GAYA_BERJALAN' => $request->input('rj_sm_5') ?? 0,
-                            'KESADARAN'     => $request->input('rj_sm_6') ?? 0,
-                            'TANGGAL'       => now(),
-                            'OLEH'          => auth()->id(),
-                            'STATUS'        => 1,
-                        ]
-                    );
-                }
-
-
-                // ==========================================
-                // SKRINING RISIKO JATUH - EPFRA
-                // ==========================================
-                $epfraFields = [
-                    'rj_epfra_usia',
-                    'rj_epfra_1',
-                    'rj_epfra_2',
-                    'rj_epfra_3',
-                    'rj_epfra_4',
-                    'rj_epfra_5',
-                    'rj_epfra_6',
-                    'rj_epfra_7',
-                    'rj_epfra_8',
-                ];
-
-                if ($this->isFieldEmpty($request, $epfraFields)) {
-
-                    // Semua kosong → hapus skrining lama
-                    DB::table('medicalrecord.penilaian_epfra')
-                        ->where('KUNJUNGAN', $request->NOKUNJ)
-                        ->update([
-                            'OLEH'   => auth()->id(),
-                            'STATUS' => 0,
-                        ]);
-
-                } else {
-
-                    DB::table('medicalrecord.penilaian_epfra')->updateOrInsert(
-                        [
-                            'KUNJUNGAN' => $request->NOKUNJ
-                        ],
-                        [
-                            'USIA'           => $request->input('rj_epfra_usia') ?? 0,
-                            'STATUS_MENTAL'  => $request->input('rj_epfra_1') ?? 0,
-                            'ELIMINASI'      => $request->input('rj_epfra_2') ?? 0,
-                            'MEDIKASI'       => $request->input('rj_epfra_3') ?? 0,
-                            'DIAGNOSIS'      => $request->input('rj_epfra_4') ?? 0,
-                            'AMBULASI'       => $request->input('rj_epfra_5') ?? 0,
-                            'NUTRISI'        => $request->input('rj_epfra_6') ?? 0,
-                            'GANGGUAN_TIDUR' => $request->input('rj_epfra_7') ?? 0,
-                            'RIWAYAT_JATUH'  => $request->input('rj_epfra_8') ?? 0,
-                            'TANGGAL'        => now(),
-                            'OLEH'           => auth()->id(),
-                            'STATUS'         => 1,
-                        ]
-                    );
-                }
-
-
-                // ==========================================
-                // SKRINING GIZI - MUST
-                // ==========================================
-                $mustFields = [
-                    'sgd1',
-                    'sgd1_c',
-                    'sgd2',
-                    'sgd3',
-                ];
-
-                if ($this->isFieldEmpty($request, $mustFields)) {
-
-                    // Semua kosong → hapus skrining lama
-                    DB::table('medicalrecord.permasalahan_gizi')
-                        ->where('KUNJUNGAN', $request->NOKUNJ)
-                        ->update([
-                            'OLEH'   => auth()->id(),
-                            'STATUS' => 0,
-                        ]);
-
-                } else {
-
-                    DB::table('medicalrecord.permasalahan_gizi')->updateOrInsert(
-                        [
-                            'KUNJUNGAN' => $request->NOKUNJ
-                        ],
-                        [
-                            'BERAT_BADAN_SIGNIFIKAN' => $request->input('sgd1') ?? 0,
-                            'PERUBAHAN_BERAT_BADAN'  => $request->input('sgd1_c') ?? 0,
-                            'INTAKE_MAKANAN'         => $request->input('sgd2') ?? 0,
-                            'KONDISI_KHUSUS'         => $request->input('sgd3') ?? 0,
-                            'SKOR'                   => $request->input('skor_sgd') ?? 0,
-                            'STATUS_SKOR'            => 1,
-                            'TANGGAL'               => now(),
-                            'OLEH'                   => auth()->id(),
-                            'STATUS'                 => 1,
-                        ]
-                    );
-                }
-
-
-                // ==========================================
-                // SKRINING GIZI - STRONG KID
-                // ==========================================
-                $strongKidFields = [
-                    'sga1',
-                    'sga2',
-                    'sga3',
-                    'sga4',
-                ];
-
-                if ($this->isFieldEmpty($request, $strongKidFields)) {
-
-                    // Semua kosong → hapus skrining lama
-                    DB::table('medicalrecord.penilaian_strong_kid')
-                        ->where('KUNJUNGAN', $request->NOKUNJ)
-                        ->update([
-                            'OLEH'   => auth()->id(),
-                            'STATUS' => 0,
-                        ]);
-
-                } else {
-
-                    DB::table('medicalrecord.penilaian_strong_kid')->updateOrInsert(
-                        [
-                            'KUNJUNGAN' => $request->NOKUNJ
-                        ],
-                        [
-                            'TAMPAK_KURUS'          => $request->input('sga1') ?? 0,
-                            'PENURUNAN_BERAT_BADAN' => $request->input('sga2') ?? 0,
-                            'DIARE_INTAKE_MAKANAN'  => $request->input('sga3') ?? 0,
-                            'RESIKO_MALNUTRISI'     => $request->input('sga4') ?? 0,
-                            'SKOR'                  => $request->input('skor_sga') ?? 0,
-                            'STATUS_SKOR'           => 1,
-                            'TANGGAL'               => now(),
-                            'OLEH'                  => auth()->id(),
-                            'STATUS'                => 1,
-                        ]
-                    );
-                }
-
-                // ==========================================
                 // STATUS REPRODUKSI
                 // ==========================================
                 DB::table('medicalrecord.sirmed_status_reproduksi')->updateOrInsert(
@@ -2202,23 +1792,9 @@ class PengkajianGawatDaruratController extends Controller
                         'TK16'                        => $request->boolean('tk_16') ? 1 : 0,
                         'TK17'                        => $request->boolean('tk_17') ? 1 : 0,
                         'TK18'                        => $request->boolean('tk_18') ? 1 : 0,
-                        'TK19'                        => $request->boolean('tk_19') ? 1 : 0,
-                        'TK20'                        => $request->boolean('tk_20') ? 1 : 0,
-                        'TK21'                        => $request->boolean('tk_21') ? 1 : 0,
-                        'TK22'                        => $request->boolean('tk_22') ? 1 : 0,
-                        'TK23'                        => $request->boolean('tk_23') ? 1 : 0,
-                        'TK24'                        => $request->boolean('tk_24') ? 1 : 0,
-                        'TK25'                        => $request->boolean('tk_25') ? 1 : 0,
-                        'TK26'                        => $request->boolean('tk_26') ? 1 : 0,
-                        'TK27'                        => $request->boolean('tk_27') ? 1 : 0,
+                        'TK99'                        => $request->boolean('tk_99') ? 1 : 0,
 
-                        'TK9_LAIN'                    => $request->input('tk_9_lain', '') ?? '',
-                        'TK14_LAIN'                   => $request->input('tk_14_lain', '') ?? '',
-                        'TK16_LAIN'                   => $request->input('tk_16_lain', '') ?? '',
-                        'TK17_LAIN'                   => $request->input('tk_17_lain', '') ?? '',
-                        'TK18_LAIN'                   => $request->input('tk_18_lain', '') ?? '',
-                        'TK19_LAIN'                   => $request->input('tk_19_lain', '') ?? '',
-                        'TK20_LAIN'                   => $request->input('tk_20_lain', '') ?? '',
+                        'TK99_LAIN'                    => $request->input('tk_99_lain', '') ?? '',
 
                         'TK1_TIME'                         => $request->input('tk_1_dt') ?: null,
                         'TK2_TIME'                         => $request->input('tk_2_dt') ?: null,
@@ -2238,15 +1814,7 @@ class PengkajianGawatDaruratController extends Controller
                         'TK16_TIME'                         => $request->input('tk_16_dt') ?: null,
                         'TK17_TIME'                         => $request->input('tk_17_dt') ?: null,
                         'TK18_TIME'                         => $request->input('tk_18_dt') ?: null,
-                        'TK19_TIME'                         => $request->input('tk_19_dt') ?: null,
-                        'TK20_TIME'                         => $request->input('tk_20_dt') ?: null,
-                        'TK21_TIME'                         => $request->input('tk_21_dt') ?: null,
-                        'TK22_TIME'                         => $request->input('tk_22_dt') ?: null,
-                        'TK23_TIME'                         => $request->input('tk_23_dt') ?: null,
-                        'TK24_TIME'                         => $request->input('tk_24_dt') ?: null,
-                        'TK25_TIME'                         => $request->input('tk_25_dt') ?: null,
-                        'TK26_TIME'                         => $request->input('tk_26_dt') ?: null,
-                        'TK27_TIME'                         => $request->input('tk_27_dt') ?: null,
+                        'TK99_TIME'                         => $request->input('tk_99_dt') ?: null,
 
                         'TANGGAL'                     => now(),
                         'OLEH'                        => auth()->id(),

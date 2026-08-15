@@ -136,6 +136,27 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     Route::get('emr/pengkajian/riwayat_obstetri/{kunjungan}',[AddOnPengkajianController::class, 'getRiwayatObstetri']);
                     Route::post('emr/pengkajian/riwayat_obstetri/{kunjungan}/simpan',[AddOnPengkajianController::class, 'simpanRiwayatObstetri']);
                     Route::delete('emr/pengkajian/riwayat_obstetri/{kunjungan}/hapus/{id}',[AddOnPengkajianController::class, 'hapusRiwayatObstetri']);
+                // SKRINING
+                    // NYERI
+                        Route::get('emr/pengkajian/skrining/nyeri/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningNyeri']);
+                        Route::post('emr/pengkajian/skrining/nyeri/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningNyeri']);
+                    // RESIKO JATUH
+                        // HUMPTY DUMPTY
+                        Route::get('emr/pengkajian/skrining/resikojatuh/hd/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningResikoJatuhHumptyDumpty']);
+                        Route::post('emr/pengkajian/skrining/resikojatuh/hd/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningResikoJatuhHumptyDumpty']);
+                        // SKOR MORSE
+                        Route::get('emr/pengkajian/skrining/resikojatuh/sm/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningResikoJatuhSkalaMorse']);
+                        Route::post('emr/pengkajian/skrining/resikojatuh/sm/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningResikoJatuhSkalaMorse']);
+                        // EPFRA
+                        Route::get('emr/pengkajian/skrining/resikojatuh/epfra/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningResikoJatuhEPFRA']);
+                        Route::post('emr/pengkajian/skrining/resikojatuh/epfra/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningResikoJatuhEPFRA']);
+                    // GIZI
+                        // MUST
+                        Route::get('emr/pengkajian/skrining/gizi/must/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningGiziMust']);
+                        Route::post('emr/pengkajian/skrining/gizi/must/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningGiziMust']);
+                        // STRONG KID
+                        Route::get('emr/pengkajian/skrining/gizi/strongkid/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningGiziStrongKid']);
+                        Route::post('emr/pengkajian/skrining/gizi/strongkid/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningGiziStrongKid']);
 });
 
 // SIRMED v.1

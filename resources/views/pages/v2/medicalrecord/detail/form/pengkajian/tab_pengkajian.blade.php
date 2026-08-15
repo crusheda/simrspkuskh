@@ -256,6 +256,22 @@
 
 <script>
     $(function () {
+        $(document).on(
+            'input',
+            'input[type="number"][min][max]',
+            function () {
+
+                const min = parseFloat(this.min);
+                const max = parseFloat(this.max);
+                const value = parseFloat(this.value);
+
+                // Kosongkan jika nilai di luar range
+                if (!isNaN(value) && (value < min || value > max)) {
+                    this.value = '';
+                }
+            }
+        );
+
         // Menandai menu aktif jika URL sama (opsional)
         const menu = $('#pengkajianMenu');
         let pageUrl = window.location.href.split(/[?#]/)[0];
