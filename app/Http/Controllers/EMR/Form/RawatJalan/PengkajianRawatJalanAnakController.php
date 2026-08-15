@@ -255,6 +255,32 @@ class PengkajianRawatJalanAnakController extends Controller
     {
         $data = [];
 
+        // ======================================================
+        // TANDA VITAL
+        // ======================================================
+        $tanda_vital = DB::table('medicalrecord.tanda_vital')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+        if ($tanda_vital) {
+
+            $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
+            $data['ku']          = $tanda_vital->KEADAAN_UMUM;
+            $data['kesadaran']   = $tanda_vital->KESADARAN;
+            $data['eye']         = $tanda_vital->EYE;
+            $data['motorik']     = $tanda_vital->MOTORIK;
+            $data['verbal']      = $tanda_vital->VERBAL;
+            $data['gcs']         = $tanda_vital->GCS;
+
+            $data['td_up']       = $tanda_vital->SISTOLIK;
+            $data['td_down']     = $tanda_vital->DISTOLIK;
+            $data['spo2']        = $tanda_vital->SATURASI_O2;
+            $data['nafas']       = $tanda_vital->FREKUENSI_NAFAS;
+            $data['suhu']        = $tanda_vital->SUHU;
+            $data['nadi']        = $tanda_vital->FREKUENSI_NADI;
+            $data['abn']         = $tanda_vital->ALAT_BANTU_NAFAS;
+        }
+
         // Anamnesis diperoleh
         $anam = DB::table('medicalrecord.anamnesis_diperoleh')
             ->where('KUNJUNGAN', $kunjungan)
@@ -380,6 +406,7 @@ class PengkajianRawatJalanAnakController extends Controller
                     'KUNJUNGAN' => $request->NOKUNJ
                 ],
                 [
+                    'KELUHAN_UTAMA' => $request->anm_ku,
                     'KEADAAN_UMUM' => $request->ku,
                     'KESADARAN'    => $request->kesadaran,
                     'EYE'          => $request->eye,
@@ -591,24 +618,9 @@ class PengkajianRawatJalanAnakController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        // Default
-        $data['ku'] = '';
-        $data['kesadaran'] = '';
-        $data['eye'] = '';
-        $data['motorik'] = '';
-        $data['verbal'] = '';
-        $data['gcs'] = '';
-
-        $data['td_up'] = '';
-        $data['td_down'] = '';
-        $data['spo2'] = '';
-        $data['nafas'] = '';
-        $data['suhu'] = '';
-        $data['nadi'] = '';
-        $data['abn'] = '';
-
         if ($tanda_vital) {
 
+            $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
             $data['ku']          = $tanda_vital->KEADAAN_UMUM;
             $data['kesadaran']   = $tanda_vital->KESADARAN;
             $data['eye']         = $tanda_vital->EYE;
@@ -632,40 +644,6 @@ class PengkajianRawatJalanAnakController extends Controller
         $kondisi_sosial = DB::table('medicalrecord.kondisi_sosial')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-
-        // Default Status Psikologi
-        $data['tak'] = 0;
-        $data['marah'] = 0;
-        $data['cemas'] = 0;
-        $data['takut'] = 0;
-        $data['sedih'] = 0;
-        $data['bundir'] = 0;
-        $data['pse_lain'] = '';
-
-
-        // Status Mental
-        $data['sm'] = 0;
-        $data['perilaku'] = '';
-        $data['kekerasan'] = '';
-
-
-        // Hubungan Sosial
-        $data['hub'] = 0;
-        $data['tinggal'] = 0;
-        $data['tinggal_lain'] = '';
-
-
-        // Spiritual
-        $data['kbt'] = 0;
-        $data['nk'] = 0;
-        $data['nk_lain'] = '';
-        $data['pk'] = '';
-
-
-        // Ekonomi
-        $data['hasil'] = 0;
-
 
         if ($kondisi_sosial) {
 
@@ -709,15 +687,6 @@ class PengkajianRawatJalanAnakController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['sn_nyeri'] = 0;
-        $data['sn_onset'] = '';
-        $data['sn_skala'] = '';
-        $data['sn_metode'] = '';
-        $data['sn_pencetus'] = '';
-        $data['sn_gambaran'] = '';
-        $data['sn_durasi'] = '';
-        $data['sn_lokasi'] = '';
-
         if ($nyeri) {
 
             $data['sn_nyeri']    = $nyeri->NYERI;
@@ -737,10 +706,6 @@ class PengkajianRawatJalanAnakController extends Controller
         $getup = DB::table('medicalrecord.penilaian_getup_and_go')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['cara_berjalan'] = 0;
-        $data['faktor_risiko'] = 0;
-        $data['kon_obat'] = 0;
 
         if ($getup) {
 
@@ -774,14 +739,6 @@ class PengkajianRawatJalanAnakController extends Controller
             ->where('STATUS', 1)
             ->first();
 
-        $data['rp_lama_hamil'] = '';
-        $data['rp_satuan'] = 'MINGGU';
-        $data['rp_komplikasi'] = 0;
-        $data['rp_komplikasi_ket'] = '';
-        $data['rp_persalinan'] = '';
-        $data['rp_penyulit'] = 0;
-        $data['rp_penyulit_ket'] = '';
-
         if ($perinatal) {
 
             $data['rp_lama_hamil'] = $perinatal->LAMA_HAMIL;
@@ -803,33 +760,6 @@ class PengkajianRawatJalanAnakController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
             ->first();
-
-        $data['lk_lahir'] = '';
-        $data['bb_lahir'] = '';
-        $data['tb_lahir'] = '';
-
-        $data['asi_sampai'] = '';
-        $data['asi_satuan'] = 'BULAN';
-
-        $data['sufor_mulai'] = '';
-        $data['sufor_satuan'] = 'BULAN';
-
-        $data['mpasi_mulai'] = '';
-        $data['mpasi_satuan'] = 'BULAN';
-
-        $data['tengkurap'] = '';
-        $data['duduk'] = '';
-        $data['merangkak'] = '';
-        $data['berdiri'] = '';
-        $data['berjalan'] = '';
-
-        $data['neonatus'] = 0;
-        $data['neonatus_ket'] = '';
-
-        $data['keluhan_tumbuh_kembang'] = '';
-
-        $data['imunisasi'] = '';
-        $data['imunisasi_lain'] = '';
 
         if ($tumbuh) {
 
@@ -860,6 +790,55 @@ class PengkajianRawatJalanAnakController extends Controller
             $data['imunisasi'] = $tumbuh->IMUNISASI;
             $data['imunisasi_lain'] = $tumbuh->IMUNISASI_LAIN;
         }
+
+        // ======================================================
+        // MASALAH KEPERAWATAN
+        // ======================================================
+        $masalah = DB::table('medicalrecord.masalah_keperawatan')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+
+        $diag_field = [
+            'diag_1'  => 'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
+            'diag_2'  => 'POLA_NAFAS_TIDAK_EFEKTIF',
+            'diag_3'  => 'PERFUSI_PERIFER_TIDAK_EFEKTIF',
+            'diag_4'  => 'DIARE',
+            'diag_5'  => 'NYERI_AKUT',
+            'diag_6'  => 'NAUSEA',
+            'diag_7'  => 'HIPERTERMI',
+            'diag_8'  => 'ANSIETAS',
+
+            'diag_9'  => 'GANGGUAN_INTEGRITAS_KULIT_JARINGAN',
+            'diag_10' => 'GANGGUAN_ELIMINASI_URIN',
+            'diag_11' => 'INTOLERANSI_AKTIFITAS',
+            'diag_12' => 'GANGGUAN_MOBILITAS_FISIK',
+            'diag_13' => 'GANGGUAN_PERTUKARAN_GAS',
+            'diag_lain' => 'DIAGNOSA_LAIN',
+
+            'tin_1' => 'TINDAKAN_RELAKSASI_NAFAS_DALAM',
+            'tin_2' => 'TINDAKAN_BODY_ALIGNMENT',
+            'tin_3' => 'TINDAKAN_TENANGKAN_PASIEN',
+            'tin_4' => 'TINDAKAN_PENDIDIKAN_KESEHATAN',
+            'tin_5' => 'TINDAKAN_RAWAT_LUKA',
+
+            'tin_6' => 'TERAPI_ORAL',
+            'tin_7' => 'TERAPI_IV_SC_IM',
+        ];
+
+        $data['terapi_oral'] = '';
+        $data['terapi_iv'] = '';
+
+        if ($masalah) {
+
+            foreach ($diag_field as $key => $column) {
+                $data[$key] = $masalah->$column;
+            }
+
+            $data['terapi_oral'] = $masalah->TERAPI_ORAL_DETAIL;
+            $data['terapi_iv'] = $masalah->TERAPI_IV_SC_IM_DETAIL;
+        }
+
 
         return response()->json($data);
     }

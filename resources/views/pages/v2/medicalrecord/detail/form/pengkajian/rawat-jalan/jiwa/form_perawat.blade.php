@@ -4,6 +4,12 @@
         <div class="row">
             <div class="col-md-12 mb-3">
                 <div class="form-group">
+                    <label class="form-label fw-bold"> Keluhan Utama </label>
+                    <input class="form-control form-control" type="text" name="anm_ku" id="anm_ku">
+                </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <div class="form-group">
                     <label class="form-label fw-bold">Keadaan Umum</label>
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control" name="ku" id="ku">
@@ -920,7 +926,7 @@
                             <label class="col-md-5 col-form-label">Kesediaan pasien/keluarga menerima informasi</label>
                             <div class="col-md-7">
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="edu_1" id="edu_1_ya" value="1">
+                                    <input class="form-check-input" type="radio" name="edu_1" id="edu_1_ya" value="1" checked>
                                     <label class="form-check-label">
                                         Ya
                                     </label>
@@ -936,7 +942,7 @@
                             <label class="col-md-5 col-form-label">Terdapat hambatan dalam edukasi</label>
                             <div class="col-md-7">
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="edu_2" id="edu_2_ya" value="1">
+                                    <input class="form-check-input" type="radio" name="edu_2" id="edu_2_ya" value="1" checked>
                                     <label class="form-check-label">
                                         Ya
                                     </label>
@@ -959,7 +965,7 @@
                                 </div>
 
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="edu_3" id="edu_3_ya" value="0">
+                                    <input class="form-check-input" type="radio" name="edu_3" id="edu_3_ya" value="0" checked>
                                     <label class="form-check-label">
                                         Tidak
                                     </label>
@@ -970,7 +976,7 @@
                             <label class="form-label fw-bold">Kebutuhan Edukasi</label>
                             <div class="col">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_1" id="kb_edu_1">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_1" id="kb_edu_1" checked>
                                     <label class="form-check-label">Kondisi kesehatan dan diagnosa pasti dan penatalaksanaannya</label>
                                 </div>
 
@@ -980,22 +986,22 @@
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_3" id="kb_edu_3">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_3" id="kb_edu_3" checked>
                                     <label class="form-check-label">Hak dan Kewajiban Pasien</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_4" id="kb_edu_4">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_4" id="kb_edu_4" checked>
                                     <label class="form-check-label">Proses pemberian informed consent</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_5" id="kb_edu_5">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_5" id="kb_edu_5" checked>
                                     <label class="form-check-label">Cuci tangan dengan benar</label>
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_6" id="kb_edu_6">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_6" id="kb_edu_6" checked>
                                     <label class="form-check-label">Edukasi perencanaan pulang</label>
                                 </div>
                             </div>
@@ -1003,7 +1009,7 @@
                             <!-- Kolom 2 -->
                             <div class="col">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_7" id="kb_edu_7">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_7" id="kb_edu_7" checked>
                                     <label class="form-check-label">Penggunaan obat secara efektif dan efek samping interaksinya</label>
                                 </div>
 
@@ -1013,7 +1019,7 @@
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_9" id="kb_edu_9">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_9" id="kb_edu_9" checked>
                                     <label class="form-check-label">Hak untuk berpartisipasi pada pelayanan</label>
                                 </div>
 
@@ -1023,7 +1029,7 @@
                                 </div>
 
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_11" id="kb_edu_11">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_11" id="kb_edu_11" checked>
                                     <label class="form-check-label">Bahaya merokok</label>
                                 </div>
 
@@ -1036,7 +1042,7 @@
                             <!-- Kolom 3 -->
                             <div class="col">
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_13" id="kb_edu_13">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="kb_edu_13" id="kb_edu_13" checked>
                                     <label class="form-check-label">Diet dan Nutrisi</label>
                                 </div>
 
@@ -1108,15 +1114,15 @@
                                 Harga Diri Rendah
                             </label>
                         </div>
-                    </div>
-                    <!-- Kolom Tengah -->
-                    <div class="col-md-4">
                         <div class="form-check mb-2">
                             <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_6" id="diag_jiwa_6">
                             <label class="form-check-label" for="diag_jiwa_6">
                                 Isolasi Sosial
                             </label>
                         </div>
+                    </div>
+                    <!-- Kolom Tengah -->
+                    <div class="col-md-4">
                         <div class="form-check mb-2">
                             <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_jiwa_7" id="diag_jiwa_7">
                             <label class="form-check-label" for="diag_jiwa_7">
@@ -1147,6 +1153,10 @@
                                 Gangguan Persepsi Sensori
                             </label>
                         </div>
+                        <div class="form-check mb-2">
+                            <label class="form-input-label">Diagnosa Keperawatan Lainnya</label>
+                            <input type="text" class="form-control" id="diag_lain" name="diag_lain" placeholder="Lainnya">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1162,25 +1172,25 @@
                             Mandiri
                         </label>
                         <div class="form-check mb-2">
-                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_jiwa_1" id="tin_jiwa_1">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_jiwa_1" id="tin_jiwa_1" checked>
                             <label class="form-check-label" for="tin_jiwa_1">
                                 Ajarkan teknik relaksasi
                             </label>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_jiwa_2" id="tin_jiwa_2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_jiwa_2" id="tin_jiwa_2" checked>
                             <label class="form-check-label" for="tin_jiwa_2">
                                 Bina Hubungan Saling Percaya
                             </label>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_jiwa_3" id="tin_jiwa_3">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_jiwa_3" id="tin_jiwa_3" checked>
                             <label class="form-check-label" for="tin_jiwa_3">
                                 Diskusikan dengan pasien / keluarga
                             </label>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_jiwa_4" id="tin_jiwa_4">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_jiwa_4" id="tin_jiwa_4" checked>
                             <label class="form-check-label" for="tin_jiwa_4">
                                 Latih Strategi Pelaksanaan
                             </label>
@@ -1191,7 +1201,7 @@
                             <label class="col-md-12 col-form-label mb-0">Pemberian Terapi :</label>
                             <div class="col-md-4">
                                 <div class="form-check">
-                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_6" id="tin_6">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_6" id="tin_6" checked>
                                     <label class="form-check-label">Oral</label>
                                 </div>
                             </div>
@@ -1473,26 +1483,68 @@
         });
     }
 
+    function setValIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(value);
+        }
+    }
+
+    function setNumberIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(Number(value).toLocaleString('id-ID', {
+                maximumFractionDigits: 0
+            }));
+        }
+    }
+
+    function setSuhuIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(Number(value).toLocaleString('id-ID', {
+                maximumFractionDigits: 2
+            }));
+        }
+    }
+
+    function setCheckedIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector)
+                .prop('checked', Number(value) === 1)
+                .trigger('change');
+        }
+    }
+
+    function setRadioIfExists(name, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $('input[name="' + name + '"][value="' + value + '"]')
+                .prop('checked', true)
+                .trigger('change');
+        }
+    }
+
     function isiFormPengkajianRJJp(data){
 
         // ======================================================
         // TANDA VITAL
         // ======================================================
 
-        $('#ku').val(data.ku);
-        $('#kesadaran').val(data.kesadaran);
-        $('#eye').val(data.eye);
-        $('#motorik').val(data.motorik);
-        $('#verbal').val(data.verbal);
-        $('#gcs').val(data.gcs);
+        setValIfExists('#anm_ku', data.anm_ku);
+        setValIfExists('#ku', data.ku);
+        setValIfExists('#kesadaran', data.kesadaran);
 
-        $('#td_up').val(data.td_up);
-        $('#td_down').val(data.td_down);
-        $('#spo2').val(data.spo2);
-        $('#nafas').val(data.nafas);
-        $('#suhu').val(data.suhu);
-        $('#nadi').val(data.nadi);
-        $('#abn').val(data.abn);
+        setNumberIfExists('#eye', data.eye);
+        setNumberIfExists('#motorik', data.motorik);
+        setNumberIfExists('#verbal', data.verbal);
+        setNumberIfExists('#gcs', data.gcs);
+
+        setNumberIfExists('#td_up', data.td_up);
+        setNumberIfExists('#td_down', data.td_down);
+        setNumberIfExists('#spo2', data.spo2);
+        setNumberIfExists('#nafas', data.nafas);
+
+        setSuhuIfExists('#suhu', data.suhu);
+
+        setNumberIfExists('#nadi', data.nadi);
+        setRadioIfExists('abn', data.abn);
 
 
         // ======================================================
@@ -1500,80 +1552,73 @@
         // ======================================================
 
         // Status Psikologi (Checkbox)
-        $('#tak').prop('checked', data.tak == 1);
-        $('#marah').prop('checked', data.marah == 1);
-        $('#cemas').prop('checked', data.cemas == 1);
-        $('#takut').prop('checked', data.takut == 1);
-        $('#sedih').prop('checked', data.sedih == 1);
-        $('#bundir').prop('checked', data.bundir == 1);
+        setCheckedIfExists('#tak', data.tak);
+        setCheckedIfExists('#marah', data.marah);
+        setCheckedIfExists('#cemas', data.cemas);
+        setCheckedIfExists('#takut', data.takut);
+        setCheckedIfExists('#sedih', data.sedih);
+        setCheckedIfExists('#bundir', data.bundir);
 
-        $('#pse_lain').val(data.pse_lain).slideDown();
+        setValIfExists('#pse_lain', data.pse_lain);
 
+        if (data.pse_lain !== null && data.pse_lain !== undefined && data.pse_lain !== '') {
+            $('#pse_lain').slideDown();
+        }
 
         // Status Mental
-        $('input[name="sm"][value="' + data.sm + '"]').prop('checked', true);
+        setRadioIfExists('sm', data.sm);
 
-        $('#perilaku').val(data.perilaku);
-        $('#kekerasan').val(data.kekerasan);
+        setValIfExists('#perilaku', data.perilaku);
+        setValIfExists('#kekerasan', data.kekerasan);
 
 
         // Hubungan Sosial
-        $('input[name="hub"][value="' + data.hub + '"]').prop('checked', true);
+        setRadioIfExists('hub', data.hub);
 
-        $('input[name="tinggal"][value="' + data.tinggal + '"]').prop('checked', true);
+        setRadioIfExists('tinggal', data.tinggal);
 
-        $('#tinggal_lain').val(data.tinggal_lain);
+        setValIfExists('#tinggal_lain', data.tinggal_lain);
 
 
         // Spiritual
-        $('input[name="kbt"][value="' + data.kbt + '"]').prop('checked', true);
+        setRadioIfExists('kbt', data.kbt);
 
-        $('input[name="nk"][value="' + data.nk + '"]').prop('checked', true);
+        setRadioIfExists('nk', data.nk);
 
-        $('#nk_lain').val(data.nk_lain);
+        setValIfExists('#nk_lain', data.nk_lain);
 
-        $('#pk').val(data.pk);
+        setValIfExists('#pk', data.pk);
 
 
         // Ekonomi
-        $('input[name="hasil"][value="' + data.hasil + '"]')
-            .prop('checked', true);
+        setRadioIfExists('hasil', data.hasil);
 
         //SKRINING NYERI
-        $('input[name="sn_nyeri"]').prop('checked', false);
-        $('input[name="sn_nyeri"][value="' + data.sn_nyeri + '"]')
-            .prop('checked', true);
+        setRadioIfExists('sn_nyeri', data.sn_nyeri);
 
-        $('input[name="sn_onset"][value="' + data.sn_onset + '"]')
-            .prop('checked', true);
+        setRadioIfExists('sn_onset', data.sn_onset);
 
-        $('#sn_skala').val(data.sn_skala);
-        $('input[name="sn_metode"][value="' + data.sn_metode + '"]')
-            .prop('checked', true);
-        $('#sn_pencetus').val(data.sn_pencetus);
-        $('#sn_gambaran').val(data.sn_gambaran);
-        $('#sn_durasi').val(data.sn_durasi);
-        $('#sn_lokasi').val(data.sn_lokasi);
+        setValIfExists('#sn_skala', data.sn_skala);
 
-        $('input[name="cara_berjalan"][value="' + data.cara_berjalan + '"]')
-            .prop('checked', true).trigger("change");
-        $('input[name="faktor_risiko"][value="' + data.faktor_risiko + '"]')
-            .prop('checked', true).trigger("change");
-        $('input[name="kon_obat"][value="' + data.kon_obat + '"]')
-            .prop('checked', true).trigger("change");
+        setRadioIfExists('sn_metode', data.sn_metode);
 
-        // SKRINING GIZI
-        $('input[name="bb_turun"][value="' + data.bb_turun + '"]')
-            .prop('checked', true).trigger("change");
-        $('input[name="bb_ubah"][value="' + data.bb_ubah + '"]')
-            .prop('checked', true).trigger("change");
-        $('input[name="nafsu_makan"][value="' + data.nafsu_makan + '"]')
-            .prop('checked', true).trigger("change");
+        setValIfExists('#sn_pencetus', data.sn_pencetus);
+        setValIfExists('#sn_gambaran', data.sn_gambaran);
+        setValIfExists('#sn_durasi', data.sn_durasi);
+        setValIfExists('#sn_lokasi', data.sn_lokasi);
 
-        $('#kondisi_khusus').val(data.kondisi_khusus);
+        setRadioIfExists('cara_berjalan', data.cara_berjalan);
+        setRadioIfExists('faktor_risiko', data.faktor_risiko);
+        setRadioIfExists('kon_obat', data.kon_obat);
 
-        $('#skor_gizi').val(data.skor_gizi);
-        $('#status_skor').val(data.status_skor);
+        setRadioIfExists('bb_turun', data.bb_turun);
+        setRadioIfExists('bb_ubah', data.bb_ubah);
+        setRadioIfExists('nafsu_makan', data.nafsu_makan);
+
+        setValIfExists('#kondisi_khusus', data.kondisi_khusus);
+
+        setValIfExists('#skor_gizi', data.skor_gizi);
+        setValIfExists('#status_skor', data.status_skor);
 
         //STRONG KID
         $("input[name='sga1'][value='"+data.sga1+"']")
@@ -1602,36 +1647,32 @@
 
         //EDUKASI PASIEN KELUARGA
         // Edukasi awal
-        $("input[name='edu_1'][value='" + data.edu_1 + "']")
-            .prop('checked', true);
-
-        $("input[name='edu_2'][value='" + data.edu_2 + "']")
-            .prop('checked', true);
-
-        $("input[name='edu_3'][value='" + data.edu_3 + "']")
-            .prop('checked', true);
+        setRadioIfExists('edu_1', data.edu_1);
+        setRadioIfExists('edu_2', data.edu_2);
+        setRadioIfExists('edu_3', data.edu_3);
 
 
         // Kebutuhan Edukasi
-        $('#kb_edu_1').prop('checked', Number(data.edukasi_diagnosa) === 1);
-        $('#kb_edu_2').prop('checked', Number(data.edukasi_rehab_medik) === 1);
-        $('#kb_edu_3').prop('checked', Number(data.edukasi_hkp) === 1);
-        $('#kb_edu_4').prop('checked', Number(data.edukasi_informed_consent) === 1);
-        $('#kb_edu_5').prop('checked', Number(data.edukasi_cuci_tangan) === 1);
-        $('#kb_edu_6').prop('checked', Number(data.edukasi_perencanaan_pulang) === 1);
-        $('#kb_edu_7').prop('checked', Number(data.edukasi_obat) === 1);
-        $('#kb_edu_8').prop('checked', Number(data.edukasi_nyeri) === 1);
-        $('#kb_edu_9').prop('checked', Number(data.edukasi_hak_partisipasi) === 1);
-        $('#kb_edu_10').prop('checked', Number(data.edukasi_penundaan) === 1);
-        $('#kb_edu_11').prop('checked', Number(data.edukasi_bahaya_merokok) === 1);
-        $('#kb_edu_13').prop('checked', Number(data.edukasi_nutrisi) === 1);
-        $('#kb_edu_14').prop('checked', Number(data.edukasi_penggunaan_alat) === 1);
-        $('#kb_edu_15').prop('checked', Number(data.edukasi_prosedure) === 1);
-        $('#kb_edu_16').prop('checked', Number(data.edukasi_keterlambatan) === 1);
-        $('#kb_edu_17').prop('checked', Number(data.edukasi_rujukan) === 1);
+        setCheckedIfExists('#kb_edu_1', data.edukasi_diagnosa);
+        setCheckedIfExists('#kb_edu_2', data.edukasi_rehab_medik);
+        setCheckedIfExists('#kb_edu_3', data.edukasi_hkp);
+        setCheckedIfExists('#kb_edu_4', data.edukasi_informed_consent);
+        setCheckedIfExists('#kb_edu_5', data.edukasi_cuci_tangan);
+        setCheckedIfExists('#kb_edu_6', data.edukasi_perencanaan_pulang);
+        setCheckedIfExists('#kb_edu_7', data.edukasi_obat);
+        setCheckedIfExists('#kb_edu_8', data.edukasi_nyeri);
+        setCheckedIfExists('#kb_edu_9', data.edukasi_hak_partisipasi);
+        setCheckedIfExists('#kb_edu_10', data.edukasi_penundaan);
+        setCheckedIfExists('#kb_edu_11', data.edukasi_bahaya_merokok);
+        setCheckedIfExists('#kb_edu_12', data.status_lain);
+        setCheckedIfExists('#kb_edu_13', data.edukasi_nutrisi);
+        setCheckedIfExists('#kb_edu_14', data.edukasi_penggunaan_alat);
+        setCheckedIfExists('#kb_edu_15', data.edukasi_prosedure);
+        setCheckedIfExists('#kb_edu_16', data.edukasi_keterlambatan);
+        setCheckedIfExists('#kb_edu_17', data.edukasi_rujukan);
         // Lainnya
-        $('#kb_edu_12').prop('checked', Number(data.status_lain) === 1);
-        $('#kb_edu_lain').val(data.kb_edu_lain);
+        setCheckedIfExists('#kb_edu_12', data.status_lain);
+        setValIfExists('#kb_edu_lain', data.kb_edu_lain);
 
         // Masalah Keperawatan Jiwa
         for (let i = 1; i <= 11; i++) {
@@ -1648,14 +1689,14 @@
                 data['tin_jiwa_' + i] == 1
             );
         }
-
-        $('#tin_6').prop('checked', data.tin_6 == 1).trigger("change");;
-        $('#tin_7').prop('checked', data.tin_7 == 1).trigger("change");;
+        setValIfExists('#diag_lain', data.diag_lain);
+        setCheckedIfExists('#tin_6', data.tin_6);
+        setCheckedIfExists('#tin_7', data.tin_7);
 
 
         // Detail terapi
-        $('#terapi_oral').val(data.terapi_oral);
-        $('#terapi_iv').val(data.terapi_iv);
+        setValIfExists('#terapi_oral', data.terapi_oral);
+        setValIfExists('#terapi_iv', data.terapi_iv);
 
     }
 

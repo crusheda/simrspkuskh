@@ -348,6 +348,32 @@ class PengkajianRawatJalanObsgynController extends Controller
     {
         $data = [];
 
+        // ======================================================
+        // TANDA VITAL
+        // ======================================================
+        $tanda_vital = DB::table('medicalrecord.tanda_vital')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+        if ($tanda_vital) {
+
+            $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
+            $data['ku']          = $tanda_vital->KEADAAN_UMUM;
+            $data['kesadaran']   = $tanda_vital->KESADARAN;
+            $data['eye']         = $tanda_vital->EYE;
+            $data['motorik']     = $tanda_vital->MOTORIK;
+            $data['verbal']      = $tanda_vital->VERBAL;
+            $data['gcs']         = $tanda_vital->GCS;
+
+            $data['td_up']       = $tanda_vital->SISTOLIK;
+            $data['td_down']     = $tanda_vital->DISTOLIK;
+            $data['spo2']        = $tanda_vital->SATURASI_O2;
+            $data['nafas']       = $tanda_vital->FREKUENSI_NAFAS;
+            $data['suhu']        = $tanda_vital->SUHU;
+            $data['nadi']        = $tanda_vital->FREKUENSI_NADI;
+            $data['abn']         = $tanda_vital->ALAT_BANTU_NAFAS;
+        }
+
         // Anamnesis diperoleh
         $anam = DB::table('medicalrecord.anamnesis_diperoleh')
             ->where('KUNJUNGAN', $kunjungan)

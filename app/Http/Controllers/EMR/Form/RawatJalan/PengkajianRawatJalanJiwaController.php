@@ -164,20 +164,6 @@ class PengkajianRawatJalanJiwaController extends Controller
                 ]
             );
 
-            // ASSESMENT
-            DB::table('medicalrecord.sirmed_assesment')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'TOLAK_UKUR'   => $request->tu,
-                    'EVALUASI'     => $request->eval,
-                    'OLEH'         => auth()->id(),
-                    'STATUS'       => 1,
-                    'TANGGAL'      => now()
-                ]
-            );
-
             // Edukasi Rawat Jalan
             DB::table('medicalrecord.edukasi_rajal')->updateOrInsert(
                 [
@@ -283,6 +269,32 @@ class PengkajianRawatJalanJiwaController extends Controller
     {
         $data = [];
 
+        // ======================================================
+        // TANDA VITAL
+        // ======================================================
+        $tanda_vital = DB::table('medicalrecord.tanda_vital')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+        if ($tanda_vital) {
+
+            $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
+            $data['ku']          = $tanda_vital->KEADAAN_UMUM;
+            $data['kesadaran']   = $tanda_vital->KESADARAN;
+            $data['eye']         = $tanda_vital->EYE;
+            $data['motorik']     = $tanda_vital->MOTORIK;
+            $data['verbal']      = $tanda_vital->VERBAL;
+            $data['gcs']         = $tanda_vital->GCS;
+
+            $data['td_up']       = $tanda_vital->SISTOLIK;
+            $data['td_down']     = $tanda_vital->DISTOLIK;
+            $data['spo2']        = $tanda_vital->SATURASI_O2;
+            $data['nafas']       = $tanda_vital->FREKUENSI_NAFAS;
+            $data['suhu']        = $tanda_vital->SUHU;
+            $data['nadi']        = $tanda_vital->FREKUENSI_NADI;
+            $data['abn']         = $tanda_vital->ALAT_BANTU_NAFAS;
+        }
+
         // Anamnesis diperoleh
         $anam = DB::table('medicalrecord.anamnesis_diperoleh')
             ->where('KUNJUNGAN', $kunjungan)
@@ -372,19 +384,6 @@ class PengkajianRawatJalanJiwaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        // Default
-        $data['me_1'] = 0;
-        $data['me_2'] = 0;
-        $data['me_3'] = 0;
-        $data['me_4'] = 0;
-        $data['me_5'] = 0;
-
-        $data['sie_1'] = 0;
-        $data['sie_2'] = 0;
-
-        $data['eval_1'] = 0;
-        $data['eval_2'] = 0;
-
         if ($edukasi) {
             $data['me_1'] = $edukasi->ME_TANDA_GEJALA;
             $data['me_2'] = $edukasi->ME_HASIL_PEMERIKSAAN;
@@ -403,11 +402,6 @@ class PengkajianRawatJalanJiwaController extends Controller
         $tindak_lanjut = DB::table('medicalrecord.tindak_lanjut_pengkajian')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['tl'] = '';
-        $data['rujuk'] = '';
-        $data['rujuk_lainnya'] = '';
-
         if ($tindak_lanjut) {
             $data['tl'] = $tindak_lanjut->TINDAK_LANJUT;
             $data['rujuk'] = $tindak_lanjut->RUJUKAN;
@@ -418,12 +412,6 @@ class PengkajianRawatJalanJiwaController extends Controller
         $perencanaan = DB::table('medicalrecord.perencanaan_rawat_inap')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['pri_ruang'] = '';
-        $data['pri_perawatan'] = '';
-        $data['pri_indikasi'] = '';
-        $data['pri_ket'] = '';
-        $data['pri_dpjp'] = '';
 
         if ($perencanaan) {
             $data['pri_ruang'] = $perencanaan->JENIS_RUANG_PERAWATAN;
@@ -452,6 +440,7 @@ class PengkajianRawatJalanJiwaController extends Controller
                     'KUNJUNGAN' => $request->NOKUNJ
                 ],
                 [
+                    'KELUHAN_UTAMA'=> $request->anm_ku,
                     'KEADAAN_UMUM' => $request->ku,
                     'KESADARAN'    => $request->kesadaran,
                     'EYE'          => $request->eye,
@@ -661,7 +650,7 @@ class PengkajianRawatJalanJiwaController extends Controller
                     'JIWA_TINDAKAN_BINA_HUBUNGAN_SALING_PERCAYA' => $request->input('tin_jiwa_2') ? 1 : 0,
                     'JIWA_TINDAKAN_DISKUSI_PASIEN_KELUARGA' => $request->input('tin_jiwa_3') ? 1 : 0,
                     'JIWA_TINDAKAN_STRATEGI_PELAKSANAAN' => $request->input('tin_jiwa_4') ? 1 : 0,
-
+                    'DIAGNOSA_LAIN' => $request->input('diag_lain') ? 1 : 0,
                     // Gunakan field yang SUDAH ADA
                     'TERAPI_ORAL' => $request->input('tin_6') ? 1 : 0,
                     'TERAPI_ORAL_DETAIL' => $request->terapi_oral,
@@ -705,24 +694,9 @@ class PengkajianRawatJalanJiwaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        // Default
-        $data['ku'] = '';
-        $data['kesadaran'] = '';
-        $data['eye'] = '';
-        $data['motorik'] = '';
-        $data['verbal'] = '';
-        $data['gcs'] = '';
-
-        $data['td_up'] = '';
-        $data['td_down'] = '';
-        $data['spo2'] = '';
-        $data['nafas'] = '';
-        $data['suhu'] = '';
-        $data['nadi'] = '';
-        $data['abn'] = '';
-
         if ($tanda_vital) {
 
+            $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
             $data['ku']          = $tanda_vital->KEADAAN_UMUM;
             $data['kesadaran']   = $tanda_vital->KESADARAN;
             $data['eye']         = $tanda_vital->EYE;
@@ -746,40 +720,6 @@ class PengkajianRawatJalanJiwaController extends Controller
         $kondisi_sosial = DB::table('medicalrecord.kondisi_sosial')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-
-        // Default Status Psikologi
-        $data['tak'] = 0;
-        $data['marah'] = 0;
-        $data['cemas'] = 0;
-        $data['takut'] = 0;
-        $data['sedih'] = 0;
-        $data['bundir'] = 0;
-        $data['pse_lain'] = '';
-
-
-        // Status Mental
-        $data['sm'] = 0;
-        $data['perilaku'] = '';
-        $data['kekerasan'] = '';
-
-
-        // Hubungan Sosial
-        $data['hub'] = 0;
-        $data['tinggal'] = 0;
-        $data['tinggal_lain'] = '';
-
-
-        // Spiritual
-        $data['kbt'] = 0;
-        $data['nk'] = 0;
-        $data['nk_lain'] = '';
-        $data['pk'] = '';
-
-
-        // Ekonomi
-        $data['hasil'] = 0;
-
 
         if ($kondisi_sosial) {
 
@@ -823,15 +763,6 @@ class PengkajianRawatJalanJiwaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['sn_nyeri'] = 0;
-        $data['sn_onset'] = '';
-        $data['sn_skala'] = '';
-        $data['sn_metode'] = '';
-        $data['sn_pencetus'] = '';
-        $data['sn_gambaran'] = '';
-        $data['sn_durasi'] = '';
-        $data['sn_lokasi'] = '';
-
         if ($nyeri) {
 
             $data['sn_nyeri']    = $nyeri->NYERI;
@@ -852,10 +783,6 @@ class PengkajianRawatJalanJiwaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['cara_berjalan'] = 0;
-        $data['faktor_risiko'] = 0;
-        $data['kon_obat'] = 0;
-
         if ($getup) {
 
             $data['cara_berjalan'] = $getup->CARA_BERJALAN_PASIEN;
@@ -863,23 +790,12 @@ class PengkajianRawatJalanJiwaController extends Controller
             $data['kon_obat']      = $getup->OBAT_YANG_DIMINUM;
         }
 
-
         // ======================================================
         // SKRINING GIZI
         // ======================================================
         $gizi = DB::table('medicalrecord.permasalahan_gizi')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-
-        $data['bb_turun'] = 0;
-        $data['bb_ubah'] = 0;
-        $data['nafsu_makan'] = 0;
-        $data['kondisi_khusus'] = '';
-
-        $data['skor_gizi'] = '';
-        $data['status_skor'] = '';
-
 
         if ($gizi) {
 
@@ -914,42 +830,6 @@ class PengkajianRawatJalanJiwaController extends Controller
         $edukasi_pk = DB::table('medicalrecord.edukasi_pasien_keluarga')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-
-        // Default Edukasi Awal
-        $data['edu_1'] = 0;
-        $data['edu_2'] = 0;
-        $data['edu_3'] = 0;
-
-
-        // Kebutuhan Edukasi
-        $data['edukasi_diagnosa'] = 0;
-        $data['edukasi_rehab_medik'] = 0;
-        $data['edukasi_hkp'] = 0;
-        $data['edukasi_informed_consent'] = 0;
-
-        $data['edukasi_cuci_tangan'] = 0;
-        $data['edukasi_perencanaan_pulang'] = 0;
-
-        $data['edukasi_obat'] = 0;
-        $data['edukasi_nyeri'] = 0;
-        $data['edukasi_hak_partisipasi'] = 0;
-
-        $data['edukasi_penundaan'] = 0;
-        $data['edukasi_bahaya_merokok'] = 0;
-
-        $data['edukasi_nutrisi'] = 0;
-        $data['edukasi_penggunaan_alat'] = 0;
-        $data['edukasi_prosedure'] = 0;
-
-        $data['edukasi_keterlambatan'] = 0;
-        $data['edukasi_rujukan'] = 0;
-
-
-        // Lainnya
-        $data['status_lain'] = 0;
-        $data['kb_edu_lain'] = '';
-
 
         if ($edukasi_pk) {
 
@@ -1020,24 +900,6 @@ class PengkajianRawatJalanJiwaController extends Controller
             'tin_jiwa_3' => 'JIWA_TINDAKAN_DISKUSI_PASIEN_KELUARGA',
             'tin_jiwa_4' => 'JIWA_TINDAKAN_STRATEGI_PELAKSANAAN',
         ];
-
-        // ======================================================
-        // DEFAULT MASALAH KEPERAWATAN JIWA
-        // ======================================================
-        foreach ($diag_jiwa_field as $key => $column) {
-            $data[$key] = 0;
-        }
-        foreach ($tin_jiwa_field as $key => $column) {
-            $data[$key] = 0;
-        }
-
-        // ======================================================
-        // DEFAULT DETAIL TERAPI
-        // ======================================================
-        $data['tin_6'] = '';
-        $data['tin_7'] = '';
-        $data['terapi_oral'] = '';
-        $data['terapi_iv'] = '';
 
         // ======================================================
         // JIKA DATA SUDAH ADA

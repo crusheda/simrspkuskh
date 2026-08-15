@@ -5,6 +5,12 @@
         <div class="row">
             <div class="col-md-12 mb-3">
                 <div class="form-group">
+                    <label class="form-label fw-bold"> Keluhan Utama </label>
+                    <input class="form-control form-control" type="text" name="anm_ku" id="anm_ku">
+                </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <div class="form-group">
                     <label class="form-label fw-bold">Keadaan Umum</label>
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control" name="ku" id="ku">
@@ -910,7 +916,7 @@
                         <div class="d-flex flex-wrap gap-4">
 
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="rp_persalinan" value="1">
+                                <input class="form-check-input" type="radio" name="rp_persalinan" value="1" checked>
                                 <label class="form-check-label">
                                     Spontan
                                 </label>
@@ -1130,6 +1136,171 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-12 mb-3">
+            <div class="card card-body border border-dashed border-warning mb-1">
+                <div class="row">
+                    <div class="col-md-12 mb-1">
+                        <div class="form-group">
+                            <h5 class="border-bottom pb-2 text-bold">
+                                <strong>Masalah Keperawatan </strong>
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <div class="row">
+                            <label class="form-label fw-bold">Diagnosa Keperawatan</label>
+
+                            <!-- Kolom Kiri -->
+                            <div class="col-md-6">
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_1" id="diag_1">
+                                    <label class="form-check-label">Bersihkan jalan nafas tidak efektif</label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_2" id="diag_2">
+                                    <label class="form-check-label">Pola nafas tidak efektif</label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_3" id="diag_3">
+                                    <label class="form-check-label">Perfusi perifer tidak efektif</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_4" id="diag_4">
+                                    <label class="form-check-label">Diare</label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_5" id="diag_5">
+                                    <label class="form-check-label">Nyeri Akut</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_6" id="diag_6">
+                                    <label class="form-check-label">Nausea</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_7" id="diag_7">
+                                    <label class="form-check-label">Hipertermi</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_8" id="diag_8">
+                                    <label class="form-check-label">Ansietas</label>
+                                </div>
+
+                            </div>
+
+                            <!-- Kolom Kanan -->
+                            <div class="col-md-6">
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_9" id="diag_9">
+                                    <label class="form-check-label">Gangguan integritas kulit / jaringan</label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_10" id="diag_10">
+                                    <label class="form-check-label">Gangguan eliminasi urin</label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_11" id="diag_11">
+                                    <label class="form-check-label">Intoleransi aktifitas</label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_12" id="diag_12">
+                                    <label class="form-check-label">Gangguan mobilitas fisik</label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_13" id="diag_13">
+                                    <label class="form-check-label">Gangguan pertukaran gas</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <label class="form-input-label">Diagnosa Keperawatan Lainnya</label>
+                                    <input type="text" class="form-control" id="diag_lain" name="diag_lain" placeholder="Lainnya">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Perencanaan dan Tindakan -->
+                    <div class="col-md-12 mb-3">
+                        <div class="row">
+                            <label class="form-label fw-bold">Perencanaan dan Tindakan</label>
+
+                            <!-- Mandiri -->
+                            <div class="col-md-6 border-end">
+
+                                <label class="form-label fw-semibold">Mandiri</label>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_1" id="tin_1">
+                                    <label class="form-check-label" for="tin_1">Ajarkan teknik relaksasi dan nafas dalam</label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_2" id="tin_2">
+                                    <label class="form-check-label" for="tin_2">Pertahankan body alignment dan posisi yang nyaman</label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_3" id="tin_3" checked>
+                                    <label class="form-check-label" for="tin_3">Tenangkan Pasien</label>
+                                </div>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_4" id="tin_4" checked>
+                                    <label class="form-check-label" for="tin_4">Berikan Pendidikan Kesehatan ke pasien dan keluarga</label>
+                                </div>
+
+                            </div>
+
+                            <!-- Kolaborasi -->
+                            <div class="col-md-6">
+
+                                <label class="form-label fw-semibold">Kolaborasi</label>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_5" id="tin_5">
+                                    <label class="form-check-label" for="tin_5">Rawat Luka</label>
+                                </div>
+
+                                <div class="row align-items-center mb-2">
+                                    <label class="col-md-12 col-form-label mb-0">Pemberian Terapi :</label>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_6" id="tin_6" checked>
+                                            <label class="form-check-label">Oral</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="terapi_oral" id="terapi_oral">
+                                    </div>
+                                </div>
+
+                                <div class="row align-items-center">
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input check-primary" type="checkbox" value="1" name="tin_7" id="tin_7">
+                                            <label class="form-check-label">IV/SC/IM</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="terapi_iv" id="terapi_iv">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="form-footer">
         <button class="btn btn-secondary">
@@ -1154,6 +1325,8 @@
         $('#terapi_oral').hide();
         $('#terapi_iv').hide();
         $('#perubahan_berat').hide();
+        $('#terapi_oral').hide();
+        $('#terapi_iv').hide();
 
         // Status Psikologi
         $('#pse_7').change(function () {
@@ -1379,80 +1552,121 @@
         });
     }
 
+    function setValIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(value);
+        }
+    }
+
+    function setNumberIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(Number(value).toLocaleString('id-ID', {
+                maximumFractionDigits: 0
+            }));
+        }
+    }
+
+    function setSuhuIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(Number(value).toLocaleString('id-ID', {
+                maximumFractionDigits: 2
+            }));
+        }
+    }
+
+    function setCheckedIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector)
+                .prop('checked', Number(value) === 1)
+                .trigger('change');
+        }
+    }
+
+    function setRadioIfExists(name, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $('input[name="' + name + '"][value="' + value + '"]')
+                .prop('checked', true)
+                .trigger('change');
+        }
+    }
+
     function isiFormPengkajianRJAp(data){
 
         // ======================================================
         // TANDA VITAL
         // ======================================================
 
-        $('#ku').val(data.ku);
-        $('#kesadaran').val(data.kesadaran);
-        $('#eye').val(data.eye);
-        $('#motorik').val(data.motorik);
-        $('#verbal').val(data.verbal);
-        $('#gcs').val(data.gcs);
+        setValIfExists('#anm_ku', data.anm_ku);
+        setValIfExists('#ku', data.ku);
+        setValIfExists('#kesadaran', data.kesadaran);
 
-        $('#td_up').val(data.td_up);
-        $('#td_down').val(data.td_down);
-        $('#spo2').val(data.spo2);
-        $('#nafas').val(data.nafas);
-        $('#suhu').val(data.suhu);
-        $('#nadi').val(data.nadi);
-        $('#abn').val(data.abn);
+        setNumberIfExists('#eye', data.eye);
+        setNumberIfExists('#motorik', data.motorik);
+        setNumberIfExists('#verbal', data.verbal);
+        setNumberIfExists('#gcs', data.gcs);
 
+        setNumberIfExists('#td_up', data.td_up);
+        setNumberIfExists('#td_down', data.td_down);
+        setNumberIfExists('#spo2', data.spo2);
+        setNumberIfExists('#nafas', data.nafas);
+
+        setSuhuIfExists('#suhu', data.suhu);
+
+        setNumberIfExists('#nadi', data.nadi);
+        setRadioIfExists('abn', data.abn);
 
         // ======================================================
         // KONDISI SOSIAL
         // ======================================================
 
         // Status Psikologi (Checkbox)
-        $('#tak').prop('checked', data.tak == 1);
-        $('#marah').prop('checked', data.marah == 1);
-        $('#cemas').prop('checked', data.cemas == 1);
-        $('#takut').prop('checked', data.takut == 1);
-        $('#sedih').prop('checked', data.sedih == 1);
-        $('#bundir').prop('checked', data.bundir == 1);
-        $('#pse_lain').val(data.pse_lain).slideDown();
+        setCheckedIfExists('#tak', data.tak);
+        setCheckedIfExists('#marah', data.marah);
+        setCheckedIfExists('#cemas', data.cemas);
+        setCheckedIfExists('#takut', data.takut);
+        setCheckedIfExists('#sedih', data.sedih);
+        setCheckedIfExists('#bundir', data.bundir);
+
+        setValIfExists('#pse_lain', data.pse_lain);
+
+        if (data.pse_lain !== null && data.pse_lain !== undefined && data.pse_lain !== '') {
+            $('#pse_lain').slideDown();
+        }
         // Status Mental
-        $('input[name="sm"][value="' + data.sm + '"]').prop('checked', true);
-        $('#perilaku').val(data.perilaku);
-        $('#kekerasan').val(data.kekerasan);
+        setRadioIfExists('sm', data.sm);
+
+        setValIfExists('#perilaku', data.perilaku);
+        setValIfExists('#kekerasan', data.kekerasan);
         // Hubungan Sosial
-        $('input[name="hub"][value="' + data.hub + '"]').prop('checked', true);
-        $('input[name="tinggal"][value="' + data.tinggal + '"]').prop('checked', true);
-        $('#tinggal_lain').val(data.tinggal_lain);
+        setRadioIfExists('hub', data.hub);
+        setRadioIfExists('tinggal', data.tinggal);
+        setValIfExists('#tinggal_lain', data.tinggal_lain);
         // Spiritual
-        $('input[name="kbt"][value="' + data.kbt + '"]').prop('checked', true);
-        $('input[name="nk"][value="' + data.nk + '"]').prop('checked', true);
-        $('#nk_lain').val(data.nk_lain);
-        $('#pk').val(data.pk);
+        setRadioIfExists('kbt', data.kbt);
+        setRadioIfExists('nk', data.nk);
+        setValIfExists('#nk_lain', data.nk_lain);
+        setValIfExists('#pk', data.pk);
         // Ekonomi
-        $('input[name="hasil"][value="' + data.hasil + '"]')
-            .prop('checked', true);
+        setRadioIfExists('hasil', data.hasil);
 
         //SKRINING NYERI
-        $('input[name="sn_nyeri"]').prop('checked', false);
-        $('input[name="sn_nyeri"][value="' + data.sn_nyeri + '"]')
-            .prop('checked', true);
+        setRadioIfExists('sn_nyeri', data.sn_nyeri);
 
-        $('input[name="sn_onset"][value="' + data.sn_onset + '"]')
-            .prop('checked', true);
+        setRadioIfExists('sn_onset', data.sn_onset);
 
-        $('#sn_skala').val(data.sn_skala);
-        $('input[name="sn_metode"][value="' + data.sn_metode + '"]')
-            .prop('checked', true);
-        $('#sn_pencetus').val(data.sn_pencetus);
-        $('#sn_gambaran').val(data.sn_gambaran);
-        $('#sn_durasi').val(data.sn_durasi);
-        $('#sn_lokasi').val(data.sn_lokasi);
+        setValIfExists('#sn_skala', data.sn_skala);
+
+        setRadioIfExists('sn_metode', data.sn_metode);
+
+        setValIfExists('#sn_pencetus', data.sn_pencetus);
+        setValIfExists('#sn_gambaran', data.sn_gambaran);
+        setValIfExists('#sn_durasi', data.sn_durasi);
+        setValIfExists('#sn_lokasi', data.sn_lokasi);
 
         //RESIKO JATUH
-        $('input[name="cara_berjalan"][value="' + data.cara_berjalan + '"]')
-            .prop('checked', true).trigger("change");
-        $('input[name="faktor_risiko"][value="' + data.faktor_risiko + '"]')
-            .prop('checked', true).trigger("change");
-        $('input[name="kon_obat"][value="' + data.kon_obat + '"]')
-            .prop('checked', true).trigger("change");
+        setRadioIfExists('cara_berjalan', data.cara_berjalan);
+        setRadioIfExists('faktor_risiko', data.faktor_risiko);
+        setRadioIfExists('kon_obat', data.kon_obat);
 
         //STRONG KID
         $("input[name='sga1'][value='"+data.sga1+"']")
@@ -1479,55 +1693,106 @@
         }
         $('#skor_sga').removeAttr('hidden');
 
-        // Detail terapi
-        $('#terapi_oral').val(data.terapi_oral);
-        $('#terapi_iv').val(data.terapi_iv);
-
         //Riwayat Perinatal
-        $("#rp_lama_hamil").val(data.rp_lama_hamil);
-        $("#rp_satuan").val(data.rp_satuan);
-        $("input[name='rp_komplikasi'][value='" + data.rp_komplikasi + "']")
-            .prop("checked", true)
-            .trigger("change");
-        $("#rp_komplikasi_ket").val(data.rp_komplikasi_ket);
-        $("input[name='rp_persalinan'][value='" + data.rp_persalinan + "']")
-            .prop("checked", true);
-        $("input[name='rp_penyulit'][value='" + data.rp_penyulit + "']")
-            .prop("checked", true)
-            .trigger("change");
-        $("#rp_penyulit_ket").val(data.rp_penyulit_ket);
+        setValIfExists('#rp_lama_hamil', data.rp_lama_hamil);
+        setValIfExists('#rp_satuan', data.rp_satuan);
+
+        setRadioIfExists('rp_komplikasi', data.rp_komplikasi);
+
+        setValIfExists('#rp_komplikasi_ket', data.rp_komplikasi_ket);
+
+        setRadioIfExists('rp_persalinan', data.rp_persalinan);
+
+        setRadioIfExists('rp_penyulit', data.rp_penyulit);
+
+        setValIfExists('#rp_penyulit_ket', data.rp_penyulit_ket);
 
         // Riwayat Tumbuh Kembang
-        $("#lk_lahir").val(data.lk_lahir);
-        $("#bb_lahir").val(data.bb_lahir);
-        $("#tb_lahir").val(data.tb_lahir);
+        setValIfExists('#lk_lahir', data.lk_lahir);
+        setValIfExists('#bb_lahir', data.bb_lahir);
+        setValIfExists('#tb_lahir', data.tb_lahir);
 
-        $("#asi_sampai").val(data.asi_sampai);
-        $("#asi_satuan").val(data.asi_satuan);
+        setValIfExists('#asi_sampai', data.asi_sampai);
+        setValIfExists('#asi_satuan', data.asi_satuan);
 
-        $("#sufor_mulai").val(data.sufor_mulai);
-        $("#sufor_satuan").val(data.sufor_satuan);
+        setValIfExists('#sufor_mulai', data.sufor_mulai);
+        setValIfExists('#sufor_satuan', data.sufor_satuan);
 
-        $("#mpasi_mulai").val(data.mpasi_mulai);
-        $("#mpasi_satuan").val(data.mpasi_satuan);
+        setValIfExists('#mpasi_mulai', data.mpasi_mulai);
+        setValIfExists('#mpasi_satuan', data.mpasi_satuan);
 
-        $("#tengkurap").val(data.tengkurap);
-        $("#duduk").val(data.duduk);
-        $("#merangkak").val(data.merangkak);
-        $("#berdiri").val(data.berdiri);
-        $("#berjalan").val(data.berjalan);
+        setValIfExists('#tengkurap', data.tengkurap);
+        setValIfExists('#duduk', data.duduk);
+        setValIfExists('#merangkak', data.merangkak);
+        setValIfExists('#berdiri', data.berdiri);
+        setValIfExists('#berjalan', data.berjalan);
 
-        $("input[name='neonatus'][value='" + data.neonatus + "']")
-            .prop("checked", true)
-            .trigger("change");
+        // =============================
+        // Neonatus
+        // =============================
 
-        $("input[name='imunisasi'][value='" + data.imunisasi + "']")
-            .prop("checked", true)
-            .trigger("change");
+        setRadioIfExists('neonatus', data.neonatus);
+        setValIfExists('neonatus_ket', data.neonatus_ket);
+        if (data.neonatus_ket !== null && data.neonatus_ket !== undefined && data.neonatus_ket !== '') {
+            $('#neonatus_ket').slideDown();
+        }
 
-        $("input[name='neonatus_ket']").val(data.neonatus_ket);
-        $("textarea[name='keluhan_tumbuh_kembang']").val(data.keluhan_tumbuh_kembang);
-        $("input[name='imunisasi_lain']").val(data.imunisasi_lain);
+        // =============================
+        // Imunisasi
+        // =============================
+
+        setRadioIfExists('imunisasi', data.imunisasi);
+        setValIfExists('imunisasi_lain', data.imunisasi_lain);
+        if (data.imunisasi_lain !== null && data.imunisasi_lain !== undefined && data.imunisasi_lain !== '') {
+            $('#imunisasi_lain').slideDown();
+        }
+
+        setValIfExists(
+            'textarea[name="keluhan_tumbuh_kembang"]',
+            data.keluhan_tumbuh_kembang
+        );
+
+        // ======================================================
+        // MASALAH KEPERAWATAN
+        // ======================================================
+
+        setCheckedIfExists('#diag_1', data.diag_1);
+        setCheckedIfExists('#diag_2', data.diag_2);
+        setCheckedIfExists('#diag_3', data.diag_3);
+        setCheckedIfExists('#diag_4', data.diag_4);
+        setCheckedIfExists('#diag_5', data.diag_5);
+        setCheckedIfExists('#diag_6', data.diag_6);
+        setCheckedIfExists('#diag_7', data.diag_7);
+        setCheckedIfExists('#diag_8', data.diag_8);
+        setCheckedIfExists('#diag_9', data.diag_9);
+        setCheckedIfExists('#diag_10', data.diag_10);
+        setCheckedIfExists('#diag_11', data.diag_11);
+        setCheckedIfExists('#diag_12', data.diag_12);
+        setCheckedIfExists('#diag_13', data.diag_13);
+
+        setValIfExists('#diag_lain', data.diag_lain);
+
+
+        // ======================================================
+        // TINDAKAN
+        // ======================================================
+
+        setCheckedIfExists('#tin_1', data.tin_1);
+        setCheckedIfExists('#tin_2', data.tin_2);
+        setCheckedIfExists('#tin_3', data.tin_3);
+        setCheckedIfExists('#tin_4', data.tin_4);
+        setCheckedIfExists('#tin_5', data.tin_5);
+
+        setCheckedIfExists('#tin_6', data.tin_6);
+        setCheckedIfExists('#tin_7', data.tin_7);
+
+
+        // ======================================================
+        // DETAIL TERAPI
+        // ======================================================
+
+        setValIfExists('#terapi_oral', data.terapi_oral);
+        setValIfExists('#terapi_iv', data.terapi_iv);
 
     }
 

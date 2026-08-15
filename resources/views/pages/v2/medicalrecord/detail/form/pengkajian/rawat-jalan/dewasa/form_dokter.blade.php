@@ -314,10 +314,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12 mb-3 d-flex flex-column">
-                            <label class="form-label fw-bold">Tolok Ukur / Sasaran yang Dicapai</label>
-                            <textarea class="form-control" name="tu" id="tu" rows="3"></textarea>
-                        </div>
                     </div>
 
                     <div class="form-group mb-2">
@@ -326,6 +322,7 @@
                         </h5>
                     </div>
                     <div class="row align-items-center">
+                        <div class="col-md-12" id="displayttv"></div>
                         <div class="col-md-12">
                             <label class="form-label fw-bold">Terapi / Tindakan</label>
                             <textarea class="form-control" name="terapi_tind" id="terapi_tind" rows="3"></textarea>
@@ -658,6 +655,164 @@
         getDiagnosis();
     });
 
+    function formatAngkaBulat(value) {
+        if (value === null || value === undefined || value === '') {
+            return '-';
+        }
+
+        return Number(value).toLocaleString('id-ID', {
+            maximumFractionDigits: 0
+        });
+    }
+
+    function formatSuhu(value) {
+        if (value === null || value === undefined || value === '') {
+            return '-';
+        }
+
+        return Number(value).toLocaleString('id-ID', {
+            maximumFractionDigits: 2
+        });
+    }
+
+    function displayTTV(data) {
+
+        let html = `
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>
+                        <i class="ri-heart-pulse-line me-1"></i>
+                        Tanda-Tanda Vital
+                    </strong>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+
+                        <!-- Keadaan Umum -->
+                        <div class="col-md-4 mb-3">
+                            <div class="small text-muted">Keadaan Umum</div>
+                            <div class="fw-bold">
+                                ${data.ku || '-'}
+                            </div>
+                        </div>
+
+                        <!-- Kesadaran -->
+                        <div class="col-md-4 mb-3">
+                            <div class="small text-muted">Tingkat Kesadaran</div>
+                            <div class="fw-bold">
+                                ${getKesadaranText(data.kesadaran)}
+                            </div>
+                        </div>
+
+                        <!-- GCS -->
+                        <div class="col-md-4 mb-3">
+                            <div class="small text-muted">GCS</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.gcs)}
+                            </div>
+                        </div>
+
+                        <!-- E -->
+                        <div class="col-md-2 mb-3">
+                            <div class="small text-muted">Eye (E)</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.eye)}
+                            </div>
+                        </div>
+
+                        <!-- M -->
+                        <div class="col-md-2 mb-3">
+                            <div class="small text-muted">Motorik (M)</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.motorik)}
+                            </div>
+                        </div>
+
+                        <!-- V -->
+                        <div class="col-md-2 mb-3">
+                            <div class="small text-muted">Verbal (V)</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.verbal)}
+                            </div>
+                        </div>
+
+                        <!-- Tekanan Darah -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Tekanan Darah</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.td_up)}
+                                /
+                                ${formatAngkaBulat(data.td_down)}
+                                mmHg
+                            </div>
+                        </div>
+
+                        <!-- SpO2 -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">SpO2</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.spo2)} %
+                            </div>
+                        </div>
+
+                        <!-- Nafas -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Frekuensi Nafas</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.nafas)} X/menit
+                            </div>
+                        </div>
+
+                        <!-- Nadi -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Nadi</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.nadi)} X/menit
+                            </div>
+                        </div>
+
+                        <!-- Suhu -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Suhu</div>
+                            <div class="fw-bold">
+                                ${formatSuhu(data.suhu)} °C
+                            </div>
+                        </div>
+
+                        <!-- Alat Bantu Nafas -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Alat Bantu Nafas</div>
+                            <div class="fw-bold">
+                                ${getABNText(data.abn)}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        `;
+
+        $('#displayttv').html(html);
+    }
+
+    function getABNText(value) {
+        if (value == 1) {
+            return 'Ya';
+        }
+        if (value == 2) {
+            return 'Tidak';
+        }
+        return '-';
+    }
+
+    function getKesadaranText(value) {
+        if (value === null || value === undefined || value === '') {
+            return '-';
+        }
+        return $('#kesadaran option[value="' + value + '"]').text() || '-';
+    }
+
     function loadDataPengkajianRJDd() {
         const kunjungan = $('#rjd_dokter').data('kunjungan');
 
@@ -666,6 +821,8 @@
             type: 'GET',
             success:function(res){
                 isiFormPengkajianRJDd(res);
+                // Tampilkan TTV
+                displayTTV(res);
             }
         });
     }
@@ -708,9 +865,6 @@
 
         $("#terapi_tind").val(data.terapi_tind);
 
-        $("#tu").val(data.tu);
-
-
         // MASALAH / EDUKASI
         setCheckedIfExists('#me_1', data.me_1);
         setCheckedIfExists('#me_2', data.me_2);
@@ -718,34 +872,24 @@
         setCheckedIfExists('#me_4', data.me_4);
         setCheckedIfExists('#me_5', data.me_5);
 
-
         // SIE
         setCheckedIfExists('#sie_1', data.sie_1);
         setCheckedIfExists('#sie_2', data.sie_2);
-
 
         // EVALUASI
         setCheckedIfExists('#eval_1', data.eval_1);
         setCheckedIfExists('#eval_2', data.eval_2);
 
-
         // TINDAK LANJUT
         setRadioIfExists('tl', data.tl);
-
         setRadioIfExists('rujuk', data.rujuk);
-
         $("#rujuk_lainnya").val(data.rujuk_lainnya);
-
 
         // PRIORITAS
         $("#pri_ruang").val(data.pri_ruang);
-
         $("#pri_perawatan").val(data.pri_perawatan);
-
         $("#pri_indikasi").val(data.pri_indikasi);
-
         $("#pri_ket").val(data.pri_ket);
-
         $("#pri_dpjp").val(data.pri_dpjp);
 
     }

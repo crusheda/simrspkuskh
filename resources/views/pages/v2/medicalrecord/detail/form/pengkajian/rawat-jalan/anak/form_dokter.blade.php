@@ -16,7 +16,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-check">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="1" checked="">
+                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="1">
                                 <label class="form-check-label">
                                     Autoanamnesis
                                 </label>
@@ -24,7 +24,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-check">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="2">
+                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="2" checked>
                                 <label class="form-check-label">
                                     Alloanamnesis
                                 </label>
@@ -292,6 +292,7 @@
                     </div>
                     <div class="row align-items-center">
                         <div class="col-md-12">
+                            <div class="col-md-12" id="displayttv"></div>
                             <label class="form-label fw-bold">Terapi / Tindakan</label>
                             <textarea class="form-control" name="terapi_tind" id="terapi_tind" rows="3"></textarea>
                         </div>
@@ -554,6 +555,144 @@
         getDiagnosis();
     });
 
+    function displayTTV(data) {
+
+        let html = `
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>
+                        <i class="ri-heart-pulse-line me-1"></i>
+                        Tanda-Tanda Vital
+                    </strong>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+
+                        <!-- Keadaan Umum -->
+                        <div class="col-md-4 mb-3">
+                            <div class="small text-muted">Keadaan Umum</div>
+                            <div class="fw-bold">
+                                ${data.ku || '-'}
+                            </div>
+                        </div>
+
+                        <!-- Kesadaran -->
+                        <div class="col-md-4 mb-3">
+                            <div class="small text-muted">Tingkat Kesadaran</div>
+                            <div class="fw-bold">
+                                ${getKesadaranText(data.kesadaran)}
+                            </div>
+                        </div>
+
+                        <!-- GCS -->
+                        <div class="col-md-4 mb-3">
+                            <div class="small text-muted">GCS</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.gcs)}
+                            </div>
+                        </div>
+
+                        <!-- E -->
+                        <div class="col-md-2 mb-3">
+                            <div class="small text-muted">Eye (E)</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.eye)}
+                            </div>
+                        </div>
+
+                        <!-- M -->
+                        <div class="col-md-2 mb-3">
+                            <div class="small text-muted">Motorik (M)</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.motorik)}
+                            </div>
+                        </div>
+
+                        <!-- V -->
+                        <div class="col-md-2 mb-3">
+                            <div class="small text-muted">Verbal (V)</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.verbal)}
+                            </div>
+                        </div>
+
+                        <!-- Tekanan Darah -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Tekanan Darah</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.td_up)}
+                                /
+                                ${formatAngkaBulat(data.td_down)}
+                                mmHg
+                            </div>
+                        </div>
+
+                        <!-- SpO2 -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">SpO2</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.spo2)} %
+                            </div>
+                        </div>
+
+                        <!-- Nafas -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Frekuensi Nafas</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.nafas)} X/menit
+                            </div>
+                        </div>
+
+                        <!-- Nadi -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Nadi</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.nadi)} X/menit
+                            </div>
+                        </div>
+
+                        <!-- Suhu -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Suhu</div>
+                            <div class="fw-bold">
+                                ${formatSuhu(data.suhu)} °C
+                            </div>
+                        </div>
+
+                        <!-- Alat Bantu Nafas -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Alat Bantu Nafas</div>
+                            <div class="fw-bold">
+                                ${getABNText(data.abn)}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        `;
+
+        $('#displayttv').html(html);
+    }
+
+    function getABNText(value) {
+        if (value == 1) {
+            return 'Ya';
+        }
+        if (value == 2) {
+            return 'Tidak';
+        }
+        return '-';
+    }
+
+    function getKesadaranText(value) {
+        if (value === null || value === undefined || value === '') {
+            return '-';
+        }
+        return $('#kesadaran option[value="' + value + '"]').text() || '-';
+    }
+
     function loadDataPengkajianRJAd() {
         const kunjungan = $('#rja_dokter').data('kunjungan');
 
@@ -562,6 +701,8 @@
             type: 'GET',
             success:function(res){
                 isiFormPengkajianRJAd(res);
+                // Tampilkan TTV
+                displayTTV(res);
             }
         });
     }

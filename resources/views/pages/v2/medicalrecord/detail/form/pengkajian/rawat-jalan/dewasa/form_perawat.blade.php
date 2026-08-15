@@ -1350,8 +1350,9 @@
             url: `/api/v2/emr/form/pengkajian/rjd/pr/get/${kunjungan}`,
             type: 'GET',
             success:function(res){
+                // Isi form
                 isiFormPengkajianRJDp(res);
-                console.log(res);
+                // console.log(res);
             }
         });
     }
@@ -1359,6 +1360,22 @@
     function setValIfExists(selector, value) {
         if (value !== null && value !== undefined && value !== '') {
             $(selector).val(value);
+        }
+    }
+
+    function setNumberIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(Number(value).toLocaleString('id-ID', {
+                maximumFractionDigits: 0
+            }));
+        }
+    }
+
+    function setSuhuIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(Number(value).toLocaleString('id-ID', {
+                maximumFractionDigits: 2
+            }));
         }
     }
 
@@ -1387,18 +1404,21 @@
         setValIfExists('#anm_ku', data.anm_ku);
         setValIfExists('#ku', data.ku);
         setValIfExists('#kesadaran', data.kesadaran);
-        setValIfExists('#eye', data.eye);
-        setValIfExists('#motorik', data.motorik);
-        setValIfExists('#verbal', data.verbal);
-        setValIfExists('#gcs', data.gcs);
 
-        setValIfExists('#td_up', data.td_up);
-        setValIfExists('#td_down', data.td_down);
-        setValIfExists('#spo2', data.spo2);
-        setValIfExists('#nafas', data.nafas);
-        setValIfExists('#suhu', data.suhu);
-        setValIfExists('#nadi', data.nadi);
-        setValIfExists('#abn', data.abn);
+        setNumberIfExists('#eye', data.eye);
+        setNumberIfExists('#motorik', data.motorik);
+        setNumberIfExists('#verbal', data.verbal);
+        setNumberIfExists('#gcs', data.gcs);
+
+        setNumberIfExists('#td_up', data.td_up);
+        setNumberIfExists('#td_down', data.td_down);
+        setNumberIfExists('#spo2', data.spo2);
+        setNumberIfExists('#nafas', data.nafas);
+
+        setSuhuIfExists('#suhu', data.suhu);
+
+        setNumberIfExists('#nadi', data.nadi);
+        setRadioIfExists('abn', data.abn);
 
 
         // ======================================================
