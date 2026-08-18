@@ -4,6 +4,12 @@
         <div class="row">
             <div class="col-md-12 mb-3">
                 <div class="form-group">
+                    <label class="form-label fw-bold"> Keluhan Utama </label>
+                    <input class="form-control form-control" type="text" name="anm_ku" id="anm_ku">
+                </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <div class="form-group">
                     <label class="form-label fw-bold">Keadaan Umum</label>
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control" name="ku" id="ku">
@@ -466,12 +472,12 @@
                                 <label class="form-label d-block">&nbsp;</label>
 
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input skor" type="radio" name="cara_berjalan" id="cara_ya" value="1">
+                                    <input class="form-check-input skor" type="radio" name="cara_berjalan" id="cara_ya" value="1" checked>
                                     <label class="form-check-label" for="cara_ya">Ya</label>
                                 </div>
 
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input skor" type="radio" name="cara_berjalan" id="cara_tidak" value="0" checked>
+                                    <input class="form-check-input skor" type="radio" name="cara_berjalan" id="cara_tidak" value="0" >
                                     <label class="form-check-label" for="cara_tidak">Tidak</label>
                                 </div>
                             </div>
@@ -517,12 +523,12 @@
                                 <label class="form-label d-block">&nbsp;</label>
 
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input skor" type="radio" name="faktor_risiko" id="risiko_ya" value="1">
+                                    <input class="form-check-input skor" type="radio" name="faktor_risiko" id="risiko_ya" value="1" checked>
                                     <label class="form-check-label" for="risiko_ya">Ya</label>
                                 </div>
 
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input skor" type="radio" name="faktor_risiko" id="risiko_tidak" value="0" checked>
+                                    <input class="form-check-input skor" type="radio" name="faktor_risiko" id="risiko_tidak" value="0">
                                     <label class="form-check-label" for="risiko_tidak">Tidak</label>
                                 </div>
                             </div>
@@ -553,12 +559,12 @@
                                 <label class="form-label d-block">&nbsp;</label>
 
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input skor" type="radio" name="kon_obat" id="obat_ya" value="1">
+                                    <input class="form-check-input skor" type="radio" name="kon_obat" id="obat_ya" value="1" checked>
                                     <label class="form-check-label" for="obat_ya">Ya</label>
                                 </div>
 
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input skor" type="radio" name="kon_obat" id="obat_tidak" value="0" checked>
+                                    <input class="form-check-input skor" type="radio" name="kon_obat" id="obat_tidak" value="0">
                                     <label class="form-check-label" for="obat_tidak">Tidak</label>
                                 </div>
                             </div>
@@ -1794,26 +1800,69 @@
         });
     }
 
+    function setValIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(value);
+        }
+    }
+
+    function setNumberIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(Number(value).toLocaleString('id-ID', {
+                maximumFractionDigits: 0
+            }));
+        }
+    }
+
+    function setSuhuIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(Number(value).toLocaleString('id-ID', {
+                maximumFractionDigits: 2
+            }));
+        }
+    }
+
+    function setCheckedIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector)
+                .prop('checked', Number(value) === 1)
+                .trigger('change');
+        }
+    }
+
+    function setRadioIfExists(name, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $('input[name="' + name + '"][value="' + value + '"]')
+                .prop('checked', true)
+                .trigger('change');
+        }
+    }
+
     function isiFormPengkajianRJGp(data){
 
         // ======================================================
         // TANDA VITAL
         // ======================================================
 
-        $('#ku').val(data.ku);
-        $('#kesadaran').val(data.kesadaran);
-        $('#eye').val(data.eye);
-        $('#motorik').val(data.motorik);
-        $('#verbal').val(data.verbal);
-        $('#gcs').val(data.gcs);
+        setValIfExists('#anm_ku', data.anm_ku);
+        setValIfExists('#ku', data.ku);
+        setValIfExists('#kesadaran', data.kesadaran);
 
-        $('#td_up').val(data.td_up);
-        $('#td_down').val(data.td_down);
-        $('#spo2').val(data.spo2);
-        $('#nafas').val(data.nafas);
-        $('#suhu').val(data.suhu);
-        $('#nadi').val(data.nadi);
-        $('#abn').val(data.abn);
+        setNumberIfExists('#eye', data.eye);
+        setNumberIfExists('#motorik', data.motorik);
+        setNumberIfExists('#verbal', data.verbal);
+        setNumberIfExists('#gcs', data.gcs);
+
+        setNumberIfExists('#td_up', data.td_up);
+        setNumberIfExists('#td_down', data.td_down);
+        setNumberIfExists('#spo2', data.spo2);
+        setNumberIfExists('#nafas', data.nafas);
+
+        setSuhuIfExists('#suhu', data.suhu);
+
+        setNumberIfExists('#nadi', data.nadi);
+        setRadioIfExists('abn', data.abn);
+
 
 
         // ======================================================
@@ -1821,147 +1870,105 @@
         // ======================================================
 
         // Status Psikologi (Checkbox)
-        $('#tak').prop('checked', data.tak == 1);
-        $('#marah').prop('checked', data.marah == 1);
-        $('#cemas').prop('checked', data.cemas == 1);
-        $('#takut').prop('checked', data.takut == 1);
-        $('#sedih').prop('checked', data.sedih == 1);
-        $('#bundir').prop('checked', data.bundir == 1);
+        setCheckedIfExists('#tak', data.tak);
+        setCheckedIfExists('#marah', data.marah);
+        setCheckedIfExists('#cemas', data.cemas);
+        setCheckedIfExists('#takut', data.takut);
+        setCheckedIfExists('#sedih', data.sedih);
+        setCheckedIfExists('#bundir', data.bundir);
 
-        $('#pse_lain').val(data.pse_lain).slideDown();
+        setValIfExists('#pse_lain', data.pse_lain);
 
+        if (data.pse_lain !== null && data.pse_lain !== undefined && data.pse_lain !== '') {
+            $('#pse_lain').slideDown();
+        }
 
         // Status Mental
-        $('input[name="sm"][value="' + data.sm + '"]').prop('checked', true);
+        setRadioIfExists('sm', data.sm);
 
-        $('#perilaku').val(data.perilaku);
-        $('#kekerasan').val(data.kekerasan);
-
+        setValIfExists('#perilaku', data.perilaku);
+        setValIfExists('#kekerasan', data.kekerasan);
 
         // Hubungan Sosial
-        $('input[name="hub"][value="' + data.hub + '"]').prop('checked', true);
-
-        $('input[name="tinggal"][value="' + data.tinggal + '"]').prop('checked', true);
-
-        $('#tinggal_lain').val(data.tinggal_lain);
-
+        setRadioIfExists('hub', data.hub);
+        setRadioIfExists('tinggal', data.tinggal);
+        setValIfExists('#tinggal_lain', data.tinggal_lain);
 
         // Spiritual
-        $('input[name="kbt"][value="' + data.kbt + '"]').prop('checked', true);
-
-        $('input[name="nk"][value="' + data.nk + '"]').prop('checked', true);
-
-        $('#nk_lain').val(data.nk_lain);
-
-        $('#pk').val(data.pk);
+        setRadioIfExists('kbt', data.kbt);
+        setRadioIfExists('nk', data.nk);
+        setValIfExists('#nk_lain', data.nk_lain);
+        setValIfExists('#pk', data.pk);
 
 
         // Ekonomi
-        $('input[name="hasil"][value="' + data.hasil + '"]')
-            .prop('checked', true);
+        setRadioIfExists('hasil', data.hasil);
 
         //SKRINING NYERI
-        $('input[name="sn_nyeri"]').prop('checked', false);
-        $('input[name="sn_nyeri"][value="' + data.sn_nyeri + '"]')
-            .prop('checked', true);
+        setRadioIfExists('sn_nyeri', data.sn_nyeri);
 
-        $('input[name="sn_onset"][value="' + data.sn_onset + '"]')
-            .prop('checked', true);
+        setRadioIfExists('sn_onset', data.sn_onset);
 
-        $('#sn_skala').val(data.sn_skala);
-        $('input[name="sn_metode"][value="' + data.sn_metode + '"]')
-            .prop('checked', true);
-        $('#sn_pencetus').val(data.sn_pencetus);
-        $('#sn_gambaran').val(data.sn_gambaran);
-        $('#sn_durasi').val(data.sn_durasi);
-        $('#sn_lokasi').val(data.sn_lokasi);
+        setValIfExists('#sn_skala', data.sn_skala);
 
-        $('input[name="cara_berjalan"][value="' + data.cara_berjalan + '"]')
-            .prop('checked', true).trigger("change");
-        $('input[name="faktor_risiko"][value="' + data.faktor_risiko + '"]')
-            .prop('checked', true).trigger("change");
-        $('input[name="kon_obat"][value="' + data.kon_obat + '"]')
-            .prop('checked', true).trigger("change");
+        setRadioIfExists('sn_metode', data.sn_metode);
 
-        $('input[name="bb_turun"][value="' + data.bb_turun + '"]')
-            .prop('checked', true).trigger("change");
-        $('input[name="bb_ubah"][value="' + data.bb_ubah + '"]')
-            .prop('checked', true).trigger("change");
-        $('input[name="nafsu_makan"][value="' + data.nafsu_makan + '"]')
-            .prop('checked', true).trigger("change");
+        setValIfExists('#sn_pencetus', data.sn_pencetus);
+        setValIfExists('#sn_gambaran', data.sn_gambaran);
+        setValIfExists('#sn_durasi', data.sn_durasi);
+        setValIfExists('#sn_lokasi', data.sn_lokasi);
 
-        $('#kondisi_khusus').val(data.kondisi_khusus);
+        // ======================================================
+        // SKRINING LAINNYA
+        // ======================================================
 
-        $('#skor_gizi').val(data.skor_gizi);
-        $('#status_skor').val(data.status_skor);
+        setRadioIfExists('cara_berjalan', data.cara_berjalan);
+        setRadioIfExists('faktor_risiko', data.faktor_risiko);
+        setRadioIfExists('kon_obat', data.kon_obat);
 
+        setRadioIfExists('bb_turun', data.bb_turun);
+        setRadioIfExists('bb_ubah', data.bb_ubah);
+        setRadioIfExists('nafsu_makan', data.nafsu_makan);
+
+        setValIfExists('#kondisi_khusus', data.kondisi_khusus);
+
+        setValIfExists('#skor_gizi', data.skor_gizi);
+        setValIfExists('#status_skor', data.status_skor);
+
+        // ======================================================
         // DIAGNOSIS KEPERAWATAN
-        for (let i = 1; i <= 11; i++) {
+        // ======================================================
 
-            $('#diag_keperawatan_' + i).prop(
-                'checked',
-                data['diag_keperawatan_' + i] == 1
+        for (let i = 1; i <= 11; i++) {
+            setCheckedIfExists(
+                '#diag_keperawatan_' + i,
+                data['diag_keperawatan_' + i]
             );
         }
 
+        // ======================================================
         // RENCANA ASUHAN KEPERAWATAN
-        $('#rencana_asuhan_keperawatan').val(
-            data.rencana_asuhan_keperawatan || ''
+        // ======================================================
+
+        setValIfExists(
+            '#rencana_asuhan_keperawatan',
+            data.rencana_asuhan_keperawatan
         );
 
         // ======================================================
         // ASSESMEN SINDROM GERIATRI
         // ======================================================
 
-        $('input[name="geriatri_adl"]')
-            .prop('checked', false)
-            .filter('[value="' + (data.geriatri_adl || '') + '"]')
-            .prop('checked', true);
-
-        $('input[name="geriatri_iadl"]')
-            .prop('checked', false)
-            .filter('[value="' + (data.geriatri_iadl || '') + '"]')
-            .prop('checked', true);
-
-        $('input[name="geriatri_acs"]')
-            .prop('checked', false)
-            .filter('[value="' + (data.geriatri_acs || '') + '"]')
-            .prop('checked', true);
-
-        $('input[name="geriatri_nutrisi"]')
-            .prop('checked', false)
-            .filter('[value="' + (data.geriatri_nutrisi || '') + '"]')
-            .prop('checked', true);
-
-        $('input[name="geriatri_kognitif"]')
-            .prop('checked', false)
-            .filter('[value="' + (data.geriatri_kognitif || '') + '"]')
-            .prop('checked', true);
-
-        $('input[name="geriatri_depresi"]')
-            .prop('checked', false)
-            .filter('[value="' + (data.geriatri_depresi || '') + '"]')
-            .prop('checked', true);
-
-        $('input[name="geriatri_inkontinensia"]')
-            .prop('checked', false)
-            .filter('[value="' + (data.geriatri_inkontinensia || '') + '"]')
-            .prop('checked', true);
-
-        $('input[name="geriatri_dvt"]')
-            .prop('checked', false)
-            .filter('[value="' + (data.geriatri_dvt || '') + '"]')
-            .prop('checked', true);
-
-        $('input[name="geriatri_ulkus"]')
-            .prop('checked', false)
-            .filter('[value="' + (data.geriatri_ulkus || '') + '"]')
-            .prop('checked', true);
-
-        $('input[name="geriatri_insomnia"]')
-            .prop('checked', false)
-            .filter('[value="' + (data.geriatri_insomnia || '') + '"]')
-            .prop('checked', true);
+        setRadioIfExists('geriatri_adl', data.geriatri_adl);
+        setRadioIfExists('geriatri_iadl', data.geriatri_iadl);
+        setRadioIfExists('geriatri_acs', data.geriatri_acs);
+        setRadioIfExists('geriatri_nutrisi', data.geriatri_nutrisi);
+        setRadioIfExists('geriatri_kognitif', data.geriatri_kognitif);
+        setRadioIfExists('geriatri_depresi', data.geriatri_depresi);
+        setRadioIfExists('geriatri_inkontinensia', data.geriatri_inkontinensia);
+        setRadioIfExists('geriatri_dvt', data.geriatri_dvt);
+        setRadioIfExists('geriatri_ulkus', data.geriatri_ulkus);
+        setRadioIfExists('geriatri_insomnia', data.geriatri_insomnia);
 
     }
 

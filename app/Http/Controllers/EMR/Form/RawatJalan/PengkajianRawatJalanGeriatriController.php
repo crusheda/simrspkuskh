@@ -255,12 +255,36 @@ class PengkajianRawatJalanGeriatriController extends Controller
     {
         $data = [];
 
+        // ======================================================
+        // TANDA VITAL
+        // ======================================================
+        $tanda_vital = DB::table('medicalrecord.tanda_vital')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+        if ($tanda_vital) {
+
+            $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
+            $data['ku']          = $tanda_vital->KEADAAN_UMUM;
+            $data['kesadaran']   = $tanda_vital->KESADARAN;
+            $data['eye']         = $tanda_vital->EYE;
+            $data['motorik']     = $tanda_vital->MOTORIK;
+            $data['verbal']      = $tanda_vital->VERBAL;
+            $data['gcs']         = $tanda_vital->GCS;
+
+            $data['td_up']       = $tanda_vital->SISTOLIK;
+            $data['td_down']     = $tanda_vital->DISTOLIK;
+            $data['spo2']        = $tanda_vital->SATURASI_O2;
+            $data['nafas']       = $tanda_vital->FREKUENSI_NAFAS;
+            $data['suhu']        = $tanda_vital->SUHU;
+            $data['nadi']        = $tanda_vital->FREKUENSI_NADI;
+            $data['abn']         = $tanda_vital->ALAT_BANTU_NAFAS;
+        }
+
         // Anamnesis diperoleh
         $anam = DB::table('medicalrecord.anamnesis_diperoleh')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['anam'] = 0;
 
         if ($anam) {
             if ($anam->AUTOANAMNESIS == 1) {
@@ -276,8 +300,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['keluhan_utama'] = '';
-
         if ($keluhan_utama) {
             $data['keluhan_utama'] = $keluhan_utama->DESKRIPSI;
         }
@@ -286,8 +308,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
         $anamnesis = DB::table('medicalrecord.anamnesis')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['rps'] = '';
 
         if ($anamnesis) {
             $data['rps'] = $anamnesis->DESKRIPSI;
@@ -298,8 +318,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['rpd'] = '';
-
         if ($rpp) {
             $data['rpd'] = $rpp->DESKRIPSI;
         }
@@ -308,8 +326,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
         $pemeriksaan_fisik = DB::table('medicalrecord.pemeriksaan_fisik')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['pfisik'] = '';
 
         if ($pemeriksaan_fisik) {
             $data['pfisik'] = $pemeriksaan_fisik->DESKRIPSI;
@@ -320,8 +336,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['terapi_tind'] = '';
-
         if ($rencana_terapi) {
             $data['terapi_tind'] = $rencana_terapi->DESKRIPSI;
         }
@@ -330,10 +344,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
         $tindak_lanjut = DB::table('medicalrecord.tindak_lanjut_pengkajian')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['tl'] = '';
-        $data['rujuk'] = '';
-        $data['rujuk_lainnya'] = '';
 
         if ($tindak_lanjut) {
             $data['tl'] = $tindak_lanjut->TINDAK_LANJUT;
@@ -345,12 +355,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
         $perencanaan = DB::table('medicalrecord.perencanaan_rawat_inap')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['pri_ruang'] = '';
-        $data['pri_perawatan'] = '';
-        $data['pri_indikasi'] = '';
-        $data['pri_ket'] = '';
-        $data['pri_dpjp'] = '';
 
         if ($perencanaan) {
             $data['pri_ruang'] = $perencanaan->JENIS_RUANG_PERAWATAN;
@@ -379,6 +383,7 @@ class PengkajianRawatJalanGeriatriController extends Controller
                     'KUNJUNGAN' => $request->NOKUNJ
                 ],
                 [
+                    'KELUHAN_UTAMA' => $request->anm_ku,
                     'KEADAAN_UMUM' => $request->ku,
                     'KESADARAN'    => $request->kesadaran,
                     'EYE'          => $request->eye,
@@ -606,6 +611,7 @@ class PengkajianRawatJalanGeriatriController extends Controller
             ->first();
 
         // Default
+        $data['anm_ku'] = '';
         $data['ku'] = '';
         $data['kesadaran'] = '';
         $data['eye'] = '';
@@ -623,6 +629,7 @@ class PengkajianRawatJalanGeriatriController extends Controller
 
         if ($tanda_vital) {
 
+            $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
             $data['ku']          = $tanda_vital->KEADAAN_UMUM;
             $data['kesadaran']   = $tanda_vital->KESADARAN;
             $data['eye']         = $tanda_vital->EYE;

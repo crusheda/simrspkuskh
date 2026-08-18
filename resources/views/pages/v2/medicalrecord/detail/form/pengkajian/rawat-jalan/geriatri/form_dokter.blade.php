@@ -16,7 +16,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-check">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="1" checked="">
+                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="1" checked>
                                 <label class="form-check-label">
                                     Autoanamnesis
                                 </label>
@@ -323,6 +323,7 @@
                     </div>
                     <div class="row align-items-center">
                         <div class="col-md-12">
+                            <div class="col-md-12" id="displayttv"></div>
                             <label class="form-label fw-bold">Terapi / Tindakan</label>
                             <textarea class="form-control" name="terapi_tind" id="terapi_tind" rows="3"></textarea>
                         </div>
@@ -345,7 +346,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tl" id="tl_pulang" value="2">
+                                <input class="form-check-input" type="radio" name="tl" id="tl_pulang" value="2" checked>
                                 <label class="form-check-label">
                                     Pulang
                                 </label>
@@ -585,6 +586,157 @@
         getDiagnosis();
     });
 
+    function formatAngkaBulat(value) {
+        if (value === null || value === undefined || value === '') {
+            return '-';
+        }
+
+        return Number(value).toLocaleString('id-ID', {
+            maximumFractionDigits: 0
+        });
+    }
+
+    function formatSuhu(value) {
+        if (value === null || value === undefined || value === '') {
+            return '-';
+        }
+
+        return Number(value).toLocaleString('id-ID', {
+            maximumFractionDigits: 2
+        });
+    }
+
+    function displayTTV(data) {
+
+        let html = `
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <strong>
+                        <i class="ri-heart-pulse-line me-1"></i>
+                        Tanda-Tanda Vital
+                    </strong>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+
+                        <!-- Keadaan Umum -->
+                        <div class="col-md-4 mb-3">
+                            <div class="small text-muted">Keadaan Umum</div>
+                            <div class="fw-bold">
+                                ${data.ku || '-'}
+                            </div>
+                        </div>
+
+                        <!-- Kesadaran -->
+                        <div class="col-md-4 mb-3">
+                            <div class="small text-muted">Tingkat Kesadaran</div>
+                            <div class="fw-bold">
+                                ${getKesadaranText(data.kesadaran)}
+                            </div>
+                        </div>
+
+                        <!-- GCS -->
+                        <div class="col-md-4 mb-3">
+                            <div class="small text-muted">GCS</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.gcs)}
+                            </div>
+                        </div>
+
+                        <!-- E -->
+                        <div class="col-md-2 mb-3">
+                            <div class="small text-muted">Eye (E)</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.eye)}
+                            </div>
+                        </div>
+
+                        <!-- M -->
+                        <div class="col-md-2 mb-3">
+                            <div class="small text-muted">Motorik (M)</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.motorik)}
+                            </div>
+                        </div>
+
+                        <!-- V -->
+                        <div class="col-md-2 mb-3">
+                            <div class="small text-muted">Verbal (V)</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.verbal)}
+                            </div>
+                        </div>
+
+                        <!-- Tekanan Darah -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Tekanan Darah</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.td_up)}
+                                /
+                                ${formatAngkaBulat(data.td_down)}
+                                mmHg
+                            </div>
+                        </div>
+
+                        <!-- SpO2 -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">SpO2</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.spo2)} %
+                            </div>
+                        </div>
+
+                        <!-- Nafas -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Frekuensi Nafas</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.nafas)} X/menit
+                            </div>
+                        </div>
+
+                        <!-- Nadi -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Nadi</div>
+                            <div class="fw-bold">
+                                ${formatAngkaBulat(data.nadi)} X/menit
+                            </div>
+                        </div>
+
+                        <!-- Suhu -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Suhu</div>
+                            <div class="fw-bold">
+                                ${formatSuhu(data.suhu)} °C
+                            </div>
+                        </div>
+
+                        <!-- Alat Bantu Nafas -->
+                        <div class="col-md-3 mb-3">
+                            <div class="small text-muted">Alat Bantu Nafas</div>
+                            <div class="fw-bold">
+                                ${getABNText(data.abn)}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        `;
+
+        $('#displayttv').html(html);
+    }
+
+    function getABNText(value) {
+        if (value == 1) {
+            return 'Ya';
+        }
+        if (value == 2) {
+            return 'Tidak';
+        }
+        return '-';
+    }
+
     function loadDataPengkajianRJGd() {
         const kunjungan = $('#rjg_dokter').data('kunjungan');
 
@@ -593,15 +745,37 @@
             type: 'GET',
             success:function(res){
                 isiFormPengkajianRJGd(res);
+                // Tampilkan TTV
+                displayTTV(res);
             }
         });
     }
 
+    function setValIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector).val(value);
+        }
+    }
+
+    function setCheckedIfExists(selector, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $(selector)
+                .prop('checked', Number(value) === 1)
+                .trigger('change');
+        }
+    }
+
+    function setRadioIfExists(name, value) {
+        if (value !== null && value !== undefined && value !== '') {
+            $('input[name="' + name + '"][value="' + value + '"]')
+                .prop('checked', true)
+                .trigger('change');
+        }
+    }
+
     function isiFormPengkajianRJGd(data){
 
-        $("input[name=anam][value='"+data.anam+"']")
-            .prop("checked",true)
-            .trigger("change");
+        setRadioIfExists('anam', data.anam);
 
         $("#anamnesis_oleh").val(data.anamnesis_oleh);
 
@@ -615,9 +789,10 @@
 
         $("#terapi_tind").val(data.terapi_tind);
 
-        $('input[name="tl"][value="' + data.tl + '"]').prop('checked', true).trigger('change');
-        $('input[name="rujuk"][value="' + data.rujuk + '"]').prop('checked', true).trigger('change');
-        $('#rujuk_lainnya').val(data.rujuk_lainnya);
+        // TINDAK LANJUT
+        setRadioIfExists('tl', data.tl);
+        setRadioIfExists('rujuk', data.rujuk);
+        $("#rujuk_lainnya").val(data.rujuk_lainnya);
 
         $('#pri_ruang').val(data.pri_ruang);
         $('#pri_perawatan').val(data.pri_perawatan);
