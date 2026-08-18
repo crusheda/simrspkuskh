@@ -25,7 +25,7 @@
             <div class="btn-group w-100">
                 <button
                     type="button"
-                    class="btn btn-info btn-sm"
+                    class="btn btn-info btn-sm btn-save-sub-pengkajian"
                     id="btnTambahAlergi"
                     onclick="tambahRiwayatAlergi()"
                 >

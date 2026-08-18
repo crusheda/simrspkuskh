@@ -2457,7 +2457,8 @@ textarea.form-control-lg {
 }
 
 .form-select-sm {
-  padding: 0.2rem 0.8rem;
+  padding: 0.2rem 2.8rem 0.2rem 0.8rem;
+  /* padding: 0.2rem 0.8rem; */
   /* padding-top: 0.4rem;
   padding-bottom: 0.4rem;
   padding-left: 0.8rem; */
@@ -2867,6 +2868,15 @@ textarea.form-control-lg {
 .input-group > .form-floating:not(:first-child) > .form-select {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+}
+.input-group-sm {
+    padding: 0.2rem 0rem !important;
+}
+
+.input-group-sm > .input-group-text,
+.input-group-sm > .form-control,
+.input-group-sm > .form-select {
+    padding: 0.2rem 0.8rem !important;
 }
 
 .valid-feedback {

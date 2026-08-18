@@ -354,7 +354,7 @@
                             <div class="form-group">
                                 <h6>Keadaan Umum</h6>
                                 <div class="form-group">
-                                    <textarea class="form-control" name="keu" rows="2"></textarea>
+                                    <textarea class="form-control" name="keu" rows="1"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -481,7 +481,7 @@
                                                 <input type="number" class="form-control" name="dia_up">
                                                 <div class="input-group-text"> mm / </div>
                                                 <input type="number" class="form-control" name="dia_down">
-                                                <div class="input-group-text"> mm / </div>
+                                                <div class="input-group-text"> mm </div>
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center gap-3">

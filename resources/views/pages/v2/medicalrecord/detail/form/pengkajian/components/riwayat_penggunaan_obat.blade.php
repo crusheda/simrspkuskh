@@ -6,7 +6,7 @@
         </div>
         <div class="col-md-2">
             <div class="btn-group w-100">
-                <button class="btn btn-success" id="btnTambahObat" onclick="tambahPenggunaanObat()">
+                <button class="btn btn-success btn-save-sub-pengkajian" id="btnTambahObat" onclick="tambahPenggunaanObat()">
                     <i class="ri-add-box-line"></i>
                 </button>
                 <button class="btn btn-subtle-warning" id="btnRefreshObat" onclick="getPenggunaanObat()">

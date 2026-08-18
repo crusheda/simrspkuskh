@@ -256,6 +256,62 @@
 
 <script>
     $(function () {
+
+        // ==========================
+        // STARTING _ DISABLED AFTER CHECKBOX IS TRUE / ADA (ONLY INPUT LAINNYA)
+        // ==========================
+            /**
+             * Enable / disable input lain-lain
+             * berdasarkan checkbox yang dipilih.
+             */
+            function toggleInputLainnya($checkbox) {
+                const target = $checkbox.data('target');
+                const $input = $(target);
+
+                if (!$input.length) {
+                    return;
+                }
+
+                // Cari checkbox yang sedang terpilih
+                const $selected = $(
+                    `[data-target="${target}"]:checked`
+                );
+
+                // Jika pilihan yang terpilih mempunyai class buka-lainnya
+                if ($selected.hasClass('buka-lainnya')) {
+                    $input.prop('disabled', false);
+                } else {
+                    $input
+                        .prop('disabled', true)
+                        .val('');
+                }
+            }
+
+            /**
+             * Ketika user memilih checkbox
+             */
+            $(document).on('change', '.single-checkbox[data-target]', function () {
+                toggleInputLainnya($(this));
+            });
+
+            /**
+             * Inisialisasi kondisi awal.
+             *
+             * Ini penting setelah data dari AJAX dimasukkan
+             * ke checkbox.
+             */
+            function initInputLainnya() {
+                $('.single-checkbox[data-target]').each(function () {
+                    toggleInputLainnya($(this));
+                });
+            }
+
+            // Jalankan saat halaman pertama kali selesai dimuat
+            initInputLainnya();
+        // ==========================
+        // ENDED _ DISABLED AFTER CHECKBOX IS TRUE / ADA (ONLY INPUT LAINNYA)
+        // ==========================
+
         $(document).on(
             'input',
             'input[type="number"][min][max]',

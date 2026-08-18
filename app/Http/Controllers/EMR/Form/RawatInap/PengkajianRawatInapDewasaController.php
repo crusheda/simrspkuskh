@@ -21,6 +21,13 @@ class PengkajianRawatInapDewasaController extends Controller
 
     function index($kunjungan)
     {
+        $tingkat_kesadaran = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',179)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
         $pasien = DB::table('pendaftaran.kunjungan AS pk')
             ->leftJoin('pendaftaran.pendaftaran AS pd', 'pd.NOMOR', '=', 'pk.NOPEN')
             ->leftJoin('master.pasien AS p', 'p.NORM', '=', 'pd.NORM')
@@ -39,6 +46,7 @@ class PengkajianRawatInapDewasaController extends Controller
 
         $data = [
             'kunjungan' => $kunjungan,
+            'tingkat_kesadaran' => $tingkat_kesadaran,
             'pasien' => $pasien
         ];
 

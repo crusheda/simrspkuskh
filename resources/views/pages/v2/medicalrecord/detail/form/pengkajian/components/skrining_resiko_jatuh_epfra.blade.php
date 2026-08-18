@@ -127,7 +127,7 @@
             </div>
         </div>
         <div class="col-md-12">
-            <button class="btn btn-primary" onclick="simpanSkriningEPFRA(this)">
+            <button class="btn btn-primary btn-save-sub-pengkajian" onclick="simpanSkriningEPFRA(this)">
                 <i class="ri-save-line me-1"></i> Simpan Skrining Jatuh
             </button>
         </div>

@@ -99,7 +99,7 @@
             </div>
         </div>
         <div class="col-md-12">
-            <button class="btn btn-primary" onclick="simpanSkriningHumptyDumpty(this)">
+            <button class="btn btn-primary btn-save-sub-pengkajian" onclick="simpanSkriningHumptyDumpty(this)">
                 <i class="ri-save-line me-1"></i> Simpan Skrining Jatuh
             </button>
         </div>

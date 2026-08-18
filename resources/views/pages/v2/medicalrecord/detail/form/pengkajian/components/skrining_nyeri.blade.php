@@ -366,7 +366,7 @@
         </div>
     </div>
 
-    <button class="btn btn-primary float-end mt-2" onclick="simpanSkriningNyeri(this)">
+    <button class="btn btn-primary float-end mt-2 btn-save-sub-pengkajian" onclick="simpanSkriningNyeri(this)">
         <i class="ri-save-line me-1"></i> Simpan Skrining Nyeri
     </button>
 </div>

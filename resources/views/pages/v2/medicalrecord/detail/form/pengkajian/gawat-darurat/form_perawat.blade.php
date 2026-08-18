@@ -1497,7 +1497,7 @@
         <button type="button" class="btn btn-subtle-info btnLihatCPPT" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat CPPT" onclick="showCppt('{{ $list['kunjungan'] }}')">
             <i class="ri-booklet-line me-1"></i> Lihat CPPT
         </button>
-        <button class="btn btn-success" onclick="saveDataPengkajianGdP(this)">
+        <button class="btn btn-success" onclick="triggerSaveSubDataPengkajianGdP(); saveDataPengkajianGdP(this)">
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
     </div>
@@ -1773,6 +1773,12 @@
 
         getDataPengkajianGdP();
     })
+
+    function triggerSaveSubDataPengkajianGdP() {
+        $sectionGdP.find('.btn-save-sub-pengkajian').each(function () {
+            $(this).trigger('click');
+        });
+    }
 
     // RESET CARA KEDATANGAN
     function resetDatangCara($sectionGdP) {
