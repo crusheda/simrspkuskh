@@ -862,6 +862,10 @@
                                 Perubahan Nutrisi Kurang dari Kebutuhan
                             </label>
                         </div>
+                        <div class="form-check mb-2">
+                            <label class="form-input-label">Diagnosa Keperawatan Lainnya</label>
+                            <input type="text" class="form-control" id="diag_lain" name="diag_lain" placeholder="Lainnya">
+                        </div>
                     </div>
                 </div>
                 <div class="mt-3">
@@ -1954,7 +1958,7 @@
             '#rencana_asuhan_keperawatan',
             data.rencana_asuhan_keperawatan
         );
-
+        setValIfExists('#diag_lain', data.diag_lain);
         // ======================================================
         // ASSESMEN SINDROM GERIATRI
         // ======================================================

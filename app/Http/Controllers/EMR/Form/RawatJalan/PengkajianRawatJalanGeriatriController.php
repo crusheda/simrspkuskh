@@ -546,6 +546,9 @@ class PengkajianRawatJalanGeriatriController extends Controller
                     'PERUBAHAN_NUTRISI_KURANG_DARI_KEBUTUHAN' =>
                         $request->input('diag_keperawatan_11') ? 1 : 0,
 
+                    'MASALAH_LAIN' =>
+                        $request->input('diag_lain') ? 1 : 0,
+
                     'RENCANA_ASUHAN_KEPERAWATAN' =>
                         $request->input('rencana_asuhan_keperawatan'),
 
@@ -610,23 +613,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        // Default
-        $data['anm_ku'] = '';
-        $data['ku'] = '';
-        $data['kesadaran'] = '';
-        $data['eye'] = '';
-        $data['motorik'] = '';
-        $data['verbal'] = '';
-        $data['gcs'] = '';
-
-        $data['td_up'] = '';
-        $data['td_down'] = '';
-        $data['spo2'] = '';
-        $data['nafas'] = '';
-        $data['suhu'] = '';
-        $data['nadi'] = '';
-        $data['abn'] = '';
-
         if ($tanda_vital) {
 
             $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
@@ -653,40 +639,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
         $kondisi_sosial = DB::table('medicalrecord.kondisi_sosial')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-
-        // Default Status Psikologi
-        $data['tak'] = 0;
-        $data['marah'] = 0;
-        $data['cemas'] = 0;
-        $data['takut'] = 0;
-        $data['sedih'] = 0;
-        $data['bundir'] = 0;
-        $data['pse_lain'] = '';
-
-
-        // Status Mental
-        $data['sm'] = 0;
-        $data['perilaku'] = '';
-        $data['kekerasan'] = '';
-
-
-        // Hubungan Sosial
-        $data['hub'] = 0;
-        $data['tinggal'] = 0;
-        $data['tinggal_lain'] = '';
-
-
-        // Spiritual
-        $data['kbt'] = 0;
-        $data['nk'] = 0;
-        $data['nk_lain'] = '';
-        $data['pk'] = '';
-
-
-        // Ekonomi
-        $data['hasil'] = 0;
-
 
         if ($kondisi_sosial) {
 
@@ -730,15 +682,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['sn_nyeri'] = 0;
-        $data['sn_onset'] = '';
-        $data['sn_skala'] = '';
-        $data['sn_metode'] = '';
-        $data['sn_pencetus'] = '';
-        $data['sn_gambaran'] = '';
-        $data['sn_durasi'] = '';
-        $data['sn_lokasi'] = '';
-
         if ($nyeri) {
 
             $data['sn_nyeri']    = $nyeri->NYERI;
@@ -759,10 +702,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['cara_berjalan'] = 0;
-        $data['faktor_risiko'] = 0;
-        $data['kon_obat'] = 0;
-
         if ($getup) {
 
             $data['cara_berjalan'] = $getup->CARA_BERJALAN_PASIEN;
@@ -777,16 +716,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
         $gizi = DB::table('medicalrecord.permasalahan_gizi')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-
-        $data['bb_turun'] = 0;
-        $data['bb_ubah'] = 0;
-        $data['nafsu_makan'] = 0;
-        $data['kondisi_khusus'] = '';
-
-        $data['skor_gizi'] = '';
-        $data['status_skor'] = '';
-
 
         if ($gizi) {
 
@@ -842,11 +771,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
                 'PERUBAHAN_NUTRISI_KURANG_DARI_KEBUTUHAN',
         ];
 
-
-        foreach ($diagnosa_keperawatan_field as $key => $column) {
-            $data[$key] = 0;
-        }
-
         $data['rencana_asuhan_keperawatan'] = '';
 
         if ($diagnosa_keperawatan) {
@@ -856,6 +780,9 @@ class PengkajianRawatJalanGeriatriController extends Controller
                 $data[$key] =
                     (int) ($diagnosa_keperawatan->$column ?? 0);
             }
+
+            $data['diag_lain'] =
+                $diagnosa_keperawatan->MASALAH_LAIN ?? '';
 
             $data['rencana_asuhan_keperawatan'] =
                 $diagnosa_keperawatan->RENCANA_ASUHAN_KEPERAWATAN ?? '';
