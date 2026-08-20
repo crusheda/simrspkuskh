@@ -672,12 +672,12 @@
                             <textarea class="form-control" name="ku" rows="1"></textarea>
                         </div>
                         <div class="form-group mb-3">
-                            <h6>Riwayat Penyakit Dahulu</h6>
-                            <textarea class="form-control" name="rpd" rows="1"></textarea>
-                        </div>
-                        <div class="form-group mb-3">
                             <h6>Riwayat Penyakit Sekarang</h6>
                             <textarea class="form-control" name="rps" rows="3"></textarea>
+                        </div>
+                        <div class="form-group mb-3">
+                            <h6>Riwayat Penyakit Dahulu</h6>
+                            <textarea class="form-control" name="rpd" rows="1"></textarea>
                         </div>
                         <div class="form-group mb-3">
                             <h6>Riwayat Penyakit Keluarga</h6>
@@ -701,8 +701,8 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_penggunaan_obat')
                         @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_alergi')
+                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_penggunaan_obat')
                     </div>
                 </div>
             </div>

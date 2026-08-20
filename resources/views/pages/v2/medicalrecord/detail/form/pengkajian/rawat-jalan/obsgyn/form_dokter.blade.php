@@ -639,6 +639,10 @@ Uodema        : (   /   )
                     </div>
                     <div class="row align-items-center">
                         <div class="col-md-12">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-bold">Tolok Ukur / Sasaran yang Dicapai</label>
+                                <textarea class="form-control" name="tu" id="tu" rows="3"></textarea>
+                            </div>
                             <div class="col-md-12" id="displayttv"></div>
                             <label class="form-label fw-bold">Terapi / Tindakan</label>
                             <textarea class="form-control" name="terapi_tind" id="terapi_tind" rows="3"></textarea>
@@ -1093,7 +1097,9 @@ Uodema        : (   /   )
             $("#pfisik").val(data.pfisik);
         }
 
+        $("#tu").val(data.tu);
         $("#terapi_tind").val(data.terapi_tind);
+
 
         $('input[name="tl"][value="' + data.tl + '"]').prop('checked', true).trigger('change');
         $('input[name="rujuk"][value="' + data.rujuk + '"]').prop('checked', true).trigger('change');
