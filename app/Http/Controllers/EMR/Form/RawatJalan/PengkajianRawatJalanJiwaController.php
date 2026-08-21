@@ -164,6 +164,19 @@ class PengkajianRawatJalanJiwaController extends Controller
                 ]
             );
 
+            // ASSESMENT
+            DB::table('medicalrecord.sirmed_assesment')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'TOLAK_UKUR'   => $request->tu,
+                    'OLEH'         => auth()->id(),
+                    'STATUS'       => 1,
+                    'TANGGAL'      => now()
+                ]
+            );
+
             // Edukasi Rawat Jalan
             DB::table('medicalrecord.edukasi_rajal')->updateOrInsert(
                 [
@@ -360,10 +373,17 @@ class PengkajianRawatJalanJiwaController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['terapi_tind'] = '';
-
         if ($rencana_terapi) {
             $data['terapi_tind'] = $rencana_terapi->DESKRIPSI;
+        }
+
+        // Riwayat Terapi
+        $assesment = DB::table('medicalrecord.sirmed_assesment')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+        if ($assesment) {
+            $data['tu'] = $assesment->TOLAK_UKUR;
         }
 
         // Riwayat Terapi

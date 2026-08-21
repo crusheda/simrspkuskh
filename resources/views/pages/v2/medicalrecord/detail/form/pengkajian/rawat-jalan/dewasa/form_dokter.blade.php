@@ -322,6 +322,10 @@
                         </h5>
                     </div>
                     <div class="row align-items-center">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Tolok Ukur / Sasaran yang Dicapai</label>
+                            <textarea class="form-control" name="tu" id="tu" rows="3"></textarea>
+                        </div>
                         <div class="col-md-12" id="displayttv"></div>
                         <div class="col-md-12">
                             <label class="form-label fw-bold">Terapi / Tindakan</label>
@@ -863,6 +867,7 @@
 
         $("#pfisik").val(data.pfisik);
 
+        $("#tu").val(data.tu);
         $("#terapi_tind").val(data.terapi_tind);
 
         // MASALAH / EDUKASI
