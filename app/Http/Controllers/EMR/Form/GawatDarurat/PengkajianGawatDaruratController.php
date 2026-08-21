@@ -28,13 +28,6 @@ class PengkajianGawatDaruratController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
-        $riw_alergi = DB::table('master.referensi')
-                ->select('ID','DESKRIPSI')
-                ->where('JENIS',180)
-                ->where('STATUS',1)
-                ->orderBy('TABEL_ID','ASC')
-                ->get();
-
         $usia = DB::table('master.referensi')
                 ->select('ID','DESKRIPSI')
                 ->where('JENIS',192)
@@ -95,7 +88,6 @@ class PengkajianGawatDaruratController extends Controller
         $data = [
             'kunjungan' => $kunjungan,
             'tingkat_kesadaran' => $tingkat_kesadaran,
-            'riwayat_alergi' => $riw_alergi,
             'cara_keluar' => $cara_keluar,
             'usia' => $usia,
             'jk' => $jk,

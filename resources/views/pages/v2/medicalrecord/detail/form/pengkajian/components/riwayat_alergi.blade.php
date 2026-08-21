@@ -2,20 +2,11 @@
     <h6>Riwayat Alergi</h6>
     <div class="row g-2 mb-2 align-items-center">
         <div class="col-md-3">
-            <select class="form-select" name="ra_jenis">
-                <option value="" hidden>Pilih Jenis Alergi</option>
-                @if ($list['riwayat_alergi'])
-                    @foreach ($list['riwayat_alergi'] as $item)
-                        <option value="{{ $item->ID }}">
-                            {{ $item->DESKRIPSI }}
-                        </option>
-                    @endforeach
-                @endif
-            </select>
+            <select class="form-select" name="ra_jenis"></select>
         </div>
         <div class="col-md-7">
             <textarea
-                class="form-control form-control-sm"
+                class="form-control"
                 name="ra_deskripsi"
                 placeholder="Masukkan Alergi"
                 rows="1"
@@ -84,8 +75,11 @@
             },
             success: function (res) {
                 let html = '';
-                if (res.length > 0) {
-                    $.each(res, function (i, v) {
+                let opt = '';
+
+                // PUSH RIWAYAT ALERGI
+                if (res.riw_alergi.length > 0) {
+                    $.each(res.riw_alergi, function (i, v) {
                         html += `
                         <tr>
                             <td>${i + 1}</td>
@@ -107,6 +101,15 @@
                     `;
                 }
                 $("#tblAlergiBody").html(html);
+
+                // PUSH REFERENSI RIWAYAT ALERGI
+                if (res.ref_riw_alergi.length > 0) {
+                    opt += '<option value="" hidden>Pilih Jenis Alergi</option>';
+                    res.ref_riw_alergi.forEach(item => {
+                        opt += `<option value="${item.ID}">${item.DESKRIPSI}</option>`;
+                    });
+                }
+                $("[name='ra_jenis']").empty().html(opt);
             },
             error: function (xhr) {
                 let message = 'Data gagal disimpan.';

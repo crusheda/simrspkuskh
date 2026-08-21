@@ -168,7 +168,14 @@ class AddOnPengkajianController extends Controller
 
     public function getRiwayatAlergi($kunjungan)
     {
-        $data = DB::table('medicalrecord.riwayat_alergi as ra')
+        $ref_riw_alergi = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',180)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $riwayat_alergi = DB::table('medicalrecord.riwayat_alergi as ra')
             ->leftJoin('master.referensi as ref', function($join){
                 $join->on('ra.JENIS', '=', 'ref.ID')
                     ->where('ref.JENIS',180)
@@ -178,6 +185,12 @@ class AddOnPengkajianController extends Controller
             ->where('ra.KUNJUNGAN', $kunjungan)
             ->where('ra.STATUS', 1)
             ->get();
+
+        $data = [
+            'kunjungan' => $kunjungan,
+            'ref_riw_alergi' => $ref_riw_alergi,
+            'riw_alergi' => $riwayat_alergi,
+        ];
 
         return response()->json($data);
     }

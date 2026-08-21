@@ -5,10 +5,10 @@
         data-bs-target="#gd_perawat" aria-expanded="false" aria-controls="gd_perawat"><i class="ri-stethoscope-line me-1"></i> Pengkajian Keperawatan</button>
 </div>
 <div class="accordion mt-3" id="gdAccordion">
-    <div class="multi-collapse collapse show" data-bs-parent="#gdAccordion" id="gd_dokter" data-kunjungan="{{ $list['kunjungan'] }}">
+    <div class="multi-collapse collapse show" data-bs-parent="#gdAccordion" id="riD_dokter" data-kunjungan="{{ $list['kunjungan'] }}">
         @include('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa.form_dokter')
     </div>
-    <div class="multi-collapse collapse" data-bs-parent="#gdAccordion" id="gd_perawat" data-kunjungan="{{ $list['kunjungan'] }}">
+    <div class="multi-collapse collapse" data-bs-parent="#gdAccordion" id="riP_dokter" data-kunjungan="{{ $list['kunjungan'] }}">
         @include('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa.form_perawat')
     </div>
 </div>

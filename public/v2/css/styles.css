@@ -2361,7 +2361,8 @@ progress {
   border-radius: 8px;
 }
 textarea.form-control-sm {
-    padding: 0.532rem 1.2rem;
+    /* padding: 0.532rem 1.2rem; */
+    padding: 0.2rem 0.8rem !important;
 }
 .form-control-sm::file-selector-button {
   padding: 0.5rem 0.8rem;
@@ -2385,7 +2386,7 @@ textarea.form-control {
   min-height: calc(1.6em + 1.064rem + calc(var(--bs-border-width) * 2));
 }
 textarea.form-control-sm {
-  min-height: calc(1.6em + 1rem + calc(var(--bs-border-width) * 2));
+  min-height: 0 !important;
 }
 textarea.form-control-lg {
   min-height: calc(1.6em + 1.5rem + calc(var(--bs-border-width) * 2));
