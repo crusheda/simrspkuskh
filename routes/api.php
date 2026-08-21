@@ -20,6 +20,7 @@ use App\Http\Controllers\EMR\Form\AddOnPengkajianController;
 use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapDewasaController;
 use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapNeonatusController;
+use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapObsgynController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanAnakController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanJiwaController;
@@ -81,6 +82,13 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                         // PERAWAT
                         Route::get('emr/form/pengkajian/rin/pr/{kunjungan}', [PengkajianRawatInapNeonatusController::class, 'getFormPerawatRIN']);
                         Route::post('emr/form/pengkajian/rin/pr/simpan', [PengkajianRawatInapNeonatusController::class, 'simpanFormPerawatRIN']);
+                    // OBSGYN
+                        // DOKTER
+                        Route::get('emr/form/pengkajian/rio/dr/{kunjungan}', [PengkajianRawatInapObsgynController::class, 'getFormDokterRIO']);
+                        Route::post('emr/form/pengkajian/rio/dr/simpan', [PengkajianRawatInapObsgynController::class, 'simpanFormDokterRIO']);
+                        // PERAWAT
+                        Route::get('emr/form/pengkajian/rio/pr/{kunjungan}', [PengkajianRawatInapObsgynController::class, 'getFormPerawatRIO']);
+                        Route::post('emr/form/pengkajian/rio/pr/simpan', [PengkajianRawatInapObsgynController::class, 'simpanFormPerawatRIO']);
 
                 // RAWAT JALAN
                     // DEWASA
