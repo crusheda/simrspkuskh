@@ -2,6 +2,27 @@
 // GLOBAL FORM HELPER
 // ============================================================
 window.FormHelper = {
+    // ==========================================================
+    // CEK VALUE TERISI DAN BUKAN 0
+    // ==========================================================
+    // null / undefined / '' / 0 / '0' / '0.00' => false
+    // selain itu => true
+    //
+    // Contoh:
+    // FormHelper.hasValue(94)      => true
+    // FormHelper.hasValue('94.00') => true
+    // FormHelper.hasValue('0.00')  => false
+    // FormHelper.hasValue(null)    => false
+    // ==========================================================
+    hasValue: function (value) {
+
+        return (
+            value !== null &&
+            value !== undefined &&
+            value !== '' &&
+            Number(value) !== 0
+        );
+    },
 
     // ==========================================================
     // SET VALUE

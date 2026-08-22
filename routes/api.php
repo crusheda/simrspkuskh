@@ -173,6 +173,10 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                         // STRONG KID
                         Route::get('emr/pengkajian/skrining/gizi/strongkid/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningGiziStrongKid']);
                         Route::post('emr/pengkajian/skrining/gizi/strongkid/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningGiziStrongKid']);
+                // KHUSUS RAWAT INAP
+                    // TANDA VITAL
+                        Route::get('emr/pengkajian/ri/tandavital/{kunjungan}', [AddOnPengkajianController::class, 'getTandaVitalRI']);
+                        Route::post('emr/pengkajian/ri/tandavital/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTandaVitalRI']);
 });
 
 // SIRMED v.1

@@ -552,7 +552,6 @@
             type: 'GET',
             success: function (html) {
                 console.log(form);
-                console.log(kunjungan);
                 $('#formContent').html(html);
             },
             error: function () {

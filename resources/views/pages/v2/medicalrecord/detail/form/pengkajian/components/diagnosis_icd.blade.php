@@ -3,7 +3,7 @@
     <div class="d-flex align-items-center gap-2 mb-2">
         <div class="flex-grow-1">
             <textarea
-                class="form-control form-control-sm"
+                class="form-control"
                 name="diag_detail"
                 placeholder="Masukkan Diagnosa"
                 rows="1"
