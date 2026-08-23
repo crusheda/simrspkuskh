@@ -636,7 +636,7 @@ class PengkajianRawatJalanDewasaController extends Controller
                     'ANSIETAS' => $request->input('diag_8') ? 1 : 0,
 
                     'GANGGUAN_INTEGRITAS_KULIT_JARINGAN' => $request->input('diag_9') ? 1 : 0,
-                    'GANGGUAN_ELIMINASI_URIN' => $request->input('diag_10') ? 1 : 0,
+                    'GANGGUAN_ELIMINASI_URINE' => $request->input('diag_10') ? 1 : 0,
                     'INTOLERANSI_AKTIFITAS' => $request->input('diag_11') ? 1 : 0,
                     'GANGGUAN_MOBILITAS_FISIK' => $request->input('diag_12') ? 1 : 0,
                     'GANGGUAN_PERTUKARAN_GAS' => $request->input('diag_13') ? 1 : 0,
@@ -876,7 +876,7 @@ class PengkajianRawatJalanDewasaController extends Controller
             'diag_8'  => 'ANSIETAS',
 
             'diag_9'  => 'GANGGUAN_INTEGRITAS_KULIT_JARINGAN',
-            'diag_10' => 'GANGGUAN_ELIMINASI_URIN',
+            'diag_10' => 'GANGGUAN_ELIMINASI_URINE',
             'diag_11' => 'INTOLERANSI_AKTIFITAS',
             'diag_12' => 'GANGGUAN_MOBILITAS_FISIK',
             'diag_13' => 'GANGGUAN_PERTUKARAN_GAS',

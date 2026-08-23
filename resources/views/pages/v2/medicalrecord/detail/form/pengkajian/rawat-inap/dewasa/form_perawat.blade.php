@@ -4,10 +4,7 @@
     <div class="form-content">
         <div class="row">
             <div class="col-md-12 mb-3">
-                <h4 class="text-danger">Anamnesis</h4>
-                <div class="row">
-
-                </div>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#riD_perawat'])
             </div>
         </div>
     </div>

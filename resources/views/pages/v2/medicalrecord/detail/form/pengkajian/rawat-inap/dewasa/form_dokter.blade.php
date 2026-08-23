@@ -64,7 +64,21 @@
                 </div>
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital', ['section' => '#riD_dokter'])
+                @include(
+                    'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
+                    [
+                        'section' => '#riD_dokter',
+                        'page' => 'dokter',
+                        // 'editableFields' => [
+                        //     'tv_keu',
+                        //     'tv_gcs_e',
+                        //     'tv_gcs_v',
+                        //     'tv_gcs_m',
+                        //     'tv_bb',
+                        //     'tv_tb',
+                        // ],
+                    ]
+                )
             </div>
             <div class="col-md-12 mb-3">
                 <h4 class="mb-3 text-danger">Pemeriksaan Fisik</h4>

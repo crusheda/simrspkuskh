@@ -829,7 +829,7 @@ class PengkajianRawatJalanAnakController extends Controller
             'diag_8'  => 'ANSIETAS',
 
             'diag_9'  => 'GANGGUAN_INTEGRITAS_KULIT_JARINGAN',
-            'diag_10' => 'GANGGUAN_ELIMINASI_URIN',
+            'diag_10' => 'GANGGUAN_ELIMINASI_URINE',
             'diag_11' => 'INTOLERANSI_AKTIFITAS',
             'diag_12' => 'GANGGUAN_MOBILITAS_FISIK',
             'diag_13' => 'GANGGUAN_PERTUKARAN_GAS',

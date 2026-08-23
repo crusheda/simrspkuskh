@@ -1353,6 +1353,152 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    function getKebutuhanEdukasi($KUNJUNGAN)
+    {
+        $edu1 = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.edukasi_pasien_keluarga',
+            [
+                'KESEDIAAN',
+
+                'HAMBATAN',
+                    'HAMBATAN_PENDENGARAN',
+                    'HAMBATAN_PENGLIHATAN',
+                    'HAMBATAN_KOGNITIF',
+                    'HAMBATAN_FISIK',
+                    'HAMBATAN_BUDAYA',
+                    'HAMBATAN_EMOSI',
+                    'HAMBATAN_BAHASA',
+
+                'PENERJEMAH',
+                    'BAHASA',
+
+                'EDUKASI_DIAGNOSA',
+                'EDUKASI_REHAB_MEDIK',
+                'EDUKASI_HKP',
+                'EDUKASI_PEMBERIAN_INFORMED_CONSENT',
+                'EDUKASI_CUCI_TANGAN',
+                'EDUKASI_PERENCANAAN_PULANG',
+                'EDUKASI_OBAT',
+                'EDUKASI_NYERI',
+                'EDUKASI_HAK_BERPARTISIPASI',
+                'EDUKASI_PENUNDAAN_PELAYANAN',
+                'EDUKASI_BAHAYA_MEROKO',
+                'EDUKASI_NUTRISI',
+                'EDUKASI_PENGGUNAAN_ALAT',
+                'EDUKASI_PROSEDURE_PENUNJANG',
+                'EDUKASI_KELAMBATAN_PELAYANAN',
+                'EDUKASI_RUJUKAN_PASIEN',
+                'STATUS_LAIN',
+                'DESKRIPSI_LAINYA',
+            ]
+        );
+
+        $edu2 = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.edukasi_emergency',
+            [
+                'EDUKASI',
+            ]
+        );
+
+        $edu = array_merge(
+            (array) $edu1,
+            (array) $edu2
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $edu
+        ]);
+    }
+
+    function simpanKebutuhanEdukasi(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.edukasi_pasien_keluarga')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    // Edukasi awal
+                    'KESEDIAAN' => $request->edu_1 ?? 0,
+
+                    'HAMBATAN' => $request->edu_2 ?? 0,
+
+                    'PENERJEMAH' => $request->edu_3 ?? 0,
+                    'PENERJEMAH' => $request->edu_3_lain ?? '',
+
+                    // Kebutuhan Edukasi
+                    'EDUKASI_DIAGNOSA' => $request->kb_edu_1 ?? 0,
+                    'EDUKASI_REHAB_MEDIK' => $request->kb_edu_2 ?? 0,
+                    'EDUKASI_HKP' => $request->kb_edu_3 ?? 0,
+
+                    'EDUKASI_PEMBERIAN_INFORMED_CONSENT' => $request->kb_edu_4 ?? 0,
+
+                    'EDUKASI_CUCI_TANGAN' => $request->kb_edu_5 ?? 0,
+                    'EDUKASI_PERENCANAAN_PULANG' => $request->kb_edu_6 ?? 0,
+
+                    'EDUKASI_OBAT' => $request->kb_edu_7 ?? 0,
+                    'EDUKASI_NYERI' => $request->kb_edu_8 ?? 0,
+                    'EDUKASI_HAK_BERPARTISIPASI' => $request->kb_edu_9 ?? 0,
+
+                    'EDUKASI_PENUNDAAN_PELAYANAN' => $request->kb_edu_10 ?? 0,
+                    'EDUKASI_BAHAYA_MEROKO' => $request->kb_edu_11 ?? 0,
+
+                    'EDUKASI_NUTRISI' => $request->kb_edu_13 ?? 0,
+                    'EDUKASI_PENGGUNAAN_ALAT' => $request->kb_edu_14 ?? 0,
+                    'EDUKASI_PROSEDURE_PENUNJANG' => $request->kb_edu_15 ?? 0,
+
+                    'EDUKASI_KELAMBATAN_PELAYANAN' => $request->kb_edu_16 ?? 0,
+                    'EDUKASI_RUJUKAN_PASIEN' => $request->kb_edu_17 ?? 0,
+
+                    // Lainnya
+                    'STATUS_LAIN' => $request->kb_edu_12 ?? 0,
+                    'DESKRIPSI_LAINYA' => $request->kb_edu_lain,
+
+                    'TANGGAL' => now(),
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
+            );
+
+            DB::table('medicalrecord.edukasi_emergency')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'EDUKASI' => $request->kb_edu_deskripsi ?? '',
+                    'KEMBALI_KE_UGD' => '',
+
+                    'TANGGAL' => now(),
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Kebutuhan Edukasi berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Kebutuhan Edukasi gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     function getTandaVitalRI($KUNJUNGAN)
     {
         $ttv1 = $this->getData(
@@ -1377,11 +1523,9 @@ class AddOnPengkajianController extends Controller
 
         $ttv2 = $this->getData(
             $KUNJUNGAN,
-            'medicalrecord.nutrisi',
+            'medicalrecord.edukasi_emergency',
             [
-                'BERAT_BADAN',
-                'TINGGI_BADAN',
-                'INDEX_MASSA_TUBUH',
+                'EDUKASI',
             ]
         );
 
