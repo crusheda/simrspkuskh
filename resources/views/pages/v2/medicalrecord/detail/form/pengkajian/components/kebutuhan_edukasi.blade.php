@@ -1,7 +1,7 @@
 <div class="row" id="form_kebutuhan_edukasi">
     <div class="col-md-12">
         <div class="form-group">
-            <h5 class="mb-0">
+            <h5 class="mb-0 text-success">
                 <strong>Edukasi</strong>
             </h5>
         </div>

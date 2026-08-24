@@ -1,7 +1,7 @@
 <div class="row align-items-center" id="form_aktivitas_latihan_personal_hygiene">
     <div class="col-md-12 mb-2">
         <div class="form-group">
-            <h5 class="mb-0">
+            <h5 class="mb-0 text-success">
                 <strong>Aktivitas Dan Latihan, Personal Hygiene</strong>
             </h5>
         </div>

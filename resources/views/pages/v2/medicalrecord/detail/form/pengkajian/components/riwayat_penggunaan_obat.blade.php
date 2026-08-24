@@ -1,15 +1,31 @@
 <div class="form-group">
     <h6>Riwayat Penggunaan Obat</h6>
     <div class="row g-2 mb-2 align-items-center">
-        <div class="col-md-10">
-            <input type="text" class="form-control" name="rpo_nama_obat" id="rpo_nama_obat" placeholder="Masukkan Nama Obat">
+        <div class="col">
+            <input
+                type="text"
+                class="form-control"
+                name="rpo_nama_obat"
+                id="rpo_nama_obat"
+                placeholder="Masukkan Nama Obat"
+            >
         </div>
-        <div class="col-md-2">
-            <div class="btn-group w-100">
-                <button class="btn btn-success btn-save-sub-pengkajian" id="btnTambahObat" onclick="tambahPenggunaanObat()">
+        <div class="col-auto">
+            <div class="btn-group">
+                <button
+                    type="button"
+                    class="btn btn-success btn-save-sub-pengkajian"
+                    id="btnTambahObat"
+                    onclick="tambahPenggunaanObat()"
+                >
                     <i class="ri-add-box-line"></i>
                 </button>
-                <button class="btn btn-subtle-warning" id="btnRefreshObat" onclick="getPenggunaanObat()">
+                <button
+                    type="button"
+                    class="btn btn-subtle-warning"
+                    id="btnRefreshObat"
+                    onclick="getPenggunaanObat()"
+                >
                     <i class="ri-refresh-line"></i>
                 </button>
             </div>

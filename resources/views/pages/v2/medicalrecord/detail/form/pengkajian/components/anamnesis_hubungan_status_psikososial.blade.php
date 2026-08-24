@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12 mb-1">
         <div class="form-group">
-            <h5 class="border-bottom pb-2 text-bold">
+            <h5 class="border-bottom pb-2 text-bold text-success">
                 <strong>PSIKOLOGI - SOSIAL - EKONOMI - SPIRITUAL - FUNGSIONAL </strong>
             </h5>
         </div>

@@ -4,64 +4,13 @@
     <div class="form-content">
         <div class="row">
             <div class="col-md-12 mb-3">
-                <h4 class="text-danger">Anamnesis</h4>
-                <div class="row">
-                    <div class="col-md-12">
-                        <h6>Anamnesis Diperoleh</h6>
-                        <div class="form-group mb-3">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="1">
-                                <label class="form-check-label"> Autoanamnesis </label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="2">
-                                <label class="form-check-label"> Alloanamnesis </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <h6>Keluhan Utama</h6>
-                            <textarea class="form-control" name="ku" rows="1"></textarea>
-                        </div>
-                        <div class="form-group mb-3">
-                            <h6>Riwayat Penyakit Sekarang</h6>
-                            <textarea class="form-control" name="rps" rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <h6>Riwayat Penyakit Dahulu</h6>
-                            <textarea class="form-control" name="rpd" rows="1"></textarea>
-                        </div>
-                        <div class="form-group mb-3">
-                            <h6>Riwayat Penyakit Keluarga</h6>
-                            <div class="form-check form-check-inline mb-2">
-                                <input class="form-check-input check-primary" type="checkbox" name="rpk_h">
-                                <label class="form-check-label"> Hipertensi </label>
-                            </div>
-                            <div class="form-check form-check-inline mb-2">
-                                <input class="form-check-input check-primary" type="checkbox" name="rpk_d">
-                                <label class="form-check-label"> Diabetes Melitus </label>
-                            </div>
-                            <div class="form-check form-check-inline mb-2">
-                                <input class="form-check-input check-primary" type="checkbox" name="rpk_p">
-                                <label class="form-check-label"> Penyakit Jantung </label>
-                            </div>
-                            <div class="form-check form-check-inline mb-2">
-                                <input class="form-check-input check-primary" type="checkbox" name="rpk_a">
-                                <label class="form-check-label"> Asma </label>
-                            </div>
-                            <textarea class="form-control" name="rpk_lain" rows="1" placeholder="Lainnya..."></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_alergi')
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_penggunaan_obat')
-                    </div>
-                </div>
+                @include(
+                    'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
+                    [
+                        'section' => '#riD_dokter',
+                        'anak' => 'false',
+                    ]
+                )
             </div>
             <div class="col-md-12 mb-3">
                 @include(

@@ -1635,6 +1635,312 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    function getAnamnesisRI($KUNJUNGAN)
+    {
+        $anam1 = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.anamnesis_diperoleh',
+            [
+                'AUTOANAMNESIS',
+                'ALLOANAMNESIS',
+            ]
+        );
+
+        $anam2 = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.keluhan_utama',
+            [
+                'DESKRIPSI',
+            ]
+        );
+
+        $anam3 = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.anamnesis',
+            [
+                'DESKRIPSI',
+            ]
+        );
+
+        $anam4 = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.rpp',
+            [
+                'DESKRIPSI',
+            ]
+        );
+
+        $anam5 = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.riwayat_penyakit_keluarga',
+            [
+                'HIPERTENSI',
+                'DIABETES_MELITUS',
+                'PENYAKIT_JANTUNG',
+                'ASMA',
+                'LAINNYA',
+            ]
+        );
+
+        $anam6 = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.sirmed_status_reproduksi',
+            [
+                'RIWAYAT_TUMBUH_KEMBANG',
+                'RIWAYAT_KELAHIRAN',
+                'USIA_KEHAMILAN',
+                'PERSALINAN',
+                'PERSALINAN_LAINNYA',
+            ]
+        );
+
+        $anam = array_merge(
+            (array) $anam1,
+            (array) $anam2,
+            (array) $anam3,
+            (array) $anam4,
+            (array) $anam5,
+            (array) $anam6
+        );
+
+        return response()->json([
+            'status' => true,
+
+            'data' => [
+                'anam1' => $anam1,
+                'anam2' => $anam2,
+                'anam3' => $anam3,
+                'anam4' => $anam4,
+                'anam5' => $anam5,
+                'anam6' => $anam6,
+            ]
+        ]);
+
+        // return response()->json([
+        //     'status' => true,
+        //     'data' => $anam
+        // ]);
+    }
+
+    function simpanAnamnesisRI(Request $request, $KUNJUNGAN)
+    {
+        // ==========================================
+        // DATA KUNJUNGAN
+        // ==========================================
+        $getDataKunjungan = DB::table('pendaftaran.kunjungan as pk')
+            ->join(
+                'pendaftaran.pendaftaran as pp',
+                'pp.NOMOR',
+                '=',
+                'pk.NOPEN'
+            )
+            ->select(
+                'pp.NORM',
+                'pp.NOMOR as NOPEN'
+            )
+            ->where('pk.NOMOR', $request->NOKUNJ)
+            ->first();
+
+        if (!$getDataKunjungan) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data kunjungan tidak ditemukan.'
+            ], 404);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            // ==========================================
+            // AUTO / ALLO
+            // TABEL ANAMNESIS_DIPEROLEH
+            // ==========================================
+            if ($request->has('anam')) {
+
+                DB::table('medicalrecord.anamnesis_diperoleh')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $request->NOKUNJ
+                        ],
+                        [
+                            'AUTOANAMNESIS' => ($request->anam == 1) ? 1 : 0,
+                            'ALLOANAMNESIS' => ($request->anam == 2) ? 1 : 0,
+                            'DARI'          => "",
+                            'OLEH'          => auth()->id(),
+                            'STATUS'        => 1,
+                            'TANGGAL'       => now()
+                        ]
+                    );
+            }
+
+
+            // ==========================================
+            // KELUHAN UTAMA
+            // TABEL KELUHAN_UTAMA
+            // ==========================================
+            if (
+                $request->has('ku') &&
+                $request->filled('ku')
+            ) {
+
+                DB::table('medicalrecord.keluhan_utama')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $request->NOKUNJ
+                        ],
+                        [
+                            'DESKRIPSI'    => $request->ku,
+                            'SNOMED_CT_ID' => 0,
+                            'TANGGAL'      => now(),
+                            'OLEH'         => auth()->id(),
+                            'STATUS'       => 1,
+                        ]
+                    );
+            }
+
+
+            // ==========================================
+            // RIWAYAT PENYAKIT SEKARANG
+            // TABEL ANAMNESIS
+            // ==========================================
+            if (
+                $request->has('rps') &&
+                $request->filled('rps')
+            ) {
+
+                DB::table('medicalrecord.anamnesis')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN'  => $request->NOKUNJ,
+                            'PENDAFTARAN' => $getDataKunjungan->NOPEN
+                        ],
+                        [
+                            'SNOMED_CT_ID' => 0,
+                            'DESKRIPSI'    => $request->rps,
+                            'TANGGAL'      => now(),
+                            'OLEH'         => auth()->id(),
+                            'STATUS'       => 1,
+                        ]
+                    );
+            }
+
+
+            // ==========================================
+            // RIWAYAT PENYAKIT DAHULU
+            // TABEL RPP
+            // ==========================================
+            if (
+                $request->has('rpd') &&
+                $request->filled('rpd')
+            ) {
+
+                DB::table('medicalrecord.rpp')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $request->NOKUNJ
+                        ],
+                        [
+                            'SNOMED_CT_ID' => 0,
+                            'DESKRIPSI'    => $request->rpd,
+                            'TANGGAL'      => now(),
+                            'OLEH'         => auth()->id(),
+                            'STATUS'       => 1,
+                        ]
+                    );
+            }
+
+
+            // ==========================================
+            // RIWAYAT PENYAKIT KELUARGA
+            // TABEL RIWAYAT_PENYAKIT_KELUARGA
+            // ==========================================
+            if (
+                $request->has('rpk_h') ||
+                $request->has('rpk_d') ||
+                $request->has('rpk_p') ||
+                $request->has('rpk_a') ||
+                (
+                    $request->has('rpk_lain') &&
+                    $request->filled('rpk_lain')
+                )
+            ) {
+
+                DB::table('medicalrecord.riwayat_penyakit_keluarga')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $request->NOKUNJ
+                        ],
+                        [
+                            'HIPERTENSI'       => $request->rpk_h ?? 0,
+                            'DIABETES_MELITUS' => $request->rpk_d ?? 0,
+                            'PENYAKIT_JANTUNG' => $request->rpk_p ?? 0,
+                            'ASMA'             => $request->rpk_a ?? 0,
+                            'LAINNYA'          => $request->rpk_lain,
+                            'TANGGAL'          => now(),
+                            'OLEH'             => auth()->id(),
+                            'STATUS'           => 1,
+                        ]
+                    );
+            }
+
+
+            // ==========================================
+            // RIWAYAT KELAHIRAN / DATA ANAK
+            // TABEL SIRMED_STATUS_REPRODUKSI
+            // ==========================================
+            if (
+                $request->has('anam_rtk') ||
+                $request->has('anam_k') ||
+                $request->has('anam_uk') ||
+                $request->has('anam_p') ||
+                (
+                    $request->has('anam_p_lain') &&
+                    $request->filled('anam_p_lain')
+                )
+            ) {
+
+                DB::table('medicalrecord.sirmed_status_reproduksi')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $request->NOKUNJ
+                        ],
+                        [
+                            'RIWAYAT_TUMBUH_KEMBANG' => $request->anam_rtk,
+                            'RIWAYAT_KELAHIRAN'      => $request->anam_k,
+                            'USIA_KEHAMILAN'         => $request->anam_uk,
+                            'PERSALINAN'             => $request->anam_p,
+                            'PERSALINAN_LAINNYA'    => $request->anam_p_lain,
+                            'TANGGAL'                => now(),
+                            'OLEH'                   => auth()->id(),
+                            'STATUS'                 => 1,
+                        ]
+                    );
+            }
+
+
+            // ==========================================
+            // COMMIT
+            // ==========================================
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Anamnesis berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Anamnesis gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     function getTandaVitalRI($KUNJUNGAN)
     {
         $ttv1 = $this->getData(
