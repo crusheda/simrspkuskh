@@ -51,11 +51,75 @@ class PengkajianRawatInapObsgynController extends Controller
             ->orderBy('TABEL_ID','ASC')
             ->get();
 
+        $usia_kehamilan = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',299)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $jenis_persalinan = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',300)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $penyulit = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',301)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $jenis_kelamin = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',2)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $penolong = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',303)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $tempat = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',304)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $keadaan_sat_ini = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',302)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $usia = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',192)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
         $data = [
             'kunjungan' => $kunjungan,
             'tingkat_kesadaran' => $tingkat_kesadaran,
             'pasien' => $pasien,
-            'riwayat_alergi' => $riwayat_alergi
+            'riwayat_alergi' => $riwayat_alergi,
+            'usia_kehamilan' => $usia_kehamilan,
+            'jenis_persalinan' => $jenis_persalinan,
+            'penyulit' => $penyulit,
+            'jenis_kelamin' => $jenis_kelamin,
+            'penolong' => $penolong,
+            'tempat' => $tempat,
+            'keadaan_sat_ini' => $keadaan_sat_ini,
+            'usia' => $usia,
         ];
 
         return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.obsgyn.index')->with('list',$data);
