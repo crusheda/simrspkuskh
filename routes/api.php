@@ -173,6 +173,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                         // STRONG KID
                         Route::get('emr/pengkajian/skrining/gizi/strongkid/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningGiziStrongKid']);
                         Route::post('emr/pengkajian/skrining/gizi/strongkid/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningGiziStrongKid']);
+                // HUBUNGAN STATUS PSIKOSOSIAL
+                    Route::get('emr/pengkajian/hubunganstatuspsikososial/{kunjungan}', [AddOnPengkajianController::class, 'getHubunganStatusPsikososial']);
+                    Route::post('emr/pengkajian/hubunganstatuspsikososial/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanHubunganStatusPsikososial']);
                 // KEBUTUHAN EDUKASI
                     Route::get('emr/pengkajian/edukasi/{kunjungan}', [AddOnPengkajianController::class, 'getKebutuhanEdukasi']);
                     Route::post('emr/pengkajian/edukasi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanKebutuhanEdukasi']);

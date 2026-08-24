@@ -267,8 +267,8 @@
 
     </div>
 
-    <div class="col-md-12 mb-1">
-        <div class="row align-items-center mb-2">
+    <div class="col-md-12 mb-2">
+        <div class="row align-items-center">
 
             <label class="col-md-5 col-form-label">
                 Dibutuhkan penerjemah
@@ -320,7 +320,7 @@
         </div>
     </div>
 
-    <div class="col-md-12">
+    <div class="col-md-12 mb-2">
         <div class="row align-items-center">
         {{-- ======================================================
             KEBUTUHAN EDUKASI

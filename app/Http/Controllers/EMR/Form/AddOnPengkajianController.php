@@ -1353,6 +1353,108 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    function getHubunganStatusPsikososial($KUNJUNGAN)
+    {
+        $hubspsi = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.kondisi_sosial',
+            [
+                    'TIDAK_ADA_KELAINAN',
+                    'MARAH',
+                    'CEMAS',
+                    'TAKUT',
+                    'SEDIH',
+                    'BUNUH_DIRI',
+                    'LAINNYA',
+
+                    'STATUS_MENTAL',
+                    'MASALAH_PERILAKU',
+                    'PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA',
+
+                    'HUBUNGAN_PASIEN_DENGAN_KELUARGA',
+                    'TEMPAT_TINGGAL',
+                    'TEMPAT_TINGGAL_LAINNYA',
+
+                    'KEBIASAAN_BERIBADAH_TERATUR',
+                    'NILAI_KEPERCAYAAN',
+                    'NILAI_KEPERCAYAAN_DESKRIPSI',
+                    'PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA',
+
+                    'PENGHASILAN_PERBULAN',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $hubspsi
+        ]);
+    }
+
+    function simpanHubunganStatusPsikososial(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.kondisi_sosial')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    // Status Psikologi
+                    'TIDAK_ADA_KELAINAN' => $request->tak ? 1 : 0,
+                    'MARAH'              => $request->marah ? 1 : 0,
+                    'CEMAS'              => $request->cemas ? 1 : 0,
+                    'TAKUT'              => $request->takut ? 1 : 0,
+                    'SEDIH'              => $request->sedih ? 1 : 0,
+                    'BUNUH_DIRI'         => $request->bundir ? 1 : 0,
+                    'LAINNYA'            => $request->pse_lain ?? '',
+
+                    // Status Mental
+                    'STATUS_MENTAL'                         => $request->sm ?? 0,
+                    'MASALAH_PERILAKU'                      => $request->sm2_lain ?? '',
+                    'PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA' => $request->sm3_lain ?? '',
+
+                    // Hubungan Sosial
+                    'HUBUNGAN_PASIEN_DENGAN_KELUARGA' => $request->hub ?? 0,
+                    'TEMPAT_TINGGAL'                  => $request->tinggal ?? 0,
+                    'TEMPAT_TINGGAL_LAINNYA'          => $request->tinggal_lain ?? '',
+
+                    // Spiritual
+                    'KEBIASAAN_BERIBADAH_TERATUR' => $request->kbt ?? 0,
+                    'NILAI_KEPERCAYAAN'           => $request->nk ?? 0,
+                    'NILAI_KEPERCAYAAN_DESKRIPSI' => $request->nk_lain ?? '',
+                    'PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA' => $request->pk ?? '',
+
+                    // Ekonomi
+                    'PENGHASILAN_PERBULAN' => $request->hasil ?? 0,
+
+                    // Audit
+                    'OLEH'    => auth()->id(),
+                    'STATUS'  => 1,
+                    'TANGGAL' => now(),
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Hubungan Status Psikososial berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Hubungan Status Psikososial gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     function getKebutuhanEdukasi($KUNJUNGAN)
     {
         $edu1 = $this->getData(

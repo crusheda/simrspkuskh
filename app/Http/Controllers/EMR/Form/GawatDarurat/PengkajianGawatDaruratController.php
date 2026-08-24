@@ -1138,33 +1138,33 @@ class PengkajianGawatDaruratController extends Controller
             // ==========================================
             // KONDISI SOSIAL
             // ==========================================
-            $kondisiSosial = $getData(
-                'medicalrecord.kondisi_sosial',
-                [
-                    'TIDAK_ADA_KELAINAN',
-                    'MARAH',
-                    'CEMAS',
-                    'TAKUT',
-                    'SEDIH',
-                    'BUNUH_DIRI',
-                    'LAINNYA',
+            // $kondisiSosial = $getData(
+            //     'medicalrecord.kondisi_sosial',
+            //     [
+            //         'TIDAK_ADA_KELAINAN',
+            //         'MARAH',
+            //         'CEMAS',
+            //         'TAKUT',
+            //         'SEDIH',
+            //         'BUNUH_DIRI',
+            //         'LAINNYA',
 
-                    'STATUS_MENTAL',
-                    'MASALAH_PERILAKU',
-                    'PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA',
+            //         'STATUS_MENTAL',
+            //         'MASALAH_PERILAKU',
+            //         'PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA',
 
-                    'HUBUNGAN_PASIEN_DENGAN_KELUARGA',
-                    'TEMPAT_TINGGAL',
-                    'TEMPAT_TINGGAL_LAINNYA',
+            //         'HUBUNGAN_PASIEN_DENGAN_KELUARGA',
+            //         'TEMPAT_TINGGAL',
+            //         'TEMPAT_TINGGAL_LAINNYA',
 
-                    'KEBIASAAN_BERIBADAH_TERATUR',
-                    'NILAI_KEPERCAYAAN',
-                    'NILAI_KEPERCAYAAN_DESKRIPSI',
-                    'PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA',
+            //         'KEBIASAAN_BERIBADAH_TERATUR',
+            //         'NILAI_KEPERCAYAAN',
+            //         'NILAI_KEPERCAYAAN_DESKRIPSI',
+            //         'PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA',
 
-                    'PENGHASILAN_PERBULAN',
-                ]
-            );
+            //         'PENGHASILAN_PERBULAN',
+            //     ]
+            // );
 
             // ==========================================
             // STATUS REPRODUKSI
@@ -1269,7 +1269,7 @@ class PengkajianGawatDaruratController extends Controller
                     'GANGGUAN_PERFUSI_JARINGAN',
                     'GANGGUAN_VOLUME_CAIRAN',
                     'POTENSI_INFEKSI',
-                    'HIPERTEMI',
+                    'HIPERTERMI',
                     'TAKUT',
                     'KETIDAKEFEKTIFAN_POLA_MAKAN',
                     'MASALAH_LAIN',
@@ -1342,7 +1342,7 @@ class PengkajianGawatDaruratController extends Controller
                     'triage'                    => $triage,
                     'tanda_vital'               => $tandaVital,
                     'anamnesis_diperoleh'       => $anamnesisDiperoleh,
-                    'kondisi_sosial'            => $kondisiSosial,
+                    // 'kondisi_sosial'            => $kondisiSosial,
                     // 'penilaian_nyeri'           => $penilaianNyeri,
                     // 'humpty_dumpty'             => $humptyDumpty,
                     // 'morse'                     => $morse,
@@ -1667,45 +1667,45 @@ class PengkajianGawatDaruratController extends Controller
                 // ==========================================
                 // KONDISI SOSIAL
                 // ==========================================
-                DB::table('medicalrecord.kondisi_sosial')->updateOrInsert(
-                    [
-                        'KUNJUNGAN' => $request->NOKUNJ
-                    ],
-                    [
-                        // Status Psikologi
-                        'TIDAK_ADA_KELAINAN' => $request->tak ? 1 : 0,
-                        'MARAH'              => $request->marah ? 1 : 0,
-                        'CEMAS'              => $request->cemas ? 1 : 0,
-                        'TAKUT'              => $request->takut ? 1 : 0,
-                        'SEDIH'              => $request->sedih ? 1 : 0,
-                        'BUNUH_DIRI'         => $request->bundir ? 1 : 0,
-                        'LAINNYA'            => $request->pse_lain ?? '',
+                // DB::table('medicalrecord.kondisi_sosial')->updateOrInsert(
+                //     [
+                //         'KUNJUNGAN' => $request->NOKUNJ
+                //     ],
+                //     [
+                //         // Status Psikologi
+                //         'TIDAK_ADA_KELAINAN' => $request->tak ? 1 : 0,
+                //         'MARAH'              => $request->marah ? 1 : 0,
+                //         'CEMAS'              => $request->cemas ? 1 : 0,
+                //         'TAKUT'              => $request->takut ? 1 : 0,
+                //         'SEDIH'              => $request->sedih ? 1 : 0,
+                //         'BUNUH_DIRI'         => $request->bundir ? 1 : 0,
+                //         'LAINNYA'            => $request->pse_lain ?? '',
 
-                        // Status Mental
-                        'STATUS_MENTAL'                         => $request->sm ?? 0,
-                        'MASALAH_PERILAKU'                      => $request->sm2_lain ?? '',
-                        'PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA' => $request->sm3_lain ?? '',
+                //         // Status Mental
+                //         'STATUS_MENTAL'                         => $request->sm ?? 0,
+                //         'MASALAH_PERILAKU'                      => $request->sm2_lain ?? '',
+                //         'PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA' => $request->sm3_lain ?? '',
 
-                        // Hubungan Sosial
-                        'HUBUNGAN_PASIEN_DENGAN_KELUARGA' => $request->hub ?? 0,
-                        'TEMPAT_TINGGAL'                  => $request->tinggal ?? 0,
-                        'TEMPAT_TINGGAL_LAINNYA'          => $request->tinggal_lain ?? '',
+                //         // Hubungan Sosial
+                //         'HUBUNGAN_PASIEN_DENGAN_KELUARGA' => $request->hub ?? 0,
+                //         'TEMPAT_TINGGAL'                  => $request->tinggal ?? 0,
+                //         'TEMPAT_TINGGAL_LAINNYA'          => $request->tinggal_lain ?? '',
 
-                        // Spiritual
-                        'KEBIASAAN_BERIBADAH_TERATUR' => $request->kbt ?? 0,
-                        'NILAI_KEPERCAYAAN'           => $request->nk ?? 0,
-                        'NILAI_KEPERCAYAAN_DESKRIPSI' => $request->nk_lain ?? '',
-                        'PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA' => $request->pk ?? 0,
+                //         // Spiritual
+                //         'KEBIASAAN_BERIBADAH_TERATUR' => $request->kbt ?? 0,
+                //         'NILAI_KEPERCAYAAN'           => $request->nk ?? 0,
+                //         'NILAI_KEPERCAYAAN_DESKRIPSI' => $request->nk_lain ?? '',
+                //         'PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA' => $request->pk ?? 0,
 
-                        // Ekonomi
-                        'PENGHASILAN_PERBULAN' => $request->hasil ?? 0,
+                //         // Ekonomi
+                //         'PENGHASILAN_PERBULAN' => $request->hasil ?? 0,
 
-                        // Audit
-                        'OLEH'    => auth()->id(),
-                        'STATUS'  => 1,
-                        'TANGGAL' => now(),
-                    ]
-                );
+                //         // Audit
+                //         'OLEH'    => auth()->id(),
+                //         'STATUS'  => 1,
+                //         'TANGGAL' => now(),
+                //     ]
+                // );
 
                 // ==========================================
                 // STATUS REPRODUKSI
@@ -1832,7 +1832,7 @@ class PengkajianGawatDaruratController extends Controller
                         'GANGGUAN_PERFUSI_JARINGAN'     => $request->boolean('dmk_5') ? 1 : 0,
                         'GANGGUAN_VOLUME_CAIRAN'        => $request->boolean('dmk_6') ? 1 : 0,
                         'POTENSI_INFEKSI'               => $request->boolean('dmk_7') ? 1 : 0,
-                        'HIPERTEMI'                     => $request->boolean('dmk_8') ? 1 : 0,
+                        'HIPERTERMI'                     => $request->boolean('dmk_8') ? 1 : 0,
                         'TAKUT'                         => $request->boolean('dmk_9') ? 1 : 0,
                         'KETIDAKEFEKTIFAN_POLA_MAKAN'  => $request->boolean('dmk_10') ? 1 : 0,
                         'MASALAH_LAIN'                  => $request->input('dmk_lain', '') ?? '',

@@ -9,8 +9,11 @@
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#riD_perawat'])
             </div>
-            <div class="col-md-12">
+            <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kriteria_pulang',['section' => '#riD_perawat'])
+            </div>
+            <div class="col-md-12">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial',['section' => '#riD_perawat'])
             </div>
         </div>
     </div>

@@ -1961,73 +1961,73 @@
                 // ==========================================
                 // KONDISI SOSIAL
                 // ==========================================
-                const sosial = data.kondisi_sosial;
+                // const sosial = data.kondisi_sosial;
 
-                if (sosial) {
-                    FormHelper.setCheckbox($form,'tak', sosial.TIDAK_ADA_KELAINAN);
-                    FormHelper.setCheckbox($form,'marah', sosial.MARAH);
-                    FormHelper.setCheckbox($form,'cemas', sosial.CEMAS);
-                    FormHelper.setCheckbox($form,'takut', sosial.TAKUT);
-                    FormHelper.setCheckbox($form,'sedih', sosial.SEDIH);
-                    FormHelper.setCheckbox($form,'bundir', sosial.BUNUH_DIRI);
+                // if (sosial) {
+                //     FormHelper.setCheckbox($form,'tak', sosial.TIDAK_ADA_KELAINAN);
+                //     FormHelper.setCheckbox($form,'marah', sosial.MARAH);
+                //     FormHelper.setCheckbox($form,'cemas', sosial.CEMAS);
+                //     FormHelper.setCheckbox($form,'takut', sosial.TAKUT);
+                //     FormHelper.setCheckbox($form,'sedih', sosial.SEDIH);
+                //     FormHelper.setCheckbox($form,'bundir', sosial.BUNUH_DIRI);
 
-                    FormHelper.setValue($form,'pse_lain', sosial.LAINNYA);
+                //     FormHelper.setValue($form,'pse_lain', sosial.LAINNYA);
 
-                    FormHelper.setSingleCheckbox($form,
-                        'sm',
-                        sosial.STATUS_MENTAL
-                    );
+                //     FormHelper.setSingleCheckbox($form,
+                //         'sm',
+                //         sosial.STATUS_MENTAL
+                //     );
 
-                    FormHelper.setValue($form,
-                        'sm2_lain',
-                        sosial.MASALAH_PERILAKU
-                    );
+                //     FormHelper.setValue($form,
+                //         'sm2_lain',
+                //         sosial.MASALAH_PERILAKU
+                //     );
 
-                    FormHelper.setValue($form,
-                        'sm3_lain',
-                        sosial.PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA
-                    );
+                //     FormHelper.setValue($form,
+                //         'sm3_lain',
+                //         sosial.PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA
+                //     );
 
-                    FormHelper.setSingleCheckbox($form,
-                        'hub',
-                        sosial.HUBUNGAN_PASIEN_DENGAN_KELUARGA
-                    );
+                //     FormHelper.setSingleCheckbox($form,
+                //         'hub',
+                //         sosial.HUBUNGAN_PASIEN_DENGAN_KELUARGA
+                //     );
 
-                    FormHelper.setSingleCheckbox($form,
-                        'tinggal',
-                        sosial.TEMPAT_TINGGAL
-                    );
+                //     FormHelper.setSingleCheckbox($form,
+                //         'tinggal',
+                //         sosial.TEMPAT_TINGGAL
+                //     );
 
-                    FormHelper.setValue($form,
-                        'tinggal_lain',
-                        sosial.TEMPAT_TINGGAL_LAINNYA
-                    );
+                //     FormHelper.setValue($form,
+                //         'tinggal_lain',
+                //         sosial.TEMPAT_TINGGAL_LAINNYA
+                //     );
 
-                    FormHelper.setSingleCheckbox($form,
-                        'kbt',
-                        sosial.KEBIASAAN_BERIBADAH_TERATUR
-                    );
+                //     FormHelper.setSingleCheckbox($form,
+                //         'kbt',
+                //         sosial.KEBIASAAN_BERIBADAH_TERATUR
+                //     );
 
-                    FormHelper.setSingleCheckbox($form,
-                        'nk',
-                        sosial.NILAI_KEPERCAYAAN
-                    );
+                //     FormHelper.setSingleCheckbox($form,
+                //         'nk',
+                //         sosial.NILAI_KEPERCAYAAN
+                //     );
 
-                    FormHelper.setValue($form,
-                        'nk_lain',
-                        sosial.NILAI_KEPERCAYAAN_DESKRIPSI
-                    );
+                //     FormHelper.setValue($form,
+                //         'nk_lain',
+                //         sosial.NILAI_KEPERCAYAAN_DESKRIPSI
+                //     );
 
-                    FormHelper.setSingleCheckbox($form,
-                        'pk',
-                        sosial.PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA
-                    );
+                //     FormHelper.setSingleCheckbox($form,
+                //         'pk',
+                //         sosial.PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA
+                //     );
 
-                    FormHelper.setValue($form,
-                        'hasil',
-                        sosial.PENGHASILAN_PERBULAN
-                    );
-                }
+                //     FormHelper.setValue($form,
+                //         'hasil',
+                //         sosial.PENGHASILAN_PERBULAN
+                //     );
+                // }
 
                 // ==========================================
                 // STATUS REPRODUKSI
@@ -2148,7 +2148,7 @@
                     FormHelper.setCheckbox($form,'dmk_5', masalah.GANGGUAN_PERFUSI_JARINGAN);
                     FormHelper.setCheckbox($form,'dmk_6', masalah.GANGGUAN_VOLUME_CAIRAN);
                     FormHelper.setCheckbox($form,'dmk_7', masalah.POTENSI_INFEKSI);
-                    FormHelper.setCheckbox($form,'dmk_8', masalah.HIPERTEMI);
+                    FormHelper.setCheckbox($form,'dmk_8', masalah.HIPERTERMI);
                     FormHelper.setCheckbox($form,'dmk_9', masalah.TAKUT);
                     FormHelper.setCheckbox($form,
                         'dmk_10',
