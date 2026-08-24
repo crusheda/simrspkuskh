@@ -268,7 +268,7 @@
     </div>
 
     <div class="col-md-12 mb-1">
-        <div class="row align-items-center">
+        <div class="row align-items-center mb-2">
 
             <label class="col-md-5 col-form-label">
                 Dibutuhkan penerjemah
@@ -320,12 +320,12 @@
         </div>
     </div>
 
-    <div class="col-md-12 mb-1">
+    <div class="col-md-12">
         <div class="row align-items-center">
         {{-- ======================================================
             KEBUTUHAN EDUKASI
         ======================================================= --}}
-            <label class="form-label fw-bold mb-3 mt-2">
+            <label class="form-label fw-bold mb-1">
                 Kebutuhan Edukasi
             </label>
 
@@ -582,7 +582,7 @@
         DESKRIPSI EDUKASI
     =========================================================== --}}
     <div class="col-md-12">
-        <label class="form-label">
+        <label class="form-label fw-bold">
             Emergency
         </label>
         <textarea
@@ -883,14 +883,14 @@
                     // Jika Anda sudah menambahkan field ini di controller/getData
                     if (
                         FormHelper.hasValue(
-                            edukasi.PENERJEMAH_LAIN
+                            edukasi.BAHASA
                         )
                     ) {
 
                         FormHelper.setValue(
                             $section,
                             'edu_3_lain',
-                            edukasi.PENERJEMAH_LAIN
+                            edukasi.BAHASA
                         );
 
                     }

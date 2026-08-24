@@ -1425,39 +1425,47 @@ class AddOnPengkajianController extends Controller
                 ],
                 [
                     // Edukasi awal
-                    'KESEDIAAN' => $request->edu_1 ?? 0,
+                    'KESEDIAAN' => $request->edu_1,
 
-                    'HAMBATAN' => $request->edu_2 ?? 0,
+                    'HAMBATAN' => $request->edu_2,
+                    'HAMBATAN_PENDENGARAN' => $request->hb_edu_1,
+                    'HAMBATAN_PENGLIHATAN' => $request->hb_edu_2,
+                    'HAMBATAN_KOGNITIF' => $request->hb_edu_3,
+                    'HAMBATAN_FISIK' => $request->hb_edu_4,
+                    'HAMBATAN_BUDAYA' => $request->hb_edu_5,
+                    'HAMBATAN_EMOSI' => $request->hb_edu_6,
+                    'HAMBATAN_BAHASA' => $request->hb_edu_7,
+                    'HAMBATAN_LAINNYA' => $request->hb_edu_8,
 
-                    'PENERJEMAH' => $request->edu_3 ?? 0,
-                    'PENERJEMAH' => $request->edu_3_lain ?? '',
+                    'PENERJEMAH' => $request->edu_3,
+                    'BAHASA' => $request->edu_3_lain,
 
                     // Kebutuhan Edukasi
-                    'EDUKASI_DIAGNOSA' => $request->kb_edu_1 ?? 0,
-                    'EDUKASI_REHAB_MEDIK' => $request->kb_edu_2 ?? 0,
-                    'EDUKASI_HKP' => $request->kb_edu_3 ?? 0,
+                    'EDUKASI_DIAGNOSA' => $request->kb_edu_1,
+                    'EDUKASI_REHAB_MEDIK' => $request->kb_edu_2,
+                    'EDUKASI_HKP' => $request->kb_edu_3,
 
-                    'EDUKASI_PEMBERIAN_INFORMED_CONSENT' => $request->kb_edu_4 ?? 0,
+                    'EDUKASI_PEMBERIAN_INFORMED_CONSENT' => $request->kb_edu_4,
 
-                    'EDUKASI_CUCI_TANGAN' => $request->kb_edu_5 ?? 0,
-                    'EDUKASI_PERENCANAAN_PULANG' => $request->kb_edu_6 ?? 0,
+                    'EDUKASI_CUCI_TANGAN' => $request->kb_edu_5,
+                    'EDUKASI_PERENCANAAN_PULANG' => $request->kb_edu_6,
 
-                    'EDUKASI_OBAT' => $request->kb_edu_7 ?? 0,
-                    'EDUKASI_NYERI' => $request->kb_edu_8 ?? 0,
-                    'EDUKASI_HAK_BERPARTISIPASI' => $request->kb_edu_9 ?? 0,
+                    'EDUKASI_OBAT' => $request->kb_edu_7,
+                    'EDUKASI_NYERI' => $request->kb_edu_8,
+                    'EDUKASI_HAK_BERPARTISIPASI' => $request->kb_edu_9,
 
-                    'EDUKASI_PENUNDAAN_PELAYANAN' => $request->kb_edu_10 ?? 0,
-                    'EDUKASI_BAHAYA_MEROKO' => $request->kb_edu_11 ?? 0,
+                    'EDUKASI_PENUNDAAN_PELAYANAN' => $request->kb_edu_10,
+                    'EDUKASI_BAHAYA_MEROKO' => $request->kb_edu_11,
 
-                    'EDUKASI_NUTRISI' => $request->kb_edu_13 ?? 0,
-                    'EDUKASI_PENGGUNAAN_ALAT' => $request->kb_edu_14 ?? 0,
-                    'EDUKASI_PROSEDURE_PENUNJANG' => $request->kb_edu_15 ?? 0,
+                    'EDUKASI_NUTRISI' => $request->kb_edu_13,
+                    'EDUKASI_PENGGUNAAN_ALAT' => $request->kb_edu_14,
+                    'EDUKASI_PROSEDURE_PENUNJANG' => $request->kb_edu_15,
 
-                    'EDUKASI_KELAMBATAN_PELAYANAN' => $request->kb_edu_16 ?? 0,
-                    'EDUKASI_RUJUKAN_PASIEN' => $request->kb_edu_17 ?? 0,
+                    'EDUKASI_KELAMBATAN_PELAYANAN' => $request->kb_edu_16,
+                    'EDUKASI_RUJUKAN_PASIEN' => $request->kb_edu_17,
 
                     // Lainnya
-                    'STATUS_LAIN' => $request->kb_edu_12 ?? 0,
+                    'STATUS_LAIN' => $request->kb_edu_12,
                     'DESKRIPSI_LAINYA' => $request->kb_edu_lain,
 
                     'TANGGAL' => now(),
