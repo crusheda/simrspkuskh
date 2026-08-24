@@ -19,7 +19,7 @@
             <div class="col-md-7">
                 <div class="form-check form-check-inline">
                     <input
-                        class="form-check-input single-checkbox"
+                        class="form-check-input check-primary single-checkbox"
                         type="checkbox"
                         name="edu_1"
                         value="1"
@@ -30,7 +30,7 @@
                 </div>
                 <div class="form-check form-check-inline">
                     <input
-                        class="form-check-input single-checkbox"
+                        class="form-check-input check-danger single-checkbox"
                         type="checkbox"
                         name="edu_1"
                         value="0"
@@ -58,7 +58,7 @@
                 <div class="form-check form-check-inline">
 
                     <input
-                        class="form-check-input single-checkbox"
+                        class="form-check-input check-primary single-checkbox"
                         type="checkbox"
                         name="edu_2"
                         value="1"
@@ -75,7 +75,7 @@
                 <div class="form-check form-check-inline">
 
                     <input
-                        class="form-check-input single-checkbox"
+                        class="form-check-input check-danger single-checkbox"
                         type="checkbox"
                         name="edu_2"
                         value="0"
@@ -281,7 +281,7 @@
                     {{-- YA --}}
                     <div class="form-check mb-0 flex-shrink-0">
                         <input
-                            class="form-check-input single-checkbox"
+                            class="form-check-input check-primary single-checkbox"
                             type="checkbox"
                             name="edu_3"
                             value="1"
@@ -294,7 +294,7 @@
                     {{-- TIDAK --}}
                     <div class="form-check mb-0 flex-shrink-0">
                         <input
-                            class="form-check-input single-checkbox"
+                            class="form-check-input check-danger single-checkbox"
                             type="checkbox"
                             name="edu_3"
                             value="0"

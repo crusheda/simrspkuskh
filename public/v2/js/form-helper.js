@@ -19,8 +19,8 @@ window.FormHelper = {
         return (
             value !== null &&
             value !== undefined &&
-            value !== '' &&
-            Number(value) !== 0
+            value !== ''
+            // && Number(value) !== 0
         );
     },
 

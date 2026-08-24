@@ -176,6 +176,12 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // KEBUTUHAN EDUKASI
                     Route::get('emr/pengkajian/edukasi/{kunjungan}', [AddOnPengkajianController::class, 'getKebutuhanEdukasi']);
                     Route::post('emr/pengkajian/edukasi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanKebutuhanEdukasi']);
+                // AKTIVITAS DAN LATIHAN, PERSONAL HYGIENE
+                    Route::get('emr/pengkajian/alph/{kunjungan}', [AddOnPengkajianController::class, 'getALPH']);
+                    Route::post('emr/pengkajian/alph/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanALPH']);
+                // KRITERIA PULANG
+                    Route::get('emr/pengkajian/kriteriapulang/{kunjungan}', [AddOnPengkajianController::class, 'getKriteriaPulang']);
+                    Route::post('emr/pengkajian/kriteriapulang/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanKriteriaPulang']);
                 // KHUSUS RAWAT INAP
                     // TANDA VITAL
                         Route::get('emr/pengkajian/ri/tandavital/{kunjungan}', [AddOnPengkajianController::class, 'getTandaVitalRI']);

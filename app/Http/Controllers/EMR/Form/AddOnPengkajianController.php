@@ -1507,6 +1507,134 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    function getALPH($KUNJUNGAN)
+    {
+        $aplh = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.sirmed_aktivitas_latihan_personal_hygiene',
+            [
+                'TINGKAT_KETERGANTUNGAN',
+                'MANDI',
+                'GANTI_PAKAIAN',
+                'KERAMAS',
+                'GOSOK_GIGI',
+                'MEMOTONG_KUKU',
+                'TIDUR_SIANG',
+                'TIDUR_MALAM',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $aplh
+        ]);
+    }
+
+    function simpanALPH(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.sirmed_aktivitas_latihan_personal_hygiene')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN
+                ],
+                [
+                    // Edukasi awal
+                    'TINGKAT_KETERGANTUNGAN' => $request->ph_tk,
+                    'MANDI' => $request->ph_m,
+                    'GANTI_PAKAIAN' => $request->ph_gp,
+                    'KERAMAS' => $request->ph_k,
+                    'GOSOK_GIGI' => $request->ph_gg,
+                    'MEMOTONG_KUKU' => $request->ph_mk,
+                    'TIDUR_SIANG' => $request->ph_ts,
+                    'TIDUR_MALAM' => $request->ph_tm,
+
+                    'TANGGAL' => now(),
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Aktivitas dan Latihan, Personal Hygiene berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Aktivitas dan Latihan, Personal Hygiene gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    function getKriteriaPulang($KUNJUNGAN)
+    {
+        $aplh = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.sirmed_kriteria_pulang',
+            [
+                'KRITERIA_PULANG',
+                'HARI',
+                'KARENA',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $aplh
+        ]);
+    }
+
+    function simpanKriteriaPulang(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.sirmed_kriteria_pulang')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN
+                ],
+                [
+                    // Edukasi awal
+                    'KRITERIA_PULANG' => $request->kp_plr,
+                    'HARI' => $request->kp_plr_hari,
+                    'KARENA' => $request->kp_plr_karena,
+
+                    'TANGGAL' => now(),
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Kriteria Pulang berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Kriteria Pulang gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     function getTandaVitalRI($KUNJUNGAN)
     {
         $ttv1 = $this->getData(
