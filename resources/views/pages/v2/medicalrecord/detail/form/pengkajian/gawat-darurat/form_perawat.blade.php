@@ -879,7 +879,8 @@
                 </div>
             </div>
             <div class="col-md-12">
-                <h6 class="mb-2">Kriteria Perencanaan Pulang (Discharge Planning)</h6>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.discharge_planning',['section' => '#gd_perawat'])
+                {{-- <h6 class="mb-2">Kriteria Perencanaan Pulang (Discharge Planning)</h6>
                 <div class="row">
                     <div class="col-md-6 mb-2">
                         <div class="form-group mb-2">
@@ -1258,7 +1259,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
@@ -1505,36 +1506,36 @@
         });
 
         // CB - Discharge Planning
-        $sectionGdP.on('change', '.single-checkbox-bos', function () {
+        // $sectionGdP.on('change', '.single-checkbox-bos', function () {
 
-            // Hanya proses checkbox yang sedang checked
-            if (!this.checked) {
-                return;
-            }
+        //     // Hanya proses checkbox yang sedang checked
+        //     if (!this.checked) {
+        //         return;
+        //     }
 
-            const name = this.name;
-            const value = String(this.value);
+        //     const name = this.name;
+        //     const value = String(this.value);
 
-            // Hanya dp_1, dp_2, dp_3, dst.
-            if (!/^dp_\d+$/.test(name)) {
-                return;
-            }
+        //     // Hanya dp_1, dp_2, dp_3, dst.
+        //     if (!/^dp_\d+$/.test(name)) {
+        //         return;
+        //     }
 
-            const $target = $sectionGdP.find('#tampil_' + name);
+        //     const $target = $sectionGdP.find('#tampil_' + name);
 
-            if (value === '1') {
+        //     if (value === '1') {
 
-                // ADA
-                $target.prop('hidden', false);
+        //         // ADA
+        //         $target.prop('hidden', false);
 
-            } else {
+        //     } else {
 
-                // TIDAK ADA
-                $target.prop('hidden', true);
+        //         // TIDAK ADA
+        //         $target.prop('hidden', true);
 
-                resetDischargePlanningDetail($sectionGdP, name);
-            }
-        });
+        //         resetDischargePlanningDetail($sectionGdP, name);
+        //     }
+        // });
 
         // INIT FUNCTION ------------------------------------------------------------------------------
         resetDatangCara($sectionGdP);
@@ -1603,32 +1604,32 @@
         $sectionGdP.find('input[name="sh_h"]').val('');
     }
 
-    function resetDischargePlanningDetail($sectionGdP, name) {
-        const $target = $sectionGdP.find('#tampil_' + name);
+    // function resetDischargePlanningDetail($sectionGdP, name) {
+    //     const $target = $sectionGdP.find('#tampil_' + name);
 
-        // Reset semua checkbox di dalam card
-        $target.find('input[type="checkbox"]')
-            .prop('checked', false);
+    //     // Reset semua checkbox di dalam card
+    //     $target.find('input[type="checkbox"]')
+    //         .prop('checked', false);
 
-        // Reset semua input text
-        $target.find('input[type="text"]')
-            .val('');
+    //     // Reset semua input text
+    //     $target.find('input[type="text"]')
+    //         .val('');
 
-        // Reset semua select
-        $target.find('select')
-            .val('');
+    //     // Reset semua select
+    //     $target.find('select')
+    //         .val('');
 
-        // Reset textarea
-        $target.find('textarea')
-            .val('');
+    //     // Reset textarea
+    //     $target.find('textarea')
+    //         .val('');
 
-        // Pastikan pilihan utama kembali ke "Tidak Ada"
-        $sectionGdP.find(`[name="${name}"][value="0"]`)
-            .prop('checked', true);
+    //     // Pastikan pilihan utama kembali ke "Tidak Ada"
+    //     $sectionGdP.find(`[name="${name}"][value="0"]`)
+    //         .prop('checked', true);
 
-        $sectionGdP.find(`[name="${name}"][value="1"]`)
-            .prop('checked', false);
-    }
+    //     $sectionGdP.find(`[name="${name}"][value="1"]`)
+    //         .prop('checked', false);
+    // }
 
     function getDataPengkajianGdP() {
         if (!$sectionGdP.length) {
@@ -2164,177 +2165,177 @@
                 // ==========================================
                 // DISCHARGE PLANNING - FAKTOR RISIKO
                 // ==========================================
-                const dpFaktor = data.discharge_faktor_risiko;
+                // const dpFaktor = data.discharge_faktor_risiko;
 
-                if (dpFaktor) {
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_1',
-                        dpFaktor.PASIEN_TINGGAL_SENDIRI
-                    );
+                // if (dpFaktor) {
+                //     FormHelper.setSingleCheckbox($form,
+                //         'dp_1',
+                //         dpFaktor.PASIEN_TINGGAL_SENDIRI
+                //     );
 
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_2',
-                        dpFaktor.PASIEN_KHAWATIR_KETIKA_DIRUMAH
-                    );
+                //     FormHelper.setSingleCheckbox($form,
+                //         'dp_2',
+                //         dpFaktor.PASIEN_KHAWATIR_KETIKA_DIRUMAH
+                //     );
 
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_3',
-                        dpFaktor.PASIEN_TAK_ADA_YANG_MERAWAT
-                    );
+                //     FormHelper.setSingleCheckbox($form,
+                //         'dp_3',
+                //         dpFaktor.PASIEN_TAK_ADA_YANG_MERAWAT
+                //     );
 
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_4',
-                        dpFaktor.PASIEN_DILANTAI_ATAS
-                    );
-                }
+                //     FormHelper.setSingleCheckbox($form,
+                //         'dp_4',
+                //         dpFaktor.PASIEN_DILANTAI_ATAS
+                //     );
+                // }
 
                 // ==========================================
                 // DISCHARGE PLANNING - SKRINING
                 // ==========================================
-                const dpSkrining = data.discharge_skrining;
+                // const dpSkrining = data.discharge_skrining;
 
-                if (dpSkrining) {
+                // if (dpSkrining) {
 
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_5',
-                        dpSkrining.PERAWATAN_LANJUTAN_MEDIS
-                    );
+                //     FormHelper.setSingleCheckbox($form,
+                //         'dp_5',
+                //         dpSkrining.PERAWATAN_LANJUTAN_MEDIS
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_5_1',
-                        dpSkrining.PLM_KATETER_URIN
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_5_1',
+                //         dpSkrining.PLM_KATETER_URIN
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_5_2',
-                        dpSkrining.PLM_TRAECHOSTOMY
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_5_2',
+                //         dpSkrining.PLM_TRAECHOSTOMY
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_5_3',
-                        dpSkrining.PLM_NGT
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_5_3',
+                //         dpSkrining.PLM_NGT
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_5_4',
-                        dpSkrining.PLM_COLOSTOMY
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_5_4',
+                //         dpSkrining.PLM_COLOSTOMY
+                //     );
 
-                    // dp_5_lain -> KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA
-                    FormHelper.setValue($form,
-                        'dp_5_lain',
-                        dpSkrining.KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA
-                    );
+                //     // dp_5_lain -> KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA
+                //     FormHelper.setValue($form,
+                //         'dp_5_lain',
+                //         dpSkrining.KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA
+                //     );
 
-                    // Kriteria dasar
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_6',
-                        dpSkrining.PASIEN_PULANG
-                    );
+                //     // Kriteria dasar
+                //     FormHelper.setSingleCheckbox($form,
+                //         'dp_6',
+                //         dpSkrining.PASIEN_PULANG
+                //     );
 
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_7',
-                        dpSkrining.PASIEN_MENGAJUKAN
-                    );
+                //     FormHelper.setSingleCheckbox($form,
+                //         'dp_7',
+                //         dpSkrining.PASIEN_MENGAJUKAN
+                //     );
 
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_8',
-                        dpSkrining.TIDAK_ADA_KRITERIA
-                    );
+                //     FormHelper.setSingleCheckbox($form,
+                //         'dp_8',
+                //         dpSkrining.TIDAK_ADA_KRITERIA
+                //     );
 
-                    // KPB
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_9',
-                        dpSkrining.KEBUTUHAN_PELAYANAN_BERKELANJUTAN_KPB
-                    );
+                //     // KPB
+                //     FormHelper.setSingleCheckbox($form,
+                //         'dp_9',
+                //         dpSkrining.KEBUTUHAN_PELAYANAN_BERKELANJUTAN_KPB
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_9_1',
-                        dpSkrining.KPB_RAWAT_LUKA
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_9_1',
+                //         dpSkrining.KPB_RAWAT_LUKA
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_9_2',
-                        dpSkrining.KPB_TB
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_9_2',
+                //         dpSkrining.KPB_TB
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_9_3',
-                        dpSkrining.KPB_DM_TERAPI_INSULIN
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_9_3',
+                //         dpSkrining.KPB_DM_TERAPI_INSULIN
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_9_4',
-                        dpSkrining.KPB_PPOK
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_9_4',
+                //         dpSkrining.KPB_PPOK
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_9_5',
-                        dpSkrining.KPB_PASIEN_KEMO
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_9_5',
+                //         dpSkrining.KPB_PASIEN_KEMO
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_9_6',
-                        dpSkrining.KPB_HIV
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_9_6',
+                //         dpSkrining.KPB_HIV
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_9_7',
-                        dpSkrining.KPB_DM
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_9_7',
+                //         dpSkrining.KPB_DM
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_9_8',
-                        dpSkrining.KPB_STROKE
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_9_8',
+                //         dpSkrining.KPB_STROKE
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_9_9',
-                        dpSkrining.KPB_CKD
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_9_9',
+                //         dpSkrining.KPB_CKD
+                //     );
 
-                    // Penggunaan alat medis
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_10',
-                        dpSkrining.PENGGUNAAN_ALAT_MEDIS_PAM
-                    );
+                //     // Penggunaan alat medis
+                //     FormHelper.setSingleCheckbox($form,
+                //         'dp_10',
+                //         dpSkrining.PENGGUNAAN_ALAT_MEDIS_PAM
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_10_1',
-                        dpSkrining.PAM_KATETER_URIN
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_10_1',
+                //         dpSkrining.PAM_KATETER_URIN
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_10_2',
-                        dpSkrining.PAM_TRAECHOSTOMY
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_10_2',
+                //         dpSkrining.PAM_TRAECHOSTOMY
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_10_3',
-                        dpSkrining.PAM_NGT
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_10_3',
+                //         dpSkrining.PAM_NGT
+                //     );
 
-                    FormHelper.setCheckbox($form,
-                        'dp_10_4',
-                        dpSkrining.PAM_COLOSTOMY
-                    );
+                //     FormHelper.setCheckbox($form,
+                //         'dp_10_4',
+                //         dpSkrining.PAM_COLOSTOMY
+                //     );
 
-                    FormHelper.setValue($form,
-                        'dp_10_lain',
-                        dpSkrining.PAM_LAINNYA
-                    );
+                //     FormHelper.setValue($form,
+                //         'dp_10_lain',
+                //         dpSkrining.PAM_LAINNYA
+                //     );
 
-                    // Skrining lanjutan
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_11',
-                        dpSkrining.SKRINING_LANJUTAN
-                    );
+                //     // Skrining lanjutan
+                //     FormHelper.setSingleCheckbox($form,
+                //         'dp_11',
+                //         dpSkrining.SKRINING_LANJUTAN
+                //     );
 
-                    FormHelper.setSingleCheckbox($form,
-                        'dp_11_skrining',
-                        dpSkrining.SKRINING
-                    );
-                }
+                //     FormHelper.setSingleCheckbox($form,
+                //         'dp_11_skrining',
+                //         dpSkrining.SKRINING
+                //     );
+                // }
 
                 // ==========================================
                 // Jalankan ulang kalkulasi / tampilan

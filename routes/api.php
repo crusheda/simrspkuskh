@@ -185,6 +185,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // KRITERIA PULANG
                     Route::get('emr/pengkajian/kriteriapulang/{kunjungan}', [AddOnPengkajianController::class, 'getKriteriaPulang']);
                     Route::post('emr/pengkajian/kriteriapulang/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanKriteriaPulang']);
+                // DISCHARGE PLANNING
+                    Route::get('emr/pengkajian/dischargeplanning/{kunjungan}', [AddOnPengkajianController::class, 'getDischargePlanning']);
+                    Route::post('emr/pengkajian/dischargeplanning/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanDischargePlanning']);
 
                 // KHUSUS RAWAT INAP
                     // KRITERIA PULANG

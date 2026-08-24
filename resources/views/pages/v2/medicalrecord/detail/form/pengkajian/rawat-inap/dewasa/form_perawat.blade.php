@@ -12,19 +12,22 @@
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kriteria_pulang',['section' => '#riD_perawat'])
             </div>
-            <div class="col-md-12">
+            <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial',['section' => '#riD_perawat'])
+            </div>
+            <div class="col-md-12">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.discharge_planning',['section' => '#riD_perawat'])
             </div>
         </div>
     </div>
-    <div class="form-footer d-flex justify-content-between">
+    {{-- <div class="form-footer d-flex justify-content-between">
         <button type="button" class="btn btn-subtle-info btnLihatCPPT" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat CPPT" onclick="showCppt('{{ $list['kunjungan'] }}')">
             <i class="ri-booklet-line me-1"></i> Lihat CPPT
         </button>
         <button class="btn btn-danger" onclick="saveDataPengkajianRiDp(this)">
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
-    </div>
+    </div> --}}
 </div>
 
 <script>

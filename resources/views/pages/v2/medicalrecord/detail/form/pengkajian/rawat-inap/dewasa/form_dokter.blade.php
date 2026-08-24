@@ -70,14 +70,6 @@
             </div>
         </div>
     </div>
-    <div class="form-footer d-flex justify-content-between">
-        <button type="button" class="btn btn-subtle-info btnLihatCPPT" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat CPPT" onclick="showCppt('{{ $list['kunjungan'] }}')">
-            <i class="ri-booklet-line me-1"></i> Lihat CPPT
-        </button>
-        <button class="btn btn-danger" onclick="saveDataPengkajianRiDd(this)">
-            <i class="ri-save-line me-1"></i> Simpan Pengkajian
-        </button>
-    </div>
 </div>
 
 <script>
