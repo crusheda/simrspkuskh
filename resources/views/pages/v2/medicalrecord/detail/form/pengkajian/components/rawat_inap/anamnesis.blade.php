@@ -1,4 +1,8 @@
-<div class="row align-items-center" id="form_anamnesis">
+@php
+    $instance = ltrim($section, '#'); // riD_dokter atau riD_perawat
+@endphp
+
+<div class="row align-items-center" data-anamnesis-form>
     <div class="col-md-12">
         <h4 class="text-danger">Anamnesis</h4>
 
@@ -16,9 +20,9 @@
                             type="checkbox"
                             name="anam"
                             value="1"
-                            id="anam_1"
+                            id="{{ $instance }}_anam_1"
                         >
-                        <label class="form-check-label" for="anam_1">
+                        <label class="form-check-label" for="{{ $instance }}_anam_1">
                             Autoanamnesis
                         </label>
                     </div>
@@ -29,9 +33,9 @@
                             type="checkbox"
                             name="anam"
                             value="2"
-                            id="anam_2"
+                            id="{{ $instance }}_anam_2"
                         >
-                        <label class="form-check-label" for="anam_2">
+                        <label class="form-check-label" for="{{ $instance }}_anam_2">
                             Alloanamnesis
                         </label>
                     </div>
@@ -71,9 +75,9 @@
                             type="checkbox"
                             name="rpk_h"
                             value="1"
-                            id="rpk_h"
+                            id="{{ $instance }}_rpk_h"
                         >
-                        <label class="form-check-label" for="rpk_h">
+                        <label class="form-check-label" for="{{ $instance }}_rpk_h">
                             Hipertensi
                         </label>
                     </div>
@@ -84,9 +88,9 @@
                             type="checkbox"
                             name="rpk_d"
                             value="1"
-                            id="rpk_d"
+                            id="{{ $instance }}_rpk_d"
                         >
-                        <label class="form-check-label" for="rpk_d">
+                        <label class="form-check-label" for="{{ $instance }}_rpk_d">
                             Diabetes Melitus
                         </label>
                     </div>
@@ -97,9 +101,9 @@
                             type="checkbox"
                             name="rpk_p"
                             value="1"
-                            id="rpk_p"
+                            id="{{ $instance }}_rpk_p"
                         >
-                        <label class="form-check-label" for="rpk_p">
+                        <label class="form-check-label" for="{{ $instance }}_rpk_p">
                             Penyakit Jantung
                         </label>
                     </div>
@@ -110,9 +114,9 @@
                             type="checkbox"
                             name="rpk_a"
                             value="1"
-                            id="rpk_a"
+                            id="{{ $instance }}_rpk_a"
                         >
-                        <label class="form-check-label" for="rpk_a">
+                        <label class="form-check-label" for="{{ $instance }}_rpk_a">
                             Asma
                         </label>
                     </div>
@@ -143,7 +147,7 @@
             {{-- ==========================================================
                 ANAMNESIS ANAK
             =========================================================== --}}
-            <div class="col-md-12" id="anamnesis_anak">
+            <div class="col-md-12" data-anamnesis-anak>
                 <div class="row align-items-center">
                     <div class="col-md-12">
                         <div class="form-group mb-2">
@@ -185,9 +189,9 @@
                                         type="checkbox"
                                         name="anam_p"
                                         value="1"
-                                        id="anam_p_1"
+                                        id="{{ $instance }}_anam_p_1"
                                     >
-                                    <label class="form-check-label" for="anam_p_1">
+                                    <label class="form-check-label" for="{{ $instance }}_anam_p_1">
                                         Sectio Caesarea
                                     </label>
                                 </div>
@@ -198,9 +202,9 @@
                                         type="checkbox"
                                         name="anam_p"
                                         value="2"
-                                        id="anam_p_2"
+                                        id="{{ $instance }}_anam_p_2"
                                     >
-                                    <label class="form-check-label" for="anam_p_2">
+                                    <label class="form-check-label" for="{{ $instance }}_anam_p_2">
                                         Spontan
                                     </label>
                                 </div>
@@ -211,9 +215,9 @@
                                         type="checkbox"
                                         name="anam_p"
                                         value="3"
-                                        id="anam_p_3"
+                                        id="{{ $instance }}_anam_p_3"
                                     >
-                                    <label class="form-check-label" for="anam_p_3">
+                                    <label class="form-check-label" for="{{ $instance }}_anam_p_3">
                                         Vacum
                                     </label>
                                 </div>
@@ -225,9 +229,9 @@
                                             type="checkbox"
                                             name="anam_p"
                                             value="4"
-                                            id="anam_p_4"
+                                            id="{{ $instance }}_anam_p_4"
                                         >
-                                        <label class="form-check-label" for="anam_p_4">
+                                        <label class="form-check-label" for="{{ $instance }}_anam_p_4">
                                             Lainnya
                                         </label>
                                     </div>
@@ -254,7 +258,7 @@
     'use strict';
 
     const $section = $(@json($section));
-    const $form = $section.find('#form_anamnesis');
+    const $form = $section.find('[data-anamnesis-form]');
 
     const isAnamnesisAnak =
         String(@json($anak ?? 'false')).toLowerCase() === 'true';
@@ -266,7 +270,7 @@
     // UPDATE STATE ANAMNESIS ANAK
     // ==============================================================
     function updateAnamnesisAnakState() {
-        const $anak = $form.find('#anamnesis_anak');
+        const $anak = $form.find('[data-anamnesis-anak]');
 
         if (!$anak.length) {
             return;
@@ -380,11 +384,17 @@
                     }
 
                     if (anamnesisDiperoleh !== null) {
-                        FormHelper.setSingleCheckbox(
-                            $section,
-                            'anam',
-                            anamnesisDiperoleh
+                        const $anamCheckboxes = $form.find(
+                            'input[type="checkbox"][name="anam"]'
                         );
+
+                        // Hanya reset checkbox pada form dokter/perawat ini saja.
+                        $anamCheckboxes.prop('checked', false);
+
+                        // Centang sesuai value hanya pada form ini.
+                        $anamCheckboxes
+                            .filter(`[value="${anamnesisDiperoleh}"]`)
+                            .prop('checked', true);
                     }
                 }
 
@@ -631,100 +641,63 @@
 
         getAnamnesisRI();
 
-        // ==========================================================
+        const formSelector = '[data-anamnesis-form]';
+
         // ANAMNESIS DIPEROLEH
-        // ==========================================================
         $section
-            .off(
-                'change.anam',
-                '#form_anamnesis input[name="anam"]'
-            )
-            .on(
-                'change.anam',
-                '#form_anamnesis input[name="anam"]',
-                function () {
-                    if (isAnamnesisRILoading) {
-                        return;
-                    }
-
-                    simpanAnamnesisRI();
+            .off('change.anam', `${formSelector} input[name="anam"]`)
+            .on('change.anam', `${formSelector} input[name="anam"]`, function () {
+                if (isAnamnesisRILoading) {
+                    return;
                 }
-            );
 
-        // ==========================================================
+                simpanAnamnesisRI();
+            });
+
         // RIWAYAT PENYAKIT KELUARGA
-        // ==========================================================
+        const rpkSelector =
+            `${formSelector} input[name="rpk_h"], ` +
+            `${formSelector} input[name="rpk_d"], ` +
+            `${formSelector} input[name="rpk_p"], ` +
+            `${formSelector} input[name="rpk_a"]`;
+
         $section
-            .off(
-                'change.anam',
-                '#form_anamnesis input[name="rpk_h"],' +
-                '#form_anamnesis input[name="rpk_d"],' +
-                '#form_anamnesis input[name="rpk_p"],' +
-                '#form_anamnesis input[name="rpk_a"]'
-            )
-            .on(
-                'change.anam',
-                '#form_anamnesis input[name="rpk_h"],' +
-                '#form_anamnesis input[name="rpk_d"],' +
-                '#form_anamnesis input[name="rpk_p"],' +
-                '#form_anamnesis input[name="rpk_a"]',
-                function () {
-                    if (isAnamnesisRILoading) {
-                        return;
-                    }
-
-                    simpanAnamnesisRI();
+            .off('change.anam', rpkSelector)
+            .on('change.anam', rpkSelector, function () {
+                if (isAnamnesisRILoading) {
+                    return;
                 }
-            );
 
-        // ==========================================================
+                simpanAnamnesisRI();
+            });
+
         // PERSALINAN
-        // ==========================================================
         $section
-            .off(
-                'change.anam',
-                '#form_anamnesis input[name="anam_p"]'
-            )
-            .on(
-                'change.anam',
-                '#form_anamnesis input[name="anam_p"]',
-                function () {
-                    if (isAnamnesisRILoading) {
-                        return;
-                    }
-
-                    updatePersalinanState();
-                    simpanAnamnesisRI();
+            .off('change.anam', `${formSelector} input[name="anam_p"]`)
+            .on('change.anam', `${formSelector} input[name="anam_p"]`, function () {
+                if (isAnamnesisRILoading) {
+                    return;
                 }
-            );
 
-        // ==========================================================
+                updatePersalinanState();
+                simpanAnamnesisRI();
+            });
+
         // TEXTAREA & INPUT
-        // ==========================================================
+        const textSelector =
+            `${formSelector} textarea, ` +
+            `${formSelector} input[type="text"], ` +
+            `${formSelector} input[type="number"]`;
+
         $section
-            .off(
-                'blur.anam',
-                '#form_anamnesis textarea,' +
-                '#form_anamnesis input[type="text"],' +
-                '#form_anamnesis input[type="number"]'
-            )
-            .on(
-                'blur.anam',
-                '#form_anamnesis textarea,' +
-                '#form_anamnesis input[type="text"],' +
-                '#form_anamnesis input[type="number"]',
-                function () {
-                    if (isAnamnesisRILoading) {
-                        return;
-                    }
-
-                    if ($(this).prop('disabled')) {
-                        return;
-                    }
-
-                    simpanAnamnesisRI();
+            .off('blur.anam', textSelector)
+            .on('blur.anam', textSelector, function () {
+                if (isAnamnesisRILoading || $(this).prop('disabled')) {
+                    return;
                 }
-            );
+
+                simpanAnamnesisRI();
+            });
     });
 })();
 </script>

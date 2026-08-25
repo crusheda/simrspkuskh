@@ -12,12 +12,16 @@
             <div class="input-group input-group-sm flex-grow-1">
                 <span class="input-group-text">Usia</span>
                 <select class="form-select form-select-sm" name="rj_usia" data-hd-required data-hd-score>
-                    <option value="">Pilih</option>
-                    @if ($list['usia'])
+                    <option value="" hidden>Pilih</option>
+                    <option value="1">&lt; 3 Tahun</option>
+                    <option value="2">3 s.d &lt; 7 Tahun</option>
+                    <option value="3">7 s.d &lt; 13 Tahun</option>
+                    <option value="4">&gt;= 13 Tahun</option>
+                    {{-- @if ($list['usia'])
                         @foreach ($list['usia'] as $item)
                             <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
                         @endforeach
-                    @endif
+                    @endif --}}
                 </select>
             </div>
         </div>
@@ -25,12 +29,14 @@
             <div class="input-group input-group-sm flex-grow-1">
                 <span class="input-group-text">Jenis Kelamin</span>
                 <select class="form-select form-select-sm" name="rj_jk" data-hd-required data-hd-score>
-                    <option value="">Pilih</option>
-                    @if ($list['jk'])
+                    <option value="" hidden>Pilih</option>
+                    <option value="2">Perempuan</option>
+                    <option value="1">Laki-laki</option>
+                    {{-- @if ($list['jk'])
                         @foreach ($list['jk'] as $item)
                             <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
                         @endforeach
-                    @endif
+                    @endif --}}
                 </select>
             </div>
         </div>

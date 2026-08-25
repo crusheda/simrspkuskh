@@ -602,5 +602,48 @@ class EMRController extends Controller
         return app($controllers[$form])->index($kunjungan);
     }
 
+    public function loadSubFormPengkajian(
+        Request $request,
+        string $kunjungan,
+        string $formKey
+    ) {
+        $forms = [
+            // Rawat inap dewasa
+            'rid_dokter' => [
+                'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa.form_dokter',
+            ],
+            'rid_perawat' => [
+                'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa.form_perawat',
+            ],
+
+            // Siapkan untuk Rawat Inap Anak
+            'ria_dokter' => [
+                'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.anak.form_dokter',
+            ],
+            'ria_perawat' => [
+                'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.anak.form_perawat',
+            ],
+        ];
+
+        abort_unless(
+            array_key_exists($formKey, $forms),
+            404,
+            'Form pengkajian tidak ditemukan.'
+        );
+
+        /*
+         * Tambahkan query kunjungan/pasien Anda di sini bila partial
+         * membutuhkan data lain selain kunjungan.
+         */
+        $list = [
+            'kunjungan' => $kunjungan,
+        ];
+
+        return view(
+            $forms[$formKey]['view'],
+            compact('list', 'kunjungan', 'formKey')
+        );
+    }
+
 
 }

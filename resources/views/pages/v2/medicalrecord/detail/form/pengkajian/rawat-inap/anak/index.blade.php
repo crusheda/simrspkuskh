@@ -4,9 +4,9 @@
         class="btn btn-danger waves-effect waves-light"
         id="btnDokter"
         data-bs-toggle="collapse"
-        data-bs-target="#riD_dokter"
+        data-bs-target="#riA_dokter"
         aria-expanded="true"
-        aria-controls="riD_dokter"
+        aria-controls="riA_dokter"
     >
         <i class="ri-stethoscope-line me-1"></i>
         Pengkajian Dokter
@@ -17,34 +17,34 @@
         class="btn btn-success waves-effect waves-light collapsed"
         id="btnPerawat"
         data-bs-toggle="collapse"
-        data-bs-target="#riD_perawat"
+        data-bs-target="#riA_perawat"
         aria-expanded="false"
-        aria-controls="riD_perawat"
+        aria-controls="riA_perawat"
     >
         <i class="ri-stethoscope-line me-1"></i>
         Pengkajian Keperawatan
     </button>
 </div>
 
-<div class="accordion mt-3" id="ridAccordion">
+<div class="accordion mt-3" id="riaAccordion">
     <div
         class="multi-collapse collapse show"
-        data-bs-parent="#ridAccordion"
-        id="riD_dokter"
+        data-bs-parent="#riaAccordion"
+        id="riA_dokter"
         data-kunjungan="{{ $list['kunjungan'] }}"
-        data-form-key="rid_dokter"
-        data-url="{{ route('v2.emr.form.sub.rawat-inap.load', ['kunjungan' => $list['kunjungan'], 'formKey' => 'rid_dokter']) }}"
+        data-form-key="riA_dokter"
+        data-url="{{ route('v2.emr.form.sub.rawat-inap.load', ['kunjungan' => $list['kunjungan'], 'formKey' => 'ria_dokter']) }}"
     >
         <div class="form-content"></div>
     </div>
 
     <div
         class="multi-collapse collapse"
-        data-bs-parent="#ridAccordion"
-        id="riD_perawat"
+        data-bs-parent="#riaAccordion"
+        id="riA_perawat"
         data-kunjungan="{{ $list['kunjungan'] }}"
-        data-form-key="rid_perawat"
-        data-url="{{ route('v2.emr.form.sub.rawat-inap.load', ['kunjungan' => $list['kunjungan'], 'formKey' => 'rid_perawat']) }}"
+        data-form-key="riA_perawat"
+        data-url="{{ route('v2.emr.form.sub.rawat-inap.load', ['kunjungan' => $list['kunjungan'], 'formKey' => 'ria_perawat']) }}"
     >
         <div class="form-content"></div>
     </div>
@@ -54,19 +54,19 @@
     (function ($) {
         'use strict';
 
-        function updateRanapDewasaButton() {
+        function updateRanapAnakButton() {
             $('#btnDokter').prop(
                 'disabled',
-                $('#riD_dokter').hasClass('show')
+                $('#riA_dokter').hasClass('show')
             );
 
             $('#btnPerawat').prop(
                 'disabled',
-                $('#riD_perawat').hasClass('show')
+                $('#riA_perawat').hasClass('show')
             );
         }
 
-        function loadRanapDewasaForm($section) {
+        function loadRanapAnakForm($section) {
             if (
                 $section.data('loaded') ||
                 $section.data('loading')
@@ -79,7 +79,7 @@
 
             if (!url || !$content.length) {
                 console.error(
-                    'URL atau container form Rawat Inap Dewasa tidak ditemukan.'
+                    'URL atau container form Rawat Inap Anak tidak ditemukan.'
                 );
                 return;
             }
@@ -105,13 +105,13 @@
                      * Hapus form panel lain supaya elemen dengan ID/name
                      * yang sama tidak tampil bersama dalam DOM.
                      */
-                    $('#ridAccordion')
+                    $('#riaAccordion')
                         .find('.multi-collapse')
                         .not($section)
                         .find('.form-content')
                         .empty();
 
-                    $('#ridAccordion')
+                    $('#riaAccordion')
                         .find('.multi-collapse')
                         .not($section)
                         .removeData('loaded');
@@ -126,7 +126,7 @@
                 })
                 .fail(function (xhr) {
                     console.error(
-                        'Gagal memuat form Rawat Inap Dewasa:',
+                        'Gagal memuat form Rawat Inap Anak:',
                         xhr.responseText
                     );
 
@@ -143,25 +143,25 @@
 
         $(function () {
             // Dokter adalah panel yang terbuka saat halaman ini pertama tampil.
-            loadRanapDewasaForm($('#riD_dokter'));
+            loadRanapAnakForm($('#riA_dokter'));
 
-            $('#ridAccordion').on(
+            $('#riaAccordion').on(
                 'shown.bs.collapse',
                 '.multi-collapse',
                 function () {
                     const $section = $(this);
 
-                    updateRanapDewasaButton();
-                    loadRanapDewasaForm($section);
+                    updateRanapAnakButton();
+                    loadRanapAnakForm($section);
                     $section.find('.form-content').scrollTop(0);
                 }
             );
 
-            $('#ridAccordion').on(
+            $('#riaAccordion').on(
                 'hidden.bs.collapse',
                 '.multi-collapse',
                 function () {
-                    updateRanapDewasaButton();
+                    updateRanapAnakButton();
                     $(this).find('.form-content').scrollTop(0);
                 }
             );
@@ -172,12 +172,12 @@
              */
             $(document)
                 .off(
-                    'change.ridSingleCheckbox',
-                    '#ridAccordion .form-content .single-checkbox'
+                    'change.riaSingleCheckbox',
+                    '#riaAccordion .form-content .single-checkbox'
                 )
                 .on(
-                    'change.ridSingleCheckbox',
-                    '#ridAccordion .form-content .single-checkbox',
+                    'change.riaSingleCheckbox',
+                    '#riaAccordion .form-content .single-checkbox',
                     function () {
                         if (!this.checked) {
                             return;
@@ -195,12 +195,12 @@
 
             $(document)
                 .off(
-                    'change.ridSingleCheckboxBos',
-                    '#ridAccordion .form-content .single-checkbox-bos'
+                    'change.riaSingleCheckboxBos',
+                    '#riaAccordion .form-content .single-checkbox-bos'
                 )
                 .on(
-                    'change.ridSingleCheckboxBos',
-                    '#ridAccordion .form-content .single-checkbox-bos',
+                    'change.riaSingleCheckboxBos',
+                    '#riaAccordion .form-content .single-checkbox-bos',
                     function () {
                         if (!this.checked) {
                             this.checked = true;
@@ -217,7 +217,7 @@
                     }
                 );
 
-            updateRanapDewasaButton();
+            updateRanapAnakButton();
         });
     })(jQuery);
 </script>

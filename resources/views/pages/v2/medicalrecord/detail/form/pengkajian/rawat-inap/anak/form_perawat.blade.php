@@ -1,5 +1,5 @@
 <div class="form-wrapper">
-    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN KEPERAWATAN <b class="text-success">RAWAT INAP</b> <b class="text-warning">DEWASA</b></center></h1>
+    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN KEPERAWATAN <b class="text-success">RAWAT INAP</b> <b class="text-warning">ANAK</b></center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-success">Diisi Oleh Perawat</a>)</center></h1>
     <div class="form-content">
         <div class="row">
@@ -7,8 +7,8 @@
                 @include(
                     'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
                     [
-                        'section' => '#riD_perawat',
-                        'anak' => 'false',
+                        'section' => '#riA_perawat',
+                        'anak' => 'true',
                     ]
                 )
             </div>
@@ -16,7 +16,7 @@
                 @include(
                     'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
                     [
-                        'section' => '#riD_perawat',
+                        'section' => '#riA_perawat',
                         'page' => 'perawat',
                     ]
                 )
@@ -30,10 +30,10 @@
                 <i>... coming soon</i>
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.aktivitas_latihan_personal_hygiene',['section' => '#riD_perawat'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.aktivitas_latihan_personal_hygiene',['section' => '#riA_perawat'])
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial',['section' => '#riD_perawat'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial',['section' => '#riA_perawat'])
             </div>
             <div class="col-md-12 mb-3">
                 <div class="form-group mb-2">
@@ -41,7 +41,7 @@
                         <strong>SKRINING GIZI</strong>
                     </h5>
                 </div>
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_gizi_must', ['section' => '#riD_perawat'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_gizi_strong_kid', ['section' => '#riA_perawat'])
             </div>
             <div class="col-md-12 mb-3">
                 <div class="form-group mb-2">
@@ -51,8 +51,8 @@
                 </div>
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
                     [
-                        'section' => '#riD_perawat',
-                        'metodeNyeri' => ['nrs', 'bps', 'nips', 'flacc', 'vas']
+                        'section' => '#riA_perawat',
+                        'metodeNyeri' => ['nrs','flacc','vas']
                     ]
                 )
             </div>
@@ -62,7 +62,7 @@
                         <strong>SKRINING RESIKO JATUH</strong>
                     </h5>
                 </div>
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_skala_morse', ['section' => '#riD_perawat'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_humpty_dumpty', ['section' => '#riA_perawat'])
             </div>
             <div class="col-md-12 mb-3">
                 <div class="form-group mb-2">
@@ -73,10 +73,10 @@
                 <i>... coming soon</i>
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#riD_perawat'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#riA_perawat'])
             </div>
             <div class="col-md-12">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.discharge_planning',['section' => '#riD_perawat'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.discharge_planning',['section' => '#riA_perawat'])
             </div>
         </div>
     </div>
@@ -91,7 +91,7 @@
 </div>
 
 <script>
-    var $sectionRiDp = $('#riD_perawat');
+    var $sectionRiDp = $('#riA_perawat');
     $(document).ready(function() {
 
     })

@@ -78,6 +78,12 @@ Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'v2', 'as' => ''], fu
             // FORM PENGKAJIAN
             Route::get('erm/form/{form}/{kunjungan}', [EMRController::class, 'loadFormPengkajian'])->name('v2.emr.form');
 
+            // FORM PENGKAJIAN SUB RAWAT INAP
+            Route::get(
+                'emr/form/ri/{kunjungan}/form/{formKey}',
+                [EMRController::class, 'loadSubFormPengkajian']
+            )->name('v2.emr.form.sub.rawat-inap.load');
+
         // MONITORING
         Route::get('monitoring', [MonitoringController::class, 'indexV2'])->name('v2.monitoring');
 
