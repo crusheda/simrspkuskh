@@ -22,6 +22,7 @@
         'leher',
         'dada',
         'perut',
+        'status_lokalis',
     ];
     $metodePemeriksaan = $metodePemeriksaan ?? $semuaMetode;
     $metodePemeriksaan = collect($metodePemeriksaan)
@@ -519,12 +520,24 @@
             </div>
             {{-- Lain-lain --}}
             <div class="col-md-12">
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <div class="d-flex align-items-center gap-3">
                         <label class="form-label fw-bold flex-shrink-0">Lain-lain</label>
                         <input type="text" class="form-control form-control-sm" name="pf_dada_lain">
                     </div>
                 </div>
+            </div>
+        </div>
+    @endif
+
+    @if ($tampilkan('status_lokalis'))
+        @if ($hrSebelum('status_lokalis'))
+            <hr class="pemeriksaan-anatomi-divider mt-2">
+        @endif
+        <div class="row" data-pemeriksaan="status_lokalis">
+            <div class="form-group mb-3">
+                <label class="form-label fw-bold flex-shrink-0">Status Lokalis</label>
+                <textarea class="form-control" name="status_lokalis" rows="3"></textarea>
             </div>
         </div>
     @endif

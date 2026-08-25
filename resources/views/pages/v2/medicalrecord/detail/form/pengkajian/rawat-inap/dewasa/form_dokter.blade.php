@@ -29,7 +29,7 @@
                     ]
                 )
             </div>
-            <div class="col-md-12 mb-3">
+            <div class="col-md-12">
                 <h4 class="mb-3 text-danger">Pemeriksaan Fisik</h4>
                 <div class="mb-3">
                     @include(
@@ -41,7 +41,8 @@
                                 'tenggorokan',
                                 'leher',
                                 'dada',
-                                'perut'
+                                'perut',
+                                'status_lokalis'
                             ]
                         ]
                     )
@@ -62,11 +63,17 @@
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.diagnosis_icd')
                 </div>
             </div>
-            <div class="col-md-12">
-                <div class="form-group">
-                    <h4 class="form-label fw-bold text-danger mb-3">Rencana Kerja dan Terapi</h4>
-                    <textarea class="form-control" name="pt" rows="2"></textarea>
-                </div>
+            <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.tata_laksana_terapi',['section' => '#riD_dokter'])
+            </div>
+            <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.target_terapi',['section' => '#riD_dokter'])
+            </div>
+            <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rencana_konsultasi',['section' => '#riD_dokter'])
+            </div>
+            <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kriteria_pulang',['section' => '#riD_dokter'])
             </div>
         </div>
     </div>

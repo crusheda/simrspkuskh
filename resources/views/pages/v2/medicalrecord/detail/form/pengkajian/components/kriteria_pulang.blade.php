@@ -5,9 +5,9 @@
     =========================================================== --}}
     <div class="col-md-12 mb-2">
         <div class="form-group">
-            <h5 class="mb-0 text-success">
-                <strong>Kriteria Pulang</strong>
-            </h5>
+            <h4 class="mb-0 text-danger">
+                Kriteria Pulang
+            </h4>
         </div>
     </div>
 
@@ -32,12 +32,10 @@
                     type="checkbox"
                     name="kp_plr"
                     value="1"
-                    id="kp_plr_1"
                 >
 
                 <label
                     class="form-check-label"
-                    for="kp_plr_1"
                 >
                     Sudah bisa ditetapkan :
                 </label>
@@ -69,12 +67,10 @@
                     type="checkbox"
                     name="kp_plr"
                     value="0"
-                    id="kp_plr_0"
                 >
 
                 <label
                     class="form-check-label"
-                    for="kp_plr_0"
                 >
                     Belum bisa ditetapkan, karena :
                 </label>
@@ -209,14 +205,11 @@
                 // ==================================================
                 // KRITERIA PULANG
                 // ==================================================
-                if (FormHelper.hasValue(kpl.KRITERIA_PULANG)) {
-
-                    FormHelper.setSingleCheckbox(
-                        $section,
-                        'kp_plr',
-                        kpl.KRITERIA_PULANG
-                    );
-                }
+                FormHelper.setSingleCheckbox(
+                    $section,
+                    'kp_plr',
+                    kpl.KRITERIA_PULANG
+                );
 
 
                 // ==================================================

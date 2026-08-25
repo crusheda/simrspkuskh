@@ -182,6 +182,15 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // AKTIVITAS DAN LATIHAN, PERSONAL HYGIENE
                     Route::get('emr/pengkajian/alph/{kunjungan}', [AddOnPengkajianController::class, 'getALPH']);
                     Route::post('emr/pengkajian/alph/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanALPH']);
+                // TATA LAKSANA TERAPI
+                    Route::get('emr/pengkajian/tatalaksanaterapi/{kunjungan}', [AddOnPengkajianController::class, 'getTataLaksanaTerapi']);
+                    Route::post('emr/pengkajian/tatalaksanaterapi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTataLaksanaTerapi']);
+                // TARGET TERAPI
+                    Route::get('emr/pengkajian/targetterapi/{kunjungan}', [AddOnPengkajianController::class, 'getTargetTerapi']);
+                    Route::post('emr/pengkajian/targetterapi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTargetTerapi']);
+                // RENCANA KONSULTASI
+                    Route::get('emr/pengkajian/rencanakonsultasi/{kunjungan}', [AddOnPengkajianController::class, 'getRencanaKonsultasi']);
+                    Route::post('emr/pengkajian/rencanakonsultasi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanRencanaKonsultasi']);
                 // KRITERIA PULANG
                     Route::get('emr/pengkajian/kriteriapulang/{kunjungan}', [AddOnPengkajianController::class, 'getKriteriaPulang']);
                     Route::post('emr/pengkajian/kriteriapulang/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanKriteriaPulang']);

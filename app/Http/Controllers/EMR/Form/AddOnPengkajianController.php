@@ -1859,6 +1859,168 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    function getTataLaksanaTerapi($KUNJUNGAN)
+    {
+        $data = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.sirmed_tata_laksana_terapi',
+            [
+                'DESKRIPSI',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function simpanTataLaksanaTerapi(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.sirmed_tata_laksana_terapi')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN
+                ],
+                [
+                    'DESKRIPSI' => $request->tatalaksana_terapi,
+
+                    'TANGGAL' => now(),
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Tata Laksana Terapi berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Tata Laksana Terapi gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    function getTargetTerapi($KUNJUNGAN)
+    {
+        $data = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.sirmed_target_terapi',
+            [
+                'DESKRIPSI',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function simpanTargetTerapi(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.sirmed_target_terapi')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN
+                ],
+                [
+                    'DESKRIPSI' => $request->target_terapi,
+
+                    'TANGGAL' => now(),
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Target Terapi berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Target Terapi gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    function getRencanaKonsultasi($KUNJUNGAN)
+    {
+        $data = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.sirmed_rencana_konsultasi',
+            [
+                'DESKRIPSI',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function simpanRencanaKonsultasi(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.sirmed_rencana_konsultasi')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN
+                ],
+                [
+                    'DESKRIPSI' => $request->rencana_konsultasi,
+
+                    'TANGGAL' => now(),
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Rencana Konsultasi berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Rencana Konsultasi gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     function getKriteriaPulang($KUNJUNGAN)
     {
         $aplh = $this->getData(
