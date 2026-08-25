@@ -128,12 +128,12 @@
                             <div class="form-check">
                                 <input class="form-check-input single-checkbox" type="checkbox" name="pernah_dirawat" value="1" id="pernah_dirawat_ya">
                                 <label class="form-check-label" for="pernah_dirawat_ya">
-                                    Ya, Diagnosa :
+                                    Ya, Diagnosa
                                 </label>
                             </div>
                             <input type="text" class="form-control form-control-sm mx-2" name="pernah_dirawat_diagnosa" style="max-width: 250px;">
                             <label class="form-label mb-0 me-2">
-                                Kapan :
+                                Kapan
                             </label>
                             <input type="date" class="form-control form-control-sm" name="pernah_dirawat_kapan" style="max-width: 160px;">
                         </div>
@@ -412,8 +412,7 @@
                                 <!-- Suntik -->
                                 <div class="col-md-3 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input check-primary" type="checkbox" name="kb_suntik" id="kb_suntik"
-                                            value="1" />
+                                        <input class="form-check-input check-primary" type="checkbox" name="kb_suntik" id="kb_suntik" value="1" />
                                         <label class="form-check-label" for="kb_suntik"> Suntik </label>
                                     </div>
                                 </div>
@@ -421,8 +420,7 @@
                                 <!-- IUD -->
                                 <div class="col-md-3 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input check-primary" type="checkbox" name="kb_iud" id="kb_iud"
-                                            value="1" />
+                                        <input class="form-check-input check-primary" type="checkbox" name="kb_iud" id="kb_iud" value="1" />
                                         <label class="form-check-label" for="kb_iud"> IUD </label>
                                     </div>
                                 </div>
@@ -430,8 +428,7 @@
                                 <!-- Pil -->
                                 <div class="col-md-3 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input check-primary" type="checkbox" name="kb_pil" id="kb_pil"
-                                            value="1" />
+                                        <input class="form-check-input check-primary" type="checkbox" name="kb_pil" id="kb_pil" value="1" />
                                         <label class="form-check-label" for="kb_pil"> Pil </label>
                                     </div>
                                 </div>
@@ -439,8 +436,7 @@
                                 <!-- Kondom -->
                                 <div class="col-md-3 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input check-primary" type="checkbox" name="kb_kondom" id="kb_kondom"
-                                            value="1" />
+                                        <input class="form-check-input check-primary" type="checkbox" name="kb_kondom" id="kb_kondom" value="1" />
                                         <label class="form-check-label" for="kb_kondom"> Kondom </label>
                                     </div>
                                 </div>
@@ -457,8 +453,7 @@
                                 <!-- MOW -->
                                 <div class="col-md-3 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input check-primary" type="checkbox" name="kb_mow" id="kb_mow"
-                                            value="1" />
+                                        <input class="form-check-input check-primary" type="checkbox" name="kb_mow" id="kb_mow" value="1" />
                                         <label class="form-check-label" for="kb_mow"> MOW </label>
                                     </div>
                                 </div>
@@ -466,8 +461,7 @@
                                 <!-- MOP -->
                                 <div class="col-md-3 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input check-primary" type="checkbox" name="kb_mop" id="kb_mop"
-                                            value="1" />
+                                        <input class="form-check-input check-primary" type="checkbox" name="kb_mop" id="kb_mop" value="1" />
                                         <label class="form-check-label" for="kb_mop"> MOP </label>
                                     </div>
                                 </div>
@@ -475,8 +469,7 @@
                                 <!-- Implan -->
                                 <div class="col-md-3 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input check-primary" type="checkbox" name="kb_implan" id="kb_implan"
-                                            value="1" />
+                                        <input class="form-check-input check-primary" type="checkbox" name="kb_implan" id="kb_implan" value="1" />
                                         <label class="form-check-label" for="kb_implan"> Implan </label>
                                     </div>
                                 </div>
@@ -498,22 +491,786 @@
                         @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_penggunaan_obat')
                     </div>
                     <div class="col-md-12 mb-3">
-                        <h4 class="mb-3 text-danger">Pemeriksaan Fisik</h4>
-                        <div class="mb-3">
-                            @include(
-                                'pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_anatomi',
-                                [
-                                    'section' => '#riD_dokter',
-                                    'metodePemeriksaan' => [
-                                        'mata',
-                                        'tenggorokan',
-                                        'leher',
-                                        'dada',
-                                        'perut'
-                                    ]
-                                ]
-                            )
+                        @include(
+                            'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
+                            [
+                                'section' => '#rio_perawat',
+                                'page' => 'perawat',
+                                // 'editableFields' => [
+                                //     'tv_keu',
+                                //     'tv_gcs_e',
+                                //     'tv_gcs_v',
+                                //     'tv_gcs_m',
+                                //     'tv_bb',
+                                //     'tv_tb',
+                                // ],
+                            ]
+                        )
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Pemeriksaan Fisik</label>
+
+                        <!-- MATA -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Mata</label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="mata" value="1">
+                                    <label class="form-check-label">
+                                        Pandangan Kabur
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check flex-shrink-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="mata" value="2">
+                                        <label class="form-check-label">
+                                            Lainnya
+                                        </label>
+                                    </div>
+                                    <input type="text" class="form-control" name="mata_keterangan" id="mata_keterangan" placeholder="Keterangan...">
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- SKLERA -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Sklera</label>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="1">
+                                    <label class="form-check-label">
+                                        Ikterik
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="2">
+                                    <label class="form-check-label">
+                                        An Ikterik
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="3">
+                                    <label class="form-check-label">
+                                        Anemis
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="4">
+                                    <label class="form-check-label">
+                                        Tak Anemis
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KEPALA -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Kepala</label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kepala" value="1">
+                                    <label class="form-check-label">
+                                        Normal
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check flex-shrink-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kepala" value="2">
+                                    </div>
+                                    <input type="text" class="form-control" name="kepala_keterangan" id="kepala_keterangan" placeholder="Keterangan kelainan...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TELINGA -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Telinga</label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="telinga" value="1">
+                                    <label class="form-check-label">
+                                        Normal
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check flex-shrink-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="telinga" value="2">
+                                    </div>
+                                    <input type="text" class="form-control" name="telinga_keterangan" id="telinga_keterangan" placeholder="Keterangan kelainan...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- HIDUNG -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Hidung</label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="hidung" value="1">
+                                    <label class="form-check-label">
+                                        Normal
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check flex-shrink-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="hidung" value="2">
+                                    </div>
+                                    <input type="text" class="form-control" name="hidung_keterangan" id="hidung_keterangan" placeholder="Keterangan kelainan...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TENGGOROKAN -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Tenggorokan</label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="tenggorokan" value="1">
+                                    <label class="form-check-label">
+                                        Normal
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check flex-shrink-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="tenggorokan" value="2">
+                                    </div>
+                                    <input type="text" class="form-control" name="tenggorokan_keterangan" id="tenggorokan_keterangan" placeholder="Keterangan kelainan...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LEHER -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Leher</label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leher" value="1">
+                                    <label class="form-check-label">
+                                        Normal
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check flex-shrink-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leher" value="2">
+                                    </div>
+                                    <input type="text" class="form-control" name="leher_keterangan" id="leher_keterangan" placeholder="Keterangan kelainan...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DADA -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Dada</label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="dada" value="1">
+                                    <label class="form-check-label">
+                                        Normal
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check flex-shrink-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="dada" value="2">
+                                    </div>
+                                    <input type="text" class="form-control" name="dada_keterangan" id="dada_keterangan" placeholder="Keterangan kelainan...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- JANTUNG -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Jantung</label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jantung" value="1">
+                                    <label class="form-check-label">
+                                        Normal
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check flex-shrink-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jantung" value="2">
+                                    </div>
+                                    <input type="text" class="form-control" name="jantung_keterangan" id="jantung_keterangan" placeholder="Keterangan kelainan...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PARU-PARU -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Paru-paru</label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="paru" value="1">
+                                    <label class="form-check-label">
+                                        Normal
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check flex-shrink-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="paru" value="2">
+                                    </div>
+                                    <input type="text" class="form-control" name="paru_keterangan" id="paru_keterangan" placeholder="Keterangan kelainan...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ABDOMEN -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Abdomen</label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abdomen" value="1">
+                                    <label class="form-check-label">
+                                        Normal
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check flex-shrink-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abdomen" value="2">
+                                    </div>
+                                    <input type="text" class="form-control" name="abdomen_keterangan" id="abdomen_keterangan" placeholder="Keterangan kelainan...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ANGGOTA GERAK ATAS -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Anggota gerak atas</label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_atas" value="1">
+                                    <label class="form-check-label">
+                                        Oedema
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_atas" value="2">
+                                    <label class="form-check-label">
+                                        Tak Oedema
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ANGGOTA GERAK BAWAH -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-3">
+                                <label class="form-label mb-0">Anggota gerak bawah</label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_bawah" value="1">
+                                    <label class="form-check-label">
+                                        Oedema
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_bawah" value="2">
+                                    <label class="form-check-label">
+                                        Tak Oedema
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label fw-bold">Pemeriksaan Khusus</label>
+                        <!-- DADA -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-2">
+                                <label class="form-label mb-0">Dada</label>
+                            </div>
+                            <!-- Mammae -->
+                            <div class="col-md-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="mammae" value="1">
+                                        <label class="form-check-label">
+                                            Mammae simetris
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="mammae" value="2">
+                                        <label class="form-check-label">
+                                            Asimetris
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Areola -->
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary" type="checkbox" name="areola_hiperpigmentasi" value="1">
+                                    <label class="form-check-label">
+                                        Areola hiperpigmentasi
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Puting -->
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="puting_susu" value="1">
+                                        <label class="form-check-label">
+                                            Puting susu menonjol
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="puting_susu" value="2">
+                                        <label class="form-check-label">
+                                            Tidak
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KOLOSTRUM -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-2"></div>
+
+                            <div class="col-md-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label class="form-label mb-0">Kolostrum</label>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kolostrum" value="1">
+                                        <label class="form-check-label">
+                                            (+)
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kolostrum" value="2">
+                                        <label class="form-check-label">
+                                            (-)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- ABDOMEN - INSPEKSI -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-2">
+                                <label class="form-label mb-0">Abdomen</label>
+                            </div>
+
+                            <div class="col-md-10">
+                                <div class="d-flex align-items-center flex-wrap gap-3">
+
+                                    <span class="fw-normal">Inspeksi :</span>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary" type="checkbox" name="abdomen_luka_bekas_op" value="1">
+                                        <label class="form-check-label">
+                                            Luka bekas OP
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary" type="checkbox" name="abdomen_linea_alba" value="1">
+                                        <label class="form-check-label">
+                                            Linea Alba
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary" type="checkbox" name="abdomen_linea_nigra" value="1">
+                                        <label class="form-check-label">
+                                            Linea Nigra
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary" type="checkbox" name="abdomen_striae_livida" value="1">
+                                        <label class="form-check-label">
+                                            Striae Livida
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary" type="checkbox" name="abdomen_striae_albican" value="1">
+                                        <label class="form-check-label">
+                                            Striae Albican
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- ABDOMEN - PALPASI -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-2">
+                                <label class="form-label mb-0">Palpasi</label>
+                            </div>
+
+                            <div class="col-md-10">
+                                <div class="d-flex align-items-center flex-wrap gap-3">
+
+                                    <span>Leopold I :</span>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_1" value="1">
+                                        <label class="form-check-label">
+                                            TFU
+                                        </label>
+                                    </div>
+
+                                    <input type="text" class="form-control" name="leopold_1_tfu" id="leopold_1_tfu" placeholder="TFU" style="width: 100px;">
+
+                                    <span>cm</span>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- LEOPOLD II -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-2"></div>
+
+                            <div class="col-md-10">
+                                <div class="d-flex align-items-center flex-wrap gap-3">
+
+                                    <span>Leopold II :</span>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_2" value="1">
+                                        <label class="form-check-label">
+                                            Punggung Kanan
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_2" value="2">
+                                        <label class="form-check-label">
+                                            Punggung Kiri
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- LEOPOLD III -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-2"></div>
+
+                            <div class="col-md-10">
+                                <div class="d-flex align-items-center flex-wrap gap-3">
+
+                                    <span>Leopold III :</span>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_3" value="1">
+                                        <label class="form-check-label">
+                                            Kepala
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_3" value="2">
+                                        <label class="form-check-label">
+                                            Bokong
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- LEOPOLD IV -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-2"></div>
+
+                            <div class="col-md-10">
+                                <div class="d-flex align-items-center flex-wrap gap-3">
+
+                                    <span>Leopold IV :</span>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_4" value="1">
+                                        <label class="form-check-label">
+                                            Sudah masuk PAP
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_4" value="2">
+                                        <label class="form-check-label">
+                                            Belum masuk PAP
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- AUSKULTASI -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-2">
+                                <label class="form-label mb-0">Auskultasi</label>
+                            </div>
+
+                            <div class="col-md-10">
+                                <div class="d-flex align-items-center flex-wrap gap-3">
+
+                                    <span>DJJ :</span>
+
+                                    <input type="text" class="form-control" name="djj" id="djj" placeholder="DJJ" style="width: 100px;">
+
+                                    <span>X/menit</span>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="djj_kondisi" value="1">
+                                        <label class="form-check-label">
+                                            Teratur
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="djj_kondisi" value="2">
+                                        <label class="form-check-label">
+                                            Tidak teratur
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- HIS/KONTRAKSI -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-2">
+                                <label class="form-label mb-0">HIS/Kontraksi</label>
+                            </div>
+
+                            <div class="col-md-10">
+                                <div class="d-flex align-items-center flex-wrap gap-3">
+
+                                    <span>.......... X/menit</span>
+
+                                    <label class="form-label mb-0">
+                                        Durasi
+                                    </label>
+
+                                    <input type="text" class="form-control" name="his_durasi" id="his_durasi" placeholder="Durasi" style="width: 100px;">
+
+                                    <span>detik</span>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="his_kekuatan" value="1">
+                                        <label class="form-check-label">
+                                            Kuat
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="his_kekuatan" value="2">
+                                        <label class="form-check-label">
+                                            Sedang
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="his_kekuatan" value="3">
+                                        <label class="form-check-label">
+                                            Lemah
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- ANOGENITAL - INSPEKSI -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-2">
+                                <label class="form-label mb-0">Anogenital</label>
+                            </div>
+
+                            <div class="col-md-10">
+                                <div class="d-flex align-items-center flex-wrap gap-3">
+
+                                    <span>Inspeksi :</span>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary" type="checkbox" name="anogenital_pengeluaran" value="1">
+                                        <label class="form-check-label">
+                                            Pengeluaran per Vagina
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary" type="checkbox" name="anogenital_darah" value="1">
+                                        <label class="form-check-label">
+                                            Darah
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary" type="checkbox" name="anogenital_lendir" value="1">
+                                        <label class="form-check-label">
+                                            Lendir
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input check-primary" type="checkbox" name="anogenital_air_ketuban" value="1">
+                                        <label class="form-check-label">
+                                            Air Ketuban
+                                        </label>
+                                    </div>
+
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input check-primary"
+                                                type="checkbox"
+                                                name="anogenital_lainnya"
+                                                value="1">
+                                            <label class="form-check-label">
+                                                Lainnya
+                                            </label>
+                                        </div>
+
+                                        <input type="text"
+                                            class="form-control" name="anogenital_lainnya_keterangan"
+                                            id="anogenital_lainnya_keterangan"
+                                            placeholder="Keterangan..."
+                                            style="width: 200px;">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- VAGINA TOUCHER -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-2">
+                                <label class="form-label mb-0">Vagina Toucher</label>
+                            </div>
+
+                            <div class="col-md-10">
+                                <input type="text"
+                                    class="form-control"
+                                    name="vagina_toucher"
+                                    id="vagina_toucher"
+                                    placeholder="Hasil pemeriksaan vagina toucher...">
+                            </div>
+                        </div>
+
+
+                        <!-- LAIN-LAIN -->
+                        <div class="row align-items-center mb-2">
+                            <div class="col-md-2">
+                                <label class="form-label mb-0">Lain-lain</label>
+                            </div>
+
+                            <div class="col-md-10">
+                                <input type="text"
+                                    class="form-control"
+                                    name="pemeriksaan_lain_lain"
+                                    id="pemeriksaan_lain_lain"
+                                    placeholder="Lain-lain...">
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
