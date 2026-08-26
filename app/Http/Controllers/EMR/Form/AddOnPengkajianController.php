@@ -820,6 +820,122 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    public function getSkriningDekubitus($KUNJUNGAN)
+    {
+        $dekubitus = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.penilaian_dekubitus',
+            [
+                'KONDISI_FISIK',
+                'KESADARAN',
+                'AKTIVITAS',
+                'MOBILITAS',
+                'INKONTINENSIA',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $dekubitus
+        ]);
+    }
+
+    public function simpanSkriningDekubitus(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'NOKUNJ' => 'required',
+                'decu_1' => 'nullable|integer|min:0|max:4',
+                'decu_2' => 'nullable|integer|min:0|max:4',
+                'decu_3' => 'nullable|integer|min:0|max:4',
+                'decu_4' => 'nullable|integer|min:0|max:4',
+                'decu_5' => 'nullable|integer|min:0|max:4',
+            ],
+            [
+                'NOKUNJ.required' => 'Kunjungan wajib diisi.',
+                'decu_1.integer' => 'Nilai kondisi fisik tidak valid.',
+                'decu_2.integer' => 'Nilai kesadaran tidak valid.',
+                'decu_3.integer' => 'Nilai aktivitas tidak valid.',
+                'decu_4.integer' => 'Nilai mobilitas tidak valid.',
+                'decu_5.integer' => 'Nilai inkontinensia tidak valid.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $data = [
+                'KONDISI_FISIK' => (int) ($request->decu_1 ?? 0),
+                'KESADARAN' => (int) ($request->decu_2 ?? 0),
+                'AKTIVITAS' => (int) ($request->decu_3 ?? 0),
+                'MOBILITAS' => (int) ($request->decu_4 ?? 0),
+                'INKONTINENSIA' => (int) ($request->decu_5 ?? 0),
+                'OLEH' => auth()->id(),
+                'STATUS' => 1,
+                'TANGGAL' => now(),
+            ];
+
+            DB::table('medicalrecord.penilaian_dekubitus')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ,
+                    ],
+                    $data
+                );
+
+            DB::commit();
+
+            $skor =
+                $data['KONDISI_FISIK'] +
+                $data['KESADARAN'] +
+                $data['AKTIVITAS'] +
+                $data['MOBILITAS'] +
+                $data['INKONTINENSIA'];
+
+            if ($skor <= 11) {
+                $kategori = 'Peningkatan Risiko';
+                $keterangan = 'Risiko 50x lebih besar terjadinya ulkus decubitus.';
+            } elseif ($skor <= 13) {
+                $kategori = 'Risiko Sedang';
+                $keterangan = 'Pasien memiliki risiko sedang terjadinya ulkus decubitus.';
+            } elseif ($skor === 14) {
+                $kategori = 'Risiko Tinggi';
+                $keterangan = 'Risiko tinggi terjadinya ulkus decubitus.';
+            } else {
+                $kategori = 'Risiko Kecil';
+                $keterangan = 'Risiko kecil terjadinya ulkus decubitus.';
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Skrining Dekubitus berhasil disimpan.',
+                'data' => [
+                    'skor_s_decu' => $skor,
+                    'kategori_s_decu' => $kategori,
+                    'keterangan_s_decu' => $keterangan,
+                ],
+            ], 200);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Skrining Dekubitus gagal disimpan.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function getSkriningResikoJatuhHumptyDumpty($KUNJUNGAN)
     {
         $humptyDumpty = $this->getData(

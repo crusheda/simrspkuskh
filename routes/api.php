@@ -156,6 +156,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // NYERI
                         Route::get('emr/pengkajian/skrining/nyeri/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningNyeri']);
                         Route::post('emr/pengkajian/skrining/nyeri/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningNyeri']);
+                    // DECUBITUS
+                        Route::get('emr/pengkajian/skrining/dekubitus/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningDekubitus']);
+                        Route::post('emr/pengkajian/skrining/dekubitus/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningDekubitus']);
                     // RESIKO JATUH
                         // HUMPTY DUMPTY
                         Route::get('emr/pengkajian/skrining/resikojatuh/hd/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningResikoJatuhHumptyDumpty']);
@@ -199,6 +202,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     Route::post('emr/pengkajian/dischargeplanning/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanDischargePlanning']);
 
                 // KHUSUS RAWAT INAP
+                    // KRITERIA PULANG
+                        Route::get('emr/pengkajian/ri/pemeriksaanfisik/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanFisikRI']);
+                        Route::post('emr/pengkajian/ri/pemeriksaanfisik/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanFisikRI']);
                     // KRITERIA PULANG
                         Route::get('emr/pengkajian/ri/anamnesis/{kunjungan}', [AddOnPengkajianController::class, 'getAnamnesisRI']);
                         Route::post('emr/pengkajian/ri/anamnesis/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanAnamnesisRI']);

@@ -6,7 +6,7 @@
     <div class="col-md-12">
         <h4 class="text-danger">Anamnesis</h4>
 
-        <div class="row align-items-center">
+        <div class="row">
             {{-- ==========================================================
                 ANAMNESIS DIPEROLEH
             =========================================================== --}}

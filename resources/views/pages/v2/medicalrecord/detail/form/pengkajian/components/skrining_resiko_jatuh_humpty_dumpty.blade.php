@@ -272,17 +272,12 @@
             },
             success: function (res) {
                 Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: res.message || "Data Skrining berhasil disimpan",
+                    position: 'top-end',
+                    icon: 'success',
+                    title: res.message || 'Data Skrining berhasil disimpan',
                     showConfirmButton: false,
-                    timer: 1500,
-                    backdrop: `
-                        rgba(0,0,123,0.4)
-                        url("/images/nyan-cat.gif")
-                        left top
-                        no-repeat
-                    `
+                    timer: 1000,
+                    toast: true
                 });
                 getSkriningHumptyDumpty();
             },

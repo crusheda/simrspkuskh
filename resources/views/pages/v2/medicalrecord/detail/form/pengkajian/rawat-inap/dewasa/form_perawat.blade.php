@@ -22,12 +22,7 @@
                 )
             </div>
             <div class="col-md-12 mb-3">
-                <div class="form-group mb-2">
-                    <h5 class="mb-0 text-success">
-                        <strong>Pemeriksaan Fisik</strong>
-                    </h5>
-                </div>
-                <i>... coming soon</i>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.pemeriksaan_fisik',['section' => '#riD_perawat'])
             </div>
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.aktivitas_latihan_personal_hygiene',['section' => '#riD_perawat'])
@@ -63,6 +58,14 @@
                     </h5>
                 </div>
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_skala_morse', ['section' => '#riD_perawat'])
+            </div>
+            <div class="col-md-12 mb-3">
+                <div class="form-group mb-2">
+                    <h5 class="mb-0 text-success">
+                        <strong>SKRINING DECUBITUS</strong>
+                    </h5>
+                </div>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_decubitus', ['section' => '#riD_perawat'])
             </div>
             <div class="col-md-12 mb-3">
                 <div class="form-group mb-2">
