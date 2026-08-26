@@ -216,10 +216,13 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     Route::post('emr/pengkajian/penunjanglain/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPenunjangLain']);
 
                 // KHUSUS RAWAT INAP
-                    // KRITERIA PULANG
+                    // DAFTAR MASALAH KEPERAWATAN
+                        Route::get('emr/pengkajian/ri/masalahkeperawatan/{kunjungan}', [AddOnPengkajianController::class, 'getMasalahKeperawatanRI']);
+                        Route::post('emr/pengkajian/ri/masalahkeperawatan/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanMasalahKeperawatanRI']);
+                    // PEMERIKSAAN FISIK
                         Route::get('emr/pengkajian/ri/pemeriksaanfisik/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanFisikRI']);
                         Route::post('emr/pengkajian/ri/pemeriksaanfisik/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanFisikRI']);
-                    // KRITERIA PULANG
+                    // ANAMNESIS
                         Route::get('emr/pengkajian/ri/anamnesis/{kunjungan}', [AddOnPengkajianController::class, 'getAnamnesisRI']);
                         Route::post('emr/pengkajian/ri/anamnesis/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanAnamnesisRI']);
                     // TANDA VITAL

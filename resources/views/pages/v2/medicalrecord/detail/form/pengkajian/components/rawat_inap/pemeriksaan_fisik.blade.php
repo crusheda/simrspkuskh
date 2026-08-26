@@ -126,18 +126,18 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group mb-3">
-                    <h6>Jenis</h6>
+                    <h6>Jenis Gangguan Sesak Nafas</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
                             <input class="form-check-input single-checkbox" type="checkbox" name="pfn_irnj" value="1">
                             <label class="form-check-label">
-                                Dispone
+                                Dispnea
                             </label>
                         </div>
                         <div class="form-check form-check-inline mb-2">
                             <input class="form-check-input single-checkbox" type="checkbox" name="pfn_irnj" value="2">
                             <label class="form-check-label">
-                                Kusmaul
+                                Kussmaul
                             </label>
                         </div>
                     </div>
@@ -146,45 +146,58 @@
             <div class="col-md-12">
                 <div class="form-group mb-3">
                     <h6>Suara Nafas</h6>
-                    <div class="d-flex align-items-center">
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_snaf" value="1">
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input single-checkbox"
+                                type="checkbox"
+                                name="pfn_snaf"
+                                value="1">
                             <label class="form-check-label">
                                 Vesikuler
                             </label>
                         </div>
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_snaf" value="2">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input single-checkbox"
+                                type="checkbox"
+                                name="pfn_snaf"
+                                value="2">
                             <label class="form-check-label">
                                 Bronko Vesikuler
                             </label>
                         </div>
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_snaf" value="3">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input single-checkbox"
+                                type="checkbox"
+                                name="pfn_snaf"
+                                value="3">
                             <label class="form-check-label">
                                 Ronki
                             </label>
                         </div>
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_snaf" value="4">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input single-checkbox"
+                                type="checkbox"
+                                name="pfn_snaf"
+                                value="4">
                             <label class="form-check-label">
                                 Wheezing
                             </label>
                         </div>
-                        <div class="d-flex align-items-center gap-2 flex-grow-1">
+                        <div class="d-flex align-items-center gap-2">
                             <div class="form-check mb-0 flex-shrink-0">
                                 <input class="form-check-input single-checkbox"
                                     type="checkbox"
                                     name="pfn_snaf"
                                     value="5">
                                 <label class="form-check-label">
-                                    Lain-lain ,
+                                    Lain-lain
                                 </label>
                             </div>
                             <input type="text"
                                 class="form-control form-control-sm"
                                 name="pfn_snaf_lain"
-                                placeholder="Sebutkan ...">
+                                placeholder="Sebutkan ..."
+                                style="width: 180px;">
                         </div>
                     </div>
                 </div>
@@ -1394,46 +1407,251 @@
 (function () {
     'use strict';
 
+    // ==========================================================
+    // SECTION & FORM
+    // ==========================================================
     const $section = $(@json($section));
     const $form = $section.find('#form_pemeriksaan_fisik');
 
     let isPemeriksaanFisikLoading = false;
     let isPemeriksaanFisikSaving = false;
+    let isPemeriksaanFisikSavePending = false;
+
+    // ==========================================================
+    // NORMALIZE OBJECT DATA
+    // ==========================================================
+    function normalizeData(data) {
+
+        if (!data || typeof data !== 'object') {
+            return {};
+        }
+
+        const normalized = {};
+
+        Object.keys(data).forEach(function (key) {
+
+            normalized[String(key).toLowerCase()] = data[key];
+
+        });
+
+        return normalized;
+    }
+
+
+    // ==========================================================
+    // GET VALUE BERDASARKAN NAME
+    // Case insensitive
+    // ==========================================================
+    function getDataValue(data, name) {
+
+        if (!data || !name) {
+            return undefined;
+        }
+
+        const normalizedName = String(name).toLowerCase();
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                data,
+                normalizedName
+            )
+        ) {
+            return data[normalizedName];
+        }
+
+        return undefined;
+    }
+
 
     // ==========================================================
     // GET DATA
     // ==========================================================
-    function getTargetTerapi() {
+    function getPemeriksaanFisik() {
 
         if (!$form.length) {
-            console.warn('Form Pemeriksaan Fisik tidak ditemukan.');
+
+            console.warn(
+                'Form Pemeriksaan Fisik tidak ditemukan.'
+            );
+
+            return;
+        }
+
+        // Jangan menjalankan GET jika sedang loading
+        if (isPemeriksaanFisikLoading) {
             return;
         }
 
         isPemeriksaanFisikLoading = true;
 
         $.ajax({
+
             url: `/api/v2/emr/pengkajian/ri/pemeriksaanfisik/${kunjungan}`,
+
             type: 'GET',
+
             dataType: 'json',
 
             success: function (res) {
 
-                const tlt = res.data;
+                // ==================================================
+                // DATA API
+                // ==================================================
+                const data = normalizeData(res?.data);
 
-                if (!tlt) {
+                console.log(
+                    '========== GET PEMERIKSAAN FISIK =========='
+                );
+
+                console.log(
+                    'Data Pemeriksaan Fisik:',
+                    res?.data
+                );
+
+
+                // ==================================================
+                // TIDAK ADA DATA
+                // ==================================================
+                if (
+                    !res ||
+                    !res.data ||
+                    typeof res.data !== 'object'
+                ) {
+
+                    console.log(
+                        'Belum ada data Pemeriksaan Fisik.'
+                    );
+
                     return;
                 }
 
-                if (FormHelper.hasValue(tlt.DESKRIPSI)) {
-                    FormHelper.setValue(
-                        $section,
-                        'tatalaksana_terapi',
-                        tlt.DESKRIPSI
-                    );
-                }
+
+                // ==================================================
+                // LOAD SEMUA FIELD BERDASARKAN NAME
+                // ==================================================
+                const processedCheckboxGroups = new Set();
+
+                $form
+                    .find('input[name], textarea[name], select[name]')
+                    .each(function () {
+
+                        const $el = $(this);
+
+                        const name = $el.attr('name');
+
+                        if (!name) {
+                            return;
+                        }
+
+
+                        // ==================================================
+                        // CHECKBOX
+                        // ==================================================
+                        if (
+                            $el.is(
+                                'input[type="checkbox"]'
+                            )
+                        ) {
+
+                            // ----------------------------------------------
+                            // Jangan proses group checkbox berkali-kali
+                            // ----------------------------------------------
+                            if (
+                                processedCheckboxGroups.has(name)
+                            ) {
+                                return;
+                            }
+
+                            processedCheckboxGroups.add(name);
+
+
+                            // ----------------------------------------------
+                            // Ambil value dari database
+                            // ----------------------------------------------
+                            const value = getDataValue(
+                                data,
+                                name
+                            );
+
+
+                            // ----------------------------------------------
+                            // Jika field menggunakan single-checkbox
+                            // ----------------------------------------------
+                            const $group = $form.find(
+                                `input[name="${name}"]`
+                            );
+
+                            if (
+                                $group.hasClass(
+                                    'single-checkbox'
+                                )
+                            ) {
+
+                                FormHelper.setSingleCheckbox(
+                                    $form,
+                                    name,
+                                    value
+                                );
+
+                            }
+
+                            // ----------------------------------------------
+                            // Checkbox biasa
+                            // ----------------------------------------------
+                            else {
+
+                                FormHelper.setCheckbox(
+                                    $form,
+                                    name,
+                                    value
+                                );
+
+                            }
+
+                            return;
+                        }
+
+
+                        // ==================================================
+                        // TEXT / NUMBER / TEXTAREA / SELECT
+                        // ==================================================
+                        const value = getDataValue(
+                            data,
+                            name
+                        );
+
+
+                        // --------------------------------------------------
+                        // Jika key tidak ada di response,
+                        // jangan mengubah nilai HTML
+                        // --------------------------------------------------
+                        if (value === undefined) {
+                            return;
+                        }
+
+
+                        FormHelper.setValue(
+                            $form,
+                            name,
+                            value
+                        );
+
+                    });
+
+
+                console.log(
+                    'Pemeriksaan Fisik berhasil dimuat.'
+                );
+
+                console.log(
+                    '============================================'
+                );
             },
 
+
+            // ==========================================================
+            // ERROR
+            // ==========================================================
             error: function (xhr, status, error) {
 
                 console.error(
@@ -1444,53 +1662,127 @@
                 let message =
                     'Gagal mengambil data Pemeriksaan Fisik.';
 
-                if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
+                if (
+                    xhr.responseJSON?.message
+                ) {
+
+                    message =
+                        xhr.responseJSON.message;
+
                 }
 
                 console.warn(message);
             },
 
+
+            // ==========================================================
+            // COMPLETE
+            // ==========================================================
             complete: function () {
+
                 isPemeriksaanFisikLoading = false;
+
             }
+
         });
     }
+
 
     // ==========================================================
     // SIMPAN DATA
     // ==========================================================
-    function simpanTargetTerapi() {
+    function simpanPemeriksaanFisik() {
 
-        if (
-            !$form.length ||
-            isPemeriksaanFisikLoading ||
-            isPemeriksaanFisikSaving
-        ) {
+        if (!$form.length) {
             return;
         }
 
-        const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
-        });
+        // ======================================================
+        // MASIH LOAD DATA
+        // ======================================================
+        if (isPemeriksaanFisikLoading) {
+            return;
+        }
 
+        // ======================================================
+        // MASIH SAVING
+        //
+        // Jangan buang event.
+        // Tandai bahwa ada perubahan yang harus disimpan lagi.
+        // ======================================================
+        if (isPemeriksaanFisikSaving) {
+
+            isPemeriksaanFisikSavePending = true;
+
+            console.log(
+                'Save sedang berjalan -> tandai sebagai PENDING'
+            );
+
+            return;
+        }
+
+        // ======================================================
+        // AMBIL DATA FORM TERBARU
+        // ======================================================
+        const data = getFormDataByName(
+            $form,
+            {
+                NOKUNJ: kunjungan
+            }
+        );
+
+        console.log(
+            '========== SIMPAN PEMERIKSAAN FISIK =========='
+        );
+
+        console.log(
+            'Data:',
+            data
+        );
+
+        // ======================================================
+        // RESET PENDING
+        // Karena data terbaru akan dikirim sekarang.
+        // ======================================================
+        isPemeriksaanFisikSavePending = false;
+
+        // ======================================================
+        // LOCK
+        // ======================================================
         isPemeriksaanFisikSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/ri/pemeriksaanfisik/${kunjungan}/simpan`,
+
+            url:
+                `/api/v2/emr/pengkajian/ri/pemeriksaanfisik/${kunjungan}/simpan`,
+
             type: 'POST',
+
             data: data,
 
             headers: {
+
                 'X-CSRF-TOKEN': $(
                     'meta[name="csrf-token"]'
                 ).attr('content')
+
             },
 
+            // ==================================================
+            // SUCCESS
+            // ==================================================
             success: function (res) {
 
+                console.log(
+                    'Pemeriksaan Fisik berhasil disimpan.',
+                    res
+                );
+
             },
 
+            // ==================================================
+            // ERROR
+            // ==================================================
             error: function (xhr) {
 
                 let message =
@@ -1500,64 +1792,129 @@
                     xhr.status === 422 &&
                     xhr.responseJSON?.errors
                 ) {
+
                     message = Object
-                        .values(xhr.responseJSON.errors)
+                        .values(
+                            xhr.responseJSON.errors
+                        )
                         .flat()
                         .join('<br>');
+
                 }
-                else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
+                else if (
+                    xhr.responseJSON?.message
+                ) {
+
+                    message =
+                        xhr.responseJSON.message;
+
                 }
 
                 iziToast.error({
+
                     title: 'Validasi Gagal!',
+
                     message: message,
+
                     position: 'topRight'
+
                 });
+
             },
 
+            // ==================================================
+            // COMPLETE
+            // ==================================================
             complete: function () {
+
+                // Buka lock
                 isPemeriksaanFisikSaving = false;
+
+                // ==================================================
+                // ADA PERUBAHAN SELAMA SAVE BERJALAN?
+                // ==================================================
+                if (isPemeriksaanFisikSavePending) {
+
+                    console.log(
+                        'Ada SAVE PENDING -> simpan data terbaru.'
+                    );
+
+                    // Reset sebelum menjalankan save berikutnya
+                    isPemeriksaanFisikSavePending = false;
+
+                    // Beri kesempatan browser menyelesaikan
+                    // event/change/blur yang sedang berjalan.
+                    setTimeout(function () {
+
+                        simpanPemeriksaanFisik();
+
+                    }, 0);
+
+                }
+
             }
+
         });
+
     }
+
 
     // ==========================================================
     // AUTO SAVE
     // ==========================================================
+
     $(function () {
 
         if (!$form.length) {
+
+            console.warn(
+                'Form Pemeriksaan Fisik tidak ditemukan.'
+            );
+
             return;
         }
 
-        getTargetTerapi();
+
+        // ======================================================
+        // LOAD DATA TERLEBIH DAHULU
+        // ======================================================
+
+        getPemeriksaanFisik();
+
+
+        // ======================================================
+        // TEXT / NUMBER / DATE / TIME / TEXTAREA
+        //
+        // SAVE SAAT BLUR
+        // ======================================================
 
         $form.on(
             'blur',
-            'textarea,input',
+            'textarea, input:not([type="checkbox"]):not([type="radio"])',
             function () {
 
-                if (isPemeriksaanFisikLoading) {
-                    return;
-                }
+                simpanPemeriksaanFisik();
 
-                simpanTargetTerapi();
             }
         );
+
+
+        // ======================================================
+        // CHECKBOX / RADIO / SELECT
+        //
+        // SAVE SAAT CHANGE
+        // ======================================================
 
         $form.on(
             'change',
-            'select,input[type="checkbox"],input[type="radio"]',
+            'select, input[type="checkbox"], input[type="radio"]',
             function () {
 
-                if (isPemeriksaanFisikLoading) {
-                    return;
-                }
+                simpanPemeriksaanFisik();
 
-                simpanTargetTerapi();
             }
         );
+
     });
 
 })();

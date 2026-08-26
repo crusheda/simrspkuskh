@@ -11,7 +11,6 @@
         <i class="ri-stethoscope-line me-1"></i>
         Pengkajian Dokter
     </button>
-
     <button
         type="button"
         class="btn btn-success waves-effect waves-light collapsed"
@@ -25,19 +24,17 @@
         Pengkajian Keperawatan
     </button>
 </div>
-
-<div class="accordion mt-3" id="ridAccordion">
+<div class="accordion" id="ridAccordion">
     <div
-        class="multi-collapse collapse show"
+        class="multi-collapse collapse"
         data-bs-parent="#ridAccordion"
         id="riD_dokter"
         data-kunjungan="{{ $list['kunjungan'] }}"
         data-form-key="rid_dokter"
         data-url="{{ route('v2.emr.form.sub.rawat-inap.load', ['kunjungan' => $list['kunjungan'], 'formKey' => 'rid_dokter']) }}"
     >
-        <div class="form-content"></div>
+        <div class="form-content mt-3"></div>
     </div>
-
     <div
         class="multi-collapse collapse"
         data-bs-parent="#ridAccordion"
@@ -46,36 +43,69 @@
         data-form-key="rid_perawat"
         data-url="{{ route('v2.emr.form.sub.rawat-inap.load', ['kunjungan' => $list['kunjungan'], 'formKey' => 'rid_perawat']) }}"
     >
-        <div class="form-content"></div>
+        <div class="form-content mt-3"></div>
     </div>
 </div>
-
 <script>
     (function ($) {
         'use strict';
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE BUTTON
+        |--------------------------------------------------------------------------
+        |
+        | Saat awal kedua tombol aktif karena kedua accordion tertutup.
+        | Setelah salah satu accordion terbuka, tombol accordion tersebut
+        | akan disabled.
+        |
+        |--------------------------------------------------------------------------
+        */
 
         function updateRanapDewasaButton() {
             $('#btnDokter').prop(
                 'disabled',
                 $('#riD_dokter').hasClass('show')
             );
-
             $('#btnPerawat').prop(
                 'disabled',
                 $('#riD_perawat').hasClass('show')
             );
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | LOAD FORM
+        |--------------------------------------------------------------------------
+        */
+
         function loadRanapDewasaForm($section) {
+            if (!$section || !$section.length) {
+                return;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Jangan load ulang jika sudah pernah berhasil dimuat.
+            |--------------------------------------------------------------------------
+            */
+
             if (
-                $section.data('loaded') ||
-                $section.data('loading')
+                $section.data('loaded') === true ||
+                $section.data('loading') === true
             ) {
                 return;
             }
 
             const url = $section.data('url');
-            const $content = $section.find('.form-content');
+            const $content =
+                $section.find('.form-content');
+
+            /*
+            |--------------------------------------------------------------------------
+            | Validasi
+            |--------------------------------------------------------------------------
+            */
 
             if (!url || !$content.length) {
                 console.error(
@@ -84,92 +114,258 @@
                 return;
             }
 
-            $section.data('loading', true);
+            /*
+            |--------------------------------------------------------------------------
+            | Loading
+            |--------------------------------------------------------------------------
+            */
 
+            $section.data('loading', true);
             $content.html(`
                 <div class="text-center py-4">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Memuat...</span>
+                    <div
+                        class="spinner-border text-primary"
+                        role="status"
+                    >
+                        <span class="visually-hidden">
+                            Memuat...
+                        </span>
                     </div>
-                    <div class="mt-2">Memuat sub formulir...</div>
+                    <div class="mt-2">
+                        Memuat sub formulir...
+                    </div>
                 </div>
             `);
+
+            /*
+            |--------------------------------------------------------------------------
+            | AJAX GET
+            |--------------------------------------------------------------------------
+            */
 
             $.ajax({
                 url: url,
                 type: 'GET',
                 dataType: 'html',
+                cache: false
             })
-                .done(function (html) {
-                    /*
-                     * Hapus form panel lain supaya elemen dengan ID/name
-                     * yang sama tidak tampil bersama dalam DOM.
-                     */
-                    $('#ridAccordion')
-                        .find('.multi-collapse')
-                        .not($section)
-                        .find('.form-content')
-                        .empty();
+            .done(function (html) {
+                /*
+                |--------------------------------------------------------------------------
+                | Pastikan section masih terbuka.
+                |
+                | Kalau user sudah pindah ke form lain sebelum response
+                | selesai, response ini tidak ditampilkan.
+                |--------------------------------------------------------------------------
+                */
 
-                    $('#ridAccordion')
-                        .find('.multi-collapse')
-                        .not($section)
-                        .removeData('loaded');
-
-                    /*
-                     * Script inline pada form dokter/perawat serta modul
-                     * di dalamnya akan dijalankan setelah partial dipasang.
-                     */
-                    $content.empty().append(html);
-
-                    $section.data('loaded', true);
-                })
-                .fail(function (xhr) {
-                    console.error(
-                        'Gagal memuat form Rawat Inap Dewasa:',
-                        xhr.responseText
+                if (!$section.hasClass('show')) {
+                    console.log(
+                        '[RI] Response diabaikan karena section sudah ditutup:',
+                        $section.attr('id')
                     );
+                    return;
+                }
 
+                /*
+                |--------------------------------------------------------------------------
+                | Hapus content section lainnya.
+                |
+                | Ini penting supaya tidak ada elemen ID/name yang sama
+                | dari dokter dan perawat berada bersamaan di DOM.
+                |--------------------------------------------------------------------------
+                */
+
+                $('#ridAccordion')
+                    .find('.multi-collapse')
+                    .not($section)
+                    .find('.form-content')
+                    .empty();
+
+                $('#ridAccordion')
+                    .find('.multi-collapse')
+                    .not($section)
+                    .removeData('loaded');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Masukkan partial
+                |--------------------------------------------------------------------------
+                */
+
+                $content
+                    .empty()
+                    .append(html);
+
+                /*
+                |--------------------------------------------------------------------------
+                | Tandai sudah berhasil dimuat
+                |--------------------------------------------------------------------------
+                */
+
+                $section.data('loaded', true);
+                console.log(
+                    '[RI] Form berhasil dimuat:',
+                    $section.data('form-key')
+                );
+            })
+            .fail(function (xhr, status, error) {
+                /*
+                |--------------------------------------------------------------------------
+                | Kalau AJAX dibatalkan, jangan tampilkan error.
+                |--------------------------------------------------------------------------
+                */
+
+                if (status === 'abort') {
+                    console.log(
+                        '[RI] AJAX di-abort:',
+                        $section.data('form-key')
+                    );
+                    return;
+                }
+
+                console.error(
+                    'Gagal memuat form Rawat Inap Dewasa:',
+                    {
+                        status: status,
+                        error: error,
+                        response: xhr.responseText
+                    }
+                );
+
+                /*
+                |--------------------------------------------------------------------------
+                | Hanya tampilkan error jika section masih terbuka.
+                |--------------------------------------------------------------------------
+                */
+
+                if ($section.hasClass('show')) {
                     $content.html(`
                         <div class="alert alert-danger mb-0">
-                            Form gagal dimuat. Silakan coba kembali.
+                            <i class="ri-error-warning-line me-1"></i>
+                            Form gagal dimuat.
+                            Silakan coba kembali.
                         </div>
                     `);
-                })
-                .always(function () {
-                    $section.removeData('loading');
-                });
+                }
+            })
+            .always(function () {
+                $section.removeData('loading');
+            });
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | DOCUMENT READY
+        |--------------------------------------------------------------------------
+        */
+
         $(function () {
-            // Dokter adalah panel yang terbuka saat halaman ini pertama tampil.
-            loadRanapDewasaForm($('#riD_dokter'));
+            /*
+            |--------------------------------------------------------------------------
+            | PENTING:
+            |
+            | Tidak ada loadRanapDewasaForm() di sini.
+            |
+            | Jadi saat pertama kali halaman dibuka:
+            |
+            | - Dokter tidak otomatis GET
+            | - Perawat tidak otomatis GET
+            | - Kedua tombol tetap aktif
+            | - Kedua accordion tetap tertutup
+            |--------------------------------------------------------------------------
+            */
 
-            $('#ridAccordion').on(
-                'shown.bs.collapse',
-                '.multi-collapse',
-                function () {
-                    const $section = $(this);
-
-                    updateRanapDewasaButton();
-                    loadRanapDewasaForm($section);
-                    $section.find('.form-content').scrollTop(0);
-                }
-            );
-
-            $('#ridAccordion').on(
-                'hidden.bs.collapse',
-                '.multi-collapse',
-                function () {
-                    updateRanapDewasaButton();
-                    $(this).find('.form-content').scrollTop(0);
-                }
-            );
+            updateRanapDewasaButton();
 
             /*
-             * Scope checkbox ke .form-content milik panel yang aktif.
-             * Dokter tidak dapat menghapus pilihan checkbox Perawat.
-             */
+            |--------------------------------------------------------------------------
+            | ACCORDION SHOWN
+            |--------------------------------------------------------------------------
+            |
+            | Form baru di-load setelah accordion benar-benar terbuka.
+            |--------------------------------------------------------------------------
+            */
+
+            $('#ridAccordion')
+                .off(
+                    'shown.bs.collapse.ridRanap',
+                    '.multi-collapse'
+                )
+                .on(
+                    'shown.bs.collapse.ridRanap',
+                    '.multi-collapse',
+                    function () {
+                        const $section =
+                            $(this);
+
+                        console.log(
+                            '[RI] Accordion dibuka:',
+                            $section.attr('id')
+                        );
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Update tombol
+                        |--------------------------------------------------------------------------
+                        */
+
+                        updateRanapDewasaButton();
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Load form
+                        |--------------------------------------------------------------------------
+                        */
+
+                        loadRanapDewasaForm(
+                            $section
+                        );
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Scroll content ke atas
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $section
+                            .find('.form-content')
+                            .scrollTop(0);
+                    }
+                );
+
+            /*
+            |--------------------------------------------------------------------------
+            | ACCORDION HIDDEN
+            |--------------------------------------------------------------------------
+            */
+
+            $('#ridAccordion')
+                .off(
+                    'hidden.bs.collapse.ridRanap',
+                    '.multi-collapse'
+                )
+                .on(
+                    'hidden.bs.collapse.ridRanap',
+                    '.multi-collapse',
+                    function () {
+                        const $section =
+                            $(this);
+
+                        updateRanapDewasaButton();
+
+                        $section
+                            .find('.form-content')
+                            .scrollTop(0);
+                    }
+                );
+
+            /*
+            |--------------------------------------------------------------------------
+            | SINGLE CHECKBOX
+            |--------------------------------------------------------------------------
+            */
+
             $(document)
                 .off(
                     'change.ridSingleCheckbox',
@@ -189,9 +385,18 @@
                                 `input.single-checkbox[name="${this.name}"]`
                             )
                             .not(this)
-                            .prop('checked', false);
+                            .prop(
+                                'checked',
+                                false
+                            );
                     }
                 );
+
+            /*
+            |--------------------------------------------------------------------------
+            | SINGLE CHECKBOX BOS
+            |--------------------------------------------------------------------------
+            */
 
             $(document)
                 .off(
@@ -202,6 +407,12 @@
                     'change.ridSingleCheckboxBos',
                     '#ridAccordion .form-content .single-checkbox-bos',
                     function () {
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Tidak boleh uncheck semuanya.
+                        |--------------------------------------------------------------------------
+                        */
+
                         if (!this.checked) {
                             this.checked = true;
                             return;
@@ -213,9 +424,23 @@
                                 `input.single-checkbox-bos[name="${this.name}"]`
                             )
                             .not(this)
-                            .prop('checked', false);
+                            .prop(
+                                'checked',
+                                false
+                            );
                     }
                 );
+
+            /*
+            |--------------------------------------------------------------------------
+            | INITIAL STATE
+            |--------------------------------------------------------------------------
+            |
+            | Tidak ada form yang di-load.
+            |
+            | Kedua tombol aktif.
+            |--------------------------------------------------------------------------
+            */
 
             updateRanapDewasaButton();
         });
