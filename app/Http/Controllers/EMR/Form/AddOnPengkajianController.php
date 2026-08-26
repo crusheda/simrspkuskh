@@ -2626,4 +2626,337 @@ class AddOnPengkajianController extends Controller
             ], 500);
         }
     }
+
+    function getPemeriksaanObsgyn($KUNJUNGAN)
+    {
+        $data = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.sirmed_pemeriksaan_obsgyn',
+            [
+                'FISIK',
+                'OBSTETRI',
+                'GYNEKOLOGI',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function simpanPemeriksaanObsgyn(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.sirmed_pemeriksaan_obsgyn')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN
+                ],
+                [
+                    'PENDAFTARAN'  => DB::table('pendaftaran.kunjungan')->where('NOMOR', $request->NOKUNJ ?? $KUNJUNGAN)->value('NOPEN'),
+                    'FISIK' => $request->pfisik,
+                    'OBSTETRI' => $request->pobs,
+                    'GYNEKOLOGI' => $request->pgyn,
+
+                    'TANGGAL' => now(),
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Pemeriksaan Obsgyn berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Pemeriksaan Obsgyn gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    function getPenunjangLain($KUNJUNGAN)
+    {
+
+        $eeg = DB::table('medicalrecord.pemeriksaan_eeg')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->first([
+                'HASIL',
+                'KESIMPULAN',
+            ]);
+
+        $penunjang = DB::table('medicalrecord.sirmed_pemeriksaan_penunjang_lain')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->first([
+                'DESKRIPSI',
+            ]);
+
+        return response()->json([
+            'status' => true,
+            'data' => (object) [
+                'KUNJUNGAN'  => $KUNJUNGAN,
+                'HASIL'      => $eeg->HASIL ?? null,
+                'KESIMPULAN' => $eeg->KESIMPULAN ?? null,
+                'DESKRIPSI'  => $penunjang->DESKRIPSI ?? null,
+            ]
+        ]);
+    }
+
+    function simpanPenunjangLain(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.pemeriksaan_eeg')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN
+                ],
+                [
+                    'HASIL' => $request->usg_hasil,
+                    'KESIMPULAN' => $request->usg_kesimpulan,
+
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
+            );
+
+            DB::table('medicalrecord.sirmed_pemeriksaan_penunjang_lain')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN
+                ],
+                [
+                    'PENDAFTARAN'  => DB::table('pendaftaran.kunjungan')->where('NOMOR', $request->NOKUNJ ?? $KUNJUNGAN)->value('NOPEN'),
+                    'DESKRIPSI' => $request->penlain,
+
+                    'TANGGAL' => now(),
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Pemeriksaan Penunjang Lain berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Pemeriksaan Penunjang Lain gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getRiwayatNikah($kunjungan)
+    {
+        $riwayat_nikah = DB::table('medicalrecord.sirmed_riwayat_nikah as rn')
+            ->select('rn.*')
+            ->where('rn.KUNJUNGAN', $kunjungan)
+            ->where('rn.STATUS', 1)
+            ->get();
+
+        $data = [
+            'kunjungan' => $kunjungan,
+            'riw_nikah' => $riwayat_nikah,
+        ];
+
+        return response()->json($data);
+    }
+
+    public function simpanRiwayatNikah(Request $request, $KUNJUNGAN)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'tahun' => ['required'],
+            ],
+            [
+                'tahun.required' => 'Lama Pernikahan wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validasi gagal.',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        DB::table('medicalrecord.sirmed_riwayat_nikah')->insert([
+            'KUNJUNGAN'         => $KUNJUNGAN,
+            'LAMA_NIKAH'        => $request->tahun,
+            'KETERANGAN'        => $request->ket,
+            'OLEH'              => auth()->id(),
+            'TANGGAL'           => now(),
+            'STATUS'            => 1,
+        ]);
+
+        return response()->json(['message' => 'Data riwayat pernikahan berhasil disimpan.'], 200);
+    }
+
+    public function hapusRiwayatNikah($KUNJUNGAN, $ID)
+    {
+        DB::table('medicalrecord.sirmed_riwayat_nikah')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('ID', $ID)
+            ->update(['STATUS' => 0]);
+
+        return response()->json(['message' => 'Data riwayat pernikahan berhasil dihapus.'], 200);
+    }
+
+    public function getRiwayatKb($kunjungan)
+    {
+        $riwayat_kb = DB::table('medicalrecord.sirmed_riwayat_kb_menstruasi as rkm')
+            ->where('rkm.KUNJUNGAN', $kunjungan)
+            ->where('rkm.STATUS', 1)
+            ->first();
+
+        $data = [
+            'kunjungan' => $kunjungan,
+            'riw_kb'    => $riwayat_kb,
+        ];
+
+        return response()->json($data);
+    }
+
+
+    public function simpanRiwayatKb(Request $request, $KUNJUNGAN)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'kb_suntik'          => ['nullable'],
+                'kb_iud'             => ['nullable'],
+                'kb_pil'             => ['nullable'],
+                'kb_kondom'          => ['nullable'],
+                'kb_kalender'        => ['nullable'],
+                'kb_mow'             => ['nullable'],
+                'kb_mop'             => ['nullable'],
+                'kb_implan'          => ['nullable'],
+
+                'kb_keluhan'         => ['nullable'],
+                'menstruasi_teratur' => ['nullable'],
+                'menstruasi_keluhan' => ['nullable'],
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Validasi gagal.',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            // ==========================================================
+            // DATA YANG AKAN DISIMPAN
+            // ==========================================================
+
+            $data = [
+                'KB_SUNTIK'   => $request->kb_suntik == 1 ? 1 : 0,
+                'KB_IUD'      => $request->kb_iud == 1 ? 1 : 0,
+                'KB_PIL'      => $request->kb_pil == 1 ? 1 : 0,
+                'KB_KONDOM'   => $request->kb_kondom == 1 ? 1 : 0,
+                'KB_KALENDER' => $request->kb_kalender == 1 ? 1 : 0,
+                'KB_MOW'      => $request->kb_mow == 1 ? 1 : 0,
+                'KB_MOP'      => $request->kb_mop == 1 ? 1 : 0,
+                'KB_IMPLAN'   => $request->kb_implan == 1 ? 1 : 0,
+
+                'KB_KELUHAN'         => $request->kb_keluhan,
+
+                'MENSTRUASI_TERATUR' => $request->menstruasi_teratur,
+
+                'MENSTRUASI_KELUHAN' => $request->menstruasi_keluhan,
+
+                'OLEH'               => auth()->id(),
+                'TANGGAL'            => now(),
+                'STATUS'             => 1,
+            ];
+
+
+            // ==========================================================
+            // SIMPAN DENGAN UPDATE OR INSERT
+            // ==========================================================
+
+            $existing = DB::table('medicalrecord.sirmed_riwayat_kb_menstruasi')
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->first();
+
+            if ($existing) {
+
+                DB::table('medicalrecord.sirmed_riwayat_kb_menstruasi')
+                    ->where('ID', $existing->ID)
+                    ->update($data);
+
+            } else {
+
+                $data['KUNJUNGAN'] = $KUNJUNGAN;
+
+                DB::table('medicalrecord.sirmed_riwayat_kb_menstruasi')
+                    ->insert($data);
+            }
+
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Data riwayat KB dan menstruasi berhasil disimpan.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            \Log::error('Gagal menyimpan riwayat KB dan menstruasi', [
+                'KUNJUNGAN' => $KUNJUNGAN,
+                'error'     => $e->getMessage(),
+                'line'      => $e->getLine(),
+                'file'      => $e->getFile(),
+            ]);
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data riwayat KB dan menstruasi gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function hapusRiwayatKb($KUNJUNGAN, $ID)
+    {
+        DB::table('medicalrecord.sirmed_riwayat_kb_menstruasi')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('ID', $ID)
+            ->update([
+                'STATUS' => 0
+            ]);
+
+        return response()->json([
+            'message' => 'Data riwayat KB dan menstruasi berhasil dihapus.'
+        ], 200);
+    }
+
 }

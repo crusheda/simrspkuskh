@@ -1,19 +1,21 @@
-<div class="row align-items-center" id="form_target_terapi">
-    <div class="col-md-12 mb-2">
-        <div class="form-group">
-            <h4 class="mb-0 text-danger">
-                Target Terapi
-            </h4>
+<div class="row align-items-center" id="form_pemeriksaan_obsgyn">
+    <div class="col-md-12 mb-1">
+        <h4 class="mb-3 text-danger">Pemeriksaan</h4>
+        <div class="mb-3">
+            <h6>Pemeriksaan Fisik</h6>
+            <textarea class="form-control" name="pfisik" rows="3"></textarea>
         </div>
     </div>
-
-    <div class="col-md-12">
-        <div class="form-group">
-            <textarea
-                class="form-control"
-                name="target_terapi"
-                rows="2"
-                placeholder="Masukkan target terapi"></textarea>
+    <div class="col-md-12 mb-1">
+        <div class="mb-3">
+            <h6>Pemeriksaan Obstetri</h6>
+            <textarea class="form-control" name="pobs" rows="3"></textarea>
+        </div>
+    </div>
+    <div class="col-md-12 mb-1">
+        <div class="mb-3">
+            <h6>Pemeriksaan Gynekologi</h6>
+            <textarea class="form-control" name="pgyn" rows="3"></textarea>
         </div>
     </div>
 </div>
@@ -23,25 +25,25 @@
     'use strict';
 
     const $section = $(@json($section));
-    const $form = $section.find('#form_target_terapi');
+    const $form = $section.find('#form_pemeriksaan_obsgyn');
 
-    let isTargetTerapiLoading = false;
-    let isTargetTerapiSaving = false;
+    let isPemeriksaanObsgynLoading = false;
+    let isPemeriksaanObsgynSaving = false;
 
     // ==========================================================
     // GET DATA
     // ==========================================================
-    function getTargetTerapi() {
+    function getPemeriksaanObsgyn() {
 
         if (!$form.length) {
-            console.warn('Form Target Terapi tidak ditemukan.');
+            console.warn('Form Pemeriksaan Obsgyn tidak ditemukan.');
             return;
         }
 
-        isTargetTerapiLoading = true;
+        isPemeriksaanObsgynLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/targetterapi/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/pobgn/${kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -53,24 +55,34 @@
                     return;
                 }
 
-                if (FormHelper.hasValue(tlt.DESKRIPSI)) {
-                    FormHelper.setValue(
-                        $section,
-                        'target_terapi',
-                        tlt.DESKRIPSI
-                    );
-                }
+                FormHelper.setValue(
+                    $section,
+                    'pfisik',
+                    tlt.FISIK
+                );
+                FormHelper.setValue(
+                    $section,
+                    'pobs',
+                    tlt.OBSTETRI
+                );
+                FormHelper.setValue(
+                    $section,
+                    'pgyn',
+                    tlt.GYNEKOLOGI
+                );
+                // if (FormHelper.hasValue(tlt.FISIK)) {
+                // }
             },
 
             error: function (xhr, status, error) {
 
                 console.error(
-                    'Error Target Terapi:',
+                    'Error Pemeriksaan Obsgyn:',
                     xhr.responseText || error
                 );
 
                 let message =
-                    'Gagal mengambil data Target Terapi.';
+                    'Gagal mengambil data Pemeriksaan Obsgyn.';
 
                 if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
@@ -80,7 +92,7 @@
             },
 
             complete: function () {
-                isTargetTerapiLoading = false;
+                isPemeriksaanObsgynLoading = false;
             }
         });
     }
@@ -88,12 +100,12 @@
     // ==========================================================
     // SIMPAN DATA
     // ==========================================================
-    function simpanTargetTerapi() {
+    function simpanPemeriksaanObsgyn() {
 
         if (
             !$form.length ||
-            isTargetTerapiLoading ||
-            isTargetTerapiSaving
+            isPemeriksaanObsgynLoading ||
+            isPemeriksaanObsgynSaving
         ) {
             return;
         }
@@ -102,10 +114,10 @@
             NOKUNJ: kunjungan
         });
 
-        isTargetTerapiSaving = true;
+        isPemeriksaanObsgynSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/targetterapi/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/pobgn/${kunjungan}/simpan`,
             type: 'POST',
             data: data,
 
@@ -122,7 +134,7 @@
             error: function (xhr) {
 
                 let message =
-                    'Data Target Terapi gagal disimpan.';
+                    'Data Pemeriksaan Obsgyn gagal disimpan.';
 
                 if (
                     xhr.status === 422 &&
@@ -145,7 +157,7 @@
             },
 
             complete: function () {
-                isTargetTerapiSaving = false;
+                isPemeriksaanObsgynSaving = false;
             }
         });
     }
@@ -159,18 +171,20 @@
             return;
         }
 
-        getTargetTerapi();
+        console.log($section);
+
+        getPemeriksaanObsgyn();
 
         $form.on(
             'blur',
             'textarea,input',
             function () {
 
-                if (isTargetTerapiLoading) {
+                if (isPemeriksaanObsgynLoading) {
                     return;
                 }
 
-                simpanTargetTerapi();
+                simpanPemeriksaanObsgyn();
             }
         );
 
@@ -179,11 +193,11 @@
             'select,input[type="checkbox"],input[type="radio"]',
             function () {
 
-                if (isTargetTerapiLoading) {
+                if (isPemeriksaanObsgynLoading) {
                     return;
                 }
 
-                simpanTargetTerapi();
+                simpanPemeriksaanObsgyn();
             }
         );
     });

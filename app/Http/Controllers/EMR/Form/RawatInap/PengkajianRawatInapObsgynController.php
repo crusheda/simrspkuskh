@@ -124,4 +124,10 @@ class PengkajianRawatInapObsgynController extends Controller
 
         return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.obsgyn.index')->with('list',$data);
     }
+
+    function simpanFormPerawatRIO(Request $request)
+    {
+        // print_r($request->all());
+        // die();
+    }
 }

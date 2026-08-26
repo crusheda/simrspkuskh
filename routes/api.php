@@ -152,6 +152,14 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     Route::get('emr/pengkajian/riwayat_obstetri/{kunjungan}',[AddOnPengkajianController::class, 'getRiwayatObstetri']);
                     Route::post('emr/pengkajian/riwayat_obstetri/{kunjungan}/simpan',[AddOnPengkajianController::class, 'simpanRiwayatObstetri']);
                     Route::delete('emr/pengkajian/riwayat_obstetri/{kunjungan}/hapus/{id}',[AddOnPengkajianController::class, 'hapusRiwayatObstetri']);
+                // RIWAYAT PERNIKAHAN
+                    Route::get('emr/pengkajian/riwayat_nikah/{kunjungan}',[AddOnPengkajianController::class, 'getRiwayatNikah']);
+                    Route::post('emr/pengkajian/riwayat_nikah/{kunjungan}/simpan',[AddOnPengkajianController::class, 'simpanRiwayatNikah']);
+                    Route::delete('emr/pengkajian/riwayat_nikah/{kunjungan}/hapus/{id}',[AddOnPengkajianController::class, 'hapusRiwayatNikah']);
+                // RIWAYAT MENSTRUASI KB
+                    Route::get('emr/pengkajian/riwayat_kb_mens/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatKb']);
+                    Route::post('emr/pengkajian/riwayat_kb_mens/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanRiwayatKb']);
+                    Route::delete('emr/pengkajian/riwayat_kb_mens/{kunjungan}/hapus/{id}', [AddOnPengkajianController::class, 'hapusRiwayatKb']);
                 // SKRINING
                     // NYERI
                         Route::get('emr/pengkajian/skrining/nyeri/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningNyeri']);
@@ -200,6 +208,12 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // DISCHARGE PLANNING
                     Route::get('emr/pengkajian/dischargeplanning/{kunjungan}', [AddOnPengkajianController::class, 'getDischargePlanning']);
                     Route::post('emr/pengkajian/dischargeplanning/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanDischargePlanning']);
+                // PEMERIKSAAN OBSGYN
+                    Route::get('emr/pengkajian/pobgn/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanObsgyn']);
+                    Route::post('emr/pengkajian/pobgn/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanObsgyn']);
+                // PENUNJANG LAIN
+                    Route::get('emr/pengkajian/penunjanglain/{kunjungan}', [AddOnPengkajianController::class, 'getPenunjangLain']);
+                    Route::post('emr/pengkajian/penunjanglain/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPenunjangLain']);
 
                 // KHUSUS RAWAT INAP
                     // KRITERIA PULANG

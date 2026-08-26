@@ -1,19 +1,21 @@
-<div class="row align-items-center" id="form_target_terapi">
-    <div class="col-md-12 mb-2">
-        <div class="form-group">
-            <h4 class="mb-0 text-danger">
-                Target Terapi
-            </h4>
+<div class="row align-items-center" id="form_penunjang_lain">
+    <div class="col-md-12 mb-1">
+        <h4 class="text-warning">Pemeriksaan USG</h4>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <h6>Hasil Pemeriksaan</h6>
+                <textarea class="form-control" name="usg_hasil" rows="3"></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+                <h6>Kesimpulan</h6>
+                <textarea class="form-control" name="usg_kesimpulan" rows="3"></textarea>
+            </div>
         </div>
     </div>
-
-    <div class="col-md-12">
-        <div class="form-group">
-            <textarea
-                class="form-control"
-                name="target_terapi"
-                rows="2"
-                placeholder="Masukkan target terapi"></textarea>
+    <div class="col-md-12 mb-1">
+        <div class="mb-3">
+            <h6>Pemeriksaan Penunjang Lainnya</h6>
+            <textarea class="form-control" name="penlain" rows="3"></textarea>
         </div>
     </div>
 </div>
@@ -23,25 +25,25 @@
     'use strict';
 
     const $section = $(@json($section));
-    const $form = $section.find('#form_target_terapi');
+    const $form = $section.find('#form_penunjang_lain');
 
-    let isTargetTerapiLoading = false;
-    let isTargetTerapiSaving = false;
+    let isPenunjangLainLoading = false;
+    let isPenunjangLainSaving = false;
 
     // ==========================================================
     // GET DATA
     // ==========================================================
-    function getTargetTerapi() {
+    function getPenunjangLain() {
 
         if (!$form.length) {
-            console.warn('Form Target Terapi tidak ditemukan.');
+            console.warn('Form Penunjang Lain tidak ditemukan.');
             return;
         }
 
-        isTargetTerapiLoading = true;
+        isPenunjangLainLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/targetterapi/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/penunjanglain/${kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -53,24 +55,34 @@
                     return;
                 }
 
-                if (FormHelper.hasValue(tlt.DESKRIPSI)) {
-                    FormHelper.setValue(
-                        $section,
-                        'target_terapi',
-                        tlt.DESKRIPSI
-                    );
-                }
+                FormHelper.setValue(
+                    $section,
+                    'usg_hasil',
+                    tlt.HASIL
+                );
+                FormHelper.setValue(
+                    $section,
+                    'usg_kesimpulan',
+                    tlt.KESIMPULAN
+                );
+                FormHelper.setValue(
+                    $section,
+                    'penlain',
+                    tlt.DESKRIPSI
+                );
+                // if (FormHelper.hasValue(tlt.FISIK)) {
+                // }
             },
 
             error: function (xhr, status, error) {
 
                 console.error(
-                    'Error Target Terapi:',
+                    'Error Penunjang Lain:',
                     xhr.responseText || error
                 );
 
                 let message =
-                    'Gagal mengambil data Target Terapi.';
+                    'Gagal mengambil data Penunjang Lain.';
 
                 if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
@@ -80,7 +92,7 @@
             },
 
             complete: function () {
-                isTargetTerapiLoading = false;
+                isPenunjangLainLoading = false;
             }
         });
     }
@@ -88,12 +100,12 @@
     // ==========================================================
     // SIMPAN DATA
     // ==========================================================
-    function simpanTargetTerapi() {
+    function simpanPenunjangLain() {
 
         if (
             !$form.length ||
-            isTargetTerapiLoading ||
-            isTargetTerapiSaving
+            isPenunjangLainLoading ||
+            isPenunjangLainSaving
         ) {
             return;
         }
@@ -102,10 +114,10 @@
             NOKUNJ: kunjungan
         });
 
-        isTargetTerapiSaving = true;
+        isPenunjangLainSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/targetterapi/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/penunjanglain/${kunjungan}/simpan`,
             type: 'POST',
             data: data,
 
@@ -122,7 +134,7 @@
             error: function (xhr) {
 
                 let message =
-                    'Data Target Terapi gagal disimpan.';
+                    'Data Penunjang Lain gagal disimpan.';
 
                 if (
                     xhr.status === 422 &&
@@ -145,7 +157,7 @@
             },
 
             complete: function () {
-                isTargetTerapiSaving = false;
+                isPenunjangLainSaving = false;
             }
         });
     }
@@ -159,18 +171,20 @@
             return;
         }
 
-        getTargetTerapi();
+        console.log($section);
+
+        getPenunjangLain();
 
         $form.on(
             'blur',
             'textarea,input',
             function () {
 
-                if (isTargetTerapiLoading) {
+                if (isPenunjangLainLoading) {
                     return;
                 }
 
-                simpanTargetTerapi();
+                simpanPenunjangLain();
             }
         );
 
@@ -179,11 +193,11 @@
             'select,input[type="checkbox"],input[type="radio"]',
             function () {
 
-                if (isTargetTerapiLoading) {
+                if (isPenunjangLainLoading) {
                     return;
                 }
 
-                simpanTargetTerapi();
+                simpanPenunjangLain();
             }
         );
     });

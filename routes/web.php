@@ -60,7 +60,7 @@ Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'v2', 'as' => ''], fu
         // ANTRIAN POLI
         Route::get('display/antrian/admisi', [AntrianAdmisiController::class, 'indexV2'])->name('v2.display.antrian.admisi');
         // FARMASI
-        Route::get('display', [DisplayFarmasiController::class, 'indexV2'])->name('v2.display.antrian.farmasi.display');
+        // Route::get('display', [DisplayFarmasiController::class, 'indexV2'])->name('v2.display.antrian.farmasi.display');
         // RATING
         Route::get('display/rating', [RatingController::class, 'indexV2'])->name('v2.display.rating');
         Route::get('display/rating/laporan/{bulan}', [RatingController::class, 'laporanV2'])->name('v2.display.rating.laporan');
@@ -120,7 +120,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
         // ANTRIAN POLI
         Route::get('display/antrian/admisi', [AntrianAdmisiController::class, 'index'])->name('display.antrian.admisi.index');
         // FARMASI
-        Route::get('display', [DisplayFarmasiController::class, 'index'])->name('display.antrian.farmasi.display.index');
+        // Route::get('display', [DisplayFarmasiController::class, 'index'])->name('display.antrian.farmasi.display.index');
         // RATING
         Route::get('display/rating', [RatingController::class, 'index'])->name('display.rating.index');
         Route::get('display/rating/laporan/{bulan}', [RatingController::class, 'laporan'])->name('display.rating.laporan');

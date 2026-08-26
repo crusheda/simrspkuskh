@@ -1,146 +1,7 @@
-<div class="form-wrapper">
+<div class="form-wrapper" data-rio-form>
     <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN KEPERAWATAN <b class="text-danger">RAWAT INAP</b> <b class="text-warning">OBSGYN</b></center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-danger">Diisi Oleh Bidan</a>)</center></h1>
     <div class="form-content">
-        <div class="row">
-            <div class="col-md-12 mb-2">
-                <h4 class="text-danger">Riwayat Pasien</h4>
-                <div class="row mb-2">
-                    <h6>Sumber Data</h6>
-                    <div class="col-md-3">
-                        <div class="form-check">
-                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="1">
-                            <label class="form-check-label">
-                                Autoanamnesis
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-check">
-                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="2" checked>
-                            <label class="form-check-label">
-                                Alloanamnesis
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-1">
-                        <input type="text" class="form-control" name="anamnesis_oleh" id="anamnesis_oleh" placeholder="Oleh.....">
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col-md-6">
-                        <h6>Rujukan</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="rujukan" value="0" id="rujukan_tidak">
-                                <label class="form-check-label">
-                                    Tidak
-                                </label>
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="rujukan" value="1" id="rujukan_ya">
-                                <label class="form-check-label" for="rujukan_ya">
-                                    Ya
-                                </label>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <h6>Asal Rujukan</h6>
-                                    <div class="col-md-6">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <div class="form-check me-2">
-                                                <input class="form-check-input" type="checkbox" name="rujukan_rs" value="1"id="rujukan_rs">
-                                                <label class="form-check-label">
-                                                    RS
-                                                </label>
-                                            </div>
-                                            <input type="text" class="form-control form-control-sm" name="rujukan_rs_ket">
-                                        </div>
-                                        <div class="d-flex align-items-center mb-2">
-                                            <div class="form-check me-2">
-                                                <input class="form-check-input" type="checkbox" name="rujukan_dokter" value="1" id="rujukan_dokter">
-                                                <label class="form-check-label">
-                                                    Dokter
-                                                </label>
-                                            </div>
-                                            <input type="text" class="form-control form-control-sm" name="rujukan_dokter_ket">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <div class="form-check me-2">
-                                                <input class="form-check-input" type="checkbox" name="rujukan_puskesmas" value="1" id="rujukan_puskesmas">
-                                                <label class="form-check-label">
-                                                    Puskesmas
-                                                </label>
-                                            </div>
-                                            <input type="text" class="form-control form-control-sm" name="rujukan_puskesmas_ket">
-                                        </div>
-                                        <div class="d-flex align-items-center mb-2">
-                                            <div class="form-check me-2">
-                                                <input class="form-check-input" type="checkbox" name="rujukan_bidan" value="1" id="rujukan_bidan">
-                                                <label class="form-check-label">
-                                                    Bidan
-                                                </label>
-                                            </div>
-                                            <input type="text" class="form-control form-control-sm" name="rujukan_bidan_ket">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <h6>Diagnosis Dirujuk</h6>
-                                <input type="text" class="form-control form-control-sm" name="diagnosis_dirujuk_ket">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        {{-- CARA MASUK --}}
-                        <h6 class="mb-2">
-                            Cara masuk ke Rawat Inap
-                        </h6>
-                        <div class="d-flex align-items-center">
-                            <div class="form-check">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="cara_masuk" value="1" id="cara_masuk_kursi">
-                                <label class="form-check-label" for="cara_masuk_kursi">
-                                    Kursi Roda
-                                </label>
-                            </div>
-                            <input type="text" class="form-control form-control-sm d-inline-block ms-3" name="cara_masuk_kursi_ket" style="max-width: 250px;">
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="cara_masuk" value="2" id="cara_masuk_brankard">
-                            <label class="form-check-label" for="cara_masuk_brankard">
-                                Brankard
-                            </label>
-                        </div>
-                        {{-- PERNAH DIRAWAT --}}
-                        <h6 class="mb-2">
-                            Pernah dirawat di RS PKU Muhammadiyah Sukoharjo
-                        </h6>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pernah_dirawat" value="0" id="pernah_dirawat_tidak">
-                            <label class="form-check-label" for="pernah_dirawat_tidak">
-                                Tidak
-                            </label>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <div class="form-check">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="pernah_dirawat" value="1" id="pernah_dirawat_ya">
-                                <label class="form-check-label" for="pernah_dirawat_ya">
-                                    Ya, Diagnosa
-                                </label>
-                            </div>
-                            <input type="text" class="form-control form-control-sm mx-2" name="pernah_dirawat_diagnosa" style="max-width: 250px;">
-                            <label class="form-label mb-0 me-2">
-                                Kapan
-                            </label>
-                            <input type="date" class="form-control form-control-sm" name="pernah_dirawat_kapan" style="max-width: 160px;">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-12 mb-2">
                 <h4 class="text-danger">Anamnesis</h4>
@@ -186,206 +47,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <div class="card card-body border border-dashed border-primary">
-                            <h6>Status Pernikahan</h6>
-                            <div class="row g-2 mb-2">
-                                {{-- Tahun --}}
-                                <div class="col-md-2">
-                                    <label class="form-label">Tahun</label>
-                                    <input type="number" class="form-control form-control-sm" name="nikah_tahun" id="nikah_tahun" min="1" max="100" placeholder="Tahun">
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Ket. Tempat</label>
-                                    <input type="text" class="form-control form-control-sm" name="nikah_ket" id="nikah_ket" placeholder="Keterangan">
-                                </div>
-                                <div class="col-md-7 d-flex align-items-end">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-success btn-sm" id="btnTambahObstetri" onclick="tambahRiwayatObstetri()">
-                                            <i class="ri-add-box-line"></i>
-                                            Tambah
-                                        </button>
-                                        <button type="button" class="btn btn-subtle-warning btn-sm" id="btnRefreshObstetri" onclick="getRiwayatObstetri()">
-                                            <i class="ri-refresh-line"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="table-responsive mt-2">
-                                <table class="table table-bordered table-sm align-middle mb-1">
-                                    <thead>
-                                        <tr class="table-success">
-                                            <th>No</th>
-                                            <th>Lama Menikah (Tahun)</th>
-                                            <th>Keterangan</th>
-                                            <th class="text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tblNikahBody">
-                                        <tr>
-                                            <td colspan="11" class="text-center">
-                                                Tidak ada data
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="card card-body border border-dashed border-primary">
-                            <h6>Riwayat Obstetri</h6>
-                            <div class="row g-2 mb-2">
-                                {{-- Tahun --}}
-                                <div class="col-md-2">
-                                    <label class="form-label">Tahun</label>
-                                    <input type="number" class="form-control form-control-sm" name="obstetri_tahun" id="obstetri_tahun" min="1900" max="2100" placeholder="Tahun">
-                                </div>
-                                {{-- Usia Kehamilan --}}
-                                <div class="col-md-2">
-                                    <label class="form-label">Usia Kehamilan</label>
-                                    <select class="form-select form-select-sm" name="obstetri_usia_kehamilan" id="obstetri_usia_kehamilan">
-                                        <option value="">Pilih</option>
-                                        @foreach ($list['usia_kehamilan'] as $item)
-                                            <option value="{{ $item->ID }}">
-                                                {{ $item->DESKRIPSI }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                {{-- Jenis Persalinan --}}
-                                <div class="col-md-2">
-                                    <label class="form-label">Persalinan</label>
-                                    <select class="form-select form-select-sm" name="obstetri_jenis_persalinan" id="obstetri_jenis_persalinan">
-                                        <option value="">Pilih</option>
-                                        @foreach ($list['jenis_persalinan'] as $item)
-                                            <option value="{{ $item->ID }}">
-                                                {{ $item->DESKRIPSI }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                {{-- Penyulit --}}
-                                <div class="col-md-2">
-                                    <label class="form-label">Penyulit</label>
-                                    <select class="form-select form-select-sm" name="obstetri_penyulit" id="obstetri_penyulit">
-                                        <option value="">Pilih</option>
-                                        @foreach ($list['penyulit'] as $item)
-                                            <option value="{{ $item->ID }}">
-                                                {{ $item->DESKRIPSI }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                {{-- Jenis Kelamin --}}
-                                <div class="col-md-2">
-                                    <label class="form-label">JK</label>
-                                    <select class="form-select form-select-sm" name="obstetri_jenis_kelamin" id="obstetri_jenis_kelamin">
-                                        <option value="">Pilih</option>
-                                        @foreach ($list['jenis_kelamin'] as $item)
-                                            <option value="{{ $item->ID }}">
-                                                {{ $item->DESKRIPSI }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                {{-- Berat Badan --}}
-                                <div class="col-md-2">
-                                    <label class="form-label">BB (gram)</label>
-                                    <input type="number" class="form-control form-control-sm" name="obstetri_berat_badan" id="obstetri_berat_badan" placeholder="BB">
-                                </div>
-                            </div>
-                            <div class="row g-2 mb-2">
-                                {{-- Penolong --}}
-                                <div class="col-md-3">
-                                    <label class="form-label">Penolong</label>
-                                    <select class="form-select form-select-sm" name="obstetri_penolong" id="obstetri_penolong">
-                                        <option value="">Pilih</option>
-                                        @foreach ($list['penolong'] as $item)
-                                            <option value="{{ $item->ID }}">
-                                                {{ $item->DESKRIPSI }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                {{-- Keterangan Penolong --}}
-                                <div class="col-md-3">
-                                    <label class="form-label">Ket. Penolong</label>
-                                    <input type="text" class="form-control form-control-sm" name="obstetri_keterangan_penolong" id="obstetri_keterangan_penolong" placeholder="Keterangan">
-                                </div>
-                                {{-- Tempat --}}
-                                <div class="col-md-3">
-                                    <label class="form-label">Tempat</label>
-                                    <select class="form-select form-select-sm" name="obstetri_tempat" id="obstetri_tempat">
-                                        <option value="">Pilih</option>
-                                        @foreach ($list['tempat'] as $item)
-                                            <option value="{{ $item->ID }}">
-                                                {{ $item->DESKRIPSI }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                {{-- Keterangan Tempat --}}
-                                <div class="col-md-3">
-                                    <label class="form-label">Ket. Tempat</label>
-                                    <input type="text" class="form-control form-control-sm" name="obstetri_keterangan_tempat" id="obstetri_keterangan_tempat" placeholder="Keterangan">
-                                </div>
-                            </div>
-                            <div class="row g-2 mb-2">
-                                {{-- Keadaan Saat Ini --}}
-                                <div class="col-md-4">
-                                    <label class="form-label">Keadaan Saat Ini</label>
-                                    <select class="form-select form-select-sm" name="obstetri_keadaan_saat_ini" id="obstetri_keadaan_saat_ini">
-                                        <option value="">Pilih</option>
-                                        @foreach ($list['keadaan_sat_ini'] as $item)
-                                            <option value="{{ $item->ID }}">
-                                                {{ $item->DESKRIPSI }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                {{-- Tombol --}}
-                                <div class="col-md-8 d-flex align-items-end">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-success btn-sm" id="btnTambahObstetri" onclick="tambahRiwayatObstetri()">
-                                            <i class="ri-add-box-line"></i>
-                                            Tambah
-                                        </button>
-                                        <button type="button" class="btn btn-subtle-warning btn-sm" id="btnRefreshObstetri" onclick="getRiwayatObstetri()">
-                                            <i class="ri-refresh-line"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            {{-- Tabel --}}
-                            <div class="table-responsive mt-2">
-                                <table class="table table-bordered table-sm align-middle mb-1">
-                                    <thead>
-                                        <tr class="table-success">
-                                            <th>No</th>
-                                            <th>Tahun</th>
-                                            <th>Usia Kehamilan</th>
-                                            <th>Persalinan</th>
-                                            <th>Penyulit</th>
-                                            <th>Penolong</th>
-                                            <th>Tempat</th>
-                                            <th>JK</th>
-                                            <th>BB</th>
-                                            <th>Keadaan Saat Ini</th>
-                                            <th class="text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tblObstetriBody">
-                                        <tr>
-                                            <td colspan="11" class="text-center">
-                                                Tidak ada data
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <h6>Riwayat Penyakit Dahulu</h6>
@@ -406,11 +67,11 @@
                             <textarea class="form-control" name="rpd" rows="1"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold"> Riwayat KB </label>
+                            <h6>Riwayat KB</h6>
 
                             <div class="row">
                                 <!-- Suntik -->
-                                <div class="col-md-3 mb-2">
+                                <div class="col mb-2">
                                     <div class="form-check">
                                         <input class="form-check-input check-primary" type="checkbox" name="kb_suntik" id="kb_suntik" value="1" />
                                         <label class="form-check-label" for="kb_suntik"> Suntik </label>
@@ -418,7 +79,7 @@
                                 </div>
 
                                 <!-- IUD -->
-                                <div class="col-md-3 mb-2">
+                                <div class="col mb-2">
                                     <div class="form-check">
                                         <input class="form-check-input check-primary" type="checkbox" name="kb_iud" id="kb_iud" value="1" />
                                         <label class="form-check-label" for="kb_iud"> IUD </label>
@@ -426,7 +87,7 @@
                                 </div>
 
                                 <!-- Pil -->
-                                <div class="col-md-3 mb-2">
+                                <div class="col mb-2">
                                     <div class="form-check">
                                         <input class="form-check-input check-primary" type="checkbox" name="kb_pil" id="kb_pil" value="1" />
                                         <label class="form-check-label" for="kb_pil"> Pil </label>
@@ -434,7 +95,7 @@
                                 </div>
 
                                 <!-- Kondom -->
-                                <div class="col-md-3 mb-2">
+                                <div class="col mb-2">
                                     <div class="form-check">
                                         <input class="form-check-input check-primary" type="checkbox" name="kb_kondom" id="kb_kondom" value="1" />
                                         <label class="form-check-label" for="kb_kondom"> Kondom </label>
@@ -442,7 +103,7 @@
                                 </div>
 
                                 <!-- Kalender -->
-                                <div class="col-md-3 mb-2">
+                                <div class="col mb-2">
                                     <div class="form-check">
                                         <input class="form-check-input check-primary" type="checkbox" name="kb_kalender"
                                             id="kb_kalender" value="1" />
@@ -451,7 +112,7 @@
                                 </div>
 
                                 <!-- MOW -->
-                                <div class="col-md-3 mb-2">
+                                <div class="col mb-2">
                                     <div class="form-check">
                                         <input class="form-check-input check-primary" type="checkbox" name="kb_mow" id="kb_mow" value="1" />
                                         <label class="form-check-label" for="kb_mow"> MOW </label>
@@ -459,7 +120,7 @@
                                 </div>
 
                                 <!-- MOP -->
-                                <div class="col-md-3 mb-2">
+                                <div class="col mb-2">
                                     <div class="form-check">
                                         <input class="form-check-input check-primary" type="checkbox" name="kb_mop" id="kb_mop" value="1" />
                                         <label class="form-check-label" for="kb_mop"> MOP </label>
@@ -467,7 +128,7 @@
                                 </div>
 
                                 <!-- Implan -->
-                                <div class="col-md-3 mb-2">
+                                <div class="col mb-2">
                                     <div class="form-check">
                                         <input class="form-check-input check-primary" type="checkbox" name="kb_implan" id="kb_implan" value="1" />
                                         <label class="form-check-label" for="kb_implan"> Implan </label>
@@ -491,6 +152,15 @@
                         @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_penggunaan_obat')
                     </div>
                     <div class="col-md-12 mb-3">
+                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_menstruasi_kb')
+                    </div>
+                    <div class="col-md-12 mb-1">
+                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_pernikahan')
+                    </div>
+                    <div class="col-md-12 mb-1">
+                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_obstetri')
+                    </div>
+                    <div class="col-md-12 mb-3">
                         @include(
                             'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
                             [
@@ -507,8 +177,8 @@
                             ]
                         )
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Pemeriksaan Fisik</label>
+                    <div class="col-md-12 mb-3">
+                        <h4 class="text-danger">Pemeriksaan Fisik</h4>
 
                         <!-- MATA -->
                         <div class="row align-items-center mb-2">
@@ -516,7 +186,7 @@
                                 <label class="form-label mb-0">Mata</label>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="mata" value="1">
                                     <label class="form-check-label">
@@ -525,13 +195,10 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check flex-shrink-0">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="mata" value="2">
-                                        <label class="form-check-label">
-                                            Lainnya
-                                        </label>
                                     </div>
                                     <input type="text" class="form-control" name="mata_keterangan" id="mata_keterangan" placeholder="Keterangan...">
                                 </div>
@@ -544,7 +211,7 @@
                                 <label class="form-label mb-0">Sklera</label>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="1">
                                     <label class="form-check-label">
@@ -553,7 +220,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="2">
                                     <label class="form-check-label">
@@ -562,7 +229,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="3">
                                     <label class="form-check-label">
@@ -571,7 +238,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="4">
                                     <label class="form-check-label">
@@ -587,7 +254,7 @@
                                 <label class="form-label mb-0">Kepala</label>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kepala" value="1">
                                     <label class="form-check-label">
@@ -596,7 +263,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check flex-shrink-0">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kepala" value="2">
@@ -612,7 +279,7 @@
                                 <label class="form-label mb-0">Telinga</label>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="telinga" value="1">
                                     <label class="form-check-label">
@@ -621,7 +288,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check flex-shrink-0">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="telinga" value="2">
@@ -637,7 +304,7 @@
                                 <label class="form-label mb-0">Hidung</label>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="hidung" value="1">
                                     <label class="form-check-label">
@@ -646,7 +313,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check flex-shrink-0">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="hidung" value="2">
@@ -662,7 +329,7 @@
                                 <label class="form-label mb-0">Tenggorokan</label>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="tenggorokan" value="1">
                                     <label class="form-check-label">
@@ -671,7 +338,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check flex-shrink-0">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="tenggorokan" value="2">
@@ -687,7 +354,7 @@
                                 <label class="form-label mb-0">Leher</label>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leher" value="1">
                                     <label class="form-check-label">
@@ -696,7 +363,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check flex-shrink-0">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leher" value="2">
@@ -712,7 +379,7 @@
                                 <label class="form-label mb-0">Dada</label>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="dada" value="1">
                                     <label class="form-check-label">
@@ -721,7 +388,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check flex-shrink-0">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="dada" value="2">
@@ -737,7 +404,7 @@
                                 <label class="form-label mb-0">Jantung</label>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jantung" value="1">
                                     <label class="form-check-label">
@@ -746,7 +413,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check flex-shrink-0">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jantung" value="2">
@@ -762,7 +429,7 @@
                                 <label class="form-label mb-0">Paru-paru</label>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="paru" value="1">
                                     <label class="form-check-label">
@@ -771,7 +438,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check flex-shrink-0">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="paru" value="2">
@@ -787,7 +454,7 @@
                                 <label class="form-label mb-0">Abdomen</label>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abdomen" value="1">
                                     <label class="form-check-label">
@@ -796,7 +463,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check flex-shrink-0">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abdomen" value="2">
@@ -812,7 +479,7 @@
                                 <label class="form-label mb-0">Anggota gerak atas</label>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_atas" value="1">
                                     <label class="form-check-label">
@@ -821,7 +488,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_atas" value="2">
                                     <label class="form-check-label">
@@ -837,7 +504,7 @@
                                 <label class="form-label mb-0">Anggota gerak bawah</label>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_bawah" value="1">
                                     <label class="form-check-label">
@@ -846,7 +513,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_bawah" value="2">
                                     <label class="form-check-label">
@@ -857,7 +524,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
-                        <label class="form-label fw-bold">Pemeriksaan Khusus</label>
+                        <h4 class="text-danger">Pemeriksaan Khusus</h4>
                         <!-- DADA -->
                         <div class="row align-items-center mb-2">
                             <div class="col-md-2">
@@ -867,15 +534,9 @@
                             <div class="col-md-3">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="mammae" value="1">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="dada" value="1">
                                         <label class="form-check-label">
-                                            Mammae simetris
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="mammae" value="2">
-                                        <label class="form-check-label">
-                                            Asimetris
+                                            Mammae simetris / Asimetris
                                         </label>
                                     </div>
                                 </div>
@@ -884,7 +545,7 @@
                             <!-- Areola -->
                             <div class="col-md-3">
                                 <div class="form-check">
-                                    <input class="form-check-input check-primary" type="checkbox" name="areola_hiperpigmentasi" value="1">
+                                    <input class="form-check-input check-primary" type="checkbox" name="dada" value="2">
                                     <label class="form-check-label">
                                         Areola hiperpigmentasi
                                     </label>
@@ -895,16 +556,9 @@
                             <div class="col-md-4">
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="form-check">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="puting_susu" value="1">
+                                        <input class="form-check-input check-primary checkbox" type="checkbox" name="dada" value="3">
                                         <label class="form-check-label">
-                                            Puting susu menonjol
-                                        </label>
-                                    </div>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="puting_susu" value="2">
-                                        <label class="form-check-label">
-                                            Tidak
+                                            Puting susu menonjol / Tidak
                                         </label>
                                     </div>
                                 </div>
@@ -915,23 +569,23 @@
                         <div class="row align-items-center mb-2">
                             <div class="col-md-2"></div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="d-flex align-items-center gap-2">
-                                    <label class="form-label mb-0">Kolostrum</label>
 
                                     <div class="form-check">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kolostrum" value="1">
+                                        <input class="form-check-input check-primary checkbox" type="checkbox" name="dada" value="4">
                                         <label class="form-check-label">
-                                            (+)
+                                            Kolostrum (+) / (-)
                                         </label>
                                     </div>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kolostrum" value="2">
-                                        <label class="form-check-label">
-                                            (-)
-                                        </label>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="form-check flex-shrink-0">
+                                        <input class="form-check-input check-primary" type="checkbox" name="dada" value="5">
                                     </div>
+                                    <input type="text" class="form-control" name="kolostrum_keterangan" id="kolostrum_keterangan" placeholder="Lainnya">
                                 </div>
                             </div>
                         </div>
@@ -940,14 +594,11 @@
                         <!-- ABDOMEN - INSPEKSI -->
                         <div class="row align-items-center mb-2">
                             <div class="col-md-2">
-                                <label class="form-label mb-0">Abdomen</label>
+                                <label class="form-label mb-0">Abdomen Inspeksi</label>
                             </div>
 
                             <div class="col-md-10">
                                 <div class="d-flex align-items-center flex-wrap gap-3">
-
-                                    <span class="fw-normal">Inspeksi :</span>
-
                                     <div class="form-check">
                                         <input class="form-check-input check-primary" type="checkbox" name="abdomen_luka_bekas_op" value="1">
                                         <label class="form-check-label">
@@ -993,112 +644,75 @@
                             <div class="col-md-2">
                                 <label class="form-label mb-0">Palpasi</label>
                             </div>
-
-                            <div class="col-md-10">
+                            <div class="col-md-4 mb-2">
                                 <div class="d-flex align-items-center flex-wrap gap-3">
-
                                     <span>Leopold I :</span>
-
                                     <div class="form-check">
-                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_1" value="1">
                                         <label class="form-check-label">
                                             TFU
                                         </label>
                                     </div>
-
-                                    <input type="text" class="form-control" name="leopold_1_tfu" id="leopold_1_tfu" placeholder="TFU" style="width: 100px;">
-
+                                    <input type="text" class="form-control form-control-sm" name="leopold_1_tfu" id="leopold_1_tfu" placeholder="TFU" style="width: 100px;">
                                     <span>cm</span>
 
                                 </div>
                             </div>
-                        </div>
-
-
-                        <!-- LEOPOLD II -->
-                        <div class="row align-items-center mb-2">
-                            <div class="col-md-2"></div>
-
-                            <div class="col-md-10">
+                            <div class="col-md-6 mb-2">
                                 <div class="d-flex align-items-center flex-wrap gap-3">
-
                                     <span>Leopold II :</span>
-
                                     <div class="form-check">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_2" value="1">
                                         <label class="form-check-label">
                                             Punggung Kanan
                                         </label>
                                     </div>
-
                                     <div class="form-check">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_2" value="2">
                                         <label class="form-check-label">
                                             Punggung Kiri
                                         </label>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
-
                         <!-- LEOPOLD III -->
                         <div class="row align-items-center mb-2">
                             <div class="col-md-2"></div>
-
-                            <div class="col-md-10">
+                            <div class="col-md-4 mb-2">
                                 <div class="d-flex align-items-center flex-wrap gap-3">
-
                                     <span>Leopold III :</span>
-
                                     <div class="form-check">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_3" value="1">
                                         <label class="form-check-label">
                                             Kepala
                                         </label>
                                     </div>
-
                                     <div class="form-check">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_3" value="2">
                                         <label class="form-check-label">
                                             Bokong
                                         </label>
                                     </div>
-
                                 </div>
                             </div>
-                        </div>
-
-
-                        <!-- LEOPOLD IV -->
-                        <div class="row align-items-center mb-2">
-                            <div class="col-md-2"></div>
-
-                            <div class="col-md-10">
+                            <div class="col-md-6 mb-2">
                                 <div class="d-flex align-items-center flex-wrap gap-3">
-
                                     <span>Leopold IV :</span>
-
                                     <div class="form-check">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_4" value="1">
                                         <label class="form-check-label">
                                             Sudah masuk PAP
                                         </label>
                                     </div>
-
                                     <div class="form-check">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="leopold_4" value="2">
                                         <label class="form-check-label">
                                             Belum masuk PAP
                                         </label>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
-
                         <!-- AUSKULTASI -->
                         <div class="row align-items-center mb-2">
                             <div class="col-md-2">
@@ -1142,15 +756,12 @@
                             <div class="col-md-10">
                                 <div class="d-flex align-items-center flex-wrap gap-3">
 
-                                    <span>.......... X/menit</span>
-
-                                    <label class="form-label mb-0">
-                                        Durasi
-                                    </label>
+                                    <input type="text" class="form-control" name="his" id="his" placeholder="HIS" style="width: 100px;">
+                                    <span>X/menit, Durasi</span>
 
                                     <input type="text" class="form-control" name="his_durasi" id="his_durasi" placeholder="Durasi" style="width: 100px;">
 
-                                    <span>detik</span>
+                                    <span>detik,</span>
 
                                     <div class="form-check">
                                         <input class="form-check-input check-primary single-checkbox" type="checkbox" name="his_kekuatan" value="1">
@@ -1181,20 +792,12 @@
                         <!-- ANOGENITAL - INSPEKSI -->
                         <div class="row align-items-center mb-2">
                             <div class="col-md-2">
-                                <label class="form-label mb-0">Anogenital</label>
+                                <label class="form-label mb-0">Anogenital Inspeksi</label>
                             </div>
 
                             <div class="col-md-10">
                                 <div class="d-flex align-items-center flex-wrap gap-3">
-
-                                    <span>Inspeksi :</span>
-
-                                    <div class="form-check">
-                                        <input class="form-check-input check-primary" type="checkbox" name="anogenital_pengeluaran" value="1">
-                                        <label class="form-check-label">
-                                            Pengeluaran per Vagina
-                                        </label>
-                                    </div>
+                                    <span>Pengeluaran per Vagina</span>
 
                                     <div class="form-check">
                                         <input class="form-check-input check-primary" type="checkbox" name="anogenital_darah" value="1">
@@ -1219,20 +822,13 @@
 
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="form-check">
-                                            <input class="form-check-input check-primary"
-                                                type="checkbox"
-                                                name="anogenital_lainnya"
-                                                value="1">
+                                            <input class="form-check-input check-primary" type="checkbox" name="anogenital_lainnya" value="1">
                                             <label class="form-check-label">
                                                 Lainnya
                                             </label>
                                         </div>
 
-                                        <input type="text"
-                                            class="form-control" name="anogenital_lainnya_keterangan"
-                                            id="anogenital_lainnya_keterangan"
-                                            placeholder="Keterangan..."
-                                            style="width: 200px;">
+                                        <input type="text" class="form-control" name="anogenital_lainnya_keterangan" id="anogenital_lainnya_keterangan" placeholder="Keterangan...">
                                     </div>
 
                                 </div>
@@ -1240,18 +836,14 @@
                         </div>
 
 
-                        <!-- VAGINA TOUCHER -->
+                        <!-- VAGINA TAUCHER -->
                         <div class="row align-items-center mb-2">
                             <div class="col-md-2">
-                                <label class="form-label mb-0">Vagina Toucher</label>
+                                <label class="form-label mb-0">Vagina Taucher</label>
                             </div>
 
                             <div class="col-md-10">
-                                <input type="text"
-                                    class="form-control"
-                                    name="vagina_toucher"
-                                    id="vagina_toucher"
-                                    placeholder="Hasil pemeriksaan vagina toucher...">
+                                <input type="text" class="form-control" name="vagina_taucher" id="vagina_taucher" placeholder="Hasil pemeriksaan vagina taucher...">
                             </div>
                         </div>
 
@@ -1263,17 +855,165 @@
                             </div>
 
                             <div class="col-md-10">
-                                <input type="text"
-                                    class="form-control"
-                                    name="pemeriksaan_lain_lain"
-                                    id="pemeriksaan_lain_lain"
-                                    placeholder="Lain-lain...">
+                                <input type="text" class="form-control" name="pemeriksaan_lain_lain" id="pemeriksaan_lain_lain" placeholder="Lain-lain...">
                             </div>
                         </div>
 
                     </div>
                 </div>
             </div>
+            <div class="col-md-12">
+                <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
+                <div class="mb-3">
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_lab')
+                </div>
+                <div class="mb-3">
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad')
+                </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_penunjang',['section' => '#rio_perawat'])
+            </div>
+            <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial',['section' => '#rio_perawat'])
+            </div>
+            <div class="col-md-12 mb-3">
+                <div class="form-group mb-2">
+                    <h5 class="mb-0 text-success">
+                        <strong>SKRINING GIZI</strong>
+                    </h5>
+                </div>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_gizi_must', ['section' => '#rio_perawat'])
+            </div>
+            <div class="col-md-12 mb-3">
+                <div class="form-group mb-2">
+                    <h5 class="mb-0 text-success">
+                        <strong>SKRINING RESIKO JATUH</strong>
+                    </h5>
+                </div>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_skala_morse', ['section' => '#rio_perawat'])
+            </div>
+            <div class="col-md-12 mb-3">
+                <div class="form-group mb-2">
+                    <h5 class="mb-0 text-success">
+                        <strong>SKRINING NYERI</strong>
+                    </h5>
+                </div>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
+                    [
+                        'section' => '#rio_perawat',
+                        'metodeNyeri' => ['nrs', 'bps', 'nips', 'flacc', 'vas']
+                    ]
+                )
+            </div>
+            <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#rio_perawat'])
+            </div>
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="form-group mb-2">
+                        <h5 class="mb-0 text-success">
+                            <strong>Masalah Keperawatan</strong>
+                        </h5>
+                    </div>
+
+                    <!-- Kolom Kiri -->
+                    <div class="col">
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_1" id="diag_1">
+                            <label class="form-check-label">Nyeri</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_2" id="diag_2">
+                            <label class="form-check-label">Resiko Pendarahan</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_3" id="diag_3">
+                            <label class="form-check-label">Resiko Infeksi</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_4" id="diag_4">
+                            <label class="form-check-label">Resiko Syok</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_5" id="diag_5">
+                            <label class="form-check-label">Retensi Urin</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_6" id="diag_6">
+                            <label class="form-check-label">Gangguan Nutrisi</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_7" id="diag_7">
+                            <label class="form-check-label">Bersihkan Jalan Nafas Tidak Efektif</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_8" id="diag_8">
+                            <label class="form-check-label">Cemas</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_9" id="diag_9">
+                            <label class="form-check-label">Diare</label>
+                        </div>
+                    </div>
+
+                    <!-- Kolom Kanan -->
+                    <div class="col">
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_10" id="diag_10">
+                            <label class="form-check-label">Gangguan Integritas Jaringan</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_11" id="diag_11">
+                            <label class="form-check-label">Gangguan Komunikasi Verbal</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_12" id="diag_12">
+                            <label class="form-check-label">Gangguan Mobilitas Fisik</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_13" id="diag_13">
+                            <label class="form-check-label">Gangguan Pola Tidur</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_14" id="diag_14">
+                            <label class="form-check-label">Hipertermi</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_15" id="diag_15">
+                            <label class="form-check-label">Hipotermi</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_16" id="diag_16">
+                            <label class="form-check-label">Kurang Perawatan Diri : ADL</label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input check-primary" type="checkbox" value="1" name="diag_17" id="diag_17">
+                            <label class="form-check-label">Resiko Jatuh</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input type="text" class="form-control" id="diag_lain" name="diag_lain" placeholder="Lainnya">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.discharge_planning',['section' => '#rio_perawat'])
+            </div>
         </div>
     </div>
 </div>
+
