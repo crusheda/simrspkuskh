@@ -1,6 +1,9 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('v2/css/folder/tab_pengkajian.css') }}">
 @endpush
+<div id="apiLoadingBar" class="api-loading-bar" aria-hidden="true">
+    <div class="api-loading-bar__progress"></div>
+</div>
 <div class="row">
     <div class="col-xl-3" id="pengkajian-sidebar-col">
         <a href="#" class="d-inline-flex align-items-center d-xl-none btn btn-dark w-100 mb-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_component">
@@ -256,6 +259,25 @@
 
 <script>
     $(function () {
+
+        let activeApiRequests = 0;
+
+        $(document).ajaxSend(function () {
+            activeApiRequests++;
+            $('#apiLoadingBar').addClass('is-loading')
+                .attr('aria-hidden', 'false');
+        });
+
+        $(document).ajaxComplete(function () {
+            activeApiRequests = Math.max(0, activeApiRequests - 1);
+
+            if (activeApiRequests === 0) {
+                $('#apiLoadingBar').removeClass('is-loading')
+                    .attr('aria-hidden', 'true');
+
+                $(document).trigger('page:api-ready');
+            }
+        });
 
         // ==========================
         // STARTING _ DISABLED AFTER CHECKBOX IS TRUE / ADA (ONLY INPUT LAINNYA)
@@ -663,4 +685,8 @@
             }
         })
     }
+
+    // FOR STATUS BAR PROGRESS API
+    (function ($) {
+    })(jQuery);
 </script>

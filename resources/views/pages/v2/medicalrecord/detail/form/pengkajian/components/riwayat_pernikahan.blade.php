@@ -100,7 +100,7 @@
                 } else if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
                 }
-                alert(message);
+                console.log(message);
             },
             complete: function () {
                 $button.prop('disabled', false).html('<i class="ri-refresh-line"></i>');

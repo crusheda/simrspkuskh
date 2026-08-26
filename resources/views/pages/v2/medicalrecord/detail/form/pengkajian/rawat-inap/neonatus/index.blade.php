@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between">
     <button type="button" class="btn btn-danger waves-effect waves-light collapsed" data-bs-toggle="collapse" id="btnDokter"
-        data-bs-target="#rin_dokter" aria-expanded="false" aria-controls="rin_dokter"><i class="ri-stethoscope-line me-1"></i> Pengkajian Dokter</button>
+        data-bs-target="#rin_dokter" aria-expanded="false" aria-controls="rin_dokter"><i class="ri-stethoscope-line me-1"></i> Pengkajian Medis</button>
     <button type="button" class="btn btn-success waves-effect waves-light collapsed" data-bs-toggle="collapse" id="btnPerawat"
         data-bs-target="#rin_perawat" aria-expanded="false" aria-controls="rin_perawat"><i class="ri-stethoscope-line me-1"></i> Pengkajian Keperawatan</button>
 </div>

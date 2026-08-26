@@ -222,7 +222,7 @@
                 if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
                 }
-                alert(message);
+                console.log(message);
             },
             complete: function () {
                 $button
@@ -307,7 +307,7 @@
                 } else if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
                 }
-                alert(message);
+                console.log(message);
             },
             complete: function () {
                 $button
@@ -343,7 +343,7 @@
                 if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
                 }
-                alert(message);
+                console.log(message);
             }
         });
     }

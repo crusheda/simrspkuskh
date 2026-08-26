@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-between">
+<div class="d-flex justify-content-between align-items-center">
     <button
         type="button"
         class="btn btn-danger waves-effect waves-light"
@@ -9,9 +9,9 @@
         aria-controls="riA_dokter"
     >
         <i class="ri-stethoscope-line me-1"></i>
-        Pengkajian Dokter
+        Pengkajian Medis
     </button>
-
+    <h6 id="pilihPengkajian" class="mb-0 pilih-form-title">Pilih Form Pengkajian</h6>
     <button
         type="button"
         class="btn btn-success waves-effect waves-light collapsed"
@@ -297,6 +297,13 @@
         $('#btnDokter,#btnPerawat').prop('disabled',false);
 
         updateRanapAnakButton();
+
+        // HIDE TEXT FORM pilih pengkajian
+        $('#btnDokter, #btnPerawat')
+            .off('click')
+            .on('click', function () {
+                $('#pilihPengkajian').addClass('is-hidden');
+            });
 
         /*
         |--------------------------------------------------------------------------

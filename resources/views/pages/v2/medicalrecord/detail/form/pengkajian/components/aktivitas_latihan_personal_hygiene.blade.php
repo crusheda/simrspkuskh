@@ -65,28 +65,28 @@
                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
                     <label class="form-check-label flex-shrink-0">Mandi</label>
                     <div class="input-group input-group-sm">
-                        <input type="number" class="form-control form-control-sm" name="ph_m" min="1" max="20" style="width: 100px; flex: 0 0 90px;" placeholder="">
+                        <input type="number" class="form-control form-control-sm" name="ph_m" min="1" max="99" style="width: 100px; flex: 0 0 90px;" placeholder="">
                         <span class="input-group-text">X/hari</span>
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
                     <label class="form-check-label flex-shrink-0">Ganti Pakaian</label>
                     <div class="input-group input-group-sm">
-                        <input type="number" class="form-control form-control-sm" name="ph_gp" min="1" max="20" style="width: 100px; flex: 0 0 90px;" placeholder="">
+                        <input type="number" class="form-control form-control-sm" name="ph_gp" min="1" max="99" style="width: 100px; flex: 0 0 90px;" placeholder="">
                         <span class="input-group-text">X/hari</span>
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
                     <label class="form-check-label flex-shrink-0">Keramas</label>
                     <div class="input-group input-group-sm">
-                        <input type="number" class="form-control form-control-sm" name="ph_k" min="1" max="20" style="width: 100px; flex: 0 0 90px;" placeholder="">
+                        <input type="number" class="form-control form-control-sm" name="ph_k" min="1" max="99" style="width: 100px; flex: 0 0 90px;" placeholder="">
                         <span class="input-group-text">X/hari</span>
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-shrink-0">
                     <label class="form-check-label flex-shrink-0">Gosok Gigi</label>
                     <div class="input-group input-group-sm">
-                        <input type="number" class="form-control form-control-sm" name="ph_gg" min="1" max="20" style="width: 100px; flex: 0 0 90px;" placeholder="">
+                        <input type="number" class="form-control form-control-sm" name="ph_gg" min="1" max="99" style="width: 100px; flex: 0 0 90px;" placeholder="">
                         <span class="input-group-text">X/hari</span>
                     </div>
                 </div>
@@ -115,7 +115,7 @@
                     <div class="d-flex align-items-center gap-3 flex-shrink-0">
                         <label class="form-label flex-shrink-0">Tidur Siang</label>
                         <div class="input-group input-group-sm">
-                            <input type="number" class="form-control form-control-sm" name="ph_ts" min="1" max="20" style="width: 100px; flex: 0 0 90px;" placeholder="">
+                            <input type="number" class="form-control form-control-sm" name="ph_ts" min="1" max="99" style="width: 100px; flex: 0 0 90px;" placeholder="">
                             <span class="input-group-text">Jam</span>
                         </div>
                     </div>
@@ -126,7 +126,7 @@
                     <div class="d-flex align-items-center gap-3 flex-shrink-0">
                         <label class="form-label flex-shrink-0">Tidur Malam</label>
                         <div class="input-group input-group-sm">
-                            <input type="number" class="form-control form-control-sm" name="ph_tm" min="1" max="20" style="width: 100px; flex: 0 0 90px;" placeholder="">
+                            <input type="number" class="form-control form-control-sm" name="ph_tm" min="1" max="99" style="width: 100px; flex: 0 0 90px;" placeholder="">
                             <span class="input-group-text">Jam</span>
                         </div>
                     </div>
