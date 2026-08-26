@@ -552,6 +552,7 @@
             </div>
             <div class="col-md-12">
                 <div class="card card-body border border-dashed border-success mb-3">
+                    <h6 class="mb-3">SKRINING NYERI</h6>
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
                         [
                             'section' => '#gd_perawat',

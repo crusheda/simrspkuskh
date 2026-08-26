@@ -22,12 +22,7 @@
                 )
             </div>
             <div class="col-md-12 mb-3">
-                <div class="form-group mb-2">
-                    <h5 class="mb-0 text-success">
-                        <strong>Pemeriksaan Fisik</strong>
-                    </h5>
-                </div>
-                <i>... coming soon</i>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.pemeriksaan_fisik',['section' => '#riA_perawat'])
             </div>
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.aktivitas_latihan_personal_hygiene',['section' => '#riA_perawat'])

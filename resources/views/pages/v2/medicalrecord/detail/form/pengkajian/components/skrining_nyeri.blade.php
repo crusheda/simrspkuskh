@@ -8,7 +8,6 @@
     ];
 @endphp
 <div class="form-group" id="form_skrining_nyeri">
-    <h6 class="mb-3">SKRINING NYERI</h6>
     <div class="row mb-3 align-items-center">
         <div class="col-md-4">
             <div class="row align-items-center">
