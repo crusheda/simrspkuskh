@@ -4055,4 +4055,708 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    public function getRiwayatImunisasi($KUNJUNGAN)
+    {
+        try {
+
+            $data = DB::table('medicalrecord.riwayat_tumbuh_kembang')
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+            if (!$data) {
+                return response()->json([
+                    'status' => true,
+                    'data'   => null
+                ]);
+            }
+
+            return response()->json([
+                'status' => true,
+                'data'   => [
+                    'imunisasi'     => $data->IMUNISASI ?? null,
+                    'imunisasi_lain'=> $data->IMUNISASI_LAIN ?? null,
+                ]
+            ]);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Gagal mengambil data Riwayat Imunisasi.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function simpanRiwayatImunisasi(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $oleh = auth()->user()->ID ?? auth()->id();
+
+            DB::table('medicalrecord.riwayat_tumbuh_kembang')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $KUNJUNGAN
+                ],
+                [
+                    'IMUNISASI'      => $request->input('imunisasi'),
+                    'IMUNISASI_LAIN' => $request->input('imunisasi_lain'),
+
+                    'TANGGAL'        => now(),
+                    'OLEH'           => $oleh,
+                    'STATUS'         => 1,
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Riwayat Imunisasi berhasil disimpan.'
+            ]);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Riwayat Imunisasi gagal disimpan.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getStatusObstetriNeonatus($KUNJUNGAN)
+    {
+        try {
+
+            $obstetri = DB::table('medicalrecord.sirmed_status_obstetri')
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+            $neonatus = DB::table('medicalrecord.sirmed_status_neonatus')
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+
+            return response()->json([
+                'status' => true,
+
+                'obstetri' => $obstetri ? [
+                    'so_umur_ibu'          => $obstetri->UMUR_IBU,
+                    'so_g'                 => $obstetri->G,
+                    'so_p'                 => $obstetri->P,
+                    'so_a'                 => $obstetri->A,
+
+                    'so_umur_kehamilan'    => $obstetri->UMUR_KEHAMILAN,
+
+                    'so_komplikasi'        => $obstetri->KOMPLIKASI,
+                    'so_komplikasi_ket'    => $obstetri->KOMPLIKASI_KET,
+
+                    'so_gol_darah_ibu'     => $obstetri->GOL_DARAH_IBU,
+                    'so_rh_ibu'            => $obstetri->RH_IBU,
+
+                    'so_gol_darah_ayah'    => $obstetri->GOL_DARAH_AYAH,
+                    'so_rh_ayah'           => $obstetri->RH_AYAH,
+                    'so_gol_ayah_tidak'    => $obstetri->GOL_AYAH_TIDAK,
+
+                    'so_kk_pecah_jam'      => $obstetri->KK_PECAH_JAM,
+                ] : null,
+
+
+                'neonatus' => $neonatus ? [
+                    'sn_tanggal_lahir'          => $neonatus->TANGGAL_LAHIR,
+                    'sn_jam_lahir'              => $neonatus->JAM_LAHIR,
+
+                    'sn_jenis_kelamin'         => $neonatus->JENIS_KELAMIN,
+
+                    'sn_bb_lahir'              => $neonatus->BB_LAHIR,
+                    'sn_pb_lahir'              => $neonatus->PB_LAHIR,
+
+                    'sn_lk'                    => $neonatus->LK,
+                    'sn_ld'                    => $neonatus->LD,
+                    'sn_lp'                    => $neonatus->LP,
+                    'sn_lila'                  => $neonatus->LILA,
+
+                    'sn_resusitasi_intubasi'   => $neonatus->RESUSITASI_INTUBASI,
+                    'sn_resusitasi_pompa'      => $neonatus->RESUSITASI_POMPA,
+
+                    'sn_berulang'              => $neonatus->BERULANG,
+
+                    'sn_jenis_partus'          => $neonatus->JENIS_PARTUS,
+
+                    'sn_indikasi'              => $neonatus->INDIKASI,
+                ] : null,
+            ]);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Gagal mengambil Status Obstetri dan Neonatus.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function simpanStatusObstetriNeonatus(
+        Request $request,
+        $KUNJUNGAN
+    ) {
+        DB::beginTransaction();
+
+        try {
+
+            $oleh = auth()->user()->ID ?? auth()->id();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | STATUS OBSTETRI
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table('medicalrecord.sirmed_status_obstetri')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $KUNJUNGAN
+                    ],
+                    [
+                        'UMUR_IBU'
+                            => $request->input('so_umur_ibu'),
+
+                        'G'
+                            => $request->input('so_g'),
+
+                        'P'
+                            => $request->input('so_p'),
+
+                        'A'
+                            => $request->input('so_a'),
+
+                        'UMUR_KEHAMILAN'
+                            => $request->input('so_umur_kehamilan'),
+
+                        'KOMPLIKASI'
+                            => $request->input('so_komplikasi'),
+
+                        'KOMPLIKASI_KET'
+                            => $request->input('so_komplikasi_ket'),
+
+                        'GOL_DARAH_IBU'
+                            => $request->input('so_gol_darah_ibu'),
+
+                        'RH_IBU'
+                            => $request->input('so_rh_ibu'),
+
+                        'GOL_DARAH_AYAH'
+                            => $request->input('so_gol_darah_ayah'),
+
+                        'RH_AYAH'
+                            => $request->input('so_rh_ayah'),
+
+                        'GOL_AYAH_TIDAK'
+                            => $request->input('so_gol_ayah_tidak', 0),
+
+                        'KK_PECAH_JAM'
+                            => $request->input('so_kk_pecah_jam'),
+
+                        'TANGGAL' => now(),
+                        'OLEH'    => $oleh,
+                        'STATUS'  => 1,
+                    ]
+                );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | STATUS NEONATUS
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table('medicalrecord.sirmed_status_neonatus')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $KUNJUNGAN
+                    ],
+                    [
+                        'TANGGAL_LAHIR'
+                            => $request->input('sn_tanggal_lahir'),
+
+                        'JAM_LAHIR'
+                            => $request->input('sn_jam_lahir'),
+
+                        'JENIS_KELAMIN'
+                            => $request->input('sn_jenis_kelamin'),
+
+                        'BB_LAHIR'
+                            => $request->input('sn_bb_lahir'),
+
+                        'PB_LAHIR'
+                            => $request->input('sn_pb_lahir'),
+
+                        'LK'
+                            => $request->input('sn_lk'),
+
+                        'LD'
+                            => $request->input('sn_ld'),
+
+                        'LP'
+                            => $request->input('sn_lp'),
+
+                        'LILA'
+                            => $request->input('sn_lila'),
+
+                        'RESUSITASI_INTUBASI'
+                            => $request->input(
+                                'sn_resusitasi_intubasi',
+                                0
+                            ),
+
+                        'RESUSITASI_POMPA'
+                            => $request->input(
+                                'sn_resusitasi_pompa',
+                                0
+                            ),
+
+                        'BERULANG'
+                            => $request->input('sn_berulang'),
+
+                        'JENIS_PARTUS'
+                            => $request->input('sn_jenis_partus'),
+
+                        'INDIKASI'
+                            => $request->input('sn_indikasi'),
+
+                        'TANGGAL' => now(),
+                        'OLEH'    => $oleh,
+                        'STATUS'  => 1,
+                    ]
+                );
+
+
+            DB::commit();
+
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Status Obstetri dan Neonatus berhasil disimpan.'
+            ]);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Status Obstetri dan Neonatus gagal disimpan.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getPenilaianAwalBayi($kunjungan)
+    {
+        $data = DB::table('medicalrecord.sirmed_penilaian_awal_bayi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
+    public function simpanPenilaianAwalBayi(Request $request, $kunjungan)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $oleh = auth()->user()->ID ?? auth()->id();
+
+
+            // ======================================================
+            // STATUS BAYI
+            // ======================================================
+
+            $statusBayi = $request->apgar_status_bayi;
+
+
+            // ======================================================
+            // DEFAULT
+            // ======================================================
+
+            $data = [
+
+                'APGAR_STATUS_BAYI' => $statusBayi,
+
+                // APGAR
+                'APGAR_1_MENIT_DENYUT'       => $request->apgar_1_menit_denyut,
+                'APGAR_1_MENIT_PERNAFASAN'   => $request->apgar_1_menit_pernafasan,
+                'APGAR_1_MENIT_TONUS'        => $request->apgar_1_menit_tonus,
+                'APGAR_1_MENIT_RANGSANG'     => $request->apgar_1_menit_rangsang,
+                'APGAR_1_MENIT_WARNA'        => $request->apgar_1_menit_warna,
+                'APGAR_TOTAL_1_MENIT'        => $request->apgar_total_1_menit,
+
+                'APGAR_5_MENIT_DENYUT'       => $request->apgar_5_menit_denyut,
+                'APGAR_5_MENIT_PERNAFASAN'   => $request->apgar_5_menit_pernafasan,
+                'APGAR_5_MENIT_TONUS'        => $request->apgar_5_menit_tonus,
+                'APGAR_5_MENIT_RANGSANG'     => $request->apgar_5_menit_rangsang,
+                'APGAR_5_MENIT_WARNA'        => $request->apgar_5_menit_warna,
+                'APGAR_TOTAL_5_MENIT'        => $request->apgar_total_5_menit,
+
+                'APGAR_10_MENIT_DENYUT'      => $request->apgar_10_menit_denyut,
+                'APGAR_10_MENIT_PERNAFASAN'  => $request->apgar_10_menit_pernafasan,
+                'APGAR_10_MENIT_TONUS'       => $request->apgar_10_menit_tonus,
+                'APGAR_10_MENIT_RANGSANG'    => $request->apgar_10_menit_rangsang,
+                'APGAR_10_MENIT_WARNA'       => $request->apgar_10_menit_warna,
+                'APGAR_TOTAL_10_MENIT'       => $request->apgar_total_10_menit,
+
+
+                // RESUSITASI
+                'APGAR_RESUSITASI'
+                    => $request->apgar_resusitasi,
+
+                'APGAR_LANGKAH_AWAL'
+                    => $request->apgar_langkah_awal ?? 0,
+
+                'APGAR_LANGKAH_AWAL_DETIK'
+                    => $request->apgar_langkah_awal_detik,
+
+                'APGAR_VTP'
+                    => $request->apgar_vtp ?? 0,
+
+                'APGAR_VTP_DETIK'
+                    => $request->apgar_vtp_detik,
+
+                'APGAR_KOMPRESI_DADA'
+                    => $request->apgar_kompresi_dada ?? 0,
+
+                'APGAR_KOMPRESI_DADA_DETIK'
+                    => $request->apgar_kompresi_dada_detik,
+
+                'APGAR_ETT'
+                    => $request->apgar_ett ?? 0,
+
+                'APGAR_RESUSITASI_DIHENTIKAN'
+                    => $request->apgar_resusitasi_dihentikan ?? 0,
+
+                'APGAR_RESUSITASI_DIHENTIKAN_MENIT'
+                    => $request->apgar_resusitasi_dihentikan_menit,
+
+
+                // UMUM
+                'APGAR_TANGGAL'
+                    => $request->apgar_tanggal,
+
+                'APGAR_JAM'
+                    => $request->apgar_jam,
+
+                'APGAR_BB_SEKARANG'
+                    => $request->apgar_bb_sekarang,
+
+                'OLEH' => $oleh,
+                'STATUS' => 1,
+            ];
+
+
+            // ======================================================
+            // PENTING
+            // JIKA BUGAR -> HAPUS SEMUA RESUSITASI
+            // ======================================================
+
+            if ($statusBayi === 'bugar') {
+
+                $data['APGAR_RESUSITASI'] = null;
+
+                $data['APGAR_LANGKAH_AWAL'] = 0;
+                $data['APGAR_LANGKAH_AWAL_DETIK'] = null;
+
+                $data['APGAR_VTP'] = 0;
+                $data['APGAR_VTP_DETIK'] = null;
+
+                $data['APGAR_KOMPRESI_DADA'] = 0;
+                $data['APGAR_KOMPRESI_DADA_DETIK'] = null;
+
+                $data['APGAR_ETT'] = 0;
+
+                $data['APGAR_RESUSITASI_DIHENTIKAN'] = 0;
+                $data['APGAR_RESUSITASI_DIHENTIKAN_MENIT'] = null;
+
+            }
+
+
+            // ======================================================
+            // JIKA TIDAK BUGAR -> HAPUS SEMUA APGAR
+            // ======================================================
+
+            if ($statusBayi === 'tidak_bugar') {
+
+                $data['APGAR_1_MENIT_DENYUT'] = null;
+                $data['APGAR_1_MENIT_PERNAFASAN'] = null;
+                $data['APGAR_1_MENIT_TONUS'] = null;
+                $data['APGAR_1_MENIT_RANGSANG'] = null;
+                $data['APGAR_1_MENIT_WARNA'] = null;
+                $data['APGAR_TOTAL_1_MENIT'] = null;
+
+
+                $data['APGAR_5_MENIT_DENYUT'] = null;
+                $data['APGAR_5_MENIT_PERNAFASAN'] = null;
+                $data['APGAR_5_MENIT_TONUS'] = null;
+                $data['APGAR_5_MENIT_RANGSANG'] = null;
+                $data['APGAR_5_MENIT_WARNA'] = null;
+                $data['APGAR_TOTAL_5_MENIT'] = null;
+
+
+                $data['APGAR_10_MENIT_DENYUT'] = null;
+                $data['APGAR_10_MENIT_PERNAFASAN'] = null;
+                $data['APGAR_10_MENIT_TONUS'] = null;
+                $data['APGAR_10_MENIT_RANGSANG'] = null;
+                $data['APGAR_10_MENIT_WARNA'] = null;
+                $data['APGAR_TOTAL_10_MENIT'] = null;
+
+            }
+
+
+            // ======================================================
+            // SIMPAN
+            // ======================================================
+
+            DB::table('medicalrecord.sirmed_penilaian_awal_bayi')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $kunjungan
+                    ],
+                    $data
+                );
+
+
+            DB::commit();
+
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Penilaian awal bayi berhasil disimpan'
+            ]);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getPemeriksaanFisikNeo($KUNJUNGAN)
+    {
+        try {
+
+            $data = DB::table('medicalrecord.sirmed_pemeriksaan_fisik_neonatus')
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+
+            return response()->json([
+                'status' => true,
+                'data'   => $data
+            ]);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Gagal mengambil data Pemeriksaan Fisik Neonatus.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function simpanPemeriksaanFisikNeo(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            /*
+            |--------------------------------------------------------------------------
+            | USER
+            |--------------------------------------------------------------------------
+            */
+
+            $oleh = auth()->user()->ID ?? auth()->id();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PEMERIKSAAN FISIK NEONATUS
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table('medicalrecord.sirmed_pemeriksaan_fisik_neonatus')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $KUNJUNGAN
+                    ],
+                    [
+
+                        // ==========================================================
+                        // KEPALA
+                        // ==========================================================
+
+                        'BENTUK'
+                            => $request->bentuk,
+
+                        'SUTURAE'
+                            => $request->suturae,
+
+                        'FONTANELLA'
+                            => $request->fontanella,
+
+                        'MATA'
+                            => $request->mata,
+
+                        'HIDUNG'
+                            => $request->hidung,
+
+                        'CAPUT_SUCCEDANEUM'
+                            => $request->caput_succedaneum,
+
+                        'CEPHAL_HEMATOM'
+                            => $request->cephal_hematom,
+
+                        'TELINGA'
+                            => $request->telinga,
+
+                        'MULUT'
+                            => $request->mulut,
+
+                        'LEHER'
+                            => $request->leher,
+
+
+                        // ==========================================================
+                        // PARU
+                        // ==========================================================
+
+                        'PARU'
+                            => $request->paru,
+
+
+                        // ==========================================================
+                        // JANTUNG
+                        // ==========================================================
+
+                        'JANTUNG'
+                            => $request->jantung,
+
+
+                        // ==========================================================
+                        // ABDOMEN
+                        // ==========================================================
+
+                        'ABDOMEN'
+                            => $request->abdomen,
+
+
+                        // ==========================================================
+                        // EKSTREMITAS
+                        // ==========================================================
+
+                        'EKSTREMITAS'
+                            => $request->ekstremitas,
+
+
+                        // ==========================================================
+                        // NEUROLOGI
+                        // ==========================================================
+
+                        'ROOTING'
+                            => $request->rooting ? 1 : 0,
+
+                        'SUCKING'
+                            => $request->sucking ? 1 : 0,
+
+                        'MORO'
+                            => $request->moro ? 1 : 0,
+
+                        'ASYMMETRIC_TONIC_NECK'
+                            => $request->asymmetric_tonic_neck ? 1 : 0,
+
+                        'BABINSKI'
+                            => $request->babinski ? 1 : 0,
+
+                        'MENGGENGGAM'
+                            => $request->menggenggam ? 1 : 0,
+
+
+                        // ==========================================================
+                        // SUARA
+                        // ==========================================================
+
+                        'SUARA_DIAM'
+                            => $request->suara_diam ? 1 : 0,
+
+                        'SUARA_MERINTIH'
+                            => $request->suara_merintih ? 1 : 0,
+
+                        'SUARA_KUAT'
+                            => $request->suara_kuat ? 1 : 0,
+
+
+                        // ==========================================================
+                        // KULIT
+                        // ==========================================================
+
+                        'IKRENIK'
+                            => $request->kulit_ikrenik ? 1 : 0,
+
+                        'KULIT_KETERANGAN'
+                            => $request->kulit_keterangan,
+
+
+                        // ==========================================================
+                        // AUDIT
+                        // ==========================================================
+
+                        'TANGGAL' => now(),
+                        'OLEH'    => $oleh,
+                        'STATUS'  => 1,
+                    ]
+                );
+
+
+            DB::commit();
+
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Pemeriksaan Fisik Neonatus berhasil disimpan.'
+            ]);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Pemeriksaan Fisik Neonatus gagal disimpan.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
