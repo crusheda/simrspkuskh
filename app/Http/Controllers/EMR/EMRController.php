@@ -28,6 +28,15 @@ use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapAnakController;
 use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapNeonatusController;
 use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapObsgynController;
 
+use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususRemajaController;
+use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususTerminalController;
+use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususNyeriKronikController;
+use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususSistemImunTergangguController;
+use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususKecanduanObatAlkoholController;
+use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususKorbanKekerasanController;
+use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususPenyakitMenularController;
+use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususLanjutanController;
+
 class EMRController extends Controller
 {
     // INDEX
@@ -583,18 +592,27 @@ class EMRController extends Controller
         // }
 
         $controllers = [
-            'pengkajian-gd'                 => PengkajianGawatDaruratController::class,
+            'pengkajian-gd'                             => PengkajianGawatDaruratController::class,
 
-            'pengkajian-rajal-dewasa'       => PengkajianRawatJalanDewasaController::class,
-            'pengkajian-rajal-anak'         => PengkajianRawatJalanAnakController::class,
-            'pengkajian-rajal-psikiatri'    => PengkajianRawatJalanJiwaController::class,
-            'pengkajian-rajal-geriatri'     => PengkajianRawatJalanGeriatriController::class,
-            'pengkajian-rajal-obsgyn'       => PengkajianRawatJalanObsgynController::class,
+            'pengkajian-rajal-dewasa'                   => PengkajianRawatJalanDewasaController::class,
+            'pengkajian-rajal-anak'                     => PengkajianRawatJalanAnakController::class,
+            'pengkajian-rajal-psikiatri'                => PengkajianRawatJalanJiwaController::class,
+            'pengkajian-rajal-geriatri'                 => PengkajianRawatJalanGeriatriController::class,
+            'pengkajian-rajal-obsgyn'                   => PengkajianRawatJalanObsgynController::class,
 
-            'pengkajian-ranap-dewasa'       => PengkajianRawatInapDewasaController::class,
-            'pengkajian-ranap-anak'         => PengkajianRawatInapAnakController::class,
-            'pengkajian-ranap-neonatus'     => PengkajianRawatInapNeonatusController::class,
-            'pengkajian-ranap-obsgyn'       => PengkajianRawatInapObsgynController::class,
+            'pengkajian-ranap-dewasa'                   => PengkajianRawatInapDewasaController::class,
+            'pengkajian-ranap-anak'                     => PengkajianRawatInapAnakController::class,
+            'pengkajian-ranap-neonatus'                 => PengkajianRawatInapNeonatusController::class,
+            'pengkajian-ranap-obsgyn'                   => PengkajianRawatInapObsgynController::class,
+
+            'pengkajian-khusus-remaja'                  => PengkajianKhususRemajaController::class,
+            'pengkajian-khusus-terminal'                => PengkajianKhususTerminalController::class,
+            'pengkajian-khusus-nyerikronik'             => PengkajianKhususNyeriKronikController::class,
+            'pengkajian-khusus-sistemimunterganggu'     => PengkajianKhususSistemImunTergangguController::class,
+            'pengkajian-khusus-kecanduanobatalkohol'    => PengkajianKhususKecanduanObatAlkoholController::class,
+            'pengkajian-khusus-korbankekerasan'         => PengkajianKhususKorbanKekerasanController::class,
+            'pengkajian-khusus-penyakitmenular'         => PengkajianKhususPenyakitMenularController::class,
+            'pengkajian-khusus-lanjutan'                => PengkajianKhususLanjutanController::class,
         ];
 
         abort_unless(isset($controllers[$form]), 404);

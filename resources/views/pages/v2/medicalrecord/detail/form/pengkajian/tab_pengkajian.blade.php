@@ -177,19 +177,19 @@
                             <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-terminal" data-group="khusus">
                                 Form Pengkajian Terminal
                             </a>
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-nyeri-kronik" data-group="khusus">
+                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-nyerikronik" data-group="khusus">
                                 Form Pengkajian Nyeri Kronik
                             </a>
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-sistem-imun-terganggu" data-group="khusus">
+                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-sistemimunterganggu" data-group="khusus">
                                 Form Pengkajian Sistem Imun Terganggu
                             </a>
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-kecanduan-obat-terlarang" data-group="khusus">
+                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-kecanduanobatalkohol" data-group="khusus">
                                 Form Pengkajian Kecanduan Obat Terlarang
                             </a>
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-korban-kekerasan" data-group="khusus">
+                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-korbankekerasan" data-group="khusus">
                                 Form Pengkajian Korban Kekerasan
                             </a>
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-penyakit-menular" data-group="khusus">
+                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-penyakitmenular" data-group="khusus">
                                 Form Pengkajian Penyakit Menular
                             </a>
                             <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-lanjutan" data-group="khusus">
