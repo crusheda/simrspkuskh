@@ -228,6 +228,12 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // TANDA VITAL
                         Route::get('emr/pengkajian/ri/tandavital/{kunjungan}', [AddOnPengkajianController::class, 'getTandaVitalRI']);
                         Route::post('emr/pengkajian/ri/tandavital/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTandaVitalRI']);
+                    // PEMERIKSAAN FISIK OBSGYN
+                        Route::get('emr/pengkajian/ri/pemeriksaanfisikobsgyn/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanFisikObs']);
+                        Route::post('emr/pengkajian/ri/pemeriksaanfisikobsgyn/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanFisikObs']);
+                    // PEMERIKSAAN KHUSUS OBSGYN
+                        Route::get('emr/pengkajian/ri/pemeriksaankhususobsgyn/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanKhususObs']);
+                        Route::post('emr/pengkajian/ri/pemeriksaankhususobsgyn/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanKhususObs']);
 });
 
 // SIRMED v.1

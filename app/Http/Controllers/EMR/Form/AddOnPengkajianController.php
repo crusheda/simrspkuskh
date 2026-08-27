@@ -2246,6 +2246,7 @@ class AddOnPengkajianController extends Controller
                 'HIPERVOLEMIA',
                 'HIPOVOLEMIA',
                 'BERAT_BADAN_LEBIH',
+                'CEMAS',
             ]
         );
 
@@ -2306,6 +2307,7 @@ class AddOnPengkajianController extends Controller
                 'HIPERVOLEMIA',
                 'HIPOVOLEMIA',
                 'BERAT_BADAN_LEBIH',
+                'CEMAS',
             ];
 
             $data = [
@@ -3578,6 +3580,479 @@ class AddOnPengkajianController extends Controller
         return response()->json([
             'message' => 'Data riwayat KB dan menstruasi berhasil dihapus.'
         ], 200);
+    }
+
+    public function getPemeriksaanFisikObs($KUNJUNGAN)
+    {
+        try {
+
+            $data = DB::table('medicalrecord.sirmed_pemeriksaan_fisik_obsgyn')
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+
+            return response()->json([
+                'status' => true,
+                'data'   => $data
+            ]);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Gagal mengambil data Pemeriksaan Fisik Obsgyn.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function simpanPemeriksaanFisikObs(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            /*
+            |--------------------------------------------------------------------------
+            | USER
+            |--------------------------------------------------------------------------
+            */
+
+            $oleh = auth()->user()->ID ?? auth()->id();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PEMERIKSAAN FISIK OBSGYN
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table('medicalrecord.sirmed_pemeriksaan_fisik_obsgyn')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $KUNJUNGAN
+                    ],
+                    [
+
+                        // ==========================================================
+                        // MATA
+                        // ==========================================================
+
+                        'MATA'              => $request->input('mata'),
+                        'MATA_KETERANGAN'   => $request->input('mata_keterangan'),
+
+
+                        // ==========================================================
+                        // SKLERA
+                        // ==========================================================
+
+                        'SKLERA'            => $request->input('sklera'),
+
+
+                        // ==========================================================
+                        // KEPALA
+                        // ==========================================================
+
+                        'KEPALA'            => $request->input('kepala'),
+                        'KEPALA_KETERANGAN' => $request->input('kepala_keterangan'),
+
+
+                        // ==========================================================
+                        // TELINGA
+                        // ==========================================================
+
+                        'TELINGA'            => $request->input('telinga'),
+                        'TELINGA_KETERANGAN' => $request->input('telinga_keterangan'),
+
+
+                        // ==========================================================
+                        // HIDUNG
+                        // ==========================================================
+
+                        'HIDUNG'            => $request->input('hidung'),
+                        'HIDUNG_KETERANGAN' => $request->input('hidung_keterangan'),
+
+
+                        // ==========================================================
+                        // TENGGOROKAN
+                        // ==========================================================
+
+                        'TENGGOROKAN'            => $request->input('tenggorokan'),
+                        'TENGGOROKAN_KETERANGAN' => $request->input('tenggorokan_keterangan'),
+
+
+                        // ==========================================================
+                        // LEHER
+                        // ==========================================================
+
+                        'LEHER'            => $request->input('leher'),
+                        'LEHER_KETERANGAN' => $request->input('leher_keterangan'),
+
+
+                        // ==========================================================
+                        // DADA
+                        // ==========================================================
+
+                        'DADA'            => $request->input('dada'),
+                        'DADA_KETERANGAN' => $request->input('dada_keterangan'),
+
+
+                        // ==========================================================
+                        // JANTUNG
+                        // ==========================================================
+
+                        'JANTUNG'            => $request->input('jantung'),
+                        'JANTUNG_KETERANGAN' => $request->input('jantung_keterangan'),
+
+
+                        // ==========================================================
+                        // PARU
+                        // ==========================================================
+
+                        'PARU'            => $request->input('paru'),
+                        'PARU_KETERANGAN' => $request->input('paru_keterangan'),
+
+
+                        // ==========================================================
+                        // ABDOMEN
+                        // ==========================================================
+
+                        'ABDOMEN'            => $request->input('abdomen'),
+                        'ABDOMEN_KETERANGAN' => $request->input('abdomen_keterangan'),
+
+
+                        // ==========================================================
+                        // ANGGOTA GERAK ATAS
+                        // ==========================================================
+
+                        'ANGGOTA_GERAK_ATAS'
+                            => $request->input('anggota_gerak_atas'),
+
+
+                        // ==========================================================
+                        // ANGGOTA GERAK BAWAH
+                        // ==========================================================
+
+                        'ANGGOTA_GERAK_BAWAH'
+                            => $request->input('anggota_gerak_bawah'),
+
+
+                        // ==========================================================
+                        // AUDIT
+                        // ==========================================================
+
+                        'TANGGAL' => now(),
+                        'OLEH'    => $oleh,
+                        'STATUS'  => 1,
+                    ]
+                );
+
+
+            DB::commit();
+
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Pemeriksaan Fisik Obsgyn berhasil disimpan.'
+            ]);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Pemeriksaan Fisik Obsgyn gagal disimpan.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getPemeriksaanKhususObs($KUNJUNGAN)
+    {
+        try {
+
+            $dataDb = DB::table('medicalrecord.sirmed_pemeriksaan_khusus_obsgyn')
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+            if (!$dataDb) {
+                return response()->json([
+                    'status' => true,
+                    'data'   => null
+                ]);
+            }
+
+            $data = [
+
+                // ==========================================================
+                // DADA
+                // ==========================================================
+                'dada_1' => $dataDb->DADA_1 ?? 0,
+                'dada_2' => $dataDb->DADA_2 ?? 0,
+                'dada_3' => $dataDb->DADA_3 ?? 0,
+                'dada_4' => $dataDb->DADA_4 ?? 0,
+                'dada_5' => $dataDb->DADA_5 ?? 0,
+
+                'kolostrum_keterangan'
+                    => $dataDb->KOLOSTRUM_KETERANGAN ?? null,
+
+
+                // ==========================================================
+                // ABDOMEN - INSPEKSI
+                // ==========================================================
+                'abdomen_luka_bekas_op'
+                    => $dataDb->ABDOMEN_LUKA_BEKAS_OP ?? 0,
+
+                'abdomen_linea_alba'
+                    => $dataDb->ABDOMEN_LINEA_ALBA ?? 0,
+
+                'abdomen_linea_nigra'
+                    => $dataDb->ABDOMEN_LINEA_NIGRA ?? 0,
+
+                'abdomen_striae_livida'
+                    => $dataDb->ABDOMEN_STRIAE_LIVIDA ?? 0,
+
+                'abdomen_striae_albican'
+                    => $dataDb->ABDOMEN_STRIAE_ALBICAN ?? 0,
+
+
+                // ==========================================================
+                // LEOPOLD
+                // ==========================================================
+                'leopold_1_tfu'
+                    => $dataDb->LEOPOLD_1_TFU ?? null,
+
+                'leopold_2'
+                    => $dataDb->LEOPOLD_2 ?? null,
+
+                'leopold_3'
+                    => $dataDb->LEOPOLD_3 ?? null,
+
+                'leopold_4'
+                    => $dataDb->LEOPOLD_4 ?? null,
+
+
+                // ==========================================================
+                // AUSKULTASI
+                // ==========================================================
+                'djj'
+                    => $dataDb->DJJ ?? null,
+
+                'djj_kondisi'
+                    => $dataDb->DJJ_KONDISI ?? null,
+
+
+                // ==========================================================
+                // HIS / KONTRAKSI
+                // ==========================================================
+                'his'
+                    => $dataDb->HIS ?? null,
+
+                'his_durasi'
+                    => $dataDb->HIS_DURASI ?? null,
+
+                'his_kekuatan'
+                    => $dataDb->HIS_KEKUATAN ?? null,
+
+
+                // ==========================================================
+                // ANOGENITAL
+                // ==========================================================
+                'anogenital_darah'
+                    => $dataDb->ANOGENITAL_DARAH ?? 0,
+
+                'anogenital_lendir'
+                    => $dataDb->ANOGENITAL_LENDIR ?? 0,
+
+                'anogenital_air_ketuban'
+                    => $dataDb->ANOGENITAL_AIR_KETUBAN ?? 0,
+
+                'anogenital_lainnya'
+                    => $dataDb->ANOGENITAL_LAINNYA ?? 0,
+
+                'anogenital_lainnya_keterangan'
+                    => $dataDb->ANOGENITAL_LAINNYA_KETERANGAN ?? null,
+
+
+                // ==========================================================
+                // LAIN-LAIN
+                // ==========================================================
+                'vagina_taucher'
+                    => $dataDb->VAGINA_TAUCHER ?? null,
+
+                'pemeriksaan_lain_lain'
+                    => $dataDb->PEMERIKSAAN_LAIN_LAIN ?? null,
+            ];
+
+            return response()->json([
+                'status' => true,
+                'data'   => $data
+            ]);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Gagal mengambil data Pemeriksaan Khusus.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function simpanPemeriksaanKhususObs(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $oleh = auth()->user()->ID ?? auth()->id();
+
+            DB::table('medicalrecord.sirmed_pemeriksaan_khusus_obsgyn')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $KUNJUNGAN
+                    ],
+                    [
+
+                        // ==================================================
+                        // DADA
+                        // ==================================================
+                        'DADA_1'
+                            => $request->input('dada_1', 0),
+
+                        'DADA_2'
+                            => $request->input('dada_2', 0),
+
+                        'DADA_3'
+                            => $request->input('dada_3', 0),
+
+                        'DADA_4'
+                            => $request->input('dada_4', 0),
+
+                        'DADA_5'
+                            => $request->input('dada_5', 0),
+
+                        'KOLOSTRUM_KETERANGAN'
+                            => $request->input('kolostrum_keterangan'),
+
+
+                        // ==================================================
+                        // ABDOMEN - INSPEKSI
+                        // ==================================================
+                        'ABDOMEN_LUKA_BEKAS_OP'
+                            => $request->input('abdomen_luka_bekas_op', 0),
+
+                        'ABDOMEN_LINEA_ALBA'
+                            => $request->input('abdomen_linea_alba', 0),
+
+                        'ABDOMEN_LINEA_NIGRA'
+                            => $request->input('abdomen_linea_nigra', 0),
+
+                        'ABDOMEN_STRIAE_LIVIDA'
+                            => $request->input('abdomen_striae_livida', 0),
+
+                        'ABDOMEN_STRIAE_ALBICAN'
+                            => $request->input('abdomen_striae_albican', 0),
+
+
+                        // ==================================================
+                        // LEOPOLD
+                        // ==================================================
+                        'LEOPOLD_1_TFU'
+                            => $request->input('leopold_1_tfu'),
+
+                        'LEOPOLD_2'
+                            => $request->input('leopold_2'),
+
+                        'LEOPOLD_3'
+                            => $request->input('leopold_3'),
+
+                        'LEOPOLD_4'
+                            => $request->input('leopold_4'),
+
+
+                        // ==================================================
+                        // AUSKULTASI
+                        // ==================================================
+                        'DJJ'
+                            => $request->input('djj'),
+
+                        'DJJ_KONDISI'
+                            => $request->input('djj_kondisi'),
+
+
+                        // ==================================================
+                        // HIS / KONTRAKSI
+                        // ==================================================
+                        'HIS'
+                            => $request->input('his'),
+
+                        'HIS_DURASI'
+                            => $request->input('his_durasi'),
+
+                        'HIS_KEKUATAN'
+                            => $request->input('his_kekuatan'),
+
+
+                        // ==================================================
+                        // ANOGENITAL
+                        // ==================================================
+                        'ANOGENITAL_DARAH'
+                            => $request->input('anogenital_darah', 0),
+
+                        'ANOGENITAL_LENDIR'
+                            => $request->input('anogenital_lendir', 0),
+
+                        'ANOGENITAL_AIR_KETUBAN'
+                            => $request->input('anogenital_air_ketuban', 0),
+
+                        'ANOGENITAL_LAINNYA'
+                            => $request->input('anogenital_lainnya', 0),
+
+                        'ANOGENITAL_LAINNYA_KETERANGAN'
+                            => $request->input('anogenital_lainnya_keterangan'),
+
+
+                        // ==================================================
+                        // LAIN-LAIN
+                        // ==================================================
+                        'VAGINA_TAUCHER'
+                            => $request->input('vagina_taucher'),
+
+                        'PEMERIKSAAN_LAIN_LAIN'
+                            => $request->input('pemeriksaan_lain_lain'),
+
+
+                        // ==================================================
+                        // AUDIT
+                        // ==================================================
+                        'TANGGAL' => now(),
+                        'OLEH'    => $oleh,
+                        'STATUS'  => 1,
+                    ]
+                );
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Pemeriksaan Khusus berhasil disimpan.'
+            ]);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Pemeriksaan Khusus gagal disimpan.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
     }
 
 }

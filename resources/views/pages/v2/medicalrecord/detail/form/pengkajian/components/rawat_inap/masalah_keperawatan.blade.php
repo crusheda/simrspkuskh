@@ -54,6 +54,7 @@
                 'Hipervolemia',
                 'Hipovolemia',
                 'Berat badan lebih',
+                'Cemas',
             ];
 
             $jumlahKolom = 3;
@@ -163,7 +164,8 @@
             'RESIKO_INFEKSI',
             'HIPERVOLEMIA',
             'HIPOVOLEMIA',
-            'BERAT_BADAN_LEBIH'
+            'BERAT_BADAN_LEBIH',
+            'CEMAS'
         ];
 
         $.ajax({
