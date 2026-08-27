@@ -156,7 +156,7 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                         Route::post('emr/form/pengkajian/khu/korbankekerasan/simpan', [PengkajianKhususKorbanKekerasanController::class, 'simpanFormKhusus']);
                     // PENYAKIT MENULAR
                         Route::get('emr/form/pengkajian/khu/penyakitmenular/{kunjungan}', [PengkajianKhususPenyakitMenularController::class, 'getFormKhusus']);
-                        Route::post('emr/form/pengkajian/khu/penyakitmenular/simpan', [PengkajianKhususPenyakitMenularController::class, 'simpanFormKhusus']);
+                        Route::post('emr/form/pengkajian/khu/penyakitmenular/{kunjungan}/simpan', [PengkajianKhususPenyakitMenularController::class, 'simpanFormKhusus']);
                     // LANJUTAN
                         Route::get('emr/form/pengkajian/khu/lanjutan/{kunjungan}', [PengkajianKhususLanjutanController::class, 'getFormKhusus']);
                         Route::post('emr/form/pengkajian/khu/lanjutan/simpan', [PengkajianKhususLanjutanController::class, 'simpanFormKhusus']);

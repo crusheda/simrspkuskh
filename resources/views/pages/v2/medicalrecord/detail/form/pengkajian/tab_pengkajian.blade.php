@@ -606,8 +606,46 @@
                 return;
             }
 
-            // Checkbox
+            // // Checkbox
+            // if (type === 'checkbox') {
+            //     if (!(name in data)) {
+            //         data[name] = null;
+            //     }
+
+            //     if ($field.is(':checked')) {
+            //         data[name] = $field.val() || 1;
+            //     }
+
+            //     return;
+            // }
+
+            // ==========================================================
+            // CHECKBOX
+            // ==========================================================
             if (type === 'checkbox') {
+
+                // ======================================================
+                // CHECKBOX ARRAY
+                // ======================================================
+                if (name.endsWith('[]')) {
+
+                    if (!Array.isArray(data[name])) {
+                        data[name] = [];
+                    }
+
+                    if ($field.is(':checked')) {
+                        data[name].push(
+                            $field.val() || 1
+                        );
+                    }
+
+                    return;
+                }
+
+
+                // ======================================================
+                // CHECKBOX BIASA
+                // ======================================================
                 if (!(name in data)) {
                     data[name] = null;
                 }
