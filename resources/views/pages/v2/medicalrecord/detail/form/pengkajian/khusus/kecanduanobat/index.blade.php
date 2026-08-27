@@ -91,7 +91,7 @@
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input" name="pn_jenis_masalah[]" value="Perokok berat" id="pn_jenis_perokok">
                             <label class="form-check-label" for="pn_jenis_perokok">
-                                Perokok berat, ..... batang sehari
+                                Perokok berat
                             </label>
                         </div>
                     </div>
