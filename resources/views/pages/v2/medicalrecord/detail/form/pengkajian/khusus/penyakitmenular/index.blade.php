@@ -29,7 +29,7 @@
         isDataLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/khu/penyakitmenular/${kunjungan}`,
+            url: `/api/v2/emr/form/pengkajian/khu/penyakitmenular/${kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -93,7 +93,7 @@
         isDataSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/khu/penyakitmenular/${kunjungan}/simpan`,
+            url: `/api/v2/emr/form/pengkajian/khu/penyakitmenular/${kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

@@ -29,7 +29,7 @@
         isDataLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/khu/korbankekerasan/${kunjungan}`,
+            url: `/api/v2/emr/form/pengkajian/khu/korbankekerasan/${kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -93,7 +93,7 @@
         isDataSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/khu/korbankekerasan/${kunjungan}/simpan`,
+            url: `/api/v2/emr/form/pengkajian/khu/korbankekerasan/${kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

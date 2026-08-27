@@ -29,7 +29,7 @@
         isDataLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/khu/nyerikronik/${kunjungan}`,
+            url: `/api/v2/emr/form/pengkajian/khu/nyerikronik/${kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -93,7 +93,7 @@
         isDataSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/khu/nyerikronik/${kunjungan}/simpan`,
+            url: `/api/v2/emr/form/pengkajian/khu/nyerikronik/${kunjungan}/simpan`,
             type: 'POST',
             data: data,
 
