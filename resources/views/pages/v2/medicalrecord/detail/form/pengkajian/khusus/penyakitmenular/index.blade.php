@@ -1,11 +1,6 @@
 <div class="form-wrapper" id="form_khusus_penyakitmenular">
     <h1 class="display-6 mb-3 mt-2 fs-23 fw-medium"><center>PENGKAJIAN <b class="text-primary">PASIEN DENGAN PENYAKIT MENULAR ATAU INFEKSIUS</b></center></h1>
     <div class="form-content">
-        <div class="row">
-            <div class="col-md-12">
-
-            </div>
-        </div>
         <div class="row align-items-center mb-3">
 
             <div class="col-md-5">

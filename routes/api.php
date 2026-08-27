@@ -138,28 +138,28 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // KHUSUS
                     // REMAJA
                         Route::get('emr/form/pengkajian/khu/remaja/{kunjungan}', [PengkajianKhususRemajaController::class, 'getFormKhusus']);
-                        Route::post('emr/form/pengkajian/khu/remaja/simpan', [PengkajianKhususRemajaController::class, 'simpanFormKhusus']);
+                        Route::post('emr/form/pengkajian/khu/remaja/{kunjungan}/simpan', [PengkajianKhususRemajaController::class, 'simpanFormKhusus']);
                     // TERMINAL
                         Route::get('emr/form/pengkajian/khu/terminal/{kunjungan}', [PengkajianKhususTerminalController::class, 'getFormKhusus']);
-                        Route::post('emr/form/pengkajian/khu/terminal/simpan', [PengkajianKhususTerminalController::class, 'simpanFormKhusus']);
+                        Route::post('emr/form/pengkajian/khu/terminal/{kunjungan}/simpan', [PengkajianKhususTerminalController::class, 'simpanFormKhusus']);
                     // NYERI KRONIK
                         Route::get('emr/form/pengkajian/khu/nyerikronik/{kunjungan}', [PengkajianKhususNyeriKronikController::class, 'getFormKhusus']);
-                        Route::post('emr/form/pengkajian/khu/nyerikronik/simpan', [PengkajianKhususNyeriKronikController::class, 'simpanFormKhusus']);
+                        Route::post('emr/form/pengkajian/khu/nyerikronik/{kunjungan}/simpan', [PengkajianKhususNyeriKronikController::class, 'simpanFormKhusus']);
                     // SISTEM IMUN TERGANGGU
                         Route::get('emr/form/pengkajian/khu/sistemimun/{kunjungan}', [PengkajianKhususSistemImunTergangguController::class, 'getFormKhusus']);
-                        Route::post('emr/form/pengkajian/khu/sistemimun/simpan', [PengkajianKhususSistemImunTergangguController::class, 'simpanFormKhusus']);
+                        Route::post('emr/form/pengkajian/khu/sistemimun/{kunjungan}/simpan', [PengkajianKhususSistemImunTergangguController::class, 'simpanFormKhusus']);
                     // KECANDUAN OBAT TERLARANG DAN ALKOHOL
                         Route::get('emr/form/pengkajian/khu/kecanduanobat/{kunjungan}', [PengkajianKhususKecanduanObatAlkoholController::class, 'getFormKhusus']);
-                        Route::post('emr/form/pengkajian/khu/kecanduanobat/simpan', [PengkajianKhususKecanduanObatAlkoholController::class, 'simpanFormKhusus']);
+                        Route::post('emr/form/pengkajian/khu/kecanduanobat/{kunjungan}/simpan', [PengkajianKhususKecanduanObatAlkoholController::class, 'simpanFormKhusus']);
                     // KORBAN KEKERASAN
                         Route::get('emr/form/pengkajian/khu/korbankekerasan/{kunjungan}', [PengkajianKhususKorbanKekerasanController::class, 'getFormKhusus']);
-                        Route::post('emr/form/pengkajian/khu/korbankekerasan/simpan', [PengkajianKhususKorbanKekerasanController::class, 'simpanFormKhusus']);
+                        Route::post('emr/form/pengkajian/khu/korbankekerasan/{kunjungan}/simpan', [PengkajianKhususKorbanKekerasanController::class, 'simpanFormKhusus']);
                     // PENYAKIT MENULAR
                         Route::get('emr/form/pengkajian/khu/penyakitmenular/{kunjungan}', [PengkajianKhususPenyakitMenularController::class, 'getFormKhusus']);
                         Route::post('emr/form/pengkajian/khu/penyakitmenular/{kunjungan}/simpan', [PengkajianKhususPenyakitMenularController::class, 'simpanFormKhusus']);
                     // LANJUTAN
                         Route::get('emr/form/pengkajian/khu/lanjutan/{kunjungan}', [PengkajianKhususLanjutanController::class, 'getFormKhusus']);
-                        Route::post('emr/form/pengkajian/khu/lanjutan/simpan', [PengkajianKhususLanjutanController::class, 'simpanFormKhusus']);
+                        Route::post('emr/form/pengkajian/khu/lanjutan/{kunjungan}/simpan', [PengkajianKhususLanjutanController::class, 'simpanFormKhusus']);
 
             // ADD ON ✨✨✨✨✨
                 // ASAL RUJUKAN / PPK
