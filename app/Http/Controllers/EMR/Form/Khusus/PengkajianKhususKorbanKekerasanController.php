@@ -45,13 +45,72 @@ class PengkajianKhususKorbanKekerasanController extends Controller
         return view('pages.v2.medicalrecord.detail.form.pengkajian.khusus.korbankekerasan.index')->with('list',$data);
     }
 
-    function getFormKhusus()
+    function getFormKhusus($KUNJUNGAN)
     {
+        $data = DB::table('simrspku_pengkajian.pengkajian_kekerasan_penganiayaan')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('STATUS', 1)
+            ->first();
 
+        return response()->json([
+            'data' => $data
+        ]);
     }
+
 
     function simpanFormKhusus(Request $request, $KUNJUNGAN)
     {
+        $data = [
+            'KUNJUNGAN' => $KUNJUNGAN,
 
+            'MENGALAMI_KEKERASAN' =>
+                $request->input('kp_mengalami_kekerasan'),
+
+            'JENIS_KEKERASAN' =>
+                $request->input('kp_jenis_kekerasan'),
+
+            'LAMA_KEKERASAN' =>
+                $request->input('kp_lama_kekerasan'),
+
+            'FREKUENSI_KEKERASAN' =>
+                $request->input('kp_frekuensi_kekerasan'),
+
+            'PELAKU_KEKERASAN' =>
+                $request->input('kp_pelaku_kekerasan'),
+
+            'MEMERLUKAN_PENDAMPINGAN' =>
+                $request->input('kp_memerlukan_pendampingan'),
+
+            'OLEH' => auth()->id(),
+            'STATUS' => 1,
+        ];
+
+        $existing = DB::table(
+            'simrspku_pengkajian.pengkajian_kekerasan_penganiayaan'
+        )
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->first();
+
+        if ($existing) {
+
+            DB::table(
+                'simrspku_pengkajian.pengkajian_kekerasan_penganiayaan'
+            )
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->update($data);
+
+        } else {
+
+            DB::table(
+                'simrspku_pengkajian.pengkajian_kekerasan_penganiayaan'
+            )
+                ->insert($data);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil disimpan.'
+        ]);
     }
+
 }
