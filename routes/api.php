@@ -214,6 +214,18 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // PENUNJANG LAIN
                     Route::get('emr/pengkajian/penunjanglain/{kunjungan}', [AddOnPengkajianController::class, 'getPenunjangLain']);
                     Route::post('emr/pengkajian/penunjanglain/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPenunjangLain']);
+                // RIWAYAT IMUNIASASI
+                    Route::get('emr/pengkajian/riwayat_imunisasi/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatImunisasi']);
+                    Route::post('emr/pengkajian/riwayat_imunisasi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanRiwayatImunisasi']);
+                // STATUS OBSTETRI DAN NEONATUS
+                    Route::get('/emr/pengkajian/status_obstetri_neonatus/{kunjungan}',[AddOnPengkajianController::class, 'getStatusObstetriNeonatus']);
+                    Route::post('/emr/pengkajian/status_obstetri_neonatus/{kunjungan}/simpan',[AddOnPengkajianController::class, 'simpanStatusObstetriNeonatus']);
+                // PENILAIAN AWAL BAYI
+                    Route::get('/emr/pengkajian/penilaian_awal_bayi/{kunjungan}',[AddOnPengkajianController::class, 'getPenilaianAwalBayi']);
+                    Route::post('/emr/pengkajian/penilaian_awal_bayi/{kunjungan}/simpan',[AddOnPengkajianController::class, 'simpanPenilaianAwalBayi']);
+                // PEMERIKSAAN FISIK NEONATUS
+                    Route::get('/emr/pengkajian/pemeriksaan_fisik_neonatus/{kunjungan}',[AddOnPengkajianController::class, 'getPemeriksaanFisikNeo']);
+                    Route::post('/emr/pengkajian/pemeriksaan_fisik_neonatus/{kunjungan}/simpan',[AddOnPengkajianController::class, 'simpanPemeriksaanFisikNeo']);
 
                 // KHUSUS RAWAT INAP
                     // DAFTAR MASALAH KEPERAWATAN
