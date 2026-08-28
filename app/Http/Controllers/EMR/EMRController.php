@@ -37,6 +37,8 @@ use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususKorbanKekerasanControll
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususPenyakitMenularController;
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususLanjutanController;
 
+use App\Http\Controllers\EMR\Form\Lain\LembarTransferPasienInternalController;
+
 class EMRController extends Controller
 {
     // INDEX
@@ -613,6 +615,8 @@ class EMRController extends Controller
             'pengkajian-khusus-korbankekerasan'         => PengkajianKhususKorbanKekerasanController::class,
             'pengkajian-khusus-penyakitmenular'         => PengkajianKhususPenyakitMenularController::class,
             'pengkajian-khusus-lanjutan'                => PengkajianKhususLanjutanController::class,
+
+            'form-transfer-pasien'                      => LembarTransferPasienInternalController::class,
         ];
 
         abort_unless(isset($controllers[$form]), 404);

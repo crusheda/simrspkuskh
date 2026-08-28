@@ -195,6 +195,15 @@
                             <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-lanjutan" data-group="khusus">
                                 Form Pengkajian Lanjutan
                             </a>
+
+                            <div class="list-group-item menu-group-title p-2" data-group="lain">
+                                <h5 class="mt-2 ms-3">LAIN-LAIN</h5>
+                            </div>
+
+                            <!-- Gawat Darurat -->
+                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="form-transfer-pasien" data-group="lain">
+                                Lembar Transfer Pasien Internal
+                            </a>
                         </div>
                     </div>
                 </div>
