@@ -707,8 +707,7 @@
                 else if (
                     xhr.responseJSON?.message
                 ) {
-                    message =
-                        xhr.responseJSON.message;
+                    message = xhr.responseJSON.message;
                 }
                 iziToast.error({
                     title: 'Gagal',

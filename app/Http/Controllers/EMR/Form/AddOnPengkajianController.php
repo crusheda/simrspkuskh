@@ -1471,10 +1471,12 @@ class AddOnPengkajianController extends Controller
 
     public function getPengkajianUlangResikoJatuhHumptyDumpty($kunjungan)
     {
-        $data = DB::table('medicalrecord.sirmed_pengkajian_ulang_humpty_dumpty')
-                ->where('KUNJUNGAN', $kunjungan)
-                ->where('STATUS', 1)
-                ->orderByDesc('TANGGAL')
+        $data = DB::table('medicalrecord.sirmed_pengkajian_ulang_humpty_dumpty AS spuhd')
+                ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','spuhd.OLEH')
+                ->select(DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAUSER'),'spuhd.*')
+                ->where('spuhd.KUNJUNGAN', $kunjungan)
+                ->where('spuhd.STATUS', 1)
+                ->orderByDesc('spuhd.TANGGAL')
                 ->get();
 
         /*
@@ -1573,7 +1575,7 @@ class AddOnPengkajianController extends Controller
              * Kalau nanti mau nama user,
              * bagian ini bisa diganti JOIN.
              */
-            $item->NAMA_USER = $item->OLEH;
+            $item->NAMA_USER = $item->NAMAUSER;
 
             /*
              * Kategori risiko.
@@ -2457,12 +2459,169 @@ class AddOnPengkajianController extends Controller
         }
     }
 
-    function getMasalahKeperawatanRI($KUNJUNGAN)
+    // function getMasalahKeperawatanRI($KUNJUNGAN)
+    // {
+    //     $data = $this->getData(
+    //         $KUNJUNGAN,
+    //         'medicalrecord.masalah_keperawatan',
+    //         [
+    //             'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
+    //             'GANGGUAN_PERTUKARAN_GAS',
+    //             'GANGGUAN_VENTILASI_SPONTAN',
+    //             'POLA_NYERI_TIDAK_EFEKTIF',
+    //             'GANGGUAN_SIRKULASI_SPONTAN',
+    //             'PENURUNAN_CURAH_JANTUNG',
+    //             'PERFUSI_PERIFER_TIDAK_EFEKTIF',
+    //             'TERMOREGULASI_TIDAK_EFEKTIF',
+    //             'RESIKO_PERFUSI_GASTROINTESTINAL_TIDAK_EFEKTIF',
+    //             'RESIKO_PERDARAHAN',
+    //             'DEFISIT_NUTRISI',
+    //             'DIARE',
+    //             'KETIDAKSTABILAN_KADAR_GLUKOSA_DARAH',
+    //             'RESIKO_KETIDAKSEIMBANGAN_CAIRAN',
+    //             'RESIKO_KETIDAKSEIMBANGAN_ELEKTROLIT',
+    //             'RESIKO_SYOK',
+    //             'DISFUNGSI_MOTILITAS_GASTROINTESTINAL',
+    //             'GANGGUAN_ELIMINASI_URINE',
+    //             'KONSTIPASI',
+    //             'RETENSI_URINE',
+    //             'GANGGUAN_MOBILITAS_FISIK',
+    //             'GANGGUAN_POLA_TIDUR',
+    //             'INTOLERANSI_AKTIVITAS',
+    //             'GANGGUAN_MENELAN',
+    //             'GANGGUAN_RASA_NYAMAN',
+    //             'NAUSEA',
+    //             'NYERI_AKUT',
+    //             'NYERI_KRONIS',
+    //             'ANSIETAS',
+    //             'GANGGUAN_PERSEPSI_SENSORI',
+    //             'DEFISIT_PERAWATAN_DIRI',
+    //             'DEFISIT_PENGETAHUAN',
+    //             'GANGGUAN_INTERAKSI_SOSIAL',
+    //             'GANGGUAN_KOMUNIKASI_VERBAL',
+    //             'GANGGUAN_INTEGRITAS_KULIT_JARINGAN',
+    //             'HIPERTERMI',
+    //             'HIPOTERMI',
+    //             'PERLAMBATAN_PEMULIHAN_PASCA_BEDAH',
+    //             'RESIKO_ALERGI',
+    //             'RESIKO_CIDERA',
+    //             'RESIKO_INFEKSI',
+    //             'HIPERVOLEMIA',
+    //             'HIPOVOLEMIA',
+    //             'BERAT_BADAN_LEBIH',
+    //             'CEMAS',
+    //         ]
+    //     );
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'data' => $data
+    //     ]);
+    // }
+
+    // function simpanMasalahKeperawatanRI(Request $request, $KUNJUNGAN)
+    // {
+    //     DB::beginTransaction();
+
+    //     try {
+
+    //         $kolom = [
+    //             'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
+    //             'GANGGUAN_PERTUKARAN_GAS',
+    //             'GANGGUAN_VENTILASI_SPONTAN',
+    //             'POLA_NYERI_TIDAK_EFEKTIF',
+    //             'GANGGUAN_SIRKULASI_SPONTAN',
+    //             'PENURUNAN_CURAH_JANTUNG',
+    //             'PERFUSI_PERIFER_TIDAK_EFEKTIF',
+    //             'TERMOREGULASI_TIDAK_EFEKTIF',
+    //             'RESIKO_PERFUSI_GASTROINTESTINAL_TIDAK_EFEKTIF',
+    //             'RESIKO_PERDARAHAN',
+    //             'DEFISIT_NUTRISI',
+    //             'DIARE',
+    //             'KETIDAKSTABILAN_KADAR_GLUKOSA_DARAH',
+    //             'RESIKO_KETIDAKSEIMBANGAN_CAIRAN',
+    //             'RESIKO_KETIDAKSEIMBANGAN_ELEKTROLIT',
+    //             'RESIKO_SYOK',
+    //             'DISFUNGSI_MOTILITAS_GASTROINTESTINAL',
+    //             'GANGGUAN_ELIMINASI_URINE',
+    //             'KONSTIPASI',
+    //             'RETENSI_URINE',
+    //             'GANGGUAN_MOBILITAS_FISIK',
+    //             'GANGGUAN_POLA_TIDUR',
+    //             'INTOLERANSI_AKTIVITAS',
+    //             'GANGGUAN_MENELAN',
+    //             'GANGGUAN_RASA_NYAMAN',
+    //             'NAUSEA',
+    //             'NYERI_AKUT',
+    //             'NYERI_KRONIS',
+    //             'ANSIETAS',
+    //             'GANGGUAN_PERSEPSI_SENSORI',
+    //             'DEFISIT_PERAWATAN_DIRI',
+    //             'DEFISIT_PENGETAHUAN',
+    //             'GANGGUAN_INTERAKSI_SOSIAL',
+    //             'GANGGUAN_KOMUNIKASI_VERBAL',
+    //             'GANGGUAN_INTEGRITAS_KULIT_JARINGAN',
+    //             'HIPERTERMI',
+    //             'HIPOTERMI',
+    //             'PERLAMBATAN_PEMULIHAN_PASCA_BEDAH',
+    //             'RESIKO_ALERGI',
+    //             'RESIKO_CIDERA',
+    //             'RESIKO_INFEKSI',
+    //             'HIPERVOLEMIA',
+    //             'HIPOVOLEMIA',
+    //             'BERAT_BADAN_LEBIH',
+    //             'CEMAS',
+    //         ];
+
+    //         $data = [
+    //             'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN,
+    //             'OLEH'      => auth()->id(),
+    //             'STATUS'    => 1,
+    //             'TANGGAL'   => now(),
+    //         ];
+
+    //         foreach ($kolom as $index => $namaKolom) {
+    //             $nomor = $index + 1;
+
+    //             $data[$namaKolom] = $request->input(
+    //                 "dmk_{$nomor}",
+    //                 0
+    //             );
+    //         }
+
+    //         DB::table('medicalrecord.masalah_keperawatan')
+    //             ->updateOrInsert(
+    //                 [
+    //                     'KUNJUNGAN' => $data['KUNJUNGAN'],
+    //                 ],
+    //                 $data
+    //             );
+
+    //         DB::commit();
+
+    //         return response()->json([
+    //             'status'  => true,
+    //             'message' => 'Daftar Masalah Keperawatan berhasil diperbarui.',
+    //         ], 200);
+
+    //     } catch (\Throwable $e) {
+
+    //         DB::rollBack();
+
+    //         return response()->json([
+    //             'status'  => false,
+    //             'message' => 'Data Masalah Keperawatan gagal disimpan.',
+    //             'error'   => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+
+    public function getMasalahKeperawatanRI(Request $request, $KUNJUNGAN)
     {
-        $data = $this->getData(
-            $KUNJUNGAN,
-            'medicalrecord.masalah_keperawatan',
-            [
+        $form = strtolower($request->query('form', 'dewasa'));
+
+        $kolomByForm = [
+            'dewasa' => [
                 'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
                 'GANGGUAN_PERTUKARAN_GAS',
                 'GANGGUAN_VENTILASI_SPONTAN',
@@ -2508,22 +2667,71 @@ class AddOnPengkajianController extends Controller
                 'HIPOVOLEMIA',
                 'BERAT_BADAN_LEBIH',
                 'CEMAS',
-            ]
+            ],
+            'neonatus' => [
+                'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
+                'POLA_NAFAS_TIDAK_EFEKTIF',
+                'GANGGUAN_PERTUKARAN_GAS',
+                'PERFUSI_JARINGAN_TIDAK_EFEKTIF',
+                'HIPOTERMI',
+                'GANGGUAN_KESEIMBANGAN_CAIRAN_ELEKTROLIT',
+                'RESIKO_KERUSAKAN_INTEGRITAS_KULIT',
+                'HIPERTERMI',
+                'GANGGUAN_PERFUSI_JARINGAN_CEREBRAL',
+                'KONSTIPASI',
+                'DIARE',
+                'RESIKO_TINGGI_MALNUTRISI',
+                'KOPING_KELUARGA_TIDAK_EFEKTIF',
+                'RESIKO_TERHADAP_ASPIRASI',
+                'KETIDAKSEIMBANGAN_NUTRISI',
+                'GANGGUAN_ELIMINASI',
+                'RETENSI_URINE',
+                'KECEMASAN_ORANG_TUA',
+                'NYERI',
+            ],
+            'obsgyn' => [
+                'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
+                'CEMAS',
+                'DIARE',
+                'GANGGUAN_INTEGRITAS_KULIT_JARINGAN',
+                'GANGGUAN_KOMUNIKASI_VERBAL',
+                'GANGGUAN_MOBILITAS_FISIK',
+                'GANGGUAN_POLA_TIDUR',
+                'HARGA_DIRI_RENDAH',
+                'HIPERTERMI',
+                'KURANG_PERAWATAN_DIRI',
+                'NYERI',
+                'RESIKO_JATUH',
+            ],
+        ];
+
+        $kolomByForm['anak'] = $kolomByForm['dewasa'];
+
+        if (!isset($kolomByForm[$form])) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Parameter form tidak valid.',
+            ], 422);
+        }
+
+        $data = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.masalah_keperawatan',
+            $kolomByForm[$form]
         );
 
         return response()->json([
             'status' => true,
-            'data' => $data
+            'data' => $data,
         ]);
     }
 
-    function simpanMasalahKeperawatanRI(Request $request, $KUNJUNGAN)
+    public function simpanMasalahKeperawatanRI(Request $request, $KUNJUNGAN)
     {
-        DB::beginTransaction();
+        $form = strtolower($request->input('form', 'dewasa'));
 
-        try {
-
-            $kolom = [
+        $kolomByForm = [
+            'dewasa' => [
                 'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
                 'GANGGUAN_PERTUKARAN_GAS',
                 'GANGGUAN_VENTILASI_SPONTAN',
@@ -2569,47 +2777,85 @@ class AddOnPengkajianController extends Controller
                 'HIPOVOLEMIA',
                 'BERAT_BADAN_LEBIH',
                 'CEMAS',
-            ];
+            ],
+            'neonatus' => [
+                'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
+                'POLA_NAFAS_TIDAK_EFEKTIF',
+                'GANGGUAN_PERTUKARAN_GAS',
+                'PERFUSI_JARINGAN_TIDAK_EFEKTIF',
+                'HIPOTERMI',
+                'GANGGUAN_KESEIMBANGAN_CAIRAN_ELEKTROLIT',
+                'RESIKO_KERUSAKAN_INTEGRITAS_KULIT',
+                'HIPERTERMI',
+                'GANGGUAN_PERFUSI_JARINGAN_CEREBRAL',
+                'KONSTIPASI',
+                'DIARE',
+                'RESIKO_TINGGI_MALNUTRISI',
+                'KOPING_KELUARGA_TIDAK_EFEKTIF',
+                'RESIKO_TERHADAP_ASPIRASI',
+                'KETIDAKSEIMBANGAN_NUTRISI',
+                'GANGGUAN_ELIMINASI',
+                'RETENSI_URINE',
+                'KECEMASAN_ORANG_TUA',
+                'NYERI',
+            ],
+            'obsgyn' => [
+                'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
+                'CEMAS',
+                'DIARE',
+                'GANGGUAN_INTEGRITAS_KULIT_JARINGAN',
+                'GANGGUAN_KOMUNIKASI_VERBAL',
+                'GANGGUAN_MOBILITAS_FISIK',
+                'GANGGUAN_POLA_TIDUR',
+                'HARGA_DIRI_RENDAH',
+                'HIPERTERMI',
+                'KURANG_PERAWATAN_DIRI',
+                'NYERI',
+                'RESIKO_JATUH',
+            ],
+        ];
 
+        $kolomByForm['anak'] = $kolomByForm['dewasa'];
+
+        if (!isset($kolomByForm[$form])) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Parameter form tidak valid.',
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
             $data = [
-                'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN,
-                'OLEH'      => auth()->id(),
-                'STATUS'    => 1,
-                'TANGGAL'   => now(),
+                'KUNJUNGAN' => $KUNJUNGAN,
+                'OLEH' => auth()->id(),
+                'STATUS' => 1,
+                'TANGGAL' => now(),
             ];
 
-            foreach ($kolom as $index => $namaKolom) {
-                $nomor = $index + 1;
-
-                $data[$namaKolom] = $request->input(
-                    "dmk_{$nomor}",
-                    0
-                );
+            foreach ($kolomByForm[$form] as $index => $namaKolom) {
+                $data[$namaKolom] = $request->boolean('dmk_' . ($index + 1)) ? 1 : 0;
             }
 
-            DB::table('medicalrecord.masalah_keperawatan')
-                ->updateOrInsert(
-                    [
-                        'KUNJUNGAN' => $data['KUNJUNGAN'],
-                    ],
-                    $data
-                );
+            DB::table('medicalrecord.masalah_keperawatan')->updateOrInsert(
+                ['KUNJUNGAN' => $KUNJUNGAN],
+                $data
+            );
 
             DB::commit();
 
             return response()->json([
-                'status'  => true,
+                'status' => true,
                 'message' => 'Daftar Masalah Keperawatan berhasil diperbarui.',
-            ], 200);
-
+            ]);
         } catch (\Throwable $e) {
-
             DB::rollBack();
 
             return response()->json([
-                'status'  => false,
+                'status' => false,
                 'message' => 'Data Masalah Keperawatan gagal disimpan.',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

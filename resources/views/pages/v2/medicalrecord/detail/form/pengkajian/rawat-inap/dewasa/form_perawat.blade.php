@@ -68,7 +68,12 @@
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_decubitus', ['section' => '#riD_perawat'])
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.masalah_keperawatan',['section' => '#riD_perawat'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.masalah_keperawatan',
+                    [
+                        'section' => '#riD_perawat',
+                        'form' => 'dewasa' // pilihan = 'dewasa' / 'anak' / 'neonatus' / 'obsgyn'
+                    ]
+                )
             </div>
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#riD_perawat'])

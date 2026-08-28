@@ -66,7 +66,12 @@
             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_penunjang',['section' => '#rin_perawat'])
         </div>
         <div class="col-md-12 mb-3">
-            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.masalah_keperawatan',['section' => '#rin_perawat'])
+            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.masalah_keperawatan',
+                [
+                    'section' => '#rin_perawat',
+                    'form' => 'neonatus' // pilihan = 'dewasa' / 'anak' / 'neonatus' / 'obsgyn'
+                ]
+            )
         </div>
         <div class="col-md-12">
             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.discharge_planning',['section' => '#rin_perawat'])

@@ -96,7 +96,12 @@
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#rio_perawat'])
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.masalah_keperawatan',['section' => '#rio_perawat'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.masalah_keperawatan',
+                    [
+                        'section' => '#rio_perawat',
+                        'form' => 'obsgyn' // pilihan = 'dewasa' / 'anak' / 'neonatus' / 'obsgyn'
+                    ]
+                )
             </div>
             <div class="col-md-12">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.discharge_planning',['section' => '#rio_perawat'])

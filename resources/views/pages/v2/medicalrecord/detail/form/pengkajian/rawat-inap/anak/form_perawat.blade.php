@@ -60,12 +60,12 @@
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_humpty_dumpty', ['section' => '#riA_perawat'])
             </div>
             <div class="col-md-12 mb-3">
-                <div class="form-group mb-2">
-                    <h5 class="mb-0 text-success">
-                        <strong>Daftar Masalah Keperawatan</strong>
-                    </h5>
-                </div>
-                <i>... coming soon</i>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.masalah_keperawatan',
+                    [
+                        'section' => '#riA_perawat',
+                        'form' => 'anak' // pilihan = 'dewasa' / 'anak' / 'neonatus' / 'obsgyn'
+                    ]
+                )
             </div>
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#riA_perawat'])
