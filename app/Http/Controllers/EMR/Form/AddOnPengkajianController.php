@@ -1469,6 +1469,267 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    public function getPengkajianUlangResikoJatuhHumptyDumpty($kunjungan)
+    {
+        $data = DB::table('medicalrecord.sirmed_pengkajian_ulang_humpty_dumpty')
+                ->where('KUNJUNGAN', $kunjungan)
+                ->where('STATUS', 1)
+                ->orderByDesc('TANGGAL')
+                ->get();
+
+        /*
+         * Mapping label berdasarkan value yang ada
+         * di option Blade.
+         */
+        $usia = [
+            4 => '< 3 tahun',
+            3 => '3 - 7 tahun',
+            2 => '7 - 13 tahun',
+            1 => '≥ 13 tahun',
+        ];
+
+        $jenisKelamin = [
+            2 => 'Laki-laki',
+            1 => 'Perempuan',
+        ];
+
+        $diagnosa = [
+            4 => 'Diagnosa neurologi',
+            3 => 'Perubahan oksigenasi',
+            2 => 'Gangguan perilaku/psikiatri',
+            1 => 'Diagnosis lainnya',
+        ];
+
+        $gangguanKognitif = [
+            3 => 'Tidak menyadari keterbatasan dirinya',
+            2 => 'Lupa akan adanya keterbatasan',
+            1 => 'Orientasi baik terhadap diri sendiri',
+        ];
+
+        $faktorLingkungan = [
+            4 => 'Riwayat jatuh / bayi diletakkan di tempat tidur dewasa',
+            3 => 'Pasien menggunakan alat bantu / bayi diletakkan dalam tempat tidur bayi / perabot rumah',
+            2 => 'Pasien diletakkan di tempat tidur',
+            1 => 'Area di luar rumah sakit',
+        ];
+
+        $pembedahan = [
+            3 => 'Dalam 24 jam',
+            2 => 'Dalam 48 jam',
+            1 => '> 48 jam atau tidak menjalani pembedahan / sedasi / anestesi',
+        ];
+
+        $medikamentosa = [
+            3 => 'Penggunaan multipel',
+            2 => 'Penggunaan salah satu obat',
+            1 => 'Penggunaan medikasi lainnya / tidak ada medikasi',
+        ];
+
+        /*
+         * Tambahkan label ke setiap data.
+         */
+        $data->transform(function ($item) use (
+            $usia,
+            $jenisKelamin,
+            $diagnosa,
+            $gangguanKognitif,
+            $faktorLingkungan,
+            $pembedahan,
+            $medikamentosa
+        ) {
+
+            $item->USIA_LABEL =
+                $usia[(int) $item->USIA] ?? '-';
+
+            $item->JENIS_KELAMIN_LABEL =
+                $jenisKelamin[(int) $item->JENIS_KELAMIN] ?? '-';
+
+            $item->DIAGNOSA_LABEL =
+                $diagnosa[(int) $item->DIAGNOSA] ?? '-';
+
+            $item->GANGGUAN_KOGNITIF_LABEL =
+                $gangguanKognitif[(int) $item->GANGGUAN_KOGNITIF] ?? '-';
+
+            $item->FAKTOR_LINGKUNGAN_LABEL =
+                $faktorLingkungan[(int) $item->FAKTOR_LINGKUNGAN] ?? '-';
+
+            $item->PEMBEDAHAN_SEDASI_ANESTESI_LABEL =
+                $pembedahan[(int) $item->PEMBEDAHAN_SEDASI_ANESTESI] ?? '-';
+
+            $item->PENGGUNAAN_MEDIKAMENTOSA_LABEL =
+                $medikamentosa[(int) $item->PENGGUNAAN_MEDIKAMENTOSA] ?? '-';
+
+            $item->TANGGAL_FORMATTED =
+                $item->TANGGAL
+                    ? date(
+                        'd-m-Y H:i:s',
+                        strtotime($item->TANGGAL)
+                    )
+                    : '-';
+
+            /*
+             * Sementara OLEH ditampilkan sebagai ID user.
+             *
+             * Kalau nanti mau nama user,
+             * bagian ini bisa diganti JOIN.
+             */
+            $item->NAMA_USER = $item->OLEH;
+
+            /*
+             * Kategori risiko.
+             */
+            $skor = (int) $item->SKOR;
+            if ($skor >= 7 && $skor <= 11) {
+                $item->KATEGORI =
+                    'Risiko Rendah (RR)';
+            } elseif ($skor >= 12) {
+                $item->KATEGORI =
+                    'Risiko Tinggi (RT)';
+            } else {
+                $item->KATEGORI = '-';
+            }
+            return $item;
+        });
+
+        return response()->json([
+            'status' => true,
+            'data' => $data,
+        ]);
+    }
+
+    public function simpanPengkajianUlangResikoJatuhHumptyDumpty(Request $request, $kunjungan)
+    {
+        $validated = $request->validate([
+            'purj_usia' => [
+                'required',
+                'integer',
+                'in:1,2,3,4'
+            ],
+            'purj_jk' => [
+                'required',
+                'integer',
+                'in:1,2'
+            ],
+            'purj_diagnosa' => [
+                'required',
+                'integer',
+                'in:1,2,3,4'
+            ],
+            'purj_gangguan_kognitif' => [
+                'required',
+                'integer',
+                'in:1,2,3'
+            ],
+            'purj_faktor_lingkungan' => [
+                'required',
+                'integer',
+                'in:1,2,3,4'
+            ],
+            'purj_pembedahan_sedasi_anestesi' => [
+                'required',
+                'integer',
+                'in:1,2,3'
+            ],
+            'purj_penggunaan_medikamentosa' => [
+                'required',
+                'integer',
+                'in:1,2,3'
+            ],
+        ]);
+
+        // ======================================================
+        // HITUNG SKOR
+        // ======================================================
+        $skor =
+            (int) $validated['purj_usia']
+            + (int) $validated['purj_jk']
+            + (int) $validated['purj_diagnosa']
+            + (int) $validated['purj_gangguan_kognitif']
+            + (int) $validated['purj_faktor_lingkungan']
+            + (int) $validated['purj_pembedahan_sedasi_anestesi']
+            + (int) $validated['purj_penggunaan_medikamentosa'];
+
+        // ======================================================
+        // KATEGORI
+        // ======================================================
+        if ($skor >= 7 && $skor <= 11) {
+            $kategori =
+                'Risiko Rendah (RR)';
+        } elseif ($skor >= 12) {
+            $kategori =
+                'Risiko Tinggi (RT)';
+        } else {
+            $kategori = '-';
+        }
+
+        // ======================================================
+        // USER
+        // ======================================================
+        $oleh = Auth::id();
+
+        // ======================================================
+        // INSERT
+        // ======================================================
+        $id = DB::table(
+            'medicalrecord.sirmed_pengkajian_ulang_humpty_dumpty'
+        )->insertGetId([
+            'KUNJUNGAN' => $kunjungan,
+            'USIA' => $validated['purj_usia'],
+            'JENIS_KELAMIN' => $validated['purj_jk'],
+            'DIAGNOSA' => $validated['purj_diagnosa'],
+            'GANGGUAN_KOGNITIF' => $validated['purj_gangguan_kognitif'],
+            'FAKTOR_LINGKUNGAN' => $validated['purj_faktor_lingkungan'],
+            'PEMBEDAHAN_SEDASI_ANESTESI' => $validated['purj_pembedahan_sedasi_anestesi'],
+            'PENGGUNAAN_MEDIKAMENTOSA' => $validated['purj_penggunaan_medikamentosa'],
+            'SKOR' => $skor,
+            'OLEH' => $oleh,
+            'STATUS' => 1,
+            'TANGGAL' => now(),
+        ]);
+
+        // ======================================================
+        // RESPONSE
+        // ======================================================
+        return response()->json([
+            'status' => true,
+            'message' => 'Pengkajian ulang Humpty Dumpty berhasil disimpan.',
+            'data' => [
+                'ID' =>
+                    $id,
+                'SKOR' =>
+                    $skor,
+                'KATEGORI' =>
+                    $kategori,
+            ],
+        ], 201);
+    }
+
+    public function hapusPengkajianUlangResikoJatuhHumptyDumpty(string $kunjungan, int $id)
+    {
+        $updated = DB::table(
+            'medicalrecord.sirmed_pengkajian_ulang_humpty_dumpty'
+        )
+            ->where('ID', $id)
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->update([
+                'STATUS' => 0,
+            ]);
+
+        if (!$updated) {
+            return response()->json([
+                'status' => false,
+                'message' =>
+                    'Data pengkajian tidak ditemukan.',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Data pengkajian berhasil dihapus.',
+        ]);
+    }
+
     function getHubunganStatusPsikososial($KUNJUNGAN)
     {
         $hubspsi = $this->getData(

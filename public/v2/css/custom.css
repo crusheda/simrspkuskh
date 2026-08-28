@@ -1,7 +1,25 @@
-.form-wrapper{
+/* .form-wrapper{
     display:flex;
     flex-direction:column;
     height:calc(100vh - 250px);
+} */
+/* .form-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    max-height: calc(100vh - 250px);
+
+    overflow-y: auto;
+} */
+.form-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    max-height: calc(100vh - 250px);
+
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .form-content{

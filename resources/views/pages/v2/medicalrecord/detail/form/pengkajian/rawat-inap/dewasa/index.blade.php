@@ -298,11 +298,11 @@
             $('#ridAccordion')
                 .off(
                     'shown.bs.collapse.ridRanap',
-                    '.multi-collapse'
+                    '#riD_dokter, #riD_perawat'
                 )
                 .on(
                     'shown.bs.collapse.ridRanap',
-                    '.multi-collapse',
+                    '#riD_dokter, #riD_perawat',
                     function () {
                         const $section =
                             $(this);
@@ -351,11 +351,11 @@
             $('#ridAccordion')
                 .off(
                     'hidden.bs.collapse.ridRanap',
-                    '.multi-collapse'
+                    '#riD_dokter, #riD_perawat'
                 )
                 .on(
                     'hidden.bs.collapse.ridRanap',
-                    '.multi-collapse',
+                    '#riD_dokter, #riD_perawat',
                     function () {
                         const $section =
                             $(this);

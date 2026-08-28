@@ -10,6 +10,7 @@
     <div class="col-md-12">
         @php
             $diagnosaKeperawatan = [
+                // DEWASA & ANAK
                 'Bersihan jalan nafas tidak efektif',
                 'Gangguan pertukaran gas',
                 'Gangguan ventilasi spontan',
@@ -55,6 +56,11 @@
                 'Hipovolemia',
                 'Berat badan lebih',
                 'Cemas',
+
+                // NEONATUS
+
+                // OBSGYN
+
             ];
 
             $jumlahKolom = 3;
@@ -121,6 +127,7 @@
         isLoading = true;
 
         const kolom = [
+            // DEWASA & ANAK
             'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
             'GANGGUAN_PERTUKARAN_GAS',
             'GANGGUAN_VENTILASI_SPONTAN',
@@ -166,6 +173,11 @@
             'HIPOVOLEMIA',
             'BERAT_BADAN_LEBIH',
             'CEMAS'
+
+            // NEONATUS
+
+            // OBSGYN
+
         ];
 
         $.ajax({

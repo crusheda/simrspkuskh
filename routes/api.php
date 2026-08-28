@@ -218,6 +218,11 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                         // STRONG KID
                         Route::get('emr/pengkajian/skrining/gizi/strongkid/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningGiziStrongKid']);
                         Route::post('emr/pengkajian/skrining/gizi/strongkid/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningGiziStrongKid']);
+                // PENGKAJIAN ULANG RESIKO JATUH
+                    // HUMPTY DUMPTY (PASIEN PEDIATRI)
+                    Route::get('emr/pengkajian/pengkajianulang/resikojatuh/humptydumpty/{kunjungan}', [AddOnPengkajianController::class, 'getPengkajianUlangResikoJatuhHumptyDumpty']);
+                    Route::post('emr/pengkajian/pengkajianulang/resikojatuh/humptydumpty/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPengkajianUlangResikoJatuhHumptyDumpty']);
+                    Route::delete('emr/pengkajian/pengkajianulang/resikojatuh/humptydumpty/{kunjungan}/hapus/{id}', [AddOnPengkajianController::class, 'hapusPengkajianUlangResikoJatuhHumptyDumpty']);
                 // HUBUNGAN STATUS PSIKOSOSIAL
                     Route::get('emr/pengkajian/hubunganstatuspsikososial/{kunjungan}', [AddOnPengkajianController::class, 'getHubunganStatusPsikososial']);
                     Route::post('emr/pengkajian/hubunganstatuspsikososial/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanHubunganStatusPsikososial']);

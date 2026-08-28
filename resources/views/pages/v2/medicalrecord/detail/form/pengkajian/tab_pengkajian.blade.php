@@ -200,7 +200,7 @@
                                 <h5 class="mt-2 ms-3">LAIN-LAIN</h5>
                             </div>
 
-                            <!-- Gawat Darurat -->
+                            <!-- Lembar Transfer Pasien -->
                             <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="form-transfer-pasien" data-group="lain">
                                 Lembar Transfer Pasien Internal
                             </a>
