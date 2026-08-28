@@ -31,6 +31,12 @@
             )
         </div>
         <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.pemeriksaan_fisik',['section' => '#rin_perawat'])
+        </div>
+        <div class="col-md-12 mb-3">
+            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial',['section' => '#rin_perawat'])
+        </div>
+        <div class="col-md-12 mb-3">
             <div class="form-group mb-2">
                 <h5 class="mb-0 text-success">
                     <strong>SKRINING GIZI</strong>
