@@ -1732,6 +1732,259 @@ class AddOnPengkajianController extends Controller
         ]);
     }
 
+    public function getPengkajianUlangResikoJatuhSkalaMorse($kunjungan)
+    {
+        $data = DB::table('medicalrecord.sirmed_pengkajian_ulang_skala_morse AS spm')
+                ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','spm.OLEH')
+                ->select(DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAUSER'),'spm.*')
+                ->where('spm.KUNJUNGAN', $kunjungan)
+                ->where('spm.STATUS', 1)
+                ->orderByDesc('spm.TANGGAL')
+                ->get();
+
+        /*
+        * Mapping label berdasarkan value
+        * yang ada di option Blade.
+        */
+        $riwayatJatuh = [
+            0 => 'Tidak',
+            25 => 'Ya',
+        ];
+
+        $diagnosisSekunder = [
+            0 => 'Tidak',
+            15 => 'Ya',
+        ];
+
+        $alatBantuJalan = [
+            0 => 'Tidak ada / Bed rest / Dibantu perawat',
+            15 => 'Kruk / Tongkat / Walker',
+            30 => 'Berpegangan pada furniture',
+        ];
+
+        $terapiIv = [
+            0 => 'Tidak',
+            20 => 'Ya',
+        ];
+
+        $gayaBerjalan = [
+            0 => 'Normal / Bed rest / Immobilisasi',
+            10 => 'Lemah',
+            20 => 'Terganggu',
+        ];
+
+        $statusMental = [
+            0 => 'Menyadari kemampuan sendiri',
+            15 => 'Lupa keterbatasan / Overestimate kemampuan',
+        ];
+
+        /*
+        * Tambahkan label ke setiap data.
+        */
+        $data->transform(function ($item) use (
+            $riwayatJatuh,
+            $diagnosisSekunder,
+            $alatBantuJalan,
+            $terapiIv,
+            $gayaBerjalan,
+            $statusMental
+        ) {
+
+            $item->RIWAYAT_JATUH_LABEL =
+                $riwayatJatuh[(int) $item->RIWAYAT_JATUH] ?? '-';
+
+            $item->DIAGNOSIS_SEKUNDER_LABEL =
+                $diagnosisSekunder[(int) $item->DIAGNOSIS_SEKUNDER] ?? '-';
+
+            $item->ALAT_BANTU_JALAN_LABEL =
+                $alatBantuJalan[(int) $item->ALAT_BANTU_JALAN] ?? '-';
+
+            $item->TERAPI_IV_LABEL =
+                $terapiIv[(int) $item->TERAPI_IV] ?? '-';
+
+            $item->GAYA_BERJALAN_LABEL =
+                $gayaBerjalan[(int) $item->GAYA_BERJALAN] ?? '-';
+
+            $item->STATUS_MENTAL_LABEL =
+                $statusMental[(int) $item->STATUS_MENTAL] ?? '-';
+
+            $item->TANGGAL_FORMATTED =
+                $item->TANGGAL
+                    ? date(
+                        'd-m-Y H:i:s',
+                        strtotime($item->TANGGAL)
+                    )
+                    : '-';
+
+            /*
+            * Nama user.
+            */
+            $item->NAMA_USER = $item->NAMAUSER;
+
+            /*
+            * Kategori risiko Skala Morse.
+            */
+            $skor = (int) $item->SKOR;
+
+            if ($skor >= 0 && $skor <= 24) {
+                $item->KATEGORI =
+                    'Risiko Rendah (RR)';
+            } elseif ($skor >= 25 && $skor <= 44) {
+                $item->KATEGORI =
+                    'Risiko Sedang (RS)';
+            } elseif ($skor >= 45) {
+                $item->KATEGORI =
+                    'Risiko Tinggi (RT)';
+            } else {
+                $item->KATEGORI = '-';
+            }
+
+            return $item;
+        });
+
+        return response()->json([
+            'status' => true,
+            'data' => $data,
+        ]);
+    }
+
+
+    public function simpanPengkajianUlangResikoJatuhSkalaMorse(
+        Request $request,
+        $kunjungan
+    ) {
+        $validated = $request->validate([
+            'mfsd_riwayat_jatuh' => [
+                'required',
+                'integer',
+                'in:0,25'
+            ],
+            'mfsd_diagnosis_sekunder' => [
+                'required',
+                'integer',
+                'in:0,15'
+            ],
+            'mfsd_alat_bantu_jalan' => [
+                'required',
+                'integer',
+                'in:0,15,30'
+            ],
+            'mfsd_terapi_iv' => [
+                'required',
+                'integer',
+                'in:0,20'
+            ],
+            'mfsd_gaya_berjalan' => [
+                'required',
+                'integer',
+                'in:0,10,20'
+            ],
+            'mfsd_status_mental' => [
+                'required',
+                'integer',
+                'in:0,15'
+            ],
+        ]);
+
+        // ======================================================
+        // HITUNG SKOR
+        // ======================================================
+        $skor =
+            (int) $validated['mfsd_riwayat_jatuh']
+            + (int) $validated['mfsd_diagnosis_sekunder']
+            + (int) $validated['mfsd_alat_bantu_jalan']
+            + (int) $validated['mfsd_terapi_iv']
+            + (int) $validated['mfsd_gaya_berjalan']
+            + (int) $validated['mfsd_status_mental'];
+
+        // ======================================================
+        // KATEGORI
+        // ======================================================
+        if ($skor >= 0 && $skor <= 24) {
+            $kategori =
+                'Risiko Rendah (RR)';
+        } elseif ($skor >= 25 && $skor <= 44) {
+            $kategori =
+                'Risiko Sedang (RS)';
+        } elseif ($skor >= 45) {
+            $kategori =
+                'Risiko Tinggi (RT)';
+        } else {
+            $kategori = '-';
+        }
+
+        // ======================================================
+        // USER
+        // ======================================================
+        $oleh = Auth::id();
+
+        // ======================================================
+        // INSERT
+        // ======================================================
+        $id = DB::table(
+            'medicalrecord.sirmed_pengkajian_ulang_skala_morse'
+        )->insertGetId([
+            'KUNJUNGAN' => $kunjungan,
+            'RIWAYAT_JATUH' => $validated['mfsd_riwayat_jatuh'],
+            'DIAGNOSIS_SEKUNDER' => $validated['mfsd_diagnosis_sekunder'],
+            'ALAT_BANTU_JALAN' => $validated['mfsd_alat_bantu_jalan'],
+            'TERAPI_IV' => $validated['mfsd_terapi_iv'],
+            'GAYA_BERJALAN' => $validated['mfsd_gaya_berjalan'],
+            'STATUS_MENTAL' => $validated['mfsd_status_mental'],
+            'SKOR' => $skor,
+            'OLEH' => $oleh,
+            'STATUS' => 1,
+            'TANGGAL' => now(),
+        ]);
+
+        // ======================================================
+        // RESPONSE
+        // ======================================================
+        return response()->json([
+            'status' => true,
+            'message' =>
+                'Pengkajian ulang Skala Morse berhasil disimpan.',
+            'data' => [
+                'ID' =>
+                    $id,
+                'SKOR' =>
+                    $skor,
+                'KATEGORI' =>
+                    $kategori,
+            ],
+        ], 201);
+    }
+
+
+    public function hapusPengkajianUlangResikoJatuhSkalaMorse(
+        string $kunjungan,
+        int $id
+    ) {
+        $updated = DB::table(
+            'medicalrecord.sirmed_pengkajian_ulang_skala_morse'
+        )
+            ->where('ID', $id)
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->update([
+                'STATUS' => 0,
+            ]);
+
+        if (!$updated) {
+            return response()->json([
+                'status' => false,
+                'message' =>
+                    'Data pengkajian tidak ditemukan.',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' =>
+                'Data pengkajian berhasil dihapus.',
+        ]);
+    }
+
     function getHubunganStatusPsikososial($KUNJUNGAN)
     {
         $hubspsi = $this->getData(

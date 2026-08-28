@@ -1,8 +1,13 @@
 <div class="form-wrapper" id="form_lembar_transfer_pasien">
-    <h1 class="display-6 mb-1 mt-2 fs-23 fw-medium"><center>LEMBAR <b class="text-warning">TRANSFER PASIEN INTERNAL</b></center></h1>
+    <h1 class="display-6 mb-3 mt-2 fs-23 fw-medium"><center>LEMBAR <b class="text-warning">TRANSFER PASIEN INTERNAL</b></center></h1>
     <div class="form-content">
         <div class="row">
-            {{-- COL --}}
+            <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pengkajian_ulang_resiko_jatuh_humpty_dumpty_pediatri',['section' => '#form_lembar_transfer_pasien'])
+            </div>
+            <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pengkajian_ulang_resiko_jatuh_skala_morse_dewasa',['section' => '#form_lembar_transfer_pasien'])
+            </div>
         </div>
     </div>
 </div>

@@ -223,6 +223,10 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     Route::get('emr/pengkajian/pengkajianulang/resikojatuh/humptydumpty/{kunjungan}', [AddOnPengkajianController::class, 'getPengkajianUlangResikoJatuhHumptyDumpty']);
                     Route::post('emr/pengkajian/pengkajianulang/resikojatuh/humptydumpty/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPengkajianUlangResikoJatuhHumptyDumpty']);
                     Route::delete('emr/pengkajian/pengkajianulang/resikojatuh/humptydumpty/{kunjungan}/hapus/{id}', [AddOnPengkajianController::class, 'hapusPengkajianUlangResikoJatuhHumptyDumpty']);
+                    // SKALA MORSE (PASIEN DEWASA)
+                    Route::get('emr/pengkajian/pengkajianulang/resikojatuh/morse/{kunjungan}', [AddOnPengkajianController::class, 'getPengkajianUlangResikoJatuhSkalaMorse']);
+                    Route::post('emr/pengkajian/pengkajianulang/resikojatuh/morse/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPengkajianUlangResikoJatuhSkalaMorse']);
+                    Route::delete('emr/pengkajian/pengkajianulang/resikojatuh/morse/{kunjungan}/hapus/{id}', [AddOnPengkajianController::class, 'hapusPengkajianUlangResikoJatuhSkalaMorse']);
                 // HUBUNGAN STATUS PSIKOSOSIAL
                     Route::get('emr/pengkajian/hubunganstatuspsikososial/{kunjungan}', [AddOnPengkajianController::class, 'getHubunganStatusPsikososial']);
                     Route::post('emr/pengkajian/hubunganstatuspsikososial/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanHubunganStatusPsikososial']);
