@@ -178,13 +178,13 @@
                 */
 
                 $('#ridAccordion')
-                    .find('.multi-collapse')
+                    .find('#riD_dokter, #riD_perawat')
                     .not($section)
                     .find('.form-content')
                     .empty();
 
                 $('#ridAccordion')
-                    .find('.multi-collapse')
+                    .find('#riD_dokter, #riD_perawat')
                     .not($section)
                     .removeData('loaded');
 
