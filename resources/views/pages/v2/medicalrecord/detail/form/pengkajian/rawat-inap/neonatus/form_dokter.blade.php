@@ -65,9 +65,6 @@
                 </div>
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#rin_dokter'])
-            </div>
-            <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rencana_konsultasi',['section' => '#rin_dokter'])
             </div>
             <div class="col-md-12 mb-3">
