@@ -5519,4 +5519,592 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    public function getPemeriksaanFisikNeonatus($KUNJUNGAN)
+    {
+        try {
+
+            /*
+            |--------------------------------------------------------------------------
+            | SISTEM PERNAFASAN
+            |--------------------------------------------------------------------------
+            */
+
+            $pernafasan = DB::table(
+                'medicalrecord.sirmed_sistem_pernafasan'
+            )
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SISTEM KARDIOVASKULER
+            |--------------------------------------------------------------------------
+            */
+
+            $kardiovaskuler = DB::table(
+                'medicalrecord.sirmed_sistem_kardiovaskuler'
+            )
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SISTEM NEUROLOGIS
+            | Menggunakan sirmed_sistem_persyarafan
+            |--------------------------------------------------------------------------
+            */
+
+            $persyarafan = DB::table(
+                'medicalrecord.sirmed_sistem_persyarafan'
+            )
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SISTEM GASTROINTESTINAL
+            |--------------------------------------------------------------------------
+            */
+
+            $pencernaan = DB::table(
+                'medicalrecord.sirmed_sistem_gastrointestinal'
+            )
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SISTEM PERKEMIHAN
+            |--------------------------------------------------------------------------
+            */
+
+            $perkemihan = DB::table(
+                'medicalrecord.sirmed_sistem_perkemihan'
+            )
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SISTEM INTEGUMEN
+            | Menggunakan sirmed_sistem_muskuloskeletal_integumen
+            |--------------------------------------------------------------------------
+            */
+
+            $integumen = DB::table(
+                'medicalrecord.sirmed_sistem_muskuloskeletal_integumen'
+            )
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | MAPPING DATABASE -> NAME BLADE
+            |--------------------------------------------------------------------------
+            */
+
+            $data = [
+
+                // ==========================================================
+                // PERNAFASAN
+                // ==========================================================
+
+                'pfn_un' =>
+                    $pernafasan->USAHA_NAFAS ?? null,
+
+                'pfn_tn' =>
+                    $pernafasan->TIPE_NAFAS ?? null,
+
+                'pfn_tn_freq' =>
+                    $pernafasan->TIPE_NAFAS_FREKUENSI ?? null,
+
+                'pfn_in' =>
+                    $pernafasan->INSPEKSI ?? null,
+
+                'pfn_pl' =>
+                    $pernafasan->PALPASI ?? null,
+
+                'pfn_per' =>
+                    $pernafasan->PERKUSI ?? null,
+
+                'pfn_aus' =>
+                    $pernafasan->AUSKULTASI ?? null,
+
+
+                // ==========================================================
+                // KARDIOVASKULER
+                // ==========================================================
+
+                'psk_bj' =>
+                    $kardiovaskuler->BUNYI_JANTUNG ?? null,
+
+                'psk_ij' =>
+                    $kardiovaskuler->IRAMA_JANTUNG ?? null,
+
+                'psk_pul' =>
+                    $kardiovaskuler->PULSASI ?? null,
+
+                'psk_trb' =>
+                    $kardiovaskuler->TERABA ?? null,
+
+                'psk_crt' =>
+                    $kardiovaskuler->CRT ?? null,
+
+                'psk_ak' =>
+                    $kardiovaskuler->AKRAL ?? null,
+
+                'psk_ak_suhu' =>
+                    $kardiovaskuler->AKRAL_SUHU ?? null,
+
+
+                // ==========================================================
+                // NEUROLOGIS / PERSYARAFAN
+                // ==========================================================
+
+                'psn_kes' =>
+                    $persyarafan->KESADARAN ?? null,
+
+                'psp_pul' =>
+                    $persyarafan->SKLERA ?? null,
+
+                'psp_pup' =>
+                    $persyarafan->PUPIL ?? null,
+
+                'psn_rc_r' =>
+                    $persyarafan->REFLEK_CAHAYA_KANAN ?? null,
+
+                'psn_rc_l' =>
+                    $persyarafan->REFLEK_CAHAYA_KIRI ?? null,
+
+                'psn_ref' =>
+                    $persyarafan->REFLEK ?? null,
+
+                'psp_kjg' =>
+                    $persyarafan->KEJANG ?? null,
+
+                'psp_kjg_lain' =>
+                    $persyarafan->KEJANG_LAMA ?? null,
+
+                'psn_gerak_k' =>
+                    $persyarafan->PERGERAKAN_KAKI ?? null,
+
+                'psn_gerak_t' =>
+                    $persyarafan->PERGERAKAN_TANGAN ?? null,
+
+
+                // ==========================================================
+                // GASTROINTESTINAL
+                // ==========================================================
+
+                'psg_bab_freq' =>
+                    $pencernaan->BAB_FREKUENSI ?? null,
+
+                'psg_bab' =>
+                    $pencernaan->BAB_KONSISTENSI ?? null,
+
+                'psg_bab_war' =>
+                    $pencernaan->BAB_WARNA ?? null,
+
+                'psg_muntah' =>
+                    $pencernaan->MUNTAH ?? null,
+
+                'psg_muntah_freq' =>
+                    $pencernaan->MUNTAH_FREKUENSI ?? null,
+
+                'psg_ins' =>
+                    $pencernaan->INSPEKSI ?? null,
+
+                'psg_pl_hepar' =>
+                    $pencernaan->PALPASI_HEPAR ?? null,
+
+                'psg_pl_lien' =>
+                    $pencernaan->PALPASI_LIEN ?? null,
+
+                'psg_prk' =>
+                    $pencernaan->PERKUSI ?? null,
+
+                'psg_aus' =>
+                    $pencernaan->AUSKULTASI ?? null,
+
+                'psg_aus_detail' =>
+                    $pencernaan->AUSKULTASI_DETAIL ?? null,
+
+
+                // ==========================================================
+                // PERKEMIHAN
+                // ==========================================================
+
+                'pskm_bak_freq' =>
+                    $perkemihan->BAK_FREKUENSI ?? null,
+
+                'pskm_bak' =>
+                    $perkemihan->BAK ?? null,
+
+                'pskm_bak_warna' =>
+                    $perkemihan->BAK_WARNA ?? null,
+
+
+                // ==========================================================
+                // INTEGUMEN
+                // Menggunakan sirmed_sistem_muskuloskeletal_integumen
+                // ==========================================================
+
+                'psi_war' =>
+                    $integumen->WARNA ?? null,
+
+                'psi_tur' =>
+                    $integumen->TURGOR ?? null,
+
+                'psi_ukk' =>
+                    $integumen->UKK ?? null,
+            ];
+
+
+            return response()->json([
+                'status' => true,
+                'data'   => $data
+            ]);
+
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Gagal mengambil data Pemeriksaan Fisik Neonatus.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function simpanPemeriksaanFisikNeonatus(
+        Request $request,
+        $KUNJUNGAN
+    ) {
+        DB::beginTransaction();
+
+        try {
+
+            /*
+            |--------------------------------------------------------------------------
+            | USER
+            |--------------------------------------------------------------------------
+            */
+
+            $oleh = auth()->user()->ID ?? auth()->id();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SISTEM PERNAFASAN
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table(
+                'medicalrecord.sirmed_sistem_pernafasan'
+            )->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $KUNJUNGAN
+                ],
+                [
+                    'USAHA_NAFAS'
+                        => $request->input('pfn_un'),
+
+                    'TIPE_NAFAS'
+                        => $request->input('pfn_tn'),
+
+                    'TIPE_NAFAS_FREKUENSI'
+                        => $request->input('pfn_tn_freq'),
+
+                    'INSPEKSI'
+                        => $request->input('pfn_in'),
+
+                    'PALPASI'
+                        => $request->input('pfn_pl'),
+
+                    'PERKUSI'
+                        => $request->input('pfn_per'),
+
+                    'AUSKULTASI'
+                        => $request->input('pfn_aus'),
+
+                    'TANGGAL'
+                        => now(),
+
+                    'OLEH'
+                        => $oleh,
+
+                    'STATUS'
+                        => 1,
+                ]
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SISTEM KARDIOVASKULER
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table(
+                'medicalrecord.sirmed_sistem_kardiovaskuler'
+            )->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $KUNJUNGAN
+                ],
+                [
+                    'BUNYI_JANTUNG'
+                        => $request->input('psk_bj'),
+
+                    'IRAMA_JANTUNG'
+                        => $request->input('psk_ij'),
+
+                    'PULSASI'
+                        => $request->input('psk_pul'),
+
+                    'TERABA'
+                        => $request->input('psk_trb'),
+
+                    'CRT'
+                        => $request->input('psk_crt'),
+
+                    'AKRAL'
+                        => $request->input('psk_ak'),
+
+                    'AKRAL_SUHU'
+                        => $request->input('psk_ak_suhu'),
+
+                    'TANGGAL'
+                        => now(),
+
+                    'OLEH'
+                        => $oleh,
+
+                    'STATUS'
+                        => 1,
+                ]
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SISTEM NEUROLOGIS
+            | Tabel: sirmed_sistem_persyarafan
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table(
+                'medicalrecord.sirmed_sistem_persyarafan'
+            )->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $KUNJUNGAN
+                ],
+                [
+                    'KESADARAN'
+                        => $request->input('psn_kes'),
+
+                    'SKLERA'
+                        => $request->input('psp_pul'),
+
+                    'PUPIL'
+                        => $request->input('psp_pup'),
+
+                    'REFLEK_CAHAYA_KANAN'
+                        => $request->input('psn_rc_r'),
+
+                    'REFLEK_CAHAYA_KIRI'
+                        => $request->input('psn_rc_l'),
+
+                    'REFLEK'
+                        => $request->input('psn_ref'),
+
+                    'KEJANG'
+                        => $request->input('psp_kjg'),
+
+                    'KEJANG_LAMA'
+                        => $request->input('psp_kjg_lain'),
+
+                    'PERGERAKAN_KAKI'
+                        => $request->input('psn_gerak_k'),
+
+                    'PERGERAKAN_TANGAN'
+                        => $request->input('psn_gerak_t'),
+
+                    'TANGGAL'
+                        => now(),
+
+                    'OLEH'
+                        => $oleh,
+
+                    'STATUS'
+                        => 1,
+                ]
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SISTEM GASTROINTESTINAL
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table(
+                'medicalrecord.sirmed_sistem_gastrointestinal'
+            )->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $KUNJUNGAN
+                ],
+                [
+                    'BAB_FREKUENSI'
+                        => $request->input('psg_bab_freq'),
+
+                    'BAB_KONSISTENSI'
+                        => $request->input('psg_bab'),
+
+                    'BAB_WARNA'
+                        => $request->input('psg_bab_war'),
+
+                    'MUNTAH'
+                        => $request->input('psg_muntah'),
+
+                    'MUNTAH_FREKUENSI'
+                        => $request->input('psg_muntah_freq'),
+
+                    'INSPEKSI'
+                        => $request->input('psg_ins'),
+
+                    'PALPASI_HEPAR'
+                        => $request->input('psg_pl_hepar'),
+
+                    'PALPASI_LIEN'
+                        => $request->input('psg_pl_lien'),
+
+                    'PERKUSI'
+                        => $request->input('psg_prk'),
+
+                    'AUSKULTASI'
+                        => $request->input('psg_aus'),
+
+                    'AUSKULTASI_DETAIL'
+                        => $request->input('psg_aus_detail'),
+
+                    'TANGGAL'
+                        => now(),
+
+                    'OLEH'
+                        => $oleh,
+
+                    'STATUS'
+                        => 1,
+                ]
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SISTEM PERKEMIHAN
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table(
+                'medicalrecord.sirmed_sistem_perkemihan'
+            )->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $KUNJUNGAN
+                ],
+                [
+                    'BAK_FREKUENSI'
+                        => $request->input('pskm_bak_freq'),
+
+                    'BAK'
+                        => $request->input('pskm_bak'),
+
+                    'BAK_WARNA'
+                        => $request->input('pskm_bak_warna'),
+
+                    'TANGGAL'
+                        => now(),
+
+                    'OLEH'
+                        => $oleh,
+
+                    'STATUS'
+                        => 1,
+                ]
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SISTEM INTEGUMEN
+            | Tabel: sirmed_sistem_muskuloskeletal_integumen
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table(
+                'medicalrecord.sirmed_sistem_muskuloskeletal_integumen'
+            )->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $KUNJUNGAN
+                ],
+                [
+                    'WARNA'
+                        => $request->input('psi_war'),
+
+                    'TURGOR'
+                        => $request->input('psi_tur'),
+
+                    'UKK'
+                        => $request->input('psi_ukk'),
+
+                    'TANGGAL'
+                        => now(),
+
+                    'OLEH'
+                        => $oleh,
+
+                    'STATUS'
+                        => 1,
+                ]
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | COMMIT
+            |--------------------------------------------------------------------------
+            */
+
+            DB::commit();
+
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Pemeriksaan Fisik Neonatus berhasil disimpan.'
+            ]);
+
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Pemeriksaan Fisik Neonatus gagal disimpan.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

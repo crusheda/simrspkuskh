@@ -277,6 +277,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // PEMERIKSAAN FISIK
                         Route::get('emr/pengkajian/ri/pemeriksaanfisik/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanFisikRI']);
                         Route::post('emr/pengkajian/ri/pemeriksaanfisik/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanFisikRI']);
+                    // PEMERIKSAAN FISIK NEONATUS
+                        Route::get('emr/pengkajian/ri/pemeriksaanfisikneonatus/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanFisikNeonatus']);
+                        Route::post('emr/pengkajian/ri/pemeriksaanfisikneonatus/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanFisikNeonatus']);
                     // ANAMNESIS
                         Route::get('emr/pengkajian/ri/anamnesis/{kunjungan}', [AddOnPengkajianController::class, 'getAnamnesisRI']);
                         Route::post('emr/pengkajian/ri/anamnesis/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanAnamnesisRI']);

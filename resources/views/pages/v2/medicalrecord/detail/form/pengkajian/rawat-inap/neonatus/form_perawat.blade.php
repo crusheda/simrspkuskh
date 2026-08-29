@@ -31,7 +31,7 @@
             )
         </div>
         <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.pemeriksaan_fisik',['section' => '#rin_perawat'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.pemeriksaan_fisik_perawat_neonatus',['section' => '#rin_perawat'])
         </div>
         <div class="col-md-12 mb-3">
             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial',['section' => '#rin_perawat'])
@@ -68,9 +68,15 @@
         <div class="col-md-12 mb-3">
             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#rin_perawat'])
         </div>
-        <div class="col-md-12 mb-3">
-            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_penunjang',['section' => '#rin_perawat'])
-        </div>
+        <div class="col-md-12">
+                <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
+                <div class="mb-3">
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_lab')
+                </div>
+                <div class="mb-3">
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad')
+                </div>
+            </div>
         <div class="col-md-12 mb-3">
             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.masalah_keperawatan',
                 [
