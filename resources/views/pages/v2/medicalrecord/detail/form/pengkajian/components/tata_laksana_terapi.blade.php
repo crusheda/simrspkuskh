@@ -12,7 +12,7 @@
             <textarea
                 class="form-control"
                 name="tatalaksana_terapi"
-                rows="2"
+                rows="3"
                 placeholder="Masukkan tata laksana terapi"></textarea>
         </div>
     </div>

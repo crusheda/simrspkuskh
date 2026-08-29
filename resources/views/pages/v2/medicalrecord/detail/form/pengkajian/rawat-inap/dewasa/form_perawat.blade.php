@@ -47,7 +47,7 @@
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
                     [
                         'section' => '#riD_perawat',
-                        'metodeNyeri' => ['nrs', 'bps', 'nips', 'flacc', 'vas']
+                        'metodeNyeri' => ['nrs', 'bps', 'vas']
                     ]
                 )
             </div>

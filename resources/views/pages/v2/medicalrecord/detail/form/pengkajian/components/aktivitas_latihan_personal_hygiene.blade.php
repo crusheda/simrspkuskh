@@ -51,6 +51,7 @@
                         type="checkbox"
                         name="ph_tk"
                         value="4"
+                        checked=""
                     >
                     <label class="form-check-label">
                         Mandiri

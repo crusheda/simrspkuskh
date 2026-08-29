@@ -195,8 +195,31 @@ window.FormHelper = {
 
         if (!$group.length) return;
 
-        // Kalau database kosong,
-        // jangan mengganggu checked bawaan HTML.
+        // ======================================================
+        // PASANG BEHAVIOR SINGLE CHECKBOX
+        // Hanya satu checkbox yang boleh checked.
+        // ======================================================
+        if (!$group.data('single-checkbox-initialized')) {
+
+            $group.data('single-checkbox-initialized', true);
+
+            $group.on('click.singleCheckbox', function () {
+
+                // Kalau checkbox ini akan dicentang,
+                // langsung uncheck checkbox lain TERLEBIH DAHULU.
+                if ($(this).is(':checked')) {
+
+                    $group
+                        .not(this)
+                        .prop('checked', false);
+                }
+            });
+        }
+
+        // ======================================================
+        // DATABASE KOSONG
+        // Jangan mengganggu checked bawaan HTML.
+        // ======================================================
         if (
             value === null ||
             value === undefined ||
@@ -207,10 +230,14 @@ window.FormHelper = {
 
         const normalizedValue = String(value);
 
-        // Uncheck semua
+        // ======================================================
+        // UNCHECK SEMUA
+        // ======================================================
         $group.prop('checked', false);
 
-        // Check yang sesuai
+        // ======================================================
+        // CHECK SESUAI VALUE DATABASE
+        // ======================================================
         const $selected = $group
             .filter(function () {
                 return String($(this).val()) === normalizedValue;
@@ -224,6 +251,69 @@ window.FormHelper = {
             .trigger('change');
     },
 
+        // BACKUP SETSINGLECHECKBOX -----------------------------------------------------------------------------
+        // setSingleCheckbox: function ($form, name, value) {
+
+        //     const $group = $form.find(`input[name="${name}"]`);
+
+        //     if (!$group.length) return;
+
+        //     // ======================================================
+        //     // PASANG BEHAVIOR SINGLE CHECKBOX
+        //     // Hanya satu checkbox yang boleh checked.
+        //     // ======================================================
+        //     if (!$group.data('single-checkbox-initialized')) {
+
+        //         $group.data('single-checkbox-initialized', true);
+
+        //         $group.on('click.singleCheckbox', function () {
+
+        //             // Kalau checkbox ini akan dicentang,
+        //             // langsung uncheck checkbox lain TERLEBIH DAHULU.
+        //             if ($(this).is(':checked')) {
+
+        //                 $group
+        //                     .not(this)
+        //                     .prop('checked', false);
+        //             }
+        //         });
+        //     }
+
+        //     // ======================================================
+        //     // DATABASE KOSONG
+        //     // Jangan mengganggu checked bawaan HTML.
+        //     // ======================================================
+        //     if (
+        //         value === null ||
+        //         value === undefined ||
+        //         value === ''
+        //     ) {
+        //         return;
+        //     }
+
+        //     const normalizedValue = String(value);
+
+        //     // ======================================================
+        //     // UNCHECK SEMUA
+        //     // ======================================================
+        //     $group.prop('checked', false);
+
+        //     // ======================================================
+        //     // CHECK SESUAI VALUE DATABASE
+        //     // ======================================================
+        //     const $selected = $group
+        //         .filter(function () {
+        //             return String($(this).val()) === normalizedValue;
+        //         })
+        //         .first();
+
+        //     if (!$selected.length) return;
+
+        //     $selected
+        //         .prop('checked', true)
+        //         .trigger('change');
+        // },
+        // BACKUP SETSINGLECHECKBOX -----------------------------------------------------------------------------
 
     // ==========================================================
     // VALIDASI NUMBER BERDASARKAN MIN / MAX HTML

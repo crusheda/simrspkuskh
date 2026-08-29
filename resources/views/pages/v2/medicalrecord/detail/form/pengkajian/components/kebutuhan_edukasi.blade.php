@@ -582,9 +582,6 @@
         DESKRIPSI EDUKASI
     =========================================================== --}}
     <div class="col-md-12">
-        <label class="form-label fw-bold">
-            Emergency
-        </label>
         <textarea
             class="form-control form-control-sm"
             name="kb_edu_deskripsi"

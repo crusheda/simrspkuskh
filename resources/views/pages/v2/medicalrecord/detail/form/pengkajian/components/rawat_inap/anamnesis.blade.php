@@ -42,30 +42,28 @@
                 </div>
             </div>
 
-            {{-- ==========================================================
-                KOLOM KIRI
-            =========================================================== --}}
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="form-group mb-3">
                     <h6>Keluhan Utama</h6>
                     <textarea class="form-control" name="ku" rows="1"></textarea>
                 </div>
+            </div>
 
+            <div class="col-md-12">
                 <div class="form-group mb-3">
                     <h6>Riwayat Penyakit Sekarang</h6>
                     <textarea class="form-control" name="rps" rows="3"></textarea>
                 </div>
             </div>
 
-            {{-- ==========================================================
-                KOLOM KANAN
-            =========================================================== --}}
             <div class="col-md-6">
                 <div class="form-group mb-3">
                     <h6>Riwayat Penyakit Dahulu</h6>
-                    <textarea class="form-control" name="rpd" rows="1"></textarea>
+                    <textarea class="form-control" name="rpd" rows="2"></textarea>
                 </div>
+            </div>
 
+            <div class="col-md-6">
                 <div class="form-group mb-3">
                     <h6>Riwayat Penyakit Keluarga</h6>
 

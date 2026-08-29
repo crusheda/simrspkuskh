@@ -142,7 +142,7 @@
 <div class="row align-items-center" id="{{ $formId }}">
     <div class="col-md-12 mb-1">
         <div class="form-group mb-2">
-            <h5 class="mb-0 text-success"><strong>Daftar Masalah Keperawatan</strong></h5>
+            <h5 class="mb-0 text-success"><strong>Diagnosis Keperawatan</strong></h5>
         </div>
     </div>
     <div class="col-md-12">

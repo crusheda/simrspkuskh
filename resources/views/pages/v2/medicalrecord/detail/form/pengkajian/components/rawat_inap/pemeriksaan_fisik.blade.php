@@ -17,7 +17,7 @@
                     <h6>Sesak Nafas</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_sn" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_sn" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -27,7 +27,7 @@
                                 <input class="form-check-input single-checkbox" type="checkbox" name="pfn_sn" value="2">
                                 <label class="form-check-label">Ya ,</label>
                             </div>
-                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pfn_sn_jenis" placeholder="Jika Ya, Jenis ...">
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pfn_sn_jenis" placeholder="Jika Ya, Jenis ..." disabled>
                         </div>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                     <h6>Batuk</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_ba" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_ba" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -52,7 +52,7 @@
                     <h6>Nyeri Waktu Nafas</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_nwn" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_nwn" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -110,7 +110,7 @@
                     <h6>Irama Nafas</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_irn" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_irn" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -197,7 +197,7 @@
                                 class="form-control form-control-sm"
                                 name="pfn_snaf_lain"
                                 placeholder="Sebutkan ..."
-                                style="width: 180px;">
+                                style="width: 180px;" disabled>
                         </div>
                     </div>
                 </div>
@@ -205,7 +205,7 @@
                     <h6>Alat Bantu Nafas</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_abn" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_abn" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -217,11 +217,11 @@
                             </div>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text">Jenis</span>
-                                <input type="text" class="form-control form-control-sm flex-grow-1" name="pfn_abn_jenis" placeholder="">
+                                <input type="text" class="form-control form-control-sm flex-grow-1" name="pfn_abn_jenis" placeholder="" disabled>
                             </div>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text">Flow</span>
-                                <input type="number" class="form-control form-control-sm flex-grow-1" name="pfn_abn_flow" placeholder="">
+                                <input type="number" class="form-control form-control-sm flex-grow-1" name="pfn_abn_flow" placeholder="" disabled>
                                 <span class="input-group-text">it/mt</span>
                             </div>
                         </div>
@@ -241,7 +241,7 @@
                     <h6>Nyeri Dada</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psk_nd" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psk_nd" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -260,7 +260,7 @@
                     <h6>Irama Jantung</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psk_ij" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psk_ij" value="1" checked="">
                             <label class="form-check-label">
                                 Reguler
                             </label>
@@ -291,7 +291,7 @@
                             <input class="form-check-input single-checkbox"
                                 type="checkbox"
                                 name="psk_pul"
-                                value="2">
+                                value="2" checked="">
                             <label class="form-check-label">
                                 Kuat
                             </label>
@@ -337,7 +337,7 @@
                                 class="form-control form-control-sm"
                                 name="psk_pul_detik"
                                 placeholder="Sebutkan ..."
-                                style="width: 100px;">
+                                style="width: 100px;" disabled>
                             <label class="form-check-label mb-0 flex-shrink-0">
                                 Detik
                             </label>
@@ -350,7 +350,7 @@
                     <h6>Akral</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psk_ak" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psk_ak" value="1" checked="">
                             <label class="form-check-label">
                                 Hangat
                             </label>
@@ -374,7 +374,7 @@
                             <input type="text"
                                 class="form-control form-control-sm"
                                 name="psk_ak_lain"
-                                placeholder="Sebutkan ...">
+                                placeholder="Sebutkan ..." disabled>
                         </div>
                     </div>
                 </div>
@@ -384,7 +384,7 @@
                     <h6>Perdarahan</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psk_pd" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psk_pd" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak Ada
                             </label>
@@ -402,7 +402,7 @@
                             <input type="text"
                                 class="form-control form-control-sm"
                                 name="psk_pd_lain"
-                                placeholder="Sebutkan ...">
+                                placeholder="Sebutkan ..." disabled>
                         </div>
                     </div>
                 </div>
@@ -423,10 +423,10 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group mb-3">
-                    <h6>Sklera/kon, unctiva</h6>
+                    <h6>Sklera / Konjungtiva</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psp_pul" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psp_pul" value="1" checked="">
                             <label class="form-check-label">
                                 Normal
                             </label>
@@ -451,7 +451,7 @@
                     <h6>Pupil</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psp_pup" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psp_pup" value="1" checked="">
                             <label class="form-check-label">
                                 Isokor
                             </label>
@@ -482,7 +482,7 @@
                     <h6>Penglihatan</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psp_pgl" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psp_pgl" value="1" checked="">
                             <label class="form-check-label">
                                 Normal
                             </label>
@@ -507,7 +507,7 @@
                     <h6>Pendengaran</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psp_pdg" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psp_pdg" value="1" checked="">
                             <label class="form-check-label">
                                 Normal
                             </label>
@@ -532,7 +532,7 @@
                     <h6>Penciuman</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psp_pcm" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psp_pcm" value="1" checked="">
                             <label class="form-check-label">
                                 Normal
                             </label>
@@ -551,7 +551,7 @@
                     <h6>Kejang</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psp_kjg" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psp_kjg" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -582,7 +582,7 @@
                             <input class="form-check-input single-checkbox"
                                 type="checkbox"
                                 name="psp_gt"
-                                value="1">
+                                value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -600,7 +600,7 @@
                             <input type="text"
                                 class="form-control form-control-sm"
                                 name="psp_gt_lain"
-                                placeholder="Sebutkan ...">
+                                placeholder="Sebutkan ..." disabled>
                         </div>
                     </div>
                 </div>
@@ -624,7 +624,7 @@
                     <h6>Kebersihan Area Genital</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psh_kag" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psh_kag" value="1" checked="">
                             <label class="form-check-label">
                                 Bersih
                             </label>
@@ -643,7 +643,7 @@
                     <h6>Kandung Kemih Membesar</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psh_kkm" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psh_kkm" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -665,7 +665,7 @@
                             <input class="form-check-input single-checkbox"
                                 type="checkbox"
                                 name="psh_bak"
-                                value="1">
+                                value="1" checked="">
                             <label class="form-check-label">
                                 Normal
                             </label>
@@ -711,7 +711,7 @@
                                 class="form-control form-control-sm"
                                 name="psh_bak_anuria"
                                 placeholder="..."
-                                style="width: 150px;">
+                                style="width: 150px;" disabled>
                         </div>
                         <div class="d-flex align-items-center gap-1 flex-shrink-0">
                             <div class="form-check mb-0 me-2">
@@ -727,7 +727,7 @@
                                 class="form-control form-control-sm"
                                 name="psh_bak_warna"
                                 placeholder="..."
-                                style="width: 150px;">
+                                style="width: 150px;" disabled>
                         </div>
                     </div>
                 </div>
@@ -737,7 +737,7 @@
                     <h6>Nyeri Tekan</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psh_nyt" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psh_nyt" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -759,7 +759,7 @@
                             <input class="form-check-input single-checkbox"
                                 type="checkbox"
                                 name="psh_abk"
-                                value="1">
+                                value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -771,13 +771,13 @@
                                     name="psh_abk"
                                     value="2">
                                 <label class="form-check-label">
-                                    Ya,
+                                    Ya, Dari kapan&nbsp;
                                 </label>
                             </div>
                             <input type="date"
                                 class="form-control form-control-sm"
                                 name="psh_abk_tgl"
-                                style="width: 230px;">
+                                style="width: 230px;" disabled>
                         </div>
                     </div>
                 </div>
@@ -801,7 +801,7 @@
                     <h6>Mulut</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psc_mul" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psc_mul" value="1" checked="">
                             <label class="form-check-label">
                                 Bersih
                             </label>
@@ -893,7 +893,7 @@
                                 <input type="text"
                                     class="form-control"
                                     name="psc_nfm_frek"
-                                    placeholder="...">
+                                    placeholder="..." disabled>
                                 <span class="input-group-text">
                                     x/hari
                                 </span>
@@ -907,7 +907,7 @@
                     <h6>Mual</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psc_mua" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psc_mua" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -926,7 +926,7 @@
                     <h6>Muntah</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psc_mun" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psc_mun" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -944,23 +944,35 @@
                 <div class="form-group mb-3">
                     <h6>Tenggorokan</h6>
                     <div class="d-flex align-items-center">
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psc_teng" value="1">
-                            <label class="form-check-label">
-                                Sakit Menelan
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psc_teng" value="2">
-                            <label class="form-check-label">
-                                Kesulitan Menelan
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psc_teng" value="3">
-                            <label class="form-check-label">
-                                Pembesaran Tonsil
-                            </label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check form-check-inline mb-2">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="psc_teng" value="1">
+                                    <label class="form-check-label">
+                                        Dalam Batas Normal
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline mb-2">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="psc_teng" value="2">
+                                    <label class="form-check-label">
+                                        Sakit Menelan
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-check-inline mb-2">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="psc_teng" value="3">
+                                    <label class="form-check-label">
+                                        Kesulitan Menelan
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline mb-2">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="psc_teng" value="4">
+                                    <label class="form-check-label">
+                                        Pembesaran Tonsil
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -969,23 +981,35 @@
                 <div class="form-group mb-3">
                     <h6>Abdomen</h6>
                     <div class="d-flex align-items-center">
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psc_abd" value="1">
-                            <label class="form-check-label">
-                                Tegang/distended
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psc_abd" value="2">
-                            <label class="form-check-label">
-                                Kembung
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psc_abd" value="3">
-                            <label class="form-check-label">
-                                Ascites
-                            </label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check form-check-inline mb-2">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="psc_abd" value="1">
+                                    <label class="form-check-label">
+                                        Dalam Batas Normal
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline mb-2">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="psc_abd" value="2">
+                                    <label class="form-check-label">
+                                        Tegang/distended
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-check-inline mb-2">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="psc_abd" value="3">
+                                    <label class="form-check-label">
+                                        Kembung
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline mb-2">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="psc_abd" value="4">
+                                    <label class="form-check-label">
+                                        Ascites
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -997,7 +1021,7 @@
                             <h6>Nyeri Tekan</h6>
                             <div class="d-flex align-items-center">
                                 <div class="form-check form-check-inline mb-2">
-                                    <input class="form-check-input single-checkbox" type="checkbox" name="psc_nyt" value="1">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="psc_nyt" value="1" checked="">
                                     <label class="form-check-label">
                                         Tidak
                                     </label>
@@ -1091,7 +1115,7 @@
                             <input class="form-check-input single-checkbox"
                                 type="checkbox"
                                 name="psmi_oed"
-                                value="1">
+                                value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -1109,17 +1133,17 @@
                             <input type="text"
                                 class="form-control form-control-sm"
                                 name="psmi_oed_lok"
-                                placeholder="Lokasi ...">
+                                placeholder="Lokasi ..." disabled>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group mb-3">
                     <h6>Kelainan Ekstremitas</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_kes" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_kes" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -1133,12 +1157,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group mb-3">
                     <h6>Kelainan Tulang Belakang</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_ktb" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_ktb" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -1152,12 +1176,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group mb-3">
                     <h6>Fraktur</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_fra" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_fra" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -1176,7 +1200,7 @@
                     <h6>Gips/Spalk/Traksi</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_gip" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_gip" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak Ada
                             </label>
@@ -1195,7 +1219,7 @@
                     <h6>Kompartemen Syndrome</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_ksy" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_ksy" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -1209,30 +1233,36 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-9">
                 <div class="form-group mb-3">
                     <h6>Kulit</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_kul" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_kul" value="1" checked="">
                             <label class="form-check-label">
-                                Ikterus
+                                Dalam Batas Normal
                             </label>
                         </div>
                         <div class="form-check form-check-inline mb-2">
                             <input class="form-check-input single-checkbox" type="checkbox" name="psmi_kul" value="2">
                             <label class="form-check-label">
-                                Sianosis
+                                Ikterus
                             </label>
                         </div>
                         <div class="form-check form-check-inline mb-2">
                             <input class="form-check-input single-checkbox" type="checkbox" name="psmi_kul" value="3">
                             <label class="form-check-label">
-                                Kemerahan
+                                Sianosis
                             </label>
                         </div>
                         <div class="form-check form-check-inline mb-2">
                             <input class="form-check-input single-checkbox" type="checkbox" name="psmi_kul" value="4">
+                            <label class="form-check-label">
+                                Kemerahan
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline mb-2">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_kul" value="5">
                             <label class="form-check-label">
                                 Hiperpigmentasi
                             </label>
@@ -1245,7 +1275,7 @@
                     <h6>Turgor</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_tur" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psmi_tur" value="1" checked="">
                             <label class="form-check-label">
                                 Baik
                             </label>
@@ -1292,7 +1322,7 @@
                                 class="form-control form-control-sm"
                                 name="psmi_lde_luas"
                                 placeholder="Luas ..."
-                                style="width: 190px;">
+                                style="width: 190px;" disabled>
                         </div>
                         <div class="form-check mb-0 flex-shrink-0">
                             <input class="form-check-input single-checkbox"
@@ -1328,7 +1358,7 @@
                     <h6>Perbesaran Kelenjar Tiroid</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psr_pkt" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psr_pkt" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -1347,7 +1377,7 @@
                     <h6>Pembesaran Kelenjar Getah Bening</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psr_pkg" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psr_pkg" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -1366,7 +1396,7 @@
                     <h6>Hipoglikemia</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psr_hpo" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psr_hpo" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -1385,7 +1415,7 @@
                     <h6>Hiperglikemia</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psr_hpi" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psr_hpi" value="1" checked="">
                             <label class="form-check-label">
                                 Tidak
                             </label>
@@ -1437,7 +1467,6 @@
         return normalized;
     }
 
-
     // ==========================================================
     // GET VALUE BERDASARKAN NAME
     // Case insensitive
@@ -1462,6 +1491,42 @@
         return undefined;
     }
 
+    // ==========================================================
+    // INPUT TAMBAHAN BERDASARKAN CHECKBOX
+    // Aktif jika checkbox pada blok yang sama tercentang.
+    // Berlaku untuk centang manual maupun hasil GET AJAX.
+    // ==========================================================
+    // ==========================================================
+    function updateConditionalInputs() {
+    $form.find('input[name]').each(function () {
+        const $input = $(this);
+
+        if (
+            $input.is(':checkbox') ||
+            $input.is(':radio')
+        ) {
+            return;
+        }
+
+        const $parent = $input.parent();
+
+        const $checkbox = $parent.find(
+            'input.single-checkbox[type="checkbox"]'
+        );
+
+        if (!$checkbox.length) {
+            return;
+        }
+
+        const isChecked = $checkbox.is(':checked');
+
+        $input.prop('disabled', !isChecked);
+
+        if (!isChecked) {
+            $input.val('');
+        }
+    });
+}
 
     // ==========================================================
     // GET DATA
@@ -1508,7 +1573,6 @@
                     res?.data
                 );
 
-
                 // ==================================================
                 // TIDAK ADA DATA
                 // ==================================================
@@ -1524,7 +1588,6 @@
 
                     return;
                 }
-
 
                 // ==================================================
                 // LOAD SEMUA FIELD BERDASARKAN NAME
@@ -1542,7 +1605,6 @@
                         if (!name) {
                             return;
                         }
-
 
                         // ==================================================
                         // CHECKBOX
@@ -1564,7 +1626,6 @@
 
                             processedCheckboxGroups.add(name);
 
-
                             // ----------------------------------------------
                             // Ambil value dari database
                             // ----------------------------------------------
@@ -1572,7 +1633,6 @@
                                 data,
                                 name
                             );
-
 
                             // ----------------------------------------------
                             // Jika field menggunakan single-checkbox
@@ -1611,7 +1671,6 @@
                             return;
                         }
 
-
                         // ==================================================
                         // TEXT / NUMBER / TEXTAREA / SELECT
                         // ==================================================
@@ -1619,7 +1678,6 @@
                             data,
                             name
                         );
-
 
                         // --------------------------------------------------
                         // Jika key tidak ada di response,
@@ -1629,7 +1687,6 @@
                             return;
                         }
 
-
                         FormHelper.setValue(
                             $form,
                             name,
@@ -1638,6 +1695,7 @@
 
                     });
 
+                updateConditionalInputs();
 
                 console.log(
                     'Pemeriksaan Fisik berhasil dimuat.'
@@ -1647,7 +1705,6 @@
                     '============================================'
                 );
             },
-
 
             // ==========================================================
             // ERROR
@@ -1674,7 +1731,6 @@
                 console.warn(message);
             },
 
-
             // ==========================================================
             // COMPLETE
             // ==========================================================
@@ -1686,7 +1742,6 @@
 
         });
     }
-
 
     // ==========================================================
     // SIMPAN DATA
@@ -1858,7 +1913,6 @@
 
     }
 
-
     // ==========================================================
     // AUTO SAVE
     // ==========================================================
@@ -1874,13 +1928,11 @@
             return;
         }
 
-
         // ======================================================
         // LOAD DATA TERLEBIH DAHULU
         // ======================================================
 
         getPemeriksaanFisik();
-
 
         // ======================================================
         // TEXT / NUMBER / DATE / TIME / TEXTAREA
@@ -1898,7 +1950,6 @@
             }
         );
 
-
         // ======================================================
         // CHECKBOX / RADIO / SELECT
         //
@@ -1909,9 +1960,8 @@
             'change',
             'select, input[type="checkbox"], input[type="radio"]',
             function () {
-
+                updateConditionalInputs();
                 simpanPemeriksaanFisik();
-
             }
         );
 
