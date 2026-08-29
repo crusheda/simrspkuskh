@@ -25,7 +25,7 @@
     <meta name="twitter:description" content="Sistem Manajemen Rumah Sakit PKU Muhammadiyah Sukoharjo">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>@yield('title', 'SIRMED')</title>
+    <title>@yield('title', 'SIRMED v2')</title>
 
     <link rel="icon" type="image/png" href="{{ asset('images/logo/logo.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/logo/logo.png') }}">
@@ -34,7 +34,7 @@
     @include('inc.v2.css')
     @stack('styles')
 
-    <script>
+    {{-- <script>
         const originalTitle = document.title + "   •   Sistem Informasi Rekam Medis   •   RS PKU Muhammadiyah Sukoharjo   •   ";
         let index = 0;
 
@@ -49,7 +49,7 @@
                 index = 0;
             }
         }, 250);
-    </script>
+    </script> --}}
 </head>
 
 <body>

@@ -28,6 +28,10 @@ use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapAnakController;
 use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapNeonatusController;
 use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapObsgynController;
 
+use App\Http\Controllers\EMR\Form\BedahAnestesi\PengkajianPraBedahController;
+use App\Http\Controllers\EMR\Form\BedahAnestesi\PengkajianPraAnestesiInduksiController;
+use App\Http\Controllers\EMR\Form\BedahAnestesi\PengkajianLaporanAnestesiController;
+
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususRemajaController;
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususTerminalController;
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususNyeriKronikController;
@@ -270,8 +274,8 @@ class EMRController extends Controller
                 'pp.TANGGAL AS TGLDAFTAR',
                 'pp.STATUS AS STATUSDAFTAR',
                 'pk.STATUS AS STATUSKUNJUNGAN',
-                'kjs.noSEP AS NOSEP',
-                'kjs.tglSEP AS TGLSEP',
+                // 'kjs.noSEP AS NOSEP',
+                // 'kjs.tglSEP AS TGLSEP',
                 'ru.DESKRIPSI AS NAMARUANGAN',
                 DB::raw("
                     master.getNamaLengkapPegawai(
@@ -285,7 +289,7 @@ class EMRController extends Controller
             )
             ->leftJoin('pendaftaran.pendaftaran AS pp', 'pp.NOMOR', '=', 'pk.NOPEN')
             ->leftJoin('pendaftaran.penjamin AS pj', 'pj.NOPEN', '=', 'pp.NOMOR')
-            ->leftJoin('bpjs.kunjungan AS kjs', 'kjs.noSEP', '=', 'pj.NOMOR')
+            // ->leftJoin('bpjs.kunjungan AS kjs', 'kjs.noSEP', '=', 'pj.NOMOR')
             ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'pk.RUANGAN')
             ->leftJoin('master.dokter AS dr', 'dr.ID', '=', 'pk.DPJP')
             ->where(function ($q) {
@@ -606,6 +610,10 @@ class EMRController extends Controller
             'pengkajian-ranap-anak'                     => PengkajianRawatInapAnakController::class,
             'pengkajian-ranap-neonatus'                 => PengkajianRawatInapNeonatusController::class,
             'pengkajian-ranap-obsgyn'                   => PengkajianRawatInapObsgynController::class,
+
+            'pengkajian-prabedah'                       => PengkajianPraBedahController::class,
+            'pengkajian-praanestesiinduksi'             => PengkajianPraAnestesiInduksiController::class,
+            'pengkajian-laporananestesi'                => PengkajianLaporanAnestesiController::class,
 
             'pengkajian-khusus-remaja'                  => PengkajianKhususRemajaController::class,
             'pengkajian-khusus-terminal'                => PengkajianKhususTerminalController::class,

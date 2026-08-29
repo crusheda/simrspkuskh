@@ -167,6 +167,43 @@
                                 </div>
                             </div>
 
+                            <div class="menu-wrapper">
+                                <!-- Rawat Inap -->
+                                <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center menu-collapse menu-parent"
+                                    data-bs-toggle="collapse"
+                                    href="#submenuBedahAnestesi"
+                                    role="button"
+                                    data-group="awal">
+                                    <span>Form Pengkajian Bedah & Anestesi</span>
+                                    <i class="ti ti-chevron-down submenu-icon"></i>
+                                </a>
+                                <div class="collapse submenu" id="submenuBedahAnestesi">
+                                    <div class="list-group">
+                                        <a href="javascript:void(0);"
+                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            data-form="pengkajian-prabedah"
+                                            data-group="awal">
+                                            <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                            Form Pra Bedah
+                                        </a>
+                                        <a href="javascript:void(0);"
+                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            data-form="pengkajian-praanestesiinduksi"
+                                            data-group="awal">
+                                            <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                            Form Pra Anestesia Dan Induksi
+                                        </a>
+                                        <a href="javascript:void(0);"
+                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            data-form="pengkajian-laporananestesi"
+                                            data-group="awal">
+                                            <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                            Form Laporan Anestesi
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="list-group-item menu-group-title p-2" data-group="khusus">
                                 <h5 class="mt-2 ms-3">PENGKAJIAN KHUSUS</h5>
                             </div>

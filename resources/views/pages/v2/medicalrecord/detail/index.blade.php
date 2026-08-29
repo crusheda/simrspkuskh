@@ -1,5 +1,7 @@
 @extends('layouts.v2.index')
 
+@section('title','Detail Kunjungan - RM.'.$list["show"]->NORM ?? 'XXXX')
+
 @section('content')
 
 <div class="container-fluid">

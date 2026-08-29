@@ -1,6 +1,6 @@
 @extends('layouts.v2.index')
 
-@section('title','Detail Kunjungan Pasien')
+@section('title','Electronic Medical Record')
 
 @section('content')
 
