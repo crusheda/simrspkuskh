@@ -58,16 +58,17 @@
                 <label class="col-md-2 col-form-label fw-bold">Metode</label>
                 <div class="col-md-10">
                     <div class="d-flex gap-4">
+
+                        @if(in_array('vas', $metodeNyeri))
+                            <div class="form-check">
+                                <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="5">
+                                <label class="form-check-label">VAS</label>
+                            </div>
+                        @endif
                         @if(in_array('nrs', $metodeNyeri))
                             <div class="form-check">
                                 <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="1">
                                 <label class="form-check-label">NRS</label>
-                            </div>
-                        @endif
-                        @if(in_array('bps', $metodeNyeri))
-                            <div class="form-check">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="2">
-                                <label class="form-check-label">BPS</label>
                             </div>
                         @endif
                         @if(in_array('nips', $metodeNyeri))
@@ -82,10 +83,10 @@
                                 <label class="form-check-label">FLACC</label>
                             </div>
                         @endif
-                        @if(in_array('vas', $metodeNyeri))
+                        @if(in_array('bps', $metodeNyeri))
                             <div class="form-check">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="5">
-                                <label class="form-check-label">VAS</label>
+                                <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="2">
+                                <label class="form-check-label">BPS</label>
                             </div>
                         @endif
                     </div>

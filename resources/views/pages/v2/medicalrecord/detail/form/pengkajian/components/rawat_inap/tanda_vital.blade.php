@@ -43,8 +43,97 @@
                 </div>
             </div>
 
+            <div class="form-group mb-3 d-none" data-kesadaran-neonatus>
+                <label class="form-label">
+                    Kesadaran Neonatus
+                </label>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle text-center mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Pilih</th>
+                                <th style="width: 80px;">Kode</th>
+                                <th>Mata</th>
+                                <th>Menangis</th>
+                                <th>Gerak</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {{-- S1 --}}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="form-check-input single-checkbox" name="kesadaran_neonatus" value="1" id="kesadaran_neonatus">
+                                </td>
+                                <td>
+                                    <strong>S1</strong>
+                                </td>
+                                <td>Tertutup</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+
+                            {{-- S2 --}}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="form-check-input single-checkbox" name="kesadaran_neonatus" value="2" id="kesadaran_neonatus">
+                                </td>
+                                <td>
+                                    <strong>S2</strong>
+                                </td>
+                                <td>Tertutup</td>
+                                <td>-</td>
+                                <td>+</td>
+                            </tr>
+
+                            {{-- S3 --}}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="form-check-input single-checkbox" name="kesadaran_neonatus" value="3" id="kesadaran_neonatus">
+                                </td>
+                                <td>
+                                    <strong>S3</strong>
+                                </td>
+                                <td>Terbuka</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+
+                            {{-- S4 --}}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="form-check-input single-checkbox" name="kesadaran_neonatus" value="4" id="kesadaran_neonatus">
+                                </td>
+                                <td>
+                                    <strong>S4</strong>
+                                </td>
+                                <td>Terbuka</td>
+                                <td>-</td>
+                                <td>+</td>
+                            </tr>
+
+                            {{-- S5 --}}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="form-check-input single-checkbox" name="kesadaran_neonatus" value="5" id="kesadaran_neonatus">
+                                </td>
+                                <td>
+                                    <strong>S5</strong>
+                                </td>
+                                <td>Terbuka</td>
+                                <td>+</td>
+                                <td>+</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             {{-- GCS --}}
-            <div class="form-group mb-3">
+            <div class="form-group mb-3" data-ttv-neonatus>
                 <label class="form-label">
                     GCS (<i>Glasgow Coma Scale</i>)
                 </label>
@@ -116,7 +205,7 @@
             </div>
 
             {{-- TEKANAN DARAH --}}
-            <div class="form-group mb-3">
+            <div class="form-group mb-3" data-ttv-neonatus>
                 <label class="form-label">
                     Tekanan Darah
                 </label>
@@ -248,11 +337,7 @@
                             Suhu
                         </label>
                         <div class="input-group">
-                            <input
-                                type="number"
-                                class="form-control"
-                                name="tv_suhu"
-                            >
+                            <input type="number" class="form-control" name="tv_suhu">
                             <div class="input-group-text">
                                 °C
                             </div>
@@ -267,11 +352,7 @@
                             SpO2
                         </label>
                         <div class="input-group">
-                            <input
-                                type="number"
-                                class="form-control"
-                                name="tv_spo2"
-                            >
+                            <input type="number" class="form-control" name="tv_spo2">
                             <div class="input-group-text">
                                 %
                             </div>
@@ -290,13 +371,9 @@
                             BB
                         </label>
                         <div class="input-group">
-                            <input
-                                type="number"
-                                class="form-control"
-                                name="tv_bb"
+                            <input type="number" class="form-control" name="tv_bb"
                                 step="0.1"
-                                min="0"
-                            >
+                                min="0">
                             <div class="input-group-text">
                                 Kg
                             </div>
@@ -311,13 +388,9 @@
                             TB
                         </label>
                         <div class="input-group">
-                            <input
-                                type="number"
-                                class="form-control"
-                                name="tv_tb"
+                            <input type="number" class="form-control" name="tv_tb"
                                 step="0.1"
-                                min="0"
-                            >
+                                min="0">
                             <div class="input-group-text">
                                 Cm
                             </div>
@@ -358,6 +431,61 @@
     const $section = $(@json($section));
     const page = @json($page);
     const editableFields = @json($editableFields);
+
+    const $form = $section.find('[data-ttv-form]');
+
+    function updateTtvNeonatusState() {
+        const $neonatus = $section.find('[data-ttv-neonatus]');
+        const $kesadaranNeonatus = $section.find('[data-kesadaran-neonatus]');
+
+        if (!$neonatus.length) {
+            return;
+        }
+
+        // Normalisasi nilai neonatus
+        const neonatusValue = String(@json($neonatus ?? false))
+            .toLowerCase()
+            .trim();
+
+        const isNeonatus =
+            neonatusValue === 'true' ||
+            neonatusValue === '1' ||
+            neonatusValue === 'yes' ||
+            neonatusValue === 'ya';
+
+        // console.log('Neonatus:', neonatusValue);
+        // console.log('isNeonatus:', isNeonatus);
+
+        if (isNeonatus) {
+
+            $neonatus
+                .stop(true, true)
+                .hide()
+                .find('input, textarea, select')
+                .prop('disabled', true);
+
+            $kesadaranNeonatus
+                .stop(true, true)
+                .removeClass('d-none')
+                .show()
+                .find('input, textarea, select')
+                .prop('disabled', false);
+
+        } else {
+
+            $neonatus
+                .stop(true, true)
+                .show()
+                .find('input, textarea, select')
+                .prop('disabled', false);
+
+            $kesadaranNeonatus
+                .stop(true, true)
+                .addClass('d-none')
+                .find('input, textarea, select')
+                .prop('disabled', true);
+        }
+    }
 
     // ==============================================================
     // STATE
@@ -633,6 +761,11 @@
 
                 const ttv = res.data;
 
+                if (!ttv) {
+                    updateTtvNeonatusState();
+                    return;
+                }
+
                 if (ttv) {
                     // --------------------------------------------------
                     // KEADAAN UMUM
@@ -829,8 +962,20 @@
                         );
                         hitungIMT();
                     }
-                }
 
+                    if (
+                        FormHelper.hasValue(
+                            ttv.KESADARAN_NEONATUS
+                        )
+                    ) {
+                        FormHelper.setSingleCheckbox(
+                            $section,
+                            'kesadaran_neonatus',
+                            ttv.KESADARAN_NEONATUS
+                        );
+                    }
+                }
+                updateTtvNeonatusState();
                 // ------------------------------------------------------
                 // APPLY ACCESS SETELAH DATA SELESAI DIMASUKKAN
                 // ------------------------------------------------------
@@ -853,6 +998,7 @@
                 console.warn(message);
             },
             complete: function () {
+                updateTtvNeonatusState();
             }
         });
     }
@@ -881,6 +1027,8 @@
                 return;
             }
         }
+
+        updateTtvNeonatusState();
 
         // ----------------------------------------------------------
         // AMBIL FORM
@@ -959,6 +1107,8 @@
         // GET DATA
         // ==========================================================
         getTandaVital();
+
+        updateTtvNeonatusState();
 
         // ==========================================================
         // HITUNG GCS

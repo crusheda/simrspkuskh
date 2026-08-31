@@ -7,7 +7,7 @@
                 <div class="row mb-2">
                     <div class="col-md-12 mb-3">
                         @include(
-                            'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
+                            'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis_keperawatan',
                             [
                                 'section' => '#rio_perawat',
                                 'anak' => 'false',
@@ -88,7 +88,7 @@
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
                     [
                         'section' => '#rio_perawat',
-                        'metodeNyeri' => ['nrs', 'bps', 'nips', 'flacc', 'vas']
+                        'metodeNyeri' => ['nrs', 'bps', 'vas']
                     ]
                 )
             </div>

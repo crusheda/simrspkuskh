@@ -5,12 +5,15 @@
         <div class="row">
             <div class="col-md-12 mb-3">
                 @include(
-                    'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
+                    'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis_keperawatan',
                     [
                         'section' => '#rin_perawat',
                         'anak' => 'true',
                     ]
                 )
+            </div>
+            <div class="col-md-12">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.intra_post_natal')
             </div>
         </div>
         <div class="col-md-12 mb-3">
@@ -19,6 +22,7 @@
                 [
                     'section' => '#rin_perawat',
                     'page' => 'perawat',
+                    'neonatus' => 'true',
                     // 'editableFields' => [
                     //     'tv_keu',
                     //     'tv_gcs_e',
@@ -53,30 +57,34 @@
             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_humpty_dumpty', ['section' => '#rin_perawat'])
         </div>
         <div class="col-md-12 mb-3">
-            <div class="form-group mb-2">
-                <h5 class="mb-0 text-success">
-                    <strong>SKRINING NYERI</strong>
-                </h5>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group mb-2">
+                        <h5 class="mb-0 text-success">
+                            <strong>SKRINING NYERI</strong>
+                        </h5>
+                    </div>
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
+                        [
+                            'section' => '#rio_perawat',
+                            'metodeNyeri' => ['nips']
+                        ]
+                    )
+                </div>
             </div>
-            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
-                [
-                    'section' => '#rin_perawat',
-                    'metodeNyeri' => ['nrs','flacc','vas']
-                ]
-            )
         </div>
         <div class="col-md-12 mb-3">
-            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#rin_perawat'])
+            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#rio_perawat'])
         </div>
         <div class="col-md-12">
-                <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
-                <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_lab')
-                </div>
-                <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad')
-                </div>
+            <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
+            <div class="mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_lab')
             </div>
+            <div class="mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad')
+            </div>
+        </div>
         <div class="col-md-12 mb-3">
             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.masalah_keperawatan',
                 [

@@ -249,8 +249,9 @@
                                             <textarea
                                                 class="form-control form-control-sm"
                                                 name="diag_detail"
+                                                id="diag_detail"
                                                 placeholder="Masukkan Diagnosa"
-                                                rows="1"
+                                                rows="4"
                                             ></textarea>
                                         </div>
                                         <div class="flex-shrink-0">
@@ -651,6 +652,35 @@
                 }
             }
         });
+
+        $('#diag_utama').on('change', function () {
+
+            const $textarea = $('#diag_detail');
+            const currentValue = $textarea.val() || '';
+
+            const template = `Axis
+        I.
+        II.
+        III.`;
+
+            if ($(this).is(':checked')) {
+
+                // Hanya masukkan template jika textarea kosong
+                if (currentValue.trim() === '') {
+                    $textarea.val(template);
+                }
+
+                $textarea.focus();
+
+            } else {
+
+                // Hapus template jika belum diedit
+                if (currentValue.trim() === template.trim()) {
+                    $textarea.val('');
+                }
+            }
+        });
+
         loadDataPengkajianRJJd();
         getPenggunaanObat();
         getRiwayatAlergi();
@@ -853,22 +883,26 @@
         }
     }
 
-    function isiFormPengkajianRJJd(data){
+    function isiFormPengkajianRJJd(data) {
 
         setRadioIfExists('anam', data.anam);
 
         $("#anamnesis_oleh").val(data.anamnesis_oleh);
-
         $("#keluhan_utama").val(data.keluhan_utama);
-
         $("#rps").val(data.rps);
-
         $("#rpd").val(data.rpd);
-
         $("#pfisik").val(data.pfisik);
 
         $("#tu").val(data.tu);
         $("#terapi_tind").val(data.terapi_tind);
+
+        // DIAGNOSIS UTAMA
+        $("#diag_detail").val(data.diag_detail);
+
+        if (data.diag_utama !== null && data.diag_utama !== undefined) {
+            $('#diag_utama')
+                .prop('checked', Number(data.diag_utama) === 1);
+        }
 
         // MASALAH / EDUKASI
         setCheckedIfExists('#me_1', data.me_1);
@@ -888,6 +922,7 @@
         // TINDAK LANJUT
         setRadioIfExists('tl', data.tl);
         setRadioIfExists('rujuk', data.rujuk);
+
         $("#rujuk_lainnya").val(data.rujuk_lainnya);
 
         // PRIORITAS
@@ -896,7 +931,6 @@
         $("#pri_indikasi").val(data.pri_indikasi);
         $("#pri_ket").val(data.pri_ket);
         $("#pri_dpjp").val(data.pri_dpjp);
-
     }
 
     function saveDataPengkajianRJJd(btn) {

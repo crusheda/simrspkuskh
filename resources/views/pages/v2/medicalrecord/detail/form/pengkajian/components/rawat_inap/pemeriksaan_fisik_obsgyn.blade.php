@@ -41,7 +41,7 @@
 
                     </div>
 
-                    <input type="text" class="form-control" name="mata_keterangan" id="mata_keterangan" placeholder="Keterangan..." >
+                    <input type="text" class="form-control form-control-sm" name="mata_keterangan" id="mata_keterangan" placeholder="Keterangan..." >
 
                 </div>
 
@@ -65,18 +65,6 @@
             <div class="col">
                 <div class="form-check">
 
-                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="1" >
-
-                    <label class="form-check-label">
-                        Ikterik
-                    </label>
-
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="form-check">
-
                     <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="2" >
 
                     <label class="form-check-label">
@@ -89,10 +77,31 @@
             <div class="col">
                 <div class="form-check">
 
-                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="3" >
+                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="1" >
 
                     <label class="form-check-label">
-                        Anemis
+                        Ikterik
+                    </label>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row align-items-center mb-2">
+
+            <div class="col-md-3">
+                <label class="form-label mb-0">
+                    Konjungtiva
+                </label>
+            </div>
+
+            <div class="col">
+                <div class="form-check">
+
+                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="konj" value="2" >
+
+                    <label class="form-check-label">
+                        Tak Anemis
                     </label>
 
                 </div>
@@ -101,10 +110,10 @@
             <div class="col">
                 <div class="form-check">
 
-                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="sklera" value="4" >
+                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="konj" value="1" >
 
                     <label class="form-check-label">
-                        Tak Anemis
+                        Anemis
                     </label>
 
                 </div>
@@ -147,7 +156,7 @@
 
                     </div>
 
-                    <input type="text" class="form-control" name="kepala_keterangan" id="kepala_keterangan" placeholder="Keterangan kelainan..." >
+                    <input type="text" class="form-control form-control-sm" name="kepala_keterangan" id="kepala_keterangan" placeholder="Keterangan kelainan..." >
 
                 </div>
 
@@ -190,7 +199,7 @@
 
                     </div>
 
-                    <input type="text" class="form-control" name="telinga_keterangan" id="telinga_keterangan" placeholder="Keterangan kelainan..." >
+                    <input type="text" class="form-control form-control-sm" name="telinga_keterangan" id="telinga_keterangan" placeholder="Keterangan kelainan..." >
 
                 </div>
 
@@ -233,7 +242,7 @@
 
                     </div>
 
-                    <input type="text" class="form-control" name="hidung_keterangan" id="hidung_keterangan" placeholder="Keterangan kelainan..." >
+                    <input type="text" class="form-control form-control-sm" name="hidung_keterangan" id="hidung_keterangan" placeholder="Keterangan kelainan..." >
 
                 </div>
 
@@ -276,7 +285,7 @@
 
                     </div>
 
-                    <input type="text" class="form-control" name="tenggorokan_keterangan" id="tenggorokan_keterangan" placeholder="Keterangan kelainan..." >
+                    <input type="text" class="form-control form-control-sm" name="tenggorokan_keterangan" id="tenggorokan_keterangan" placeholder="Keterangan kelainan..." >
 
                 </div>
 
@@ -319,7 +328,7 @@
 
                     </div>
 
-                    <input type="text" class="form-control" name="leher_keterangan" id="leher_keterangan" placeholder="Keterangan kelainan..." >
+                    <input type="text" class="form-control form-control-sm" name="leher_keterangan" id="leher_keterangan" placeholder="Keterangan kelainan..." >
 
                 </div>
 
@@ -362,7 +371,7 @@
 
                     </div>
 
-                    <input type="text" class="form-control" name="dada_keterangan" id="dada_keterangan" placeholder="Keterangan kelainan..." >
+                    <input type="text" class="form-control form-control-sm" name="dada_keterangan" id="dada_keterangan" placeholder="Keterangan kelainan..." >
 
                 </div>
 
@@ -405,7 +414,7 @@
 
                     </div>
 
-                    <input type="text" class="form-control" name="jantung_keterangan" id="jantung_keterangan" placeholder="Keterangan kelainan..." >
+                    <input type="text" class="form-control form-control-sm" name="jantung_keterangan" id="jantung_keterangan" placeholder="Keterangan kelainan..." >
 
                 </div>
 
@@ -448,7 +457,7 @@
 
                     </div>
 
-                    <input type="text" class="form-control" name="paru_keterangan" id="paru_keterangan" placeholder="Keterangan kelainan..." >
+                    <input type="text" class="form-control form-control-sm" name="paru_keterangan" id="paru_keterangan" placeholder="Keterangan kelainan..." >
 
                 </div>
 
@@ -491,7 +500,7 @@
 
                     </div>
 
-                    <input type="text" class="form-control" name="abdomen_keterangan" id="abdomen_keterangan" placeholder="Keterangan kelainan..." >
+                    <input type="text" class="form-control form-control-sm" name="abdomen_keterangan" id="abdomen_keterangan" placeholder="Keterangan kelainan..." >
 
                 </div>
 
@@ -516,10 +525,10 @@
 
                 <div class="form-check">
 
-                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_atas" value="1" >
+                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_atas" value="2" >
 
                     <label class="form-check-label">
-                        Oedema
+                        Tak Oedema
                     </label>
 
                 </div>
@@ -530,10 +539,10 @@
 
                 <div class="form-check">
 
-                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_atas" value="2" >
+                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_atas" value="1" >
 
                     <label class="form-check-label">
-                        Tak Oedema
+                        Oedema
                     </label>
 
                 </div>
@@ -559,10 +568,10 @@
 
                 <div class="form-check">
 
-                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_bawah" value="1" >
+                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_bawah" value="2" >
 
                     <label class="form-check-label">
-                        Oedema
+                        Tak Oedema
                     </label>
 
                 </div>
@@ -573,10 +582,10 @@
 
                 <div class="form-check">
 
-                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_bawah" value="2" >
+                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anggota_gerak_bawah" value="1" >
 
                     <label class="form-check-label">
-                        Tak Oedema
+                        Oedema
                     </label>
 
                 </div>
@@ -656,6 +665,18 @@
 
                 $form
                     .find(`[name="sklera"][value="${data.SKLERA}"]`)
+                    .prop('checked', true);
+
+                // ==================================================
+                // KONJUNGTIVA
+                // ==================================================
+
+                $form
+                    .find('[name="konj"]')
+                    .prop('checked', false);
+
+                $form
+                    .find(`[name="konj"][value="${data.KONJUNGTIVA}"]`)
                     .prop('checked', true);
 
 

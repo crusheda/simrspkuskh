@@ -648,14 +648,6 @@
                                         <label class="form-check-label">VAS</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="3">
-                                        <label class="form-check-label">NIPS</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="4">
-                                        <label class="form-check-label">FLACC</label>
-                                    </div>
-                                    <div class="form-check">
                                         <input class="form-check-input single-checkbox" type="checkbox" name="sn_metode" value="2">
                                         <label class="form-check-label">BPS</label>
                                     </div>
@@ -931,109 +923,6 @@
         <div class="col-md-12 mb-3">
             <div class="card card-body border border-dashed border-warning mb-1">
                 <h6>SKRINING RESIKO JATUH</h6>
-                <div class="d-flex align-items-center gap-2 mb-2">
-                    <div class="form-check mb-0 flex-shrink-0">
-                        <input class="form-check-input check-primary" type="checkbox" id="srj_hd">
-                        <label class="form-check-label ms-1">
-                            <small class="mb-2 fw-bold">Penilaian Resiko Jatuh Anak ( Skala Humpty Dumpty)</small>
-                        </label>
-                    </div>
-                </div>
-                <div class="row" id="tampil_srj_hd" hidden>
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-sm flex-grow-1">
-                            <span class="input-group-text">Usia</span>
-                            <select class="form-select form-select-sm" name="rj_usia" id="rj_usia" data-hd-required data-hd-score>
-                                <option value="">Pilih</option>
-                                @if ($list['usia'])
-                                    @foreach ($list['usia'] as $item)
-                                        <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-sm flex-grow-1">
-                            <span class="input-group-text">Jenis Kelamin</span>
-                            <select class="form-select form-select-sm" name="rj_jk" id="rj_jk" data-hd-required data-hd-score>
-                                <option value="">Pilih</option>
-                                @if ($list['jenis_kelamin'])
-                                    @foreach ($list['jenis_kelamin'] as $item)
-                                        <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label class="form-label">Diagnosa</label>
-                            <select class="form-select form-select-sm" name="rj_hd_1" id="rj_hd_1" data-hd-required data-hd-score>
-                                <option value="">Pilih</option>
-                                <option value="4">Kelainan neurogis (meningitis) enchepalitis kejang dan atau gelisah</option>
-                                <option value="3">Gangguan perilaku / spikiatri</option>
-                                <option value="2">Perubahan oksigenasi (diagnosis, respiratorik, asthma, syncope, dehidrasi, anemia, anoresia)</option>
-                                <option value="1">Diagnosis lainnya</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label class="form-label">Gangguan Kognitif</label>
-                            <select class="form-select form-select-sm" name="rj_hd_2" id="rj_hd_2" data-hd-required data-hd-score>
-                                <option value="">Pilih</option>
-                                <option value="3">Belum punya kontrol diri / gelisah</option>
-                                <option value="2">Lupa akan kondisi sakitnya / kadang gelisah</option>
-                                <option value="1">Orientasi terhadap kemampuan diri</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label class="form-label">Faktor Lingkungan</label>
-                            <select class="form-select form-select-sm" name="rj_hd_3" id="rj_hd_3" data-hd-required data-hd-score>
-                                <option value="">Pilih</option>
-                                <option value="4">Riwayat jatuh / pasien ditempatkan di tempat tidur dewasa</option>
-                                <option value="3">Pasien menggunakan alat bantu, ditempatkan dikursi / pangkuan</option>
-                                <option value="2">Pasien diletakkan di tempat tidur bayi / khusus anak</option>
-                                <option value="1">Area di luar rumah sakit</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label class="form-label">Respon Terhadap Tindakan Operasi (Anastesi Sedasi)</label>
-                            <select class="form-select form-select-sm" name="rj_hd_4" id="rj_hd_4" data-hd-required data-hd-score>
-                                <option value="">Pilih</option>
-                                <option value="3">Dalam 24 jam</option>
-                                <option value="2">Dalam 48 jam</option>
-                                <option value="1">48 jam / tidak menjalani operasi</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group mb-3">
-                            <label class="form-label">Penggunaan Obat</label>
-                            <select class="form-select form-select-sm" name="rj_hd_5" id="rj_hd_5" data-hd-required data-hd-score>
-                                <option value="">Pilih</option>
-                                <option value="3">Penggunaan multiple sedative (obat), hypnosi, barbiturate, antidrepesan, pencahar, diuretic, narcose</option>
-                                <option value="2">Penggunaan obat salah satu diatas</option>
-                                <option value="1">Obat lain / tidak menggunakan obat salah satu diatas</option>
-                            </select>
-                        </div>
-                        <input type="number" step="1" class="form-control" name="skor_rj_hd" value="0" hidden>
-                        <div id="skor_rj_hd" class="mb-3" hidden>
-                            <div class="alert alert-success mb-0 d-inline-flex align-items-center">
-                                <div class="me-4 flex-shrink-0">
-                                    <h1 class="display-1 fw-bold mb-0" id="nilai_rj_hd">0</h1>
-                                </div>
-                                <div>
-                                    <h5 class="mb-1 fw-bold">Skor Risiko Jatuh</h5>
-                                    <div class="fw-bold text-success" id="kategori_rj_hd"></div>
-                                    <small class="text-muted" id="keterangan_rj_hd"></small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <hr class="mt-0">
-                    </div>
-                </div>
                 <div class="d-flex align-items-center gap-2 mb-2">
                     <div class="form-check mb-0 flex-shrink-0">
                         <input class="form-check-input check-primary" type="checkbox" id="srj_gag">

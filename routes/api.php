@@ -298,6 +298,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // ANAMNESIS
                         Route::get('emr/pengkajian/ri/anamnesis/{kunjungan}', [AddOnPengkajianController::class, 'getAnamnesisRI']);
                         Route::post('emr/pengkajian/ri/anamnesis/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanAnamnesisRI']);
+                    // ANAMNESIS KHUSUS PERAWAT
+                        Route::get('emr/pengkajian/ri/anam_prwt/{kunjungan}', [AddOnPengkajianController::class, 'getAnamnesisPerawat']);
+                        Route::post('emr/pengkajian/ri/anam_prwt/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanAnamnesisPerawat']);
                     // TANDA VITAL
                         Route::get('emr/pengkajian/ri/tandavital/{kunjungan}', [AddOnPengkajianController::class, 'getTandaVitalRI']);
                         Route::post('emr/pengkajian/ri/tandavital/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTandaVitalRI']);

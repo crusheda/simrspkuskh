@@ -2,65 +2,110 @@
     <h4 class="text-danger">Pemeriksaan Khusus</h4>
     <!-- DADA -->
     <div class="row align-items-center mb-2">
-        <div class="col-md-2">
+        <div class="col-md-2 mb-2">
             <label class="form-label mb-0">Dada</label>
         </div>
-        <!-- Mammae -->
-        <div class="col-md-3">
-            <div class="d-flex align-items-center gap-2">
-                <div class="form-check">
-                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="dada_1" value="1">
-                    <label class="form-check-label">
-                        Mammae simetris / Asimetris
-                    </label>
+        <div class="col-md-5 mb-2">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Mammae</label>
+                </div>
+                <div class="col">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="mammae" value="1">
+                            <label class="form-check-label">
+                                Simetris
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="mammae" value="2">
+                            <label class="form-check-label">
+                                Asimetris
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- Areola -->
-        <div class="col-md-3">
-            <div class="form-check">
-                <input class="form-check-input check-primary" type="checkbox" name="dada_2" value="2">
-                <label class="form-check-label">
-                    Areola hiperpigmentasi
-                </label>
-            </div>
-        </div>
-
-        <!-- Puting -->
-        <div class="col-md-4">
-            <div class="d-flex align-items-center gap-2">
-                <div class="form-check">
-                    <input class="form-check-input check-primary checkbox" type="checkbox" name="dada_3" value="3">
-                    <label class="form-check-label">
-                        Puting susu menonjol / Tidak
-                    </label>
+        <div class="col-md-5 mb-2">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Areola</label>
+                </div>
+                <div class="col">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="areola" value="1">
+                            <label class="form-check-label">
+                                Hiperpigmentasi
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- KOLOSTRUM -->
-    <div class="row align-items-center mb-2">
-        <div class="col-md-2"></div>
-
-        <div class="col-md-3">
-            <div class="d-flex align-items-center gap-2">
-
-                <div class="form-check">
-                    <input class="form-check-input check-primary checkbox" type="checkbox" name="dada_4" value="4">
-                    <label class="form-check-label">
-                        Kolostrum (+) / (-)
-                    </label>
+        <div class="col-md-2 mb-2">
+        </div>
+        <div class="col-md-5 mb-2">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Puting Susu</label>
+                </div>
+                <div class="col">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="puting" value="1">
+                            <label class="form-check-label">
+                                Menonjol
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="puting" value="2">
+                            <label class="form-check-label">
+                                Tidak
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-7">
-            <div class="d-flex align-items-center gap-2">
-                <div class="form-check flex-shrink-0">
-                    <input class="form-check-input check-primary" type="checkbox" name="dada_5" value="5">
+        <div class="col-md-5 mb-2">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="form-label">Kolostrum</label>
                 </div>
-                <input type="text" class="form-control" name="kolostrum_keterangan" id="kolostrum_keterangan" placeholder="Lainnya">
+                <div class="col">
+                    <div class="d-flex align-items-center">
+                        <select class="form-select form-select-sm" id="kolostrum1" name="kolostrum1">
+                            <option value="1">+</option>
+                            <option value="0">-</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex align-items-center">
+                        <select class="form-select form-select-sm" id="kolostrum2" name="kolostrum2">
+                            <option value="1">+</option>
+                            <option value="0">-</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 mb-2">
+        </div>
+        <div class="col-md-10">
+            <div class="d-flex align-items-center gap-2">
+                <input type="text" class="form-control form-control-sm" name="kolostrum_keterangan" id="kolostrum_keterangan" placeholder="Lainnya">
             </div>
         </div>
     </div>
@@ -377,25 +422,25 @@
                 // ==================================================
 
                 $form
-                    .find('[name="dada_1"]')
-                    .prop('checked', data.dada_1 == 1);
+                    .find(
+                        `[name="mammae"][value="${data.mammae}"]`
+                    )
+                    .prop('checked', true);
 
                 $form
-                    .find('[name="dada_2"]')
-                    .prop('checked', data.dada_2 == 1);
+                    .find(
+                        `[name="areola"][value="${data.areola}"]`
+                    )
+                    .prop('checked', true);
 
                 $form
-                    .find('[name="dada_3"]')
-                    .prop('checked', data.dada_3 == 1);
+                    .find(
+                        `[name="puting"][value="${data.puting}"]`
+                    )
+                    .prop('checked', true);
 
-                $form
-                    .find('[name="dada_4"]')
-                    .prop('checked', data.dada_4 == 1);
-
-                $form
-                    .find('[name="dada_5"]')
-                    .prop('checked', data.dada_5 == 1);
-
+                $("#kolostrum1").val(data.kolostrum1);
+                $("#kolostrum2").val(data.kolostrum2);
 
                 $form
                     .find('[name="kolostrum_keterangan"]')
@@ -707,6 +752,24 @@
                     return;
                 }
 
+
+                simpanPemeriksaanKhususObs();
+
+            }
+        );
+
+        // ==========================================================
+        // SELECT
+        // ==========================================================
+        $form.on(
+            'change',
+            'select',
+            function (e) {
+
+                // Jangan save saat GET mengisi form
+                if (!e.originalEvent) {
+                    return;
+                }
 
                 simpanPemeriksaanKhususObs();
 

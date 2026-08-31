@@ -335,7 +335,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6>Sklera/kon, unctiva</h6>
+                    <h6>Sklera/konjunctiva</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
                             <input class="form-check-input single-checkbox" type="checkbox" name="psp_pul" value="1">
