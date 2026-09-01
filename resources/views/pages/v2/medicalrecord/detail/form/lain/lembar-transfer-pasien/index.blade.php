@@ -186,6 +186,90 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-12 mb-2">
+                <h4 class="text-danger">Status Pasien</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card card-body border border-dashed border-success mb-1">
+                            <div class="border-bottom mb-3 text-center">
+                                <h4>Sebelum Transfer</h4>
+                            </div>
+                            @include(
+                                'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
+                                [
+                                    'section' => '#form_lembar_transfer_pasien',
+                                    'page' => 'dokter',
+                                    ]
+                                    )
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <div class="form-group mb-2">
+                                        <h5 class="mb-0 text-success">
+                                            <strong>SKRINING NYERI</strong>
+                                        </h5>
+                                    </div>
+                                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
+                                        [
+                                            'section' => '#rio_perawat',
+                                            'metodeNyeri' => ['vas']
+                                        ]
+                                    )
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card card-body border border-dashed border-success mb-1">
+                            <div class="border-bottom mb-3 text-center">
+                                <h4>Setelah Transfer</h4>
+                            </div>
+                            @include(
+                                'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
+                                [
+                                    'section' => '#form_lembar_transfer_pasien',
+                                    'page' => 'dokter',
+                                    ]
+                                    )
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <div class="form-group mb-2">
+                                        <h5 class="mb-0 text-success">
+                                            <strong>SKRINING NYERI</strong>
+                                        </h5>
+                                    </div>
+                                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
+                                        [
+                                            'section' => '#rio_perawat',
+                                            'metodeNyeri' => ['vas']
+                                        ]
+                                    )
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group mb-3">
+                    <h4 class="mb-2 text-warning">Checklist Transfer</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="pb_rp_dm" id=""></div>
+                                <label class="form-label mb-0" for="">Surat Perintah Rawat Inap</label>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="pb_rp_tb" id=""></div>
+                                <label class="form-label mb-0" for="">Surat Hasil Pemeriksaan</label>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="pb_rp_hepatitis" id=""></div>
+                                <label class="form-label mb-0" for="">Lain-lain</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -234,8 +234,8 @@
                 <label class="form-label">
                     Frekuensi Nadi
                 </label>
-                <div class="d-flex align-items-center gap-3">
-                    <div class="input-group flex-grow-1">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <div class="input-group flex-grow-1" style="flex: 1 1 100px; min-width: 50px;">
                         <input
                             type="number"
                             class="form-control"
@@ -247,7 +247,7 @@
                     </div>
 
                     {{-- REGULER --}}
-                    <div class="form-check m-0">
+                    <div class="form-check m-0 flex-shrink-0">
                         <input
                             class="form-check-input single-checkbox"
                             type="checkbox"
@@ -261,7 +261,7 @@
                     </div>
 
                     {{-- IREGULER --}}
-                    <div class="form-check m-0">
+                    <div class="form-check m-0 flex-shrink-0">
                         <input
                             class="form-check-input single-checkbox"
                             type="checkbox"
@@ -286,8 +286,11 @@
                 <label class="form-label">
                     Frekuensi Nafas
                 </label>
-                <div class="d-flex align-items-center gap-3">
-                    <div class="input-group flex-grow-1">
+
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+
+                    {{-- INPUT FREKUENSI --}}
+                    <div class="input-group" style="flex: 1 1 100px; min-width: 50px;">
                         <input
                             type="number"
                             class="form-control"
@@ -299,7 +302,7 @@
                     </div>
 
                     {{-- SIMETRIS --}}
-                    <div class="form-check m-0">
+                    <div class="form-check m-0 flex-shrink-0">
                         <input
                             class="form-check-input single-checkbox"
                             type="checkbox"
@@ -313,7 +316,7 @@
                     </div>
 
                     {{-- ASIMETRIS --}}
-                    <div class="form-check m-0">
+                    <div class="form-check m-0 flex-shrink-0">
                         <input
                             class="form-check-input single-checkbox"
                             type="checkbox"
@@ -324,6 +327,7 @@
                             Asimetris
                         </label>
                     </div>
+
                 </div>
             </div>
 
