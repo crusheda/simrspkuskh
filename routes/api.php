@@ -37,6 +37,7 @@ use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususKecanduanObatAlkoholCon
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususKorbanKekerasanController;
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususPenyakitMenularController;
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususLanjutanController;
+use App\Http\Controllers\EMR\Form\Lain\LembarTransferPasienInternalController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\EMR\ApiNewRehabMedikController;
 use App\Http\Controllers\EMR\ApiMatriksController;
@@ -310,6 +311,11 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // PEMERIKSAAN KHUSUS OBSGYN
                         Route::get('emr/pengkajian/ri/pemeriksaankhususobsgyn/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanKhususObs']);
                         Route::post('emr/pengkajian/ri/pemeriksaankhususobsgyn/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanKhususObs']);
+            
+            //FORM LAIN
+                // LEMBAR TRANSFER INTERNAL
+                    Route::get('emr/form/lain/lembartransferpasien/{kunjungan}', [LembarTransferPasienInternalController::class, 'getFormTransfer']);
+                    Route::post('emr/form/lain/lembartransferpasien/{kunjungan}/simpan', [LembarTransferPasienInternalController::class, 'simpanFormTransfer']);
 });
 
 // SIRMED v.1

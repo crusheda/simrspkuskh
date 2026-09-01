@@ -34,13 +34,22 @@ class LembarTransferPasienInternalController extends Controller
                     ->where('kj.JENIS', '=', '4');
             })
             ->leftJoin('master.dokter AS dok', 'dok.ID', '=', 'pk.DPJP')
-            ->select('pd.TANGGAL AS TGL_KEDATANGAN','dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'), 'ag.DESKRIPSI AS AGAMA', 'kj.DESKRIPSI AS PEKERJAAN')
+            ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'pk.RUANGAN')
+            ->select('pd.TANGGAL AS TGL_KEDATANGAN','dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'), 'ru.DESKRIPSI AS RUANGAN', 'ag.DESKRIPSI AS AGAMA', 'kj.DESKRIPSI AS PEKERJAAN')
             ->where('pk.NOMOR', $kunjungan)
             ->first();
+        $ruangan = DB::table('master.ruangan as ru')
+            ->where(function ($query) {
+                $query->where('ru.ID', 'like', '1020301%')
+                    ->orWhere('ru.ID', 'like', '1020302%');
+            })
+            ->where('ru.JENIS', '5')
+            ->get();
 
         $data = [
             'kunjungan' => $kunjungan,
-            'pasien' => $pasien
+            'pasien' => $pasien,
+            'ruangan' => $ruangan,
         ];
 
         return view('pages.v2.medicalrecord.detail.form.lain.lembar-transfer-pasien.index')->with('list',$data);
