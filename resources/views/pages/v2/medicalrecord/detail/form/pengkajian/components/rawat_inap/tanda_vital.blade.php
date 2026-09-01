@@ -878,7 +878,7 @@
                     // TEKANAN DARAH
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValue(ttv.SISTOLIK)
+                        FormHelper.hasValueNot0(ttv.SISTOLIK)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -888,7 +888,7 @@
                     }
 
                     if (
-                        FormHelper.hasValue(ttv.DISTOLIK)
+                        FormHelper.hasValueNot0(ttv.DISTOLIK)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -901,7 +901,7 @@
                     // NADI
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValue(ttv.FREKUENSI_NADI)
+                        FormHelper.hasValueNot0(ttv.FREKUENSI_NADI)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -910,7 +910,7 @@
                         );
                     }
 
-                    if (FormHelper.hasValue(ttv.FREKUENSI_NADI_CB)) {
+                    if (FormHelper.hasValueNot0(ttv.FREKUENSI_NADI_CB)) {
                         setSingleCheckbox(
                             'tv_nadi_cb',
                             ttv.FREKUENSI_NADI_CB
@@ -921,7 +921,7 @@
                     // NAFAS
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValue(ttv.FREKUENSI_NAFAS)
+                        FormHelper.hasValueNot0(ttv.FREKUENSI_NAFAS)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -930,7 +930,7 @@
                         );
                     }
 
-                    if (FormHelper.hasValue(ttv.FREKUENSI_NAFAS_CB)) {
+                    if (FormHelper.hasValueNot0(ttv.FREKUENSI_NAFAS_CB)) {
                         setSingleCheckbox(
                             'tv_nafas_cb',
                             ttv.FREKUENSI_NAFAS_CB
@@ -941,7 +941,7 @@
                     // SUHU
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValue(ttv.SUHU)
+                        FormHelper.hasValueNot0(ttv.SUHU)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -954,7 +954,7 @@
                     // SPO2
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValue(ttv.SATURASI_O2)
+                        FormHelper.hasValueNot0(ttv.SATURASI_O2)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -967,7 +967,7 @@
                     // BB
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValue(ttv.BERAT_BADAN)
+                        FormHelper.hasValueNot0(ttv.BERAT_BADAN)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -980,7 +980,7 @@
                     // TB
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValue(ttv.TINGGI_BADAN)
+                        FormHelper.hasValueNot0(ttv.TINGGI_BADAN)
                     ) {
                         FormHelper.setValue(
                             $section,

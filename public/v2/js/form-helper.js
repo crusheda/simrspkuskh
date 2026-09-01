@@ -2,6 +2,117 @@
 // GLOBAL FORM HELPER
 // ============================================================
 window.FormHelper = {
+
+    // ==========================================================
+    // UPDATE DEPENDENT INPUTS
+    //
+    // Contoh:
+    //
+    // data-enable-when="keb_duk_lain"
+    // Aktif jika checkbox keb_duk_lain dicentang
+    //
+    // data-enable-when="nyeri:2"
+    // Aktif jika name="nyeri" dengan value="2" dicentang
+    //
+    // Pemakaian:
+    //
+    // FormHelper.updateDependentInputs($form);
+    // ==========================================================
+    updateDependentInputs: function ($form) {
+
+        if (!$form || !$form.length) {
+            return;
+        }
+
+        $form.find('[data-enable-when]').each(function () {
+
+            const $input = $(this);
+
+            const condition = String(
+                $input.attr('data-enable-when') || ''
+            ).trim();
+
+            if (!condition) {
+                return;
+            }
+
+            const parts = condition.split(':');
+
+            let isEnabled = false;
+
+            // ======================================================
+            // MODEL 1
+            // data-enable-when="keb_duk_lain"
+            //
+            // Aktif jika checkbox/radio dicentang
+            // ======================================================
+            if (parts.length === 1) {
+
+                const fieldName = parts[0];
+
+                const $field = $form.find(
+                    `[name="${fieldName}"]`
+                );
+
+                if ($field.length) {
+
+                    const type = (
+                        $field.first().attr('type') || ''
+                    ).toLowerCase();
+
+                    if (type === 'checkbox' || type === 'radio') {
+
+                        isEnabled = $field.is(':checked');
+
+                    } else {
+
+                        isEnabled =
+                            $field.val() !== null &&
+                            $field.val() !== '';
+                    }
+                }
+            }
+
+            // ======================================================
+            // MODEL 2
+            // data-enable-when="nyeri:2"
+            //
+            // Aktif jika field mempunyai value tertentu
+            // ======================================================
+            else if (parts.length === 2) {
+
+                const fieldName = parts[0];
+                const expectedValue = parts[1];
+
+                const $field = $form.find(
+                    `[name="${fieldName}"]`
+                );
+
+                if ($field.length) {
+
+                    isEnabled = $field
+                        .filter(':checked')
+                        .filter(function () {
+
+                            return String($(this).val()) ===
+                                String(expectedValue);
+
+                        })
+                        .length > 0;
+                }
+            }
+
+            // ======================================================
+            // APPLY
+            // ======================================================
+            $input.prop('disabled', !isEnabled);
+
+            // Kalau menjadi disabled, kosongkan isian
+            if (!isEnabled) {
+                $input.val('');
+            }
+        });
+    },
     // ==========================================================
     // CEK VALUE TERISI DAN BUKAN 0
     // ==========================================================
@@ -21,6 +132,15 @@ window.FormHelper = {
             value !== undefined &&
             value !== ''
             // && Number(value) !== 0
+        );
+    },
+    hasValueNot0: function (value) {
+
+        return (
+            value !== null &&
+            value !== undefined &&
+            value !== '' &&
+            Number(value) !== 0
         );
     },
 

@@ -78,8 +78,14 @@
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#riD_perawat'])
             </div>
-            <div class="col-md-12">
+            <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.discharge_planning',['section' => '#riD_perawat'])
+            </div>
+            <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pengkajian_ulang_resiko_jatuh_humpty_dumpty_pediatri',['section' => '#riD_perawat'])
+            </div>
+            <div class="col-md-12">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pengkajian_ulang_resiko_jatuh_skala_morse_dewasa',['section' => '#riD_perawat'])
             </div>
         </div>
     </div>

@@ -638,37 +638,87 @@ class EMRController extends Controller
         string $formKey
     ) {
         $forms = [
-            // Rawat inap dewasa
-            'rid_dokter' => [
-                'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa.form_dokter',
-            ],
-            'rid_perawat' => [
-                'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa.form_perawat',
-            ],
+            // Gawat Darurat
+                'gd_dokter' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.gawat-darurat.form_dokter',
+                ],
+                'gd_perawat' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.gawat-darurat.form_perawat',
+                ],
 
-            // Siapkan untuk Rawat Inap Anak
-            'ria_dokter' => [
-                'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.anak.form_dokter',
-            ],
-            'ria_perawat' => [
-                'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.anak.form_perawat',
-            ],
+            // Rawat Jalan
+                // Dewasa
+                'rjd_dokter' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.dewasa.form_dokter',
+                ],
+                'rjd_perawat' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.dewasa.form_perawat',
+                ],
 
-            // Rawat inap neonatus
-            'rin_dokter' => [
-                'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.neonatus.form_dokter',
-            ],
-            'rin_perawat' => [
-                'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.neonatus.form_perawat',
-            ],
+                // Anak
+                'rja_dokter' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.anak.form_dokter',
+                ],
+                'rja_perawat' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.anak.form_perawat',
+                ],
 
-            // Rawat inap obsgyn
-            'rio_dokter' => [
-                'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.obsgyn.form_dokter',
-            ],
-            'rio_perawat' => [
-                'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.obsgyn.form_perawat',
-            ],
+                // Geriatri
+                'rjg_dokter' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.geriatri.form_dokter',
+                ],
+                'rjg_perawat' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.geriatri.form_perawat',
+                ],
+
+                // Jiwa
+                'rjj_dokter' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.jiwa.form_dokter',
+                ],
+                'rjj_perawat' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.jiwa.form_perawat',
+                ],
+
+                // Obsgyn
+                'rjo_dokter' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.obsgyn.form_dokter',
+                ],
+                'rjo_perawat' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.obsgyn.form_perawat',
+                ],
+
+            // Rawat Inap
+                // Dewasa
+                'rid_dokter' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa.form_dokter',
+                ],
+                'rid_perawat' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa.form_perawat',
+                ],
+
+                // Anak
+                'ria_dokter' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.anak.form_dokter',
+                ],
+                'ria_perawat' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.anak.form_perawat',
+                ],
+
+                // Neonatus
+                'rin_dokter' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.neonatus.form_dokter',
+                ],
+                'rin_perawat' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.neonatus.form_perawat',
+                ],
+
+                // Obsgyn
+                'rio_dokter' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.obsgyn.form_dokter',
+                ],
+                'rio_perawat' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.obsgyn.form_perawat',
+                ],
         ];
 
         abort_unless(
@@ -689,6 +739,20 @@ class EMRController extends Controller
             in_array(
                 $formKey,
                 [
+                    'gd_dokter',
+                    'gd_perawat',
+
+                    'rjd_dokter',
+                    'rjd_perawat',
+                    'rja_dokter',
+                    'rja_perawat',
+                    'rjg_dokter',
+                    'rjg_perawat',
+                    'rjj_dokter',
+                    'rjj_perawat',
+                    'rjo_dokter',
+                    'rjo_perawat',
+
                     'rio_dokter',
                     'rio_perawat',
                 ],
@@ -741,6 +805,7 @@ class EMRController extends Controller
                 'pk.DPJP'
             )
             ->select(
+                'pd.TANGGAL AS TGL_KEDATANGAN',
                 'dok.ID',
                 DB::raw(
                     'master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'
@@ -808,11 +873,66 @@ class EMRController extends Controller
             ->get();
 
         $usia = DB::table('master.referensi')
-            ->select('ID', 'DESKRIPSI')
-            ->where('JENIS', 192)
-            ->where('STATUS', 1)
-            ->orderBy('TABEL_ID', 'ASC')
-            ->get();
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',192)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $jk = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',193)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $cara_keluar = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',45)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $keadaan_keluar = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',46)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $frekuensi_obat = DB::table('master.frekuensi_aturan_resep')
+                ->select('ID','FREKUENSI')
+                ->where('STATUS',1)
+                ->orderBy('ID','ASC')
+                ->get();
+
+        $rute_obat = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',217)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $jenis_ruang = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',242)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $jenis_perawatan = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',243)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
+        $jenis_alergi = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',180)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
 
         return [
             'kunjungan' => $kunjungan,
@@ -827,6 +947,14 @@ class EMRController extends Controller
             'tempat' => $tempat,
             'keadaan_sat_ini' => $keadaan_sat_ini,
             'usia' => $usia,
+            'jk' => $jk,
+            'cara_keluar' => $cara_keluar,
+            'keadaan_keluar' => $keadaan_keluar,
+            'frekuensi_obat' => $frekuensi_obat,
+            'rute_obat' => $rute_obat,
+            'jenis_ruang' => $jenis_ruang,
+            'jenis_perawatan' => $jenis_perawatan,
+            'jenis_alergi' => $jenis_alergi,
         ];
     }
 

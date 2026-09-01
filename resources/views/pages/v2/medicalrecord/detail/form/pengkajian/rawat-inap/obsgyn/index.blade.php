@@ -32,7 +32,7 @@
         id="riO_dokter"
         data-kunjungan="{{ $list['kunjungan'] }}"
         data-form-key="rio_dokter"
-        data-url="{{ route('v2.emr.form.sub.rawat-inap.load', ['kunjungan' => $list['kunjungan'], 'formKey' => 'rio_dokter']) }}"
+        data-url="{{ route('v2.emr.form.sub.load', ['kunjungan' => $list['kunjungan'], 'formKey' => 'rio_dokter']) }}"
     >
         <div class="form-content mt-3"></div>
     </div>
@@ -42,7 +42,7 @@
         id="riO_perawat"
         data-kunjungan="{{ $list['kunjungan'] }}"
         data-form-key="rio_perawat"
-        data-url="{{ route('v2.emr.form.sub.rawat-inap.load', ['kunjungan' => $list['kunjungan'], 'formKey' => 'rio_perawat']) }}"
+        data-url="{{ route('v2.emr.form.sub.load', ['kunjungan' => $list['kunjungan'], 'formKey' => 'rio_perawat']) }}"
     >
         <div class="form-content mt-3"></div>
     </div>

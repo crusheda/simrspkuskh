@@ -1,8 +1,10 @@
-<div class="form-wrapper" id="form_khusus_nyerikronik">
+<div class="form-wrapper" id="form_laporan_anestesi">
     <h1 class="display-6 mb-1 mt-2 fs-23 fw-medium"><center>LAPORAN <b class="text-success">ANESTESI</b></center></h1>
-    <div class="form-content">
+    <div class="form-content mt-3">
         <div class="row">
-            {{-- COL --}}
+            <div class="col-md-12">
+
+            </div>
         </div>
     </div>
 </div>
@@ -11,7 +13,7 @@
 (function () {
     'use strict';
 
-    const $form = $('#form_khusus_nyerikronik');
+    const $form = $('#form_laporan_anestesi');
 
     let isDataLoading = false;
     let isDataSaving = false;
@@ -29,7 +31,7 @@
         isDataLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/form/pengkajian/khu/nyerikronik/${kunjungan}`,
+            url: `/api/v2/emr/form/pengkajian/bedans/laporananestesi/${kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -93,7 +95,7 @@
         isDataSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/form/pengkajian/khu/nyerikronik/${kunjungan}/simpan`,
+            url: `/api/v2/emr/form/pengkajian/bedans/laporananestesi/${kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

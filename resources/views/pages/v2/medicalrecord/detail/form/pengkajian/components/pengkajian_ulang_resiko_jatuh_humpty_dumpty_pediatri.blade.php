@@ -236,7 +236,7 @@
                     <i class="ri-add-box-line me-1"></i>
                     Submit
                 </button>
-                <a class="btn btn-subtle-success waves-effect waves-light" data-bs-toggle="collapse" href="#collapse-table-pengkajian-ulang-humpty-dumpty" role="button" aria-expanded="true" aria-controls="collapse-table-pengkajian-ulang-humpty-dumpty"><i class="ri-table-view"></i></a>
+                <a href="javascript:void(0)" class="btn btn-subtle-success waves-effect waves-light" id="btn-table-pengkajian-ulang-humpty-dumpty" role="button" aria-expanded="true"><i class="ri-table-view"></i></a>
                 {{-- <button
                     type="button"
                     class="btn btn-subtle-warning"
@@ -251,7 +251,7 @@
     {{-- ==========================================================
         TABEL RIWAYAT
     =========================================================== --}}
-    <div class="col-md-12 multi-collapse collapse show" id="collapse-table-pengkajian-ulang-humpty-dumpty">
+    <div class="col-md-12" id="table-pengkajian-ulang-humpty-dumpty">
         <div class="table-responsive">
             <table
                 class="table table-hover table-border-bottom align-middle mb-0"
@@ -820,6 +820,14 @@
         }
         hitungTotalSkor();
         getHumptyDumpty();
+
+        $('#btn-table-pengkajian-ulang-humpty-dumpty').on('click', function (e) {
+            e.preventDefault();
+            $('#table-pengkajian-ulang-humpty-dumpty').prop(
+                'hidden',
+                !$('#table-pengkajian-ulang-humpty-dumpty').prop('hidden')
+            );
+        });
     });
 })();
 </script>

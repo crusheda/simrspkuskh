@@ -22,7 +22,7 @@
                     <label class="form-label fw-bold">Tingkat Kesadaran</label>
                     <select class="form-control" name="kesadaran" id="kesadaran">
                         <option value="">Pilih Tingkat Kesadaran</option>
-                        @foreach ($list['kesadaran'] as $item)
+                        @foreach ($list['tingkat_kesadaran'] as $item)
                             <option value="{{ $item->ID }}">
                                 {{ $item->DESKRIPSI }}
                             </option>

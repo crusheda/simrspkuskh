@@ -329,7 +329,7 @@
             <div class="col-md-12">
                 <div class="form-group mb-3">
                     <div class="d-flex align-items-center gap-3 mb-2">
-                        <h6 class="fw-medium mb-0">Apakah ada orang yang dihubungi saat ini ?</h6>
+                        <h6 class="fw-light mb-0">Apakah ada orang yang dihubungi saat ini ?</h6>
                         <div class="form-check mb-0 flex-shrink-0">
                             <input class="form-check-input single-checkbox" type="checkbox" name="psiko_dihubungi" value="1">
                             <label class="form-check-label">
@@ -355,7 +355,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="fw-medium">Bagaimana rencana perawatan selanjutnya ?</h6>
+                    <h6 class="fw-light">Bagaimana rencana perawatan selanjutnya ?</h6>
                     <div class="d-flex align-items-center gap-3 mb-2">
                         <div class="form-check mb-0 flex-shrink-0">
                             <input class="form-check-input single-checkbox" type="checkbox" name="psiko_perawatan" value="1">
@@ -372,7 +372,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="fw-medium">Apakah lingkungan rumah sudah disiapkan ?</h6>
+                    <h6 class="fw-light">Apakah lingkungan rumah sudah disiapkan ?</h6>
                     <div class="d-flex align-items-center gap-3 mb-2">
                         <div class="form-check mb-0 flex-shrink-0">
                             <input class="form-check-input single-checkbox" type="checkbox" name="psiko_lingkungan" value="1">
@@ -390,7 +390,7 @@
                 </div>
                 <div class="form-group mb-3">
                     <div class="d-flex align-items-center gap-3">
-                        <label class="form-label">Jika Ya, apakah ada yang mampu merawat pasien di Rumah ?</label>
+                        <h6 class="fw-light">Jika Ya, apakah ada yang mampu merawat pasien di Rumah ?</h6>
                         <div class="form-check mb-0 flex-shrink-0">
                             <input class="form-check-input single-checkbox" type="checkbox" name="psiko_rawat_pasien" value="1">
                             <label class="form-check-label">
@@ -409,7 +409,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="fw-medium">Jika Tidak, apakah perlu di fasilitasi oleh Rumah Sakit ?</h6>
+                    <h6 class="fw-light">Jika Tidak, apakah perlu di fasilitasi oleh Rumah Sakit ?</h6>
                     <div class="d-flex align-items-center gap-3 mb-2">
                         <div class="form-check mb-0 flex-shrink-0">
                             <input class="form-check-input single-checkbox" type="checkbox" name="psiko_fasilitas_rs" value="1">
@@ -426,7 +426,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="fw-medium mb-1">Reaksi pasien atas penyakitnya</h6>
+                    <h6 class="fw-light mb-1">Reaksi pasien atas penyakitnya</h6>
                     <small><i class="ri-arrow-right-s-line text-primary me-1"></i> Assesmen Informasi</small>
                     <div class="row mt-2">
                         <div class="col-md-6">
@@ -934,107 +934,6 @@
     }
 
     // ==========================================================
-    // ENABLE / DISABLE INPUT BERDASARKAN SINGLE CHECKBOX
-    //
-    // Contoh:
-    //
-    // data-enable-when="nyeri:2"
-    //
-    // Artinya:
-    // input aktif jika checkbox name="nyeri"
-    // dengan value="2" sedang tercentang.
-    // ==========================================================
-    function updateDependentInputs() {
-
-        $form.find('[data-enable-when]').each(function () {
-
-            const $input = $(this);
-
-            const condition = String(
-                $input.attr('data-enable-when') || ''
-            ).trim();
-
-            if (!condition) {
-                return;
-            }
-
-            const parts = condition.split(':');
-
-            let isEnabled = false;
-
-            // ======================================================
-            // MODEL 1
-            // data-enable-when="keb_duk_lain"
-            //
-            // Aktif jika checkbox dicentang
-            // ======================================================
-            if (parts.length === 1) {
-
-                const fieldName = parts[0];
-
-                const $field = $form.find(
-                    `[name="${fieldName}"]`
-                );
-
-                if ($field.length) {
-
-                    const type = (
-                        $field.first().attr('type') || ''
-                    ).toLowerCase();
-
-                    if (type === 'checkbox' || type === 'radio') {
-
-                        isEnabled = $field.is(':checked');
-
-                    } else {
-
-                        isEnabled =
-                            $field.val() !== null &&
-                            $field.val() !== '';
-                    }
-                }
-            }
-
-            // ======================================================
-            // MODEL 2
-            // data-enable-when="nyeri:2"
-            //
-            // Aktif jika field mempunyai value tertentu
-            // ======================================================
-            else if (parts.length === 2) {
-
-                const fieldName = parts[0];
-                const expectedValue = parts[1];
-
-                const $field = $form.find(
-                    `[name="${fieldName}"]`
-                );
-
-                if ($field.length) {
-
-                    isEnabled = $field
-                        .filter(':checked')
-                        .filter(function () {
-                            return String($(this).val()) ===
-                                String(expectedValue);
-                        })
-                        .length > 0;
-                }
-            }
-
-            // ======================================================
-            // APPLY
-            // ======================================================
-            $input.prop('disabled', !isEnabled);
-
-            // Kalau menjadi disabled, kosongkan isian
-            if (!isEnabled) {
-                $input.val('');
-            }
-        });
-    }
-
-    // ==========================================================
     // GET DATA
     // ==========================================================
     function getData() {
@@ -1059,7 +958,7 @@
                 });
 
                 // Update kondisi input setelah semua data selesai di-load
-                updateDependentInputs();
+                FormHelper.updateDependentInputs($form);
 
                 lastSavedPayload = buildPayload();
             },
@@ -1229,7 +1128,7 @@
             }
 
             // Update input yang bergantung pada pilihan ini
-            updateDependentInputs();
+            FormHelper.updateDependentInputs($form);
 
             // Autosave
             requestSave();

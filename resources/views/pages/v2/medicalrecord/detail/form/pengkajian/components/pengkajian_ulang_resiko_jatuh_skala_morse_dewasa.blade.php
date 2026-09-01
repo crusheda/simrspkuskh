@@ -207,12 +207,11 @@
                 </button>
 
                 <a
+                    href="javascript:void(0)"
                     class="btn btn-subtle-success waves-effect waves-light"
-                    data-bs-toggle="collapse"
-                    href="#collapse-table-pengkajian-ulang-morse-dewasa"
+                    id="btn-table-pengkajian-ulang-morse-dewasa"
                     role="button"
                     aria-expanded="true"
-                    aria-controls="collapse-table-pengkajian-ulang-morse-dewasa"
                 >
                     <i class="ri-table-view"></i>
                 </a>
@@ -224,8 +223,8 @@
         TABEL RIWAYAT
     =========================================================== --}}
     <div
-        class="col-md-12 multi-collapse collapse show"
-        id="collapse-table-pengkajian-ulang-morse-dewasa"
+        class="col-md-12"
+        id="table-pengkajian-ulang-morse-dewasa"
     >
         <div class="table-responsive">
             <table
@@ -956,8 +955,15 @@
         }
 
         hitungTotalSkorMorseDewasa();
-
         getMorseDewasa();
+
+        $('#btn-table-pengkajian-ulang-morse-dewasa').on('click', function (e) {
+            e.preventDefault();
+            $('#table-pengkajian-ulang-morse-dewasa').prop(
+                'hidden',
+                !$('#table-pengkajian-ulang-morse-dewasa').prop('hidden')
+            );
+        });
     });
 
 })();
