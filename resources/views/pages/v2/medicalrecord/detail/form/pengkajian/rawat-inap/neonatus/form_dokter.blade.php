@@ -32,6 +32,7 @@
                     [
                         'section' => '#rin_dokter',
                         'page' => 'dokter',
+                        'neonatus' => 'true',
                         // 'editableFields' => [
                         //     'tv_keu',
                         //     'tv_gcs_e',

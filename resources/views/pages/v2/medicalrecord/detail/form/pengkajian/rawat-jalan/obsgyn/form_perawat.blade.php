@@ -118,6 +118,9 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-12 mb-1">
+            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_obstetri')
+        </div>
         <div class="col-md-12 mb-3">
             <div class="card card-body border border-dashed border-primary mb-1">
                 <div class="row">

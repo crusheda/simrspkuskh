@@ -438,11 +438,13 @@
         const $neonatus = $section.find('[data-ttv-neonatus]');
         const $kesadaranNeonatus = $section.find('[data-kesadaran-neonatus]');
 
-        if (!$neonatus.length) {
+        if (!$neonatus.length || !$kesadaranNeonatus.length) {
             return;
         }
 
-        // Normalisasi nilai neonatus
+        // ==========================================================
+        // NORMALISASI NILAI NEONATUS
+        // ==========================================================
         const neonatusValue = String(@json($neonatus ?? false))
             .toLowerCase()
             .trim();
@@ -453,35 +455,84 @@
             neonatusValue === 'yes' ||
             neonatusValue === 'ya';
 
-        // console.log('Neonatus:', neonatusValue);
-        // console.log('isNeonatus:', isNeonatus);
-
+        // ==========================================================
+        // NEONATUS
+        // ==========================================================
         if (isNeonatus) {
 
+            // ------------------------------------------------------
+            // Sembunyikan TTV biasa
+            // ------------------------------------------------------
             $neonatus
                 .stop(true, true)
                 .hide()
                 .find('input, textarea, select')
                 .prop('disabled', true);
 
+            // ------------------------------------------------------
+            // Tampilkan Kesadaran Neonatus
+            // ------------------------------------------------------
             $kesadaranNeonatus
                 .stop(true, true)
                 .removeClass('d-none')
-                .show()
+                .show();
+
+            // ------------------------------------------------------
+            // Hak akses kesadaran neonatus
+            // ------------------------------------------------------
+            $kesadaranNeonatus
                 .find('input, textarea, select')
-                .prop('disabled', false);
+                .each(function () {
+
+                    const $input = $(this);
+                    const name = $input.attr('name');
+
+                    if (!name) {
+                        return;
+                    }
+
+                    // Dokter hanya boleh edit jika ada di editableFields
+                    if (bolehEditTandaVital(name)) {
+                        $input.prop('disabled', false);
+                    } else {
+                        $input.prop('disabled', true);
+                    }
+                });
 
         } else {
 
+            // ======================================================
+            // BUKAN NEONATUS
+            // ======================================================
+
             $neonatus
                 .stop(true, true)
-                .show()
-                .find('input, textarea, select')
-                .prop('disabled', false);
+                .show();
 
+            // Hak akses TTV biasa diatur oleh applyTandaVitalAccess()
+            $neonatus
+                .find('input, textarea, select')
+                .each(function () {
+
+                    const $input = $(this);
+                    const name = $input.attr('name');
+
+                    if (!name) {
+                        return;
+                    }
+
+                    if (bolehEditTandaVital(name)) {
+                        $input.prop('disabled', false);
+                    } else {
+                        $input.prop('disabled', true);
+                    }
+                });
+
+            // Sembunyikan kesadaran neonatus
             $kesadaranNeonatus
                 .stop(true, true)
                 .addClass('d-none')
+                .hide()
                 .find('input, textarea, select')
                 .prop('disabled', true);
         }
@@ -859,13 +910,8 @@
                         );
                     }
 
-                    if (
-                        FormHelper.hasValue(
-                            ttv.FREKUENSI_NADI_CB
-                        )
-                    ) {
-                        FormHelper.setSingleCheckbox(
-                            $section,
+                    if (FormHelper.hasValue(ttv.FREKUENSI_NADI_CB)) {
+                        setSingleCheckbox(
                             'tv_nadi_cb',
                             ttv.FREKUENSI_NADI_CB
                         );
@@ -884,13 +930,8 @@
                         );
                     }
 
-                    if (
-                        FormHelper.hasValue(
-                            ttv.FREKUENSI_NAFAS_CB
-                        )
-                    ) {
-                        FormHelper.setSingleCheckbox(
-                            $section,
+                    if (FormHelper.hasValue(ttv.FREKUENSI_NAFAS_CB)) {
+                        setSingleCheckbox(
                             'tv_nafas_cb',
                             ttv.FREKUENSI_NAFAS_CB
                         );
@@ -963,13 +1004,8 @@
                         hitungIMT();
                     }
 
-                    if (
-                        FormHelper.hasValue(
-                            ttv.KESADARAN_NEONATUS
-                        )
-                    ) {
-                        FormHelper.setSingleCheckbox(
-                            $section,
+                    if (FormHelper.hasValue(ttv.KESADARAN_NEONATUS)) {
+                        setSingleCheckbox(
                             'kesadaran_neonatus',
                             ttv.KESADARAN_NEONATUS
                         );
@@ -1097,6 +1133,23 @@
             complete: function () {
             }
         });
+    }
+
+    function setSingleCheckbox(name, value) {
+
+        const normalizedValue = String(value).trim();
+
+        $section
+            .find(`[name="${name}"]`)
+            .each(function () {
+
+                const $checkbox = $(this);
+
+                $checkbox.prop(
+                    'checked',
+                    String($checkbox.val()).trim() === normalizedValue
+                );
+            });
     }
 
     // ==============================================================
