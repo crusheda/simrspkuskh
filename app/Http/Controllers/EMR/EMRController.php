@@ -968,11 +968,11 @@ class EMRController extends Controller
         $getData = DB::table('pendaftaran.kunjungan AS pk')
             ->select(
                 'pk.NOMOR AS NOKUNJUNGAN',
-                'pk.MASUK AS MASUK'
+                'pk.MASUK AS TGLMASUK'
             )
             ->where('pk.NOMOR', $kunjungan)
             ->where('pk.STATUS', '!=', 0)
-            ->orderBy('pk.TANGGAL', 'DESC')
+            ->orderBy('pk.MASUK', 'DESC')
             ->first();
 
         if (!$getData) {
@@ -980,7 +980,7 @@ class EMRController extends Controller
         }
 
         return [
-            'inputdate' => $getData->MASUK,
+            'inputdate' => $getData->TGLMASUK,
         ];
     }
 }
