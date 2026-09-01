@@ -180,11 +180,209 @@
                     return;
                 }
 
-                if (FormHelper.hasValue(tlt.DESKRIPSI)) {
+                setCheckboxValue(
+                    'pb_ds_batuk',
+                    tlt.BATUK
+                );
+
+                setCheckboxValue(
+                    'pb_ds_pusing',
+                    tlt.PUSING
+                );
+
+                setCheckboxValue(
+                    'pb_ds_sesaknafas',
+                    tlt.SESAKNAFAS
+                );
+
+                setCheckboxValue(
+                    'pb_ds_pilek',
+                    tlt.PILEK
+                );
+
+                setCheckboxValue(
+                    'pb_ds_mual',
+                    tlt.MUAL
+                );
+
+                setCheckboxValue(
+                    'pb_ds_puasa',
+                    tlt.PUASA
+                );
+
+                setCheckboxValue(
+                    'pb_ds_gigipalsu',
+                    tlt.GIGIPALSU
+                );
+
+                setCheckboxValue(
+                    'pb_ds_lain',
+                    tlt.LAIN
+                );
+
+                if (FormHelper.hasValue(tlt.LAIN_SEBUT)) {
                     FormHelper.setValue(
                         $form,
-                        'nyerikronik',
-                        tlt.DESKRIPSI
+                        'pb_ds_lain_sebut',
+                        tlt.LAIN_SEBUT
+                    );
+                }
+
+
+                // ==========================================================
+                // RIWAYAT OPERASI SEBELUMNYA
+                // ==========================================================
+
+                if (FormHelper.hasValue(tlt.ROS)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pb_ros',
+                        tlt.ROS
+                    );
+                }
+
+
+                // ==========================================================
+                // DATA OBYEKTIF
+                // ==========================================================
+
+                if (FormHelper.hasValue(tlt.DO)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pb_do',
+                        tlt.DO
+                    );
+                }
+
+
+                // ==========================================================
+                // RIWAYAT PENYAKIT
+                // ==========================================================
+
+                setCheckboxValue(
+                    'pb_rp_dm',
+                    tlt.DM
+                );
+
+                setCheckboxValue(
+                    'pb_rp_tb',
+                    tlt.TB
+                );
+
+                setCheckboxValue(
+                    'pb_rp_hepatitis',
+                    tlt.HEPATITIS
+                );
+
+                setCheckboxValue(
+                    'pb_rp_hipertensi',
+                    tlt.HIPERTENSI
+                );
+
+                setCheckboxValue(
+                    'pb_rp_stemi',
+                    tlt.STEMI
+                );
+
+                setCheckboxValue(
+                    'pb_rp_hiv',
+                    tlt.HIV
+                );
+
+                setCheckboxValue(
+                    'pb_rp_asma',
+                    tlt.ASMA
+                );
+
+                setCheckboxValue(
+                    'pb_rp_chf',
+                    tlt.CHF
+                );
+
+                setCheckboxValue(
+                    'pb_rp_lain',
+                    tlt.RP_LAIN
+                );
+
+                if (FormHelper.hasValue(tlt.RP_LAIN_SEBUT)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pb_rp_lain_sebut',
+                        tlt.RP_LAIN_SEBUT
+                    );
+                }
+
+
+                // ==========================================================
+                // PEMERIKSAAN LAB / RAD
+                // ==========================================================
+
+                if (FormHelper.hasValue(tlt.LAB)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pb_lab',
+                        tlt.LAB
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.RAD)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pb_rad',
+                        tlt.RAD
+                    );
+                }
+
+
+                // ==========================================================
+                // DATA PRA OPERASI
+                // ==========================================================
+
+                if (FormHelper.hasValue(tlt.DPO)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pb_dpo',
+                        tlt.DPO
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.PPDO)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pb_ppdo',
+                        tlt.PPDO
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.PRO)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pb_pro',
+                        tlt.PRO
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.PLO)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pb_plo',
+                        tlt.PLO
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.AK)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pb_ak',
+                        tlt.AK
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.RO)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pb_ro',
+                        tlt.RO
                     );
                 }
             },
@@ -314,6 +512,21 @@
             }
         );
     });
+
+    function setCheckboxValue(name, value) {
+
+        const $checkbox = $form.find(
+            `[name="${name}"]`
+        );
+
+        if (!$checkbox.length) {
+            return;
+        }
+
+        $checkbox
+            .prop('checked', Number(value) === 1)
+            .trigger('change');
+    }
 
 })();
 </script>

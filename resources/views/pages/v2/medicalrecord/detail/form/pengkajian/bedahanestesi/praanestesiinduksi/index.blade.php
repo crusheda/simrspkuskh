@@ -1,4 +1,4 @@
-<div class="form-wrapper" id="form_khusus_nyerikronik">
+<div class="form-wrapper" id="form_praanestesi">
     <h1 class="display-6 mb-1 mt-2 fs-23 fw-medium"><center>PENGKAJIAN <b class="text-success">PRA ANESTESI DAN INDUKSI</b></center></h1>
     <div class="form-content mt-3">
         <div class="row mb-4">
@@ -10,11 +10,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_hg">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_hg" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_hg">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_hg" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -26,11 +26,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_mbl">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_mbl" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_mbl">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_mbl" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -42,11 +42,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_lp">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_lp" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_lp">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_lp" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -58,11 +58,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_bat">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_bat" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_bat">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_bat" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -74,11 +74,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_sn">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_sn" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_sn">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_sn" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -90,11 +90,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_bsmi">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_bsmi" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_bsmi">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_bsmi" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -106,11 +106,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_pmtn">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_pmtn" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_pmtn">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_pmtn" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -122,11 +122,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_str">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_str" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_str">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_str" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -141,11 +141,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_sda">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_sda" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_sda">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_sda" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -157,11 +157,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_djtn">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_djtn" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_djtn">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_djtn" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -173,11 +173,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_mth">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_mth" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_mth">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_mth" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -189,11 +189,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_skg">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_skg" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_skg">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_skg" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -205,11 +205,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_kjg">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_kjg" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_kjg">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_kjg" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -221,11 +221,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_shl">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_shl" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_shl">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_shl" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -237,11 +237,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_pgs">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_pgs" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_pgs">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_pgs" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -253,11 +253,11 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_obs">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_obs" value="1">
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_obs">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_obs" value="2">
                             <label class="form-check-label">Ya</label>
                         </div>
                     </div>
@@ -273,7 +273,7 @@
                 @include(
                     'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
                     [
-                        'section' => '#form_khusus_nyerikronik',
+                        'section' => '#form_praanestesi',
                         'page' => 'dokter',
                     ]
                 )
@@ -336,24 +336,24 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2 mb-2">
-                    <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="pai_asa1" id=""></div>
-                    <label class="form-label mb-0" for="">ASA 1 Pasien normal yang sehat</label>
+                    <div class="form-check mb-0"><input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_asa" value="1"></div>
+                    <label class="form-label mb-0" for="">ASA I Pasien normal yang sehat</label>
                 </div>
                 <div class="d-flex align-items-center gap-2 mb-2">
-                    <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="pai_asa2" id=""></div>
-                    <label class="form-label mb-0" for="">ASA 2 Pasien dengan penyakit sistemik ringan</label>
+                    <div class="form-check mb-0"><input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_asa" value="2"></div>
+                    <label class="form-label mb-0" for="">ASA II Pasien dengan penyakit sistemik ringan</label>
                 </div>
                 <div class="d-flex align-items-center gap-2 mb-2">
-                    <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="pai_asa3" id=""></div>
-                    <label class="form-label mb-0" for="">ASA 3 Pasien dengan penyakit sistemik berat</label>
+                    <div class="form-check mb-0"><input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_asa" value="3"></div>
+                    <label class="form-label mb-0" for="">ASA III Pasien dengan penyakit sistemik berat</label>
                 </div>
                 <div class="d-flex align-items-center gap-2 mb-2">
-                    <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="pai_asa4" id=""></div>
-                    <label class="form-label mb-0" for="">ASA 4 Pasien dengan penyakit sistemik berat yang mengancam nyawa</label>
+                    <div class="form-check mb-0"><input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_asa" value="4"></div>
+                    <label class="form-label mb-0" for="">ASA IV Pasien dengan penyakit sistemik berat yang mengancam nyawa</label>
                 </div>
                 <div class="form-group mb-3">
                     <label class="form-label">Kesimpulan Status ASA</label>
-                    <textarea class="form-control" name="pai_asa" id="" rows="2"></textarea>
+                    <textarea class="form-control" name="pai_asa_kes" value="" rows="2"></textarea>
                 </div>
             </div>
             <div class="col-md-12">
@@ -363,7 +363,7 @@
                     <div class="form-group mb-3">
                         <div class="d-flex gap-2 align-items-center">
                             <div class="form-check mb-0">
-                                <input class="form-check-input check-primary" type="checkbox" name="pai_sedasi" id="">
+                                <input class="form-check-input check-primary" type="checkbox" name="pai_sedasi" value="1">
                             </div>
                             <label class="form-label mb-0 flex-shrink-0">
                                 Sedasi
@@ -374,7 +374,7 @@
                     <div class="form-group mb-3">
                         <div class="d-flex gap-2 align-items-center">
                             <div class="form-check mb-0">
-                                <input class="form-check-input check-primary" type="checkbox" name="pai_ga" id="">
+                                <input class="form-check-input check-primary" type="checkbox" name="pai_ga" value="1">
                             </div>
                             <label class="form-label mb-0 flex-shrink-0">
                                 GA
@@ -388,25 +388,25 @@
                                 Regional :
                             </label>
                             <div class="form-check mb-0">
-                                <input class="form-check-input check-primary" type="checkbox" name="pai_reg_s" id="">
+                                <input class="form-check-input check-primary" type="checkbox" name="pai_reg_s" value="1">
                                 <label class="form-check-label mb-0 flex-shrink-0">
                                     Spinal
                                 </label>
                             </div>
                             <div class="form-check mb-0">
-                                <input class="form-check-input check-primary" type="checkbox" name="pai_reg_e" id="">
+                                <input class="form-check-input check-primary" type="checkbox" name="pai_reg_e" value="1">
                                 <label class="form-check-label mb-0 flex-shrink-0">
                                     Epidural
                                 </label>
                             </div>
                             <div class="form-check mb-0">
-                                <input class="form-check-input check-primary" type="checkbox" name="pai_reg_k" id="">
+                                <input class="form-check-input check-primary" type="checkbox" name="pai_reg_k" value="1">
                                 <label class="form-check-label mb-0 flex-shrink-0">
                                     Kaudal
                                 </label>
                             </div>
                             <div class="form-check mb-0">
-                                <input class="form-check-input check-primary" type="checkbox" name="pai_reg_b" id="">
+                                <input class="form-check-input check-primary" type="checkbox" name="pai_reg_b" value="1">
                                 <label class="form-check-label mb-0 flex-shrink-0">
                                     Blok Perifer
                                 </label>
@@ -417,36 +417,31 @@
                 <div class="form-group mb-3">
                     <h6>Perawatan pasca anestesia :</h6>
                     <div class="form-check mb-2">
-                        <input class="form-check-input check-primary" type="checkbox" name="pai_pa_ri" id="">
+                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" value="1">
                         <label class="form-check-label mb-0 flex-shrink-0">
                             Rawat Inap
                         </label>
                     </div>
                     <div class="form-check mb-2">
-                        <input class="form-check-input check-primary" type="checkbox" name="pai_pa_rj" id="">
+                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" value="2">
                         <label class="form-check-label mb-0 flex-shrink-0">
                             Rawat Jalan
                         </label>
                     </div>
-                    <div class="d-flex gap-2 align-items-center mb-2">
-                        <label class="form-label mb-0 flex-shrink-0">
-                            Rawat Khusus :
+                    <div class="form-check mb-2">
+                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" value="3">
+                        <label class="form-check-label mb-0 flex-shrink-0">
+                            ICU
                         </label>
-                        <div class="form-check mb-0">
-                            <input class="form-check-input check-primary" type="checkbox" name="pai_pa_rk_icu" id="">
-                            <label class="form-check-label mb-0 flex-shrink-0">
-                                ICU
-                            </label>
-                        </div>
-                        <div class="form-check mb-0">
-                            <input class="form-check-input check-primary" type="checkbox" name="pai_pa_rk_picun" id="">
-                            <label class="form-check-label mb-0 flex-shrink-0">
-                                PICU / NICU
-                            </label>
-                        </div>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" value="4">
+                        <label class="form-check-label mb-0 flex-shrink-0">
+                            PICU / NICU
+                        </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input check-primary" type="checkbox" name="pai_pa_aps" id="">
+                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" value="5">
                         <label class="form-check-label mb-0 flex-shrink-0">
                             APS
                         </label>
@@ -482,7 +477,7 @@
 (function () {
     'use strict';
 
-    const $form = $('#form_khusus_nyerikronik');
+    const $form = $('#form_praanestesi');
 
     let isDataLoading = false;
     let isDataSaving = false;
@@ -500,7 +495,7 @@
         isDataLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/form/pengkajian/khu/nyerikronik/${kunjungan}`,
+            url: `/api/v2/emr/form/pengkajian/bedans/praanestesiinduksi/${kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -512,13 +507,195 @@
                     return;
                 }
 
-                if (FormHelper.hasValue(tlt.DESKRIPSI)) {
+                // ==================================================
+                // KONDISI / ANAMNESIS
+                // ==================================================
+
+                setCheckboxValue('pai_cb_hg', tlt.HILANG_GIGI);
+                setCheckboxValue('pai_cb_mbl', tlt.MOBILISASI_LEHER);
+                setCheckboxValue('pai_cb_lp', tlt.LEHER_PENDEK);
+                setCheckboxValue('pai_cb_bat', tlt.BATUK);
+                setCheckboxValue('pai_cb_sn', tlt.SESAK_NAFAS);
+                setCheckboxValue('pai_cb_bsmi', tlt.INFEKSI_SALURAN_NAFAS);
+                setCheckboxValue('pai_cb_pmtn', tlt.MENSTRUASI_TIDAK_NORMAL);
+                setCheckboxValue('pai_cb_str', tlt.STROKE);
+                setCheckboxValue('pai_cb_sda', tlt.SAKIT_DADA);
+                setCheckboxValue('pai_cb_djtn', tlt.DENYUT_JANTUNG_TIDAK_NORMAL);
+                setCheckboxValue('pai_cb_mth', tlt.MUNTAH);
+                setCheckboxValue('pai_cb_skg', tlt.SUSAH_KENCING);
+                setCheckboxValue('pai_cb_kjg', tlt.KEJANG);
+                setCheckboxValue('pai_cb_shl', tlt.HAMIL);
+                setCheckboxValue('pai_cb_pgs', tlt.PINGSAN);
+                setCheckboxValue('pai_cb_obs', tlt.OBESITAS);
+                // ==================================================
+                // PEMERIKSAAN FISIK
+                // ==================================================
+
+                if (FormHelper.hasValue(tlt.PEMERIKSAAN_FISIK)) {
                     FormHelper.setValue(
                         $form,
-                        'nyerikronik',
-                        tlt.DESKRIPSI
+                        'pai_cb_pf',
+                        tlt.PEMERIKSAAN_FISIK
                     );
                 }
+
+                if (FormHelper.hasValue(tlt.KEPALA_LEHER)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_keple',
+                        tlt.KEPALA_LEHER
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.THORAKS_COR)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_thrcor',
+                        tlt.THORAKS_COR
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.THORAKS_PULMO)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_thrpul',
+                        tlt.THORAKS_PULMO
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.ABDOMEN)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_abd',
+                        tlt.ABDOMEN
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.EKSTREMITAS)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_eks',
+                        tlt.EKSTREMITAS
+                    );
+                }
+
+                // ==================================================
+                // DIAGNOSIS
+                // ==================================================
+
+                if (FormHelper.hasValue(tlt.DIAGNOSIS_1)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_diag1',
+                        tlt.DIAGNOSIS_1
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.DIAGNOSIS_2)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_diag2',
+                        tlt.DIAGNOSIS_2
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.DIAGNOSIS_3)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_diag3',
+                        tlt.DIAGNOSIS_3
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.DIAGNOSIS_4)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_diag4',
+                        tlt.DIAGNOSIS_4
+                    );
+                }
+
+                // ==================================================
+                // ASA
+                // ==================================================
+
+                setCheckboxValue('pai_asa', tlt.ASA);
+
+                if (FormHelper.hasValue(tlt.KESIMPULAN_ASA)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_kesimpulan_asa',
+                        tlt.KESIMPULAN_ASA
+                    );
+                }
+
+                // ==================================================
+                // PERENCANAAN ANESTESIA
+                // ==================================================
+
+                setCheckboxValue('pai_sedasi', tlt.SEDASI);
+
+                if (FormHelper.hasValue(tlt.SEDASI_KETERANGAN)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_sedasi_lain',
+                        tlt.SEDASI_KETERANGAN
+                    );
+                }
+
+                setCheckboxValue('pai_ga', tlt.GA);
+
+                if (FormHelper.hasValue(tlt.GA_KETERANGAN)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_ga_lain',
+                        tlt.GA_KETERANGAN
+                    );
+                }
+
+                setCheckboxValue('pai_reg_s', tlt.REGIONAL_SPINAL);
+                setCheckboxValue('pai_reg_e', tlt.REGIONAL_EPIDURAL);
+                setCheckboxValue('pai_reg_k', tlt.REGIONAL_KAUDAL);
+                setCheckboxValue('pai_reg_b', tlt.REGIONAL_BLOK_PERIFER);
+
+                setCheckboxValue('pai_ppa', tlt.PASCA_ANESTESIA);
+
+                // ==================================================
+                // PERSIAPAN PRA ANESTESIA
+                // ==================================================
+
+                if (FormHelper.hasValue(tlt.PRA_ANESTESIA_1)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_pra1',
+                        tlt.PRA_ANESTESIA_1
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.PRA_ANESTESIA_2)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_pra2',
+                        tlt.PRA_ANESTESIA_2
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.PRA_ANESTESIA_3)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_pra3',
+                        tlt.PRA_ANESTESIA_3
+                    );
+                }
+
+                if (FormHelper.hasValue(tlt.PRA_ANESTESIA_4)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pai_pra4',
+                        tlt.PRA_ANESTESIA_4
+                    );
+                }
+
             },
 
             error: function (xhr, status, error) {
@@ -564,7 +741,7 @@
         isDataSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/form/pengkajian/khu/nyerikronik/${kunjungan}/simpan`,
+            url: `/api/v2/emr/form/pengkajian/bedans/praanestesiinduksi/${kunjungan}/simpan`,
             type: 'POST',
             data: data,
 
@@ -618,6 +795,31 @@
             return;
         }
 
+        $('.single-checkbox').on('change', function () {
+            if (!this.checked) return;
+
+            const $otherCheckboxes = $('input.single-checkbox[name="' + this.name + '"]').not(this);
+
+            $otherCheckboxes.each(function() {
+                if (this.checked) {
+                    this.checked = false;
+                    // Pemicu manual agar fungsi onchange="toggleSubOptions(...)" di HTML ikut berjalan
+                    $(this).trigger('change');
+                }
+            });
+        });
+        $('.single-checkbox-bos').on('change', function () {
+            // Jika checkbox di-uncheck, langsung kembalikan ke checked
+            if (!this.checked) {
+                this.checked = true;
+                return;
+            }
+            // Uncheck pilihan lain dengan name yang sama
+            $('input.single-checkbox-bos[name="' + this.name + '"]')
+                .not(this)
+                .prop('checked', false);
+        });
+
         getData();
 
         $form.on(
@@ -646,6 +848,24 @@
             }
         );
     });
+
+    function setCheckboxValue(name, value) {
+        const $checkboxes = $('input[type="checkbox"][name="' + name + '"]');
+
+        // Bersihkan pilihan sebelumnya
+        $checkboxes.prop('checked', false);
+
+        if (value === null || value === undefined || value === '') {
+            return;
+        }
+
+        // Cocokkan value checkbox dengan value dari database
+        $checkboxes
+            .filter(function () {
+                return String($(this).val()) === String(value);
+            })
+            .prop('checked', true);
+    }
 
 })();
 </script>
