@@ -762,8 +762,9 @@ class EMRController extends Controller
             $list = $this->getDataMaster($kunjungan);
         }
 
+        $identification = $this->formInputIdentification($kunjungan);
         $init = [
-            'input_date' => $this->formInputIdentification($kunjungan),
+            'input_date' => $identification['inputdate'],
         ];
 
         return view(
@@ -962,10 +963,12 @@ class EMRController extends Controller
         ];
     }
 
-    private function formInputIdentification($kunjungan) {
+    private function formInputIdentification($kunjungan)
+    {
         $getData = DB::table('pendaftaran.kunjungan AS pk')
             ->select(
                 'pk.NOMOR AS NOKUNJUNGAN',
+                'pk.MASUK AS MASUK'
             )
             ->where('pk.NOMOR', $kunjungan)
             ->where('pk.STATUS', '!=', 0)
@@ -976,11 +979,8 @@ class EMRController extends Controller
             return null;
         }
 
-        $inputDate = $get
-
         return [
-            'input-date' => $inputDate,
-        ]
+            'inputdate' => $getData->MASUK,
+        ];
     }
-
 }
