@@ -287,7 +287,7 @@ DESKTOP
         visibility: visible !important;
 
         position: absolute;
-        z-index: 100;
+        /* z-index: 100; */
 
         top: 0;
         right: 0;

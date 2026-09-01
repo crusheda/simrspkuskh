@@ -250,11 +250,16 @@
     <div class="col-xl-9" id="pengkajian-content-col">
         <div class="row">
             <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-body p-3" id="formContent">
-                        <div class="text-center">
-                            Silakan pilih form.
-                        </div>
+                <div id="formContent">
+                    <div
+                        class="d-flex justify-content-center align-items-center"
+                        style="min-height: 70vh;"
+                    >
+                        <img
+                            src="{{ asset('v2/images/auth/vector1.svg') }}"
+                            alt="" style="width: 600px;height:auto;"
+                            class="img-fluid cover-img"
+                        >
                     </div>
                 </div>
             </div>
@@ -604,14 +609,18 @@
     function loadForm(form)
     {
         $('#formContent').html(`
-            <div class="d-flex flex-column align-items-center justify-content-center py-5">
-                <div class="spinner-border text-primary mb-3"></div>
-                <h6 class="mb-1">
-                    Memuat Form...
-                </h6>
-                <small class="text-muted">
-                    Mohon tunggu sebentar...
-                </small>
+            <div class="card">
+                <div class="card-body p-3">
+                    <div class="d-flex flex-column align-items-center justify-content-center py-5">
+                        <div class="spinner-border text-primary mb-3"></div>
+                        <h6 class="mb-1">
+                            Memuat Form...
+                        </h6>
+                        <small class="text-muted">
+                            Mohon tunggu sebentar...
+                        </small>
+                    </div>
+                </div>
             </div>
         `);
 
@@ -620,13 +629,22 @@
             type: 'GET',
             success: function (html) {
                 console.log(form);
-                $('#formContent').html(html);
+                content = `<div class="card">
+                                <div class="card-body p-3">
+                                    ${html}
+                                </div>
+                            </div>`;
+                $('#formContent').html(content);
             },
             error: function () {
                 $('#formContent').html(`
-                    <div class="alert alert-danger mb-0">
-                        <strong>Gagal!</strong><br>
-                        Form tidak dapat dimuat.
+                    <div class="card">
+                        <div class="card-body p-3">
+                            <div class="alert alert-danger mb-0">
+                                <strong>Gagal!</strong><br>
+                                Form tidak dapat dimuat.
+                            </div>
+                        </div>
                     </div>
                 `);
             }

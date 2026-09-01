@@ -1,9 +1,7 @@
 <div class="form-wrapper" id="form_khusus_nyerikronik">
     <h1 class="display-6 mb-1 mt-2 fs-23 fw-medium"><center>PENGKAJIAN <b class="text-primary">PASIEN DENGAN NYERI KRONIK</b></center></h1>
-    <div class="form-content">
-        <div class="row">
-            {{-- COL --}}
-        </div>
+    <div class="form-content text-center">
+        Formulir belum Ada.
     </div>
 </div>
 

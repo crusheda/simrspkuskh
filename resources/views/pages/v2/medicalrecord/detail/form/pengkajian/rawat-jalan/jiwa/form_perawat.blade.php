@@ -1,5 +1,6 @@
 <div class="form-wrapper">
-    <h1 class="display-6 mb-4 fs-27"><center>PENGKAJIAN KEPERAWATAN</center></h1>
+    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN KEPERAWATAN <b class="">RAWAT JALAN</b> <b class="text-warning">JIWA</b></center></h1>
+    <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-success">Diisi Oleh Perawat</a>)</center></h1>
     <div class="form-content">
         <div class="row">
             <div class="col-md-12 mb-3">
