@@ -150,6 +150,8 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                         // LAPORAN ANESTESI
                             Route::get('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}', [PengkajianLaporanAnestesiController::class, 'getForm']);
                             Route::post('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}/simpan', [PengkajianLaporanAnestesiController::class, 'simpanForm']);
+                            Route::get('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}/monitoring', [PengkajianLaporanAnestesiController::class, 'getDiagramMonitoringAnestesi']);
+                            Route::post('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}/monitoring/simpan', [PengkajianLaporanAnestesiController::class, 'simpanDiagramMonitoringAnestesi']);
 
                 // KHUSUS
                     // REMAJA
@@ -314,7 +316,7 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // PEMERIKSAAN KHUSUS OBSGYN
                         Route::get('emr/pengkajian/ri/pemeriksaankhususobsgyn/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanKhususObs']);
                         Route::post('emr/pengkajian/ri/pemeriksaankhususobsgyn/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanKhususObs']);
-            
+
             //FORM LAIN
                 // LEMBAR TRANSFER INTERNAL
                     Route::get('emr/form/lain/lembartransferpasien/{kunjungan}', [LembarTransferPasienInternalController::class, 'getFormTransfer']);
