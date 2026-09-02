@@ -234,8 +234,8 @@
                 <label class="form-label">
                     Frekuensi Nadi
                 </label>
-                <div class="d-flex align-items-center gap-3 flex-wrap">
-                    <div class="input-group flex-grow-1" style="flex: 1 1 100px; min-width: 50px;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="input-group flex-grow-1">
                         <input
                             type="number"
                             class="form-control"
@@ -247,7 +247,7 @@
                     </div>
 
                     {{-- REGULER --}}
-                    <div class="form-check m-0 flex-shrink-0">
+                    <div class="form-check m-0">
                         <input
                             class="form-check-input single-checkbox"
                             type="checkbox"
@@ -261,7 +261,7 @@
                     </div>
 
                     {{-- IREGULER --}}
-                    <div class="form-check m-0 flex-shrink-0">
+                    <div class="form-check m-0">
                         <input
                             class="form-check-input single-checkbox"
                             type="checkbox"
@@ -286,11 +286,8 @@
                 <label class="form-label">
                     Frekuensi Nafas
                 </label>
-
-                <div class="d-flex align-items-center gap-3 flex-wrap">
-
-                    {{-- INPUT FREKUENSI --}}
-                    <div class="input-group" style="flex: 1 1 100px; min-width: 50px;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="input-group flex-grow-1">
                         <input
                             type="number"
                             class="form-control"
@@ -302,7 +299,7 @@
                     </div>
 
                     {{-- SIMETRIS --}}
-                    <div class="form-check m-0 flex-shrink-0">
+                    <div class="form-check m-0">
                         <input
                             class="form-check-input single-checkbox"
                             type="checkbox"
@@ -316,7 +313,7 @@
                     </div>
 
                     {{-- ASIMETRIS --}}
-                    <div class="form-check m-0 flex-shrink-0">
+                    <div class="form-check m-0">
                         <input
                             class="form-check-input single-checkbox"
                             type="checkbox"
@@ -327,7 +324,6 @@
                             Asimetris
                         </label>
                     </div>
-
                 </div>
             </div>
 
@@ -813,6 +809,9 @@
             beforeSend: function () {
             },
             success: function (res) {
+                console.log('=== TANDA VITAL BIASA ===');
+                console.log('SECTION:', @json($section));
+                console.log('RESPONSE:', res);
 
                 const ttv = res.data;
 
@@ -882,7 +881,7 @@
                     // TEKANAN DARAH
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValueNot0(ttv.SISTOLIK)
+                        FormHelper.hasValue(ttv.SISTOLIK)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -892,7 +891,7 @@
                     }
 
                     if (
-                        FormHelper.hasValueNot0(ttv.DISTOLIK)
+                        FormHelper.hasValue(ttv.DISTOLIK)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -905,7 +904,7 @@
                     // NADI
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValueNot0(ttv.FREKUENSI_NADI)
+                        FormHelper.hasValue(ttv.FREKUENSI_NADI)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -914,7 +913,7 @@
                         );
                     }
 
-                    if (FormHelper.hasValueNot0(ttv.FREKUENSI_NADI_CB)) {
+                    if (FormHelper.hasValue(ttv.FREKUENSI_NADI_CB)) {
                         setSingleCheckbox(
                             'tv_nadi_cb',
                             ttv.FREKUENSI_NADI_CB
@@ -925,7 +924,7 @@
                     // NAFAS
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValueNot0(ttv.FREKUENSI_NAFAS)
+                        FormHelper.hasValue(ttv.FREKUENSI_NAFAS)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -934,7 +933,7 @@
                         );
                     }
 
-                    if (FormHelper.hasValueNot0(ttv.FREKUENSI_NAFAS_CB)) {
+                    if (FormHelper.hasValue(ttv.FREKUENSI_NAFAS_CB)) {
                         setSingleCheckbox(
                             'tv_nafas_cb',
                             ttv.FREKUENSI_NAFAS_CB
@@ -945,7 +944,7 @@
                     // SUHU
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValueNot0(ttv.SUHU)
+                        FormHelper.hasValue(ttv.SUHU)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -958,7 +957,7 @@
                     // SPO2
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValueNot0(ttv.SATURASI_O2)
+                        FormHelper.hasValue(ttv.SATURASI_O2)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -971,7 +970,7 @@
                     // BB
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValueNot0(ttv.BERAT_BADAN)
+                        FormHelper.hasValue(ttv.BERAT_BADAN)
                     ) {
                         FormHelper.setValue(
                             $section,
@@ -984,7 +983,7 @@
                     // TB
                     // --------------------------------------------------
                     if (
-                        FormHelper.hasValueNot0(ttv.TINGGI_BADAN)
+                        FormHelper.hasValue(ttv.TINGGI_BADAN)
                     ) {
                         FormHelper.setValue(
                             $section,

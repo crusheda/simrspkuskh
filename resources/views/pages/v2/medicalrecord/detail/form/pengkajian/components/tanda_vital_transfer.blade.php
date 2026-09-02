@@ -30,7 +30,7 @@
     }
 @endphp
 
-<div class="form-group" id="form_tanda_vital_transfer">
+<div class="form-group" id="form_tanda_vital_transfer_{{ $transfer }}">
     <h4 class="text-danger">Tanda Vital</h4>
     <div class="row">
 
@@ -333,12 +333,12 @@
                     hidden
                 >
                 <div
-                    id="hasil_imt"
+                    id="hasil_imt_transfer_{{ $transfer }}"
                     class="alert alert-danger d-flex align-items-center d-none"
                     role="alert"
                 >
                     <i class="ri-spam-line me-2"></i>
-                    <span id="hasil_imt_text"></span>
+                    <span id="hasil_imt_transfer_{{ $transfer }}_text"></span>
                 </div>
             </div>
         </div>
@@ -354,6 +354,13 @@
     // CONFIGURATION
     // ==============================================================
     const $section = $(@json($section));
+
+console.log('1. section selector:', @json($section));
+console.log('2. section length:', $section.length);
+console.log('3. neonatus global:', $('[data-ttv-neonatus]').length);
+console.log('4. kesadaran global:', $('[data-kesadaran-neonatus]').length);
+console.log('5. neonatus dalam section:', $section.find('[data-ttv-neonatus]').length);
+console.log('6. kesadaran dalam section:', $section.find('[data-kesadaran-neonatus]').length);
     const page = @json($page);
     const editableFields = @json($editableFields);
     const transfer = @json($transfer);
@@ -406,7 +413,7 @@
     // APPLY ACCESS / READONLY
     // ==============================================================
     function applyTandaVitalAccess() {
-        const $form = $section.find('#form_tanda_vital_transfer');
+        const $form = $section.find('#form_tanda_vital_transfer_{{ $transfer }}');
 
         $form
             .find('input, textarea, select')
@@ -510,8 +517,8 @@
                 .find('[name="tv_tb"]')
                 .val()
         );
-        const $hasil = $section.find('#hasil_imt');
-        const $text = $section.find('#hasil_imt_text');
+        const $hasil = $section.find('#hasil_imt_transfer_{{ $transfer }}');
+        const $text = $section.find('#hasil_imt_transfer_{{ $transfer }}_text');
 
         // ----------------------------------------------------------
         // BB / TB BELUM VALID
@@ -635,6 +642,11 @@
             beforeSend: function () {
             },
             success: function (res) {
+                console.log('=== TANDA VITAL TRANSFER ===');
+                console.log('TRANSFER:', transfer);
+                console.log('SECTION:', @json($section));
+                console.log('URL:', `/api/v2/emr/pengkajian/tandavitaltf/${kunjungan}`);
+                console.log('RESPONSE:', res);
 
                 const ttv = res.data;
 
@@ -885,7 +897,7 @@
         // AMBIL FORM
         // ----------------------------------------------------------
         const $sectionTandaVital =
-            $section.find('#form_tanda_vital_transfer');
+            $section.find('#form_tanda_vital_transfer_{{ $transfer }}');
 
         // ----------------------------------------------------------
         // AMBIL DATA
