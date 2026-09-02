@@ -195,10 +195,11 @@
                                 <h4>Sebelum Transfer</h4>
                             </div>
                             @include(
-                                'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
+                                'pages.v2.medicalrecord.detail.form.pengkajian.components.tanda_vital_transfer',
                                 [
-                                    'section' => '#form_lembar_transfer_pasien',
-                                    'page' => 'dokter',
+                                    'section' => '#form_lembar_transfer_pasien_sebelum',
+                                    'page' => 'perawat',
+                                    'transfer' => 1,
                                     ]
                                     )
                             <div class="row">
@@ -224,10 +225,11 @@
                                 <h4>Setelah Transfer</h4>
                             </div>
                             @include(
-                                'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
+                                'pages.v2.medicalrecord.detail.form.pengkajian.components.tanda_vital_transfer',
                                 [
-                                    'section' => '#form_lembar_transfer_pasien',
-                                    'page' => 'dokter',
+                                    'section' => '#form_lembar_transfer_pasien_sesudah',
+                                    'page' => 'perawat',
+                                    'transfer' => 2,
                                     ]
                                     )
                             <div class="row">
@@ -255,15 +257,15 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="pb_rp_dm" id=""></div>
+                                <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="spri" value="1"></div>
                                 <label class="form-label mb-0" for="">Surat Perintah Rawat Inap</label>
                             </div>
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="pb_rp_tb" id=""></div>
+                                <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="shp" value="1"></div>
                                 <label class="form-label mb-0" for="">Surat Hasil Pemeriksaan</label>
                             </div>
                             <div class="d-flex align-items-center gap-2 mb-2">
-                                <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="pb_rp_hepatitis" id=""></div>
+                                <div class="form-check mb-0"><input class="form-check-input check-primary" type="checkbox" name="slain" value="1"></div>
                                 <label class="form-label mb-0" for="">Lain-lain</label>
                             </div>
                         </div>
@@ -302,19 +304,122 @@
 
             success: function (res) {
 
-                // const tlt = res.data;
+                const tlt = res.data;
 
-                // if (!tlt) {
-                //     return;
-                // }
+                if (!tlt) {
+                    return;
+                }
 
-                // if (FormHelper.hasValue(tlt.DESKRIPSI)) {
-                //     FormHelper.setValue(
-                //         $form,
-                //         'nyerikronik',
-                //         tlt.DESKRIPSI
-                //     );
-                // }
+                // ======================================================
+                // UNIT TUJUAN
+                // ======================================================
+
+                if (FormHelper.hasValue(tlt.UNIT_TUJUAN)) {
+                    FormHelper.setValue(
+                        $form,
+                        'unit_tujuan',
+                        tlt.UNIT_TUJUAN
+                    );
+                }
+
+
+                // ======================================================
+                // PETUGAS PENDAMPING
+                // ======================================================
+
+                setCheckboxValue('petugas', tlt.PETUGAS);
+
+
+                // ======================================================
+                // TANGGAL
+                // ======================================================
+
+                if (FormHelper.hasValue(tlt.TANGGAL_TRANSFER)) {
+                    FormHelper.setValue(
+                        $form,
+                        'sn_tanggal_lahir',
+                        tlt.TANGGAL_TRANSFER
+                    );
+                }
+
+
+                // ======================================================
+                // JAM
+                // ======================================================
+
+                if (FormHelper.hasValue(tlt.JAM_TRANSFER)) {
+                    FormHelper.setValue(
+                        $form,
+                        'sn_jam_lahir',
+                        tlt.JAM_TRANSFER
+                    );
+                }
+
+
+                // ======================================================
+                // TEMUAN KLINIS
+                // ======================================================
+
+                if (FormHelper.hasValue(tlt.KLINIS)) {
+                    FormHelper.setValue(
+                        $form,
+                        'klinis',
+                        tlt.KLINIS
+                    );
+                }
+
+
+                // ======================================================
+                // INDIKASI
+                // ======================================================
+
+                if (FormHelper.hasValue(tlt.INDIKASI)) {
+                    FormHelper.setValue(
+                        $form,
+                        'indikasi',
+                        tlt.INDIKASI
+                    );
+                }
+
+
+                // ======================================================
+                // TERAPI
+                // ======================================================
+
+                if (FormHelper.hasValue(tlt.TERAPI)) {
+                    FormHelper.setValue(
+                        $form,
+                        'terapi',
+                        tlt.TERAPI
+                    );
+                }
+
+
+                // ======================================================
+                // KATEGORI TRANSFER
+                // ======================================================
+
+                setCheckboxValue('kategori_trans', tlt.KATEGORI_TRANS);
+
+
+                // ======================================================
+                // CHECKLIST TRANSFER
+                // ======================================================
+
+                setCheckboxValue(
+                    'spri',
+                    tlt.SPRI
+                );
+
+                setCheckboxValue(
+                    'shp',
+                    tlt.SURAT_HASIL
+                );
+
+                setCheckboxValue(
+                    'slain',
+                    tlt.SURAT_LAIN
+                );
             },
 
             error: function (xhr, status, error) {
@@ -467,6 +572,24 @@
             }
         );
     });
+
+    function setCheckboxValue(name, value) {
+        const $checkboxes = $('input[type="checkbox"][name="' + name + '"]');
+
+        // Bersihkan pilihan sebelumnya
+        $checkboxes.prop('checked', false);
+
+        if (value === null || value === undefined || value === '') {
+            return;
+        }
+
+        // Cocokkan value checkbox dengan value dari database
+        $checkboxes
+            .filter(function () {
+                return String($(this).val()) === String(value);
+            })
+            .prop('checked', true);
+    }
 
 })();
 </script>

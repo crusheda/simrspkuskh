@@ -285,6 +285,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // PEMERIKSAAN FISIK NEONATUS
                     Route::get('/emr/pengkajian/pemeriksaan_fisik_neonatus/{kunjungan}',[AddOnPengkajianController::class, 'getPemeriksaanFisikNeo']);
                     Route::post('/emr/pengkajian/pemeriksaan_fisik_neonatus/{kunjungan}/simpan',[AddOnPengkajianController::class, 'simpanPemeriksaanFisikNeo']);
+                // TANDA VITAL TRANSFER
+                    Route::get('emr/pengkajian/tandavitaltf/{kunjungan}', [AddOnPengkajianController::class, 'getTandaVitalTf']);
+                    Route::post('emr/pengkajian/tandavitaltf/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTandaVitalTf']);
 
                 // KHUSUS RAWAT INAP
                     // DAFTAR MASALAH KEPERAWATAN

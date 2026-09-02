@@ -54,4 +54,65 @@ class LembarTransferPasienInternalController extends Controller
 
         return view('pages.v2.medicalrecord.detail.form.lain.lembar-transfer-pasien.index')->with('list',$data);
     }
+
+    function getFormTransfer(string $kunjungan)
+    {
+        $data = DB::table('simrspku_pengkajian.lembar_transfer_internal')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
+    function simpanFormTransfer(
+        Request $request,
+        string $kunjungan
+    ) {
+        try {
+
+            DB::table('simrspku_pengkajian.lembar_transfer_internal')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $kunjungan
+                    ],
+                    [
+                        'UNIT_TUJUAN' => $request->unit_tujuan,
+                        'PETUGAS' => $request->petugas,
+
+                        'TANGGAL_TRANSFER' => $request->sn_tanggal_lahir,
+                        'JAM_TRANSFER' => $request->sn_jam_lahir,
+
+                        'KLINIS' => $request->klinis,
+                        'INDIKASI' => $request->indikasi,
+                        'TERAPI' => $request->terapi,
+
+                        'KATEGORI_TRANS' => $request->kategori_trans,
+
+                        'SPRI'       => $request->spri ?? 0,
+                        'SURAT_HASIL' => $request->shp ?? 0,
+                        'SURAT_LAIN' => $request->slain ?? 0,
+
+                        'OLEH'                  => auth()->id(),
+                        'STATUS'                => 1,
+                        'TANGGAL'               => now()
+                    ]
+                );
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Data lembar transfer internal berhasil disimpan.'
+            ]);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data gagal disimpan.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
 }

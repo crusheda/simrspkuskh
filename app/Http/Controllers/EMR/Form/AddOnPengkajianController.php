@@ -4211,6 +4211,126 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    function getTandaVitalTf(Request $request, $KUNJUNGAN)
+    {
+        $transfer = (int) $request->get('transfer', 1);
+
+        if (!in_array($transfer, [1, 2], true)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Parameter transfer tidak valid.'
+            ], 422);
+        }
+
+        $ttv1 = DB::table('medicalrecord.tanda_vital_transfer')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('TRANSFER', $transfer)
+            ->first();
+
+        $ttv2 = DB::table('medicalrecord.nutrisi_transfer')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->first();
+
+        $ttv = [
+            'KEADAAN_UMUM'       => $ttv1->KEADAAN_UMUM ?? null,
+            'SISTOLIK'           => $ttv1->SISTOLIK ?? null,
+            'DISTOLIK'           => $ttv1->DISTOLIK ?? null,
+            'FREKUENSI_NADI'     => $ttv1->FREKUENSI_NADI ?? null,
+            'FREKUENSI_NADI_CB'  => $ttv1->FREKUENSI_NADI_CB ?? null,
+            'SUHU'               => $ttv1->SUHU ?? null,
+            'SATURASI_O2'        => $ttv1->SATURASI_O2 ?? null,
+            'FREKUENSI_NAFAS'    => $ttv1->FREKUENSI_NAFAS ?? null,
+            'FREKUENSI_NAFAS_CB' => $ttv1->FREKUENSI_NAFAS_CB ?? null,
+
+            'EYE'                => $ttv1->EYE ?? null,
+            'VERBAL'             => $ttv1->VERBAL ?? null,
+            'MOTORIK'            => $ttv1->MOTORIK ?? null,
+            'GCS'                => $ttv1->GCS ?? null,
+
+            'TRANSFER'           => $ttv1->TRANSFER ?? null,
+
+            'BERAT_BADAN'        => $ttv2->BERAT_BADAN ?? null,
+            'TINGGI_BADAN'       => $ttv2->TINGGI_BADAN ?? null,
+            'INDEX_MASSA_TUBUH'  => $ttv2->INDEX_MASSA_TUBUH ?? null,
+        ];
+
+        return response()->json([
+            'status' => true,
+            'data' => $ttv
+        ]);
+    }
+
+    function simpanTandaVitalTf(Request $request, $KUNJUNGAN)
+    {
+
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.tanda_vital_transfer')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $KUNJUNGAN,
+                    'TRANSFER'  => $request->transfer ?? 0,
+                ],
+                [
+                    'KEADAAN_UMUM'       => $request->tv_keu ?? '',
+                    'SISTOLIK'           => $request->tv_td_up ?? 0,
+                    'DISTOLIK'           => $request->tv_td_down ?? 0,
+                    'FREKUENSI_NADI'     => $request->tv_nadi ?? 0,
+                    'FREKUENSI_NADI_CB'  => $request->tv_nadi_cb ?? null,
+                    'SUHU'               => $request->tv_suhu ?? 0,
+                    'SATURASI_O2'        => $request->tv_spo2 ?? 0,
+                    'FREKUENSI_NAFAS'    => $request->tv_nafas ?? 0,
+                    'FREKUENSI_NAFAS_CB' => $request->tv_nafas_cb ?? null,
+
+                    'EYE'                => $request->tv_gcs_e ?? 0,
+                    'VERBAL'             => $request->tv_gcs_v ?? 0,
+                    'MOTORIK'            => $request->tv_gcs_m ?? 0,
+                    'GCS'                => $request->tv_gcs_t ?? 0,
+
+                    'OLEH'               => auth()->id(),
+                    'STATUS'             => 1,
+                    'TANGGAL'            => now(),
+                ]
+            );
+
+            DB::table('medicalrecord.nutrisi_transfer')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $KUNJUNGAN
+                ],
+                [
+                    'DATA_PENGUKURAN'       => 1,
+                    'BERAT_BADAN'           => $request->tv_bb,
+                    'TINGGI_BADAN'          => $request->tv_tb,
+                    'INDEX_MASSA_TUBUH'     => $request->filled('gizi_imt')
+                                                ? round((float) $request->gizi_imt, 2)
+                                                : 0,
+                    'TANGGAL_PEMERIKSAAN'   => now(),
+                    'OLEH'                  => auth()->id(),
+                    'STATUS'                => 1,
+                    'TANGGAL'               => now()
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Tanda Vital berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Tanda Vital gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     function getPemeriksaanObsgyn($KUNJUNGAN)
     {
         $data = $this->getData(
