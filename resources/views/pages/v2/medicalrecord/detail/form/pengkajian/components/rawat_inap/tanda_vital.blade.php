@@ -809,9 +809,6 @@
             beforeSend: function () {
             },
             success: function (res) {
-                console.log('=== TANDA VITAL BIASA ===');
-                console.log('SECTION:', @json($section));
-                console.log('RESPONSE:', res);
 
                 const ttv = res.data;
 

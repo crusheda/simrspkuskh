@@ -642,11 +642,6 @@ console.log('6. kesadaran dalam section:', $section.find('[data-kesadaran-neonat
             beforeSend: function () {
             },
             success: function (res) {
-                console.log('=== TANDA VITAL TRANSFER ===');
-                console.log('TRANSFER:', transfer);
-                console.log('SECTION:', @json($section));
-                console.log('URL:', `/api/v2/emr/pengkajian/tandavitaltf/${kunjungan}`);
-                console.log('RESPONSE:', res);
 
                 const ttv = res.data;
 

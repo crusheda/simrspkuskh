@@ -4,9 +4,9 @@
         class="btn btn-danger waves-effect waves-light"
         id="btnDokter"
         data-bs-toggle="collapse"
-        data-bs-target="#riO_dokter"
+        data-bs-target="#rio_dokter"
         aria-expanded="true"
-        aria-controls="riO_dokter"
+        aria-controls="rio_dokter"
     >
         <i class="ri-stethoscope-line me-1"></i>
         Pengkajian Medis
@@ -17,9 +17,9 @@
         class="btn btn-success waves-effect waves-light collapsed"
         id="btnPerawat"
         data-bs-toggle="collapse"
-        data-bs-target="#riO_perawat"
+        data-bs-target="#rio_perawat"
         aria-expanded="false"
-        aria-controls="riO_perawat"
+        aria-controls="rio_perawat"
     >
         <i class="ri-stethoscope-line me-1"></i>
         Pengkajian Keperawatan
@@ -29,7 +29,7 @@
     <div
         class="multi-collapse collapse"
         data-bs-parent="#rioAccordion"
-        id="riO_dokter"
+        id="rio_dokter"
         data-kunjungan="{{ $list['kunjungan'] }}"
         data-form-key="rio_dokter"
         data-url="{{ route('v2.emr.form.sub.load', ['kunjungan' => $list['kunjungan'], 'formKey' => 'rio_dokter']) }}"
@@ -39,7 +39,7 @@
     <div
         class="multi-collapse collapse"
         data-bs-parent="#rioAccordion"
-        id="riO_perawat"
+        id="rio_perawat"
         data-kunjungan="{{ $list['kunjungan'] }}"
         data-form-key="rio_perawat"
         data-url="{{ route('v2.emr.form.sub.load', ['kunjungan' => $list['kunjungan'], 'formKey' => 'rio_perawat']) }}"
@@ -66,11 +66,11 @@
         function updateRanapObsgynButton() {
             $('#btnDokter').prop(
                 'disabled',
-                $('#riO_dokter').hasClass('show')
+                $('#rio_dokter').hasClass('show')
             );
             $('#btnPerawat').prop(
                 'disabled',
-                $('#riO_perawat').hasClass('show')
+                $('#rio_perawat').hasClass('show')
             );
         }
 
@@ -178,13 +178,13 @@
                 */
 
                 $('#rioAccordion')
-                    .find('#riO_dokter, #riO_perawat')
+                    .find('#rio_dokter, #rio_perawat')
                     .not($section)
                     .find('.form-content')
                     .empty();
 
                 $('#rioAccordion')
-                    .find('#riO_dokter, #riO_perawat')
+                    .find('#rio_dokter, #rio_perawat')
                     .not($section)
                     .removeData('loaded');
 
@@ -298,11 +298,11 @@
             $('#rioAccordion')
                 .off(
                     'shown.bs.collapse.rioRanap',
-                    '#riO_dokter, #riO_perawat'
+                    '#rio_dokter, #rio_perawat'
                 )
                 .on(
                     'shown.bs.collapse.rioRanap',
-                    '#riO_dokter, #riO_perawat',
+                    '#rio_dokter, #rio_perawat',
                     function () {
                         const $section =
                             $(this);
@@ -351,11 +351,11 @@
             $('#rioAccordion')
                 .off(
                     'hidden.bs.collapse.rioRanap',
-                    '#riO_dokter, #riO_perawat'
+                    '#rio_dokter, #rio_perawat'
                 )
                 .on(
                     'hidden.bs.collapse.rioRanap',
-                    '#riO_dokter, #riO_perawat',
+                    '#rio_dokter, #rio_perawat',
                     function () {
                         const $section =
                             $(this);

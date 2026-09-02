@@ -1535,9 +1535,9 @@
 
         if (!$form.length) {
 
-            console.warn(
-                'Form Pemeriksaan Fisik tidak ditemukan.'
-            );
+            // console.warn(
+            //     'Form Pemeriksaan Fisik tidak ditemukan.'
+            // );
 
             return;
         }
@@ -1564,14 +1564,14 @@
                 // ==================================================
                 const data = normalizeData(res?.data);
 
-                console.log(
-                    '========== GET PEMERIKSAAN FISIK =========='
-                );
+                // console.log(
+                //     '========== GET PEMERIKSAAN FISIK =========='
+                // );
 
-                console.log(
-                    'Data Pemeriksaan Fisik:',
-                    res?.data
-                );
+                // console.log(
+                //     'Data Pemeriksaan Fisik:',
+                //     res?.data
+                // );
 
                 // ==================================================
                 // TIDAK ADA DATA
@@ -1697,13 +1697,13 @@
 
                 updateConditionalInputs();
 
-                console.log(
-                    'Pemeriksaan Fisik berhasil dimuat.'
-                );
+                // console.log(
+                //     'Pemeriksaan Fisik berhasil dimuat.'
+                // );
 
-                console.log(
-                    '============================================'
-                );
+                // console.log(
+                //     '============================================'
+                // );
             },
 
             // ==========================================================
@@ -1769,9 +1769,9 @@
 
             isPemeriksaanFisikSavePending = true;
 
-            console.log(
-                'Save sedang berjalan -> tandai sebagai PENDING'
-            );
+            // console.log(
+            //     'Save sedang berjalan -> tandai sebagai PENDING'
+            // );
 
             return;
         }
@@ -1786,14 +1786,14 @@
             }
         );
 
-        console.log(
-            '========== SIMPAN PEMERIKSAAN FISIK =========='
-        );
+        // console.log(
+        //     '========== SIMPAN PEMERIKSAAN FISIK =========='
+        // );
 
-        console.log(
-            'Data:',
-            data
-        );
+        // console.log(
+        //     'Data:',
+        //     data
+        // );
 
         // ======================================================
         // RESET PENDING
@@ -1828,10 +1828,10 @@
             // ==================================================
             success: function (res) {
 
-                console.log(
-                    'Pemeriksaan Fisik berhasil disimpan.',
-                    res
-                );
+                // console.log(
+                //     'Pemeriksaan Fisik berhasil disimpan.',
+                //     res
+                // );
 
             },
 
@@ -1890,9 +1890,9 @@
                 // ==================================================
                 if (isPemeriksaanFisikSavePending) {
 
-                    console.log(
-                        'Ada SAVE PENDING -> simpan data terbaru.'
-                    );
+                    // console.log(
+                    //     'Ada SAVE PENDING -> simpan data terbaru.'
+                    // );
 
                     // Reset sebelum menjalankan save berikutnya
                     isPemeriksaanFisikSavePending = false;
@@ -1921,9 +1921,9 @@
 
         if (!$form.length) {
 
-            console.warn(
-                'Form Pemeriksaan Fisik tidak ditemukan.'
-            );
+            // console.warn(
+            //     'Form Pemeriksaan Fisik tidak ditemukan.'
+            // );
 
             return;
         }
