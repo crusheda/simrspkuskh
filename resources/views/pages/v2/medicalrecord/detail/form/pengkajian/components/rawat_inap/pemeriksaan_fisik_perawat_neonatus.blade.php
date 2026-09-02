@@ -856,9 +856,9 @@
     function getPemeriksaanFisikNeonatus() {
 
         if (!$form.length) {
-            console.warn(
-                'Form Pemeriksaan Fisik Perawat Neonatus tidak ditemukan.'
-            );
+            // console.warn(
+            //     'Form Pemeriksaan Fisik Perawat Neonatus tidak ditemukan.'
+            // );
             return;
         }
 
@@ -870,9 +870,9 @@
             success: function (res) {
 
                 if (!res.status) {
-                    console.warn(
-                        res.message || 'Data pemeriksaan fisik tidak ditemukan.'
-                    );
+                    // console.warn(
+                    //     res.message || 'Data pemeriksaan fisik tidak ditemukan.'
+                    // );
                     return;
                 }
 
@@ -1055,9 +1055,9 @@
 
             savePending = true;
 
-            console.log(
-                'SAVE masih berjalan -> tandai sebagai pending.'
-            );
+            // console.log(
+            //     'SAVE masih berjalan -> tandai sebagai pending.'
+            // );
 
             return;
         }
@@ -1089,20 +1089,20 @@
 
             success: function (res) {
 
-                if (res.status) {
+                // if (res.status) {
 
-                    console.log(
-                        'Pemeriksaan Fisik Neonatus berhasil disimpan.'
-                    );
+                //     console.log(
+                //         'Pemeriksaan Fisik Neonatus berhasil disimpan.'
+                //     );
 
-                } else {
+                // } else {
 
-                    console.warn(
-                        res.message ||
-                        'Pemeriksaan Fisik Neonatus gagal disimpan.'
-                    );
+                //     console.warn(
+                //         res.message ||
+                //         'Pemeriksaan Fisik Neonatus gagal disimpan.'
+                //     );
 
-                }
+                // }
 
             },
 
@@ -1130,9 +1130,9 @@
 
                 if (savePending) {
 
-                    console.log(
-                        'Ada SAVE PENDING -> simpan data terbaru.'
-                    );
+                    // console.log(
+                    //     'Ada SAVE PENDING -> simpan data terbaru.'
+                    // );
 
                     savePending = false;
 

@@ -911,10 +911,10 @@
 
             success: function (res) {
 
-                console.log(
-                    'Pemeriksaan Fisik Obsgyn berhasil disimpan.',
-                    res
-                );
+                // console.log(
+                //     'Pemeriksaan Fisik Obsgyn berhasil disimpan.',
+                //     res
+                // );
 
             },
 

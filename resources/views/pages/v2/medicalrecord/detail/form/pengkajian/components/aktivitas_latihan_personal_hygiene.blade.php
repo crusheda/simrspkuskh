@@ -256,7 +256,7 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function (res) {
-                console.log('Aktivitas Latihan Personal Hygiene berhasil disimpan.');
+                // console.log('Aktivitas Latihan Personal Hygiene berhasil disimpan.');
             },
             error: function (xhr) {
                 let message = 'Data Aktivitas Latihan Personal Hygiene gagal disimpan.';

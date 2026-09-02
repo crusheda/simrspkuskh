@@ -190,7 +190,7 @@
                 <h4 class="text-danger">Status Pasien</h4>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="card card-body border border-dashed border-success mb-1">
+                        <div class="card card-body border border-dashed border-success mb-1" id="form_lembar_transfer_pasien_sebelum">
                             <div class="border-bottom mb-3 text-center">
                                 <h4>Sebelum Transfer</h4>
                             </div>
@@ -220,7 +220,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card card-body border border-dashed border-success mb-1">
+                        <div class="card card-body border border-dashed border-success mb-1" id="form_lembar_transfer_pasien_sesudah">
                             <div class="border-bottom mb-3 text-center">
                                 <h4>Setelah Transfer</h4>
                             </div>

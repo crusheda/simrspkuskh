@@ -627,10 +627,10 @@
 
             success: function (res) {
 
-                console.log(
-                    'Pemeriksaan Khusus berhasil disimpan.',
-                    res
-                );
+                // console.log(
+                //     'Pemeriksaan Khusus berhasil disimpan.',
+                //     res
+                // );
 
             },
 
