@@ -719,6 +719,16 @@ class EMRController extends Controller
                 'rio_perawat' => [
                     'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.obsgyn.form_perawat',
                 ],
+
+            // BEDAH & ANESTESI
+                // LAPORAN ANESTESI
+                'lap_anestesi' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.bedahanestesi.laporananestesi.laporananestesi',
+                ],
+                'lap_pasca_anestesi' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.bedahanestesi.laporananestesi.laporanpascaanestesi',
+                ],
+
         ];
 
         abort_unless(

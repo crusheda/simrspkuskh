@@ -21,25 +21,25 @@ class PengkajianLaporanAnestesiController extends Controller
 
     function index($kunjungan)
     {
-        $pasien = DB::table('pendaftaran.kunjungan AS pk')
-            ->leftJoin('pendaftaran.pendaftaran AS pd', 'pd.NOMOR', '=', 'pk.NOPEN')
-            ->leftJoin('master.pasien AS p', 'p.NORM', '=', 'pd.NORM')
-            ->leftJoin('master.referensi AS ag', function ($join) {
-                $join->on('ag.ID', '=', 'p.AGAMA')
-                    ->where('ag.JENIS', '=', '1');
-            })
-            ->leftJoin('master.referensi AS kj', function ($join) {
-                $join->on('kj.ID', '=', 'p.PEKERJAAN')
-                    ->where('kj.JENIS', '=', '4');
-            })
-            ->leftJoin('master.dokter AS dok', 'dok.ID', '=', 'pk.DPJP')
-            ->select('dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'), 'ag.DESKRIPSI AS AGAMA', 'kj.DESKRIPSI AS PEKERJAAN')
-            ->where('pk.NOMOR', $kunjungan)
-            ->first();
+        // $pasien = DB::table('pendaftaran.kunjungan AS pk')
+        //     ->leftJoin('pendaftaran.pendaftaran AS pd', 'pd.NOMOR', '=', 'pk.NOPEN')
+        //     ->leftJoin('master.pasien AS p', 'p.NORM', '=', 'pd.NORM')
+        //     ->leftJoin('master.referensi AS ag', function ($join) {
+        //         $join->on('ag.ID', '=', 'p.AGAMA')
+        //             ->where('ag.JENIS', '=', '1');
+        //     })
+        //     ->leftJoin('master.referensi AS kj', function ($join) {
+        //         $join->on('kj.ID', '=', 'p.PEKERJAAN')
+        //             ->where('kj.JENIS', '=', '4');
+        //     })
+        //     ->leftJoin('master.dokter AS dok', 'dok.ID', '=', 'pk.DPJP')
+        //     ->select('dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'), 'ag.DESKRIPSI AS AGAMA', 'kj.DESKRIPSI AS PEKERJAAN')
+        //     ->where('pk.NOMOR', $kunjungan)
+        //     ->first();
 
         $data = [
             'kunjungan' => $kunjungan,
-            'pasien' => $pasien
+            // 'pasien' => $pasien
         ];
 
         return view('pages.v2.medicalrecord.detail.form.pengkajian.bedahanestesi.laporananestesi.index')->with('list',$data);
@@ -282,6 +282,492 @@ class PengkajianLaporanAnestesiController extends Controller
                     : null,
                 'keterangan' => $result->KETERANGAN,
             ],
+        ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | GRAFIK MONITORING ANESTESI DETAIL
+    |--------------------------------------------------------------------------
+    |
+    | Menangani:
+    | 1. Zat Anestesi
+    | 2. Temperatur
+    | 3. Cairan
+    |
+    */
+
+    public function getDiagramMonitoringAnestesiDetail(
+        string $KUNJUNGAN
+    ) {
+        $data = DB::table(
+            'simrspku_pengkajian.monitoring_anestesi_detail'
+        )
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->orderBy('WAKTU')
+            ->orderBy('ID')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => (int) $item->ID,
+                    'kunjungan' => $item->KUNJUNGAN,
+                    'jenis_data' => $item->JENIS_DATA,
+                    'baris' => $item->BARIS !== null
+                        ? (int) $item->BARIS
+                        : null,
+                    'waktu' => substr((string) $item->WAKTU, 0, 8),
+                    'nilai' => $item->NILAI !== null
+                        ? (float) $item->NILAI
+                        : null,
+                    'jenis' => $item->JENIS,
+                    'zat' => $item->ZAT,
+                    'keterangan' => $item->KETERANGAN,
+                ];
+            })
+            ->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'zat_anestesi' => $data
+                    ->where('jenis_data', 'zat_anestesi')
+                    ->values(),
+
+                'temperatur' => $data
+                    ->where('jenis_data', 'temperatur')
+                    ->values(),
+
+                'cairan' => $data
+                    ->where('jenis_data', 'cairan')
+                    ->values(),
+            ],
+        ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SIMPAN GRAFIK DETAIL
+    |--------------------------------------------------------------------------
+    |
+    | Satu method untuk:
+    | - zat_anestesi
+    | - temperatur
+    | - cairan
+    |
+    */
+
+    public function simpanDiagramMonitoringAnestesiDetail(
+        Request $request,
+        string $KUNJUNGAN
+    ) {
+        $validated = $request->validate([
+            'id' => [
+                'nullable',
+                'integer',
+            ],
+
+            'jenis_data' => [
+                'required',
+                'in:zat_anestesi,temperatur,cairan',
+            ],
+
+            'waktu' => [
+                'required',
+                'date_format:H:i:s',
+            ],
+
+            'baris' => [
+                'nullable',
+                'integer',
+                'min:1',
+                'max:5',
+            ],
+
+            'nilai' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                'max:300',
+            ],
+
+            'jenis' => [
+                'nullable',
+                'in:oral,rectal,masuk,keluar',
+            ],
+
+            'zat' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
+
+            'keterangan' => [
+                'nullable',
+                'string',
+            ],
+        ]);
+
+        $jenisData = $validated['jenis_data'];
+        $waktu = $validated['waktu'];
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI INTERVAL
+        |--------------------------------------------------------------------------
+        */
+
+        $interval = match ($jenisData) {
+            'zat_anestesi' => 5,
+            'temperatur', 'cairan' => 15,
+        };
+
+        $this->validateMonitoringAnestesiWaktu(
+            $waktu,
+            $interval
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI ZAT ANESTESI
+        |--------------------------------------------------------------------------
+        */
+
+        if ($jenisData === 'zat_anestesi') {
+            if (
+                !isset($validated['baris']) ||
+                $validated['baris'] < 1 ||
+                $validated['baris'] > 5
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Baris zat anestesi harus 1 sampai 5.',
+                ], 422);
+            }
+
+            if (
+                !isset($validated['zat']) ||
+                trim($validated['zat']) === ''
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nama zat anestesi wajib diisi.',
+                ], 422);
+            }
+
+            $validated['nilai'] = null;
+            $validated['jenis'] = null;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI TEMPERATUR
+        |--------------------------------------------------------------------------
+        */
+
+        if ($jenisData === 'temperatur') {
+            if (
+                !in_array(
+                    $validated['jenis'] ?? '',
+                    ['oral', 'rectal'],
+                    true
+                )
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jenis temperatur harus Oral atau Rectal.',
+                ], 422);
+            }
+
+            if (
+                !isset($validated['nilai']) ||
+                $validated['nilai'] === ''
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nilai temperatur wajib diisi.',
+                ], 422);
+            }
+
+            $validated['baris'] = null;
+            $validated['zat'] = null;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI CAIRAN
+        |--------------------------------------------------------------------------
+        */
+
+        if ($jenisData === 'cairan') {
+            if (
+                !in_array(
+                    $validated['jenis'] ?? '',
+                    ['masuk', 'keluar'],
+                    true
+                )
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jenis cairan harus Masuk atau Keluar.',
+                ], 422);
+            }
+
+            if (
+                !isset($validated['nilai']) ||
+                $validated['nilai'] === ''
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jumlah cairan wajib diisi.',
+                ], 422);
+            }
+
+            $validated['baris'] = null;
+            $validated['zat'] = null;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA DATABASE
+        |--------------------------------------------------------------------------
+        */
+
+        $data = [
+            'KUNJUNGAN' => $KUNJUNGAN,
+            'JENIS_DATA' => $jenisData,
+            'BARIS' => $validated['baris'] ?? null,
+            'WAKTU' => $waktu,
+            'NILAI' => $validated['nilai'] ?? null,
+            'JENIS' => $validated['jenis'] ?? null,
+            'ZAT' => isset($validated['zat'])
+                ? trim($validated['zat'])
+                : null,
+            'KETERANGAN' => $validated['keterangan'] ?? null,
+            'updated_at' => now(),
+        ];
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE BERDASARKAN ID
+        |--------------------------------------------------------------------------
+        |
+        | ID harus tetap berada pada KUNJUNGAN yang sama.
+        |
+        */
+
+        if (!empty($validated['id'])) {
+            $existing = DB::table(
+                'simrspku_pengkajian.monitoring_anestesi_detail'
+            )
+                ->where('ID', $validated['id'])
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->first();
+
+            if ($existing) {
+                DB::table(
+                    'simrspku_pengkajian.monitoring_anestesi_detail'
+                )
+                    ->where('ID', $existing->ID)
+                    ->where('KUNJUNGAN', $KUNJUNGAN)
+                    ->update($data);
+
+                return $this->responseMonitoringAnestesiDetail(
+                    $existing->ID,
+                    'Data monitoring berhasil diperbarui.'
+                );
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CARI DATA PADA SLOT YANG SAMA
+        |--------------------------------------------------------------------------
+        |
+        | ZAT:
+        | KUNJUNGAN + JENIS_DATA + BARIS + WAKTU
+        |
+        | TEMPERATUR:
+        | KUNJUNGAN + JENIS_DATA + JENIS + WAKTU
+        |
+        | CAIRAN:
+        | KUNJUNGAN + JENIS_DATA + JENIS + WAKTU
+        |
+        */
+
+        $query = DB::table(
+            'simrspku_pengkajian.monitoring_anestesi_detail'
+        )
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('JENIS_DATA', $jenisData)
+            ->where('WAKTU', $waktu);
+
+        if ($jenisData === 'zat_anestesi') {
+            $query->where('BARIS', $validated['baris']);
+        } else {
+            $query->where('JENIS', $validated['jenis']);
+        }
+
+        $existing = $query->first();
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE
+        |--------------------------------------------------------------------------
+        */
+
+        if ($existing) {
+            DB::table(
+                'simrspku_pengkajian.monitoring_anestesi_detail'
+            )
+                ->where('ID', $existing->ID)
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->update($data);
+
+            return $this->responseMonitoringAnestesiDetail(
+                $existing->ID,
+                'Data monitoring berhasil diperbarui.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | INSERT
+        |--------------------------------------------------------------------------
+        */
+
+        $data['created_at'] = now();
+
+        $ID = DB::table(
+            'simrspku_pengkajian.monitoring_anestesi_detail'
+        )->insertGetId($data);
+
+        return $this->responseMonitoringAnestesiDetail(
+            $ID,
+            'Data monitoring berhasil disimpan.'
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | VALIDASI WAKTU MONITORING DETAIL
+    |--------------------------------------------------------------------------
+    */
+
+    private function validateMonitoringAnestesiWaktu(
+        string $waktu,
+        int $interval
+    ): void {
+        [$jam, $menit, $detik] = array_map(
+            'intval',
+            explode(':', $waktu)
+        );
+
+        $totalMenit = ($jam * 60) + $menit;
+
+        if ($detik !== 0) {
+            abort(response()->json([
+                'success' => false,
+                'message' => 'Waktu monitoring harus tepat pada menit.',
+            ], 422));
+        }
+
+        if ($totalMenit < 0 || $totalMenit > 300) {
+            abort(response()->json([
+                'success' => false,
+                'message' => 'Waktu monitoring harus antara menit 0 sampai 300.',
+            ], 422));
+        }
+
+        if ($totalMenit % $interval !== 0) {
+            abort(response()->json([
+                'success' => false,
+                'message' => "Waktu monitoring harus kelipatan {$interval} menit.",
+            ], 422));
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | RESPONSE DETAIL
+    |--------------------------------------------------------------------------
+    */
+
+    private function responseMonitoringAnestesiDetail(
+        int $ID,
+        string $message
+    ) {
+        $result = DB::table(
+            'simrspku_pengkajian.monitoring_anestesi_detail'
+        )
+            ->where('ID', $ID)
+            ->first();
+
+        if (!$result) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data monitoring tidak ditemukan.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'data' => [
+                'id' => (int) $result->ID,
+                'kunjungan' => $result->KUNJUNGAN,
+                'jenis_data' => $result->JENIS_DATA,
+                'baris' => $result->BARIS !== null
+                    ? (int) $result->BARIS
+                    : null,
+                'waktu' => substr(
+                    (string) $result->WAKTU,
+                    0,
+                    8
+                ),
+                'nilai' => $result->NILAI !== null
+                    ? (float) $result->NILAI
+                    : null,
+                'jenis' => $result->JENIS,
+                'zat' => $result->ZAT,
+                'keterangan' => $result->KETERANGAN,
+            ],
+        ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | HAPUS GRAFIK DETAIL
+    |--------------------------------------------------------------------------
+    */
+
+    public function hapusDiagramMonitoringAnestesiDetail(
+        string $KUNJUNGAN,
+        int $ID
+    ) {
+        $existing = DB::table(
+            'simrspku_pengkajian.monitoring_anestesi_detail'
+        )
+            ->where('ID', $ID)
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->first();
+
+        if (!$existing) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data monitoring tidak ditemukan.',
+            ], 404);
+        }
+
+        DB::table(
+            'simrspku_pengkajian.monitoring_anestesi_detail'
+        )
+            ->where('ID', $ID)
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data monitoring berhasil dihapus.',
         ]);
     }
 }

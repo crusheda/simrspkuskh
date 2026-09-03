@@ -152,6 +152,10 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                             Route::post('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}/simpan', [PengkajianLaporanAnestesiController::class, 'simpanForm']);
                             Route::get('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}/monitoring', [PengkajianLaporanAnestesiController::class, 'getDiagramMonitoringAnestesi']);
                             Route::post('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}/monitoring/simpan', [PengkajianLaporanAnestesiController::class, 'simpanDiagramMonitoringAnestesi']);
+                            // DETAIL MONITORING ANESTESI (ZAT, TEMPERATUR, CAIRAN)
+                            Route::get('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}/monitoring-detail', [PengkajianLaporanAnestesiController::class, 'getDiagramMonitoringAnestesiDetail']);
+                            Route::post('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}/monitoring-detail/simpan', [PengkajianLaporanAnestesiController::class, 'simpanDiagramMonitoringAnestesiDetail']);
+                            Route::delete('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}/monitoring-detail/hapus/{id}', [PengkajianLaporanAnestesiController::class, 'hapusDiagramMonitoringAnestesiDetail']);
 
                 // KHUSUS
                     // REMAJA
