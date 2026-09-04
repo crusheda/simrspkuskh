@@ -90,7 +90,7 @@
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_lab')
                 </div>
                 <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad')
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad_global')
                 </div>
             </div>
             <div class="col-md-12">

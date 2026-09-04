@@ -378,6 +378,91 @@ class AddOnPengkajianController extends Controller
         return $data;
     }
 
+    public function getRiwayatRadiologi($kunjungan)
+    {
+        $kunjunganList = DB::table('pendaftaran.pendaftaran as pp')
+            ->leftJoin('pendaftaran.kunjungan as pk', 'pk.NOPEN', '=', 'pp.NOMOR')
+            ->where('pp.STATUS', '!=', 0)
+            ->where('pk.STATUS', '!=', 0)
+            ->whereRaw(
+                '(pp.NORM, DATE(pp.TANGGAL)) = (
+                    SELECT
+                        pp1.NORM,
+                        DATE(pp1.TANGGAL)
+                    FROM pendaftaran.kunjungan as pk1
+                    LEFT JOIN pendaftaran.pendaftaran as pp1
+                        ON pp1.NOMOR = pk1.NOPEN
+                        AND pp1.STATUS != 0
+                    WHERE pk1.NOMOR = ?
+                )',
+                [$kunjungan]
+            )
+            ->pluck('pk.NOMOR');
+    
+        $data = DB::table('layanan.hasil_rad as hrad')
+            ->leftJoin('master.dokter as dok', 'hrad.DOKTER', '=', 'dok.ID')
+            ->leftJoin('master.pegawai as mp', 'dok.NIP', '=', 'mp.NIP')
+            ->join('layanan.tindakan_medis as tm', 'hrad.TINDAKAN_MEDIS', '=', 'tm.ID')
+            ->leftJoin('master.tindakan as t', 'tm.TINDAKAN', '=', 't.ID')
+            ->leftJoin('pendaftaran.kunjungan as pku', 'pku.NOMOR', '=', 'tm.KUNJUNGAN')
+            ->leftJoin('layanan.order_rad as orad', function($join){
+                $join->on('orad.NOMOR', '=', 'pku.REF')
+                    ->whereIn('orad.STATUS', [1,2]);
+            })
+            ->leftJoin('master.dokter as dokasal', 'orad.DOKTER_ASAL', '=', 'dokasal.ID')
+            ->leftJoin('layanan.petugas_tindakan_medis as ptm', function($join){
+                $join->on('ptm.TINDAKAN_MEDIS', '=', 'tm.ID')
+                    ->where('ptm.JENIS', 3)
+                    ->where('ptm.KE', 1)
+                    ->where('ptm.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.perawat as prad', 'ptm.MEDIS', '=', 'prad.ID')
+            ->join('pendaftaran.kunjungan as pk', 'tm.KUNJUNGAN', '=', 'pk.NOMOR')
+            ->leftJoin('layanan.order_rad as ks', 'pk.REF', '=', 'ks.NOMOR')
+            ->leftJoin('pendaftaran.kunjungan as kj', 'ks.KUNJUNGAN', '=', 'kj.NOMOR')
+            ->leftJoin('master.ruangan as r', function($join){
+                $join->on('kj.RUANGAN', '=', 'r.ID')
+                    ->where('r.JENIS', 5);
+            })
+            ->join('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
+            ->join('master.pasien as p', 'pp.NORM', '=', 'p.NORM')
+            ->leftJoin('master.referensi as rjk', function($join){
+                $join->on('p.JENIS_KELAMIN', '=', 'rjk.ID')
+                    ->where('rjk.JENIS', 2);
+            })
+            ->select([
+                DB::raw("DATE_FORMAT(SYSDATE(),'%d-%m-%Y %H:%i:%s') AS TGLSKRG"),
+                DB::raw("LPAD(p.NORM,8,'0') AS NORM"),
+                DB::raw("master.getNamaLengkap(p.NORM) AS NAMALENGKAP"),
+                DB::raw("CONCAT(rjk.DESKRIPSI,' / ',DATE_FORMAT(p.TANGGAL_LAHIR,'%d-%m-%Y')) AS JKTGLALHIR"),
+            'hrad.TANGGAL',
+                'hrad.KLINIS',
+                'hrad.KESAN',
+                'hrad.USUL',
+                'hrad.HASIL',
+                'hrad.BTK',
+            DB::raw("master.getNamaLengkapPegawai(mp.NIP) AS DOKTER"),
+                'mp.NIP AS NIPDOKTER',
+            'pk.NOPEN',
+                'pk.MASUK AS TGLREG',
+            't.NAMA AS NAMATINDAKAN',
+                'r.DESKRIPSI AS UNITPENGANTAR',
+                'orad.ALASAN AS DIAGNOSA',
+            'p.ALAMAT',
+            DB::raw("master.getNamaLengkapPegawai(dokasal.NIP) AS DOKTERASAL"),
+                DB::raw("master.getNamaLengkapPegawai(prad.NIP) AS RADIOGRAFER"),
+            ])
+
+            ->whereIn('tm.STATUS', [1,2])
+            ->where('hrad.STATUS', '!=', 0)
+            ->whereIn('kj.NOMOR', $kunjunganList)
+
+            ->orderBy('t.ID')
+            ->get();
+        // dd($data);
+        return $data;
+    }
+
     public function getDiagnosis($kunjungan)
     {
         $nopen = DB::table('pendaftaran.kunjungan')->where('NOMOR', $kunjungan)->value('NOPEN');
