@@ -143,7 +143,7 @@
 
                     {{-- Footer --}}
                     <div class="p-2">
-                        <a href="{{ url('/v2/notifikasi/klaim') }}" class="btn w-100 btn-primary waves-effect waves-light disabled">
+                        <a href="{{ route('v2.notifikasi') }}" class="btn w-100 btn-primary waves-effect waves-light">
                             Lihat Semua Notifikasi
                         </a>
                     </div>
@@ -357,7 +357,7 @@
                     </li> --}}
                     <li>
                         <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('clear.cache') }}">
-                            <i class="fi fi-rr-usd-circle scale-1x"></i> Clear Cache
+                            <i class="fi fi-rr-sun scale-1x"></i> Clear Cache
                         </a>
                     </li>
                     <li>

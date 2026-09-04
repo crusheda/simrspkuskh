@@ -1,6 +1,6 @@
 @extends('layouts.v2.index')
 
-@section('title','Electronic Medical Record')
+@section('title','SIRMED v2 - Electronic Medical Record')
 
 @section('content')
 

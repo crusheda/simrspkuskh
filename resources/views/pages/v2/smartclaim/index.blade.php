@@ -1,6 +1,6 @@
 @extends('layouts.v2.index')
 
-@section('title','Smart Claim')
+@section('title','SIRMED v2 - Smart Claim')
 
 @section('content')
 
@@ -277,7 +277,7 @@
             type: 'GET',
             dataType: 'json',
             beforeSend: function() {
-                $('#jumlah_claim').empty().append('<i class="fas fa-sync fa-spin"></i>')
+                $('#jumlah_claim').empty().append('<i class="fas fa-sync fa-spin"></i>');
             },
             success: function(res) {
                 $("#tampil-tbody").empty();
@@ -395,6 +395,9 @@
                     position: 'topRight'
                 });$("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center>Gagal Memuat Data Klaim</center></td></tr>`);
                 $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
+            },
+            complete: function() {
+                $('#jumlah_claim').empty().append('0 Data');
             }
         })
     }

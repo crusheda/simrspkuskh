@@ -1,6 +1,6 @@
 @extends('layouts.v2.index')
 
-@section('title','Digital Monitoring')
+@section('title','SIRMED v2 - Digital Monitoring')
 
 @section('content')
 

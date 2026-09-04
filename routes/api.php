@@ -66,7 +66,10 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
 Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v.2
     // SETTING
         // NOTIFIKASI
-        Route::get('notifikasi/klaim', [NotifikasiController::class, 'notifikasiKlaim']);
+        Route::get('notifikasi/klaim', [NotifikasiController::class, 'notifikasiKlaim']); // GET NOTIFIKASI AFTER SECONDSSS
+        Route::get('notifikasi', [NotifikasiController::class, 'index']);
+        Route::get('notifikasi/data', [NotifikasiController::class, 'getData']);
+        Route::get('notifikasi/data/{id}', [NotifikasiController::class, 'showDetail']);
 
     // DIGITAL
         // MEDICAL RECORD

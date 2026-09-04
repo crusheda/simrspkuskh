@@ -1,6 +1,6 @@
 @extends('layouts.v2.index')
 
-@section('title','Detail Smart Claim')
+@section('title','SIRMED v2 - Detail Smart Claim')
 
 @section('content')
 
@@ -190,11 +190,11 @@
             </div>
             <div class="accordion card accordion-custom-button accordion-primary" id="verif_accordion" hidden>
                 <div class="accordion-item mb-0">
-                    <h2 class="accordion-header" id="headingOne">
+                    <h5 class="accordion-header" id="headingOne">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#verif_collapse" aria-expanded="true" aria-controls="verif_collapse">
                             <i class="feather icon-check-circle me-2"></i> Catatan Verifikasi Berkas <span class="badge bg-secondary text-white ms-2"><a id="jumlah_catatan">0</a>&nbsp; Catatan</span>
                         </button>
-                    </h2>
+                    </h5>
                     <div id="verif_collapse" class="accordion-collapse p-3 collapse show" aria-labelledby="headingOne" data-bs-parent="#verif_accordion">
                         <div class="row border-bottom mb-3">
                             <div class="col-md-12">
@@ -203,10 +203,38 @@
                                     {{-- <textarea name="catatan_add" id="catatan_add" class="form-control" rows="2" placeholder="Tuliskan catatan berkas klaim disini..."></textarea> --}}
                                 </div>
                             </div>
-                            <div class="col-md-12 d-flex justify-content-end mt-3 mb-2">
-                                <div class="btn-group">
-                                    <button class="btn btn-subtle-warning border border-dashed btn-sm" onclick="verify()" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Refresh Data Catatan"><i class="fas fa-sync"></i></button>
-                                    <button class="btn btn-danger btn-sm" onclick="tambahCatatan()" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tambah Catatan Baru" id="btn-tambah"><i class="fas fa-sticky-note me-1"></i> Tambah Catatan</button>
+                            <div class="col-md-12 d-flex align-items-center justify-content-between gap-2 mt-3 mb-2">
+                                <button
+                                    type="button"
+                                    class="btn btn-subtle-warning border border-dashed btn-sm flex-shrink-0"
+                                    onclick="verify()"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="bottom"
+                                    title="Refresh Data Catatan"
+                                >
+                                    <i class="fas fa-sync me-1"></i> Refresh Catatan
+                                </button>
+                                <div class="d-flex flex-grow-1 gap-2" style="max-width: 500px;">
+                                    <div class="flex-grow-1">
+                                        <select
+                                            class="form-select"
+                                            id="unit_add"
+                                            multiple
+                                            data-placeholder="Pilih Unit Tujuan"
+                                        ></select>
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-danger text-nowrap"
+                                        onclick="tambahCatatan()"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="bottom"
+                                        title="Tambah Catatan Baru"
+                                        id="btn-tambah"
+                                    >
+                                        <i class="fas fa-sticky-note me-1"></i> Tambah Catatan
+                                    </button>
                                 </div>
                             </div>
                             <small class="text-center mb-2"><i class="fas fa-sort-amount-down me-1"></i> <a><b>Data di bawah diurutkan berdasarkan <code>Tanggal Catatan Terakhir</code> ditambahkan</b></a></small>
@@ -229,9 +257,9 @@
         <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">
+                    <h6 class="modal-title">
                         Form Upload Berkas Tambahan
-                    </h4>
+                    </h6>
                 </div>
                 <div class="modal-body">
                     <input type="text" id="id_upload" hidden>
@@ -262,9 +290,9 @@
         <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">
+                    <h6 class="modal-title">
                         Form Hapus Berkas Tambahan
-                    </h4>
+                    </h6>
                 </div>
                 <div class="modal-body">
                     <input type="text" id="id_hapus_tambahan" hidden>
@@ -289,9 +317,9 @@
         <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">
+                    <h6 class="modal-title">
                         Form Hapus Berkas Rehabilitasi Medik
-                    </h4>
+                    </h6>
                 </div>
                 <div class="modal-body">
                     <input type="text" id="id_hapus_rehab" hidden>
@@ -316,9 +344,9 @@
         <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">
+                    <h6 class="modal-title">
                         Form Hapus Klaim
-                    </h4>
+                    </h6>
                 </div>
                 <div class="modal-body">
                     <input type="text" id="id_hapus" hidden>
@@ -339,22 +367,63 @@
             </div>
         </div>
     </div>
-    <div class="modal animate__animated animate__rubberBand fade" id="ubahCatatan" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal animate__animated animate__rubberBand fade"
+        id="ubahCatatan"
+        tabindex="-1"
+        aria-hidden="true"
+        data-bs-backdrop="static">
+
         <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered modal-xl">
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h4 class="modal-title">
+                    <h6 class="modal-title">
                         Form Ubah Catatan Klaim
-                    </h4>
+                    </h6>
                 </div>
+
                 <div class="modal-body">
-                    <input type="text" id="id_ubah_catatan" hidden>
-                    <textarea name="content" class="form-control" id="catatan_edit"></textarea>
+                    <input type="hidden" id="id_ubah_catatan">
+
+                    <div class="mb-3">
+                        <label for="unit_edit" class="form-label">
+                            Unit Tujuan
+                        </label>
+
+                        <select class="form-select"
+                            id="unit_edit"
+                            multiple>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="catatan_edit" class="form-label">
+                            Catatan
+                        </label>
+
+                        <textarea name="content"
+                            class="form-control"
+                            id="catatan_edit"></textarea>
+                    </div>
                 </div>
+
                 <div class="col-12 text-center mb-4">
-                    <button type="submit" id="btn-ubah-catatan" class="btn btn-primary me-sm-3 me-1" onclick="prosesUbahCatatan()"><i class="fa fa-edit me-1" style="font-size:13px"></i> Ubah</button>
-                    <button type="reset" class="btn btn-subtle-secondary" data-bs-dismiss="modal" aria-label="Close"><i class="fa fa-times me-1" style="font-size:13px"></i> Batal</button>
+                    <button type="button"
+                        id="btn-ubah-catatan"
+                        class="btn btn-primary me-sm-3 me-1"
+                        onclick="prosesUbahCatatan()">
+                        <i class="fa fa-edit me-1" style="font-size:13px"></i>
+                        Ubah
+                    </button>
+
+                    <button type="button"
+                        class="btn btn-subtle-secondary"
+                        data-bs-dismiss="modal">
+                        <i class="fa fa-times me-1" style="font-size:13px"></i>
+                        Batal
+                    </button>
                 </div>
+
             </div>
         </div>
     </div>
@@ -362,9 +431,9 @@
         <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">
+                    <h6 class="modal-title">
                         Form Hapus Catatan Klaim
-                    </h4>
+                    </h6>
                 </div>
                 <div class="modal-body">
                     <input type="text" id="id_hapus_catatan" hidden>
@@ -390,6 +459,9 @@
     <script>
         var editorCatatanTambah; // global variable
         var editorCatatanEdit; // global variable
+        let unitAddChoices;
+        let unitEditChoices;
+        let daftarRoles = [];
         $(document).ready(function() {
             $('.pc-sidebar').removeClass('pc-sidebar-hide').addClass('pc-sidebar-hide');
             const listCheckbox = [
@@ -416,6 +488,28 @@
             //             console.error(error);
             //         });
             // });
+            unitAddChoices = new Choices('#unit_add', {
+                removeItemButton: true,
+                searchEnabled: true,
+                searchPlaceholderValue: 'Cari unit...',
+                placeholder: true,
+                placeholderValue: 'Pilih Unit Tujuan',
+                shouldSort: false,
+                itemSelectText: '',
+                noResultsText: 'Unit tidak ditemukan',
+                noChoicesText: 'Tidak ada unit',
+            });
+            unitEditChoices = new Choices('#unit_edit', {
+                removeItemButton: true,
+                searchEnabled: true,
+                searchPlaceholderValue: 'Cari unit...',
+                placeholder: true,
+                placeholderValue: 'Pilih Unit Tujuan',
+                shouldSort: false,
+                itemSelectText: '',
+                noResultsText: 'Unit tidak ditemukan',
+                noChoicesText: 'Tidak ada unit',
+            });
             ClassicEditor.create(document.querySelector('#catatan_add'), {
                     placeholder: 'Silakan isi catatan klaim di sini...'
                 })
@@ -444,6 +538,44 @@
             verify();
         });
 
+        function getNamaUnit(unit) {
+            if (!unit) {
+                return [];
+            }
+
+            // Handle JSON string
+            if (typeof unit === 'string') {
+                try {
+                    unit = JSON.parse(unit);
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            // Handle double encoded JSON
+            if (typeof unit === 'string') {
+                try {
+                    unit = JSON.parse(unit);
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            if (!Array.isArray(unit)) {
+                return [];
+            }
+
+            return unit
+                .map(function(id) {
+                    const role = daftarRoles.find(function(role) {
+                        return Number(role.id) === Number(id);
+                    });
+
+                    return role ? role.name : null;
+                })
+                .filter(Boolean);
+        }
+
         function verify() {
             var kunjungan = "{{ $list['KUNJUNGAN'] }}";
             $('#daftar_catatan').empty()
@@ -457,6 +589,34 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function(res) {
+                    // ISI ROLES SELECT
+                    if (Array.isArray(res.roles)) {
+                        const choices = res.roles.map(function(role) {
+                            return {
+                                value: String(role.id),
+                                label: role.name
+                            };
+                        });
+
+                        unitAddChoices.clearChoices();
+                        unitAddChoices.setChoices(
+                            choices,
+                            'value',
+                            'label',
+                            true
+                        );
+
+                        unitEditChoices.clearChoices();
+                        unitEditChoices.setChoices(
+                            choices,
+                            'value',
+                            'label',
+                            true
+                        );
+
+                        daftarRoles = res.roles;
+                    }
+
                     // REFRESH HALAMAN
                     if (!res.show) {
                         $('#alert_verif').empty();
@@ -550,48 +710,136 @@
                             $('#jumlah_catatan').text(res.catatan.length);
                             $('#daftar_catatan').empty();
                             res.catatan.forEach(item => {
-                                $('#daftar_catatan')
-                                    .append(`<div class="col-md-12 border border-top-0 border-start-0 border-end-0 mb-3">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <div class="">
-                                                            <h4 class="d-inline-block">${item.NAMAPEGAWAI} ${item.solved == 0?'<span class="badge text-bg-danger p-1">Belum Terselesaikan</span>':'<span class="badge text-bg-success p-1">Terselesaikan</span>'}</h4>
-                                                            <p class="text-muted">${moment(item.updated_at).locale('id').fromNow()} (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <ul class="list-unstyled mb-0">
-                                                            ${item.solved == 0?
-                                                                `<li class="d-inline-block f-20 me-2">
-                                                                    <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Ubah Catatan" class="text-warning" onclick="ubahCatatan(${item.id})">
-                                                                        <i class="fas fa-edit"></i>
-                                                                    </a>
-                                                                </li>
-                                                                <li class="d-inline-block f-20">
-                                                                    <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Hapus Catatan" class="text-danger" onclick="hapusCatatan(${item.id})">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </a>
-                                                                </li>`
-                                                            :
-                                                                `<li class="d-inline-block f-20 me-2">
-                                                                    <a href="javascript: void(0);" class="text-secondary">
-                                                                        <i class="fas fa-edit"></i>
-                                                                    </a>
-                                                                </li>
-                                                                <li class="d-inline-block f-20">
-                                                                    <a href="javascript: void(0);" class="text-secondary">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </a>
-                                                                </li>`
-                                                            }
+                                // $('#daftar_catatan')
+                                //     .append(`<div class="col-md-12 border border-top-0 border-start-0 border-end-0 mb-3">
+                                //                 <div class="row">
+                                //                     <div class="col">
+                                //                         <div class="">
+                                //                             <h4 class="d-inline-block">${item.NAMAPEGAWAI} ${item.solved == 0?'<span class="badge text-bg-danger p-1">Belum Terselesaikan</span>':'<span class="badge text-bg-success p-1">Terselesaikan</span>'}</h4>
+                                //                             <p class="text-muted">${moment(item.updated_at).locale('id').fromNow()} (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})</p>
+                                //                         </div>
+                                //                     </div>
+                                //                     <div class="col-auto">
+                                //                         <ul class="list-unstyled mb-0">
+                                //                             ${item.solved == 0?
+                                //                                 `<li class="d-inline-block f-20 me-2">
+                                //                                     <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Ubah Catatan" class="text-warning" onclick="ubahCatatan(${item.id})">
+                                //                                         <i class="fas fa-edit"></i>
+                                //                                     </a>
+                                //                                 </li>
+                                //                                 <li class="d-inline-block f-20">
+                                //                                     <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Hapus Catatan" class="text-danger" onclick="hapusCatatan(${item.id})">
+                                //                                         <i class="fas fa-trash"></i>
+                                //                                     </a>
+                                //                                 </li>`
+                                //                             :
+                                //                                 `<li class="d-inline-block f-20 me-2">
+                                //                                     <a href="javascript: void(0);" class="text-secondary">
+                                //                                         <i class="fas fa-edit"></i>
+                                //                                     </a>
+                                //                                 </li>
+                                //                                 <li class="d-inline-block f-20">
+                                //                                     <a href="javascript: void(0);" class="text-secondary">
+                                //                                         <i class="fas fa-trash"></i>
+                                //                                     </a>
+                                //                                 </li>`
+                                //                             }
 
-                                                        </ul>
+                                //                         </ul>
+                                //                     </div>
+                                //                 </div>
+                                //                 <div>
+                                //                     <p>${item.deskripsi?item.deskripsi:'-'}</p>
+                                //                 </div>
+                                //             </div>`);
+                                var namaUnit = getNamaUnit(item.unit);
+                                $('#daftar_catatan').append(`
+                                    <div class="col-md-12 border border-top-0 border-start-0 border-end-0 mb-3">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div>
+                                                    <h5 class="d-inline-block me-1">
+                                                        ${item.NAMAPEGAWAI}
+                                                        ${
+                                                            item.solved == 0
+                                                                ? '<span class="badge badge-sm text-bg-danger py-1">Belum Terselesaikan</span>'
+                                                                : '<span class="badge badge-sm text-bg-success py-1">Terselesaikan</span>'
+                                                        }
+                                                    </h5>
+
+                                                    <p class="text-muted mb-2">
+                                                        ${moment(item.updated_at).locale('id').fromNow()}
+                                                        (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})
+                                                    </p>
+
+                                                    <div class="mb-3">
+                                                        <small class="text-muted me-1">
+                                                            <i class="fas fa-paper-plane me-1"></i> Unit Tujuan :
+                                                        </small>
+
+                                                        ${
+                                                            namaUnit.length
+                                                                ? namaUnit
+                                                                    .map(function(unit) {
+                                                                        return `<span class="badge badge-sm text-bg-light border me-1">${unit}</span>`;
+                                                                    })
+                                                                    .join('')
+                                                                : '<span class="text-muted">-</span>'
+                                                        }
                                                     </div>
                                                 </div>
-                                                <div>
-                                                    <p>${item.deskripsi?item.deskripsi:'-'}</p>
-                                                </div>
-                                            </div>`);
+                                            </div>
+
+                                            <div class="col-auto">
+                                                <ul class="list-unstyled mb-0">
+                                                    ${
+                                                        item.solved == 0
+                                                            ? `
+                                                                <li class="d-inline-block f-20 me-2">
+                                                                    <a href="javascript:void(0);"
+                                                                        data-bs-toggle="tooltip"
+                                                                        title="Ubah Catatan"
+                                                                        class="btn btn-sm btn-subtle-warning"
+                                                                        onclick="ubahCatatan(${item.id})">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                </li>
+
+                                                                <li class="d-inline-block f-20">
+                                                                    <a href="javascript:void(0);"
+                                                                        data-bs-toggle="tooltip"
+                                                                        title="Hapus Catatan"
+                                                                        class="btn btn-sm btn-subtle-danger"
+                                                                        onclick="hapusCatatan(${item.id})">
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </a>
+                                                                </li>
+                                                            `
+                                                            : `
+                                                                <li class="d-inline-block f-20 me-2">
+                                                                    <a href="javascript:void(0);" class="btn btn-sm btn-subtle-secondary" disabled>
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                </li>
+
+                                                                <li class="d-inline-block f-20">
+                                                                    <a href="javascript:void(0);" class="btn btn-sm btn-subtle-secondary" disabled>
+                                                                        <i class="fas fa-trash"></i>
+                                                                    </a>
+                                                                </li>
+                                                            `
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <p class="mb-3">
+                                                ${item.deskripsi ? item.deskripsi : '-'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                `);
                             })
                             // Showing Tooltip
                             $('[data-bs-toggle="tooltip"]').tooltip({
@@ -718,48 +966,136 @@
                                 $('#jumlah_catatan').text(res.catatan.length);
                                 $('#daftar_catatan').empty();
                                 res.catatan.forEach(item => {
-                                    $('#daftar_catatan')
-                                        .append(`<div class="col-md-12 border border-top-0 border-start-0 border-end-0 mb-3">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <div class="">
-                                                                <h4 class="d-inline-block">${item.NAMAPEGAWAI} ${item.solved == 0?'<span class="badge text-bg-danger p-1">Belum Terselesaikan</span>':'<span class="badge text-bg-success p-1">Terselesaikan</span>'}</h4>
-                                                                <p class="text-muted">${moment(item.updated_at).locale('id').fromNow()} (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})</p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-auto">
-                                                            <ul class="list-unstyled mb-0">
-                                                                ${item.solved == 0?
-                                                                    `<li class="d-inline-block f-20 me-2">
-                                                                        <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Ubah Catatan" class="text-warning" onclick="ubahCatatan(${item.id})">
-                                                                            <i class="fas fa-edit"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li class="d-inline-block f-20">
-                                                                        <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Hapus Catatan" class="text-danger" onclick="hapusCatatan(${item.id})">
-                                                                            <i class="fas fa-trash"></i>
-                                                                        </a>
-                                                                    </li>`
-                                                                :
-                                                                    `<li class="d-inline-block f-20 me-2">
-                                                                        <a href="javascript: void(0);" class="text-secondary">
-                                                                            <i class="fas fa-edit"></i>
-                                                                        </a>
-                                                                    </li>
-                                                                    <li class="d-inline-block f-20">
-                                                                        <a href="javascript: void(0);" class="text-secondary">
-                                                                            <i class="fas fa-trash"></i>
-                                                                        </a>
-                                                                    </li>`
-                                                                }
+                                    // $('#daftar_catatan')
+                                    //     .append(`<div class="col-md-12 border border-top-0 border-start-0 border-end-0 mb-3">
+                                    //                 <div class="row">
+                                    //                     <div class="col">
+                                    //                         <div class="">
+                                    //                             <h4 class="d-inline-block">${item.NAMAPEGAWAI} ${item.solved == 0?'<span class="badge text-bg-danger p-1">Belum Terselesaikan</span>':'<span class="badge text-bg-success p-1">Terselesaikan</span>'}</h4>
+                                    //                             <p class="text-muted">${moment(item.updated_at).locale('id').fromNow()} (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})</p>
+                                    //                         </div>
+                                    //                     </div>
+                                    //                     <div class="col-auto">
+                                    //                         <ul class="list-unstyled mb-0">
+                                    //                             ${item.solved == 0?
+                                    //                                 `<li class="d-inline-block f-20 me-2">
+                                    //                                     <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Ubah Catatan" class="text-warning" onclick="ubahCatatan(${item.id})">
+                                    //                                         <i class="fas fa-edit"></i>
+                                    //                                     </a>
+                                    //                                 </li>
+                                    //                                 <li class="d-inline-block f-20">
+                                    //                                     <a href="javascript: void(0);" data-bs-toggle="tooltip" title="Hapus Catatan" class="text-danger" onclick="hapusCatatan(${item.id})">
+                                    //                                         <i class="fas fa-trash"></i>
+                                    //                                     </a>
+                                    //                                 </li>`
+                                    //                             :
+                                    //                                 `<li class="d-inline-block f-20 me-2">
+                                    //                                     <a href="javascript: void(0);" class="text-secondary">
+                                    //                                         <i class="fas fa-edit"></i>
+                                    //                                     </a>
+                                    //                                 </li>
+                                    //                                 <li class="d-inline-block f-20">
+                                    //                                     <a href="javascript: void(0);" class="text-secondary">
+                                    //                                         <i class="fas fa-trash"></i>
+                                    //                                     </a>
+                                    //                                 </li>`
+                                    //                             }
 
-                                                            </ul>
+                                    //                         </ul>
+                                    //                     </div>
+                                    //                 </div>
+                                    //                 <div>
+                                    //                     <p>${item.deskripsi?item.deskripsi:'-'}</p>
+                                    //                 </div>
+                                    //             </div>`);
+                                    var namaUnit = getNamaUnit(item.unit);
+                                    $('#daftar_catatan').append(`
+                                        <div class="col-md-12 border border-top-0 border-start-0 border-end-0 mb-3">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div>
+                                                        <h5 class="d-inline-block me-1">
+                                                            ${item.NAMAPEGAWAI}
+                                                            ${
+                                                                item.solved == 0
+                                                                    ? '<span class="badge badge-sm text-bg-danger py-1">Belum Terselesaikan</span>'
+                                                                    : '<span class="badge badge-sm text-bg-success py-1">Terselesaikan</span>'
+                                                            }
+                                                        </h5>
+
+                                                        <p class="text-muted mb-2">
+                                                            ${moment(item.updated_at).locale('id').fromNow()}
+                                                            (${moment(item.updated_at).locale('id').format('D MMMM YYYY, [Pukul] HH:mm [WIB]')})
+                                                        </p>
+
+                                                        <div class="mb-3">
+                                                            <small class="text-muted me-1">
+                                                                <i class="fas fa-paper-plane me-1"></i> Unit Tujuan :
+                                                            </small>
+
+                                                            ${
+                                                                namaUnit.length
+                                                                    ? namaUnit
+                                                                        .map(function(unit) {
+                                                                            return `<span class="badge badge-sm text-bg-light border me-1">${unit}</span>`;
+                                                                        })
+                                                                        .join('')
+                                                                    : '<span class="text-muted">-</span>'
+                                                            }
                                                         </div>
                                                     </div>
-                                                    <div>
-                                                        <p>${item.deskripsi?item.deskripsi:'-'}</p>
-                                                    </div>
-                                                </div>`);
+                                                </div>
+
+                                                <div class="col-auto">
+                                                    <ul class="list-unstyled mb-0">
+                                                        ${
+                                                            item.solved == 0
+                                                                ? `
+                                                                    <li class="d-inline-block f-20 me-2">
+                                                                        <a href="javascript:void(0);"
+                                                                            data-bs-toggle="tooltip"
+                                                                            title="Ubah Catatan"
+                                                                            class="btn btn-sm btn-subtle-warning"
+                                                                            onclick="ubahCatatan(${item.id})">
+                                                                            <i class="fas fa-edit"></i>
+                                                                        </a>
+                                                                    </li>
+
+                                                                    <li class="d-inline-block f-20">
+                                                                        <a href="javascript:void(0);"
+                                                                            data-bs-toggle="tooltip"
+                                                                            title="Hapus Catatan"
+                                                                            class="btn btn-sm btn-subtle-danger"
+                                                                            onclick="hapusCatatan(${item.id})">
+                                                                            <i class="fas fa-trash"></i>
+                                                                        </a>
+                                                                    </li>
+                                                                `
+                                                                : `
+                                                                    <li class="d-inline-block f-20 me-2">
+                                                                        <a href="javascript:void(0);" class="btn btn-sm btn-subtle-secondary" disabled>
+                                                                            <i class="fas fa-edit"></i>
+                                                                        </a>
+                                                                    </li>
+
+                                                                    <li class="d-inline-block f-20">
+                                                                        <a href="javascript:void(0);" class="btn btn-sm btn-subtle-danger" disabled>
+                                                                            <i class="fas fa-trash"></i>
+                                                                        </a>
+                                                                    </li>
+                                                                `
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <p class="mb-3">
+                                                    ${item.deskripsi ? item.deskripsi : '-'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    `);
                                 })
                                 // Showing Tooltip
                                 $('[data-bs-toggle="tooltip"]').tooltip({
@@ -1489,61 +1825,235 @@
             }
         }
 
-        function tambahCatatan() {
-            $("#btn-tambah").prop('disabled', true);
-            $("#btn-tambah").find("i").removeClass("fa-sticky-note").addClass('fa-sync fa-spin');
+        // function tambahCatatan() {
+        //     $("#btn-tambah").prop('disabled', true);
+        //     $("#btn-tambah").find("i").removeClass("fa-sticky-note").addClass('fa-sync fa-spin');
 
-            // Hapus tag HTML dan spasi
-            var isiEditor = editorCatatanTambah.getData();
-            var isiBersih = isiEditor.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim();
-            var kunjungan = "{{ $list['KUNJUNGAN'] }}";
-            // Definisi
-            var save = new FormData();
-            save.append('kunjungan', kunjungan);
-            save.append('catatan', isiEditor);
+        //     // Hapus tag HTML dan spasi
+        //     var isiEditor = editorCatatanTambah.getData();
+        //     var isiBersih = isiEditor.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim();
+        //     var kunjungan = "{{ $list['KUNJUNGAN'] }}";
+        //     // Definisi
+        //     var save = new FormData();
+        //     save.append('kunjungan', kunjungan);
+        //     save.append('catatan', isiEditor);
+        //     save.append('unit', unitAddChoices.getValue(true).map(Number));
+        //     if (isiBersih === '') {
+        //         iziToast.warning({
+        //             title: 'Pesan Error!',
+        //             message: 'Pastikan Anda tidak mengosongi isian Keterangan (Wajib)',
+        //             position: 'topRight'
+        //         });
+        //         $("#btn-tambah").find("i").removeClass("fa-sync fa-spin").addClass("fa-sticky-note");
+        //         $("#btn-tambah").prop('disabled', false);
+        //     } else {
+        //         $.ajax({
+        //             headers: {
+        //                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //             },
+        //             url: "/api/klaim/catatan/simpan",
+        //             method: 'post',
+        //             data: save,
+        //             cache: false,
+        //             contentType: false,
+        //             processData: false,
+        //             dataType: 'json',
+        //             success: function(res) {
+        //                 iziToast.success({
+        //                     title: 'Pesan Berhasil!',
+        //                     message: `Catatan Berkas Klaim telah berhasil ditambahkan`,
+        //                     position: 'topRight'
+        //                 });
+        //                 verify();
+        //                 editorCatatanTambah.setData('');
+        //                 $("#btn-tambah").find("i").removeClass("fa-sync fa-spin").addClass("fa-sticky-note");
+        //                 $("#btn-tambah").prop('disabled', false);
+        //             },
+        //             error: function (res) {
+        //                 iziToast.error({
+        //                     title: res.statusText + " (Code " + res.status + ")",
+        //                     message: res.responseText,
+        //                     position: 'topRight'
+        //                 });
+        //                 $("#btn-tambah").find("i").removeClass("fa-sync fa-spin").addClass("fa-sticky-note");
+        //                 $("#btn-tambah").prop('disabled', false);
+        //             }
+        //         });
+        //     }
+
+        // }
+
+        // function ubahCatatan(id) {
+        //     $.ajax({
+        //         url: `/api/klaim/catatan/${id}`,
+        //         type: 'GET',
+        //         dataType: 'json',
+        //         success: function(res) {
+        //             $('#id_ubah_catatan').val(id);
+
+        //             if (!res.deskripsi) {
+        //                 iziToast.warning({
+        //                     title: "Pesan Ambigu!",
+        //                     message: "Catatan kosong/null",
+        //                     position: 'topRight'
+        //                 });
+        //             }
+
+        //             editorCatatanEdit.setData(res.deskripsi || '');
+
+        //             // Reset pilihan sebelumnya
+        //             unitAddChoices.removeActiveItems();
+
+        //             // Pilih role/unit dari response
+        //             if (Array.isArray(res.roles)) {
+        //                 res.roles.forEach(function(role) {
+        //                     unitAddChoices.setChoiceByValue(String(role.id));
+        //                 });
+        //             }
+
+        //             $('#ubahCatatan').modal('show');
+        //         }
+        //     });
+        // }
+
+        // function prosesUbahCatatan() {
+        //     var id = $("#id_ubah_catatan").val();
+        //     var isiEditor = editorCatatanEdit.getData();
+        //     var isiBersih = isiEditor.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim();
+
+        //     var save = new FormData();
+        //     save.append('id',id);
+        //     save.append('catatan',isiEditor);
+        //     save.append('unit_tujuan', unitAddChoices.getValue(true).map(Number));
+
+        //     if (isiBersih === '') {
+        //         iziToast.warning({
+        //             title: 'Pesan Error!',
+        //             message: 'Pastikan Anda tidak mengosongi isian Keterangan (Wajib)',
+        //             position: 'topRight'
+        //         });
+        //     } else {
+        //         $.ajax({
+        //             headers: {
+        //                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //             },
+        //             url: `/api/klaim/catatan/${id}/ubah`,
+        //             method: 'post',
+        //             data: save,
+        //             cache: false,
+        //             contentType: false,
+        //             processData: false,
+        //             dataType: 'json',
+        //             success: function(res) {
+        //                 verify();
+        //                 iziToast.success({
+        //                     title: 'Pesan Berhasil!',
+        //                     message: `Catatan Berkas Klaim dengan ID#${id} telah berhasil diperbarui`,
+        //                     position: 'topRight'
+        //                 });
+        //                 $('#ubahCatatan').modal('hide');
+        //             },
+        //             error: function (res) {
+        //                 iziToast.error({
+        //                     title: res.statusText + " (Code " + res.status + ")",
+        //                     message: res.responseText,
+        //                     position: 'topRight'
+        //                 });
+        //             }
+        //         })
+        //     }
+        // }
+
+        function tambahCatatan() {
+            const $button = $('#btn-tambah');
+            const $icon = $button.find('i');
+
+            $button.prop('disabled', true);
+            $icon.removeClass('fa-sticky-note').addClass('fa-sync fa-spin');
+
+            const isiEditor = editorCatatanTambah.getData();
+            const isiBersih = isiEditor
+                .replace(/<[^>]*>/g, '')
+                .replace(/&nbsp;/g, '')
+                .trim();
+
+            const kunjungan = "{{ $list['KUNJUNGAN'] }}";
+            const unitTujuan = unitAddChoices.getValue(true).map(Number);
+
             if (isiBersih === '') {
                 iziToast.warning({
                     title: 'Pesan Error!',
                     message: 'Pastikan Anda tidak mengosongi isian Keterangan (Wajib)',
                     position: 'topRight'
                 });
-                $("#btn-tambah").find("i").removeClass("fa-sync fa-spin").addClass("fa-sticky-note");
-                $("#btn-tambah").prop('disabled', false);
-            } else {
-                $.ajax({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: "/api/klaim/catatan/simpan",
-                    method: 'post',
-                    data: save,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    dataType: 'json',
-                    success: function(res) {
-                        iziToast.success({
-                            title: 'Pesan Berhasil!',
-                            message: `Catatan Berkas Klaim telah berhasil ditambahkan`,
-                            position: 'topRight'
-                        });
-                        verify();
-                        editorCatatanTambah.setData('');
-                        $("#btn-tambah").find("i").removeClass("fa-sync fa-spin").addClass("fa-sticky-note");
-                        $("#btn-tambah").prop('disabled', false);
-                    },
-                    error: function (res) {
-                        iziToast.error({
-                            title: res.statusText + " (Code " + res.status + ")",
-                            message: res.responseText,
-                            position: 'topRight'
-                        });
-                        $("#btn-tambah").find("i").removeClass("fa-sync fa-spin").addClass("fa-sticky-note");
-                        $("#btn-tambah").prop('disabled', false);
-                    }
-                });
+
+                $icon.removeClass('fa-sync fa-spin').addClass('fa-sticky-note');
+                $button.prop('disabled', false);
+                return;
             }
 
+            if (unitTujuan.length === 0) {
+                iziToast.warning({
+                    title: 'Pesan Error!',
+                    message: 'Pastikan Anda memilih minimal satu Unit Tujuan',
+                    position: 'topRight'
+                });
+
+                $icon.removeClass('fa-sync fa-spin').addClass('fa-sticky-note');
+                $button.prop('disabled', false);
+                return;
+            }
+
+            const save = new FormData();
+
+            save.append('kunjungan', kunjungan);
+            save.append('catatan', isiEditor);
+
+            unitTujuan.forEach(function(unitId) {
+                save.append('unit_tujuan[]', unitId);
+            });
+
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: '/api/klaim/catatan/simpan',
+                method: 'POST',
+                data: save,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+
+                success: function(res) {
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: 'Catatan Berkas Klaim telah berhasil ditambahkan',
+                        position: 'topRight'
+                    });
+
+                    verify();
+
+                    editorCatatanTambah.setData('');
+
+                    // Bersihkan pilihan unit
+                    unitAddChoices.removeActiveItems();
+
+                    $icon.removeClass('fa-sync fa-spin').addClass('fa-sticky-note');
+                    $button.prop('disabled', false);
+                },
+
+                error: function(res) {
+                    iziToast.error({
+                        title: res.statusText + ' (Code ' + res.status + ')',
+                        message: res.responseText,
+                        position: 'topRight'
+                    });
+
+                    $icon.removeClass('fa-sync fa-spin').addClass('fa-sticky-note');
+                    $button.prop('disabled', false);
+                }
+            });
         }
 
         function ubahCatatan(id) {
@@ -1551,65 +2061,118 @@
                 url: `/api/klaim/catatan/${id}`,
                 type: 'GET',
                 dataType: 'json',
+
                 success: function(res) {
                     $('#id_ubah_catatan').val(id);
-                    if (!res.deskripsi) {
-                        iziToast.warning({
-                            title: "Pesan Ambigu!",
-                            message: "Catatan kosong/null",
-                            position: 'topRight'
-                        });
+
+                    editorCatatanEdit.setData(res.deskripsi || '');
+
+                    // Bersihkan pilihan sebelumnya
+                    unitEditChoices.removeActiveItems();
+
+                    let unit = res.unit || [];
+
+                    // Decode JSON string
+                    if (typeof unit === 'string') {
+                        try {
+                            unit = JSON.parse(unit);
+                        } catch (e) {
+                            unit = [];
+                        }
                     }
-                    editorCatatanEdit.setData(res.deskripsi);
-                    // $('#catatan_edit').val(res.deskripsi);
+
+                    // Pastikan array
+                    if (Array.isArray(unit)) {
+                        unitEditChoices.setChoiceByValue(
+                            unit.map(function(unitId) {
+                                return String(unitId);
+                            })
+                        );
+                    }
+
                     $('#ubahCatatan').modal('show');
+                },
+
+                error: function(xhr) {
+                    iziToast.error({
+                        title: 'Error',
+                        message: 'Gagal mengambil data catatan.',
+                        position: 'topRight'
+                    });
                 }
-            })
+            });
         }
 
         function prosesUbahCatatan() {
-            var id = $("#id_ubah_catatan").val();
-            var isiEditor = editorCatatanEdit.getData();
-            var isiBersih = isiEditor.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim();
-            var save = new FormData();
-            save.append('id',id);
-            save.append('catatan',isiEditor);
+            const id = $('#id_ubah_catatan').val();
+
+            const isiEditor = editorCatatanEdit.getData();
+            const isiBersih = isiEditor
+                .replace(/<[^>]*>/g, '')
+                .replace(/&nbsp;/g, '')
+                .trim();
+
+            const unitTujuan = unitEditChoices.getValue(true).map(Number);
+
             if (isiBersih === '') {
                 iziToast.warning({
                     title: 'Pesan Error!',
                     message: 'Pastikan Anda tidak mengosongi isian Keterangan (Wajib)',
                     position: 'topRight'
                 });
-            } else {
-                $.ajax({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: `/api/klaim/catatan/${id}/ubah`,
-                    method: 'post',
-                    data: save,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    dataType: 'json',
-                    success: function(res) {
-                        verify();
-                        iziToast.success({
-                            title: 'Pesan Berhasil!',
-                            message: `Catatan Berkas Klaim dengan ID#${id} telah berhasil diperbarui`,
-                            position: 'topRight'
-                        });
-                        $('#ubahCatatan').modal('hide');
-                    },
-                    error: function (res) {
-                        iziToast.error({
-                            title: res.statusText + " (Code " + res.status + ")",
-                            message: res.responseText,
-                            position: 'topRight'
-                        });
-                    }
-                })
+                return;
             }
+
+            if (unitTujuan.length === 0) {
+                iziToast.warning({
+                    title: 'Pesan Error!',
+                    message: 'Pastikan Anda memilih minimal satu Unit Tujuan',
+                    position: 'topRight'
+                });
+                return;
+            }
+
+            const save = new FormData();
+
+            save.append('id', id);
+            save.append('catatan', isiEditor);
+
+            unitTujuan.forEach(function(unitId) {
+                save.append('unit_tujuan[]', unitId);
+            });
+
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: `/api/klaim/catatan/${id}/ubah`,
+                method: 'POST',
+                data: save,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+
+                success: function(res) {
+                    verify();
+
+                    iziToast.success({
+                        title: 'Pesan Berhasil!',
+                        message: `Catatan Berkas Klaim dengan ID#${id} telah berhasil diperbarui`,
+                        position: 'topRight'
+                    });
+
+                    $('#ubahCatatan').modal('hide');
+                },
+
+                error: function(res) {
+                    iziToast.error({
+                        title: res.statusText + ' (Code ' + res.status + ')',
+                        message: res.responseText,
+                        position: 'topRight'
+                    });
+                }
+            });
         }
 
         function hapusCatatan(id) {

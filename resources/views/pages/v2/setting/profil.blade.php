@@ -1,5 +1,7 @@
 @extends('layouts.v2.index')
 
+@section('title','SIRMED v2 - Profil Saya')
+
 @section('content')
 
 <div class="container-fluid">

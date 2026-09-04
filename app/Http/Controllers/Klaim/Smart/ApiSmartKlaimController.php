@@ -9,6 +9,7 @@ use App\Models\simrspku_klaim\klaim_verifikasi_catatan;
 use App\Models\simrspku_klaim\klaim_verifikasi;
 use App\Models\simrspku_klaim\klaim_farmasi_verifikasi;
 use App\Models\simrspku_klaim\klaim_file;
+use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use PHPJasper\PHPJasper;
@@ -855,37 +856,91 @@ class ApiSmartKlaimController extends Controller
         return response()->json($show, 200);
     }
 
-    function simpanCatatan(Request $request)
+    public function simpanCatatan(Request $request)
     {
-        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+        $validated = $request->validate([
+            'kunjungan' => [
+                'required',
+            ],
 
-        // print_r(Auth::user()->ID);
-        // die();
+            'catatan' => [
+                'required',
+            ],
+
+            'unit_tujuan' => [
+                'required',
+                'array',
+                'min:1',
+            ],
+
+            'unit_tujuan.*' => [
+                'required',
+                'integer',
+                'distinct',
+            ],
+        ], [
+            'kunjungan.required' => 'Nomor kunjungan wajib diisi.',
+
+            'catatan.required' => 'Catatan wajib diisi.',
+
+            'unit_tujuan.required' => 'Unit tujuan wajib dipilih.',
+            'unit_tujuan.array' => 'Unit tujuan harus berupa array.',
+            'unit_tujuan.min' => 'Minimal pilih 1 unit tujuan.',
+
+            'unit_tujuan.*.integer' => 'Unit tujuan tidak valid.',
+            'unit_tujuan.*.distinct' => 'Unit tujuan tidak boleh duplikat.',
+        ]);
+
         $data = new klaim_verifikasi_catatan;
-        $data->nomor        = $request->kunjungan;
-        $data->user         = Auth::user()->ID;
-        $data->deskripsi    = $request->catatan;
-        $data->status       = true;
+
+        $data->nomor     = $validated['kunjungan'];
+        $data->user      = Auth::user()->ID;
+        $data->deskripsi = $validated['catatan'];
+        $data->unit      = $validated['unit_tujuan'];
+        $data->status    = true;
+
         $data->save();
 
         return response()->json($data, 200);
     }
 
-    function ubahCatatan(Request $request)
+    public function ubahCatatan(Request $request)
     {
-        $now = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+        $validated = $request->validate([
+            'id' => [
+                'required',
+                // 'exists:klaim_verifikasi_catatan,id',
+            ],
 
-        $show               = klaim_verifikasi_catatan::find($request->id);
-        $show->user         = Auth::user()->ID;
-        $show->deskripsi    = $request->catatan;
+            'catatan' => [
+                'required',
+            ],
+
+            'unit_tujuan' => [
+                'required',
+                'array',
+                'min:1',
+            ],
+
+            'unit_tujuan.*' => [
+                'required',
+                'integer',
+                'distinct',
+            ],
+        ]);
+
+        $show = klaim_verifikasi_catatan::findOrFail($validated['id']);
+
+        $show->user      = Auth::user()->ID;
+        $show->deskripsi = $validated['catatan'];
+        $show->unit      = $validated['unit_tujuan'];
+
         $show->save();
 
-        $data = [
-            'now' => $now,
+        return response()->json([
+            'now'  => Carbon::now()->format('Y-m-d H:i:s'),
             'show' => $show,
-        ];
-
-        return response()->json($data, 200);
+        ], 200);
     }
 
     function hapusCatatan($id)
@@ -910,11 +965,13 @@ class ApiSmartKlaimController extends Controller
                         ->orderBy('kvc.created_at','DESC')
                         ->get();
         $file = klaim_file::where('nomor',$kunjungan)->where('status',true)->whereNull('deleted_at')->get();
+        $roles = Role::where('visible', 1)->get();
 
         $data = [
             'show' => $show,
             'catatan' => $catatan,
             'file' => $file,
+            'roles' => $roles,
         ];
 
         return response()->json($data, 200);

@@ -10,6 +10,7 @@ use App\Http\Controllers\Log\BerkasController;
 use App\Http\Controllers\Setting\ProfilController;
 use App\Http\Controllers\Setting\RolesController;
 use App\Http\Controllers\Setting\PermissionsController;
+use App\Http\Controllers\Setting\NotifikasiController;
 use App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController;
 use App\Http\Controllers\Pelayanan\Pasien\PasienController;
 use App\Http\Controllers\Pelayanan\Pasien\ResumeMedisController;
@@ -69,6 +70,7 @@ Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'v2', 'as' => ''], fu
         Route::get('setting/profil', [ProfilController::class, 'indexV2'])->name('v2.profil');
         // Route::get('setting/roles', [RolesController::class, 'index'])->name('roles');
         // Route::get('setting/permissions', [PermissionsController::class, 'index'])->name('permissions');
+        Route::get('notifikasi', [NotifikasiController::class, 'index'])->name('v2.notifikasi');
 
     // DIGITAL
         // MEDICAL RECORD

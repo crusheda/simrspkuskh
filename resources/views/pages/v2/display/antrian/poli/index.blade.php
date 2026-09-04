@@ -1,6 +1,6 @@
 @extends('layouts.v2.index')
 
-@section('title','Display Antrian Poliklinik')
+@section('title','SIRMED v2 - Display Antrian Poliklinik')
 
 @section('content')
 
