@@ -46,7 +46,7 @@
                                 <label class="form-label mb-0 flex-shrink-0">
                                     Lainnya ,
                                 </label>
-                                <input type="text" class="form-control form-control-sm" data-enable-when="ds_lain" name="pb_ds_lain_sebut" placeholder="Sebutkan ..." disabled>
+                                <input type="text" class="form-control form-control-sm" data-enable-when="pb_ds_lain" name="pb_ds_lain_sebut" placeholder="Sebutkan ..." disabled>
                             </div>
                         </div>
                     </div>
@@ -106,7 +106,7 @@
                                 <label class="form-label mb-0 flex-shrink-0">
                                     Lainnya ,
                                 </label>
-                                <input type="text" class="form-control form-control-sm" data-enable-when="ds_lain" name="pb_rp_lain_sebut" placeholder="Sebutkan ..." disabled>
+                                <input type="text" class="form-control form-control-sm" data-enable-when="pb_rp_lain" name="pb_rp_lain_sebut" placeholder="Sebutkan ..." disabled>
                             </div>
                         </div>
                     </div>

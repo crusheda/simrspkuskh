@@ -95,11 +95,11 @@ class PengkajianLaporanAnestesiController extends Controller
             'la_nama_ahli_anestesi' => ['nullable', 'string'],
             'la_nama_perawat_bidan' => ['nullable', 'string'],
 
-            'la_anes_mulai' => ['nullable', 'date_format:H:i:s'],
-            'la_anes_selesai' => ['nullable', 'date_format:H:i:s'],
+            'la_anes_mulai' => ['nullable', 'date_format:H:i'],
+            'la_anes_selesai' => ['nullable', 'date_format:H:i'],
 
-            'la_op_mulai' => ['nullable', 'date_format:H:i:s'],
-            'la_op_selesai' => ['nullable', 'date_format:H:i:s'],
+            'la_op_mulai' => ['nullable', 'date_format:H:i'],
+            'la_op_selesai' => ['nullable', 'date_format:H:i'],
         ]);
 
         $data = [
@@ -136,6 +136,39 @@ class PengkajianLaporanAnestesiController extends Controller
 
             'LA_OP_MULAI' => $request->input('la_op_mulai'),
             'LA_OP_SELESAI' => $request->input('la_op_selesai'),
+
+            'LA_TEKNIK_IV' => $request->boolean('la_teknik_iv'),
+            'LA_TEKNIK_SC' => $request->boolean('la_teknik_sc'),
+            'LA_TEKNIK_TAF' => $request->boolean('la_teknik_taf'),
+            'LA_TEKNIK_CIR' => $request->boolean('la_teknik_cir'),
+            'LA_TEKNIK_JR' => $request->boolean('la_teknik_jr'),
+            'LA_TEKNIK_SPI' => $request->boolean('la_teknik_spi'),
+            'LA_TEKNIK_EPI' => $request->boolean('la_teknik_epi'),
+
+            'LA_OBATANES_PEN' => $request->boolean('la_obatanes_pen'),
+            'LA_OBATANES_KET' => $request->boolean('la_obatanes_ket'),
+            'LA_OBATANES_N2O' => $request->boolean('la_obatanes_n2o'),
+            'LA_OBATANES_ETH' => $request->boolean('la_obatanes_eth'),
+            'LA_OBATANES_FLO' => $request->boolean('la_obatanes_flo'),
+            'LA_OBATANES_ETR' => $request->boolean('la_obatanes_etr'),
+            'LA_OBATANES_SUC' => $request->boolean('la_obatanes_suc'),
+            'LA_OBATANES_PAV' => $request->boolean('la_obatanes_pav'),
+            'LA_OBATANES_LAIN1' => $request->boolean('la_obatanes_lain1'),
+            'LA_OBATANES_LAIN2' => $request->boolean('la_obatanes_lain2'),
+            'LA_OBATANES_LAIN1_DES' => $request->input('la_obatanes_lain1_des'),
+            'LA_OBATANES_LAIN2_DES' => $request->input('la_obatanes_lain2_des'),
+
+            'LA_ET_UKURAN' => $request->boolean('la_et_ukuran'),
+            'LA_ET_NASAL' => $request->boolean('la_et_nasal'),
+            'LA_ET_ORAL' => $request->boolean('la_et_oral'),
+            'LA_ET_CUFF' => $request->boolean('la_et_cuff'),
+            'LA_ET_PACK' => $request->boolean('la_et_pack'),
+
+            'LA_POS_SUPINE' => $request->boolean('la_pos_supine'),
+            'LA_POS_PRONE' => $request->boolean('la_pos_prone'),
+            'LA_POS_LATERAL' => $request->boolean('la_pos_lateral'),
+
+            'LA_CATATAN' => $request->input('la_catatan'),
 
             'updated_at' => now(),
         ];

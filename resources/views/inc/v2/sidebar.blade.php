@@ -98,10 +98,14 @@
                                 <span class="menu-label">Display</span>
                             </li>
                             <li class="menu-item">
-                                <a class="menu-link" href="{{ route('v2.display.antrian.poli') }}" role="button">
+                                <a class="menu-link" href="{{ route('display.antrian.poli.index') }}" role="button">
                                     <i class="ri-dashboard-line"></i>
                                     <span class="menu-label">Antrian Poliklinik</span>
                                 </a>
+                                {{-- <a class="menu-link" href="{{ route('v2.display.antrian.poli') }}" role="button">
+                                    <i class="ri-dashboard-line"></i>
+                                    <span class="menu-label">Antrian Poliklinik</span>
+                                </a> --}}
                             </li>
                         </ul>
                     </nav>

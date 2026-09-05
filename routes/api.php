@@ -65,6 +65,8 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
 //---------------------------------------------------------------    A  P  I    L  O  K  A  L    -----------------------------------------------------------------
 Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v.2
     // SETTING
+        // ROLES
+        Route::get('roles/data', [RolesController::class, 'dataRoles']);
         // NOTIFIKASI
         Route::get('notifikasi/klaim', [NotifikasiController::class, 'notifikasiKlaim']); // GET NOTIFIKASI AFTER SECONDSSS
         Route::get('notifikasi', [NotifikasiController::class, 'index']);

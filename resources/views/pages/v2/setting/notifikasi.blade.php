@@ -184,10 +184,12 @@
 <script>
 
     let tableNotifikasi = null;
+    let daftarRoles = [];
 
     $(document).ready(function () {
 
-        getData();
+        // getData();
+        getRoles();
 
     });
 
@@ -274,7 +276,7 @@
                                     unit.length
                                         ? unit.map(function (nama) {
                                             return `
-                                                <span class="badge text-bg-light border me-1">
+                                                <span class="badge badge-sm text-bg-light fw-light border me-1">
                                                     ${escapeHtml(nama)}
                                                 </span>
                                             `;
@@ -468,7 +470,7 @@
                     $('#detailUnit').html(
                         unit.map(function (nama) {
                             return `
-                                <span class="badge text-bg-light border me-1">
+                                <span class="badge badge-sm text-bg-light fw-light border me-1">
                                     ${escapeHtml(nama)}
                                 </span>
                             `;
@@ -516,13 +518,50 @@
         });
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | GET ROLES
+    |--------------------------------------------------------------------------
+    */
+    function getRoles() {
+        $.ajax({
+            url: '/api/v2/roles/data',
+            type: 'GET',
+            dataType: 'json',
+            success: function (res) {
+
+                if (!res || !Array.isArray(res.show)) {
+                    console.error('Data roles tidak ditemukan.');
+                    daftarRoles = [];
+                    return;
+                }
+
+                daftarRoles = res.show.map(function (role) {
+                    return {
+                        id: String(role.id),
+                        name: role.name
+                    };
+                });
+
+                getData();
+            },
+            error: function (xhr) {
+                console.error(
+                    'Gagal mengambil data roles:',
+                    xhr.status,
+                    xhr.responseText
+                );
+
+                daftarRoles = [];
+            }
+        });
+    }
 
     /*
     |--------------------------------------------------------------------------
     | GET NAMA UNIT
     |--------------------------------------------------------------------------
     */
-
     function getNamaUnit(unit) {
 
         if (!unit) {
@@ -530,13 +569,11 @@
         }
 
         if (typeof unit === 'string') {
-
             try {
                 unit = JSON.parse(unit);
             } catch (e) {
                 return [];
             }
-
         }
 
         if (!Array.isArray(unit)) {
@@ -547,9 +584,7 @@
             .map(function (id) {
 
                 const role = daftarRoles.find(function (role) {
-
                     return Number(role.id) === Number(id);
-
                 });
 
                 return role ? role.name : null;
@@ -557,7 +592,6 @@
             })
             .filter(Boolean);
     }
-
 
     /*
     |--------------------------------------------------------------------------

@@ -97,7 +97,10 @@ class NotifikasiController extends Controller
 
     public function getData(Request $request)
     {
-        $unitUser = Auth::user()->unit;
+        $user = Auth::user();
+        $isAdmin = $user->hasRole('admin');
+
+        $unitUser = $user->unit;
 
         if (!is_array($unitUser)) {
             $unitUser = [$unitUser];
@@ -120,7 +123,12 @@ class NotifikasiController extends Controller
                 'created_at',
                 'updated_at',
             ])
-            ->filter(function ($item) use ($unitUser) {
+            ->filter(function ($item) use ($unitUser, $isAdmin) {
+
+                // Admin dapat melihat semua data
+                if ($isAdmin) {
+                    return true;
+                }
 
                 // Unit kosong/null = bisa dilihat semua user
                 if (empty($item->unit)) {
@@ -145,7 +153,6 @@ class NotifikasiController extends Controller
             })
             ->values()
             ->map(function ($item) {
-
                 return [
                     'id' => $item->id,
                     'nomor' => $item->nomor,
@@ -166,7 +173,10 @@ class NotifikasiController extends Controller
 
     public function showDetail(Request $request, $id)
     {
-        $unitUser = Auth::user()->unit;
+        $user = Auth::user();
+        $isAdmin = $user->hasRole('admin');
+
+        $unitUser = $user->unit;
 
         if (!is_array($unitUser)) {
             $unitUser = [$unitUser];
@@ -184,7 +194,8 @@ class NotifikasiController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if (!empty($item->unit)) {
+        // Admin dapat melihat semua data
+        if (!$isAdmin && !empty($item->unit)) {
 
             $unit = $item->unit;
 
@@ -206,12 +217,12 @@ class NotifikasiController extends Controller
         $pasien = DB::table('pendaftaran.kunjungan AS pk')
             ->leftJoin('pendaftaran.pendaftaran AS pd', 'pd.NOMOR', '=', 'pk.NOPEN')
             ->leftJoin('master.pasien AS p', 'p.NORM', '=', 'pd.NORM')
-            ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+            ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'pk.RUANGAN')
             ->leftJoin('master.dokter AS dok', 'dok.ID', '=', 'pk.DPJP')
             ->select(
                 'pd.TANGGAL as TGLPENDAFTARAN',
                 DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'),
-                DB::raw('master.getCariUmur(now(),(p.TANGGAL_LAHIR)) AS UMURPASIEN'),
+                DB::raw('master.getCariUmur(now(), (p.TANGGAL_LAHIR)) AS UMURPASIEN'),
                 DB::raw('master.getNamaLengkap(p.NORM) AS NAMAPASIEN'),
                 DB::raw('master.getAlamatPasienCustom(p.NORM) AS ALAMATPASIEN'),
                 'ru.DESKRIPSI AS NAMARUANGAN',
