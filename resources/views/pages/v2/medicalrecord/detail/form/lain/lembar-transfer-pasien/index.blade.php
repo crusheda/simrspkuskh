@@ -87,10 +87,10 @@
             <div class="col-md-12">
                 <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
                 <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_lab')
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_laborat')
                 </div>
                 <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad_global')
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_radiologi')
                 </div>
             </div>
             <div class="col-md-12">

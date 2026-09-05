@@ -201,6 +201,7 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // PEMERIKSAAN PENUNJANG
                     // LABORAT
                         Route::get('emr/pengkajian/lab/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatLab']);
+                        Route::get('emr/pengkajian/laborat/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatLaborat']);
                     // RADIOLOGI
                     Route::get('emr/pengkajian/rad/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatRad']);
                     Route::get('emr/pengkajian/radiologi/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatRadiologi']);
