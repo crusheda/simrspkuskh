@@ -310,26 +310,132 @@
                             <strong><em>Objective </em>(O) : </strong>
                         </h5>
                     </div>
-                    <div class="row align-items-center" id="pemeriksaan_fisik">
+                    <div class="row align-items-start" id="pemeriksaan_fisik">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Pemeriksaan Fisik</label>
-                            <textarea class="form-control" name="pfisik" id="pfisik" rows="16">Palpasi Leopold :
-Leopold I   :
-Leopold II  :
-Leopold III :
-Leopold IV  :
+                        </div>
+                        <div class="col-md-6 mb-3" >
+                            <div class="row">
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Palpasi Leopold</label>
+                                </div>
+                                <div class="col-md-8 mb-2">
+                                    <input type="text" class="form-control form-control-sm" name="palpasi_leopold" id="palpasi_leopold">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Leopold I</label>
+                                </div>
+                                <div class="col-md-8 mb-2">
+                                    <input type="text" class="form-control form-control-sm" name="leopold1" id="leopold1">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Leopold II</label>
+                                </div>
+                                <div class="col-md-8 mb-2">
+                                    <input type="text" class="form-control form-control-sm" name="leopold2" id="leopold2">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Leopold III</label>
+                                </div>
+                                <div class="col-md-8 mb-2">
+                                    <input type="text" class="form-control form-control-sm" name="leopold3" id="leopold3">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Leopold IV</label>
+                                </div>
+                                <div class="col-md-8 mb-2">
+                                    <input type="text" class="form-control form-control-sm" name="leopold4" id="leopold4">
+                                </div>
+                                <div class="col-12 mb-2">
+                                    <label class="form-label fw-bold">Auskultasi</label>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">DJJ</label>
+                                </div>
+                                <div class="col-md-8 mb-2">
+                                    <div class="input-group input-group-sm">
+                                        <input type="number" class="form-control form-control-sm" name="aus_nadi">
+                                        <span class="input-group-text">
+                                            X/menit
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                </div>
+                                <div class="col-md-8 mb-2">
+                                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                                        <div class="form-check m-0 flex-shrink-0">
+                                            <input class="form-check-input single-checkbox" type="checkbox" name="aus_nadi_cb" value="1" checked>
+                                            <label class="form-check-label">
+                                                Reguler
+                                            </label>
+                                        </div>
 
-AUSKULTASI
-DJJ         :    x/m Regular / Irregular
+                                        {{-- IREGULER --}}
+                                        <div class="form-check m-0 flex-shrink-0">
+                                            <input class="form-check-input single-checkbox" type="checkbox" name="aus_nadi_cb" value="2" >
+                                            <label class="form-check-label">
+                                                Ireguler
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="row">
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Pemeriksaan Lain</label>
+                                </div>
+                                <div class="col-md-8 mb-2">
+                                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                                        <div class="form-check m-0 flex-shrink-0">
+                                            <input class="form-check-input single-checkbox" type="checkbox" name="pem_lain" value="1" checked>
+                                            <label class="form-check-label">
+                                                Panggul
+                                            </label>
+                                        </div>
 
-PEMERIKSAAN LAIN : Panggul / Osborn
-
-EXTREMITAS :
-
-REFLEK PATELA : (   /   )
-Uodema        : (   /   )
-
-*Keterangan: hapus pilihan yang tidak sesuai.</textarea>
+                                        {{-- IREGULER --}}
+                                        <div class="form-check m-0 flex-shrink-0">
+                                            <input class="form-check-input single-checkbox" type="checkbox" name="pem_lain" value="2" >
+                                            <label class="form-check-label">
+                                                Osborn
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Extremitas</label>
+                                </div>
+                                <div class="col-md-8 mb-2">
+                                    <input type="text" class="form-control form-control-sm" name="extremitas" id="extremitas">
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Reflek Patela</label>
+                                </div>
+                                <div class="col-md-8 mb-2">
+                                    <div class="input-group input-group-sm">
+                                        <input type="number" class="form-control form-control-sm" name="patela1">
+                                        <span class="input-group-text">
+                                            /
+                                        </span>
+                                        <input type="number" class="form-control form-control-sm" name="patela2">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="form-label">Uodema</label>
+                                </div>
+                                <div class="col-md-8 mb-2">
+                                    <div class="input-group input-group-sm">
+                                        <input type="number" class="form-control form-control-sm" name="uodema1">
+                                        <span class="input-group-text">
+                                            /
+                                        </span>
+                                        <input type="number" class="form-control form-control-sm" name="uodema2">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row align-items-center" id="pemeriksaan_penunjang">

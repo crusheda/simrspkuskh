@@ -203,13 +203,140 @@ class PengkajianRawatJalanObsgynController extends Controller
             );
 
             // Riwayat Pemeriksaan Fisik
+            DB::table('medicalrecord.sirmed_pemeriksaan_fisik_obsgyn')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    // 'PENDAFTARAN'  => DB::table('pendaftaran.kunjungan')->where('NOMOR', $request->NOKUNJ)->value('NOPEN'),
+                    'RJ_PALPASI'   => $request->palpasi_leopold,
+                    'RJ_LEOPOLD_1' => $request->leopold1,
+                    'RJ_LEOPOLD_2' => $request->leopold2,
+                    'RJ_LEOPOLD_3' => $request->leopold3,
+                    'RJ_LEOPOLD_4' => $request->leopold4,
+                    'RJ_DJJ'       => $request->aus_nadi,
+                    'RJ_AUSKULTASI'       => $request->aus_nadi_cb,
+                    'RJ_PEMERIKSAAN_LAIN' => $request->pem_lain,
+                    'RJ_EXTREMITAS'       => $request->extremitas,
+                    'RJ_PATELA_1'       => $request->patela1,
+                    'RJ_PATELA_2'       => $request->patela2,
+                    'RJ_UODEMA_1'       => $request->uodema1,
+                    'RJ_UODEMA_2'       => $request->uodema2,
+                    'OLEH'         => auth()->id(),
+                    'STATUS'       => 1,
+                    'TANGGAL'      => now()
+                ]
+            );
+            $auskultasi = '';
+
+            if ($request->aus_nadi_cb == 1) {
+                $auskultasi = 'Reguler';
+            } elseif ($request->aus_nadi_cb == 2) {
+                $auskultasi = 'Ireguler';
+            }
+
+            $pemeriksaanLain = '';
+
+            if ($request->pem_lain == 1) {
+                $pemeriksaanLain = 'Panggul';
+            } elseif ($request->pem_lain == 2) {
+                $pemeriksaanLain = 'Osborn';
+            }
+
+            $deskripsiItems = [];
+
+            // Palpasi Leopold
+            if ($request->filled('palpasi_leopold')) {
+                $deskripsiItems[] = 'Palpasi Leopold: ' . $request->palpasi_leopold;
+            }
+
+            // Leopold I
+            if ($request->filled('leopold1')) {
+                $deskripsiItems[] = 'Leopold I: ' . $request->leopold1;
+            }
+
+            // Leopold II
+            if ($request->filled('leopold2')) {
+                $deskripsiItems[] = 'Leopold II: ' . $request->leopold2;
+            }
+
+            // Leopold III
+            if ($request->filled('leopold3')) {
+                $deskripsiItems[] = 'Leopold III: ' . $request->leopold3;
+            }
+
+            // Leopold IV
+            if ($request->filled('leopold4')) {
+                $deskripsiItems[] = 'Leopold IV: ' . $request->leopold4;
+            }
+
+            // DJJ
+            if ($request->filled('aus_nadi')) {
+                $deskripsiItems[] = 'DJJ: ' . $request->aus_nadi . ' X/menit';
+            }
+
+            // Auskultasi
+            if ($request->filled('aus_nadi_cb')) {
+                $auskultasi = '';
+
+                if ($request->aus_nadi_cb == 1) {
+                    $auskultasi = 'Reguler';
+                } elseif ($request->aus_nadi_cb == 2) {
+                    $auskultasi = 'Ireguler';
+                }
+
+                if ($auskultasi !== '') {
+                    $deskripsiItems[] = 'Auskultasi: ' . $auskultasi;
+                }
+            }
+
+            // Pemeriksaan Lain
+            if ($request->filled('pem_lain')) {
+                $pemeriksaanLain = '';
+
+                if ($request->pem_lain == 1) {
+                    $pemeriksaanLain = 'Panggul';
+                } elseif ($request->pem_lain == 2) {
+                    $pemeriksaanLain = 'Osborn';
+                }
+
+                if ($pemeriksaanLain !== '') {
+                    $deskripsiItems[] = 'Pemeriksaan Lain: ' . $pemeriksaanLain;
+                }
+            }
+
+            // Extremitas
+            if ($request->filled('extremitas')) {
+                $deskripsiItems[] = 'Extremitas: ' . $request->extremitas;
+            }
+
+            // Reflek Patela
+            if ($request->filled('patela1') || $request->filled('patela2')) {
+                $deskripsiItems[] = 'Reflek Patela: '
+                    . ($request->patela1 ?? '')
+                    . ' / '
+                    . ($request->patela2 ?? '');
+            }
+
+            // Uodema
+            if ($request->filled('uodema1') || $request->filled('uodema2')) {
+                $deskripsiItems[] = 'Uodema: '
+                    . ($request->uodema1 ?? '')
+                    . ' / '
+                    . ($request->uodema2 ?? '');
+            }
+
+            // Gabungkan hanya yang memiliki isi
+            $deskripsi = implode("\n", $deskripsiItems);
+            // dd($deskripsi);
+
             DB::table('medicalrecord.pemeriksaan_fisik')->updateOrInsert(
                 [
                     'KUNJUNGAN' => $request->NOKUNJ
                 ],
                 [
                     'PENDAFTARAN'  => DB::table('pendaftaran.kunjungan')->where('NOMOR', $request->NOKUNJ)->value('NOPEN'),
-                    'DESKRIPSI'    => $request->pfisik,
+                    'DESKRIPSI'    => $deskripsi,
                     'OLEH'         => auth()->id(),
                     'STATUS'       => 1,
                     'TANGGAL'      => now()
@@ -430,18 +557,34 @@ class PengkajianRawatJalanObsgynController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['rpd'] = '';
-
         if ($rpp) {
             $data['rpd'] = $rpp->DESKRIPSI;
         }
 
         // Riwayat Pemeriksaan Fisik
-        $pemeriksaan_fisik = DB::table('medicalrecord.pemeriksaan_fisik')
+        $pemeriksaan_fisik_obsgyn = DB::table('medicalrecord.sirmed_pemeriksaan_fisik_obsgyn')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['pfisik'] = '';
+        if ($pemeriksaan_fisik_obsgyn) {
+            $data['palpasi_leopold'] = $pemeriksaan_fisik_obsgyn->RJ_PALPASI;
+            $data['leopold1'] = $pemeriksaan_fisik_obsgyn->RJ_LEOPOLD_1;
+            $data['leopold2'] = $pemeriksaan_fisik_obsgyn->RJ_LEOPOLD_2;
+            $data['leopold3'] = $pemeriksaan_fisik_obsgyn->RJ_LEOPOLD_3;
+            $data['leopold4'] = $pemeriksaan_fisik_obsgyn->RJ_LEOPOLD_4;
+            $data['aus_nadi'] = $pemeriksaan_fisik_obsgyn->RJ_DJJ;
+            $data['aus_nadi_cb'] = $pemeriksaan_fisik_obsgyn->RJ_AUSKULTASI;
+            $data['pem_lain'] = $pemeriksaan_fisik_obsgyn->RJ_LEOPOLD2;
+            $data['extremitas'] = $pemeriksaan_fisik_obsgyn->RJ_LEOPOLD3;
+            $data['patela1'] = $pemeriksaan_fisik_obsgyn->RJ_PATELA_1;
+            $data['patela2'] = $pemeriksaan_fisik_obsgyn->RJ_PATELA_2;
+            $data['uodema1'] = $pemeriksaan_fisik_obsgyn->RJ_UODEMA_1;
+            $data['uodema2'] = $pemeriksaan_fisik_obsgyn->RJ_UODEMA_2;
+            }
+
+        $pemeriksaan_fisik = DB::table('medicalrecord.pemeriksaan_fisik')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
 
         if ($pemeriksaan_fisik) {
             $data['pfisik'] = $pemeriksaan_fisik->DESKRIPSI;
@@ -472,9 +615,6 @@ class PengkajianRawatJalanObsgynController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
-        $data['tl'] = '';
-        $data['rujuk'] = '';
-        $data['rujuk_lainnya'] = '';
 
         if ($tindak_lanjut) {
             $data['tl'] = $tindak_lanjut->TINDAK_LANJUT;
@@ -486,12 +626,6 @@ class PengkajianRawatJalanObsgynController extends Controller
         $perencanaan = DB::table('medicalrecord.perencanaan_rawat_inap')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['pri_ruang'] = '';
-        $data['pri_perawatan'] = '';
-        $data['pri_indikasi'] = '';
-        $data['pri_ket'] = '';
-        $data['pri_dpjp'] = '';
 
         if ($perencanaan) {
             $data['pri_ruang'] = $perencanaan->JENIS_RUANG_PERAWATAN;
@@ -505,20 +639,6 @@ class PengkajianRawatJalanObsgynController extends Controller
         $reproduksi = DB::table('medicalrecord.sirmed_status_reproduksi')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
-
-        $data['kb_suntik'] = 0;
-        $data['kb_iud'] = 0;
-        $data['kb_pil'] = 0;
-        $data['kb_kondom'] = 0;
-        $data['kb_kalender'] = 0;
-        $data['kb_mow'] = 0;
-        $data['kb_mop'] = 0;
-        $data['kb_implan'] = 0;
-
-        $data['kb_keluhan'] = '';
-
-        $data['menstruasi_teratur'] = '';
-        $data['menstruasi_keluhan'] = '';
 
         if ($reproduksi) {
             $data['kb_suntik'] = (int) $reproduksi->KB_SUNTIK;

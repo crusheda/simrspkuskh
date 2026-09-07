@@ -112,10 +112,10 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_lab')
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_laborat')
                 </div>
                 <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad')
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_radiologi')
                 </div>
                 <div class="form-group mb-3">
                     <h6 class="mb-2">Diagnosa Pra Operasi</h6>
