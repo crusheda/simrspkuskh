@@ -29,6 +29,7 @@ use App\Http\Controllers\EMR\Form\RawatInap\PengkajianRawatInapObsgynController;
 use App\Http\Controllers\EMR\Form\BedahAnestesi\PengkajianPraBedahController;
 use App\Http\Controllers\EMR\Form\BedahAnestesi\PengkajianPraAnestesiInduksiController;
 use App\Http\Controllers\EMR\Form\BedahAnestesi\PengkajianLaporanAnestesiController;
+use App\Http\Controllers\EMR\Form\BedahAnestesi\PengkajianLaporanPascaAnestesiController;
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususRemajaController;
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususTerminalController;
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususNyeriKronikController;
@@ -161,6 +162,13 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                             Route::get('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}/monitoring-detail', [PengkajianLaporanAnestesiController::class, 'getDiagramMonitoringAnestesiDetail']);
                             Route::post('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}/monitoring-detail/simpan', [PengkajianLaporanAnestesiController::class, 'simpanDiagramMonitoringAnestesiDetail']);
                             Route::delete('emr/form/pengkajian/bedans/laporananestesi/{kunjungan}/monitoring-detail/hapus/{id}', [PengkajianLaporanAnestesiController::class, 'hapusDiagramMonitoringAnestesiDetail']);
+                        // LAPORAN PASCA ANESTESI
+                            Route::get('emr/form/pengkajian/bedans/laporanpascaanestesi/{kunjungan}', [PengkajianLaporanPascaAnestesiController::class, 'getForm']);
+                            Route::post('emr/form/pengkajian/bedans/laporanpascaanestesi/{kunjungan}/simpan', [PengkajianLaporanPascaAnestesiController::class, 'simpanForm']);
+                            // DETAIL MONITORING ANESTESI (ZAT, TEMPERATUR, CAIRAN)
+                            Route::get('emr/form/pengkajian/bedans/laporanpascaanestesi/{kunjungan}/monitoring', [PengkajianLaporanPascaAnestesiController::class, 'getMonitoringPascaAnestesi']);
+                            Route::post('emr/form/pengkajian/bedans/laporanpascaanestesi/{kunjungan}/monitoring/simpan', [PengkajianLaporanPascaAnestesiController::class, 'simpanMonitoringPascaAnestesi']);
+                            Route::delete('emr/form/pengkajian/bedans/laporanpascaanestesi/{kunjungan}/monitoring/hapus', [PengkajianLaporanPascaAnestesiController::class, 'hapusMonitoringPascaAnestesi']);
 
                 // KHUSUS
                     // REMAJA

@@ -53,8 +53,4 @@ class PengkajianRawatInapDewasaController extends Controller
         return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.dewasa.index')->with('list',$data);
     }
 
-    function getFormDokterRI()
-    {
-
-    }
 }

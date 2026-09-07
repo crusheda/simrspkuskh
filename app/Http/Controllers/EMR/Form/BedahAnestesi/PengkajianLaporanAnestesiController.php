@@ -53,7 +53,7 @@ class PengkajianLaporanAnestesiController extends Controller
 
         if (!$data) {
             return response()->json([
-                'success' => true,
+                'success' => false,
                 'data' => null,
             ]);
         }
@@ -170,6 +170,10 @@ class PengkajianLaporanAnestesiController extends Controller
 
             'LA_CATATAN' => $request->input('la_catatan'),
 
+            'TANGGAL' => now(),
+            'OLEH' => auth()->user()->ID ?? auth()->id(),
+            'STATUS' => 1,
+
             'updated_at' => now(),
         ];
 
@@ -263,6 +267,9 @@ class PengkajianLaporanAnestesiController extends Controller
             'INDIKATOR' => $validated['indikator'],
             'NILAI' => (string) $validated['nilai'],
             'KETERANGAN' => $validated['keterangan'] ?? null,
+            'TANGGAL' => now(),
+            'OLEH' => auth()->user()->ID ?? auth()->id(),
+            'STATUS' => 1,
             'updated_at' => now(),
         ];
 
@@ -576,6 +583,9 @@ class PengkajianLaporanAnestesiController extends Controller
                 ? trim($validated['zat'])
                 : null,
             'KETERANGAN' => $validated['keterangan'] ?? null,
+            'TANGGAL' => now(),
+            'OLEH' => auth()->user()->ID ?? auth()->id(),
+            'STATUS' => 1,
             'updated_at' => now(),
         ];
 

@@ -696,493 +696,496 @@
 
         </div>
     </div>
-</div>
 
-{{-- MODAL MONITORING ANESTESI --}}
-<div class="modal fade" id="modalPilihIndikatorAnestesi" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header py-2">
-                <h5 class="modal-title">Monitoring Anestesi</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label">
-                        Waktu
-                        <span class="badge bg-primary-subtle text-primary p-1 ms-1" id="anestesiMonitoringMenit">-</span>
-                    </label>
-                    <input type="text" class="form-control" id="anestesiMonitoringWaktu" readonly>
+    {{-- ==========================================================
+        MODAL MONITORING ANESTESI
+    =========================================================== --}}
+    <div class="modal fade" id="modalPilihIndikatorAnestesi" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title">Monitoring Anestesi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Waktu
+                            <span class="badge bg-primary-subtle text-primary p-1 ms-1" id="anestesiMonitoringMenit">-</span>
+                        </label>
+                        <input type="text" class="form-control" id="anestesiMonitoringWaktu" readonly>
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Nilai</label>
-                    <input type="number" class="form-control" id="anestesiMonitoringNilai" min="0" max="300" step="1">
-                    <small class="text-muted">Nilai bebas 0–300</small>
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nilai</label>
+                        <input type="number" class="form-control" id="anestesiMonitoringNilai" min="0" max="300" step="1">
+                        <small class="text-muted">Nilai bebas 0–300</small>
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Indikator</label>
-                    <select class="form-select" id="anestesiMonitoringIndikator">
-                        <option value="">Pilih indikator</option>
-                        <option value="tensi_rendah">Tensi Rendah</option>
-                        <option value="tensi_tinggi">Tensi Tinggi</option>
-                        <option value="nadi">Nadi</option>
-                        <option value="resp_sr">Resp SR</option>
-                        <option value="resp_ar">Resp AR</option>
-                        <option value="resp_cr">Resp CR</option>
-                    </select>
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label">Indikator</label>
+                        <select class="form-select" id="anestesiMonitoringIndikator">
+                            <option value="">Pilih indikator</option>
+                            <option value="tensi_rendah">Tensi Rendah</option>
+                            <option value="tensi_tinggi">Tensi Tinggi</option>
+                            <option value="nadi">Nadi</option>
+                            <option value="resp_sr">Resp SR</option>
+                            <option value="resp_ar">Resp AR</option>
+                            <option value="resp_cr">Resp CR</option>
+                        </select>
+                    </div>
 
-                <div>
-                    <label class="form-label">Keterangan</label>
-                    <textarea class="form-control" id="anestesiMonitoringKeterangan" rows="2" placeholder="Keterangan..."></textarea>
+                    <div>
+                        <label class="form-label">Keterangan</label>
+                        <textarea class="form-control" id="anestesiMonitoringKeterangan" rows="2" placeholder="Keterangan..."></textarea>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer py-2">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-success" id="btnSimpanMonitoringAnestesi">
-                    <i class="ri-save-line me-1"></i>
-                    Simpan
-                </button>
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-success" id="btnSimpanMonitoringAnestesi">
+                        <i class="ri-save-line me-1"></i>
+                        Simpan
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-{{-- ==========================================================
-    MODAL ZAT ANESTESI
-=========================================================== --}}
-<div
-    class="modal fade"
-    id="modalZatAnestesi"
-    tabindex="-1"
-    aria-hidden="true"
->
-    <div class="modal-dialog modal-sm modal-dialog-centered">
+    {{-- ==========================================================
+        MODAL ZAT ANESTESI
+    =========================================================== --}}
+    <div
+        class="modal fade"
+        id="modalZatAnestesi"
+        tabindex="-1"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog modal-sm modal-dialog-centered">
 
-        <div class="modal-content">
+            <div class="modal-content">
 
-            <div class="modal-header py-2">
+                <div class="modal-header py-2">
 
-                <h5 class="modal-title">
-                    Zat Anestesi
-                </h5>
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                ></button>
-
-            </div>
-
-
-            <div class="modal-body">
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        Menit
-                        <span
-                            class="badge bg-primary-subtle text-primary ms-1"
-                            id="zatAnestesiMenitBadge"
-                        >
-                            Menit 0
-                        </span>
-                    </label>
-
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="zatAnestesiWaktu"
-                        readonly
-                    >
-
-                </div>
-
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        Baris
-                    </label>
-
-                    <select
-                        class="form-select"
-                        id="zatAnestesiBaris"
-                    >
-                        <option value="">Pilih baris</option>
-                        <option value="1">Baris 1</option>
-                        <option value="2">Baris 2</option>
-                        <option value="3">Baris 3</option>
-                        <option value="4">Baris 4</option>
-                        <option value="5">Baris 5</option>
-                    </select>
-
-                </div>
-
-
-                <div class="mb-3">
-
-                    <label class="form-label">
+                    <h5 class="modal-title">
                         Zat Anestesi
-                    </label>
+                    </h5>
 
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="zatAnestesiNama"
-                        placeholder="Contoh: Propofol"
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                    ></button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Menit
+                            <span
+                                class="badge bg-primary-subtle text-primary ms-1"
+                                id="zatAnestesiMenitBadge"
+                            >
+                                Menit 0
+                            </span>
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="zatAnestesiWaktu"
+                            readonly
+                        >
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Baris
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="zatAnestesiBaris"
+                        >
+                            <option value="">Pilih baris</option>
+                            <option value="1">Baris 1</option>
+                            <option value="2">Baris 2</option>
+                            <option value="3">Baris 3</option>
+                            <option value="4">Baris 4</option>
+                            <option value="5">Baris 5</option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Zat Anestesi
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="zatAnestesiNama"
+                            placeholder="Contoh: Propofol"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="form-label">
+                            Keterangan
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            id="zatAnestesiKeterangan"
+                            rows="2"
+                            placeholder="Keterangan..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer py-2">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
                     >
+                        Batal
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-success"
+                        id="btnSimpanZatAnestesi"
+                    >
+                        <i class="ri-save-line me-1"></i>
+                        Simpan
+                    </button>
 
                 </div>
-
-
-                <div>
-
-                    <label class="form-label">
-                        Keterangan
-                    </label>
-
-                    <textarea
-                        class="form-control"
-                        id="zatAnestesiKeterangan"
-                        rows="2"
-                        placeholder="Keterangan..."
-                    ></textarea>
-
-                </div>
-
-            </div>
-
-
-            <div class="modal-footer py-2">
-
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                >
-                    Batal
-                </button>
-
-                <button
-                    type="button"
-                    class="btn btn-success"
-                    id="btnSimpanZatAnestesi"
-                >
-                    <i class="ri-save-line me-1"></i>
-                    Simpan
-                </button>
 
             </div>
 
         </div>
-
     </div>
-</div>
 
-{{-- ==========================================================
-    MODAL TEMPERATUR
-=========================================================== --}}
-<div
-    class="modal fade"
-    id="modalTemperaturAnestesi"
-    tabindex="-1"
-    aria-hidden="true"
->
-    <div class="modal-dialog modal-sm modal-dialog-centered">
+    {{-- ==========================================================
+        MODAL TEMPERATUR
+    =========================================================== --}}
+    <div
+        class="modal fade"
+        id="modalTemperaturAnestesi"
+        tabindex="-1"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog modal-sm modal-dialog-centered">
 
-        <div class="modal-content">
+            <div class="modal-content">
 
-            <div class="modal-header py-2">
+                <div class="modal-header py-2">
 
-                <h5 class="modal-title">
-                    Temperatur
-                </h5>
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                ></button>
-
-            </div>
-
-
-            <div class="modal-body">
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-
-                        Menit
-
-                        <span
-                            class="badge bg-primary-subtle text-primary ms-1"
-                            id="temperaturMenitBadge"
-                        >
-                            Menit 0
-                        </span>
-
-                    </label>
-
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="temperaturWaktu"
-                        readonly
-                    >
-
-                </div>
-
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        Jenis
-                    </label>
-
-                    <select
-                        class="form-select"
-                        id="temperaturJenis"
-                    >
-                        <option value="">
-                            Pilih
-                        </option>
-
-                        <option value="oral">
-                            Oral
-                        </option>
-
-                        <option value="rectal">
-                            Rectal
-                        </option>
-                    </select>
-
-                </div>
-
-
-                <div class="mb-3">
-
-                    <label class="form-label">
+                    <h5 class="modal-title">
                         Temperatur
-                    </label>
+                    </h5>
 
-                    <div class="input-group">
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                    ></button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Menit
+
+                            <span
+                                class="badge bg-primary-subtle text-primary ms-1"
+                                id="temperaturMenitBadge"
+                            >
+                                Menit 0
+                            </span>
+
+                        </label>
 
                         <input
-                            type="number"
+                            type="text"
                             class="form-control"
-                            id="temperaturNilai"
-                            min="0"
-                            max="300"
-                            step="0.1"
+                            id="temperaturWaktu"
+                            readonly
                         >
 
-                        <span class="input-group-text">
-                            °C
-                        </span>
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Jenis
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="temperaturJenis"
+                        >
+                            <option value="">
+                                Pilih
+                            </option>
+
+                            <option value="oral">
+                                Oral
+                            </option>
+
+                            <option value="rectal">
+                                Rectal
+                            </option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Temperatur
+                        </label>
+
+                        <div class="input-group">
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="temperaturNilai"
+                                min="0"
+                                max="300"
+                                step="0.1"
+                            >
+
+                            <span class="input-group-text">
+                                °C
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="form-label">
+                            Keterangan
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            id="temperaturKeterangan"
+                            rows="2"
+                        ></textarea>
 
                     </div>
 
                 </div>
 
 
-                <div>
+                <div class="modal-footer py-2">
 
-                    <label class="form-label">
-                        Keterangan
-                    </label>
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Batal
+                    </button>
 
-                    <textarea
-                        class="form-control"
-                        id="temperaturKeterangan"
-                        rows="2"
-                    ></textarea>
+                    <button
+                        type="button"
+                        class="btn btn-success"
+                        id="btnSimpanTemperatur"
+                    >
+                        <i class="ri-save-line me-1"></i>
+                        Simpan
+                    </button>
 
                 </div>
-
-            </div>
-
-
-            <div class="modal-footer py-2">
-
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                >
-                    Batal
-                </button>
-
-                <button
-                    type="button"
-                    class="btn btn-success"
-                    id="btnSimpanTemperatur"
-                >
-                    <i class="ri-save-line me-1"></i>
-                    Simpan
-                </button>
 
             </div>
 
         </div>
-
     </div>
-</div>
 
-{{-- ==========================================================
-    MODAL CAIRAN
-=========================================================== --}}
-<div
-    class="modal fade"
-    id="modalCairanAnestesi"
-    tabindex="-1"
-    aria-hidden="true"
->
-    <div class="modal-dialog modal-sm modal-dialog-centered">
+    {{-- ==========================================================
+        MODAL CAIRAN
+    =========================================================== --}}
+    <div
+        class="modal fade"
+        id="modalCairanAnestesi"
+        tabindex="-1"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog modal-sm modal-dialog-centered">
 
-        <div class="modal-content">
+            <div class="modal-content">
 
-            <div class="modal-header py-2">
+                <div class="modal-header py-2">
 
-                <h5 class="modal-title">
-                    Cairan
-                </h5>
+                    <h5 class="modal-title">
+                        Cairan
+                    </h5>
 
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                ></button>
-
-            </div>
-
-
-            <div class="modal-body">
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-
-                        Menit
-
-                        <span
-                            class="badge bg-primary-subtle text-primary ms-1"
-                            id="cairanMenitBadge"
-                        >
-                            Menit 0
-                        </span>
-
-                    </label>
-
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="cairanWaktu"
-                        readonly
-                    >
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                    ></button>
 
                 </div>
 
 
-                <div class="mb-3">
+                <div class="modal-body">
 
-                    <label class="form-label">
-                        Jenis
-                    </label>
+                    <div class="mb-3">
 
-                    <select
-                        class="form-select"
-                        id="cairanJenis"
-                    >
+                        <label class="form-label">
 
-                        <option value="">
-                            Pilih
-                        </option>
+                            Menit
 
-                        <option value="masuk">
-                            Masuk
-                        </option>
+                            <span
+                                class="badge bg-primary-subtle text-primary ms-1"
+                                id="cairanMenitBadge"
+                            >
+                                Menit 0
+                            </span>
 
-                        <option value="keluar">
-                            Keluar
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="mb-3">
-
-                    <label class="form-label">
-                        Jumlah
-                    </label>
-
-                    <div class="input-group">
+                        </label>
 
                         <input
-                            type="number"
+                            type="text"
                             class="form-control"
-                            id="cairanNilai"
-                            min="0"
-                            max="300"
-                            step="1"
+                            id="cairanWaktu"
+                            readonly
                         >
 
-                        <span class="input-group-text">
-                            ml
-                        </span>
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Jenis
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="cairanJenis"
+                        >
+
+                            <option value="">
+                                Pilih
+                            </option>
+
+                            <option value="masuk">
+                                Masuk
+                            </option>
+
+                            <option value="keluar">
+                                Keluar
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Jumlah
+                        </label>
+
+                        <div class="input-group">
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="cairanNilai"
+                                min="0"
+                                max="300"
+                                step="1"
+                            >
+
+                            <span class="input-group-text">
+                                ml
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="form-label">
+                            Keterangan
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            id="cairanKeterangan"
+                            rows="2"
+                        ></textarea>
 
                     </div>
 
                 </div>
 
 
-                <div>
+                <div class="modal-footer py-2">
 
-                    <label class="form-label">
-                        Keterangan
-                    </label>
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Batal
+                    </button>
 
-                    <textarea
-                        class="form-control"
-                        id="cairanKeterangan"
-                        rows="2"
-                    ></textarea>
+                    <button
+                        type="button"
+                        class="btn btn-success"
+                        id="btnSimpanCairan"
+                    >
+                        <i class="ri-save-line me-1"></i>
+                        Simpan
+                    </button>
 
                 </div>
 
             </div>
 
-
-            <div class="modal-footer py-2">
-
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                >
-                    Batal
-                </button>
-
-                <button
-                    type="button"
-                    class="btn btn-success"
-                    id="btnSimpanCairan"
-                >
-                    <i class="ri-save-line me-1"></i>
-                    Simpan
-                </button>
-
-            </div>
-
         </div>
-
     </div>
+
 </div>
 
 <script>
@@ -1902,14 +1905,14 @@
             });
         }
     );
-    $(document).on(
+    $form.on(
         'click',
         '#btnSimpanMonitoringAnestesi',
         function () {
             simpanMonitoring();
         }
     );
-    $(document).on(
+    $form.on(
         'hidden.bs.modal',
         '#modalPilihIndikatorAnestesi',
         function () {
@@ -3534,21 +3537,21 @@
     // ==========================================================
     // EVENT
     // ==========================================================
-    $(document).on(
+    $form.on(
         'click',
         '#btnSimpanZatAnestesi',
         function () {
             simpanZatAnestesi();
         }
     );
-    $(document).on(
+    $form.on(
         'click',
         '#btnSimpanTemperatur',
         function () {
             simpanTemperatur();
         }
     );
-    $(document).on(
+    $form.on(
         'click',
         '#btnSimpanCairan',
         function () {
@@ -3558,7 +3561,7 @@
     // ==========================================================
     // REFRESH ZAT
     // ==========================================================
-    $(document).on(
+    $form.on(
         'click',
         '#btnRefreshZatAnestesi',
         function () {
@@ -3568,7 +3571,7 @@
     // ==========================================================
     // REFRESH TEMPERATUR
     // ==========================================================
-    $(document).on(
+    $form.on(
         'click',
         '#btnRefreshTemperatur',
         function () {
@@ -3578,7 +3581,7 @@
     // ==========================================================
     // REFRESH CAIRAN
     // ==========================================================
-    $(document).on(
+    $form.on(
         'click',
         '#btnRefreshCairan',
         function () {
@@ -3588,21 +3591,21 @@
     // ==========================================================
     // MODAL CLOSED
     // ==========================================================
-    $(document).on(
+    $form.on(
         'hidden.bs.modal',
         '#modalZatAnestesi',
         function () {
             resetZatModal();
         }
     );
-    $(document).on(
+    $form.on(
         'hidden.bs.modal',
         '#modalTemperaturAnestesi',
         function () {
             resetTemperaturModal();
         }
     );
-    $(document).on(
+    $form.on(
         'hidden.bs.modal',
         '#modalCairanAnestesi',
         function () {
