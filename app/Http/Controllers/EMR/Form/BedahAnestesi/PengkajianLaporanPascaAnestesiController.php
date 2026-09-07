@@ -101,6 +101,11 @@ class PengkajianLaporanPascaAnestesiController extends Controller
             'ipa_obt_1' => ['nullable', 'string'],
             'ipa_obt_2' => ['nullable', 'string'],
             'ipa_obt_3' => ['nullable', 'string'],
+
+            'ipa_sadarjam' => ['nullable', 'date_format:H:i'],
+            'ipa_pindahjam' => ['nullable', 'date_format:H:i'],
+
+            'ipa_penyulit' => ['nullable'],
         ]);
 
         $NOKUNJ = $request->NOKUNJ ?? $KUNJUNGAN;
@@ -138,6 +143,10 @@ class PengkajianLaporanPascaAnestesiController extends Controller
             'ipa_obt_1' => $request->input('ipa_obt_1'),
             'ipa_obt_2' => $request->input('ipa_obt_2'),
             'ipa_obt_3' => $request->input('ipa_obt_3'),
+
+            'ipa_sadarjam' => $request->input('ipa_sadarjam'),
+            'ipa_pindahjam' => $request->input('ipa_pindahjam'),
+            'ipa_penyulit' => $request->input('ipa_penyulit'),
 
             'TANGGAL' => now(),
             'OLEH' => auth()->user()->ID ?? auth()->id(),

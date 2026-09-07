@@ -177,6 +177,31 @@
                     </div>
                     <div class="card-body p-2 pb-4">
                         <div id="monitoringPascaAnestesiChart" style="min-height:500px;" class="p-2"></div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <div class="d-flex align-items-center gap-2 w-100">
+                                        <label class="form-label flex-shrink-0 mb-0">Penderita sadar pada jam </label>
+                                        <input type="time" class="form-control form-control-sm flex-grow-1" name="ipa_sadarjam" placeholder="...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <div class="d-flex align-items-center gap-2 w-100">
+                                        <label class="form-label flex-shrink-0 mb-0">Dipindahkan dari RR pada jam </label>
+                                        <input type="time" class="form-control form-control-sm flex-grow-1" name="ipa_pindahjam" placeholder="...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">Penyulit yang timbul selama perawatan di R.R.</label>
+                                    <textarea class="form-control" name="ipa_penyulit" rows="2" placeholder=". . ."></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -325,7 +350,10 @@
         IPA_SS_ICU: 'ipa_ss_icu',
         IPA_OBT_1: 'ipa_obt_1',
         IPA_OBT_2: 'ipa_obt_2',
-        IPA_OBT_3: 'ipa_obt_3'
+        IPA_OBT_3: 'ipa_obt_3',
+        IPA_SADARJAM: 'ipa_sadarjam',
+        IPA_PINDAHJAM: 'ipa_pindahjam',
+        IPA_PENYULIT: 'ipa_penyulit'
     };
 
     /* ==========================================================
