@@ -14,7 +14,9 @@ use PHPJasper\PHPJasper;
 use Carbon\Carbon;
 use Auth, Storage;
 
+//////////////////////////////////////////////////////////////////////////////////////////
 // CONTROLLER FORM
+//////////////////////////////////////////////////////////////////////////////////////////
 use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
@@ -43,6 +45,7 @@ use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususLanjutanController;
 
 use App\Http\Controllers\EMR\Form\Lain\LembarTransferPasienInternalController;
 
+//////////////////////////////////////////////////////////////////////////////////////////
 class EMRController extends Controller
 {
     // INDEX
@@ -793,11 +796,21 @@ class EMRController extends Controller
     public function showCPPT($PKUNJUNGAN)
     {
         $getInit = DB::table('pendaftaran.kunjungan AS pk')
-                    ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
-                    ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
-                    ->select('pk.NOPEN','ps.NORM',DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'))
-                    ->where('pk.NOMOR',$PKUNJUNGAN)
-                    ->first();
+            ->leftJoin('pendaftaran.pendaftaran AS pp', 'pp.NOMOR', '=', 'pk.NOPEN')
+            ->leftJoin('master.pasien AS ps', 'ps.NORM', '=', 'pp.NORM')
+            ->select(
+                'pk.NOPEN',
+                'ps.NORM',
+                DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN')
+            )
+            ->where('pk.NOMOR', $PKUNJUNGAN)
+            ->first();
+
+        if (!$getInit) {
+            return response()->json([
+                'message' => 'Data kunjungan tidak ditemukan.'
+            ], 404);
+        }
 
         $PNOPEN = $getInit->NOPEN;
 
@@ -813,86 +826,24 @@ class EMRController extends Controller
             ->leftJoin('medicalrecord.verifikasi_cppt as vcp', 'cp.VERIFIKASI', '=', 'vcp.ID')
             ->leftJoin('aplikasi.pengguna as vr', 'vcp.OLEH', '=', 'vr.ID')
             ->leftJoin('pendaftaran.kunjungan as pk', 'cp.KUNJUNGAN', '=', 'pk.NOMOR')
-            ->where('cp.KUNJUNGAN', '=', DB::raw('pk.NOMOR'))
             ->where('cp.STATUS', '!=', 0)
-            ->where('pk.NOPEN', '=', $PNOPEN)
-            ->where('cp.KUNJUNGAN', '=', $PKUNJUNGAN)
+            ->where('pk.NOPEN', $PNOPEN)
+            ->where('cp.KUNJUNGAN', $PKUNJUNGAN)
             ->select([
-                DB::raw("CONCAT(DATE_FORMAT(cp.TANGGAL, '%d-%m-%Y'), ' ', TIME(cp.TANGGAL)) AS TANGGAL"),
                 DB::raw("
-                    IF(
-                        (
-                            SELECT r.CONFIG->>'$.dietisen'
-                            FROM master.referensi r
-                            WHERE r.JENIS = 32
-                            AND r.ID = cp.JENIS
-                        ) = 'true',
-                        CONCAT(
-                            '<b>A/ :</b> ',
-                            REPLACE(REPLACE(master.getReplaceFont(cp.SUBYEKTIF), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                            ' <br/><br/> ',
-                            '<b>D/ :</b> ',
-                            REPLACE(REPLACE(master.getReplaceFont(cp.OBYEKTIF), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                            ' <br/><br/> ',
-                            '<b>I/ :</b> ',
-                            REPLACE(REPLACE(master.getReplaceFont(cp.ASSESMENT), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                            ' <br/><br/> ',
-                            '<b>ME/ :</b> ',
-                            REPLACE(REPLACE(master.getReplaceFont(cp.PLANNING), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                            ' <br/><br/>'
-                        ),
-                        IF(
-                            cp.STATUS_SBAR = 1,
-                            CONCAT(
-                                '<b>S/ :</b> ',
-                                REPLACE(REPLACE(master.getReplaceFont(cp.SUBYEKTIF), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                                ' <br/><br/> ',
-                                '<b>B/ :</b> ',
-                                REPLACE(REPLACE(master.getReplaceFont(cp.OBYEKTIF), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                                ' <br/><br/> ',
-                                '<b>A/ :</b> ',
-                                REPLACE(REPLACE(master.getReplaceFont(cp.ASSESMENT), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                                ' <br/><br/> ',
-                                '<b>R/ :</b> ',
-                                REPLACE(REPLACE(master.getReplaceFont(cp.PLANNING), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                                ' <br/><br/> ',
-                                '<b>Dokter/ :</b> ',
-                                IFNULL(master.getNamaLengkapPegawai(dc.NIP), '')
-                            ),
-                            IF(
-                                cp.STATUS_TBAK = 1,
-                                CONCAT(
-                                    '<b>Tulis/ :</b> ',
-                                    REPLACE(REPLACE(master.remove_html_tags(cp.TULIS), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                                    ' <br/><br/> ',
-                                    '<b>Baca/ :</b> ',
-                                    IF(cp.BACA = 0, 'Belum Baca', 'Sudah Baca'),
-                                    ' ',
-                                    '<b>Konfirmasi/ :</b> ',
-                                    IF(cp.KONFIRMASI = 0, 'Belum Konfirmasi', 'Sudah Konfirmasi'),
-                                    ' ',
-                                    '<b>Dokter/ :</b> ',
-                                    IFNULL(master.getNamaLengkapPegawai(dc.NIP), '')
-                                ),
-                                CONCAT(
-                                    '<b>S/ :</b> ',
-                                    REPLACE(REPLACE(master.getReplaceFont(cp.SUBYEKTIF), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                                    ' <br/><br/> ',
-                                    '<b>O/ :</b> ',
-                                    REPLACE(REPLACE(master.getReplaceFont(cp.OBYEKTIF), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                                    ' <br/><br/> ',
-                                    '<b>A/ :</b> ',
-                                    REPLACE(REPLACE(master.getReplaceFont(cp.ASSESMENT), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                                    ' <br/><br/> ',
-                                    '<b>P/ :</b> ',
-                                    REPLACE(REPLACE(master.getReplaceFont(cp.PLANNING), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
-                                    ' <br/><br/>'
-                                )
-                            )
-                        )
-                    ) AS CATATAN
+                    CONCAT(
+                        DATE_FORMAT(cp.TANGGAL, '%d-%m-%Y'),
+                        ' ',
+                        TIME(cp.TANGGAL)
+                    ) AS TANGGAL
                 "),
-                DB::raw("master.getReplaceFont(cp.INSTRUKSI) AS INSTRUKSI"),
+
+                DB::raw("'' AS CATATAN"),
+
+                DB::raw("
+                    master.getReplaceFont(cp.INSTRUKSI) AS INSTRUKSI
+                "),
+
                 DB::raw("
                     IF(
                         ref.REF_ID = '4',
@@ -900,6 +851,7 @@ class EMRController extends Controller
                         ''
                     ) AS DOKTER
                 "),
+
                 DB::raw("
                     IF(
                         ref.REF_ID = '6',
@@ -911,7 +863,9 @@ class EMRController extends Controller
                         )
                     ) AS PERAWAT
                 "),
+
                 'ref.DESKRIPSI as JNSPPA',
+
                 DB::raw("
                     CONCAT(
                         IF(
@@ -939,8 +893,19 @@ class EMRController extends Controller
                         )
                     ) AS PPA
                 "),
-                DB::raw("CONCAT(DATE_FORMAT(vcp.TANGGAL, '%d-%m-%Y'), ' ', TIME(vcp.TANGGAL)) AS TGLVERIFIKASI"),
-                DB::raw("master.getNamaLengkapPegawai(vr.NIP) AS VERIFIKATOR"),
+
+                DB::raw("
+                    CONCAT(
+                        DATE_FORMAT(vcp.TANGGAL, '%d-%m-%Y'),
+                        ' ',
+                        TIME(vcp.TANGGAL)
+                    ) AS TGLVERIFIKASI
+                "),
+
+                DB::raw("
+                    master.getNamaLengkapPegawai(vr.NIP) AS VERIFIKATOR
+                "),
+
                 DB::raw("
                     CONCAT(
                         master.getNamaLengkapPegawai(vr.NIP),
@@ -950,6 +915,7 @@ class EMRController extends Controller
                         TIME(vcp.TANGGAL)
                     ) AS VERIFIKASI
                 "),
+
                 DB::raw("
                     IF(
                         cp.STATUS_SBAR = 1,
@@ -960,14 +926,124 @@ class EMRController extends Controller
                             ''
                         )
                     ) AS TBAK_SBAR
-                ")
+                "),
+
+                // Field internal untuk membangun CATATAN.
+                'cp.SUBYEKTIF as _CPPT_SUBYEKTIF',
+                'cp.OBYEKTIF as _CPPT_OBYEKTIF',
+                'cp.ASSESMENT as _CPPT_ASSESMENT',
+                'cp.PLANNING as _CPPT_PLANNING',
+                'cp.TULIS as _CPPT_TULIS',
+                'cp.BACA as _CPPT_BACA',
+                'cp.KONFIRMASI as _CPPT_KONFIRMASI',
+                'cp.STATUS_SBAR as _CPPT_STATUS_SBAR',
+                'cp.STATUS_TBAK as _CPPT_STATUS_TBAK',
+
+                DB::raw("
+                    ref.CONFIG->>'$.dietisen' AS _CPPT_DIETISEN
+                "),
+
+                DB::raw("
+                    IFNULL(
+                        master.getNamaLengkapPegawai(dc.NIP),
+                        ''
+                    ) AS _CPPT_DOKTER_TBAK
+                "),
             ])
             ->orderBy('cp.TANGGAL', 'DESC')
             ->get();
 
+        $show->transform(function ($item) {
+
+            $subyektif = $this->normalizeCpptHtml($item->_CPPT_SUBYEKTIF);
+            $obyektif = $this->normalizeCpptHtml($item->_CPPT_OBYEKTIF);
+            $assesment = $this->normalizeCpptHtml($item->_CPPT_ASSESMENT);
+            $planning = $this->normalizeCpptHtml($item->_CPPT_PLANNING);
+            $tulis = $this->normalizeCpptHtml($item->_CPPT_TULIS);
+            $dokterTbak = $item->_CPPT_DOKTER_TBAK ?? '';
+
+            if ($item->_CPPT_DIETISEN === 'true') {
+
+                $item->CATATAN =
+                    '<b>A/ :</b> ' . $subyektif .
+                    '<br><br>' .
+                    '<b>D/ :</b> ' . $obyektif .
+                    '<br><br>' .
+                    '<b>I/ :</b> ' . $assesment .
+                    '<br><br>' .
+                    '<b>ME/ :</b> ' . $planning .
+                    '<br><br>';
+
+            } elseif ((int) $item->_CPPT_STATUS_SBAR === 1) {
+
+                $item->CATATAN =
+                    '<b>S/ :</b> ' . $subyektif .
+                    '<br><br>' .
+                    '<b>B/ :</b> ' . $obyektif .
+                    '<br><br>' .
+                    '<b>A/ :</b> ' . $assesment .
+                    '<br><br>' .
+                    '<b>R/ :</b> ' . $planning .
+                    '<br><br>' .
+                    '<b>Dokter/ :</b> ' . e($dokterTbak);
+
+            } elseif ((int) $item->_CPPT_STATUS_TBAK === 1) {
+
+                $baca = ((int) $item->_CPPT_BACA === 0)
+                    ? 'Belum Baca'
+                    : 'Sudah Baca';
+
+                $konfirmasi = ((int) $item->_CPPT_KONFIRMASI === 0)
+                    ? 'Belum Konfirmasi'
+                    : 'Sudah Konfirmasi';
+
+                $item->CATATAN =
+                    '<b>Tulis/ :</b> ' . $tulis .
+                    '<br><br>' .
+                    '<b>Baca/ :</b> ' . e($baca) .
+                    ' ' .
+                    '<b>Konfirmasi/ :</b> ' . e($konfirmasi) .
+                    ' ' .
+                    '<b>Dokter/ :</b> ' . e($dokterTbak);
+
+            } else {
+
+                $item->CATATAN =
+                    '<b>S/ :</b> ' . $subyektif .
+                    '<br><br>' .
+                    '<b>O/ :</b> ' . $obyektif .
+                    '<br><br>' .
+                    '<b>A/ :</b> ' . $assesment .
+                    '<br><br>' .
+                    '<b>P/ :</b> ' . $planning .
+                    '<br><br>';
+            }
+
+            // Hapus field internal sebelum response.
+            unset(
+                $item->_CPPT_SUBYEKTIF,
+                $item->_CPPT_OBYEKTIF,
+                $item->_CPPT_ASSESMENT,
+                $item->_CPPT_PLANNING,
+                $item->_CPPT_TULIS,
+                $item->_CPPT_BACA,
+                $item->_CPPT_KONFIRMASI,
+                $item->_CPPT_STATUS_SBAR,
+                $item->_CPPT_STATUS_TBAK,
+                $item->_CPPT_DIETISEN,
+                $item->_CPPT_DOKTER_TBAK
+            );
+
+            return $item;
+        });
+
         $ppa = DB::table('aplikasi.pengguna AS pe')
-                ->select('pe.ID', 'pe.NIP', DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMA'))
-                ->get();
+            ->select(
+                'pe.ID',
+                'pe.NIP',
+                DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMA')
+            )
+            ->get();
 
         $data = [
             'norm' => $getInit->NORM,
@@ -978,6 +1054,193 @@ class EMRController extends Controller
         ];
 
         return response()->json($data, 200);
+    }
+
+
+    private function normalizeCpptHtml(?string $html): string
+    {
+        if ($html === null || trim($html) === '') {
+            return '';
+        }
+
+        // Normalisasi line break dan whitespace.
+        $html = str_replace(
+            [
+                "\r\n",
+                "\r",
+                "\n",
+                '&nbsp;',
+            ],
+            [
+                "\n",
+                "\n",
+                "\n",
+                ' ',
+            ],
+            $html
+        );
+
+        // Block element dijadikan line break.
+        $html = preg_replace('/<div\b[^>]*>/i', '<br>', $html);
+        $html = preg_replace('/<\/div\s*>/i', '', $html);
+        $html = preg_replace('/<p\b[^>]*>/i', '<br>', $html);
+        $html = preg_replace('/<\/p\s*>/i', '', $html);
+        $html = preg_replace('/<br\s*\/?>/i', '<br>', $html);
+
+        // Pertahankan isi font/span tanpa formatting-nya.
+        $html = preg_replace('/<font\b[^>]*>/i', '', $html);
+        $html = preg_replace('/<\/font\s*>/i', '', $html);
+        $html = preg_replace('/<span\b[^>]*>/i', '', $html);
+        $html = preg_replace('/<\/span\s*>/i', '', $html);
+
+        $allowedTags = [
+            'b',
+            'strong',
+            'i',
+            'em',
+            'u',
+            'br',
+            'ul',
+            'ol',
+            'li',
+            'sub',
+            'sup',
+        ];
+
+        $dom = new \DOMDocument('1.0', 'UTF-8');
+
+        libxml_use_internal_errors(true);
+
+        $wrappedHtml =
+            '<!DOCTYPE html>' .
+            '<html>' .
+            '<head><meta charset="UTF-8"></head>' .
+            '<body>' .
+            $html .
+            '</body>' .
+            '</html>';
+
+        $loaded = $dom->loadHTML(
+            '<?xml encoding="UTF-8" ?>' . $wrappedHtml,
+            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+        );
+
+        if (!$loaded) {
+            libxml_clear_errors();
+
+            return e(strip_tags($html));
+        }
+
+        $sanitizeNode = function (\DOMNode $node) use (
+            &$sanitizeNode,
+            $allowedTags
+        ) {
+            if ($node->nodeType === XML_TEXT_NODE) {
+                return;
+            }
+
+            if ($node->nodeType === XML_COMMENT_NODE) {
+                $node->parentNode?->removeChild($node);
+
+                return;
+            }
+
+            if ($node->nodeType === XML_ELEMENT_NODE) {
+
+                $tagName = strtolower($node->nodeName);
+
+                if (!in_array($tagName, $allowedTags, true)) {
+
+                    $parent = $node->parentNode;
+
+                    if ($parent) {
+                        while ($node->firstChild) {
+                            $parent->insertBefore(
+                                $node->firstChild,
+                                $node
+                            );
+                        }
+
+                        $parent->removeChild($node);
+                    }
+
+                    return;
+                }
+
+                // CPPT tidak membutuhkan attribute HTML.
+                while ($node->attributes->length > 0) {
+                    $node->removeAttributeNode(
+                        $node->attributes->item(0)
+                    );
+                }
+            }
+
+            $children = [];
+
+            foreach ($node->childNodes as $child) {
+                $children[] = $child;
+            }
+
+            foreach ($children as $child) {
+                $sanitizeNode($child);
+            }
+        };
+
+        $body = $dom->getElementsByTagName('body')->item(0);
+
+        if (!$body) {
+            libxml_clear_errors();
+
+            return e(strip_tags($html));
+        }
+
+        $children = [];
+
+        foreach ($body->childNodes as $child) {
+            $children[] = $child;
+        }
+
+        foreach ($children as $child) {
+            $sanitizeNode($child);
+        }
+
+        $result = '';
+
+        foreach ($body->childNodes as $child) {
+            $result .= $dom->saveHTML($child);
+        }
+
+        libxml_clear_errors();
+
+        // Rapikan hasil akhir.
+        $result = str_replace(
+            [
+                '&nbsp;',
+                "\xc2\xa0",
+            ],
+            ' ',
+            $result
+        );
+
+        $result = preg_replace(
+            '/(?:\s*<br>\s*){3,}/i',
+            '<br><br>',
+            $result
+        );
+
+        $result = preg_replace(
+            '/^(?:\s*<br>\s*)+/i',
+            '',
+            $result
+        );
+
+        $result = preg_replace(
+            '/(?:\s*<br>\s*)+$/i',
+            '',
+            $result
+        );
+
+        return trim($result);
     }
 
     private function getDataMaster($kunjungan)

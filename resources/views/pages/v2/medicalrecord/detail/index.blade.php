@@ -339,11 +339,37 @@
                                         <input type="time" class="form-control" id="cppt_jam">
                                     </div>
                                     {{-- PPA --}}
-                                    <div class="col-md-7 position-relative">
+                                    <div class="col-md-5 position-relative">
                                         <label class="form-label">PPA</label>
                                         <input type="text" class="form-control" id="cppt_ppa" placeholder="Cari nama atau NIP PPA..." autocomplete="off">
                                         <input type="hidden" id="cppt_ppa_id">
                                         <div id="cppt_ppa_autocomplete" class="list-group position-absolute start-0 end-0 shadow-sm bg-body" style="z-index:1050;display:none;"></div>
+                                    </div>
+                                    {{-- METODE CPPT --}}
+                                    <div class="col-md-2">
+                                        <label class="form-label">Metode</label>
+                                        <div class="d-flex align-items-center gap-3 mt-2">
+                                            {{-- SBAR --}}
+                                            <div class="form-check">
+                                                <input class="form-check-input cppt-format"
+                                                    type="checkbox"
+                                                    id="cppt_format_sbar"
+                                                    value="SBAR">
+                                                <label class="form-check-label" for="cppt_format_sbar">
+                                                    SBAR
+                                                </label>
+                                            </div>
+                                            {{-- TBAK --}}
+                                            <div class="form-check">
+                                                <input class="form-check-input cppt-format"
+                                                    type="checkbox"
+                                                    id="cppt_format_tbak"
+                                                    value="TBAK">
+                                                <label class="form-check-label" for="cppt_format_tbak">
+                                                    TBAK
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                     {{-- S --}}
                                     <div class="col-md-6">
@@ -488,6 +514,12 @@
         );
 
         loadRiwayatKunjunganPasien();
+
+        $('.cppt-format').on('change', function () {
+            if ($(this).is(':checked')) {
+                $('.cppt-format').not(this).prop('checked', false);
+            }
+        });
     });
 
     function initCppt() {
@@ -644,25 +676,51 @@
                         ic='ph-duotone ph-x';
                         ic_col='red-700';
                     }
-                    riwayat+=`
-                        <div class="cppt-timeline-item">
-                            <div class="cppt-timeline-marker bg-${ic_col}">
-                                <i class="${ic}"></i>
-                            </div>
-                            <div class="cppt-timeline-content">
-                                <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
-                                    <div>
-                                        <div class="fw-bold">${item.PPA??'-'}</div>
-                                        <small class="text-muted">${item.JNSPPA??'-'}</small>
+                    riwayat += `<div class="cppt-timeline-item">
+                                    <div class="cppt-timeline-marker bg-${ic_col}">
+                                        <i class="${ic}"></i>
                                     </div>
-                                    <span class="badge bg-primary-subtle text-primary">${item.TANGGAL??'-'}</span>
+
+                                    <div class="cppt-timeline-content">
+                                        <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+                                            <div>
+                                                <div class="fw-bold">${item.PPA ?? '-'}</div>
+                                                <small class="text-muted">${item.JNSPPA ?? '-'}</small>
+                                            </div>
+
+                                            <span class="badge bg-primary-subtle text-primary">
+                                                ${item.TANGGAL ?? '-'}
+                                            </span>
+                                        </div>
+
+                                        <hr class="my-2">
+
+                                        <div class="small lh-lg">
+                                            ${item.CATATAN ?? ''}
+                                        </div>
+
+                                        <div class="small lh-lg">
+                                            <b>I/ :</b> ${item.INSTRUKSI ?? '-'}
+                                        </div>
+
+                                        <div class="d-flex justify-content-end gap-2 mt-3">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-icon btn-subtle-warning border border-warning text-warning-emphasis border-dashed"
+                                                    data-bs-toggle="tooltip" title="Ubah Cppt"
+                                                    onclick="editCPPT('${item.ID}')">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+
+                                            <button type="button"
+                                                    class="btn btn-sm btn-icon btn-subtle-danger border border-danger text-danger-emphasis border-dashed"
+                                                    data-bs-toggle="tooltip" title="Hapus Cppt"
+                                                    onclick="hapusCPPT('${item.ID}')">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <hr class="my-2">
-                                <div class="small lh-lg">${item.CATATAN??''}</div>
-                                <div class="small lh-lg"><b>I/ :</b> ${item.INSTRUKSI??'-'}</div>
-                            </div>
-                        </div>
-                    `;
+                            `;
                 });
                 $('#cppt_riwayat').empty().append(riwayat||'<div class="text-center text-muted py-4">Belum ada catatan CPPT.</div>');
 
