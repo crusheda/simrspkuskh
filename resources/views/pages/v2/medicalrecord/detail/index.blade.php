@@ -312,7 +312,7 @@
                 <div class="modal-body p-3 p-md-4 position-relative">
 
                     <div class="cppt-patient-info rounded-3 p-3 mb-1">
-                        <div class="row g-3" id="cppt_header">
+                        <div class="row g-3" id="cppt_header"></div>
                     </div>
 
                     <div class="card border border-info text-info-emphasis border-dashed rounded-3 shadow-none mb-3 mt-2">
@@ -628,6 +628,9 @@
         </div>
     </div>
 
+    {{-- MODAL EDIT CPPT --}}
+    @include('pages.v2.medicalrecord.detail.cppt.modal_edit')
+
 </div>
 
 <script>
@@ -902,15 +905,19 @@
 
                                         <div class="d-flex justify-content-end gap-2 mt-3">
                                             <button type="button"
+                                                    class="btn btn-sm btn-icon btn-subtle-info border border-info text-info-emphasis border-dashed"
+                                                    data-bs-toggle="tooltip" title="Copy Cppt" id="btn-copy-cppt-${item.ID}">
+                                                <i class="ri-file-copy-2-line"></i>
+                                            </button>
+                                            <button type="button"
                                                     class="btn btn-sm btn-icon btn-subtle-warning border border-warning text-warning-emphasis border-dashed"
-                                                    data-bs-toggle="tooltip" title="Ubah Cppt"
-                                                    onclick="editCPPT('${item.ID}')">
+                                                    data-bs-toggle="tooltip" title="Ubah Cppt" id="btn-edit-cppt-${item.ID}"
+                                                    onclick="editCPPT('${item.ID}', this)">
                                                 <i class="ri-edit-line"></i>
                                             </button>
-
                                             <button type="button"
                                                     class="btn btn-sm btn-icon btn-subtle-danger border border-danger text-danger-emphasis border-dashed"
-                                                    data-bs-toggle="tooltip" title="Hapus Cppt"
+                                                    data-bs-toggle="tooltip" title="Hapus Cppt" id="btn-hapus-cppt-${item.ID}"
                                                     onclick="hapusCPPT('${item.ID}')">
                                                 <i class="ri-delete-bin-line"></i>
                                             </button>
@@ -1615,6 +1622,8 @@
             return;
         }
 
+        const $btnHapus = $('#btn-hapus-cppt-' + id);
+
         Swal.fire({
             title: 'Hapus CPPT?',
             text: 'Catatan CPPT yang dipilih akan dihapus. Tindakan ini tidak dapat dibatalkan.',
@@ -1649,6 +1658,8 @@
                             Swal.showLoading();
                         }
                     });
+                    $btnHapus.prop('disabled', true);
+                    $btnHapus.html('<i class="ph-duotone ph-spinner ph-spin"></i>');
                 },
 
                 success: function (res) {
@@ -1698,6 +1709,10 @@
                         message: message,
                         position: 'topRight'
                     });
+                },
+                complete: function () {
+                    $btnHapus.prop('disabled', false);
+                    $btnHapus.html('<i class="ri-delete-bin-line"></i>');
                 }
             });
         });
@@ -1932,96 +1947,29 @@
         });
     }
 
-    // function aktifkanTabsDariHash() {
-    //     const hash = window.location.hash; // contoh: #frehab#formlayanankfr
-    //     if (!hash) return;
-
-    //     // pecah jadi array ['frehab', 'formlayanankfr']
-    //     const ids = hash.split('#').filter(Boolean);
-
-    //     ids.forEach((id, index) => {
-    //         const selector = '#' + id;
-    //         const $tabBtn = $('[data-bs-target="' + selector + '"]');
-
-    //         if ($tabBtn.length) {
-    //             const tab = new bootstrap.Tab($tabBtn[0]);
-    //             tab.show();
-
-    //             // SHOWING TOP BUTTON & BREADCRUMB
-    //             $("#btn-top-detail-kunjungan").prop('hidden', false);
-    //             $("#breadcrumb-detail-kunjungan").prop('hidden', false);
-
-    //             // jalankan validasi sesuai target
-    //             if (selector === '#frehab' || selector === '#formlayanankfr') {
-    //                 validPageFormKfr();
-    //                 // console.log('jalan kfr');
-    //             } else if (selector === '#formjadwalpelayanan') {
-    //                 validPageFormJp();
-    //                 // console.log('jalan jp');
-    //             } else if (selector === '#formkonsulkfr') {
-    //                 validPageFormKs();
-    //                 // console.log('jalan ks');
-    //             } else if (selector === '#fmrehab' || selector === 'frjkfr') {
-    //                 // console.log('masuk form kfr');
-    //                 loadFormKfr();
-    //                 loadCpptKfr();
-    //                 loadRiwayatKfr();
-    //             } else if (selector === 'pterapi') {
-    //                 // console.log('masuk form program terapi');
-    //             } else if (selector === '#fpengkajian') {
-    //                 console.log('MASUK PENGKAJIAN');
-    //                 // HIDDEN TOP BUTTON & BREADCRUMB
-    //                 $("#btn-top-detail-kunjungan").prop('hidden', true);
-    //                 $("#breadcrumb-detail-kunjungan").prop('hidden', true);
-    //             } else {
-    //                 console.log('tab lain');
-    //             }
-    //         }
-    //     });
-    // }
-
     function aktifkanTabsDariHash() {
-
         const hash = window.location.hash;
-
         if (!hash) return;
-
         const ids = hash.split('#').filter(Boolean);
-
         ids.forEach((id) => {
-
             const selector = '#' + id;
             const $tabBtn = $('[data-bs-target="' + selector + '"], a[href="' + selector + '"]');
-
             if ($tabBtn.length) {
-
                 const tab = new bootstrap.Tab($tabBtn[0]);
-
                 tab.show();
-
                 // Logic khusus lainnya tetap di sini
                 if (selector === '#frehab' || selector === '#formlayanankfr') {
-
                     validPageFormKfr();
-
                 } else if (selector === '#formjadwalpelayanan') {
-
                     validPageFormJp();
-
                 } else if (selector === '#formkonsulkfr') {
-
                     validPageFormKs();
-
                 } else if (selector === '#fmrehab' || selector === '#frjkfr') {
-
                     loadFormKfr();
                     loadCpptKfr();
                     loadRiwayatKfr();
-
                 } else if (selector === '#pterapi') {
-
                     // Form program terapi
-
                 }
             }
         });

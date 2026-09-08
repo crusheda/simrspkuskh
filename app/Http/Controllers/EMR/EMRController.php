@@ -10,6 +10,7 @@ use App\Models\simrspku_klaim\klaim_verifikasi;
 use App\Models\simrspku_klaim\klaim_file;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\Rule;
 use PHPJasper\PHPJasper;
 use Carbon\Carbon;
 use Auth, Storage;
@@ -1055,7 +1056,7 @@ class EMRController extends Controller
             )
             ->where('peg.PROFESI','=','4')
             ->get();
-        
+
         $ppaLogin = DB::table('aplikasi.pengguna AS pe')
             ->select(
                 'pe.ID',
@@ -1323,6 +1324,272 @@ class EMRController extends Controller
         }
     }
 
+    public function detailCPPT($kunjungan,$id)
+    {
+        $cppt = DB::table('medicalrecord.cppt as cp')
+            ->leftJoin('master.referensi as ref', function ($join) {
+                $join->on('cp.JENIS', '=', 'ref.ID')
+                    ->where('ref.JENIS', '=', 32);
+            })
+            ->leftJoin('master.pegawai as p', 'cp.TENAGA_MEDIS', '=', 'p.ID')
+            ->leftJoin('master.dokter as d', 'cp.TENAGA_MEDIS', '=', 'd.ID')
+            ->leftJoin('master.perawat as pr', 'cp.TENAGA_MEDIS', '=', 'pr.ID')
+            ->leftJoin(
+                'master.dokter as dokter_tbak',
+                'cp.DOKTER_TBAK_OR_SBAR',
+                '=',
+                'dokter_tbak.ID'
+            )
+            ->leftJoin(
+                'aplikasi.pengguna as pengguna_dokter',
+                'dokter_tbak.NIP',
+                '=',
+                'pengguna_dokter.NIP'
+            )
+            ->leftJoin('pendaftaran.kunjungan as pk', 'cp.KUNJUNGAN', '=', 'pk.NOMOR')
+            ->leftJoin('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
+            ->leftJoin('master.pasien as ps', 'pp.NORM', '=', 'ps.NORM')
+            ->where('cp.ID', $id)
+            ->where('cp.KUNJUNGAN', $kunjungan)
+            ->where('cp.STATUS', '!=', 0)
+            ->select([
+                'cp.ID',
+                'cp.KUNJUNGAN',
+
+                DB::raw("DATE_FORMAT(cp.TANGGAL, '%Y-%m-%d') as TANGGAL"),
+                DB::raw("DATE_FORMAT(cp.TANGGAL, '%H:%i') as JAM"),
+
+                'cp.SUBYEKTIF',
+                'cp.OBYEKTIF',
+                'cp.ASSESMENT',
+                'cp.PLANNING',
+                'cp.INSTRUKSI',
+
+                'cp.TULIS',
+                'cp.BACA',
+                'cp.KONFIRMASI',
+
+                'cp.STATUS_TBAK',
+                'cp.STATUS_SBAR',
+
+                'cp.TENAGA_MEDIS as PPA_ID',
+                'cp.DOKTER_TBAK_OR_SBAR as DOKTER_MASTER_ID',
+                'pengguna_dokter.ID as DOKTER_ID',
+
+                DB::raw("
+                    IF(
+                        cp.STATUS_SBAR = 1,
+                        'SBAR',
+                        IF(cp.STATUS_TBAK = 1, 'TBAK', '')
+                    ) as TBAK_SBAR
+                "),
+
+                DB::raw("
+                    IFNULL(
+                        master.getNamaLengkapPegawai(dokter_tbak.NIP),
+                        ''
+                    ) as DOKTER
+                "),
+
+                DB::raw("
+                    IF(
+                        ref.REF_ID = '4',
+                        master.getNamaLengkapPegawai(d.NIP),
+                        IF(
+                            ref.REF_ID = '6',
+                            master.getNamaLengkapPegawai(pr.NIP),
+                            master.getNamaLengkapPegawai(p.NIP)
+                        )
+                    ) as PPA
+                "),
+
+                'ps.NORM',
+                DB::raw("
+                    master.getNamaLengkap(ps.NORM) as NAMAPASIEN
+                "),
+            ])
+            ->first();
+
+        if (!$cppt) {
+            return response()->json([
+                'message' => 'Data CPPT tidak ditemukan.'
+            ], 404);
+        }
+
+        $cppt->COUNT_CPPT = DB::table('medicalrecord.cppt')
+                                ->where('KUNJUNGAN', $cppt->KUNJUNGAN)
+                                ->where('STATUS', '!=', 0)
+                                ->count();
+
+        // Hindari HTML database masuk mentah ke textarea.
+        $cppt->SUBYEKTIF = $this->cpptHtmlKeText($cppt->SUBYEKTIF);
+        $cppt->OBYEKTIF = $this->cpptHtmlKeText($cppt->OBYEKTIF);
+        $cppt->ASSESMENT = $this->cpptHtmlKeText($cppt->ASSESMENT);
+        $cppt->PLANNING = $this->cpptHtmlKeText($cppt->PLANNING);
+        $cppt->INSTRUKSI = $this->cpptHtmlKeText($cppt->INSTRUKSI);
+        $cppt->TULIS = $this->cpptHtmlKeText($cppt->TULIS);
+
+        return response()->json([
+            'data' => $cppt
+        ]);
+    }
+
+    public function updateCPPT(Request $request, $kunjungan,$id)
+    {
+        $validated = $request->validate([
+            // 'kunjungan' => ['required', 'string'],
+            'tanggal' => ['required', 'date_format:Y-m-d'],
+            'jam' => ['required', 'date_format:H:i'],
+            'tbak_sbar' => ['nullable', Rule::in(['', 'SBAR', 'TBAK'])],
+            'instruksi' => ['nullable', 'string'],
+
+            // CPPT Biasa
+            's' => ['nullable', 'string'],
+            'o' => ['nullable', 'string'],
+            'a' => ['nullable', 'string'],
+            'p' => ['nullable', 'string'],
+
+            // SBAR
+            'situation' => ['nullable', 'string'],
+            'background' => ['nullable', 'string'],
+            'assessment' => ['nullable', 'string'],
+            'recommendation' => ['nullable', 'string'],
+
+            // TBAK
+            'tulis' => ['nullable', 'string'],
+            'baca' => ['nullable', 'boolean'],
+            'konfirmasi' => ['nullable', 'boolean'],
+
+            // ID aplikasi.pengguna dari autocomplete dokter
+            'dokter_id' => ['nullable', 'integer'],
+        ]);
+
+        $cppt = DB::table('medicalrecord.cppt')
+            ->where('ID', $id)
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', '!=', 0)
+            ->first();
+
+        if (!$cppt) {
+            return response()->json([
+                'message' => 'Data CPPT tidak ditemukan atau bukan milik kunjungan ini.'
+            ], 404);
+        }
+
+        /*
+        | Aktifkan bila hanya pembuat CPPT boleh mengedit.
+        |
+        | if ((int) $cppt->OLEH !== (int) auth()->id()) {
+        |     return response()->json([
+        |         'message' => 'Anda tidak berhak mengubah CPPT ini.'
+        |     ], 403);
+        | }
+        */
+
+        /*
+        | Aktifkan bila CPPT yang sudah diverifikasi tidak boleh diedit.
+        |
+        | if (!empty($cppt->VERIFIKASI) && (int) $cppt->VERIFIKASI > 0) {
+        |     return response()->json([
+        |         'message' => 'CPPT yang sudah diverifikasi tidak dapat diubah.'
+        |     ], 422);
+        | }
+        */
+
+        $modeLama = ((int) $cppt->STATUS_SBAR === 1)
+            ? 'SBAR'
+            : (((int) $cppt->STATUS_TBAK === 1) ? 'TBAK' : '');
+
+        $modeRequest = strtoupper(trim($validated['tbak_sbar'] ?? ''));
+
+        /*
+        | Modal edit tidak mengizinkan jenis CPPT berubah.
+        | Ini mencegah record SBAR berubah menjadi TBAK secara tidak sengaja.
+        */
+        if ($modeLama !== $modeRequest) {
+            return response()->json([
+                'message' => 'Jenis CPPT tidak boleh diubah saat proses edit.'
+            ], 422);
+        }
+
+        $tanggal = $validated['tanggal'] . ' ' . $validated['jam'] . ':00';
+
+        $update = [
+            'TANGGAL' => $tanggal,
+            'INSTRUKSI' => $this->cpptTextKeHtml($validated['instruksi'] ?? ''),
+        ];
+
+        /*
+        |--------------------------------------------------------------------------
+        | CPPT Biasa
+        |--------------------------------------------------------------------------
+        */
+        if ($modeRequest === '') {
+            $update['SUBYEKTIF'] = $this->cpptTextKeHtml($validated['s'] ?? '');
+            $update['OBYEKTIF'] = $this->cpptTextKeHtml($validated['o'] ?? '');
+            $update['ASSESMENT'] = $this->cpptTextKeHtml($validated['a'] ?? '');
+            $update['PLANNING'] = $this->cpptTextKeHtml($validated['p'] ?? '');
+
+            $update['TULIS'] = '';
+            $update['BACA'] = 0;
+            $update['KONFIRMASI'] = 0;
+            $update['DOKTER_TBAK_OR_SBAR'] = 0;
+            $update['STATUS_TBAK'] = 0;
+            $update['STATUS_SBAR'] = 0;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SBAR
+        |--------------------------------------------------------------------------
+        */
+        if ($modeRequest === 'SBAR') {
+            $update['SUBYEKTIF'] = $this->cpptTextKeHtml($validated['situation'] ?? '');
+            $update['OBYEKTIF'] = $this->cpptTextKeHtml($validated['background'] ?? '');
+            $update['ASSESMENT'] = $this->cpptTextKeHtml($validated['assessment'] ?? '');
+            $update['PLANNING'] = $this->cpptTextKeHtml($validated['recommendation'] ?? '');
+
+            $update['TULIS'] = '';
+            $update['BACA'] = 0;
+            $update['KONFIRMASI'] = 0;
+            $update['STATUS_TBAK'] = 0;
+            $update['STATUS_SBAR'] = 1;
+            $update['DOKTER_TBAK_OR_SBAR'] = $this->dokterCpptDariPengguna(
+                $validated['dokter_id'] ?? null
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | TBAK
+        |--------------------------------------------------------------------------
+        */
+        if ($modeRequest === 'TBAK') {
+            /*
+            | Kolom SOAP tidak dikosongkan: data lama tetap aman.
+            | Yang diubah hanya elemen TBAK.
+            */
+            $update['TULIS'] = $this->cpptTextKeHtml($validated['tulis'] ?? '');
+            $update['BACA'] = !empty($validated['baca']) ? 1 : 0;
+            $update['KONFIRMASI'] = !empty($validated['konfirmasi']) ? 1 : 0;
+            $update['STATUS_TBAK'] = 1;
+            $update['STATUS_SBAR'] = 0;
+            $update['DOKTER_TBAK_OR_SBAR'] = $this->dokterCpptDariPengguna(
+                $validated['dokter_id'] ?? null
+            );
+        }
+
+        DB::transaction(function () use ($id, $update) {
+            DB::table('medicalrecord.cppt')
+                ->where('ID', $id)
+                ->update($update);
+        });
+
+        return response()->json([
+            'message' => 'CPPT berhasil diperbarui.'
+        ]);
+    }
+
     public function hapusCPPT(Request $request, $id)
     {
         try {
@@ -1381,6 +1648,137 @@ class EMRController extends Controller
         }
     }
 
+    /**
+     * Ubah HTML yang disimpan di database menjadi teks aman untuk textarea.
+     */
+    private function cpptHtmlKeText(?string $value): string
+    {
+        $value = (string) $value;
+
+        if ($value === '') {
+            return '';
+        }
+
+        // Ubah ordered list menjadi "1. ...", "2. ...", dst.
+        $value = preg_replace_callback(
+            '/<ol\b[^>]*>(.*?)<\/ol>/is',
+            function ($match) {
+                preg_match_all(
+                    '/<li\b[^>]*>(.*?)<\/li>/is',
+                    $match[1],
+                    $items
+                );
+
+                $hasil = [];
+
+                foreach ($items[1] as $index => $item) {
+                    $isi = $this->cpptHtmlKeText($item);
+
+                    if ($isi !== '') {
+                        $hasil[] = ($index + 1) . '. ' . $isi;
+                    }
+                }
+
+                return "\n" . implode("\n", $hasil) . "\n";
+            },
+            $value
+        );
+
+        // Ubah unordered list menjadi "- ..."
+        $value = preg_replace_callback(
+            '/<ul\b[^>]*>(.*?)<\/ul>/is',
+            function ($match) {
+                preg_match_all(
+                    '/<li\b[^>]*>(.*?)<\/li>/is',
+                    $match[1],
+                    $items
+                );
+
+                $hasil = [];
+
+                foreach ($items[1] as $item) {
+                    $isi = $this->cpptHtmlKeText($item);
+
+                    if ($isi !== '') {
+                        $hasil[] = '- ' . $isi;
+                    }
+                }
+
+                return "\n" . implode("\n", $hasil) . "\n";
+            },
+            $value
+        );
+
+        // Tag yang secara visual berarti ganti baris.
+        $value = preg_replace('/<br\s*\/?>/i', "\n", $value);
+        // $value = preg_replace('/<\/div\s*>/i', "\n", $value);
+        // $value = preg_replace('/<\/p\s*>/i', "\n", $value);
+
+        // Baik tag pembuka maupun penutup div/p dianggap sebagai ganti baris.
+        $value = preg_replace('/<\/?(?:div|p)\b[^>]*>/i', "\n", $value);
+
+        $value = preg_replace('/<\/h[1-6]\s*>/i', "\n", $value);
+        $value = preg_replace('/<\/tr\s*>/i', "\n", $value);
+
+        // Antisipasi tag li yang tidak berada dalam ol/ul sempurna.
+        $value = preg_replace('/<li\b[^>]*>/i', "\n- ", $value);
+        $value = preg_replace('/<\/li\s*>/i', "\n", $value);
+
+        // Hilangkan tag HTML tersisa, tetapi pertahankan teks.
+        $value = strip_tags($value);
+
+        // &nbsp; dan entity lain menjadi karakter normal.
+        $value = html_entity_decode(
+            $value,
+            ENT_QUOTES | ENT_HTML5,
+            'UTF-8'
+        );
+
+        $value = str_replace("\xc2\xa0", ' ', $value);
+        $value = preg_replace("/[ \t]+\n/", "\n", $value);
+        $value = preg_replace("/\n[ \t]+/", "\n", $value);
+        $value = preg_replace("/\n{3,}/", "\n\n", $value);
+
+        return trim($value);
+    }
+
+    /**
+     * Simpan teks textarea sebagai HTML aman untuk format lama tabel CPPT.
+     */
+    private function cpptTextKeHtml(?string $value): string
+    {
+        $value = trim((string) $value);
+
+        return nl2br(e($value), false);
+    }
+
+    /**
+     * Konversi ID aplikasi.pengguna menjadi ID master.dokter.
+     *
+     * Front-end autocomplete Anda mengirim ID dari aplikasi.pengguna,
+     * sementara medicalrecord.cppt.DOKTER_TBAK_OR_SBAR memakai master.dokter.ID.
+     */
+    private function dokterCpptDariPengguna(?int $penggunaId): int
+    {
+        if (!$penggunaId) {
+            return 0;
+        }
+
+        $dokterId = DB::table('aplikasi.pengguna as pe')
+            ->join('master.dokter as d', 'd.NIP', '=', 'pe.NIP')
+            ->where('pe.ID', $penggunaId)
+            ->value('d.ID');
+
+        return (int) ($dokterId ?? 0);
+    }
+
+    /**
+     * Normalisasi HTML CPPT agar aman ditampilkan di front-end.
+     * Hanya tag tertentu yang diperbolehkan, sisanya dihapus.
+     * Tag yang diperbolehkan: <b>, <strong>, <i>, <em>, <u>, <br>, <ul>, <ol>, <li>, <sub>, <sup>.
+     * Semua tag lain akan dihapus, termasuk atribut HTML.
+     * Line break akan dinormalisasi menjadi <br>.
+     */
     private function normalizeCpptHtml(?string $html): string
     {
         if ($html === null || trim($html) === '') {
