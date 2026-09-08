@@ -340,7 +340,12 @@
                                     </div>
                                     {{-- PPA --}}
                                     <div class="col-md-5 position-relative">
-                                        <label class="form-label">PPA</label>
+                                        <label class="form-label">
+                                            PPA
+                                            <span class="badge bg-primary-subtle text-primary ms-1">
+                                                Default: User Login
+                                            </span>
+                                        </label>
                                         <input type="text" class="form-control" id="cppt_ppa" placeholder="Cari nama atau NIP PPA..." autocomplete="off">
                                         <input type="hidden" id="cppt_ppa_id">
                                         <div id="cppt_ppa_autocomplete" class="list-group position-absolute start-0 end-0 shadow-sm bg-body" style="z-index:1050;display:none;"></div>
@@ -372,29 +377,202 @@
                                         </div>
                                     </div>
                                     {{-- S --}}
-                                    <div class="col-md-6">
+                                    {{-- <div class="col-md-6">
                                         <label class="form-label fw-semibold">S <small class="text-muted">(Subjective)</small></label>
                                         <textarea class="form-control" id="cppt_s" rows="4" placeholder="Keluhan atau kondisi yang dirasakan pasien..."></textarea>
-                                    </div>
+                                    </div> --}}
                                     {{-- O --}}
-                                    <div class="col-md-6">
+                                    {{-- <div class="col-md-6">
                                         <label class="form-label fw-semibold">O <small class="text-muted">(Objective)</small></label>
                                         <textarea class="form-control" id="cppt_o" rows="4" placeholder="Hasil pemeriksaan objektif..."></textarea>
-                                    </div>
+                                    </div> --}}
                                     {{-- A --}}
-                                    <div class="col-md-6">
+                                    {{-- <div class="col-md-6">
                                         <label class="form-label fw-semibold">A <small class="text-muted">(Assessment)</small></label>
                                         <textarea class="form-control" id="cppt_a" rows="4" placeholder="Assessment atau diagnosis pasien..."></textarea>
-                                    </div>
+                                    </div> --}}
                                     {{-- P --}}
-                                    <div class="col-md-6">
+                                    {{-- <div class="col-md-6">
                                         <label class="form-label fw-semibold">P <small class="text-muted">(Planning)</small></label>
                                         <textarea class="form-control" id="cppt_p" rows="4" placeholder="Rencana terapi atau tindak lanjut..."></textarea>
-                                    </div>
+                                    </div> --}}
                                     {{-- I --}}
-                                    <div class="col-12">
+                                    {{-- <div class="col-12">
                                         <label class="form-label fw-semibold">I <small class="text-muted">(Instruction)</small></label>
                                         <textarea class="form-control" id="cppt_i" rows="4" placeholder="Instruksi untuk tindak lanjut pasien..."></textarea>
+                                    </div> --}}
+                                    {{-- ========================================================= --}}
+                                    {{-- MODE CPPT BIASA --}}
+                                    {{-- ========================================================= --}}
+                                    <div id="cppt_mode_biasa" class="row g-3">
+
+                                        {{-- S --}}
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">
+                                                S <small class="text-muted">(Subjective)</small>
+                                            </label>
+                                            <textarea class="form-control" id="cppt_s" rows="4" placeholder="Keluhan atau kondisi yang dirasakan pasien..."></textarea>
+                                        </div>
+
+                                        {{-- O --}}
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">
+                                                O <small class="text-muted">(Objective)</small>
+                                            </label>
+                                            <textarea class="form-control" id="cppt_o" rows="4" placeholder="Hasil pemeriksaan objektif..."></textarea>
+                                        </div>
+
+                                        {{-- A --}}
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">
+                                                A <small class="text-muted">(Assessment)</small>
+                                            </label>
+                                            <textarea class="form-control" id="cppt_a" rows="4" placeholder="Assessment atau diagnosis pasien..."></textarea>
+                                        </div>
+
+                                        {{-- P --}}
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">
+                                                P <small class="text-muted">(Planning)</small>
+                                            </label>
+                                            <textarea class="form-control" id="cppt_p" rows="4" placeholder="Rencana terapi atau tindak lanjut..."></textarea>
+                                        </div>
+
+                                        {{-- I --}}
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold">
+                                                I <small class="text-muted">(Instruction)</small>
+                                            </label>
+                                            <textarea class="form-control" id="cppt_i" rows="4" placeholder="Instruksi untuk tindak lanjut pasien..."></textarea>
+                                        </div>
+
+                                    </div>
+
+
+                                    {{-- ========================================================= --}}
+                                    {{-- MODE CPPT SBAR --}}
+                                    {{-- ========================================================= --}}
+                                    <div id="cppt_mode_sbar" class="row g-3" style="display: none;">
+
+                                        {{-- SITUATION --}}
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">
+                                                Situation <small class="text-muted">(Situasi)</small>
+                                            </label>
+                                            <textarea class="form-control" id="cppt_sbar_situation" rows="4" placeholder="Situasi atau kondisi pasien saat ini..."></textarea>
+                                        </div>
+
+                                        {{-- BACKGROUND --}}
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">
+                                                Background <small class="text-muted">(Latar Belakang)</small>
+                                            </label>
+                                            <textarea class="form-control" id="cppt_sbar_background" rows="4" placeholder="Latar belakang atau riwayat yang relevan..."></textarea>
+                                        </div>
+
+                                        {{-- ASSESSMENT --}}
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">
+                                                Assessment <small class="text-muted">(Penilaian)</small>
+                                            </label>
+                                            <textarea class="form-control" id="cppt_sbar_assessment" rows="4" placeholder="Penilaian atau hasil analisis kondisi pasien..."></textarea>
+                                        </div>
+
+                                        {{-- RECOMMENDATION --}}
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold">
+                                                Recommendation <small class="text-muted">(Rekomendasi)</small>
+                                            </label>
+                                            <textarea class="form-control" id="cppt_sbar_recommendation" rows="4" placeholder="Rekomendasi atau tindak lanjut..."></textarea>
+                                        </div>
+
+                                        {{-- DOKTER SBAR --}}
+                                        <div class="col-md-6 position-relative">
+                                            <label class="form-label">
+                                                Dokter SBAR
+                                            </label>
+
+                                            <input
+                                                type="text" class="form-control" id="cppt_dokter_sbar" placeholder="Cari nama atau NIP dokter..."
+                                                autocomplete="off">
+
+                                            <input
+                                                type="hidden" id="cppt_dokter_sbar_id">
+
+                                            <div id="cppt_dokter_sbar_autocomplete" class="list-group position-absolute start-0 end-0 shadow-sm bg-body"
+                                                style="z-index:1050;display:none;"></div>
+                                        </div>
+
+                                    </div>
+
+
+                                    {{-- ========================================================= --}}
+                                    {{-- MODE CPPT TBAK --}}
+                                    {{-- ========================================================= --}}
+                                    <div id="cppt_mode_tbak" class="row g-3" style="display: none;">
+
+                                        {{-- TULIS --}}
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold">
+                                                Tulis
+                                            </label>
+
+                                            <textarea class="form-control" id="cppt_tulis" rows="4" placeholder="Tuliskan informasi yang akan disampaikan..."></textarea>
+                                        </div>
+
+                                        {{-- BACA --}}
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    id="cppt_baca"
+                                                    value="1"
+                                                >
+                                                <label
+                                                    class="form-check-label"
+                                                    for="cppt_baca"
+                                                >
+                                                    Baca
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        {{-- KONFIRMASI --}}
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    id="cppt_konfirmasi"
+                                                    value="1"
+                                                >
+                                                <label
+                                                    class="form-check-label"
+                                                    for="cppt_konfirmasi"
+                                                >
+                                                    Konfirmasi
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        {{-- DOKTER TBAK --}}
+                                        <div class="col-md-6 position-relative">
+                                            <label class="form-label">
+                                                Dokter TBAK
+                                            </label>
+
+                                            <input
+                                                type="text" class="form-control" id="cppt_dokter_tbak" placeholder="Cari nama atau NIP dokter..."
+                                                autocomplete="off">
+
+                                            <input
+                                                type="hidden" id="cppt_dokter_tbak_id">
+
+                                            <div id="cppt_dokter_tbak_autocomplete" class="list-group position-absolute start-0 end-0 shadow-sm bg-body"
+                                                style="z-index:1050;display:none;"></div>
+                                        </div>
+
                                     </div>
                                     {{-- BUTTON --}}
                                     <div class="col-12">
@@ -633,6 +811,26 @@
                 $('#cppt_ppa_autocomplete').hide().empty();
                 $('#cppt_ppa').data('ppa',dataPPA);
 
+                // ============================================================
+                // DEFAULT PPA SESUAI USER LOGIN
+                // ============================================================
+                if (res.ppa_login && res.ppa_login.ID) {
+
+                    $('#cppt_ppa').val(res.ppa_login.NAMA);
+                    $('#cppt_ppa_id').val(res.ppa_login.ID);
+                    $('#cppt_ppa').data('nip', res.ppa_login.NIP || '');
+
+                    ppaSelected = true;
+
+                } else {
+
+                    $('#cppt_ppa').val('');
+                    $('#cppt_ppa_id').val('');
+                    $('#cppt_ppa').removeData('nip');
+
+                    ppaSelected = false;
+                }
+
                 let header='';
                 let riwayat='';
 
@@ -752,6 +950,59 @@
             }
         });
     }
+
+    function setModeCPPT(mode) {
+
+        $('#cppt_mode_biasa').hide();
+        $('#cppt_mode_sbar').hide();
+        $('#cppt_mode_tbak').hide();
+
+        if (mode === 'SBAR') {
+
+            $('#cppt_mode_sbar').show();
+
+        } else if (mode === 'TBAK') {
+
+            $('#cppt_mode_tbak').show();
+
+        } else {
+
+            $('#cppt_mode_biasa').show();
+
+        }
+    }
+
+
+    $('.cppt-format').on('change', function () {
+
+        const id = $(this).attr('id');
+
+        if (id === 'cppt_format_sbar' && $(this).is(':checked')) {
+
+            // SBAR dipilih → TBAK dimatikan
+            $('#cppt_format_tbak').prop('checked', false);
+
+            setModeCPPT('SBAR');
+
+        } else if (id === 'cppt_format_tbak' && $(this).is(':checked')) {
+
+            // TBAK dipilih → SBAR dimatikan
+            $('#cppt_format_sbar').prop('checked', false);
+
+            setModeCPPT('TBAK');
+
+        } else {
+
+            // Tidak ada yang dicentang → CPPT biasa
+            if (
+                !$('#cppt_format_sbar').is(':checked') &&
+                !$('#cppt_format_tbak').is(':checked')
+            ) {
+                setModeCPPT('BIASA');
+            }
+        }
+
+    });
 
     function initAutocompletePPA(){
         const $input=$('#cppt_ppa');

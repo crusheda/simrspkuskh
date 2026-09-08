@@ -1044,10 +1044,20 @@ class EMRController extends Controller
                 DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMA')
             )
             ->get();
+        
+        $ppaLogin = DB::table('aplikasi.pengguna AS pe')
+            ->select(
+                'pe.ID',
+                'pe.NIP',
+                DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMA')
+            )
+            ->where('pe.ID', auth()->id())
+            ->first();
 
         $data = [
             'norm' => $getInit->NORM,
             'ppa' => $ppa,
+            'ppa_login' => $ppaLogin,
             'namapasien' => $getInit->NAMAPASIEN,
             'count' => $show->count(),
             'show' => $show,
