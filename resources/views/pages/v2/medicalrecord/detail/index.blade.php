@@ -642,7 +642,9 @@
     const tgl_sep_date = tgl_sep?tgl_sep.substring(0, 10):null;
 
     let dataPPA = [];
+    let dataDokter = [];
     let ppaSelected=false;
+    let currentKunjunganCppt = null;
 
     $(document).ready(function() {
 
@@ -692,12 +694,6 @@
         );
 
         loadRiwayatKunjunganPasien();
-
-        $('.cppt-format').on('change', function () {
-            if ($(this).is(':checked')) {
-                $('.cppt-format').not(this).prop('checked', false);
-            }
-        });
     });
 
     function initCppt() {
@@ -768,6 +764,7 @@
     }
 
     function showModalCppt(kunjungan){
+        currentKunjunganCppt = kunjungan;
         const $btnCppt=$('#btn-floating-cppt');
         $.ajax({
             url:"/api/v2/emr/cppt/"+kunjungan,
@@ -807,9 +804,11 @@
                 }
 
                 dataPPA=(res.ppa||[]).filter(item=>item.ID&&item.NAMA);
+                dataDokter=(res.dokter||[]).filter(item=>item.ID&&item.NAMA);
 
                 $('#cppt_ppa_autocomplete').hide().empty();
                 $('#cppt_ppa').data('ppa',dataPPA);
+                $('#cppt_dokter_sbar').data('dokter',dataDokter);
 
                 // ============================================================
                 // DEFAULT PPA SESUAI USER LOGIN
@@ -925,6 +924,7 @@
                 $('#modalCPPT').modal('show');
 
                 initAutocompletePPA();
+                initAutocompleteDokter();
             },
             error:function(xhr){
                 let message='Data gagal ditampilkan.';
@@ -1004,33 +1004,62 @@
 
     });
 
-    function initAutocompletePPA(){
-        const $input=$('#cppt_ppa');
-        const $container=$('#cppt_ppa_autocomplete');
+    function initAutocompletePPA() {
 
-        $input.on('input',function(){
-            const keyword=$(this).val().trim().toLowerCase();
+        const $input = $('#cppt_ppa');
+        const $container = $('#cppt_ppa_autocomplete');
 
-            // Setiap kali user mengetik ulang, pilihan sebelumnya dibatalkan
-            ppaSelected=false;
+        // Cegah event terpasang berulang
+        $input.off('.autocompletePPA');
+        $container.off('.autocompletePPA');
+
+        /*
+        |--------------------------------------------------------------------------
+        | INPUT / SEARCH
+        |--------------------------------------------------------------------------
+        */
+
+        $input.on('input.autocompletePPA', function () {
+
+            const keyword = $(this).val().trim().toLowerCase();
+
+            // User mengetik ulang → pilihan sebelumnya batal
+            ppaSelected = false;
+
             $('#cppt_ppa_id').val('');
-            $('#cppt_ppa').removeData('nip');
+            $input.removeData('nip');
 
             $container.empty();
 
-            if(keyword.length<2){
+            if (keyword.length < 2) {
                 $container.hide();
                 return;
             }
 
-            const hasil=dataPPA.filter(item=>{
-                const nama=(item.NAMA||'').toLowerCase();
-                const nip=(item.NIP||'').toLowerCase();
+            /*
+            |--------------------------------------------------------------------------
+            | FILTER PPA
+            |--------------------------------------------------------------------------
+            */
 
-                return nama.includes(keyword)||nip.includes(keyword);
-            }).slice(0,10);
+            const hasil = dataPPA.filter(item => {
 
-            if(!hasil.length){
+                const nama = String(item.NAMA || '').toLowerCase();
+                const nip  = String(item.NIP || '').toLowerCase();
+
+                return nama.includes(keyword) ||
+                    nip.includes(keyword);
+
+            }).slice(0, 10);
+
+            /*
+            |--------------------------------------------------------------------------
+            | TIDAK DITEMUKAN
+            |--------------------------------------------------------------------------
+            */
+
+            if (!hasil.length) {
+
                 $container.html(`
                     <div class="list-group-item text-muted">
                         <i class="ph ph-magnifying-glass me-1"></i>
@@ -1041,56 +1070,721 @@
                 return;
             }
 
-            hasil.forEach(item=>{
+            /*
+            |--------------------------------------------------------------------------
+            | TAMPILKAN HASIL
+            |--------------------------------------------------------------------------
+            */
+
+            hasil.forEach(item => {
+
                 $container.append(`
-                    <button type="button"
-                            class="list-group-item list-group-item-action cppt-ppa-item text-start bg-body"
-                            data-id="${item.ID}"
-                            data-nip="${item.NIP??''}"
-                            data-nama="${item.NAMA??''}">
-                        <div class="fw-semibold">${item.NAMA??'-'}</div>
+                    <button
+                        type="button"
+                        class="list-group-item list-group-item-action cppt-ppa-item text-start bg-body"
+                        data-id="${item.ID ?? ''}"
+                        data-nip="${item.NIP ?? ''}"
+                        data-nama="${item.NAMA ?? ''}">
+
+                        <div class="fw-semibold">
+                            ${item.NAMA ?? '-'}
+                        </div>
+
                         <small class="text-muted">
-                            NIP: ${item.NIP??'-'}
+                            NIP: ${item.NIP ?? '-'}
                         </small>
+
                     </button>
                 `);
+
             });
 
             $container.show();
         });
 
-        $container.on('click','.cppt-ppa-item',function(){
-            const id=$(this).data('id');
-            const nip=$(this).data('nip');
-            const nama=$(this).data('nama');
+        /*
+        |--------------------------------------------------------------------------
+        | PILIH PPA
+        |--------------------------------------------------------------------------
+        */
 
-            $('#cppt_ppa_id').val(id);
-            $('#cppt_ppa').val(nama);
-            $('#cppt_ppa').data('nip',nip);
+        $container.on(
+            'click.autocompletePPA',
+            '.cppt-ppa-item',
+            function () {
 
-            // Tandai bahwa PPA valid sudah dipilih dari list
-            ppaSelected=true;
+                const id   = $(this).data('id');
+                const nip  = $(this).data('nip');
+                const nama = $(this).data('nama');
 
-            $container.hide().empty();
-        });
+                $('#cppt_ppa_id').val(id);
+                $('#cppt_ppa').val(nama);
+                $('#cppt_ppa').data('nip', nip);
 
-        $input.on('blur',function(){
-            setTimeout(function(){
+                ppaSelected = true;
+
+                $container
+                    .hide()
+                    .empty();
+            }
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | BLUR
+        |--------------------------------------------------------------------------
+        */
+
+        $input.on('blur.autocompletePPA', function () {
+
+            setTimeout(function () {
 
                 $container.hide();
 
-                // Jika belum memilih PPA dari autocomplete,
-                // maka input dianggap tidak valid
-                if(!ppaSelected || !$('#cppt_ppa_id').val()){
+                if (
+                    !ppaSelected ||
+                    !$('#cppt_ppa_id').val()
+                ) {
+
                     $input.val('');
                     $('#cppt_ppa_id').val('');
                     $input.removeData('nip');
 
-                    ppaSelected=false;
+                    ppaSelected = false;
                 }
 
-            },200);
+            }, 200);
         });
+    }
+
+    function initAutocompleteDokter() {
+
+        initAutocompleteDokterField({
+            input: '#cppt_dokter_sbar',
+            hidden: '#cppt_dokter_sbar_id',
+            container: '#cppt_dokter_sbar_autocomplete'
+        });
+
+        initAutocompleteDokterField({
+            input: '#cppt_dokter_tbak',
+            hidden: '#cppt_dokter_tbak_id',
+            container: '#cppt_dokter_tbak_autocomplete'
+        });
+    }
+
+
+    function initAutocompleteDokterField(config) {
+
+        const $input = $(config.input);
+        const $hidden = $(config.hidden);
+        const $container = $(config.container);
+
+        // Cegah event duplicate
+        $input.off('.autocompleteDokter');
+        $container.off('.autocompleteDokter');
+
+        /*
+        |--------------------------------------------------------------------------
+        | INPUT / SEARCH
+        |--------------------------------------------------------------------------
+        */
+
+        $input.on('input.autocompleteDokter', function () {
+
+            const keyword = $(this)
+                .val()
+                .trim()
+                .toLowerCase();
+
+            // User mengetik ulang → ID dokter dibatalkan
+            $hidden.val('');
+            $input.removeData('nip');
+
+            $container.empty();
+
+            if (keyword.length < 2) {
+                $container.hide();
+                return;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | FILTER DOKTER
+            |--------------------------------------------------------------------------
+            */
+
+            const hasil = dataDokter.filter(item => {
+
+                const nama = String(item.NAMA || '')
+                    .toLowerCase();
+
+                const nip = String(item.NIP || '')
+                    .toLowerCase();
+
+                return nama.includes(keyword) ||
+                    nip.includes(keyword);
+
+            }).slice(0, 10);
+
+            /*
+            |--------------------------------------------------------------------------
+            | TIDAK DITEMUKAN
+            |--------------------------------------------------------------------------
+            */
+
+            if (!hasil.length) {
+
+                $container.html(`
+                    <div class="list-group-item text-muted">
+                        <i class="ph ph-magnifying-glass me-1"></i>
+                        Dokter tidak ditemukan
+                    </div>
+                `).show();
+
+                return;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | HASIL
+            |--------------------------------------------------------------------------
+            */
+
+            hasil.forEach(item => {
+
+                $container.append(`
+                    <button
+                        type="button"
+                        class="list-group-item list-group-item-action cppt-dokter-item text-start bg-body"
+                        data-id="${item.ID ?? ''}"
+                        data-nip="${item.NIP ?? ''}"
+                        data-nama="${item.NAMA ?? ''}">
+
+                        <div class="fw-semibold">
+                            ${item.NAMA ?? '-'}
+                        </div>
+
+                        <small class="text-muted">
+                            NIP: ${item.NIP ?? '-'}
+                        </small>
+
+                    </button>
+                `);
+
+            });
+
+            $container.show();
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | PILIH DOKTER
+        |--------------------------------------------------------------------------
+        */
+
+        $container.on(
+            'click.autocompleteDokter',
+            '.cppt-dokter-item',
+            function () {
+
+                const id = $(this).data('id');
+                const nip = $(this).data('nip');
+                const nama = $(this).data('nama');
+
+                // Nama dokter
+                $input.val(nama);
+
+                // ID dokter
+                $hidden.val(id);
+
+                // NIP
+                $input.data('nip', nip);
+
+                // Tutup autocomplete
+                $container
+                    .hide()
+                    .empty();
+
+                console.log('Dokter dipilih:', {
+                    id: id,
+                    nip: nip,
+                    nama: nama
+                });
+            }
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | BLUR
+        |--------------------------------------------------------------------------
+        */
+
+        $input.on('blur.autocompleteDokter', function () {
+
+            setTimeout(function () {
+
+                $container.hide();
+
+                // Kalau ID kosong berarti belum memilih dari autocomplete
+                if (!$hidden.val()) {
+
+                    $input.val('');
+                    $hidden.val('');
+                    $input.removeData('nip');
+                }
+
+            }, 200);
+        });
+    }
+
+    $('#btn-simpan-cppt').on('click', function () {
+
+        const $btn = $(this);
+
+        /*
+        |--------------------------------------------------------------------------
+        | AMBIL MODE CPPT
+        |--------------------------------------------------------------------------
+        */
+
+        let mode = 'BIASA';
+
+        if ($('#cppt_format_sbar').is(':checked')) {
+            mode = 'SBAR';
+        } else if ($('#cppt_format_tbak').is(':checked')) {
+            mode = 'TBAK';
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI PPA
+        |--------------------------------------------------------------------------
+        */
+
+        const ppaId = $('#cppt_ppa_id').val();
+
+        if (!ppaId) {
+
+            iziToast.warning({
+                title: 'Perhatian!',
+                message: 'Silakan pilih PPA terlebih dahulu.',
+                position: 'topRight'
+            });
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA UMUM
+        |--------------------------------------------------------------------------
+        */
+
+        const tanggal = $('#cppt_tanggal').val();
+        const jam = $('#cppt_jam').val();
+
+
+        if (!tanggal || !jam) {
+
+            iziToast.warning({
+                title: 'Perhatian!',
+                message: 'Tanggal dan jam harus diisi.',
+                position: 'topRight'
+            });
+
+            return;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DOKTER SBAR / TBAK
+        |--------------------------------------------------------------------------
+        */
+
+        let dokterId = null;
+
+        if (mode === 'SBAR') {
+            dokterId = $('#cppt_dokter_sbar_id').val() || null;
+        }
+
+        if (mode === 'TBAK') {
+            dokterId = $('#cppt_dokter_tbak_id').val() || null;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA YANG DIKIRIM
+        |--------------------------------------------------------------------------
+        */
+
+        let data = {
+
+            _token: $('meta[name="csrf-token"]').attr('content'),
+
+            tanggal: tanggal,
+            jam: jam,
+
+            ppa_id: ppaId,
+
+            mode: mode,
+
+            dokter_id: dokterId,
+
+
+            /*
+            | CPPT Biasa / SBAR
+            */
+            s: $('#cppt_s').val() || '',
+            o: $('#cppt_o').val() || '',
+            a: $('#cppt_a').val() || '',
+            p: $('#cppt_p').val() || '',
+            i: $('#cppt_i').val() || '',
+
+
+            /*
+            | TBAK
+            */
+            tulis: $('#cppt_tulis').val() || '',
+
+            baca: $('#cppt_baca').is(':checked') ? 1 : 0,
+
+            konfirmasi: $('#cppt_konfirmasi').is(':checked') ? 1 : 0
+        };
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MODE SBAR
+        |--------------------------------------------------------------------------
+        |
+        | Input SBAR kita masukkan ke field yang sama:
+        |
+        | Situation      -> s
+        | Background     -> o
+        | Assessment     -> a
+        | Recommendation -> p
+        |
+        */
+
+        if (mode === 'SBAR') {
+
+            data.s = $('#cppt_sbar_situation').val() || '';
+            data.o = $('#cppt_sbar_background').val() || '';
+            data.a = $('#cppt_sbar_assessment').val() || '';
+            data.p = $('#cppt_sbar_recommendation').val() || '';
+            data.i = '';
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MODE TBAK
+        |--------------------------------------------------------------------------
+        */
+
+        if (mode === 'TBAK') {
+
+            data.s = '';
+            data.o = '';
+            data.a = '';
+            data.p = '';
+            data.i = '';
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | AJAX SIMPAN
+        |--------------------------------------------------------------------------
+        */
+
+        $.ajax({
+
+            url: '/api/v2/emr/cppt/' + currentKunjunganCppt,
+
+            type: 'POST',
+
+            data: data,
+
+            dataType: 'json',
+
+            beforeSend: function () {
+
+                $btn
+                    .prop('disabled', true)
+                    .html(`
+                        <span class="spinner-border spinner-border-sm me-1"
+                            role="status"></span>
+                        Menyimpan...
+                    `);
+            },
+
+            success: function (res) {
+
+                iziToast.success({
+                    title: 'Berhasil!',
+                    message: res.message || 'CPPT berhasil ditambahkan.',
+                    position: 'topRight'
+                });
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | RESET FORM
+                |--------------------------------------------------------------------------
+                */
+
+                resetFormCPPT();
+
+
+                // Set tanggal & jam otomatis saat ini
+                const now = new Date();
+
+                const tahun = now.getFullYear();
+                const bulan = String(now.getMonth() + 1).padStart(2, '0');
+                const tanggal = String(now.getDate()).padStart(2, '0');
+
+                const jam = String(now.getHours()).padStart(2, '0');
+                const menit = String(now.getMinutes()).padStart(2, '0');
+
+                $('#cppt_tanggal').val(`${tahun}-${bulan}-${tanggal}`);
+                $('#cppt_jam').val(`${jam}:${menit}`);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | REFRESH RIWAYAT CPPT
+                |--------------------------------------------------------------------------
+                */
+
+                showModalCppt(currentKunjunganCppt);
+            },
+
+            error: function (xhr) {
+
+                let message = 'Data CPPT gagal disimpan.';
+
+                if (
+                    xhr.status === 422 &&
+                    xhr.responseJSON?.errors
+                ) {
+
+                    message = Object
+                        .values(xhr.responseJSON.errors)
+                        .flat()
+                        .join('<br>');
+
+                } else if (xhr.responseJSON?.message) {
+
+                    message = xhr.responseJSON.message;
+                }
+
+
+                iziToast.error({
+                    title: 'Proses Gagal!',
+                    message: message,
+                    position: 'topRight'
+                });
+            },
+
+            complete: function () {
+
+                $btn
+                    .prop('disabled', false)
+                    .html(`
+                        <i class="ph ph-floppy-disk me-1"></i>
+                        Tambah CPPT
+                    `);
+            }
+        });
+
+    });
+
+    function hapusCPPT(id) {
+
+        if (!id) {
+            iziToast.warning({
+                title: 'Peringatan',
+                message: 'ID CPPT tidak ditemukan.',
+                position: 'topRight'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Hapus CPPT?',
+            text: 'Catatan CPPT yang dipilih akan dihapus. Tindakan ini tidak dapat dibatalkan.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            focusCancel: true
+        }).then((result) => {
+
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            $.ajax({
+                url: '/api/v2/emr/cppt/' + id,
+                type: 'DELETE',
+                dataType: 'json',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+
+                beforeSend: function () {
+                    Swal.fire({
+                        title: 'Menghapus...',
+                        text: 'Mohon tunggu.',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                },
+
+                success: function (res) {
+
+                    Swal.close();
+
+                    if (res.status) {
+
+                        iziToast.success({
+                            title: 'Berhasil',
+                            message: res.message || 'CPPT berhasil dihapus.',
+                            position: 'topRight'
+                        });
+
+                        // Refresh data CPPT
+                        if (currentKunjunganCppt) {
+                            showModalCppt(currentKunjunganCppt);
+                        }
+
+                    } else {
+
+                        iziToast.error({
+                            title: 'Gagal',
+                            message: res.message || 'CPPT gagal dihapus.',
+                            position: 'topRight'
+                        });
+
+                    }
+                },
+
+                error: function (xhr) {
+
+                    Swal.close();
+
+                    let message = 'CPPT gagal dihapus.';
+
+                    if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                        message = Object.values(xhr.responseJSON.errors)
+                            .flat()
+                            .join('<br>');
+                    } else if (xhr.responseJSON?.message) {
+                        message = xhr.responseJSON.message;
+                    }
+
+                    iziToast.error({
+                        title: 'Proses Gagal!',
+                        message: message,
+                        position: 'topRight'
+                    });
+                }
+            });
+        });
+    }
+
+    function resetFormCPPT() {
+
+        /*
+        |--------------------------------------------------------------------------
+        | TANGGAL & JAM
+        |--------------------------------------------------------------------------
+        */
+
+        $('#cppt_tanggal').val('');
+        $('#cppt_jam').val('');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PPA
+        |--------------------------------------------------------------------------
+        |
+        | PPA jangan dikosongkan karena default-nya user login.
+        |
+        */
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | MODE
+        |--------------------------------------------------------------------------
+        */
+
+        $('#cppt_format_sbar').prop('checked', false);
+        $('#cppt_format_tbak').prop('checked', false);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CPPT BIASA
+        |--------------------------------------------------------------------------
+        */
+
+        $('#cppt_s').val('');
+        $('#cppt_o').val('');
+        $('#cppt_a').val('');
+        $('#cppt_p').val('');
+        $('#cppt_i').val('');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SBAR
+        |--------------------------------------------------------------------------
+        */
+
+        $('#cppt_sbar_situation').val('');
+        $('#cppt_sbar_background').val('');
+        $('#cppt_sbar_assessment').val('');
+        $('#cppt_sbar_recommendation').val('');
+
+        $('#cppt_dokter_sbar').val('');
+        $('#cppt_dokter_sbar_id').val('');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TBAK
+        |--------------------------------------------------------------------------
+        */
+
+        $('#cppt_tulis').val('');
+
+        $('#cppt_baca').prop('checked', false);
+        $('#cppt_konfirmasi').prop('checked', false);
+
+        $('#cppt_dokter_tbak').val('');
+        $('#cppt_dokter_tbak_id').val('');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | KEMBALIKAN KE MODE CPPT BIASA
+        |--------------------------------------------------------------------------
+        */
+
+        setModeCPPT('BIASA');
     }
 
     function showICare() {

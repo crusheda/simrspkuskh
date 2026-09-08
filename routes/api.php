@@ -344,6 +344,8 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
 
             // PLUGINS
             Route::get('emr/cppt/{kunjungan}', [EMRController::class, 'showCppt']);
+            Route::post('emr/cppt/{kunjungan}',[EMRController::class, 'simpanCPPT']);
+            Route::delete('emr/cppt/{id}',[EMRController::class, 'hapusCPPT']);
 
         // KLAIM
         Route::get('generate/lab/{kunjungan}', [BerkasKlaimController::class, 'generateLab']);
