@@ -574,13 +574,13 @@ class PengkajianRawatJalanObsgynController extends Controller
             $data['leopold4'] = $pemeriksaan_fisik_obsgyn->RJ_LEOPOLD_4;
             $data['aus_nadi'] = $pemeriksaan_fisik_obsgyn->RJ_DJJ;
             $data['aus_nadi_cb'] = $pemeriksaan_fisik_obsgyn->RJ_AUSKULTASI;
-            $data['pem_lain'] = $pemeriksaan_fisik_obsgyn->RJ_LEOPOLD2;
-            $data['extremitas'] = $pemeriksaan_fisik_obsgyn->RJ_LEOPOLD3;
+            $data['pem_lain'] = $pemeriksaan_fisik_obsgyn->RJ_PEMERIKSAAN_LAIN;
+            $data['extremitas'] = $pemeriksaan_fisik_obsgyn->RJ_EXTREMITAS;
             $data['patela1'] = $pemeriksaan_fisik_obsgyn->RJ_PATELA_1;
             $data['patela2'] = $pemeriksaan_fisik_obsgyn->RJ_PATELA_2;
             $data['uodema1'] = $pemeriksaan_fisik_obsgyn->RJ_UODEMA_1;
             $data['uodema2'] = $pemeriksaan_fisik_obsgyn->RJ_UODEMA_2;
-            }
+        }
 
         $pemeriksaan_fisik = DB::table('medicalrecord.pemeriksaan_fisik')
             ->where('KUNJUNGAN', $kunjungan)

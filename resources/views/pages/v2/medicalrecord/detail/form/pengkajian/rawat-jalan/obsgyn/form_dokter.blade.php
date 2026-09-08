@@ -354,7 +354,7 @@
                                 </div>
                                 <div class="col-md-8 mb-2">
                                     <div class="input-group input-group-sm">
-                                        <input type="number" class="form-control form-control-sm" name="aus_nadi">
+                                        <input type="number" class="form-control form-control-sm" name="aus_nadi" id="aus_nadi">
                                         <span class="input-group-text">
                                             X/menit
                                         </span>
@@ -416,11 +416,11 @@
                                 </div>
                                 <div class="col-md-8 mb-2">
                                     <div class="input-group input-group-sm">
-                                        <input type="number" class="form-control form-control-sm" name="patela1">
+                                        <input type="number" class="form-control form-control-sm" name="patela1" id="patela1">
                                         <span class="input-group-text">
                                             /
                                         </span>
-                                        <input type="number" class="form-control form-control-sm" name="patela2">
+                                        <input type="number" class="form-control form-control-sm" name="patela2" id="patela2">
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-2">
@@ -428,11 +428,11 @@
                                 </div>
                                 <div class="col-md-8 mb-2">
                                     <div class="input-group input-group-sm">
-                                        <input type="number" class="form-control form-control-sm" name="uodema1">
+                                        <input type="number" class="form-control form-control-sm" name="uodema1" id="uodema1">
                                         <span class="input-group-text">
                                             /
                                         </span>
-                                        <input type="number" class="form-control form-control-sm" name="uodema2">
+                                        <input type="number" class="form-control form-control-sm" name="uodema2" id="uodema2">
                                     </div>
                                 </div>
                             </div>
@@ -1085,7 +1085,19 @@
         }
 
         $('#menstruasi_keluhan').val(data.menstruasi_keluhan || '');
-
+        $('#palpasi_leopold').val(data.palpasi_leopold);
+        $('#leopold1').val(data.leopold1);
+        $('#leopold2').val(data.leopold2);
+        $('#leopold3').val(data.leopold3);
+        $('#leopold4').val(data.leopold4);
+        $('#aus_nadi').val(data.aus_nadi);
+        $('#extremitas').val(data.extremitas);
+        $('#patela1').val(data.patela1);
+        $('#patela2').val(data.patela2);
+        $('#uodema1').val(data.uodema1);
+        $('#uodema2').val(data.uodema2);
+        $('#aus_nadi_cb').prop('checked', data.aus_nadi_cb == 1);
+        $('#pem_lain').prop('checked', data.pem_lain == 1);
     }
 
     function saveDataPengkajianRJOd(btn) {
