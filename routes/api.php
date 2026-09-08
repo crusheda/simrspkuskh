@@ -46,6 +46,7 @@ use App\Http\Controllers\EMR\ApiKonsulController;
 use App\Http\Controllers\EMR\ApiUploadController;
 use App\Http\Controllers\Klaim\Smart\SmartKlaimController;
 use App\Http\Controllers\Klaim\Smart\ApiSmartKlaimController;
+use App\Http\Controllers\Klaim\BerkasKlaimController;
 use App\Http\Controllers\Monitoring\MonitoringController;
 use App\Http\Controllers\Monitoring\ApiMonitoringController;
 use App\Http\Controllers\Pelayanan\Penunjang\RISController;
@@ -336,10 +337,16 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                         Route::get('emr/pengkajian/ri/pemeriksaankhususobsgyn/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanKhususObs']);
                         Route::post('emr/pengkajian/ri/pemeriksaankhususobsgyn/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanKhususObs']);
 
-            //FORM LAIN
+            // FORM LAIN
                 // LEMBAR TRANSFER INTERNAL
                     Route::get('emr/form/lain/lembartransferpasien/{kunjungan}', [LembarTransferPasienInternalController::class, 'getFormTransfer']);
                     Route::post('emr/form/lain/lembartransferpasien/{kunjungan}/simpan', [LembarTransferPasienInternalController::class, 'simpanFormTransfer']);
+
+            // PLUGINS
+            Route::get('emr/cppt/{kunjungan}', [EMRController::class, 'showCppt']);
+
+        // KLAIM
+        Route::get('generate/lab/{kunjungan}', [BerkasKlaimController::class, 'generateLab']);
 });
 
 // SIRMED v.1
@@ -482,7 +489,6 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     Route::post('emr/file-upload/{nomor}', [ApiUploadController::class, 'store'])->name('file.tambahan.upload');
     Route::get('emr/file-upload/{nomor}/list', [ApiUploadController::class, 'listFiles'])->name('file.tambahan.list');
     Route::delete('emr/file-upload/{nomor}/{id}', [ApiUploadController::class, 'destroy'])->name('file.tambahan.delete');
-
 
     // DIGITAL
     Route::post('monitoring', [ApiMonitoringController::class, 'table'])->name('api.monitoring');

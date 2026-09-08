@@ -2000,6 +2000,7 @@ class ApiMonitoringController extends Controller
                     //GENERATE QR CODE
                     $generator = new DNS2D();
                     $pegawai = $value->NIP_ANALIS . '-' . $value->ANALIS;
+                    // print_r($value->ANALIS.'                   -                ');
 
                     // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
                     $image = $generator->getBarcodePNG($pegawai, 'QRCODE');
@@ -2074,6 +2075,7 @@ class ApiMonitoringController extends Controller
                 $jasper->process($input, $output, $options)->execute();
                 $tempPaths[] = "{$output}.pdf"; // Simpan path PDF sementara
             }
+                // die();
 
             // Gabungkan semua PDF yang dihasilkan
             $pathMerged = 'files/laborat/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;

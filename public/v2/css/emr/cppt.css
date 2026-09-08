@@ -1,0 +1,222 @@
+/* ============================================================
+FLOATING BUTTON
+============================================================ */
+.cppt-floating-container {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1045;
+}
+.cppt-floating-btn {
+    position: relative;
+    height: 58px;
+    min-width: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 999px;
+    color: #fff;
+    background: linear-gradient(135deg,#0d6efd,#6f42c1);
+    box-shadow: 0 8px 25px rgba(13,110,253,.35),0 3px 10px rgba(0,0,0,.15);
+    cursor: pointer;
+    transition: transform .25s ease,box-shadow .25s ease;
+    animation: cpptFloating 3s ease-in-out infinite;
+}
+.cppt-floating-btn:hover {
+    transform: translateY(-5px) scale(1.04);
+    box-shadow: 0 14px 35px rgba(13,110,253,.45),0 5px 15px rgba(0,0,0,.18);
+}
+.cppt-floating-btn:active {
+    transform: scale(.94);
+}
+.cppt-floating-icon {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,.18);
+    font-size: 20px;
+}
+.cppt-floating-label {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .5px;
+}
+
+/* ============================================================
+BADGE
+============================================================ */
+.cppt-floating-badge {
+    position: absolute;
+    top: -6px;
+    right: -4px;
+    min-width: 21px;
+    height: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    border-radius: 50px;
+    background: #dc3545;
+    color: #fff;
+    border: 2px solid #fff;
+    font-size: 10px;
+    font-weight: 700;
+    animation: cpptBadgePulse 1.8s ease-in-out infinite;
+}
+
+.cppt-riwayat-scroll {
+    height: 350px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 5px;
+}
+/* ============================================================
+FLOATING ANIMATION
+============================================================ */
+@keyframes cpptFloating {
+    0%,100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-6px);
+    }
+}
+@keyframes cpptBadgePulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.18);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ============================================================
+MODAL
+============================================================ */
+.cppt-modal-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255,255,255,.18);
+}
+.cppt-patient-info {
+    background: var(--bs-primary-bg-subtle);
+    border: 1px solid var(--bs-primary-border-subtle);
+}
+
+/* ============================================================
+TIMELINE
+============================================================ */
+.cppt-timeline {
+    position: relative;
+    padding-left: 8px;
+}
+.cppt-timeline::before {
+    content: "";
+    position: absolute;
+    left: 22px;
+    top: 15px;
+    bottom: 15px;
+    width: 2px;
+    background: var(--bs-border-color);
+}
+.cppt-timeline-item {
+    position: relative;
+    display: flex;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+.cppt-timeline-item:last-child {
+    margin-bottom: 0;
+}
+.cppt-timeline-marker {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+    box-shadow: 0 0 0 4px var(--bs-body-bg),0 3px 8px rgba(0,0,0,.15);
+    font-size: 14px;
+}
+.cppt-timeline-content {
+    flex: 1;
+    padding: 14px 16px;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 12px;
+    background: var(--bs-body-bg);
+    box-shadow: 0 3px 12px rgba(0,0,0,.04);
+    transition: transform .2s ease,box-shadow .2s ease;
+}
+.cppt-timeline-content:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px rgba(0,0,0,.08);
+}
+
+/* ============================================================
+MOBILE
+============================================================ */
+@media (max-width: 767.98px) {
+    .cppt-floating-container {
+        right: 15px;
+        bottom: 15px;
+    }
+    .cppt-floating-btn {
+        width: 58px;
+        height: 58px;
+        min-width: 58px;
+        padding: 0;
+    }
+    .cppt-floating-label {
+        display: none;
+    }
+    .cppt-floating-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 21px;
+    }
+    .cppt-floating-badge {
+        top: -5px;
+        right: -4px;
+    }
+    .modal-dialog {
+        margin: .5rem;
+    }
+    .modal-content {
+        border-radius: 18px !important;
+    }
+    .cppt-timeline {
+        padding-left: 0;
+    }
+    .cppt-timeline::before {
+        left: 19px;
+    }
+    .cppt-timeline-item {
+        gap: 14px;
+    }
+    .cppt-timeline-marker {
+        flex-basis: 28px;
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+    .cppt-timeline-content {
+        padding: 12px;
+    }
+}

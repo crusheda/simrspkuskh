@@ -2,6 +2,10 @@
 
 @section('title','Detail Kunjungan - RM.'.$list["show"]->NORM ?? 'XXXX')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('v2/css/emr/cppt.css') }}">
+@endpush
+
 @section('content')
 
 <div class="container-fluid">
@@ -257,6 +261,169 @@
     </div>
     {{-- MODAL ENDED --}}
 
+    {{-- ============================================================
+        FLOATING CPPT BUTTON
+    ============================================================ --}}
+    <div class="cppt-floating-container">
+        <button type="button" id="btn-floating-cppt" class="cppt-floating-btn" onclick="showModalCppt('{{ $list['KUNJUNGAN'] }}')">
+            <span class="cppt-floating-icon">
+                <i class="ph-duotone ph-notepad"></i>
+            </span>
+            <span class="cppt-floating-label">
+                CPPT
+            </span>
+            <span class="cppt-floating-badge" id="btn-count-cppt">
+                {{ $list['cpptCount'] }}
+            </span>
+        </button>
+    </div>
+
+    {{-- ============================================================
+        OPEN MODAL NEW CPPT
+    ============================================================ --}}
+    <div class="modal fade" id="modalCPPT" tabindex="-1" aria-labelledby="modalCPPTLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+                {{-- HEADER --}}
+                <div class="modal-header bg-primary text-white border-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="cppt-modal-icon">
+                            <i class="ph-duotone ph-notepad fs-24"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-white fw-bold mb-0"
+                                id="modalCPPTLabel">
+                                CPPT
+                            </h5>
+                            <small class="opacity-75">
+                                Catatan Perkembangan Pasien Terintegrasi
+                            </small>
+                        </div>
+                    </div>
+                    <button type="button"
+                            class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+                </div>
+
+                {{-- BODY --}}
+                <div class="modal-body p-3 p-md-4 position-relative">
+
+                    <div class="cppt-patient-info rounded-3 p-3 mb-1">
+                        <div class="row g-3" id="cppt_header">
+                    </div>
+
+                    <div class="card border border-info text-info-emphasis border-dashed rounded-3 shadow-none mb-3 mt-2">
+                        <div class="card-header bg-info-subtle p-0" data-bs-toggle="tooltip" title="Buka / Sembunyikan Form Tambah CPPT">
+                            <button type="button" class="btn w-100 text-start d-flex align-items-center justify-content-between px-3 py-3 shadow-none" data-bs-toggle="collapse" data-bs-target="#collapseTambahCPPT" aria-expanded="true" aria-controls="collapseTambahCPPT">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="ph-duotone ph-plus-circle text-primary fs-20"></i>
+                                    <strong>Tambah Catatan CPPT</strong>
+                                </div>
+                                <i class="ph ph-caret-down"></i>
+                            </button>
+                        </div>
+                        <div class="collapse show" id="collapseTambahCPPT">
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    {{-- TANGGAL --}}
+                                    <div class="col-md-3">
+                                        <label class="form-label">Tanggal</label>
+                                        <input type="date" class="form-control" id="cppt_tanggal">
+                                    </div>
+                                    {{-- JAM --}}
+                                    <div class="col-md-2">
+                                        <label class="form-label">Jam</label>
+                                        <input type="time" class="form-control" id="cppt_jam">
+                                    </div>
+                                    {{-- PPA --}}
+                                    <div class="col-md-7 position-relative">
+                                        <label class="form-label">PPA</label>
+                                        <input type="text" class="form-control" id="cppt_ppa" placeholder="Cari nama atau NIP PPA..." autocomplete="off">
+                                        <input type="hidden" id="cppt_ppa_id">
+                                        <div id="cppt_ppa_autocomplete" class="list-group position-absolute start-0 end-0 shadow-sm bg-body" style="z-index:1050;display:none;"></div>
+                                    </div>
+                                    {{-- S --}}
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">S <small class="text-muted">(Subjective)</small></label>
+                                        <textarea class="form-control" id="cppt_s" rows="4" placeholder="Keluhan atau kondisi yang dirasakan pasien..."></textarea>
+                                    </div>
+                                    {{-- O --}}
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">O <small class="text-muted">(Objective)</small></label>
+                                        <textarea class="form-control" id="cppt_o" rows="4" placeholder="Hasil pemeriksaan objektif..."></textarea>
+                                    </div>
+                                    {{-- A --}}
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">A <small class="text-muted">(Assessment)</small></label>
+                                        <textarea class="form-control" id="cppt_a" rows="4" placeholder="Assessment atau diagnosis pasien..."></textarea>
+                                    </div>
+                                    {{-- P --}}
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">P <small class="text-muted">(Planning)</small></label>
+                                        <textarea class="form-control" id="cppt_p" rows="4" placeholder="Rencana terapi atau tindak lanjut..."></textarea>
+                                    </div>
+                                    {{-- I --}}
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold">I <small class="text-muted">(Instruction)</small></label>
+                                        <textarea class="form-control" id="cppt_i" rows="4" placeholder="Instruksi untuk tindak lanjut pasien..."></textarea>
+                                    </div>
+                                    {{-- BUTTON --}}
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <button type="button" class="btn btn-light" id="btn-batal-cppt" data-bs-toggle="collapse" data-bs-target="#collapseTambahCPPT" aria-expanded="true" aria-controls="collapseTambahCPPT">
+                                                <i class="ph ph-x me-1"></i> Batal
+                                            </button>
+                                            <button type="button" class="btn btn-primary" id="btn-simpan-cppt">
+                                                <i class="ph ph-floppy-disk me-1"></i> Tambah CPPT
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- RIWAYAT CPPT --}}
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="ph-duotone ph-clock-counter-clockwise text-primary fs-20"></i>
+                            <strong>Riwayat CPPT</strong>
+                        </div>
+                        <span class="badge text-bg-primary" id="cppt_count"></span>
+                    </div>
+
+                    {{-- TIMELINE --}}
+                    <div class="cppt-timeline" id="cppt_riwayat"></div>
+
+                    {{-- SCROLL TO TOP --}}
+                    <div class="position-sticky bottom-0 d-flex justify-content-end pe-1 pb-1"
+                        style="z-index:1050;pointer-events:none;">
+                        <button type="button"
+                                id="btn-cppt-scroll-top"
+                                class="btn btn-primary rounded-circle shadow d-flex align-items-center justify-content-center"
+                                style="width:45px;height:45px;pointer-events:auto;" data-bs-toggle="tooltip" title="Kembali ke atas">
+                            <i class="ph-duotone ph-arrow-fat-lines-up fs-20"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+                {{-- FOOTER --}}
+                <div class="modal-footer border-0 p-0 pt-3">
+                    <button type="button" class="btn btn-outline-light border-dashed waves-effect waves-light" data-bs-dismiss="modal" data-bs-toggle="tooltip" title="Tutup Cppt">
+                        <i class="ph-duotone ph-x me-1"></i> Tutup
+                    </button>
+                    <button type="button" class="btn btn-subtle-warning" onclick="showModalCppt('{{ $list['KUNJUNGAN'] }}')" data-bs-toggle="tooltip" title="Refresh Data Riwayat CPPT">
+                        <i class="ph-duotone ph-arrows-clockwise me-1"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -270,7 +437,13 @@
     const tgl_keluar = @json($list['show']->KELUAR);
     const tgl_sep_date = tgl_sep?tgl_sep.substring(0, 10):null;
 
+    let dataPPA = [];
+    let ppaSelected=false;
+
     $(document).ready(function() {
+
+        initCppt();
+
         // aktifkan saat pertama kali load
         aktifkanTabsDariHash();
 
@@ -316,6 +489,300 @@
 
         loadRiwayatKunjunganPasien();
     });
+
+    function initCppt() {
+        /* ============================================================
+        CPPT INIT STARTED
+        ============================================================ */
+        const tanggalCppt = document.getElementById('cppt_tanggal');
+        const jamCppt = document.getElementById('cppt_jam');
+
+        if (tanggalCppt) {
+            const now = new Date();
+            const year =
+                now.getFullYear();
+            const month =
+                String(now.getMonth() + 1).padStart(2, '0');
+            const day =
+                String(now.getDate()).padStart(2, '0');
+            tanggalCppt.value =
+                `${year}-${month}-${day}`;
+        }
+
+        if (jamCppt) {
+            const now = new Date();
+            jamCppt.value = now.toTimeString().substring(0, 5);
+        }
+
+        /* ============================================================
+        DUMMY SIMPAN
+        ============================================================ */
+        const btnSimpanCppt = document.getElementById('btn-dummy-simpan-cppt');
+        if (btnSimpanCppt) {
+            btnSimpanCppt.addEventListener('click', function () {
+                const original =
+                    this.innerHTML;
+                this.disabled = true;
+                this.innerHTML = `
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                    Menyimpan...
+                `;
+                setTimeout(() => {
+                    this.innerHTML = `
+                        <i class="ph-duotone ph-check-circle me-1"></i>
+                        Tersimpan
+                    `;
+                    setTimeout(() => {
+                        this.disabled = false;
+                        this.innerHTML =
+                            original;
+                    }, 1500);
+                }, 800);
+            });
+        }
+
+        /* ============================================================
+        ANIMASI KLIK FAB
+        ============================================================ */
+        const btnFloatingCppt = document.getElementById('btn-floating-cppt');
+        if (btnFloatingCppt) {
+            btnFloatingCppt.addEventListener(
+                'click',
+                function () {
+                    this.style.animation = 'none';
+                    void this.offsetWidth;
+                    this.style.animation = 'cpptFloating .45s ease';
+                }
+            );
+        }
+    }
+
+    function showModalCppt(kunjungan){
+        const $btnCppt=$('#btn-floating-cppt');
+        $.ajax({
+            url:"/api/v2/emr/cppt/"+kunjungan,
+            type:'GET',
+            dataType:'json',
+            beforeSend:function(){
+                $btnCppt.prop('disabled',true).find('i').removeClass('ph-duotone ph-notepad').addClass('ri-refresh-line ri-spin');
+                $('#cppt_riwayat').empty().append(`<center><div class="spinner-border spinner-border-sm" role="status"></div></center>`);
+            },
+            success:function(res){
+                if(!res){
+                    iziToast.error({
+                        title:'Maaf!',
+                        message:'Data CPPT tidak ditemukan / belum diisi',
+                        position:'topRight'
+                    });
+                    return;
+                }
+
+                // Init Scroll to Top
+                const modalCpptBody = document.querySelector('#modalCPPT .modal-body');
+                const btnCpptScrollTop = document.getElementById('btn-cppt-scroll-top');
+                if (modalCpptBody && btnCpptScrollTop) {
+                    modalCpptBody.addEventListener('scroll', function() {
+                        if (this.scrollTop > 300) {
+                            btnCpptScrollTop.classList.remove('d-none');
+                        } else {
+                            btnCpptScrollTop.classList.add('d-none');
+                        }
+                    });
+                    btnCpptScrollTop.addEventListener('click', function() {
+                        modalCpptBody.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    });
+                }
+
+                dataPPA=(res.ppa||[]).filter(item=>item.ID&&item.NAMA);
+
+                $('#cppt_ppa_autocomplete').hide().empty();
+                $('#cppt_ppa').data('ppa',dataPPA);
+
+                let header='';
+                let riwayat='';
+
+                header+=`
+                    <div class="col-md-5">
+                        <div class="small text-muted">Pasien</div>
+                        <div class="fw-bold text-truncate">${res.namapasien??'-'}</div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="small text-muted">No. RM</div>
+                        <div class="fw-bold">${res.norm??'-'}</div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="small text-muted">Kunjungan</div>
+                        <div class="fw-bold">${kunjungan}</div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="small text-muted">CPPT</div>
+                        <span class="badge text-bg-primary">${res.count??0} Catatan</span>
+                    </div>
+                `;
+                $('#cppt_header').empty().append(header);
+                $('#cppt_count').text((res.count??0)+' Catatan');
+                $('#btn-count-cppt').text(res.count??0);
+                (res.show||[]).forEach(item=>{
+                    let ic='ph-duotone ph-notepad';
+                    let ic_col='primary';
+                    if(item.JNSPPA=='Dokter'){
+                        ic='ph-duotone ph-stethoscope';
+                        ic_col='primary';
+                    }else if(item.JNSPPA=='Paramedis'){
+                        ic='ph-duotone ph-heartbeat';
+                        ic_col='success';
+                    }else if(item.JNSPPA=='Apoteker'){
+                        ic='ph-duotone ph-pill';
+                        ic_col='warning';
+                    }else if(item.JNSPPA=='Nutrisionis'){
+                        ic='ph-duotone ph-bowl-food';
+                        ic_col='pink-500';
+                    }else {
+                        ic='ph-duotone ph-x';
+                        ic_col='red-700';
+                    }
+                    riwayat+=`
+                        <div class="cppt-timeline-item">
+                            <div class="cppt-timeline-marker bg-${ic_col}">
+                                <i class="${ic}"></i>
+                            </div>
+                            <div class="cppt-timeline-content">
+                                <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+                                    <div>
+                                        <div class="fw-bold">${item.PPA??'-'}</div>
+                                        <small class="text-muted">${item.JNSPPA??'-'}</small>
+                                    </div>
+                                    <span class="badge bg-primary-subtle text-primary">${item.TANGGAL??'-'}</span>
+                                </div>
+                                <hr class="my-2">
+                                <div class="small lh-lg">${item.CATATAN??''}</div>
+                                <div class="small lh-lg"><b>I/ :</b> ${item.INSTRUKSI??'-'}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                $('#cppt_riwayat').empty().append(riwayat||'<div class="text-center text-muted py-4">Belum ada catatan CPPT.</div>');
+
+                $('#modalCPPT').modal('show');
+
+                initAutocompletePPA();
+            },
+            error:function(xhr){
+                let message='Data gagal ditampilkan.';
+                if(xhr.status===422&&xhr.responseJSON?.errors){
+                    message=Object.values(xhr.responseJSON.errors).flat().join('<br>');
+                }else if(xhr.responseJSON?.message){
+                    message=xhr.responseJSON.message;
+                }
+                iziToast.error({
+                    title:'Proses Gagal!',
+                    message:message,
+                    position:'topRight'
+                });
+            },
+            complete:function(){
+                $btnCppt.prop('disabled',false).find('i').removeClass('ri-refresh-line ri-spin').addClass('ph-duotone ph-notepad');
+                // Showing Tooltip
+                $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                $('.tooltip').remove();
+                $('[data-bs-toggle="tooltip"]').tooltip({
+                    trigger : 'hover'
+                })
+            }
+        });
+    }
+
+    function initAutocompletePPA(){
+        const $input=$('#cppt_ppa');
+        const $container=$('#cppt_ppa_autocomplete');
+
+        $input.on('input',function(){
+            const keyword=$(this).val().trim().toLowerCase();
+
+            // Setiap kali user mengetik ulang, pilihan sebelumnya dibatalkan
+            ppaSelected=false;
+            $('#cppt_ppa_id').val('');
+            $('#cppt_ppa').removeData('nip');
+
+            $container.empty();
+
+            if(keyword.length<2){
+                $container.hide();
+                return;
+            }
+
+            const hasil=dataPPA.filter(item=>{
+                const nama=(item.NAMA||'').toLowerCase();
+                const nip=(item.NIP||'').toLowerCase();
+
+                return nama.includes(keyword)||nip.includes(keyword);
+            }).slice(0,10);
+
+            if(!hasil.length){
+                $container.html(`
+                    <div class="list-group-item text-muted">
+                        <i class="ph ph-magnifying-glass me-1"></i>
+                        PPA tidak ditemukan
+                    </div>
+                `).show();
+
+                return;
+            }
+
+            hasil.forEach(item=>{
+                $container.append(`
+                    <button type="button"
+                            class="list-group-item list-group-item-action cppt-ppa-item text-start bg-body"
+                            data-id="${item.ID}"
+                            data-nip="${item.NIP??''}"
+                            data-nama="${item.NAMA??''}">
+                        <div class="fw-semibold">${item.NAMA??'-'}</div>
+                        <small class="text-muted">
+                            NIP: ${item.NIP??'-'}
+                        </small>
+                    </button>
+                `);
+            });
+
+            $container.show();
+        });
+
+        $container.on('click','.cppt-ppa-item',function(){
+            const id=$(this).data('id');
+            const nip=$(this).data('nip');
+            const nama=$(this).data('nama');
+
+            $('#cppt_ppa_id').val(id);
+            $('#cppt_ppa').val(nama);
+            $('#cppt_ppa').data('nip',nip);
+
+            // Tandai bahwa PPA valid sudah dipilih dari list
+            ppaSelected=true;
+
+            $container.hide().empty();
+        });
+
+        $input.on('blur',function(){
+            setTimeout(function(){
+
+                $container.hide();
+
+                // Jika belum memilih PPA dari autocomplete,
+                // maka input dianggap tidak valid
+                if(!ppaSelected || !$('#cppt_ppa_id').val()){
+                    $input.val('');
+                    $('#cppt_ppa_id').val('');
+                    $input.removeData('nip');
+
+                    ppaSelected=false;
+                }
+
+            },200);
+        });
+    }
 
     function showICare() {
         const btn = $('#btn-icare');

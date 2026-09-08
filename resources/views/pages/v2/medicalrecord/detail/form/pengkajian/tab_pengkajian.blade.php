@@ -1,5 +1,5 @@
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('v2/css/folder/tab_pengkajian.css') }}">
+    <link rel="stylesheet" href="{{ asset('v2/css/emr/tab_pengkajian.css') }}">
 @endpush
 <div id="apiLoadingBar" class="api-loading-bar" aria-hidden="true">
     <div class="api-loading-bar__progress"></div>

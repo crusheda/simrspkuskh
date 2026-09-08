@@ -862,8 +862,8 @@
 
                         $('#btn-refresh-klaim').empty().append(`
                             <div class="btn-group">
-                                <button class="btn btn-light-primary" onclick="prosesSubmit('${kunjungan}')"><i class="fas fa-sync me-1"></i> Refresh Preview Klaim</button>
-                                <a class="btn btn-light-success" href="/api/klaim/${kunjungan}/pdf/download"><i class="fas fa-download me-1"></i> Download Berkas Klaim</a>
+                                <button class="btn btn-subtle-primary" onclick="prosesSubmit('${kunjungan}')"><i class="fas fa-sync me-1"></i> Refresh Preview Klaim</button>
+                                <a class="btn btn-subtle-success" href="/api/klaim/${kunjungan}/pdf/download"><i class="fas fa-download me-1"></i> Download Berkas Klaim</a>
                             </div>
                         `);
 
@@ -1326,40 +1326,92 @@
         }
 
         function laboratorium(kunjungan) {
-            $('#ck_laboratorium').prop('disabled',true);
+            $('#ck_laboratorium').prop('disabled', true);
             $('#preview').empty().append(`
                 <div class="spinner-grow align-middle me-2" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
                 Area ini akan menampilkan Preview Berkas Klaim yang dipilih
             `);
+            fetch("/api/v2/generate/lab/" + kunjungan)
+                .then(async response => {
 
-            // AJAX FETCH
-            fetch("/api/pasien/"+kunjungan+"/lab")
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('File tidak ditemukan atau gagal diambil.');
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                // Buat object URL dari blob
-                const fileURL = URL.createObjectURL(blob);
+                    // ==========================================
+                    // RESPONSE ERROR
+                    // ==========================================
+                    if (!response.ok) {
 
-                // Tampilkan ke iframe dalam modal
-                $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-                $('#ck_laboratorium').prop('disabled',false);
-            })
-            .catch(error => {
-                iziToast.error({
-                    title: 'Maaf!',
-                    message: error.message ?? "Data Hasil Laboratorium tidak ditemukan atau belum dibuatkan oleh Simgos.",
-                    position: 'topRight'
+                        let message =
+                            'File tidak ditemukan atau gagal diambil.';
+
+                        try {
+
+                            const data = await response.json();
+
+                            message =
+                                data.message ??
+                                data.detail ??
+                                data.error ??
+                                message;
+
+                        } catch (e) {
+
+                            console.error(
+                                'Response bukan JSON:',
+                                e
+                            );
+                        }
+
+                        throw new Error(message);
+                    }
+
+                    // ==========================================
+                    // RESPONSE PDF
+                    // ==========================================
+                    return response.blob();
+                })
+                .then(blob => {
+
+                    const fileURL =
+                        URL.createObjectURL(blob);
+
+                    $('#preview')
+                        .empty()
+                        .html(`
+                            <iframe
+                                src="${fileURL}"
+                                width="100%"
+                                height="500px"
+                                frameborder="0">
+                            </iframe>
+                        `);
+
+                    $('#ck_laboratorium')
+                        .prop('disabled', false);
+                })
+                .catch(error => {
+
+                    console.error(
+                        'Generate Lab Error:',
+                        error
+                    );
+
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: error.message,
+                        position: 'topRight'
+                    });
+
+                    $('#preview')
+                        .empty()
+                        .append(`
+                            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+                        `);
+
+                    $('#ck_laboratorium')
+                        .prop('checked', false)
+                        .prop('disabled', false);
                 });
-                console.error(error);
-                $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-                $('#ck_laboratorium').prop('checked', false).prop('disabled',false);
-            });
         }
 
         function radiologi(kunjungan) {

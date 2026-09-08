@@ -252,9 +252,16 @@ class EMRController extends Controller
 
             $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')->where('nip',Auth::user()->NIP)->whereNull('deleted_at')->exists();
 
+            $countCppt = DB::table('medicalrecord.cppt as cp')
+                ->join('pendaftaran.kunjungan as pk', 'cp.KUNJUNGAN', '=', 'pk.NOMOR')
+                ->where('cp.STATUS', '!=', 0)
+                ->where('pk.NOPEN', $show->NOPEN)
+                ->where('cp.KUNJUNGAN', $KUNJUNGAN)
+                ->count();
+
             $data = [
                 'show' => $show,
-                // 'riwayat' => $riwayat,
+                'cpptCount' => $countCppt,
                 'KUNJUNGAN' => $KUNJUNGAN,
                 'tte_pegawai' => $tte_pegawai,
             ];
@@ -781,6 +788,196 @@ class EMRController extends Controller
             $forms[$formKey]['view'],
             compact('init', 'list', 'kunjungan', 'formKey')
         );
+    }
+
+    public function showCPPT($PKUNJUNGAN)
+    {
+        $getInit = DB::table('pendaftaran.kunjungan AS pk')
+                    ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                    ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
+                    ->select('pk.NOPEN','ps.NORM',DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'))
+                    ->where('pk.NOMOR',$PKUNJUNGAN)
+                    ->first();
+
+        $PNOPEN = $getInit->NOPEN;
+
+        $show = DB::table('medicalrecord.cppt as cp')
+            ->leftJoin('master.referensi as ref', function ($join) {
+                $join->on('cp.JENIS', '=', 'ref.ID')
+                    ->where('ref.JENIS', '=', 32);
+            })
+            ->leftJoin('master.pegawai as p', 'cp.TENAGA_MEDIS', '=', 'p.ID')
+            ->leftJoin('master.dokter as d', 'cp.TENAGA_MEDIS', '=', 'd.ID')
+            ->leftJoin('master.dokter as dc', 'cp.DOKTER_TBAK_OR_SBAR', '=', 'dc.ID')
+            ->leftJoin('master.perawat as pr', 'cp.TENAGA_MEDIS', '=', 'pr.ID')
+            ->leftJoin('medicalrecord.verifikasi_cppt as vcp', 'cp.VERIFIKASI', '=', 'vcp.ID')
+            ->leftJoin('aplikasi.pengguna as vr', 'vcp.OLEH', '=', 'vr.ID')
+            ->leftJoin('pendaftaran.kunjungan as pk', 'cp.KUNJUNGAN', '=', 'pk.NOMOR')
+            ->where('cp.KUNJUNGAN', '=', DB::raw('pk.NOMOR'))
+            ->where('cp.STATUS', '!=', 0)
+            ->where('pk.NOPEN', '=', $PNOPEN)
+            ->where('cp.KUNJUNGAN', '=', $PKUNJUNGAN)
+            ->select([
+                DB::raw("CONCAT(DATE_FORMAT(cp.TANGGAL, '%d-%m-%Y'), ' ', TIME(cp.TANGGAL)) AS TANGGAL"),
+                DB::raw("
+                    IF(
+                        (
+                            SELECT r.CONFIG->>'$.dietisen'
+                            FROM master.referensi r
+                            WHERE r.JENIS = 32
+                            AND r.ID = cp.JENIS
+                        ) = 'true',
+                        CONCAT(
+                            '<b>A/ :</b> ',
+                            REPLACE(REPLACE(master.getReplaceFont(cp.SUBYEKTIF), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                            ' <br/><br/> ',
+                            '<b>D/ :</b> ',
+                            REPLACE(REPLACE(master.getReplaceFont(cp.OBYEKTIF), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                            ' <br/><br/> ',
+                            '<b>I/ :</b> ',
+                            REPLACE(REPLACE(master.getReplaceFont(cp.ASSESMENT), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                            ' <br/><br/> ',
+                            '<b>ME/ :</b> ',
+                            REPLACE(REPLACE(master.getReplaceFont(cp.PLANNING), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                            ' <br/><br/>'
+                        ),
+                        IF(
+                            cp.STATUS_SBAR = 1,
+                            CONCAT(
+                                '<b>S/ :</b> ',
+                                REPLACE(REPLACE(master.getReplaceFont(cp.SUBYEKTIF), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                                ' <br/><br/> ',
+                                '<b>B/ :</b> ',
+                                REPLACE(REPLACE(master.getReplaceFont(cp.OBYEKTIF), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                                ' <br/><br/> ',
+                                '<b>A/ :</b> ',
+                                REPLACE(REPLACE(master.getReplaceFont(cp.ASSESMENT), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                                ' <br/><br/> ',
+                                '<b>R/ :</b> ',
+                                REPLACE(REPLACE(master.getReplaceFont(cp.PLANNING), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                                ' <br/><br/> ',
+                                '<b>Dokter/ :</b> ',
+                                IFNULL(master.getNamaLengkapPegawai(dc.NIP), '')
+                            ),
+                            IF(
+                                cp.STATUS_TBAK = 1,
+                                CONCAT(
+                                    '<b>Tulis/ :</b> ',
+                                    REPLACE(REPLACE(master.remove_html_tags(cp.TULIS), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                                    ' <br/><br/> ',
+                                    '<b>Baca/ :</b> ',
+                                    IF(cp.BACA = 0, 'Belum Baca', 'Sudah Baca'),
+                                    ' ',
+                                    '<b>Konfirmasi/ :</b> ',
+                                    IF(cp.KONFIRMASI = 0, 'Belum Konfirmasi', 'Sudah Konfirmasi'),
+                                    ' ',
+                                    '<b>Dokter/ :</b> ',
+                                    IFNULL(master.getNamaLengkapPegawai(dc.NIP), '')
+                                ),
+                                CONCAT(
+                                    '<b>S/ :</b> ',
+                                    REPLACE(REPLACE(master.getReplaceFont(cp.SUBYEKTIF), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                                    ' <br/><br/> ',
+                                    '<b>O/ :</b> ',
+                                    REPLACE(REPLACE(master.getReplaceFont(cp.OBYEKTIF), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                                    ' <br/><br/> ',
+                                    '<b>A/ :</b> ',
+                                    REPLACE(REPLACE(master.getReplaceFont(cp.ASSESMENT), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                                    ' <br/><br/> ',
+                                    '<b>P/ :</b> ',
+                                    REPLACE(REPLACE(master.getReplaceFont(cp.PLANNING), '<p', '<br><p'), '<div style=\"\">', '<br/>'),
+                                    ' <br/><br/>'
+                                )
+                            )
+                        )
+                    ) AS CATATAN
+                "),
+                DB::raw("master.getReplaceFont(cp.INSTRUKSI) AS INSTRUKSI"),
+                DB::raw("
+                    IF(
+                        ref.REF_ID = '4',
+                        master.getNamaLengkapPegawai(d.NIP),
+                        ''
+                    ) AS DOKTER
+                "),
+                DB::raw("
+                    IF(
+                        ref.REF_ID = '6',
+                        master.getNamaLengkapPegawai(pr.NIP),
+                        IF(
+                            ref.REF_ID NOT IN ('6', '4'),
+                            master.getNamaLengkapPegawai(p.NIP),
+                            ''
+                        )
+                    ) AS PERAWAT
+                "),
+                'ref.DESKRIPSI as JNSPPA',
+                DB::raw("
+                    CONCAT(
+                        IF(
+                            ref.REF_ID = '4',
+                            master.getNamaLengkapPegawai(d.NIP),
+                            IF(
+                                ref.REF_ID = '6',
+                                master.getNamaLengkapPegawai(pr.NIP),
+                                IF(
+                                    ref.REF_ID NOT IN ('6', '4'),
+                                    master.getNamaLengkapPegawai(p.NIP),
+                                    ''
+                                )
+                            )
+                        ),
+                        ' ',
+                        IF(
+                            cp.STATUS_SBAR = 1,
+                            '( SBAR )',
+                            IF(
+                                cp.STATUS_TBAK = 1,
+                                '( TBAK )',
+                                ''
+                            )
+                        )
+                    ) AS PPA
+                "),
+                DB::raw("CONCAT(DATE_FORMAT(vcp.TANGGAL, '%d-%m-%Y'), ' ', TIME(vcp.TANGGAL)) AS TGLVERIFIKASI"),
+                DB::raw("master.getNamaLengkapPegawai(vr.NIP) AS VERIFIKATOR"),
+                DB::raw("
+                    CONCAT(
+                        master.getNamaLengkapPegawai(vr.NIP),
+                        ' ',
+                        DATE_FORMAT(vcp.TANGGAL, '%d-%m-%Y'),
+                        ' ',
+                        TIME(vcp.TANGGAL)
+                    ) AS VERIFIKASI
+                "),
+                DB::raw("
+                    IF(
+                        cp.STATUS_SBAR = 1,
+                        'SBAR',
+                        IF(
+                            cp.STATUS_TBAK = 1,
+                            'TBAK',
+                            ''
+                        )
+                    ) AS TBAK_SBAR
+                ")
+            ])
+            ->orderBy('cp.TANGGAL', 'DESC')
+            ->get();
+
+        $ppa = DB::table('aplikasi.pengguna AS pe')
+                ->select('pe.ID', 'pe.NIP', DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMA'))
+                ->get();
+
+        $data = [
+            'norm' => $getInit->NORM,
+            'ppa' => $ppa,
+            'namapasien' => $getInit->NAMAPASIEN,
+            'count' => $show->count(),
+            'show' => $show,
+        ];
+
+        return response()->json($data, 200);
     }
 
     private function getDataMaster($kunjungan)
