@@ -876,6 +876,15 @@
                         ic='ph-duotone ph-x';
                         ic_col='red-700';
                     }
+
+                    let pushInstruksi = '';
+                    if (item.INSTRUKSI != null || item.INSTRUKSI != '') {
+                        let instruksi = htmlKeTextCPPT(item.INSTRUKSI);
+                        pushInstruksi = `<div class="small lh-lg">
+                                        <b>I/ :</b> ${escapeHtmlCPPT(instruksi).replace(/\n/g, '<br>') ?? '-'}
+                                    </div>`;
+                    }
+
                     riwayat += `<div class="cppt-timeline-item">
                                     <div class="cppt-timeline-marker bg-${ic_col}">
                                         <i class="${ic}"></i>
@@ -899,9 +908,7 @@
                                             ${item.CATATAN ?? ''}
                                         </div>
 
-                                        <div class="small lh-lg">
-                                            <b>I/ :</b> ${item.INSTRUKSI ?? '-'}
-                                        </div>
+                                        ${pushInstruksi}
 
                                         <div class="d-flex justify-content-end gap-2 mt-3">
                                             <button type="button"

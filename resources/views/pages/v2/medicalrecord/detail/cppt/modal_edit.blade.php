@@ -227,8 +227,8 @@
                         <input type="hidden" id="edit_sbar_dokter_id">
 
                         <div id="edit_sbar_dokter_autocomplete"
-                             class="list-group position-absolute start-0 end-0 shadow-sm bg-body"
-                             style="z-index: 1060; display: none;">
+                            class="list-group position-absolute start-0 end-0 shadow-sm bg-body"
+                            style="z-index: 1060; display: none;">
                         </div>
                     </div>
                 </div>
@@ -303,7 +303,7 @@
                 </div>
 
                 {{-- Instruksi tampil untuk seluruh mode --}}
-                <div class="card border border-info-subtle shadow-none rounded-3 mt-4">
+                <div id="edit_instruksi_cppt" class="card border border-info-subtle shadow-none rounded-3 mt-4">
                     <div class="card-header bg-info-subtle border-0 py-2 px-3">
                         <div class="d-flex align-items-center gap-2 text-info-emphasis">
                             <i class="ph-duotone ph-megaphone-simple fs-20"></i>
@@ -414,10 +414,27 @@
     }
 
     function htmlKeTextCPPT(html) {
-        return $('<div>')
-            .html(String(html || '').replace(/<br\s*\/?>/gi, '\n'))
+        if (!html) {
+            return '';
+        }
+
+        const $temp = $('<div>').html(String(html));
+
+        // Buang Simple Translate
+        $temp.find('#simple-translate').remove();
+
+        // Buang elemen dari extension
+        $temp.find('[src^="chrome-extension://"]').remove();
+        $temp.find('[href^="chrome-extension://"]').remove();
+
+        // HTML -> text
+        $temp.find('br').replaceWith('\n');
+
+        return $temp
             .text()
             .replace(/\u00a0/g, ' ')
+            .replace(/\r\n/g, '\n')
+            .replace(/\n{3,}/g, '\n\n')
             .trim();
     }
 
@@ -500,28 +517,47 @@
     }
 
     function ubahModeEditCPPT(mode) {
+
+        // Sembunyikan semua mode
         $('#edit_mode_biasa, #edit_mode_sbar, #edit_mode_tbak')
             .addClass('d-none')
             .find(':input')
             .prop('disabled', true);
 
+        // Instruksi default: sembunyikan + disable
+        $('#edit_instruksi_cppt')
+            .addClass('d-none')
+            .find(':input')
+            .prop('disabled', true);
+
         if (mode === 'SBAR') {
+
             $('#edit_mode_sbar')
                 .removeClass('d-none')
                 .find(':input')
                 .prop('disabled', false);
+
             return;
         }
 
         if (mode === 'TBAK') {
+
             $('#edit_mode_tbak')
                 .removeClass('d-none')
                 .find(':input')
                 .prop('disabled', false);
+
             return;
         }
 
+        // CPPT Biasa
         $('#edit_mode_biasa')
+            .removeClass('d-none')
+            .find(':input')
+            .prop('disabled', false);
+
+        // Instruksi hanya CPPT Biasa
+        $('#edit_instruksi_cppt')
             .removeClass('d-none')
             .find(':input')
             .prop('disabled', false);
@@ -540,6 +576,7 @@
     }
 
     function isiFormEditCPPT(data) {
+
         const mode = modeDariCPPT(data);
 
         resetFormEditCPPT();
@@ -554,26 +591,43 @@
         $('#edit_cppt_jam').val(data.JAM || '');
         $('#edit_cppt_ppa').val(data.PPA || '');
         $('#edit_cppt_ppa_id').val(data.PPA_ID || '');
-        $('#edit_cppt_instruksi').val(data.INSTRUKSI || '');
 
         if (mode === 'SBAR') {
+
             $('#edit_sbar_situation').val(data.SUBYEKTIF || '');
             $('#edit_sbar_background').val(data.OBYEKTIF || '');
             $('#edit_sbar_assessment').val(data.ASSESMENT || '');
             $('#edit_sbar_recommendation').val(data.PLANNING || '');
+
             $('#edit_sbar_dokter').val(data.DOKTER || '');
             $('#edit_sbar_dokter_id').val(data.DOKTER_ID || '');
+
         } else if (mode === 'TBAK') {
+
             $('#edit_tbak_tulis').val(data.TULIS || '');
-            $('#edit_tbak_baca').prop('checked', Number(data.BACA) === 1);
-            $('#edit_tbak_konfirmasi').prop('checked', Number(data.KONFIRMASI) === 1);
+
+            $('#edit_tbak_baca')
+                .prop('checked', Number(data.BACA) === 1);
+
+            $('#edit_tbak_konfirmasi')
+                .prop('checked', Number(data.KONFIRMASI) === 1);
+
             $('#edit_tbak_dokter').val(data.DOKTER || '');
             $('#edit_tbak_dokter_id').val(data.DOKTER_ID || '');
+
         } else {
+
+            // =====================================================
+            // CPPT BIASA
+            // =====================================================
+
             $('#edit_cppt_s').val(data.SUBYEKTIF || '');
             $('#edit_cppt_o').val(data.OBYEKTIF || '');
             $('#edit_cppt_a').val(data.ASSESMENT || '');
             $('#edit_cppt_p').val(data.PLANNING || '');
+
+            // Instruksi hanya CPPT biasa
+            $('#edit_cppt_instruksi').val(data.INSTRUKSI || '');
         }
 
         $('#modalEditCPPT').data('mode', mode);
@@ -646,6 +700,7 @@
     }
 
     function ambilPayloadEditCPPT() {
+
         const mode = $('#modalEditCPPT').data('mode');
 
         const payload = {
@@ -653,39 +708,62 @@
             kunjungan: $('#edit_cppt_kunjungan').val(),
             tanggal: $('#edit_cppt_tanggal').val(),
             jam: $('#edit_cppt_jam').val(),
-            instruksi: $('#edit_cppt_instruksi').val(),
 
             // '' untuk CPPT biasa, 'SBAR', atau 'TBAK'
             tbak_sbar: mode === 'BIASA' ? '' : mode
         };
 
-        // CPPT biasa
+        // =========================================================
+        // CPPT BIASA
+        // =========================================================
         if (mode === 'BIASA') {
+
             payload.s = $('#edit_cppt_s').val();
             payload.o = $('#edit_cppt_o').val();
             payload.a = $('#edit_cppt_a').val();
             payload.p = $('#edit_cppt_p').val();
+
+            // Instruksi hanya digunakan CPPT biasa
+            payload.instruksi = $('#edit_cppt_instruksi').val();
         }
 
+        // =========================================================
         // SBAR
+        // =========================================================
         if (mode === 'SBAR') {
-            payload.situation = $('#edit_sbar_situation').val();
-            payload.background = $('#edit_sbar_background').val();
-            payload.assessment = $('#edit_sbar_assessment').val();
-            payload.recommendation = $('#edit_sbar_recommendation').val();
 
-            // Ini yang dimaksud: ID dokter dari hidden input modal edit
-            payload.dokter_id = $('#edit_sbar_dokter_id').val();
+            payload.situation =
+                $('#edit_sbar_situation').val();
+
+            payload.background =
+                $('#edit_sbar_background').val();
+
+            payload.assessment =
+                $('#edit_sbar_assessment').val();
+
+            payload.recommendation =
+                $('#edit_sbar_recommendation').val();
+
+            payload.dokter_id =
+                $('#edit_sbar_dokter_id').val();
         }
 
+        // =========================================================
         // TBAK
+        // =========================================================
         if (mode === 'TBAK') {
-            payload.tulis = $('#edit_tbak_tulis').val();
-            payload.baca = $('#edit_tbak_baca').is(':checked') ? 1 : 0;
-            payload.konfirmasi = $('#edit_tbak_konfirmasi').is(':checked') ? 1 : 0;
 
-            // Untuk TBAK, ambil dari hidden input dokter TBAK
-            payload.dokter_id = $('#edit_tbak_dokter_id').val();
+            payload.tulis =
+                $('#edit_tbak_tulis').val();
+
+            payload.baca =
+                $('#edit_tbak_baca').is(':checked') ? 1 : 0;
+
+            payload.konfirmasi =
+                $('#edit_tbak_konfirmasi').is(':checked') ? 1 : 0;
+
+            payload.dokter_id =
+                $('#edit_tbak_dokter_id').val();
         }
 
         return payload;
