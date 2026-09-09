@@ -92,64 +92,6 @@ class PengkajianRawatJalanDewasaController extends Controller
 
         try {
 
-            // ANAMNESIS DIPEROLEH
-            DB::table('medicalrecord.anamnesis_diperoleh')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'AUTOANAMNESIS' => ($request->anam == 1) ? 1 : 0,
-                    'ALLOANAMNESIS' => ($request->anam == 2) ? 1 : 0,
-                    'DARI'          => $request->anamnesis_oleh,
-                    'OLEH'          => auth()->id(),
-                    'STATUS'        => 1,
-                    'TANGGAL'       => now()
-                ]
-            );
-
-            // KELUHAN UTAMA
-            DB::table('medicalrecord.keluhan_utama')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'DESKRIPSI'    => $request->keluhan_utama,
-                    'SNOMED_CT_ID' => 0,
-                    'OLEH'         => auth()->id(),
-                    'STATUS'       => 1,
-                    'TANGGAL'      => now()
-                ]
-            );
-
-            // Riwayat Penyakit Sekarang
-            DB::table('medicalrecord.anamnesis')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'PENDAFTARAN'  => DB::table('pendaftaran.kunjungan')->where('NOMOR', $request->NOKUNJ)->value('NOPEN'),
-                    'DESKRIPSI'    => $request->rps,
-                    'SNOMED_CT_ID' => 0,
-                    'OLEH'         => auth()->id(),
-                    'STATUS'       => 1,
-                    'TANGGAL'      => now()
-                ]
-            );
-
-            // Riwayat Penyakit Dahulu
-            DB::table('medicalrecord.rpp')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'DESKRIPSI'    => $request->rpd,
-                    'SNOMED_CT_ID' => 0,
-                    'OLEH'         => auth()->id(),
-                    'STATUS'       => 1,
-                    'TANGGAL'      => now()
-                ]
-            );
-
             // Riwayat Pemeriksaan Fisik
             DB::table('medicalrecord.pemeriksaan_fisik')->updateOrInsert(
                 [
@@ -294,73 +236,6 @@ class PengkajianRawatJalanDewasaController extends Controller
     public function getFormDokterRJD($kunjungan)
     {
         $data = [];
-
-        // ======================================================
-        // TANDA VITAL
-        // ======================================================
-        $tanda_vital = DB::table('medicalrecord.tanda_vital')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        if ($tanda_vital) {
-
-            $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
-            $data['ku']          = $tanda_vital->KEADAAN_UMUM;
-            $data['kesadaran']   = $tanda_vital->KESADARAN;
-            $data['eye']         = $tanda_vital->EYE;
-            $data['motorik']     = $tanda_vital->MOTORIK;
-            $data['verbal']      = $tanda_vital->VERBAL;
-            $data['gcs']         = $tanda_vital->GCS;
-
-            $data['td_up']       = $tanda_vital->SISTOLIK;
-            $data['td_down']     = $tanda_vital->DISTOLIK;
-            $data['spo2']        = $tanda_vital->SATURASI_O2;
-            $data['nafas']       = $tanda_vital->FREKUENSI_NAFAS;
-            $data['suhu']        = $tanda_vital->SUHU;
-            $data['nadi']        = $tanda_vital->FREKUENSI_NADI;
-            $data['abn']         = $tanda_vital->ALAT_BANTU_NAFAS;
-        }
-
-        // Anamnesis diperoleh
-        $anam = DB::table('medicalrecord.anamnesis_diperoleh')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        if ($anam) {
-            if ($anam->AUTOANAMNESIS == 1) {
-                $data['anam'] = 1;
-            } elseif ($anam->ALLOANAMNESIS == 1) {
-                $data['anam'] = 2;
-            }
-            $data['anamnesis_oleh'] = $anam->DARI;
-        }
-
-        // Keluhan Utama
-        $keluhan_utama = DB::table('medicalrecord.keluhan_utama')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        if ($keluhan_utama) {
-            $data['keluhan_utama'] = $keluhan_utama->DESKRIPSI;
-        }
-
-        // Riwayat Penyakit Sekarang
-        $anamnesis = DB::table('medicalrecord.anamnesis')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        if ($anamnesis) {
-            $data['rps'] = $anamnesis->DESKRIPSI;
-        }
-
-        // Riwayat Penyakit Dahulu
-        $rpp = DB::table('medicalrecord.rpp')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        if ($rpp) {
-            $data['rpd'] = $rpp->DESKRIPSI;
-        }
 
         // Riwayat Pemeriksaan Fisik
         $pemeriksaan_fisik = DB::table('medicalrecord.pemeriksaan_fisik')
