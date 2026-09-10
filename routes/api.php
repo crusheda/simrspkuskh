@@ -318,6 +318,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // PEMERIKSAAN FISIK
                         Route::get('emr/pengkajian/ri/pemeriksaanfisik/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanFisikRI']);
                         Route::post('emr/pengkajian/ri/pemeriksaanfisik/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanFisikRI']);
+                    // PEMERIKSAAN ANATOMI
+                        Route::get('emr/pengkajian/ri/pemeriksaananatomi/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanAnatomiRI']);
+                        Route::post('emr/pengkajian/ri/pemeriksaananatomi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanAnatomiRI']);
                     // PEMERIKSAAN FISIK NEONATUS
                         Route::get('emr/pengkajian/ri/pemeriksaanfisikneonatus/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanFisikNeonatus']);
                         Route::post('emr/pengkajian/ri/pemeriksaanfisikneonatus/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanFisikNeonatus']);
@@ -328,8 +331,8 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                         Route::get('emr/pengkajian/ri/anam_prwt/{kunjungan}', [AddOnPengkajianController::class, 'getAnamnesisPerawat']);
                         Route::post('emr/pengkajian/ri/anam_prwt/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanAnamnesisPerawat']);
                     // TANDA VITAL
-                        Route::get('emr/pengkajian/ri/tandavital/{kunjungan}', [AddOnPengkajianController::class, 'getTandaVitalRI']);
-                        Route::post('emr/pengkajian/ri/tandavital/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTandaVitalRI']);
+                        Route::get('emr/pengkajian/ri/tandavital/{ppa}/{kunjungan}', [AddOnPengkajianController::class, 'getTandaVitalRI']);
+                        Route::post('emr/pengkajian/ri/tandavital/{ppa}/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTandaVitalRI']);
                     // PEMERIKSAAN FISIK OBSGYN
                         Route::get('emr/pengkajian/ri/pemeriksaanfisikobsgyn/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanFisikObs']);
                         Route::post('emr/pengkajian/ri/pemeriksaanfisikobsgyn/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanFisikObs']);

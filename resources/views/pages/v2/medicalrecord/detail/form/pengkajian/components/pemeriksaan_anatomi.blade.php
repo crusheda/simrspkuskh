@@ -93,7 +93,7 @@
                             </div>
                             <div class="d-flex align-items-center">
                                 <label class="form-label mb-0 flex-shrink-0" style="width: 120px;">
-                                    Udem Palpebrae
+                                    Udema Palpebrae
                                 </label>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="form-check m-0">
@@ -134,9 +134,9 @@
                             Diameter Pupil
                         </label>
                         <div class="input-group input-group-sm" style="width: 250px;">
-                            <input type="number" class="form-control" name="pf_dia_up" value="0">
+                            <input type="number" class="form-control" name="pf_dia_up" value="0" min="0" max="7" step="1">
                             <div class="input-group-text">mm /</div>
-                            <input type="number" class="form-control" name="pf_dia_down" value="0">
+                            <input type="number" class="form-control" name="pf_dia_down" value="0" min="0" max="7" step="1">
                             <div class="input-group-text">mm</div>
                         </div>
                     </div>
@@ -273,8 +273,9 @@
             <div class="col-md-12">
                 <div class="form-group mb-3">
                     <div class="d-flex align-items-center gap-3">
-                        <label class="form-label fw-bold flex-shrink-0">Cor S1/S2 Irama</label>
+                        <label class="form-label fw-bold flex-shrink-0">Cor S1/S2</label>
                         <input type="text" class="form-control form-control-sm" name="pf_cor">
+                        <label class="form-label fw-bold flex-shrink-0">Irama</label>
                         <div class="form-check flex-shrink-0 m-0">
                             <input class="form-check-input single-checkbox" type="checkbox" name="pf_cor_cb" value="1">
                             <label class="form-check-label">Reguler</label>
@@ -501,7 +502,7 @@
             <div class="col-md-6">
                 <div class="form-group mb-3">
                     <div class="d-flex align-items-center gap-3">
-                        <label class="form-label fw-bold flex-shrink-0">Udem</label>
+                        <label class="form-label fw-bold flex-shrink-0">Udema Palpebrae</label>
                         <div class="d-flex align-items-center gap-3 ms-auto">
                             <div class="form-check m-0">
                                 <input class="form-check-input single-checkbox" type="checkbox" data-target="#pf_udem_lain" name="pf_udem" value="0">
@@ -543,121 +544,288 @@
     @endif
 </div>
 
-{{-- ==============================================================
-     JAVASCRIPT COMPONENT
-     ============================================================== --}}
 <script>
-    $(function () {
-        const $component = $('[data-pemeriksaan-anatomi]').last();
-        if (!$component.length) {
+$(function(){
+    const $component=$('[data-pemeriksaan-anatomi]').last();
+    if(!$component.length)return;
+
+    const kunjungan=@json($kunjungan ?? request()->route('kunjungan'));
+    const urlGet='/api/v2/emr/pengkajian/ri/pemeriksaananatomi/'+encodeURIComponent(kunjungan);
+    const urlSave='/api/v2/emr/pengkajian/ri/pemeriksaananatomi/'+encodeURIComponent(kunjungan)+'/simpan';
+
+    let isLoadingAnatomi=false;
+    let isSavingAnatomi=false;
+
+    // ONLY INPUT 0 - 7 on Diameter Pupil
+    $('[name="pf_dia_up"], [name="pf_dia_down"]').on('input', function () {
+        let value = parseInt($(this).val(), 10);
+
+        if (isNaN(value)) {
+            $(this).val('');
             return;
         }
 
-        /**
-         * ==========================================================
-         * TOGGLE INPUT LAINNYA
-         * ==========================================================
-         *
-         * Pilihan yang mempunyai class:
-         *
-         *     .buka-lainnya
-         *
-         * akan membuka input yang ditunjuk oleh:
-         *
-         *     data-target="#id_input"
-         *
-         */
-        function toggleInputLainnya($checkbox) {
-            if (!$checkbox || !$checkbox.length) {
-                return;
-            }
-            const target = $checkbox.data('target');
-            if (!target) {
-                return;
-            }
-            const $input = $component.find(target);
-            if (!$input.length) {
-                return;
-            }
-
-            // Cari checkbox yang sedang terpilih
-            const $selected = $component
-                .find(`[data-target="${target}"]:checked`);
-
-            /*
-             * Jika checkbox yang dipilih mempunyai
-             * class .buka-lainnya
-             */
-            if ($selected.hasClass('buka-lainnya')) {
-                $input.prop('disabled', false);
-            } else {
-                $input
-                    .prop('disabled', true)
-                    .val('');
-            }
+        if (value < 0) {
+            $(this).val(0);
+        } else if (value > 7) {
+            $(this).val(7);
         }
-
-        /**
-         * ==========================================================
-         * EVENT CHANGE
-         * ==========================================================
-         */
-        $component.on(
-            'change.pemeriksaanAnatomi',
-            '.single-checkbox[data-target]',
-            function () {
-                toggleInputLainnya($(this));
-            }
-        );
-
-        /**
-         * ==========================================================
-         * INITIALIZE INPUT LAINNYA
-         * ==========================================================
-         *
-         * Fungsi ini penting ketika data di-load melalui AJAX.
-         *
-         * Misalnya:
-         *
-         * pf_kd = 1
-         *
-         * lalu checkbox value 1 di-check menggunakan:
-         *
-         * $('input[name="pf_kd"][value="1"]')
-         *     .prop('checked', true);
-         *
-         * Setelah semua data AJAX selesai di-set:
-         *
-         * initInputLainnya();
-         *
-         * maka input pf_kd_lain otomatis dibuka.
-         */
-        function initInputLainnya() {
-            $component
-                .find('.single-checkbox[data-target]')
-                .each(function () {
-                    toggleInputLainnya($(this));
-                });
-        }
-
-        /**
-         * Jalankan initial state ketika component pertama kali
-         * ditampilkan.
-         */
-        initInputLainnya();
-
-        /**
-         * ==========================================================
-         * PUBLIC FUNCTION
-         * ==========================================================
-         *
-         * Bisa dipanggil dari function AJAX Anda:
-         *
-         * initPemeriksaanAnatomiLainnya();
-         *
-         */
-        window.initPemeriksaanAnatomiLainnya = function () {
-            initInputLainnya();
-        };
     });
+
+    /* ==========================================================
+       TOGGLE INPUT LAINNYA
+       ========================================================== */
+    function toggleInputLainnya($checkbox){
+        if(!$checkbox||!$checkbox.length)return;
+
+        const target=$checkbox.data('target');
+        if(!target)return;
+
+        const $input=$component.find(target);
+        if(!$input.length)return;
+
+        const $selected=$component.find(`[data-target="${target}"]:checked`);
+
+        if($selected.hasClass('buka-lainnya')){
+            $input.prop('disabled',false);
+        }else{
+            $input.prop('disabled',true).val('');
+        }
+    }
+
+    /* ==========================================================
+       INITIALIZE INPUT LAINNYA
+       ========================================================== */
+    function initInputLainnya(){
+        $component.find('.single-checkbox[data-target]').each(function(){
+            toggleInputLainnya($(this));
+        });
+    }
+
+    /* ==========================================================
+       GET DATA FORM
+       ========================================================== */
+    function collectFormAnatomi(){
+        const data={};
+
+        $component.find('[name]').each(function(){
+            const $el=$(this);
+            const name=$el.attr('name');
+
+            if(!name)return;
+
+            if($el.is(':checkbox')){
+                const $group=$component.find(`input[type="checkbox"][name="${name}"]`);
+
+                if($group.length>1){
+                    if($el.is(':checked')){
+                        data[name]=$el.val();
+                    }
+                }else{
+                    data[name]=$el.is(':checked')?1:0;
+                }
+            }else{
+                data[name]=$el.val()??'';
+            }
+        });
+
+        return data;
+    }
+
+    /* ==========================================================
+       SET DATA FORM
+       ========================================================== */
+    function setFormAnatomi(data){
+        if(!data)return;
+
+        Object.keys(data).forEach(function(name){
+            const value=data[name];
+            const $elements=$component.find(`[name="${name}"]`);
+
+            if(!$elements.length)return;
+
+            const $first=$elements.first();
+            const type=($first.attr('type')||'').toLowerCase();
+
+            // ==========================================================
+            // CHECKBOX
+            // ==========================================================
+            if(type==='checkbox'){
+
+                // ------------------------------------------------------
+                // SINGLE CHECKBOX
+                // Ditandai dengan class .single-checkbox
+                // ------------------------------------------------------
+                if($first.hasClass('single-checkbox')){
+
+                    FormHelper.setSingleCheckbox(
+                        $component,
+                        name,
+                        value
+                    );
+
+                // ------------------------------------------------------
+                // CHECKBOX BIASA / BOOLEAN
+                // ------------------------------------------------------
+                }else{
+
+                    FormHelper.setCheckbox(
+                        $component,
+                        name,
+                        value
+                    );
+                }
+
+            // ==========================================================
+            // INPUT / TEXTAREA / SELECT / NUMBER
+            // ==========================================================
+            }else{
+
+                FormHelper.setValue(
+                    $component,
+                    name,
+                    value
+                );
+            }
+        });
+
+        initInputLainnya();
+    }
+
+    /* ==========================================================
+       AJAX GET
+       getFormAnatomi()
+       ========================================================== */
+    window.getFormAnatomi=function(){
+        if(!kunjungan)return;
+        if(isLoadingAnatomi)return;
+
+        isLoadingAnatomi=true;
+
+        $.ajax({
+            url:urlGet,
+            type:'GET',
+            dataType:'json',
+            success:function(response){
+                if(response&&response.status===true){
+                    if(response.data){
+                        setFormAnatomi(response.data);
+                    }else{
+                        initInputLainnya();
+                    }
+                }else{
+                    console.error(
+                        'Gagal mengambil data pemeriksaan anatomi:',
+                        response
+                    );
+                    initInputLainnya();
+                }
+            },
+            error:function(xhr){
+                console.error(
+                    'AJAX GET pemeriksaan anatomi gagal:',
+                    xhr.responseText||xhr.statusText
+                );
+                initInputLainnya();
+            },
+            complete:function(){
+                isLoadingAnatomi=false;
+            }
+        });
+    };
+
+    /* ==========================================================
+       AJAX SIMPAN
+       simpanFormAnatomi()
+       ========================================================== */
+    window.simpanFormAnatomi=function(){
+        if(!kunjungan)return;
+        if(isLoadingAnatomi)return;
+        if(isSavingAnatomi)return;
+
+        const data=collectFormAnatomi();
+
+        isSavingAnatomi=true;
+
+        $.ajax({
+            url:urlSave,
+            type:'POST',
+            dataType:'json',
+            data:data,
+            headers:{
+                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+            },
+            success:function(response){
+                if(response&&response.status===true){
+                    console.log('Pemeriksaan anatomi berhasil disimpan');
+                }else{
+                    console.error(
+                        'Gagal menyimpan pemeriksaan anatomi:',
+                        response
+                    );
+                }
+            },
+            error:function(xhr){
+                console.error(
+                    'AJAX simpan pemeriksaan anatomi gagal:',
+                    xhr.responseText||xhr.statusText
+                );
+            },
+            complete:function(){
+                isSavingAnatomi=false;
+            }
+        });
+    };
+
+    /* ==========================================================
+       EVENT CHANGE - SINGLE CHECKBOX DENGAN INPUT LAINNYA
+       ========================================================== */
+    $component.on(
+        'change.pemeriksaanAnatomi',
+        '.single-checkbox[data-target]',
+        function(){
+            toggleInputLainnya($(this));
+            simpanFormAnatomi();
+        }
+    );
+
+    /* ==========================================================
+       EVENT CHANGE - CHECKBOX BIASA & SELECT
+       ========================================================== */
+    $component.on(
+        'change.pemeriksaanAnatomi',
+        'input[type="checkbox"]:not(.single-checkbox[data-target]),select',
+        function(){
+            simpanFormAnatomi();
+        }
+    );
+
+    /* ==========================================================
+       EVENT BLUR - INPUT & TEXTAREA
+       ========================================================== */
+    $component.on(
+        'blur.pemeriksaanAnatomi',
+        'input:not([type="checkbox"]):not([type="radio"]),textarea',
+        function(){
+            simpanFormAnatomi();
+        }
+    );
+
+    /* ==========================================================
+       PUBLIC FUNCTION TOGGLE
+       ========================================================== */
+    window.initPemeriksaanAnatomiLainnya=function(){
+        initInputLainnya();
+    };
+
+    /* ==========================================================
+       INITIAL STATE
+       ========================================================== */
+    initInputLainnya();
+
+    /* ==========================================================
+       LOAD DATA AJAX
+       ========================================================== */
+    getFormAnatomi();
+});
 </script>

@@ -162,17 +162,41 @@ window.FormHelper = {
         // ======================================================
         if (tagName === 'select') {
 
-            // null, undefined, '', 0 => option value=""
+            // null, undefined, '' => kosong
             if (
                 value === null ||
                 value === undefined ||
-                value === '' ||
-                Number(value) === 0
+                value === ''
             ) {
-                value = '';
+                $el.val('').trigger('change');
+                return;
             }
 
-            $el.val(String(value)).trigger('change');
+            const normalizedValue = String(value);
+
+            // ==================================================
+            // Jika value = 0
+            // Cek apakah option value="0" tersedia
+            // ==================================================
+            if (Number(value) === 0) {
+
+                const hasZeroOption = $el.find('option').filter(function () {
+                    return String($(this).val()) === '0';
+                }).length > 0;
+
+                if (hasZeroOption) {
+                    $el.val('0').trigger('change');
+                } else {
+                    $el.val('').trigger('change');
+                }
+
+                return;
+            }
+
+            // ==================================================
+            // Value selain 0
+            // ==================================================
+            $el.val(normalizedValue).trigger('change');
 
             return;
         }

@@ -351,12 +351,16 @@
 
     function bersihkanTooltipCPPT(button) {
         if (button) {
-            $(button).tooltip('hide');
-            $(button).tooltip('dispose');
+            const tooltip = bootstrap.Tooltip.getInstance(button);
+
+            if (tooltip) {
+                tooltip.dispose();
+            }
         }
 
-        // Hapus tooltip yang mungkin masih tertinggal di body.
-        $('.tooltip').remove();
+        document.querySelectorAll('.tooltip').forEach(function (el) {
+            el.remove();
+        });
     }
 
     function batalEditCPPT() {
@@ -690,11 +694,11 @@
                 btnEdit.prop('disabled', false);
                 btnEdit.html('<i class="ri-edit-line"></i>');
                 // Showing Tooltip
-                $('[data-bs-toggle="tooltip"]').tooltip('dispose');
-                $('.tooltip').remove();
-                $('[data-bs-toggle="tooltip"]').tooltip({
-                    trigger : 'hover'
-                })
+                // $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                // $('.tooltip').remove();
+                // $('[data-bs-toggle="tooltip"]').tooltip({
+                //     trigger : 'hover'
+                // })
             }
         });
     }

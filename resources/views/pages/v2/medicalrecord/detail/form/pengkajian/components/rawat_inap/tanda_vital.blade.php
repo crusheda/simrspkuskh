@@ -803,7 +803,7 @@
     // ==============================================================
     function getTandaVital() {
         $.ajax({
-            url: `/api/v2/emr/pengkajian/ri/tandavital/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/ri/tandavital/${page}/${kunjungan}`,
             type: 'GET',
             dataType: 'json',
             beforeSend: function () {
@@ -1086,7 +1086,7 @@
         // POST
         // ----------------------------------------------------------
         $.ajax({
-            url: `/api/v2/emr/pengkajian/ri/tandavital/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/ri/tandavital/${page}/${kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {
@@ -1250,6 +1250,13 @@
                     // ------------------------------------------------
                     // SIMPAN
                     // ------------------------------------------------
+                    // const $this = $(this);
+                    // setTimeout(function () {
+                    //     if (!$this.is(':checked')) {
+                    //         return;
+                    //     }
+
+                    // }, 0);
                     simpanTandaVital();
 
                     // ------------------------------------------------
@@ -1287,7 +1294,14 @@
                         // ------------------------------------------------
                         // SIMPAN
                         // ------------------------------------------------
-                        simpanTandaVital();
+                        const $this = $(this);
+                        setTimeout(function () {
+                            if (!$this.is(':checked')) {
+                                return;
+                            }
+
+                            simpanTandaVital();
+                        }, 0);
 
                         // ------------------------------------------------
                         // RESET DIRTY

@@ -13,7 +13,7 @@
             <div class="col-md-12">
                 <h6>Anamnesis Diperoleh</h6>
 
-                <div class="form-group mb-3">
+                <div class="form-group d-flex align-items-center mb-3">
                     <div class="form-check form-check-inline">
                         <input
                             class="form-check-input check-primary single-checkbox"
@@ -39,6 +39,7 @@
                             Alloanamnesis
                         </label>
                     </div>
+                    <input type="text" class="form-control" name="dari" placeholder="Dari ...">
                 </div>
             </div>
 
@@ -236,10 +237,81 @@
 
                                     <input
                                         type="text"
-                                        class="form-control"
+                                        class="form-control form-control-sm"
                                         name="anam_p_lain"
                                         placeholder="Tuliskan"
                                         disabled
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group mb-2">
+                            <label class="form-label mb-2">Riwayat Imunisasi</label>
+
+                            <div class="d-flex flex-wrap gap-4 align-items-center">
+                                <div class="form-check">
+                                    <input
+                                        class="form-check-input check-primary single-checkbox"
+                                        type="checkbox"
+                                        name="imunisasi"
+                                        value="1"
+                                        id="{{ $instance }}_imunisasi1"
+                                    >
+                                    <label class="form-check-label" for="{{ $instance }}_imunisasi1">
+                                        Imunisasi Dasar Lengkap
+                                    </label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input
+                                        class="form-check-input check-primary single-checkbox"
+                                        type="checkbox"
+                                        name="imunisasi"
+                                        value="2"
+                                        id="{{ $instance }}_imunisasi2"
+                                    >
+                                    <label class="form-check-label" for="{{ $instance }}_imunisasi2">
+                                        Imunisasi Dasar Tidak Lengkap
+                                    </label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input
+                                        class="form-check-input check-primary single-checkbox"
+                                        type="checkbox"
+                                        name="imunisasi"
+                                        value="3"
+                                        id="{{ $instance }}_imunisasi3"
+                                    >
+                                    <label class="form-check-label" for="{{ $instance }}_imunisasi3">
+                                        Tidak Imunisasi
+                                    </label>
+                                </div>
+
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="form-check flex-shrink-0">
+                                        <input
+                                            class="form-check-input check-primary single-checkbox"
+                                            type="checkbox"
+                                            name="imunisasi"
+                                            value="4"
+                                            id="{{ $instance }}_imunisasi4"
+                                        >
+                                        <label class="form-check-label flex-shrink-0" for="{{ $instance }}_imunisasi4">
+                                            Lain-lain
+                                        </label>
+                                    </div>
+
+                                    <input
+                                        type="text"
+                                        class="form-control form-control-sm"
+                                        name="imunisasi_lain"
+                                        placeholder="Tuliskan ..."
+                                        data-enable-when="imunisasi:4"
+                                        disabled=""
                                     >
                                 </div>
                             </div>
@@ -269,26 +341,17 @@
     // ==============================================================
     function updateAnamnesisAnakState() {
         const $anak = $form.find('[data-anamnesis-anak]');
-
-        if (!$anak.length) {
-            return;
-        }
+        if (!$anak.length) return;
 
         if (!isAnamnesisAnak) {
-            $anak
-                .hide()
-                .find('input, textarea, select')
-                .prop('disabled', true);
-
+            $anak.hide().find('input, textarea, select').prop('disabled', true);
             return;
         }
 
-        $anak
-            .show()
-            .find('input, textarea, select')
-            .prop('disabled', false);
+        $anak.show().find('input, textarea, select').prop('disabled', false);
 
         updatePersalinanState();
+        FormHelper.updateDependentInputs($form);
     }
 
     // ==============================================================
@@ -363,7 +426,6 @@
                 }
 
                 const anam1 = anam.anam1;
-                const anam2 = anam.anam2;
 
                 // ==================================================
                 // ANAMNESIS DIPEROLEH
@@ -389,6 +451,17 @@
                         $anamCheckboxes
                             .filter(`[value="${anamnesisDiperoleh}"]`)
                             .prop('checked', true);
+                    }
+                    // PENGISIAN dari
+                    if (
+                        anam1.DARI &&
+                        FormHelper.hasValue(anam1.DARI)
+                    ) {
+                        FormHelper.setValue(
+                            $section,
+                            'dari',
+                            anam1.DARI
+                        );
                     }
                 }
 
@@ -470,64 +543,83 @@
                 // ==================================================
                 // DATA ANAK
                 // ==================================================
-                if (isAnamnesisAnak && anam2) {
+                if (isAnamnesisAnak) {
                     if (
                         FormHelper.hasValue(
-                            anam2.RIWAYAT_TUMBUH_KEMBANG
+                            anam1.RIWAYAT_TUMBUH_KEMBANG
                         )
                     ) {
                         FormHelper.setValue(
                             $section,
                             'anam_rtk',
-                            anam2.RIWAYAT_TUMBUH_KEMBANG
+                            anam1.RIWAYAT_TUMBUH_KEMBANG
                         );
                     }
 
                     if (
                         FormHelper.hasValue(
-                            anam2.RIWAYAT_KELAHIRAN
+                            anam1.RIWAYAT_KELAHIRAN
                         )
                     ) {
                         FormHelper.setValue(
                             $section,
                             'anam_k',
-                            anam2.RIWAYAT_KELAHIRAN
+                            anam1.RIWAYAT_KELAHIRAN
                         );
                     }
 
                     if (
                         FormHelper.hasValue(
-                            anam2.USIA_KEHAMILAN
+                            anam1.USIA_KEHAMILAN
                         )
                     ) {
                         FormHelper.setValue(
                             $section,
                             'anam_uk',
-                            anam2.USIA_KEHAMILAN
+                            anam1.USIA_KEHAMILAN
                         );
                     }
 
                     FormHelper.setSingleCheckbox(
                         $section,
                         'anam_p',
-                        anam2.PERSALINAN
+                        anam1.PERSALINAN
                     );
 
                     if (
                         FormHelper.hasValue(
-                            anam2.PERSALINAN_LAINNYA
+                            anam1.PERSALINAN_LAINNYA
                         )
                     ) {
                         FormHelper.setValue(
                             $section,
                             'anam_p_lain',
-                            anam2.PERSALINAN_LAINNYA
+                            anam1.PERSALINAN_LAINNYA
+                        );
+                    }
+
+                    FormHelper.setSingleCheckbox(
+                        $section,
+                        'imunisasi',
+                        anam1.IMUNISASI
+                    );
+
+                    if (
+                        FormHelper.hasValue(
+                            anam1.IMUNISASI_LAIN
+                        )
+                    ) {
+                        FormHelper.setValue(
+                            $section,
+                            'imunisasi_lain',
+                            anam1.IMUNISASI_LAIN
                         );
                     }
                 }
 
                 updateAnamnesisAnakState();
                 updatePersalinanState();
+                FormHelper.updateDependentInputs($form);
             },
 
             error: function (xhr, status, error) {
@@ -633,6 +725,8 @@
         updateAnamnesisAnakState();
         updatePersalinanState();
 
+        FormHelper.updateDependentInputs($form);
+
         getAnamnesisRI();
 
         const formSelector = '[data-anamnesis-form]';
@@ -645,7 +739,15 @@
                     return;
                 }
 
-                simpanAnamnesisRI();
+                const $this = $(this);
+
+                setTimeout(function () {
+                    if (!$this.is(':checked')) {
+                        return;
+                    }
+
+                    simpanAnamnesisRI();
+                }, 0);
             });
 
         // RIWAYAT PENYAKIT KELUARGA
@@ -675,6 +777,26 @@
 
                 updatePersalinanState();
                 simpanAnamnesisRI();
+            });
+
+        // RIWAYAT IMUNISASI
+        $section
+            .off('change.anam', `${formSelector} input[name="imunisasi"]`)
+            .on('change.anam', `${formSelector} input[name="imunisasi"]`, function () {
+                if (isAnamnesisRILoading) {
+                    return;
+                }
+
+                const $this = $(this);
+
+                setTimeout(function () {
+                    if (!$this.is(':checked')) {
+                        return;
+                    }
+
+                    FormHelper.updateDependentInputs($form);
+                    simpanAnamnesisRI();
+                }, 0);
             });
 
         // TEXTAREA & INPUT

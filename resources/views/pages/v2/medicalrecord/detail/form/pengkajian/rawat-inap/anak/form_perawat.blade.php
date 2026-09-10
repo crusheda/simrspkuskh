@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-12 mb-3">
                 @include(
-                    'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
+                    'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis_keperawatan',
                     [
                         'section' => '#riA_perawat',
                         'anak' => 'true',

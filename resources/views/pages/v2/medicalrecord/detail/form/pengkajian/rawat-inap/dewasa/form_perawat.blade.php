@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-md-12 mb-3">
                 @include(
-                    'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
+                    'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis_keperawatan',
                     [
                         'section' => '#riD_perawat',
                         'anak' => 'false',
@@ -80,12 +80,6 @@
             </div>
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.discharge_planning',['section' => '#riD_perawat'])
-            </div>
-            <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pengkajian_ulang_resiko_jatuh_humpty_dumpty_pediatri',['section' => '#riD_perawat'])
-            </div>
-            <div class="col-md-12">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pengkajian_ulang_resiko_jatuh_skala_morse_dewasa',['section' => '#riD_perawat'])
             </div>
         </div>
     </div>

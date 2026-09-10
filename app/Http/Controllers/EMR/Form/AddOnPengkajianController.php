@@ -310,7 +310,7 @@ class AddOnPengkajianController extends Controller
 
             return $data;
     }
-    
+
     public function getRiwayatLaborat($kunjungan) {
         $kunjunganList = DB::table('pendaftaran.pendaftaran as pp')
             ->leftJoin('pendaftaran.kunjungan as pk', 'pk.NOPEN', '=', 'pp.NOMOR')
@@ -513,7 +513,7 @@ class AddOnPengkajianController extends Controller
                 [$kunjungan]
             )
             ->pluck('pk.NOMOR');
-    
+
         $data = DB::table('layanan.hasil_rad as hrad')
             ->leftJoin('master.dokter as dok', 'hrad.DOKTER', '=', 'dok.ID')
             ->leftJoin('master.pegawai as mp', 'dok.NIP', '=', 'mp.NIP')
@@ -2713,23 +2713,26 @@ class AddOnPengkajianController extends Controller
 
         try {
 
+            $kunjungan = $request->NOKUNJ ?? $KUNJUNGAN;
+
             DB::table('medicalrecord.sirmed_tata_laksana_terapi')->updateOrInsert(
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN
+                    'KUNJUNGAN' => $kunjungan
                 ],
                 [
                     'DESKRIPSI' => $request->tatalaksana_terapi,
-
                     'TANGGAL' => now(),
                     'OLEH' => auth()->id(),
                     'STATUS' => 1,
                 ]
             );
 
+            $this->sinkronisasiRencanaTerapi($kunjungan);
+
             DB::commit();
 
             return response()->json([
-                'status'  => true,
+                'status' => true,
                 'message' => 'Tata Laksana Terapi berhasil diperbarui.'
             ], 200);
 
@@ -2738,9 +2741,9 @@ class AddOnPengkajianController extends Controller
             DB::rollBack();
 
             return response()->json([
-                'status'  => false,
+                'status' => false,
                 'message' => 'Data Tata Laksana Terapi gagal disimpan.',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -2767,23 +2770,26 @@ class AddOnPengkajianController extends Controller
 
         try {
 
+            $kunjungan = $request->NOKUNJ ?? $KUNJUNGAN;
+
             DB::table('medicalrecord.sirmed_target_terapi')->updateOrInsert(
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN
+                    'KUNJUNGAN' => $kunjungan
                 ],
                 [
                     'DESKRIPSI' => $request->target_terapi,
-
                     'TANGGAL' => now(),
                     'OLEH' => auth()->id(),
                     'STATUS' => 1,
                 ]
             );
 
+            $this->sinkronisasiRencanaTerapi($kunjungan);
+
             DB::commit();
 
             return response()->json([
-                'status'  => true,
+                'status' => true,
                 'message' => 'Target Terapi berhasil diperbarui.'
             ], 200);
 
@@ -2792,9 +2798,9 @@ class AddOnPengkajianController extends Controller
             DB::rollBack();
 
             return response()->json([
-                'status'  => false,
+                'status' => false,
                 'message' => 'Data Target Terapi gagal disimpan.',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -2821,23 +2827,26 @@ class AddOnPengkajianController extends Controller
 
         try {
 
+            $kunjungan = $request->NOKUNJ ?? $KUNJUNGAN;
+
             DB::table('medicalrecord.sirmed_rencana_konsultasi')->updateOrInsert(
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN
+                    'KUNJUNGAN' => $kunjungan
                 ],
                 [
                     'DESKRIPSI' => $request->rencana_konsultasi,
-
                     'TANGGAL' => now(),
                     'OLEH' => auth()->id(),
                     'STATUS' => 1,
                 ]
             );
 
+            $this->sinkronisasiRencanaTerapi($kunjungan);
+
             DB::commit();
 
             return response()->json([
-                'status'  => true,
+                'status' => true,
                 'message' => 'Rencana Konsultasi berhasil diperbarui.'
             ], 200);
 
@@ -2846,11 +2855,57 @@ class AddOnPengkajianController extends Controller
             DB::rollBack();
 
             return response()->json([
-                'status'  => false,
+                'status' => false,
                 'message' => 'Data Rencana Konsultasi gagal disimpan.',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    private function sinkronisasiRencanaTerapi($kunjungan)
+    {
+        $tataLaksana = DB::table('medicalrecord.sirmed_tata_laksana_terapi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->value('DESKRIPSI');
+
+        $targetTerapi = DB::table('medicalrecord.sirmed_target_terapi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->value('DESKRIPSI');
+
+        $rencanaKonsultasi = DB::table('medicalrecord.sirmed_rencana_konsultasi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->value('DESKRIPSI');
+
+        $bagian = [];
+
+        if ($tataLaksana !== null && trim($tataLaksana) !== '') {
+            $bagian[] = "Tata Laksana Terapi :\n" . trim($tataLaksana);
+        }
+
+        if ($targetTerapi !== null && trim($targetTerapi) !== '') {
+            $bagian[] = "Target Terapi :\n" . trim($targetTerapi);
+        }
+
+        if ($rencanaKonsultasi !== null && trim($rencanaKonsultasi) !== '') {
+            $bagian[] = "Rencana Konsultasi :\n" . trim($rencanaKonsultasi);
+        }
+
+        $deskripsi = implode("\n\n", $bagian);
+
+        DB::table('medicalrecord.rencana_terapi')->updateOrInsert(
+            [
+                'KUNJUNGAN' => $kunjungan
+            ],
+            [
+                'DESKRIPSI' => $deskripsi,
+                'TANGGAL' => now(),
+                'OLEH' => auth()->id(),
+                'STATUS' => 1,
+            ]
+        );
     }
 
     function getKriteriaPulang($KUNJUNGAN)
@@ -3779,6 +3834,454 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    public function getPemeriksaanAnatomiRI($kunjungan)
+    {
+        try {
+            $data = DB::table('medicalrecord.sirmed_pemeriksaan_anatomi')
+                ->where('KUNJUNGAN', $kunjungan)
+                ->first();
+
+            return response()->json([
+                'status' => true,
+                'data' => $data
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function simpanPemeriksaanAnatomiRI(Request $request, $kunjungan)
+    {
+        $getDataKunjungan = DB::table('pendaftaran.kunjungan as pk')
+            ->join(
+                'pendaftaran.pendaftaran as pp',
+                'pp.NOMOR',
+                '=',
+                'pk.NOPEN'
+            )
+            ->select(
+                'pp.NORM',
+                'pp.NOMOR as NOPEN'
+            )
+            ->where('pk.NOMOR', $kunjungan)
+            ->first();
+
+        try {
+            $data = [
+                'pf_anemis' => $request->input('pf_anemis') !== null && $request->input('pf_anemis') !== '' ? (int) $request->input('pf_anemis') : null,
+                'pf_ikterus' => $request->input('pf_ikterus') !== null && $request->input('pf_ikterus') !== '' ? (int) $request->input('pf_ikterus') : null,
+                'pf_upal' => $request->input('pf_upal') !== null && $request->input('pf_upal') !== '' ? (int) $request->input('pf_upal') : null,
+                'pf_pupil' => $request->input('pf_pupil') !== null && $request->input('pf_pupil') !== '' ? (int) $request->input('pf_pupil') : null,
+                'pf_dia_up' => $request->input('pf_dia_up') !== null && $request->input('pf_dia_up') !== '' ? $request->input('pf_dia_up') : null,
+                'pf_dia_down' => $request->input('pf_dia_down') !== null && $request->input('pf_dia_down') !== '' ? $request->input('pf_dia_down') : null,
+                'pf_kelainan_mata' => $request->input('pf_kelainan_mata'),
+
+                'pf_mulut' => $request->input('pf_mulut'),
+
+                'pf_jvp' => $request->input('pf_jvp'),
+                'pf_pkl' => $request->input('pf_pkl') !== null && $request->input('pf_pkl') !== '' ? (int) $request->input('pf_pkl') : null,
+                'pf_pkl_lain' => $request->input('pf_pkl_lain'),
+                'pf_kd' => $request->input('pf_kd') !== null && $request->input('pf_kd') !== '' ? (int) $request->input('pf_kd') : null,
+                'pf_kd_lain' => $request->input('pf_kd_lain'),
+                'pf_kelainan_leher' => $request->input('pf_kelainan_leher') !== null && $request->input('pf_kelainan_leher') !== '' ? (int) $request->input('pf_kelainan_leher') : null,
+
+                'pf_thoraks' => $request->input('pf_thoraks') !== null && $request->input('pf_thoraks') !== '' ? (int) $request->input('pf_thoraks') : null,
+                'pf_thoraks_lain' => $request->input('pf_thoraks_lain'),
+                'pf_cor' => $request->input('pf_cor'),
+                'pf_cor_cb' => $request->input('pf_cor_cb') !== null && $request->input('pf_cor_cb') !== '' ? (int) $request->input('pf_cor_cb') : null,
+                'pf_murmur' => $request->input('pf_murmur'),
+                'pf_murmur_lain' => $request->input('pf_murmur_lain'),
+                'pf_pulmo' => $request->input('pf_pulmo'),
+                'pf_ronchi' => $request->input('pf_ronchi') !== null && $request->input('pf_ronchi') !== '' ? (int) $request->input('pf_ronchi') : null,
+                'pf_ronchi_lain' => $request->input('pf_ronchi_lain'),
+                'pf_wheezing' => $request->input('pf_wheezing') !== null && $request->input('pf_wheezing') !== '' ? (int) $request->input('pf_wheezing') : null,
+                'pf_wheezing_lain' => $request->input('pf_wheezing_lain'),
+                'pf_kelainan_dada' => $request->input('pf_kelainan_dada') !== null && $request->input('pf_kelainan_dada') !== '' ? (int) $request->input('pf_kelainan_dada') : null,
+
+                'pf_distended' => $request->input('pf_distended') !== null && $request->input('pf_distended') !== '' ? (int) $request->input('pf_distended') : null,
+                'pf_meteor' => $request->input('pf_meteor') !== null && $request->input('pf_meteor') !== '' ? (int) $request->input('pf_meteor') : null,
+                'pf_asites' => $request->input('pf_asites') !== null && $request->input('pf_asites') !== '' ? (int) $request->input('pf_asites') : null,
+                'pf_peristal_normal' => $request->boolean('pf_peristal_normal') ? 1 : 0,
+                'pf_peristal_meningkat' => $request->boolean('pf_peristal_meningkat') ? 1 : 0,
+                'pf_peristal_menurun' => $request->boolean('pf_peristal_menurun') ? 1 : 0,
+                'pf_peristal_tidak' => $request->boolean('pf_peristal_tidak') ? 1 : 0,
+                'pf_nyeri_tekan' => $request->input('pf_nyeri_tekan') !== null && $request->input('pf_nyeri_tekan') !== '' ? (int) $request->input('pf_nyeri_tekan') : null,
+                'pf_nyeri_tekan_lain' => $request->input('pf_nyeri_tekan_lain'),
+                'pf_hepar' => $request->input('pf_hepar'),
+                'pf_lien' => $request->input('pf_lien'),
+                'pf_extremitas_hangat' => $request->boolean('pf_extremitas_hangat') ? 1 : 0,
+                'pf_extremitas_dingin' => $request->boolean('pf_extremitas_dingin') ? 1 : 0,
+                'pf_udem' => $request->input('pf_udem') !== null && $request->input('pf_udem') !== '' ? (int) $request->input('pf_udem') : null,
+                'pf_udem_lain' => $request->input('pf_udem_lain'),
+                'pf_dada_lain' => $request->input('pf_dada_lain'),
+
+                'status_lokalis' => $request->input('status_lokalis'),
+
+                'TANGGAL' => now(),
+                'OLEH' => auth()->id(),
+                'STATUS' => 1
+            ];
+
+            $exists = DB::table('medicalrecord.sirmed_pemeriksaan_anatomi')
+                ->where('KUNJUNGAN', $kunjungan)
+                ->exists();
+
+            if ($exists) {
+                DB::table('medicalrecord.sirmed_pemeriksaan_anatomi')
+                    ->where('KUNJUNGAN', $kunjungan)
+                    ->update($data);
+            } else {
+                $data['KUNJUNGAN'] = $kunjungan;
+
+                DB::table('medicalrecord.sirmed_pemeriksaan_anatomi')
+                    ->insert($data);
+            }/*
+
+            |--------------------------------------------------------------------------
+            | PEMBUATAN DESKRIPSI PEMERIKSAAN FISIK
+            |--------------------------------------------------------------------------
+            */
+
+            $esc = function ($value) {
+                return htmlspecialchars(
+                    trim((string) $value),
+                    ENT_QUOTES | ENT_SUBSTITUTE,
+                    'UTF-8'
+                );
+            };
+
+            $baris = [];
+
+            // ==========================================================
+            // MATA
+            // ==========================================================
+
+            $mata = [];
+
+            if ($request->filled('pf_anemis')) {
+                $mata[] = 'anemis : ' . ((int) $request->pf_anemis === 1 ? '(+)' : '(-)');
+            }
+
+            if ($request->filled('pf_ikterus')) {
+                $mata[] = 'ikterus : ' . ((int) $request->pf_ikterus === 1 ? '(+)' : '(-)');
+            }
+
+            if ($request->filled('pf_upal')) {
+                $mata[] = 'upal : ' . ((int) $request->pf_upal === 1 ? '(+)' : '(-)');
+            }
+
+            if ($request->filled('pf_pupil')) {
+                $mata[] = 'pupil : ' . ((int) $request->pf_pupil === 1 ? 'isokor' : 'anisokor');
+            }
+
+            $diaUp = $request->input('pf_dia_up');
+            $diaDown = $request->input('pf_dia_down');
+
+            // Hanya tampilkan diameter jika minimal salah satu terisi
+            if (($diaUp !== null && $diaUp !== '') || ($diaDown !== null && $diaDown !== '')) {
+                $diameter = 'diameter pupil : ';
+
+                if ($diaUp !== null && $diaUp !== '') {
+                    $diameter .= $esc($diaUp) . ' mm';
+                }
+
+                if ($diaDown !== null && $diaDown !== '') {
+                    if ($diaUp !== null && $diaUp !== '') {
+                        $diameter .= ' / ';
+                    }
+
+                    $diameter .= $esc($diaDown) . ' mm';
+                }
+
+                $mata[] = $diameter;
+            }
+
+            if ($request->filled('pf_kelainan_mata')) {
+                $mata[] = 'kelainan mata : ' . $esc($request->input('pf_kelainan_mata'));
+            }
+
+            if ($mata) {
+                $baris[] = implode(', ', $mata);
+            }
+
+            // ==========================================================
+            // TENGGOROKAN
+            // ==========================================================
+
+            if ($request->filled('pf_mulut')) {
+                $baris[] = 'mulut : ' . nl2br($esc($request->input('pf_mulut')));
+            }
+
+            // ==========================================================
+            // LEHER
+            // ==========================================================
+
+            $leher = [];
+
+            if ($request->filled('pf_jvp')) {
+                $leher[] = 'JVP : ' . $esc($request->input('pf_jvp'));
+            }
+
+            if ($request->filled('pf_pkl')) {
+                $pkl = (int) $request->input('pf_pkl') === 1 ? 'Ada' : 'Tidak Ada';
+
+                if ($request->filled('pf_pkl_lain')) {
+                    $pkl .= ' (' . $esc($request->input('pf_pkl_lain')) . ')';
+                }
+
+                $leher[] = 'pembesaran KGB : ' . $pkl;
+            }
+
+            if ($request->filled('pf_kd')) {
+                $kd = (int) $request->input('pf_kd') === 1 ? 'Ada' : 'Tidak Ada';
+
+                if ($request->filled('pf_kd_lain')) {
+                    $kd .= ' (' . $esc($request->input('pf_kd_lain')) . ')';
+                }
+
+                $leher[] = 'kaku kuduk : ' . $kd;
+            }
+
+            if ($request->filled('pf_kelainan_leher')) {
+                $nilai = [
+                    0 => 'Tidak Ada',
+                    1 => 'Ada',
+                    2 => 'Lainnya'
+                ];
+
+                $hasil = $nilai[(int) $request->input('pf_kelainan_leher')] ?? '';
+
+                if ($hasil !== '') {
+                    $leher[] = 'kelainan leher : ' . $hasil;
+                }
+            }
+
+            if ($leher) {
+                $baris[] = implode(', ', $leher);
+            }
+
+            // ==========================================================
+            // DADA
+            // ==========================================================
+
+            $dada = [];
+
+            if ($request->filled('pf_thoraks')) {
+                $thoraks = (int) $request->input('pf_thoraks') === 1 ? 'Normal' : 'Tidak Normal';
+
+                if ($request->filled('pf_thoraks_lain')) {
+                    $thoraks .= ' (' . $esc($request->input('pf_thoraks_lain')) . ')';
+                }
+
+                $dada[] = 'thoraks : ' . $thoraks;
+            }
+
+            if ($request->filled('pf_cor')) {
+                $dada[] = 'cor : ' . $esc($request->input('pf_cor'));
+            }
+
+            if ($request->filled('pf_cor_cb')) {
+                $dada[] = 'cor CB : ' . ((int) $request->input('pf_cor_cb') === 1 ? 'Normal' : 'Tidak Normal');
+            }
+
+            if ($request->filled('pf_murmur')) {
+                $murmur = $esc($request->input('pf_murmur'));
+
+                if ($request->filled('pf_murmur_lain')) {
+                    $murmur .= ' (' . $esc($request->input('pf_murmur_lain')) . ')';
+                }
+
+                $dada[] = 'murmur : ' . $murmur;
+            }
+
+            if ($request->filled('pf_pulmo')) {
+                $dada[] = 'pulmo : ' . $esc($request->input('pf_pulmo'));
+            }
+
+            if ($request->filled('pf_ronchi')) {
+                $ronchi = (int) $request->input('pf_ronchi') === 1 ? '(-)' : '(+)';
+
+                if ($request->filled('pf_ronchi_lain')) {
+                    $ronchi .= ' ' . $esc($request->input('pf_ronchi_lain'));
+                }
+
+                $dada[] = 'ronchi : ' . $ronchi;
+            }
+
+            if ($request->filled('pf_wheezing')) {
+                $wheezing = (int) $request->input('pf_wheezing') === 1 ? '(-)' : '(+)';
+
+                if ($request->filled('pf_wheezing_lain')) {
+                    $wheezing .= ' ' . $esc($request->input('pf_wheezing_lain'));
+                }
+
+                $dada[] = 'wheezing : ' . $wheezing;
+            }
+
+            if ($request->filled('pf_kelainan_dada')) {
+                $nilai = [
+                    0 => 'Tidak Ada',
+                    1 => 'Ada',
+                    2 => 'Lainnya'
+                ];
+
+                $hasil = $nilai[(int) $request->input('pf_kelainan_dada')] ?? '';
+
+                if ($hasil !== '') {
+                    $dada[] = 'kelainan dada : ' . $hasil;
+                }
+            }
+
+            if ($request->filled('pf_dada_lain')) {
+                $dada[] = 'lainnya : ' . $esc($request->input('pf_dada_lain'));
+            }
+
+            if ($dada) {
+                $baris[] = implode(', ', $dada);
+            }
+
+            // ==========================================================
+            // PERUT
+            // ==========================================================
+
+            $perut = [];
+
+            if ($request->filled('pf_distended')) {
+                $perut[] = 'distended : ' . ((int) $request->input('pf_distended') === 1 ? '(+)' : '(-)');
+            }
+
+            if ($request->filled('pf_meteor')) {
+                $perut[] = 'meteorismus : ' . ((int) $request->input('pf_meteor') === 1 ? '(+)' : '(-)');
+            }
+
+            if ($request->filled('pf_asites')) {
+                $perut[] = 'asites : ' . ((int) $request->input('pf_asites') === 1 ? '(+)' : '(-)');
+            }
+
+            $peristal = [];
+
+            if ($request->boolean('pf_peristal_normal')) {
+                $peristal[] = 'normal';
+            }
+
+            if ($request->boolean('pf_peristal_meningkat')) {
+                $peristal[] = 'meningkat';
+            }
+
+            if ($request->boolean('pf_peristal_menurun')) {
+                $peristal[] = 'menurun';
+            }
+
+            if ($request->boolean('pf_peristal_tidak')) {
+                $peristal[] = 'tidak ada';
+            }
+
+            if ($peristal) {
+                $perut[] = 'peristaltik : ' . implode(', ', $peristal);
+            }
+
+            if ($request->filled('pf_nyeri_tekan')) {
+                $nyeri = (int) $request->input('pf_nyeri_tekan') === 1 ? 'Ada' : 'Tidak Ada';
+
+                if ($request->filled('pf_nyeri_tekan_lain')) {
+                    $nyeri .= ' (' . $esc($request->input('pf_nyeri_tekan_lain')) . ')';
+                }
+
+                $perut[] = 'nyeri tekan : ' . $nyeri;
+            }
+
+            if ($request->filled('pf_hepar')) {
+                $perut[] = 'hepar : ' . $esc($request->input('pf_hepar'));
+            }
+
+            if ($request->filled('pf_lien')) {
+                $perut[] = 'lien : ' . $esc($request->input('pf_lien'));
+            }
+
+            $extremitas = [];
+
+            if ($request->boolean('pf_extremitas_hangat')) {
+                $extremitas[] = 'hangat';
+            }
+
+            if ($request->boolean('pf_extremitas_dingin')) {
+                $extremitas[] = 'dingin';
+            }
+
+            if ($extremitas) {
+                $perut[] = 'extremitas : ' . implode(', ', $extremitas);
+            }
+
+            if ($request->filled('pf_udem')) {
+                $udem = (int) $request->input('pf_udem') === 1 ? 'Ada' : 'Tidak Ada';
+
+                if ($request->filled('pf_udem_lain')) {
+                    $udem .= ' (' . $esc($request->input('pf_udem_lain')) . ')';
+                }
+
+                $perut[] = 'udem : ' . $udem;
+            }
+
+            if ($perut) {
+                $baris[] = implode(', ', $perut);
+            }
+
+            // ==========================================================
+            // STATUS LOKALIS
+            // ==========================================================
+
+            if ($request->filled('status_lokalis')) {
+                $baris[] = 'status lokalis : ' . nl2br($esc($request->input('status_lokalis')));
+            }
+
+            // ==========================================================
+            // GABUNGKAN DENGAN FORMAT SEPERTI EDITOR SIMGOS
+            // ==========================================================
+            //
+            // Antar kelompok diberi 1 baris kosong.
+            // Tidak menggunakan <div> agar editor SIMGOS tidak
+            // memberikan spacing/margin paragraf tambahan.
+            //
+
+            $deskripsi = implode('<br><br>', $baris);
+
+            /*
+            |--------------------------------------------------------------------------
+            | SIMPAN KE medicalrecord.pemeriksaan_fisik
+            |--------------------------------------------------------------------------
+            */
+
+            if ($getDataKunjungan) {
+                DB::table('medicalrecord.pemeriksaan_fisik')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $kunjungan
+                        ],
+                        [
+                            'PENDAFTARAN' => $getDataKunjungan->NOPEN,
+                            'TANGGAL' => now(),
+                            'DESKRIPSI' => $deskripsi,
+                            'OLEH' => auth()->id(),
+                            'STATUS' => 1
+                        ]
+                    );
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Pemeriksaan anatomi berhasil disimpan'
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     function getAnamnesisRI($KUNJUNGAN)
     {
         $anam1 = $this->getData(
@@ -3787,6 +4290,7 @@ class AddOnPengkajianController extends Controller
             [
                 'AUTOANAMNESIS',
                 'ALLOANAMNESIS',
+                'DARI',
             ]
         );
 
@@ -3838,13 +4342,23 @@ class AddOnPengkajianController extends Controller
             ]
         );
 
+        $anam7 = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.riwayat_tumbuh_kembang',
+            [
+                'IMUNISASI',
+                'IMUNISASI_LAIN',
+            ]
+        );
+
         $anam = array_merge(
             (array) $anam1,
             (array) $anam2,
             (array) $anam3,
             (array) $anam4,
             (array) $anam5,
-            (array) $anam6
+            (array) $anam6,
+            (array) $anam7
         );
 
         return response()->json([
@@ -3857,6 +4371,7 @@ class AddOnPengkajianController extends Controller
                 'anam4' => $anam4,
                 'anam5' => $anam5,
                 'anam6' => $anam6,
+                'anam7' => $anam7,
             ]
         ]);
 
@@ -3910,7 +4425,7 @@ class AddOnPengkajianController extends Controller
                         [
                             'AUTOANAMNESIS' => ($request->anam == 1) ? 1 : 0,
                             'ALLOANAMNESIS' => ($request->anam == 2) ? 1 : 0,
-                            'DARI'          => "",
+                            'DARI'          => $request->anamnesis_dari,
                             'OLEH'          => auth()->id(),
                             'STATUS'        => 1,
                             'TANGGAL'       => now()
@@ -4061,6 +4576,28 @@ class AddOnPengkajianController extends Controller
                         ]
                     );
             }
+            if (
+                $request->has('imunisasi') ||
+                (
+                    $request->has('imunisasi_lain') &&
+                    $request->filled('imunisasi_lain')
+                )
+            ) {
+
+                DB::table('medicalrecord.riwayat_tumbuh_kembang')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $KUNJUNGAN
+                    ],
+                    [
+                        'IMUNISASI'      => $request->input('imunisasi'),
+                        'IMUNISASI_LAIN' => $request->input('imunisasi_lain'),
+
+                        'TANGGAL'        => now(),
+                        'OLEH'           => auth()->id(),
+                        'STATUS'         => 1,
+                    ]
+                );
+            }
 
 
             // ==========================================
@@ -4101,33 +4638,26 @@ class AddOnPengkajianController extends Controller
                 'DIABETES_MELITUS',
                 'PENYAKIT_JANTUNG',
                 'ASMA',
-                'LAINNYA'
-            ]
-        );
-
-        $anam2 = $this->getData(
-            $KUNJUNGAN,
-            'medicalrecord.sirmed_status_reproduksi',
-            [
+                'LAINNYA',
                 'RIWAYAT_TUMBUH_KEMBANG',
                 'RIWAYAT_KELAHIRAN',
                 'USIA_KEHAMILAN',
                 'PERSALINAN',
                 'PERSALINAN_LAINNYA',
+                'IMUNISASI',
+                'IMUNISASI_LAIN',
             ]
         );
 
-        $anam = array_merge(
-            (array) $anam1,
-            (array) $anam2
-        );
+        // $anam = array_merge(
+        //     (array) $anam1
+        // );
 
         return response()->json([
             'status' => true,
 
             'data' => [
-                'anam1' => $anam1,
-                'anam2' => $anam2
+                'anam1' => $anam1
             ]
         ]);
 
@@ -4178,21 +4708,21 @@ class AddOnPengkajianController extends Controller
             }
 
             if ($request->has('dari')) {
-                $data['DARI'] = $request->dari;
+                $data['DARI'] = $request->dari ?? null;
             }
 
             if ($request->has('ku')) {
-                $data['KELUHAN_UTAMA'] = $request->ku;
+                $data['KELUHAN_UTAMA'] = $request->ku ?? '';
             }
 
             if ($request->has('rps')) {
                 $data['SNOMED_RPS'] = 0;
-                $data['RPS'] = $request->rps;
+                $data['RPS'] = $request->rps ?? '';
             }
 
             if ($request->has('rpd')) {
                 $data['SNOMED_RPD'] = 0;
-                $data['RPD'] = $request->rpd;
+                $data['RPD'] = $request->rpd ?? '';
             }
 
             if ($request->has('rpk_h')) {
@@ -4215,6 +4745,28 @@ class AddOnPengkajianController extends Controller
                 $data['LAINNYA'] = $request->rpk_lain;
             }
 
+            if ($request->has('anam_rtk')) {
+                $data['RIWAYAT_TUMBUH_KEMBANG'] = $request->anam_rtk;
+            }
+            if ($request->has('anam_k')) {
+                $data['RIWAYAT_KELAHIRAN'] = $request->anam_k;
+            }
+            if ($request->has('anam_uk')) {
+                $data['USIA_KEHAMILAN'] = $request->anam_uk;
+            }
+            if ($request->has('anam_p')) {
+                $data['PERSALINAN'] = $request->anam_p;
+            }
+            if ($request->has('anam_p_lain')) {
+                $data['PERSALINAN_LAINNYA'] = $request->anam_p_lain;
+            }
+            if ($request->has('imunisasi')) {
+                $data['IMUNISASI'] = $request->imunisasi;
+            }
+            if ($request->has('imunisasi_lain')) {
+                $data['IMUNISASI_LAIN'] = $request->imunisasi_lain;
+            }
+
             $data['OLEH'] = auth()->id();
             $data['STATUS'] = 1;
             $data['TANGGAL'] = now();
@@ -4227,40 +4779,6 @@ class AddOnPengkajianController extends Controller
                     ],
                     $data
                 );
-
-            // ==========================================
-            // RIWAYAT KELAHIRAN / DATA ANAK
-            // TABEL SIRMED_STATUS_REPRODUKSI
-            // ==========================================
-            if (
-                $request->has('anam_rtk') ||
-                $request->has('anam_k') ||
-                $request->has('anam_uk') ||
-                $request->has('anam_p') ||
-                (
-                    $request->has('anam_p_lain') &&
-                    $request->filled('anam_p_lain')
-                )
-            ) {
-
-                DB::table('medicalrecord.sirmed_status_reproduksi')
-                    ->updateOrInsert(
-                        [
-                            'KUNJUNGAN' => $request->NOKUNJ
-                        ],
-                        [
-                            'RIWAYAT_TUMBUH_KEMBANG' => $request->anam_rtk,
-                            'RIWAYAT_KELAHIRAN'      => $request->anam_k,
-                            'USIA_KEHAMILAN'         => $request->anam_uk,
-                            'PERSALINAN'             => $request->anam_p,
-                            'PERSALINAN_LAINNYA'    => $request->anam_p_lain,
-                            'TANGGAL'                => now(),
-                            'OLEH'                   => auth()->id(),
-                            'STATUS'                 => 1,
-                        ]
-                    );
-            }
-
 
             // ==========================================
             // COMMIT
@@ -4284,12 +4802,18 @@ class AddOnPengkajianController extends Controller
         }
     }
 
-    function getTandaVitalRI($KUNJUNGAN)
+    function getTandaVitalRI($PPA, $KUNJUNGAN)
     {
-        $ttv1 = $this->getData(
-            $KUNJUNGAN,
-            'medicalrecord.tanda_vital',
-            [
+        if ($PPA == 'dokter') {
+            $PPA = 1;
+        } else if ($PPA == 'perawat') {
+            $PPA = 2;
+        } else {
+            $PPA = 0;
+        }
+
+        $ttv1 = DB::table('medicalrecord.tanda_vital')
+            ->select(
                 'KEADAAN_UMUM',
                 'SISTOLIK',
                 'DISTOLIK',
@@ -4304,8 +4828,12 @@ class AddOnPengkajianController extends Controller
                 'MOTORIK',
                 'GCS',
                 'KESADARAN_NEONATUS'
-            ]
-        );
+            )
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->whereIn('STATUS', [1, 2])
+            ->where('PPA', $PPA)
+            ->orderByDesc('ID')
+            ->first();
 
         $ttv2 = $this->getData(
             $KUNJUNGAN,
@@ -4315,9 +4843,22 @@ class AddOnPengkajianController extends Controller
             ]
         );
 
+        $ttv3 = DB::table('medicalrecord.nutrisi')
+            ->select(
+                'BERAT_BADAN',
+                'TINGGI_BADAN',
+                'INDEX_MASSA_TUBUH'
+            )
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->whereIn('STATUS', [1, 2])
+            ->where('PPA', $PPA)
+            ->orderByDesc('ID')
+            ->first();
+
         $ttv = array_merge(
             (array) $ttv1,
-            (array) $ttv2
+            (array) $ttv2,
+            (array) $ttv3
         );
 
         return response()->json([
@@ -4326,32 +4867,24 @@ class AddOnPengkajianController extends Controller
         ]);
     }
 
-    function simpanTandaVitalRI(Request $request, $KUNJUNGAN)
+    function simpanTandaVitalRI(Request $request, $PPA, $KUNJUNGAN)
     {
-        // $validator = Validator::make(
-        //     $request->all(),
-        //     [
-        //         'NOKUNJ' => 'required',
-        //     ],
-        //     [
-        //         'NOKUNJ.required' => 'Kunjungan wajib terisi.',
-        //     ]
-        // );
-
-        // if ($validator->fails()) {
-        //     return response()->json([
-        //         'status'  => false,
-        //         'message' => $validator->errors()->first()
-        //     ], 422);
-        // }
-
         DB::beginTransaction();
 
         try {
 
+            if ($PPA == 'dokter') {
+                $PPA = 1;
+            } else if ($PPA == 'perawat') {
+                $PPA = 2;
+            } else {
+                $PPA = 0;
+            }
+
             DB::table('medicalrecord.tanda_vital')->updateOrInsert(
                 [
-                    'KUNJUNGAN' => $KUNJUNGAN
+                    'KUNJUNGAN' => $KUNJUNGAN,
+                    'PPA'       => $PPA
                 ],
                 [
                     'KEADAAN_UMUM'          => $request->tv_keu ?? '',
@@ -4368,6 +4901,7 @@ class AddOnPengkajianController extends Controller
                     'MOTORIK'               => $request->tv_gcs_m ?? 0,
                     'GCS'                   => $request->tv_gcs_t ?? 0,
                     'KESADARAN_NEONATUS'    => $request->kesadaran_neonatus ?? 0,
+                    'WAKTU_PEMERIKSAAN'     => now(),
                     'OLEH'                  => auth()->id(),
                     'STATUS'                => 1,
                     'TANGGAL'               => now()
@@ -4376,7 +4910,8 @@ class AddOnPengkajianController extends Controller
 
             DB::table('medicalrecord.nutrisi')->updateOrInsert(
                 [
-                    'KUNJUNGAN' => $KUNJUNGAN
+                    'KUNJUNGAN' => $KUNJUNGAN,
+                    'PPA'       => $PPA
                 ],
                 [
                     'DATA_PENGUKURAN'       => 1,

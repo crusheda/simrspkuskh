@@ -2,6 +2,12 @@
     <h1 class="display-6 mb-1 mt-2 fs-23 fw-medium"><center>PENGKAJIAN <b class="text-primary">PASIEN LANJUTAN</b></center></h1>
     <div class="form-content">
         <div class="row">
+            <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pengkajian_ulang_resiko_jatuh_humpty_dumpty_pediatri',['section' => '#riD_perawat'])
+            </div>
+            <div class="col-md-12">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pengkajian_ulang_resiko_jatuh_skala_morse_dewasa',['section' => '#riD_perawat'])
+            </div>
             {{-- COL --}}
         </div>
     </div>
