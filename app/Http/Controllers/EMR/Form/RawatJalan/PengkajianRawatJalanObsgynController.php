@@ -144,64 +144,6 @@ class PengkajianRawatJalanObsgynController extends Controller
 
         try {
 
-            // ANAMNESIS DIPEROLEH
-            DB::table('medicalrecord.anamnesis_diperoleh')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'AUTOANAMNESIS' => ($request->anam == 1) ? 1 : 0,
-                    'ALLOANAMNESIS' => ($request->anam == 2) ? 1 : 0,
-                    'DARI'          => $request->anamnesis_oleh,
-                    'OLEH'          => auth()->id(),
-                    'STATUS'        => 1,
-                    'TANGGAL'       => now()
-                ]
-            );
-
-            // KELUHAN UTAMA
-            DB::table('medicalrecord.keluhan_utama')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'DESKRIPSI'    => $request->keluhan_utama,
-                    'SNOMED_CT_ID' => 0,
-                    'OLEH'         => auth()->id(),
-                    'STATUS'       => 1,
-                    'TANGGAL'      => now()
-                ]
-            );
-
-            // Riwayat Penyakit Sekarang
-            DB::table('medicalrecord.anamnesis')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'PENDAFTARAN'  => DB::table('pendaftaran.kunjungan')->where('NOMOR', $request->NOKUNJ)->value('NOPEN'),
-                    'DESKRIPSI'    => $request->rps,
-                    'SNOMED_CT_ID' => 0,
-                    'OLEH'         => auth()->id(),
-                    'STATUS'       => 1,
-                    'TANGGAL'      => now()
-                ]
-            );
-
-            // Riwayat Penyakit Dahulu
-            DB::table('medicalrecord.rpp')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'DESKRIPSI'    => $request->rpd,
-                    'SNOMED_CT_ID' => 0,
-                    'OLEH'         => auth()->id(),
-                    'STATUS'       => 1,
-                    'TANGGAL'      => now()
-                ]
-            );
-
             // Riwayat Pemeriksaan Fisik
             DB::table('medicalrecord.sirmed_pemeriksaan_fisik_obsgyn')->updateOrInsert(
                 [
@@ -488,79 +430,6 @@ class PengkajianRawatJalanObsgynController extends Controller
     {
         $data = [];
 
-        // ======================================================
-        // TANDA VITAL
-        // ======================================================
-        $tanda_vital = DB::table('medicalrecord.tanda_vital')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        if ($tanda_vital) {
-
-            $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
-            $data['ku']          = $tanda_vital->KEADAAN_UMUM;
-            $data['kesadaran']   = $tanda_vital->KESADARAN;
-            $data['eye']         = $tanda_vital->EYE;
-            $data['motorik']     = $tanda_vital->MOTORIK;
-            $data['verbal']      = $tanda_vital->VERBAL;
-            $data['gcs']         = $tanda_vital->GCS;
-
-            $data['td_up']       = $tanda_vital->SISTOLIK;
-            $data['td_down']     = $tanda_vital->DISTOLIK;
-            $data['spo2']        = $tanda_vital->SATURASI_O2;
-            $data['nafas']       = $tanda_vital->FREKUENSI_NAFAS;
-            $data['suhu']        = $tanda_vital->SUHU;
-            $data['nadi']        = $tanda_vital->FREKUENSI_NADI;
-            $data['abn']         = $tanda_vital->ALAT_BANTU_NAFAS;
-        }
-
-        // Anamnesis diperoleh
-        $anam = DB::table('medicalrecord.anamnesis_diperoleh')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        $data['anam'] = 0;
-
-        if ($anam) {
-            if ($anam->AUTOANAMNESIS == 1) {
-                $data['anam'] = 1;
-            } elseif ($anam->ALLOANAMNESIS == 1) {
-                $data['anam'] = 2;
-            }
-            $data['anamnesis_oleh'] = $anam->DARI;
-        }
-
-        // Keluhan Utama
-        $keluhan_utama = DB::table('medicalrecord.keluhan_utama')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        $data['keluhan_utama'] = '';
-
-        if ($keluhan_utama) {
-            $data['keluhan_utama'] = $keluhan_utama->DESKRIPSI;
-        }
-
-        // Riwayat Penyakit Sekarang
-        $anamnesis = DB::table('medicalrecord.anamnesis')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        $data['rps'] = '';
-
-        if ($anamnesis) {
-            $data['rps'] = $anamnesis->DESKRIPSI;
-        }
-
-        // Riwayat Penyakit Dahulu
-        $rpp = DB::table('medicalrecord.rpp')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        if ($rpp) {
-            $data['rpd'] = $rpp->DESKRIPSI;
-        }
-
         // Riwayat Pemeriksaan Fisik
         $pemeriksaan_fisik_obsgyn = DB::table('medicalrecord.sirmed_pemeriksaan_fisik_obsgyn')
             ->where('KUNJUNGAN', $kunjungan)
@@ -680,224 +549,11 @@ class PengkajianRawatJalanObsgynController extends Controller
                 ],
                 [
                     'KELUHAN_UTAMA' => $request->anm_ku,
-                    'KEADAAN_UMUM' => $request->ku,
-                    'KESADARAN'    => $request->kesadaran,
-                    'EYE'          => $request->eye,
-                    'MOTORIK'      => $request->motorik,
-                    'VERBAL'       => $request->verbal,
-                    'GCS'          => $request->gcs,
-
-                    'SISTOLIK'          => $request->td_up,
-                    'DISTOLIK'          => $request->td_down,
-                    'SATURASI_O2'       => $request->spo2,
-                    'FREKUENSI_NAFAS'   => $request->nafas,
-                    'SUHU'              => $request->suhu,
-                    'FREKUENSI_NADI'    => $request->nadi,
-                    'ALAT_BANTU_NAFAS'  => $request->abn,
-                    'EWSS'              => '0',
-                    'UMUR'              => '0',
-                    'PEWSS'             => '0',
                     'WAKTU_PEMERIKSAAN' => now(),
 
                     'OLEH'         => auth()->id(),
                     'STATUS'       => 1,
                     'TANGGAL'      => now(),
-                ]
-            );
-
-            //KONDISI SOSIAL
-            DB::table('medicalrecord.kondisi_sosial')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    // Status Psikologi
-                    'TIDAK_ADA_KELAINAN' => $request->input('tak') ? 1 : 0,
-                    'MARAH'              => $request->input('marah') ? 1 : 0,
-                    'CEMAS'              => $request->input('cemas') ? 1 : 0,
-                    'TAKUT'              => $request->input('takut') ? 1 : 0,
-                    'SEDIH'              => $request->input('sedih') ? 1 : 0,
-                    'BUNUH_DIRI'         => $request->input('bundir') ? 1 : 0,
-                    'LAINNYA'            => $request->pse_lain,
-
-                    // Status Mental
-                    'STATUS_MENTAL'                         => $request->sm ?? 0,
-                    'MASALAH_PERILAKU'                      => $request->perilaku,
-                    'PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA' => $request->kekerasan,
-
-                    // Hubungan Sosial
-                    'HUBUNGAN_PASIEN_DENGAN_KELUARGA' => $request->hub ?? 0,
-                    'TEMPAT_TINGGAL'                  => $request->tinggal ?? 0,
-                    'TEMPAT_TINGGAL_LAINNYA'          => $request->tinggal_lain,
-
-                    // Spiritual
-                    'KEBIASAAN_BERIBADAH_TERATUR' => $request->kbt ?? 0,
-                    'NILAI_KEPERCAYAAN'           => $request->nk ?? 0,
-                    'NILAI_KEPERCAYAAN_DESKRIPSI' => $request->nk_lain,
-                    'PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA' => $request->pk,
-
-                    // Ekonomi
-                    'PENGHASILAN_PERBULAN' => $request->hasil ?? 0,
-
-                    // Audit
-                    'OLEH'    => auth()->id(),
-                    'STATUS'  => 1,
-                    'TANGGAL' => now(),
-                ]
-            );
-
-            // PENILAIAN NYERI
-            DB::table('medicalrecord.penilaian_nyeri')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'NYERI'     => $request->sn_nyeri ?? 0,
-                    'ONSET'     => $request->sn_onset ?? null,
-                    'SKALA'     => $request->sn_skala,
-                    'METODE'    => $request->sn_metode,
-                    'PENCETUS'  => $request->sn_pencetus,
-                    'GAMBARAN'  => $request->sn_gambaran,
-                    'DURASI'    => $request->sn_durasi,
-                    'LOKASI'    => $request->sn_lokasi,
-
-                    'OLEH'      => auth()->id(),
-                    'STATUS'    => 1,
-                    'TANGGAL'   => now(),
-                ]
-            );
-
-            // RESIKO JATUH GET UP AND GO
-            $caraBerjalan = $request->cara_berjalan ?? 0;
-            $faktorRisiko = $request->faktor_risiko ?? 0;
-            $obatDiminum  = $request->kon_obat ?? 0;
-
-            if ($caraBerjalan == 0 && $faktorRisiko == 0 && $obatDiminum == 0) {
-                DB::table('medicalrecord.penilaian_getup_and_go')
-                    ->where('KUNJUNGAN', $request->NOKUNJ)
-                    ->delete();
-            } else {
-                DB::table('medicalrecord.penilaian_getup_and_go')->updateOrInsert(
-                    [
-                        'KUNJUNGAN' => $request->NOKUNJ
-                    ],
-                    [
-                        'CARA_BERJALAN_PASIEN' => $caraBerjalan,
-                        'FAKTOR_RESIKO'        => $faktorRisiko,
-                        'OBAT_YANG_DIMINUM'    => $obatDiminum,
-                        'OLEH'                 => auth()->id(),
-                        'STATUS'               => 1,
-                        'TANGGAL'              => now(),
-                    ]
-                );
-            };
-
-            $usia = $request->rj_usia ?? 0;
-            $jk   = $request->rj_jk ?? 0;
-            $hd1  = $request->rj_hd_1 ?? 0;
-            $hd2  = $request->rj_hd_2 ?? 0;
-            $hd3  = $request->rj_hd_3 ?? 0;
-            $hd4  = $request->rj_hd_4 ?? 0;
-            $hd5  = $request->rj_hd_5 ?? 0;
-
-            if (
-                $usia == 0 &&
-                $jk == 0 &&
-                $hd1 == 0 &&
-                $hd2 == 0 &&
-                $hd3 == 0 &&
-                $hd4 == 0 &&
-                $hd5 == 0
-            ) {
-                DB::table('medicalrecord.penilaian_skala_humpty_dumpty')
-                    ->where('KUNJUNGAN', $request->NOKUNJ)
-                    ->update([
-                        'STATUS' => 0,
-                        'OLEH'   => auth()->id(),
-                    ]);
-            } else {
-                DB::table('medicalrecord.penilaian_skala_humpty_dumpty')
-                    ->updateOrInsert(
-                        [
-                            'KUNJUNGAN' => $request->NOKUNJ
-                        ],
-                        [
-                            'UMUR'               => $usia,
-                            'JENIS_KELAMIN'      => $jk,
-                            'DIAGNOSA'           => $hd1,
-                            'GANGGUAN_KONGNITIF' => $hd2,
-                            'FAKTOR_LINGKUNGAN'  => $hd3,
-                            'RESPON'             => $hd4,
-                            'PENGGUNAAN_OBAT'    => $hd5,
-                            'OLEH'               => auth()->id(),
-                            'STATUS'             => 1,
-                            'TANGGAL'            => now(),
-                        ]
-                    );
-            }
-
-            // SKRINING GIZI
-            DB::table('medicalrecord.permasalahan_gizi')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'BERAT_BADAN_SIGNIFIKAN' => $request->bb_turun ?? 0,
-                    'PERUBAHAN_BERAT_BADAN'  => $request->bb_ubah ?? 0,
-                    'INTAKE_MAKANAN'         => $request->nafsu_makan ?? 0,
-                    'KONDISI_KHUSUS'         => $request->kondisi_khusus,
-
-                    'SKOR'                  => $request->skor_gizi,
-                    'STATUS_SKOR'           => $request->status_skor,
-
-                    'OLEH'                  => auth()->id(),
-                    'STATUS'                => 1,
-                    'TANGGAL'               => now(),
-                ]
-            );
-
-            // EDUKASI PASIEN DAN KELUARGA
-            DB::table('medicalrecord.edukasi_pasien_keluarga')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    // Edukasi awal
-                    'KESEDIAAN' => $request->edu_1 ?? 0,
-                    'HAMBATAN' => $request->edu_2 ?? 0,
-                    'PENERJEMAH' => $request->edu_3 ?? 0,
-
-                    // Kebutuhan Edukasi
-                    'EDUKASI_DIAGNOSA' => $request->kb_edu_1 ?? 0,
-                    'EDUKASI_REHAB_MEDIK' => $request->kb_edu_2 ?? 0,
-                    'EDUKASI_HKP' => $request->kb_edu_3 ?? 0,
-
-                    'EDUKASI_PEMBERIAN_INFORMED_CONSENT' => $request->kb_edu_4 ?? 0,
-
-                    'EDUKASI_CUCI_TANGAN' => $request->kb_edu_5 ?? 0,
-                    'EDUKASI_PERENCANAAN_PULANG' => $request->kb_edu_6 ?? 0,
-
-                    'EDUKASI_OBAT' => $request->kb_edu_7 ?? 0,
-                    'EDUKASI_NYERI' => $request->kb_edu_8 ?? 0,
-                    'EDUKASI_HAK_BERPARTISIPASI' => $request->kb_edu_9 ?? 0,
-
-                    'EDUKASI_PENUNDAAN_PELAYANAN' => $request->kb_edu_10 ?? 0,
-                    'EDUKASI_BAHAYA_MEROKO' => $request->kb_edu_11 ?? 0,
-
-                    'EDUKASI_NUTRISI' => $request->kb_edu_13 ?? 0,
-                    'EDUKASI_PENGGUNAAN_ALAT' => $request->kb_edu_14 ?? 0,
-                    'EDUKASI_PROSEDURE_PENUNJANG' => $request->kb_edu_15 ?? 0,
-
-                    'EDUKASI_KELAMBATAN_PELAYANAN' => $request->kb_edu_16 ?? 0,
-                    'EDUKASI_RUJUKAN_PASIEN' => $request->kb_edu_17 ?? 0,
-
-                    // Lainnya
-                    'STATUS_LAIN' => $request->kb_edu_12 ?? 0,
-                    'DESKRIPSI_LAINYA' => $request->kb_edu_lain,
-
-                    'OLEH' => auth()->id(),
-                    'STATUS' => 1,
-                    'TANGGAL' => now(),
                 ]
             );
 
@@ -921,6 +577,7 @@ class PengkajianRawatJalanObsgynController extends Controller
                     'INTOLERANSI_AKTIFITAS' => $request->input('diag_11') ? 1 : 0,
                     'GANGGUAN_MOBILITAS_FISIK' => $request->input('diag_12') ? 1 : 0,
                     'GANGGUAN_PERTUKARAN_GAS' => $request->input('diag_13') ? 1 : 0,
+                    'DIAGNOSA_LAIN' => $request->input('diag_lain') ? 1 : 0,
 
                     'TINDAKAN_RELAKSASI_NAFAS_DALAM' => $request->input('tin_1') ? 1 : 0,
                     'TINDAKAN_BODY_ALIGNMENT' => $request->input('tin_2') ? 1 : 0,
@@ -1054,207 +711,11 @@ class PengkajianRawatJalanObsgynController extends Controller
             ->first();
 
         // Default
-        $data['anm_ku'] = '';
-        $data['ku'] = '';
-        $data['kesadaran'] = '';
-        $data['eye'] = '';
-        $data['motorik'] = '';
-        $data['verbal'] = '';
-        $data['gcs'] = '';
-
-        $data['td_up'] = '';
-        $data['td_down'] = '';
-        $data['spo2'] = '';
-        $data['nafas'] = '';
-        $data['suhu'] = '';
-        $data['nadi'] = '';
-        $data['abn'] = '';
-
         if ($tanda_vital) {
 
             $data['anm_ku']      = $tanda_vital->KELUHAN_UTAMA;
-            $data['ku']          = $tanda_vital->KEADAAN_UMUM;
-            $data['kesadaran']   = $tanda_vital->KESADARAN;
-            $data['eye']         = $tanda_vital->EYE;
-            $data['motorik']     = $tanda_vital->MOTORIK;
-            $data['verbal']      = $tanda_vital->VERBAL;
-            $data['gcs']         = $tanda_vital->GCS;
-
-            $data['td_up']       = $tanda_vital->SISTOLIK;
-            $data['td_down']     = $tanda_vital->DISTOLIK;
-            $data['spo2']        = $tanda_vital->SATURASI_O2;
-            $data['nafas']       = $tanda_vital->FREKUENSI_NAFAS;
-            $data['suhu']        = $tanda_vital->SUHU;
-            $data['nadi']        = $tanda_vital->FREKUENSI_NADI;
-            $data['abn']         = $tanda_vital->ALAT_BANTU_NAFAS;
         }
         // dd($tanda_vital);
-
-        // ======================================================
-        // KONDISI SOSIAL
-        // ======================================================
-        $kondisi_sosial = DB::table('medicalrecord.kondisi_sosial')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-
-        // Default Status Psikologi
-        $data['tak'] = 0;
-        $data['marah'] = 0;
-        $data['cemas'] = 0;
-        $data['takut'] = 0;
-        $data['sedih'] = 0;
-        $data['bundir'] = 0;
-        $data['pse_lain'] = '';
-
-
-        // Status Mental
-        $data['sm'] = 0;
-        $data['perilaku'] = '';
-        $data['kekerasan'] = '';
-
-
-        // Hubungan Sosial
-        $data['hub'] = 0;
-        $data['tinggal'] = 0;
-        $data['tinggal_lain'] = '';
-
-
-        // Spiritual
-        $data['kbt'] = 0;
-        $data['nk'] = 0;
-        $data['nk_lain'] = '';
-        $data['pk'] = '';
-
-
-        // Ekonomi
-        $data['hasil'] = 0;
-
-
-        if ($kondisi_sosial) {
-
-            // Status Psikologi
-            $data['tak']       = $kondisi_sosial->TIDAK_ADA_KELAINAN;
-            $data['marah']     = $kondisi_sosial->MARAH;
-            $data['cemas']     = $kondisi_sosial->CEMAS;
-            $data['takut']     = $kondisi_sosial->TAKUT;
-            $data['sedih']     = $kondisi_sosial->SEDIH;
-            $data['bundir']    = $kondisi_sosial->BUNUH_DIRI;
-            $data['pse_lain']  = $kondisi_sosial->LAINNYA;
-
-
-            // Status Mental
-            $data['sm']        = $kondisi_sosial->STATUS_MENTAL;
-            $data['perilaku']  = $kondisi_sosial->MASALAH_PERILAKU;
-            $data['kekerasan'] = $kondisi_sosial->PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA;
-
-
-            // Hubungan Sosial
-            $data['hub']          = $kondisi_sosial->HUBUNGAN_PASIEN_DENGAN_KELUARGA;
-            $data['tinggal']      = $kondisi_sosial->TEMPAT_TINGGAL;
-            $data['tinggal_lain'] = $kondisi_sosial->TEMPAT_TINGGAL_LAINNYA;
-
-
-            // Spiritual
-            $data['kbt']     = $kondisi_sosial->KEBIASAAN_BERIBADAH_TERATUR;
-            $data['nk']      = $kondisi_sosial->NILAI_KEPERCAYAAN;
-            $data['nk_lain'] = $kondisi_sosial->NILAI_KEPERCAYAAN_DESKRIPSI;
-            $data['pk']      = $kondisi_sosial->PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA;
-
-
-            // Ekonomi
-            $data['hasil'] = $kondisi_sosial->PENGHASILAN_PERBULAN;
-        }
-
-        // ======================================================
-        // PENILAIAN NYERI
-        // ======================================================
-        $nyeri = DB::table('medicalrecord.penilaian_nyeri')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        $data['sn_nyeri'] = 0;
-        $data['sn_onset'] = '';
-        $data['sn_skala'] = '';
-        $data['sn_metode'] = '';
-        $data['sn_pencetus'] = '';
-        $data['sn_gambaran'] = '';
-        $data['sn_durasi'] = '';
-        $data['sn_lokasi'] = '';
-
-        if ($nyeri) {
-
-            $data['sn_nyeri']    = $nyeri->NYERI;
-            $data['sn_onset']    = $nyeri->ONSET;
-            $data['sn_skala']    = $nyeri->SKALA;
-            $data['sn_metode']   = $nyeri->METODE;
-            $data['sn_pencetus'] = $nyeri->PENCETUS;
-            $data['sn_gambaran'] = $nyeri->GAMBARAN;
-            $data['sn_durasi']   = $nyeri->DURASI;
-            $data['sn_lokasi']   = $nyeri->LOKASI;
-        }
-
-
-        // ======================================================
-        // RESIKO JATUH GET UP AND GO
-        // ======================================================
-        $getup = DB::table('medicalrecord.penilaian_getup_and_go')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        $data['cara_berjalan'] = 0;
-        $data['faktor_risiko'] = 0;
-        $data['kon_obat'] = 0;
-
-        if ($getup) {
-
-            $data['cara_berjalan'] = $getup->CARA_BERJALAN_PASIEN;
-            $data['faktor_risiko'] = $getup->FAKTOR_RESIKO;
-            $data['kon_obat']      = $getup->OBAT_YANG_DIMINUM;
-        }
-
-        $data['humpty_dumpty'] = DB::table('medicalrecord.penilaian_skala_humpty_dumpty')
-            ->select([
-                'UMUR',
-                'JENIS_KELAMIN',
-                'DIAGNOSA',
-                'GANGGUAN_KONGNITIF',
-                'FAKTOR_LINGKUNGAN',
-                'RESPON',
-                'PENGGUNAAN_OBAT',
-            ])
-            ->where('KUNJUNGAN', $kunjungan)
-            ->whereIn('STATUS', [1, 2])
-            ->orderByDesc('ID')
-            ->first();
-
-        // ======================================================
-        // SKRINING GIZI
-        // ======================================================
-        $gizi = DB::table('medicalrecord.permasalahan_gizi')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-
-        $data['bb_turun'] = 0;
-        $data['bb_ubah'] = 0;
-        $data['nafsu_makan'] = 0;
-        $data['kondisi_khusus'] = '';
-
-        $data['skor_gizi'] = '';
-        $data['status_skor'] = '';
-
-
-        if ($gizi) {
-
-            $data['bb_turun']       = $gizi->BERAT_BADAN_SIGNIFIKAN;
-            $data['bb_ubah']        = $gizi->PERUBAHAN_BERAT_BADAN;
-            $data['nafsu_makan']    = $gizi->INTAKE_MAKANAN;
-            $data['kondisi_khusus'] = $gizi->KONDISI_KHUSUS;
-
-            $data['skor_gizi']      = $gizi->SKOR;
-            $data['status_skor']    = $gizi->STATUS_SKOR;
-        }
 
         // ======================================================
         // STATUS FUNGSIONAL
@@ -1263,11 +724,6 @@ class PengkajianRawatJalanObsgynController extends Controller
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
             ->first();
-
-        $data['alat_bantu_fungsional'] = '';
-        $data['alat_bantu'] = '';
-        $data['cacat_tubuh'] = '0';
-        $data['ket_cacat_tubuh'] = '';
 
         if ($status_fungsional) {
 
@@ -1342,13 +798,6 @@ class PengkajianRawatJalanObsgynController extends Controller
                 'PERUBAHAN_NUTRISI_KURANG_DARI_KEBUTUHAN',
         ];
 
-
-        foreach ($diagnosa_keperawatan_field as $key => $column) {
-            $data[$key] = 0;
-        }
-
-        $data['rencana_asuhan_keperawatan'] = '';
-
         if ($diagnosa_keperawatan) {
 
             foreach ($diagnosa_keperawatan_field as $key => $column) {
@@ -1357,6 +806,8 @@ class PengkajianRawatJalanObsgynController extends Controller
                     (int) ($diagnosa_keperawatan->$column ?? 0);
             }
 
+            $data['diag_lain'] =
+                $diagnosa_keperawatan->DIAGNOSA_LAIN ?? '';
             $data['rencana_asuhan_keperawatan'] =
                 $diagnosa_keperawatan->RENCANA_ASUHAN_KEPERAWATAN ?? '';
         }

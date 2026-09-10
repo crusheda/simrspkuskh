@@ -240,6 +240,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                         Route::get('emr/pengkajian/skrining/dekubitus/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningDekubitus']);
                         Route::post('emr/pengkajian/skrining/dekubitus/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningDekubitus']);
                     // RESIKO JATUH
+                        //GET UP AND GO
+                        Route::get('emr/pengkajian/skrining/resikojatuh/gtg/{kunjungan}',[AddOnPengkajianController::class, 'getSkriningResikoJatuhGetUpAndGo']);
+                        Route::post('emr/pengkajian/skrining/resikojatuh/gtg/{kunjungan}/simpan',[AddOnPengkajianController::class, 'simpanSkriningResikoJatuhGetUpAndGo']);
                         // HUMPTY DUMPTY
                         Route::get('emr/pengkajian/skrining/resikojatuh/hd/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningResikoJatuhHumptyDumpty']);
                         Route::post('emr/pengkajian/skrining/resikojatuh/hd/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningResikoJatuhHumptyDumpty']);

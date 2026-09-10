@@ -3,6 +3,11 @@
     <h1 class="display-6 mb-4 fs-18"><center>PENGKAJIAN MEDIS (<a class="text-danger">Diisi Oleh Dokter</a>)</center></h1>
     <div class="form-content">
         <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-12 mb-1">
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.status_obstetri_neonatus')
+                </div>
+            </div>
             <div class="col-md-12 mb-3">
                 @include(
                     'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
@@ -14,11 +19,6 @@
             </div>
             <div class="col-md-12 mb-3">
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="col-md-12 mb-1">
-                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.status_obstetri_neonatus')
-                        </div>
-                    </div>
                     <div class="col-md-12">
                         <div class="col-md-12 mb-1">
                             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.penilaian_awal_bbl')
@@ -66,10 +66,13 @@
                 </div>
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rencana_konsultasi',['section' => '#rin_dokter'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.tata_laksana_terapi',['section' => '#riN_dokter'])
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.tata_laksana_terapi',['section' => '#rin_dokter'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.target_terapi',['section' => '#riN_dokter'])
+            </div>
+            <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rencana_konsultasi',['section' => '#riN_dokter'])
             </div>
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kriteria_pulang',['section' => '#rin_dokter'])

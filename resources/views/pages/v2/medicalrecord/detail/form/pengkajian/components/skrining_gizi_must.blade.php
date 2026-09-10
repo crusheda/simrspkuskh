@@ -285,10 +285,10 @@
     }
 
     function simpanSkriningMust(btn) {
-        const $buttonSkriningEPFRA = $(btn);
-        const $sectionSkriningEPFRA = $('#form_skrining_must');
+        const $buttonSkriningMust = $(btn);
+        const $sectionSkriningMust = $('#form_skrining_must');
 
-        const data = getFormDataByName($sectionSkriningEPFRA, {
+        const data = getFormDataByName($sectionSkriningMust, {
             NOKUNJ: kunjungan
         });
         $.ajax({
@@ -299,7 +299,7 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             beforeSend: function () {
-                $buttonSkriningEPFRA.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan...');
+                $buttonSkriningMust.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan...');
             },
             success: function (res) {
                 Swal.fire({
@@ -310,7 +310,7 @@
                     timer: 1000,
                     toast: true
                 });
-                getSkriningEPFRA();
+                getSkriningMust();
             },
             error: function (xhr) {
                 let message = 'Data gagal disimpan.';
@@ -328,7 +328,7 @@
                 });
             },
             complete: function () {
-                $buttonSkriningEPFRA.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Skrining Jatuh');
+                $buttonSkriningMust.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Skrining Gizi');
             }
         });
     }

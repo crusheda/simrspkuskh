@@ -10,150 +10,14 @@
                             <strong><em>Subjective </em>(S) : </strong>
                         </h5>
                     </div>
-                    <div class="row align-items-center mb-3" id="anamnesis_diperoleh">
-                        <div class="col-md-12">
-                            <label class="form-label fw-bold">Anamnesis</label>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="1" checked="">
-                                <label class="form-check-label">
-                                    Autoanamnesis
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="2">
-                                <label class="form-check-label">
-                                    Alloanamnesis
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" class="form-control" name="anamnesis_oleh" id="anamnesis_oleh" placeholder="Oleh.....">
-                        </div>
-                    </div>
-                    <div class="row align-items-start" id="anamnesis">
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label fw-bold">Keluhan Utama</label>
-                            <textarea class="form-control" name="keluhan_utama" id="keluhan_utama" rows="3"></textarea>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Riwayat Penyakit Sekarang</label>
-                            <textarea class="form-control" name="rps" id="rps" rows="3"></textarea>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Riwayat Penyakit Dahulu</label>
-                            <textarea class="form-control" name="rpd" id="rpd" rows="3"></textarea>
-                        </div>
-                        <div class="col-md-6 mb-2 d-flex flex-column">
-                            <h6>Riwayat Alergi</h6>
-                            <div class="row g-2 mb-2">
-                                <div class="col-md-12">
-                                    <select class="form-select form-select-sm" name="ra_jenis">
-                                        <option value="">Jenis Alergi</option>
-                                        @foreach ($list['jenis_alergi'] as $item)
-                                            <option value="{{ $item->ID }}">
-                                                {{ $item->DESKRIPSI }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-9">
-                                    <textarea class="form-control" name="ra_deskripsi" placeholder="Masukkan Alergi" rows="2"></textarea>
-                                </div>
-                                <div class="col-md-3 d-flex align-items-start">
-                                    <div class="btn-group">
-                                        <button class="btn btn-success" id="btnTambahAlergi" onclick="tambahRiwayatAlergi()">
-                                            <i class="ri-add-box-line"></i>
-                                        </button>
-                                        <button class="btn btn-subtle-warning" id="btnRefreshAlergi" onclick="getRiwayatAlergi()">
-                                            <i class="ri-refresh-line"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-bordered table align-middle mb-1">
-                                    <thead>
-                                        <tr class="table-success">
-                                            <th>No</th>
-                                            <th>Jenis</th>
-                                            <th>Deskripsi</th>
-                                            <th class="text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tblAlergiBody">
-                                        <tr>
-                                            <td colspan="4" class="text-center">Tidak ada data</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-2 d-flex flex-column">
-                            <h6>Riwayat Penggunaan Obat</h6>
-                            <div class="row g-2 mb-2">
-                                <div class="col-md-9">
-                                    <input type="text" class="form-control" name="rpo_nama_obat" id="rpo_nama_obat" placeholder="Masukkan Nama Obat">
-                                </div>
-                                {{-- <div class="col-md-6">
-                                    <input type="text" class="form-control" name="rpo_dosis" placeholder="Masukkan Dosis">
-                                </div>
-                                <div class="col-md-6">
-                                    <select class="form-select" name="rpo_frekuensi">
-                                        @foreach ($list['frekuensi_obat'] as $item)
-                                            <option value="{{ $item->ID }}" {{ $item->FREKUENSI == '-' ? 'selected' : '' }}>
-                                                {{ $item->FREKUENSI }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <select class="form-select" name="rpo_rute">
-                                        @foreach ($list['rute_obat'] as $item)
-                                            <option value="{{ $item->ID }}" {{ $item->DESKRIPSI == '-' ? 'selected' : '' }}>
-                                                {{ $item->DESKRIPSI }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" name="rpo_lama" placeholder="Tuliskan Lama Penggunaan Obat">
-                                </div> --}}
-                                <div class="col-md-3 d-grid">
-                                    <div class="btn-group">
-                                        <button class="btn btn-success" id="btnTambahObat" onclick="tambahPenggunaanObat()">
-                                            <i class="ri-add-box-line"></i>
-                                        </button>
-                                        <button class="btn btn-subtle-warning" id="btnRefreshObat" onclick="getPenggunaanObat()">
-                                            <i class="ri-refresh-line"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-bordered table align-middle mb-1">
-                                    <thead>
-                                        <tr class="table-info">
-                                            <th>No</th>
-                                            <th>Nama Obat</th>
-                                            {{-- <th>Dosis</th>
-                                            <th>Frekuensi (Keterangan)</th>
-                                            <th>Rute Pemberian</th>
-                                            <th>Lama Penggunaan</th> --}}
-                                            <th class="text-center">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tblObatBody">
-                                        <tr>
-                                            <td colspan="3" class="text-center">Tidak ada data</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="col-md-12 mb-2">
+                        @include(
+                            'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
+                            [
+                                'section' => '#rjd_dokter',
+                                'anak' => 'false',
+                            ]
+                        )
                     </div>
 
                     <div class="form-group mb-2">
@@ -167,70 +31,13 @@
                             <textarea class="form-control" name="pfisik" id="pfisik" rows="3"></textarea>
                         </div>
                     </div>
-                    <div class="row align-items-center" id="pemeriksaan_penunjang">
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label fw-bold">Pemeriksaan Penunjang</label>
-                            <div class="card card-body border border-dashed border-info mb-0">
-                                <div class="mb-3">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <h6 class="mb-0">Pemeriksaan Penunjang Laboratorium</h6>
-
-                                        <button class="btn btn-subtle-warning btn-sm" id="btnRefreshLab" onclick="getRiwayatLab()">
-                                            <i class="ri-refresh-line"></i>
-                                        </button>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <table class="table table-striped table-hover table-display">
-                                            <thead>
-                                                <tr>
-                                                    <th>No</th>
-                                                    <th>Jenis Pemeriksaan</th>
-                                                    <th>Parameter</th>
-                                                    <th>Hasil</th>
-                                                    <th>Satuan</th>
-                                                    <th>Nilai Normal</th>
-                                                    <th>Keterangan</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tblLabBody">
-                                                <tr>
-                                                    <td colspan="7" class="text-center">Belum ada data</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <h6 class="mb-0">Pemeriksaan Penunjang Radiologi</h6>
-
-                                        <button class="btn btn-subtle-warning btn-sm" id="btnRefreshRad" onclick="getRiwayatRad()">
-                                            <i class="ri-refresh-line"></i>
-                                        </button>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <table class="table table-striped table-hover table-display">
-                                            <thead>
-                                                <tr>
-                                                    <th>No</th>
-                                                    <th>Nama Tindakan</th>
-                                                    <th>Klinis</th>
-                                                    <th>Kesan</th>
-                                                    <th>Usul</th>
-                                                    <th>Hasil</th>
-                                                    <th>BTK</th>
-                                                    <th>Dokter</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tblRadBody">
-                                                <tr>
-                                                    <td colspan="8" class="text-center">Belum ada data</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="col-md-12">
+                        <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
+                        <div class="mb-3">
+                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_lab')
+                        </div>
+                        <div class="mb-3">
+                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad')
                         </div>
                     </div>
 
@@ -323,12 +130,28 @@
                         </h5>
                     </div>
                     <div class="row align-items-center">
+                        <div class="col-md-12 mb-2">
+                            @include(
+                                'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
+                                [
+                                    'section' => '#rjj_dokter',
+                                    'page' => 'dokter',
+                                    // 'editableFields' => [
+                                    //     'tv_keu',
+                                    //     'tv_gcs_e',
+                                    //     'tv_gcs_v',
+                                    //     'tv_gcs_m',
+                                    //     'tv_bb',
+                                    //     'tv_tb',
+                                    // ],
+                                ]
+                            )
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Tolok Ukur / Sasaran yang Dicapai</label>
+                            <textarea class="form-control" name="tu" id="tu" rows="3"></textarea>
+                        </div>
                         <div class="col-md-12">
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label fw-bold">Tolok Ukur / Sasaran yang Dicapai</label>
-                                <textarea class="form-control" name="tu" id="tu" rows="3"></textarea>
-                            </div>
-                            <div class="col-md-12" id="displayttv"></div>
                             <label class="form-label fw-bold">Terapi / Tindakan</label>
                             <textarea class="form-control" name="terapi_tind" id="terapi_tind" rows="3"></textarea>
                         </div>
@@ -546,12 +369,6 @@
 
     $(document).ready(function () {
 
-        const $inputObat = $('[name="rpo_nama_obat"]');
-
-        if (!$inputObat.length ) {
-            return;
-        }
-
         // Sembunyikan textarea saat pertama kali
         $('#pri').hide();
         $('#rujuk_lainnya').hide();
@@ -589,70 +406,6 @@
                 defaultDate: [today]
             }
         );
-
-        //Auto Nama Obat
-        new autoComplete({
-            selector: '[name="rpo_nama_obat"]',
-            placeHolder: 'Masukkan Nama Obat',
-            threshold: 2,
-            debounce: 300,
-
-            data: {
-                src: async function (query) {
-                    try {
-                        return await $.ajax({
-                            url: "/api/v2/emr/pengkajian/riwayat_pemberian_obat/obat",
-                            type: 'GET',
-                            dataType: 'json',
-                            data: {
-                                q: query
-                            }
-                        });
-                    } catch (error) {
-                        console.error('Gagal mengambil data obat:', error);
-                        return [];
-                    }
-                },
-
-                keys: ['nama'],
-                cache: false
-            },
-
-            resultsList: {
-                maxResults: 15,
-                noResults: true
-            },
-
-            resultItem: {
-                highlight: true,
-
-                element: function (item, data) {
-                    const obat = data.value;
-
-                    // .text() lebih aman daripada memasukkan data database ke HTML langsung
-                    $(item)
-                        .empty()
-                        .append(
-                            $('<strong>').text(obat.nama),
-                            $('<small>')
-                                .addClass('d-block text-muted')
-                                .text(`Kategori: ${obat.kategori ?? '-'}  |  Satuan: ${obat.ket_satuan ?? '-'}${obat.satuan ? ' ('+obat.satuan+')' : '-'}`)
-                        );
-                }
-            },
-
-            events: {
-                input: {
-                    selection: function (event) {
-                        const obat = event.detail.selection.value;
-
-                        $inputObat.val(obat.nama);
-                        // $inputBarangId.val(obat.id);
-                    }
-                }
-            }
-        });
-
         $('#diag_utama').on('change', function () {
 
             const $textarea = $('#diag_detail');
@@ -661,7 +414,9 @@
             const template = `Axis
         I.
         II.
-        III.`;
+        III.
+        IV.
+        V.`;
 
             if ($(this).is(':checked')) {
 
@@ -682,10 +437,6 @@
         });
 
         loadDataPengkajianRJJd();
-        getPenggunaanObat();
-        getRiwayatAlergi();
-        getRiwayatLab();
-        getRiwayatRad();
         getDiagnosis();
     });
 
@@ -707,127 +458,6 @@
         return Number(value).toLocaleString('id-ID', {
             maximumFractionDigits: 2
         });
-    }
-
-    function displayTTV(data) {
-
-        let html = `
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <strong>
-                        <i class="ri-heart-pulse-line me-1"></i>
-                        Tanda-Tanda Vital
-                    </strong>
-                </div>
-
-                <div class="card-body">
-                    <div class="row">
-
-                        <!-- Keadaan Umum -->
-                        <div class="col-md-4 mb-3">
-                            <div class="small text-muted">Keadaan Umum</div>
-                            <div class="fw-bold">
-                                ${data.ku || '-'}
-                            </div>
-                        </div>
-
-                        <!-- Kesadaran -->
-                        <div class="col-md-4 mb-3">
-                            <div class="small text-muted">Tingkat Kesadaran</div>
-                            <div class="fw-bold">
-                                ${getKesadaranText(data.kesadaran)}
-                            </div>
-                        </div>
-
-                        <!-- GCS -->
-                        <div class="col-md-4 mb-3">
-                            <div class="small text-muted">GCS</div>
-                            <div class="fw-bold">
-                                ${formatAngkaBulat(data.gcs)}
-                            </div>
-                        </div>
-
-                        <!-- E -->
-                        <div class="col-md-2 mb-3">
-                            <div class="small text-muted">Eye (E)</div>
-                            <div class="fw-bold">
-                                ${formatAngkaBulat(data.eye)}
-                            </div>
-                        </div>
-
-                        <!-- M -->
-                        <div class="col-md-2 mb-3">
-                            <div class="small text-muted">Motorik (M)</div>
-                            <div class="fw-bold">
-                                ${formatAngkaBulat(data.motorik)}
-                            </div>
-                        </div>
-
-                        <!-- V -->
-                        <div class="col-md-2 mb-3">
-                            <div class="small text-muted">Verbal (V)</div>
-                            <div class="fw-bold">
-                                ${formatAngkaBulat(data.verbal)}
-                            </div>
-                        </div>
-
-                        <!-- Tekanan Darah -->
-                        <div class="col-md-3 mb-3">
-                            <div class="small text-muted">Tekanan Darah</div>
-                            <div class="fw-bold">
-                                ${formatAngkaBulat(data.td_up)}
-                                /
-                                ${formatAngkaBulat(data.td_down)}
-                                mmHg
-                            </div>
-                        </div>
-
-                        <!-- SpO2 -->
-                        <div class="col-md-3 mb-3">
-                            <div class="small text-muted">SpO2</div>
-                            <div class="fw-bold">
-                                ${formatAngkaBulat(data.spo2)} %
-                            </div>
-                        </div>
-
-                        <!-- Nafas -->
-                        <div class="col-md-3 mb-3">
-                            <div class="small text-muted">Frekuensi Nafas</div>
-                            <div class="fw-bold">
-                                ${formatAngkaBulat(data.nafas)} X/menit
-                            </div>
-                        </div>
-
-                        <!-- Nadi -->
-                        <div class="col-md-3 mb-3">
-                            <div class="small text-muted">Nadi</div>
-                            <div class="fw-bold">
-                                ${formatAngkaBulat(data.nadi)} X/menit
-                            </div>
-                        </div>
-
-                        <!-- Suhu -->
-                        <div class="col-md-3 mb-3">
-                            <div class="small text-muted">Suhu</div>
-                            <div class="fw-bold">
-                                ${formatSuhu(data.suhu)} °C
-                            </div>
-                        </div>
-
-                        <!-- Alat Bantu Nafas -->
-                        <div class="col-md-3 mb-3">
-                            <div class="small text-muted">Alat Bantu Nafas</div>
-                            <div class="fw-bold">
-                                ${getABNText(data.abn)}
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        `;
-
-        $('#displayttv').html(html);
     }
 
     function getABNText(value) {
@@ -855,8 +485,6 @@
             type: 'GET',
             success:function(res){
                 isiFormPengkajianRJJd(res);
-                // Tampilkan TTV
-                displayTTV(res);
             }
         });
     }
@@ -885,12 +513,6 @@
 
     function isiFormPengkajianRJJd(data) {
 
-        setRadioIfExists('anam', data.anam);
-
-        $("#anamnesis_oleh").val(data.anamnesis_oleh);
-        $("#keluhan_utama").val(data.keluhan_utama);
-        $("#rps").val(data.rps);
-        $("#rpd").val(data.rpd);
         $("#pfisik").val(data.pfisik);
 
         $("#tu").val(data.tu);
@@ -983,424 +605,6 @@
     };
 
     // ADD ON ---------------------------------------------------------------------------------------------------------------------------------------------------
-    function getRiwayatAlergi() {
-        const $button = $('#btnRefreshAlergi');
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
-
-        $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_alergi/${kunjungan}`,
-            type: 'GET',
-            beforeSend: function () {
-                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
-                $("#tblAlergiBody").html(`<tr><td colspan="4" class="text-center"><i class="ri-refresh-line ri-spin me-1"></i> Memproses data...</td></tr>`);
-            },
-            success: function (res) {
-                let html = '';
-                if (res.length > 0) {
-                    $.each(res, function (i, v) {
-                        html += `
-                        <tr>
-                            <td>${i + 1}</td>
-                            <td>${v.JENIS_ALERGI}</td>
-                            <td>${v.DESKRIPSI}</td>
-                            <td class="text-center">
-                                <button class="btn btn-danger btn-sm" onclick="hapusRiwayatAlergi(${v.ID})">
-                                    <i class="ri-delete-bin-line"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        `;
-                    });
-                } else {
-                    html = `
-                    <tr>
-                        <td colspan="4" class="text-center">Tidak ada data</td>
-                    </tr>
-                    `;
-                }
-                $("#tblAlergiBody").html(html);
-            },
-            error: function (xhr) {
-                let message = 'Data gagal disimpan.';
-
-                if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors)
-                        .flat()
-                        .join('\n');
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                }
-                alert(message);
-            },
-            complete: function () {
-                $button.prop('disabled', false).html('<i class="ri-refresh-line"></i>');
-            }
-        });
-    };
-
-    function tambahRiwayatAlergi() {
-        const $button = $('#btnTambahAlergi');
-        let jenis = $("[name='ra_jenis']").val();
-        let deskripsi = $("[name='ra_deskripsi']").val();
-
-        $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_alergi/${kunjungan}/simpan`,
-            type: 'POST',
-            data: {
-                'jenis': jenis,
-                'deskripsi': deskripsi
-            },
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-
-            beforeSend: function () {
-                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
-            },
-
-            success: function (res) {
-                iziToast.success({
-                    title: 'Proses Berhasil!',
-                    message: res.message || 'Data berhasil disimpan.',
-                    position: 'topRight'
-                });
-                $("[name='ra_jenis']").val('');
-                $("[name='ra_deskripsi']").val('');
-                getRiwayatAlergi();
-            },
-
-            error: function (xhr) {
-                let message = 'Data gagal disimpan.';
-
-                if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors)
-                        .flat()
-                        .join('\n');
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                }
-
-                alert(message);
-            },
-
-            complete: function () {
-                $button.prop('disabled', false).html('<i class="ri-add-box-line"></i>');
-            }
-        });
-    };
-
-    function hapusRiwayatAlergi(id){
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
-        $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_alergi/${kunjungan}/hapus/${id}`,
-            type: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (res) {
-                iziToast.success({
-                    title: 'Proses Berhasil!',
-                    message: res.message || 'Data berhasil dihapus.',
-                    position: 'topRight'
-                });
-                getRiwayatAlergi();
-            },
-            error: function (xhr) {
-                let message = 'Data gagal dihapus.';
-
-                if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors)
-                        .flat()
-                        .join('\n');
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                }
-
-                alert(message);
-            }
-        });
-    };
-
-    function getPenggunaanObat() {
-        const $button = $('#btnRefreshObat');
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
-
-        $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}`,
-            type: 'GET',
-            beforeSend: function () {
-                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
-                $("#tblObatBody").html(`<tr><td colspan="3" class="text-center"><i class="ri-refresh-line ri-spin me-1"></i> Memproses data...</td></tr>`);
-            },
-            success: function (res) {
-                let html = '';
-                if (res.length > 0) {
-                    $.each(res, function (i, v) {
-                        html += `
-                        <tr>
-                            <td>${i + 1}</td>
-                            <td>${v.OBAT}</td>
-                            {{-- <td>${v.DOSIS}</td>
-                            <td>${v.FREKUENSI_NAMA} ${v.FREKUENSI_KETERANGAN ? `(${v.FREKUENSI_KETERANGAN})` : ''}</td>
-                            <td>${v.RUTE_NAMA}</td>
-                            <td>${v.LAMA_PENGGUNAAN}</td> --}}
-                            <td class="text-center">
-                                <button class="btn btn-danger btn-sm" onclick="hapusPenggunaanObat(${v.ID})">
-                                    <i class="ri-delete-bin-line"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        `;
-                    });
-                } else {
-                    html = `
-                    <tr>
-                        <td colspan="3" class="text-center">Tidak ada data</td>
-                    </tr>
-                    `;
-                }
-                $("#tblObatBody").html(html);
-            },
-            error: function (xhr) {
-                let message = 'Data gagal disimpan.';
-
-                if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors)
-                        .flat()
-                        .join('\n');
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                }
-                alert(message);
-            },
-            complete: function () {
-                $button.prop('disabled', false).html('<i class="ri-refresh-line"></i>');
-            }
-        });
-    };
-
-    function tambahPenggunaanObat() {
-        const $button = $('#btnTambahObat');
-        let nama_obat = $("input[name='rpo_nama_obat']").val();
-        // let dosis = $("input[name='rpo_dosis']").val();
-        // let frekuensi = $("select[name='rpo_frekuensi']").val();
-        // let rute = $("select[name='rpo_rute']").val();
-        // let lama = $("input[name='rpo_lama']").val();
-
-        $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}/simpan`,
-            type: 'POST',
-            data: {
-                'nama_obat': nama_obat
-                // 'dosis': dosis,
-                // 'frekuensi': frekuensi,
-                // 'rute': rute,
-                // 'lama': lama
-            },
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-
-            beforeSend: function () {
-                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
-            },
-
-            success: function (res) {
-                iziToast.success({
-                    title: 'Proses Berhasil!',
-                    message: res.message || 'Data berhasil disimpan.',
-                    position: 'topRight'
-                });
-                $("[name='rpo_nama_obat']").val('');
-                getPenggunaanObat();
-            },
-
-            error: function (xhr) {
-                let message = 'Data gagal disimpan.';
-
-                if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors)
-                        .flat()
-                        .join('\n');
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                }
-
-                alert(message);
-            },
-
-            complete: function () {
-                $button.prop('disabled', false).html('<i class="ri-add-box-line"></i>');
-            }
-        });
-    };
-
-    function hapusPenggunaanObat(id){
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
-        $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}/hapus/${id}`,
-            type: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (res) {
-                iziToast.success({
-                    title: 'Proses Berhasil!',
-                    message: res.message || 'Data berhasil dihapus.',
-                    position: 'topRight'
-                });
-                getPenggunaanObat();
-            },
-            error: function (xhr) {
-                let message = 'Data gagal dihapus.';
-
-                if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors)
-                        .flat()
-                        .join('\n');
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                }
-
-                alert(message);
-            }
-        });
-    };
-
-    function getRiwayatLab() {
-        const $button = $('#btnRefreshLab');
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
-
-        $.ajax({
-            url: `/api/v2/emr/pengkajian/lab/${kunjungan}`,
-            type: 'GET',
-
-            beforeSend: function () {
-                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
-                $("#tblLabBody").html(`
-                    <tr>
-                        <td colspan="7" class="text-center">
-                            <i class="ri-refresh-line ri-spin me-1"></i>
-                            Memuat data...
-                        </td>
-                    </tr>
-                `);
-            },
-
-            success: function (res) {
-                let html = '';
-                if (res.length > 0) {
-                    $.each(res, function (i, v) {
-                        html += `
-                            <tr>
-                                <td>${i + 1}</td>
-                                <td>${v.NAMATINDAKAN ?? ''}</td>
-                                <td>${v.PARAMETER ?? ''}</td>
-                                <td>${v.HASIL ?? ''}</td>
-                                <td>${v.SATUAN ?? ''}</td>
-                                <td>${v.NILAI_RUJUKAN ?? ''}</td>
-                                <td>${v.KETERANGAN ?? ''}</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    html = `
-                        <tr>
-                            <td colspan="7" class="text-center">
-                                Tidak ada hasil laboratorium
-                            </td>
-                        </tr>
-                    `;
-                }
-                $("#tblLabBody").html(html);
-            },
-
-            error: function (xhr) {
-                $("#tblLabBody").html(`
-                    <tr>
-                        <td colspan="7" class="text-center text-danger">
-                            Gagal memuat data.
-                        </td>
-                    </tr>
-                `);
-                console.error(xhr);
-            },
-
-            complete: function () {
-                $button.prop('disabled', false)
-                    .html('<i class="ri-refresh-line"></i>');
-            }
-
-        });
-    };
-
-    function getRiwayatRad() {
-        const $button = $('#btnRefreshRad');
-        const kunjungan = $('#rjj_dokter').data('kunjungan');
-
-        $.ajax({
-            url: `/api/v2/emr/pengkajian/rad/${kunjungan}`,
-            type: 'GET',
-
-            beforeSend: function () {
-                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
-                $("#tblRadBody").html(`
-                    <tr>
-                        <td colspan="8" class="text-center">
-                            <i class="ri-refresh-line ri-spin me-1"></i>
-                            Memuat data...
-                        </td>
-                    </tr>
-                `);
-            },
-
-            success: function (res) {
-                let html = '';
-                if (res.length > 0) {
-                    $.each(res, function (i, v) {
-                        html += `
-                            <tr>
-                                <td>${i + 1}</td>
-                                <td>${v.NAMATINDAKAN ?? ''}</td>
-                                <td>${v.KLINIS ?? ''}</td>
-                                <td>${v.KESAN ?? ''}</td>
-                                <td>${v.USUL ?? ''}</td>
-                                <td>${v.HASIL ?? ''}</td>
-                                <td>${v.BTK ?? ''}</td>
-                                <td>${v.DOKTER ?? ''}</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    html = `
-                        <tr>
-                            <td colspan="7" class="text-center">
-                                Tidak ada hasil laboratorium
-                            </td>
-                        </tr>
-                    `;
-                }
-                $("#tblRadBody").html(html);
-            },
-
-            error: function (xhr) {
-                $("#tblRadBody").html(`
-                    <tr>
-                        <td colspan="7" class="text-center text-danger">
-                            Gagal memuat data.
-                        </td>
-                    </tr>
-                `);
-                console.error(xhr);
-            },
-
-            complete: function () {
-                $button.prop('disabled', false)
-                    .html('<i class="ri-refresh-line"></i>');
-            }
-
-        });
-    };
 
     function getDiagnosis() {
         const $button = $('#btnRefreshDiagnosis');

@@ -10,14 +10,16 @@
                             <strong><em>Subjective </em>(S) : </strong>
                         </h5>
                     </div>
-                    <div class="col-md-12 mb-2">
-                        @include(
-                            'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
-                            [
-                                'section' => '#rjd_dokter',
-                                'anak' => 'false',
-                            ]
-                        )
+                    <div class="row">
+                        <div class="col-md-12 mb-2">
+                            @include(
+                                'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
+                                [
+                                    'section' => '#rjd_dokter',
+                                    'anak' => 'false',
+                                ]
+                            )
+                        </div>
                     </div>
                     <div class="form-group mb-2">
                         <h5 class="border-bottom pb-2 mb-3 text-primary">
@@ -29,26 +31,27 @@
                             <label class="form-label fw-bold">Pemeriksaan Fisik</label>
                             <textarea class="form-control" name="pfisik" id="pfisik" rows="3"></textarea>
                         </div>
-                    </div>
-                    <div class="col-md-12">
-                        <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
-                        <div class="mb-3">
-                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_lab')
+                        <div class="col-md-12">
+                            <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
+                            <div class="mb-3">
+                                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_lab')
+                            </div>
+                            <div class="mb-3">
+                                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad')
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad')
-                        </div>
                     </div>
-
                     <div class="form-group mb-2">
                         <h5 class="border-bottom pb-2 mb-3 text-primary">
                             <strong><em>Assessment </em>(A) : </strong>
                         </h5>
                     </div>
-                    <div class="col-md-12">
-                        <h4 class="text-danger">Diagnosis (<b class="text-warning">ICD</b>)</h4>
-                        <div class="mb-3">
-                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.diagnosis_icd')
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4 class="text-danger">Diagnosis (<b class="text-warning">ICD</b>)</h4>
+                            <div class="mb-3">
+                                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.diagnosis_icd')
+                            </div>
                         </div>
                     </div>
 
@@ -297,12 +300,6 @@
 
     $(document).ready(function () {
 
-        const $inputObat = $('[name="rpo_nama_obat"]');
-
-        if (!$inputObat.length ) {
-            return;
-        }
-
         // Sembunyikan textarea saat pertama kali
         $('#pri').hide();
         $('#rujuk_lainnya').hide();
@@ -388,8 +385,6 @@
             type: 'GET',
             success:function(res){
                 isiFormPengkajianRJDd(res);
-                // Tampilkan TTV
-                displayTTV(res);
             }
         });
     }

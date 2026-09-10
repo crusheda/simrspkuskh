@@ -1136,6 +1136,99 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    public function getSkriningResikoJatuhGetUpAndGo($KUNJUNGAN)
+    {
+        $getUpAndGo = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.penilaian_getup_and_go',
+            [
+                'CARA_BERJALAN_PASIEN',
+                'FAKTOR_RESIKO',
+                'OBAT_YANG_DIMINUM',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $getUpAndGo
+        ]);
+    }
+
+    public function simpanSkriningResikoJatuhGetUpAndGo(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'NOKUNJ' => 'required',
+            ],
+            [
+                'NOKUNJ.required' => 'Kunjungan wajib diisi.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $getUpAndGoFields = [
+                'gtg_cara_berjalan',
+                'gtg_faktor_resiko',
+                'gtg_obat',
+            ];
+
+            if ($this->isFieldEmpty($request, $getUpAndGoFields)) {
+
+                // Semua kosong → nonaktifkan data lama
+                DB::table('medicalrecord.penilaian_getup_and_go')
+                    ->where('KUNJUNGAN', $request->NOKUNJ)
+                    ->update([
+                        'OLEH'   => auth()->id(),
+                        'STATUS' => 0,
+                    ]);
+
+            } else {
+
+                DB::table('medicalrecord.penilaian_getup_and_go')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'CARA_BERJALAN_PASIEN' => $request->input('gtg_cara_berjalan') ?? 0,
+                        'FAKTOR_RESIKO'        => $request->input('gtg_faktor_resiko') ?? 0,
+                        'OBAT_YANG_DIMINUM'    => $request->input('gtg_obat') ?? 0,
+                        'TANGGAL'              => now(),
+                        'OLEH'                 => auth()->id(),
+                        'STATUS'               => 1,
+                    ]
+                );
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Skrining Resiko Jatuh Get Up and Go berhasil disimpan.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Data Skrining Resiko Jatuh Get Up and Go gagal disimpan.',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function getSkriningResikoJatuhHumptyDumpty($KUNJUNGAN)
     {
         $humptyDumpty = $this->getData(

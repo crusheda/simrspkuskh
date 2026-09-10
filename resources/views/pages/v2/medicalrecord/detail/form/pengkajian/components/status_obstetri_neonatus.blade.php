@@ -1,344 +1,360 @@
-<div class="row" id="form_status_obstetri_neonatus">
-    {{-- ================= STATUS OBSTETRI ================= --}}
-    <div class="col-md-6">
-        <h6 class="fw-bold text-dark mb-1">
-            STATUS OBSTETRI
-        </h6>
+<div class="form-group" id="form_status_obstetri_neonatus">
 
-        {{-- Umur Ibu --}}
-        <div class="row align-items-center mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">Umur Ibu</label>
-            </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center gap-1"> 
-                    <input type="number" class="form-control form-control-sm" name="so_umur_ibu" style="max-width: 80px;">
-                    <span>TH</span>
-                </div>
-            </div>
-        </div>
+    {{-- CHECKBOX STATUS --}}
+    <div class="d-flex align-items-center gap-2 mb-2">
+        <div class="form-check mb-0 flex-shrink-0">
 
-        {{-- Riwayat Obstetri --}}
-        <div class="row align-items-center mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">Riwayat Obstetri</label>
-            </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center gap-1"> 
-                    <span>G</span>
-                    <input type="number" class="form-control form-control-sm" name="so_g" style="max-width: 70px;">
-                    <span>P</span>
-                    <input type="number" class="form-control form-control-sm" name="so_p" style="max-width: 70px;">
-                    <span>A</span>
-                    <input type="number" class="form-control form-control-sm" name="so_a" style="max-width: 70px;">
-                </div>
-            </div>
-        </div>
+            <input class="form-check-input check-primary" type="checkbox" id="status_obstetri_neonatus">
 
-        {{-- Umur Kehamilan --}}
-        <div class="row align-items-center mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">Umur Kehamilan</label>
-            </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center gap-1"> 
-                    <input type="number" class="form-control form-control-sm" name="so_umur_kehamilan" style="max-width: 80px;">
-                    <span>MG</span>
-                </div>
-            </div>
-        </div>
+            <label class="form-check-label ms-1" for="status_obstetri_neonatus">
+                <h6>
+                    Bayi Lahir di RS PKU Muhammadiyah Sukoharjo
+                </h6>
+            </label>
 
-        {{-- Komplikasi --}}
-        <div class="row mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">Komplikasi selama kehamilan</label>
-            </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center flex-wrap gap-2"> 
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_komplikasi" value="0">
-                        <label class="form-check-label">Tidak Ada</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_komplikasi" value="1">
-                        <label class="form-check-label">Ada</label>
-                    </div>
-                    <input type="text" class="form-control form-control-sm" name="so_komplikasi_ket" placeholder="Keterangan..." style="max-width: 220px;">
-                </div>
-            </div>
-        </div>
-
-        {{-- Golongan Darah Ibu --}}
-        <div class="row mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">Golongan Darah Ibu</label>
-            </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center flex-wrap gap-2"> 
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_gol_darah_ibu" value="A">
-                        <label class="form-check-label">A</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_gol_darah_ibu" value="B">
-                        <label class="form-check-label">B</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_gol_darah_ibu" value="O">
-                        <label class="form-check-label">O</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_gol_darah_ibu" value="AB">
-                        <label class="form-check-label">AB</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_rh_ibu" value="+">
-                        <label class="form-check-label">RH (+)</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_rh_ibu" value="-">
-                        <label class="form-check-label">RH (-)</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Golongan Darah Ayah --}}
-        <div class="row mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">Golongan Darah Ayah</label>
-            </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center flex-wrap gap-2"> 
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_gol_darah_ayah" value="A">
-                        <label class="form-check-label">A</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_gol_darah_ayah" value="B">
-                        <label class="form-check-label">B</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_gol_darah_ayah" value="O">
-                        <label class="form-check-label">O</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_gol_darah_ayah" value="AB">
-                        <label class="form-check-label">AB</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_rh_ayah" value="+">
-                        <label class="form-check-label">RH (+)</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_rh_ayah" value="-">
-                        <label class="form-check-label">RH (-)</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="so_gol_ayah_tidak" value="1">
-                        <label class="form-check-label">Tidak Tahu</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- KK Pecah Jam --}}
-        <div class="row align-items-center mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">KK Pecah Jam</label>
-            </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center gap-1"> 
-                    <input type="time" class="form-control form-control-sm" name="so_kk_pecah_jam" style="max-width: 130px;">
-                    <span>WIB</span>
-                </div>
-            </div>
         </div>
     </div>
+    <div class="row" id="tampil_status_obstetri_neonatus" hidden>
+        {{-- ================= STATUS OBSTETRI ================= --}}
+        <div class="col-md-6">
+            <h6 class="fw-bold text-dark mb-1">
+                STATUS OBSTETRI
+            </h6>
 
-    {{-- ================= STATUS NEONATUS ================= --}}
-    <div class="col-md-6">
-        <h6 class="fw-bold text-dark mb-1">
-            STATUS NEONATUS
-        </h6>
-
-        {{-- Bayi Lahir --}}
-        <div class="row align-items-center mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">Bayi lahir tanggal</label>
-            </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center gap-1"> 
-                    <input type="date" class="form-control form-control-sm" name="sn_tanggal_lahir" style="max-width: 145px;">
-                    <span>Jam</span>
-                    <input type="time" class="form-control form-control-sm" name="sn_jam_lahir" style="max-width: 110px;">
+            {{-- Umur Ibu --}}
+            <div class="row align-items-center mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Umur Ibu</label>
                 </div>
-            </div>
-        </div>
-
-        {{-- Jenis Kelamin --}}
-        <div class="row mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">Jenis Kelamin</label>
-            </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center gap-3"> 
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="sn_jenis_kelamin" value="L">
-                        <label class="form-check-label">Laki-laki</label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="sn_jenis_kelamin" value="P">
-                        <label class="form-check-label">Perempuan</label>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center gap-1">
+                        <input type="number" class="form-control form-control-sm" name="so_umur_ibu" style="max-width: 80px;">
+                        <span>TH</span>
                     </div>
                 </div>
             </div>
-        </div>
 
-        {{-- BB --}}
-        <div class="row align-items-center mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">BB Lahir</label>
-            </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center gap-1"> 
-                    <input type="number" class="form-control form-control-sm" name="sn_bb_lahir" style="max-width: 100px;">
-                    <span>gram</span>
+            {{-- Riwayat Obstetri --}}
+            <div class="row align-items-center mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Riwayat Obstetri</label>
                 </div>
-            </div>
-        </div>
-
-        {{-- PB --}}
-        <div class="row align-items-center mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">PB Lahir</label>
-            </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center gap-1"> 
-                    <input type="number" class="form-control form-control-sm" name="sn_pb_lahir" style="max-width: 100px;">
-                    <span>cm</span>
-                </div>
-            </div>
-        </div>
-        <div class="row g-2 mb-2">
-            <!-- LK -->
-            <div class="col-md-6">
-                <div class="d-flex align-items-center gap-1">
-                    <label class="form-label mb-0">LK</label>
-                    <input type="number"
-                        class="form-control form-control-sm"
-                        name="sn_lk"
-                        step="0.1">
-                    <span>cm</span>
-                </div>
-            </div>
-
-            <!-- LD -->
-            <div class="col-md-6">
-                <div class="d-flex align-items-center gap-1">
-                    <label class="form-label mb-0">LD</label>
-                    <input type="number"
-                        class="form-control form-control-sm"
-                        name="sn_ld"
-                        step="0.1">
-                    <span>cm</span>
-                </div>
-            </div>
-
-            <!-- LP -->
-            <div class="col-md-6">
-                <div class="d-flex align-items-center gap-1">
-                    <label class="form-label mb-0">LP</label>
-                    <input type="number"
-                        class="form-control form-control-sm"
-                        name="sn_lp"
-                        step="0.1">
-                    <span>cm</span>
-                </div>
-            </div>
-
-            <!-- LILA -->
-            <div class="col-md-6">
-                <div class="d-flex align-items-center gap-1">
-                    <label class="form-label mb-0">LILA</label>
-                    <input type="number"
-                        class="form-control form-control-sm"
-                        name="sn_lila"
-                        step="0.1">
-                    <span>cm</span>
-                </div>
-            </div>
-        </div>
-        {{-- Resusitasi --}}
-        <div class="row mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">Resusitasi</label>
-            </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center flex-wrap gap-2"> 
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="checkbox" name="sn_resusitasi_intubasi" value="1">
-                        <label class="form-check-label">
-                            Intubasi Intra Trachea
-                        </label>
-                    </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="checkbox" name="sn_resusitasi_pompa" value="1">
-                        <label class="form-check-label">
-                            Pompa Udara Berulang
-                        </label>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center gap-1">
+                        <span>G</span>
+                        <input type="number" class="form-control form-control-sm" name="so_g" style="max-width: 70px;">
+                        <span>P</span>
+                        <input type="number" class="form-control form-control-sm" name="so_p" style="max-width: 70px;">
+                        <span>A</span>
+                        <input type="number" class="form-control form-control-sm" name="so_a" style="max-width: 70px;">
                     </div>
                 </div>
             </div>
-        </div>
 
-        {{-- Berulang --}}
-        <div class="row align-items-center mb-2">
-            <div class="col-md-4"></div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center gap-1">
-                    <input type="text" class="form-control form-control-sm" name="sn_berulang">
+            {{-- Umur Kehamilan --}}
+            <div class="row align-items-center mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Umur Kehamilan</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center gap-1">
+                        <input type="number" class="form-control form-control-sm" name="so_umur_kehamilan" style="max-width: 80px;">
+                        <span>MG</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        {{-- Jenis Partus --}}
-        <div class="row mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">Jenis Partus</label>
+            {{-- Komplikasi --}}
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Komplikasi selama kehamilan</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_komplikasi" value="0">
+                            <label class="form-check-label">Tidak Ada</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_komplikasi" value="1">
+                            <label class="form-check-label">Ada</label>
+                        </div>
+                        <input type="text" class="form-control form-control-sm" name="so_komplikasi_ket" placeholder="Keterangan..." style="max-width: 220px;">
+                    </div>
+                </div>
             </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center flex-wrap gap-3"> 
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="sn_jenis_partus" value="SC">
-                        <label class="form-check-label">SC</label>
+
+            {{-- Golongan Darah Ibu --}}
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Golongan Darah Ibu</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_gol_darah_ibu" value="A">
+                            <label class="form-check-label">A</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_gol_darah_ibu" value="B">
+                            <label class="form-check-label">B</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_gol_darah_ibu" value="O">
+                            <label class="form-check-label">O</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_gol_darah_ibu" value="AB">
+                            <label class="form-check-label">AB</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_rh_ibu" value="+">
+                            <label class="form-check-label">RH (+)</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_rh_ibu" value="-">
+                            <label class="form-check-label">RH (-)</label>
+                        </div>
                     </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="sn_jenis_partus" value="V">
-                        <label class="form-check-label">Vacuum</label>
+                </div>
+            </div>
+
+            {{-- Golongan Darah Ayah --}}
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Golongan Darah Ayah</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_gol_darah_ayah" value="A">
+                            <label class="form-check-label">A</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_gol_darah_ayah" value="B">
+                            <label class="form-check-label">B</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_gol_darah_ayah" value="O">
+                            <label class="form-check-label">O</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_gol_darah_ayah" value="AB">
+                            <label class="form-check-label">AB</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_rh_ayah" value="+">
+                            <label class="form-check-label">RH (+)</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_rh_ayah" value="-">
+                            <label class="form-check-label">RH (-)</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="so_gol_ayah_tidak" value="1">
+                            <label class="form-check-label">Tidak Tahu</label>
+                        </div>
                     </div>
-                    <div class="form-check form-check-inline m-0">
-                        <input class="form-check-input" type="radio" name="sn_jenis_partus" value="S">
-                        <label class="form-check-label">Spontan</label>
+                </div>
+            </div>
+
+            {{-- KK Pecah Jam --}}
+            <div class="row align-items-center mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">KK Pecah Jam</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center gap-1">
+                        <input type="time" class="form-control form-control-sm" name="so_kk_pecah_jam" style="max-width: 130px;">
+                        <span>WIB</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Indikasi --}}
-        <div class="row mb-2">
-            <div class="col-md-4">
-                <label class="form-label mb-0">Indikasi</label>
+        {{-- ================= STATUS NEONATUS ================= --}}
+        <div class="col-md-6">
+            <h6 class="fw-bold text-dark mb-1">
+                STATUS NEONATUS
+            </h6>
+
+            {{-- Bayi Lahir --}}
+            <div class="row align-items-center mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Bayi lahir tanggal</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center gap-1">
+                        <input type="date" class="form-control form-control-sm" name="sn_tanggal_lahir" style="max-width: 145px;">
+                        <span>Jam</span>
+                        <input type="time" class="form-control form-control-sm" name="sn_jam_lahir" style="max-width: 110px;">
+                    </div>
+                </div>
             </div>
-            <div class="col-md-8">
-                <div class="d-flex align-items-center gap-1"> 
-                    <input type="text" class="form-control form-control-sm" name="sn_indikasi">
+
+            {{-- Jenis Kelamin --}}
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Jenis Kelamin</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="sn_jenis_kelamin" value="L">
+                            <label class="form-check-label">Laki-laki</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="sn_jenis_kelamin" value="P">
+                            <label class="form-check-label">Perempuan</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- BB --}}
+            <div class="row align-items-center mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">BB Lahir</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center gap-1">
+                        <input type="number" class="form-control form-control-sm" name="sn_bb_lahir" style="max-width: 100px;">
+                        <span>gram</span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- PB --}}
+            <div class="row align-items-center mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">PB Lahir</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center gap-1">
+                        <input type="number" class="form-control form-control-sm" name="sn_pb_lahir" style="max-width: 100px;">
+                        <span>cm</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-2 mb-2">
+                <!-- LK -->
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-1">
+                        <label class="form-label mb-0">LK</label>
+                        <input type="number"
+                            class="form-control form-control-sm"
+                            name="sn_lk"
+                            step="0.1">
+                        <span>cm</span>
+                    </div>
+                </div>
+
+                <!-- LD -->
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-1">
+                        <label class="form-label mb-0">LD</label>
+                        <input type="number"
+                            class="form-control form-control-sm"
+                            name="sn_ld"
+                            step="0.1">
+                        <span>cm</span>
+                    </div>
+                </div>
+
+                <!-- LP -->
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-1">
+                        <label class="form-label mb-0">LP</label>
+                        <input type="number"
+                            class="form-control form-control-sm"
+                            name="sn_lp"
+                            step="0.1">
+                        <span>cm</span>
+                    </div>
+                </div>
+
+                <!-- LILA -->
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-1">
+                        <label class="form-label mb-0">LILA</label>
+                        <input type="number"
+                            class="form-control form-control-sm"
+                            name="sn_lila"
+                            step="0.1">
+                        <span>cm</span>
+                    </div>
+                </div>
+            </div>
+            {{-- Resusitasi --}}
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Resusitasi</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="checkbox" name="sn_resusitasi_intubasi" value="1">
+                            <label class="form-check-label">
+                                Intubasi Intra Trachea
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="checkbox" name="sn_resusitasi_pompa" value="1">
+                            <label class="form-check-label">
+                                Pompa Udara Berulang
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Berulang --}}
+            <div class="row align-items-center mb-2">
+                <div class="col-md-4"></div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center gap-1">
+                        <input type="text" class="form-control form-control-sm" name="sn_berulang">
+                    </div>
+                </div>
+            </div>
+
+            {{-- Jenis Partus --}}
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Jenis Partus</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center flex-wrap gap-3">
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="sn_jenis_partus" value="SC">
+                            <label class="form-check-label">SC</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="sn_jenis_partus" value="V">
+                            <label class="form-check-label">Vacuum</label>
+                        </div>
+                        <div class="form-check form-check-inline m-0">
+                            <input class="form-check-input" type="radio" name="sn_jenis_partus" value="S">
+                            <label class="form-check-label">Spontan</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Indikasi --}}
+            <div class="row mb-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0">Indikasi</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center gap-1">
+                        <input type="text" class="form-control form-control-sm" name="sn_indikasi">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <script>
 (function () {
 
@@ -667,6 +683,32 @@
 
         getStatusObstetriNeonatus();
 
+        // ==========================================================
+        // CHECKBOX BAYI LAHIR DI RS PKU
+        // ==========================================================
+
+        $form.on(
+            'change',
+            '#status_obstetri_neonatus',
+            function (e) {
+
+                const checked = $(this).is(':checked');
+
+                $form
+                    .find('#tampil_status_obstetri_neonatus')
+                    .prop('hidden', !checked);
+
+
+                // Jangan save ketika GET sedang mengisi form
+                if (!e.originalEvent) {
+                    return;
+                }
+
+                simpanStatusObstetriNeonatus();
+
+            }
+        );
+
 
         // ==========================================================
         // INPUT
@@ -714,6 +756,11 @@
             'change',
             'input[type="radio"], input[type="checkbox"]',
             function (e) {
+
+                // Checkbox status utama sudah ditangani di atas
+                if ($(this).is('#status_obstetri_neonatus')) {
+                    return;
+                }
 
                 // Jangan save ketika GET sedang mengisi form
                 if (!e.originalEvent) {
