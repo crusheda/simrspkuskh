@@ -46,6 +46,8 @@ use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususLanjutanController;
 
 use App\Http\Controllers\EMR\Form\Lain\LembarTransferPasienInternalController;
 
+use App\Support\FinalisasiMap;
+
 //////////////////////////////////////////////////////////////////////////////////////////
 class EMRController extends Controller
 {
@@ -792,6 +794,88 @@ class EMRController extends Controller
             $forms[$formKey]['view'],
             compact('init', 'list', 'kunjungan', 'formKey')
         );
+    }
+
+    private function getFinalisasiFormSub(string $formKey): array
+    {
+        return FinalisasiMap::get($formKey);
+    }
+
+    private function getStatusFinalisasi(
+        string $kunjungan,
+        string $formKey
+    ): array {
+        $mapping = $this->getFinalisasiFormSub($formKey);
+
+        $data = DB::table('simrspku_pengkajian.finalisasi as fin')
+            ->leftJoin(
+                'aplikasi.pengguna as usr1',
+                'usr1.ID',
+                '=',
+                'fin.USER_CREATED'
+            )
+            ->leftJoin(
+                'aplikasi.pengguna as usr2',
+                'usr2.ID',
+                '=',
+                'fin.USER_UPDATED'
+            )
+            ->select(
+                'fin.*',
+                DB::raw(
+                    'master.getNamaLengkapPegawai(usr1.NIP) AS NAMAUSER_CREATED'
+                ),
+                DB::raw(
+                    'master.getNamaLengkapPegawai(usr2.NIP) AS NAMAUSER_UPDATED'
+                ),
+            )
+            ->where('fin.KUNJUNGAN', $kunjungan)
+            ->where('fin.FORM', $mapping['form'])
+            ->where('fin.SUB', $mapping['sub'])
+            ->first();
+
+        return [
+            'status' => $data ? (int) $data->STATUS : 1,
+            'is_final' => $data && (int) $data->STATUS === 2,
+            'data' => $data,
+        ];
+    }
+
+    public function statusFinalisasi(
+        Request $request,
+        string $kunjungan
+    ) {
+        $formKeys = collect($request->input('formKeys', []))
+            ->filter(fn ($formKey) => is_string($formKey))
+            ->unique()
+            ->values();
+
+        $result = [];
+
+        foreach ($formKeys as $formKey) {
+            try {
+                $status = $this->getStatusFinalisasi(
+                    $kunjungan,
+                    $formKey
+                );
+
+                $result[$formKey] = [
+                    'status' => $status['status'],
+                    'is_final' => $status['is_final'],
+                ];
+            } catch (\InvalidArgumentException $e) {
+                // Abaikan form key yang tidak ada di FinalisasiMap.
+            }
+        }
+
+        return response()
+            ->json([
+                'status' => true,
+                'data' => $result,
+            ])
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
     }
 
     public function showCPPT($PKUNJUNGAN)

@@ -133,36 +133,94 @@
                                     <span>Form Pengkajian Rawat Inap</span>
                                     <i class="ti ti-chevron-down submenu-icon"></i>
                                 </a>
+
                                 <div class="collapse submenu" id="submenuRanap">
                                     <div class="list-group">
+
                                         <a href="javascript:void(0);"
-                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            class="list-group-item list-group-item-action ps-5 menu-child
+                                                js-ranap-final d-flex align-items-center"
                                             data-form="pengkajian-ranap-dewasa"
                                             data-group="awal">
-                                            <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
-                                            Form Dewasa
+                                            <span>
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Dewasa
+                                            </span>
+
+                                            <span class="ms-auto d-flex align-items-center gap-1">
+                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon"
+                                                    data-final-key="rid_dokter"
+                                                    title="Sudah difinalisasi dokter"></i>
+
+                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon"
+                                                    data-final-key="rid_perawat"
+                                                    title="Sudah difinalisasi perawat"></i>
+                                            </span>
                                         </a>
+
                                         <a href="javascript:void(0);"
-                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            class="list-group-item list-group-item-action ps-5 menu-child
+                                                js-ranap-final d-flex align-items-center"
                                             data-form="pengkajian-ranap-anak"
                                             data-group="awal">
-                                            <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
-                                            Form Anak
+                                            <span>
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Anak
+                                            </span>
+
+                                            <span class="ms-auto d-flex align-items-center gap-1">
+                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon"
+                                                    data-final-key="ria_dokter"
+                                                    title="Sudah difinalisasi dokter"></i>
+
+                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon"
+                                                    data-final-key="ria_perawat"
+                                                    title="Sudah difinalisasi perawat"></i>
+                                            </span>
                                         </a>
+
                                         <a href="javascript:void(0);"
-                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            class="list-group-item list-group-item-action ps-5 menu-child
+                                                js-ranap-final d-flex align-items-center"
                                             data-form="pengkajian-ranap-neonatus"
                                             data-group="awal">
-                                            <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
-                                            Form Neonatus
+                                            <span>
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Neonatus
+                                            </span>
+
+                                            <span class="ms-auto d-flex align-items-center gap-1">
+                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon"
+                                                    data-final-key="rin_dokter"
+                                                    title="Sudah difinalisasi dokter"></i>
+
+                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon"
+                                                    data-final-key="rin_perawat"
+                                                    title="Sudah difinalisasi perawat"></i>
+                                            </span>
                                         </a>
+
                                         <a href="javascript:void(0);"
-                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            class="list-group-item list-group-item-action ps-5 menu-child
+                                                js-ranap-final d-flex align-items-center"
                                             data-form="pengkajian-ranap-obsgyn"
                                             data-group="awal">
-                                            <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
-                                            Form Obstetri dan Ginekologi
+                                            <span>
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Obstetri dan Ginekologi
+                                            </span>
+
+                                            <span class="ms-auto d-flex align-items-center gap-1">
+                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon"
+                                                    data-final-key="rio_dokter"
+                                                    title="Sudah difinalisasi dokter"></i>
+
+                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon"
+                                                    data-final-key="rio_perawat"
+                                                    title="Sudah difinalisasi perawat"></i>
+                                            </span>
                                         </a>
+
                                     </div>
                                 </div>
                             </div>
@@ -312,6 +370,10 @@
     $(function () {
 
         let activeApiRequests = 0;
+
+        $(document).ready(function() {
+            tampilkanPenandaFinalisasi();
+        });
 
         $(document).ajaxSend(function () {
             activeApiRequests++;
@@ -727,6 +789,52 @@
 
         return data;
     }
+
+    window.updatePenandaFinalisasi = function (formKey, isFinal) {
+        const $icons = $(
+            `.js-final-icon[data-final-key="${formKey}"]`
+        );
+
+        if (!$icons.length) {
+            console.warn(
+                'Icon penanda tidak ditemukan untuk formKey:',
+                formKey
+            );
+            return;
+        }
+
+        $icons.toggleClass('d-none', !isFinal);
+    };
+
+    window.tampilkanPenandaFinalisasi = function () {
+        const formKeys = $('.js-final-icon').map(function () {
+            return $(this).data('final-key');
+        }).get();
+
+        $.ajax({
+            url: `/api/v2/emr/pengkajian/status-finalisasi/${kunjungan}`,
+            type: 'GET',
+            dataType: 'json',
+            cache: false,
+            data: {
+                formKeys: formKeys,
+                _ts: Date.now()
+            },
+
+            success: function (response) {
+                const data = response?.data || {};
+
+                Object.entries(data).forEach(function ([formKey, item]) {
+                    window.updatePenandaFinalisasi(
+                        formKey,
+                        Boolean(item?.is_final)
+                    );
+                });
+            }
+        });
+    };
+
+    window.tampilkanPenandaFinalisasi();
 
     // ==========================
     // GET CPPT

@@ -7,20 +7,20 @@
 @endphp
 
 <div id="{{ $formId }}_finalisasi_action"
-    class="position-relative d-flex justify-content-end gap-2 mt-4 pt-3 border-top z-4">
-
-    <button type="button"
-        class="btn btn-success"
-        data-finalisasi-action="final">
-        <i class="fa-solid fa-check me-1"></i>Finalisasi
-    </button>
-
-    <button type="button"
-        class="btn btn-warning d-none"
-        data-finalisasi-action="batal">
-        <i class="fa-solid fa-rotate-left me-1"></i>Batal Final
-    </button>
-
+    class="position-relative d-flex justify-content-between align-items-center gap-2 mt-4 pt-3 border-top z-4">
+    <div>
+        <button type="button"
+            class="btn btn-success"
+            data-finalisasi-action="final" disabled>
+            <i class="fa-solid fa-check me-1"></i> Finalisasi
+        </button>
+        <button type="button"
+            class="btn btn-warning d-none"
+            data-finalisasi-action="batal" disabled>
+            <i class="fa-solid fa-rotate-left me-1"></i> Batal Final
+        </button>
+    </div>
+    <p class="mb-0 text-end" id="{{ $formId }}_final_identity"></p>
 </div>
 
 {{-- ==========================================================
@@ -140,6 +140,8 @@
 
     const $action = $('#' + formId + '_finalisasi_action');
 
+    const $finalIdentity = $('#' + formId + '_final_identity');
+
     const $btnFinal = $action.find(
         '[data-finalisasi-action="final"]'
     );
@@ -172,6 +174,22 @@
     const urlBatalFinalisasi =
         `/api/v2/emr/pengkajian/batal-finalisasi/${kunjungan}`;
 
+    function formatWaktuFinal(waktu) {
+        const bulan = [
+            'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+            'Jul', 'Agst', 'Sept', 'Okt', 'Nov', 'Des'
+        ];
+
+        const m = moment(waktu);
+
+        return `${m.format('DD')} ${bulan[m.month()]} ${m.format('YYYY, [Pukul] HH:mm:ss [WIB]')}`;
+    }
+
+    function aktifkanTombolFinalisasi(isFinal) {
+        $btnFinal.prop('disabled', isFinal);
+        $btnBatal.prop('disabled', !isFinal);
+    }
+
     // ==========================================================
     // BACKDROP
     // ==========================================================
@@ -194,50 +212,62 @@
     // TAMPILKAN FINALISASI
     // ==========================================================
 
-    function tampilkanFinalisasi(){
-
+    function tampilkanFinalisasi() {
         updateBackdrop();
 
-        // Field tidak dapat difokuskan / diinteraksikan
-        $formFields.attr('inert','');
-
-        // HANYA form-content yang scrollbar-nya dikunci.
-        // Body / halaman utama tetap normal.
+        $formFields.attr('inert', '');
         $formContent.addClass('overflow-hidden');
 
         $backdrop
-            .stop(true,true)
+            .stop(true, true)
             .removeClass('d-none')
-            .hide()
-            .fadeIn(250);
+            .show();
 
         $btnFinal.addClass('d-none');
         $btnBatal.removeClass('d-none');
 
-        setTimeout(function(){
-            updateBackdrop();
-        },50);
+        aktifkanTombolFinalisasi(true);
+    }
+
+    function tampilkanFinalIdentity(data){
+        const nama_created = data?.NAMAUSER_CREATED ?? '-';
+        const nama_updated = data?.NAMAUSER_UPDATED ?? '-';
+        const date_created = data?.CREATED ?? '';
+        const date_updated = data?.UPDATED ?? '';
+
+        if (data?.STATUS == 2 && data?.REASON == null) {
+            $finalIdentity.empty().html(
+                date_created ? `<small>Difinalisasi oleh ${nama_created}<br>Pada ${formatWaktuFinal(date_created)}</small>` : ``
+            );
+        } else if (data?.STATUS == 2 && data?.REASON != null) {
+            $finalIdentity.empty().html(
+                date_updated ? `<small>Difinalisasi ulang oleh ${nama_updated}<br>Pada ${formatWaktuFinal(date_updated)}</small>` : ``
+            );
+        } else if (data?.STATUS == 1) {
+            $finalIdentity.empty().html(
+                date_updated ? `<small>Dibatal finalisasi oleh ${nama_updated}<br>Pada ${formatWaktuFinal(date_updated)}</small>` : ``
+            );
+        } else {
+            $finalIdentity.empty().html('');
+        }
     }
 
     // ==========================================================
     // SEMBUNYIKAN FINALISASI
-    // ==========================================================
-
-    function sembunyikanFinalisasi(){
-
+    // =========================================================
+    function sembunyikanFinalisasi() {
         $formFields.removeAttr('inert');
-
-        // Kembalikan scrollbar form-content
         $formContent.removeClass('overflow-hidden');
 
         $backdrop
-            .stop(true,true)
-            .fadeOut(250,function(){
-                $(this).addClass('d-none');
-            });
+            .stop(true, true)
+            .hide()
+            .addClass('d-none');
 
         $btnFinal.removeClass('d-none');
         $btnBatal.addClass('d-none');
+
+        aktifkanTombolFinalisasi(false);
     }
 
     // ==========================================================
@@ -301,6 +331,14 @@
                     }
 
                     tampilkanFinalisasi();
+
+                    if (typeof window.updatePenandaFinalisasi === 'function') {
+                        window.updatePenandaFinalisasi(formKey, true);
+                    }
+
+                    if (typeof window.tampilkanPenandaFinalisasi === 'function') {
+                        window.tampilkanPenandaFinalisasi();
+                    }
 
                     Swal.fire({
                         icon: 'success',
@@ -428,6 +466,15 @@
                 }
 
                 sembunyikanFinalisasi();
+                $finalIdentity.empty();
+
+                if (typeof window.updatePenandaFinalisasi === 'function') {
+                    window.updatePenandaFinalisasi(formKey, false);
+                }
+
+                if (typeof window.tampilkanPenandaFinalisasi === 'function') {
+                    window.tampilkanPenandaFinalisasi();
+                }
 
                 Swal.fire({
                     icon: 'success',
@@ -492,15 +539,18 @@
                     1
                 );
 
-                if(status === 2){
-
+                if (status === 2) {
                     tampilkanFinalisasi();
-
-                }else{
-
+                    tampilkanFinalIdentity(response?.data);
+                } else {
                     sembunyikanFinalisasi();
-
+                    $finalIdentity.empty();
                 }
+
+                $(document).trigger(
+                    'finalisasi:status-tab-berubah',
+                    [formKey, true]
+                );
 
             },
 

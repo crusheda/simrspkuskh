@@ -357,6 +357,7 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
             Route::delete('emr/cppt/{id}',[EMRController::class, 'hapusCPPT']);
 
             // FINALISASI
+            Route::get('emr/pengkajian/status-finalisasi/{kunjungan}', [EMRController::class, 'statusFinalisasi']);
             Route::get('emr/pengkajian/finalisasi/{kunjungan}', [FinalisasiRanapController::class, 'statusFinalisasiPengkajianRanap']);
             Route::post('emr/pengkajian/finalisasi/{kunjungan}', [FinalisasiRanapController::class, 'finalisasiPengkajianRanap']);
             Route::post('emr/pengkajian/batal-finalisasi/{kunjungan}', [FinalisasiRanapController::class, 'batalFinalisasiPengkajianRanap']);

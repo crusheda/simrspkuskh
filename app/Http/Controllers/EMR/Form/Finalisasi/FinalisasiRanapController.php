@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\EMR\Form\AddOnPengkajianController;
 use Illuminate\Http\Request;
 use Throwable;
 use Carbon\Carbon;
 use Auth, Storage;
+
+use App\Http\Controllers\EMR\Form\AddOnPengkajianController;
+use App\Support\FinalisasiMap;
 
 class FinalisasiRanapController extends Controller
 {
@@ -26,47 +28,7 @@ class FinalisasiRanapController extends Controller
 
     private function getFinalisasiFormSub(string $formKey): array
     {
-        return match ($formKey) {
-            'rid_dokter' => [
-                'form' => 'pengkajian-ranap-dewasa',
-                'sub' => 'DOKTER',
-            ],
-            'rid_perawat' => [
-                'form' => 'pengkajian-ranap-dewasa',
-                'sub' => 'PERAWAT',
-            ],
-
-            'ria_dokter' => [
-                'form' => 'pengkajian-ranap-anak',
-                'sub' => 'DOKTER',
-            ],
-            'ria_perawat' => [
-                'form' => 'pengkajian-ranap-anak',
-                'sub' => 'PERAWAT',
-            ],
-
-            'rin_dokter' => [
-                'form' => 'pengkajian-ranap-neonatus',
-                'sub' => 'DOKTER',
-            ],
-            'rin_perawat' => [
-                'form' => 'pengkajian-ranap-neonatus',
-                'sub' => 'PERAWAT',
-            ],
-
-            'rio_dokter' => [
-                'form' => 'pengkajian-ranap-obsgyn',
-                'sub' => 'DOKTER',
-            ],
-            'rio_perawat' => [
-                'form' => 'pengkajian-ranap-obsgyn',
-                'sub' => 'PERAWAT',
-            ],
-
-            default => throw new \InvalidArgumentException(
-                "Form key tidak dikenal: {$formKey}"
-            ),
-        };
+        return FinalisasiMap::get($formKey);
     }
 
     private function getStatusFinalisasi(
@@ -75,10 +37,17 @@ class FinalisasiRanapController extends Controller
     ): array {
         $mapping = $this->getFinalisasiFormSub($formKey);
 
-        $data = DB::table('simrspku_pengkajian.finalisasi')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->where('FORM', $mapping['form'])
-            ->where('SUB', $mapping['sub'])
+        $data = DB::table('simrspku_pengkajian.finalisasi as fin')
+            ->leftJoin('aplikasi.pengguna as usr1','usr1.ID','=','fin.USER_CREATED')
+            ->leftJoin('aplikasi.pengguna as usr2','usr2.ID','=','fin.USER_UPDATED')
+            ->select(
+                'fin.*',
+                DB::raw('master.getNamaLengkapPegawai(usr1.NIP) AS NAMAUSER_CREATED'),
+                DB::raw('master.getNamaLengkapPegawai(usr2.NIP) AS NAMAUSER_UPDATED'),
+            )
+            ->where('fin.KUNJUNGAN', $kunjungan)
+            ->where('fin.FORM', $mapping['form'])
+            ->where('fin.SUB', $mapping['sub'])
             ->first();
 
         return [
@@ -206,7 +175,7 @@ class FinalisasiRanapController extends Controller
                         'STATUS' => 2,
                         'USER_UPDATED' => auth()->id(),
                         'UPDATED' => now(),
-                        'REASON' => null,
+                        // 'REASON' => null,
                     ]);
 
             } else {
@@ -217,8 +186,10 @@ class FinalisasiRanapController extends Controller
                         'FORM' => $form,
                         'SUB' => $sub,
                         'USER_CREATED' => auth()->id(),
+                        'USER_UPDATED' => auth()->id(),
+                        'CREATED' => now(),
                         'STATUS' => 2,
-                        'REASON' => null,
+                        // 'REASON' => null,
                     ]);
             }
 
