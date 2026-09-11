@@ -269,7 +269,8 @@ class PengkajianRawatJalanObsgynController extends Controller
             }
 
             // Gabungkan hanya yang memiliki isi
-            $deskripsi = implode("\n", $deskripsiItems);
+            // $deskripsi = implode("\n", $deskripsiItems);
+            $deskripsi = implode('<br><br>', $deskripsiItems);
             // dd($deskripsi);
 
             DB::table('medicalrecord.pemeriksaan_fisik')->updateOrInsert(

@@ -394,8 +394,34 @@
                 // STATUS OBSTETRI
                 // ==================================================
 
-                const obstetri =
-                    res.obstetri;
+                const obstetri = res.obstetri;
+
+
+                const neonatus = res.neonatus;
+
+                const adaDataObstetri =
+                    obstetri &&
+                    Object.keys(obstetri).length > 0;
+
+                const adaDataNeonatus =
+                    neonatus &&
+                    Object.keys(neonatus).length > 0;
+
+                const adaData =
+                    adaDataObstetri || adaDataNeonatus;
+
+
+                // ==================================================
+                // OTOMATIS CHECKBOX & TAMPILKAN FORM
+                // ==================================================
+
+                $form
+                    .find('#status_obstetri_neonatus')
+                    .prop('checked', adaData);
+
+                $form
+                    .find('#tampil_status_obstetri_neonatus')
+                    .prop('hidden', !adaData);
 
 
                 if (obstetri) {
@@ -475,10 +501,6 @@
                 // ==================================================
                 // STATUS NEONATUS
                 // ==================================================
-
-                const neonatus =
-                    res.neonatus;
-
 
                 if (neonatus) {
 

@@ -143,7 +143,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4 mb-2">
-                                    <label class="form-label">Uodema</label>
+                                    <label class="form-label">Oedema</label>
                                 </div>
                                 <div class="col-md-8 mb-2">
                                     <div class="input-group input-group-sm">

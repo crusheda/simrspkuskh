@@ -334,6 +334,15 @@ class FinalisasiRanapController extends Controller
             $sub
         );
 
+        $tenagaMedis = DB::table('aplikasi.pengguna AS pe')
+            ->leftJoin('master.pegawai AS peg','peg.NIP','=','pe.NIP')
+            ->where('pe.ID', auth()->id())
+            ->select(
+                'peg.ID',
+                'peg.NIP'
+            )
+            ->first();
+        // dd($tenagaMedis);
         $dataCppt = [
             'KUNJUNGAN' => $kunjungan,
             'TANGGAL' => now(),
@@ -342,6 +351,8 @@ class FinalisasiRanapController extends Controller
             'ASSESMENT' => $soap['ASSESMENT'] ?? '',
             'PLANNING' => $soap['PLANNING'] ?? '',
             'INSTRUKSI' => $soap['INSTRUKSI'] ?? '',
+            'JENIS' => 1,
+            'TENAGA_MEDIS' => $tenagaMedis->ID,
             'OLEH' => auth()->id(),
             'STATUS' => 1,
         ];
@@ -1181,6 +1192,13 @@ class FinalisasiRanapController extends Controller
             $sub
         );
 
+
+        $s = [];
+
+        if ($dewasa['SUBYEKTIF']) {
+            $s[] = $dewasa['SUBYEKTIF'];
+        }
+
         /*
         |--------------------------------------------------------------------------
         | S - DATA KHUSUS NEONATUS
@@ -1194,53 +1212,331 @@ class FinalisasiRanapController extends Controller
             ->where('STATUS', 1)
             ->first();
 
-        $penilaianBayi = DB::table(
-            'medicalrecord.sirmed_penilaian_awal_bayi'
-        )
-            ->where('KUNJUNGAN', $kunjungan)
-            ->where('STATUS', 1)
-            ->first();
+        $statusNeonatus = DB::table('medicalrecord.sirmed_status_neonatus')
+                ->where('KUNJUNGAN', $kunjungan)
+                ->where('STATUS', 1)
+                ->first();
 
-        $s = [];
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS OBSTETRI
+        |--------------------------------------------------------------------------
+        */
 
-        if ($dewasa['SUBYEKTIF']) {
-            $s[] = $dewasa['SUBYEKTIF'];
+        if ($statusObstetri) {
+
+            $dataObstetri = [
+                'UMUR_IBU' => 'Umur Ibu',
+                'G' => 'G',
+                'P' => 'P',
+                'A' => 'A',
+                'UMUR_KEHAMILAN' => 'Umur Kehamilan',
+                'GOL_DARAH_IBU' => 'Golongan Darah Ibu',
+                'RH_IBU' => 'Rhesus Ibu',
+                'GOL_DARAH_AYAH' => 'Golongan Darah Ayah',
+                'RH_AYAH' => 'Rhesus Ayah',
+                'KK_PECAH_JAM' => 'Ketuban Pecah',
+            ];
+
+            $statusObstetriText = [];
+
+            foreach ($dataObstetri as $field => $label) {
+
+                if (property_exists($statusObstetri, $field)) {
+
+                    $value = $this->soapValue(
+                        $statusObstetri->{$field}
+                    );
+
+                    if ($value !== null) {
+                        $statusObstetriText[] =
+                            $label . ': ' . $value;
+                    }
+                }
+            }
+
+            /*
+            |----------------------------------------------------------------------
+            | KOMPLIKASI
+            |----------------------------------------------------------------------
+            */
+
+            if (
+                property_exists($statusObstetri, 'KOMPLIKASI') &&
+                $statusObstetri->KOMPLIKASI !== null
+            ) {
+
+                if ((int) $statusObstetri->KOMPLIKASI === 1) {
+
+                    $komplikasi = 'Ada';
+
+                    if (
+                        property_exists($statusObstetri, 'KOMPLIKASI_KET')
+                        && $this->soapValue($statusObstetri->KOMPLIKASI_KET) !== null
+                    ) {
+                        $komplikasi .= ': ' .
+                            $this->soapValue(
+                                $statusObstetri->KOMPLIKASI_KET
+                            );
+                    }
+
+                } else {
+                    $komplikasi = 'Tidak Ada';
+                }
+
+                $statusObstetriText[] =
+                    'Komplikasi: ' . $komplikasi;
+            }
+
+            /*
+            |----------------------------------------------------------------------
+            | GOLONGAN DARAH AYAH TIDAK TAHU
+            |----------------------------------------------------------------------
+            */
+
+            if (
+                property_exists($statusObstetri, 'GOL_AYAH_TIDAK') &&
+                $statusObstetri->GOL_AYAH_TIDAK !== null
+            ) {
+
+                if ((int) $statusObstetri->GOL_AYAH_TIDAK === 1) {
+                    $statusObstetriText[] =
+                        'Golongan Darah Ayah: Tidak Tahu';
+                }
+            }
+
+            if (!empty($statusObstetriText)) {
+
+                $s[] = 'Status Obstetri: ' .
+                    implode(', ', $statusObstetriText);
+            }
         }
 
         /*
         |--------------------------------------------------------------------------
-        | DATA NEONATUS
-        |--------------------------------------------------------------------------
-        |
-        | Kita ambil hanya kolom yang benar-benar berisi.
-        | Tidak mengubah nilai database.
+        | STATUS NEONATUS
         |--------------------------------------------------------------------------
         */
 
-        foreach ([
-            'STATUS_BAYI' => 'Status Bayi',
-            'JENIS_KELAMIN' => 'Jenis Kelamin',
-            'BERAT_BADAN_LAHIR' => 'Berat Badan Lahir',
-            'PANJANG_BADAN' => 'Panjang Badan',
-            'LINGKAR_KEPALA' => 'Lingkar Kepala',
-            'APGAR_1' => 'APGAR 1 Menit',
-            'APGAR_5' => 'APGAR 5 Menit',
-            'APGAR_10' => 'APGAR 10 Menit',
-        ] as $field => $label) {
+        if ($statusNeonatus) {
+
+            $statusNeonatusText = [];
+
+            /*
+            |--------------------------------------------------------------------------
+            | TANGGAL DAN JAM LAHIR
+            |--------------------------------------------------------------------------
+            */
 
             if (
-                $penilaianBayi &&
-                property_exists($penilaianBayi, $field)
+                property_exists($statusNeonatus, 'TANGGAL_LAHIR') &&
+                $this->soapValue($statusNeonatus->TANGGAL_LAHIR) !== null
             ) {
+
+                $tanggalLahir = $this->soapValue(
+                    $statusNeonatus->TANGGAL_LAHIR
+                );
+
+                if (
+                    property_exists($statusNeonatus, 'JAM_LAHIR') &&
+                    $this->soapValue($statusNeonatus->JAM_LAHIR) !== null
+                ) {
+
+                    $jamLahir = $this->soapValue(
+                        $statusNeonatus->JAM_LAHIR
+                    );
+
+                    $tanggalLahir .= ' ' . $jamLahir;
+                }
+
+                $statusNeonatusText[] =
+                    'Tanggal/Jam Lahir: ' . $tanggalLahir;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | JENIS KELAMIN
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                property_exists($statusNeonatus, 'JENIS_KELAMIN') &&
+                $this->soapValue($statusNeonatus->JENIS_KELAMIN) !== null
+            ) {
+
+                $jenisKelamin =
+                    strtoupper(
+                        $statusNeonatus->JENIS_KELAMIN
+                    );
+
+                if ($jenisKelamin === 'L') {
+                    $jenisKelamin = 'Laki-laki';
+                } elseif ($jenisKelamin === 'P') {
+                    $jenisKelamin = 'Perempuan';
+                }
+
+                $statusNeonatusText[] =
+                    'Jenis Kelamin: ' . $jenisKelamin;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | ANTROPOMETRI LAHIR
+            |--------------------------------------------------------------------------
+            */
+
+            $dataNeonatus = [
+                'BB_LAHIR' => 'BB Lahir',
+                'PB_LAHIR' => 'PB Lahir',
+                'LK' => 'Lingkar Kepala',
+                'LD' => 'Lingkar Dada',
+                'LP' => 'Lingkar Perut',
+                'LILA' => 'LILA',
+            ];
+
+            $satuanNeonatus = [
+                'BB_LAHIR' => 'gram',
+                'PB_LAHIR' => 'cm',
+                'LK' => 'cm',
+                'LD' => 'cm',
+                'LP' => 'cm',
+                'LILA' => 'cm',
+            ];
+
+            foreach ($dataNeonatus as $field => $label) {
+
+                if (property_exists($statusNeonatus, $field)) {
+
+                    $value = $this->soapValue(
+                        $statusNeonatus->{$field}
+                    );
+
+                    if ($value !== null) {
+
+                        $satuan = $satuanNeonatus[$field] ?? '';
+
+                        $statusNeonatusText[] =
+                            $label . ': ' . $value . ' ' . $satuan;
+                    }
+                }
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | RESUSITASI
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                property_exists($statusNeonatus, 'RESUSITASI_INTUBASI') &&
+                $statusNeonatus->RESUSITASI_INTUBASI !== null
+            ) {
+
+                $statusNeonatusText[] =
+                    'Resusitasi Intubasi: ' .
+                    (
+                        (int) $statusNeonatus->RESUSITASI_INTUBASI === 1
+                            ? 'Ya'
+                            : 'Tidak'
+                    );
+            }
+
+            if (
+                property_exists($statusNeonatus, 'RESUSITASI_POMPA') &&
+                $statusNeonatus->RESUSITASI_POMPA !== null
+            ) {
+
+                $statusNeonatusText[] =
+                    'Resusitasi Pompa: ' .
+                    (
+                        (int) $statusNeonatus->RESUSITASI_POMPA === 1
+                            ? 'Ya'
+                            : 'Tidak'
+                    );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | BERULANG
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                property_exists($statusNeonatus, 'BERULANG')
+            ) {
+
                 $value = $this->soapValue(
-                    $penilaianBayi->{$field}
+                    $statusNeonatus->BERULANG
                 );
 
                 if ($value !== null) {
-                    $s[] = $label . ': ' . $value;
+
+                    $statusNeonatusText[] =
+                        'Berulang: ' . $value;
                 }
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | JENIS PARTUS
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                property_exists($statusNeonatus, 'JENIS_PARTUS') &&
+                $this->soapValue($statusNeonatus->JENIS_PARTUS) !== null
+            ) {
+
+                $jenisPartus =
+                    strtoupper(
+                        $statusNeonatus->JENIS_PARTUS
+                    );
+
+                $jenisPartusLabel = match ($jenisPartus) {
+                    'SC' => 'Sectio Caesarea',
+                    'V' => 'Vacuum',
+                    'S' => 'Spontan',
+                    default => $jenisPartus,
+                };
+
+                $statusNeonatusText[] =
+                    'Jenis Partus: ' . $jenisPartusLabel;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | INDIKASI
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                property_exists($statusNeonatus, 'INDIKASI')
+            ) {
+
+                $value = $this->soapValue(
+                    $statusNeonatus->INDIKASI
+                );
+
+                if ($value !== null) {
+
+                    $statusNeonatusText[] =
+                        'Indikasi: ' . $value;
+                }
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | MASUK KE S
+            |--------------------------------------------------------------------------
+            */
+
+            if (!empty($statusNeonatusText)) {
+
+                $s[] = 'Status Neonatus: ' .
+                    implode(', ', $statusNeonatusText);
+            }
         }
+
 
         /*
         |--------------------------------------------------------------------------
@@ -1248,15 +1544,503 @@ class FinalisasiRanapController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $dewasaSoap = $this->generateSoapRanapDewasa(
-            $kunjungan,
-            $sub
-        );
-
         $o = [];
 
-        if ($dewasaSoap['OBYEKTIF']) {
-            $o[] = $dewasaSoap['OBYEKTIF'];
+        $penilaianBayi = DB::table(
+            'medicalrecord.sirmed_penilaian_awal_bayi'
+        )
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | APGAR
+        |--------------------------------------------------------------------------
+        */
+
+        if ($penilaianBayi) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | STATUS BAYI
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                property_exists($penilaianBayi, 'APGAR_STATUS_BAYI') &&
+                $this->soapValue($penilaianBayi->APGAR_STATUS_BAYI) !== null
+            ) {
+
+                $statusBayi = $this->soapValue(
+                    $penilaianBayi->APGAR_STATUS_BAYI
+                );
+
+                $statusBayiLabel = match ($statusBayi) {
+                    'bugar' => 'Bugar',
+                    'tidak_bugar' => 'Tidak Bugar',
+                    default => $statusBayi,
+                };
+
+                $o[] = 'Status Bayi: ' . $statusBayiLabel;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | BAYI BUGAR
+            |--------------------------------------------------------------------------
+            | Tampilkan APGAR 1, 5, dan 10 menit
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                property_exists($penilaianBayi, 'APGAR_STATUS_BAYI') &&
+                $penilaianBayi->APGAR_STATUS_BAYI === 'bugar'
+            ) {
+
+                $apgarMenit = [
+                    1 => [
+                        'DENYUT' => 'APGAR 1 Menit - Denyut',
+                        'PERNAFASAN' => 'APGAR 1 Menit - Pernafasan',
+                        'TONUS' => 'APGAR 1 Menit - Tonus',
+                        'RANGSANG' => 'APGAR 1 Menit - Rangsang',
+                        'WARNA' => 'APGAR 1 Menit - Warna',
+                        'TOTAL' => 'APGAR Total 1 Menit',
+                    ],
+                    5 => [
+                        'DENYUT' => 'APGAR 5 Menit - Denyut',
+                        'PERNAFASAN' => 'APGAR 5 Menit - Pernafasan',
+                        'TONUS' => 'APGAR 5 Menit - Tonus',
+                        'RANGSANG' => 'APGAR 5 Menit - Rangsang',
+                        'WARNA' => 'APGAR 5 Menit - Warna',
+                        'TOTAL' => 'APGAR Total 5 Menit',
+                    ],
+                    10 => [
+                        'DENYUT' => 'APGAR 10 Menit - Denyut',
+                        'PERNAFASAN' => 'APGAR 10 Menit - Pernafasan',
+                        'TONUS' => 'APGAR 10 Menit - Tonus',
+                        'RANGSANG' => 'APGAR 10 Menit - Rangsang',
+                        'WARNA' => 'APGAR 10 Menit - Warna',
+                        'TOTAL' => 'APGAR Total 10 Menit',
+                    ],
+                ];
+
+                foreach ($apgarMenit as $menit => $fields) {
+
+                    foreach ($fields as $suffix => $label) {
+
+                        if ($suffix === 'TOTAL') {
+                            $field = 'APGAR_TOTAL_' . $menit . '_MENIT';
+                        } else {
+                            $field = 'APGAR_' . $menit . '_MENIT_' . $suffix;
+                        }
+
+                        if (property_exists($penilaianBayi, $field)) {
+
+                            $value = $this->soapValue(
+                                $penilaianBayi->{$field}
+                            );
+
+                            if ($value !== null) {
+                                $o[] = $label . ': ' . $value;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | BAYI TIDAK BUGAR
+            |--------------------------------------------------------------------------
+            | Tampilkan data resusitasi
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                property_exists($penilaianBayi, 'APGAR_STATUS_BAYI') &&
+                $penilaianBayi->APGAR_STATUS_BAYI === 'tidak_bugar'
+            ) {
+
+                /*
+                | APGAR Resusitasi
+                */
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_RESUSITASI') &&
+                    $this->soapValue($penilaianBayi->APGAR_RESUSITASI) !== null
+                ) {
+
+                    $resusitasi = $this->soapValue(
+                        $penilaianBayi->APGAR_RESUSITASI
+                    );
+
+                    $resusitasiLabel = match ($resusitasi) {
+                        'dilakukan' => 'Dilakukan',
+                        'tidak_dilakukan' => 'Tidak Dilakukan',
+                        default => $resusitasi,
+                    };
+
+                    $o[] = 'APGAR Resusitasi: ' . $resusitasiLabel;
+                }
+
+
+                /*
+                | APGAR Langkah Awal
+                */
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_LANGKAH_AWAL') &&
+                    $penilaianBayi->APGAR_LANGKAH_AWAL !== null
+                ) {
+
+                    $o[] = 'APGAR Langkah Awal: ' .
+                        (
+                            (int) $penilaianBayi->APGAR_LANGKAH_AWAL === 1
+                                ? 'Ya'
+                                : 'Tidak'
+                        );
+                }
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_LANGKAH_AWAL_DETIK')
+                ) {
+
+                    $value = $this->soapValue(
+                        $penilaianBayi->APGAR_LANGKAH_AWAL_DETIK
+                    );
+
+                    if ($value !== null) {
+                        $o[] = 'APGAR Langkah Awal Detik: ' . $value;
+                    }
+                }
+
+
+                /*
+                | APGAR VTP
+                */
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_VTP') &&
+                    $penilaianBayi->APGAR_VTP !== null
+                ) {
+
+                    $o[] = 'APGAR VTP: ' .
+                        (
+                            (int) $penilaianBayi->APGAR_VTP === 1
+                                ? 'Ya'
+                                : 'Tidak'
+                        );
+                }
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_VTP_DETIK')
+                ) {
+
+                    $value = $this->soapValue(
+                        $penilaianBayi->APGAR_VTP_DETIK
+                    );
+
+                    if ($value !== null) {
+                        $o[] = 'APGAR VTP Detik: ' . $value;
+                    }
+                }
+
+
+                /*
+                | APGAR Kompresi Dada
+                */
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_KOMPRESI_DADA') &&
+                    $penilaianBayi->APGAR_KOMPRESI_DADA !== null
+                ) {
+
+                    $o[] = 'APGAR Kompresi Dada: ' .
+                        (
+                            (int) $penilaianBayi->APGAR_KOMPRESI_DADA === 1
+                                ? 'Ya'
+                                : 'Tidak'
+                        );
+                }
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_KOMPRESI_DADA_DETIK')
+                ) {
+
+                    $value = $this->soapValue(
+                        $penilaianBayi->APGAR_KOMPRESI_DADA_DETIK
+                    );
+
+                    if ($value !== null) {
+                        $o[] = 'APGAR Kompresi Dada Detik: ' . $value;
+                    }
+                }
+
+
+                /*
+                | APGAR ETT
+                */
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_ETT') &&
+                    $penilaianBayi->APGAR_ETT !== null
+                ) {
+
+                    $o[] = 'APGAR ETT: ' .
+                        (
+                            (int) $penilaianBayi->APGAR_ETT === 1
+                                ? 'Ya'
+                                : 'Tidak'
+                        );
+                }
+
+
+                /*
+                | APGAR Resusitasi Dihentikan
+                */
+
+                if (
+                    property_exists(
+                        $penilaianBayi,
+                        'APGAR_RESUSITASI_DIHENTIKAN'
+                    ) &&
+                    $penilaianBayi->APGAR_RESUSITASI_DIHENTIKAN !== null
+                ) {
+
+                    $o[] = 'APGAR Resusitasi Dihentikan: ' .
+                        (
+                            (int) $penilaianBayi->APGAR_RESUSITASI_DIHENTIKAN === 1
+                                ? 'Ya'
+                                : 'Tidak'
+                        );
+                }
+
+                if (
+                    property_exists(
+                        $penilaianBayi,
+                        'APGAR_RESUSITASI_DIHENTIKAN_MENIT'
+                    )
+                ) {
+
+                    $value = $this->soapValue(
+                        $penilaianBayi->APGAR_RESUSITASI_DIHENTIKAN_MENIT
+                    );
+
+                    if ($value !== null) {
+                        $o[] =
+                            'APGAR Resusitasi Dihentikan Menit: ' .
+                            $value;
+                    }
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | DATA YANG SELALU DITAMPILKAN
+            |--------------------------------------------------------------------------
+            | Tidak peduli bugar / tidak bugar
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                property_exists($penilaianBayi, 'APGAR_TANGGAL')
+            ) {
+
+                $value = $this->soapValue(
+                    $penilaianBayi->APGAR_TANGGAL
+                );
+
+                if ($value !== null) {
+                    $o[] = 'APGAR Tanggal: ' . $value;
+                }
+            }
+
+            if (
+                property_exists($penilaianBayi, 'APGAR_JAM')
+            ) {
+
+                $value = $this->soapValue(
+                    $penilaianBayi->APGAR_JAM
+                );
+
+                if ($value !== null) {
+                    $o[] = 'APGAR Jam: ' . $value;
+                }
+            }
+
+            if (
+                property_exists($penilaianBayi, 'APGAR_BB_SEKARANG')
+            ) {
+
+                $value = $this->soapValue(
+                    $penilaianBayi->APGAR_BB_SEKARANG
+                );
+
+                if ($value !== null) {
+                    $o[] = 'APGAR BB Sekarang: ' . $value . ' gram';
+                }
+            }
+        }
+
+        $tandaVital = DB::table('medicalrecord.tanda_vital')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('PPA', 1)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first([
+                'KEADAAN_UMUM',
+                'SISTOLIK',
+                'DISTOLIK',
+                'FREKUENSI_NADI',
+                'FREKUENSI_NADI_CB',
+                'SUHU',
+                'SATURASI_O2',
+                'FREKUENSI_NAFAS',
+                'FREKUENSI_NAFAS_CB',
+                'KESADARAN_NEONATUS',
+            ]);
+
+        $nutrisi = DB::table('medicalrecord.nutrisi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('PPA', 1)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first([
+                'BERAT_BADAN',
+                'TINGGI_BADAN',
+                'INDEX_MASSA_TUBUH',
+            ]);
+
+        if ($tandaVital) {
+
+            $o[] = $this->soapLine(
+                'Keadaan Umum',
+                $tandaVital->KEADAAN_UMUM
+            );
+
+            if (
+                $tandaVital->SISTOLIK !== null ||
+                $tandaVital->DISTOLIK !== null
+            ) {
+                $o[] = 'TD: ' .
+                    ($tandaVital->SISTOLIK ?? '-') .
+                    '/' .
+                    ($tandaVital->DISTOLIK ?? '-') .
+                    ' mmHg';
+            }
+
+            if ($tandaVital->FREKUENSI_NADI !== null) {
+                $o[] = 'Nadi: ' .
+                    $tandaVital->FREKUENSI_NADI .
+                    ' x/menit';
+            }
+
+            if ($tandaVital->FREKUENSI_NADI_CB !== null) {
+                $o[] = 'Nadi Catatan: ' .
+                    $tandaVital->FREKUENSI_NADI_CB;
+            }
+
+            if ($tandaVital->SUHU !== null) {
+                $o[] = 'Suhu: ' .
+                    $tandaVital->SUHU .
+                    ' °C';
+            }
+
+            if ($tandaVital->SATURASI_O2 !== null) {
+                $o[] = 'SpO2: ' .
+                    $tandaVital->SATURASI_O2 .
+                    ' %';
+            }
+
+            if ($tandaVital->FREKUENSI_NAFAS !== null) {
+                $o[] = 'RR: ' .
+                    $tandaVital->FREKUENSI_NAFAS .
+                    ' x/menit';
+            }
+
+            if ($tandaVital->FREKUENSI_NAFAS_CB !== null) {
+                $o[] = 'RR Catatan: ' .
+                    $tandaVital->FREKUENSI_NAFAS_CB;
+            }
+
+            if ($tandaVital->KESADARAN_NEONATUS !== null) {
+
+                $kesadaranNeonatus = [
+                    1 => [
+                        'label' => 'S1',
+                        'mata' => 'Tertutup',
+                        'menangis' => '-',
+                        'gerak' => '-',
+                    ],
+                    2 => [
+                        'label' => 'S2',
+                        'mata' => 'Tertutup',
+                        'menangis' => '-',
+                        'gerak' => '+',
+                    ],
+                    3 => [
+                        'label' => 'S3',
+                        'mata' => 'Terbuka',
+                        'menangis' => '-',
+                        'gerak' => '-',
+                    ],
+                    4 => [
+                        'label' => 'S4',
+                        'mata' => 'Terbuka',
+                        'menangis' => '-',
+                        'gerak' => '+',
+                    ],
+                    5 => [
+                        'label' => 'S5',
+                        'mata' => 'Terbuka',
+                        'menangis' => '+',
+                        'gerak' => '+',
+                    ],
+                ];
+
+                $nilaiKesadaran = $tandaVital->KESADARAN_NEONATUS;
+
+                if (isset($kesadaranNeonatus[$nilaiKesadaran])) {
+
+                    $data = $kesadaranNeonatus[$nilaiKesadaran];
+
+                    $o[] = 'Kesadaran Neonatus: ' . $data['label'];
+                    $o[] = 'Mata: ' . $data['mata'];
+                    $o[] = 'Menangis: ' . $data['menangis'];
+                    $o[] = 'Gerak: ' . $data['gerak'];
+
+                } else {
+
+                    $o[] = 'Kesadaran Neonatus: ' . $nilaiKesadaran;
+
+                }
+            }
+
+        }
+
+        if ($nutrisi) {
+
+            if ($nutrisi->BERAT_BADAN !== null) {
+                $o[] = 'BB: ' .
+                    $nutrisi->BERAT_BADAN .
+                    ' kg';
+            }
+
+            if ($nutrisi->TINGGI_BADAN !== null) {
+                $o[] = 'TB: ' .
+                    $nutrisi->TINGGI_BADAN .
+                    ' cm';
+            }
+
+            if ($nutrisi->INDEX_MASSA_TUBUH !== null) {
+                $o[] = 'IMT: ' .
+                    $nutrisi->INDEX_MASSA_TUBUH;
+            }
         }
 
         $fisikNeo = DB::table(
@@ -1341,7 +2125,7 @@ class FinalisasiRanapController extends Controller
             'OBYEKTIF' => implode("\n", $o),
             'ASSESMENT' => $dewasaSoap['ASSESMENT'],
             'PLANNING' => $dewasaSoap['PLANNING'],
-            'INSTRUKSI' => '',
+            'INSTRUKSI' => '-',
         ];
     }
 
@@ -1371,11 +2155,11 @@ class FinalisasiRanapController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $o = [];
+        $o = ['-'];
 
         $tandaVital = DB::table('medicalrecord.tanda_vital')
             ->where('KUNJUNGAN', $kunjungan)
-            ->where('PPA', 1)
+            ->whereIn('PPA', [1, 2])
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -1388,6 +2172,9 @@ class FinalisasiRanapController extends Controller
                 'SATURASI_O2',
                 'FREKUENSI_NAFAS',
                 'FREKUENSI_NAFAS_CB',
+                'EYE',
+                'VERBAL',
+                'MOTORIK',
                 'GCS',
             ]);
 
@@ -1435,7 +2222,45 @@ class FinalisasiRanapController extends Controller
 
             if ($tandaVital->GCS !== null) {
                 $o[] = 'GCS: ' .
-                    $tandaVital->GCS;
+                    $tandaVital->GCS .
+                    ' (E' .
+                    ($tandaVital->EYE ?? '-') .
+                    ' V' .
+                    ($tandaVital->VERBAL ?? '-') .
+                    ' M' .
+                    ($tandaVital->MOTORIK ?? '-') .
+                    ')';
+            }
+        }
+
+        $nutrisi = DB::table('medicalrecord.nutrisi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('PPA', 1)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first([
+                'BERAT_BADAN',
+                'TINGGI_BADAN',
+                'INDEX_MASSA_TUBUH',
+            ]);
+
+        if ($nutrisi) {
+
+            if ($nutrisi->BERAT_BADAN !== null) {
+                $o[] = 'BB: ' .
+                    $nutrisi->BERAT_BADAN .
+                    ' kg';
+            }
+
+            if ($nutrisi->TINGGI_BADAN !== null) {
+                $o[] = 'TB: ' .
+                    $nutrisi->TINGGI_BADAN .
+                    ' cm';
+            }
+
+            if ($nutrisi->INDEX_MASSA_TUBUH !== null) {
+                $o[] = 'IMT: ' .
+                    $nutrisi->INDEX_MASSA_TUBUH;
             }
         }
 
@@ -1446,7 +2271,7 @@ class FinalisasiRanapController extends Controller
         */
 
         $fisikObs = DB::table(
-            'medicalrecord.sirmed_pemeriksaan_fisik_obsgyn'
+            'medicalrecord.sirmed_pemeriksaan_obsgyn'
         )
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
@@ -1459,6 +2284,7 @@ class FinalisasiRanapController extends Controller
                 if (in_array($field, [
                     'ID',
                     'KUNJUNGAN',
+                    'PENDAFTARAN',
                     'TANGGAL',
                     'OLEH',
                     'STATUS',
@@ -1532,7 +2358,7 @@ class FinalisasiRanapController extends Controller
             'OBYEKTIF' => implode("\n", $o),
             'ASSESMENT' => $soapDasar['ASSESMENT'],
             'PLANNING' => $soapDasar['PLANNING'],
-            'INSTRUKSI' => '',
+            'INSTRUKSI' => '-',
         ];
     }
 
