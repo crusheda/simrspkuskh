@@ -17,6 +17,7 @@ use App\Http\Controllers\Display\AntrianPoliController;
 use App\Http\Controllers\Display\AntrianAdmisiController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\Form\AddOnPengkajianController;
+use App\Http\Controllers\EMR\Form\Finalisasi\FinalisasiRanapController;
 use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanAnakController;
@@ -354,6 +355,11 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
             Route::get('emr/cppt/{kunjungan}/detail/{id}', [EMRController::class, 'detailCPPT']);
             Route::put('emr/cppt/{kunjungan}/detail/{id}/update', [EMRController::class, 'updateCPPT']);
             Route::delete('emr/cppt/{id}',[EMRController::class, 'hapusCPPT']);
+
+            // FINALISASI
+            Route::get('emr/pengkajian/finalisasi/{kunjungan}', [FinalisasiRanapController::class, 'statusFinalisasiPengkajianRanap']);
+            Route::post('emr/pengkajian/finalisasi/{kunjungan}', [FinalisasiRanapController::class, 'finalisasiPengkajianRanap']);
+            Route::post('emr/pengkajian/batal-finalisasi/{kunjungan}', [FinalisasiRanapController::class, 'batalFinalisasiPengkajianRanap']);
 
         // KLAIM
         Route::get('generate/lab/{kunjungan}', [BerkasKlaimController::class, 'generateLab']);

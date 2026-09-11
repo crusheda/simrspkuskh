@@ -85,11 +85,13 @@
             </div>
         </div>
     </div>
+
+    @include('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.finalisasi.finalisasi_dokter', [
+        'jenis' => 'anak',
+        'formKey' => 'ria_dokter',
+        'form' => 'pengkajian-ranap-anak',
+        'sub' => 'DOKTER',
+        'kunjungan' => $list['kunjungan'],
+    ])
+
 </div>
-
-<script>
-    var $sectionRiAd = $('#riA_dokter');
-    $(document).ready(function() {
-
-    })
-</script>

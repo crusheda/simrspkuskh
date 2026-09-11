@@ -1,9 +1,7 @@
-<div class="form-wrapper">
+<div class="form-wrapper position-relative" id="form_ranap_dewasa_dokter">
     <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN MEDIS <b class="text-danger">RAWAT INAP</b> <b class="text-warning">DEWASA</b></center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-danger">Diisi Oleh Dokter</a>)</center></h1>
-    <div class="form-content">
-        {{-- @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pengkajian_ulang_resiko_jatuh_humpty_dumpty_pediatri',['section' => '#riD_dokter'])
-        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pengkajian_ulang_resiko_jatuh_skala_morse_dewasa',['section' => '#riD_dokter']) --}}
+    <div class="form-content position-relative">
         <div class="row">
             <div class="col-md-12 mb-3">
                 @include(
@@ -87,11 +85,13 @@
             </div>
         </div>
     </div>
+
+    @include('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.finalisasi.finalisasi_dokter', [
+        'jenis' => 'dewasa',
+        'formKey' => 'rid_dokter',
+        'form' => 'pengkajian-ranap-dewasa',
+        'sub' => 'DOKTER',
+        'kunjungan' => $list['kunjungan'],
+    ])
+
 </div>
-
-<script>
-    var $sectionRiDd = $('#riD_dokter');
-    $(document).ready(function() {
-
-    })
-</script>

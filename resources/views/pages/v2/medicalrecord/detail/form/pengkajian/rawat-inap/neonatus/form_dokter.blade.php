@@ -79,4 +79,13 @@
             </div>
         </div>
     </div>
+
+    @include('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.finalisasi.finalisasi_dokter', [
+        'jenis' => 'neonatus',
+        'formKey' => 'rin_dokter',
+        'form' => 'pengkajian-ranap-neonatus',
+        'sub' => 'DOKTER',
+        'kunjungan' => $list['kunjungan'],
+    ])
+
 </div>
