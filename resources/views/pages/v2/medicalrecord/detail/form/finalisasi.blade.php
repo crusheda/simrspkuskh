@@ -1,21 +1,24 @@
 @php
-    $formId = 'form_ranap_' . $jenis . '_dokter';
+    $role = $role ?? 'dokter';
+    $formId = $formId ?? ('form_ranap_' . $jenis . '_' . $role);
     $formKey = $formKey ?? '';
-    $form = $form ?? '';
+    // $form = $form ?? '';
     $sub = $sub ?? 'DOKTER';
     $kunjungan = $kunjungan ?? '';
+    $initialFinalisasi = $initialFinalisasi ?? null;
+    $isInitialFinal = (bool) ($initialFinalisasi['is_final'] ?? false);
 @endphp
 
 <div id="{{ $formId }}_finalisasi_action"
     class="position-relative d-flex justify-content-between align-items-center gap-2 mt-4 pt-3 border-top z-4">
     <div>
         <button type="button"
-            class="btn btn-success"
+            class="btn btn-success {{ $isInitialFinal ? 'd-none' : '' }}"
             data-finalisasi-action="final" disabled>
             <i class="fa-solid fa-check me-1"></i> Finalisasi
         </button>
         <button type="button"
-            class="btn btn-warning d-none"
+            class="btn btn-warning {{ $isInitialFinal ? '' : 'd-none' }}"
             data-finalisasi-action="batal" disabled>
             <i class="fa-solid fa-rotate-left me-1"></i> Batal Final
         </button>
@@ -96,10 +99,9 @@
     BACKDROP FINALISASI
 ========================================================== --}}
 <div id="{{ $formId }}_finalisasi_backdrop"
-    class="position-absolute top-0 start-0 w-100 bg-white bg-opacity-75 d-none z-3">
+    class="position-fixed pe-none bg-white bg-opacity-75 {{ $isInitialFinal ? '' : 'd-none' }} z-3">
 
-    <div class="position-sticky top-50 translate-middle-y text-center px-3"
-        style="top:50%;">
+    <div class="h-100 d-flex align-items-center justify-content-center text-center px-3">
 
         <div class="d-inline-flex align-items-center justify-content-center flex-column">
 
@@ -128,6 +130,7 @@
     const formId = @json($formId);
     const formKey = @json($formKey);
     const kunjungan = @json($kunjungan);
+    const initialFinalisasi = @json($initialFinalisasi);
 
     const $form = $('#' + formId);
 
@@ -202,10 +205,28 @@
             return;
         }
 
-        $backdrop.css(
-            'height',
-            $formContent.outerHeight() + 'px'
-        );
+        const formContent = $formContent.get(0);
+
+        // Backdrop dipasang fixed pada area form yang sedang terlihat.
+        // Konten dapat discroll di bawah overlay tanpa backdrop ikut bergeser.
+        if (!formContent || !document.body.contains(formContent)) {
+            return;
+        }
+
+        const rect = formContent.getBoundingClientRect();
+        const top = Math.max(rect.top, 0);
+        const left = Math.max(rect.left, 0);
+        const bottom = Math.min(rect.bottom, window.innerHeight);
+        const right = Math.min(rect.right, window.innerWidth);
+        const isVisible = bottom > top && right > left;
+
+        $backdrop.css({
+            top: `${top}px`,
+            left: `${left}px`,
+            width: `${Math.max(right - left, 0)}px`,
+            height: `${Math.max(bottom - top, 0)}px`,
+            visibility: isVisible ? 'visible' : 'hidden'
+        });
     }
 
     // ==========================================================
@@ -216,7 +237,6 @@
         updateBackdrop();
 
         $formFields.attr('inert', '');
-        $formContent.addClass('overflow-hidden');
 
         $backdrop
             .stop(true, true)
@@ -257,12 +277,12 @@
     // =========================================================
     function sembunyikanFinalisasi() {
         $formFields.removeAttr('inert');
-        $formContent.removeClass('overflow-hidden');
 
         $backdrop
             .stop(true, true)
             .hide()
-            .addClass('d-none');
+            .addClass('d-none')
+            .css('visibility', '');
 
         $btnFinal.removeClass('d-none');
         $btnBatal.addClass('d-none');
@@ -281,6 +301,14 @@
         }
 
     });
+
+    // Capture memastikan scroll pada container mana pun turut
+    // memperbarui posisi fixed backdrop.
+    window.addEventListener('scroll', function () {
+        if (!$backdrop.hasClass('d-none')) {
+            updateBackdrop();
+        }
+    }, true);
 
     // ==========================================================
     // FINALISASI
@@ -486,7 +514,6 @@
                 });
 
             },
-
             error: function(xhr){
 
                 Swal.fire({
@@ -517,6 +544,26 @@
     // ==========================================================
 
     function cekStatusFinalisasi(){
+
+        // Status sudah diambil saat server merender partial. Terapkan lebih
+        // dulu supaya backdrop dan tombol tidak terlambat tampil setelah
+        // isi form sempat terlihat.
+        if (initialFinalisasi) {
+            if (initialFinalisasi.is_final) {
+                tampilkanFinalisasi();
+                tampilkanFinalIdentity(initialFinalisasi.data);
+            } else {
+                sembunyikanFinalisasi();
+                tampilkanFinalIdentity(initialFinalisasi.data);
+            }
+
+            $(document).trigger(
+                'finalisasi:status-tab-berubah',
+                [formKey, true]
+            );
+
+            return;
+        }
 
         const statusUrl =
             `/api/v2/emr/pengkajian/finalisasi/${kunjungan}`;

@@ -14,7 +14,7 @@ use Auth, Storage;
 use App\Http\Controllers\EMR\Form\AddOnPengkajianController;
 use App\Support\FinalisasiMap;
 
-class FinalisasiRanapController extends Controller
+class FinalisasiController extends Controller
 {
     protected AddOnPengkajianController $addOnPengkajianController;
 
@@ -151,15 +151,23 @@ class FinalisasiRanapController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | SIMPAN SOAP
+            | SIMPAN SOAP KHUSUS DOKTER
             |--------------------------------------------------------------------------
+            |
+            | Finalisasi perawat hanya mengubah status pada tabel
+            | simrspku_pengkajian.finalisasi. Tidak membuat atau memperbarui
+            | CPPT maupun medicalrecord.push_cppt.
+            |
             */
+            $soap = null;
 
-            $soap = $this->simpanSoapPengkajianRanap(
-                $kunjungan,
-                $form,
-                $sub
-            );
+            if ($sub === 'DOKTER') {
+                $soap = $this->simpanSoapPengkajianRanap(
+                    $kunjungan,
+                    $form,
+                    $sub
+                );
+            }
 
             /*
             |--------------------------------------------------------------------------

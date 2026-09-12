@@ -261,6 +261,18 @@
             </div>
         </div>
     </div>
+
+    @include(
+        'pages.v2.medicalrecord.detail.form.finalisasi',
+        [
+            'jenis' => 'non-cppt',
+            'formId' => 'form_khusus_penyakitmenular',
+            'formKey' => 'kh_penyakitmenular',
+            'sub' => 'KHUSUS',
+            'kunjungan' => $kunjungan ?? $list['kunjungan'],
+        ]
+    )
+
 </div>
 
 <script>

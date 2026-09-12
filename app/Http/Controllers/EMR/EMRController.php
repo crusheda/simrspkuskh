@@ -790,9 +790,29 @@ class EMRController extends Controller
             'input_date' => $identification['inputdate'],
         ];
 
+        // Kirim status finalisasi bersama partial. Dengan demikian backdrop
+        // dan tombol yang tepat sudah dirender pada paint pertama, tidak
+        // perlu menunggu request AJAX kedua setelah form terlihat.
+        $initialFinalisasi = null;
+
+        try {
+            $initialFinalisasi = $this->getStatusFinalisasi(
+                $kunjungan,
+                $formKey
+            );
+        } catch (\InvalidArgumentException $e) {
+            // Form tanpa konfigurasi finalisasi tetap dapat dimuat seperti biasa.
+        }
+
         return view(
             $forms[$formKey]['view'],
-            compact('init', 'list', 'kunjungan', 'formKey')
+            compact(
+                'init',
+                'list',
+                'kunjungan',
+                'formKey',
+                'initialFinalisasi'
+            )
         );
     }
 
@@ -1885,6 +1905,11 @@ class EMRController extends Controller
             ],
             $html
         );
+
+        // Newline dari textarea harus menjadi <br>. Jika dibiarkan sebagai
+        // whitespace biasa di dalam HTML, browser akan menggabungkannya
+        // menjadi satu spasi saat riwayat CPPT ditampilkan.
+        $html = str_replace("\n", '<br>', $html);
 
         // Block element dijadikan line break.
         $html = preg_replace('/<div\b[^>]*>/i', '<br>', $html);

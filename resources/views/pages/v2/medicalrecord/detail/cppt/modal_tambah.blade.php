@@ -171,7 +171,7 @@
                     </div>
 
                     {{-- DOKTER SBAR --}}
-                    <div class="col-md-6 position-relative">
+                    <div class="col-md-12 position-relative">
                         <label class="form-label">
                             Dokter SBAR
                         </label>

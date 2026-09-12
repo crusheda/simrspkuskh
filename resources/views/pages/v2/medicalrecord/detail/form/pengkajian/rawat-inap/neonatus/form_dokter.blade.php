@@ -80,7 +80,7 @@
         </div>
     </div>
 
-    @include('pages.v2.medicalrecord.detail.form.pengkajian.rawat-inap.finalisasi.finalisasi_dokter', [
+    @include('pages.v2.medicalrecord.detail.form.finalisasi', [
         'jenis' => 'neonatus',
         'formKey' => 'rin_dokter',
         'form' => 'pengkajian-ranap-neonatus',

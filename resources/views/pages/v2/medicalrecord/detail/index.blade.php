@@ -311,7 +311,7 @@
                 {{-- BODY --}}
                 <div class="modal-body p-3 p-md-4 position-relative">
 
-                    <div class="cppt-patient-info rounded-3 p-3 mb-1">
+                    <div class="cppt-patient-info rounded-3 p-3 mb-3">
                         <div class="row g-3" id="cppt_header"></div>
                     </div>
 
@@ -606,7 +606,7 @@
                     }
 
                     let pushInstruksi = '';
-                    if (item.INSTRUKSI != null || item.INSTRUKSI != '') {
+                    if (item.INSTRUKSI != null && String(item.INSTRUKSI).trim() !== '') {
                         let instruksi = htmlKeTextCPPT(item.INSTRUKSI);
                         pushInstruksi = `<div class="small lh-lg">
                                         <b>I/ :</b> ${escapeHtmlCPPT(instruksi).replace(/\n/g, '<br>') ?? '-'}
@@ -624,10 +624,12 @@
                                                 <div class="fw-bold">${item.PPA ?? '-'}</div>
                                                 <small class="text-muted">${item.JNSPPA ?? '-'}</small>
                                             </div>
-
-                                            <span class="badge bg-primary-subtle text-primary">
-                                                ${item.TANGGAL ?? '-'}
-                                            </span>
+                                            <div>
+                                                <span class="badge bg-primary-subtle text-primary">
+                                                    ${item.TANGGAL ?? '-'}
+                                                </span>
+                                                <p class="mb-0 text-end fs-13"><small class="text-muted">ID<b class="text-warning"> # </b>${item.ID ?? 'xxx'}</small></p>
+                                            </div>
                                         </div>
 
                                         <hr class="my-2">

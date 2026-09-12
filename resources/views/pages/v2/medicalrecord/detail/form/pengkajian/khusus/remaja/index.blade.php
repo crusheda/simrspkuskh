@@ -5,7 +5,7 @@
         <!-- KELOMPOK PEREMPUAN -->
         <div class="p-3 mb-3 border border-dashed rounded">
             <h6 class="fw-bold text-secondary mb-3">Khusus Pasien Perempuan</h6>
-            
+
             <!-- Menstruasi -->
             <div class="row align-items-center mb-3">
                 <div class="col-md-5">
@@ -144,7 +144,7 @@
         <!-- KELOMPOK LAKI-LAKI -->
         <div class="p-3 mb-3 border border-dashed rounded ">
             <h6 class="fw-bold text-secondary mb-3">Khusus Pasien Laki-laki</h6>
-            
+
             <div class="row align-items-center mb-3">
                 <div class="col-md-5">
                     <label class="form-label fw-semibold mb-1">Apakah sudah mimpi basah?</label>
@@ -268,6 +268,18 @@
             </div>
         </div>
     </div>
+
+    @include(
+        'pages.v2.medicalrecord.detail.form.finalisasi',
+        [
+            'jenis' => 'non-cppt',
+            'formId' => 'form_khusus_remaja',
+            'formKey' => 'kh_remaja',
+            'sub' => 'KHUSUS',
+            'kunjungan' => $kunjungan ?? $list['kunjungan'],
+        ]
+    )
+
 </div>
 
 <script>
@@ -311,14 +323,14 @@
         // });
         $('.single-checkbox').on('change', function () {
             if (!this.checked) return;
-            
+
             const $otherCheckboxes = $('input.single-checkbox[name="' + this.name + '"]').not(this);
-            
+
             $otherCheckboxes.each(function() {
                 if (this.checked) {
                     this.checked = false;
                     // Pemicu manual agar fungsi onchange="toggleSubOptions(...)" di HTML ikut berjalan
-                    $(this).trigger('change'); 
+                    $(this).trigger('change');
                 }
             });
         });

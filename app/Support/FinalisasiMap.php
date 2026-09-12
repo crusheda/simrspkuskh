@@ -43,7 +43,29 @@ final class FinalisasiMap
             'sub' => 'PERAWAT',
         ],
 
-        // Tambahkan mapping rajal, IGD, atau form lain di sini nanti.
+        // Pengkajian khusus
+        'kh_remaja' => ['form' => 'pengkajian-khusus-remaja', 'sub' => 'KHUSUS'],
+        'kh_terminal' => ['form' => 'pengkajian-khusus-terminal', 'sub' => 'KHUSUS'],
+        'kh_nyerikronik' => ['form' => 'pengkajian-khusus-nyerikronik', 'sub' => 'KHUSUS'],
+        'kh_sistemimun' => ['form' => 'pengkajian-khusus-sistemimunterganggu', 'sub' => 'KHUSUS'],
+        'kh_kecanduanobat' => ['form' => 'pengkajian-khusus-kecanduanobatalkohol', 'sub' => 'KHUSUS'],
+        'kh_korbankekerasan' => ['form' => 'pengkajian-khusus-korbankekerasan', 'sub' => 'KHUSUS'],
+        'kh_penyakitmenular' => ['form' => 'pengkajian-khusus-penyakitmenular', 'sub' => 'KHUSUS'],
+        'kh_lanjutan' => ['form' => 'pengkajian-khusus-lanjutan', 'sub' => 'KHUSUS'],
+
+        // Anestesi
+        'lap_anestesi' => ['form' => 'laporan-anestesi', 'sub' => 'PENATA-ANESTESI'],
+        'lap_pasca_anestesi' => ['form' => 'instruksi-pasca-anestesi', 'sub' => 'DOKTER-ANESTESI'],
+
+        // Bedah
+        'prabedah' => [
+            'form' => 'pengkajian-prabedah',
+            'sub' => 'BEDAH',
+        ],
+        'praanestesiinduksi' => [
+            'form' => 'pengkajian-praanestesiinduksi',
+            'sub' => 'ANESTESI',
+        ],
     ];
 
     public static function get(string $formKey): array

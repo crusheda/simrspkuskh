@@ -1,4 +1,4 @@
-<div class="form-wrapper">
+<div class="form-wrapper position-relative" id="form_ranap_neonatus_perawat">
     <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN KEPERAWATAN <b class="text-danger">RAWAT INAP</b> <b class="text-warning">NEONATUS</b></center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-danger">Diisi Oleh Bidan</a>)</center></h1>
     <div class="form-content">
@@ -97,4 +97,15 @@
             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.discharge_planning',['section' => '#rin_perawat'])
         </div>
     </div>
+
+    @include(
+        'pages.v2.medicalrecord.detail.form.finalisasi',
+        [
+            'jenis' => 'neonatus',
+            'role' => 'perawat',
+            'sub' => 'PERAWAT',
+            'formKey' => 'rin_perawat',
+            'kunjungan' => $kunjungan ?? $list['kunjungan'],
+        ]
+    )
 </div>

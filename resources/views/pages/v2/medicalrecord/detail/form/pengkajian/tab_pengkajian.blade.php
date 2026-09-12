@@ -148,11 +148,11 @@
                                             </span>
 
                                             <span class="ms-auto d-flex align-items-center gap-1">
-                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon"
+                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon px-1 rounded"
                                                     data-final-key="rid_dokter"
                                                     title="Sudah difinalisasi dokter"></i>
 
-                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon"
+                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon px-1 rounded"
                                                     data-final-key="rid_perawat"
                                                     title="Sudah difinalisasi perawat"></i>
                                             </span>
@@ -169,11 +169,11 @@
                                             </span>
 
                                             <span class="ms-auto d-flex align-items-center gap-1">
-                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon"
+                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon px-1 rounded"
                                                     data-final-key="ria_dokter"
                                                     title="Sudah difinalisasi dokter"></i>
 
-                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon"
+                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon px-1 rounded"
                                                     data-final-key="ria_perawat"
                                                     title="Sudah difinalisasi perawat"></i>
                                             </span>
@@ -190,11 +190,11 @@
                                             </span>
 
                                             <span class="ms-auto d-flex align-items-center gap-1">
-                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon"
+                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon px-1 rounded"
                                                     data-final-key="rin_dokter"
                                                     title="Sudah difinalisasi dokter"></i>
 
-                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon"
+                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon px-1 rounded"
                                                     data-final-key="rin_perawat"
                                                     title="Sudah difinalisasi perawat"></i>
                                             </span>
@@ -211,11 +211,11 @@
                                             </span>
 
                                             <span class="ms-auto d-flex align-items-center gap-1">
-                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon"
+                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon px-1 rounded"
                                                     data-final-key="rio_dokter"
                                                     title="Sudah difinalisasi dokter"></i>
 
-                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon"
+                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon px-1 rounded"
                                                     data-final-key="rio_perawat"
                                                     title="Sudah difinalisasi perawat"></i>
                                             </span>
@@ -226,7 +226,7 @@
                             </div>
 
                             <div class="menu-wrapper">
-                                <!-- Rawat Inap -->
+                                {{-- Bedah & Anestesi --}}
                                 <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center menu-collapse menu-parent"
                                     data-bs-toggle="collapse"
                                     href="#submenuBedahAnestesi"
@@ -235,29 +235,62 @@
                                     <span>Form Pengkajian Bedah & Anestesi</span>
                                     <i class="ti ti-chevron-down submenu-icon"></i>
                                 </a>
+
                                 <div class="collapse submenu" id="submenuBedahAnestesi">
                                     <div class="list-group">
+
                                         <a href="javascript:void(0);"
-                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            class="list-group-item list-group-item-action ps-5 menu-child js-final d-flex align-items-center"
                                             data-form="pengkajian-prabedah"
                                             data-group="awal">
-                                            <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
-                                            Form Pra Bedah
+                                            <span>
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Pra Bedah
+                                            </span>
+
+                                            <span class="ms-auto d-flex align-items-center gap-1">
+                                                <i class="ri-nurse-line text-bg-warning d-none js-final-icon px-1 rounded"
+                                                    data-final-key="prabedah"
+                                                    title="Sudah difinalisasi"></i>
+                                            </span>
                                         </a>
+
                                         <a href="javascript:void(0);"
-                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            class="list-group-item list-group-item-action ps-5 menu-child js-final d-flex align-items-center"
                                             data-form="pengkajian-praanestesiinduksi"
                                             data-group="awal">
-                                            <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
-                                            Form Pra Anestesia Dan Induksi
+                                            <span>
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Pra Anestesia Dan Induksi
+                                            </span>
+
+                                            <span class="ms-auto d-flex align-items-center gap-1">
+                                                <i class="ri-nurse-line text-bg-warning d-none js-final-icon px-1 rounded"
+                                                    data-final-key="praanestesiinduksi"
+                                                    title="Sudah difinalisasi"></i>
+                                            </span>
                                         </a>
+
                                         <a href="javascript:void(0);"
-                                            class="list-group-item list-group-item-action ps-5 menu-child"
+                                            class="list-group-item list-group-item-action ps-5 menu-child js-final d-flex align-items-center"
                                             data-form="pengkajian-laporananestesi"
                                             data-group="awal">
-                                            <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
-                                            Form Laporan Anestesi
+                                            <span>
+                                                <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                                Form Laporan Anestesi
+                                            </span>
+
+                                            <span class="ms-auto d-flex align-items-center gap-1">
+                                                <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon px-1 rounded"
+                                                    data-final-key="lap_pasca_anestesi"
+                                                    title="Sudah difinalisasi penata anestesi"></i>
+
+                                                <i class="ri-nurse-line text-bg-success d-none js-final-icon px-1 rounded"
+                                                    data-final-key="lap_anestesi"
+                                                    title="Sudah difinalisasi dokter"></i>
+                                            </span>
                                         </a>
+
                                     </div>
                                 </div>
                             </div>
@@ -266,38 +299,108 @@
                                 <h5 class="mt-2 ms-3">PENGKAJIAN KHUSUS</h5>
                             </div>
 
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-remaja" data-group="khusus">
-                                Form Pengkajian Remaja
-                            </a>
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-terminal" data-group="khusus">
-                                Form Pengkajian Terminal
-                            </a>
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-nyerikronik" data-group="khusus">
-                                Form Pengkajian Nyeri Kronik
-                            </a>
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-sistemimunterganggu" data-group="khusus">
-                                Form Pengkajian Sistem Imun Terganggu
-                            </a>
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-kecanduanobatalkohol" data-group="khusus">
-                                Form Pengkajian Kecanduan Obat Terlarang
-                            </a>
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-korbankekerasan" data-group="khusus">
-                                Form Pengkajian Korban Kekerasan
-                            </a>
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-penyakitmenular" data-group="khusus">
-                                Form Pengkajian Penyakit Menular
-                            </a>
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-khusus-lanjutan" data-group="khusus">
-                                Form Pengkajian Lanjutan
+                            <a href="javascript:void(0);"
+                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center"
+                                data-form="pengkajian-khusus-remaja"
+                                data-group="khusus">
+                                <span>Form Pengkajian Remaja</span>
+
+                                <span class="ms-auto d-flex align-items-center gap-1">
+                                    <i class="ri-nurse-line text-bg-warning d-none js-final-icon px-1 rounded"
+                                        data-final-key="kh_remaja"
+                                        title="Sudah difinalisasi"></i>
+                                </span>
                             </a>
 
-                            <div class="list-group-item menu-group-title p-2" data-group="lain">
-                                <h5 class="mt-2 ms-3">LAIN-LAIN</h5>
-                            </div>
+                            <a href="javascript:void(0);"
+                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center"
+                                data-form="pengkajian-khusus-terminal"
+                                data-group="khusus">
+                                <span>Form Pengkajian Terminal</span>
 
-                            <!-- Lembar Transfer Pasien -->
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="form-transfer-pasien" data-group="lain">
-                                Lembar Transfer Pasien Internal
+                                <span class="ms-auto d-flex align-items-center gap-1">
+                                    <i class="ri-nurse-line text-bg-warning d-none js-final-icon px-1 rounded"
+                                        data-final-key="kh_terminal"
+                                        title="Sudah difinalisasi"></i>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);"
+                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center"
+                                data-form="pengkajian-khusus-nyerikronik"
+                                data-group="khusus">
+                                <span>Form Pengkajian Nyeri Kronik</span>
+
+                                <span class="ms-auto d-flex align-items-center gap-1">
+                                    <i class="ri-nurse-line text-bg-warning d-none js-final-icon px-1 rounded"
+                                        data-final-key="kh_nyerikronik"
+                                        title="Sudah difinalisasi"></i>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);"
+                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center"
+                                data-form="pengkajian-khusus-sistemimunterganggu"
+                                data-group="khusus">
+                                <span>Form Pengkajian Sistem Imun Terganggu</span>
+
+                                <span class="ms-auto d-flex align-items-center gap-1">
+                                    <i class="ri-nurse-line text-bg-warning d-none js-final-icon px-1 rounded"
+                                        data-final-key="kh_sistemimun"
+                                        title="Sudah difinalisasi"></i>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);"
+                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center"
+                                data-form="pengkajian-khusus-kecanduanobatalkohol"
+                                data-group="khusus">
+                                <span>Form Pengkajian Kecanduan Obat Terlarang</span>
+
+                                <span class="ms-auto d-flex align-items-center gap-1">
+                                    <i class="ri-nurse-line text-bg-warning d-none js-final-icon px-1 rounded"
+                                        data-final-key="kh_kecanduanobat"
+                                        title="Sudah difinalisasi"></i>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);"
+                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center"
+                                data-form="pengkajian-khusus-korbankekerasan"
+                                data-group="khusus">
+                                <span>Form Pengkajian Korban Kekerasan</span>
+
+                                <span class="ms-auto d-flex align-items-center gap-1">
+                                    <i class="ri-nurse-line text-bg-warning d-none js-final-icon px-1 rounded"
+                                        data-final-key="kh_korbankekerasan"
+                                        title="Sudah difinalisasi"></i>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);"
+                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center"
+                                data-form="pengkajian-khusus-penyakitmenular"
+                                data-group="khusus">
+                                <span>Form Pengkajian Penyakit Menular</span>
+
+                                <span class="ms-auto d-flex align-items-center gap-1">
+                                    <i class="ri-nurse-line text-bg-warning d-none js-final-icon px-1 rounded"
+                                        data-final-key="kh_penyakitmenular"
+                                        title="Sudah difinalisasi"></i>
+                                </span>
+                            </a>
+
+                            <a href="javascript:void(0);"
+                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center"
+                                data-form="pengkajian-khusus-lanjutan"
+                                data-group="khusus">
+                                <span>Form Pengkajian Lanjutan</span>
+
+                                <span class="ms-auto d-flex align-items-center gap-1">
+                                    <i class="ri-nurse-line text-bg-warning d-none js-final-icon px-1 rounded"
+                                        data-final-key="kh_lanjutan"
+                                        title="Sudah difinalisasi"></i>
+                                </span>
                             </a>
                         </div>
                     </div>
@@ -368,6 +471,10 @@
 
 <script>
     $(function () {
+
+        // Nilai kunjungan harus tersedia di scope yang sama dengan fungsi
+        // global di bawah. Sebelumnya variabel ini belum pernah dideklarasikan.
+        const kunjungan = @json($list['kunjungan'] ?? '');
 
         let activeApiRequests = 0;
 
@@ -811,8 +918,10 @@
             return $(this).data('final-key');
         }).get();
 
+        $KUNJUNGAN = @json($list["KUNJUNGAN"]);
+
         $.ajax({
-            url: `/api/v2/emr/pengkajian/status-finalisasi/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/status-finalisasi/${$KUNJUNGAN}`,
             type: 'GET',
             dataType: 'json',
             cache: false,
