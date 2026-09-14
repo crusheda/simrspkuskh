@@ -189,6 +189,11 @@
                                     Form Pengkajian Lanjutan
                                 </a>
                             </li>
+                            <li>
+                                <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="form-transfer-pasien" data-group="khusus">
+                                    Lembar Transfer Pasien
+                                </a>
+                            </li>
 
                             {{-- <li>
                                 <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#submenuKhusus" role="button">
