@@ -11,17 +11,34 @@
 
 <div id="{{ $formId }}_finalisasi_action"
     class="position-relative d-flex justify-content-between align-items-center gap-2 mt-4 pt-3 border-top z-4">
-    <div>
+    <div class="btn-group" role="group" aria-label="Aksi Finalisasi">
+
+        {{-- PRINT PREVIEW --}}
+        <button type="button"
+            class="btn btn-primary d-none"
+            data-finalisasi-action="preview">
+            <i class="fa-solid fa-print me-1"></i>
+            Print Preview
+        </button>
+
+        {{-- FINALISASI --}}
         <button type="button"
             class="btn btn-success {{ $isInitialFinal ? 'd-none' : '' }}"
-            data-finalisasi-action="final" disabled>
-            <i class="fa-solid fa-check me-1"></i> Finalisasi
+            data-finalisasi-action="final"
+            disabled>
+            <i class="fa-solid fa-check me-1"></i>
+            Finalisasi
         </button>
+
+        {{-- BATAL FINAL --}}
         <button type="button"
             class="btn btn-warning {{ $isInitialFinal ? '' : 'd-none' }}"
-            data-finalisasi-action="batal" disabled>
-            <i class="fa-solid fa-rotate-left me-1"></i> Batal Final
+            data-finalisasi-action="batal"
+            disabled>
+            <i class="fa-solid fa-rotate-left me-1"></i>
+            Batal Final
         </button>
+
     </div>
     <p class="mb-0 text-end" id="{{ $formId }}_final_identity"></p>
 </div>
@@ -123,6 +140,146 @@
 
 </div>
 
+<div class="modal fade"
+    id="{{ $formId }}_print_preview_modal"
+    tabindex="-1"
+    aria-hidden="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+
+            {{-- HEADER --}}
+            <div class="modal-header">
+
+                <div>
+                    <h5 class="modal-title mb-1">
+                        <i class="fa-solid fa-print me-2"></i>
+                        Print Preview
+                        <span class="badge bg-success ms-2">
+                            <i class="fa-solid fa-check me-1"></i>
+                            Sudah Difinalisasi
+                        </span>
+                    </h5>
+                </div>
+
+                <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            {{-- BODY --}}
+            <div class="modal-body p-0 position-relative">
+
+                {{-- LOADING --}}
+                <div
+                    id="{{ $formId }}_print_preview_loading"
+                    class="align-items-center justify-content-center"
+                    style="height: 75vh;">
+
+                    <div class="text-center">
+
+                        <div
+                            class="spinner-border text-primary mb-3"
+                            role="status">
+                        </div>
+
+                        <div class="text-muted">
+                            Menyiapkan PDF...
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {{-- ERROR --}}
+                <div
+                    id="{{ $formId }}_print_preview_error"
+                    class="align-items-center justify-content-center"
+                    style="height: 75vh; display: none;">
+
+                    <div class="text-center">
+
+                        <div class="mb-3">
+                            <i
+                                class="fa-solid fa-circle-exclamation text-danger"
+                                style="font-size: 48px;">
+                            </i>
+                        </div>
+
+                        <h5 class="mb-2">
+                            Gagal Membuat PDF
+                        </h5>
+
+                        <div
+                            class="text-muted mb-4"
+                            id="{{ $formId }}_print_preview_error_message">
+                            Terjadi kesalahan saat membuat PDF.
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            id="{{ $formId }}_print_preview_retry">
+
+                            <i class="fa-solid fa-rotate-right me-1"></i>
+                            Generate Ulang
+                        </button>
+
+                    </div>
+
+                </div>
+
+                {{-- PDF --}}
+                <iframe
+                    id="{{ $formId }}_print_preview_iframe"
+                    src="about:blank"
+                    style="
+                        width: 100%;
+                        height: 75vh;
+                        border: 0;
+                        display: none;
+                    ">
+                </iframe>
+
+            </div>
+
+            {{-- FOOTER --}}
+            <div class="modal-footer d-flex align-item-center justify-content-between">
+
+                <div
+                    class="small text-muted"
+                    id="{{ $formId }}_print_preview_info">
+                    -
+                </div>
+                <div>
+                    <button
+                        type="button"
+                        class="btn btn-secondary me-2"
+                        data-bs-dismiss="modal">
+
+                        <i class="fa-solid fa-xmark me-1"></i>
+                        Tutup
+                    </button>
+
+                    <a
+                        href="#"
+                        target="_blank"
+                        class="btn btn-primary disabled"
+                        id="{{ $formId }}_print_preview_new_tab">
+
+                        <i class="fa-solid fa-up-right-from-square me-1"></i>
+                        Buka PDF
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <script>
 (function(){
     'use strict';
@@ -153,6 +310,10 @@
         '[data-finalisasi-action="batal"]'
     );
 
+    const $btnPreview = $action.find(
+        '[data-finalisasi-action="preview"]'
+    );
+
     const $backdrop = $('#' + formId + '_finalisasi_backdrop');
 
     const modalId = formId + '_modal_batal_final';
@@ -177,6 +338,8 @@
     const urlBatalFinalisasi =
         `/api/v2/emr/pengkajian/batal-finalisasi/${kunjungan}`;
 
+    const urlPrintPreview =
+        `/api/v2/emr/pengkajian/finalisasi/preview/${kunjungan}`;
     function formatWaktuFinal(waktu) {
         const bulan = [
             'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
@@ -189,8 +352,44 @@
     }
 
     function aktifkanTombolFinalisasi(isFinal) {
-        $btnFinal.prop('disabled', isFinal);
-        $btnBatal.prop('disabled', !isFinal);
+
+        /*
+        |--------------------------------------------------------------------------
+        | FINALISASI
+        |--------------------------------------------------------------------------
+        */
+
+        $btnFinal.prop(
+            'disabled',
+            isFinal
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | BATAL FINAL
+        |--------------------------------------------------------------------------
+        */
+
+        $btnBatal.prop(
+            'disabled',
+            !isFinal
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | PRINT PREVIEW
+        |--------------------------------------------------------------------------
+        |
+        | HANYA MUNCUL JIKA SUDAH FINAL.
+        |
+        */
+
+        $btnPreview
+            .prop('disabled', !isFinal)
+            .toggleClass(
+                'd-none',
+                !isFinal
+            );
     }
 
     // ==========================================================
@@ -309,6 +508,403 @@
             updateBackdrop();
         }
     }, true);
+
+    // ==========================================================
+    // PRINT PREVIEW
+    // ==========================================================
+    function printPreview() {
+        if ($btnPreview.hasClass('d-none') || $btnPreview.prop('disabled')) {
+            return;
+        }
+
+        generatePrintPreview();
+    }
+
+    function generatePrintPreview() {
+        const originalHtml = $btnPreview.html();
+
+        const $modal = $('#' + formId + '_print_preview_modal');
+        const $iframe = $('#' + formId + '_print_preview_iframe');
+        const $loading = $('#' + formId + '_print_preview_loading');
+        const $error = $('#' + formId + '_print_preview_error');
+        const $errorMessage = $('#' + formId + '_print_preview_error_message');
+        const $info = $('#' + formId + '_print_preview_info');
+        const $newTab = $('#' + formId + '_print_preview_new_tab');
+        const $retry = $('#' + formId + '_print_preview_retry');
+
+        const modalElement = $modal.get(0);
+
+        if (!modalElement) {
+            console.error('Modal print preview tidak ditemukan.');
+            return;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | RESET
+        |--------------------------------------------------------------------------
+        */
+
+        $iframe
+            .off('load.printPreview')
+            .hide()
+            .attr('src', 'about:blank');
+
+        $loading
+            .css('display', 'flex')
+            .show();
+
+        $error.hide();
+
+        $newTab
+            .attr('href', '#')
+            .addClass('disabled');
+
+        $info.html(`
+            <span class="text-muted">
+                <i class="fa-solid fa-spinner fa-spin me-1"></i>
+                Menyiapkan dokumen...
+            </span>
+        `);
+
+        /*
+        |--------------------------------------------------------------------------
+        | SHOW MODAL
+        |--------------------------------------------------------------------------
+        */
+
+        bootstrap.Modal
+            .getOrCreateInstance(modalElement)
+            .show();
+
+        /*
+        |--------------------------------------------------------------------------
+        | BUTTON LOADING
+        |--------------------------------------------------------------------------
+        */
+
+        $btnPreview
+            .prop('disabled', true)
+            .html(`
+                <span
+                    class="spinner-border spinner-border-sm me-1"
+                    role="status">
+                </span>
+                Menyiapkan...
+            `);
+
+        /*
+        |--------------------------------------------------------------------------
+        | FETCH PDF
+        |--------------------------------------------------------------------------
+        */
+
+        fetch(
+            urlPrintPreview +
+            '?formKey=' +
+            encodeURIComponent(formKey),
+            {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/pdf'
+                },
+                cache: 'no-store'
+            }
+        )
+        .then(response => {
+
+            /*
+            |--------------------------------------------------------------------------
+            | ERROR RESPONSE
+            |--------------------------------------------------------------------------
+            */
+
+            if (!response.ok) {
+                return response.text()
+                    .then(text => {
+
+                        let message =
+                            'PDF tidak ditemukan atau gagal dibuat.';
+
+                        try {
+                            const data = JSON.parse(text);
+
+                            if (data?.message) {
+                                message = data.message;
+                            }
+                        } catch (e) {
+                            console.error(
+                                'Response error:',
+                                text
+                            );
+                        }
+
+                        throw new Error(message);
+                    });
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | PDF -> BLOB
+            |--------------------------------------------------------------------------
+            */
+
+            return response.blob();
+        })
+        .then(blob => {
+
+            if (!blob || blob.size === 0) {
+                throw new Error(
+                    'File PDF kosong atau gagal dibuat.'
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | OBJECT URL
+            |--------------------------------------------------------------------------
+            */
+
+            const fileURL = URL.createObjectURL(
+                new Blob(
+                    [blob],
+                    {
+                        type: 'application/pdf'
+                    }
+                )
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | INFO FINALISASI
+            |--------------------------------------------------------------------------
+            */
+
+            const identityText = $('#' + formId + '_final_identity')
+                .html()
+                .trim();
+
+            if (identityText) {
+
+                $info.html(`
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+
+                        <span class="text-muted">
+                            ${identityText}
+                        </span>
+
+                    </div>
+                `);
+
+            } else {
+
+                $info.html(`
+                    <div class="d-flex align-items-center gap-2">
+
+                        <span class="text-muted">
+                            PDF berhasil dibuat.
+                        </span>
+
+                    </div>
+                `);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | LOAD PDF
+            |--------------------------------------------------------------------------
+            |
+            | Loading TIDAK dihilangkan di sini.
+            |
+            | Kita menunggu iframe benar-benar menerima PDF.
+            |
+            */
+
+            $iframe
+                .off('load.printPreview')
+                .on(
+                    'load.printPreview',
+                    function() {
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | PDF SUDAH SELESAI DIMUAT
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $loading.hide();
+
+                        /*
+                        | Baru tampilkan iframe setelah load selesai.
+                        */
+
+                        $(this).show();
+                    }
+                )
+                .on(
+                    'error.printPreview',
+                    function() {
+
+                        $loading.hide();
+
+                        $(this).hide();
+
+                        $errorMessage.text(
+                            'PDF gagal ditampilkan di browser.'
+                        );
+
+                        $error
+                            .css('display', 'flex')
+                            .show();
+                    }
+                )
+                .attr('src', fileURL);
+
+            /*
+            |--------------------------------------------------------------------------
+            | OPEN PDF
+            |--------------------------------------------------------------------------
+            */
+
+            $newTab
+                .attr('href', fileURL)
+                .removeClass('disabled');
+
+            /*
+            |--------------------------------------------------------------------------
+            | RETRY
+            |--------------------------------------------------------------------------
+            */
+
+            $retry
+                .off('click.printPreview');
+
+            /*
+            |--------------------------------------------------------------------------
+            | CLEANUP
+            |--------------------------------------------------------------------------
+            */
+
+            $modal
+                .off('hidden.bs.modal.printPreview')
+                .on(
+                    'hidden.bs.modal.printPreview',
+                    function() {
+
+                        URL.revokeObjectURL(fileURL);
+
+                        $iframe
+                            .off(
+                                'load.printPreview error.printPreview'
+                            )
+                            .attr(
+                                'src',
+                                'about:blank'
+                            )
+                            .hide();
+
+                        $loading.hide();
+
+                        $error.hide();
+
+                        $newTab
+                            .attr('href', '#')
+                            .addClass('disabled');
+                    }
+                );
+        })
+        .catch(error => {
+
+            console.error(
+                'Print Preview Error:',
+                error
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | HIDE LOADING
+            |--------------------------------------------------------------------------
+            */
+
+            $loading.hide();
+
+            /*
+            |--------------------------------------------------------------------------
+            | HIDE IFRAME
+            |--------------------------------------------------------------------------
+            */
+
+            $iframe
+                .off('load.printPreview error.printPreview')
+                .hide()
+                .attr(
+                    'src',
+                    'about:blank'
+                );
+
+            /*
+            |--------------------------------------------------------------------------
+            | ERROR MESSAGE
+            |--------------------------------------------------------------------------
+            */
+
+            const message =
+                error.message ||
+                'Gagal membuat PDF.';
+
+            $errorMessage.text(message);
+
+            /*
+            |--------------------------------------------------------------------------
+            | SHOW ERROR AREA
+            |--------------------------------------------------------------------------
+            */
+
+            $error
+                .css('display', 'flex')
+                .show();
+
+            /*
+            |--------------------------------------------------------------------------
+            | INFO
+            |--------------------------------------------------------------------------
+            */
+
+            $info.html(`
+                <span class="text-danger">
+                    <i class="fa-solid fa-circle-exclamation me-1"></i>
+                    Gagal membuat PDF
+                </span>
+            `);
+
+            /*
+            |--------------------------------------------------------------------------
+            | RETRY
+            |--------------------------------------------------------------------------
+            */
+
+            $retry
+                .off('click.printPreview')
+                .on(
+                    'click.printPreview',
+                    function() {
+
+                        generatePrintPreview();
+                    }
+                );
+        })
+        .finally(() => {
+
+            $btnPreview
+                .prop('disabled', false)
+                .html(originalHtml);
+        });
+    }
+
+    $btnPreview.on('click', function() {
+        printPreview();
+    });
 
     // ==========================================================
     // FINALISASI

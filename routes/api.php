@@ -17,6 +17,7 @@ use App\Http\Controllers\Display\AntrianPoliController;
 use App\Http\Controllers\Display\AntrianAdmisiController;
 use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\Form\AddOnPengkajianController;
+use App\Http\Controllers\EMR\Form\PrintPreviewController;
 use App\Http\Controllers\EMR\Form\Finalisasi\FinalisasiController;
 use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
@@ -376,6 +377,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
             Route::get('emr/pengkajian/finalisasi/{kunjungan}', [FinalisasiController::class, 'statusFinalisasiPengkajianRanap']);
             Route::post('emr/pengkajian/finalisasi/{kunjungan}', [FinalisasiController::class, 'finalisasiPengkajianRanap']);
             Route::post('emr/pengkajian/batal-finalisasi/{kunjungan}', [FinalisasiController::class, 'batalFinalisasiPengkajianRanap']);
+
+            // PRINT PREVIEW
+            Route::get( '/emr/pengkajian/finalisasi/preview/{kunjungan}', [PrintPreviewController::class, 'printPreview']);
 
         // KLAIM
         Route::get('generate/lab/{kunjungan}', [BerkasKlaimController::class, 'generateLab']);
