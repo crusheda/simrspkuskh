@@ -85,130 +85,7 @@
                 </div>
             </div>
             <div class="col-md-12 mb-3">
-                <div class="card card-body border border-dashed border-success mb-1">
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-bold">Tindak Lanjut :</label>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tl" id="tl_mrs" value="1">
-                                <label class="form-check-label">
-                                    MRS
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tl" id="tl_pulang" value="2">
-                                <label class="form-check-label">
-                                    Pulang
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card card-body card-header border border-dashed border-primary" id="pri">
-                        <div class="card-header fw-bold">
-                            Perencanaan Rawat Inap
-                        </div>
-
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <div class="form-group">
-                                        <label class="form-label fw-bold">Jenis Ruang Perawatan</label>
-                                        <select class="form-control" name="pri_ruang" id="pri_ruang">
-                                            <option value="">Pilih Jenis Ruang Perawatan</option>
-                                            @foreach ($list['jenis_ruang'] as $item)
-                                                <option value="{{ $item->ID }}">
-                                                    {{ $item->DESKRIPSI }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <div class="form-group">
-                                        <label class="form-label fw-bold">Jenis Perawatan</label>
-                                        <select class="form-control" name="pri_perawatan" id="pri_perawatan">
-                                            <option value="">Pilih Jenis Perawatan</option>
-                                            @foreach ($list['jenis_perawatan'] as $item)
-                                                <option value="{{ $item->ID }}">
-                                                    {{ $item->DESKRIPSI }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Tanggal</label>
-                                    <div class="input-group">
-                                        <input type="text" name="pri_tgl" id="pri_tgl" class="form-control flatpickr-input active" placeholder="Pilih Rentang Tanggal" readonly="readonly">
-                                        <span class="input-group-text"><i class="feather icon-calendar"></i></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Indikasi</label>
-                                    <textarea class="form-control" name="pri_indikasi" id="pri_indikasi" rows="3"></textarea>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Keterangan</label>
-                                    <textarea class="form-control" name="pri_ket" id="pri_ket" rows="3"></textarea>
-                                </div>
-                                <div class="col-md-12 mb-3">
-                                    <label class="form-label fw-bold">DPJP</label>
-                                    <input type="text" class="form-control" value="{{ $list['pasien']->NAMADOKTER ?? '' }}" placeholder="Nama DPJP" readonly>
-                                    <input type="hidden" name="pri_dpjp" value="{{ $list['pasien']->ID ?? '' }}">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <hr>
-                        <div class="col-md-3">
-                            <label class="form-label fw-bold">Dirujuk Ke</label>
-                        </div>
-                        <div class="col-md-9">
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="rujuk" id="rujuk_gizi" value="1">
-                                        <label class="form-check-label">
-                                            Ahli Gizi
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="rujuk" id="rujuk_rehab" value="2">
-                                        <label class="form-check-label">
-                                            Rehabilitasi Medik
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="rujuk" id="rujuk_sp" value="3">
-                                        <label class="form-check-label">
-                                            Klinik Spesialis
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="rujuk" id="rujuk_lain" value="4">
-                                        <label class="form-check-label">
-                                            Lainnya
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" name="rujuk_lainnya" id="rujuk_lainnya" placeholder="Sebutkan....">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.admission_note',['section' => '#rja_dokter'])
             </div>
         </div>
     </div>
@@ -225,44 +102,6 @@
 <script>
 
     $(document).ready(function () {
-
-        // Sembunyikan textarea saat pertama kali
-        $('#pri').hide();
-        $('#rujuk_lainnya').hide();
-
-        // Perencanaan Rawat Inap
-        $('input[name="tl"]').change(function () {
-            if ($('#tl_mrs').is(':checked')) {
-                $('#pri').slideDown();
-            } else {
-                $('#pri').slideUp();
-            }
-        });
-
-        // Dirujuk Ke
-        $('input[name="rujuk"]').change(function () {
-            if ($('#rujuk_lain').is(':checked')) {
-                $('#rujuk_lainnya').slideDown();
-            } else {
-                $('#rujuk_lainnya').slideUp().val('');
-            }
-        });
-
-        // FLATPICKR DATE
-        const today = new Date(); // Hari ini
-        const fiveYearsAgo = new Date();
-        fiveYearsAgo.setFullYear(today.getFullYear() - 5); // 5 tahun ke belakang
-        $("#pri_tgl").flatpickr(
-            {
-                // enableTime: true,
-                // dateFormat: "Y-m-d H:i",
-                mode: 'single',
-                minDate: fiveYearsAgo, // Mulai dari 5 tahun yang lalu
-                maxDate: today,        // Sampai hari ini
-                dateFormat: 'Y-m-d',
-                defaultDate: [today]
-            }
-        );
 
         loadDataPengkajianRJAd();
     });
@@ -305,16 +144,6 @@
         $("#terapi_tind").val(data.terapi_tind);
 
         $("#tu").val(data.tu);
-
-        $('input[name="tl"][value="' + data.tl + '"]').prop('checked', true).trigger('change');
-        $('input[name="rujuk"][value="' + data.rujuk + '"]').prop('checked', true).trigger('change');
-        $('#rujuk_lainnya').val(data.rujuk_lainnya);
-
-        $('#pri_ruang').val(data.pri_ruang);
-        $('#pri_perawatan').val(data.pri_perawatan);
-        $('#pri_indikasi').val(data.pri_indikasi);
-        $('#pri_ket').val(data.pri_ket);
-        $('#pri_dpjp').val(data.pri_dpjp);
 
     }
 

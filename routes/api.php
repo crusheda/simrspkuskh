@@ -326,6 +326,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // TANDA VITAL TRANSFER
                     Route::get('emr/pengkajian/tandavitaltf/{kunjungan}', [AddOnPengkajianController::class, 'getTandaVitalTf']);
                     Route::post('emr/pengkajian/tandavitaltf/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTandaVitalTf']);
+                // ADMISSION NOTE
+                    Route::get('emr/pengkajian/admission/{kunjungan}', [AddOnPengkajianController::class, 'getAdmissionNote']);
+                    Route::post('emr/pengkajian/admission/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanAdmissionNote']);
 
                 // KHUSUS RAWAT INAP
                     // DAFTAR MASALAH KEPERAWATAN
