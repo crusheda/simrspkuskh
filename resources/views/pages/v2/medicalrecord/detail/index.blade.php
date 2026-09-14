@@ -218,7 +218,7 @@
         </div>
         <div class="tab-content">
             <div class="tab-pane" id="fpengkajian" role="tabpanel">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.tab_pengkajian')
+                @include('pages.v2.medicalrecord.detail.form.tab')
             </div>
         </div>
         <div class="tab-content">

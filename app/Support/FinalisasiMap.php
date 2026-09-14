@@ -7,43 +7,65 @@ use InvalidArgumentException;
 final class FinalisasiMap
 {
     private const FORM_SUB = [
-        'rid_dokter' => [
-            'form' => 'pengkajian-ranap-dewasa',
-            'sub' => 'DOKTER',
-        ],
-        'rid_perawat' => [
-            'form' => 'pengkajian-ranap-dewasa',
-            'sub' => 'PERAWAT',
-        ],
+        // Pengkajian Awal
+            // Rawat Darurat
+            'gdD_dokter' => [
+                'form' => 'pengkajian-ranap-dewasa',
+                'sub' => 'DOKTER',
+            ],
 
-        'ria_dokter' => [
-            'form' => 'pengkajian-ranap-anak',
-            'sub' => 'DOKTER',
-        ],
-        'ria_perawat' => [
-            'form' => 'pengkajian-ranap-anak',
-            'sub' => 'PERAWAT',
-        ],
+            // Rawat Inap
+            'rid_dokter' => [
+                'form' => 'pengkajian-ranap-dewasa',
+                'sub' => 'DOKTER',
+            ],
+            'rid_perawat' => [
+                'form' => 'pengkajian-ranap-dewasa',
+                'sub' => 'PERAWAT',
+            ],
 
-        'rin_dokter' => [
-            'form' => 'pengkajian-ranap-neonatus',
-            'sub' => 'DOKTER',
-        ],
-        'rin_perawat' => [
-            'form' => 'pengkajian-ranap-neonatus',
-            'sub' => 'PERAWAT',
-        ],
+            'ria_dokter' => [
+                'form' => 'pengkajian-ranap-anak',
+                'sub' => 'DOKTER',
+            ],
+            'ria_perawat' => [
+                'form' => 'pengkajian-ranap-anak',
+                'sub' => 'PERAWAT',
+            ],
 
-        'rio_dokter' => [
-            'form' => 'pengkajian-ranap-obsgyn',
-            'sub' => 'DOKTER',
-        ],
-        'rio_perawat' => [
-            'form' => 'pengkajian-ranap-obsgyn',
-            'sub' => 'PERAWAT',
-        ],
+            'rin_dokter' => [
+                'form' => 'pengkajian-ranap-neonatus',
+                'sub' => 'DOKTER',
+            ],
+            'rin_perawat' => [
+                'form' => 'pengkajian-ranap-neonatus',
+                'sub' => 'PERAWAT',
+            ],
 
-        // Pengkajian khusus
+            'rio_dokter' => [
+                'form' => 'pengkajian-ranap-obsgyn',
+                'sub' => 'DOKTER',
+            ],
+            'rio_perawat' => [
+                'form' => 'pengkajian-ranap-obsgyn',
+                'sub' => 'PERAWAT',
+            ],
+
+            // Anestesi
+            'lap_anestesi' => ['form' => 'laporan-anestesi', 'sub' => 'PENATA-ANESTESI'],
+            'lap_pasca_anestesi' => ['form' => 'instruksi-pasca-anestesi', 'sub' => 'DOKTER-ANESTESI'],
+
+            // Bedah
+            'prabedah' => [
+                'form' => 'pengkajian-prabedah',
+                'sub' => 'BEDAH',
+            ],
+            'praanestesiinduksi' => [
+                'form' => 'pengkajian-praanestesiinduksi',
+                'sub' => 'ANESTESI',
+            ],
+
+        // Pengkajian Khusus
         'kh_remaja' => ['form' => 'pengkajian-khusus-remaja', 'sub' => 'KHUSUS'],
         'kh_terminal' => ['form' => 'pengkajian-khusus-terminal', 'sub' => 'KHUSUS'],
         'kh_nyerikronik' => ['form' => 'pengkajian-khusus-nyerikronik', 'sub' => 'KHUSUS'],
@@ -53,18 +75,10 @@ final class FinalisasiMap
         'kh_penyakitmenular' => ['form' => 'pengkajian-khusus-penyakitmenular', 'sub' => 'KHUSUS'],
         'kh_lanjutan' => ['form' => 'pengkajian-khusus-lanjutan', 'sub' => 'KHUSUS'],
 
-        // Anestesi
-        'lap_anestesi' => ['form' => 'laporan-anestesi', 'sub' => 'PENATA-ANESTESI'],
-        'lap_pasca_anestesi' => ['form' => 'instruksi-pasca-anestesi', 'sub' => 'DOKTER-ANESTESI'],
-
-        // Bedah
-        'prabedah' => [
-            'form' => 'pengkajian-prabedah',
-            'sub' => 'BEDAH',
-        ],
-        'praanestesiinduksi' => [
-            'form' => 'pengkajian-praanestesiinduksi',
-            'sub' => 'ANESTESI',
+        // Form Lain
+        'ln_transfer' => [
+            'form' => 'transfer-pasien',
+            'sub' => 'PERAWAT',
         ],
     ];
 

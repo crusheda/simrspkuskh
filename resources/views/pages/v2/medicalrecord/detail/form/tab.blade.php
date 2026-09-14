@@ -1,5 +1,5 @@
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('v2/css/emr/tab_pengkajian.css') }}">
+    <link rel="stylesheet" href="{{ asset('v2/css/emr/tab.css') }}">
 @endpush
 <div id="apiLoadingBar" class="api-loading-bar" aria-hidden="true">
     <div class="api-loading-bar__progress"></div>
@@ -32,7 +32,6 @@
                         </div>
                     </div> --}}
                     <div class="card-header p-3 d-flex align-items-center gap-2">
-
                         <div class="form-search flex-grow-1">
                             <i class="ph-duotone ph-magnifying-glass icon-search"></i>
 
@@ -56,10 +55,11 @@
                             type="button"
                             class="btn btn-icon btn-action-telegram waves-effect waves-light"
                             id="btn-minimize-pengkajian"
-                            title="Minimize Menu" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Minimize Sidebar">
+                            title="Minimize Sidebar"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom">
                             <i class="ri-sidebar-fold-line fs-25"></i>
                         </button>
-
                     </div>
                     <div class="card-body p-0 menu-scroll" id="pengkajianMenu">
                         <div class="list-group">
@@ -69,8 +69,21 @@
                             </div>
 
                             <!-- Gawat Darurat -->
-                            <a href="javascript:void(0);" class="list-group-item list-group-item-action menu-item menu-parent" data-form="pengkajian-gd" data-group="awal">
-                                Form Pengkajian Gawat Darurat
+                            <a href="javascript:void(0);"
+                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center"
+                                data-form="pengkajian-gd"
+                                data-group="awal">
+                                <span>Form Pengkajian Gawat Darurat</span>
+
+                                <span class="ms-auto d-flex align-items-center gap-1">
+                                    <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon px-1 rounded"
+                                        data-final-key="gdd_dokter"
+                                        title="Sudah difinalisasi dokter"></i>
+
+                                    <i class="ri-nurse-line text-bg-success d-none js-final-icon px-1 rounded"
+                                        data-final-key="gdp_perawat"
+                                        title="Sudah difinalisasi perawat"></i>
+                                </span>
                             </a>
 
                             <div class="menu-wrapper">
@@ -402,6 +415,23 @@
                                         title="Sudah difinalisasi"></i>
                                 </span>
                             </a>
+
+                            <div class="list-group-item menu-group-title p-2" data-group="lain">
+                                <h5 class="mt-2 ms-3">PENGKAJIAN LAIN</h5>
+                            </div>
+
+                            <a href="javascript:void(0);"
+                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center"
+                                data-form="form-transfer-pasien"
+                                data-group="lain">
+                                <span>Lembar Transfer Pasien</span>
+
+                                <span class="ms-auto d-flex align-items-center gap-1">
+                                    <i class="ri-nurse-line text-bg-warning d-none js-final-icon px-1 rounded"
+                                        data-final-key="ln_transfer"
+                                        title="Sudah difinalisasi"></i>
+                                </span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -581,93 +611,277 @@
         });
 
         // ==========================
-        // SEARCH MENU FORM
-        // ==========================
-        $('#compo-menu-search').on('input', function () {
+// SEARCH MENU FORM
+// ==========================
+$('#compo-menu-search').on('input', function () {
 
-            const keyword = $(this).val().trim().toLowerCase();
+    const keyword = $(this).val()
+        .toLowerCase()
+        .trim();
 
-            // reset
-            menu.find('.menu-group-title').hide();
-            menu.find('.menu-item').hide();
-            $('.menu-wrapper').hide();
-            $('.menu-child').hide();
+    const $menu = $('#pengkajianMenu');
 
-            $('.submenu').removeClass('show');
+    // =====================================================
+    // RESET SEMUA MENU
+    // =====================================================
+    $menu.find('.menu-group-title').hide();
+    $menu.find('.menu-item').hide();
+    $menu.find('.menu-wrapper').hide();
+    $menu.find('.menu-child').hide();
 
-            $('.submenu-icon')
-                .removeClass('ti-chevron-up')
-                .addClass('ti-chevron-down');
+    $menu.find('.submenu').removeClass('show');
 
-            // ==========================
-            // JIKA KOSONG
-            // ==========================
-            if (keyword === '') {
+    $menu.find('.submenu-icon')
+        .removeClass('ti-chevron-up')
+        .addClass('ti-chevron-down');
 
-                $('.menu-group-title').show();
-                menu.find('.menu-item').show();
-                $('.menu-wrapper').show();
-                $('.menu-child').show();
+    // =====================================================
+    // SEARCH KOSONG
+    // =====================================================
+    if (keyword === '') {
 
-                return;
+        $menu.find('.menu-group-title').show();
+        $menu.find('.menu-item').show();
+        $menu.find('.menu-wrapper').show();
+        $menu.find('.menu-child').show();
+
+        return;
+    }
+
+    // =====================================================
+    // PECAH KEYWORD MENJADI KATA
+    // Contoh:
+    // "transfer pasien"
+    // menjadi ["transfer", "pasien"]
+    // =====================================================
+    const keywords = keyword
+        .split(/\s+/)
+        .filter(Boolean);
+
+    const matchedGroups = new Set();
+
+    // =====================================================
+    // FUNGSI NORMALISASI TEXT
+    // =====================================================
+    function normalizeText(text) {
+        return String(text || '')
+            .toLowerCase()
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    // =====================================================
+    // FUNGSI CEK KEYWORD
+    // SEMUA KATA HARUS ADA
+    // =====================================================
+    function isMatch(text) {
+
+        const normalizedText = normalizeText(text);
+
+        return keywords.every(function (word) {
+            return normalizedText.includes(word);
+        });
+    }
+
+    // =====================================================
+    // 1. MENU BIASA
+    // Contoh:
+    // Lembar Transfer Pasien
+    // =====================================================
+    $menu.find('.menu-item').each(function () {
+
+        const $item = $(this);
+
+        // Ambil span pertama agar icon finalisasi
+        // tidak ikut dihitung sebagai text pencarian
+        const text = normalizeText(
+            $item
+                .children('span')
+                .first()
+                .text()
+        );
+
+        const group = String(
+            $item.attr('data-group') || ''
+        );
+
+        if (isMatch(text)) {
+
+            $item.css('display', 'flex');
+
+            if (group) {
+                matchedGroups.add(group);
             }
 
-            // ==========================
-            // MENU TANPA SUBMENU
-            // ==========================
-            menu.find('.menu-item').each(function () {
+        } else {
 
-                const text = $(this).text().trim().toLowerCase();
+            $item.css('display', 'none');
 
-                if (text.includes(keyword)) {
+        }
+    });
 
-                    $(this).show();
+    // =====================================================
+    // 2. MENU DENGAN SUBMENU
+    // =====================================================
+    $menu.find('.menu-wrapper').each(function () {
 
-                    $('.menu-group-title[data-group="' + $(this).data('group') + '"]').show();
-                }
+        const $wrapper = $(this);
 
-            });
+        const $parent = $wrapper
+            .find('.menu-collapse')
+            .first();
 
-            // ==========================
-            // MENU WRAPPER
-            // ==========================
-            $('.menu-wrapper').each(function () {
+        // =================================================
+        // TEXT PARENT
+        // =================================================
+        const parentText = normalizeText(
+            $parent
+                .children('span')
+                .first()
+                .text()
+        );
 
-                const wrapper = $(this);
-                const childs = wrapper.find('.menu-child');
+        const group = String(
+            $parent.attr('data-group') || ''
+        );
 
-                let found = false;
+        let childMatched = false;
 
-                childs.each(function () {
+        // =================================================
+        // CEK SETIAP CHILD
+        // =================================================
+        $wrapper.find('.menu-child').each(function () {
 
-                    const text = $(this).text().trim().toLowerCase();
+            const $child = $(this);
 
-                    if (text.includes(keyword)) {
-                        $(this).show();
-                        found = true;
-                    }
+            /*
+             * Ambil TEXT CHILD SAJA.
+             *
+             * Tidak menggunakan parentText + childText.
+             *
+             * Clone digunakan agar icon <i> tidak ikut
+             * mempengaruhi text pencarian.
+             *
+             * Ini juga membuat struktur berikut sama-sama
+             * bisa dibaca:
+             *
+             * Rawat Jalan:
+             * <i>...</i> Form Dewasa
+             *
+             * Rawat Inap:
+             * <span>
+             *     <i>...</i> Form Dewasa
+             * </span>
+             */
 
-                });
+            const $clone = $child.clone();
 
-                if (found) {
+            // Hapus semua icon dari hasil clone
+            $clone.find('i').remove();
 
-                    wrapper.show();
+            const childText = normalizeText(
+                $clone.text()
+            );
 
-                    wrapper.find('.submenu')
-                        .addClass('show');
+            // =============================================
+            // CHILD COCOK
+            // =============================================
+            if (isMatch(childText)) {
 
-                    wrapper.find('.submenu-icon')
-                        .removeClass('ti-chevron-down')
-                        .addClass('ti-chevron-up');
+                $child.css('display', 'flex');
 
-                    const group = wrapper.find('.menu-collapse').data('group');
+                childMatched = true;
 
-                    $('.menu-group-title[data-group="' + group + '"]').show();
-                }
+            } else {
 
-            });
+                $child.css('display', 'none');
 
+            }
         });
+
+        // =================================================
+        // ADA CHILD YANG COCOK
+        // =================================================
+        if (childMatched) {
+
+            // Tampilkan wrapper
+            $wrapper.css('display', 'block');
+
+            // Tampilkan parent
+            $parent.css('display', 'flex');
+
+            // Buka submenu
+            $wrapper.find('.submenu')
+                .addClass('show');
+
+            // Ubah icon menjadi chevron-up
+            $wrapper.find('.submenu-icon')
+                .removeClass('ti-chevron-down')
+                .addClass('ti-chevron-up');
+
+            // Tandai group
+            if (group) {
+                matchedGroups.add(group);
+            }
+
+        } else {
+
+            // =================================================
+            // TIDAK ADA CHILD YANG COCOK
+            // =================================================
+
+            /*
+             * Cek apakah PARENT sendiri cocok.
+             *
+             * Contoh:
+             * search "rawat jalan"
+             *
+             * Maka hanya dropdown Rawat Jalan yang tampil,
+             * tanpa otomatis menampilkan seluruh child.
+             */
+
+            if (isMatch(parentText)) {
+
+                $wrapper.css('display', 'block');
+
+                $parent.css('display', 'flex');
+
+                if (group) {
+                    matchedGroups.add(group);
+                }
+
+            } else {
+
+                $wrapper.css('display', 'none');
+
+            }
+        }
+    });
+
+    // =====================================================
+    // 3. GROUP TITLE
+    // HANYA TAMPIL JIKA GROUP MEMILIKI HASIL
+    // =====================================================
+    $menu.find('.menu-group-title').each(function () {
+
+        const $title = $(this);
+
+        const group = String(
+            $title.attr('data-group') || ''
+        );
+
+        if (matchedGroups.has(group)) {
+
+            $title.css('display', 'block');
+
+        } else {
+
+            $title.css('display', 'none');
+
+        }
+    });
+
+});
 
         // ==========================
         // CLICK MENU FORM

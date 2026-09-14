@@ -529,6 +529,21 @@ DESKTOP
     transition collapse asli.
     */
 
+    /* =========================================================
+    FIX DISPLAY MENU PENGKAJIAN
+    Bootstrap .d-flex menggunakan display:flex !important.
+    ========================================================= */
+
+    #pengkajianMenu .menu-item.d-flex[style*="display: none"],
+    #pengkajianMenu .menu-child.d-flex[style*="display: none"] {
+        display: none !important;
+    }
+
+    #pengkajianMenu .menu-item.d-flex:not([style*="display: none"]),
+    #pengkajianMenu .menu-child.d-flex:not([style*="display: none"]) {
+        display: flex !important;
+    }
+
 }
 
 /* Setelah tombol form diklik: selalu sembunyikan */
