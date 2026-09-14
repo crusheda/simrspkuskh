@@ -5101,20 +5101,20 @@ class AddOnPengkajianController extends Controller
                     'TRANSFER'  => $request->transfer ?? 0,
                 ],
                 [
-                    'KEADAAN_UMUM'       => $request->tv_keu ?? '',
-                    'SISTOLIK'           => $request->tv_td_up ?? 0,
-                    'DISTOLIK'           => $request->tv_td_down ?? 0,
-                    'FREKUENSI_NADI'     => $request->tv_nadi ?? 0,
-                    'FREKUENSI_NADI_CB'  => $request->tv_nadi_cb ?? null,
-                    'SUHU'               => $request->tv_suhu ?? 0,
-                    'SATURASI_O2'        => $request->tv_spo2 ?? 0,
-                    'FREKUENSI_NAFAS'    => $request->tv_nafas ?? 0,
-                    'FREKUENSI_NAFAS_CB' => $request->tv_nafas_cb ?? null,
+                    'KEADAAN_UMUM'       => $request->tv_keu_tf ?? '',
+                    'SISTOLIK'           => $request->tv_td_up_tf ?? 0,
+                    'DISTOLIK'           => $request->tv_td_down_tf ?? 0,
+                    'FREKUENSI_NADI'     => $request->tv_nadi_tf ?? 0,
+                    'FREKUENSI_NADI_CB'  => $request->tv_nadi_cb_tf ?? null,
+                    'SUHU'               => $request->tv_suhu_tf ?? 0,
+                    'SATURASI_O2'        => $request->tv_spo2_tf ?? 0,
+                    'FREKUENSI_NAFAS'    => $request->tv_nafas_tf ?? 0,
+                    'FREKUENSI_NAFAS_CB' => $request->tv_nafas_cb_tf ?? null,
 
-                    'EYE'                => $request->tv_gcs_e ?? 0,
-                    'VERBAL'             => $request->tv_gcs_v ?? 0,
-                    'MOTORIK'            => $request->tv_gcs_m ?? 0,
-                    'GCS'                => $request->tv_gcs_t ?? 0,
+                    'EYE'                => $request->tv_gcs_e_tf ?? 0,
+                    'VERBAL'             => $request->tv_gcs_v_tf ?? 0,
+                    'MOTORIK'            => $request->tv_gcs_m_tf ?? 0,
+                    'GCS'                => $request->tv_gcs_t_tf ?? 0,
 
                     'OLEH'               => auth()->id(),
                     'STATUS'             => 1,
@@ -5128,10 +5128,10 @@ class AddOnPengkajianController extends Controller
                 ],
                 [
                     'DATA_PENGUKURAN'       => 1,
-                    'BERAT_BADAN'           => $request->tv_bb,
-                    'TINGGI_BADAN'          => $request->tv_tb,
-                    'INDEX_MASSA_TUBUH'     => $request->filled('gizi_imt')
-                                                ? round((float) $request->gizi_imt, 2)
+                    'BERAT_BADAN'           => $request->tv_bb_tf,
+                    'TINGGI_BADAN'          => $request->tv_tb_tf,
+                    'INDEX_MASSA_TUBUH'     => $request->filled('gizi_imt_tf')
+                                                ? round((float) $request->gizi_imt_tf, 2)
                                                 : 0,
                     'TANGGAL_PEMERIKSAAN'   => now(),
                     'OLEH'                  => auth()->id(),

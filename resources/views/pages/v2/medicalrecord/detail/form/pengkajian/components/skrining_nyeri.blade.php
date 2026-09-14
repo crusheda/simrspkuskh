@@ -375,7 +375,7 @@
 
     var $section = $(@json($section));
 
-    $(document).ready(function() {
+    $section.ready(function() {
         const metodeMap = {
             1: '#tampil_sn_nrs',
             2: '#tampil_sn_bps',
@@ -383,6 +383,7 @@
             4: '#tampil_sn_flacc',
             5: '#tampil_sn_vas'
         };
+        console.log($section);
 
         // ==========================================
         // PILIH METODE
