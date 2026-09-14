@@ -76,6 +76,18 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
         Route::get('notifikasi/data', [NotifikasiController::class, 'getData']);
         Route::get('notifikasi/data/{id}', [NotifikasiController::class, 'showDetail']);
 
+    // DISPLAY
+        // TEMPAT TIDUR
+            Route::get('display/bed', [BedController::class, 'getDisplayTt']);
+        // POLI
+            Route::post('display/antrian/poli', [AntrianPoliController::class, 'getDisplayAntrianPoli']);
+            Route::post('display/antrian/poli/update', [AntrianPoliController::class, 'updatePanggilanAntrian']);
+        // ADMISI
+            Route::post('display/antrian/admisi', [AntrianAdmisiController::class, 'getDisplayAntrianAdmisi']);
+            Route::post('display/antrian/admisi/update', [AntrianAdmisiController::class, 'updatePanggilanAntrian']);
+        // RATING
+            Route::post('rating', [RatingController::class,'store']);
+
     // DIGITAL
         // MEDICAL RECORD
             // FORM PENGKAJIAN
