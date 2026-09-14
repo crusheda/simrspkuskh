@@ -7317,4 +7317,120 @@ class AddOnPengkajianController extends Controller
             ], 500);
         }
     }
+
+    function getAdmissionNote($KUNJUNGAN)
+    {
+        $data = [];
+
+        // Tindak Lanjut Pengkajian
+        $tindak_lanjut = DB::table('medicalrecord.tindak_lanjut_pengkajian')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->first();
+
+        if ($tindak_lanjut) {
+            $data['tl'] = $tindak_lanjut->TINDAK_LANJUT;
+            $data['rujuk'] = $tindak_lanjut->RUJUKAN;
+            $data['rujuk_lainnya'] = $tindak_lanjut->RUJUKAN_LAINNYA;
+        }
+
+        // Perencanaan Rawat Inap
+        $perencanaan = DB::table('medicalrecord.perencanaan_rawat_inap')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->first();
+
+        if ($perencanaan) {
+            $data['pri_ruang'] = $perencanaan->JENIS_RUANG_PERAWATAN;
+            $data['pri_perawatan'] = $perencanaan->JENIS_PERAWATAN;
+            $data['pri_indikasi'] = $perencanaan->INDIKASI;
+            $data['pri_ket'] = $perencanaan->DESKRIPSI;
+            $data['pri_dpjp'] = $perencanaan->DOKTER;
+            $data['tanggal'] = $perencanaan->DIBUAT_TANGGAL;
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function simpanAdmissionNote(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            // Tindak Lanjut Rawat Jalan
+            DB::table('medicalrecord.tindak_lanjut_pengkajian')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    // Tindak Lanjut
+                    // 2 = Pulang
+                    // 1 = MRS
+                    'TINDAK_LANJUT' => $request->tl,
+
+                    // Rujukan
+                    // 1 = Ahli Gizi
+                    // 2 = Rehabilitasi Medik
+                    // 3 = Klinik Spesialis
+                    // 4 = Lainnya
+                    'RUJUKAN'          => $request->rujuk,
+                    'RUJUKAN_LAINNYA'  => $request->rujuk_lainnya,
+
+                    'OLEH'    => auth()->id(),
+                    'STATUS'  => 1,
+                    'TANGGAL' => now()
+                ]
+            );
+
+            if($request->tl == 1){
+
+                // Ambil nomor terakhir
+                $lastNomor = DB::table('medicalrecord.perencanaan_rawat_inap')
+                    ->orderByDesc('ID')
+                    ->value('NOMOR');
+
+                // Jika belum ada data, mulai dari 1
+                $nomor = $lastNomor ? str_pad(((int)$lastNomor + 1), 6, '0', STR_PAD_LEFT) : '000001';
+
+                // Perencanaan Rawat Inap
+                DB::table('medicalrecord.perencanaan_rawat_inap')->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'NOMOR'                 => $nomor,
+                        'NOMOR_REFERENSI'       => '',
+                        'JENIS_RUANG_PERAWATAN' => $request->pri_ruang,
+                        'JENIS_PERAWATAN'       => $request->pri_perawatan,
+                        'INDIKASI'              => $request->pri_indikasi,
+                        'DESKRIPSI'            => $request->pri_ket,
+                        'DOKTER'                => $request->pri_dpjp,
+                        'OLEH'                  => auth()->id(),
+                        'STATUS'                => 1,
+                        'TANGGAL'               => now()
+                    ]
+                );
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Admission Note berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Admission Note gagal disimpan.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }
