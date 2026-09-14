@@ -21,6 +21,15 @@ class RatingController extends Controller
         return view('pages.display.rating.index', compact('rating'));
     }
 
+    public function indexV2()
+    {
+        $rating = rating::selectRaw('rating, count(*) as total')
+            ->groupBy('rating')
+            ->pluck('total','rating');
+
+        return view('pages.v2.display.rating.index', compact('rating'));
+    }
+
     public function store(Request $request)
     {
         // $ip = $request->ip();
@@ -100,7 +109,7 @@ class RatingController extends Controller
                 ->limit($perChunk)
                 ->get();
 
-            $pdf = Pdf::loadView('pages.display.rating.pdf', [
+            $pdf = Pdf::loadView('pages.v2.display.rating.pdf', [
                 'rating'       => $data,
                 'bulan'        => $nama_bulan,
                 'bagian'       => $page + 1,

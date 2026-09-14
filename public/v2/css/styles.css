@@ -847,7 +847,7 @@ progress {
 }
 
 .row > [class*="col"] > .card {
-    height: auto !important;
+    /* height: auto !important; */
 }
 
 .col {
@@ -4548,7 +4548,7 @@ textarea.form-control-lg {
   --bs-card-cap-padding-x: 20px;
   --bs-card-cap-bg: transparent;
   --bs-card-cap-color: ;
-  --bs-card-height: calc(100% - var(--bs-gutter-x));
+  --bs-card-height: ; /* calc(100% - var(--bs-gutter-x)) */
   --bs-card-color: ;
   --bs-card-bg: var(--bs-body-bg);
   --bs-card-img-overlay-padding: 1rem;

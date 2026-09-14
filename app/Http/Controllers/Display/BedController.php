@@ -170,4 +170,9 @@ class BedController extends Controller
         // Atau kalau mau dijadikan API JSON:
         return response()->json($data, 200);
     }
+
+    function indexV2() // SIRMED v.2
+    {
+        return view('pages.v2.display.tt.index');
+    }
 }
