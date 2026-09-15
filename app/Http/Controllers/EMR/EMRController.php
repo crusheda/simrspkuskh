@@ -924,6 +924,10 @@ class EMRController extends Controller
                 $join->on('cp.JENIS', '=', 'ref.ID')
                     ->where('ref.JENIS', '=', 32);
             })
+            ->leftJoin('medicalrecord.push_cppt as pcp', function ($join) {
+                $join->on('pcp.ID_CPPT', '=', 'cp.ID')
+                    ->where('pcp.STATUS', '=', 1);
+            })
             ->leftJoin('master.pegawai as p', 'cp.TENAGA_MEDIS', '=', 'p.ID')
             ->leftJoin('master.dokter as d', 'cp.TENAGA_MEDIS', '=', 'd.ID')
             ->leftJoin('master.dokter as dc', 'cp.DOKTER_TBAK_OR_SBAR', '=', 'dc.ID')
@@ -936,6 +940,7 @@ class EMRController extends Controller
             ->where('cp.KUNJUNGAN', $PKUNJUNGAN)
             ->select([
                 'cp.ID',
+                'pcp.ID_CPPT AS CPPT_SIRMED',
                 DB::raw("
                     CONCAT(
                         DATE_FORMAT(cp.TANGGAL, '%d-%m-%Y'),

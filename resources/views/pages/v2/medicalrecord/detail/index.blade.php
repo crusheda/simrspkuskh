@@ -646,18 +646,20 @@
                                                     data-bs-toggle="tooltip" title="Copy Cppt" id="btn-copy-cppt-${item.ID}">
                                                 <i class="ri-file-copy-2-line"></i>
                                             </button>
-                                            <button type="button"
-                                                    class="btn btn-sm btn-icon btn-subtle-warning border border-warning text-warning-emphasis border-dashed"
-                                                    data-bs-toggle="tooltip" title="Ubah Cppt" id="btn-edit-cppt-${item.ID}"
-                                                    onclick="editCPPT('${item.ID}', this)">
-                                                <i class="ri-edit-line"></i>
-                                            </button>
-                                            <button type="button"
-                                                    class="btn btn-sm btn-icon btn-subtle-danger border border-danger text-danger-emphasis border-dashed"
-                                                    data-bs-toggle="tooltip" title="Hapus Cppt" id="btn-hapus-cppt-${item.ID}"
-                                                    onclick="hapusCPPT('${item.ID}')">
-                                                <i class="ri-delete-bin-line"></i>
-                                            </button>
+                                            ${item.CPPT_SIRMED == null ?
+                                                `<button type="button"
+                                                        class="btn btn-sm btn-icon btn-subtle-warning border border-warning text-warning-emphasis border-dashed"
+                                                        data-bs-toggle="tooltip" title="Ubah Cppt" id="btn-edit-cppt-${item.ID}"
+                                                        onclick="editCPPT('${item.ID}', this)">
+                                                    <i class="ri-edit-line"></i>
+                                                </button>
+                                                <button type="button"
+                                                        class="btn btn-sm btn-icon btn-subtle-danger border border-danger text-danger-emphasis border-dashed"
+                                                        data-bs-toggle="tooltip" title="Hapus Cppt" id="btn-hapus-cppt-${item.ID}"
+                                                        onclick="hapusCPPT('${item.ID}')">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>` : ''
+                                            }
                                         </div>
                                     </div>
                                 </div>
