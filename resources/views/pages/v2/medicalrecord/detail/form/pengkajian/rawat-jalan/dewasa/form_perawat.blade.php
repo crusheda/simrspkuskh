@@ -4,10 +4,7 @@
     <div class="form-content">
         <div class="row">
             <div class="col-md-12 mb-3">
-                <div class="form-group">
-                    <label class="form-label fw-bold"> Keluhan Utama </label>
-                    <input class="form-control form-control" type="text" name="anm_ku" id="anm_ku">
-                </div>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.keluhan_utama',['section' => '#rjd_perawat'])
             </div>
             <div class="col-md-12 mb-2">
                 @include(
@@ -328,12 +325,6 @@
     }
 
     function isiFormPengkajianRJDp(data){
-
-        // ======================================================
-        // TANDA VITAL
-        // ======================================================
-
-        setValIfExists('#ku', data.ku);
         // ======================================================
         // MASALAH KEPERAWATAN
         // ======================================================
@@ -426,12 +417,4 @@
             }
         });
     };
-
-    $(document).on('input', '#eye, #motorik, #verbal', function () {
-        let eye = parseInt($('#eye').val()) || 0;
-        let motorik = parseInt($('#motorik').val()) || 0;
-        let verbal = parseInt($('#verbal').val()) || 0;
-
-        $('#gcs').val(eye + motorik + verbal);
-    });
 </script>

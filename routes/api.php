@@ -333,6 +333,20 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // ADMISSION NOTE
                     Route::get('emr/pengkajian/admission/{kunjungan}', [AddOnPengkajianController::class, 'getAdmissionNote']);
                     Route::post('emr/pengkajian/admission/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanAdmissionNote']);
+                
+                //KHUSUS RAWAT JALAN
+                    // MATERI EDUKASI
+                        Route::get('emr/pengkajian/rajal/materiedukasi/{kunjungan}', [AddOnPengkajianController::class, 'getMateriEdukasi']);
+                        Route::post('emr/pengkajian/rajal/materiedukasi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanMateriEdukasi']);
+                    // PEMERIKSAAN FISIK
+                        Route::get('emr/pengkajian/rajal/pemeriksaan_fisik/{kunjungan}', [AddOnPengkajianController::class, 'getPemeriksaanFisikRajal']);
+                        Route::post('emr/pengkajian/rajal/pemeriksaan_fisik/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemeriksaanFisikRajal']);
+                    // TOLOK UKUR / TERAPI
+                        Route::get('emr/pengkajian/rajal/tu_terapi/{kunjungan}', [AddOnPengkajianController::class, 'getTuTerapi']);
+                        Route::post('emr/pengkajian/rajal/tu_terapi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTuTerapi']);
+                    // KELUHAN UTAMA
+                        Route::get('emr/pengkajian/rajal/keluhan_utama/{kunjungan}', [AddOnPengkajianController::class, 'getKeluhanUtama']);
+                        Route::post('emr/pengkajian/rajal/keluhan_utama/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanKeluhanUtama']);
 
                 // KHUSUS RAWAT INAP
                     // DAFTAR MASALAH KEPERAWATAN

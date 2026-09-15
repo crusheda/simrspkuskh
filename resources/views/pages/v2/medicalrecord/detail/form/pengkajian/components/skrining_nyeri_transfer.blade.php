@@ -42,6 +42,44 @@
     $nrsInputId = 'sn_nrs_transfer_' . $transfer;
     $vasInputId = 'sn_vas_transfer_' . $transfer;
 
+    /*
+    |--------------------------------------------------------------------------
+    | NAME UNIK PER TRANSFER
+    |--------------------------------------------------------------------------
+    */
+
+    $nyeriName = 'sn_nyeri_' . $transfer;
+    $onsetName = 'sn_onset_' . $transfer;
+    $metodeName = 'sn_metode_' . $transfer;
+
+    $skalaName = 'sn_skala_' . $transfer;
+
+    $nrsName = 'sn_nrs_' . $transfer;
+
+    $bpsName1 = 'sn_bps_1_' . $transfer;
+    $bpsName2 = 'sn_bps_2_' . $transfer;
+    $bpsName3 = 'sn_bps_3_' . $transfer;
+
+    $nipsName1 = 'sn_nips_1_' . $transfer;
+    $nipsName2 = 'sn_nips_2_' . $transfer;
+    $nipsName3 = 'sn_nips_3_' . $transfer;
+    $nipsName4 = 'sn_nips_4_' . $transfer;
+    $nipsName5 = 'sn_nips_5_' . $transfer;
+    $nipsName6 = 'sn_nips_6_' . $transfer;
+
+    $flaccName1 = 'sn_flacc_1_' . $transfer;
+    $flaccName2 = 'sn_flacc_2_' . $transfer;
+    $flaccName3 = 'sn_flacc_3_' . $transfer;
+    $flaccName4 = 'sn_flacc_4_' . $transfer;
+    $flaccName5 = 'sn_flacc_5_' . $transfer;
+
+    $vasName = 'sn_vas_' . $transfer;
+
+    $pencetusName = 'sn_pencetus_' . $transfer;
+    $gambaranName = 'sn_gambaran_' . $transfer;
+    $durasiName = 'sn_durasi_' . $transfer;
+    $lokasiName = 'sn_lokasi_' . $transfer;
+
 @endphp
 
 
@@ -75,9 +113,9 @@
                         <div class="form-check">
 
                             <input
-                                class="form-check-input single-checkbox"
+                                class="form-check-input"
                                 type="checkbox"
-                                name="sn_nyeri"
+                                name="{{ $nyeriName }}"
                                 value="1"
                             >
 
@@ -91,9 +129,9 @@
                         <div class="form-check">
 
                             <input
-                                class="form-check-input single-checkbox"
+                                class="form-check-input"
                                 type="checkbox"
-                                name="sn_nyeri"
+                                name="{{ $nyeriName }}"
                                 value="0"
                                 checked
                             >
@@ -130,9 +168,9 @@
                         <div class="form-check">
 
                             <input
-                                class="form-check-input single-checkbox"
+                                class="form-check-input"
                                 type="checkbox"
-                                name="sn_onset"
+                                name="{{ $onsetName }}"
                                 value="1"
                             >
 
@@ -146,9 +184,9 @@
                         <div class="form-check">
 
                             <input
-                                class="form-check-input single-checkbox"
+                                class="form-check-input"
                                 type="checkbox"
-                                name="sn_onset"
+                                name="{{ $onsetName }}"
                                 value="2"
                             >
 
@@ -175,7 +213,6 @@
 
     <div class="row mb-3 align-items-center">
 
-
         {{-- SKALA --}}
 
         <div class="col-md-4">
@@ -191,7 +228,7 @@
                     <input
                         type="number"
                         class="form-control"
-                        name="sn_skala"
+                        name="{{ $skalaName }}"
                         placeholder="Otomatis terisi"
                         value="0"
                         readonly
@@ -218,15 +255,14 @@
 
                     <div class="d-flex gap-4">
 
-
                         @if(in_array('vas', $metodeNyeri))
 
                             <div class="form-check">
 
                                 <input
-                                    class="form-check-input single-checkbox"
+                                    class="form-check-input"
                                     type="checkbox"
-                                    name="sn_metode"
+                                    name="{{ $metodeName }}"
                                     value="5"
                                 >
 
@@ -244,9 +280,9 @@
                             <div class="form-check">
 
                                 <input
-                                    class="form-check-input single-checkbox"
+                                    class="form-check-input"
                                     type="checkbox"
-                                    name="sn_metode"
+                                    name="{{ $metodeName }}"
                                     value="1"
                                 >
 
@@ -264,9 +300,9 @@
                             <div class="form-check">
 
                                 <input
-                                    class="form-check-input single-checkbox"
+                                    class="form-check-input"
                                     type="checkbox"
-                                    name="sn_metode"
+                                    name="{{ $metodeName }}"
                                     value="3"
                                 >
 
@@ -284,9 +320,9 @@
                             <div class="form-check">
 
                                 <input
-                                    class="form-check-input single-checkbox"
+                                    class="form-check-input"
                                     type="checkbox"
-                                    name="sn_metode"
+                                    name="{{ $metodeName }}"
                                     value="4"
                                 >
 
@@ -304,9 +340,9 @@
                             <div class="form-check">
 
                                 <input
-                                    class="form-check-input single-checkbox"
+                                    class="form-check-input"
                                     type="checkbox"
-                                    name="sn_metode"
+                                    name="{{ $metodeName }}"
                                     value="2"
                                 >
 
@@ -364,7 +400,7 @@
                         max="10"
                         step="1"
                         value="0"
-                        name="sn_nrs"
+                        name="{{ $nrsName }}"
                         id="{{ $nrsInputId }}"
                     >
 
@@ -475,7 +511,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_bps_1"
+                                        name="{{ $bpsName1 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="1"
                                         max="3"
@@ -515,7 +551,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_bps_2"
+                                        name="{{ $bpsName2 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="1"
                                         max="3"
@@ -555,7 +591,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_bps_3"
+                                        name="{{ $bpsName3 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="1"
                                         max="3"
@@ -683,7 +719,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_nips_1"
+                                        name="{{ $nipsName1 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="0"
                                         max="1"
@@ -721,7 +757,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_nips_2"
+                                        name="{{ $nipsName2 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="0"
                                         max="2"
@@ -755,7 +791,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_nips_3"
+                                        name="{{ $nipsName3 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="0"
                                         max="1"
@@ -789,7 +825,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_nips_4"
+                                        name="{{ $nipsName4 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="0"
                                         max="1"
@@ -823,7 +859,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_nips_5"
+                                        name="{{ $nipsName5 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="0"
                                         max="1"
@@ -857,7 +893,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_nips_6"
+                                        name="{{ $nipsName6 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="0"
                                         max="1"
@@ -985,7 +1021,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_flacc_1"
+                                        name="{{ $flaccName1 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="0"
                                         max="2"
@@ -1019,7 +1055,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_flacc_2"
+                                        name="{{ $flaccName2 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="0"
                                         max="2"
@@ -1053,7 +1089,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_flacc_3"
+                                        name="{{ $flaccName3 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="0"
                                         max="2"
@@ -1087,7 +1123,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_flacc_4"
+                                        name="{{ $flaccName4 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="0"
                                         max="2"
@@ -1121,7 +1157,7 @@
 
                                     <input
                                         type="number"
-                                        name="sn_flacc_5"
+                                        name="{{ $flaccName5 }}"
                                         class="form-control form-control-sm mx-auto"
                                         min="0"
                                         max="2"
@@ -1199,7 +1235,7 @@
                         max="10"
                         step="1"
                         value="0"
-                        name="sn_vas"
+                        name="{{ $vasName }}"
                         id="{{ $vasInputId }}"
                     >
 
@@ -1256,7 +1292,7 @@
             <input
                 type="text"
                 class="form-control form-control-sm"
-                name="sn_pencetus"
+                name="{{ $pencetusName }}"
                 placeholder="[ Pencetus ]"
             >
 
@@ -1280,7 +1316,7 @@
             <input
                 type="text"
                 class="form-control form-control-sm"
-                name="sn_gambaran"
+                name="{{ $gambaranName }}"
                 placeholder="[ Gambaran ]"
             >
 
@@ -1304,7 +1340,7 @@
             <input
                 type="text"
                 class="form-control form-control-sm"
-                name="sn_durasi"
+                name="{{ $durasiName }}"
                 placeholder="[ Durasi ]"
             >
 
@@ -1328,7 +1364,7 @@
             <input
                 type="text"
                 class="form-control form-control-sm"
-                name="sn_lokasi"
+                name="{{ $lokasiName }}"
                 placeholder="[ Lokasi ]"
             >
 
@@ -1368,6 +1404,49 @@
     const formId = @json($formId);
 
     const $form = $('#' + formId);
+
+
+    // ==============================================================
+    // NAME FIELD
+    // ==============================================================
+
+    const names = {
+
+        nyeri: @json($nyeriName),
+
+        onset: @json($onsetName),
+
+        metode: @json($metodeName),
+
+        skala: @json($skalaName),
+
+        nrs: @json($nrsName),
+
+        bps1: @json($bpsName1),
+        bps2: @json($bpsName2),
+        bps3: @json($bpsName3),
+
+        nips1: @json($nipsName1),
+        nips2: @json($nipsName2),
+        nips3: @json($nipsName3),
+        nips4: @json($nipsName4),
+        nips5: @json($nipsName5),
+        nips6: @json($nipsName6),
+
+        flacc1: @json($flaccName1),
+        flacc2: @json($flaccName2),
+        flacc3: @json($flaccName3),
+        flacc4: @json($flaccName4),
+        flacc5: @json($flaccName5),
+
+        vas: @json($vasName),
+
+        pencetus: @json($pencetusName),
+        gambaran: @json($gambaranName),
+        durasi: @json($durasiName),
+        lokasi: @json($lokasiName)
+
+    };
 
 
     // ==============================================================
@@ -1446,7 +1525,9 @@
 
 
         $form
-            .find('input[name="sn_skala"]')
+            .find(
+                'input[name="' + names.skala + '"]'
+            )
             .val(0);
 
     }
@@ -1472,7 +1553,7 @@
 
                 total = FormHelper.setValidNumber(
                     $form,
-                    'sn_nrs'
+                    names.nrs
                 );
 
                 break;
@@ -1484,18 +1565,19 @@
 
             case '2':
 
-                $form
-                    .find(
-                        '#{{ $bpsId }} input[type="number"]'
-                    )
-                    .each(function () {
+                [
+                    names.bps1,
+                    names.bps2,
+                    names.bps3
 
-                        total += FormHelper.setValidNumber(
-                            $form,
-                            $(this).attr('name')
-                        );
+                ].forEach(function (name) {
 
-                    });
+                    total += FormHelper.setValidNumber(
+                        $form,
+                        name
+                    );
+
+                });
 
                 break;
 
@@ -1506,18 +1588,22 @@
 
             case '3':
 
-                $form
-                    .find(
-                        '#{{ $nipsId }} input[type="number"]'
-                    )
-                    .each(function () {
+                [
+                    names.nips1,
+                    names.nips2,
+                    names.nips3,
+                    names.nips4,
+                    names.nips5,
+                    names.nips6
 
-                        total += FormHelper.setValidNumber(
-                            $form,
-                            $(this).attr('name')
-                        );
+                ].forEach(function (name) {
 
-                    });
+                    total += FormHelper.setValidNumber(
+                        $form,
+                        name
+                    );
+
+                });
 
                 break;
 
@@ -1528,18 +1614,21 @@
 
             case '4':
 
-                $form
-                    .find(
-                        '#{{ $flaccId }} input[type="number"]'
-                    )
-                    .each(function () {
+                [
+                    names.flacc1,
+                    names.flacc2,
+                    names.flacc3,
+                    names.flacc4,
+                    names.flacc5
 
-                        total += FormHelper.setValidNumber(
-                            $form,
-                            $(this).attr('name')
-                        );
+                ].forEach(function (name) {
 
-                    });
+                    total += FormHelper.setValidNumber(
+                        $form,
+                        name
+                    );
+
+                });
 
                 break;
 
@@ -1552,7 +1641,7 @@
 
                 total = FormHelper.setValidNumber(
                     $form,
-                    'sn_vas'
+                    names.vas
                 );
 
                 break;
@@ -1561,10 +1650,50 @@
 
 
         $form
-            .find('input[name="sn_skala"]')
+            .find(
+                'input[name="' + names.skala + '"]'
+            )
             .val(total);
 
     }
+
+
+    // ==============================================================
+    // SINGLE CHECKBOX
+    // KHUSUS DALAM FORM INI
+    // ==============================================================
+
+    $form.on(
+        'change',
+        'input[type="checkbox"]',
+        function () {
+
+            const $this = $(this);
+
+            if (!$this.is(':checked')) {
+                return;
+            }
+
+
+            const name = $this.attr('name');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Hanya checkbox dengan name yang sama
+            | di dalam form transfer ini yang dimatikan.
+            |--------------------------------------------------------------------------
+            */
+
+            $form
+                .find(
+                    'input[type="checkbox"][name="' + name + '"]'
+                )
+                .not($this)
+                .prop('checked', false);
+
+        }
+    );
 
 
     // ==============================================================
@@ -1573,7 +1702,7 @@
 
     $form.on(
         'change',
-        'input[name="sn_metode"]',
+        'input[name="{{ $metodeName }}"]',
         function () {
 
             const $this = $(this);
@@ -1584,9 +1713,11 @@
             if ($this.is(':checked')) {
 
 
-                // Pastikan hanya satu
+                // Pastikan hanya satu metode
                 $form
-                    .find('input[name="sn_metode"]')
+                    .find(
+                        'input[name="{{ $metodeName }}"]'
+                    )
                     .not($this)
                     .prop('checked', false);
 
@@ -1608,7 +1739,9 @@
 
                 }
 
-            } else {
+            }
+
+            else {
 
                 hideSemuaMetode();
 
@@ -1722,11 +1855,9 @@
                 const nyeri = res.data;
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Jika belum ada data
-                |--------------------------------------------------------------------------
-                */
+                // --------------------------------------------------
+                // BELUM ADA DATA
+                // --------------------------------------------------
 
                 if (!nyeri) {
 
@@ -1737,82 +1868,76 @@
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | DATA DASAR
-                |--------------------------------------------------------------------------
-                */
+                // --------------------------------------------------
+                // DATA DASAR
+                // --------------------------------------------------
 
                 FormHelper.setSingleCheckbox(
                     $form,
-                    'sn_nyeri',
+                    names.nyeri,
                     nyeri.NYERI
                 );
 
 
                 FormHelper.setSingleCheckbox(
                     $form,
-                    'sn_onset',
+                    names.onset,
                     nyeri.ONSET
                 );
 
 
                 FormHelper.setSingleCheckbox(
                     $form,
-                    'sn_metode',
+                    names.metode,
                     nyeri.METODE
                 );
 
 
                 FormHelper.setValue(
                     $form,
-                    'sn_skala',
+                    names.skala,
                     nyeri.SKALA
                 );
 
 
                 FormHelper.setValue(
                     $form,
-                    'sn_pencetus',
+                    names.pencetus,
                     nyeri.PENCETUS
                 );
 
 
                 FormHelper.setValue(
                     $form,
-                    'sn_gambaran',
+                    names.gambaran,
                     nyeri.GAMBARAN
                 );
 
 
                 FormHelper.setValue(
                     $form,
-                    'sn_durasi',
+                    names.durasi,
                     nyeri.DURASI
                 );
 
 
                 FormHelper.setValue(
                     $form,
-                    'sn_lokasi',
+                    names.lokasi,
                     nyeri.LOKASI
                 );
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Hide semua metode
-                |--------------------------------------------------------------------------
-                */
+                // --------------------------------------------------
+                // HIDE SEMUA METODE
+                // --------------------------------------------------
 
                 hideSemuaMetode();
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Tampilkan metode sesuai data
-                |--------------------------------------------------------------------------
-                */
+                // --------------------------------------------------
+                // TAMPILKAN METODE
+                // --------------------------------------------------
 
                 if (
                     nyeri.METODE &&
@@ -1826,151 +1951,141 @@
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | NRS
-                |--------------------------------------------------------------------------
-                */
+                // --------------------------------------------------
+                // NRS
+                // --------------------------------------------------
 
                 if (Number(nyeri.METODE) === 1) {
 
                     FormHelper.setValue(
                         $form,
-                        'sn_nrs',
+                        names.nrs,
                         nyeri.SKALA
                     );
 
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | BPS
-                |--------------------------------------------------------------------------
-                */
+                // --------------------------------------------------
+                // BPS
+                // --------------------------------------------------
 
                 else if (Number(nyeri.METODE) === 2) {
 
                     FormHelper.setValue(
                         $form,
-                        'sn_bps_1',
+                        names.bps1,
                         nyeri.SKOR1
                     );
 
                     FormHelper.setValue(
                         $form,
-                        'sn_bps_2',
+                        names.bps2,
                         nyeri.SKOR2
                     );
 
                     FormHelper.setValue(
                         $form,
-                        'sn_bps_3',
+                        names.bps3,
                         nyeri.SKOR3
                     );
 
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | NIPS
-                |--------------------------------------------------------------------------
-                */
+                // --------------------------------------------------
+                // NIPS
+                // --------------------------------------------------
 
                 else if (Number(nyeri.METODE) === 3) {
 
                     FormHelper.setValue(
                         $form,
-                        'sn_nips_1',
+                        names.nips1,
                         nyeri.SKOR1
                     );
 
                     FormHelper.setValue(
                         $form,
-                        'sn_nips_2',
+                        names.nips2,
                         nyeri.SKOR2
                     );
 
                     FormHelper.setValue(
                         $form,
-                        'sn_nips_3',
+                        names.nips3,
                         nyeri.SKOR3
                     );
 
                     FormHelper.setValue(
                         $form,
-                        'sn_nips_4',
+                        names.nips4,
                         nyeri.SKOR4
                     );
 
                     FormHelper.setValue(
                         $form,
-                        'sn_nips_5',
+                        names.nips5,
                         nyeri.SKOR5
                     );
 
                     FormHelper.setValue(
                         $form,
-                        'sn_nips_6',
+                        names.nips6,
                         nyeri.SKOR6
                     );
 
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | FLACC
-                |--------------------------------------------------------------------------
-                */
+                // --------------------------------------------------
+                // FLACC
+                // --------------------------------------------------
 
                 else if (Number(nyeri.METODE) === 4) {
 
                     FormHelper.setValue(
                         $form,
-                        'sn_flacc_1',
+                        names.flacc1,
                         nyeri.SKOR1
                     );
 
                     FormHelper.setValue(
                         $form,
-                        'sn_flacc_2',
+                        names.flacc2,
                         nyeri.SKOR2
                     );
 
                     FormHelper.setValue(
                         $form,
-                        'sn_flacc_3',
+                        names.flacc3,
                         nyeri.SKOR3
                     );
 
                     FormHelper.setValue(
                         $form,
-                        'sn_flacc_4',
+                        names.flacc4,
                         nyeri.SKOR4
                     );
 
                     FormHelper.setValue(
                         $form,
-                        'sn_flacc_5',
+                        names.flacc5,
                         nyeri.SKOR5
                     );
 
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | VAS
-                |--------------------------------------------------------------------------
-                */
+                // --------------------------------------------------
+                // VAS
+                // --------------------------------------------------
 
                 else if (Number(nyeri.METODE) === 5) {
 
                     FormHelper.setValue(
                         $form,
-                        'sn_vas',
+                        names.vas,
                         nyeri.SKALA
                     );
 
@@ -2030,6 +2145,7 @@
                 $currentForm.attr('data-transfer')
             );
 
+
             console.log(
                 'SIMPAN SKRINING NYERI TRANSFER',
                 {
@@ -2038,6 +2154,12 @@
                 }
             );
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Buat data dari form
+            |--------------------------------------------------------------------------
+            */
 
             const data = getFormDataByName(
                 $currentForm,
@@ -2048,11 +2170,199 @@
             );
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | Karena NAME di Blade sudah unik berdasarkan transfer,
+            | kita mapping kembali ke NAME yang dipahami controller.
+            |--------------------------------------------------------------------------
+            */
+
+            const dataTransfer = {
+
+                NOKUNJ: kunjungan,
+
+                transfer: transfer,
+
+                sn_nyeri:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $nyeriName }}"]:checked'
+                        )
+                        .val() ?? null,
+
+                sn_onset:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $onsetName }}"]:checked'
+                        )
+                        .val() ?? null,
+
+                sn_skala:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $skalaName }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_metode:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $metodeName }}"]:checked'
+                        )
+                        .val() ?? null,
+
+                sn_nrs:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $nrsName }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_bps_1:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $bpsName1 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_bps_2:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $bpsName2 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_bps_3:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $bpsName3 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_nips_1:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $nipsName1 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_nips_2:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $nipsName2 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_nips_3:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $nipsName3 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_nips_4:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $nipsName4 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_nips_5:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $nipsName5 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_nips_6:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $nipsName6 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_flacc_1:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $flaccName1 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_flacc_2:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $flaccName2 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_flacc_3:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $flaccName3 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_flacc_4:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $flaccName4 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_flacc_5:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $flaccName5 }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_vas:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $vasName }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_pencetus:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $pencetusName }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_gambaran:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $gambaranName }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_durasi:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $durasiName }}"]'
+                        )
+                        .val() ?? null,
+
+                sn_lokasi:
+                    $currentForm
+                        .find(
+                            'input[name="{{ $lokasiName }}"]'
+                        )
+                        .val() ?? null
+
+            };
+
+
             console.log(
                 'DATA YANG DIKIRIM:',
-                data
+                dataTransfer
             );
 
+
+            // ======================================================
+            // AJAX
+            // ======================================================
 
             $.ajax({
 
@@ -2061,7 +2371,7 @@
 
                 type: 'POST',
 
-                data: data,
+                data: dataTransfer,
 
                 headers: {
 
@@ -2164,6 +2474,7 @@
 
         }
     );
+
 
     // ==============================================================
     // INITIAL

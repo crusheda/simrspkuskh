@@ -257,6 +257,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
             <div class="col-md-12">
                 <div class="form-group mb-3">
                     <h4 class="mb-2 text-warning">Checklist Transfer</h4>
@@ -473,6 +475,19 @@
         const data = getFormDataByName($formUtama, {
             NOKUNJ: kunjungan
         });
+
+        // Tambahkan Checklist Transfer
+        data.spri = $form
+            .find('input[name="spri"]:checked')
+            .val() || '';
+
+        data.shp = $form
+            .find('input[name="shp"]:checked')
+            .val() || '';
+
+        data.slain = $form
+            .find('input[name="slain"]:checked')
+            .val() || '';
 
         isDataSaving = true;
 

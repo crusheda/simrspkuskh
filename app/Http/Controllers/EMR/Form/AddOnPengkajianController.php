@@ -7643,4 +7643,264 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    function getMateriEdukasi($KUNJUNGAN)
+    {
+        $data = [];
+        
+        $data = DB::table('medicalrecord.edukasi_rajal')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->first();
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function simpanMateriEdukasi(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.edukasi_rajal')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    // Materi Edukasi
+                    'ME_TANDA_GEJALA'            => $request->input('me_1') ? 1 : 0,
+                    'ME_HASIL_PEMERIKSAAN'       => $request->input('me_2') ? 1 : 0,
+                    'ME_DIAGNOSIS'               => $request->input('me_3') ? 1 : 0,
+                    'ME_RENCANA_PENATALAKSANAAN' => $request->input('me_4') ? 1 : 0,
+                    'ME_TINDAKAN_TUJUAN_TERAPI'         => $request->input('me_5') ? 1 : 0,
+
+                    // Sarana Informasi Edukasi
+                    'SIE_LEAFLET' => $request->input('sie_1') ? 1 : 0,
+                    'SIE_LISAN'   => $request->input('sie_2') ? 1 : 0,
+
+                    // Evaluasi
+                    'EVAL_SUDAH_MENGERTI' => $request->input('eval_1') ? 1 : 0,
+                    'EVAL_RE_EDUKASI'     => $request->input('eval_2') ? 1 : 0,
+
+                    'OLEH'    => auth()->id(),
+                    'STATUS'  => 1,
+                    'TANGGAL' => now()
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Materi Edukasi berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Materi Edukasi gagal disimpan.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    function getPemeriksaanFisikRajal($KUNJUNGAN)
+    {
+        $data = [];
+        
+        $data = DB::table('medicalrecord.pemeriksaan_fisik')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->first();
+        
+        if ($data && $data->DESKRIPSI) {
+            $data->DESKRIPSI = strip_tags(
+                str_replace(['<br>', '<br/>', '<br />'], "\n", $data->DESKRIPSI)
+            );
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function simpanPemeriksaanFisikRajal(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.pemeriksaan_fisik')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'PENDAFTARAN'  => DB::table('pendaftaran.kunjungan')->where('NOMOR', $request->NOKUNJ)->value('NOPEN'),
+                    'DESKRIPSI'    => $request->pfisik,
+                    'OLEH'         => auth()->id(),
+                    'STATUS'       => 1,
+                    'TANGGAL'      => now()
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Materi Edukasi berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Materi Edukasi gagal disimpan.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    function getTuTerapi($KUNJUNGAN)
+    {
+        $data = [];
+        
+        // Riwayat Terapi
+        $rencana_terapi = DB::table('medicalrecord.rencana_terapi')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->first();
+
+        if ($rencana_terapi) {
+            $data['DESKRIPSI'] = $rencana_terapi->DESKRIPSI;
+        }
+
+        // Riwayat Terapi
+        $assesment = DB::table('medicalrecord.sirmed_assesment')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->first();
+
+        if ($assesment) {
+            $data['TOLAK_UKUR'] = $assesment->TOLAK_UKUR;
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function simpanTuTerapi(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            // Rencana Terapi
+            DB::table('medicalrecord.rencana_terapi')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'DESKRIPSI'    => $request->terapi_tind,
+                    'OLEH'         => auth()->id(),
+                    'STATUS'       => 1,
+                    'TANGGAL'      => now()
+                ]
+            );
+
+            // ASSESMENT
+            DB::table('medicalrecord.sirmed_assesment')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'TOLAK_UKUR'   => $request->tu,
+                    'OLEH'         => auth()->id(),
+                    'STATUS'       => 1,
+                    'TANGGAL'      => now()
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Tolak Ukur Terapi berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Tolak Ukur Terapi gagal disimpan.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    function getKeluhanUtama($KUNJUNGAN)
+    {
+        $data = [];
+        
+        // Riwayat Terapi
+        $keluhan_utama = DB::table('medicalrecord.tanda_vital')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->first();
+
+        if ($keluhan_utama) {
+            $data['KELUHAN_UTAMA'] = $keluhan_utama->KELUHAN_UTAMA;
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function simpanKeluhanUtama(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            DB::table('medicalrecord.tanda_vital')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ
+                ],
+                [
+                    'KELUHAN_UTAMA'=> $request->anm_ku,
+                    'WAKTU_PEMERIKSAAN' => now(),
+
+                    'OLEH'         => auth()->id(),
+                    'STATUS'       => 1,
+                    'TANGGAL'      => now(),
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Keluhan utama berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Data keluhan utama gagal disimpan.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }

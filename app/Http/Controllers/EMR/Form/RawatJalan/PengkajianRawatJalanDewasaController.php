@@ -43,19 +43,6 @@ class PengkajianRawatJalanDewasaController extends Controller
             ->where('pk.NOMOR', $kunjungan)
             ->first();
 
-        // $frekuensi_obat = DB::table('master.frekuensi_aturan_resep')
-        //         ->select('ID','FREKUENSI')
-        //         ->where('STATUS',1)
-        //         ->orderBy('ID','ASC')
-        //         ->get();
-
-        // $rute_obat = DB::table('master.referensi')
-        //         ->select('ID','DESKRIPSI')
-        //         ->where('JENIS',217)
-        //         ->where('STATUS',1)
-        //         ->orderBy('TABEL_ID','ASC')
-        //         ->get();
-
         $jenis_alergi = DB::table('master.referensi')
                 ->select('ID','DESKRIPSI')
                 ->where('JENIS',180)
@@ -78,166 +65,22 @@ class PengkajianRawatJalanDewasaController extends Controller
             'jenis_alergi' => $jenis_alergi,
             'kesadaran' => $kesadaran,
         ];
-        // print_r($data);
-        // die();
+        
         return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.dewasa.index')->with('list',$data);
     }
 
     function simpanFormDokterRJD(Request $request)
     {
-        // print_r($request->all());
-        // die();
-
-        DB::beginTransaction();
-
-        try {
-
-            // Riwayat Pemeriksaan Fisik
-            DB::table('medicalrecord.pemeriksaan_fisik')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'PENDAFTARAN'  => DB::table('pendaftaran.kunjungan')->where('NOMOR', $request->NOKUNJ)->value('NOPEN'),
-                    'DESKRIPSI'    => $request->pfisik,
-                    'OLEH'         => auth()->id(),
-                    'STATUS'       => 1,
-                    'TANGGAL'      => now()
-                ]
-            );
-
-            // Rencana Terapi
-            DB::table('medicalrecord.rencana_terapi')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'DESKRIPSI'    => $request->terapi_tind,
-                    'OLEH'         => auth()->id(),
-                    'STATUS'       => 1,
-                    'TANGGAL'      => now()
-                ]
-            );
-
-            // ASSESMENT
-            DB::table('medicalrecord.sirmed_assesment')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'TOLAK_UKUR'   => $request->tu,
-                    'OLEH'         => auth()->id(),
-                    'STATUS'       => 1,
-                    'TANGGAL'      => now()
-                ]
-            );
-
-            // Edukasi Rawat Jalan
-            DB::table('medicalrecord.edukasi_rajal')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    // Materi Edukasi
-                    'ME_TANDA_GEJALA'            => $request->input('me_1') ? 1 : 0,
-                    'ME_HASIL_PEMERIKSAAN'       => $request->input('me_2') ? 1 : 0,
-                    'ME_DIAGNOSIS'               => $request->input('me_3') ? 1 : 0,
-                    'ME_RENCANA_PENATALAKSANAAN' => $request->input('me_4') ? 1 : 0,
-                    'ME_TINDAKAN_TUJUAN_TERAPI'         => $request->input('me_5') ? 1 : 0,
-
-                    // Sarana Informasi Edukasi
-                    'SIE_LEAFLET' => $request->input('sie_1') ? 1 : 0,
-                    'SIE_LISAN'   => $request->input('sie_2') ? 1 : 0,
-
-                    // Evaluasi
-                    'EVAL_SUDAH_MENGERTI' => $request->input('eval_1') ? 1 : 0,
-                    'EVAL_RE_EDUKASI'     => $request->input('eval_2') ? 1 : 0,
-
-                    'OLEH'    => auth()->id(),
-                    'STATUS'  => 1,
-                    'TANGGAL' => now()
-                ]
-            );
-
-            DB::commit();
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Berhasil disimpan'
-            ]);
-
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage()
-            ], 500);
-
-        }
+        
     }
 
     public function getFormDokterRJD($kunjungan)
     {
-        $data = [];
-
-        // Riwayat Pemeriksaan Fisik
-        $pemeriksaan_fisik = DB::table('medicalrecord.pemeriksaan_fisik')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        if ($pemeriksaan_fisik) {
-            $data['pfisik'] = $pemeriksaan_fisik->DESKRIPSI;
-        }
-
-        // Riwayat Terapi
-        $rencana_terapi = DB::table('medicalrecord.rencana_terapi')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        if ($rencana_terapi) {
-            $data['terapi_tind'] = $rencana_terapi->DESKRIPSI;
-        }
-
-        // Riwayat Terapi
-        $assesment = DB::table('medicalrecord.sirmed_assesment')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        if ($assesment) {
-            $data['tu'] = $assesment->TOLAK_UKUR;
-        }
-
-        // Edukasi Rawat Jalan
-        $edukasi = DB::table('medicalrecord.edukasi_rajal')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->first();
-
-        if ($edukasi) {
-            $data['me_1'] = $edukasi->ME_TANDA_GEJALA;
-            $data['me_2'] = $edukasi->ME_HASIL_PEMERIKSAAN;
-            $data['me_3'] = $edukasi->ME_DIAGNOSIS;
-            $data['me_4'] = $edukasi->ME_RENCANA_PENATALAKSANAAN;
-            $data['me_5'] = $edukasi->ME_TINDAKAN_TUJUAN_TERAPI;
-
-            $data['sie_1'] = $edukasi->SIE_LEAFLET;
-            $data['sie_2'] = $edukasi->SIE_LISAN;
-
-            $data['eval_1'] = $edukasi->EVAL_SUDAH_MENGERTI;
-            $data['eval_2'] = $edukasi->EVAL_RE_EDUKASI;
-        }
-
-
-        // dd($data);
-
-        return response()->json($data);
+        
     }
 
     function simpanFormPerawatRJD(Request $request)
     {
-        // print_r($request->all());
-        // die();
 
         DB::beginTransaction();
 
