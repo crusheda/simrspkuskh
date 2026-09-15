@@ -1020,6 +1020,216 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    // SKRINING - SKRINING
+    public function getSkriningNyeriTransfer(
+        Request $request,
+        $kunjungan
+    ) {
+        $transfer = (int) $request->input('transfer');
+
+        // Validasi transfer
+        if (!in_array($transfer, [1, 2], true)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Parameter transfer tidak valid.',
+                'data' => null
+            ], 422);
+        }
+
+        $data = DB::table('medicalrecord.penilaian_nyeri_transfer')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('TRANSFER', $transfer)
+            ->where('STATUS', 1)
+            ->first();
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    public function simpanSkriningNyeriTransfer(
+        Request $request,
+        $kunjungan
+    ) {
+        $request->validate([
+            'NOKUNJ' => 'required',
+            'transfer' => 'required|in:1,2',
+        ]);
+
+        $transfer = (int) $request->input('transfer');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Pastikan NOKUNJ dari URL dan request sama
+        |--------------------------------------------------------------------------
+        */
+
+        if ($kunjungan !== $request->NOKUNJ) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Nomor kunjungan tidak sesuai.'
+            ], 422);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Ambil data berdasarkan metode
+        |--------------------------------------------------------------------------
+        */
+
+        $metode = $request->input('sn_metode');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKOR
+        |--------------------------------------------------------------------------
+        |
+        | SKOR1 - SKOR6 disesuaikan dengan metode yang digunakan.
+        |
+        */
+
+        $skor1 = null;
+        $skor2 = null;
+        $skor3 = null;
+        $skor4 = null;
+        $skor5 = null;
+        $skor6 = null;
+
+
+        switch ((string) $metode) {
+
+            // ======================================================
+            // BPS
+            // ======================================================
+
+            case '2':
+
+                $skor1 = $request->input('sn_bps_1');
+                $skor2 = $request->input('sn_bps_2');
+                $skor3 = $request->input('sn_bps_3');
+
+                break;
+
+
+            // ======================================================
+            // NIPS
+            // ======================================================
+
+            case '3':
+
+                $skor1 = $request->input('sn_nips_1');
+                $skor2 = $request->input('sn_nips_2');
+                $skor3 = $request->input('sn_nips_3');
+                $skor4 = $request->input('sn_nips_4');
+                $skor5 = $request->input('sn_nips_5');
+                $skor6 = $request->input('sn_nips_6');
+
+                break;
+
+
+            // ======================================================
+            // FLACC
+            // ======================================================
+
+            case '4':
+
+                $skor1 = $request->input('sn_flacc_1');
+                $skor2 = $request->input('sn_flacc_2');
+                $skor3 = $request->input('sn_flacc_3');
+                $skor4 = $request->input('sn_flacc_4');
+                $skor5 = $request->input('sn_flacc_5');
+
+                break;
+
+
+            // ======================================================
+            // NRS / VAS
+            // ======================================================
+
+            case '1':
+            case '5':
+
+                // Untuk NRS/VAS skor disimpan di SKALA
+                break;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA YANG DISIMPAN
+        |--------------------------------------------------------------------------
+        */
+
+        $data = [
+
+            'NYERI' => $request->input('sn_nyeri'),
+
+            'ONSET' => $request->input('sn_onset'),
+
+            'SKALA' => $request->input('sn_skala'),
+
+            'METODE' => $metode,
+
+            'SKOR1' => $skor1,
+            'SKOR2' => $skor2,
+            'SKOR3' => $skor3,
+            'SKOR4' => $skor4,
+            'SKOR5' => $skor5,
+            'SKOR6' => $skor6,
+
+            'PENCETUS' => $request->input('sn_pencetus'),
+
+            'GAMBARAN' => $request->input('sn_gambaran'),
+
+            'DURASI' => $request->input('sn_durasi'),
+
+            'LOKASI' => $request->input('sn_lokasi'),
+
+            'OLEH' => auth()->id(),
+
+            'STATUS' => 1,
+        ];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE / INSERT
+        |--------------------------------------------------------------------------
+        |
+        | Yang menjadi identitas data:
+        |
+        | KUNJUNGAN + TRANSFER
+        |
+        | Jadi:
+        |
+        | kunjungan A + transfer 1
+        | kunjungan A + transfer 2
+        |
+        | merupakan dua data yang berbeda.
+        |
+        */
+
+        DB::table('medicalrecord.penilaian_nyeri_transfer')
+            ->updateOrInsert(
+
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ,
+                    'TRANSFER' => $transfer,
+                ],
+
+                $data
+            );
+
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Data Skrining Nyeri Transfer berhasil disimpan.'
+        ]);
+    }
+
     public function getSkriningDekubitus($KUNJUNGAN)
     {
         $dekubitus = $this->getData(

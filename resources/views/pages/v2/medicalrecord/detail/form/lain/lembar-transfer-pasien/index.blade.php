@@ -213,10 +213,11 @@
                                             <strong>SKRINING NYERI</strong>
                                         </h5>
                                     </div>
-                                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
+                                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri_transfer',
                                         [
                                             'section' => '#form_lembar_transfer_pasien_sebelum',
-                                            'metodeNyeri' => ['vas']
+                                            'metodeNyeri' => ['vas'],
+                                            'transfer' => 1
                                         ]
                                     )
                                 </div>
@@ -243,10 +244,11 @@
                                             <strong>SKRINING NYERI</strong>
                                         </h5>
                                     </div>
-                                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
+                                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri_transfer',
                                         [
-                                            'section' => '#form_lembar_transfer_pasien_sesudah',
-                                            'metodeNyeri' => ['vas']
+                                            'section' => '#form_lembar_transfer_pasien_sebelum',
+                                            'metodeNyeri' => ['vas'],
+                                            'transfer' => 2
                                         ]
                                     )
                                 </div>

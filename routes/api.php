@@ -250,6 +250,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // NYERI
                         Route::get('emr/pengkajian/skrining/nyeri/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningNyeri']);
                         Route::post('emr/pengkajian/skrining/nyeri/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningNyeri']);
+                    // NYERI TRANSFER
+                        Route::get('emr/pengkajian/skrining/nyeri-transfer/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningNyeriTransfer']);
+                        Route::post('emr/pengkajian/skrining/nyeri-transfer/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningNyeriTransfer']);
                     // DECUBITUS
                         Route::get('emr/pengkajian/skrining/dekubitus/{kunjungan}', [AddOnPengkajianController::class, 'getSkriningDekubitus']);
                         Route::post('emr/pengkajian/skrining/dekubitus/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSkriningDekubitus']);
