@@ -138,12 +138,30 @@
 
                             <div class="menu-wrapper">
                                 <!-- Rawat Inap -->
+                                {{-- <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center menu-collapse menu-parent"
+                                    data-bs-toggle="collapse"
+                                    href="#submenuRanap"
+                                    role="button"
+                                    data-group="awal">
+                                    <span>Form Pengkajian Rawat Inap</span>
+                                    <i class="ti ti-chevron-down submenu-icon"></i>
+                                </a> --}}
                                 <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center menu-collapse menu-parent"
                                     data-bs-toggle="collapse"
                                     href="#submenuRanap"
                                     role="button"
                                     data-group="awal">
                                     <span>Form Pengkajian Rawat Inap</span>
+                                    <span class="ms-auto d-flex align-items-center gap-1 me-2 js-ranap-parent-final-icons">
+                                        {{-- Akan ditampilkan jika salah satu child sudah final --}}
+                                        <i class="ri-stethoscope-line text-bg-danger d-none js-ranap-parent-final-icon px-1 rounded"
+                                            data-final-role="dokter"
+                                            title="Ada form Rawat Inap yang sudah difinalisasi dokter"></i>
+
+                                        <i class="ri-nurse-line text-bg-success d-none js-ranap-parent-final-icon px-1 rounded"
+                                            data-final-role="perawat"
+                                            title="Ada form Rawat Inap yang sudah difinalisasi perawat"></i>
+                                    </span>
                                     <i class="ti ti-chevron-down submenu-icon"></i>
                                 </a>
 
@@ -611,277 +629,277 @@
         });
 
         // ==========================
-// SEARCH MENU FORM
-// ==========================
-$('#compo-menu-search').on('input', function () {
+        // SEARCH MENU FORM
+        // ==========================
+        $('#compo-menu-search').on('input', function () {
 
-    const keyword = $(this).val()
-        .toLowerCase()
-        .trim();
+            const keyword = $(this).val()
+                .toLowerCase()
+                .trim();
 
-    const $menu = $('#pengkajianMenu');
+            const $menu = $('#pengkajianMenu');
 
-    // =====================================================
-    // RESET SEMUA MENU
-    // =====================================================
-    $menu.find('.menu-group-title').hide();
-    $menu.find('.menu-item').hide();
-    $menu.find('.menu-wrapper').hide();
-    $menu.find('.menu-child').hide();
+            // =====================================================
+            // RESET SEMUA MENU
+            // =====================================================
+            $menu.find('.menu-group-title').hide();
+            $menu.find('.menu-item').hide();
+            $menu.find('.menu-wrapper').hide();
+            $menu.find('.menu-child').hide();
 
-    $menu.find('.submenu').removeClass('show');
+            $menu.find('.submenu').removeClass('show');
 
-    $menu.find('.submenu-icon')
-        .removeClass('ti-chevron-up')
-        .addClass('ti-chevron-down');
+            $menu.find('.submenu-icon')
+                .removeClass('ti-chevron-up')
+                .addClass('ti-chevron-down');
 
-    // =====================================================
-    // SEARCH KOSONG
-    // =====================================================
-    if (keyword === '') {
+            // =====================================================
+            // SEARCH KOSONG
+            // =====================================================
+            if (keyword === '') {
 
-        $menu.find('.menu-group-title').show();
-        $menu.find('.menu-item').show();
-        $menu.find('.menu-wrapper').show();
-        $menu.find('.menu-child').show();
+                $menu.find('.menu-group-title').show();
+                $menu.find('.menu-item').show();
+                $menu.find('.menu-wrapper').show();
+                $menu.find('.menu-child').show();
 
-        return;
-    }
-
-    // =====================================================
-    // PECAH KEYWORD MENJADI KATA
-    // Contoh:
-    // "transfer pasien"
-    // menjadi ["transfer", "pasien"]
-    // =====================================================
-    const keywords = keyword
-        .split(/\s+/)
-        .filter(Boolean);
-
-    const matchedGroups = new Set();
-
-    // =====================================================
-    // FUNGSI NORMALISASI TEXT
-    // =====================================================
-    function normalizeText(text) {
-        return String(text || '')
-            .toLowerCase()
-            .replace(/\s+/g, ' ')
-            .trim();
-    }
-
-    // =====================================================
-    // FUNGSI CEK KEYWORD
-    // SEMUA KATA HARUS ADA
-    // =====================================================
-    function isMatch(text) {
-
-        const normalizedText = normalizeText(text);
-
-        return keywords.every(function (word) {
-            return normalizedText.includes(word);
-        });
-    }
-
-    // =====================================================
-    // 1. MENU BIASA
-    // Contoh:
-    // Lembar Transfer Pasien
-    // =====================================================
-    $menu.find('.menu-item').each(function () {
-
-        const $item = $(this);
-
-        // Ambil span pertama agar icon finalisasi
-        // tidak ikut dihitung sebagai text pencarian
-        const text = normalizeText(
-            $item
-                .children('span')
-                .first()
-                .text()
-        );
-
-        const group = String(
-            $item.attr('data-group') || ''
-        );
-
-        if (isMatch(text)) {
-
-            $item.css('display', 'flex');
-
-            if (group) {
-                matchedGroups.add(group);
+                return;
             }
 
-        } else {
+            // =====================================================
+            // PECAH KEYWORD MENJADI KATA
+            // Contoh:
+            // "transfer pasien"
+            // menjadi ["transfer", "pasien"]
+            // =====================================================
+            const keywords = keyword
+                .split(/\s+/)
+                .filter(Boolean);
 
-            $item.css('display', 'none');
+            const matchedGroups = new Set();
 
-        }
-    });
-
-    // =====================================================
-    // 2. MENU DENGAN SUBMENU
-    // =====================================================
-    $menu.find('.menu-wrapper').each(function () {
-
-        const $wrapper = $(this);
-
-        const $parent = $wrapper
-            .find('.menu-collapse')
-            .first();
-
-        // =================================================
-        // TEXT PARENT
-        // =================================================
-        const parentText = normalizeText(
-            $parent
-                .children('span')
-                .first()
-                .text()
-        );
-
-        const group = String(
-            $parent.attr('data-group') || ''
-        );
-
-        let childMatched = false;
-
-        // =================================================
-        // CEK SETIAP CHILD
-        // =================================================
-        $wrapper.find('.menu-child').each(function () {
-
-            const $child = $(this);
-
-            /*
-             * Ambil TEXT CHILD SAJA.
-             *
-             * Tidak menggunakan parentText + childText.
-             *
-             * Clone digunakan agar icon <i> tidak ikut
-             * mempengaruhi text pencarian.
-             *
-             * Ini juga membuat struktur berikut sama-sama
-             * bisa dibaca:
-             *
-             * Rawat Jalan:
-             * <i>...</i> Form Dewasa
-             *
-             * Rawat Inap:
-             * <span>
-             *     <i>...</i> Form Dewasa
-             * </span>
-             */
-
-            const $clone = $child.clone();
-
-            // Hapus semua icon dari hasil clone
-            $clone.find('i').remove();
-
-            const childText = normalizeText(
-                $clone.text()
-            );
-
-            // =============================================
-            // CHILD COCOK
-            // =============================================
-            if (isMatch(childText)) {
-
-                $child.css('display', 'flex');
-
-                childMatched = true;
-
-            } else {
-
-                $child.css('display', 'none');
-
-            }
-        });
-
-        // =================================================
-        // ADA CHILD YANG COCOK
-        // =================================================
-        if (childMatched) {
-
-            // Tampilkan wrapper
-            $wrapper.css('display', 'block');
-
-            // Tampilkan parent
-            $parent.css('display', 'flex');
-
-            // Buka submenu
-            $wrapper.find('.submenu')
-                .addClass('show');
-
-            // Ubah icon menjadi chevron-up
-            $wrapper.find('.submenu-icon')
-                .removeClass('ti-chevron-down')
-                .addClass('ti-chevron-up');
-
-            // Tandai group
-            if (group) {
-                matchedGroups.add(group);
+            // =====================================================
+            // FUNGSI NORMALISASI TEXT
+            // =====================================================
+            function normalizeText(text) {
+                return String(text || '')
+                    .toLowerCase()
+                    .replace(/\s+/g, ' ')
+                    .trim();
             }
 
-        } else {
+            // =====================================================
+            // FUNGSI CEK KEYWORD
+            // SEMUA KATA HARUS ADA
+            // =====================================================
+            function isMatch(text) {
 
-            // =================================================
-            // TIDAK ADA CHILD YANG COCOK
-            // =================================================
+                const normalizedText = normalizeText(text);
 
-            /*
-             * Cek apakah PARENT sendiri cocok.
-             *
-             * Contoh:
-             * search "rawat jalan"
-             *
-             * Maka hanya dropdown Rawat Jalan yang tampil,
-             * tanpa otomatis menampilkan seluruh child.
-             */
+                return keywords.every(function (word) {
+                    return normalizedText.includes(word);
+                });
+            }
 
-            if (isMatch(parentText)) {
+            // =====================================================
+            // 1. MENU BIASA
+            // Contoh:
+            // Lembar Transfer Pasien
+            // =====================================================
+            $menu.find('.menu-item').each(function () {
 
-                $wrapper.css('display', 'block');
+                const $item = $(this);
 
-                $parent.css('display', 'flex');
+                // Ambil span pertama agar icon finalisasi
+                // tidak ikut dihitung sebagai text pencarian
+                const text = normalizeText(
+                    $item
+                        .children('span')
+                        .first()
+                        .text()
+                );
 
-                if (group) {
-                    matchedGroups.add(group);
+                const group = String(
+                    $item.attr('data-group') || ''
+                );
+
+                if (isMatch(text)) {
+
+                    $item.css('display', 'flex');
+
+                    if (group) {
+                        matchedGroups.add(group);
+                    }
+
+                } else {
+
+                    $item.css('display', 'none');
+
                 }
+            });
 
-            } else {
+            // =====================================================
+            // 2. MENU DENGAN SUBMENU
+            // =====================================================
+            $menu.find('.menu-wrapper').each(function () {
 
-                $wrapper.css('display', 'none');
+                const $wrapper = $(this);
 
-            }
-        }
-    });
+                const $parent = $wrapper
+                    .find('.menu-collapse')
+                    .first();
 
-    // =====================================================
-    // 3. GROUP TITLE
-    // HANYA TAMPIL JIKA GROUP MEMILIKI HASIL
-    // =====================================================
-    $menu.find('.menu-group-title').each(function () {
+                // =================================================
+                // TEXT PARENT
+                // =================================================
+                const parentText = normalizeText(
+                    $parent
+                        .children('span')
+                        .first()
+                        .text()
+                );
 
-        const $title = $(this);
+                const group = String(
+                    $parent.attr('data-group') || ''
+                );
 
-        const group = String(
-            $title.attr('data-group') || ''
-        );
+                let childMatched = false;
 
-        if (matchedGroups.has(group)) {
+                // =================================================
+                // CEK SETIAP CHILD
+                // =================================================
+                $wrapper.find('.menu-child').each(function () {
 
-            $title.css('display', 'block');
+                    const $child = $(this);
 
-        } else {
+                    /*
+                    * Ambil TEXT CHILD SAJA.
+                    *
+                    * Tidak menggunakan parentText + childText.
+                    *
+                    * Clone digunakan agar icon <i> tidak ikut
+                    * mempengaruhi text pencarian.
+                    *
+                    * Ini juga membuat struktur berikut sama-sama
+                    * bisa dibaca:
+                    *
+                    * Rawat Jalan:
+                    * <i>...</i> Form Dewasa
+                    *
+                    * Rawat Inap:
+                    * <span>
+                    *     <i>...</i> Form Dewasa
+                    * </span>
+                    */
 
-            $title.css('display', 'none');
+                    const $clone = $child.clone();
 
-        }
-    });
+                    // Hapus semua icon dari hasil clone
+                    $clone.find('i').remove();
 
-});
+                    const childText = normalizeText(
+                        $clone.text()
+                    );
+
+                    // =============================================
+                    // CHILD COCOK
+                    // =============================================
+                    if (isMatch(childText)) {
+
+                        $child.css('display', 'flex');
+
+                        childMatched = true;
+
+                    } else {
+
+                        $child.css('display', 'none');
+
+                    }
+                });
+
+                // =================================================
+                // ADA CHILD YANG COCOK
+                // =================================================
+                if (childMatched) {
+
+                    // Tampilkan wrapper
+                    $wrapper.css('display', 'block');
+
+                    // Tampilkan parent
+                    $parent.css('display', 'flex');
+
+                    // Buka submenu
+                    $wrapper.find('.submenu')
+                        .addClass('show');
+
+                    // Ubah icon menjadi chevron-up
+                    $wrapper.find('.submenu-icon')
+                        .removeClass('ti-chevron-down')
+                        .addClass('ti-chevron-up');
+
+                    // Tandai group
+                    if (group) {
+                        matchedGroups.add(group);
+                    }
+
+                } else {
+
+                    // =================================================
+                    // TIDAK ADA CHILD YANG COCOK
+                    // =================================================
+
+                    /*
+                    * Cek apakah PARENT sendiri cocok.
+                    *
+                    * Contoh:
+                    * search "rawat jalan"
+                    *
+                    * Maka hanya dropdown Rawat Jalan yang tampil,
+                    * tanpa otomatis menampilkan seluruh child.
+                    */
+
+                    if (isMatch(parentText)) {
+
+                        $wrapper.css('display', 'block');
+
+                        $parent.css('display', 'flex');
+
+                        if (group) {
+                            matchedGroups.add(group);
+                        }
+
+                    } else {
+
+                        $wrapper.css('display', 'none');
+
+                    }
+                }
+            });
+
+            // =====================================================
+            // 3. GROUP TITLE
+            // HANYA TAMPIL JIKA GROUP MEMILIKI HASIL
+            // =====================================================
+            $menu.find('.menu-group-title').each(function () {
+
+                const $title = $(this);
+
+                const group = String(
+                    $title.attr('data-group') || ''
+                );
+
+                if (matchedGroups.has(group)) {
+
+                    $title.css('display', 'block');
+
+                } else {
+
+                    $title.css('display', 'none');
+
+                }
+            });
+
+        });
 
         // ==========================
         // CLICK MENU FORM
@@ -1112,20 +1130,75 @@ $('#compo-menu-search').on('input', function () {
     }
 
     window.updatePenandaFinalisasi = function (formKey, isFinal) {
+
+        // ==========================================================
+        // UPDATE ICON CHILD
+        // ==========================================================
+
         const $icons = $(
             `.js-final-icon[data-final-key="${formKey}"]`
         );
 
-        if (!$icons.length) {
-            console.warn(
-                'Icon penanda tidak ditemukan untuk formKey:',
-                formKey
-            );
+        if ($icons.length) {
+            $icons.toggleClass('d-none', !isFinal);
+        }
+
+
+        // ==========================================================
+        // UPDATE ICON PARENT RAWAT INAP
+        // ==========================================================
+
+        updatePenandaFinalisasiParentRanap();
+    };
+
+    function updatePenandaFinalisasiParentRanap() {
+
+        const $parent = $('#submenuRanap')
+            .closest('.menu-wrapper')
+            .find('.menu-collapse')
+            .first();
+
+        if (!$parent.length) {
             return;
         }
 
-        $icons.toggleClass('d-none', !isFinal);
-    };
+
+        // ==========================================================
+        // CEK FINALISASI DOKTER
+        // ==========================================================
+
+        const dokterFinal = $('#submenuRanap')
+            .find('.js-final-icon[data-final-key$="_dokter"]')
+            .filter(function () {
+                return !$(this).hasClass('d-none');
+            })
+            .length > 0;
+
+
+        // ==========================================================
+        // CEK FINALISASI PERAWAT
+        // ==========================================================
+
+        const perawatFinal = $('#submenuRanap')
+            .find('.js-final-icon[data-final-key$="_perawat"]')
+            .filter(function () {
+                return !$(this).hasClass('d-none');
+            })
+            .length > 0;
+
+
+        // ==========================================================
+        // UPDATE ICON PARENT
+        // ==========================================================
+
+        $parent
+            .find('.js-ranap-parent-final-icon[data-final-role="dokter"]')
+            .toggleClass('d-none', !dokterFinal);
+
+        $parent
+            .find('.js-ranap-parent-final-icon[data-final-role="perawat"]')
+            .toggleClass('d-none', !perawatFinal);
+    }
 
     window.tampilkanPenandaFinalisasi = function () {
         const formKeys = $('.js-final-icon').map(function () {
@@ -1145,14 +1218,20 @@ $('#compo-menu-search').on('input', function () {
             },
 
             success: function (response) {
+
                 const data = response?.data || {};
 
                 Object.entries(data).forEach(function ([formKey, item]) {
+
                     window.updatePenandaFinalisasi(
                         formKey,
                         Boolean(item?.is_final)
                     );
+
                 });
+
+                // Pastikan parent Rawat Inap ikut diperbarui
+                updatePenandaFinalisasiParentRanap();
             }
         });
     };

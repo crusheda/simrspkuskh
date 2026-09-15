@@ -62,17 +62,11 @@ class PrintPreviewController extends Controller
             $finalisasi = DB::table(
                 'simrspku_pengkajian.finalisasi'
             )
-                ->where('kunjungan', $kunjungan)
-                ->where('form', $form)
-                ->where('sub', $sub)
-                ->where('status', 2)
+                ->where('KUNJUNGAN', $kunjungan)
+                ->where('FORM', $form)
+                ->where('SUB', $sub)
+                ->where('STATUS', 2)
                 ->first();
-
-            /*
-            |--------------------------------------------------------------------------
-            | WAJIB SUDAH FINAL
-            |--------------------------------------------------------------------------
-            */
 
             if (!$finalisasi) {
                 return response()->json([
@@ -88,22 +82,19 @@ class PrintPreviewController extends Controller
             | DATA FINALISASI
             |--------------------------------------------------------------------------
             */
-
             $namaFinalisasi = '-';
 
-            if (!empty($finalisasi->user)) {
-                $namaFinalisasi = DB::table(
-                    'master.pegawai'
-                )
-                    ->where('ID', $finalisasi->user)
+            if (!empty($finalisasi->USER_UPDATED)) {
+                $namaFinalisasi = DB::table('master.pegawai')
+                    ->where('ID', $finalisasi->USER_UPDATED)
                     ->value('NAMA') ?? '-';
             }
 
             $tanggalFinalisasi = '-';
 
-            if (!empty($finalisasi->created_at)) {
+            if (!empty($finalisasi->UPDATED)) {
                 $tanggalFinalisasi = Carbon::parse(
-                    $finalisasi->created_at
+                    $finalisasi->UPDATED
                 )->translatedFormat(
                     'DD MMMM YYYY [Pukul] HH:mm:ss'
                 );
@@ -157,20 +148,19 @@ class PrintPreviewController extends Controller
                 $formKey
             );
 
-            $fileName =
-                $safeFormKey . '_' . $kunjungan;
+            $fileName = $safeFormKey . '_' . $kunjungan;
 
             $temporaryWord =
-                $outputDir
-                . DIRECTORY_SEPARATOR
-                . $fileName
-                . '.docx';
+                $outputDir .
+                DIRECTORY_SEPARATOR .
+                $fileName .
+                '.docx';
 
             $finalPdf =
-                $outputDir
-                . DIRECTORY_SEPARATOR
-                . $fileName
-                . '.pdf';
+                $outputDir .
+                DIRECTORY_SEPARATOR .
+                $fileName .
+                '.pdf';
 
             /*
             |--------------------------------------------------------------------------
@@ -198,95 +188,44 @@ class PrintPreviewController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | DATA DUMMY
+            | DATA UMUM
             |--------------------------------------------------------------------------
             */
-
-            $data = [
-                /*
-                |--------------------------------------------------------------------------
-                | INSTANSI
-                |--------------------------------------------------------------------------
-                */
-
-                'NAMAINST' =>
-                    'RS PKU MUHAMMADIYAH SUKOHARJO',
-
-                'ALAMATINST' =>
-                    'Jl. Slamet Riyadi No. 534 Sukoharjo',
-
-                /*
-                |--------------------------------------------------------------------------
-                | PASIEN
-                |--------------------------------------------------------------------------
-                */
-
-                'KUNJUNGAN' =>
-                    $kunjungan,
-
-                'NORM' =>
-                    '00000001',
-
-                'NAMALENGKAP' =>
-                    'NAMA PASIEN DUMMY',
-
-                'JK' =>
-                    'Laki-laki',
-
-                'TGLLAHIR' =>
-                    '01 Januari 1990',
-
-                'UMUR' =>
-                    '36 Tahun',
-
-                'ALAMAT' =>
-                    'Alamat Pasien Dummy',
-
-                /*
-                |--------------------------------------------------------------------------
-                | FORM
-                |--------------------------------------------------------------------------
-                */
-
-                'FORMKEY' =>
-                    $formKey,
-
-                'FORM' =>
-                    $form,
-
-                'SUB' =>
-                    $sub,
-
-                'JUDULFORM' =>
-                    $title,
-
-                /*
-                |--------------------------------------------------------------------------
-                | FINALISASI
-                |--------------------------------------------------------------------------
-                */
-
-                'FINALISASI_OLEH' =>
-                    $namaFinalisasi,
-
-                'FINALISASI_TANGGAL' =>
-                    $tanggalFinalisasi,
-
-                /*
-                |--------------------------------------------------------------------------
-                | CETAK
-                |--------------------------------------------------------------------------
-                */
-
-                'TANGGAL_CETAK' =>
-                    now()->translatedFormat(
-                        'DD MMMM YYYY [Pukul] HH:mm:ss'
-                    ),
-            ];
+            $data = $this->getDataUmum(
+                $kunjungan,
+                $formKey,
+                $form,
+                $sub,
+                $title,
+                $namaFinalisasi,
+                $tanggalFinalisasi
+            );
 
             /*
             |--------------------------------------------------------------------------
-            | SET VALUE
+            | DATA KHUSUS FORM
+            |--------------------------------------------------------------------------
+            */
+            $dataForm = $this->getDataForm(
+                $formKey,
+                $kunjungan,
+                $sub
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | GABUNGKAN DATA
+            |--------------------------------------------------------------------------
+            */
+
+            $data = array_merge(
+                $data,
+                $dataForm
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | SET VALUE WORD
             |--------------------------------------------------------------------------
             */
 
@@ -347,9 +286,6 @@ class PrintPreviewController extends Controller
             |--------------------------------------------------------------------------
             | RETURN PDF
             |--------------------------------------------------------------------------
-            |
-            | SAMA DENGAN previewFormJadwalPelayanan()
-            |
             */
 
             return response()->file($finalPdf, [
@@ -365,11 +301,132 @@ class PrintPreviewController extends Controller
                 'Expires' =>
                     '0',
             ]);
+
         } catch (\Throwable $e) {
+
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage(),
             ], 500);
         }
+    }
+
+
+    /**
+     * ========================================================================
+     * DATA UMUM
+     * ========================================================================
+     */
+    private function getDataUmum(
+        $kunjungan,
+        $formKey,
+        $form,
+        $sub,
+        $title,
+        $namaFinalisasi,
+        $tanggalFinalisasi
+    ): array {
+        return [
+
+            /*
+            |--------------------------------------------------------------------------
+            | INSTANSI
+            |--------------------------------------------------------------------------
+            */
+
+            'NAMAINST' =>
+                'RS PKU MUHAMMADIYAH SUKOHARJO',
+
+            'ALAMATINST' =>
+                'Jl. Slamet Riyadi No. 534 Sukoharjo',
+
+            /*
+            |--------------------------------------------------------------------------
+            | PASIEN
+            |--------------------------------------------------------------------------
+            */
+
+            'KUNJUNGAN' =>
+                $kunjungan,
+
+            'NORM' =>
+                '00000001',
+
+            'NAMALENGKAP' =>
+                'NAMA PASIEN DUMMY',
+
+            'JK' =>
+                'Laki-laki',
+
+            'TGLLAHIR' =>
+                '01 Januari 1990',
+
+            'UMUR' =>
+                '36 Tahun',
+
+            'ALAMAT' =>
+                'Alamat Pasien Dummy',
+
+            /*
+            |--------------------------------------------------------------------------
+            | FORM
+            |--------------------------------------------------------------------------
+            */
+
+            'FORMKEY' =>
+                $formKey,
+
+            'FORM' =>
+                $form,
+
+            'SUB' =>
+                $sub,
+
+            'JUDULFORM' =>
+                $title,
+
+            /*
+            |--------------------------------------------------------------------------
+            | FINALISASI
+            |--------------------------------------------------------------------------
+            */
+
+            'FINALISASI_OLEH' =>
+                $namaFinalisasi,
+
+            'FINALISASI_TANGGAL' =>
+                $tanggalFinalisasi,
+
+            /*
+            |--------------------------------------------------------------------------
+            | CETAK
+            |--------------------------------------------------------------------------
+            */
+
+            'TANGGAL_CETAK' =>
+                now()->translatedFormat(
+                    'DD MMMM YYYY [Pukul] HH:mm:ss'
+                ),
+        ];
+    }
+
+    private function getDataForm(
+        string $formKey,
+        string $kunjungan,
+        string $sub
+    ): array {
+
+        $map = FinalisasiMap::get($formKey);
+
+        if (empty($map['service'])) {
+            return [];
+        }
+
+        $service = app($map['service']);
+
+        return $service->getData(
+            $kunjungan,
+            $sub
+        );
     }
 }

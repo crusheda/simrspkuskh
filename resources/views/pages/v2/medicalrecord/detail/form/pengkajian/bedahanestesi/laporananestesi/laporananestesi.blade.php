@@ -1186,6 +1186,17 @@
         </div>
     </div>
 
+    @include(
+        'pages.v2.medicalrecord.detail.form.finalisasi',
+        [
+            'jenis' => 'non-cppt',
+            'formId' => 'form_laporan_anestesi',
+            'formKey' => 'lap_anestesi',
+            'sub' => 'PENATA-ANESTESI',
+            'kunjungan' => $kunjungan ?? $list['kunjungan'],
+        ]
+    )
+
 </div>
 
 <script>

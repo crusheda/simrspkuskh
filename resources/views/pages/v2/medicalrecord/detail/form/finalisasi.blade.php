@@ -1161,11 +1161,8 @@
             return;
         }
 
-        const statusUrl =
-            `/api/v2/emr/pengkajian/finalisasi/${kunjungan}`;
-
         $.ajax({
-            url: statusUrl,
+            url: urlFinalisasi,
             type: 'GET',
 
             data: {

@@ -64,7 +64,8 @@ class ICareController extends Controller
         if (!$dokter) {
             return response()->json([
                 'status' => false,
-                'message'=> 'Kode DPJP BPJS untuk Dokter login saat ini tidak ditemukan'
+                'message'=> 'Login Dokter tidak valid. Pastikan akses I-Care hanya diperuntukkan bagi dokter yang bersangkutan.'
+                // 'message'=> 'Kode DPJP BPJS untuk Dokter login saat ini tidak ditemukan'
             ]);
         }
 
@@ -261,7 +262,8 @@ class ICareController extends Controller
         if (!$dokter) {
             return response()->json([
                 'status' => false,
-                'message'=> 'Kode DPJP BPJS untuk Dokter login saat ini tidak ditemukan'
+                'message'=> 'Login Dokter tidak valid. Pastikan akses I-Care hanya diperuntukkan bagi dokter yang bersangkutan.'
+                // 'message'=> 'Kode DPJP BPJS untuk Dokter login saat ini tidak ditemukan'
             ]);
         }
 

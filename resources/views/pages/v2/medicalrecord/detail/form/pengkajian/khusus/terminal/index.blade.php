@@ -956,7 +956,8 @@
             url: baseUrl,
             type: 'GET',
             dataType: 'json',
-
+            beforeSend: function () {
+            },
             success: function (res) {
 
                 const data = res?.data;

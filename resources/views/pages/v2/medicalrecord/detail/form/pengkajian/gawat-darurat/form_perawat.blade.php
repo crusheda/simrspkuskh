@@ -1264,10 +1264,7 @@
             </div>
         </div>
     </div>
-    <div class="form-footer d-flex justify-content-between">
-        <button type="button" class="btn btn-subtle-info btnLihatCPPT" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat CPPT" onclick="showCppt('{{ $list['kunjungan'] }}')">
-            <i class="ri-booklet-line me-1"></i> Lihat CPPT
-        </button>
+    <div class="form-footer">
         <button class="btn btn-success" onclick="triggerSaveSubDataPengkajianGdP(); saveDataPengkajianGdP(this)">
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
