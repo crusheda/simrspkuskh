@@ -2127,6 +2127,11 @@ class EMRController extends Controller
             ->where('pk.NOMOR', $kunjungan)
             ->first();
 
+        $dokter = DB::table('master.dokter AS dok')
+                ->select('dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'))
+                ->where('dok.STATUS',1)
+                ->get();
+
         $riwayat_alergi = DB::table('master.referensi')
             ->select('ID', 'DESKRIPSI')
             ->where('JENIS', 180)
@@ -2249,6 +2254,7 @@ class EMRController extends Controller
             'kunjungan' => $kunjungan,
             'tingkat_kesadaran' => $tingkat_kesadaran,
             'pasien' => $pasien,
+            'dokter' => $dokter,
             'riwayat_alergi' => $riwayat_alergi,
             'usia_kehamilan' => $usia_kehamilan,
             'jenis_persalinan' => $jenis_persalinan,

@@ -17,7 +17,7 @@
                     ]
                 )
             </div>
-            <div class="col-md-12 mb-3">
+            {{-- <div class="col-md-12 mb-3">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="col-md-12 mb-1">
@@ -25,7 +25,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <div class="col-md-12 mb-3">
                 @include(
                     'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
@@ -33,14 +33,23 @@
                         'section' => '#rin_dokter',
                         'page' => 'dokter',
                         'neonatus' => 'true',
-                        // 'editableFields' => [
-                        //     'tv_keu',
-                        //     'tv_gcs_e',
-                        //     'tv_gcs_v',
-                        //     'tv_gcs_m',
-                        //     'tv_bb',
-                        //     'tv_tb',
-                        // ],
+                        'editableFields' => [
+                            'tv_keu',
+                            // 'tv_gcs_e',
+                            // 'tv_gcs_v',
+                            // 'tv_gcs_m',
+                            // 'tv_td_up',
+                            // 'tv_td_down',
+                            'tv_nadi',
+                            'tv_nadi_cb',
+                            'tv_nafas',
+                            'tv_nafas_cb',
+                            'tv_suhu',
+                            'tv_spo2',
+                            'tv_bb',
+                            'tv_tb',
+                            'kesadaran_neonatus'
+                        ],
                     ]
                 )
             </div>
@@ -66,13 +75,13 @@
                 </div>
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.tata_laksana_terapi',['section' => '#riN_dokter'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.tata_laksana_terapi',['section' => '#rin_dokter'])
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.target_terapi',['section' => '#riN_dokter'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.target_terapi',['section' => '#rin_dokter'])
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rencana_konsultasi',['section' => '#riN_dokter'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rencana_konsultasi',['section' => '#rin_dokter'])
             </div>
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kriteria_pulang',['section' => '#rin_dokter'])

@@ -1,4 +1,4 @@
-<div class="row align-items-center" id="form_target_terapi">
+<div class="row align-items-center" id="form_tu_terapi">
     <div class="col-md-12 mb-3">
         <label class="form-label fw-bold">Tolok Ukur / Sasaran yang Dicapai</label>
         <textarea class="form-control" name="tu" id="tu" rows="3"></textarea>
@@ -14,7 +14,7 @@
     'use strict';
 
     const $section = $(@json($section));
-    const $form = $section.find('#form_target_terapi');
+    const $form = $section.find('#form_tu_terapi');
 
     let isTuTerapiLoading = false;
     let isTuTerapiSaving = false;
@@ -168,7 +168,7 @@
                 if (isTuTerapiLoading) {
                     return;
                 }
-
+                console.log('Memanggil simpanTuTerapi()');
                 simpanTuTerapi();
             }
         );

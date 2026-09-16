@@ -353,6 +353,11 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-12">
+            <div class="col-md-12 mb-1">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.penilaian_awal_bbl')
+            </div>
+        </div>
     </div>
 </div>
 <script>

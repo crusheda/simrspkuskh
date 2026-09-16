@@ -102,12 +102,12 @@
         <div class="col-md-6 mb-2">
             <div class="row align-items-center">
                 <div class="col-md-4">
-                    <label class="form-label mb-0">Chepal Hematom</label>
+                    <label class="form-label mb-0">Cephal Hematom</label>
                 </div>
                 <div class="col-md-8">
                     <input type="text"
                         class="form-control form-control-sm"
-                        name="chepal_hematom">
+                        name="cephal_hematom">
                 </div>
             </div>
         </div>
@@ -490,9 +490,9 @@
 
 
                 $form.find(
-                    '[name="chepal_hematom"]'
+                    '[name="cephal_hematom"]'
                 ).val(
-                    data.CHEPAL_HEMATOM ?? ''
+                    data.CEPHAL_HEMATOM ?? ''
                 );
 
 

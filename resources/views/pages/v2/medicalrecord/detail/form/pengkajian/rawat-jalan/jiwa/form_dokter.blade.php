@@ -14,12 +14,11 @@
                         @include(
                             'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
                             [
-                                'section' => '#rjd_dokter',
+                                'section' => '#rjj_dokter',
                                 'anak' => 'false',
                             ]
                         )
                     </div>
-
                     <div class="form-group mb-2">
                         <h5 class="border-bottom pb-2 mb-3 text-primary">
                             <strong><em>Objective </em>(O) : </strong>
@@ -40,7 +39,6 @@
                             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad')
                         </div>
                     </div>
-
                     <div class="form-group mb-2">
                         <h5 class="border-bottom pb-2 mb-3 text-primary">
                             <strong><em>Assessment </em>(A) : </strong>
@@ -53,23 +51,11 @@
                                     <h6>Diagnosis</h6>
                                     <div class="d-flex align-items-center gap-2 mb-2">
                                         <div class="flex-grow-1">
-                                            <textarea
-                                                class="form-control form-control-sm"
-                                                name="diag_detail"
-                                                id="diag_detail"
-                                                placeholder="Masukkan Diagnosa"
-                                                rows="4"
-                                            ></textarea>
+                                            <textarea class="form-control form-control-sm" name="diag_detail" id="diag_detail" placeholder="Masukkan Diagnosa" rows="4"></textarea>
                                         </div>
                                         <div class="flex-shrink-0">
                                             <div class="form-check mb-0">
-                                                <input
-                                                    class="form-check-input check-primary"
-                                                    type="checkbox"
-                                                    name="diag_utama"
-                                                    value="1"
-                                                    id="diag_utama"
-                                                >
+                                                <input class="form-check-input check-primary" type="checkbox" name="diag_utama" value="1" id="diag_utama">
                                                 <label class="form-check-label" for="diag_utama">
                                                     Diagnosis Utama
                                                 </label>
@@ -77,20 +63,12 @@
                                         </div>
                                         <div class="flex-shrink-0">
                                             <div class="btn-group">
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-success"
-                                                    id="btnTambahDiagnosis"
-                                                    onclick="tambahDiagnosis()"
-                                                >
+                                                <button type="button" class="btn btn-success" id="btnTambahDiagnosis"
+                                                    onclick="tambahDiagnosis()">
                                                     <i class="ri-add-box-line"></i>
                                                 </button>
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-subtle-warning"
-                                                    id="btnRefreshDiagnosis"
-                                                    onclick="getDiagnosis()"
-                                                >
+                                                <button type="button" class="btn btn-subtle-warning" id="btnRefreshDiagnosis"
+                                                    onclick="getDiagnosis()">
                                                     <i class="ri-refresh-line"></i>
                                                 </button>
                                             </div>
@@ -123,7 +101,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="form-group mb-2">
                         <h5 class="border-bottom pb-2 mb-3 text-primary">
                             <strong><em>Plan </em>(P) : </strong>

@@ -68,10 +68,22 @@
                     <label class="form-label fw-bold">Keterangan</label>
                     <textarea class="form-control" name="pri_ket" id="pri_ket" rows="3"></textarea>
                 </div>
-                <div class="col-md-12 mb-3">
+                {{-- <div class="col-md-12 mb-3">
                     <label class="form-label fw-bold">DPJP</label>
                     <input type="text" class="form-control" value="{{ $list['pasien']->NAMADOKTER ?? '' }}" placeholder="Nama DPJP" readonly>
                     <input type="hidden" name="pri_dpjp" id="pri_dpjp" value="{{ $list['pasien']->ID ?? '' }}">
+                </div> --}}
+                <div class="col-md-12 mb-3">
+                    <div class="form-group">
+                        <label class="form-label fw-bold">DPJP</label>
+                        <select class="form-control" name="pri_dpjp" id="pri_dpjp" style="width: 100%;">
+                            @foreach ($list['dokter'] as $d)
+                                <option value="{{ $d->ID }}" {{ ($list['pasien']->ID ?? null) == $d->ID ? 'selected' : '' }}>
+                                    {{ $d->NAMADOKTER }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -139,6 +151,7 @@
         let admissionDatePicker = null;
 
         let admissionSaveTimer = null;
+
 
 
         // ==========================================================

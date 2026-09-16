@@ -1004,6 +1004,11 @@
                         hitungIMT();
                     }
 
+                    console.log('PAGE:', page);
+                    console.log('KESADARAN:', ttv.KESADARAN_NEONATUS);
+                    console.log('TYPE:', typeof ttv.KESADARAN_NEONATUS);
+                    console.log('HAS VALUE:', FormHelper.hasValue(ttv.KESADARAN_NEONATUS));
+
                     if (FormHelper.hasValue(ttv.KESADARAN_NEONATUS)) {
                         setSingleCheckbox(
                             'kesadaran_neonatus',
@@ -1159,9 +1164,9 @@
         // ==========================================================
         // GET DATA
         // ==========================================================
+        updateTtvNeonatusState();
         getTandaVital();
 
-        updateTtvNeonatusState();
 
         // ==========================================================
         // HITUNG GCS

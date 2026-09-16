@@ -37,7 +37,7 @@
                             <td>Tidak ada</td>
                             <td>&lt; 100</td>
                             <td>&gt; 100</td>
-    
+
                             <td class="text-start">
                                 Denyut Jantung
                             </td>
@@ -311,7 +311,7 @@
             </div>
         </div>
         {{-- TANGGAL / JAM / BB SEKARANG --}}
-        <div class="row align-items-center mt-3">
+        {{-- <div class="row align-items-center mt-3">
             <div class="col-md-4">
                 <div class="d-flex align-items-center gap-2">
                     <label class="mb-0">Tanggal</label>
@@ -332,7 +332,7 @@
                     <span>gram</span>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 </form>
 

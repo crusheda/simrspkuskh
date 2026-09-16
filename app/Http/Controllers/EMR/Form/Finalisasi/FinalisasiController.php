@@ -1165,18 +1165,7 @@ class FinalisasiController extends Controller
         | S - ANAMNESIS
         |--------------------------------------------------------------------------
         */
-
-        $dewasa = $this->generateSoapRanapDewasa(
-            $kunjungan,
-            $sub
-        );
-
-
         $s = [];
-
-        if ($dewasa['SUBYEKTIF']) {
-            $s[] = $dewasa['SUBYEKTIF'];
-        }
 
         /*
         |--------------------------------------------------------------------------
@@ -1516,6 +1505,15 @@ class FinalisasiController extends Controller
             }
         }
 
+        $dewasa = $this->generateSoapRanapDewasa(
+            $kunjungan,
+            $sub
+        );
+
+        if ($dewasa['SUBYEKTIF']) {
+            $s[] = $dewasa['SUBYEKTIF'];
+        }
+
 
         /*
         |--------------------------------------------------------------------------
@@ -1581,27 +1579,27 @@ class FinalisasiController extends Controller
 
                 $apgarMenit = [
                     1 => [
-                        'DENYUT' => 'APGAR 1 Menit - Denyut',
-                        'PERNAFASAN' => 'APGAR 1 Menit - Pernafasan',
-                        'TONUS' => 'APGAR 1 Menit - Tonus',
-                        'RANGSANG' => 'APGAR 1 Menit - Rangsang',
-                        'WARNA' => 'APGAR 1 Menit - Warna',
+                        // 'DENYUT' => 'APGAR 1 Menit - Denyut',
+                        // 'PERNAFASAN' => 'APGAR 1 Menit - Pernafasan',
+                        // 'TONUS' => 'APGAR 1 Menit - Tonus',
+                        // 'RANGSANG' => 'APGAR 1 Menit - Rangsang',
+                        // 'WARNA' => 'APGAR 1 Menit - Warna',
                         'TOTAL' => 'APGAR Total 1 Menit',
                     ],
                     5 => [
-                        'DENYUT' => 'APGAR 5 Menit - Denyut',
-                        'PERNAFASAN' => 'APGAR 5 Menit - Pernafasan',
-                        'TONUS' => 'APGAR 5 Menit - Tonus',
-                        'RANGSANG' => 'APGAR 5 Menit - Rangsang',
-                        'WARNA' => 'APGAR 5 Menit - Warna',
+                        // 'DENYUT' => 'APGAR 5 Menit - Denyut',
+                        // 'PERNAFASAN' => 'APGAR 5 Menit - Pernafasan',
+                        // 'TONUS' => 'APGAR 5 Menit - Tonus',
+                        // 'RANGSANG' => 'APGAR 5 Menit - Rangsang',
+                        // 'WARNA' => 'APGAR 5 Menit - Warna',
                         'TOTAL' => 'APGAR Total 5 Menit',
                     ],
                     10 => [
-                        'DENYUT' => 'APGAR 10 Menit - Denyut',
-                        'PERNAFASAN' => 'APGAR 10 Menit - Pernafasan',
-                        'TONUS' => 'APGAR 10 Menit - Tonus',
-                        'RANGSANG' => 'APGAR 10 Menit - Rangsang',
-                        'WARNA' => 'APGAR 10 Menit - Warna',
+                        // 'DENYUT' => 'APGAR 10 Menit - Denyut',
+                        // 'PERNAFASAN' => 'APGAR 10 Menit - Pernafasan',
+                        // 'TONUS' => 'APGAR 10 Menit - Tonus',
+                        // 'RANGSANG' => 'APGAR 10 Menit - Rangsang',
+                        // 'WARNA' => 'APGAR 10 Menit - Warna',
                         'TOTAL' => 'APGAR Total 10 Menit',
                     ],
                 ];
@@ -1902,16 +1900,16 @@ class FinalisasiController extends Controller
                 $tandaVital->KEADAAN_UMUM
             );
 
-            if (
-                $tandaVital->SISTOLIK !== null ||
-                $tandaVital->DISTOLIK !== null
-            ) {
-                $o[] = 'TD: ' .
-                    ($tandaVital->SISTOLIK ?? '-') .
-                    '/' .
-                    ($tandaVital->DISTOLIK ?? '-') .
-                    ' mmHg';
-            }
+            // if (
+            //     $tandaVital->SISTOLIK !== null ||
+            //     $tandaVital->DISTOLIK !== null
+            // ) {
+            //     $o[] = 'TD: ' .
+            //         ($tandaVital->SISTOLIK ?? '-') .
+            //         '/' .
+            //         ($tandaVital->DISTOLIK ?? '-') .
+            //         ' mmHg';
+            // }
 
             if ($tandaVital->FREKUENSI_NADI !== null) {
                 $o[] = 'Nadi: ' .
@@ -2002,25 +2000,25 @@ class FinalisasiController extends Controller
 
         }
 
-        if ($nutrisi) {
+        // if ($nutrisi) {
 
-            if ($nutrisi->BERAT_BADAN !== null) {
-                $o[] = 'BB: ' .
-                    $nutrisi->BERAT_BADAN .
-                    ' kg';
-            }
+        //     if ($nutrisi->BERAT_BADAN !== null) {
+        //         $o[] = 'BB: ' .
+        //             $nutrisi->BERAT_BADAN .
+        //             ' kg';
+        //     }
 
-            if ($nutrisi->TINGGI_BADAN !== null) {
-                $o[] = 'TB: ' .
-                    $nutrisi->TINGGI_BADAN .
-                    ' cm';
-            }
+        //     if ($nutrisi->TINGGI_BADAN !== null) {
+        //         $o[] = 'TB: ' .
+        //             $nutrisi->TINGGI_BADAN .
+        //             ' cm';
+        //     }
 
-            if ($nutrisi->INDEX_MASSA_TUBUH !== null) {
-                $o[] = 'IMT: ' .
-                    $nutrisi->INDEX_MASSA_TUBUH;
-            }
-        }
+        //     if ($nutrisi->INDEX_MASSA_TUBUH !== null) {
+        //         $o[] = 'IMT: ' .
+        //             $nutrisi->INDEX_MASSA_TUBUH;
+        //     }
+        // }
 
         $fisikNeo = DB::table(
             'medicalrecord.sirmed_pemeriksaan_fisik_neonatus'

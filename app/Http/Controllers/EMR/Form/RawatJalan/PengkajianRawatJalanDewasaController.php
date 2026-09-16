@@ -57,6 +57,11 @@ class PengkajianRawatJalanDewasaController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
+        $dokter = DB::table('master.dokter AS dok')
+                ->select('dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'))
+                ->where('dok.STATUS',1)
+                ->get();
+
         $data = [
             'kunjungan' => $kunjungan,
             'jenis_ruang' => $jenis_ruang,
@@ -64,19 +69,20 @@ class PengkajianRawatJalanDewasaController extends Controller
             'pasien' => $pasien,
             'jenis_alergi' => $jenis_alergi,
             'kesadaran' => $kesadaran,
+            'dokter' => $dokter,
         ];
-        
+
         return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.dewasa.index')->with('list',$data);
     }
 
     function simpanFormDokterRJD(Request $request)
     {
-        
+
     }
 
     public function getFormDokterRJD($kunjungan)
     {
-        
+
     }
 
     function simpanFormPerawatRJD(Request $request)
