@@ -2281,12 +2281,12 @@ class EMRController extends Controller
             ->orderBy('pk.MASUK', 'DESC')
             ->first();
 
-        if (!$getData) {
-            return null;
-        }
+        // if (!$getData) {
+        //     return null;
+        // }
 
         return [
-            'inputdate' => $getData->TGLMASUK,
+            'inputdate' => $getData?->TGLMASUK,
         ];
     }
 }
