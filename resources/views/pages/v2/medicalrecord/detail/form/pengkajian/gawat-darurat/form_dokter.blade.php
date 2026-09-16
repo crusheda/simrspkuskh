@@ -739,11 +739,14 @@
                 </div>
             </div>
             <div class="col-md-12">
-                <h6>Tindak Lanjut Asuhan</h6>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.admission_note',['section' => '#gd_dokter'])
+            </div>
+            <div class="col-md-12">
+                {{-- <h6>Tindak Lanjut Asuhan</h6> --}}
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
-                            <label class="form-label">Cara Keluar</label>
+                            <h6>Cara Keluar</h6>
                             <select class="form-control" name="tla_ck">
                                 <option value="">Pilih</option>
                                 @if ($list['cara_keluar'])
@@ -756,7 +759,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
-                            <label class="form-label">Keadaan Keluar</label>
+                            <h6>Keadaan Keluar</h6>
                             <select class="form-control" name="tla_kk">
                                 <option value="">Pilih</option>
                                 @if ($list['keadaan_keluar'])
@@ -767,12 +770,6 @@
                             </select>
                         </div>
                     </div>
-                    {{-- <div class="col-md-12 mb-3">
-                        <div class="form-group">
-                            <label class="form-label">Diagnosa Akhir</label>
-                            <input type="text" class="form-control" name="tla_da">
-                        </div>
-                    </div> --}}
                 </div>
             </div>
         </div>

@@ -866,7 +866,7 @@ class PengkajianGawatDaruratController extends Controller
                             'KUNJUNGAN'     => $request->NOKUNJ,
                         ],
                         [
-                            'DESKRIPSI'     => $request->hld,
+                            'DESKRIPSI'     => $request->hld ?? "",
                             'TANGGAL'       => now(),
                             'OLEH'          => auth()->id(),
                             'STATUS'        => 1,
@@ -886,6 +886,20 @@ class PengkajianGawatDaruratController extends Controller
                             'DOKTER'        => $getDataDokter->ID ?? 0,
                             'OLEH'          => auth()->id(),
                             'STATUS'        => 1,
+                        ]
+                    );
+                    // FINALISASI FORM
+                    DB::table('simrspku_pengkajian.finalisasi')->updateOrInsert(
+                        [
+                            'KUNJUNGAN'     => $request->NOKUNJ,
+                            'FORM'          => "pengkajian-radar",
+                            'SUB'           => "DOKTER",
+                        ],
+                        [
+                            'CREATED'       => now(),
+                            // 'UPDATED'    => now(),
+                            'USER_CREATED'  => now(),
+                            'STATUS'        => 2,
                         ]
                     );
 
@@ -1982,6 +1996,21 @@ class PengkajianGawatDaruratController extends Controller
                 //         'STATUS'                                => 1,
                 //     ]
                 // );
+
+                // FINALISASI
+                DB::table('simrspku_pengkajian.finalisasi')->updateOrInsert(
+                    [
+                        'KUNJUNGAN'     => $request->NOKUNJ,
+                        'FORM'          => "pengkajian-radar",
+                        'SUB'           => "PERAWAT",
+                    ],
+                    [
+                        'CREATED'       => now(),
+                        // 'UPDATED'    => now(),
+                        'USER_CREATED'  => now(),
+                        'STATUS'        => 2,
+                    ]
+                );
 
                 // ==========================================
                 // COMMIT
