@@ -132,7 +132,7 @@
             success:function(res){
                 isiFormPengkajianRJAd(res);
                 // Tampilkan TTV
-                displayTTV(res);
+                // displayTTV(res);
             }
         });
     }
