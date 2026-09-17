@@ -56,9 +56,6 @@
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_fisik_neonatus')
             </div>
-            <div class="mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_imunisasi')
-            </div>
             <div class="col-md-12">
                 <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
                 <div class="mb-3">

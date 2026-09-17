@@ -6719,6 +6719,318 @@ class AddOnPengkajianController extends Controller
                     $data
                 );
 
+            // ======================================================
+            // SIMPAN PEMERIKSAAN FISIK / DESKRIPSI CPPT
+            // ======================================================
+
+            $deskripsi = [];
+
+            // ======================================================
+            // STATUS BAYI
+            // ======================================================
+
+            if ($statusBayi !== null) {
+
+                $statusBayiLabel = match ($statusBayi) {
+                    'bugar' => 'Bugar',
+                    'tidak_bugar' => 'Tidak Bugar',
+                    default => $statusBayi,
+                };
+
+                $deskripsi[] = 'Status Bayi: ' . $statusBayiLabel;
+            }
+
+
+            // ======================================================
+            // APGAR BAYI BUGAR
+            // ======================================================
+
+            if ($statusBayi === 'bugar') {
+
+                $apgarMenit = [
+                    1 => [
+                        'DENYUT' => 'APGAR 1 Menit - Denyut',
+                        'PERNAFASAN' => 'APGAR 1 Menit - Pernafasan',
+                        'TONUS' => 'APGAR 1 Menit - Tonus',
+                        'RANGSANG' => 'APGAR 1 Menit - Rangsang',
+                        'WARNA' => 'APGAR 1 Menit - Warna',
+                        'TOTAL' => 'APGAR Total 1 Menit',
+                    ],
+                    5 => [
+                        'DENYUT' => 'APGAR 5 Menit - Denyut',
+                        'PERNAFASAN' => 'APGAR 5 Menit - Pernafasan',
+                        'TONUS' => 'APGAR 5 Menit - Tonus',
+                        'RANGSANG' => 'APGAR 5 Menit - Rangsang',
+                        'WARNA' => 'APGAR 5 Menit - Warna',
+                        'TOTAL' => 'APGAR Total 5 Menit',
+                    ],
+                    10 => [
+                        'DENYUT' => 'APGAR 10 Menit - Denyut',
+                        'PERNAFASAN' => 'APGAR 10 Menit - Pernafasan',
+                        'TONUS' => 'APGAR 10 Menit - Tonus',
+                        'RANGSANG' => 'APGAR 10 Menit - Rangsang',
+                        'WARNA' => 'APGAR 10 Menit - Warna',
+                        'TOTAL' => 'APGAR Total 10 Menit',
+                    ],
+                ];
+
+                foreach ($apgarMenit as $menit => $fields) {
+
+                    foreach ($fields as $suffix => $label) {
+
+                        if ($suffix === 'TOTAL') {
+                            $field = 'APGAR_TOTAL_' . $menit . '_MENIT';
+                        } else {
+                            $field = 'APGAR_' . $menit . '_MENIT_' . $suffix;
+                        }
+
+                        $value = $data[$field] ?? null;
+
+                        if ($value !== null && $value !== '') {
+                            $deskripsi[] = $label . ': ' . $value;
+                        }
+                    }
+                }
+            }
+
+
+            // ======================================================
+            // APGAR BAYI TIDAK BUGAR
+            // ======================================================
+
+            if ($statusBayi === 'tidak_bugar') {
+
+                if (($data['APGAR_RESUSITASI'] ?? null) !== null) {
+
+                    $resusitasiLabel = match ($data['APGAR_RESUSITASI']) {
+                        'dilakukan' => 'Dilakukan',
+                        'tidak_dilakukan' => 'Tidak Dilakukan',
+                        default => $data['APGAR_RESUSITASI'],
+                    };
+
+                    $deskripsi[] =
+                        'APGAR Resusitasi: ' . $resusitasiLabel;
+                }
+
+                if (($data['APGAR_LANGKAH_AWAL'] ?? null) !== null) {
+                    $deskripsi[] =
+                        'APGAR Langkah Awal: ' .
+                        ((int) $data['APGAR_LANGKAH_AWAL'] === 1
+                            ? 'Ya'
+                            : 'Tidak');
+                }
+
+                if (($data['APGAR_LANGKAH_AWAL_DETIK'] ?? null) !== null) {
+                    $deskripsi[] =
+                        'APGAR Langkah Awal Detik: ' .
+                        $data['APGAR_LANGKAH_AWAL_DETIK'];
+                }
+
+                if (($data['APGAR_VTP'] ?? null) !== null) {
+                    $deskripsi[] =
+                        'APGAR VTP: ' .
+                        ((int) $data['APGAR_VTP'] === 1
+                            ? 'Ya'
+                            : 'Tidak');
+                }
+
+                if (($data['APGAR_VTP_DETIK'] ?? null) !== null) {
+                    $deskripsi[] =
+                        'APGAR VTP Detik: ' .
+                        $data['APGAR_VTP_DETIK'];
+                }
+
+                if (($data['APGAR_KOMPRESI_DADA'] ?? null) !== null) {
+                    $deskripsi[] =
+                        'APGAR Kompresi Dada: ' .
+                        ((int) $data['APGAR_KOMPRESI_DADA'] === 1
+                            ? 'Ya'
+                            : 'Tidak');
+                }
+
+                if (($data['APGAR_KOMPRESI_DADA_DETIK'] ?? null) !== null) {
+                    $deskripsi[] =
+                        'APGAR Kompresi Dada Detik: ' .
+                        $data['APGAR_KOMPRESI_DADA_DETIK'];
+                }
+
+                if (($data['APGAR_ETT'] ?? null) !== null) {
+                    $deskripsi[] =
+                        'APGAR ETT: ' .
+                        ((int) $data['APGAR_ETT'] === 1
+                            ? 'Ya'
+                            : 'Tidak');
+                }
+
+                if (($data['APGAR_RESUSITASI_DIHENTIKAN'] ?? null) !== null) {
+                    $deskripsi[] =
+                        'APGAR Resusitasi Dihentikan: ' .
+                        ((int) $data['APGAR_RESUSITASI_DIHENTIKAN'] === 1
+                            ? 'Ya'
+                            : 'Tidak');
+                }
+
+                if (($data['APGAR_RESUSITASI_DIHENTIKAN_MENIT'] ?? null) !== null) {
+                    $deskripsi[] =
+                        'APGAR Resusitasi Dihentikan Menit: ' .
+                        $data['APGAR_RESUSITASI_DIHENTIKAN_MENIT'];
+                }
+            }
+
+
+            // ======================================================
+            // DATA UMUM
+            // ======================================================
+
+            if (($data['APGAR_TANGGAL'] ?? null) !== null) {
+                $deskripsi[] =
+                    'APGAR Tanggal: ' . $data['APGAR_TANGGAL'];
+            }
+
+            if (($data['APGAR_JAM'] ?? null) !== null) {
+                $deskripsi[] =
+                    'APGAR Jam: ' . $data['APGAR_JAM'];
+            }
+
+            if (($data['APGAR_BB_SEKARANG'] ?? null) !== null) {
+                $deskripsi[] =
+                    'APGAR BB Sekarang: ' .
+                    $data['APGAR_BB_SEKARANG'] .
+                    ' gram';
+            }
+
+            $fisikNeo = DB::table(
+                'medicalrecord.sirmed_pemeriksaan_fisik_neonatus'
+            )
+                ->where('KUNJUNGAN', $kunjungan)
+                ->where('STATUS', 1)
+                ->first();
+
+            if ($fisikNeo) {
+
+                $skipFields = [
+                    'ID',
+                    'KUNJUNGAN',
+                    'TANGGAL',
+                    'OLEH',
+                    'STATUS',
+
+                    // Field yang akan kita format khusus
+                    'ROOTING',
+                    'SUCKING',
+                    'MORO',
+                    'ASYMMETRIC_TONIC_NECK',
+                    'BABINSKI',
+                    'MENGGENGGAM',
+                    'SUARA_DIAM',
+                    'SUARA_MERINTIH',
+                    'SUARA_KUAT',
+                    'IKRENIK',
+                    'KULIT_KETERANGAN',
+                ];
+
+                // ==========================================
+                // PEMERIKSAAN FISIK UMUM
+                // ==========================================
+                foreach ((array) $fisikNeo as $field => $value) {
+
+                    if (in_array($field, $skipFields)) {
+                        continue;
+                    }
+
+                    $value = $this->pemfisValue($value);
+
+                    if ($value === null) {
+                        continue;
+                    }
+
+                    $label = ucwords(
+                        strtolower(
+                            str_replace('_', ' ', $field)
+                        )
+                    );
+
+                    $deskripsi[] = $label . ': ' . $value;
+                }
+
+                // ==========================================
+                // NEUROLOGI
+                // ==========================================
+                $deskripsi[] = 'Neurologi';
+
+                $neurologi = [
+                    'ROOTING' => 'Rooting',
+                    'SUCKING' => 'Sucking',
+                    'MORO' => 'Moro',
+                    'ASYMMETRIC_TONIC_NECK' => 'Asymmetric Tonic Neck',
+                    'BABINSKI' => 'Babinski',
+                    'MENGGENGGAM' => 'Menggenggam',
+                ];
+
+                foreach ($neurologi as $field => $label) {
+
+                    $value = (int) ($fisikNeo->$field ?? 0);
+
+                    $deskripsi[] = $label . ': ' . ($value === 1 ? 'Ya' : 'Tidak');
+                }
+
+                // ==========================================
+                // KULIT
+                // ==========================================
+                $deskripsi[] = 'Kulit';
+
+                // Suara: ambil yang nilainya 1
+                $suara = null;
+
+                if ((int) ($fisikNeo->SUARA_DIAM ?? 0) === 1) {
+                    $suara = 'Suara Diam';
+                } elseif ((int) ($fisikNeo->SUARA_MERINTIH ?? 0) === 1) {
+                    $suara = 'Suara Merintih';
+                } elseif ((int) ($fisikNeo->SUARA_KUAT ?? 0) === 1) {
+                    $suara = 'Suara Kuat';
+                }
+
+                if ($suara !== null) {
+                    $deskripsi[] = 'Suara: ' . $suara;
+                }
+
+                // Ikrenik
+                $ikrenik = (int) ($fisikNeo->IKRENIK ?? 0);
+
+                $deskripsi[] = 'Ikrenik: ' . ($ikrenik === 1 ? 'Ya' : 'Tidak');
+
+                // Keterangan kulit
+                $kulitKeterangan = $this->pemfisValue(
+                    $fisikNeo->KULIT_KETERANGAN ?? null
+                );
+
+                if ($kulitKeterangan !== null) {
+                    $deskripsi[] = 'Keterangan: ' . $kulitKeterangan;
+                }
+            }
+
+
+            // ======================================================
+            // SIMPAN KE PEMERIKSAAN_FISIK
+            // ======================================================
+
+            if (!empty($deskripsi)) {
+
+                $deskripsiText = implode('<br>', $deskripsi);
+
+                DB::table('medicalrecord.pemeriksaan_fisik')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $kunjungan,
+                            'PENDAFTARAN' => DB::table('pendaftaran.kunjungan')->where('NOMOR', $kunjungan)->value('NOPEN'),
+                        ],
+                        [
+                            'DESKRIPSI' => $deskripsiText,
+                            'OLEH' => $oleh,
+                            'STATUS' => 1,
+                        ]
+                    );
+            }
 
             DB::commit();
 
@@ -7646,7 +7958,7 @@ class AddOnPengkajianController extends Controller
     function getMateriEdukasi($KUNJUNGAN)
     {
         $data = [];
-        
+
         $data = DB::table('medicalrecord.edukasi_rajal')
             ->where('KUNJUNGAN', $KUNJUNGAN)
             ->first();
@@ -7711,11 +8023,11 @@ class AddOnPengkajianController extends Controller
     function getPemeriksaanFisikRajal($KUNJUNGAN)
     {
         $data = [];
-        
+
         $data = DB::table('medicalrecord.pemeriksaan_fisik')
             ->where('KUNJUNGAN', $KUNJUNGAN)
             ->first();
-        
+
         if ($data && $data->DESKRIPSI) {
             $data->DESKRIPSI = strip_tags(
                 str_replace(['<br>', '<br/>', '<br />'], "\n", $data->DESKRIPSI)
@@ -7769,7 +8081,7 @@ class AddOnPengkajianController extends Controller
     function getTuTerapi($KUNJUNGAN)
     {
         $data = [];
-        
+
         // Riwayat Terapi
         $rencana_terapi = DB::table('medicalrecord.rencana_terapi')
             ->where('KUNJUNGAN', $KUNJUNGAN)
@@ -7848,7 +8160,7 @@ class AddOnPengkajianController extends Controller
     function getKeluhanUtama($KUNJUNGAN)
     {
         $data = [];
-        
+
         // Riwayat Terapi
         $keluhan_utama = DB::table('medicalrecord.tanda_vital')
             ->where('KUNJUNGAN', $KUNJUNGAN)
@@ -7901,6 +8213,36 @@ class AddOnPengkajianController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    private function pemfisValue($value)
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $value = trim(strip_tags((string) $value));
+
+        return $value === '' ? null : $value;
+    }
+
+    private function pemfisLine($label, $value)
+    {
+        $value = $this->pemfisValue($value);
+
+        if ($value === null) {
+            return null;
+        }
+
+        return $label . ': ' . $value;
+    }
+
+    private function pemfisJoin($rows)
+    {
+        return implode("\n", array_values(array_filter(
+            $rows,
+            fn($row) => $row !== null && trim($row) !== ''
+        )));
     }
 
 }

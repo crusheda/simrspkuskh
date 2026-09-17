@@ -581,9 +581,16 @@ class FinalisasiController extends Controller
                 $statusReproduksi->USIA_KEHAMILAN
             );
 
+            $persalinan = [
+                1 => 'SC',
+                2 => 'SPONTAN',
+                3 => 'VACUM',
+                4 => 'LAINNYA',
+            ];
+
             $rows[] = $this->soapLine(
                 'Persalinan',
-                $statusReproduksi->PERSALINAN
+                $persalinan[$statusReproduksi->PERSALINAN] ?? $statusReproduksi->PERSALINAN
             );
 
             $rows[] = $this->soapLine(
@@ -602,9 +609,16 @@ class FinalisasiController extends Controller
 
             $rows = [];
 
+            $imunisasi = [
+                1 => 'Lengkap',
+                2 => 'Tidak Lengkap',
+                3 => 'Tidak Imunisasi',
+                4 => 'Lain-lain',
+            ];
+
             $rows[] = $this->soapLine(
                 'Imunisasi',
-                $tumbuhKembang->IMUNISASI
+                $imunisasi[$tumbuhKembang->IMUNISASI] ?? $tumbuhKembang->IMUNISASI
             );
 
             $rows[] = $this->soapLine(
@@ -1274,10 +1288,16 @@ class FinalisasiController extends Controller
             }
 
             if (!empty($statusObstetriText)) {
+                $s[] = 'Status Obstetri:';
 
-                $s[] = 'Status Obstetri: ' .
-                    implode(', ', $statusObstetriText);
+                foreach ($statusObstetriText as $item) {
+                    $s[] = $item;
+                }
             }
+        }
+
+        if (!empty($statusObstetriText)) {
+            $s[] = '';
         }
 
         /*
@@ -1499,9 +1519,11 @@ class FinalisasiController extends Controller
             */
 
             if (!empty($statusNeonatusText)) {
+                $s[] = 'Status Neonatus:';
 
-                $s[] = 'Status Neonatus: ' .
-                    implode(', ', $statusNeonatusText);
+                foreach ($statusNeonatusText as $item) {
+                    $s[] = $item;
+                }
             }
         }
 
@@ -1913,13 +1935,19 @@ class FinalisasiController extends Controller
 
             if ($tandaVital->FREKUENSI_NADI !== null) {
                 $o[] = 'Nadi: ' .
-                    $tandaVital->FREKUENSI_NADI .
+                    round($tandaVital->FREKUENSI_NADI) .
                     ' x/menit';
             }
 
             if ($tandaVital->FREKUENSI_NADI_CB !== null) {
-                $o[] = 'Nadi Catatan: ' .
-                    $tandaVital->FREKUENSI_NADI_CB;
+                $nadi = [
+                    1 => 'Reguler',
+                    2 => 'Irreguler',
+                ];
+
+                $value = $tandaVital->FREKUENSI_NADI_CB;
+
+                $o[] = 'Nadi Catatan: ' . ($nadi[$value] ?? $value);
             }
 
             if ($tandaVital->SUHU !== null) {
@@ -1930,19 +1958,25 @@ class FinalisasiController extends Controller
 
             if ($tandaVital->SATURASI_O2 !== null) {
                 $o[] = 'SpO2: ' .
-                    $tandaVital->SATURASI_O2 .
+                    round($tandaVital->SATURASI_O2) .
                     ' %';
             }
 
             if ($tandaVital->FREKUENSI_NAFAS !== null) {
                 $o[] = 'RR: ' .
-                    $tandaVital->FREKUENSI_NAFAS .
+                    round($tandaVital->FREKUENSI_NAFAS) .
                     ' x/menit';
             }
 
             if ($tandaVital->FREKUENSI_NAFAS_CB !== null) {
-                $o[] = 'RR Catatan: ' .
-                    $tandaVital->FREKUENSI_NAFAS_CB;
+                $nafas = [
+                    1 => 'Simetris',
+                    2 => 'Asimetris',
+                ];
+
+                $value = $tandaVital->FREKUENSI_NAFAS_CB;
+
+                $o[] = 'RR Catatan: ' . ($nafas[$value] ?? $value);
             }
 
             if ($tandaVital->KESADARAN_NEONATUS !== null) {
@@ -2000,25 +2034,25 @@ class FinalisasiController extends Controller
 
         }
 
-        // if ($nutrisi) {
+        if ($nutrisi) {
 
-        //     if ($nutrisi->BERAT_BADAN !== null) {
-        //         $o[] = 'BB: ' .
-        //             $nutrisi->BERAT_BADAN .
-        //             ' kg';
-        //     }
+            if ($nutrisi->BERAT_BADAN !== null) {
+                $o[] = 'BB: ' .
+                    $nutrisi->BERAT_BADAN .
+                    ' kg';
+            }
 
-        //     if ($nutrisi->TINGGI_BADAN !== null) {
-        //         $o[] = 'TB: ' .
-        //             $nutrisi->TINGGI_BADAN .
-        //             ' cm';
-        //     }
+            if ($nutrisi->TINGGI_BADAN !== null) {
+                $o[] = 'PB: ' .
+                    $nutrisi->TINGGI_BADAN .
+                    ' cm';
+            }
 
-        //     if ($nutrisi->INDEX_MASSA_TUBUH !== null) {
-        //         $o[] = 'IMT: ' .
-        //             $nutrisi->INDEX_MASSA_TUBUH;
-        //     }
-        // }
+            // if ($nutrisi->INDEX_MASSA_TUBUH !== null) {
+            //     $o[] = 'IMT: ' .
+            //         $nutrisi->INDEX_MASSA_TUBUH;
+            // }
+        }
 
         $fisikNeo = DB::table(
             'medicalrecord.sirmed_pemeriksaan_fisik_neonatus'
@@ -2029,15 +2063,33 @@ class FinalisasiController extends Controller
 
         if ($fisikNeo) {
 
+            $skipFields = [
+                'ID',
+                'KUNJUNGAN',
+                'TANGGAL',
+                'OLEH',
+                'STATUS',
+
+                // Field yang akan kita format khusus
+                'ROOTING',
+                'SUCKING',
+                'MORO',
+                'ASYMMETRIC_TONIC_NECK',
+                'BABINSKI',
+                'MENGGENGGAM',
+                'SUARA_DIAM',
+                'SUARA_MERINTIH',
+                'SUARA_KUAT',
+                'IKRENIK',
+                'KULIT_KETERANGAN',
+            ];
+
+            // ==========================================
+            // PEMERIKSAAN FISIK UMUM
+            // ==========================================
             foreach ((array) $fisikNeo as $field => $value) {
 
-                if (in_array($field, [
-                    'ID',
-                    'KUNJUNGAN',
-                    'TANGGAL',
-                    'OLEH',
-                    'STATUS',
-                ])) {
+                if (in_array($field, $skipFields)) {
                     continue;
                 }
 
@@ -2055,34 +2107,60 @@ class FinalisasiController extends Controller
 
                 $o[] = $label . ': ' . $value;
             }
-        }
 
-        /*
-        |--------------------------------------------------------------------------
-        | RIWAYAT IMUNISASI
-        |--------------------------------------------------------------------------
-        */
+            // ==========================================
+            // NEUROLOGI
+            // ==========================================
+            $o[] = 'Neurologi';
 
-        $imunisasi = DB::table(
-            'medicalrecord.riwayat_tumbuh_kembang'
-        )
-            ->where('KUNJUNGAN', $kunjungan)
-            ->where('STATUS', 1)
-            ->first([
-                'IMUNISASI',
-                'IMUNISASI_LAIN',
-            ]);
+            $neurologi = [
+                'ROOTING' => 'Rooting',
+                'SUCKING' => 'Sucking',
+                'MORO' => 'Moro',
+                'ASYMMETRIC_TONIC_NECK' => 'Asymmetric Tonic Neck',
+                'BABINSKI' => 'Babinski',
+                'MENGGENGGAM' => 'Menggenggam',
+            ];
 
-        if ($imunisasi) {
+            foreach ($neurologi as $field => $label) {
 
-            if ($this->soapValue($imunisasi->IMUNISASI)) {
-                $o[] = 'Imunisasi: ' .
-                    $this->soapValue($imunisasi->IMUNISASI);
+                $value = (int) ($fisikNeo->$field ?? 0);
+
+                $o[] = $label . ': ' . ($value === 1 ? 'Ya' : 'Tidak');
             }
 
-            if ($this->soapValue($imunisasi->IMUNISASI_LAIN)) {
-                $o[] = 'Imunisasi Lain: ' .
-                    $this->soapValue($imunisasi->IMUNISASI_LAIN);
+            // ==========================================
+            // KULIT
+            // ==========================================
+            $o[] = 'Kulit';
+
+            // Suara: ambil yang nilainya 1
+            $suara = null;
+
+            if ((int) ($fisikNeo->SUARA_DIAM ?? 0) === 1) {
+                $suara = 'Suara Diam';
+            } elseif ((int) ($fisikNeo->SUARA_MERINTIH ?? 0) === 1) {
+                $suara = 'Suara Merintih';
+            } elseif ((int) ($fisikNeo->SUARA_KUAT ?? 0) === 1) {
+                $suara = 'Suara Kuat';
+            }
+
+            if ($suara !== null) {
+                $o[] = 'Suara: ' . $suara;
+            }
+
+            // Ikrenik
+            $ikrenik = (int) ($fisikNeo->IKRENIK ?? 0);
+
+            $o[] = 'Ikrenik: ' . ($ikrenik === 1 ? 'Ya' : 'Tidak');
+
+            // Keterangan kulit
+            $kulitKeterangan = $this->soapValue(
+                $fisikNeo->KULIT_KETERANGAN ?? null
+            );
+
+            if ($kulitKeterangan !== null) {
+                $o[] = 'Keterangan: ' . $kulitKeterangan;
             }
         }
 
