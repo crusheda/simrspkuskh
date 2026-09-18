@@ -333,7 +333,7 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // ADMISSION NOTE
                     Route::get('emr/pengkajian/admission/{kunjungan}', [AddOnPengkajianController::class, 'getAdmissionNote']);
                     Route::post('emr/pengkajian/admission/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanAdmissionNote']);
-                
+
                 //KHUSUS RAWAT JALAN
                     // MATERI EDUKASI
                         Route::get('emr/pengkajian/rajal/materiedukasi/{kunjungan}', [AddOnPengkajianController::class, 'getMateriEdukasi']);
@@ -347,6 +347,11 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // KELUHAN UTAMA
                         Route::get('emr/pengkajian/rajal/keluhan_utama/{kunjungan}', [AddOnPengkajianController::class, 'getKeluhanUtama']);
                         Route::post('emr/pengkajian/rajal/keluhan_utama/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanKeluhanUtama']);
+
+                // KHUSUS GAWAT DARURAT
+                    // ATS
+                        Route::get('emr/pengkajian/gd/ats/{kunjungan}', [AddOnPengkajianController::class, 'getATS']);
+                        Route::post('emr/pengkajian/gd/ats/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanATS']);
 
                 // KHUSUS RAWAT INAP
                     // DAFTAR MASALAH KEPERAWATAN

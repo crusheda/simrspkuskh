@@ -8215,6 +8215,751 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    public function getATS($KUNJUNGAN)
+    {
+        // ==========================================
+        // TRIAGE
+        // ==========================================
+
+        $triage = DB::table('medicalrecord.triage')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first();
+
+        // ==========================================
+        // DECODE JSON TRIAGE
+        // ==========================================
+
+        if ($triage) {
+
+            $jsonFields = [
+                'RESUSITASI',
+                'EMERGENCY',
+                'URGENT',
+                'LESS_URGENT',
+                'NON_URGENT',
+                'DOA',
+            ];
+
+            foreach ($jsonFields as $field) {
+
+                if (
+                    isset($triage->$field) &&
+                    $triage->$field !== null &&
+                    $triage->$field !== ''
+                ) {
+
+                    $triage->$field = json_decode(
+                        $triage->$field,
+                        true
+                    );
+                }
+            }
+        }
+
+        // ==========================================
+        // RESPONSE
+        // ==========================================
+
+        return response()->json([
+            'status' => true,
+
+            'data' => [
+                'triage' => $triage,
+            ],
+        ]);
+    }
+
+    // ==========================================================
+    // SIMPAN COMPONENT ATS
+    // ==========================================================
+    public function simpanATS(Request $request)
+    {
+        // ==========================================
+        // VALIDASI
+        // ==========================================
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'NOKUNJ' => 'required',
+
+                'ats_p' => 'required|in:1,2,3,4,5',
+
+                'ats' => 'nullable|string',
+
+                'ats_jn_1' => 'nullable',
+                'ats_pf_1_1' => 'nullable',
+                'ats_pf_1_2' => 'nullable',
+                'ats_pf_1_3' => 'nullable',
+                'ats_sr_1' => 'nullable',
+
+                'ats_jn_2' => 'nullable',
+                'ats_pf_2_1' => 'nullable',
+                'ats_pf_2_2' => 'nullable',
+                'ats_pf_2_3' => 'nullable',
+                'ats_pf_2_4' => 'nullable',
+                'ats_pf_2_5' => 'nullable',
+
+                'ats_sr_2_1' => 'nullable',
+                'ats_sr_2_2' => 'nullable',
+                'ats_sr_2_3' => 'nullable',
+                'ats_sr_2_4' => 'nullable',
+                'ats_sr_2_5' => 'nullable',
+                'ats_sr_2_6' => 'nullable',
+                'ats_sr_2_7' => 'nullable',
+                'ats_sr_2_8' => 'nullable',
+                'ats_sr_2_9' => 'nullable',
+                'ats_sr_2_10' => 'nullable',
+
+                'ats_jn_3_1' => 'nullable',
+                'ats_jn_3_2' => 'nullable',
+
+                'ats_pf_3_1' => 'nullable',
+                'ats_pf_3_2' => 'nullable',
+                'ats_pf_3_3' => 'nullable',
+                'ats_pf_3_4' => 'nullable',
+
+                'ats_sr_3_1' => 'nullable',
+                'ats_sr_3_2' => 'nullable',
+                'ats_sr_3_3' => 'nullable',
+                'ats_sr_3_4' => 'nullable',
+                'ats_sr_3_5' => 'nullable',
+                'ats_sr_3_6' => 'nullable',
+                'ats_sr_3_7' => 'nullable',
+
+                'ats_jn_4' => 'nullable',
+
+                'ats_pf_4_1' => 'nullable',
+                'ats_pf_4_2' => 'nullable',
+
+                'ats_sr_4_1' => 'nullable',
+                'ats_sr_4_2' => 'nullable',
+                'ats_sr_4_3' => 'nullable',
+                'ats_sr_4_4' => 'nullable',
+                'ats_sr_4_5' => 'nullable',
+                'ats_sr_4_6' => 'nullable',
+                'ats_sr_4_7' => 'nullable',
+
+                'ats_jn_5' => 'nullable',
+
+                'ats_pf_5_1' => 'nullable',
+                'ats_pf_5_2' => 'nullable',
+
+                'ats_sr_5_1' => 'nullable',
+                'ats_sr_5_2' => 'nullable',
+                'ats_sr_5_3' => 'nullable',
+                'ats_sr_5_4' => 'nullable',
+                'ats_sr_5_5' => 'nullable',
+                'ats_sr_5_6' => 'nullable',
+                'ats_sr_5_7' => 'nullable',
+            ],
+            [
+                'NOKUNJ.required' =>
+                    'Kunjungan wajib diisi.',
+
+                'ats_p.required' =>
+                    'Kategori ATS wajib dipilih.',
+
+                'ats_p.in' =>
+                    'Kategori ATS tidak valid.',
+            ]
+        );
+
+        if ($validator->fails()) {
+
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            // ==========================================
+            // DATA DOKTER
+            // ==========================================
+
+            $getDataDokter = DB::table('master.dokter as dr')
+                ->leftJoin('aplikasi.pengguna as pe', function ($join) {
+
+                    $join->on(
+                        'pe.NIP',
+                        '=',
+                        'dr.NIP'
+                    )->where(
+                        'pe.STATUS',
+                        '=',
+                        1
+                    );
+                })
+                ->select('dr.ID')
+                ->where(
+                    'pe.ID',
+                    auth()->id()
+                )
+                ->where(
+                    'dr.STATUS',
+                    1
+                )
+                ->first();
+
+
+            // ==========================================
+            // DATA KUNJUNGAN
+            // ==========================================
+
+            $getDataKunjungan = DB::table(
+                'pendaftaran.kunjungan as pk'
+            )
+                ->join(
+                    'pendaftaran.pendaftaran as pp',
+                    'pp.NOMOR',
+                    '=',
+                    'pk.NOPEN'
+                )
+                ->select(
+                    'pp.NORM',
+                    'pp.NOMOR as NOPEN'
+                )
+                ->where(
+                    'pk.NOMOR',
+                    $request->NOKUNJ
+                )
+                ->first();
+
+            if (!$getDataKunjungan) {
+
+                DB::rollBack();
+
+                return response()->json([
+                    'status' => false,
+                    'message' =>
+                        'Data kunjungan tidak ditemukan.',
+                ], 404);
+            }
+
+
+            // ==========================================
+            // NILAI ATS
+            // ==========================================
+
+            $atsP = (int) $request->input('ats_p');
+
+
+            // ==========================================
+            // RESUSITASI / P1
+            // ==========================================
+
+            $resusitasi = [
+
+                'CHECKED' => $atsP === 1 ? 1 : 0,
+
+                'KESADARAN' => 'Tidak Sadar',
+
+                'SIRKULASI' => [
+
+                    'NADI_TIDAK_TERABA' =>
+                        $request->boolean('ats_sr_1')
+                            ? 1
+                            : 0,
+                ],
+
+                'PERNAPASAN' => [
+
+                    'HENTI_NAFAS' =>
+                        $request->boolean('ats_pf_1_1')
+                            ? 1
+                            : 0,
+
+                    'GASPING_DIBAWAH_12_X_PER_MENIT' =>
+                        $request->boolean('ats_pf_1_3')
+                            ? 1
+                            : 0,
+
+                    'NAPAS_TIDAK_ADEKUAT_DIATAS_40_X_PER_MENIT' =>
+                        $request->boolean('ats_pf_1_2')
+                            ? 1
+                            : 0,
+                ],
+
+                'JALAN_NAPAS' => [
+
+                    'SUMBATAN_JALAN_NAPAS_TOTAL' =>
+                        $request->boolean('ats_jn_1')
+                            ? 1
+                            : 0,
+                ],
+            ];
+
+
+            // ==========================================
+            // EMERGENCY / P2
+            // ==========================================
+
+            $emergency = [
+
+                'CHECKED' => $atsP === 2 ? 1 : 0,
+
+                'KESADARAN' => 'Tidak Sadar',
+
+                'SIRKULASI' => [
+
+                    'PUCAT' =>
+                        $request->boolean('ats_sr_2_6')
+                            ? 1
+                            : 0,
+
+                    'SIANOTIK' =>
+                        $request->boolean('ats_sr_2_5')
+                            ? 1
+                            : 0,
+
+                    'NYERI_BERAT' =>
+                        $request->boolean('ats_sr_2_2')
+                            ? 1
+                            : 0,
+
+                    'AKRAL_DINGIN' =>
+                        $request->boolean('ats_sr_2_7')
+                            ? 1
+                            : 0,
+
+                    'KERINGAT_DINGIN' =>
+                        $request->boolean('ats_sr_2_8')
+                            ? 1
+                            : 0,
+
+                    'NADI_SANGAT_LEMAH' =>
+                        $request->boolean('ats_sr_2_1')
+                            ? 1
+                            : 0,
+
+                    'SPO2_DIBAWAH_90_PERSEN' =>
+                        $request->boolean('ats_sr_2_10')
+                            ? 1
+                            : 0,
+
+                    'IRAMA_NADI_TIDAK_TERATUR' =>
+                        $request->boolean('ats_sr_2_3')
+                            ? 1
+                            : 0,
+
+                    'TDS_DIBAWAH_80_ATAU_DIATAS_180_MMHG' =>
+                        $request->boolean('ats_sr_2_9')
+                            ? 1
+                            : 0,
+
+                    'NADI_DIBAWAH_50_ATAU_DIATAS_150_X_PER_MENIT' =>
+                        $request->boolean('ats_sr_2_4')
+                            ? 1
+                            : 0,
+                ],
+
+                'PERNAPASAN' => [
+
+                    'RONCHI' =>
+                        $request->boolean('ats_pf_2_4')
+                            ? 1
+                            : 0,
+
+                    'GURGLING' =>
+                        $request->boolean('ats_pf_2_5')
+                            ? 1
+                            : 0,
+
+                    'WHEEZING' =>
+                        $request->boolean('ats_pf_2_3')
+                            ? 1
+                            : 0,
+
+                    'DISTRESS_PERNAPASAN' =>
+                        $request->boolean('ats_pf_2_1')
+                            ? 1
+                            : 0,
+
+                    'FREKUENSI_PERNAPASAN_24_SAMPAI_31_X_PER_MENIT' =>
+                        $request->boolean('ats_pf_2_2')
+                            ? 1
+                            : 0,
+                ],
+
+                'JALAN_NAPAS' => [
+
+                    'SUMBATAN_JALAN_NAPAS_PARSIAL' =>
+                        $request->boolean('ats_jn_2')
+                            ? 1
+                            : 0,
+                ],
+            ];
+
+
+            // ==========================================
+            // URGENT / P3
+            // ==========================================
+
+            $urgent = [
+
+                'CHECKED' => $atsP === 3 ? 1 : 0,
+
+                'KESADARAN' => 'Sadar',
+
+                'SIRKULASI' => [
+
+                    'NYERI_SEDANG' =>
+                        $request->boolean('ats_sr_3_2')
+                            ? 1
+                            : 0,
+
+                    'NADI_TERABA_LEMAH' =>
+                        $request->boolean('ats_sr_3_1')
+                            ? 1
+                            : 0,
+
+                    'WARNA_KULIT_NORMAL' =>
+                        $request->boolean('ats_sr_3_5')
+                            ? 1
+                            : 0,
+
+                    'SPO2_DIATAS_95_PERSEN' =>
+                        $request->boolean('ats_sr_3_7')
+                            ? 1
+                            : 0,
+
+                    'IRAMA_NADI_TIDAK_TERATUR' =>
+                        $request->boolean('ats_sr_3_3')
+                            ? 1
+                            : 0,
+
+                    'TDS_80_SAMPAI_100_ATAU_150_SAMPAI_180_MMHG' =>
+                        $request->boolean('ats_sr_3_6')
+                            ? 1
+                            : 0,
+
+                    'NADI_50_SAMPAI_59_ATAU_101_SAMPAI_150_X_PER_MENIT' =>
+                        $request->boolean('ats_sr_3_4')
+                            ? 1
+                            : 0,
+                ],
+
+                'PERNAPASAN' => [
+
+                    'RONCHI' =>
+                        $request->boolean('ats_pf_3_4')
+                            ? 1
+                            : 0,
+
+                    'WHEEZING' =>
+                        $request->boolean('ats_pf_3_3')
+                            ? 1
+                            : 0,
+
+                    'RETRAKSI_ATAU_NAPAS_CUPING_HIDUNG' =>
+                        $request->boolean('ats_pf_3_1')
+                            ? 1
+                            : 0,
+
+                    'FREKUENSI_PERNAPASAN_24_SAMPAI_31_X_PER_MENIT' =>
+                        $request->boolean('ats_pf_3_2')
+                            ? 1
+                            : 0,
+                ],
+
+                'JALAN_NAPAS' => [
+
+                    'JALAN_NAPAS_BEBAS' =>
+                        $request->boolean('ats_jn_3_1')
+                            ? 1
+                            : 0,
+
+                    'CORPUS_ALLIENUM_TANDA2_GANGUAN_NAPAS' =>
+                        $request->boolean('ats_jn_3_2')
+                            ? 1
+                            : 0,
+                ],
+            ];
+
+
+            // ==========================================
+            // LESS URGENT / P4
+            // ==========================================
+
+            $lessUrgent = [
+
+                'CHECKED' => $atsP === 4 ? 1 : 0,
+
+                'KESADARAN' => 'Sadar',
+
+                'SIRKULASI' => [
+
+                    'AKRAL_HANGAT' =>
+                        $request->boolean('ats_sr_4_5')
+                            ? 1
+                            : 0,
+
+                    'NYERI_RINGAN' =>
+                        $request->boolean('ats_sr_4_2')
+                            ? 1
+                            : 0,
+
+                    'NADI_TERABA_KUAT' =>
+                        $request->boolean('ats_sr_4_1')
+                            ? 1
+                            : 0,
+
+                    'IRAMA_NADI_TERATUR' =>
+                        $request->boolean('ats_sr_4_3')
+                            ? 1
+                            : 0,
+
+                    'SPO2_DIATAS_95_PERSEN' =>
+                        $request->boolean('ats_sr_4_7')
+                            ? 1
+                            : 0,
+
+                    'NADI_60_SAMPAI_100_X_PER_MENIT' =>
+                        $request->boolean('ats_sr_4_4')
+                            ? 1
+                            : 0,
+
+                    'TDS_DIATAS_100_ATAU_DIBAWAH_150_MMHG' =>
+                        $request->boolean('ats_sr_4_6')
+                            ? 1
+                            : 0,
+                ],
+
+                'PERNAPASAN' => [
+
+                    'RETRAKSI_ATAU_NAPAS_CUPING_HIDUNG' =>
+                        $request->boolean('ats_pf_4_1')
+                            ? 1
+                            : 0,
+
+                    'FREKUENSI_PERNAPASAN_21_SAMPAI_23_X_PER_MENIT' =>
+                        $request->boolean('ats_pf_4_2')
+                            ? 1
+                            : 0,
+                ],
+
+                'JALAN_NAPAS' => [
+
+                    'JALAN_NAPAS_BEBAS' =>
+                        $request->boolean('ats_jn_4')
+                            ? 1
+                            : 0,
+                ],
+            ];
+
+
+            // ==========================================
+            // NON URGENT / P5
+            // ==========================================
+
+            $nonUrgent = [
+
+                'CHECKED' => $atsP === 4 ? 1 : 0,
+
+                'KESADARAN' => 'Sadar',
+
+                'SIRKULASI' => [
+
+                    'AKRAL_HANGAT' =>
+                        $request->boolean('ats_sr_5_5')
+                            ? 1
+                            : 0,
+
+                    'TIDAK_ADA_NYERI' =>
+                        $request->boolean('ats_sr_5_2')
+                            ? 1
+                            : 0,
+
+                    'NADI_TERABA_KUAT' =>
+                        $request->boolean('ats_sr_5_1')
+                            ? 1
+                            : 0,
+
+                    'IRAMA_NADI_TERATUR' =>
+                        $request->boolean('ats_sr_5_3')
+                            ? 1
+                            : 0,
+
+                    'SPO2_DIATAS_95_PERSEN' =>
+                        $request->boolean('ats_sr_5_7')
+                            ? 1
+                            : 0,
+
+                    'TDS_100_KOMA_150_MMHG' =>
+                        $request->boolean('ats_sr_5_6')
+                            ? 1
+                            : 0,
+
+                    'NADI_60_SAMPAI_100_X_PER_MENIT' =>
+                        $request->boolean('ats_sr_5_4')
+                            ? 1
+                            : 0,
+                ],
+
+                'PERNAPASAN' => [
+
+                    'TIDAK_ADA_RETRAKSI' =>
+                        $request->boolean('ats_pf_5_1')
+                            ? 1
+                            : 0,
+
+                    'FREKUENSI_PERNAPASAN_12_SAMPAI_20_X_PER_MENIT' =>
+                        $request->boolean('ats_pf_5_2')
+                            ? 1
+                            : 0,
+                ],
+
+                'JALAN_NAPAS' => [
+
+                    'JALAN_NAPAS_BEBAS' =>
+                        $request->boolean('ats_jn_5')
+                            ? 1
+                            : 0,
+                ],
+            ];
+
+
+            // ==========================================
+            // DOA
+            // ==========================================
+
+            $doa = [
+
+                'CHECKED' => $atsP === 5 ? 1 : 0,
+
+                'KESADARAN' =>
+                    'Pupil Midriasis Total Kaku Mayat',
+            ];
+
+
+            // ==========================================
+            // SIMPAN TRIAGE
+            // ==========================================
+
+            $planTriage = null;
+            if ($atsP == 1 || $atsP == 2) {
+                $planTriage = 1;
+            } else {
+                if ($atsP == 4 || $atsP == 5) {
+                    $planTriage = 2;
+                } else {
+                    if ($atsP == 3) {
+                        $planTriage = 3;
+                    } else {
+                        if ($atsP == 6) {
+                            $planTriage = 4;
+                        }
+                    }
+                }
+            }
+
+            DB::table('medicalrecord.triage')
+                ->updateOrInsert(
+                    [
+                        'NORM' =>
+                            $getDataKunjungan->NORM,
+
+                        'KUNJUNGAN' =>
+                            $request->NOKUNJ,
+
+                        'NOPEN' =>
+                            $getDataKunjungan->NOPEN,
+                    ],
+                    [
+
+                        'KATEGORI_PEMERIKSAAN' =>
+                            1,
+
+                        'RESUSITASI' =>
+                            json_encode(
+                                $resusitasi,
+                                JSON_UNESCAPED_UNICODE
+                            ),
+
+                        'EMERGENCY' =>
+                            json_encode(
+                                $emergency,
+                                JSON_UNESCAPED_UNICODE
+                            ),
+
+                        'URGENT' =>
+                            json_encode(
+                                $urgent,
+                                JSON_UNESCAPED_UNICODE
+                            ),
+
+                        'LESS_URGENT' =>
+                            json_encode(
+                                $lessUrgent,
+                                JSON_UNESCAPED_UNICODE
+                            ),
+
+                        'NON_URGENT' =>
+                            json_encode(
+                                $nonUrgent,
+                                JSON_UNESCAPED_UNICODE
+                            ),
+
+                        'DOA' =>
+                            json_encode(
+                                $doa,
+                                JSON_UNESCAPED_UNICODE
+                            ),
+
+                        'KRITERIA' =>
+                            $request->input('ats'),
+
+                        'PLAN' =>
+                            $planTriage,
+
+                        'DOKTER_ID' =>
+                            $getDataDokter->ID ?? 0,
+
+                        'OLEH' =>
+                            auth()->id(),
+
+                        'STATUS' =>
+                            2,
+
+                        'TANGGAL' =>
+                            now(),
+                    ]
+                );
+
+
+            // ==========================================
+            // COMMIT
+            // ==========================================
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' =>
+                    'Data ATS berhasil disimpan.',
+            ], 200);
+
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' =>
+                    'Data ATS gagal disimpan.',
+                'error' =>
+                    $e->getMessage(),
+            ], 500);
+        }
+    }
+
     private function pemfisValue($value)
     {
         if ($value === null) {

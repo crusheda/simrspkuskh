@@ -1,16 +1,337 @@
-<div class="form-wrapper position-relative" id="form_gawat_darurat_dokter">
+<div class="form-wrapper">
     <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN MEDIS <b class="text-danger">RAWAT DARURAT</b></center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-danger">Diisi Oleh Dokter</a>)</center></h1>
     <div class="form-content">
         <div class="row">
             <div class="col-md-12 mb-3">
-                @include(
-                    'pages.v2.medicalrecord.detail.form.pengkajian.components.gawat_darurat.ats',
-                    [
-                        'section' => '#gd_dokter',
-                        'kunjungan' => $kunjungan ?? $list['kunjungan'],
-                    ]
-                )
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-0">
+                        <tbody>
+                            <tr>
+                                <th class="fw-bold">PEMERIKSAAN (<i>Examination</i>)</th>
+                                <th class="text-center table-info">Resusitasi (P1)</th>
+                                <th class="text-center table-danger">Emergency (P2)</th>
+                                <th class="text-center table-warning">Urgent (P3)</th>
+                                <th class="text-center table-success">Less Urgent (P4)</th>
+                                <th class="text-center table-light">Non Urgent (P5)</th>
+                                <th class="text-center table-secondary">DOA</th>
+                            </tr>
+                            <tr>
+                                <th class="fw-bold">KESADARAN (<i>Disability</i>)</th>
+                                <td>Tidak Sadar</td>
+                                <td>Tidak Sadar</td>
+                                <td>Sadar</td>
+                                <td>Sadar</td>
+                                <td>Sadar</td>
+                                <td>Pupil Midriasis Total Kaku Mayat</td>
+                            </tr>
+                            <tr>
+                                <th class="fw-bold">JALAN NAFAS (<i>Airway</i>)</th>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_jn_1">
+                                        <label class="form-check-label"> Sumbatan jalan nafas total </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_jn_2">
+                                        <label class="form-check-label"> Sumbatan jalan nafas parsial </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_jn_3_1">
+                                        <label class="form-check-label"> Sumbatan jalan nafas bebas </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_jn_3_2">
+                                        <label class="form-check-label"> Corpus Allienum tanda-tanda gangguan nafas </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_jn_4">
+                                        <label class="form-check-label"> Jalan nafas bebas </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_jn_5">
+                                        <label class="form-check-label"> Jalan nafas bebas </label>
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th class="fw-bold">PERNAFASAN (<i>Breathing</i>)</th>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_1_1">
+                                        <label class="form-check-label"> Henti Nafas </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_1_2">
+                                        <label class="form-check-label"> Nafas tidak adekuat > 40 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_1_3">
+                                        <label class="form-check-label"> Gasping (< 12 x/menit) </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_2_1">
+                                        <label class="form-check-label"> Distress pernafasan </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_2_2">
+                                        <label class="form-check-label"> Frekuensi pernafasan 24 - 31 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_2_3">
+                                        <label class="form-check-label"> Wheezing </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_2_4">
+                                        <label class="form-check-label"> Ronchi </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_2_5">
+                                        <label class="form-check-label"> Gurgling </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_3_1">
+                                        <label class="form-check-label"> Retraksi / nafas cuping hidung </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_3_2">
+                                        <label class="form-check-label"> Frekuensi pernafasan 24 - 31 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_3_3">
+                                        <label class="form-check-label"> Wheezing </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_3_4">
+                                        <label class="form-check-label"> Ronchi </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_4_1">
+                                        <label class="form-check-label"> Retraksi / nafas cuping hidung </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_4_2">
+                                        <label class="form-check-label"> Frekuensi pernafasan 21 - 23 x/menit </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_5_1">
+                                        <label class="form-check-label"> Tidak ada retraksi </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_pf_5_2">
+                                        <label class="form-check-label"> Frekuensi pernafasan 12 - 20 x/menit </label>
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th class="fw-bold">SIRKULASI (<i>Circulation</i>)</th>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_1">
+                                        <label class="form-check-label"> Nadi tidak teraba </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_1">
+                                        <label class="form-check-label"> Nadi sangat lemah </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_2">
+                                        <label class="form-check-label"> Nyeri berat </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_3">
+                                        <label class="form-check-label"> Irama nadi tidak teratur </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_4">
+                                        <label class="form-check-label"> Nadi < 50 atau > 150 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_5">
+                                        <label class="form-check-label"> Sianotik </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_6">
+                                        <label class="form-check-label"> Pucat </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_7">
+                                        <label class="form-check-label"> Akral dingin </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_8">
+                                        <label class="form-check-label"> Keringat dingin </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_9">
+                                        <label class="form-check-label"> TDS < 80 atau > 180 mmHg </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_2_10">
+                                        <label class="form-check-label"> SpO2 < 90% </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_1">
+                                        <label class="form-check-label"> Nadi teraba lemah </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_2">
+                                        <label class="form-check-label"> Nyeri sedang </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_3">
+                                        <label class="form-check-label"> Irama nadi tidak teratur </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_4">
+                                        <label class="form-check-label"> Nadi 50 - 59 atau 101 - 150 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_5">
+                                        <label class="form-check-label"> Warna kulit normal </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_6">
+                                        <label class="form-check-label"> TDS 80 - 100 atau 150 - 180 mmHg </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_3_7">
+                                        <label class="form-check-label"> SpO2 > 95% </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_1">
+                                        <label class="form-check-label"> Nadi teraba kuat </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_2">
+                                        <label class="form-check-label"> Nyeri ringan </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_3">
+                                        <label class="form-check-label"> Irama nadi teratur </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_4">
+                                        <label class="form-check-label"> Nadi 60 - 100 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_5">
+                                        <label class="form-check-label"> Akral hangat </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_6">
+                                        <label class="form-check-label"> TDS > 100 atau < 150 mmHg </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_4_7">
+                                        <label class="form-check-label"> SpO2 > 95% </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_1">
+                                        <label class="form-check-label"> Nadi teraba kuat </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_2">
+                                        <label class="form-check-label"> Tidak ada nyeri </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_3">
+                                        <label class="form-check-label"> Irama nadi teratur </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_4">
+                                        <label class="form-check-label"> Nadi 60 - 100 x/menit </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_5">
+                                        <label class="form-check-label"> Akral hangat </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_6">
+                                        <label class="form-check-label"> TDS 100, 150 mmHg </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input check-primary" type="checkbox" name="ats_sr_5_7">
+                                        <label class="form-check-label"> SpO2 > 95% </label>
+                                    </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th class="fw-bold">PLAN</th>
+                                <td colspan="2" class="text-center table-danger">
+                                    <h6>ZONA MERAH</h6>
+                                    <div class="form-group">
+                                        <div class="form-check form-check-inline mb-2">
+                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="ats_p" value="1">
+                                            <label class="form-check-label"> Ruang Resusitasi </label>
+                                        </div>
+                                        <div class="form-check form-check-inline mb-2">
+                                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="ats_p" value="2">
+                                            <label class="form-check-label"> Ruang Kritis </label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center align-middle table-warning">
+                                    <div class="form-check d-flex justify-content-center align-items-center gap-2 mb-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="ats_p" value="3">
+                                        <label class="form-check-label mb-0">
+                                            <h6 class="mb-0">ZONA KUNING</h6>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td colspan="2" class="text-center align-middle table-success">
+                                    <div class="form-check d-flex justify-content-center align-items-center gap-2 mb-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="ats_p" value="4">
+                                        <label class="form-check-label mb-0">
+                                            <h6 class="mb-0">ZONA HIJAU</h6>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td class="text-center align-middle table-secondary">
+                                    <div class="form-check d-flex justify-content-center align-items-center gap-2 mb-0">
+                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="ats_p" value="5">
+                                        <label class="form-check-label mb-0">
+                                            <h6 class="mb-0">ZONA HITAM</h6>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <div class="form-group">
+                    <h6>Kriteria ATS (<i>Australasian Triage Scale</i>)</h6>
+                    <input type="text" class="form-control" name="ats" placeholder="Masukkan Kriteria ATS">
+                </div>
             </div>
             <div class="col-md-12 mb-3">
                 <h6>Anamnesis</h6>
@@ -458,19 +779,6 @@
             <i class="ri-save-line me-1"></i> Simpan Pengkajian
         </button>
     </div>
-@include(
-    'pages.v2.medicalrecord.detail.form.finalisasi',
-    [
-        'jenis' => 'gawat-darurat',
-        'role' => 'dokter',
-        'formId' => 'form_gawat_darurat_dokter',
-        'formKey' => 'gd_dokter',
-        'form' => 'pengkajian-radar',
-        'sub' => 'DOKTER',
-        'kunjungan' => $kunjungan ?? $list['kunjungan'],
-    ]
-)
-
 </div>
 
 <script>
@@ -561,6 +869,508 @@
 
                 const data = response.data || {};
                 const triage = data.triage || {};
+
+                // ====================================================
+                // 1. TRIAGE
+                // ====================================================
+
+                // ----------------------------------------------------
+                // KATEGORI PEMERIKSAAN
+                // ----------------------------------------------------
+
+                if (
+                    triage.KATEGORI_PEMERIKSAAN !== null &&
+                    triage.KATEGORI_PEMERIKSAAN !== undefined
+                ) {
+                    FormHelper.setSingleCheckbox(
+                        $form,
+                        'ats_p',
+                        triage.KATEGORI_PEMERIKSAAN
+                    );
+                }
+
+                // ----------------------------------------------------
+                // PLAN
+                // ----------------------------------------------------
+
+                if (
+                    triage.PLAN !== null &&
+                    triage.PLAN !== undefined
+                ) {
+                    FormHelper.setSingleCheckbox(
+                        $form,
+                        'ats_p',
+                        triage.PLAN
+                    );
+                }
+
+
+                // ====================================================
+                // 2. ATS - RESUSITASI / P1
+                // ====================================================
+
+                const resusitasi = triage.RESUSITASI || {};
+
+                // CHECKED
+                if (resusitasi.CHECKED !== undefined) {
+
+                    // Tidak ada checkbox khusus CHECKED pada HTML,
+                    // jadi tidak perlu di-set.
+                    console.log(
+                        'Resusitasi checked:',
+                        resusitasi.CHECKED
+                    );
+                }
+
+                // ----------------------------------------------------
+                // KESADARAN
+                // ----------------------------------------------------
+                // HTML Anda berupa teks statis:
+                // Resusitasi = Tidak Sadar
+                // sehingga tidak ada input untuk diisi.
+
+
+                // ----------------------------------------------------
+                // JALAN NAPAS - RESUSITASI
+                // ----------------------------------------------------
+
+                const resusJalanNapas =
+                    resusitasi.JALAN_NAPAS || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_jn_1',
+                    resusJalanNapas.SUMBATAN_JALAN_NAPAS_TOTAL
+                );
+
+
+                // ----------------------------------------------------
+                // PERNAPASAN - RESUSITASI
+                // ----------------------------------------------------
+
+                const resusPernapasan =
+                    resusitasi.PERNAPASAN || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_1_1',
+                    resusPernapasan.HENTI_NAFAS
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_1_2',
+                    resusPernapasan.NAPAS_TIDAK_ADEKUAT_DIATAS_40_X_PER_MENIT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_1_3',
+                    resusPernapasan.GASPING_DIBAWAH_12_X_PER_MENIT
+                );
+
+
+                // ----------------------------------------------------
+                // SIRKULASI - RESUSITASI
+                // ----------------------------------------------------
+
+                const resusSirkulasi =
+                    resusitasi.SIRKULASI || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_1',
+                    resusSirkulasi.NADI_TIDAK_TERABA
+                );
+
+
+                // ====================================================
+                // 3. ATS - EMERGENCY / P2
+                // ====================================================
+
+                const emergency = triage.EMERGENCY || {};
+
+                const emergencyJalanNapas =
+                    emergency.JALAN_NAPAS || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_jn_2',
+                    emergencyJalanNapas.SUMBATAN_JALAN_NAPAS_PARSIAL
+                );
+
+
+                const emergencyPernapasan =
+                    emergency.PERNAPASAN || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_2_1',
+                    emergencyPernapasan.DISTRESS_PERNAPASAN
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_2_2',
+                    emergencyPernapasan.FREKUENSI_PERNAPASAN_24_SAMPAI_31_X_PER_MENIT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_2_3',
+                    emergencyPernapasan.WHEEZING
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_2_4',
+                    emergencyPernapasan.RONCHI
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_2_5',
+                    emergencyPernapasan.GURGLING
+                );
+
+
+                const emergencySirkulasi =
+                    emergency.SIRKULASI || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_2_1',
+                    emergencySirkulasi.NADI_SANGAT_LEMAH
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_2_2',
+                    emergencySirkulasi.NYERI_BERAT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_2_3',
+                    emergencySirkulasi.IRAMA_NADI_TIDAK_TERATUR
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_2_4',
+                    emergencySirkulasi.NADI_DIBAWAH_50_ATAU_DIATAS_150_X_PER_MENIT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_2_5',
+                    emergencySirkulasi.SIANOTIK
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_2_6',
+                    emergencySirkulasi.PUCAT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_2_7',
+                    emergencySirkulasi.AKRAL_DINGIN
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_2_8',
+                    emergencySirkulasi.KERINGAT_DINGIN
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_2_9',
+                    emergencySirkulasi.TDS_DIBAWAH_80_ATAU_DIATAS_180_MMHG
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_2_10',
+                    emergencySirkulasi.SPO2_DIBAWAH_90_PERSEN
+                );
+
+
+                // ====================================================
+                // 4. ATS - URGENT / P3
+                // ====================================================
+
+                const urgent = triage.URGENT || {};
+
+                const urgentJalanNapas =
+                    urgent.JALAN_NAPAS || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_jn_3_1',
+                    urgentJalanNapas.JALAN_NAPAS_BEBAS
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_jn_3_2',
+                    urgentJalanNapas.CORPUS_ALLIENUM_TANDA2_GANGUAN_NAPAS
+                );
+
+
+                const urgentPernapasan =
+                    urgent.PERNAPASAN || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_3_1',
+                    urgentPernapasan.RETRAKSI_ATAU_NAPAS_CUPING_HIDUNG
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_3_2',
+                    urgentPernapasan.FREKUENSI_PERNAPASAN_24_SAMPAI_31_X_PER_MENIT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_3_3',
+                    urgentPernapasan.WHEEZING
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_3_4',
+                    urgentPernapasan.RONCHI
+                );
+
+
+                const urgentSirkulasi =
+                    urgent.SIRKULASI || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_3_1',
+                    urgentSirkulasi.NADI_TERABA_LEMAH
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_3_2',
+                    urgentSirkulasi.NYERI_SEDANG
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_3_3',
+                    urgentSirkulasi.IRAMA_NADI_TIDAK_TERATUR
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_3_4',
+                    urgentSirkulasi.NADI_50_SAMPAI_59_ATAU_101_SAMPAI_150_X_PER_MENIT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_3_5',
+                    urgentSirkulasi.WARNA_KULIT_NORMAL
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_3_6',
+                    urgentSirkulasi.TDS_80_SAMPAI_100_ATAU_150_SAMPAI_180_MMHG
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_3_7',
+                    urgentSirkulasi.SPO2_DIATAS_95_PERSEN
+                );
+
+
+                // ====================================================
+                // 5. ATS - LESS URGENT / P4
+                // ====================================================
+
+                const lessUrgent = triage.LESS_URGENT || {};
+
+                const lessUrgentJalanNapas =
+                    lessUrgent.JALAN_NAPAS || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_jn_4',
+                    lessUrgentJalanNapas.JALAN_NAPAS_BEBAS
+                );
+
+
+                const lessUrgentPernapasan =
+                    lessUrgent.PERNAPASAN || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_4_1',
+                    lessUrgentPernapasan.RETRAKSI_ATAU_NAPAS_CUPING_HIDUNG
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_4_2',
+                    lessUrgentPernapasan.FREKUENSI_PERNAPASAN_21_SAMPAI_23_X_PER_MENIT
+                );
+
+
+                const lessUrgentSirkulasi =
+                    lessUrgent.SIRKULASI || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_4_1',
+                    lessUrgentSirkulasi.NADI_TERABA_KUAT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_4_2',
+                    lessUrgentSirkulasi.NYERI_RINGAN
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_4_3',
+                    lessUrgentSirkulasi.IRAMA_NADI_TERATUR
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_4_4',
+                    lessUrgentSirkulasi.NADI_60_SAMPAI_100_X_PER_MENIT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_4_5',
+                    lessUrgentSirkulasi.AKRAL_HANGAT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_4_6',
+                    lessUrgentSirkulasi.TDS_DIATAS_100_ATAU_DIBAWAH_150_MMHG
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_4_7',
+                    lessUrgentSirkulasi.SPO2_DIATAS_95_PERSEN
+                );
+
+
+                // ====================================================
+                // 6. ATS - NON URGENT / P5
+                // ====================================================
+
+                const nonUrgent = triage.NON_URGENT || {};
+
+                const nonUrgentJalanNapas =
+                    nonUrgent.JALAN_NAPAS || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_jn_5',
+                    nonUrgentJalanNapas.JALAN_NAPAS_BEBAS
+                );
+
+
+                const nonUrgentPernapasan =
+                    nonUrgent.PERNAPASAN || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_5_1',
+                    nonUrgentPernapasan.TIDAK_ADA_RETRAKSI
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_pf_5_2',
+                    nonUrgentPernapasan.FREKUENSI_PERNAPASAN_12_SAMPAI_20_X_PER_MENIT
+                );
+
+
+                const nonUrgentSirkulasi =
+                    nonUrgent.SIRKULASI || {};
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_5_1',
+                    nonUrgentSirkulasi.NADI_TERABA_KUAT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_5_2',
+                    nonUrgentSirkulasi.TIDAK_ADA_NYERI
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_5_3',
+                    nonUrgentSirkulasi.IRAMA_NADI_TERATUR
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_5_4',
+                    nonUrgentSirkulasi.NADI_60_SAMPAI_100_X_PER_MENIT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_5_5',
+                    nonUrgentSirkulasi.AKRAL_HANGAT
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_5_6',
+                    nonUrgentSirkulasi.TDS_100_KOMA_150_MMHG
+                );
+
+                FormHelper.setCheckbox(
+                    $form,
+                    'ats_sr_5_7',
+                    nonUrgentSirkulasi.SPO2_DIATAS_95_PERSEN
+                );
+
+
+                // ====================================================
+                // 7. DOA
+                // ====================================================
+
+                const doa = triage.DOA || {};
+
+                console.log('DOA:', doa);
+
+                // Di HTML DOA tidak memiliki checkbox.
+                // Kesadaran DOA juga berupa teks statis.
+
+
+                // ====================================================
+                // 8. KRITERIA ATS
+                // ====================================================
+
+                FormHelper.setValue(
+                    $form,
+                    'ats',
+                    triage.KRITERIA
+                );
 
                 // ====================================================
                 // 10. ANAMNESIS DIPEROLEH

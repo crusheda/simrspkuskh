@@ -50,7 +50,7 @@ final class FinalisasiMap
         // Rawat Darurat
         // ---------------------------------------------------------------------
 
-        'gdd_dokter' => [
+        'gd_dokter' => [
             'form' => 'pengkajian-radar',
             'sub' => 'DOKTER',
             'template' => 'print_radar_dokter.docx',
@@ -58,7 +58,7 @@ final class FinalisasiMap
             'service' => GDPrintService::class,
         ],
 
-        'gdp_dokter' => [
+        'gd_perawat' => [
             'form' => 'pengkajian-radar',
             'sub' => 'PERAWAT',
             'template' => 'print_radar_perawat.docx',
