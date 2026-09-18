@@ -69,6 +69,26 @@ class PengkajianRawatJalanGeriatriController extends Controller
                 ->where('STATUS',1)
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
+        $jenisBarthel = [
+            232 => 'Mengendalikan rangsang defekasi',
+            233 => 'Mengendalikan rangsang berkemih',
+            234 => 'Membersihkan diri (seka muka, sisir rambut, sikat gigi)',
+            235 => 'Penggunaan jamban, masuk dan keluar',
+            236 => 'Makan',
+            237 => 'Berubah sikap dari berbaring ke duduk',
+            238 => 'Berpindah/berjalan',
+            239 => 'Memakai baju',
+            240 => 'Naik turun tangga',
+            241 => 'Mandi',
+        ];
+
+        $referensiBarthel = DB::table('master.referensi')
+            ->whereIn('JENIS', array_keys($jenisBarthel))
+            ->where('STATUS', 1)
+            ->orderBy('JENIS')
+            ->orderBy('ID')
+            ->get()
+            ->groupBy('JENIS');
 
         $data = [
             'kunjungan' => $kunjungan,
@@ -77,6 +97,8 @@ class PengkajianRawatJalanGeriatriController extends Controller
             'pasien' => $pasien,
             'jenis_alergi' => $jenis_alergi,
             'kesadaran' => $kesadaran,
+            'jenisBarthel' => $jenisBarthel,
+            'referensiBarthel' => $referensiBarthel,
         ];
         // print_r($data);
         // die();
@@ -269,7 +291,6 @@ class PengkajianRawatJalanGeriatriController extends Controller
                     'KUNJUNGAN' => $request->NOKUNJ
                 ],
                 [
-                    'ADL' => $request->input('geriatri_adl'),
                     'IADL' => $request->input('geriatri_iadl'),
                     'ACS' => $request->input('geriatri_acs'),
                     'NUTRISI' => $request->input('geriatri_nutrisi'),

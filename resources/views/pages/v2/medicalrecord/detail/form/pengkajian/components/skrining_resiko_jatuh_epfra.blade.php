@@ -104,7 +104,7 @@
             </div>
         </div>
         <div class="col-md-6 mb-3">
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label class="form-label">Status Mental</label>
                 <select class="form-select form-select-sm" name="rj_epfra_8" data-epfra-required data-epfra-score>
                     <option value="" data-score="0">Pilih</option>
