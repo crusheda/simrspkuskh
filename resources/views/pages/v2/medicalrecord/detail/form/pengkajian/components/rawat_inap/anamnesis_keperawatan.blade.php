@@ -422,10 +422,23 @@
 
                 if (!anam) {
                     updateAnamnesisAnakState();
+                    updatePersalinanState();
+                    FormHelper.updateDependentInputs($form);
                     return;
                 }
 
                 const anam1 = anam.anam1;
+
+                // Jika data anamnesis belum ada,
+                // biarkan form kosong dan jangan error.
+                if (!anam1) {
+                    console.log('Data anamnesis belum ada, form tetap kosong.');
+
+                    updateAnamnesisAnakState();
+                    updatePersalinanState();
+                    FormHelper.updateDependentInputs($form);
+                    return;
+                }
 
                 // ==================================================
                 // ANAMNESIS DIPEROLEH

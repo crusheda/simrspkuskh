@@ -183,77 +183,7 @@
                         <label class="form-label fw-semibold">
                             a. Activity Daily Living (ADL) Barthel
                         </label>
-
-                        <div class="row">
-
-                            <div class="col-md-6">
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary"
-                                        type="radio"
-                                        name="geriatri_adl"
-                                        id="geriatri_adl_1"
-                                        value="1">
-
-                                    <label class="form-check-label"
-                                        for="geriatri_adl_1">
-                                        Mandiri (20)
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary"
-                                        type="radio"
-                                        name="geriatri_adl"
-                                        id="geriatri_adl_2"
-                                        value="2">
-
-                                    <label class="form-check-label"
-                                        for="geriatri_adl_2">
-                                        Ketergantungan ringan (12–19)
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary"
-                                        type="radio"
-                                        name="geriatri_adl"
-                                        id="geriatri_adl_3"
-                                        value="3">
-
-                                    <label class="form-check-label"
-                                        for="geriatri_adl_3">
-                                        Ketergantungan sedang (9–11)
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary"
-                                        type="radio"
-                                        name="geriatri_adl"
-                                        id="geriatri_adl_4"
-                                        value="4">
-
-                                    <label class="form-check-label"
-                                        for="geriatri_adl_4">
-                                        Ketergantungan berat (5–8)
-                                    </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary"
-                                        type="radio"
-                                        name="geriatri_adl"
-                                        id="geriatri_adl_5"
-                                        value="5">
-
-                                    <label class="form-check-label"
-                                        for="geriatri_adl_5">
-                                        Ketergantungan total (0–4)
-                                    </label>
-                                </div>
-                            </div>
-
-                        </div>
-
+                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.skrining_barthel', ['section' => '#rjg_perawat'])
                     </div>
 
 

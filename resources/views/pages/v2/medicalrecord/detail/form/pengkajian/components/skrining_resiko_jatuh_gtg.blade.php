@@ -17,291 +17,288 @@
     <div class="row" id="tampil_srj_gtg" hidden>
 
         <div class="col-md-12 mb-3">
-            <div class="card card-body border border-dashed border-warning mb-1">
+            <div class="row">
 
-                <div class="row">
+                <div class="col-md-12 mb-1">
+                    <div class="form-group">
+                        <h5 class="border-bottom pb-2 text-bold">
+                            <strong>
+                                Skrining Resiko Jatuh (Get Up and Go)
+                            </strong>
+                        </h5>
+                    </div>
+                </div>
 
-                    <div class="col-md-12 mb-1">
-                        <div class="form-group">
-                            <h5 class="border-bottom pb-2 text-bold">
-                                <strong>
-                                    Skrining Resiko Jatuh (Get Up and Go)
-                                </strong>
-                            </h5>
-                        </div>
+                {{-- ========================================= --}}
+                {{-- CARA BERJALAN --}}
+                {{-- ========================================= --}}
+                <div class="col-md-9">
+                    <label class="form-label fw-bold">
+                        Cara Berjalan Pasien (Salah Satu atau Lebih)
+                    </label>
+
+                    <div>
+                        a. Tidak seimbang / menyopang / limbung
                     </div>
 
-                    {{-- ========================================= --}}
-                    {{-- CARA BERJALAN --}}
-                    {{-- ========================================= --}}
-                    <div class="col-md-9">
-                        <label class="form-label fw-bold">
-                            Cara Berjalan Pasien (Salah Satu atau Lebih)
-                        </label>
-
-                        <div>
-                            a. Tidak seimbang / menyopang / limbung
-                        </div>
-
-                        <div>
-                            b. Jalan dengan menggunakan alat bantu
-                            (Tongkat, kursi roda, dibantu orang lain)
-                        </div>
+                    <div>
+                        b. Jalan dengan menggunakan alat bantu
+                        (Tongkat, kursi roda, dibantu orang lain)
                     </div>
+                </div>
 
-                    <div class="col-md-3">
-                        <label class="form-label d-block">&nbsp;</label>
+                <div class="col-md-3">
+                    <label class="form-label d-block">&nbsp;</label>
 
-                        <div class="form-check form-check-inline">
-                            <input
-                                class="form-check-input single-checkbox gtg-cara-berjalan"
-                                type="checkbox"
-                                name="gtg_cara_berjalan"
-                                id="gtg_cara_berjalan_ya"
-                                value="1"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="gtg_cara_berjalan_ya"
-                            >
-                                Ya
-                            </label>
-                        </div>
-
-                        <div class="form-check form-check-inline">
-                            <input
-                                class="form-check-input single-checkbox gtg-cara-berjalan"
-                                type="checkbox"
-                                name="gtg_cara_berjalan"
-                                id="gtg_cara_berjalan_tidak"
-                                value="0"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="gtg_cara_berjalan_tidak"
-                            >
-                                Tidak
-                            </label>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    {{-- ========================================= --}}
-                    {{-- FAKTOR RISIKO --}}
-                    {{-- ========================================= --}}
-                    <div class="col-md-9">
-
-                        <label class="form-label fw-bold">
-                            Faktor Risiko
-                        </label>
-
-                        <div>
-                            <b>A.</b> Umur ≥ 60 tahun, anak &lt; 3 tahun
-                        </div>
-
-                        <div class="mt-2">
-                            <b>B.</b>
-                            Diagnosis penyakit / situasi / keluhan yang
-                            mungkin menyebabkan pasien berisiko jatuh:
-                        </div>
-
-                        <ol class="mb-2">
-                            <li>Vertigo / Pusing</li>
-                            <li>Parkinson</li>
-                            <li>
-                                Gangguan penglihatan yang belum terkoreksi
-                                (Glaukoma, Katarak, Gangguan Lapangan Penglihatan)
-                            </li>
-                            <li>
-                                Riwayat tirah baring lama yang akan dipindahkan
-                                untuk pemeriksaan penunjang
-                            </li>
-                            <li>Pasien yang mendapat sedasi</li>
-                        </ol>
-
-                        <div>
-                            <b>C.</b> Lingkungan :
-                        </div>
-
-                        <ol>
-                            <li>
-                                Area-area yang berisiko pasien jatuh
-                                (Tangga, penerangan kurang,
-                                jalan menurun/menanjak)
-                            </li>
-                            <li>
-                                Poli yang dituju:
-                                <ol>
-                                    <li>Rehabilitasi Medik</li>
-                                    <li>Radiologi</li>
-                                    <li>Radioterapi</li>
-                                </ol>
-                            </li>
-                        </ol>
-
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label d-block">&nbsp;</label>
-
-                        <div class="form-check form-check-inline">
-                            <input
-                                class="form-check-input single-checkbox gtg-faktor-resiko"
-                                type="checkbox"
-                                name="gtg_faktor_resiko"
-                                id="gtg_faktor_resiko_ya"
-                                value="1"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="gtg_faktor_resiko_ya"
-                            >
-                                Ya
-                            </label>
-                        </div>
-
-                        <div class="form-check form-check-inline">
-                            <input
-                                class="form-check-input single-checkbox gtg-faktor-resiko"
-                                type="checkbox"
-                                name="gtg_faktor_resiko"
-                                id="gtg_faktor_resiko_tidak"
-                                value="0"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="gtg_faktor_resiko_tidak"
-                            >
-                                Tidak
-                            </label>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    {{-- ========================================= --}}
-                    {{-- OBAT --}}
-                    {{-- ========================================= --}}
-                    <div class="col-md-9">
-
-                        <label class="form-label fw-bold">
-                            Menanyakan Obat-obatan yang diminum pasien
-                            saat ini, yang mungkin menyebabkan risiko
-                            jatuh adalah:
-                        </label>
-
-                        <ul class="mb-0">
-                            <li>Narkotik</li>
-                            <li>Anti hipertensi</li>
-                            <li>Diuretik</li>
-                            <li>Obat penyakit jantung</li>
-                            <li>Pengencer darah</li>
-                            <li>Tetes mata yang menyebabkan mudriasis</li>
-                            <li>Anti histamine dengan dosis yang tinggi</li>
-                            <li>Obat anti diabetes/insulin</li>
-                        </ul>
-
-                    </div>
-
-                    <div class="col-md-3">
-                        <label class="form-label d-block">&nbsp;</label>
-
-                        <div class="form-check form-check-inline">
-                            <input
-                                class="form-check-input single-checkbox gtg-obat"
-                                type="checkbox"
-                                name="gtg_obat"
-                                id="gtg_obat_ya"
-                                value="1"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="gtg_obat_ya"
-                            >
-                                Ya
-                            </label>
-                        </div>
-
-                        <div class="form-check form-check-inline">
-                            <input
-                                class="form-check-input single-checkbox gtg-obat"
-                                type="checkbox"
-                                name="gtg_obat"
-                                id="gtg_obat_tidak"
-                                value="0"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="gtg_obat_tidak"
-                            >
-                                Tidak
-                            </label>
-                        </div>
-                    </div>
-
-                    {{-- ========================================= --}}
-                    {{-- HASIL --}}
-                    {{-- ========================================= --}}
-                    <div class="col-md-12">
-                        <div
-                            id="skor_gtg"
-                            class="mb-3 mt-2"
-                            hidden
+                    <div class="form-check form-check-inline">
+                        <input
+                            class="form-check-input single-checkbox gtg-cara-berjalan"
+                            type="checkbox"
+                            name="gtg_cara_berjalan"
+                            id="gtg_cara_berjalan_ya"
+                            value="1"
                         >
-                            <div class="alert alert-success mb-0 d-inline-flex align-items-center">
-
-                                <div class="me-4 flex-shrink-0">
-                                    <h1
-                                        class="display-1 fw-bold mb-0"
-                                        id="nilai_gtg"
-                                    >
-                                        0
-                                    </h1>
-                                </div>
-
-                                <div>
-                                    <h5 class="mb-1 fw-bold">
-                                        Skor Risiko Jatuh
-                                    </h5>
-
-                                    <div
-                                        class="fw-bold text-success"
-                                        id="kategori_gtg"
-                                    ></div>
-
-                                    <small
-                                        class="text-muted"
-                                        id="keterangan_gtg"
-                                    ></small>
-                                </div>
-
-                            </div>
-                        </div>
+                        <label
+                            class="form-check-label"
+                            for="gtg_cara_berjalan_ya"
+                        >
+                            Ya
+                        </label>
                     </div>
 
-                    {{-- Hidden total score --}}
-                    <input
-                        type="number"
-                        class="form-control"
-                        name="skor_gtg"
-                        value="0"
+                    <div class="form-check form-check-inline">
+                        <input
+                            class="form-check-input single-checkbox gtg-cara-berjalan"
+                            type="checkbox"
+                            name="gtg_cara_berjalan"
+                            id="gtg_cara_berjalan_tidak"
+                            value="0"
+                        >
+                        <label
+                            class="form-check-label"
+                            for="gtg_cara_berjalan_tidak"
+                        >
+                            Tidak
+                        </label>
+                    </div>
+                </div>
+
+                <hr>
+
+                {{-- ========================================= --}}
+                {{-- FAKTOR RISIKO --}}
+                {{-- ========================================= --}}
+                <div class="col-md-9">
+
+                    <label class="form-label fw-bold">
+                        Faktor Risiko
+                    </label>
+
+                    <div>
+                        <b>A.</b> Umur ≥ 60 tahun, anak &lt; 3 tahun
+                    </div>
+
+                    <div class="mt-2">
+                        <b>B.</b>
+                        Diagnosis penyakit / situasi / keluhan yang
+                        mungkin menyebabkan pasien berisiko jatuh:
+                    </div>
+
+                    <ol class="mb-2">
+                        <li>Vertigo / Pusing</li>
+                        <li>Parkinson</li>
+                        <li>
+                            Gangguan penglihatan yang belum terkoreksi
+                            (Glaukoma, Katarak, Gangguan Lapangan Penglihatan)
+                        </li>
+                        <li>
+                            Riwayat tirah baring lama yang akan dipindahkan
+                            untuk pemeriksaan penunjang
+                        </li>
+                        <li>Pasien yang mendapat sedasi</li>
+                    </ol>
+
+                    <div>
+                        <b>C.</b> Lingkungan :
+                    </div>
+
+                    <ol>
+                        <li>
+                            Area-area yang berisiko pasien jatuh
+                            (Tangga, penerangan kurang,
+                            jalan menurun/menanjak)
+                        </li>
+                        <li>
+                            Poli yang dituju:
+                            <ol>
+                                <li>Rehabilitasi Medik</li>
+                                <li>Radiologi</li>
+                                <li>Radioterapi</li>
+                            </ol>
+                        </li>
+                    </ol>
+
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label d-block">&nbsp;</label>
+
+                    <div class="form-check form-check-inline">
+                        <input
+                            class="form-check-input single-checkbox gtg-faktor-resiko"
+                            type="checkbox"
+                            name="gtg_faktor_resiko"
+                            id="gtg_faktor_resiko_ya"
+                            value="1"
+                        >
+                        <label
+                            class="form-check-label"
+                            for="gtg_faktor_resiko_ya"
+                        >
+                            Ya
+                        </label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <input
+                            class="form-check-input single-checkbox gtg-faktor-resiko"
+                            type="checkbox"
+                            name="gtg_faktor_resiko"
+                            id="gtg_faktor_resiko_tidak"
+                            value="0"
+                        >
+                        <label
+                            class="form-check-label"
+                            for="gtg_faktor_resiko_tidak"
+                        >
+                            Tidak
+                        </label>
+                    </div>
+                </div>
+
+                <hr>
+
+                {{-- ========================================= --}}
+                {{-- OBAT --}}
+                {{-- ========================================= --}}
+                <div class="col-md-9">
+
+                    <label class="form-label fw-bold">
+                        Menanyakan Obat-obatan yang diminum pasien
+                        saat ini, yang mungkin menyebabkan risiko
+                        jatuh adalah:
+                    </label>
+
+                    <ul class="mb-0">
+                        <li>Narkotik</li>
+                        <li>Anti hipertensi</li>
+                        <li>Diuretik</li>
+                        <li>Obat penyakit jantung</li>
+                        <li>Pengencer darah</li>
+                        <li>Tetes mata yang menyebabkan mudriasis</li>
+                        <li>Anti histamine dengan dosis yang tinggi</li>
+                        <li>Obat anti diabetes/insulin</li>
+                    </ul>
+
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label d-block">&nbsp;</label>
+
+                    <div class="form-check form-check-inline">
+                        <input
+                            class="form-check-input single-checkbox gtg-obat"
+                            type="checkbox"
+                            name="gtg_obat"
+                            id="gtg_obat_ya"
+                            value="1"
+                        >
+                        <label
+                            class="form-check-label"
+                            for="gtg_obat_ya"
+                        >
+                            Ya
+                        </label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <input
+                            class="form-check-input single-checkbox gtg-obat"
+                            type="checkbox"
+                            name="gtg_obat"
+                            id="gtg_obat_tidak"
+                            value="0"
+                        >
+                        <label
+                            class="form-check-label"
+                            for="gtg_obat_tidak"
+                        >
+                            Tidak
+                        </label>
+                    </div>
+                </div>
+
+                {{-- ========================================= --}}
+                {{-- HASIL --}}
+                {{-- ========================================= --}}
+                <div class="col-md-12">
+                    <div
+                        id="skor_gtg"
+                        class="mb-3 mt-2"
                         hidden
                     >
+                        <div class="alert alert-success mb-0 d-inline-flex align-items-center">
 
-                    {{-- ========================================= --}}
-                    {{-- BUTTON --}}
-                    {{-- ========================================= --}}
-                    <div class="col-md-12">
-                        <button
-                            type="button"
-                            class="btn btn-primary btn-save-sub-pengkajian"
-                            onclick="simpanSkriningGetUpAndGo(this)"
-                        >
-                            <i class="ri-save-line me-1"></i>
-                            Simpan Skrining Jatuh
-                        </button>
+                            <div class="me-4 flex-shrink-0">
+                                <h1
+                                    class="display-1 fw-bold mb-0"
+                                    id="nilai_gtg"
+                                >
+                                    0
+                                </h1>
+                            </div>
+
+                            <div>
+                                <h5 class="mb-1 fw-bold">
+                                    Skor Risiko Jatuh
+                                </h5>
+
+                                <div
+                                    class="fw-bold text-success"
+                                    id="kategori_gtg"
+                                ></div>
+
+                                <small
+                                    class="text-muted"
+                                    id="keterangan_gtg"
+                                ></small>
+                            </div>
+
+                        </div>
                     </div>
+                </div>
+
+                {{-- Hidden total score --}}
+                <input
+                    type="number"
+                    class="form-control"
+                    name="skor_gtg"
+                    value="0"
+                    hidden
+                >
+
+                {{-- ========================================= --}}
+                {{-- BUTTON --}}
+                {{-- ========================================= --}}
+                <div class="col-md-12">
+                    <button
+                        type="button"
+                        class="btn btn-primary btn-save-sub-pengkajian"
+                        onclick="simpanSkriningGetUpAndGo(this)"
+                    >
+                        <i class="ri-save-line me-1"></i>
+                        Simpan Skrining Jatuh
+                    </button>
                 </div>
             </div>
         </div>

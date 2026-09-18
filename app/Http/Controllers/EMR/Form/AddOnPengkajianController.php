@@ -3638,11 +3638,15 @@ class AddOnPengkajianController extends Controller
         DB::beginTransaction();
 
         try {
+
+            $masalahLain = $request->input('MASALAH_LAIN');
+
             $data = [
                 'KUNJUNGAN' => $KUNJUNGAN,
                 'OLEH' => auth()->id(),
                 'STATUS' => 1,
                 'TANGGAL' => now(),
+                'MASALAH_LAIN' => $masalahLain,
             ];
 
             foreach ($kolomByForm[$form] as $index => $namaKolom) {
@@ -5408,6 +5412,41 @@ class AddOnPengkajianController extends Controller
                     'STATUS' => 1,
                 ]
             );
+
+            $deskripsi = [];
+
+            if (!empty($request->pfisik)) {
+                $deskripsi[] =
+                    '<b>Pemeriksaan Fisik:</b> ' . $request->pfisik;
+            }
+
+            if (!empty($request->pobs)) {
+                $deskripsi[] =
+                    '<b>Pemeriksaan Obstetri:</b> ' . $request->pobs;
+            }
+
+            if (!empty($request->pgyn)) {
+                $deskripsi[] =
+                    '<b>Pemeriksaan Gynekologi:</b> ' . $request->pgyn;
+            }
+
+            if (!empty($deskripsi)) {
+
+                $deskripsiText = implode('<br>', $deskripsi);
+
+                DB::table('medicalrecord.pemeriksaan_fisik')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $KUNJUNGAN,
+                            'PENDAFTARAN' => DB::table('pendaftaran.kunjungan')->where('NOMOR', $KUNJUNGAN)->value('NOPEN'),
+                        ],
+                        [
+                            'DESKRIPSI' => $deskripsiText,
+                            'OLEH' => auth()->id(),
+                            'STATUS' => 1,
+                        ]
+                    );
+            }
 
             DB::commit();
 
@@ -7230,6 +7269,488 @@ class AddOnPengkajianController extends Controller
                     ]
                 );
 
+            $deskripsi = [];
+
+            $penilaianBayi = DB::table(
+                'medicalrecord.sirmed_penilaian_awal_bayi'
+            )
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->first();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | APGAR
+            |--------------------------------------------------------------------------
+            */
+
+            if ($penilaianBayi) {
+
+                /*
+                |--------------------------------------------------------------------------
+                | STATUS BAYI
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_STATUS_BAYI') &&
+                    $this->pemfisValue($penilaianBayi->APGAR_STATUS_BAYI) !== null
+                ) {
+
+                    $statusBayi = $this->pemfisValue(
+                        $penilaianBayi->APGAR_STATUS_BAYI
+                    );
+
+                    $statusBayiLabel = match ($statusBayi) {
+                        'bugar' => 'Bugar',
+                        'tidak_bugar' => 'Tidak Bugar',
+                        default => $statusBayi,
+                    };
+
+                    $deskripsi[] = 'Status Bayi: ' . $statusBayiLabel;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | BAYI BUGAR
+                |--------------------------------------------------------------------------
+                | Tampilkan APGAR 1, 5, dan 10 menit
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_STATUS_BAYI') &&
+                    $penilaianBayi->APGAR_STATUS_BAYI === 'bugar'
+                ) {
+
+                    $apgarMenit = [
+                        1 => [
+                            'DENYUT' => 'APGAR 1 Menit - Denyut',
+                            'PERNAFASAN' => 'APGAR 1 Menit - Pernafasan',
+                            'TONUS' => 'APGAR 1 Menit - Tonus',
+                            'RANGSANG' => 'APGAR 1 Menit - Rangsang',
+                            'WARNA' => 'APGAR 1 Menit - Warna',
+                            'TOTAL' => 'APGAR Total 1 Menit',
+                        ],
+                        5 => [
+                            'DENYUT' => 'APGAR 5 Menit - Denyut',
+                            'PERNAFASAN' => 'APGAR 5 Menit - Pernafasan',
+                            'TONUS' => 'APGAR 5 Menit - Tonus',
+                            'RANGSANG' => 'APGAR 5 Menit - Rangsang',
+                            'WARNA' => 'APGAR 5 Menit - Warna',
+                            'TOTAL' => 'APGAR Total 5 Menit',
+                        ],
+                        10 => [
+                            'DENYUT' => 'APGAR 10 Menit - Denyut',
+                            'PERNAFASAN' => 'APGAR 10 Menit - Pernafasan',
+                            'TONUS' => 'APGAR 10 Menit - Tonus',
+                            'RANGSANG' => 'APGAR 10 Menit - Rangsang',
+                            'WARNA' => 'APGAR 10 Menit - Warna',
+                            'TOTAL' => 'APGAR Total 10 Menit',
+                        ],
+                    ];
+
+                    foreach ($apgarMenit as $menit => $fields) {
+
+                        foreach ($fields as $suffix => $label) {
+
+                            if ($suffix === 'TOTAL') {
+                                $field = 'APGAR_TOTAL_' . $menit . '_MENIT';
+                            } else {
+                                $field = 'APGAR_' . $menit . '_MENIT_' . $suffix;
+                            }
+
+                            if (property_exists($penilaianBayi, $field)) {
+
+                                $value = $this->pemfisValue(
+                                    $penilaianBayi->{$field}
+                                );
+
+                                if ($value !== null) {
+                                    $deskripsi[] = $label . ': ' . $value;
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | BAYI TIDAK BUGAR
+                |--------------------------------------------------------------------------
+                | Tampilkan data resusitasi
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_STATUS_BAYI') &&
+                    $penilaianBayi->APGAR_STATUS_BAYI === 'tidak_bugar'
+                ) {
+
+                    /*
+                    | APGAR Resusitasi
+                    */
+
+                    if (
+                        property_exists($penilaianBayi, 'APGAR_RESUSITASI') &&
+                        $this->pemfisValue($penilaianBayi->APGAR_RESUSITASI) !== null
+                    ) {
+
+                        $resusitasi = $this->pemfisValue(
+                            $penilaianBayi->APGAR_RESUSITASI
+                        );
+
+                        $resusitasiLabel = match ($resusitasi) {
+                            'dilakukan' => 'Dilakukan',
+                            'tidak_dilakukan' => 'Tidak Dilakukan',
+                            default => $resusitasi,
+                        };
+
+                        $deskripsi[] = 'APGAR Resusitasi: ' . $resusitasiLabel;
+                    }
+
+
+                    /*
+                    | APGAR Langkah Awal
+                    */
+
+                    if (
+                        property_exists($penilaianBayi, 'APGAR_LANGKAH_AWAL') &&
+                        $penilaianBayi->APGAR_LANGKAH_AWAL !== null
+                    ) {
+
+                        $deskripsi[] = 'APGAR Langkah Awal: ' .
+                            (
+                                (int) $penilaianBayi->APGAR_LANGKAH_AWAL === 1
+                                    ? 'Ya'
+                                    : 'Tidak'
+                            );
+                    }
+
+                    if (
+                        property_exists($penilaianBayi, 'APGAR_LANGKAH_AWAL_DETIK')
+                    ) {
+
+                        $value = $this->pemfisValue(
+                            $penilaianBayi->APGAR_LANGKAH_AWAL_DETIK
+                        );
+
+                        if ($value !== null) {
+                            $deskripsi[] = 'APGAR Langkah Awal Detik: ' . $value;
+                        }
+                    }
+
+
+                    /*
+                    | APGAR VTP
+                    */
+
+                    if (
+                        property_exists($penilaianBayi, 'APGAR_VTP') &&
+                        $penilaianBayi->APGAR_VTP !== null
+                    ) {
+
+                        $deskripsi[] = 'APGAR VTP: ' .
+                            (
+                                (int) $penilaianBayi->APGAR_VTP === 1
+                                    ? 'Ya'
+                                    : 'Tidak'
+                            );
+                    }
+
+                    if (
+                        property_exists($penilaianBayi, 'APGAR_VTP_DETIK')
+                    ) {
+
+                        $value = $this->pemfisValue(
+                            $penilaianBayi->APGAR_VTP_DETIK
+                        );
+
+                        if ($value !== null) {
+                            $deskripsi[] = 'APGAR VTP Detik: ' . $value;
+                        }
+                    }
+
+
+                    /*
+                    | APGAR Kompresi Dada
+                    */
+
+                    if (
+                        property_exists($penilaianBayi, 'APGAR_KOMPRESI_DADA') &&
+                        $penilaianBayi->APGAR_KOMPRESI_DADA !== null
+                    ) {
+
+                        $deskripsi[] = 'APGAR Kompresi Dada: ' .
+                            (
+                                (int) $penilaianBayi->APGAR_KOMPRESI_DADA === 1
+                                    ? 'Ya'
+                                    : 'Tidak'
+                            );
+                    }
+
+                    if (
+                        property_exists($penilaianBayi, 'APGAR_KOMPRESI_DADA_DETIK')
+                    ) {
+
+                        $value = $this->pemfisValue(
+                            $penilaianBayi->APGAR_KOMPRESI_DADA_DETIK
+                        );
+
+                        if ($value !== null) {
+                            $deskripsi[] = 'APGAR Kompresi Dada Detik: ' . $value;
+                        }
+                    }
+
+
+                    /*
+                    | APGAR ETT
+                    */
+
+                    if (
+                        property_exists($penilaianBayi, 'APGAR_ETT') &&
+                        $penilaianBayi->APGAR_ETT !== null
+                    ) {
+
+                        $deskripsi[] = 'APGAR ETT: ' .
+                            (
+                                (int) $penilaianBayi->APGAR_ETT === 1
+                                    ? 'Ya'
+                                    : 'Tidak'
+                            );
+                    }
+
+
+                    /*
+                    | APGAR Resusitasi Dihentikan
+                    */
+
+                    if (
+                        property_exists(
+                            $penilaianBayi,
+                            'APGAR_RESUSITASI_DIHENTIKAN'
+                        ) &&
+                        $penilaianBayi->APGAR_RESUSITASI_DIHENTIKAN !== null
+                    ) {
+
+                        $deskripsi[] = 'APGAR Resusitasi Dihentikan: ' .
+                            (
+                                (int) $penilaianBayi->APGAR_RESUSITASI_DIHENTIKAN === 1
+                                    ? 'Ya'
+                                    : 'Tidak'
+                            );
+                    }
+
+                    if (
+                        property_exists(
+                            $penilaianBayi,
+                            'APGAR_RESUSITASI_DIHENTIKAN_MENIT'
+                        )
+                    ) {
+
+                        $value = $this->pemfisValue(
+                            $penilaianBayi->APGAR_RESUSITASI_DIHENTIKAN_MENIT
+                        );
+
+                        if ($value !== null) {
+                            $deskripsi[] =
+                                'APGAR Resusitasi Dihentikan Menit: ' .
+                                $value;
+                        }
+                    }
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | DATA YANG SELALU DITAMPILKAN
+                |--------------------------------------------------------------------------
+                | Tidak peduli bugar / tidak bugar
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_TANGGAL')
+                ) {
+
+                    $value = $this->pemfisValue(
+                        $penilaianBayi->APGAR_TANGGAL
+                    );
+
+                    if ($value !== null) {
+                        $deskripsi[] = 'APGAR Tanggal: ' . $value;
+                    }
+                }
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_JAM')
+                ) {
+
+                    $value = $this->pemfisValue(
+                        $penilaianBayi->APGAR_JAM
+                    );
+
+                    if ($value !== null) {
+                        $deskripsi[] = 'APGAR Jam: ' . $value;
+                    }
+                }
+
+                if (
+                    property_exists($penilaianBayi, 'APGAR_BB_SEKARANG')
+                ) {
+
+                    $value = $this->pemfisValue(
+                        $penilaianBayi->APGAR_BB_SEKARANG
+                    );
+
+                    if ($value !== null) {
+                        $deskripsi[] = 'APGAR BB Sekarang: ' . $value . ' gram';
+                    }
+                }
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | KEPALA
+            |--------------------------------------------------------------------------
+            */
+
+            $dataKepala = [
+                'bentuk' => 'Bentuk',
+                'suturae' => 'Suturae',
+                'fontanella' => 'Fontanella',
+                'mata' => 'Mata',
+                'hidung' => 'Hidung',
+                'caput_succedaneum' => 'Caput Succedaneum',
+                'cephal_hematom' => 'Cephal Hematom',
+                'telinga' => 'Telinga',
+                'mulut' => 'Mulut',
+                'leher' => 'Leher',
+                'paru' => 'Paru',
+                'jantung' => 'Jantung',
+                'abdomen' => 'Abdomen',
+                'ekstremitas' => 'Ekstremitas',
+            ];
+
+            foreach ($dataKepala as $field => $label) {
+
+                $value = $request->{$field};
+
+                if ($value !== null && trim((string) $value) !== '') {
+                    $deskripsi[] = $label . ': ' . $value;
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | NEUROLOGI
+            |--------------------------------------------------------------------------
+            */
+
+            $deskripsi[] = 'Neurologi';
+
+            $neurologi = [
+                'rooting' => 'Rooting',
+                'sucking' => 'Sucking',
+                'moro' => 'Moro',
+                'asymmetric_tonic_neck' => 'Asymmetric Tonic Neck',
+                'babinski' => 'Babinski',
+                'menggenggam' => 'Menggenggam',
+            ];
+
+            foreach ($neurologi as $field => $label) {
+
+                $value = $request->{$field};
+
+                $deskripsi[] =
+                    $label . ': ' .
+                    ($value ? 'Ya' : 'Tidak');
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | KULIT
+            |--------------------------------------------------------------------------
+            */
+
+            $deskripsi[] = 'Kulit';
+
+
+            /*
+            | SUARA
+            |--------------------------------------------------------------------------
+            | Hanya tampilkan yang bernilai 1
+            */
+
+            if ($request->suara_diam) {
+
+                $deskripsi[] = 'Suara: Diam';
+
+            } elseif ($request->suara_merintih) {
+
+                $deskripsi[] = 'Suara: Merintih';
+
+            } elseif ($request->suara_kuat) {
+
+                $deskripsi[] = 'Suara: Kuat';
+            }
+
+
+            /*
+            | IKRENIK
+            |--------------------------------------------------------------------------
+            */
+
+            $deskripsi[] =
+                'Ikrenik: ' .
+                ($request->kulit_ikrenik ? 'Ya' : 'Tidak');
+
+
+            /*
+            | KETERANGAN KULIT
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                $request->kulit_keterangan !== null &&
+                trim((string) $request->kulit_keterangan) !== ''
+            ) {
+
+                $deskripsi[] =
+                    'Keterangan: ' .
+                    $request->kulit_keterangan;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | GABUNGKAN DESKRIPSI
+            |--------------------------------------------------------------------------
+            */
+
+            $deskripsiText = implode('<br>', $deskripsi);
+
+            if ($deskripsiText) {
+
+                DB::table('medicalrecord.pemeriksaan_fisik')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $KUNJUNGAN,
+                            'PENDAFTARAN' => DB::table('pendaftaran.kunjungan')->where('NOMOR', $KUNJUNGAN)->value('NOPEN'),
+                        ],
+                        [
+                            'DESKRIPSI' => $deskripsiText,
+                            'OLEH' => $oleh,
+                            'STATUS' => 1,
+                            'TANGGAL' => now(),
+                        ]
+                    );
+            }
 
             DB::commit();
 
@@ -8959,6 +9480,144 @@ class AddOnPengkajianController extends Controller
             ], 500);
         }
     }
+
+    public function getBarthelIndex($KUNJUNGAN)
+    {
+        $data = DB::table('medicalrecord.penilaian_barthel_index')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('STATUS', 1)
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
+    public function simpanBarthelIndex(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $pendaftaran = DB::table('pendaftaran.kunjungan')
+                ->where('NOMOR', $KUNJUNGAN)
+                ->whereIn('STATUS', [1, 2])
+                ->value('NOPEN');
+
+            if (!$pendaftaran) {
+                throw new \Exception('Data pendaftaran tidak ditemukan.');
+            }
+
+            // Ambil semua jawaban
+            $jawaban = $request->input('barthel', []);
+
+            // Mapping JENIS master -> kolom database
+            $mapping = [
+                232 => 'KENDALI_RANGSANG_DEFEKASI',
+                233 => 'KENDALI_RANGSANG_KEMIH',
+                234 => 'BERSIH_DIRI',
+                235 => 'PENGGUNAAN_JAMBAN',
+                236 => 'MAKAN',
+                237 => 'PERUBAHAN_SIKAP',
+                238 => 'PINDAH_JALAN',
+                239 => 'PAKAI_BAJU',
+                240 => 'NAIK_TURUN_TANGGA',
+                241 => 'MANDI',
+            ];
+
+            $data = [
+                'KUNJUNGAN'     => $KUNJUNGAN,
+                'PENDAFTARAN'   => $pendaftaran,
+                'TANGGAL'       => now()->toDateString(),
+                'SEBELUM_SAKIT' => (int) $request->input('sebelum_sakit', 0),
+                'STATUS'        => 1,
+                'OLEH'          => auth()->id(),
+            ];
+
+            // Simpan ID dari master.referensi ke tabel Barthel
+            foreach ($mapping as $jenis => $column) {
+
+                $data[$column] = isset($jawaban[$jenis])
+                    && $jawaban[$jenis] !== ''
+                        ? (int) $jawaban[$jenis]
+                        : null;
+            }
+
+            /*
+            * Hitung total skor.
+            *
+            * ID 1 = skor 0
+            * ID 2 = skor 1
+            * ID 3 = skor 2
+            * dst.
+            */
+            $totalSkor = 0;
+
+            foreach ($mapping as $jenis => $column) {
+
+                if (
+                    isset($jawaban[$jenis]) &&
+                    $jawaban[$jenis] !== ''
+                ) {
+                    $ref = DB::table('master.referensi')
+                        ->where('JENIS', $jenis)
+                        ->where('ID', (int) $jawaban[$jenis])
+                        ->first();
+
+                    if ($ref) {
+                        $totalSkor += ((int) $ref->ID - 1);
+                    }
+                }
+            }
+
+            /*
+            * Simpan / update Barthel Index
+            */
+            DB::table('medicalrecord.penilaian_barthel_index')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $KUNJUNGAN,
+                    ],
+                    $data
+                );
+
+            /*
+            * Simpan total skor Barthel ke
+            * medicalrecord.sirmed_assesmen_sindrom_geriatri.ADL
+            */
+            DB::table('medicalrecord.sirmed_assesmen_sindrom_geriatri')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $KUNJUNGAN,
+                    ],
+                    [
+                        'ADL'     => (string) $totalSkor,
+                        'TANGGAL' => now(),
+                        'OLEH'    => auth()->id(),
+                        'STATUS'  => 1,
+                    ]
+                );
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Barthel Index berhasil disimpan.',
+                'skor'    => $totalSkor,
+            ]);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
     private function pemfisValue($value)
     {

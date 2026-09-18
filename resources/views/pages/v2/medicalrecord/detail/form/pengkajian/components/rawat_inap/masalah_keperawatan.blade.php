@@ -174,6 +174,19 @@
                 </div>
             @endforeach
         </div>
+        {{-- MASALAH LAIN --}}
+        <div class="form-group mt-2">
+            <label class="form-label fw-bold">
+                Masalah Keperawatan Lain
+            </label>
+
+            <textarea
+                class="form-control form-control-sm masalah-keperawatan-lain"
+                name="MASALAH_LAIN"
+                rows="2"
+                placeholder="Masukkan masalah keperawatan lain jika ada..."
+            ></textarea>
+        </div>
     </div>
 </div>
 
@@ -214,6 +227,10 @@
                     const field = $input.data('field');
                     $input.prop('checked', FormHelper.hasValue(data[field]) && Number(data[field]) === 1);
                 });
+                // Load Masalah Keperawatan Lain
+                $form.find('.masalah-keperawatan-lain').val(
+                    data.MASALAH_LAIN ?? ''
+                );
             },
             error: function (xhr, status, error) {
                 console.error('Error Daftar Masalah Keperawatan:', xhr.responseText || error);
@@ -284,5 +301,13 @@
     $form.on('change', 'input[type="checkbox"]', function () {
         simpanMasalahKeperawatan();
     });
+
+    $form.on(
+        'blur',
+        '.masalah-keperawatan-lain',
+        function () {
+            simpanMasalahKeperawatan();
+        }
+    );
 })();
 </script>

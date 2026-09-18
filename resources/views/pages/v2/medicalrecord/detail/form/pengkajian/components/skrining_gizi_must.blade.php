@@ -26,7 +26,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group mb-3">
+            <div class="form-group mb-3" id="form_sgd1_c" hidden>
                 <h6>Jumlah perubahan berat badan</h6>
                 <div class="d-flex align-items-center gap-3 mb-3">
                     <div class="form-check mb-0 flex-shrink-0">
@@ -107,7 +107,11 @@
 
     $(document).ready(function() {
         $section.on('change input', '[name="sgd1"], [name="sgd1_c"], [name="sgd2"]', function () {
+            if ($(this).attr('name') === 'sgd1') {
+                toggleJumlahBeratBadan($section);
+            }
             hitungSkorMUST($section);
+            validasiSimpanMUST($section);
         });
         $section.on('change', '#sg_must', function () {
             if ($(this).is(':checked')) {
@@ -120,11 +124,42 @@
                 resetSkriningMUST($section);
             }
         });
-
+        toggleJumlahBeratBadan($section);
         hitungSkorMUST($section);
-
+        validasiSimpanMUST($section);
         getSkriningMust();
     })
+
+    function toggleJumlahBeratBadan($section) {
+        const sgd1 = $section.find('input[name="sgd1"]:checked').val();
+        const $formSgd1c = $section.find('#form_sgd1_c');
+
+        if (sgd1 === '1') {
+            // Ya → tampilkan jumlah perubahan berat badan
+            $formSgd1c.prop('hidden', false);
+        } else {
+            // Belum pilih / Tidak → sembunyikan
+            $formSgd1c.prop('hidden', true);
+
+            // Reset pilihan jumlah perubahan berat badan
+            $section.find('input[name="sgd1_c"]').prop('checked', false);
+        }
+    }
+
+    function validasiSimpanMUST($section) {
+        const sgd1 = $section.find('input[name="sgd1"]:checked').val();
+        const sgd1c = $section.find('input[name="sgd1_c"]:checked').val();
+        const sgd2 = $section.find('input[name="sgd2"]:checked').val();
+
+        const lengkap =
+            sgd1 !== undefined &&
+            sgd2 !== undefined &&
+            (sgd1 !== '1' || sgd1c !== undefined);
+
+        $section.find('.btn-save-sub-pengkajian').prop('disabled', !lengkap);
+
+        return lengkap;
+    }
 
     function hitungSkorMUST($section) {
         const sgd1 = $section.find('input[name="sgd1"]:checked').val();
@@ -137,14 +172,31 @@
         // Jumlah perubahan berat badan hanya wajib bila sgd1 = Ya
         const jumlahBeratBadanWajib = sgd1 === '1';
 
-        const semuaTerisi =
-            sgd1 !== undefined &&
-            sgd2 !== undefined &&
-            // sgd3 !== '' &&
-            (!jumlahBeratBadanWajib || sgd1c !== undefined);
-
-        if (!semuaTerisi) {
+        // Belum memilih sgd1 atau sgd2
+        if (sgd1 === undefined || sgd2 === undefined) {
             $scoreBox.prop('hidden', true);
+            return;
+        }
+
+        // Jika sgd1 = Ya tetapi jumlah perubahan BB belum dipilih
+        if (sgd1 === '1' && sgd1c === undefined) {
+
+            $section.find('#nilai_sgd').text('-');
+
+            $section.find('#kategori_sgd')
+                .text('Data belum lengkap')
+                .removeClass('text-success text-warning text-danger')
+                .addClass('text-warning');
+
+            $section.find('#keterangan_sgd')
+                .text('Silakan pilih jumlah perubahan berat badan.');
+
+            $scoreBox.find('.alert')
+                .removeClass('alert-success alert-warning alert-danger')
+                .addClass('alert-warning');
+
+            $scoreBox.prop('hidden', false);
+
             return;
         }
 
@@ -267,6 +319,9 @@
                         'skor_sgd',
                         must.SKOR
                     );
+
+                    toggleJumlahBeratBadan($section);
+                    hitungSkorMUST($section);
                 } else {
                     $section.find('#sg_must').prop('checked', false);
                     $section.find('#tampil_sg_must').prop('hidden', true);
@@ -287,6 +342,18 @@
     function simpanSkriningMust(btn) {
         const $buttonSkriningMust = $(btn);
         const $sectionSkriningMust = $('#form_skrining_must');
+
+        if (!validasiSimpanMUST($sectionSkriningMust)) {
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Data belum lengkap',
+                text: 'Silakan lengkapi data skrining MUST terlebih dahulu.',
+                confirmButtonText: 'OK'
+            });
+
+            return;
+        }
 
         const data = getFormDataByName($sectionSkriningMust, {
             NOKUNJ: kunjungan

@@ -2203,6 +2203,27 @@ class EMRController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
+        $jenisBarthel = [
+            232 => 'Mengendalikan rangsang defekasi',
+            233 => 'Mengendalikan rangsang berkemih',
+            234 => 'Membersihkan diri (seka muka, sisir rambut, sikat gigi)',
+            235 => 'Penggunaan jamban, masuk dan keluar',
+            236 => 'Makan',
+            237 => 'Berubah sikap dari berbaring ke duduk',
+            238 => 'Berpindah/berjalan',
+            239 => 'Memakai baju',
+            240 => 'Naik turun tangga',
+            241 => 'Mandi',
+        ];
+
+        $referensiBarthel = DB::table('master.referensi')
+            ->whereIn('JENIS', array_keys($jenisBarthel))
+            ->where('STATUS', 1)
+            ->orderBy('JENIS')
+            ->orderBy('ID')
+            ->get()
+            ->groupBy('JENIS');
+
         return [
             'kunjungan' => $kunjungan,
             'tingkat_kesadaran' => $tingkat_kesadaran,
@@ -2225,6 +2246,8 @@ class EMRController extends Controller
             'jenis_ruang' => $jenis_ruang,
             'jenis_perawatan' => $jenis_perawatan,
             'jenis_alergi' => $jenis_alergi,
+            'jenisBarthel' => $jenisBarthel,
+            'referensiBarthel' => $referensiBarthel,
         ];
     }
 

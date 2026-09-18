@@ -347,6 +347,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // KELUHAN UTAMA
                         Route::get('emr/pengkajian/rajal/keluhan_utama/{kunjungan}', [AddOnPengkajianController::class, 'getKeluhanUtama']);
                         Route::post('emr/pengkajian/rajal/keluhan_utama/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanKeluhanUtama']);
+                    // BARTHEL INDEX
+                        Route::get('emr/pengkajian/rajal/barthel/{kunjungan}', [AddOnPengkajianController::class, 'getBarthelIndex']);
+                        Route::post('emr/pengkajian/rajal/barthel/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanBarthelIndex']);
 
                 // KHUSUS GAWAT DARURAT
                     // ATS
