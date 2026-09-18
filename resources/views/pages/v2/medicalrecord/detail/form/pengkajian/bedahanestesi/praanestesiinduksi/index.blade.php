@@ -264,12 +264,6 @@
                 </div>
             </div>
             <div class="col-md-12">
-                <div class="form-group mb-3">
-                    <h6 class="mb-2">Pemeriksaan Fisik</h6>
-                    <textarea class="form-control" name="pai_cb_pf" id="" rows="4"></textarea>
-                </div>
-            </div>
-            <div class="col-md-12">
                 @include(
                     'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
                     [
@@ -277,6 +271,12 @@
                         'page' => 'dokter',
                     ]
                 )
+            </div>
+            <div class="col-md-12">
+                <div class="form-group mb-3">
+                    <h6 class="mb-2">Pemeriksaan Fisik</h6>
+                    <textarea class="form-control" name="pai_cb_pf" id="" rows="4"></textarea>
+                </div>
             </div>
             <div class="col-md-12">
                 <div class="form-group mb-3">
@@ -335,6 +335,7 @@
                         <input class="form-control" type="text" name="pai_diag4">
                     </div>
                 </div>
+                <h6>Klasifikasi ASA</h6>
                 <div class="d-flex align-items-center gap-2 mb-2">
                     <div class="form-check mb-0"><input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_asa" value="1"></div>
                     <label class="form-label mb-0" for="">ASA I Pasien normal yang sehat</label>
@@ -352,7 +353,7 @@
                     <label class="form-label mb-0" for="">ASA IV Pasien dengan penyakit sistemik berat yang mengancam nyawa</label>
                 </div>
                 <div class="form-group mb-3">
-                    <label class="form-label">Kesimpulan Status ASA</label>
+                    <label class="form-label fw-bold">Kesimpulan Status ASA</label>
                     <textarea class="form-control" name="pai_asa_kes" value="" rows="2"></textarea>
                 </div>
             </div>

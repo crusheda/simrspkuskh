@@ -52,14 +52,6 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2">Riwayat Operasi Sebelumnya</h6>
-                    <textarea class="form-control" name="pb_ros" id="" rows="2"></textarea>
-                </div>
-                <div class="form-group mb-3">
-                    <h6 class="mb-2">Data Obyektif (Pemeriksaan Fisik)</h6>
-                    <textarea class="form-control" name="pb_do" id="" rows="4"></textarea>
-                </div>
-                <div class="form-group mb-3">
                     <h6 class="mb-2">Riwayat Penyakit</h6>
                     <div class="row">
                         <div class="col-md-4">
@@ -111,11 +103,25 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group mb-3">
+                    <h6 class="mb-2">Riwayat Operasi Sebelumnya</h6>
+                    <textarea class="form-control" name="pb_ros" id="" rows="2"></textarea>
+                </div>
+                <div class="form-group mb-3">
+                    <h6 class="mb-2">TTV</h6>
+                </div>
+                <div class="form-group mb-3">
+                    <h6 class="mb-2">Data Obyektif (Pemeriksaan Fisik)</h6>
+                    <textarea class="form-control" name="pb_do" id="" rows="4"></textarea>
+                </div>
                 <div class="mb-3">
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_laborat')
                 </div>
                 <div class="mb-3">
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_radiologi')
+                </div>
+                <div class="form-group mb-3">
+                    <h6 class="mb-2">Catatan Penting</h6>
                 </div>
                 <div class="form-group mb-3">
                     <h6 class="mb-2">Diagnosa Pra Operasi</h6>
