@@ -3638,11 +3638,15 @@ class AddOnPengkajianController extends Controller
         DB::beginTransaction();
 
         try {
+
+            $masalahLain = $request->input('MASALAH_LAIN');
+
             $data = [
                 'KUNJUNGAN' => $KUNJUNGAN,
                 'OLEH' => auth()->id(),
                 'STATUS' => 1,
                 'TANGGAL' => now(),
+                'MASALAH_LAIN' => $masalahLain,
             ];
 
             foreach ($kolomByForm[$form] as $index => $namaKolom) {
