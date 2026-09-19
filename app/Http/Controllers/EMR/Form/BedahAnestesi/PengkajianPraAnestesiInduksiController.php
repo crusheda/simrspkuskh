@@ -36,10 +36,27 @@ class PengkajianPraAnestesiInduksiController extends Controller
             ->select('dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'), 'ag.DESKRIPSI AS AGAMA', 'kj.DESKRIPSI AS PEKERJAAN')
             ->where('pk.NOMOR', $kunjungan)
             ->first();
+        
+        $dokterAnestesi = DB::table('master.dokter_ruangan AS dr')
+            ->leftJoin(
+                'master.dokter AS dok',
+                'dok.ID',
+                '=',
+                'dr.DOKTER'
+            )
+            ->select(
+                'dok.ID',
+                DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMA')
+            )
+            ->where('dr.RUANGAN', 'LIKE', '102010117%')
+            ->whereNotNull('dok.ID')
+            ->orderBy('NAMA')
+            ->get();
 
         $data = [
             'kunjungan' => $kunjungan,
-            'pasien' => $pasien
+            'pasien' => $pasien,
+            'dokterAnestesi' => $dokterAnestesi
         ];
 
         return view('pages.v2.medicalrecord.detail.form.pengkajian.bedahanestesi.praanestesiinduksi.index')->with('list',$data);
@@ -60,6 +77,12 @@ class PengkajianPraAnestesiInduksiController extends Controller
     function simpanForm(Request $request, $kunjungan)
     {
         try {
+            
+            $ppa = $request->input('pai_ppa');
+
+            $ppaKhusus = $ppa == 3
+                ? $request->input('pai_ppa_rawat_khusus')
+                : null;
 
             $data = [
                 'KUNJUNGAN' => $kunjungan,
@@ -109,7 +132,11 @@ class PengkajianPraAnestesiInduksiController extends Controller
                 'REGIONAL_KAUDAL' => $request->pai_reg_k,
                 'REGIONAL_BLOK_PERIFER' => $request->pai_reg_b,
 
-                'PASCA_ANESTESIA' => $request->pai_ppa,
+                'PASCA_ANESTESIA' => $ppa,
+
+                'PASCA_ANESTESIA_KHUSUS' => $ppaKhusus,
+
+                'DOKTER_ANESTESI' => $request->pai_dokter_anestesi,
 
                 'PRA_ANESTESIA_1' => $request->pai_pra1,
                 'PRA_ANESTESIA_2' => $request->pai_pra2,

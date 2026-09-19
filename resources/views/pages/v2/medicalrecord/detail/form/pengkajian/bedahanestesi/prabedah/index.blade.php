@@ -108,7 +108,173 @@
                     <textarea class="form-control" name="pb_ros" id="" rows="2"></textarea>
                 </div>
                 <div class="form-group mb-3">
-                    <h6 class="mb-2">TTV</h6>
+                    <h6 class="mb-2">Tanda Vital</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{-- TEKANAN DARAH --}}
+                            <div class="form-group mb-3" data-ttv-neonatus>
+                                <label class="form-label">
+                                    Tekanan Darah
+                                </label>
+                                <div class="input-group">
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        name="pb_tv_td_up"
+                                    >
+                                    <div class="input-group-text">
+                                        /
+                                    </div>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        name="pb_tv_td_down"
+                                    >
+                                    <div class="input-group-text">
+                                        mmHg
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- FREKUENSI NADI --}}
+                            <div class="form-group mb-3">
+                                <label class="form-label">
+                                    Frekuensi Nadi
+                                </label>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="input-group flex-grow-1">
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            name="pb_tv_nadi"
+                                        >
+                                        <span class="input-group-text">
+                                            X/menit
+                                        </span>
+                                    </div>
+
+                                    {{-- REGULER --}}
+                                    <div class="form-check m-0">
+                                        <input
+                                            class="form-check-input single-checkbox"
+                                            type="checkbox"
+                                            name="pb_tv_nadi_cb"
+                                            value="1"
+                                            checked
+                                        >
+                                        <label class="form-check-label">
+                                            Reguler
+                                        </label>
+                                    </div>
+
+                                    {{-- IREGULER --}}
+                                    <div class="form-check m-0">
+                                        <input
+                                            class="form-check-input single-checkbox"
+                                            type="checkbox"
+                                            name="pb_tv_nadi_cb"
+                                            value="2"
+                                        >
+                                        <label class="form-check-label">
+                                            Ireguler
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {{-- FREKUENSI NAFAS --}}
+                            <div class="form-group mb-3">
+                                <label class="form-label">
+                                    Frekuensi Nafas
+                                </label>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="input-group flex-grow-1">
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            name="pb_tv_nafas"
+                                        >
+                                        <span class="input-group-text">
+                                            X/menit
+                                        </span>
+                                    </div>
+
+                                    {{-- SIMETRIS --}}
+                                    <div class="form-check m-0">
+                                        <input
+                                            class="form-check-input single-checkbox"
+                                            type="checkbox"
+                                            name="pb_tv_nafas_cb"
+                                            value="1"
+                                            checked
+                                        >
+                                        <label class="form-check-label">
+                                            Simetris
+                                        </label>
+                                    </div>
+
+                                    {{-- ASIMETRIS --}}
+                                    <div class="form-check m-0">
+                                        <input
+                                            class="form-check-input single-checkbox"
+                                            type="checkbox"
+                                            name="pb_tv_nafas_cb"
+                                            value="2"
+                                        >
+                                        <label class="form-check-label">
+                                            Asimetris
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- SUHU + SPO2 --}}
+                            <div class="row">
+
+                                {{-- SUHU --}}
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">
+                                            Suhu
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" name="pb_tv_suhu">
+                                            <div class="input-group-text">
+                                                °C
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- SPO2 --}}
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">
+                                            SpO2
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" name="pb_tv_spo2">
+                                            <div class="input-group-text">
+                                                %
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <h6 class="mb-2">Thorak</h6>
+                        <textarea class="form-control" name="pb_tho" id="" rows="3"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <h6 class="mb-2">Abdomen</h6>
+                        <textarea class="form-control" name="pb_abd" id="" rows="3"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <h6 class="mb-2">Ekstremitas</h6>
+                        <textarea class="form-control" name="pb_eks" id="" rows="3"></textarea>
+                    </div>
                 </div>
                 <div class="form-group mb-3">
                     <h6 class="mb-2">Data Obyektif (Pemeriksaan Fisik)</h6>
@@ -122,6 +288,7 @@
                 </div>
                 <div class="form-group mb-3">
                     <h6 class="mb-2">Catatan Penting</h6>
+                    <textarea class="form-control" name="pb_cp" id="" rows="2"></textarea>
                 </div>
                 <div class="form-group mb-3">
                     <h6 class="mb-2">Diagnosa Pra Operasi</h6>
@@ -402,6 +569,90 @@
                         tlt.RO
                     );
                 }
+
+                // ==========================================================
+                // TANDA VITAL
+                // ==========================================================
+
+                FormHelper.setValue(
+                    $form,
+                    'pb_tv_td_up',
+                    tlt.TV_TD_UP
+                );
+
+                FormHelper.setValue(
+                    $form,
+                    'pb_tv_td_down',
+                    tlt.TV_TD_DOWN
+                );
+
+                FormHelper.setValue(
+                    $form,
+                    'pb_tv_nadi',
+                    tlt.TV_NADI
+                );
+
+                setSingleCheckboxValue(
+                    'pb_tv_nadi_cb',
+                    tlt.TV_NADI_CB
+                );
+
+                FormHelper.setValue(
+                    $form,
+                    'pb_tv_nafas',
+                    tlt.TV_NAFAS
+                );
+
+                setSingleCheckboxValue(
+                    'pb_tv_nafas_cb',
+                    tlt.TV_NAFAS_CB
+                );
+
+                FormHelper.setValue(
+                    $form,
+                    'pb_tv_suhu',
+                    tlt.TV_SUHU
+                );
+
+                FormHelper.setValue(
+                    $form,
+                    'pb_tv_spo2',
+                    tlt.TV_SPO2
+                );
+
+
+                // ==========================================================
+                // PEMERIKSAAN FISIK
+                // ==========================================================
+
+                FormHelper.setValue(
+                    $form,
+                    'pb_tho',
+                    tlt.THORAK
+                );
+
+                FormHelper.setValue(
+                    $form,
+                    'pb_abd',
+                    tlt.ABDOMEN
+                );
+
+                FormHelper.setValue(
+                    $form,
+                    'pb_eks',
+                    tlt.EKSTREMITAS
+                );
+
+
+                // ==========================================================
+                // CATATAN PENTING
+                // ==========================================================
+
+                FormHelper.setValue(
+                    $form,
+                    'pb_cp',
+                    tlt.CP
+                );
             },
 
             error: function (xhr, status, error) {
@@ -458,7 +709,13 @@
             },
 
             success: function (res) {
-
+                if (!res.success) {
+                    iziToast.error({
+                        title: 'Gagal',
+                        message: res.message || 'Data gagal disimpan.',
+                        position: 'topRight'
+                    });
+                }
             },
 
             error: function (xhr) {
@@ -543,6 +800,29 @@
         $checkbox
             .prop('checked', Number(value) === 1)
             .trigger('change');
+    }
+
+    function setSingleCheckboxValue(name, value) {
+
+        const $checkbox = $form.find(
+            `[name="${name}"]`
+        );
+
+        if (!$checkbox.length) {
+            return;
+        }
+
+        $checkbox.prop('checked', false);
+
+        if (value === null || value === undefined) {
+            return;
+        }
+
+        $checkbox
+            .filter(function () {
+                return String($(this).val()) === String(value);
+            })
+            .prop('checked', true);
     }
 
 })();

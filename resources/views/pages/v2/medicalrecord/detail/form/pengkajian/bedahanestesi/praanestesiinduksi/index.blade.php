@@ -274,7 +274,7 @@
             </div>
             <div class="col-md-12">
                 <div class="form-group mb-3">
-                    <h6 class="mb-2">Pemeriksaan Fisik</h6>
+                    <h4 class="text-danger">Pemeriksaan Fisik</h4>
                     <textarea class="form-control" name="pai_cb_pf" id="" rows="4"></textarea>
                 </div>
             </div>
@@ -353,7 +353,7 @@
                     <label class="form-label mb-0" for="">ASA IV Pasien dengan penyakit sistemik berat yang mengancam nyawa</label>
                 </div>
                 <div class="form-group mb-3">
-                    <label class="form-label fw-bold">Kesimpulan Status ASA</label>
+                    <h6>Kesimpulan Status ASA</h6>
                     <textarea class="form-control" name="pai_asa_kes" value="" rows="2"></textarea>
                 </div>
             </div>
@@ -418,34 +418,49 @@
                 <div class="form-group mb-3">
                     <h6>Perawatan pasca anestesia :</h6>
                     <div class="form-check mb-2">
-                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" value="1">
+                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" id="pai_ppa_ri" value="1">
                         <label class="form-check-label mb-0 flex-shrink-0">
                             Rawat Inap
                         </label>
                     </div>
                     <div class="form-check mb-2">
-                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" value="2">
+                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" id="pai_ppa_rj" value="2">
                         <label class="form-check-label mb-0 flex-shrink-0">
                             Rawat Jalan
                         </label>
                     </div>
                     <div class="form-check mb-2">
-                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" value="3">
+                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" id="pai_ppa_rk" value="3">
                         <label class="form-check-label mb-0 flex-shrink-0">
-                            ICU
-                        </label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" value="4">
-                        <label class="form-check-label mb-0 flex-shrink-0">
-                            PICU / NICU
+                            Rawat Khusus
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" value="5">
+                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa" id="pai_ppa_aps" value="4">
                         <label class="form-check-label mb-0 flex-shrink-0">
                             APS
                         </label>
+                    </div>
+                </div>
+                <div class="form-group mb-3" id="pai_ppa_rawat_khusus" style="display: none;">
+                    <h6>Jenis Rawat Khusus</h6>
+
+                    <div class="d-flex gap-4">
+
+                        <div class="form-check">
+                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa_rawat_khusus" value="1" id="pai_ppa_icu" >
+                            <label class="form-check-label" for="pai_ppa_icu" >
+                                ICU
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="pai_ppa_rawat_khusus" value="2" id="pai_ppa_picunicu" >
+                            <label class="form-check-label" for="pai_ppa_picunicu" >
+                                PICU/NICU
+                            </label>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -469,6 +484,23 @@
                         <input class="form-control" type="text" name="pai_pra4">
                     </div>
                 </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <label class="form-label fw-bold">
+                    Dokter Anestesi
+                </label>
+
+                <select name="pai_dokter_anestesi" class="form-select" >
+                    <option value="">
+                        -- Pilih Dokter Anestesi --
+                    </option>
+
+                    @foreach($list['dokterAnestesi'] as $dokter)
+                        <option value="{{ $dokter->ID }}">
+                            {{ $dokter->NAMA }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
         </div>
     </div>
@@ -636,7 +668,7 @@
                 if (FormHelper.hasValue(tlt.KESIMPULAN_ASA)) {
                     FormHelper.setValue(
                         $form,
-                        'pai_kesimpulan_asa',
+                        'pai_asa_kes',
                         tlt.KESIMPULAN_ASA
                     );
                 }
@@ -671,6 +703,10 @@
                 setCheckboxValue('pai_reg_b', tlt.REGIONAL_BLOK_PERIFER);
 
                 setCheckboxValue('pai_ppa', tlt.PASCA_ANESTESIA);
+
+                updatePascaAnestesia();
+
+                setCheckboxValue('pai_ppa_rawat_khusus', tlt.PASCA_ANESTESIA_KHUSUS);
 
                 // ==================================================
                 // PERSIAPAN PRA ANESTESIA
@@ -707,6 +743,13 @@
                         tlt.PRA_ANESTESIA_4
                     );
                 }
+
+                // Dokter Anestesi
+                $form
+                    .find('select[name="pai_dokter_anestesi"]')
+                    .val(tlt.DOKTER_ANESTESI)
+                    .trigger('change');
+
 
             },
 
@@ -859,6 +902,16 @@
                 simpanData();
             }
         );
+
+        $form.on(
+            'change',
+            'input[name="pai_ppa"]',
+            function () {
+
+                updatePascaAnestesia();
+
+            }
+        );
     });
 
     function setCheckboxValue(name, value) {
@@ -877,6 +930,26 @@
                 return String($(this).val()) === String(value);
             })
             .prop('checked', true);
+    }
+
+    function updatePascaAnestesia() {
+
+        const value = $form
+            .find('input[name="pai_ppa"]:checked')
+            .val();
+
+        if (value === '3') {
+
+            $('#pai_ppa_rawat_khusus').show();
+
+        } else {
+
+            $('#pai_ppa_rawat_khusus').hide();
+
+            $form
+                .find('input[name="pai_ppa_rawat_khusus"]')
+                .prop('checked', false);
+        }
     }
 
 })();
