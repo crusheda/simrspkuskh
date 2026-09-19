@@ -1652,8 +1652,7 @@
     // ==========================================================
     // SIMPAN ATS
     // ==========================================================
-
-    function simpanATS() {
+    function simpanATS(changedElement = null) {
 
         if (
             isDataLoading ||
@@ -1735,6 +1734,18 @@
                 }
 
 
+                // Jika response status bukan true,
+                // kembalikan perubahan terakhir
+                if (changedElement) {
+
+                    $(changedElement).prop(
+                        'checked',
+                        !$(changedElement).is(':checked')
+                    );
+
+                }
+
+
                 if (
                     typeof iziToast !== 'undefined'
                 ) {
@@ -1753,6 +1764,20 @@
 
             error: function (xhr) {
 
+                // ==================================================
+                // BATALKAN PERUBAHAN CHECKBOX TERAKHIR
+                // ==================================================
+
+                if (changedElement) {
+
+                    $(changedElement).prop(
+                        'checked',
+                        !$(changedElement).is(':checked')
+                    );
+
+                }
+
+
                 if (
                     typeof iziToast !== 'undefined'
                 ) {
@@ -1761,9 +1786,12 @@
 
                         title: 'Gagal',
 
+                        position: 'topRight',
+
                         message:
                             xhr.responseJSON?.message ||
-                            'Data ATS gagal disimpan.'
+                            'Data ATS gagal disimpan, pastikan pengisian dilakukan oleh Dokter.'
+
                     });
 
                 }
@@ -1804,7 +1832,7 @@
                 .prop('checked', false);
 
 
-            simpanATS();
+            simpanATS(this);
 
         }
     );
@@ -1819,7 +1847,7 @@
         'input[type="checkbox"]:not([name="ats_p"])',
         function () {
 
-            simpanATS();
+            simpanATS(this);
 
         }
     );
@@ -1834,7 +1862,7 @@
         'input[name="ats"]',
         function () {
 
-            simpanATS();
+            simpanATS(this);
 
         }
     );

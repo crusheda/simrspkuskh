@@ -13,373 +13,26 @@
                 )
             </div>
             <div class="col-md-12 mb-3">
-                <h6>Anamnesis</h6>
-                <div class="form-group">
-                    <div class="form-check form-check-inline mb-2">
-                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="1">
-                        <label class="form-check-label"> Autoanamnesis </label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="anam" value="2">
-                        <label class="form-check-label"> Alloanamnesis </label>
-                    </div>
-                </div>
+                @include(
+                    'pages.v2.medicalrecord.detail.form.pengkajian.components.gawat_darurat.primary_survey',
+                    [
+                        'section' => '#gd_dokter',
+                        'page' => 'dokter',
+                        'kunjungan' => $kunjungan ?? $list['kunjungan'],
+                    ]
+                )
             </div>
             <div class="col-md-12 mb-3">
-                <div class="card card-body border border-dashed border-warning mb-3">
-                    <h5>I. Primary <b class="text-warning">Survey</b></h5>
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <div class="form-group">
-                                <h6>Keadaan Umum</h6>
-                                <div class="form-group">
-                                    <textarea class="form-control" name="keu" rows="1"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <h6 class="mb-2">Jalan Nafas ( <b class="text-warning">A</b> )</h6>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="1">
-                                    <label class="form-check-label"> Paten </label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="2">
-                                    <label class="form-check-label"> Obstruksi Parsial </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input check-primary single-checkbox" type="checkbox" name="jn" value="3">
-                                    <label class="form-check-label"> Obstruksi Total </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <h6>Pernafasan ( <b class="text-warning">B</b> )</h6>
-                            <div class="form-group">
-                                <label class="form-label">Frekuensi Nafas</label>
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="input-group input-group-sm flex-grow-1">
-                                        <input type="number" class="form-control" name="fr">
-                                        <span class="input-group-text">X/menit</span>
-                                    </div>
-                                    <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="fr_cb" value="1" checked="">
-                                        <label class="form-check-label">
-                                            Simetris
-                                        </label>
-                                    </div>
-                                    <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="fr_cb" value="2">
-                                        <label class="form-check-label">
-                                            Asimetris
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <h6>Sirkulasi ( <b class="text-warning">C</b> )</h6>
-                            <div class="form-group mb-3">
-                                <label class="form-label">Tekanan Darah (mmHg)</label>
-                                <div class="input-group input-group-sm mb-2">
-                                    <input type="number" class="form-control" name="td_up">
-                                    <div class="input-group-text"> / </div>
-                                    <input type="number" class="form-control" name="td_down">
-                                    <div class="input-group-text"> mmHg </div>
-                                </div>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label class="form-label">Frekuensi Nadi</label>
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="input-group input-group-sm flex-grow-1">
-                                        <input type="number" class="form-control" name="nadi">
-                                        <span class="input-group-text">X/menit</span>
-                                    </div>
-                                    <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="fr_nadi" value="1" checked="">
-                                        <label class="form-check-label">
-                                            Reguler
-                                        </label>
-                                    </div>
-                                    <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="fr_nadi" value="2">
-                                        <label class="form-check-label">
-                                            Ireguler
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label class="form-label">Suhu</label>
-                                <div class="input-group input-group-sm mb-2">
-                                    <input type="number" class="form-control" name="suhu">
-                                    <div class="input-group-text">°C</div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">SpO2</label>
-                                <div class="input-group input-group-sm">
-                                    <input type="number" class="form-control" name="spo2">
-                                    <div class="input-group-text">%</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <h6>Neorologi ( <b class="text-warning">D</b> )</h6>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group mb-3">
-                                        <label class="form-label">Tingkat Kesadaran</label>
-                                        <select class="form-control" name="tks">
-                                            <option value="">Pilih</option>
-                                            @if ($list['tingkat_kesadaran'])
-                                                @foreach ($list['tingkat_kesadaran'] as $item)
-                                                    <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="d-flex align-items-center column-gap-5 row-gap-3 flex-wrap mb-3">
-                                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                            <label class="form-label mb-0">Pupil</label>
-                                            <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="pupil" value="1" checked="">
-                                                <label class="form-check-label"> Isokor </label>
-                                            </div>
-                                            <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="pupil" value="2">
-                                                <label class="form-check-label"> Anisokor </label>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                            <label class="form-label mb-0"> Diameter Pupil </label>
-                                            <div class="input-group input-group-sm" style="width: 250px;">
-                                                <input type="number" class="form-control" name="dia_up">
-                                                <div class="input-group-text"> mm / </div>
-                                                <input type="number" class="form-control" name="dia_down">
-                                                <div class="input-group-text"> mm </div>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-3">
-                                            <label class="form-label mb-0 flex-shrink-0">
-                                                RC (Refleks Cahaya)
-                                            </label>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <div class="form-group mb-0">
-                                                    <input
-                                                        class="form-control"
-                                                        type="text"
-                                                        name="rc_up"
-                                                        placeholder="..."
-                                                        maxlength="1"
-                                                        style="width:60px;"
-                                                    >
-                                                </div>
-                                            </div>
-                                            <span class="text-danger fw-bold">/</span>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <div class="form-group mb-0">
-                                                    <input
-                                                        class="form-control"
-                                                        type="text"
-                                                        name="rc_down"
-                                                        placeholder="..."
-                                                        maxlength="1"
-                                                        style="width:60px;"
-                                                    >
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {{-- <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                            <label class="form-label mb-0"> RC (Refleks Cahaya) </label>
-                                            <div class="input-group input-group-sm" style="width: 130px;">
-                                                <input type="number" class="form-control" name="rc_up">
-                                                <div class="input-group-text"> / </div>
-                                                <input type="number" class="form-control" name="rc_down">
-                                            </div>
-                                        </div> --}}
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label class="form-label">GCS (<i>Glasgow Coma Scale</i>)</label>
-                                        <div class="d-flex align-items-center column-gap-3 row-gap-3 flex-wrap mb-3">
-                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                                <label class="form-check-label">Eye</label>
-                                                <input type="number" class="form-control form-control-sm" name="gcs_e" min="1" max="4" style="width: 70px; flex: 0 0 60px;" placeholder="">
-                                            </div>
-                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                                <label class="form-check-label">Verbal</label>
-                                                <input type="number" class="form-control form-control-sm" name="gcs_v" min="1" max="5" style="width: 70px; flex: 0 0 60px;" placeholder="">
-                                            </div>
-                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                                <label class="form-check-label">Move</label>
-                                                <input type="number" class="form-control form-control-sm" name="gcs_m" min="1" max="6" style="width: 70px; flex: 0 0 60px;" placeholder="">
-                                            </div>
-                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                                <label class="form-check-label">Total</label>
-                                                <input type="number" class="form-control form-control-sm" name="gcs_t" style="width: 70px; flex: 0 0 60px;" placeholder="" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-3">
-                                        <label class="form-label">VAS (<i>Visual Analog Scale</i>)</label>
-                                        <input type="number" class="form-control" name="vas">
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="mb-3">
-                                                <h6>Alat Bantu Nafas</h6>
-                                                <div class="form-group">
-                                                    <div class="form-check form-check-inline mb-2">
-                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="2">
-                                                        <label class="form-check-label"> Ya </label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline mb-2">
-                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="abn" value="0" checked="">
-                                                        <label class="form-check-label"> Tidak </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="mb-3">
-                                                <h6>Kulit</h6>
-                                                <div class="form-group">
-                                                    <div class="form-check form-check-inline mb-2">
-                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="1" checked="">
-                                                        <label class="form-check-label"> Normal </label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline mb-2">
-                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="2">
-                                                        <label class="form-check-label"> Jaundice </label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline mb-2">
-                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="3">
-                                                        <label class="form-check-label"> Akral Dingin </label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline mb-2">
-                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="4">
-                                                        <label class="form-check-label"> Sianotik </label>
-                                                    </div>
-                                                    <div class="form-check form-check-inline">
-                                                        <input class="form-check-input check-primary single-checkbox" type="checkbox" name="kulit" value="5">
-                                                        <label class="form-check-label"> Berkeringat </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <hr class="mt-3">
-                        <div class="col-md-12">
-                            <div class="d-flex align-items-center gap-3">
-                                <h6 class="mb-0">Status Reproduksi</h6>
-                                <div class="form-check m-0">
-                                    <input class="form-check-input single-checkbox" type="checkbox" name="sr" value="1" checked="">
-                                    <label class="form-check-label" for="sr2">
-                                        Tidak
-                                    </label>
-                                </div>
-                                <div class="form-check m-0">
-                                    <input class="form-check-input single-checkbox" type="checkbox" name="sr" value="2">
-                                    <label class="form-check-label" for="sr1">
-                                        Kasus Obstetri Ginekologi
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-group mt-3" id="tampil_sr_ya" hidden>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="d-flex align-items-center gap-2 mb-2">
-                                            <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="2">
-                                            </div>
-                                            <label class="form-label mb-0 me-2">
-                                                HPHT
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <input type="text" class="form-control" name="sr_hpht">
-                                            </div>
-                                            <label class="form-label mb-0 ms-2 me-2">
-                                                Siklus
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <input type="text" class="form-control" name="sr_siklus">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2 mb-2">
-                                            <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="3">
-                                            </div>
-                                            <label class="form-label mb-0 me-2" for="kb">
-                                                KB
-                                            </label>
-                                            <input type="text" class="form-control" name="sr_kb">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="d-flex align-items-center gap-2 mb-3">
-                                            <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="1">
-                                            </div>
-                                            <label class="form-label mb-0 me-2">
-                                                Hamil
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <span class="input-group-text">Gravida</span>
-                                                <input type="text" class="form-control" name="sr_grv">
-                                                <span class="input-group-text">Paritas</span>
-                                                <input type="text" class="form-control" name="sr_prt">
-                                                <span class="input-group-text">Abortus</span>
-                                                <input type="text" class="form-control" name="sr_abr">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="form-check m-0">
-                                                <input class="form-check-input single-checkbox" type="checkbox" name="sr_cb" value="0">
-                                            </div>
-                                            <label class="form-label mb-0">
-                                                Tidak Hamil
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="card card-body border border-dashed border-success mb-0">
                     <div class="row">
-                        <h5>II. Secondary <b class="text-success">Survey</b></h5>
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <h6>Keluhan Utama</h6>
-                                <textarea class="form-control" name="ku" rows="1"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <h6>Riwayat Penyakit Dahulu</h6>
-                                <textarea class="form-control" name="rpd" rows="1"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <h6>Riwayat Penyakit Sekarang</h6>
-                                <textarea class="form-control" name="rps" rows="4"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <h6>Pemeriksaan Fisik</h6>
-                                <textarea class="form-control" name="pf" rows="4"></textarea>
-                            </div>
+                        <div class="col-md-12">
+                            @include(
+                                'pages.v2.medicalrecord.detail.form.pengkajian.components.gawat_darurat.secondary_survey',
+                                [
+                                    'section' => '#gd_dokter',
+                                    'kunjungan' => $kunjungan ?? $list['kunjungan'],
+                                ]
+                            )
                         </div>
                         <div class="col-md-6 mb-3">
                             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_alergi')
@@ -406,691 +59,286 @@
                 </div>
             </div>
             <div class="col-md-12 mb-3">
-                <div class="form-group">
-                    <h6>Perencanaan Terapi</h6>
-                    <textarea class="form-control" name="pt" rows="2"></textarea>
-                </div>
+                @include(
+                    'pages.v2.medicalrecord.detail.form.pengkajian.components.gawat_darurat.perencanaan_terapi',
+                    [
+                        'section' => '#gd_dokter',
+                        'kunjungan' => $kunjungan ?? $list['kunjungan'],
+                    ]
+                )
             </div>
             <div class="col-md-12 mb-3">
-                <div class="form-group">
-                    <h6>Hasil Lapor DPJP</h6>
-                    <textarea class="form-control" name="hld" rows="2"></textarea>
-                </div>
+                @include(
+                    'pages.v2.medicalrecord.detail.form.pengkajian.components.gawat_darurat.hasil_lapor_dpjp',
+                    [
+                        'section' => '#gd_dokter',
+                        'kunjungan' => $kunjungan ?? $list['kunjungan'],
+                    ]
+                )
             </div>
             <div class="col-md-12">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.admission_note',['section' => '#gd_dokter'])
             </div>
             <div class="col-md-12">
-                {{-- <h6>Tindak Lanjut Asuhan</h6> --}}
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <h6>Cara Keluar</h6>
-                            <select class="form-control" name="tla_ck">
-                                <option value="">Pilih</option>
-                                @if ($list['cara_keluar'])
-                                    @foreach ($list['cara_keluar'] as $item)
-                                        <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <h6>Keadaan Keluar</h6>
-                            <select class="form-control" name="tla_kk">
-                                <option value="">Pilih</option>
-                                @if ($list['keadaan_keluar'])
-                                    @foreach ($list['keadaan_keluar'] as $item)
-                                        <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                @include(
+                    'pages.v2.medicalrecord.detail.form.pengkajian.components.gawat_darurat.cara_pulang',
+                    [
+                        'section' => '#gd_dokter',
+                        'kunjungan' => $kunjungan ?? $list['kunjungan'],
+                        // 'list' => $list,
+                    ]
+                )
             </div>
         </div>
     </div>
-    <div class="form-footer">
-        <button class="btn btn-danger" onclick="saveDataPengkajianGdD(this)">
-            <i class="ri-save-line me-1"></i> Simpan Pengkajian
-        </button>
-    </div>
-@include(
-    'pages.v2.medicalrecord.detail.form.finalisasi',
-    [
-        'jenis' => 'gawat-darurat',
-        'role' => 'dokter',
-        'formId' => 'form_gawat_darurat_dokter',
-        'formKey' => 'gd_dokter',
-        'form' => 'pengkajian-radar',
-        'sub' => 'DOKTER',
-        'kunjungan' => $kunjungan ?? $list['kunjungan'],
-    ]
-)
+
+    @include(
+        'pages.v2.medicalrecord.detail.form.finalisasi',
+        [
+            'jenis' => 'gawat_darurat',
+            'role' => 'dokter',
+            'sub' => 'DOKTER',
+            'formKey' => 'gd_dokter',
+            'kunjungan' => $kunjungan ?? $list['kunjungan'],
+        ]
+    )
 
 </div>
 
 <script>
     var $sectionGdD = $('#gd_dokter');
     $(document).ready(function() {
-        // HITUNG GCS
-        $sectionGdD.on(
-            'input',
-            "input[name='gcs_e'], input[name='gcs_v'], input[name='gcs_m']",
-            function () {
-                FormHelper.hitungGCS($sectionGdD, 'gcs');
-            }
-        );
 
-        // REFLEKS CAHAYA (+/-)
-        $sectionGdD.on('input', 'input[name^="rc_"]', function () {
-            this.value = this.value.replace(/[^+-]/g, '').charAt(0);
-        });
-
-        // CB - Status Reproduksi
-        $sectionGdD.on('change', '[name="sr"]', function () {
-            const nilai = $sectionGdD.find('[name="sr"]:checked').val();
-            if (nilai === '2') {
-                $sectionGdD.find('#tampil_sr_ya').prop('hidden', false);
-            } else {
-                $sectionGdD.find('#tampil_sr_ya').prop('hidden', true);
-                // Reset detail kehamilan
-                resetStatusReproduksi($sectionGdD);
-            }
-        });
-
-        getDataPengkajianGdD();
     })
 
-    function resetStatusReproduksi($sectionGdD) {
-        // Reset checkbox status reproduksi
-        $sectionGdD.find('input[name="sr_cb"]')
-            .prop('checked', false)
-            .prop('disabled', false);
-
-        // Reset semua value
-        $sectionGdD.find('input[name="sr_hpht"]').val('');
-        $sectionGdD.find('input[name="sr_siklus"]').val('');
-        $sectionGdD.find('input[name="sr_kb"]').val('');
-        $sectionGdD.find('input[name="sr_grv"]').val('');
-        $sectionGdD.find('input[name="sr_prt"]').val('');
-        $sectionGdD.find('input[name="sr_abr"]').val('');
-    }
-
-    function getDataPengkajianGdD() {
-
-        if (!$sectionGdD.length) {
-            console.warn('Section Pengkajian Medis IGD tidak ditemukan.');
-            return;
-        }
-
-        const $form = $sectionGdD.find('.form-wrapper').first();
-
-        if (!$form.length) {
-            console.warn('Form Pengkajian Medis IGD tidak ditemukan.');
-            return;
-        }
-
-        // ============================================================
-        // AJAX
-        // ============================================================
-
-        $.ajax({
-            url: `/api/v2/emr/form/pengkajian/gd/dr/${kunjungan}`,
-            type: "GET",
-            dataType: "json",
-
-            beforeSend: function () {
-                console.log('Mengambil data Pengkajian Medis IGD...');
-            },
-
-            success: function (response) {
-                // ====================================================
-                // VALIDASI RESPONSE
-                // ====================================================
-
-                if (!response || response.status !== true) {
-                    console.warn(
-                        response?.message || 'Data Pengkajian Medis IGD tidak ditemukan.'
-                    );
-                    return;
-                }
-
-                const data = response.data || {};
-                const triage = data.triage || {};
-
-                // ====================================================
-                // 10. ANAMNESIS DIPEROLEH
-                // ====================================================
-
-                const anamnesisDiperoleh = data.anamnesis_diperoleh || {};
-
-                if (anamnesisDiperoleh.AUTOANAMNESIS == 1) {
-                    FormHelper.setSingleCheckbox($form,'anam', 1);
-                } else if (anamnesisDiperoleh.ALLOANAMNESIS == 1) {
-                    FormHelper.setSingleCheckbox($form,'anam', 2);
-                }
-
-                // ====================================================
-                // 11. TANDA VITAL / PRIMARY SURVEY
-                // ====================================================
-
-                const tandaVital = data.tanda_vital || {};
-
-                // Keadaan Umum
-                FormHelper.setValue(
-                    $form,
-                    'keu',
-                    tandaVital.KEADAAN_UMUM
-                );
-
-                // Tingkat Kesadaran
-                FormHelper.setValue(
-                    $form,
-                    'tks',
-                    tandaVital.TINGKAT_KESADARAN
-                );
-
-                // Frekuensi Nafas
-                FormHelper.setValue(
-                    $form,
-                    'fr',
-                    tandaVital.FREKUENSI_NAFAS
-                );
-
-                // Frekuensi Nafas - Simetris / Asimetris
-                // if (tandaVital.FREKUENSI_NAFAS_CB !== null) {
-                //     $('input[name="fr_cb"]')
-                //         .prop('checked', false);
-
-                //     $(`input[name="fr_cb"][value="${tandaVital.FREKUENSI_NAFAS_CB}"]`)
-                //         .prop('checked', true);
-                // }
-                FormHelper.setSingleCheckbox(
-                    $form,
-                    'fr_cb',
-                    tandaVital.FREKUENSI_NAFAS_CB
-                );
-
-                // Frekuensi Nadi
-                FormHelper.setValue(
-                    $form,
-                    'nadi',
-                    tandaVital.FREKUENSI_NADI
-                );
-                FormHelper.setSingleCheckbox(
-                    $form,
-                    'fr_nadi',
-                    tandaVital.FREKUENSI_NADI_CB
-                )
-
-                // Tekanan Darah
-                FormHelper.setValue(
-                    $form,
-                    'td_up',
-                    tandaVital.SISTOLIK
-                );
-
-                FormHelper.setValue(
-                    $form,
-                    'td_down',
-                    tandaVital.DISTOLIK
-                );
-
-                // Suhu
-                FormHelper.setValue(
-                    $form,
-                    'suhu',
-                    tandaVital.SUHU
-                );
-
-                // SpO2
-                FormHelper.setValue(
-                    $form,
-                    'spo2',
-                    tandaVital.SATURASI_O2
-                );
-
-                // Pupil
-                // if (tandaVital.PUPIL !== null) {
-                //     $('input[name="pupil"]')
-                //         .prop('checked', false);
-
-                //     $(`input[name="pupil"][value="${tandaVital.PUPIL}"]`)
-                //         .prop('checked', true);
-                // }
-                FormHelper.setSingleCheckbox(
-                    $form,
-                    'pupil',
-                    tandaVital.PUPIL
-                );
-
-                // Diameter pupil
-                FormHelper.setValue(
-                    $form,
-                    'dia_up',
-                    tandaVital.DIAMETER_PUPIL_UP
-                );
-
-                FormHelper.setValue(
-                    $form,
-                    'dia_down',
-                    tandaVital.DIAMETER_PUPIL_DOWN
-                );
-
-                // Refleks cahaya
-                FormHelper.setValue(
-                    $form,
-                    'rc_up',
-                    tandaVital.RC_UP
-                );
-                FormHelper.setValue(
-                    $form,
-                    'rc_down',
-                    tandaVital.RC_DOWN
-                );
-
-                // GCS
-                FormHelper.setValue(
-                    $form,
-                    'gcs_e',
-                    tandaVital.EYE
-                );
-
-                FormHelper.setValue(
-                    $form,
-                    'gcs_v',
-                    tandaVital.VERBAL
-                );
-
-                FormHelper.setValue(
-                    $form,
-                    'gcs_m',
-                    tandaVital.MOTORIK
-                );
-
-                FormHelper.setValue(
-                    $form,
-                    'gcs_t',
-                    tandaVital.GCS
-                );
-
-
-                // VAS
-                FormHelper.setValue(
-                    $form,
-                    'vas',
-                    tandaVital.VAS
-                );
-
-
-                // Jalan Nafas
-                // if (tandaVital.JALAN_NAFAS !== null) {
-                //     $('input[name="jn"]')
-                //         .prop('checked', false);
-
-                //     $(`input[name="jn"][value="${tandaVital.JALAN_NAFAS}"]`)
-                //         .prop('checked', true);
-                // }
-                FormHelper.setSingleCheckbox(
-                    $form,
-                    'jn',
-                    tandaVital.JALAN_NAFAS
-                );
-
-
-                // Alat Bantu Nafas
-                // if (tandaVital.ALAT_BANTU_NAFAS !== null) {
-                //     $('input[name="abn"]')
-                //         .prop('checked', false);
-
-                //     $(`input[name="abn"][value="${tandaVital.ALAT_BANTU_NAFAS}"]`)
-                //         .prop('checked', true);
-                // }
-                FormHelper.setSingleCheckbox(
-                    $form,
-                    'abn',
-                    tandaVital.ALAT_BANTU_NAFAS
-                );
-
-
-                // Kulit
-                // if (tandaVital.KULIT !== null) {
-                //     $('input[name="kulit"]')
-                //         .prop('checked', false);
-
-                //     $(`input[name="kulit"][value="${tandaVital.KULIT}"]`)
-                //         .prop('checked', true);
-                // }
-                FormHelper.setSingleCheckbox(
-                    $form,
-                    'kulit',
-                    tandaVital.KULIT
-                );
-
-
-                // ====================================================
-                // 12. STATUS REPRODUKSI
-                // ====================================================
-
-                const statusReproduksi =
-                    data.status_reproduksi || {};
-
-
-                // Status kasus obstetri / ginekologi
-                //
-                // HTML:
-                // value="1" = Tidak
-                // value="2" = Kasus Obstetri Ginekologi
-                //
-                // if (statusReproduksi.KASUS_OBSTETRI_GINEKOLOGI !== null) {
-
-                //     $('input[name="sr"]')
-                //         .prop('checked', false);
-
-                //     $(
-                //         `input[name="sr"][value="${statusReproduksi.KASUS_OBSTETRI_GINEKOLOGI}"]`
-                //     ).prop('checked', true);
-                // }
-                FormHelper.setSingleCheckbox(
-                    $form,
-                    'sr',
-                    statusReproduksi.KASUS_OBSTETRI_GINEKOLOGI
-                );
-
-                // Status reproduksi (0:TIDAK HAMIL; 1:HAMIL; 2:HPHT SIKLUS; 3:KB;)
-                // if (statusReproduksi.STATUS_REPRODUKSI !== null) {
-
-                //     $('input[name="sr_cb"]')
-                //         .prop('checked', false);
-
-                //     $(
-                //         `input[name="sr_cb"][value="${statusReproduksi.STATUS_REPRODUKSI}"]`
-                //     ).prop('checked', true);
-                // }
-                FormHelper.setSingleCheckbox(
-                    $form,
-                    'sr_cb',
-                    statusReproduksi.STATUS_REPRODUKSI
-                );
-
-                // HPHT
-                FormHelper.setValue(
-                    $form,
-                    'sr_hpht',
-                    statusReproduksi.HPHT
-                );
-
-                // Siklus
-                FormHelper.setValue(
-                    $form,
-                    'sr_siklus',
-                    statusReproduksi.SIKLUS
-                );
-
-                // KB
-                FormHelper.setValue(
-                    $form,
-                    'sr_kb',
-                    statusReproduksi.KB
-                );
-
-                // Gravida
-                FormHelper.setValue(
-                    $form,
-                    'sr_grv',
-                    statusReproduksi.HAMIL_GRAVIDA
-                );
-
-                // Paritas
-                FormHelper.setValue(
-                    $form,
-                    'sr_prt',
-                    statusReproduksi.HAMIL_PARITAS
-                );
-
-                // Abortus
-                FormHelper.setValue(
-                    $form,
-                    'sr_abr',
-                    statusReproduksi.HAMIL_ABORTUS
-                );
-
-                // // INPUT CHECKBOX STATUS REPRODUKSI
-                // $('input[name="sr_cb"]')
-                //     .prop('checked', false);
-
-                // // Tidak Hamil
-                // if (
-                //     String(statusReproduksi.STATUS_REPRODUKSI) === '0'
-                // ) {
-                //     $('input[name="sr_cb"][value="0"]')
-                //         .prop('checked', true);
-                // }
-
-                // // Hamil
-                // if (
-                //     statusReproduksi.HAMIL_GRAVIDA !== null &&
-                //     statusReproduksi.HAMIL_GRAVIDA !== '' ||
-                //     statusReproduksi.HAMIL_PARITAS !== null &&
-                //     statusReproduksi.HAMIL_PARITAS !== '' ||
-                //     statusReproduksi.HAMIL_ABORTUS !== null &&
-                //     statusReproduksi.HAMIL_ABORTUS !== '' ||
-                //     String(statusReproduksi.STATUS_REPRODUKSI) === '1'
-                // ) {
-                //     $('input[name="sr_cb"][value="1"]')
-                //         .prop('checked', true);
-                // }
-
-                // // HPHT
-                // if (
-                //     statusReproduksi.HPHT !== null &&
-                //     statusReproduksi.HPHT !== '' ||
-                //     String(statusReproduksi.STATUS_REPRODUKSI) === '2'
-                // ) {
-                //     $('input[name="sr_cb"][value="2"]')
-                //         .prop('checked', true);
-                // }
-
-                // // KB
-                // if (
-                //     statusReproduksi.KB !== null &&
-                //     statusReproduksi.KB !== '' ||
-                //     String(statusReproduksi.STATUS_REPRODUKSI) === '3'
-                // ) {
-                //     $('input[name="sr_cb"][value="3"]')
-                //         .prop('checked', true);
-                // }
-
-                // ====================================================
-                // 13. KELUHAN UTAMA
-                // ====================================================
-
-                const keluhanUtama =
-                    data.keluhan_utama || {};
-
-                FormHelper.setValue(
-                    $form,
-                    'ku',
-                    keluhanUtama.DESKRIPSI
-                );
-
-
-                // ====================================================
-                // 14. ANAMNESIS / RIWAYAT PENYAKIT SEKARANG
-                // ====================================================
-
-                const anamnesis =
-                    data.anamnesis || {};
-
-                FormHelper.setValue(
-                    $form,
-                    'rps',
-                    anamnesis.DESKRIPSI
-                );
-
-                // ====================================================
-                // 15. RIWAYAT PENYAKIT DAHULU
-                // ====================================================
-
-                const rpp =
-                    data.rpp || {};
-
-                FormHelper.setValue(
-                    $form,
-                    'rpd',
-                    rpp.DESKRIPSI
-                );
-
-
-                // ====================================================
-                // 16. PEMERIKSAAN FISIK
-                // ====================================================
-
-                const pemeriksaanFisik =
-                    data.pemeriksaan_fisik || {};
-
-                FormHelper.setValue(
-                    $form,
-                    'pf',
-                    pemeriksaanFisik.DESKRIPSI
-                );
-
-
-                // ====================================================
-                // 19. PERENCANAAN TERAPI
-                // ====================================================
-                //
-                // Field ini BELUM ada di JSON yang Anda kirim.
-                // Jadi hanya akan diisi jika controller nanti
-                // mengembalikan data tersebut.
-                //
-                if (data.perencanaan_terapi) {
-
-                    FormHelper.setValue(
-                    $form,
-                        'pt',
-                        data.perencanaan_terapi.DESKRIPSI
-                    );
-                }
-
-
-                // ====================================================
-                // 20. HASIL LAPOR DPJP
-                // ====================================================
-                //
-                // Field ini juga belum ada di JSON saat ini.
-                //
-                if (data.hasil_lapor_dpjp) {
-
-                    FormHelper.setValue(
-                    $form,
-                        'hld',
-                        data.hasil_lapor_dpjp.DESKRIPSI
-                    );
-                }
-
-
-                // ====================================================
-                // 21. TINDAK LANJUT ASUHAN
-                // ====================================================
-                //
-                // Belum tersedia pada JSON saat ini.
-                //
-                if (data.tindak_lanjut_asuhan) {
-
-                    FormHelper.setValue(
-                    $form,
-                        'tla_ck',
-                        data.tindak_lanjut_asuhan.CARA
-                    );
-
-                    FormHelper.setValue(
-                    $form,
-                        'tla_kk',
-                        data.tindak_lanjut_asuhan.KEADAAN
-                    );
-                }
-
-            },
-
-            error: function (xhr, status, error) {
-
-                console.error(
-                    'Error getDataPengkajianGdD:',
-                    xhr.responseText || error
-                );
-
-                let message = 'Gagal mengambil data Pengkajian Medis IGD.';
-
-                if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                }
-
-                console.warn(message);
-            },
-
-            complete: function () {
-                console.log('Selesai getDataPengkajianGdD');
-            }
-        });
-    }
-
-    function saveDataPengkajianGdD(btn) {
-        const $button = $(btn);
-        const $sectionGdD = $('#gd_dokter');
-
-        const data = getFormDataByName($sectionGdD, {
-            NOKUNJ: $sectionGdD.data('kunjungan')
-        });
-
-        $.ajax({
-            url: '/api/v2/emr/form/pengkajian/gd/dr/simpan',
-            type: 'POST',
-            data: data,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            beforeSend: function () {
-                $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan Formulir...');
-            },
-            success: function (res) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: res.message || "Data berhasil disimpan",
-                    showConfirmButton: false,
-                    timer: 1500,
-                    backdrop: `
-                        rgba(0,0,123,0.4)
-                        url("/images/nyan-cat.gif")
-                        left top
-                        no-repeat
-                    `
-                });
-                getDataPengkajianGdD();
-            },
-            error: function (xhr) {
-                let message = 'Data gagal disimpan.';
-                if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors)
-                        .flat()
-                        .join('&nbsp;');
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                }
-                iziToast.error({
-                    title: 'Validasi Gagal!',
-                    message: message,
-                    position: 'topRight'
-                });
-            },
-            complete: function () {
-                $button.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Pengkajian');
-            }
-        });
-    }
+    // function getDataPengkajianGdD() {
+
+    //     if (!$sectionGdD.length) {
+    //         console.warn('Section Pengkajian Medis IGD tidak ditemukan.');
+    //         return;
+    //     }
+
+    //     const $form = $sectionGdD.find('.form-wrapper').first();
+
+    //     if (!$form.length) {
+    //         console.warn('Form Pengkajian Medis IGD tidak ditemukan.');
+    //         return;
+    //     }
+
+    //     // ============================================================
+    //     // AJAX
+    //     // ============================================================
+
+    //     $.ajax({
+    //         url: `/api/v2/emr/form/pengkajian/gd/dr/${kunjungan}`,
+    //         type: "GET",
+    //         dataType: "json",
+
+    //         beforeSend: function () {
+    //             console.log('Mengambil data Pengkajian Medis IGD...');
+    //         },
+
+    //         success: function (response) {
+    //             // ====================================================
+    //             // VALIDASI RESPONSE
+    //             // ====================================================
+
+    //             if (!response || response.status !== true) {
+    //                 console.warn(
+    //                     response?.message || 'Data Pengkajian Medis IGD tidak ditemukan.'
+    //                 );
+    //                 return;
+    //             }
+
+    //             const data = response.data || {};
+    //             const triage = data.triage || {};
+
+    //             // ====================================================
+    //             // 13. SECONDARY SURVEY - KELUHAN UTAMA
+    //             // ====================================================
+
+    //             const keluhanUtama =
+    //                 data.keluhan_utama || {};
+
+    //             FormHelper.setValue(
+    //                 $form,
+    //                 'ku',
+    //                 keluhanUtama.DESKRIPSI
+    //             );
+
+
+    //             // ====================================================
+    //             // 14. ANAMNESIS / RIWAYAT PENYAKIT SEKARANG
+    //             // ====================================================
+
+    //             const anamnesis =
+    //                 data.anamnesis || {};
+
+    //             FormHelper.setValue(
+    //                 $form,
+    //                 'rps',
+    //                 anamnesis.DESKRIPSI
+    //             );
+
+    //             // ====================================================
+    //             // 15. RIWAYAT PENYAKIT DAHULU
+    //             // ====================================================
+
+    //             const rpp =
+    //                 data.rpp || {};
+
+    //             FormHelper.setValue(
+    //                 $form,
+    //                 'rpd',
+    //                 rpp.DESKRIPSI
+    //             );
+
+
+    //             // ====================================================
+    //             // 16. PEMERIKSAAN FISIK
+    //             // ====================================================
+
+    //             const pemeriksaanFisik =
+    //                 data.pemeriksaan_fisik || {};
+
+    //             FormHelper.setValue(
+    //                 $form,
+    //                 'pf',
+    //                 pemeriksaanFisik.DESKRIPSI
+    //             );
+
+
+    //             // ====================================================
+    //             // 19. PERENCANAAN TERAPI
+    //             // ====================================================
+    //             //
+    //             // Field ini BELUM ada di JSON yang Anda kirim.
+    //             // Jadi hanya akan diisi jika controller nanti
+    //             // mengembalikan data tersebut.
+    //             //
+    //             if (data.perencanaan_terapi) {
+
+    //                 FormHelper.setValue(
+    //                 $form,
+    //                     'pt',
+    //                     data.perencanaan_terapi.DESKRIPSI
+    //                 );
+    //             }
+
+
+    //             // ====================================================
+    //             // 20. HASIL LAPOR DPJP
+    //             // ====================================================
+    //             //
+    //             // Field ini juga belum ada di JSON saat ini.
+    //             //
+    //             if (data.hasil_lapor_dpjp) {
+
+    //                 FormHelper.setValue(
+    //                 $form,
+    //                     'hld',
+    //                     data.hasil_lapor_dpjp.DESKRIPSI
+    //                 );
+    //             }
+
+
+    //             // ====================================================
+    //             // 21. TINDAK LANJUT ASUHAN
+    //             // ====================================================
+    //             //
+    //             // Belum tersedia pada JSON saat ini.
+    //             //
+    //             if (data.tindak_lanjut_asuhan) {
+
+    //                 FormHelper.setValue(
+    //                 $form,
+    //                     'tla_ck',
+    //                     data.tindak_lanjut_asuhan.CARA
+    //                 );
+
+    //                 FormHelper.setValue(
+    //                 $form,
+    //                     'tla_kk',
+    //                     data.tindak_lanjut_asuhan.KEADAAN
+    //                 );
+    //             }
+
+    //         },
+
+    //         error: function (xhr, status, error) {
+
+    //             console.error(
+    //                 'Error getDataPengkajianGdD:',
+    //                 xhr.responseText || error
+    //             );
+
+    //             let message = 'Gagal mengambil data Pengkajian Medis IGD.';
+
+    //             if (xhr.responseJSON?.message) {
+    //                 message = xhr.responseJSON.message;
+    //             }
+
+    //             console.warn(message);
+    //         },
+
+    //         complete: function () {
+    //             console.log('Selesai getDataPengkajianGdD');
+    //         }
+    //     });
+    // }
+
+    // function saveDataPengkajianGdD(btn) {
+    //     const $button = $(btn);
+    //     const $sectionGdD = $('#gd_dokter');
+
+    //     const data = getFormDataByName($sectionGdD, {
+    //         NOKUNJ: $sectionGdD.data('kunjungan')
+    //     });
+
+    //     $.ajax({
+    //         url: '/api/v2/emr/form/pengkajian/gd/dr/simpan',
+    //         type: 'POST',
+    //         data: data,
+    //         headers: {
+    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //         },
+    //         beforeSend: function () {
+    //             $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan Formulir...');
+    //         },
+    //         success: function (res) {
+    //             Swal.fire({
+    //                 position: "top-end",
+    //                 icon: "success",
+    //                 title: res.message || "Data berhasil disimpan",
+    //                 showConfirmButton: false,
+    //                 timer: 1500,
+    //                 backdrop: `
+    //                     rgba(0,0,123,0.4)
+    //                     url("/images/nyan-cat.gif")
+    //                     left top
+    //                     no-repeat
+    //                 `
+    //             });
+    //             getDataPengkajianGdD();
+    //         },
+    //         error: function (xhr) {
+    //             let message = 'Data gagal disimpan.';
+    //             if (xhr.status === 422 && xhr.responseJSON?.errors) {
+    //                 message = Object.values(xhr.responseJSON.errors)
+    //                     .flat()
+    //                     .join('&nbsp;');
+    //             } else if (xhr.responseJSON?.message) {
+    //                 message = xhr.responseJSON.message;
+    //             }
+    //             iziToast.error({
+    //                 title: 'Validasi Gagal!',
+    //                 message: message,
+    //                 position: 'topRight'
+    //             });
+    //         },
+    //         complete: function () {
+    //             $button.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Pengkajian');
+    //         }
+    //     });
+    // }
 </script>

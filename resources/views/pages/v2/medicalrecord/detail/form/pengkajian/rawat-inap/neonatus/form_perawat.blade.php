@@ -101,7 +101,7 @@
     @include(
         'pages.v2.medicalrecord.detail.form.finalisasi',
         [
-            'jenis' => 'neonatus',
+            'jenis' => 'ranap_neonatus',
             'role' => 'perawat',
             'sub' => 'PERAWAT',
             'formKey' => 'rin_perawat',

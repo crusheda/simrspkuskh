@@ -1,6 +1,6 @@
 @php
     $role = $role ?? 'dokter';
-    $formId = $formId ?? ('form_ranap_' . $jenis . '_' . $role);
+    $formId = $formId ?? ('form_' . $jenis . '_' . $role);
     $formKey = $formKey ?? '';
     // $form = $form ?? '';
     $sub = $sub ?? 'DOKTER';

@@ -74,7 +74,7 @@
     </div>
 
     @include('pages.v2.medicalrecord.detail.form.finalisasi', [
-        'jenis' => 'obsgyn',
+        'jenis' => 'ranap_obsgyn',
         'formKey' => 'rio_dokter',
         'form' => 'pengkajian-ranap-obsgyn',
         'sub' => 'DOKTER',

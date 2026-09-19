@@ -87,7 +87,7 @@
     @include(
         'pages.v2.medicalrecord.detail.form.finalisasi',
         [
-            'jenis' => 'dewasa',
+            'jenis' => 'ranap_dewasa',
             'role' => 'perawat',
             'sub' => 'PERAWAT',
             'formKey' => 'rid_perawat',

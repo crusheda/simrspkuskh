@@ -78,7 +78,7 @@
     @include(
         'pages.v2.medicalrecord.detail.form.finalisasi',
         [
-            'jenis' => 'anak',
+            'jenis' => 'ranap_anak',
             'role' => 'perawat',
             'sub' => 'PERAWAT',
             'formKey' => 'ria_perawat',

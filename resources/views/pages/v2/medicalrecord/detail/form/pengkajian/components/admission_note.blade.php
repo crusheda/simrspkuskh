@@ -20,7 +20,7 @@
             </div>
         </div>
     </div>
-    <div class="card card-body card-header border border-dashed border-light" id="pri">
+    <div class="card card-body card-header border border-info text-info-emphasis border-dashed p-1" id="pri">
         <div class="card-header fw-bold">
             Perencanaan Rawat Inap
         </div>

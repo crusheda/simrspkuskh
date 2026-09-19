@@ -1150,37 +1150,6 @@ class PengkajianGawatDaruratController extends Controller
             );
 
             // ==========================================
-            // KONDISI SOSIAL
-            // ==========================================
-            // $kondisiSosial = $getData(
-            //     'medicalrecord.kondisi_sosial',
-            //     [
-            //         'TIDAK_ADA_KELAINAN',
-            //         'MARAH',
-            //         'CEMAS',
-            //         'TAKUT',
-            //         'SEDIH',
-            //         'BUNUH_DIRI',
-            //         'LAINNYA',
-
-            //         'STATUS_MENTAL',
-            //         'MASALAH_PERILAKU',
-            //         'PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA',
-
-            //         'HUBUNGAN_PASIEN_DENGAN_KELUARGA',
-            //         'TEMPAT_TINGGAL',
-            //         'TEMPAT_TINGGAL_LAINNYA',
-
-            //         'KEBIASAAN_BERIBADAH_TERATUR',
-            //         'NILAI_KEPERCAYAAN',
-            //         'NILAI_KEPERCAYAAN_DESKRIPSI',
-            //         'PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA',
-
-            //         'PENGHASILAN_PERBULAN',
-            //     ]
-            // );
-
-            // ==========================================
             // STATUS REPRODUKSI
             // ==========================================
             $statusReproduksi = $getData(
@@ -1289,62 +1258,6 @@ class PengkajianGawatDaruratController extends Controller
                     'MASALAH_LAIN',
                 ]
             );
-
-            // ==========================================
-            // DISCHARGE PLANNING - FAKTOR RISIKO
-            // ==========================================
-            // $dischargeFaktorRisiko = $getData(
-            //     'medicalrecord.discharge_planning_faktor_risiko',
-            //     [
-            //         'PASIEN_TINGGAL_SENDIRI',
-            //         'PASIEN_KHAWATIR_KETIKA_DIRUMAH',
-            //         'PASIEN_TAK_ADA_YANG_MERAWAT',
-            //         'PASIEN_DILANTAI_ATAS',
-            //         'PERAWATAN_LANJUTAN_PASIEN',
-            //         'PENGAJUAN_PENDAMPINGAN_PASIEN',
-            //     ]
-            // );
-
-            // ==========================================
-            // DISCHARGE PLANNING - SKRINING
-            // ==========================================
-            // $dischargeSkrining = $getData(
-            //     'medicalrecord.discharge_planning_skrining',
-            //     [
-            //         'PASIEN_PULANG',
-            //         'PASIEN_MENGAJUKAN',
-            //         'TIDAK_ADA_KRITERIA',
-
-            //         'PERAWATAN_LANJUTAN_MEDIS',
-            //         'PLM_KATETER_URIN',
-            //         'PLM_NGT',
-            //         'PLM_TRAECHOSTOMY',
-            //         'PLM_COLOSTOMY',
-            //         'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA',
-
-            //         'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_KPB',
-            //         'KPB_RAWAT_LUKA',
-            //         'KPB_HIV',
-            //         'KPB_TB',
-            //         'KPB_DM',
-            //         'KPB_DM_TERAPI_INSULIN',
-            //         'KPB_STROKE',
-            //         'KPB_PPOK',
-            //         'KPB_CKD',
-            //         'KPB_PASIEN_KEMO',
-            //         'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA',
-
-            //         'PENGGUNAAN_ALAT_MEDIS_PAM',
-            //         'PAM_KATETER_URIN',
-            //         'PAM_NGT',
-            //         'PAM_TRAECHOSTOMY',
-            //         'PAM_COLOSTOMY',
-            //         'PAM_LAINNYA',
-
-            //         'SKRINING_LANJUTAN',
-            //         'SKRINING',
-            //     ]
-            // );
 
             // ==========================================
             // RESPONSE
@@ -1679,49 +1592,6 @@ class PengkajianGawatDaruratController extends Controller
                 );
 
                 // ==========================================
-                // KONDISI SOSIAL
-                // ==========================================
-                // DB::table('medicalrecord.kondisi_sosial')->updateOrInsert(
-                //     [
-                //         'KUNJUNGAN' => $request->NOKUNJ
-                //     ],
-                //     [
-                //         // Status Psikologi
-                //         'TIDAK_ADA_KELAINAN' => $request->tak ? 1 : 0,
-                //         'MARAH'              => $request->marah ? 1 : 0,
-                //         'CEMAS'              => $request->cemas ? 1 : 0,
-                //         'TAKUT'              => $request->takut ? 1 : 0,
-                //         'SEDIH'              => $request->sedih ? 1 : 0,
-                //         'BUNUH_DIRI'         => $request->bundir ? 1 : 0,
-                //         'LAINNYA'            => $request->pse_lain ?? '',
-
-                //         // Status Mental
-                //         'STATUS_MENTAL'                         => $request->sm ?? 0,
-                //         'MASALAH_PERILAKU'                      => $request->sm2_lain ?? '',
-                //         'PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA' => $request->sm3_lain ?? '',
-
-                //         // Hubungan Sosial
-                //         'HUBUNGAN_PASIEN_DENGAN_KELUARGA' => $request->hub ?? 0,
-                //         'TEMPAT_TINGGAL'                  => $request->tinggal ?? 0,
-                //         'TEMPAT_TINGGAL_LAINNYA'          => $request->tinggal_lain ?? '',
-
-                //         // Spiritual
-                //         'KEBIASAAN_BERIBADAH_TERATUR' => $request->kbt ?? 0,
-                //         'NILAI_KEPERCAYAAN'           => $request->nk ?? 0,
-                //         'NILAI_KEPERCAYAAN_DESKRIPSI' => $request->nk_lain ?? '',
-                //         'PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA' => $request->pk ?? 0,
-
-                //         // Ekonomi
-                //         'PENGHASILAN_PERBULAN' => $request->hasil ?? 0,
-
-                //         // Audit
-                //         'OLEH'    => auth()->id(),
-                //         'STATUS'  => 1,
-                //         'TANGGAL' => now(),
-                //     ]
-                // );
-
-                // ==========================================
                 // STATUS REPRODUKSI
                 // ==========================================
                 DB::table('medicalrecord.sirmed_status_reproduksi')->updateOrInsert(
@@ -1904,98 +1774,6 @@ class PengkajianGawatDaruratController extends Controller
                             'STATUS'     => 1,
                         ]
                     );
-
-                // ==========================================
-                // DISCHARGE PLANNING - FAKTOR RISIKO
-                // ==========================================
-                // DB::table('medicalrecord.discharge_planning_faktor_risiko')->updateOrInsert(
-                //     [
-                //         'KUNJUNGAN' => $request->NOKUNJ
-                //     ],
-                //     [
-                //         'PASIEN_TINGGAL_SENDIRI'          => $request->input('dp_1', 0) ?? 0,
-                //         'PASIEN_KHAWATIR_KETIKA_DIRUMAH'  => $request->input('dp_2', 0) ?? 0,
-                //         'PASIEN_TAK_ADA_YANG_MERAWAT'     => $request->input('dp_3', 0) ?? 0,
-                //         'PASIEN_DILANTAI_ATAS'             => $request->input('dp_4', 0) ?? 0,
-                //         // 'PERAWATAN_LANJUTAN_PASIEN'        => $request->input('dp_5', 0) ?? 0,
-                //         'PENGAJUAN_PENDAMPINGAN_PASIEN'    => 0,
-
-                //         'TANGGAL'                           => now(),
-                //         'OLEH'                              => auth()->id(),
-                //         'STATUS'                            => 1,
-                //     ]
-                // );
-
-                // ==========================================
-                // DISCHARGE PLANNING - SKRINING
-                // ==========================================
-                // DB::table('medicalrecord.discharge_planning_skrining')->updateOrInsert(
-                //     [
-                //         'KUNJUNGAN' => $request->NOKUNJ
-                //     ],
-                //     [
-                //         // ------------------------------------------
-                //         // Kriteria dasar
-                //         // ------------------------------------------
-                //         'PASIEN_PULANG'                         => $request->input('dp_6', 0) ?? 0,
-                //         'PASIEN_MENGAJUKAN'                     => $request->input('dp_7', 0) ?? 0,
-                //         'TIDAK_ADA_KRITERIA'                    => $request->input('dp_8', 0) ?? 0,
-
-                //         // ------------------------------------------
-                //         // Pasien masih ada perawatan lanjutan / penggunaan alat medis yang dilakukan di rumah
-                //         // ------------------------------------------
-                //         'PERAWATAN_LANJUTAN_MEDIS'                  => $request->input('dp_5', 0) ?? 0,
-
-                //         'PLM_KATETER_URIN'                          => $request->boolean('dp_5_1') ? 1 : 0,
-                //         'PLM_TRAECHOSTOMY'                          => $request->boolean('dp_5_2') ? 1 : 0,
-                //         'PLM_NGT'                                   => $request->boolean('dp_5_3') ? 1 : 0,
-                //         'PLM_COLOSTOMY'                             => $request->boolean('dp_5_4') ? 1 : 0,
-                //         'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA' => $request->input('dp_5_lain', '') ?? '',
-
-                //         // ------------------------------------------
-                //         // Kebutuhan Pelayanan Berkelanjutan (KPB)
-                //         // ------------------------------------------
-                //         'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_KPB' => $request->input('dp_9', 0) ?? 0,
-
-                //         'KPB_RAWAT_LUKA'                        => $request->boolean('dp_9_1') ? 1 : 0,
-                //         'KPB_TB'                                => $request->boolean('dp_9_2') ? 1 : 0,
-                //         'KPB_DM_TERAPI_INSULIN'                 => $request->boolean('dp_9_3') ? 1 : 0,
-                //         'KPB_PPOK'                              => $request->boolean('dp_9_4') ? 1 : 0,
-                //         'KPB_PASIEN_KEMO'                       => $request->boolean('dp_9_5') ? 1 : 0,
-                //         'KPB_HIV'                               => $request->boolean('dp_9_6') ? 1 : 0,
-                //         'KPB_DM'                                => $request->boolean('dp_9_7') ? 1 : 0,
-                //         'KPB_STROKE'                            => $request->boolean('dp_9_8') ? 1 : 0,
-                //         'KPB_CKD'                               => $request->boolean('dp_9_9') ? 1 : 0,
-
-                //         // Lainnya pada "Perawatan lanjutan pasien"
-                //         // dp_5_lain berasal dari field "Jika Ada, sebutkan"
-                //         'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA' => $request->input('dp_5_lain', '') ?? '',
-
-                //         // ------------------------------------------
-                //         // Penggunaan alat medis / bantu
-                //         // ------------------------------------------
-                //         'PENGGUNAAN_ALAT_MEDIS_PAM'             => $request->input('dp_10', 0) ?? 0,
-
-                //         'PAM_KATETER_URIN'                      => $request->boolean('dp_10_1') ? 1 : 0,
-                //         'PAM_TRAECHOSTOMY'                      => $request->boolean('dp_10_2') ? 1 : 0,
-                //         'PAM_NGT'                               => $request->boolean('dp_10_3') ? 1 : 0,
-                //         'PAM_COLOSTOMY'                         => $request->boolean('dp_10_4') ? 1 : 0,
-                //         'PAM_LAINNYA'                           => $request->input('dp_10_lain', '') ?? '',
-
-                //         // ------------------------------------------
-                //         // Skrining lanjutan
-                //         // ------------------------------------------
-                //         'SKRINING_LANJUTAN'                     => $request->input('dp_11', 0) ?? 0,
-
-                //         // 1 = Konsul MPP
-                //         // 2 = Edukasi
-                //         'SKRINING'                              => $request->input('dp_11_skrining', 0) ?? 0,
-
-                //         'TANGGAL'                               => now(),
-                //         'OLEH'                                  => auth()->id(),
-                //         'STATUS'                                => 1,
-                //     ]
-                // );
 
                 // FINALISASI
                 DB::table('simrspku_pengkajian.finalisasi')->updateOrInsert(

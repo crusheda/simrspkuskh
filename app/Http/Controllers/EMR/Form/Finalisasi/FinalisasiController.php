@@ -57,7 +57,7 @@ class FinalisasiController extends Controller
         ];
     }
 
-    public function statusFinalisasiPengkajianRanap(
+    public function statusFinalisasiPengkajian(
         Request $request,
         string $kunjungan
     ) {
@@ -68,10 +68,25 @@ class FinalisasiController extends Controller
         );
     }
 
-    private function generateSoapPengkajianRanap($kunjungan, $form, $sub)
+    private function generateSoapPengkajian($kunjungan, $form, $sub)
     {
         return match ($form) {
 
+            /*
+            |--------------------------------------------------------------------------
+            | RAWAT DARURAT
+            |--------------------------------------------------------------------------
+            */
+            'pengkajian-radar' =>
+                $this->generateSoapGawatDarurat(
+                    $kunjungan
+                ),
+
+            /*
+            |--------------------------------------------------------------------------
+            | RAWAT INAP
+            |--------------------------------------------------------------------------
+            */
             'pengkajian-ranap-dewasa',
             'pengkajian-ranap-anak' =>
                 $this->generateSoapRanapDewasa(
@@ -97,7 +112,7 @@ class FinalisasiController extends Controller
         };
     }
 
-    public function finalisasiPengkajianRanap(Request $request, $kunjungan)
+    public function finalisasiPengkajian(Request $request, $kunjungan)
     {
         DB::beginTransaction();
 
@@ -162,12 +177,36 @@ class FinalisasiController extends Controller
             $soap = null;
 
             if ($sub === 'DOKTER') {
-                $soap = $this->simpanSoapPengkajianRanap(
+                $soap = $this->simpanSoapPengkajian(
                     $kunjungan,
                     $form,
                     $sub
                 );
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | VALIDASI PER FORM
+            |--------------------------------------------------------------------------
+            */
+            // if ($form == 'pengkajian-radar') {
+            //     DB::table('layanan.pasien_pulang')
+            //         ->updateOrInsert(
+            //             [
+            //                 'KUNJUNGAN' => $kunjungan,
+            //                 'NOPEN'     => $getDataKunjungan->NOPEN,
+            //             ],
+            //             [
+            //                 'CARA'      => $request->tla_ck,
+            //                 'KEADAAN'   => $request->tla_kk,
+            //                 'DIAGNOSA'  => '',
+            //                 'TANGGAL'   => now(),
+            //                 'DOKTER'    => $getDataDokter->ID ?? 0,
+            //                 'OLEH'      => auth()->id(),
+            //                 'STATUS'    => 1,
+            //             ]
+            //         );
+            // }
 
             /*
             |--------------------------------------------------------------------------
@@ -232,7 +271,7 @@ class FinalisasiController extends Controller
     | BATAL FINALISASI
     |--------------------------------------------------------------------------
     */
-    public function batalFinalisasiPengkajianRanap(Request $request, $kunjungan)
+    public function batalFinalisasiPengkajian(Request $request, $kunjungan)
     {
         try {
 
@@ -300,14 +339,295 @@ class FinalisasiController extends Controller
         }
     }
 
+    private function generateSoapGawatDarurat(string $kunjungan): array
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | DATA KUNJUNGAN
+        |--------------------------------------------------------------------------
+        */
+        $getDataKunjungan = DB::table('pendaftaran.kunjungan as pk')
+            ->join(
+                'pendaftaran.pendaftaran as pp',
+                'pp.NOMOR',
+                '=',
+                'pk.NOPEN'
+            )
+            ->select(
+                'pk.NOMOR as KUNJUNGAN',
+                'pp.NOMOR as NOPEN',
+                'pp.NORM'
+            )
+            ->where('pk.NOMOR', $kunjungan)
+            ->first();
+
+        if (!$getDataKunjungan) {
+            throw new \InvalidArgumentException(
+                "Data kunjungan tidak ditemukan: {$kunjungan}"
+            );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUBYEKTIF
+        |--------------------------------------------------------------------------
+        */
+
+        $anamnesis = DB::table('medicalrecord.anamnesis')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first([
+                'DESKRIPSI'
+            ]);
+
+        $rps = $anamnesis?->DESKRIPSI ?? '';
+
+
+        $cppt_s =
+            "<div style='color:#9CC96B'>Riwayat Penyakit Sekarang:</div>"
+            . $rps;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | OBYEKTIF / TANDA VITAL
+        |--------------------------------------------------------------------------
+        */
+
+        $tandaVital = DB::table('medicalrecord.tanda_vital')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first([
+                'KEADAAN_UMUM',
+                'SISTOLIK',
+                'DISTOLIK',
+                'FREKUENSI_NADI',
+                'FREKUENSI_NADI_CB',
+                'SUHU',
+                'SATURASI_O2',
+                'TINGKAT_KESADARAN',
+                'FREKUENSI_NAFAS',
+                'FREKUENSI_NAFAS_CB',
+                'PUPIL',
+                'DIAMETER_PUPIL_UP',
+                'DIAMETER_PUPIL_DOWN',
+                'RC_UP',
+                'RC_DOWN',
+                'VAS',
+                'EYE',
+                'MOTORIK',
+                'VERBAL',
+                'GCS',
+                'JALAN_NAFAS',
+                'ALAT_BANTU_NAFAS',
+                'KULIT',
+            ]);
+
+
+        $cppt_o = "<div style='color:#9CC96B'>Pemeriksan Umum / Tanda Vital:</div>";
+
+        if ($tandaVital) {
+
+            $cppt_o .= implode("\n", array_filter([
+
+                "Keadaan Umum: " .
+                    ($tandaVital->KEADAAN_UMUM ?? ''),
+
+                "Sistolik: " .
+                    ($tandaVital->SISTOLIK ?? ''),
+
+                "Diastolik: " .
+                    ($tandaVital->DISTOLIK ?? ''),
+
+                "Frekuensi Nadi: " .
+                    ($tandaVital->FREKUENSI_NADI ?? '') .
+                    (
+                        $tandaVital->FREKUENSI_NADI_CB !== null &&
+                        $tandaVital->FREKUENSI_NADI_CB !== ''
+                            ? " ({$tandaVital->FREKUENSI_NADI_CB})"
+                            : ''
+                    ),
+
+                "Suhu: " .
+                    ($tandaVital->SUHU ?? ''),
+
+                "Saturasi O2: " .
+                    ($tandaVital->SATURASI_O2 ?? ''),
+
+                "Tingkat Kesadaran: " .
+                    ($tandaVital->TINGKAT_KESADARAN ?? ''),
+
+                "Frekuensi Nafas: " .
+                    ($tandaVital->FREKUENSI_NAFAS ?? ''),
+
+                "Frekuensi Nafas CB: " .
+                    ($tandaVital->FREKUENSI_NAFAS_CB ?? ''),
+
+                "Pupil: " .
+                    ($tandaVital->PUPIL ?? ''),
+
+                "Diameter Pupil: " .
+                    ($tandaVital->DIAMETER_PUPIL_UP ?? '') .
+                    "mm / " .
+                    ($tandaVital->DIAMETER_PUPIL_DOWN ?? '') .
+                    "mm",
+
+                "Refleks Cahaya: " .
+                    ($tandaVital->RC_UP ?? '') .
+                    " / " .
+                    ($tandaVital->RC_DOWN ?? ''),
+
+                "VAS: " .
+                    ($tandaVital->VAS ?? ''),
+
+                "GCS Eye: " .
+                    ($tandaVital->EYE ?? ''),
+
+                "GCS Motorik: " .
+                    ($tandaVital->MOTORIK ?? ''),
+
+                "GCS Verbal: " .
+                    ($tandaVital->VERBAL ?? ''),
+
+                "GCS Total: " .
+                    ($tandaVital->GCS ?? ''),
+
+                "Jalan Nafas: " .
+                    ($tandaVital->JALAN_NAFAS ?? ''),
+
+                "Alat Bantu Nafas: " .
+                    ($tandaVital->ALAT_BANTU_NAFAS ?? ''),
+
+                "Kulit: " .
+                    ($tandaVital->KULIT ?? ''),
+
+            ], function ($value) {
+
+                return trim(
+                    substr(
+                        $value,
+                        strpos($value, ':') + 1
+                    )
+                ) !== '';
+            }));
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ASSESMENT / DIAGNOSA
+        |--------------------------------------------------------------------------
+        */
+
+        $getDiagnosa = DB::table('medicalrecord.diagnosa as diag')
+            ->select(
+                'diag.ID',
+                'diag.DIAGNOSA',
+                DB::raw("
+                    CASE
+                        WHEN diag.UTAMA = 1
+                        THEN 'UTAMA'
+                        ELSE 'SEKUNDER'
+                    END AS UTAMA
+                ")
+            )
+            ->where('diag.NOPEN', $getDataKunjungan->NOPEN)
+            ->where('diag.STATUS', 1)
+            ->get();
+
+        $diagnosa = $getDiagnosa
+            ->map(function ($item) {
+
+                return $item->DIAGNOSA .
+                    ' (' .
+                    $item->UTAMA .
+                    ')';
+            })
+            ->implode("\n");
+
+        $cppt_a =
+            "<div style='color:#9CC96B'>Diagnosa Dokter:</div>" .
+            $diagnosa;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PLANNING
+        |--------------------------------------------------------------------------
+        */
+
+        $rencanaTerapi = DB::table('medicalrecord.rencana_terapi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first([
+                'DESKRIPSI'
+            ]);
+
+        $hasilLapor = DB::table('medicalrecord.hasil_lapor_dpjp')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first([
+                'DESKRIPSI'
+            ]);
+
+        $cppt_p = implode("\n", array_filter([
+
+            "<div style='color:#9CC96B'>Perencanaan Terapi:</div>" .
+                ($rencanaTerapi->DESKRIPSI ?? ''),
+
+            "\n<div style='color:#9CC96B'>Hasil Lapor DPJP:</div>" .
+                ($hasilLapor->DESKRIPSI ?? ''),
+
+        ], function ($value) {
+
+            return trim(str_replace(
+                [
+                    'Perencanaan Terapi:',
+                    'Hasil Lapor DPJP:'
+                ],
+                '',
+                $value
+            )) !== '';
+        }));
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | INSTRUKSI
+        |--------------------------------------------------------------------------
+        */
+
+        $cppt_i = '-';
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RETURN SOAP
+        |--------------------------------------------------------------------------
+        */
+
+        return [
+            'SUBYEKTIF' => $cppt_s,
+            'OBYEKTIF'  => $cppt_o,
+            'ASSESMENT' => $cppt_a,
+            'PLANNING'  => $cppt_p,
+            'INSTRUKSI' => $cppt_i,
+        ];
+    }
+
     /*
     |--------------------------------------------------------------------------
     | SOAP
     |--------------------------------------------------------------------------
     */
-    private function simpanSoapPengkajianRanap($kunjungan, $form, $sub)
+    private function simpanSoapPengkajian($kunjungan, $form, $sub)
     {
-        $soap = $this->generateSoapPengkajianRanap(
+        $soap = $this->generateSoapPengkajian(
             $kunjungan,
             $form,
             $sub
@@ -321,7 +641,7 @@ class FinalisasiController extends Controller
                 'peg.NIP'
             )
             ->first();
-        // dd($tenagaMedis);
+
         $dataCppt = [
             'KUNJUNGAN' => $kunjungan,
             'TANGGAL' => now(),

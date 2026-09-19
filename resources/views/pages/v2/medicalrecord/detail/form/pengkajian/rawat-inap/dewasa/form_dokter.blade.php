@@ -87,7 +87,7 @@
     </div>
 
     @include('pages.v2.medicalrecord.detail.form.finalisasi', [
-        'jenis' => 'dewasa',
+        'jenis' => 'ranap_dewasa',
         'formKey' => 'rid_dokter',
         'form' => 'pengkajian-ranap-dewasa',
         'sub' => 'DOKTER',

@@ -333,6 +333,8 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // ADMISSION NOTE
                     Route::get('emr/pengkajian/admission/{kunjungan}', [AddOnPengkajianController::class, 'getAdmissionNote']);
                     Route::post('emr/pengkajian/admission/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanAdmissionNote']);
+                // MASTER CARA PULANG
+                    Route::get('emr/pengkajian/master/carapulang', [AddOnPengkajianController::class, 'getMasterCaraPulang']);
 
                 //KHUSUS RAWAT JALAN
                     // MATERI EDUKASI
@@ -355,6 +357,36 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // ATS
                         Route::get('emr/pengkajian/gd/ats/{kunjungan}', [AddOnPengkajianController::class, 'getATS']);
                         Route::post('emr/pengkajian/gd/ats/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanATS']);
+                    // TRIAGE PERAWAT
+                        Route::get('emr/pengkajian/gd/tp/{kunjungan}', [AddOnPengkajianController::class, 'getTriagePerawat']);
+                        Route::post('emr/pengkajian/gd/tp/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTriagePerawat']);
+                    // PRIMARY SURVEY
+                        Route::get('emr/pengkajian/gd/ps/{kunjungan}', [AddOnPengkajianController::class, 'getPrimarySurvey']);
+                        Route::post('emr/pengkajian/gd/ps/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPrimarySurvey']);
+                    // SECONDARY SURVEY
+                        Route::get('emr/pengkajian/gd/ss/{kunjungan}', [AddOnPengkajianController::class, 'getSecondarySurvey']);
+                        Route::post('emr/pengkajian/gd/ss/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanSecondarySurvey']);
+                    // PERENCANAAN TERAPI
+                        Route::get('emr/pengkajian/gd/pt/{kunjungan}', [AddOnPengkajianController::class, 'getPerencanaanTerapi']);
+                        Route::post('emr/pengkajian/gd/pt/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPerencanaanTerapi']);
+                    // HASIL LAPOR DPJP
+                        Route::get('emr/pengkajian/gd/hld/{kunjungan}', [AddOnPengkajianController::class, 'getHasilLaporDPJP']);
+                        Route::post('emr/pengkajian/gd/hld/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanHasilLaporDPJP']);
+                    // CARA PULANG
+                        Route::get('emr/pengkajian/gd/cp/{kunjungan}', [AddOnPengkajianController::class, 'getCaraPulang']);
+                        Route::post('emr/pengkajian/gd/cp/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanCaraPulang']);
+                    // STATUS KEHAMILAN
+                        Route::get('emr/pengkajian/gd/sk/{kunjungan}', [AddOnPengkajianController::class, 'getStatusKehamilan']);
+                        Route::post('emr/pengkajian/gd/sk/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanStatusKehamilan']);
+                    // IMPLEMENTASI KEPERAWATAN
+                        Route::get('emr/pengkajian/gd/ik/{kunjungan}', [AddOnPengkajianController::class, 'getImplementasiKeperawatan']);
+                        Route::post('emr/pengkajian/gd/ik/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanImplementasiKeperawatan']);
+                    // TINDAKAN KOLABORASI
+                        Route::get('emr/pengkajian/gd/tk/{kunjungan}', [AddOnPengkajianController::class, 'getTindakanKolaborasi']);
+                        Route::post('emr/pengkajian/gd/tk/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTindakanKolaborasi']);
+                    // DIAGNOSIS KEPERAWATAN
+                        Route::get('emr/pengkajian/gd/dk/{kunjungan}', [AddOnPengkajianController::class, 'getDiagnosisKeperawatan']);
+                        Route::post('emr/pengkajian/gd/dk/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanDiagnosisKeperawatan']);
 
                 // KHUSUS RAWAT INAP
                     // DAFTAR MASALAH KEPERAWATAN
@@ -399,9 +431,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
 
             // FINALISASI
             Route::get('emr/pengkajian/status-finalisasi/{kunjungan}', [EMRController::class, 'statusFinalisasi']);
-            Route::get('emr/pengkajian/finalisasi/{kunjungan}', [FinalisasiController::class, 'statusFinalisasiPengkajianRanap']);
-            Route::post('emr/pengkajian/finalisasi/{kunjungan}', [FinalisasiController::class, 'finalisasiPengkajianRanap']);
-            Route::post('emr/pengkajian/batal-finalisasi/{kunjungan}', [FinalisasiController::class, 'batalFinalisasiPengkajianRanap']);
+            Route::get('emr/pengkajian/finalisasi/{kunjungan}', [FinalisasiController::class, 'statusFinalisasiPengkajian']);
+            Route::post('emr/pengkajian/finalisasi/{kunjungan}', [FinalisasiController::class, 'finalisasiPengkajian']);
+            Route::post('emr/pengkajian/batal-finalisasi/{kunjungan}', [FinalisasiController::class, 'batalFinalisasiPengkajian']);
 
             // PRINT PREVIEW
             Route::get( '/emr/pengkajian/finalisasi/preview/{kunjungan}', [PrintPreviewController::class, 'printPreview']);

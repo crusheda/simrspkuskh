@@ -112,7 +112,7 @@
     @include(
         'pages.v2.medicalrecord.detail.form.finalisasi',
         [
-            'jenis' => 'obsgyn',
+            'jenis' => 'ranap_obsgyn',
             'role' => 'perawat',
             'sub' => 'PERAWAT',
             'formKey' => 'rio_perawat',
