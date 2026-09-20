@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="col-md-12 mb-3">
             <div class="form-group">
                 <h6>Riwayat Penyakit Sekarang</h6>
                 <textarea class="form-control" name="rps" rows="4"></textarea>
@@ -28,6 +28,13 @@
         </div>
 
         <div class="col-md-6 mb-3">
+            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_alergi')
+        </div>
+        <div class="col-md-6 mb-3">
+            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_penggunaan_obat')
+        </div>
+
+        <div class="col-md-12">
             <div class="form-group">
                 <h6>Pemeriksaan Fisik</h6>
                 <textarea class="form-control" name="pf" rows="4"></textarea>

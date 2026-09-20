@@ -74,15 +74,15 @@
                                 data-form="pengkajian-gd"
                                 data-group="awal">
                                 <span>Form Pengkajian Gawat Darurat</span>
+                                <span class="ms-auto d-flex align-items-center gap-1 me-2 js-radar-parent-final-icons">
+                                    {{-- Akan ditampilkan jika salah satu child sudah final --}}
+                                    <i class="ri-stethoscope-line text-bg-danger d-none js-radar-parent-final-icon px-1 rounded"
+                                        data-final-role="dokter"
+                                        title="Form Gawat Darurat telah difinalisasi oleh dokter"></i>
 
-                                <span class="ms-auto d-flex align-items-center gap-1">
-                                    <i class="ri-stethoscope-line text-bg-danger d-none js-final-icon px-1 rounded"
-                                        data-final-key="gdd_dokter"
-                                        title="Sudah difinalisasi dokter"></i>
-
-                                    <i class="ri-nurse-line text-bg-success d-none js-final-icon px-1 rounded"
-                                        data-final-key="gdp_perawat"
-                                        title="Sudah difinalisasi perawat"></i>
+                                    <i class="ri-nurse-line text-bg-success d-none js-radar-parent-final-icon px-1 rounded"
+                                        data-final-role="perawat"
+                                        title="Form Gawat Darurat telah difinalisasi oleh perawat"></i>
                                 </span>
                             </a>
 

@@ -34,12 +34,6 @@
                                 ]
                             )
                         </div>
-                        <div class="col-md-6 mb-3">
-                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_alergi')
-                        </div>
-                        <div class="col-md-6">
-                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_penggunaan_obat')
-                        </div>
                     </div>
                 </div>
             </div>

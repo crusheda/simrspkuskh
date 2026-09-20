@@ -427,91 +427,169 @@ class FinalisasiController extends Controller
             ]);
 
 
-        $cppt_o = "<div style='color:#9CC96B'>Pemeriksan Umum / Tanda Vital:</div>";
+        $cppt_o = "<div style='color:#9CC96B'>Pemeriksan Umum:</div>";
 
         if ($tandaVital) {
 
+            $kulitcp = '-';
+            if ($tandaVital->KULIT) {
+                // Kulit
+                if ($tandaVital->KULIT == 1) {
+                    $kulitcp = "Normal";
+                } elseif ($tandaVital->KULIT == 2) {
+                    $kulitcp = "Jaundice";
+                } elseif ($tandaVital->KULIT == 3) {
+                    $kulitcp = "Akral Dingin";
+                } elseif ($tandaVital->KULIT == 4) {
+                    $kulitcp = "Sianotik";
+                } elseif ($tandaVital->KULIT == 5) {
+                    $kulitcp = "Berkeringat";
+                } else {
+                    $kulitcp = "-";
+                }
+            }
+
+            $freknadicp = '';
+            if ($tandaVital->FREKUENSI_NADI_CB) {
+                if ($tandaVital->FREKUENSI_NADI_CB == 1) {
+                    $freknadicp = "(Reguler)";
+                } else {
+                    $freknadicp = "(Ireguler)";
+                }
+            }
+
+            $freknafascp = '';
+            if ($tandaVital->FREKUENSI_NAFAS_CB) {
+                if ($tandaVital->FREKUENSI_NAFAS_CB == 1) {
+                    $freknafascp = "(Simetris)";
+                } else {
+                    $freknafascp = "(Asimetris)";
+                }
+            }
+
+            $pupilcp = '';
+            if ($tandaVital->PUPIL) {
+                if ($tandaVital->PUPIL == 1) {
+                    $pupilcp = "Isokor";
+                } else {
+                    $pupilcp = "Anisokor";
+                }
+            }
+
+            $tgktkesadarancp = '-';
+            if ($tandaVital->TINGKAT_KESADARAN) {
+                $reftgksdr = DB::table('master.referensi')
+                            ->select('DESKRIPSI')
+                            ->where('JENIS',179)
+                            ->where('ID',$tandaVital->TINGKAT_KESADARAN)
+                            ->where('STATUS',1)
+                            ->first();
+                $tgktkesadarancp = $reftgksdr->DESKRIPSI;
+            }
+
+            $pemeriksaanFisik = DB::table('medicalrecord.pemeriksaan_fisik')
+                ->where('KUNJUNGAN', $kunjungan)
+                ->where('PENDAFTARAN', $getDataKunjungan->NOPEN)
+                ->first();
+
             $cppt_o .= implode("\n", array_filter([
 
-                "Keadaan Umum: " .
-                    ($tandaVital->KEADAAN_UMUM ?? ''),
+                "Keadaan Umum: " . ($tandaVital->KEADAAN_UMUM ?? ''),
 
-                "Sistolik: " .
-                    ($tandaVital->SISTOLIK ?? ''),
+                (
+                    ($tandaVital->SISTOLIK ?? '') !== '' ||
+                    ($tandaVital->DISTOLIK ?? '') !== ''
+                )
+                    ? "Tekanan Darah: "
+                        . ($tandaVital->SISTOLIK ?? '')
+                        . "/"
+                        . ($tandaVital->DISTOLIK ?? '')
+                        . ' mmHg'
+                    : '',
 
-                "Diastolik: " .
-                    ($tandaVital->DISTOLIK ?? ''),
+                ($tandaVital->FREKUENSI_NADI ?? '') !== ''
+                    ? "Frekuensi Nadi: "
+                        . $tandaVital->FREKUENSI_NADI
+                        . " {$freknadicp}"
+                    : '',
 
-                "Frekuensi Nadi: " .
-                    ($tandaVital->FREKUENSI_NADI ?? '') .
+                "Suhu: " . ($tandaVital->SUHU ?? '') ."°C",
+
+                "Saturasi O2: " . ($tandaVital->SATURASI_O2 ?? '') ."%",
+
+                "Tingkat Kesadaran: " . ($tgktkesadarancp ?? ''),
+
+                ($tandaVital->FREKUENSI_NAFAS ?? '') !== ''
+                    ? "Frekuensi Nafas: "
+                        . $tandaVital->FREKUENSI_NAFAS . 'x/menit'
+                        . " {$freknafascp}"
+                    : '',
+
+                implode(', ', array_filter([
+                    ($tandaVital->PUPIL ?? '') !== ''
+                        ? 'Pupil: ' . $pupilcp
+                        : '',
+
                     (
-                        $tandaVital->FREKUENSI_NADI_CB !== null &&
-                        $tandaVital->FREKUENSI_NADI_CB !== ''
-                            ? " ({$tandaVital->FREKUENSI_NADI_CB})"
-                            : ''
-                    ),
+                        ($tandaVital->DIAMETER_PUPIL_UP ?? '') !== '' &&
+                        ($tandaVital->DIAMETER_PUPIL_DOWN ?? '') !== ''
+                    )
+                        ? 'Diameter: '
+                            . $tandaVital->DIAMETER_PUPIL_UP
+                            . 'mm / '
+                            . $tandaVital->DIAMETER_PUPIL_DOWN
+                            . 'mm'
+                        : '',
 
-                "Suhu: " .
-                    ($tandaVital->SUHU ?? ''),
+                    (
+                        ($tandaVital->RC_UP ?? '') !== '' &&
+                        ($tandaVital->RC_DOWN ?? '') !== ''
+                    )
+                        ? 'Refleks Cahaya: '
+                            . $tandaVital->RC_UP
+                            . ' / '
+                            . $tandaVital->RC_DOWN
+                        : '',
+                ])),
 
-                "Saturasi O2: " .
-                    ($tandaVital->SATURASI_O2 ?? ''),
+                "GCS: "
+                    . ($tandaVital->GCS ?? '')
+                    . " (E/"
+                    . ($tandaVital->EYE ?? '')
+                    . " M/"
+                    . ($tandaVital->MOTORIK ?? '')
+                    . " V/"
+                    . ($tandaVital->VERBAL ?? '')
+                    . "), VAS: "
+                    . ($tandaVital->VAS ?? ''),
 
-                "Tingkat Kesadaran: " .
-                    ($tandaVital->TINGKAT_KESADARAN ?? ''),
+                "Alat Bantu Nafas: "
+                    . (($tandaVital->ALAT_BANTU_NAFAS ?? null) == 2
+                        ? 'Ya'
+                        : 'Tidak'),
 
-                "Frekuensi Nafas: " .
-                    ($tandaVital->FREKUENSI_NAFAS ?? ''),
+                "Kulit: {$kulitcp}",
 
-                "Frekuensi Nafas CB: " .
-                    ($tandaVital->FREKUENSI_NAFAS_CB ?? ''),
+                "<br>",
 
-                "Pupil: " .
-                    ($tandaVital->PUPIL ?? ''),
-
-                "Diameter Pupil: " .
-                    ($tandaVital->DIAMETER_PUPIL_UP ?? '') .
-                    "mm / " .
-                    ($tandaVital->DIAMETER_PUPIL_DOWN ?? '') .
-                    "mm",
-
-                "Refleks Cahaya: " .
-                    ($tandaVital->RC_UP ?? '') .
-                    " / " .
-                    ($tandaVital->RC_DOWN ?? ''),
-
-                "VAS: " .
-                    ($tandaVital->VAS ?? ''),
-
-                "GCS Eye: " .
-                    ($tandaVital->EYE ?? ''),
-
-                "GCS Motorik: " .
-                    ($tandaVital->MOTORIK ?? ''),
-
-                "GCS Verbal: " .
-                    ($tandaVital->VERBAL ?? ''),
-
-                "GCS Total: " .
-                    ($tandaVital->GCS ?? ''),
-
-                "Jalan Nafas: " .
-                    ($tandaVital->JALAN_NAFAS ?? ''),
-
-                "Alat Bantu Nafas: " .
-                    ($tandaVital->ALAT_BANTU_NAFAS ?? ''),
-
-                "Kulit: " .
-                    ($tandaVital->KULIT ?? ''),
+                "<div style='color:#9CC96B'>Pemeriksaan Fisik: </div>"
+                    . ($pemeriksaanFisik->DESKRIPSI ?? '-'),
 
             ], function ($value) {
 
-                return trim(
-                    substr(
-                        $value,
-                        strpos($value, ':') + 1
-                    )
-                ) !== '';
+                // Elemen HTML tetap ditampilkan
+                if (str_starts_with(trim($value), '<')) {
+                    return true;
+                }
+
+                // Ambil nilai setelah tanda titik dua
+                $posisi = strpos($value, ':');
+
+                if ($posisi === false) {
+                    return trim($value) !== '';
+                }
+
+                return trim(substr($value, $posisi + 1)) !== '';
             }));
         }
 
