@@ -154,6 +154,16 @@
 </div>
 
 <script>
+    // ==============================================================
+    // DOCUMENT READY
+    // ==============================================================
+
+    $(function () {
+
+        getRiwayatObstetri();
+
+    });
+
     function getRiwayatObstetri() {
         const $button = $('#btnRefreshObstetri');
         const kunjungan = $('#rjo_dokter').data('kunjungan');

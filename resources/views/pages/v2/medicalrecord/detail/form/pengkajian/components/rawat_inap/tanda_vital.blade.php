@@ -27,7 +27,7 @@
         {{-- ==========================================================
             KOLOM KIRI
         =========================================================== --}}
-        <div class="col-md-6">
+        <div class="col-md-6" id="ttv_kolom_kiri">
 
             {{-- KEADAAN UMUM --}}
             <div class="form-group">
@@ -230,7 +230,7 @@
             </div>
 
             {{-- FREKUENSI NADI --}}
-            <div class="form-group mb-3">
+            <div class="form-group mb-3" id="frekuensi_nadi">
                 <label class="form-label">
                     Frekuensi Nadi
                 </label>
@@ -279,7 +279,8 @@
         {{-- ==========================================================
             KOLOM KANAN
         =========================================================== --}}
-        <div class="col-md-6">
+        <div class="col-md-6" id="ttv_kolom_kanan">
+            <div id="posisi_nadi_neonatus"></div>
 
             {{-- FREKUENSI NAFAS --}}
             <div class="form-group mb-3">
@@ -435,8 +436,13 @@
     const $form = $section.find('[data-ttv-form]');
 
     function updateTtvNeonatusState() {
+        const $frekuensiNadi = $section.find('#frekuensi_nadi');
+        const $posisiNadiNeonatus = $section.find('#posisi_nadi_neonatus');
         const $neonatus = $section.find('[data-ttv-neonatus]');
         const $kesadaranNeonatus = $section.find('[data-kesadaran-neonatus]');
+        const $imt = $section.find('#hasil_imt');
+        const $imtInput = $section.find('[name="gizi_imt"]');
+        const $ttvKolomKiri = $section.find('#ttv_kolom_kiri');
 
         if (!$neonatus.length || !$kesadaranNeonatus.length) {
             return;
@@ -459,6 +465,19 @@
         // NEONATUS
         // ==========================================================
         if (isNeonatus) {
+            // ------------------------------------------------------
+            // PINDAHKAN FREKUENSI NADI KE KOLOM KANAN
+            // ------------------------------------------------------
+            $posisiNadiNeonatus.append($frekuensiNadi);
+
+            // ------------------------------------------------------
+            // IMT tidak berlaku untuk neonatus
+            // ------------------------------------------------------
+            $imt
+                .addClass('d-none')
+                .hide();
+
+            $imtInput.val('');
 
             // ------------------------------------------------------
             // Sembunyikan TTV biasa
@@ -500,6 +519,26 @@
                 });
 
         } else {
+            // ------------------------------------------------------
+            // KEMBALIKAN FREKUENSI NADI KE KOLOM KIRI
+            // ------------------------------------------------------
+
+            // Letakkan setelah GCS
+            $ttvKolomKiri
+                .find('[data-ttv-neonatus]')
+                .last()
+                .after($frekuensiNadi);
+
+            // ------------------------------------------------------
+            // IMT berlaku untuk non-neonatus
+            // ------------------------------------------------------
+            const imtValue = $imtInput.val();
+
+            if (imtValue !== null && imtValue !== '') {
+                $imt
+                    .removeClass('d-none')
+                    .show();
+            }
 
             // ======================================================
             // BUKAN NEONATUS
@@ -674,6 +713,25 @@
     // HITUNG IMT
     // ==============================================================
     function hitungIMT() {
+        const neonatusValue = String(@json($neonatus ?? false))
+            .toLowerCase()
+            .trim();
+
+        const isNeonatus =
+            neonatusValue === 'true' ||
+            neonatusValue === '1' ||
+            neonatusValue === 'yes' ||
+            neonatusValue === 'ya';
+
+        if (isNeonatus) {
+            $section.find('[name="gizi_imt"]').val('');
+            $section.find('#hasil_imt')
+                .addClass('d-none')
+                .hide();
+
+            return;
+        }
+
         // ----------------------------------------------------------
         // AMBIL BB DAN TB
         // ----------------------------------------------------------

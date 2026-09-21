@@ -48,8 +48,9 @@
                 <label class="form-label">Gaya Berjalan</label>
                 <select class="form-select" name="rj_sm_5" data-sm-required>
                     <option value="">Pilih</option>
-                    <option value="1">Lemah</option> {{-- 10 --}}
-                    <option value="2">Terganggu</option> {{-- 20 --}}
+                    <option value="1">Normal</option> {{-- 0 --}}
+                    <option value="2">Lemah</option> {{-- 10 --}}
+                    <option value="3">Terganggu</option> {{-- 20 --}}
                 </select>
             </div>
             <div class="form-group mb-3">
@@ -128,7 +129,7 @@
             rj_sm_2: { 1: 0, 2: 15 },         // Diagnosa sekunder
             rj_sm_3: { 1: 0, 2: 15, 3: 30 },  // Alat bantu
             rj_sm_4: { 1: 0, 2: 20 },         // Obat
-            rj_sm_5: { 1: 10, 2: 20 },        // Gaya berjalan
+            rj_sm_5: { 1: 0, 2: 10, 3: 20 },        // Gaya berjalan
             rj_sm_6: { 1: 0, 2: 15 }          // Kesadaran
         };
 

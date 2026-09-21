@@ -1733,9 +1733,6 @@ class FinalisasiController extends Controller
 
             $dataObstetri = [
                 'UMUR_IBU' => 'Umur Ibu',
-                'G' => 'G',
-                'P' => 'P',
-                'A' => 'A',
                 'UMUR_KEHAMILAN' => 'Umur Kehamilan',
                 'GOL_DARAH_IBU' => 'Golongan Darah Ibu',
                 'RH_IBU' => 'Rhesus Ibu',
@@ -1745,6 +1742,12 @@ class FinalisasiController extends Controller
             ];
 
             $statusObstetriText = [];
+
+            /*
+            |--------------------------------------------------------------------------
+            | DATA OBSTETRI
+            |--------------------------------------------------------------------------
+            */
 
             foreach ($dataObstetri as $field => $label) {
 
@@ -1762,9 +1765,35 @@ class FinalisasiController extends Controller
             }
 
             /*
-            |----------------------------------------------------------------------
+            |--------------------------------------------------------------------------
+            | G P A
+            |--------------------------------------------------------------------------
+            */
+
+            $gpa = [];
+
+            foreach (['G', 'P', 'A'] as $field) {
+
+                if (property_exists($statusObstetri, $field)) {
+
+                    $value = $this->soapValue(
+                        $statusObstetri->{$field}
+                    );
+
+                    if ($value !== null) {
+                        $gpa[] = $field . ' : ' . $value;
+                    }
+                }
+            }
+
+            if (!empty($gpa)) {
+                $statusObstetriText[] = implode(', ', $gpa);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
             | KOMPLIKASI
-            |----------------------------------------------------------------------
+            |--------------------------------------------------------------------------
             */
 
             if (
@@ -1795,9 +1824,9 @@ class FinalisasiController extends Controller
             }
 
             /*
-            |----------------------------------------------------------------------
+            |--------------------------------------------------------------------------
             | GOLONGAN DARAH AYAH TIDAK TAHU
-            |----------------------------------------------------------------------
+            |--------------------------------------------------------------------------
             */
 
             if (
@@ -1925,6 +1954,8 @@ class FinalisasiController extends Controller
 
                     if ($value !== null) {
 
+                        $value = (int) $value;
+
                         $satuan = $satuanNeonatus[$field] ?? '';
 
                         $statusNeonatusText[] =
@@ -2051,12 +2082,15 @@ class FinalisasiController extends Controller
             }
         }
 
+        $s[] = '';
+
         $dewasa = $this->generateSoapRanapDewasa(
             $kunjungan,
             $sub
         );
 
         if ($dewasa['SUBYEKTIF']) {
+            $s[] = 'Anamnesis';
             $s[] = $dewasa['SUBYEKTIF'];
         }
 
@@ -2410,6 +2444,8 @@ class FinalisasiController extends Controller
             }
         }
 
+        $o[] = '';
+
         $tandaVital = DB::table('medicalrecord.tanda_vital')
             ->where('KUNJUNGAN', $kunjungan)
             ->where('PPA', 1)
@@ -2440,7 +2476,7 @@ class FinalisasiController extends Controller
             ]);
 
         if ($tandaVital) {
-
+            $o[] = 'Tanda Vital';
             $o[] = $this->soapLine(
                 'Keadaan Umum',
                 $tandaVital->KEADAAN_UMUM
@@ -2562,13 +2598,13 @@ class FinalisasiController extends Controller
 
             if ($nutrisi->BERAT_BADAN !== null) {
                 $o[] = 'BB: ' .
-                    $nutrisi->BERAT_BADAN .
+                    round((float) $nutrisi->BERAT_BADAN) .
                     ' kg';
             }
 
             if ($nutrisi->TINGGI_BADAN !== null) {
                 $o[] = 'PB: ' .
-                    $nutrisi->TINGGI_BADAN .
+                    round((float) $nutrisi->TINGGI_BADAN) .
                     ' cm';
             }
 
@@ -2578,6 +2614,8 @@ class FinalisasiController extends Controller
             // }
         }
 
+        $o[] = '';
+
         $fisikNeo = DB::table(
             'medicalrecord.sirmed_pemeriksaan_fisik_neonatus'
         )
@@ -2586,7 +2624,7 @@ class FinalisasiController extends Controller
             ->first();
 
         if ($fisikNeo) {
-
+            $o[] = 'Pemeriksaan Fisik';
             $skipFields = [
                 'ID',
                 'KUNJUNGAN',

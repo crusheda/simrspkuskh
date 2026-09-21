@@ -8096,8 +8096,20 @@ class AddOnPengkajianController extends Controller
                 'psg_prk' =>
                     $pencernaan->PERKUSI ?? null,
 
-                'psg_aus' =>
-                    $pencernaan->AUSKULTASI ?? null,
+                // 'psg_aus' =>
+                //     $pencernaan->AUSKULTASI ?? null,
+
+                'pfn_aus_vesikuler' => $pernafasan->AUSKULTASI_VESIKULER ?? null,
+                'pfn_aus_vesikuler_kanan' => $pernafasan->AUSKULTASI_VESIKULER_KANAN ?? null,
+                'pfn_aus_vesikuler_kiri' => $pernafasan->AUSKULTASI_VESIKULER_KIRI ?? null,
+
+                'pfn_aus_ronchi' => $pernafasan->AUSKULTASI_RONCHI ?? null,
+                'pfn_aus_ronchi_kanan' => $pernafasan->AUSKULTASI_RONCHI_KANAN ?? null,
+                'pfn_aus_ronchi_kiri' => $pernafasan->AUSKULTASI_RONCHI_KIRI ?? null,
+
+                'pfn_aus_wheezing' => $pernafasan->AUSKULTASI_WHEEZING ?? null,
+                'pfn_aus_wheezing_kanan' => $pernafasan->AUSKULTASI_WHEEZING_KANAN ?? null,
+                'pfn_aus_wheezing_kiri' => $pernafasan->AUSKULTASI_WHEEZING_KIRI ?? null,
 
                 'psg_aus_detail' =>
                     $pencernaan->AUSKULTASI_DETAIL ?? null,
@@ -8197,8 +8209,19 @@ class AddOnPengkajianController extends Controller
                     'PERKUSI'
                         => $request->input('pfn_per'),
 
-                    'AUSKULTASI'
-                        => $request->input('pfn_aus'),
+                    // 'AUSKULTASI' => $request->input('pfn_aus'),
+
+                    'AUSKULTASI_VESIKULER' => $request->input('pfn_aus_vesikuler'),
+                    'AUSKULTASI_VESIKULER_KANAN' => $request->input('pfn_aus_vesikuler_kanan'),
+                    'AUSKULTASI_VESIKULER_KIRI' => $request->input('pfn_aus_vesikuler_kiri'),
+
+                    'AUSKULTASI_RONCHI' => $request->input('pfn_aus_ronchi'),
+                    'AUSKULTASI_RONCHI_KANAN' => $request->input('pfn_aus_ronchi_kanan'),
+                    'AUSKULTASI_RONCHI_KIRI' => $request->input('pfn_aus_ronchi_kiri'),
+
+                    'AUSKULTASI_WHEEZING' => $request->input('pfn_aus_wheezing'),
+                    'AUSKULTASI_WHEEZING_KANAN' => $request->input('pfn_aus_wheezing_kanan'),
+                    'AUSKULTASI_WHEEZING_KIRI' => $request->input('pfn_aus_wheezing_kiri'),
 
                     'TANGGAL'
                         => now(),

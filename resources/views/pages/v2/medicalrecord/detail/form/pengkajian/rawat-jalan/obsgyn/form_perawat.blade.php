@@ -194,7 +194,7 @@
                         <strong>SKRINING RESIKO JATUH</strong>
                     </h5>
                 </div>
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_humpty_dumpty', ['section' => '#rjo_perawat'])
+                {{-- @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_humpty_dumpty', ['section' => '#rjo_perawat']) --}}
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_skala_morse', ['section' => '#rjo_perawat'])
             </div>
             <div class="col-md-12 mb-3">
