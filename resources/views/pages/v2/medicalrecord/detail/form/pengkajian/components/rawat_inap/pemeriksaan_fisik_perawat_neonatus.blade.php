@@ -62,6 +62,12 @@
                     <h6>Inspeksi</h6>
                     <div class="d-flex align-items-center flex-wrap gap-3">
                         <div class="form-check mb-0">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_in" value="4">
+                            <label class="form-check-label">
+                                Normal
+                            </label>
+                        </div>
+                        <div class="form-check mb-0">
                             <input class="form-check-input single-checkbox" type="checkbox" name="pfn_in" value="1">
                             <label class="form-check-label">
                                 Lendir
@@ -137,30 +143,123 @@
                 </div>
                 <div class="form-group mb-3">
                     <h6>Auskultasi</h6>
-                    <div class="d-flex align-items-center">
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_aus" value="1">
-                            <label class="form-check-label">
-                                Vesikuler
-                            </label>
+                    <div class="row mb-3">
+
+                        {{-- Vesikuler --}}
+                        <div class="col-md-5 d-flex align-items-center mb-2">
+                            <div class="form-check">
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input pfn-auskultasi-checkbox"
+                                    name="pfn_aus_vesikuler"
+                                    value="1"
+                                    id="pfn_aus_vesikuler"
+                                >
+                                <label
+                                    class="form-check-label"
+                                    for="pfn_aus_vesikuler"
+                                >
+                                    Vesikuler
+                                </label>
+                            </div>
                         </div>
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_aus" value="2">
-                            <label class="form-check-label">
-                                Ronchi
-                            </label>
+
+                        <div class="col-md-3 mb-2">
+                            <select class="form-select pfn-auskultasi-detail" name="pfn_aus_vesikuler_kanan"
+                                data-checkbox="pfn_aus_vesikuler"
+                                disabled>
+                                <option value="">-</option>
+                                <option value="+">+</option>
+                                <option value="-">-</option>
+                            </select>
                         </div>
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_aus" value="3">
-                            <label class="form-check-label">
-                                Wheezing
-                            </label>
+
+                        <div class="col-md-3 mb-2">
+                            <select class="form-select pfn-auskultasi-detail" name="pfn_aus_vesikuler_kiri"
+                                data-checkbox="pfn_aus_vesikuler"
+                                disabled>
+                                <option value="">-</option>
+                                <option value="+">+</option>
+                                <option value="-">-</option>
+                            </select>
                         </div>
-                        <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pfn_aus" value="4">
-                            <label class="form-check-label">
-                                Mendengkur
-                            </label>
+
+                        {{-- Ronchi --}}
+                        <div class="col-md-5 d-flex align-items-center mb-2">
+                            <div class="form-check">
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input pfn-auskultasi-checkbox"
+                                    name="pfn_aus_ronchi"
+                                    value="1"
+                                    id="pfn_aus_ronchi"
+                                >
+                                <label
+                                    class="form-check-label"
+                                    for="pfn_aus_ronchi"
+                                >
+                                    Ronchi
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 mb-2">
+                            <select class="form-select pfn-auskultasi-detail" name="pfn_aus_ronchi_kanan"
+                                data-checkbox="pfn_aus_ronchi"
+                                disabled>
+                                <option value="">-</option>
+                                <option value="+">+</option>
+                                <option value="-">-</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 mb-2">
+                            <select class="form-select pfn-auskultasi-detail" name="pfn_aus_ronchi_kiri"
+                                data-checkbox="pfn_aus_ronchi"
+                                disabled>
+                                <option value="">-</option>
+                                <option value="+">+</option>
+                                <option value="-">-</option>
+                            </select>
+                        </div>
+
+                        {{-- Wheezing --}}
+                        <div class="col-md-5 d-flex align-items-center mb-2">
+                            <div class="form-check">
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input pfn-auskultasi-checkbox"
+                                    name="pfn_aus_wheezing"
+                                    value="1"
+                                    id="pfn_aus_wheezing"
+                                >
+                                <label
+                                    class="form-check-label"
+                                    for="pfn_aus_wheezing"
+                                >
+                                    Wheezing
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 mb-2">
+                            <select class="form-select pfn-auskultasi-detail" name="pfn_aus_wheezing_kanan"
+                                data-checkbox="pfn_aus_wheezing"
+                                disabled>
+                                <option value="">-</option>
+                                <option value="+">+</option>
+                                <option value="-">-</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 mb-2">
+                            <select class="form-select pfn-auskultasi-detail" name="pfn_aus_wheezing_kiri"
+                                data-checkbox="pfn_aus_wheezing"
+                                disabled>
+                                <option value="">-</option>
+                                <option value="+">+</option>
+                                <option value="-">-</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -237,14 +336,22 @@
                     <h6>Teraba</h6>
                     <div class="d-flex align-items-center flex-wrap">
                         <div class="form-check form-check-inline mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psk_trb" value="1">
-                            <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input single-checkbox" name="psk_trb" value="3" id="psk_trb_3">
+                            <label class="form-check-label" for="psk_trb_3">
+                                Teraba
+                            </label>
+                        </div>
+
+                        <div class="form-check form-check-inline mb-0">
+                            <input type="checkbox" class="form-check-input single-checkbox" name="psk_trb" value="1" id="psk_trb_1">
+                            <label class="form-check-label" for="psk_trb_1">
                                 Hilang Timbul
                             </label>
                         </div>
+
                         <div class="form-check form-check-inline mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psk_trb" value="2">
-                            <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input single-checkbox" name="psk_trb" value="2" id="psk_trb_2">
+                            <label class="form-check-label" for="psk_trb_2">
                                 Tidak Teraba
                             </label>
                         </div>
@@ -1232,6 +1339,27 @@
 
             }
         );
+
+        $form.on('change', '.pfn-auskultasi-checkbox', function () {
+            const checkboxId = $(this).attr('id');
+            const checked = $(this).is(':checked');
+
+            const $detail = $form.find(
+                '.pfn-auskultasi-detail[data-checkbox="' + checkboxId + '"]'
+            );
+
+            $detail.prop('disabled', !checked);
+
+            if (!checked) {
+                $detail.val('');
+            }
+
+            simpanPemeriksaanFisikNeonatus();
+        });
+
+        $form.on('change', '.pfn-auskultasi-detail', function () {
+            simpanPemeriksaanFisikNeonatus();
+        });
 
     });
 

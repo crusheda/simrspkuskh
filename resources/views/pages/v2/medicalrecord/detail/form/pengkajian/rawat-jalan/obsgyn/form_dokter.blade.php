@@ -29,6 +29,23 @@
                             <strong><em>Objective </em>(O) : </strong>
                         </h5>
                     </div>
+                    <div class="col-md-12 mb-2">
+                        @include(
+                            'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
+                            [
+                                'section' => '#rjo_dokter',
+                                'page' => 'dokter',
+                                // 'editableFields' => [
+                                //     'tv_keu',
+                                //     'tv_gcs_e',
+                                //     'tv_gcs_v',
+                                //     'tv_gcs_m',
+                                //     'tv_bb',
+                                //     'tv_tb',
+                                // ],
+                            ]
+                        )
+                    </div>
                     <div class="row align-items-start" id="pemeriksaan_fisik">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Pemeriksaan Fisik</label>
@@ -186,23 +203,6 @@
                         </h5>
                     </div>
                     <div class="row align-items-center">
-                        <div class="col-md-12 mb-2">
-                            @include(
-                                'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
-                                [
-                                    'section' => '#rjo_dokter',
-                                    'page' => 'dokter',
-                                    // 'editableFields' => [
-                                    //     'tv_keu',
-                                    //     'tv_gcs_e',
-                                    //     'tv_gcs_v',
-                                    //     'tv_gcs_m',
-                                    //     'tv_bb',
-                                    //     'tv_tb',
-                                    // ],
-                                ]
-                            )
-                        </div>
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Tolok Ukur / Sasaran yang Dicapai</label>
                             <textarea class="form-control" name="tu" id="tu" rows="3"></textarea>

@@ -156,7 +156,7 @@
             sgd2 !== undefined &&
             (sgd1 !== '1' || sgd1c !== undefined);
 
-        $section.find('.btn-save-sub-pengkajian').prop('disabled', !lengkap);
+        $('#form_skrining_must .btn-save-sub-pengkajian').prop('disabled', !lengkap);
 
         return lengkap;
     }

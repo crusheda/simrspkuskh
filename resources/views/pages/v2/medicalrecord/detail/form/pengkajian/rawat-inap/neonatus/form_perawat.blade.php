@@ -1,4 +1,4 @@
-<div class="form-wrapper position-relative" id="form_ranap_neonatus_perawat">
+<div class="form-wrapper position-relative" id="form_ranap_neonatus_perawat" data-rin-form>
     <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN KEPERAWATAN <b class="text-danger">RAWAT INAP</b> <b class="text-warning">NEONATUS</b></center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-danger">Diisi Oleh Perawat</a>)</center></h1>
     <div class="form-content">
@@ -66,7 +66,7 @@
                     </div>
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
                         [
-                            'section' => '#rio_perawat',
+                            'section' => '#rin_perawat',
                             'metodeNyeri' => ['nips']
                         ]
                     )
@@ -74,7 +74,7 @@
             </div>
         </div>
         <div class="col-md-12 mb-3">
-            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#rio_perawat'])
+            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#rin_perawat'])
         </div>
         <div class="col-md-12">
             <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>

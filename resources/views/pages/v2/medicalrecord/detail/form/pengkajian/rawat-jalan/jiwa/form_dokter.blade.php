@@ -24,6 +24,23 @@
                             <strong><em>Objective </em>(O) : </strong>
                         </h5>
                     </div>
+                    <div class="col-md-12 mb-2">
+                        @include(
+                            'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
+                            [
+                                'section' => '#rjj_dokter',
+                                'page' => 'dokter',
+                                // 'editableFields' => [
+                                //     'tv_keu',
+                                //     'tv_gcs_e',
+                                //     'tv_gcs_v',
+                                //     'tv_gcs_m',
+                                //     'tv_bb',
+                                //     'tv_tb',
+                                // ],
+                            ]
+                        )
+                    </div>
                     <div class="row align-items-center" id="pemeriksaan_fisik">
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Pemeriksaan Fisik</label>
@@ -51,7 +68,12 @@
                                     <h6>Diagnosis</h6>
                                     <div class="d-flex align-items-center gap-2 mb-2">
                                         <div class="flex-grow-1">
-                                            <textarea class="form-control form-control-sm" name="diag_detail" id="diag_detail" placeholder="Masukkan Diagnosa" rows="4"></textarea>
+                                            <textarea name="diag_detail" id="diag_detail" class="form-control" placeholder="Masukkan Diagnosa" rows="4">Axis
+I.
+II.
+III.
+IV.
+V.</textarea>
                                         </div>
                                         <div class="flex-shrink-0">
                                             <div class="form-check mb-0">
@@ -107,23 +129,6 @@
                         </h5>
                     </div>
                     <div class="row align-items-center">
-                        <div class="col-md-12 mb-2">
-                            @include(
-                                'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
-                                [
-                                    'section' => '#rjj_dokter',
-                                    'page' => 'dokter',
-                                    // 'editableFields' => [
-                                    //     'tv_keu',
-                                    //     'tv_gcs_e',
-                                    //     'tv_gcs_v',
-                                    //     'tv_gcs_m',
-                                    //     'tv_bb',
-                                    //     'tv_tb',
-                                    // ],
-                                ]
-                            )
-                        </div>
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-bold">Tolok Ukur / Sasaran yang Dicapai</label>
                             <textarea class="form-control" name="tu" id="tu" rows="3"></textarea>
@@ -223,36 +228,6 @@
 
     $(document).ready(function () {
 
-        $('#diag_utama').on('change', function () {
-
-            const $textarea = $('#diag_detail');
-            const currentValue = $textarea.val() || '';
-
-            const template = `Axis
-        I.
-        II.
-        III.
-        IV.
-        V.`;
-
-            if ($(this).is(':checked')) {
-
-                // Hanya masukkan template jika textarea kosong
-                if (currentValue.trim() === '') {
-                    $textarea.val(template);
-                }
-
-                $textarea.focus();
-
-            } else {
-
-                // Hapus template jika belum diedit
-                if (currentValue.trim() === template.trim()) {
-                    $textarea.val('');
-                }
-            }
-        });
-
         loadDataPengkajianRJJd();
         getDiagnosis();
     });
@@ -336,7 +311,13 @@
         $("#terapi_tind").val(data.terapi_tind);
 
         // DIAGNOSIS UTAMA
-        $("#diag_detail").val(data.diag_detail);
+        if (
+            data.diag_detail !== null &&
+            data.diag_detail !== undefined &&
+            data.diag_detail.trim() !== ''
+        ) {
+            $("#diag_detail").val(data.diag_detail);
+        }
 
         if (data.diag_utama !== null && data.diag_utama !== undefined) {
             $('#diag_utama')
