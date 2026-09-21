@@ -522,13 +522,13 @@
                         /* =========================
                         * TANDA VITAL
                         * ========================= */
-                        tv_sh: tandaVital.SUHU,
-                        tv_up: tandaVital.SISTOLE,
-                        tv_down: tandaVital.DIASTOLE,
-                        tv_nadi: tandaVital.FREK_NADI,
-                        tv_fr: tandaVital.FREK_NAFAS,
-                        tv_mu: tandaVital.METODE_UKUR,
-                        tv_sn: tandaVital.SKALA_NYERI,
+                        // tv_sh: tandaVital.SUHU,
+                        // tv_up: tandaVital.SISTOLE,
+                        // tv_down: tandaVital.DIASTOLE,
+                        // tv_nadi: tandaVital.FREK_NADI,
+                        // tv_fr: tandaVital.FREK_NAFAS,
+                        // tv_mu: tandaVital.METODE_UKUR,
+                        // tv_sn: tandaVital.SKALA_NYERI,
 
 
                         /* =========================

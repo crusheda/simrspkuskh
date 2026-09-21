@@ -9375,10 +9375,10 @@ class AddOnPengkajianController extends Controller
                 $planTriage = 1;
             } else {
                 if ($atsP == 4 || $atsP == 5) {
-                    $planTriage = 2;
+                    $planTriage = 3;
                 } else {
                     if ($atsP == 3) {
-                        $planTriage = 3;
+                        $planTriage = 2;
                     } else {
                         if ($atsP == 6) {
                             $planTriage = 4;
@@ -9690,15 +9690,15 @@ class AddOnPengkajianController extends Controller
             // TANDA VITAL / PRIMARY SURVEY PERAWAT
             // ==========================================
 
-            $tandaVital = [
-                'SUHU'        => $request->input('tv_sh', ''),
-                'SISTOLE'     => $request->input('tv_up', ''),
-                'DIASTOLE'    => $request->input('tv_down', ''),
-                'FREK_NADI'   => $request->input('tv_nadi', ''),
-                'FREK_NAFAS'  => $request->input('tv_fr', ''),
-                'METODE_UKUR' => $request->input('tv_mu', ''),
-                'SKALA_NYERI' => $request->input('tv_sn', ''),
-            ];
+            // $tandaVital = [
+            //     'SUHU'        => $request->input('tv_sh', ''),
+            //     'SISTOLE'     => $request->input('tv_up', ''),
+            //     'DIASTOLE'    => $request->input('tv_down', ''),
+            //     'FREK_NADI'   => $request->input('tv_nadi', ''),
+            //     'FREK_NAFAS'  => $request->input('tv_fr', ''),
+            //     'METODE_UKUR' => $request->input('tv_mu', ''),
+            //     'SKALA_NYERI' => $request->input('tv_sn', ''),
+            // ];
 
 
             // ==========================================
@@ -9729,7 +9729,12 @@ class AddOnPengkajianController extends Controller
 
             DB::table('medicalrecord.triage')->updateOrInsert(
                 [
-                    'KUNJUNGAN' => $request->NOKUNJ
+                    'NORM' =>
+                        $getDataKunjungan->NORM,
+                    'KUNJUNGAN' =>
+                        $request->NOKUNJ,
+                    'NOPEN' =>
+                        $getDataKunjungan->NOPEN
                 ],
                 [
                     // ==============================
@@ -9759,10 +9764,10 @@ class AddOnPengkajianController extends Controller
                     // ==============================
                     // TANDA VITAL / PRIMARY SURVEY
                     // ==============================
-                    'TANDA_VITAL' => json_encode(
-                        $tandaVital,
-                        JSON_UNESCAPED_UNICODE
-                    ),
+                    // 'TANDA_VITAL' => json_encode(
+                    //     $tandaVital,
+                    //     JSON_UNESCAPED_UNICODE
+                    // ),
 
                     // ==============================
                     // OBGYN
@@ -9786,7 +9791,7 @@ class AddOnPengkajianController extends Controller
                     'RISIKO_PENULARAN_INFEKSI' => $risikoPenularan,
 
                     'OLEH'    => auth()->id(),
-                    'STATUS'  => 1,
+                    'STATUS'  => 2,
                     'TANGGAL' => now(),
                 ]
             );
@@ -10167,100 +10172,67 @@ class AddOnPengkajianController extends Controller
             // Kolom TRIAGE lainnya tidak disentuh.
             // ==========================================================
 
-            if (!$isDokter) {
+            // if (!$isDokter) {
 
                 $triageTandaVital = [
-                    'SUHU' =>
-                        $request->input('p_suhu', ''),
-
-                    'SISTOLE' =>
-                        $request->input('p_td_up', ''),
-
-                    'DIASTOLE' =>
-                        $request->input('p_td_down', ''),
-
-                    'FREK_NADI' =>
-                        $request->input('p_nadi', ''),
-
-                    'FREK_NAFAS' =>
-                        $request->input('p_fr', ''),
-
-                    'METODE_UKUR' =>
-                        $request->input('p_mu', ''),
-
-                    'SKALA_NYERI' =>
-                        $request->input('p_sn', ''),
+                    'SUHU' => $request->input('p_suhu', ''),
+                    'SISTOLE' => $request->input('p_td_up', ''),
+                    'DIASTOLE' => $request->input('p_td_down', ''),
+                    'FREK_NADI' => $request->input('p_nadi', ''),
+                    'FREK_NAFAS' => $request->input('p_fr', ''),
+                    'METODE_UKUR' => $request->input('p_mu') ?? '',
+                    'SKALA_NYERI' => $request->input('p_sn') ?? '',
                 ];
 
-                $triageTandaVitalJson = json_encode(
-                    $triageTandaVital,
-                    JSON_UNESCAPED_UNICODE
-                );
+                $triageQuery = DB::table('medicalrecord.triage')
+                    ->where('KUNJUNGAN', $request->NOKUNJ)
+                    ->whereIn('STATUS', [1, 2]);
 
-                // ======================================================
-                // CEK APAKAH DATA TRIAGE SUDAH ADA
-                // ======================================================
+                $triage = $triageQuery->first();
 
-                $triageExists = DB::table(
-                    'medicalrecord.triage'
-                )
-                    ->where(
-                        'KUNJUNGAN',
-                        $request->NOKUNJ
-                    )
-                    ->whereIn(
-                        'STATUS',
-                        [1, 2]
-                    )
-                    ->exists();
+                if ($triage) {
 
-                // ======================================================
-                // JIKA SUDAH ADA
-                // HANYA UPDATE TANDA_VITAL
-                // ======================================================
+                    // Ambil TANDA_VITAL lama
+                    $tandaVitalLama = json_decode(
+                        $triage->TANDA_VITAL ?? '{}',
+                        true
+                    ) ?: [];
 
-                if ($triageExists) {
+                    // Update hanya jika nilai lama kosong
+                    foreach ($triageTandaVital as $key => $value) {
+                        $nilaiLama = $tandaVitalLama[$key] ?? null;
 
-                    DB::table('medicalrecord.triage')
-                        ->where(
-                            'KUNJUNGAN',
-                            $request->NOKUNJ
-                        )
-                        ->whereIn(
-                            'STATUS',
-                            [1, 2]
-                        )
-                        ->update([
-                            'TANDA_VITAL' =>
-                                $triageTandaVitalJson,
-                        ]);
+                        if (
+                            $nilaiLama === null ||
+                            $nilaiLama === ''
+                        ) {
+                            $tandaVitalLama[$key] = $value;
+                        }
+                    }
 
-                // ======================================================
-                // JIKA BELUM ADA
-                // BUAT ROW BARU
-                // ======================================================
+                    $triageQuery->update([
+                        'TANDA_VITAL' => json_encode(
+                            $tandaVitalLama,
+                            JSON_UNESCAPED_UNICODE
+                        ),
+                    ]);
 
                 } else {
 
+                    // Insert hanya jika data triage belum ada
                     DB::table('medicalrecord.triage')
                         ->insert([
-                            'KUNJUNGAN' =>
-                                $request->NOKUNJ,
-
-                            'TANDA_VITAL' =>
-                                $triageTandaVitalJson,
-
-                            'OLEH' =>
-                                auth()->id(),
-
-                            'STATUS' =>
-                                1,
-
-                            'TANGGAL' =>
-                                now(),
+                            'KUNJUNGAN' => $request->NOKUNJ,
+                            'TANDA_VITAL' => json_encode(
+                                $triageTandaVital,
+                                JSON_UNESCAPED_UNICODE
+                            ),
+                            'OLEH' => auth()->id(),
+                            'STATUS' => 2,
+                            'TANGGAL' => now(),
                         ]);
                 }
-            }
+            // }
 
             // ==========================================================
             // KHUSUS DOKTER
