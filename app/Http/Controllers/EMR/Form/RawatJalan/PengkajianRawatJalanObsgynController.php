@@ -494,7 +494,7 @@ class PengkajianRawatJalanObsgynController extends Controller
 
                     'GANGGUAN_INTEGRITAS_KULIT_JARINGAN' => $request->input('diag_9') ? 1 : 0,
                     'GANGGUAN_ELIMINASI_URINE' => $request->input('diag_10') ? 1 : 0,
-                    'INTOLERANSI_AKTIFITAS' => $request->input('diag_11') ? 1 : 0,
+                    'INTOLERANSI_AKTIVITAS' => $request->input('diag_11') ? 1 : 0,
                     'GANGGUAN_MOBILITAS_FISIK' => $request->input('diag_12') ? 1 : 0,
                     'GANGGUAN_PERTUKARAN_GAS' => $request->input('diag_13') ? 1 : 0,
                     'DIAGNOSA_LAIN' => $request->input('diag_lain') ? 1 : 0,
