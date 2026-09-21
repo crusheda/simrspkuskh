@@ -165,7 +165,7 @@
                     type="text"
                     class="form-control form-control-sm"
                     name="agama"
-                    value="{{ $list['pasien']->AGAMA ?? '' }}"
+                    id="hubspsi_agama"
                     placeholder="Otomatis terisi oleh sistem"
                     readonly
                 >
@@ -198,12 +198,12 @@
             <div class="col-md-10">
                 <div class="form-check form-check-inline">
                     <input class="form-check-input single-checkbox" type="checkbox" name="nk" value="1" id="hsp_nk_1">
-                    <label class="form-check-label" for="hsp_nk_1">Tidak ada</label>
+                    <label class="form-check-label" for="hsp_nk_1">Ada</label>
                 </div>
 
                 <div class="form-check form-check-inline">
                     <input class="form-check-input single-checkbox" type="checkbox" name="nk" value="2" id="hsp_nk_2">
-                    <label class="form-check-label" for="hsp_nk_2">Ada</label>
+                    <label class="form-check-label" for="hsp_nk_2">Tidak Ada</label>
                 </div>
 
                 <div class="form-check form-check-inline">
@@ -239,7 +239,7 @@
                     type="text"
                     class="form-control form-control-sm"
                     name="kerja"
-                    value="{{ $list['pasien']->PEKERJAAN ?? '' }}"
+                    id="hubspsi_kerja"
                     placeholder="Otomatis terisi oleh sistem"
                     readonly
                 >
@@ -352,7 +352,7 @@
 
         const $nkLain = $form.find('input[name="nk_lain"]');
 
-        if (String(nk) === '2') {
+        if (String(nk) === '1') {
             $nkLain.prop('disabled', false);
         } else {
             $nkLain.val('').prop('disabled', true);
@@ -400,6 +400,10 @@
 
             success: function (res) {
                 const anam = res.data;
+                const ref= res.ref;
+
+                $('#hubspsi_kerja').val(ref?.PEKERJAAN ?? '');
+                $('#hubspsi_agama').val(ref?.AGAMA ?? '');
 
                 if (!anam) {
                     updateAdditionalFieldState();

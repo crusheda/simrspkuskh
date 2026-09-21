@@ -222,7 +222,7 @@
                             >
                         </td>
                         <td>
-                            Mengibolisasikan daerah cedera : memasang bidai / spalk / sling
+                            Mengimobilisasikan daerah cedera : memasang bidai / spalk / sling
                         </td>
                     </tr>
 

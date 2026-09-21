@@ -374,6 +374,15 @@ class FinalisasiController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        $anamnesisDiperoleh = DB::table('medicalrecord.anamnesis_diperoleh')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first([
+                'AUTOANAMNESIS',
+                'ALLOANAMNESIS',
+                'DARI',
+            ]);
+
         $anamnesis = DB::table('medicalrecord.anamnesis')
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
@@ -382,13 +391,75 @@ class FinalisasiController extends Controller
                 'DESKRIPSI'
             ]);
 
+        $keluhanUtama = DB::table('medicalrecord.keluhan_utama')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first([
+                'DESKRIPSI',
+            ]);
+
+        $rpp = DB::table('medicalrecord.rpp')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first([
+                'DESKRIPSI',
+            ]);
+
+        $rpk = DB::table('medicalrecord.riwayat_penyakit_keluarga')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first([
+                'HIPERTENSI',
+                'DIABETES_MELITUS',
+                'PENYAKIT_JANTUNG',
+                'ASMA',
+                'LAINNYA',
+            ]);
+
         $rps = $anamnesis?->DESKRIPSI ?? '';
 
+        $rows_s = [];
 
-        $cppt_s =
-            "<div style='color:#9CC96B'>Riwayat Penyakit Sekarang:</div>"
-            . $rps;
+        if ($anamnesisDiperoleh) {
 
+            if ((int) $anamnesisDiperoleh->AUTOANAMNESIS === 1) {
+                $rows_s[] = 'Autoanamnesis';
+            }
+
+            if ((int) $anamnesisDiperoleh->ALLOANAMNESIS === 1) {
+                $dari = $this->soapValue($anamnesisDiperoleh->DARI);
+
+                $rows_s[] = 'Alloanamnesis' . (
+                    $dari ? ' dari ' . $dari : ''
+                );
+            }
+        }
+
+        if ($keluhanUtama) {
+            $value = $this->soapValue($keluhanUtama->DESKRIPSI);
+
+            if ($value) {
+                $rows_s[] = 'Keluhan Utama: ' . $value;
+            }
+        }
+
+        if ($anamnesis) {
+            $value = $this->soapValue($anamnesis->DESKRIPSI);
+
+            if ($value) {
+                $rows_s[] = 'Riwayat Penyakit Sekarang: ' . $value;
+            }
+        }
+
+        if ($rpp) {
+            $value = $this->soapValue($rpp->DESKRIPSI);
+
+            if ($value) {
+                $rows_s[] = 'Riwayat Penyakit Dahulu: ' . $value;
+            }
+        }
+
+        $cppt_s = implode("\n", $rows_s);
 
         /*
         |--------------------------------------------------------------------------
@@ -501,27 +572,31 @@ class FinalisasiController extends Controller
                     ($tandaVital->DISTOLIK ?? '') !== ''
                 )
                     ? "Tekanan Darah: "
-                        . ($tandaVital->SISTOLIK ?? '')
+                        . $this->soapNumber($tandaVital->SISTOLIK)
                         . "/"
-                        . ($tandaVital->DISTOLIK ?? '')
+                        . $this->soapNumber($tandaVital->DISTOLIK)
                         . ' mmHg'
                     : '',
 
                 ($tandaVital->FREKUENSI_NADI ?? '') !== ''
                     ? "Frekuensi Nadi: "
-                        . $tandaVital->FREKUENSI_NADI
+                        . $this->soapNumber($tandaVital->FREKUENSI_NADI)
                         . " {$freknadicp}"
                     : '',
 
                 "Suhu: " . ($tandaVital->SUHU ?? '') ."°C",
 
-                "Saturasi O2: " . ($tandaVital->SATURASI_O2 ?? '') ."%",
+                ($tandaVital->SATURASI_O2 ?? '') !== ''
+                    ? "Saturasi O2: "
+                        . $this->soapNumber($tandaVital->SATURASI_O2)
+                        . "%"
+                    : '',
 
                 "Tingkat Kesadaran: " . ($tgktkesadarancp ?? ''),
 
                 ($tandaVital->FREKUENSI_NAFAS ?? '') !== ''
                     ? "Frekuensi Nafas: "
-                        . $tandaVital->FREKUENSI_NAFAS . 'x/menit'
+                        . $this->soapNumber($tandaVital->FREKUENSI_NAFAS) . 'x/menit'
                         . " {$freknafascp}"
                     : '',
 
@@ -552,16 +627,18 @@ class FinalisasiController extends Controller
                         : '',
                 ])),
 
-                "GCS: "
-                    . ($tandaVital->GCS ?? '')
-                    . " (E/"
-                    . ($tandaVital->EYE ?? '')
-                    . " M/"
-                    . ($tandaVital->MOTORIK ?? '')
-                    . " V/"
-                    . ($tandaVital->VERBAL ?? '')
-                    . "), VAS: "
-                    . ($tandaVital->VAS ?? ''),
+                ($tandaVital->GCS ?? '') !== ''
+                    ? "GCS: "
+                        . $this->soapNumber($tandaVital->GCS)
+                        . " (E/"
+                        . ($tandaVital->EYE ?? '')
+                        . " M/"
+                        . ($tandaVital->MOTORIK ?? '')
+                        . " V/"
+                        . ($tandaVital->VERBAL ?? '')
+                        . "), VAS: "
+                        . ($tandaVital->VAS ?? '')
+                    : '',
 
                 "Alat Bantu Nafas: "
                     . (($tandaVital->ALAT_BANTU_NAFAS ?? null) == 2
@@ -1194,9 +1271,9 @@ class FinalisasiController extends Controller
             } else {}
 
             if ($this->soapValue($anatomi->pf_upal) == 0) {
-                $mata[] = 'Udema Palpebrae (-)';
+                $mata[] = 'Edema Palpebrae (-)';
             } else if ($this->soapValue($anatomi->pf_upal) == 1) {
-                $mata[] = 'Udema Palpebrae (+)';
+                $mata[] = 'Edema Palpebrae (+)';
             } else {}
 
             // if ($this->soapValue($anatomi->pf_ikterus)) {
@@ -1301,20 +1378,35 @@ class FinalisasiController extends Controller
                 $thoraks[] = 'Pulmo: ' . $this->soapValue($anatomi->pf_pulmo);
             }
 
-            if ($this->soapValue($anatomi->pf_ronchi) == 2) {
-                $thoraks[] = 'Ronchi : Ada';
-            } else{
-                $thoraks[] = 'Ronchi : Tidak Ada';
+            // Ronchi
+            $ronchiLeft = $this->soapValue($anatomi->pf_ronchi_left ?? null);
+            $ronchiRight = $this->soapValue($anatomi->pf_ronchi_right ?? null);
+
+            if ($ronchiLeft || $ronchiRight) {
+                $thoraks[] = 'Ronchi : '
+                    . ($ronchiLeft ?: '-')
+                    . ' / '
+                    . ($ronchiRight ?: '-');
+
+                if ($this->soapValue($anatomi->pf_ronchi_lain ?? null)) {
+                    $thoraks[] = $this->soapValue($anatomi->pf_ronchi_lain);
+                }
             }
 
-            if ($this->soapValue($anatomi->pf_ronchi_lain)) {
-                $thoraks[] = $this->soapValue($anatomi->pf_ronchi_lain);
-            }
 
-            if ($this->soapValue($anatomi->pf_wheezing) == 2) {
-                $thoraks[] = 'Wheezing : Ada. ' . $this->soapValue($anatomi->pf_wheezing_lain);
-            } else {
-                $thoraks[] = 'Wheezing : Tidak Ada';
+            // Wheezing
+            $wheezingLeft = $this->soapValue($anatomi->pf_wheezing_left ?? null);
+            $wheezingRight = $this->soapValue($anatomi->pf_wheezing_right ?? null);
+
+            if ($wheezingLeft || $wheezingRight) {
+                $thoraks[] = 'Wheezing : '
+                    . ($wheezingLeft ?: '-')
+                    . ' / '
+                    . ($wheezingRight ?: '-');
+
+                if ($this->soapValue($anatomi->pf_wheezing_lain ?? null)) {
+                    $thoraks[] = $this->soapValue($anatomi->pf_wheezing_lain);
+                }
             }
 
             if ($this->soapValue($anatomi->pf_kelainan_dada) == 2) {
@@ -2863,6 +2955,19 @@ class FinalisasiController extends Controller
         $value = trim(strip_tags((string) $value));
 
         return $value === '' ? null : $value;
+    }
+
+    private function soapNumber($value)
+    {
+        if ($value === null || $value === '') {
+            return '';
+        }
+
+        $number = (float) $value;
+
+        return fmod($number, 1) === 0.0
+            ? (string) (int) $number
+            : (string) $number;
     }
 
     private function soapLine($label, $value)

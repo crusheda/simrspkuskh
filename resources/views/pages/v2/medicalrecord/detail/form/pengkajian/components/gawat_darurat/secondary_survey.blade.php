@@ -6,17 +6,46 @@
 
     <div class="row">
 
-        <div class="col-md-6 mb-3">
-            <div class="form-group">
-                <h6>Keluhan Utama</h6>
-                <textarea class="form-control" name="ku" rows="1"></textarea>
+        {{-- ==========================================================
+            ANAMNESIS DIPEROLEH
+        =========================================================== --}}
+        <div class="col-md-12">
+            <h6>Anamnesis Diperoleh</h6>
+
+            <div class="form-group d-flex align-items-center mb-3">
+                <div class="form-check form-check-inline">
+                    <input
+                        class="form-check-input check-primary"
+                        type="checkbox"
+                        name="anam1"
+                        value="1"
+                        id="anam_1"
+                    >
+                    <label class="form-check-label" for="anam_1">
+                        Autoanamnesis
+                    </label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input
+                        class="form-check-input check-primary"
+                        type="checkbox"
+                        name="anam2"
+                        value="1"
+                        id="anam_2"
+                    >
+                    <label class="form-check-label" for="anam_2">
+                        Alloanamnesis
+                    </label>
+                </div>
+                <input type="text" class="form-control" name="anamnesis_dari" placeholder="Dari ...">
             </div>
         </div>
 
-        <div class="col-md-6 mb-3">
+        <div class="col-md-12 mb-3">
             <div class="form-group">
-                <h6>Riwayat Penyakit Dahulu</h6>
-                <textarea class="form-control" name="rpd" rows="1"></textarea>
+                <h6>Keluhan Utama</h6>
+                <textarea class="form-control" name="ku" rows="1"></textarea>
             </div>
         </div>
 
@@ -24,6 +53,13 @@
             <div class="form-group">
                 <h6>Riwayat Penyakit Sekarang</h6>
                 <textarea class="form-control" name="rps" rows="4"></textarea>
+            </div>
+        </div>
+
+        <div class="col-md-12 mb-3">
+            <div class="form-group">
+                <h6>Riwayat Penyakit Dahulu</h6>
+                <textarea class="form-control" name="rpd" rows="1"></textarea>
             </div>
         </div>
 
@@ -59,7 +95,6 @@
     let isDataLoading = false;
     let isDataSaving = false;
 
-
     // ==========================================================
     // GET DATA
     // ==========================================================
@@ -84,6 +119,46 @@
             success: function (res) {
 
                 const data = res.data || {};
+
+                // ==================================================
+                // ANAMNESIS DIPEROLEH
+                // ==================================================
+                const anamnesis_diperoleh = data.anam || {};
+
+                if (String(anamnesis_diperoleh.AUTOANAMNESIS) === '1') {
+                    const $anamCheckboxes1 = $form.find(
+                        'input[type="checkbox"][name="anam1"]'
+                    );
+
+                    // Hanya reset checkbox pada form dokter/perawat ini saja.
+                    $anamCheckboxes1.prop('checked', false);
+
+                    // Centang sesuai value hanya pada form ini.
+                    $anamCheckboxes1.prop('checked', true);
+                }
+                if (String(anamnesis_diperoleh.ALLOANAMNESIS) === '1') {
+                    const $anamCheckboxes2 = $form.find(
+                        'input[type="checkbox"][name="anam2"]'
+                    );
+
+                    // Hanya reset checkbox pada form dokter/perawat ini saja.
+                    $anamCheckboxes2.prop('checked', false);
+
+                    // Centang sesuai value hanya pada form ini.
+                    $anamCheckboxes2.prop('checked', true);
+                }
+
+                // PENGISIAN dari
+                if (
+                    anamnesis_diperoleh.DARI &&
+                    FormHelper.hasValue(anamnesis_diperoleh.DARI)
+                ) {
+                    FormHelper.setValue(
+                        $section,
+                        'anamnesis_dari',
+                        anamnesis_diperoleh.DARI
+                    );
+                }
 
                 // ==================================================
                 // KELUHAN UTAMA
@@ -224,40 +299,55 @@
 
     }
 
+    // ==========================================================
+    // ANAMNESIS DIPEROLEH
+    // ==========================================================
+    $form
+        .off('change.anam1', `input[name="anam1"]`)
+        .on('change.anam1', `input[name="anam1"]`, function () {
+            if (isDataLoading) {
+                return;
+            }
+
+            const $this = $(this);
+
+            setTimeout(function () {
+                simpanData();
+            }, 0);
+        });
+    $form
+        .off('change.anam2', `input[name="anam2"]`)
+        .on('change.anam2', `input[name="anam2"]`, function () {
+            if (isDataLoading) {
+                return;
+            }
+
+            const $this = $(this);
+
+            setTimeout(function () {
+                simpanData();
+            }, 0);
+        });
 
     // ==========================================================
-    // AUTO SAVE
+    // AUTO SAVE FIELD LAIN
     // ==========================================================
 
-    $form.on(
-        'blur',
-        'textarea,input',
-        function () {
+    $form
+        .off('change.autosave', 'textarea,input,select')
+        .on('change.autosave', 'textarea,input,select', function () {
 
             if (isDataLoading) {
                 return;
             }
 
-            simpanData();
-
-        }
-    );
-
-
-    $form.on(
-        'change',
-        'select,input[type="checkbox"],input[type="radio"]',
-        function () {
-
-            if (isDataLoading) {
+            // Jangan proses checkbox anam di sini
+            if ($(this).is('input[name="anam"]')) {
                 return;
             }
 
             simpanData();
-
-        }
-    );
-
+        });
 
     // ==========================================================
     // INIT

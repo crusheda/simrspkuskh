@@ -2490,6 +2490,22 @@ class AddOnPengkajianController extends Controller
 
     function getHubunganStatusPsikososial($KUNJUNGAN)
     {
+        $refPasien = DB::table('pendaftaran.kunjungan AS pk')
+            ->leftJoin('pendaftaran.pendaftaran AS pd', 'pd.NOMOR', '=', 'pk.NOPEN')
+            ->leftJoin('master.pasien AS p', 'p.NORM', '=', 'pd.NORM')
+            ->leftJoin('master.referensi AS ag', function ($join) {
+                $join->on('ag.ID', '=', 'p.AGAMA')
+                    ->where('ag.JENIS', '=', '1');
+            })
+            ->leftJoin('master.referensi AS kj', function ($join) {
+                $join->on('kj.ID', '=', 'p.PEKERJAAN')
+                    ->where('kj.JENIS', '=', '4');
+            })
+            ->leftJoin('master.dokter AS dok', 'dok.ID', '=', 'pk.DPJP')
+            ->select('pd.TANGGAL AS TGL_KEDATANGAN','dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'), 'ag.DESKRIPSI AS AGAMA', 'kj.DESKRIPSI AS PEKERJAAN')
+            ->where('pk.NOMOR', $KUNJUNGAN)
+            ->first();
+
         $hubspsi = $this->getData(
             $KUNJUNGAN,
             'medicalrecord.kondisi_sosial',
@@ -2521,7 +2537,8 @@ class AddOnPengkajianController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $hubspsi
+            'data' => $hubspsi,
+            'ref' => $refPasien
         ]);
     }
 
@@ -4202,9 +4219,13 @@ class AddOnPengkajianController extends Controller
                 'pf_murmur' => $request->input('pf_murmur'),
                 'pf_murmur_lain' => $request->input('pf_murmur_lain'),
                 'pf_pulmo' => $request->input('pf_pulmo'),
-                'pf_ronchi' => $request->input('pf_ronchi') !== null && $request->input('pf_ronchi') !== '' ? (int) $request->input('pf_ronchi') : null,
+                // 'pf_ronchi' => $request->input('pf_ronchi') !== null && $request->input('pf_ronchi') !== '' ? (int) $request->input('pf_ronchi') : null,
+                'pf_ronchi_left' => $request->input('pf_ronchi_left'),
+                'pf_ronchi_right' => $request->input('pf_ronchi_right'),
                 'pf_ronchi_lain' => $request->input('pf_ronchi_lain'),
-                'pf_wheezing' => $request->input('pf_wheezing') !== null && $request->input('pf_wheezing') !== '' ? (int) $request->input('pf_wheezing') : null,
+                // 'pf_wheezing' => $request->input('pf_wheezing') !== null && $request->input('pf_wheezing') !== '' ? (int) $request->input('pf_wheezing') : null,
+                'pf_wheezing_left' => $request->input('pf_wheezing_left'),
+                'pf_wheezing_right' => $request->input('pf_wheezing_right'),
                 'pf_wheezing_lain' => $request->input('pf_wheezing_lain'),
                 'pf_kelainan_dada' => $request->input('pf_kelainan_dada') !== null && $request->input('pf_kelainan_dada') !== '' ? (int) $request->input('pf_kelainan_dada') : null,
 
@@ -4277,7 +4298,7 @@ class AddOnPengkajianController extends Controller
             }
 
             if ($request->filled('pf_upal')) {
-                $mata[] = 'upal : ' . ((int) $request->pf_upal === 1 ? '(+)' : '(-)');
+                $mata[] = 'edema palpebrae : ' . ((int) $request->pf_upal === 1 ? '(+)' : '(-)');
             }
 
             if ($request->filled('pf_pupil')) {
@@ -4387,11 +4408,11 @@ class AddOnPengkajianController extends Controller
             }
 
             if ($request->filled('pf_cor')) {
-                $dada[] = 'cor : ' . $esc($request->input('pf_cor'));
+                $dada[] = 'cor S1/S2 : ' . $esc($request->input('pf_cor'));
             }
 
             if ($request->filled('pf_cor_cb')) {
-                $dada[] = 'cor CB : ' . ((int) $request->input('pf_cor_cb') === 1 ? 'Normal' : 'Tidak Normal');
+                $dada[] = 'irama : ' . ((int) $request->input('pf_cor_cb') === 1 ? 'Normal' : 'Tidak Normal');
             }
 
             if ($request->filled('pf_murmur')) {
@@ -4408,21 +4429,50 @@ class AddOnPengkajianController extends Controller
                 $dada[] = 'pulmo : ' . $esc($request->input('pf_pulmo'));
             }
 
-            if ($request->filled('pf_ronchi')) {
-                $ronchi = (int) $request->input('pf_ronchi') === 1 ? '(-)' : '(+)';
+            // Ronchi
+            if (
+                $request->filled('pf_ronchi_left') ||
+                $request->filled('pf_ronchi_right')
+            ) {
+                $ronchiLeft = $esc(
+                    $request->input('pf_ronchi_left', '')
+                );
+
+                $ronchiRight = $esc(
+                    $request->input('pf_ronchi_right', '')
+                );
+
+                $ronchi = $ronchiLeft . ' / ' . $ronchiRight;
 
                 if ($request->filled('pf_ronchi_lain')) {
-                    $ronchi .= ' ' . $esc($request->input('pf_ronchi_lain'));
+                    $ronchi .= ' ' . $esc(
+                        $request->input('pf_ronchi_lain')
+                    );
                 }
 
                 $dada[] = 'ronchi : ' . $ronchi;
             }
 
-            if ($request->filled('pf_wheezing')) {
-                $wheezing = (int) $request->input('pf_wheezing') === 1 ? '(-)' : '(+)';
+
+            // Wheezing
+            if (
+                $request->filled('pf_wheezing_left') ||
+                $request->filled('pf_wheezing_right')
+            ) {
+                $wheezingLeft = $esc(
+                    $request->input('pf_wheezing_left', '')
+                );
+
+                $wheezingRight = $esc(
+                    $request->input('pf_wheezing_right', '')
+                );
+
+                $wheezing = $wheezingLeft . ' / ' . $wheezingRight;
 
                 if ($request->filled('pf_wheezing_lain')) {
-                    $wheezing .= ' ' . $esc($request->input('pf_wheezing_lain'));
+                    $wheezing .= ' ' . $esc(
+                        $request->input('pf_wheezing_lain')
+                    );
                 }
 
                 $dada[] = 'wheezing : ' . $wheezing;
@@ -4519,7 +4569,7 @@ class AddOnPengkajianController extends Controller
             }
 
             if ($extremitas) {
-                $perut[] = 'extremitas : ' . implode(', ', $extremitas);
+                $perut[] = 'edema : ' . implode(', ', $extremitas);
             }
 
             if ($request->filled('pf_udem')) {
@@ -4529,7 +4579,7 @@ class AddOnPengkajianController extends Controller
                     $udem .= ' (' . $esc($request->input('pf_udem_lain')) . ')';
                 }
 
-                $perut[] = 'udem : ' . $udem;
+                $perut[] = 'edema palpebrae : ' . $udem;
             }
 
             if ($perut) {
@@ -4719,26 +4769,23 @@ class AddOnPengkajianController extends Controller
         try {
 
             // ==========================================
-            // AUTO / ALLO
+            // AUTO & ALLO
             // TABEL ANAMNESIS_DIPEROLEH
             // ==========================================
-            if ($request->has('anam')) {
-
-                DB::table('medicalrecord.anamnesis_diperoleh')
-                    ->updateOrInsert(
-                        [
-                            'KUNJUNGAN' => $request->NOKUNJ
-                        ],
-                        [
-                            'AUTOANAMNESIS' => ($request->anam == 1) ? 1 : 0,
-                            'ALLOANAMNESIS' => ($request->anam == 2) ? 1 : 0,
-                            'DARI'          => $request->anamnesis_dari,
-                            'OLEH'          => auth()->id(),
-                            'STATUS'        => 1,
-                            'TANGGAL'       => now()
-                        ]
-                    );
-            }
+            DB::table('medicalrecord.anamnesis_diperoleh')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $request->NOKUNJ
+                    ],
+                    [
+                        'AUTOANAMNESIS' => ($request->anam1 == 1) ? 1 : 0,
+                        'ALLOANAMNESIS' => ($request->anam2 == 1) ? 1 : 0,
+                        'DARI'          => $request->anamnesis_dari,
+                        'OLEH'          => auth()->id(),
+                        'STATUS'        => 1,
+                        'TANGGAL'       => now()
+                    ]
+                );
 
 
             // ==========================================
@@ -5009,9 +5056,11 @@ class AddOnPengkajianController extends Controller
             // ==========================================
             $data = [];
 
-            if ($request->has('anam')) {
-                $data['AUTOANAMNESIS'] = $request->anam == 1 ? 1 : 0;
-                $data['ALLOANAMNESIS'] = $request->anam == 2 ? 1 : 0;
+            if ($request->has('anam1')) {
+                $data['AUTOANAMNESIS'] = $request->anam1 == 1 ? 1 : 0;
+            }
+            if ($request->has('anam2')) {
+                $data['ALLOANAMNESIS'] = $request->anam2 == 1 ? 1 : 0;
             }
 
             if ($request->has('dari')) {
@@ -8806,7 +8855,7 @@ class AddOnPengkajianController extends Controller
             [
                 'NOKUNJ' => 'required',
 
-                'ats_p' => 'required|in:1,2,3,4,5',
+                // 'ats_p' => 'required|in:1,2,3,4,5',
 
                 'ats' => 'nullable|string',
 
@@ -8880,11 +8929,11 @@ class AddOnPengkajianController extends Controller
                 'NOKUNJ.required' =>
                     'Kunjungan wajib diisi.',
 
-                'ats_p.required' =>
-                    'Kriteria PLAN wajib dipilih terlebih dahulu.',
+                // 'ats_p.required' =>
+                //     'Kriteria PLAN wajib dipilih terlebih dahulu.',
 
-                'ats_p.in' =>
-                    'Kriteria PLAN tidak valid.',
+                // 'ats_p.in' =>
+                //     'Kriteria PLAN tidak valid.',
             ]
         );
 
@@ -9701,26 +9750,6 @@ class AddOnPengkajianController extends Controller
             // ];
 
 
-            // ==========================================
-            // OBGYN
-            // ==========================================
-
-            $obgyn = [
-                'USIA_GESTASI'     => $request->input('ko_ug', ''),
-                'KONTRAKSI_UTERUS' => $request->input('ko_ku', ''),
-                'DETAK_JANTUNG'    => $request->input('ko_dj', ''),
-                'DILATASI_SERVIKS' => $request->input('ko_ds', ''),
-            ];
-
-
-            // ==========================================
-            // KEBUTUHAN KHUSUS
-            // ==========================================
-
-            $kebutuhanKhusus = [
-                'AIRBONE'      => $request->input('kk_a', ''),
-                'DEKONTAMINAN' => $request->input('kk_d', ''),
-            ];
 
 
             // ==========================================
@@ -10247,40 +10276,40 @@ class AddOnPengkajianController extends Controller
                 // ANAMNESIS DIPEROLEH
                 // ======================================================
 
-                DB::table(
-                    'medicalrecord.anamnesis_diperoleh'
-                )->updateOrInsert(
+                // DB::table(
+                //     'medicalrecord.anamnesis_diperoleh'
+                // )->updateOrInsert(
 
-                    [
-                        'KUNJUNGAN' =>
-                            $request->NOKUNJ,
-                    ],
+                //     [
+                //         'KUNJUNGAN' =>
+                //             $request->NOKUNJ,
+                //     ],
 
-                    [
-                        'AUTOANAMNESIS' =>
-                            ((int) $request->input('anam') === 1)
-                                ? 1
-                                : 0,
+                //     [
+                //         'AUTOANAMNESIS' =>
+                //             ((int) $request->input('anam1') === 1)
+                //                 ? 1
+                //                 : 0,
 
-                        'ALLOANAMNESIS' =>
-                            ((int) $request->input('anam') === 2)
-                                ? 1
-                                : 0,
+                //         'ALLOANAMNESIS' =>
+                //             ((int) $request->input('anam2') === 2)
+                //                 ? 1
+                //                 : 0,
 
-                        'DARI' =>
-                            '',
+                //         'DARI' =>
+                //             '',
 
-                        'OLEH' =>
-                            auth()->id(),
+                //         'OLEH' =>
+                //             auth()->id(),
 
-                        'STATUS' =>
-                            1,
+                //         'STATUS' =>
+                //             1,
 
-                        'TANGGAL' =>
-                            now(),
-                    ]
+                //         'TANGGAL' =>
+                //             now(),
+                //     ]
 
-                );
+                // );
 
 
                 // ======================================================
@@ -10405,6 +10434,16 @@ class AddOnPengkajianController extends Controller
             ], 404);
         }
 
+        $anam = $this->getData(
+            $kunjungan,
+            'medicalrecord.anamnesis_diperoleh',
+            [
+                'AUTOANAMNESIS',
+                'ALLOANAMNESIS',
+                'DARI',
+            ]
+        );
+
         $keluhanUtama = DB::table('medicalrecord.keluhan_utama')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
@@ -10425,6 +10464,7 @@ class AddOnPengkajianController extends Controller
 
         return response()->json([
             'data' => [
+                'anam'            => $anam,
                 'keluhan_utama'   => $keluhanUtama,
                 'anamnesis'       => $anamnesis,
                 'rpp'             => $rpp,
@@ -10447,6 +10487,25 @@ class AddOnPengkajianController extends Controller
             ], 404);
         }
 
+        // ==========================================
+        // AUTO / ALLO
+        // TABEL ANAMNESIS_DIPEROLEH
+        // ==========================================
+        DB::table('medicalrecord.anamnesis_diperoleh')
+            ->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $kunjungan
+                ],
+                [
+                    'AUTOANAMNESIS' => ($request->anam1 == 1) ? 1 : 0,
+                    'ALLOANAMNESIS' => ($request->anam2 == 1) ? 1 : 0,
+                    'DARI'          => $request->anamnesis_dari,
+                    'OLEH'          => auth()->id(),
+                    'STATUS'        => 1,
+                    'TANGGAL'       => now()
+                ]
+            );
+
         // ==========================================================
         // KELUHAN UTAMA
         // ==========================================================
@@ -10457,7 +10516,7 @@ class AddOnPengkajianController extends Controller
                     'KUNJUNGAN' => $kunjungan
                 ],
                 [
-                    'DESKRIPSI'    => $request->ku,
+                    'DESKRIPSI'    => $request->ku ?? '',
                     'SNOMED_CT_ID' => 0,
                     'TANGGAL'      => now(),
                     'OLEH'         => auth()->id(),
@@ -10478,7 +10537,7 @@ class AddOnPengkajianController extends Controller
                 ],
                 [
                     'SNOMED_CT_ID' => 0,
-                    'DESKRIPSI'    => $request->rps,
+                    'DESKRIPSI'    => $request->rps ?? '',
                     'TANGGAL'      => now(),
                     'OLEH'         => auth()->id(),
                     'STATUS'       => 1,
@@ -10497,7 +10556,7 @@ class AddOnPengkajianController extends Controller
                 ],
                 [
                     'SNOMED_CT_ID' => 0,
-                    'DESKRIPSI'    => $request->rpd,
+                    'DESKRIPSI'    => $request->rpd ?? '',
                     'TANGGAL'      => now(),
                     'OLEH'         => auth()->id(),
                     'STATUS'       => 1,
@@ -10516,7 +10575,7 @@ class AddOnPengkajianController extends Controller
                     'PENDAFTARAN' => $getDataKunjungan->NOPEN,
                 ],
                 [
-                    'DESKRIPSI' => $request->pf,
+                    'DESKRIPSI' => $request->pf ?? '',
                     'TANGGAL'   => now(),
                     'OLEH'      => auth()->id(),
                     'STATUS'    => 1,
@@ -10672,7 +10731,7 @@ class AddOnPengkajianController extends Controller
     ) {
         try {
 
-            $data = DB::table(
+            $status_kehamilan = DB::table(
                 'medicalrecord.sirmed_status_reproduksi'
             )
                 ->where(
@@ -10681,12 +10740,20 @@ class AddOnPengkajianController extends Controller
                 )
                 ->first();
 
+            $triage = DB::table('medicalrecord.triage')
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                ->whereIn('STATUS', [1, 2])
+                ->first();
+
 
             return response()->json([
 
                 'status' => true,
 
-                'data' => $data,
+                'data' => [
+                    'status_kehamilan' => $status_kehamilan,
+                    'triage' => $triage,
+                ],
 
             ]);
 
@@ -10729,6 +10796,20 @@ class AddOnPengkajianController extends Controller
             ], 422);
         }
 
+        $getDataKunjungan = DB::table('pendaftaran.kunjungan as pk')
+            ->join(
+                'pendaftaran.pendaftaran as pp',
+                'pp.NOMOR',
+                '=',
+                'pk.NOPEN'
+            )
+            ->select(
+                'pp.NORM',
+                'pp.NOMOR as NOPEN'
+            )
+            ->where('pk.NOMOR', $request->NOKUNJ)
+            ->first();
+
         try {
 
             DB::table(
@@ -10769,6 +10850,59 @@ class AddOnPengkajianController extends Controller
                 ]
             );
 
+            // ==========================================
+            // OBGYN
+            // ==========================================
+
+            $obgyn = [
+                'USIA_GESTASI'     => $request->input('ko_ug') ?? '',
+                'KONTRAKSI_UTERUS' => $request->input('ko_ku') ?? '',
+                'DETAK_JANTUNG'    => $request->input('ko_dj') ?? '',
+                'DILATASI_SERVIKS' => $request->input('ko_ds') ?? '',
+            ];
+
+
+            // ==========================================
+            // KEBUTUHAN KHUSUS
+            // ==========================================
+
+            $kebutuhanKhusus = [
+                'AIRBONE'      => $request->input('kk_a') ?? '',
+                'DEKONTAMINAN' => $request->input('kk_d') ?? '',
+            ];
+
+
+            DB::table('medicalrecord.triage')->updateOrInsert(
+                [
+                    'NORM' =>
+                        $getDataKunjungan->NORM,
+                    'KUNJUNGAN' =>
+                        $request->NOKUNJ,
+                    'NOPEN' =>
+                        $getDataKunjungan->NOPEN
+                ],
+                [
+                    // ==============================
+                    // OBGYN
+                    // ==============================
+                    'OBGYN' => json_encode(
+                        $obgyn,
+                        JSON_UNESCAPED_UNICODE
+                    ),
+
+                    // ==============================
+                    // KEBUTUHAN KHUSUS
+                    // ==============================
+                    'KEBUTUHAN_KHUSUS' => json_encode(
+                        $kebutuhanKhusus,
+                        JSON_UNESCAPED_UNICODE
+                    ),
+
+                    'OLEH'    => auth()->id(),
+                    'STATUS'  => 2,
+                    'TANGGAL' => now(),
+                ]
+            );
 
             return response()->json([
 

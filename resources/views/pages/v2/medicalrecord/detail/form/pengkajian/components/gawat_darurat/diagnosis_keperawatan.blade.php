@@ -6,7 +6,7 @@
     <div class="card card-body border border-dashed border-danger mb-3">
 
         <h6 class="mb-3">
-            Diagnosis Keperawatan
+            Masalah Keperawatan
         </h6>
 
 
@@ -171,7 +171,7 @@
                 <div class="form-group">
 
                     <label class="form-label">
-                        Masalah Lain
+                        Masalah Keperawatan Lain
                     </label>
 
                     <textarea

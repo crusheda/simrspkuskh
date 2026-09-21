@@ -129,6 +129,62 @@
 
             </div>
 
+            <div class="col-md-12 mb-3">
+                <h6>Khusus Obgyn</h6>
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <div class="form-group">
+                            <label class="form-label">Usia Gestasi</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="ko_ug">
+                                <div class="input-group-text">Minggu</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="form-group">
+                            <label class="form-label">Kontrasi Uterus</label>
+                            <input type="text" class="form-control" name="ko_ku">
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <div class="form-group">
+                            <label class="form-label">Detak Jantung Janin</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="ko_dj">
+                                <div class="input-group-text">X/menit</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">Dilatasi Serviks</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="ko_ds">
+                                <div class="input-group-text">cm</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 mb-3">
+                <h6>Kebutuhan Khusus</h6>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <div class="form-group">
+                            <label class="form-label">Airbone</label>
+                            <input type="text" class="form-control" name="kk_a">
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <div class="form-group">
+                            <label class="form-label">Dekontaminan</label>
+                            <input type="text" class="form-control" name="kk_d">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -199,19 +255,33 @@
         $form
             .find('[name="sh_g"]')
             .val('');
-
         $form
             .find('[name="sh_p"]')
             .val('');
-
         $form
             .find('[name="sh_a"]')
             .val('');
-
         $form
             .find('[name="sh_h"]')
             .val('');
-
+        $form
+            .find('[name="ko_ug"]')
+            .val('');
+        $form
+            .find('[name="ko_ku"]')
+            .val('');
+        $form
+            .find('[name="ko_dj"]')
+            .val('');
+        $form
+            .find('[name="ko_ds"]')
+            .val('');
+        $form
+            .find('[name="kk_a"]')
+            .val('');
+        $form
+            .find('[name="kk_d"]')
+            .val('');
     }
 
 
@@ -250,48 +320,79 @@
                 }
 
 
-                const data =
-                    res.data;
+                const sk = res.data.status_kehamilan ?? '';
+                const tg = res.data.triage ?? '';
 
+                /*
+                * =====================================================
+                * PARSE JSON DARI DATABASE
+                * =====================================================
+                */
+                let obgyn = {};
+                let kebutuhan_khusus = {};
 
-                FormHelper.setSingleCheckbox(
-                    $form,
-                    'sh',
-                    data.STATUS_REPRODUKSI
-                );
+                try {
+                    obgyn = tg.OBGYN
+                        ? JSON.parse(tg.OBGYN)
+                        : {};
+                } catch (e) {
+                    console.error('Gagal parse OBGYN:', e);
+                }
+
+                try {
+                    kebutuhan_khusus = tg.KEBUTUHAN_KHUSUS
+                        ? JSON.parse(tg.KEBUTUHAN_KHUSUS)
+                        : {};
+                } catch (e) {
+                    console.error('Gagal parse KEBUTUHAN_KHUSUS:', e);
+                }
+
+                if (FormHelper.hasValue(sk.STATUS_REPRODUKSI)) {
+                    FormHelper.setSingleCheckbox(
+                        $form,
+                        'sh',
+                        sk.STATUS_REPRODUKSI
+                    );
+                }
 
 
                 FormHelper.setValue(
                     $form,
                     'sh_g',
-                    data.HAMIL_GRAVIDA
+                    sk.HAMIL_GRAVIDA
                 );
 
 
                 FormHelper.setValue(
                     $form,
                     'sh_p',
-                    data.HAMIL_PARITAS
+                    sk.HAMIL_PARITAS
                 );
 
 
                 FormHelper.setValue(
                     $form,
                     'sh_a',
-                    data.HAMIL_ABORTUS
+                    sk.HAMIL_ABORTUS
                 );
 
 
                 FormHelper.setValue(
                     $form,
                     'sh_h',
-                    data.HPHT
+                    sk.HPHT
                 );
 
+                FormHelper.setValue($form, 'ko_ug', obgyn.USIA_GESTASI);
+                FormHelper.setValue($form, 'ko_ku', obgyn.KONTRAKSI_UTERUS);
+                FormHelper.setValue($form, 'ko_dj', obgyn.DETAK_JANTUNG);
+                FormHelper.setValue($form, 'ko_ds', obgyn.DILATASI_SERVIKS);
+                FormHelper.setValue($form, 'kk_a', kebutuhan_khusus.AIRBONE);
+                FormHelper.setValue($form, 'kk_d', kebutuhan_khusus.DEKONTAMINAN);
 
                 const status =
                     String(
-                        data.STATUS_REPRODUKSI ?? ''
+                        sk.STATUS_REPRODUKSI ?? ''
                     );
 
 

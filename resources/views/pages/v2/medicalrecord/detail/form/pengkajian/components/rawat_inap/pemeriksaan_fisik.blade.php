@@ -1109,7 +1109,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group mb-3">
-                    <h6>Oedema</h6>
+                    <h6>Edema</h6>
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0 flex-shrink-0">
                             <input class="form-check-input single-checkbox"

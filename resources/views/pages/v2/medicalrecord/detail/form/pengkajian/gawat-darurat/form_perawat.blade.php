@@ -11,6 +11,7 @@
                         'kunjungan' => $kunjungan ?? $list['kunjungan'],
                     ]
                 )
+                @include( 'pages.v2.medicalrecord.detail.form.pengkajian.components.gawat_darurat.status_kehamilan', ['section' => '#gd_perawat','kunjungan' => $kunjungan ?? $list['kunjungan']])
             </div>
             <div class="col-md-12">
                 <div class="card card-body border border-dashed border-primary mb-3">
@@ -42,9 +43,6 @@
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_gizi_must', ['section' => '#gd_perawat'])
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_gizi_strong_kid', ['section' => '#gd_perawat'])
                 </div>
-            </div>
-            <div class="col-md-12">
-                @include( 'pages.v2.medicalrecord.detail.form.pengkajian.components.gawat_darurat.status_kehamilan', ['section' => '#gd_perawat','kunjungan' => $kunjungan ?? $list['kunjungan']])
             </div>
             <div class="col-md-12">
                 @include( 'pages.v2.medicalrecord.detail.form.pengkajian.components.gawat_darurat.implementasi_keperawatan', ['section' => '#gd_perawat','kunjungan' => $kunjungan ?? $list['kunjungan']])

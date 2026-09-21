@@ -1,5 +1,5 @@
 <div id="form_ats"
-     class="form-wrapper"
+     class=""
      data-kunjungan="{{ $kunjungan }}">
 
     {{-- ========================================================= --}}

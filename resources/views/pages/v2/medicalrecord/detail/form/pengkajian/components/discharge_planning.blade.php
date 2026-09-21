@@ -14,11 +14,11 @@
                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_1" value="0">
-                        <label class="form-check-label">Tidak Ada</label>
+                        <label class="form-check-label">Tidak</label>
                     </div>
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_1" value="1">
-                        <label class="form-check-label">Ada</label>
+                        <label class="form-check-label">Ya</label>
                     </div>
                 </div>
             </div>
@@ -30,11 +30,11 @@
                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_2" value="0">
-                        <label class="form-check-label">Tidak Ada</label>
+                        <label class="form-check-label">Tidak</label>
                     </div>
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_2" value="1">
-                        <label class="form-check-label">Ada</label>
+                        <label class="form-check-label">Ya</label>
                     </div>
                 </div>
             </div>
@@ -46,11 +46,11 @@
                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_3" value="0">
-                        <label class="form-check-label">Tidak Ada</label>
+                        <label class="form-check-label">Tidak</label>
                     </div>
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_3" value="1">
-                        <label class="form-check-label">Ada</label>
+                        <label class="form-check-label">Ya</label>
                     </div>
                 </div>
             </div>
@@ -62,11 +62,11 @@
                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_4" value="0">
-                        <label class="form-check-label">Tidak Ada</label>
+                        <label class="form-check-label">Tidak</label>
                     </div>
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_4" value="1">
-                        <label class="form-check-label">Ada</label>
+                        <label class="form-check-label">Ya</label>
                     </div>
                 </div>
             </div>
@@ -78,18 +78,18 @@
                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_5" value="0">
-                        <label class="form-check-label">Tidak Ada</label>
+                        <label class="form-check-label">Tidak</label>
                     </div>
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_5" value="1">
-                        <label class="form-check-label">Ada</label>
+                        <label class="form-check-label">Ya</label>
                     </div>
                 </div>
             </div>
 
             <div class="card card-body border border-dashed border-light shadow-sm mb-3 mt-2" id="tampil_dp_5" hidden>
                 <div class="row">
-                    <h6>Jika Ada, sebutkan :</h6>
+                    <h6>Jika Ya, sebutkan :</h6>
                     <div class="col-md-6">
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="checkbox" name="dp_5_1" value="1">
@@ -126,18 +126,18 @@
                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_9" value="0">
-                        <label class="form-check-label">Tidak Ada</label>
+                        <label class="form-check-label">Tidak</label>
                     </div>
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_9" value="1">
-                        <label class="form-check-label">Ada</label>
+                        <label class="form-check-label">Ya</label>
                     </div>
                 </div>
             </div>
 
             <div class="card card-body border border-dashed border-light shadow-sm mb-3 mt-2" id="tampil_dp_9" hidden>
                 <div class="row">
-                    <h6>Jika Ada, sebutkan :</h6>
+                    <h6>Jika Ya, sebutkan :</h6>
                     <div class="col-md-6">
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="checkbox" name="dp_9_1" value="1">
@@ -190,11 +190,11 @@
                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_6" value="0">
-                        <label class="form-check-label">Tidak Ada</label>
+                        <label class="form-check-label">Tidak</label>
                     </div>
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_6" value="1">
-                        <label class="form-check-label">Ada</label>
+                        <label class="form-check-label">Ya</label>
                     </div>
                 </div>
             </div>
@@ -206,11 +206,11 @@
                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_7" value="0">
-                        <label class="form-check-label">Tidak Ada</label>
+                        <label class="form-check-label">Tidak</label>
                     </div>
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_7" value="1">
-                        <label class="form-check-label">Ada</label>
+                        <label class="form-check-label">Ya</label>
                     </div>
                 </div>
             </div>
@@ -222,11 +222,11 @@
                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_8" value="0">
-                        <label class="form-check-label">Tidak Ada</label>
+                        <label class="form-check-label">Tidak</label>
                     </div>
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_8" value="1">
-                        <label class="form-check-label">Ada</label>
+                        <label class="form-check-label">Ya</label>
                     </div>
                 </div>
             </div>
@@ -238,18 +238,18 @@
                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_10" value="0">
-                        <label class="form-check-label">Tidak Ada</label>
+                        <label class="form-check-label">Tidak</label>
                     </div>
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_10" value="1">
-                        <label class="form-check-label">Ada</label>
+                        <label class="form-check-label">Ya</label>
                     </div>
                 </div>
             </div>
 
             <div class="card card-body border border-dashed border-light shadow-sm mb-3 mt-2" id="tampil_dp_10" hidden>
                 <div class="row">
-                    <h6>Jika Ada, sebutkan :</h6>
+                    <h6>Jika Ya, sebutkan :</h6>
                     <div class="col-md-6">
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="checkbox" name="dp_10_1" value="1">
@@ -286,18 +286,18 @@
                 <div class="d-flex align-items-center gap-3 flex-shrink-0">
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_11" value="0">
-                        <label class="form-check-label">Tidak Ada</label>
+                        <label class="form-check-label">Tidak</label>
                     </div>
                     <div class="form-check m-0">
                         <input class="form-check-input single-checkbox-bos" type="checkbox" name="dp_11" value="1">
-                        <label class="form-check-label">Ada</label>
+                        <label class="form-check-label">Ya</label>
                     </div>
                 </div>
             </div>
 
             <div class="card card-body border border-dashed border-light shadow-sm mb-3 mt-2" id="tampil_dp_11" hidden>
                 <div class="row">
-                    <h6>Jika Ada :</h6>
+                    <h6>Jika Ya :</h6>
                     <div class="col-md-6">
                         <div class="form-check mb-2">
                             <input class="form-check-input single-checkbox" type="checkbox" name="dp_11_skrining" value="1">

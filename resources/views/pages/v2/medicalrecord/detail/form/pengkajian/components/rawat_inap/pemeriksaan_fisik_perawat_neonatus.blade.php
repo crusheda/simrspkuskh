@@ -59,7 +59,7 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6>Inspeks</h6>
+                    <h6>Inspeksi</h6>
                     <div class="d-flex align-items-center flex-wrap gap-3">
                         <div class="form-check mb-0">
                             <input class="form-check-input single-checkbox" type="checkbox" name="pfn_in" value="1">

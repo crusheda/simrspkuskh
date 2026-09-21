@@ -157,61 +157,6 @@
                 ]
             )
         </div>
-        <div class="col-md-12 mb-3">
-            <h6>Khusus Obgyn</h6>
-            <div class="row">
-                <div class="col-md-3 mb-2">
-                    <div class="form-group">
-                        <label class="form-label">Usia Gestasi</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" name="ko_ug">
-                            <div class="input-group-text">Minggu</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mb-2">
-                    <div class="form-group">
-                        <label class="form-label">Kontrasi Uterus</label>
-                        <input type="text" class="form-control" name="ko_ku">
-                    </div>
-                </div>
-                <div class="col-md-3 mb-2">
-                    <div class="form-group">
-                        <label class="form-label">Detak Jantung Janin</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" name="ko_dj">
-                            <div class="input-group-text">X/menit</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label class="form-label">Dilatasi Serviks</label>
-                        <div class="input-group">
-                            <input type="number" class="form-control" name="ko_ds">
-                            <div class="input-group-text">cm</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12 mb-3">
-            <h6>Kebutuhan Khusus</h6>
-            <div class="row">
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label class="form-label">Airbone</label>
-                        <input type="text" class="form-control" name="kk_a">
-                    </div>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <div class="form-group">
-                        <label class="form-label">Dekontaminan</label>
-                        <input type="text" class="form-control" name="kk_d">
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -346,8 +291,6 @@
                     let kasus = {};
                     let anamnesis = {};
                     let tandaVital = {};
-                    let obgyn = {};
-                    let kebutuhanKhusus = {};
 
                     try {
                         kedatangan = triage.KEDATANGAN
@@ -380,23 +323,6 @@
                     } catch (e) {
                         console.error('Gagal parse TANDA_VITAL:', e);
                     }
-
-                    try {
-                        obgyn = triage.OBGYN
-                            ? JSON.parse(triage.OBGYN)
-                            : {};
-                    } catch (e) {
-                        console.error('Gagal parse OBGYN:', e);
-                    }
-
-                    try {
-                        kebutuhanKhusus = triage.KEBUTUHAN_KHUSUS
-                            ? JSON.parse(triage.KEBUTUHAN_KHUSUS)
-                            : {};
-                    } catch (e) {
-                        console.error('Gagal parse KEBUTUHAN_KHUSUS:', e);
-                    }
-
 
                     /*
                     * =====================================================
@@ -518,33 +444,6 @@
                         anm_ku: anamnesis.KELUHAN_UTAMA,
                         anm_tp: anamnesis.TERPIMPIN,
 
-
-                        /* =========================
-                        * TANDA VITAL
-                        * ========================= */
-                        // tv_sh: tandaVital.SUHU,
-                        // tv_up: tandaVital.SISTOLE,
-                        // tv_down: tandaVital.DIASTOLE,
-                        // tv_nadi: tandaVital.FREK_NADI,
-                        // tv_fr: tandaVital.FREK_NAFAS,
-                        // tv_mu: tandaVital.METODE_UKUR,
-                        // tv_sn: tandaVital.SKALA_NYERI,
-
-
-                        /* =========================
-                        * OBGYN
-                        * ========================= */
-                        ko_ug: obgyn.USIA_GESTASI,
-                        ko_ku: obgyn.KONTRAKSI_UTERUS,
-                        ko_dj: obgyn.DETAK_JANTUNG,
-                        ko_ds: obgyn.DILATASI_SERVIKS,
-
-
-                        /* =========================
-                        * KEBUTUHAN KHUSUS
-                        * ========================= */
-                        kk_a: kebutuhanKhusus.AIRBONE,
-                        kk_d: kebutuhanKhusus.DEKONTAMINAN
                     };
 
 

@@ -16,9 +16,9 @@
                 <div class="form-group d-flex align-items-center mb-3">
                     <div class="form-check form-check-inline">
                         <input
-                            class="form-check-input check-primary single-checkbox"
+                            class="form-check-input check-primary"
                             type="checkbox"
-                            name="anam"
+                            name="anam1"
                             value="1"
                             id="{{ $instance }}_anam_1"
                         >
@@ -29,10 +29,10 @@
 
                     <div class="form-check form-check-inline">
                         <input
-                            class="form-check-input check-primary single-checkbox"
+                            class="form-check-input check-primary"
                             type="checkbox"
-                            name="anam"
-                            value="2"
+                            name="anam2"
+                            value="1"
                             id="{{ $instance }}_anam_2"
                         >
                         <label class="form-check-label" for="{{ $instance }}_anam_2">
@@ -443,39 +443,39 @@
                 // ==================================================
                 // ANAMNESIS DIPEROLEH
                 // ==================================================
-                if (anam1) {
-                    let anamnesisDiperoleh = null;
+                if (String(anam1.AUTOANAMNESIS) === '1') {
+                    const $anamCheckboxes1 = $form.find(
+                        'input[type="checkbox"][name="anam1"]'
+                    );
 
-                    if (String(anam1.AUTOANAMNESIS) === '1') {
-                        anamnesisDiperoleh = '1';
-                    } else if (String(anam1.ALLOANAMNESIS) === '1') {
-                        anamnesisDiperoleh = '2';
-                    }
+                    // Hanya reset checkbox pada form dokter/perawat ini saja.
+                    $anamCheckboxes1.prop('checked', false);
 
-                    if (anamnesisDiperoleh !== null) {
-                        const $anamCheckboxes = $form.find(
-                            'input[type="checkbox"][name="anam"]'
-                        );
+                    // Centang sesuai value hanya pada form ini.
+                    $anamCheckboxes1.prop('checked', true);
+                }
+                if (String(anam1.ALLOANAMNESIS) === '1') {
+                    const $anamCheckboxes2 = $form.find(
+                        'input[type="checkbox"][name="anam2"]'
+                    );
 
-                        // Hanya reset checkbox pada form dokter/perawat ini saja.
-                        $anamCheckboxes.prop('checked', false);
+                    // Hanya reset checkbox pada form dokter/perawat ini saja.
+                    $anamCheckboxes2.prop('checked', false);
 
-                        // Centang sesuai value hanya pada form ini.
-                        $anamCheckboxes
-                            .filter(`[value="${anamnesisDiperoleh}"]`)
-                            .prop('checked', true);
-                    }
-                    // PENGISIAN dari
-                    if (
-                        anam1.DARI &&
-                        FormHelper.hasValue(anam1.DARI)
-                    ) {
-                        FormHelper.setValue(
-                            $section,
-                            'dari',
-                            anam1.DARI
-                        );
-                    }
+                    // Centang sesuai value hanya pada form ini.
+                    $anamCheckboxes2.prop('checked', true);
+                }
+
+                // PENGISIAN dari
+                if (
+                    anam1.DARI &&
+                    FormHelper.hasValue(anam1.DARI)
+                ) {
+                    FormHelper.setValue(
+                        $section,
+                        'dari',
+                        anam1.DARI
+                    );
                 }
 
                 // ==================================================
@@ -744,10 +744,12 @@
 
         const formSelector = '[data-anamnesis-form]';
 
+        // ==========================================================
         // ANAMNESIS DIPEROLEH
+        // ==========================================================
         $section
-            .off('change.anam', `${formSelector} input[name="anam"]`)
-            .on('change.anam', `${formSelector} input[name="anam"]`, function () {
+            .off('change.anam1', `input[name="anam1"]`)
+            .on('change.anam1', `input[name="anam1"]`, function () {
                 if (isAnamnesisRILoading) {
                     return;
                 }
@@ -755,10 +757,19 @@
                 const $this = $(this);
 
                 setTimeout(function () {
-                    if (!$this.is(':checked')) {
-                        return;
-                    }
+                    simpanAnamnesisRI();
+                }, 0);
+            });
+        $section
+            .off('change.anam2', `input[name="anam2"]`)
+            .on('change.anam2', `input[name="anam2"]`, function () {
+                if (isAnamnesisRILoading) {
+                    return;
+                }
 
+                const $this = $(this);
+
+                setTimeout(function () {
                     simpanAnamnesisRI();
                 }, 0);
             });

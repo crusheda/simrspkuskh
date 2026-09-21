@@ -937,38 +937,37 @@
                 <div class="row">
 
                     {{-- KEADAAN UMUM --}}
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-12 mb-3">
 
-                        <div class="form-group mb-3">
+                        <div class="form-group">
 
                             <h6>
                                 Keadaan Umum
                             </h6>
 
-                            <div class="form-group">
-
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    name="p_keu"
-                                >
-
-                            </div>
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="p_keu"
+                            >
 
                         </div>
 
+                    </div>
+
+                    <div class="col-md-6 mb-3">
 
                         {{-- JALAN NAFAS --}}
-                        <div class="d-flex align-items-center gap-3">
+                        <div class="form-group">
 
-                            <h6 class="mb-0">
+                            <h6 class="mb-2">
                                 Jalan Nafas
                                 (
                                 <b class="text-warning">A</b>
                                 )
                             </h6>
 
-                            <div class="form-check m-0">
+                            <div class="form-check mb-2">
 
                                 <input
                                     class="form-check-input check-primary single-checkbox"
@@ -983,7 +982,7 @@
 
                             </div>
 
-                            <div class="form-check m-0">
+                            <div class="form-check mb-2">
 
                                 <input
                                     class="form-check-input check-primary single-checkbox"
@@ -998,7 +997,7 @@
 
                             </div>
 
-                            <div class="form-check m-0">
+                            <div class="form-check">
 
                                 <input
                                     class="form-check-input check-primary single-checkbox"

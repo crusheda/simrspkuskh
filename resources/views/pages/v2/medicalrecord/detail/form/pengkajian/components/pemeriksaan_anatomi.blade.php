@@ -316,31 +316,101 @@
                 {{-- Ronchi --}}
                 <div class="form-group mb-3">
                     <div class="d-flex align-items-center gap-3">
-                        <label class="form-label fw-bold flex-shrink-0">Ronchi</label>
-                        <div class="form-check flex-shrink-0 m-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" data-target="#pf_ronchi_lain" name="pf_ronchi" value="1">
-                            <label class="form-check-label">Tidak Ada</label>
+
+                        <label class="form-label fw-bold flex-shrink-0">
+                            Ronchi
+                        </label>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <input
+                                class="form-control form-control-sm pf-plus-minus"
+                                type="text"
+                                name="pf_ronchi_left"
+                                placeholder="+ / -"
+                                maxlength="1"
+                                pattern="[+\-]"
+                                inputmode="text"
+                                autocomplete="off"
+                                style="width:60px;"
+                            >
                         </div>
-                        <div class="form-check flex-shrink-0 m-0">
-                            <input class="form-check-input single-checkbox buka-lainnya" type="checkbox" data-target="#pf_ronchi_lain" name="pf_ronchi" value="2">
-                            <label class="form-check-label">Ada</label>
+
+                        <span class="text-danger fw-bold">
+                            /
+                        </span>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <input
+                                class="form-control form-control-sm pf-plus-minus"
+                                type="text"
+                                name="pf_ronchi_right"
+                                placeholder="+ / -"
+                                maxlength="1"
+                                pattern="[+\-]"
+                                inputmode="text"
+                                autocomplete="off"
+                                style="width:60px;"
+                            >
                         </div>
-                        <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_ronchi_lain" id="pf_ronchi_lain" disabled>
+
+                        <input
+                            type="text"
+                            class="form-control form-control-sm flex-grow-1"
+                            name="pf_ronchi_lain"
+                            id="pf_ronchi_lain"
+                            disabled
+                        >
+
                     </div>
                 </div>
                 {{-- Wheezing --}}
                 <div class="form-group mb-3">
                     <div class="d-flex align-items-center gap-3">
-                        <label class="form-label fw-bold flex-shrink-0">Wheezing</label>
-                        <div class="form-check flex-shrink-0 m-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" data-target="#pf_wheezing_lain" name="pf_wheezing" value="1">
-                            <label class="form-check-label">Tidak Ada</label>
+
+                        <label class="form-label fw-bold flex-shrink-0">
+                            Wheezing
+                        </label>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <input
+                                class="form-control form-control-sm pf-plus-minus"
+                                type="text"
+                                name="pf_wheezing_left"
+                                placeholder="+ / -"
+                                maxlength="1"
+                                pattern="[+\-]"
+                                inputmode="text"
+                                autocomplete="off"
+                                style="width:60px;"
+                            >
                         </div>
-                        <div class="form-check flex-shrink-0 m-0">
-                            <input class="form-check-input single-checkbox buka-lainnya" type="checkbox" data-target="#pf_wheezing_lain" name="pf_wheezing" value="2">
-                            <label class="form-check-label">Ada</label>
+
+                        <span class="text-danger fw-bold">
+                            /
+                        </span>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <input
+                                class="form-control form-control-sm pf-plus-minus"
+                                type="text"
+                                name="pf_wheezing_right"
+                                placeholder="+ / -"
+                                maxlength="1"
+                                pattern="[+\-]"
+                                inputmode="text"
+                                autocomplete="off"
+                                style="width:60px;"
+                            >
                         </div>
-                        <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_wheezing_lain" id="pf_wheezing_lain" disabled>
+
+                        <input
+                            type="text"
+                            class="form-control form-control-sm flex-grow-1"
+                            name="pf_wheezing_lain"
+                            id="pf_wheezing_lain"
+                            disabled
+                        >
+
                     </div>
                 </div>
                 {{-- Kelainan Dada --}}
@@ -484,7 +554,7 @@
             <div class="col-md-6">
                 <div class="form-group mb-3">
                     <div class="d-flex align-items-center gap-3">
-                        <label class="form-label fw-bold flex-shrink-0">Extremitas</label>
+                        <label class="form-label fw-bold flex-shrink-0">Edema</label>
                         <div class="d-flex align-items-center gap-3 ms-auto">
                             <div class="form-check m-0">
                                 <input class="form-check-input" type="checkbox" name="pf_extremitas_hangat">
@@ -810,6 +880,19 @@ $(function(){
             simpanFormAnatomi();
         }
     );
+
+    $component.on('input', '.pf-plus-minus', function () {
+        const value = $(this).val();
+
+        // Hanya izinkan + atau -
+        $(this).val(
+            value
+                .split('')
+                .filter(char => char === '+' || char === '-')
+                .slice(0, 1)
+                .join('')
+        );
+    });
 
     /* ==========================================================
        PUBLIC FUNCTION TOGGLE
