@@ -61,7 +61,7 @@
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_penunjang',['section' => '#rio_perawat'])
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial',['section' => '#rio_perawat'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial',['section' => '#rio_perawat','kunjungan' => $kunjungan ?? $list['kunjungan']])
             </div>
             <div class="col-md-12 mb-3">
                 <div class="form-group mb-2">

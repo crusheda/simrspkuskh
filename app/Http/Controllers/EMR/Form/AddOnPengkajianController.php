@@ -2607,6 +2607,64 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    public function getHubunganStatusFungsional(string $kunjungan)
+    {
+        $data = DB::table('medicalrecord.status_fungsional')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first();
+
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
+
+    public function simpanHubunganStatusFungsional(
+        Request $request,
+        string $kunjungan
+    ) {
+        $alatBantu = $request->input('alat_bantu_fungsional');
+
+        DB::table('medicalrecord.status_fungsional')
+            ->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $kunjungan,
+                ],
+                [
+                    // Alat bantu
+                    'TANPA_ALAT_BANTU' => $alatBantu === 'tanpa' ? 1 : 0,
+                    'TONGKAT'          => $alatBantu === 'tongkat' ? 1 : 0,
+                    'KURSI_RODA'       => $alatBantu === 'kursi_roda' ? 1 : 0,
+                    'BRANKARD'         => $alatBantu === 'brankard' ? 1 : 0,
+                    'WALKER'           => $alatBantu === 'walker' ? 1 : 0,
+
+                    // Alat bantu lainnya
+                    'ALAT_BANTU' =>
+                        $request->input('alat_bantu', ''),
+
+                    // Cacat tubuh
+                    'CACAT_TUBUH_TIDAK' =>
+                        $request->input('cacat_tubuh') == '0' ? 1 : 0,
+
+                    'CACAT_TUBUH_YA' =>
+                        $request->input('cacat_tubuh') == '1' ? 1 : 0,
+
+                    // Keterangan cacat tubuh
+                    'KET_CACAT_TUBUH' =>
+                        $request->input('ket_cacat_tubuh') ?? '',
+
+                    'OLEH'    => auth()->id(),
+                    'STATUS'  => 1,
+                    'TANGGAL' => now(),
+                ]
+            );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status Fungsional berhasil disimpan.',
+        ]);
+    }
+
     function getKebutuhanEdukasi($KUNJUNGAN)
     {
         $edu1 = $this->getData(

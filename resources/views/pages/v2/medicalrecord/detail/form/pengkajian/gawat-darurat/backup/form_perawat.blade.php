@@ -547,7 +547,7 @@
             </div>
             <div class="col-md-12">
                 <div class="card card-body border border-dashed border-primary mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial', ['section' => '#gd_perawat'])
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial', ['section' => '#gd_perawat','kunjungan' => $kunjungan ?? $list['kunjungan']])
                 </div>
             </div>
             <div class="col-md-12">

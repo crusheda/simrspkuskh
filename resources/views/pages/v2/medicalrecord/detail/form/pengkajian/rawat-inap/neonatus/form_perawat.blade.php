@@ -38,7 +38,7 @@
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.pemeriksaan_fisik_perawat_neonatus',['section' => '#rin_perawat'])
         </div>
         <div class="col-md-12 mb-3">
-            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial',['section' => '#rin_perawat'])
+            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_psikososial',['section' => '#rin_perawat','kunjungan' => $kunjungan ?? $list['kunjungan']])
         </div>
         <div class="col-md-12 mb-3">
             <div class="form-group mb-2">

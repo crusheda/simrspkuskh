@@ -288,6 +288,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // HUBUNGAN STATUS PSIKOSOSIAL
                     Route::get('emr/pengkajian/hubunganstatuspsikososial/{kunjungan}', [AddOnPengkajianController::class, 'getHubunganStatusPsikososial']);
                     Route::post('emr/pengkajian/hubunganstatuspsikososial/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanHubunganStatusPsikososial']);
+                // HUBUNGAN STATUS FUNGSIONAL
+                    Route::get('emr/pengkajian/hubunganstatusfungsional/{kunjungan}', [AddOnPengkajianController::class, 'getHubunganStatusFungsional']);
+                    Route::post('emr/pengkajian/hubunganstatusfungsional/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanHubunganStatusFungsional']);
                 // KEBUTUHAN EDUKASI
                     Route::get('emr/pengkajian/edukasi/{kunjungan}', [AddOnPengkajianController::class, 'getKebutuhanEdukasi']);
                     Route::post('emr/pengkajian/edukasi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanKebutuhanEdukasi']);

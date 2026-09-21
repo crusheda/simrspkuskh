@@ -275,6 +275,11 @@
             </div>
         </div>
     </div>
+    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.anamnesis_hubungan_status_fungsional',[
+        'section' => $section,
+        'kunjungan' => $kunjungan,
+        'instance' => $section
+    ])
 </div>
 
 <script>
