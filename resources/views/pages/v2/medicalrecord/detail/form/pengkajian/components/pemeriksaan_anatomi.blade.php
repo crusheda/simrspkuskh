@@ -93,7 +93,7 @@
                             </div>
                             <div class="d-flex align-items-center">
                                 <label class="form-label mb-0 flex-shrink-0" style="width: 120px;">
-                                    Udema Palpebrae
+                                    Edema Palpebrae
                                 </label>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="form-check m-0">
@@ -502,7 +502,7 @@
             <div class="col-md-6">
                 <div class="form-group mb-3">
                     <div class="d-flex align-items-center gap-3">
-                        <label class="form-label fw-bold flex-shrink-0">Udema Palpebrae</label>
+                        <label class="form-label fw-bold flex-shrink-0">Edema Palpebrae</label>
                         <div class="d-flex align-items-center gap-3 ms-auto">
                             <div class="form-check m-0">
                                 <input class="form-check-input single-checkbox" type="checkbox" data-target="#pf_udem_lain" name="pf_udem" value="0">

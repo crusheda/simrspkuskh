@@ -570,7 +570,7 @@ class FinalisasiController extends Controller
 
                 "Kulit: {$kulitcp}",
 
-                "<br>",
+                "",
 
                 "<div style='color:#9CC96B'>Pemeriksaan Fisik: </div>"
                     . ($pemeriksaanFisik->DESKRIPSI ?? '-'),
@@ -627,7 +627,7 @@ class FinalisasiController extends Controller
             ->implode("\n");
 
         $cppt_a =
-            "<div style='color:#9CC96B'>Diagnosa Dokter:</div>" .
+            // "<div style='color:#9CC96B'>Diagnosa Dokter:</div>" .
             $diagnosa;
 
 
@@ -1072,6 +1072,8 @@ class FinalisasiController extends Controller
 
         $o = [];
 
+        $o[] = "<b style='color:#9CC96B'>Pemeriksaan Umum</b>";
+
         if ($tandaVital) {
 
             $o[] = $this->soapLine(
@@ -1090,15 +1092,17 @@ class FinalisasiController extends Controller
                     ' mmHg';
             }
 
+            $freknadicb = '';
+            if ($tandaVital->FREKUENSI_NADI_CB == 1) {
+                $freknadicb = 'Reguler';
+            } else {
+                $freknadicb = 'Ireguler';
+            }
+
             if ($tandaVital->FREKUENSI_NADI !== null) {
                 $o[] = 'Nadi: ' .
                     $tandaVital->FREKUENSI_NADI .
-                    ' x/menit';
-            }
-
-            if ($tandaVital->FREKUENSI_NADI_CB !== null) {
-                $o[] = 'Nadi Catatan: ' .
-                    $tandaVital->FREKUENSI_NADI_CB;
+                    ' x/menit' . ($freknadicb != '' ? " ({$freknadicb})" : "");
             }
 
             if ($tandaVital->SUHU !== null) {
@@ -1113,25 +1117,27 @@ class FinalisasiController extends Controller
                     ' %';
             }
 
+            $freknafascb = '';
+            if ($tandaVital->FREKUENSI_NADI_CB == 1) {
+                $freknafascb = 'Simetris';
+            } else {
+                $freknafascb = 'Asimetris';
+            }
+
             if ($tandaVital->FREKUENSI_NAFAS !== null) {
                 $o[] = 'RR: ' .
                     $tandaVital->FREKUENSI_NAFAS .
-                    ' x/menit';
-            }
-
-            if ($tandaVital->FREKUENSI_NAFAS_CB !== null) {
-                $o[] = 'RR Catatan: ' .
-                    $tandaVital->FREKUENSI_NAFAS_CB;
+                    ' x/menit' . ($freknafascb != '' ? " ({$freknafascb})" : "");
             }
 
             if ($tandaVital->GCS !== null) {
                 $o[] = 'GCS: ' .
                     $tandaVital->GCS .
-                    ' (E' .
+                    ' (E/' .
                     ($tandaVital->EYE ?? '-') .
-                    ' V' .
+                    ' V/' .
                     ($tandaVital->VERBAL ?? '-') .
-                    ' M' .
+                    ' M/' .
                     ($tandaVital->MOTORIK ?? '-') .
                     ')';
             }
@@ -1163,6 +1169,8 @@ class FinalisasiController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        $o[] = "<b style='color:#9CC96B'>Pemeriksaan Fisik</b>";
+
         $anatomi = DB::table('medicalrecord.sirmed_pemeriksaan_anatomi')
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
@@ -1173,40 +1181,54 @@ class FinalisasiController extends Controller
             // Mata
             $mata = [];
 
-            if ($this->soapValue($anatomi->pf_anemis)) {
-                $mata[] = 'Anemis';
+            if ($this->soapValue($anatomi->pf_anemis) == 0) {
+                $mata[] = 'Anemis (-)';
+            } else if ($this->soapValue($anatomi->pf_anemis) == 1) {
+                $mata[] = 'Anemis (+)';
+            } else {}
+
+            if ($this->soapValue($anatomi->pf_ikterus) == 0) {
+                $mata[] = 'Ikterus (-)';
+            } else if ($this->soapValue($anatomi->pf_ikterus) == 1) {
+                $mata[] = 'Ikterus (+)';
+            } else {}
+
+            if ($this->soapValue($anatomi->pf_upal) == 0) {
+                $mata[] = 'Udema Palpebrae (-)';
+            } else if ($this->soapValue($anatomi->pf_upal) == 1) {
+                $mata[] = 'Udema Palpebrae (+)';
+            } else {}
+
+            // if ($this->soapValue($anatomi->pf_ikterus)) {
+            //     $mata[] = 'Ikterus';
+            // }
+
+            // if ($this->soapValue($anatomi->pf_upal)) {
+            //     $mata[] = 'Udema Palpebrae';
+            // }
+
+            if ($this->soapValue($anatomi->pf_pupil) == 1) {
+                $mata[] = 'Pupil Isokor';
+            } else {
+                $mata[] = 'Pupil Anisokor';
             }
 
-            if ($this->soapValue($anatomi->pf_ikterus)) {
-                $mata[] = 'Ikterus';
-            }
-
-            if ($this->soapValue($anatomi->pf_upal)) {
-                $mata[] = 'Pupil isokor';
-            }
-
-            if ($this->soapValue($anatomi->pf_dia_up)) {
-                $mata[] = 'Diameter pupil atas: ' .
-                    $this->soapValue($anatomi->pf_dia_up);
-            }
-
-            if ($this->soapValue($anatomi->pf_dia_down)) {
-                $mata[] = 'Diameter pupil bawah: ' .
-                    $this->soapValue($anatomi->pf_dia_down);
+            if ($this->soapValue($anatomi->pf_dia_up) && $this->soapValue($anatomi->pf_dia_down)) {
+                $mata[] = 'Diameter: ' . $this->soapValue($anatomi->pf_dia_up) . 'mm/' . $this->soapValue($anatomi->pf_dia_down) .'mm';
             }
 
             if ($this->soapValue($anatomi->pf_kelainan_mata)) {
-                $mata[] = $this->soapValue($anatomi->pf_kelainan_mata);
+                $mata[] = 'Ada Kelainan:'.$this->soapValue($anatomi->pf_kelainan_mata);
             }
 
             if ($mata) {
-                $o[] = 'Mata: ' . implode(', ', $mata);
+                $o[] = '<b style="color:#38e2c6">Mata</b>: ' . implode(', ', $mata);
             }
 
 
             // Mulut
             if ($this->soapValue($anatomi->pf_mulut)) {
-                $o[] = 'Mulut: ' .
+                $o[] = '<b style="color:#38e2c6">Mulut</b>: ' .
                     $this->soapValue($anatomi->pf_mulut);
             }
 
@@ -1218,8 +1240,8 @@ class FinalisasiController extends Controller
                 $leher[] = 'JVP ' . $this->soapValue($anatomi->pf_jvp);
             }
 
-            if ($this->soapValue($anatomi->pf_pkl)) {
-                $leher[] = 'Pembesaran kelenjar limfe';
+            if ($this->soapValue($anatomi->pf_pkl) == 1) {
+                $leher[] = 'Ada Pembesaran kelenjar limfe';
             }
 
             if ($this->soapValue($anatomi->pf_pkl_lain)) {
@@ -1227,19 +1249,19 @@ class FinalisasiController extends Controller
             }
 
             if ($this->soapValue($anatomi->pf_kd)) {
-                $leher[] = 'Kelainan daerah leher';
+                $leher[] = 'Kaku Duduk Ada';
             }
 
             if ($this->soapValue($anatomi->pf_kd_lain)) {
                 $leher[] = $this->soapValue($anatomi->pf_kd_lain);
             }
 
-            if ($this->soapValue($anatomi->pf_kelainan_leher)) {
-                $leher[] = 'Kelainan leher';
+            if ($this->soapValue($anatomi->pf_kelainan_leher) == 2) {
+                $leher[] = 'Ada kelainan leher';
             }
 
             if ($leher) {
-                $o[] = 'Leher: ' . implode(', ', $leher);
+                $o[] = '<b style="color:#38e2c6">Leher</b>: ' . implode(', ', $leher);
             }
 
 
@@ -1255,71 +1277,83 @@ class FinalisasiController extends Controller
             }
 
             if ($this->soapValue($anatomi->pf_cor)) {
-                $thoraks[] = 'Cor: ' .
+                $thoraks[] = 'Cor S1/S2: ' .
                     $this->soapValue($anatomi->pf_cor);
             }
 
-            if ($this->soapValue($anatomi->pf_cor_cb)) {
-                $thoraks[] = 'Cor CB abnormal';
+            if ($this->soapValue($anatomi->pf_cor_cb) == 1) {
+                $thoraks[] = '(Irama Reguler)';
+            }
+
+            if ($this->soapValue($anatomi->pf_cor_cb) == 2) {
+                $thoraks[] = '(Irama Ireguler)';
             }
 
             if ($this->soapValue($anatomi->pf_murmur)) {
-                $thoraks[] = 'Murmur: ' .
-                    $this->soapValue($anatomi->pf_murmur);
+                $thoraks[] = 'Murmur: ' . $this->soapValue($anatomi->pf_murmur);
             }
 
             if ($this->soapValue($anatomi->pf_murmur_lain)) {
-                $thoraks[] = $this->soapValue($anatomi->pf_murmur_lain);
+                $thoraks[] = 'Lain-lain: ' . $this->soapValue($anatomi->pf_murmur_lain);
             }
 
             if ($this->soapValue($anatomi->pf_pulmo)) {
-                $thoraks[] = 'Pulmo: ' .
-                    $this->soapValue($anatomi->pf_pulmo);
+                $thoraks[] = 'Pulmo: ' . $this->soapValue($anatomi->pf_pulmo);
             }
 
-            if ($this->soapValue($anatomi->pf_ronchi)) {
-                $thoraks[] = 'Ronchi';
+            if ($this->soapValue($anatomi->pf_ronchi) == 2) {
+                $thoraks[] = 'Ronchi : Ada';
+            } else{
+                $thoraks[] = 'Ronchi : Tidak Ada';
             }
 
             if ($this->soapValue($anatomi->pf_ronchi_lain)) {
                 $thoraks[] = $this->soapValue($anatomi->pf_ronchi_lain);
             }
 
-            if ($this->soapValue($anatomi->pf_wheezing)) {
-                $thoraks[] = 'Wheezing';
+            if ($this->soapValue($anatomi->pf_wheezing) == 2) {
+                $thoraks[] = 'Wheezing : Ada. ' . $this->soapValue($anatomi->pf_wheezing_lain);
+            } else {
+                $thoraks[] = 'Wheezing : Tidak Ada';
             }
 
-            if ($this->soapValue($anatomi->pf_wheezing_lain)) {
-                $thoraks[] = $this->soapValue($anatomi->pf_wheezing_lain);
-            }
-
-            if ($this->soapValue($anatomi->pf_kelainan_dada)) {
-                $thoraks[] = 'Kelainan dada';
-            }
-
-            if ($this->soapValue($anatomi->pf_dada_lain)) {
-                $thoraks[] = $this->soapValue($anatomi->pf_dada_lain);
+            if ($this->soapValue($anatomi->pf_kelainan_dada) == 2) {
+                $thoraks[] = 'Ada Kelainan dada';
             }
 
             if ($thoraks) {
-                $o[] = 'Thoraks: ' . implode(', ', $thoraks);
+                $o[] = '<b style="color:#38e2c6">Thoraks</b>: ' . implode(', ', $thoraks);
             }
 
 
             // Abdomen
             $abdomen = [];
 
-            if ($this->soapValue($anatomi->pf_distended)) {
-                $abdomen[] = 'Distensi';
-            }
+            if ($this->soapValue($anatomi->pf_distended) == 0) {
+                $abdomen[] = 'Distended (-)';
+            } else if ($this->soapValue($anatomi->pf_distended) == 1) {
+                $abdomen[] = 'Distended (+)';
+            } else {}
 
-            if ($this->soapValue($anatomi->pf_meteor)) {
-                $abdomen[] = 'Meteorismus';
-            }
+            if ($this->soapValue($anatomi->pf_meteor) == 0) {
+                $abdomen[] = 'Meteorismus (-)';
+            } else if ($this->soapValue($anatomi->pf_meteor) == 1) {
+                $abdomen[] = 'Meteorismus (+)';
+            } else {}
 
-            if ($this->soapValue($anatomi->pf_asites)) {
-                $abdomen[] = 'Asites';
-            }
+            if ($this->soapValue($anatomi->pf_asites) == 0) {
+                $abdomen[] = 'Asites (-)';
+            } else if ($this->soapValue($anatomi->pf_asites) == 1) {
+                $abdomen[] = 'Asites (+)';
+            } else {}
+
+            // if ($this->soapValue($anatomi->pf_meteor)) {
+            //     $abdomen[] = 'Meteorismus';
+            // }
+
+            // if ($this->soapValue($anatomi->pf_asites)) {
+            //     $abdomen[] = 'Asites';
+            // }
 
             if ($this->soapValue($anatomi->pf_peristal_normal)) {
                 $abdomen[] = 'Peristaltik normal';
@@ -1338,11 +1372,7 @@ class FinalisasiController extends Controller
             }
 
             if ($this->soapValue($anatomi->pf_nyeri_tekan)) {
-                $abdomen[] = 'Nyeri tekan';
-            }
-
-            if ($this->soapValue($anatomi->pf_nyeri_tekan_lain)) {
-                $abdomen[] = $this->soapValue($anatomi->pf_nyeri_tekan_lain);
+                $abdomen[] = 'Nyeri tekan ' . " ({$this->soapValue($anatomi->pf_nyeri_tekan_lain)})";
             }
 
             if ($this->soapValue($anatomi->pf_hepar)) {
@@ -1356,7 +1386,7 @@ class FinalisasiController extends Controller
             }
 
             if ($abdomen) {
-                $o[] = 'Abdomen: ' . implode(', ', $abdomen);
+                $o[] = '<b style="color:#38e2c6">Abdomen</b>: ' . implode(', ', $abdomen);
             }
 
 
@@ -1372,22 +1402,22 @@ class FinalisasiController extends Controller
             }
 
             if ($this->soapValue($anatomi->pf_udem)) {
-                $extremitas[] = 'Udem';
+                $extremitas[] = 'Edema Palpebrae' . " ({$this->soapValue($anatomi->pf_udem_lain)})";
             }
 
-            if ($this->soapValue($anatomi->pf_udem_lain)) {
-                $extremitas[] = $this->soapValue($anatomi->pf_udem_lain);
+            if ($this->soapValue($anatomi->pf_dada_lain)) {
+                $thoraks[] = $this->soapValue($anatomi->pf_dada_lain);
             }
 
             if ($extremitas) {
-                $o[] = 'Ekstremitas: ' .
+                $o[] = '<b style="color:#38e2c6">Ekstremitas</b>: ' .
                     implode(', ', $extremitas);
             }
 
 
             // Status Lokalis
             if ($this->soapValue($anatomi->status_lokalis)) {
-                $o[] = 'Status Lokalis: ' .
+                $o[] = '<b style="color:#38e2c6">Status Lokalis</b>: ' .
                     $this->soapValue($anatomi->status_lokalis);
             }
         }
@@ -1445,6 +1475,7 @@ class FinalisasiController extends Controller
 
         $a = [];
 
+        // $a[] = "<b style='color:#9CC96B'>Diagnosa Dokter</b>";
         foreach ($diagnosis as $diag) {
 
             $nama = $this->soapValue(
@@ -1464,8 +1495,8 @@ class FinalisasiController extends Controller
             $kode = $this->soapValue($diag->KODE);
 
             $jenis = ((int) $diag->UTAMA === 1)
-                ? 'Utama'
-                : 'Sekunder';
+                ? 'Diagnosa Utama'
+                : 'Diagnosa Sekunder';
 
             $a[] = $jenis . ': ' .
                 $nama .
@@ -1528,23 +1559,26 @@ class FinalisasiController extends Controller
         }
 
         if ($kriteriaPulang) {
-
             $rows = [];
+            $krpl = '';
 
-            if ($this->soapValue($kriteriaPulang->KRITERIA_PULANG)) {
-                $rows[] = 'Kriteria Pulang: ' .
-                    $this->soapValue($kriteriaPulang->KRITERIA_PULANG);
+            if ($kriteriaPulang->KRITERIA_PULANG !== null) {
+                if ((int) $kriteriaPulang->KRITERIA_PULANG === 0) {
+                    $karena = $this->soapValue($kriteriaPulang->KARENA);
+
+                    $krpl = 'Belum bisa ditetapkan, karena'
+                        . ($karena ? ' ' . $karena : '');
+                } elseif ((int) $kriteriaPulang->KRITERIA_PULANG === 1) {
+                    $hari = $this->soapValue($kriteriaPulang->HARI);
+
+                    $krpl = 'Sudah bisa ditetapkan dalam'
+                        . ($hari ? ' ' . $hari . ' hari' : '');
+                } else {
+                    $krpl = '-';
+                }
             }
 
-            if ($this->soapValue($kriteriaPulang->HARI)) {
-                $rows[] = 'Hari: ' .
-                    $this->soapValue($kriteriaPulang->HARI);
-            }
-
-            if ($this->soapValue($kriteriaPulang->KARENA)) {
-                $rows[] = 'Karena: ' .
-                    $this->soapValue($kriteriaPulang->KARENA);
-            }
+            $rows[] = '<br>Kriteria Pulang: ' . $krpl;
 
             $p = array_merge($p, $rows);
         }
