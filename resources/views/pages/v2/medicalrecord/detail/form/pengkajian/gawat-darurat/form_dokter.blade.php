@@ -1,5 +1,5 @@
 <div class="form-wrapper position-relative" id="form_gawat_darurat_dokter">
-    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN MEDIS <b class="text-danger">RAWAT DARURAT</b></center></h1>
+    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN AWAL MEDIS <b class="text-danger">RAWAT DARURAT</b></center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-danger">Diisi Oleh Dokter</a>)</center></h1>
     <div class="form-content">
         <div class="row">

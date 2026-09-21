@@ -1,5 +1,5 @@
 <div class="form-wrapper" id="form_praanestesi">
-    <h1 class="display-6 mb-1 mt-2 fs-23 fw-medium"><center>PENGKAJIAN <b class="text-success">PRA ANESTESI DAN INDUKSI</b></center></h1>
+    <h1 class="display-6 mb-1 mt-2 fs-23 fw-medium"><center>PENGKAJIAN AWAL <b class="text-success">PRA ANESTESI DAN INDUKSI</b></center></h1>
     <div class="form-content mt-3">
         <div class="row mb-4">
             <div class="col-md-6">

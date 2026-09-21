@@ -364,6 +364,7 @@
 <script>
     // INIT VARIABLE
     const kunjungan = @json($list["KUNJUNGAN"]);
+    const ruangan = @json($list["show"]->IDRUANGAN);
     const rm = @json($list["show"]->NORM);
     const tgl_sep = @json($list["show"]->TGLSEP);
     const sep = @json($list["show"]->NOSEP);

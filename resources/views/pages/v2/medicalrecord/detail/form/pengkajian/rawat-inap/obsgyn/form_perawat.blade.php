@@ -1,5 +1,5 @@
 <div class="form-wrapper position-relative" id="form_ranap_obsgyn_perawat" data-rio-form>
-    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN KEPERAWATAN <b class="text-danger">RAWAT INAP</b> <b class="text-warning">OBSGYN</b></center></h1>
+    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN AWAL KEPERAWATAN <b class="text-danger">RAWAT INAP</b> <b class="text-warning">OBSGYN</b></center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-danger">Diisi Oleh Bidan</a>)</center></h1>
     <div class="form-content">
         <div class="row">

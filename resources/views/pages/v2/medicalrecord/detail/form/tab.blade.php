@@ -1,6 +1,18 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('v2/css/emr/tab.css') }}">
 @endpush
+
+@php
+    $idRuangan = (string) ($list['show']->IDRUANGAN ?? '');
+    $kodeRuangan = substr($idRuangan, 0, 5);
+
+    // True jika user memiliki role "admin", meskipun punya role lain juga
+    $isAdmin = auth()->user()->hasRole('admin');
+
+    // Filter ruangan hanya berlaku untuk user yang BUKAN admin
+    $filterPengkajianRuangan = !$isAdmin;
+@endphp
+
 <div id="apiLoadingBar" class="api-loading-bar" aria-hidden="true">
     <div class="api-loading-bar__progress"></div>
 </div>
@@ -70,9 +82,10 @@
 
                             <!-- Gawat Darurat -->
                             <a href="javascript:void(0);"
-                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center"
+                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center js-filter-ruangan"
                                 data-form="pengkajian-gd"
-                                data-group="awal">
+                                data-group="awal"
+                                data-pengkajian-ruangan="gd">
                                 <span>Form Pengkajian Gawat Darurat</span>
                                 <span class="ms-auto d-flex align-items-center gap-1 me-2 js-radar-parent-final-icons">
                                     {{-- Akan ditampilkan jika salah satu child sudah final --}}
@@ -86,7 +99,7 @@
                                 </span>
                             </a>
 
-                            <div class="menu-wrapper">
+                            <div class="menu-wrapper js-filter-ruangan" data-pengkajian-ruangan="rajal">
                                 <!-- Rawat Jalan -->
                                 <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center menu-collapse menu-parent"
                                 data-bs-toggle="collapse"
@@ -136,7 +149,7 @@
                                 </div>
                             </div>
 
-                            <div class="menu-wrapper">
+                            <div class="menu-wrapper js-filter-ruangan" data-pengkajian-ruangan="ranap">
                                 <!-- Rawat Inap -->
                                 {{-- <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center menu-collapse menu-parent"
                                     data-bs-toggle="collapse"
@@ -256,7 +269,7 @@
                                 </div>
                             </div>
 
-                            <div class="menu-wrapper">
+                            <div class="menu-wrapper js-filter-ruangan" data-pengkajian-ruangan="bedahanestesi">
                                 {{-- Bedah & Anestesi --}}
                                 <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center menu-collapse menu-parent"
                                     data-bs-toggle="collapse"
@@ -523,10 +536,102 @@
         // Nilai kunjungan harus tersedia di scope yang sama dengan fungsi
         // global di bawah. Sebelumnya variabel ini belum pernah dideklarasikan.
         const kunjungan = @json($list['kunjungan'] ?? '');
+        const isAdmin = @json($isAdmin);
+
+        // ==========================================================
+        // FILTER FORM PENGKAJIAN BERDASARKAN RUANGAN
+        // ==========================================================
+        function filterPengkajianBerdasarkanRuangan() {
+            // ======================================================
+            // ADMIN
+            // Bersihkan seluruh penanda filter ruangan
+            // ======================================================
+            if (isAdmin) {
+
+                $('.js-filter-ruangan')
+                    .removeClass('d-none')
+                    .removeAttr('data-ruangan-hidden')
+                    .css('display', '');
+
+                return;
+            }
+
+            const ruangan = String(
+                @json($list['show']->IDRUANGAN ?? '')
+            );
+
+            // Ambil 5 digit pertama
+            const kodeRuangan = ruangan.substring(0, 5);
+
+            const mappingRuangan = {
+                '10201': 'rajal',
+                '10202': 'gd',
+                '10203': 'ranap',
+                '10208': 'bedahanestesi'
+            };
+
+            const jenisPengkajian = mappingRuangan[kodeRuangan];
+
+            if (!jenisPengkajian) {
+                return;
+            }
+
+            // ======================================================
+            // SEMBUNYIKAN FORM YANG BUKAN MILIK RUANGAN
+            // ======================================================
+            $('.js-filter-ruangan').each(function () {
+
+                const $element = $(this);
+
+                const jenis = $element.data('pengkajian-ruangan');
+
+                if (jenis !== jenisPengkajian) {
+
+                    $element
+                        .addClass('d-none')
+                        .attr('data-ruangan-hidden', 'true')
+                        .css('display', 'none');
+
+                } else {
+
+                    $element
+                        .removeClass('d-none')
+                        .removeAttr('data-ruangan-hidden')
+                        .css('display', '');
+                }
+            });
+        }
+
+        function applyFilterRuangan() {
+            // ======================================================
+            // ADMIN
+            // Semua form harus tampil seperti kondisi awal
+            // ======================================================
+            if (isAdmin) {
+
+                $('#pengkajianMenu')
+                    .find('[data-ruangan-hidden="true"]')
+                    .removeClass('d-none')
+                    .removeAttr('data-ruangan-hidden')
+                    .css('display', '');
+
+                return;
+            }
+
+            // ======================================================
+            // USER NON ADMIN
+            // Form yang tidak sesuai ruangan tetap disembunyikan
+            // ======================================================
+            $('#pengkajianMenu')
+                .find('[data-ruangan-hidden="true"]')
+                .addClass('d-none')
+                .css('display', 'none');
+        }
 
         let activeApiRequests = 0;
 
         $(document).ready(function() {
+            filterPengkajianBerdasarkanRuangan();
             tampilkanPenandaFinalisasi();
         });
 
@@ -663,6 +768,9 @@
                 $menu.find('.menu-wrapper').show();
                 $menu.find('.menu-child').show();
 
+                // Kembalikan filter ruangan
+                applyFilterRuangan();
+
                 return;
             }
 
@@ -724,6 +832,12 @@
                 );
 
                 if (isMatch(text)) {
+
+                    // Jangan tampilkan jika diblokir berdasarkan ruangan
+                    if ($item.attr('data-ruangan-hidden') === 'true') {
+                        $item.css('display', 'none');
+                        return;
+                    }
 
                     $item.css('display', 'flex');
 
@@ -822,22 +936,24 @@
                 // =================================================
                 if (childMatched) {
 
-                    // Tampilkan wrapper
+                    // Jangan tampilkan jika diblokir berdasarkan ruangan
+                    if ($wrapper.attr('data-ruangan-hidden') === 'true') {
+                        $wrapper.css('display', 'none');
+                        return;
+                    }
+
                     $wrapper.css('display', 'block');
 
-                    // Tampilkan parent
                     $parent.css('display', 'flex');
 
                     // Buka submenu
                     $wrapper.find('.submenu')
                         .addClass('show');
 
-                    // Ubah icon menjadi chevron-up
                     $wrapper.find('.submenu-icon')
                         .removeClass('ti-chevron-down')
                         .addClass('ti-chevron-up');
 
-                    // Tandai group
                     if (group) {
                         matchedGroups.add(group);
                     }

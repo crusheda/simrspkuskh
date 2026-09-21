@@ -1,5 +1,5 @@
 <div class="form-wrapper position-relative" id="form_ranap_anak_perawat">
-    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN KEPERAWATAN <b class="text-success">RAWAT INAP</b> <b class="text-warning">ANAK</b></center></h1>
+    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN AWAL KEPERAWATAN <b class="text-success">RAWAT INAP</b> <b class="text-warning">ANAK</b></center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-success">Diisi Oleh Perawat</a>)</center></h1>
     <div class="form-content">
         <div class="row">
