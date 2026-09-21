@@ -1145,10 +1145,30 @@
 
 
         // ==========================================================
+        // UPDATE ICON PARENT GAWAT DARURAT
+        // ==========================================================
+
+        if (formKey === 'gd_dokter') {
+
+            $('.js-radar-parent-final-icon[data-final-role="dokter"]')
+                .toggleClass('d-none', !isFinal);
+
+        }
+
+        if (formKey === 'gd_perawat') {
+
+            $('.js-radar-parent-final-icon[data-final-role="perawat"]')
+                .toggleClass('d-none', !isFinal);
+
+        }
+
+
+        // ==========================================================
         // UPDATE ICON PARENT RAWAT INAP
         // ==========================================================
 
         updatePenandaFinalisasiParentRanap();
+
     };
 
     function updatePenandaFinalisasiParentRanap() {
@@ -1201,25 +1221,61 @@
     }
 
     window.tampilkanPenandaFinalisasi = function () {
-        const formKeys = $('.js-final-icon').map(function () {
-            return $(this).data('final-key');
-        }).get();
 
-        $KUNJUNGAN = @json($list["KUNJUNGAN"]);
+        // Ambil semua final key dari icon child
+        const formKeys = $('.js-final-icon')
+            .map(function () {
+                return $(this).data('final-key');
+            })
+            .get();
+
+
+        // Tambahkan final key Gawat Darurat
+        formKeys.push('gd_dokter');
+        formKeys.push('gd_perawat');
+
+
+        // Hilangkan duplikasi key
+        const uniqueFormKeys = [...new Set(formKeys)];
+
+
+        const KUNJUNGAN = @json($list['KUNJUNGAN'] ?? '');
+
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/status-finalisasi/${$KUNJUNGAN}`,
+
+            url: `/api/v2/emr/pengkajian/status-finalisasi/${KUNJUNGAN}`,
+
             type: 'GET',
+
             dataType: 'json',
+
             cache: false,
+
             data: {
-                formKeys: formKeys,
+                formKeys: uniqueFormKeys,
                 _ts: Date.now()
             },
 
+
+            beforeSend: function () {
+
+                // Sembunyikan seluruh icon Gawat Darurat
+                $('.js-radar-parent-final-icon')
+                    .addClass('d-none');
+
+            },
+
+
             success: function (response) {
 
+                console.log('Form keys finalisasi:', uniqueFormKeys);
+
+                console.log('Response finalisasi:', response);
+
+
                 const data = response?.data || {};
+
 
                 Object.entries(data).forEach(function ([formKey, item]) {
 
@@ -1230,10 +1286,24 @@
 
                 });
 
-                // Pastikan parent Rawat Inap ikut diperbarui
+
+                // Pastikan parent Rawat Inap diperbarui
                 updatePenandaFinalisasiParentRanap();
+
+            },
+
+
+            error: function (xhr) {
+
+                console.error(
+                    'Gagal mengambil status finalisasi:',
+                    xhr.responseJSON || xhr.responseText
+                );
+
             }
+
         });
+
     };
 
     window.tampilkanPenandaFinalisasi();
