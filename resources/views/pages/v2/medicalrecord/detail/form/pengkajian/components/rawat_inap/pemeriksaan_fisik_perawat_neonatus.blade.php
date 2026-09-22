@@ -497,7 +497,7 @@
                     <h6>Reflek Cahaya</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <span>Kanan</span>
+                            <span>Kanan (R)</span>
                         </div>
                         <div class="form-check form-check-inline mb-2">
                             <input class="form-check-input single-checkbox" type="checkbox" name="psn_rc_r" value="1">
@@ -514,7 +514,7 @@
                     </div>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <span>Kiri</span>
+                            <span>Kiri (L)</span>
                         </div>
                         <div class="form-check form-check-inline mb-2">
                             <input class="form-check-input single-checkbox" type="checkbox" name="psn_rc_l" value="1">
@@ -536,31 +536,31 @@
                     <h6>Reflek</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_ref" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_ref_moro" value="1">
                             <label class="form-check-label">
                                 Moro
                             </label>
                         </div>
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_ref" value="2">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_ref_genggam" value="1">
                             <label class="form-check-label">
                                 Menggenggam
                             </label>
                         </div>
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_ref" value="3">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_ref_babin" value="1">
                             <label class="form-check-label">
                                 Babinski
                             </label>
                         </div>
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_ref" value="4">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_ref_palmar" value="1">
                             <label class="form-check-label">
                                 Palmar Grasp
                             </label>
                         </div>
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_ref" value="5">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_ref_root" value="1">
                             <label class="form-check-label">
                                 Rooting
                             </label>
@@ -588,19 +588,19 @@
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6>Pergerakan</h6>
+                    <h6>Pergerakan Kaki</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <span>Kaki R/L</span>
+                            <span>Kanan (R)</span>
                         </div>
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_gerak_k" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_gerak_k_r" value="1">
                             <label class="form-check-label">
                                 Kuat
                             </label>
                         </div>
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_gerak_k" value="2">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_gerak_k_r" value="2">
                             <label class="form-check-label">
                                 Lemah
                             </label>
@@ -608,16 +608,53 @@
                     </div>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <span>Tangan R/L</span>
+                            <span>Kiri (L)</span>
                         </div>
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_gerak_t" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_gerak_k_l" value="1">
                             <label class="form-check-label">
                                 Kuat
                             </label>
                         </div>
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_gerak_t" value="2">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_gerak_k_l" value="2">
+                            <label class="form-check-label">
+                                Lemah
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <h6>Pergerakan Tangan</h6>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check form-check-inline mb-2">
+                            <span>Kanan (R)</span>
+                        </div>
+                        <div class="form-check form-check-inline mb-2">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_gerak_t_r" value="1">
+                            <label class="form-check-label">
+                                Kuat
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline mb-2">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_gerak_t_r" value="2">
+                            <label class="form-check-label">
+                                Lemah
+                            </label>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check form-check-inline mb-2">
+                            <span>Kiri (L)</span>
+                        </div>
+                        <div class="form-check form-check-inline mb-2">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_gerak_t_l" value="1">
+                            <label class="form-check-label">
+                                Kuat
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline mb-2">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psn_gerak_t_l" value="2">
                             <label class="form-check-label">
                                 Lemah
                             </label>
@@ -728,16 +765,33 @@
                     </div>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline mb-2">
-                            <span>Tangan R/L</span>
+                            <span>Tangan Kanan (R)</span>
                         </div>
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psg_pl_lien" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psg_pl_lien_r" value="1">
                             <label class="form-check-label">
                                 Teraba
                             </label>
                         </div>
                         <div class="form-check form-check-inline mb-2">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="psg_pl_lien" value="2">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psg_pl_lien_r" value="2">
+                            <label class="form-check-label">
+                                Tidak Teraba
+                            </label>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check form-check-inline mb-2">
+                            <span>Tangan Kiri (L)</span>
+                        </div>
+                        <div class="form-check form-check-inline mb-2">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psg_pl_lien_l" value="1">
+                            <label class="form-check-label">
+                                Teraba
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline mb-2">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="psg_pl_lien_l" value="2">
                             <label class="form-check-label">
                                 Tidak Teraba
                             </label>

@@ -308,7 +308,7 @@
                     timer: 1000,
                     toast: true
                 });
-                getSkriningEPFRA();
+                getSkriningStrongKid();
             },
             error: function (xhr) {
                 let message = 'Data gagal disimpan.';

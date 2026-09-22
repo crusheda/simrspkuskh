@@ -1,186 +1,182 @@
 <div class="row align-items-center" id="form_hubungan_status_fungsional">
 
     <div class="col-md-12">
-        <div class="card card-body border border-dashed border-primary">
+        <label class="form-label fw-bold">
+            Status Fungsional
+        </label>
 
-            <label class="form-label fw-bold">
-                Status Fungsional
+        {{-- ==========================================================
+            ALAT BANTU MOBILITAS
+        =========================================================== --}}
+        <div class="mb-3">
+
+            <label class="form-label fw-semibold">
+                Alat Bantu Mobilitas
             </label>
 
-            {{-- ==========================================================
-                ALAT BANTU MOBILITAS
-            =========================================================== --}}
-            <div class="mb-3">
+            <div class="row">
 
-                <label class="form-label fw-semibold">
-                    Alat Bantu Mobilitas
-                </label>
-
-                <div class="row">
-
-                    <div class="col-md-3">
-                        <div class="form-check mb-2">
-                            <input
-                                class="form-check-input check-primary"
-                                type="radio"
-                                name="alat_bantu_fungsional"
-                                id="{{ $instance }}_tanpa_alat_bantu"
-                                value="tanpa"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="{{ $instance }}_tanpa_alat_bantu"
-                            >
-                                Tanpa Alat Bantu
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-check mb-2">
-                            <input
-                                class="form-check-input check-primary"
-                                type="radio"
-                                name="alat_bantu_fungsional"
-                                id="{{ $instance }}_tongkat"
-                                value="tongkat"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="{{ $instance }}_tongkat"
-                            >
-                                Tongkat
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-check mb-2">
-                            <input
-                                class="form-check-input check-primary"
-                                type="radio"
-                                name="alat_bantu_fungsional"
-                                id="{{ $instance }}_kursi_roda"
-                                value="kursi_roda"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="{{ $instance }}_kursi_roda"
-                            >
-                                Kursi Roda
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-check mb-2">
-                            <input
-                                class="form-check-input check-primary"
-                                type="radio"
-                                name="alat_bantu_fungsional"
-                                id="{{ $instance }}_brankard"
-                                value="brankard"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="{{ $instance }}_brankard"
-                            >
-                                Brankard
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-check mb-2">
-                            <input
-                                class="form-check-input check-primary"
-                                type="radio"
-                                name="alat_bantu_fungsional"
-                                id="{{ $instance }}_walker"
-                                value="walker"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="{{ $instance }}_walker"
-                            >
-                                Walker
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-9">
+                <div class="col-md-3">
+                    <div class="form-check mb-2">
                         <input
-                            type="text"
-                            class="form-control"
-                            name="alat_bantu"
-                            id="{{ $instance }}_alat_bantu"
-                            placeholder="Alat bantu lainnya..."
+                            class="form-check-input check-primary"
+                            type="radio"
+                            name="alat_bantu_fungsional"
+                            id="{{ $instance }}_tanpa_alat_bantu"
+                            value="tanpa"
                         >
+                        <label
+                            class="form-check-label"
+                            for="{{ $instance }}_tanpa_alat_bantu"
+                        >
+                            Tanpa Alat Bantu
+                        </label>
                     </div>
-
-                </div>
-            </div>
-
-            <hr>
-
-            {{-- ==========================================================
-                CACAT TUBUH
-            =========================================================== --}}
-            <div>
-
-                <label class="form-label fw-semibold">
-                    Cacat Tubuh
-                </label>
-
-                <div class="row mb-2">
-
-                    <div class="col-md-3">
-                        <div class="form-check">
-                            <input
-                                class="form-check-input check-primary"
-                                type="radio"
-                                name="cacat_tubuh"
-                                id="{{ $instance }}_cacat_tubuh_tidak"
-                                value="0"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="{{ $instance }}_cacat_tubuh_tidak"
-                            >
-                                Tidak
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-check">
-                            <input
-                                class="form-check-input check-primary"
-                                type="radio"
-                                name="cacat_tubuh"
-                                id="{{ $instance }}_cacat_tubuh_ya"
-                                value="1"
-                            >
-                            <label
-                                class="form-check-label"
-                                for="{{ $instance }}_cacat_tubuh_ya"
-                            >
-                                Ya
-                            </label>
-                        </div>
-                    </div>
-
                 </div>
 
-                <textarea
-                    class="form-control"
-                    name="ket_cacat_tubuh"
-                    id="{{ $instance }}_ket_cacat_tubuh"
-                    rows="2"
-                    placeholder="Keterangan cacat tubuh..."
-                ></textarea>
+                <div class="col-md-3">
+                    <div class="form-check mb-2">
+                        <input
+                            class="form-check-input check-primary"
+                            type="radio"
+                            name="alat_bantu_fungsional"
+                            id="{{ $instance }}_tongkat"
+                            value="tongkat"
+                        >
+                        <label
+                            class="form-check-label"
+                            for="{{ $instance }}_tongkat"
+                        >
+                            Tongkat
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-check mb-2">
+                        <input
+                            class="form-check-input check-primary"
+                            type="radio"
+                            name="alat_bantu_fungsional"
+                            id="{{ $instance }}_kursi_roda"
+                            value="kursi_roda"
+                        >
+                        <label
+                            class="form-check-label"
+                            for="{{ $instance }}_kursi_roda"
+                        >
+                            Kursi Roda
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-check mb-2">
+                        <input
+                            class="form-check-input check-primary"
+                            type="radio"
+                            name="alat_bantu_fungsional"
+                            id="{{ $instance }}_brankard"
+                            value="brankard"
+                        >
+                        <label
+                            class="form-check-label"
+                            for="{{ $instance }}_brankard"
+                        >
+                            Brankard
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-check mb-2">
+                        <input
+                            class="form-check-input check-primary"
+                            type="radio"
+                            name="alat_bantu_fungsional"
+                            id="{{ $instance }}_walker"
+                            value="walker"
+                        >
+                        <label
+                            class="form-check-label"
+                            for="{{ $instance }}_walker"
+                        >
+                            Walker
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="alat_bantu"
+                        id="{{ $instance }}_alat_bantu"
+                        placeholder="Alat bantu lainnya..."
+                    >
+                </div>
 
             </div>
+        </div>
+
+        <hr>
+
+        {{-- ==========================================================
+            CACAT TUBUH
+        =========================================================== --}}
+        <div>
+
+            <label class="form-label fw-semibold">
+                Cacat Tubuh
+            </label>
+
+            <div class="row mb-2">
+
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input
+                            class="form-check-input check-primary"
+                            type="radio"
+                            name="cacat_tubuh"
+                            id="{{ $instance }}_cacat_tubuh_tidak"
+                            value="0"
+                        >
+                        <label
+                            class="form-check-label"
+                            for="{{ $instance }}_cacat_tubuh_tidak"
+                        >
+                            Tidak
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-check">
+                        <input
+                            class="form-check-input check-primary"
+                            type="radio"
+                            name="cacat_tubuh"
+                            id="{{ $instance }}_cacat_tubuh_ya"
+                            value="1"
+                        >
+                        <label
+                            class="form-check-label"
+                            for="{{ $instance }}_cacat_tubuh_ya"
+                        >
+                            Ya
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <textarea
+                class="form-control"
+                name="ket_cacat_tubuh"
+                id="{{ $instance }}_ket_cacat_tubuh"
+                rows="2"
+                placeholder="Keterangan cacat tubuh..."
+            ></textarea>
 
         </div>
     </div>

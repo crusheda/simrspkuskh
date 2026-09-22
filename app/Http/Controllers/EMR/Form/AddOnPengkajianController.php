@@ -8000,8 +8000,20 @@ class AddOnPengkajianController extends Controller
                 'pfn_per' =>
                     $pernafasan->PERKUSI ?? null,
 
-                'pfn_aus' =>
-                    $pernafasan->AUSKULTASI ?? null,
+                // 'pfn_aus' =>
+                //     $pernafasan->AUSKULTASI ?? null,
+
+                'pfn_aus_vesikuler' => $pernafasan->AUSKULTASI_VESIKULER ?? null,
+                'pfn_aus_vesikuler_kanan' => $pernafasan->AUSKULTASI_VESIKULER_KANAN ?? null,
+                'pfn_aus_vesikuler_kiri' => $pernafasan->AUSKULTASI_VESIKULER_KIRI ?? null,
+
+                'pfn_aus_ronchi' => $pernafasan->AUSKULTASI_RONCHI ?? null,
+                'pfn_aus_ronchi_kanan' => $pernafasan->AUSKULTASI_RONCHI_KANAN ?? null,
+                'pfn_aus_ronchi_kiri' => $pernafasan->AUSKULTASI_RONCHI_KIRI ?? null,
+
+                'pfn_aus_wheezing' => $pernafasan->AUSKULTASI_WHEEZING ?? null,
+                'pfn_aus_wheezing_kanan' => $pernafasan->AUSKULTASI_WHEEZING_KANAN ?? null,
+                'pfn_aus_wheezing_kiri' => $pernafasan->AUSKULTASI_WHEEZING_KIRI ?? null,
 
 
                 // ==========================================================
@@ -8049,8 +8061,20 @@ class AddOnPengkajianController extends Controller
                 'psn_rc_l' =>
                     $persyarafan->REFLEK_CAHAYA_KIRI ?? null,
 
-                'psn_ref' =>
-                    $persyarafan->REFLEK ?? null,
+                'psn_ref_moro' =>
+                    $persyarafan->REFLEK_MORO ?? null,
+
+                'psn_ref_genggam' =>
+                    $persyarafan->REFLEK_MENGGENGGAM ?? null,
+
+                'psn_ref_babin' =>
+                    $persyarafan->REFLEK_BABINSKI ?? null,
+
+                'psn_ref_palmar' =>
+                    $persyarafan->REFLEK_PALMAR ?? null,
+
+                'psn_ref_root' =>
+                    $persyarafan->REFLEK_ROOTING ?? null,
 
                 'psp_kjg' =>
                     $persyarafan->KEJANG ?? null,
@@ -8058,11 +8082,17 @@ class AddOnPengkajianController extends Controller
                 'psp_kjg_lain' =>
                     $persyarafan->KEJANG_LAMA ?? null,
 
-                'psn_gerak_k' =>
-                    $persyarafan->PERGERAKAN_KAKI ?? null,
+                'psn_gerak_k_r' =>
+                    $persyarafan->PERGERAKAN_KAKI_KANAN ?? null,
 
-                'psn_gerak_t' =>
-                    $persyarafan->PERGERAKAN_TANGAN ?? null,
+                'psn_gerak_k_l' =>
+                    $persyarafan->PERGERAKAN_KAKI_KIRI ?? null,
+
+                'psn_gerak_t_r' =>
+                    $persyarafan->PERGERAKAN_TANGAN_KANAN ?? null,
+
+                'psn_gerak_t_l' =>
+                    $persyarafan->PERGERAKAN_TANGAN_KIRI ?? null,
 
 
                 // ==========================================================
@@ -8090,26 +8120,17 @@ class AddOnPengkajianController extends Controller
                 'psg_pl_hepar' =>
                     $pencernaan->PALPASI_HEPAR ?? null,
 
-                'psg_pl_lien' =>
-                    $pencernaan->PALPASI_LIEN ?? null,
+                'psg_pl_lien_r' =>
+                    $pencernaan->PALPASI_LIEN_KANAN ?? null,
+
+                'psg_pl_lien_l' =>
+                    $pencernaan->PALPASI_LIEN_KIRI ?? null,
 
                 'psg_prk' =>
                     $pencernaan->PERKUSI ?? null,
 
-                // 'psg_aus' =>
-                //     $pencernaan->AUSKULTASI ?? null,
-
-                'pfn_aus_vesikuler' => $pernafasan->AUSKULTASI_VESIKULER ?? null,
-                'pfn_aus_vesikuler_kanan' => $pernafasan->AUSKULTASI_VESIKULER_KANAN ?? null,
-                'pfn_aus_vesikuler_kiri' => $pernafasan->AUSKULTASI_VESIKULER_KIRI ?? null,
-
-                'pfn_aus_ronchi' => $pernafasan->AUSKULTASI_RONCHI ?? null,
-                'pfn_aus_ronchi_kanan' => $pernafasan->AUSKULTASI_RONCHI_KANAN ?? null,
-                'pfn_aus_ronchi_kiri' => $pernafasan->AUSKULTASI_RONCHI_KIRI ?? null,
-
-                'pfn_aus_wheezing' => $pernafasan->AUSKULTASI_WHEEZING ?? null,
-                'pfn_aus_wheezing_kanan' => $pernafasan->AUSKULTASI_WHEEZING_KANAN ?? null,
-                'pfn_aus_wheezing_kiri' => $pernafasan->AUSKULTASI_WHEEZING_KIRI ?? null,
+                'psg_aus' =>
+                    $pencernaan->AUSKULTASI ?? null,
 
                 'psg_aus_detail' =>
                     $pencernaan->AUSKULTASI_DETAIL ?? null,
@@ -8310,8 +8331,20 @@ class AddOnPengkajianController extends Controller
                     'REFLEK_CAHAYA_KIRI'
                         => $request->input('psn_rc_l'),
 
-                    'REFLEK'
-                        => $request->input('psn_ref'),
+                    'REFLEK_MORO'
+                        => $request->input('psn_ref_moro'),
+
+                    'REFLEK_MENGGENGGAM'
+                        => $request->input('psn_ref_genggam'),
+
+                    'REFLEK_BABINSKI'
+                        => $request->input('psn_ref_babin'),
+
+                    'REFLEK_PALMAR'
+                        => $request->input('psn_ref_palmar'),
+
+                    'REFLEK_ROOTING'
+                        => $request->input('psn_ref_root'),
 
                     'KEJANG'
                         => $request->input('psp_kjg'),
@@ -8319,11 +8352,17 @@ class AddOnPengkajianController extends Controller
                     'KEJANG_LAMA'
                         => $request->input('psp_kjg_lain'),
 
-                    'PERGERAKAN_KAKI'
-                        => $request->input('psn_gerak_k'),
+                    'PERGERAKAN_KAKI_KANAN'
+                        => $request->input('psn_gerak_k_r'),
 
-                    'PERGERAKAN_TANGAN'
-                        => $request->input('psn_gerak_t'),
+                    'PERGERAKAN_KAKI_KIRI'
+                        => $request->input('psn_gerak_k_l'),
+
+                    'PERGERAKAN_TANGAN_KANAN'
+                        => $request->input('psn_gerak_t_r'),
+
+                    'PERGERAKAN_TANGAN_KIRI'
+                        => $request->input('psn_gerak_t_l'),
 
                     'TANGGAL'
                         => now(),
@@ -8371,8 +8410,11 @@ class AddOnPengkajianController extends Controller
                     'PALPASI_HEPAR'
                         => $request->input('psg_pl_hepar'),
 
-                    'PALPASI_LIEN'
-                        => $request->input('psg_pl_lien'),
+                    'PALPASI_LIEN_KANAN'
+                        => $request->input('psg_pl_lien_r'),
+
+                    'PALPASI_LIEN_KIRI'
+                        => $request->input('psg_pl_lien_l'),
 
                     'PERKUSI'
                         => $request->input('psg_prk'),
