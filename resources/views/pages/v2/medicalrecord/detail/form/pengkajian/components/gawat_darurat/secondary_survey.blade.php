@@ -154,7 +154,7 @@
                     FormHelper.hasValue(anamnesis_diperoleh.DARI)
                 ) {
                     FormHelper.setValue(
-                        $section,
+                        $form,
                         'anamnesis_dari',
                         anamnesis_diperoleh.DARI
                     );
