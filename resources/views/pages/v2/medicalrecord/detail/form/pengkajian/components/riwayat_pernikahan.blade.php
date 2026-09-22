@@ -5,11 +5,11 @@
             <div class="row g-2 mb-2 align-items-center">
                 <div class="col-md-4">
                     <label class="form-label">Lama Pernikahan (Tahun)</label>
-                    <input type="number" class="form-control form-control-sm" name="nikah_tahun" id="nikah_tahun" min="1" max="100" placeholder="Tahun">
+                    <input type="number" class="form-control form-control-sm" name="nikah_tahun" id="nikah_tahun" min="1" max="100" placeholder="Berapa Tahun">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Ket. Tempat</label>
-                    <input type="text" class="form-control form-control-sm" name="nikah_ket" id="nikah_ket" placeholder="Keterangan">
+                    <label class="form-label">Keterangan (Cth : Cerai / Belum Menikah / dll)</label>
+                    <input type="text" class="form-control form-control-sm" name="nikah_ket" id="nikah_ket" placeholder="...">
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                     <div class="btn-group">

@@ -33,14 +33,22 @@
                                 [
                                     'section' => '#rjd_dokter',
                                     'page' => 'dokter',
-                                    // 'editableFields' => [
-                                    //     'tv_keu',
-                                    //     'tv_gcs_e',
-                                    //     'tv_gcs_v',
-                                    //     'tv_gcs_m',
-                                    //     'tv_bb',
-                                    //     'tv_tb',
-                                    // ],
+                                    'editableFields' => [
+                                        'tv_keu',
+                                        'tv_gcs_e',
+                                        'tv_gcs_v',
+                                        'tv_gcs_m',
+                                        'tv_td_up',
+                                        'tv_td_down',
+                                        'tv_nadi',
+                                        'tv_nadi_cb',
+                                        'tv_nafas',
+                                        'tv_nafas_cb',
+                                        'tv_suhu',
+                                        'tv_spo2',
+                                        'tv_bb',
+                                        'tv_tb',
+                                    ],
                                 ]
                             )
                         </div>

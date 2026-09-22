@@ -1,6 +1,6 @@
 <div class="row align-items-center" id="form_penunjang_lain">
     <div class="col-md-12 mb-1">
-        <h4 class="text-warning">Pemeriksaan USG</h4>
+        <h4 class="text-warning">Pemeriksaan USG Obsgyn</h4>
         <div class="row">
             <div class="col-md-6 mb-3">
                 <h6>Hasil Pemeriksaan</h6>
