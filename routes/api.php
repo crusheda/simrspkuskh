@@ -355,6 +355,15 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // BARTHEL INDEX
                         Route::get('emr/pengkajian/rajal/barthel/{kunjungan}', [AddOnPengkajianController::class, 'getBarthelIndex']);
                         Route::post('emr/pengkajian/rajal/barthel/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanBarthelIndex']);
+                    // DAFTAR MASALAH KEPERAWATAN RAWAT JALAN
+                        Route::get('emr/pengkajian/rj/masalahkeperawatan/{kunjungan}', [AddOnPengkajianController::class, 'getMasalahKeperawatanRJ']);
+                        Route::post('emr/pengkajian/rj/masalahkeperawatan/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanMasalahKeperawatanRJ']);
+                    // RENCANA ASUHAN KEPERAWATAN
+                        Route::get('emr/pengkajian/rj/askep/{kunjungan}', [AddOnPengkajianController::class, 'getAskep']);
+                        Route::post('emr/pengkajian/rj/askep/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanAskep']);
+                    // PEMERIKSAAN FISIK OBSGYN RAJAL
+                        Route::get('emr/pengkajian/rj/pemfis_obg/{kunjungan}', [AddOnPengkajianController::class, 'getPemfisObgRj']);
+                        Route::post('emr/pengkajian/rj/pemfis_obg/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemfisObgRj']);
 
                 // KHUSUS GAWAT DARURAT
                     // ATS

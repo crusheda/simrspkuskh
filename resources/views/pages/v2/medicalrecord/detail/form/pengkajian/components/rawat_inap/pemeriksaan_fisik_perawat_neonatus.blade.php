@@ -165,7 +165,7 @@
                         </div>
 
                         <div class="col-md-3 mb-2">
-                            <select class="form-select pfn-auskultasi-detail" name="pfn_aus_vesikuler_kanan"
+                            <select class="form-select form-select-sm pfn-auskultasi-detail" name="pfn_aus_vesikuler_kanan"
                                 data-checkbox="pfn_aus_vesikuler"
                                 disabled>
                                 <option value="">-</option>
@@ -175,7 +175,7 @@
                         </div>
 
                         <div class="col-md-3 mb-2">
-                            <select class="form-select pfn-auskultasi-detail" name="pfn_aus_vesikuler_kiri"
+                            <select class="form-select form-select-sm pfn-auskultasi-detail" name="pfn_aus_vesikuler_kiri"
                                 data-checkbox="pfn_aus_vesikuler"
                                 disabled>
                                 <option value="">-</option>
@@ -204,7 +204,7 @@
                         </div>
 
                         <div class="col-md-3 mb-2">
-                            <select class="form-select pfn-auskultasi-detail" name="pfn_aus_ronchi_kanan"
+                            <select class="form-select form-select-sm pfn-auskultasi-detail" name="pfn_aus_ronchi_kanan"
                                 data-checkbox="pfn_aus_ronchi"
                                 disabled>
                                 <option value="">-</option>
@@ -214,7 +214,7 @@
                         </div>
 
                         <div class="col-md-3 mb-2">
-                            <select class="form-select pfn-auskultasi-detail" name="pfn_aus_ronchi_kiri"
+                            <select class="form-select form-select-sm pfn-auskultasi-detail" name="pfn_aus_ronchi_kiri"
                                 data-checkbox="pfn_aus_ronchi"
                                 disabled>
                                 <option value="">-</option>
@@ -243,7 +243,7 @@
                         </div>
 
                         <div class="col-md-3 mb-2">
-                            <select class="form-select pfn-auskultasi-detail" name="pfn_aus_wheezing_kanan"
+                            <select class="form-select form-select-sm pfn-auskultasi-detail" name="pfn_aus_wheezing_kanan"
                                 data-checkbox="pfn_aus_wheezing"
                                 disabled>
                                 <option value="">-</option>
@@ -253,7 +253,7 @@
                         </div>
 
                         <div class="col-md-3 mb-2">
-                            <select class="form-select pfn-auskultasi-detail" name="pfn_aus_wheezing_kiri"
+                            <select class="form-select form-select-sm pfn-auskultasi-detail" name="pfn_aus_wheezing_kiri"
                                 data-checkbox="pfn_aus_wheezing"
                                 disabled>
                                 <option value="">-</option>
