@@ -100,3 +100,48 @@
         </div>
     </div>
 </div>
+
+<script>
+    const dataKunjungan = @json($list['dataKunjungan']);
+    console.log(dataKunjungan.IDRUANGAN);
+</script>
+
+{{-- CONTOH VALUE DARI JSON - dataKunjungan --}}
+{{--
+    "NOMOR": "1020201022607290001",
+    "NOPEN": "2607290001",
+    "RUANGAN": "102020102",
+    "MASUK": "2026-07-29 03:24:58",
+    "KELUAR": "2026-08-06 23:25:00",
+    "RUANG_KAMAR_TIDUR": 0,
+    "REF": null,
+    "DITERIMA_OLEH": 7,
+    "BARU": 0,
+    "TITIPAN": 0,
+    "TITIPAN_KELAS": 0,
+    "STATUS": 2,
+    "FINAL_HASIL": 0,
+    "FINAL_HASIL_OLEH": 0,
+    "FINAL_HASIL_TANGGAL": null,
+    "DPJP": 32,
+    "OTOMATIS": 0,
+    "PEMOHON_REVISI": null,
+    "DETAIL_REVISI": null,
+    "NORM": 37804,
+    "TGLDAFTAR": "2026-07-29 03:24:38",
+    "NOSEP": "",
+    "TGLSEP": "2025-09-01 06:25:11",
+    "NOBPJS": "0002697964929",
+    "IDRUANGAN": "102020102",                                               <<<<< ------ CONTOH DIPANGGIL = dataKunjungan.IDRUANGAN
+    "NAMARUANGAN": "Rawat Darurat",
+    "NIKPASIEN": "3311041702000005",
+    "NAMALENGKAPPASIEN": "MUHAMMAD ARIZAL YUSUF HERMAWAN",
+    "PANGGILANPASIEN": "MUH",
+    "TGLLAHIRPASIEN": "2000-02-17 00:00:00",
+    "JKPASIEN": "LAKI-LAKI",
+    "NAMAPASIEN": "MUHAMMAD ARIZAL YUSUF HERMAWAN, SDR",
+    "ALAMATPASIEN": "JL BAWEAN 17 SUKOHARJO RT. 3 RW. 1 Kel/Desa. SUKOHARJO Kec. SUKOHARJO Kab/Kota. SUKOHARJO Prov. JAWA TENGAH 57512",
+    "NAMADOKTER": "dr. FITRIANA DARMASTUTI",
+    "UMURPASIEN": "26 Th/ 5 bl/ 12 hr",
+    "TLPASIEN": "SUKOHARJO"
+--}}

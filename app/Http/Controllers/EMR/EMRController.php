@@ -707,8 +707,52 @@ class EMRController extends Controller
          * Tambahkan query kunjungan/pasien Anda di sini bila partial
          * membutuhkan data lain selain kunjungan.
          */
+        $getDataKunjungan = DB::table('pendaftaran.kunjungan AS pk')
+                ->select(
+                    'pk.*',
+                    'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
+                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
+                    'kjs.noKartu AS NOBPJS',
+                    'ru.ID AS IDRUANGAN',
+                    'ru.DESKRIPSI AS NAMARUANGAN',
+                    'kips.NOMOR AS NIKPASIEN',
+                    'ps.NAMA AS NAMALENGKAPPASIEN',
+                    'ps.PANGGILAN AS PANGGILANPASIEN',
+                    'ps.TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+                    DB::raw("
+                        IF(
+                            ps.JENIS_KELAMIN = 1,
+                            'LAKI-LAKI',
+                            IF(
+                                ps.JENIS_KELAMIN = 2,
+                                'PEREMPUAN',
+                                'TIDAK DIKETAHUI'
+                            )
+                        ) AS JKPASIEN
+                    "),
+                    DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
+                    DB::raw('master.getAlamatPasienCustom(ps.NORM) AS ALAMATPASIEN'),
+                    DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+                    DB::raw('master.getCariUmur(pp.TANGGAL,ps.TANGGAL_LAHIR) AS UMURPASIEN'),
+                    DB::raw("(
+                        SELECT DESKRIPSI
+                        FROM master.wilayah AS wil
+                        WHERE wil.ID = ps.TEMPAT_LAHIR
+                    ) AS TLPASIEN"),
+                )
+                ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
+                ->leftJoin('master.kartu_identitas_pasien AS kips','ps.NORM','=','kips.NORM')
+                ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                ->where('pk.NOMOR',$kunjungan)
+                ->first();
+
         $list = [
             'kunjungan' => $kunjungan,
+            'dataKunjungan' => $getDataKunjungan,
         ];
 
         if (
@@ -735,7 +779,10 @@ class EMRController extends Controller
                 true
             )
         ) {
-            $list = $this->getDataMaster($kunjungan);
+            $list = array_merge(
+                $list,
+                $this->getDataMaster($kunjungan)
+            );
         }
 
         $identification = $this->formInputIdentification($kunjungan);
