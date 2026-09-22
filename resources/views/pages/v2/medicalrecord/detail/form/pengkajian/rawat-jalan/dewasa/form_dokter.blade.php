@@ -33,6 +33,7 @@
                                 [
                                     'section' => '#rjd_dokter',
                                     'page' => 'dokter',
+                                    'idRuangan' => $list['dataKunjungan']->IDRUANGAN ?? $list['dataKunjungan']['IDRUANGAN'] ?? null,
                                     'editableFields' => [
                                         'tv_keu',
                                         'tv_gcs_e',
@@ -48,6 +49,10 @@
                                         'tv_spo2',
                                         'tv_bb',
                                         'tv_tb',
+                                        'tv_visus_od',
+                                        'tv_visus_os',
+                                        'tv_tio_od',
+                                        'tv_tio_os',
                                     ],
                                 ]
                             )
@@ -102,8 +107,8 @@
 </div>
 
 <script>
-    const dataKunjungan = @json($list['dataKunjungan']);
-    console.log(dataKunjungan.IDRUANGAN);
+    // const dataKunjungan = @json($list['dataKunjungan']);
+    // console.log(dataKunjungan.IDRUANGAN);
 </script>
 
 {{-- CONTOH VALUE DARI JSON - dataKunjungan --}}

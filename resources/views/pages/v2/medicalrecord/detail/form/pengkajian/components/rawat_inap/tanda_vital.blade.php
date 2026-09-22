@@ -18,6 +18,8 @@
     if (!is_array($editableFields)) {
         $editableFields = [];
     }
+
+    $idRuangan = $idRuangan ?? null;
 @endphp
 
 <div class="form-group" id="form_tanda_vital">
@@ -362,6 +364,64 @@
                 </div>
             </div>
 
+            {{-- Khusus Poli Mata --}}
+            <div class="row d-none" id="khusus_poli_mata">
+
+                {{-- Visus --}}
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label class="form-label">
+                            Visus
+                        </label>
+                        <div class="input-group">
+                            <div class="input-group-text">
+                                OD
+                            </div>
+                            <input
+                                type="input"
+                                class="form-control"
+                                name="tv_visus_od"
+                            >
+                            <div class="input-group-text">
+                                OS
+                            </div>
+                            <input
+                                type="input"
+                                class="form-control"
+                                name="tv_visus_os"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Tio --}}
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label class="form-label">
+                            Tio
+                        </label>
+                        <div class="input-group">
+                            <div class="input-group-text">
+                                OD
+                            </div>
+                            <input
+                                type="input"
+                                class="form-control"
+                                name="tv_tio_od"
+                            >
+                            <div class="input-group-text">
+                                OS
+                            </div>
+                            <input
+                                type="input"
+                                class="form-control"
+                                name="tv_tio_os"
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {{-- BB + TB --}}
             <div class="row">
 
@@ -432,8 +492,34 @@
     const $section = $(@json($section));
     const page = @json($page);
     const editableFields = @json($editableFields);
-
+    
     const $form = $section.find('[data-ttv-form]');
+
+    const idRuangan = String(@json($idRuangan ?? ''))
+        .trim();
+
+    function updatePoliMataState() {
+        const $poliMata = $section.find('#khusus_poli_mata');
+
+        if (!$poliMata.length) {
+            return;
+        }
+
+        if (idRuangan === '102010108') {
+            $poliMata
+                .removeClass('d-none')
+                .show();
+        } else {
+            $poliMata
+                .addClass('d-none')
+                .hide();
+
+            // Kosongkan nilai ketika bukan Poli Mata
+            $poliMata
+                .find('input, textarea, select')
+                .val('');
+        }
+    }
 
     function updateTtvNeonatusState() {
         const $frekuensiNadi = $section.find('#frekuensi_nadi');
@@ -1073,6 +1159,34 @@
                             ttv.KESADARAN_NEONATUS
                         );
                     }
+
+                    if (FormHelper.hasValue(ttv.VISUS_OD)) {
+                        setSingleCheckbox(
+                            'tv_visus_od',
+                            ttv.VISUS_OD
+                        );
+                    }
+
+                    if (FormHelper.hasValue(ttv.VISUS_OS)) {
+                        setSingleCheckbox(
+                            'tv_visus_os',
+                            ttv.VISUS_Os
+                        );
+                    }
+
+                    if (FormHelper.hasValue(ttv.TIO_OD)) {
+                        setSingleCheckbox(
+                            'tv_tio_od',
+                            ttv.TIO_OD
+                        );
+                    }
+
+                    if (FormHelper.hasValue(ttv.TIO_OS)) {
+                        setSingleCheckbox(
+                            'tv_tio_os',
+                            ttv.TIO_OS
+                        );
+                    }
                 }
                 updateTtvNeonatusState();
                 // ------------------------------------------------------
@@ -1222,6 +1336,7 @@
         // ==========================================================
         // GET DATA
         // ==========================================================
+        updatePoliMataState();
         updateTtvNeonatusState();
         getTandaVital();
 

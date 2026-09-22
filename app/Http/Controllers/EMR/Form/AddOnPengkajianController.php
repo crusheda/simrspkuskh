@@ -5470,13 +5470,13 @@ class AddOnPengkajianController extends Controller
 
     function getTandaVitalRI($PPA, $KUNJUNGAN)
     {
-        if ($PPA == 'dokter') {
-            $PPA = 1;
-        } else if ($PPA == 'perawat') {
-            $PPA = 2;
-        } else {
+        // if ($PPA == 'dokter') {
+        //     $PPA = 1;
+        // } else if ($PPA == 'perawat') {
+        //     $PPA = 2;
+        // } else {
             $PPA = 0;
-        }
+        // }
 
         $ttv1 = DB::table('medicalrecord.tanda_vital')
             ->select(
@@ -5493,7 +5493,11 @@ class AddOnPengkajianController extends Controller
                 'VERBAL',
                 'MOTORIK',
                 'GCS',
-                'KESADARAN_NEONATUS'
+                'KESADARAN_NEONATUS',
+                'VISUS_OD',
+                'VISUS_OS',
+                'TIO_OD',
+                'TIO_OS'
             )
             ->where('KUNJUNGAN', $KUNJUNGAN)
             ->whereIn('STATUS', [1, 2])
@@ -5539,13 +5543,13 @@ class AddOnPengkajianController extends Controller
 
         try {
 
-            if ($PPA == 'dokter') {
-                $PPA = 1;
-            } else if ($PPA == 'perawat') {
-                $PPA = 2;
-            } else {
+            // if ($PPA == 'dokter') {
+            //     $PPA = 1;
+            // } else if ($PPA == 'perawat') {
+            //     $PPA = 2;
+            // } else {
                 $PPA = 0;
-            }
+            // }
 
             DB::table('medicalrecord.tanda_vital')->updateOrInsert(
                 [
@@ -5567,6 +5571,10 @@ class AddOnPengkajianController extends Controller
                     'MOTORIK'               => $request->tv_gcs_m ?? 0,
                     'GCS'                   => $request->tv_gcs_t ?? 0,
                     'KESADARAN_NEONATUS'    => $request->kesadaran_neonatus ?? 0,
+                    'VISUS_OD'              => $request->tv_visus_od ?? 0,
+                    'VISUS_OS'              => $request->tv_visus_os ?? 0,
+                    'TIO_OD'                => $request->tv_tio_od ?? 0,
+                    'TIO_OS'                => $request->tv_tio_os ?? 0,
                     'WAKTU_PEMERIKSAAN'     => now(),
                     'OLEH'                  => auth()->id(),
                     'STATUS'                => 1,

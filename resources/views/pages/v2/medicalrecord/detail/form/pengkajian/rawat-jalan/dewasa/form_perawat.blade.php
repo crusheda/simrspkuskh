@@ -12,6 +12,7 @@
                     [
                         'section' => '#rjd_perawat',
                         'page' => 'perawat',
+                        'idRuangan' => $list['dataKunjungan']->IDRUANGAN ?? $list['dataKunjungan']['IDRUANGAN'] ?? null,
                         // 'editableFields' => [
                         //     'tv_keu',
                         //     'tv_gcs_e',
