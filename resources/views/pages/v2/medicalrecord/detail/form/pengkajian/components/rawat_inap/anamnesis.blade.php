@@ -436,39 +436,41 @@
                 // ==================================================
                 // ANAMNESIS DIPEROLEH
                 // ==================================================
-                if (String(anam1.AUTOANAMNESIS) === '1') {
-                    const $anamCheckboxes1 = $form.find(
-                        'input[type="checkbox"][name="anam1"]'
-                    );
+                if (anam1) {
+                    if (String(anam1.AUTOANAMNESIS) === '1') {
+                        const $anamCheckboxes1 = $form.find(
+                            'input[type="checkbox"][name="anam1"]'
+                        );
 
-                    // Hanya reset checkbox pada form dokter/perawat ini saja.
-                    $anamCheckboxes1.prop('checked', false);
+                        // Hanya reset checkbox pada form dokter/perawat ini saja.
+                        $anamCheckboxes1.prop('checked', false);
 
-                    // Centang sesuai value hanya pada form ini.
-                    $anamCheckboxes1.prop('checked', true);
-                }
-                if (String(anam1.ALLOANAMNESIS) === '1') {
-                    const $anamCheckboxes2 = $form.find(
-                        'input[type="checkbox"][name="anam2"]'
-                    );
+                        // Centang sesuai value hanya pada form ini.
+                        $anamCheckboxes1.prop('checked', true);
+                    }
+                    if (String(anam1.ALLOANAMNESIS) === '1') {
+                        const $anamCheckboxes2 = $form.find(
+                            'input[type="checkbox"][name="anam2"]'
+                        );
 
-                    // Hanya reset checkbox pada form dokter/perawat ini saja.
-                    $anamCheckboxes2.prop('checked', false);
+                        // Hanya reset checkbox pada form dokter/perawat ini saja.
+                        $anamCheckboxes2.prop('checked', false);
 
-                    // Centang sesuai value hanya pada form ini.
-                    $anamCheckboxes2.prop('checked', true);
-                }
+                        // Centang sesuai value hanya pada form ini.
+                        $anamCheckboxes2.prop('checked', true);
+                    }
 
-                // PENGISIAN dari
-                if (
-                    anam1.DARI &&
-                    FormHelper.hasValue(anam1.DARI)
-                ) {
-                    FormHelper.setValue(
-                        $section,
-                        'anamnesis_dari',
-                        anam1.DARI
-                    );
+                    // PENGISIAN dari
+                    if (
+                        anam1.DARI &&
+                        FormHelper.hasValue(anam1.DARI)
+                    ) {
+                        FormHelper.setValue(
+                            $section,
+                            'anamnesis_dari',
+                            anam1.DARI
+                        );
+                    }
                 }
 
                 // ==================================================
