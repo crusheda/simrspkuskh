@@ -4627,7 +4627,7 @@ class AddOnPengkajianController extends Controller
             }
 
             if ($extremitas) {
-                $perut[] = 'edema : ' . implode(', ', $extremitas);
+                $perut[] = 'akral : ' . implode(', ', $extremitas);
             }
 
             if ($request->filled('pf_udem')) {
@@ -4637,7 +4637,7 @@ class AddOnPengkajianController extends Controller
                     $udem .= ' (' . $esc($request->input('pf_udem_lain')) . ')';
                 }
 
-                $perut[] = 'edema palpebrae : ' . $udem;
+                $perut[] = 'edema : ' . $udem;
             }
 
             if ($perut) {
@@ -9872,12 +9872,28 @@ class AddOnPengkajianController extends Controller
             //     'SKALA_NYERI' => $request->input('tv_sn', ''),
             // ];
 
-
-
-
             // ==========================================
             // SIMPAN TRIAGE
             // ==========================================
+            $getPerawat = DB::table('master.perawat as prw')
+                        ->leftJoin('aplikasi.pengguna as pe', function ($join) {
+                            $join->on('pe.NIP','=','prw.NIP')
+                                ->where('pe.STATUS', 1);
+                        })
+                        ->where('prw.STATUS', 1)
+                        ->select('prw.ID', 'prw.NIP', DB::raw('master.getNamaLengkapPegawai(prw.NIP) AS NAMAPEGAWAI'))
+                        ->orderByDesc('prw.ID')
+                        ->first();
+
+            if (!$getPerawat) {
+
+                // DB::rollBack();
+
+                // return response()->json([
+                //     'status'  => false,
+                //     'message' => 'Data login perawat tidak ditemukan. Silakan menghubungi Administrator'
+                // ], 404);
+            }
 
             DB::table('medicalrecord.triage')->updateOrInsert(
                 [
@@ -9942,9 +9958,10 @@ class AddOnPengkajianController extends Controller
                     // ==============================
                     'RISIKO_PENULARAN_INFEKSI' => $risikoPenularan,
 
-                    'OLEH'    => auth()->id(),
-                    'STATUS'  => 2,
-                    'TANGGAL' => now(),
+                    'PERAWAT_ID'    => $getPerawat->ID ?? null,
+                    'OLEH'          => auth()->id(),
+                    'STATUS'        => 2,
+                    'TANGGAL'       => now(),
                 ]
             );
 

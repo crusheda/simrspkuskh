@@ -554,7 +554,7 @@
             <div class="col-md-6">
                 <div class="form-group mb-3">
                     <div class="d-flex align-items-center gap-3">
-                        <label class="form-label fw-bold flex-shrink-0">Edema</label>
+                        <label class="form-label fw-bold flex-shrink-0">Akral</label>
                         <div class="d-flex align-items-center gap-3 ms-auto">
                             <div class="form-check m-0">
                                 <input class="form-check-input" type="checkbox" name="pf_extremitas_hangat">
@@ -572,7 +572,7 @@
             <div class="col-md-6">
                 <div class="form-group mb-3">
                     <div class="d-flex align-items-center gap-3">
-                        <label class="form-label fw-bold flex-shrink-0">Edema Palpebrae</label>
+                        <label class="form-label fw-bold flex-shrink-0">Edema</label>
                         <div class="d-flex align-items-center gap-3 ms-auto">
                             <div class="form-check m-0">
                                 <input class="form-check-input single-checkbox" type="checkbox" data-target="#pf_udem_lain" name="pf_udem" value="0">
