@@ -320,7 +320,7 @@
         </div>
     </div>
 
-    <div class="col-md-12 mb-2">
+    <div class="col-md-12">
         <div class="row align-items-center">
         {{-- ======================================================
             KEBUTUHAN EDUKASI
@@ -581,14 +581,14 @@
     {{-- ==========================================================
         DESKRIPSI EDUKASI
     =========================================================== --}}
-    <div class="col-md-12">
+    {{-- <div class="col-md-12">
         <textarea
             class="form-control form-control-sm"
             name="kb_edu_deskripsi"
             rows="3"
             placeholder="Masukkan Edukasi / Follow Up"
         ></textarea>
-    </div>
+    </div> --}}
 </div>
 
 <script>
@@ -1156,19 +1156,19 @@
                     // DESKRIPSI EDUKASI
                     // ==================================================
 
-                    if (
-                        FormHelper.hasValue(
-                            edukasi.EDUKASI
-                        )
-                    ) {
+                    // if (
+                    //     FormHelper.hasValue(
+                    //         edukasi.EDUKASI
+                    //     )
+                    // ) {
 
-                        FormHelper.setValue(
-                            $section,
-                            'kb_edu_deskripsi',
-                            edukasi.EDUKASI
-                        );
+                    //     FormHelper.setValue(
+                    //         $section,
+                    //         'kb_edu_deskripsi',
+                    //         edukasi.EDUKASI
+                    //     );
 
-                    }
+                    // }
 
                 }
 

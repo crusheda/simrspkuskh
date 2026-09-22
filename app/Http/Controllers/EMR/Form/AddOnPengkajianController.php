@@ -2786,19 +2786,19 @@ class AddOnPengkajianController extends Controller
                 ]
             );
 
-            DB::table('medicalrecord.edukasi_emergency')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $request->NOKUNJ
-                ],
-                [
-                    'EDUKASI' => $request->kb_edu_deskripsi ?? '',
-                    'KEMBALI_KE_UGD' => '',
+            // DB::table('medicalrecord.edukasi_emergency')->updateOrInsert(
+            //     [
+            //         'KUNJUNGAN' => $request->NOKUNJ
+            //     ],
+            //     [
+            //         'EDUKASI' => $request->kb_edu_deskripsi ?? '',
+            //         'KEMBALI_KE_UGD' => '',
 
-                    'TANGGAL' => now(),
-                    'OLEH' => auth()->id(),
-                    'STATUS' => 1,
-                ]
-            );
+            //         'TANGGAL' => now(),
+            //         'OLEH' => auth()->id(),
+            //         'STATUS' => 1,
+            //     ]
+            // );
 
             DB::commit();
 
