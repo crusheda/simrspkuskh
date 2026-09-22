@@ -11,7 +11,7 @@
         ========================================================== --}}
     @if ($page === 'dokter')
 
-        <div class="card card-body border border-dashed border-warning mb-3">
+        <div class="card card-body border border-dashed border-warning">
 
             <h5>
                 I. Primary <b class="text-warning">Survey</b>

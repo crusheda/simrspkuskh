@@ -7,7 +7,7 @@
         <textarea
             class="form-control"
             name="hld"
-            rows="2"></textarea>
+            rows="4"></textarea>
 
     </div>
 
