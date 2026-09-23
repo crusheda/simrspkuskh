@@ -5934,10 +5934,20 @@ class AddOnPengkajianController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'tahun' => ['required'],
+                'tahun' => ['required', 'integer', 'min:1', 'max:100'],
+                'ket' => [
+                    'required',
+                    'in:Menikah,Belum Menikah,Cerai Hidup,Cerai Mati'
+                ],
             ],
             [
                 'tahun.required' => 'Lama Pernikahan wajib diisi.',
+                'tahun.integer'  => 'Lama Pernikahan harus berupa angka.',
+                'tahun.min'      => 'Lama Pernikahan minimal 1 tahun.',
+                'tahun.max'      => 'Lama Pernikahan maksimal 100 tahun.',
+
+                'ket.required' => 'Keterangan wajib dipilih.',
+                'ket.in'       => 'Keterangan yang dipilih tidak valid.',
             ]
         );
 
@@ -5949,15 +5959,17 @@ class AddOnPengkajianController extends Controller
         }
 
         DB::table('medicalrecord.sirmed_riwayat_nikah')->insert([
-            'KUNJUNGAN'         => $KUNJUNGAN,
-            'LAMA_NIKAH'        => $request->tahun,
-            'KETERANGAN'        => $request->ket,
-            'OLEH'              => auth()->id(),
-            'TANGGAL'           => now(),
-            'STATUS'            => 1,
+            'KUNJUNGAN'  => $KUNJUNGAN,
+            'LAMA_NIKAH' => $request->tahun,
+            'KETERANGAN' => $request->ket,
+            'OLEH'       => auth()->id(),
+            'TANGGAL'    => now(),
+            'STATUS'     => 1,
         ]);
 
-        return response()->json(['message' => 'Data riwayat pernikahan berhasil disimpan.'], 200);
+        return response()->json([
+            'message' => 'Data riwayat pernikahan berhasil disimpan.'
+        ], 200);
     }
 
     public function hapusRiwayatNikah($KUNJUNGAN, $ID)
@@ -5991,6 +6003,7 @@ class AddOnPengkajianController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
+                'tidak_kb'           => ['nullable'],
                 'kb_suntik'          => ['nullable'],
                 'kb_iud'             => ['nullable'],
                 'kb_pil'             => ['nullable'],
@@ -6023,6 +6036,7 @@ class AddOnPengkajianController extends Controller
             // ==========================================================
 
             $data = [
+                'TIDAK_KB'   => $request->tidak_kb == 1 ? 1 : 0,
                 'KB_SUNTIK'   => $request->kb_suntik == 1 ? 1 : 0,
                 'KB_IUD'      => $request->kb_iud == 1 ? 1 : 0,
                 'KB_PIL'      => $request->kb_pil == 1 ? 1 : 0,
@@ -6870,7 +6884,52 @@ class AddOnPengkajianController extends Controller
                         'STATUS'  => 1,
                     ]
                 );
+            
+            /*
+            |--------------------------------------------------------------------------
+            | PENILAIAN AWAL BAYI
+            |--------------------------------------------------------------------------
+            | Jika minimal salah satu dari BB, PB, LK, LD, LP, LILA terisi,
+            | sinkronkan ke sirmed_penilaian_awal_bayi
+            |--------------------------------------------------------------------------
+            */
 
+            $bbLahir = $request->input('sn_bb_lahir');
+            $pbLahir = $request->input('sn_pb_lahir');
+            $lk      = $request->input('sn_lk');
+            $ld      = $request->input('sn_ld');
+            $lp      = $request->input('sn_lp');
+            $lila    = $request->input('sn_lila');
+
+            $adaDataAntropometri =
+                $bbLahir !== null && $bbLahir !== ''
+                || $pbLahir !== null && $pbLahir !== ''
+                || $lk !== null && $lk !== ''
+                || $ld !== null && $ld !== ''
+                || $lp !== null && $lp !== ''
+                || $lila !== null && $lila !== '';
+
+            if ($adaDataAntropometri) {
+
+                DB::table('medicalrecord.sirmed_penilaian_awal_bayi')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $KUNJUNGAN
+                        ],
+                        [
+                            'BBL'  => $bbLahir,
+                            'PBL'  => $pbLahir,
+                            'LK'   => $lk,
+                            'LD'   => $ld,
+                            'LP'   => $lp,
+                            'LILA' => $lila,
+
+                            'TANGGAL' => now(),
+                            'OLEH'    => $oleh,
+                            'STATUS'  => 1,
+                        ]
+                    );
+            }
 
             DB::commit();
 
@@ -7124,6 +7183,47 @@ class AddOnPengkajianController extends Controller
                     ],
                     $data
                 );
+
+            // ======================================================
+            // SINKRONISASI ANTROPOMETRI KE STATUS NEONATUS
+            // ======================================================
+
+            $bbLahir = $request->input('bbl');
+            $pbLahir = $request->input('pbl');
+            $lk      = $request->input('lk');
+            $ld      = $request->input('ld');
+            $lp      = $request->input('lp');
+            $lila    = $request->input('lila');
+
+            // Cek apakah minimal salah satu antropometri diisi
+            $adaAntropometri =
+                ($bbLahir !== null && $bbLahir !== '') ||
+                ($pbLahir !== null && $pbLahir !== '') ||
+                ($lk !== null && $lk !== '') ||
+                ($ld !== null && $ld !== '') ||
+                ($lp !== null && $lp !== '') ||
+                ($lila !== null && $lila !== '');
+
+            if ($adaAntropometri) {
+
+                DB::table('medicalrecord.sirmed_status_neonatus')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $kunjungan
+                        ],
+                        [
+                            'BB_LAHIR' => $bbLahir,
+                            'PB_LAHIR' => $pbLahir,
+                            'LK'       => $lk,
+                            'LD'       => $ld,
+                            'LP'       => $lp,
+                            'LILA'     => $lila,
+                            'TANGGAL'  => now(),
+                            'OLEH'     => $oleh,
+                            'STATUS'   => 1,
+                        ]
+                    );
+            }
 
             // ======================================================
             // SIMPAN PEMERIKSAAN FISIK / DESKRIPSI CPPT

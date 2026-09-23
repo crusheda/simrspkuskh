@@ -290,6 +290,33 @@
 
     <div class="row mb-3">
         <div class="col">
+            <h6>Kulit</h6>
+            <div class="d-flex align-items-center gap-3">
+
+                {{-- Ikrenik --}}
+                <div class="form-check m-0">
+                    <input class="form-check-input"
+                        type="checkbox"
+                        name="kulit_ikrenik"
+                        value="1"
+                        id="kulit_ikrenik">
+
+                    <label class="form-check-label"
+                        for="kulit_ikrenik">
+                        Ikterik
+                    </label>
+                </div>
+
+                {{-- Keterangan --}}
+                <input type="text"
+                    class="form-control form-control-sm"
+                    name="kulit_keterangan"
+                    placeholder="Keterangan...">
+
+            </div>
+
+        </div>
+        <div class="col" hidden>
             <h6>Suara</h6>
             <div class="d-flex align-items-center flex-wrap gap-3">
 
@@ -334,33 +361,6 @@
                         Kuat
                     </label>
                 </div>
-
-            </div>
-
-        </div>
-        <div class="col">
-            <h6>Kulit</h6>
-            <div class="d-flex align-items-center gap-3">
-
-                {{-- Ikrenik --}}
-                <div class="form-check m-0">
-                    <input class="form-check-input"
-                        type="checkbox"
-                        name="kulit_ikrenik"
-                        value="1"
-                        id="kulit_ikrenik">
-
-                    <label class="form-check-label"
-                        for="kulit_ikrenik">
-                        Ikrenik
-                    </label>
-                </div>
-
-                {{-- Keterangan --}}
-                <input type="text"
-                    class="form-control form-control-sm"
-                    name="kulit_keterangan"
-                    placeholder="Keterangan...">
 
             </div>
 

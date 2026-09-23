@@ -8,8 +8,14 @@
                     <input type="number" class="form-control form-control-sm" name="nikah_tahun" id="nikah_tahun" min="1" max="100" placeholder="Berapa Tahun">
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Keterangan (Cth : Cerai / Belum Menikah / dll)</label>
-                    <input type="text" class="form-control form-control-sm" name="nikah_ket" id="nikah_ket" placeholder="...">
+                    <label class="form-label">Keterangan</label>
+                    <select class="form-select form-select-sm" name="nikah_ket" id="nikah_ket">
+                        <option value="">-- Pilih Status --</option>
+                        <option value="Menikah">Menikah</option>
+                        <option value="Belum Menikah">Belum Menikah</option>
+                        <option value="Cerai Hidup">Cerai Hidup</option>
+                        <option value="Cerai Mati">Cerai Mati</option>
+                    </select>
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                     <div class="btn-group">
@@ -113,6 +119,24 @@
         let tahun = $("[name='nikah_tahun']").val();
         let ket = $("[name='nikah_ket']").val();
 
+        if (!tahun) {
+            iziToast.warning({
+                title: 'Perhatian!',
+                message: 'Lama Pernikahan wajib diisi.',
+                position: 'topRight'
+            });
+            return;
+        }
+
+        if (!ket) {
+            iziToast.warning({
+                title: 'Perhatian!',
+                message: 'Keterangan wajib dipilih.',
+                position: 'topRight'
+            });
+            return;
+        }
+
         $.ajax({
             url: `/api/v2/emr/pengkajian/riwayat_nikah/${kunjungan}/simpan`,
             type: 'POST',
@@ -132,8 +156,8 @@
                     message: res.message || 'Data berhasil disimpan.',
                     position: 'topRight'
                 });
-                $("[name='ra_jenis']").val('');
-                $("[name='ra_deskripsi']").val('');
+                $("[name='nikah_tahun']").val('');
+                $("[name='nikah_ket']").val('');
                 getRiwayatNikah();
             },
             error: function (xhr) {

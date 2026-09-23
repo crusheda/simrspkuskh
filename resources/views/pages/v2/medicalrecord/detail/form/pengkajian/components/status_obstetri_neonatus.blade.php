@@ -14,7 +14,7 @@
 
         </div>
     </div>
-    <div class="row" id="tampil_status_obstetri_neonatus" hidden>
+    <div class="row mb-2" id="tampil_status_obstetri_neonatus" hidden>
         {{-- ================= STATUS OBSTETRI ================= --}}
         <div class="col-md-6">
             <h6 class="fw-bold text-dark mb-1">
@@ -286,7 +286,7 @@
                 </div>
             </div>
             {{-- Resusitasi --}}
-            <div class="row mb-2">
+            {{-- <div class="row mb-2">
                 <div class="col-md-4">
                     <label class="form-label mb-0">Resusitasi</label>
                 </div>
@@ -306,17 +306,17 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             {{-- Berulang --}}
-            <div class="row align-items-center mb-2">
+            {{-- <div class="row align-items-center mb-2">
                 <div class="col-md-4"></div>
                 <div class="col-md-8">
                     <div class="d-flex align-items-center gap-1">
                         <input type="text" class="form-control form-control-sm" name="sn_berulang">
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             {{-- Jenis Partus --}}
             <div class="row mb-2">
@@ -353,6 +353,8 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
             <div class="col-md-12 mb-1">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.penilaian_awal_bbl')
@@ -526,24 +528,24 @@
 
                     // Berat / panjang badan
                     $form.find('[name="sn_bb_lahir"]')
-                        .val(neonatus.sn_bb_lahir ?? '');
+                        .val(Math.round(Number(neonatus.sn_bb_lahir)) || '');
 
                     $form.find('[name="sn_pb_lahir"]')
-                        .val(neonatus.sn_pb_lahir ?? '');
+                        .val(Math.round(Number(neonatus.sn_pb_lahir)) || '');
 
 
                     // Lingkar
                     $form.find('[name="sn_lk"]')
-                        .val(neonatus.sn_lk ?? '');
+                        .val(Math.round(Number(neonatus.sn_lk)) || '');
 
                     $form.find('[name="sn_ld"]')
-                        .val(neonatus.sn_ld ?? '');
+                        .val(Math.round(Number(neonatus.sn_ld)) || '');
 
                     $form.find('[name="sn_lp"]')
-                        .val(neonatus.sn_lp ?? '');
+                        .val(Math.round(Number(neonatus.sn_lp)) || '');
 
                     $form.find('[name="sn_lila"]')
-                        .val(neonatus.sn_lila ?? '');
+                        .val(Math.round(Number(neonatus.sn_lila)) || '');
 
 
                     // Resusitasi

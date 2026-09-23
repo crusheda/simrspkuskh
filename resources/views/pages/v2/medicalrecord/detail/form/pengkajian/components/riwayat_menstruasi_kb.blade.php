@@ -90,6 +90,15 @@
                                     </label>
                                 </div>
                             </div>
+                            
+                            <div class="col mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input check-primary" type="checkbox" name="tidak_kb" id="tidak_kb" value="1" >
+                                    <label class="form-check-label" for="tidak_kb">
+                                        Tidak KB
+                                    </label>
+                                </div>
+                            </div>
 
                         </div>
 
@@ -211,6 +220,10 @@
                 // ==================================================
                 // RIWAYAT KB
                 // ==================================================
+
+                $('#form_riwayat_kb_menstruasi')
+                    .find('[name="tidak_kb"]')
+                    .prop('checked', data.TIDAK_KB == 1);
 
                 $('#form_riwayat_kb_menstruasi')
                     .find('[name="kb_suntik"]')

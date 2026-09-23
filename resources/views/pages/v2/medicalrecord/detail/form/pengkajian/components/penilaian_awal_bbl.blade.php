@@ -1,16 +1,9 @@
 <form id="form_penilaian_awal_bayi">
     <div class="col-md-12 mb-3">
         <div>
-            <h6 class="fw-bold mb-1">
+            <h4 class="text-danger">
                 PENILAIAN AWAL BAYI BARU LAHIR
-            </h6>
-        </div>
-        {{-- Bayi Bugar --}}
-        <div class="form-check mb-2">
-            <input class="form-check-input" type="radio" name="apgar_status_bayi" id="apgar_bayi_bugar" value="bugar">
-            <label class="form-check-label" for="apgar_bayi_bugar">
-                Bayi Bugar
-            </label>
+            </h4>
         </div>
         <div id="section_apgar">
             <div class="mb-2">
@@ -216,6 +209,13 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+        {{-- Bayi Bugar --}}
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="apgar_status_bayi" id="apgar_bayi_bugar" value="bugar">
+            <label class="form-check-label" for="apgar_bayi_bugar">
+                Bayi Bugar
+            </label>
         </div>
         {{-- BAYI TIDAK BUGAR --}}
         <div class="form-check mb-2">
@@ -430,32 +430,21 @@
 
         console.log('Update status bayi:', status);
 
-        if (status === 'bugar') {
+        $sectionApgar.show();
 
-            $sectionApgar.show();
+        if (status === 'tidak_bugar') {
+
+            // Jika bayi tidak bugar → tampilkan resusitasi
+            $sectionResusitasi.show();
+
+        } else {
+
+            // Jika bayi bugar → sembunyikan resusitasi
             $sectionResusitasi.hide();
 
             if (resetLawan) {
                 resetResusitasi();
             }
-
-        }
-
-        else if (status === 'tidak_bugar') {
-
-            $sectionApgar.hide();
-            $sectionResusitasi.show();
-
-            if (resetLawan) {
-                resetApgar();
-            }
-
-        }
-
-        else {
-
-            hideAllSection();
-
         }
 
     }
@@ -818,11 +807,7 @@
                 // HITUNG ULANG APGAR
                 // ==================================================
 
-                if (statusBayi === 'bugar') {
-
-                    hitungSemuaApgar();
-
-                }
+                hitungSemuaApgar();
 
 
                 console.log(
@@ -996,52 +981,35 @@
                     return;
                 }
 
+                const status = $(this).val();
 
-                const status =
-                    $(this).val();
+                console.log('Status bayi dipilih:', status);
 
-
-                console.log(
-                    'Status bayi dipilih:',
-                    status
-                );
-
-
-                // ==================================================
-                // BUGAR
-                // ==================================================
+                // APGAR SELALU TAMPIL
+                $sectionApgar.show();
 
                 if (status === 'bugar') {
 
-                    $sectionApgar.show();
+                    // Tidak perlu resusitasi
                     $sectionResusitasi.hide();
 
-                    // Kosongkan seluruh resusitasi
+                    // Bersihkan data resusitasi
                     resetResusitasi();
 
-                    // Simpan
-                    simpanPenilaianAwalBayi();
-
                 }
-
-
-                // ==================================================
-                // TIDAK BUGAR
-                // ==================================================
 
                 else if (status === 'tidak_bugar') {
 
-                    $sectionApgar.hide();
+                    // APGAR TETAP TAMPIL
+                    $sectionApgar.show();
+
+                    // Tampilkan resusitasi
                     $sectionResusitasi.show();
-
-                    // Kosongkan seluruh APGAR
-                    resetApgar();
-
-                    // Simpan
-                    simpanPenilaianAwalBayi();
 
                 }
 
+                // Simpan status
+                simpanPenilaianAwalBayi();
             }
         );
 
