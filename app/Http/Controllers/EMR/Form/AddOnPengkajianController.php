@@ -3761,71 +3761,46 @@ class AddOnPengkajianController extends Controller
         $kolomByForm = [
             'dewasa' => [
                 'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
-                'GANGGUAN_PERTUKARAN_GAS',
-                'GANGGUAN_VENTILASI_SPONTAN',
-                'POLA_NYERI_TIDAK_EFEKTIF',
-                'GANGGUAN_SIRKULASI_SPONTAN',
-                'PENURUNAN_CURAH_JANTUNG',
+                'POLA_NAFAS_TIDAK_EFEKTIF',
                 'PERFUSI_PERIFER_TIDAK_EFEKTIF',
-                'TERMOREGULASI_TIDAK_EFEKTIF',
-                'RESIKO_PERFUSI_GASTROINTESTINAL_TIDAK_EFEKTIF',
-                'RESIKO_PERDARAHAN',
-                'DEFISIT_NUTRISI',
                 'DIARE',
-                'KETIDAKSTABILAN_KADAR_GLUKOSA_DARAH',
-                'RESIKO_KETIDAKSEIMBANGAN_CAIRAN',
-                'RESIKO_KETIDAKSEIMBANGAN_ELEKTROLIT',
-                'RESIKO_SYOK',
-                'DISFUNGSI_MOTILITAS_GASTROINTESTINAL',
-                'GANGGUAN_ELIMINASI_URINE',
-                'KONSTIPASI',
-                'RETENSI_URINE',
-                'GANGGUAN_MOBILITAS_FISIK',
-                'GANGGUAN_POLA_TIDUR',
-                'INTOLERANSI_AKTIVITAS',
-                'GANGGUAN_MENELAN',
-                'GANGGUAN_RASA_NYAMAN',
-                'NAUSEA',
                 'NYERI_AKUT',
-                'NYERI_KRONIS',
-                'ANSIETAS',
-                'GANGGUAN_PERSEPSI_SENSORI',
-                'DEFISIT_PERAWATAN_DIRI',
-                'DEFISIT_PENGETAHUAN',
-                'GANGGUAN_INTERAKSI_SOSIAL',
-                'GANGGUAN_KOMUNIKASI_VERBAL',
-                'GANGGUAN_INTEGRITAS_KULIT_JARINGAN',
+                'NAUSEA',
                 'HIPERTERMI',
-                'HIPOTERMI',
-                'PERLAMBATAN_PEMULIHAN_PASCA_BEDAH',
-                'RESIKO_ALERGI',
-                'RESIKO_CIDERA',
-                'RESIKO_INFEKSI',
-                'HIPERVOLEMIA',
-                'HIPOVOLEMIA',
-                'BERAT_BADAN_LEBIH',
-                'CEMAS',
+                'ANSIETAS',
+                'GANGGUAN_INTEGRITAS_KULIT_JARINGAN',
+                'GANGGUAN_ELIMINASI_URINE',
+                'INTOLERANSI_AKTIVITAS',
+                'GANGGUAN_MOBILITAS_FISIK',
+                'GANGGUAN_PERTUKARAN_GAS',
             ],
-            'neonatus' => [
+            'anak' => [
                 'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF',
                 'POLA_NAFAS_TIDAK_EFEKTIF',
-                'GANGGUAN_PERTUKARAN_GAS',
-                'PERFUSI_JARINGAN_TIDAK_EFEKTIF',
-                'HIPOTERMI',
-                'GANGGUAN_KESEIMBANGAN_CAIRAN_ELEKTROLIT',
-                'RESIKO_KERUSAKAN_INTEGRITAS_KULIT',
-                'HIPERTERMI',
-                'GANGGUAN_PERFUSI_JARINGAN_CEREBRAL',
-                'KONSTIPASI',
+                'PERFUSI_PERIFER_TIDAK_EFEKTIF',
                 'DIARE',
-                'RESIKO_TINGGI_MALNUTRISI',
-                'KOPING_KELUARGA_TIDAK_EFEKTIF',
-                'RESIKO_TERHADAP_ASPIRASI',
-                'KETIDAKSEIMBANGAN_NUTRISI',
-                'GANGGUAN_ELIMINASI',
-                'RETENSI_URINE',
-                'KECEMASAN_ORANG_TUA',
-                'NYERI',
+                'NYERI_AKUT',
+                'NAUSEA',
+                'HIPERTERMI',
+                'ANSIETAS',
+                'GANGGUAN_INTEGRITAS_KULIT_JARINGAN',
+                'GANGGUAN_ELIMINASI_URINE',
+                'INTOLERANSI_AKTIVITAS',
+                'GANGGUAN_MOBILITAS_FISIK',
+                'GANGGUAN_PERTUKARAN_GAS',
+            ],
+            'psikiatri' => [
+                'ANSIETAS',
+                'DEFISIT_PENGETAHUAN',
+                'RISIKO_PERILAKU_KEKERASAN',
+                'DEFISIT_PERAWATAN_DIRI',
+                'HARGA_DIRI_RENDAH',
+                'ISOLASI_SOSIAL',
+                'KEPUTUSASAAN',
+                'KOPING_TIDAK_EFEKTIF',
+                'WAHAM',
+                'PERILAKU_KEKERASAN',
+                'GANGGUAN_PERSEPSI_SENSORI',
             ],
             'obsgyn' => [
                 'GANGGUAN_PERFUSI_JARINGAN_CEREBRAL',
@@ -11980,6 +11955,280 @@ class AddOnPengkajianController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Data Rencana Asuhan Keperawatan gagal disimpan.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    function getGeriatri($KUNJUNGAN)
+    {
+        $data = DB::table('medicalrecord.sirmed_assesmen_sindrom_geriatri')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('STATUS', 1)
+            ->first();
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function simpanGeriatri(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $kunjungan = $request->NOKUNJ ?? $KUNJUNGAN;
+
+            DB::table('medicalrecord.sirmed_assesmen_sindrom_geriatri')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $kunjungan
+                ],
+                [
+                    'IADL' => $request->input('geriatri_iadl'),
+                    'ACS' => $request->input('geriatri_acs'),
+                    'NUTRISI' => $request->input('geriatri_nutrisi'),
+                    'KOGNITIF' => $request->input('geriatri_kognitif'),
+                    'DEPRESI' => $request->input('geriatri_depresi'),
+                    'INKONTINENSIA' => $request->input('geriatri_inkontinensia'),
+                    'DVT' => $request->input('geriatri_dvt'),
+                    'ULKUS' => $request->input('geriatri_ulkus'),
+                    'INSOMNIA' => $request->input('geriatri_insomnia'),
+
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                    'TANGGAL' => now(),
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Asesmen Geriatri berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Asesmen Geriatri gagal disimpan.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    function getPerinatal($KUNJUNGAN)
+    {
+        $perinatal = DB::table('medicalrecord.riwayat_perinatal')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('STATUS', 1)
+            ->first();
+
+        $tumbuhKembang = DB::table('medicalrecord.riwayat_tumbuh_kembang')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('STATUS', 1)
+            ->first();
+
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'perinatal' => $perinatal,
+                'tumbuh_kembang' => $tumbuhKembang,
+            ]
+        ]);
+    }
+
+    function simpanPerinatal(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $kunjungan = $request->NOKUNJ ?? $KUNJUNGAN;
+
+            DB::table('medicalrecord.riwayat_perinatal')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $kunjungan
+                ],
+                [
+                    'LAMA_HAMIL'      => $request->rp_lama_hamil,
+                    'SATUAN'          => $request->rp_satuan,
+                    'KOMPLIKASI'      => $request->rp_komplikasi,
+                    'KOMPLIKASI_KET'  => $request->rp_komplikasi_des,
+                    'PERSALINAN'      => $request->rp_persalinan,
+                    'PENYULIT'        => $request->rp_penyulit,
+                    'PENYULIT_KET'    => $request->rp_penyulit_des,
+                    'OLEH'            => auth()->id(),
+                    'STATUS'          => 1,
+                    'TANGGAL'         => now(),
+                ]
+            );
+
+            DB::table('medicalrecord.riwayat_tumbuh_kembang')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $kunjungan
+                ],
+                [
+                    'LK_LAHIR'      => $request->lk_lahir,
+                    'BB_LAHIR'      => $request->bb_lahir,
+                    'TB_LAHIR'      => $request->tb_lahir,
+
+                    'ASI_SAMPAI'    => $request->asi_sampai,
+                    'ASI_SATUAN'    => $request->asi_satuan,
+
+                    'SUFOR_MULAI'   => $request->sufor_mulai,
+                    'SUFOR_SATUAN'  => $request->sufor_satuan,
+
+                    'MPASI_MULAI'   => $request->mpasi_mulai,
+                    'MPASI_SATUAN'  => $request->mpasi_satuan,
+
+                    'TENGKURAP'     => $request->tengkurap,
+                    'DUDUK'         => $request->duduk,
+                    'MERANGKAK'     => $request->merangkak,
+                    'BERDIRI'       => $request->berdiri,
+                    'BERJALAN'      => $request->berjalan,
+
+                    'NEONATUS'      => $request->neonatus,
+                    'NEONATUS_KET'  => $request->neonatus_ket,
+
+                    'KELUHAN'       => $request->keluhan_tumbuh_kembang,
+
+                    'OLEH'          => auth()->id(),
+                    'STATUS'        => 1,
+                    'TANGGAL'       => now()
+                ]
+            );
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Riwayat Perinatal dan Tumbuh Kembang berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Riwayat Perinatal dan Tumbuh Kembang gagal disimpan.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    function getPerencanaan($KUNJUNGAN)
+    {
+        $data = DB::table('medicalrecord.masalah_keperawatan')
+            ->where('KUNJUNGAN', $KUNJUNGAN)
+            ->where('STATUS', 1)
+            ->first();
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    public function simpanPerencanaan(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $kunjungan = $request->NOKUNJ ?? $KUNJUNGAN;
+            $form = strtolower($request->FORM ?? 'umum');
+
+            $data = [
+                'TINDAKAN_RAWAT_LUKA' => $request->input('tin_5') ? 1 : 0,
+
+                'TERAPI_ORAL' => $request->input('tin_6') ? 1 : 0,
+                'TERAPI_ORAL_DETAIL' => $request->input('terapi_oral'),
+
+                'TERAPI_IV_SC_IM' => $request->input('tin_7') ? 1 : 0,
+                'TERAPI_IV_SC_IM_DETAIL' => $request->input('terapi_iv'),
+
+                'OLEH' => auth()->id(),
+                'STATUS' => 1,
+                'TANGGAL' => now(),
+            ];
+
+
+            // ======================================================
+            // UMUM
+            // ======================================================
+            if ($form === 'umum') {
+
+                $data = array_merge($data, [
+
+                    'TINDAKAN_RELAKSASI_NAFAS_DALAM'
+                        => $request->input('tin_1') ? 1 : 0,
+
+                    'TINDAKAN_BODY_ALIGNMENT'
+                        => $request->input('tin_2') ? 1 : 0,
+
+                    'TINDAKAN_TENANGKAN_PASIEN'
+                        => $request->input('tin_3') ? 1 : 0,
+
+                    'TINDAKAN_PENDIDIKAN_KESEHATAN'
+                        => $request->input('tin_4') ? 1 : 0,
+                ]);
+            }
+
+
+            // ======================================================
+            // PSIKIATRI
+            // ======================================================
+            if ($form === 'psikiatri') {
+
+                $data = array_merge($data, [
+
+                    'JIWA_TINDAKAN_RELAKSASI'
+                        => $request->input('tin_jiwa_1') ? 1 : 0,
+
+                    'JIWA_TINDAKAN_BINA_HUBUNGAN_SALING_PERCAYA'
+                        => $request->input('tin_jiwa_2') ? 1 : 0,
+
+                    'JIWA_TINDAKAN_DISKUSI_PASIEN_KELUARGA'
+                        => $request->input('tin_jiwa_3') ? 1 : 0,
+
+                    'JIWA_TINDAKAN_STRATEGI_PELAKSANAAN'
+                        => $request->input('tin_jiwa_4') ? 1 : 0,
+                ]);
+            }
+
+
+            // ======================================================
+            // SIMPAN
+            // ======================================================
+            DB::table('medicalrecord.masalah_keperawatan')
+                ->updateOrInsert(
+                    [
+                        'KUNJUNGAN' => $kunjungan
+                    ],
+                    $data
+                );
+
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Rencana Perencanaan dan Tindakan berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Perencanaan dan Tindakan gagal disimpan.',
                 'error' => $e->getMessage(),
             ], 500);
         }

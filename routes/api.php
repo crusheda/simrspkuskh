@@ -358,12 +358,21 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // DAFTAR MASALAH KEPERAWATAN RAWAT JALAN
                         Route::get('emr/pengkajian/rj/masalahkeperawatan/{kunjungan}', [AddOnPengkajianController::class, 'getMasalahKeperawatanRJ']);
                         Route::post('emr/pengkajian/rj/masalahkeperawatan/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanMasalahKeperawatanRJ']);
+                    // PERENCANAAN TINDAKAN
+                        Route::get('emr/pengkajian/rj/perencanaan/{kunjungan}', [AddOnPengkajianController::class, 'getPerencanaan']);
+                        Route::post('emr/pengkajian/rj/perencanaan/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPerencanaan']);
                     // RENCANA ASUHAN KEPERAWATAN
                         Route::get('emr/pengkajian/rj/askep/{kunjungan}', [AddOnPengkajianController::class, 'getAskep']);
                         Route::post('emr/pengkajian/rj/askep/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanAskep']);
                     // PEMERIKSAAN FISIK OBSGYN RAJAL
                         Route::get('emr/pengkajian/rj/pemfis_obg/{kunjungan}', [AddOnPengkajianController::class, 'getPemfisObgRj']);
                         Route::post('emr/pengkajian/rj/pemfis_obg/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPemfisObgRj']);
+                    // RIWAYAT PERINATAL
+                        Route::get('emr/pengkajian/rj/riwayatperinatal/{kunjungan}', [AddOnPengkajianController::class, 'getPerinatal']);
+                        Route::post('emr/pengkajian/rj/riwayatperinatal/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPerinatal']);
+                    // ASESMEN GERIATRI
+                        Route::get('emr/pengkajian/rj/asesmengeriatri/{kunjungan}', [AddOnPengkajianController::class, 'getGeriatri']);
+                        Route::post('emr/pengkajian/rj/asesmengeriatri/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanGeriatri']);
 
                 // KHUSUS GAWAT DARURAT
                     // ATS

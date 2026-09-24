@@ -1,3 +1,7 @@
+@php
+    $section = $section ?? null;
+    $isJiwa = $section === '#rjj_dokter';
+@endphp
 <div class="form-group">
     <h6>Diagnosis</h6>
     <div class="d-flex align-items-center gap-2 mb-2">
@@ -5,8 +9,9 @@
             <textarea
                 class="form-control"
                 name="diag_detail"
+                id="diag_detail"
                 placeholder="Masukkan Diagnosa"
-                rows="1"
+                rows="{{ $isJiwa ? 6 : 1 }}"
             ></textarea>
         </div>
         <div class="flex-shrink-0">
@@ -73,6 +78,26 @@
 
 <script>
     $(document).ready(function() {
+        const isJiwa = @json($isJiwa);
+
+        if (isJiwa) {
+
+            const $textarea = $('#diag_detail');
+
+            if (!$textarea.val()) {
+
+                $textarea.val(
+`Axis
+I.
+II.
+III.
+IV.
+V.`
+                );
+
+            }
+        }
+
         getDiagnosis();
     })
 

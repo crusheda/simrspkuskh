@@ -1,4 +1,4 @@
-<div class="form-wrapper">
+<div class="form-wrapper" id="form_rajal_geriatri_dokter">
     <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN AWAL MEDIS <b class="">RAWAT JALAN</b> <b class="text-warning">GERIATRI</b></center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-danger">Diisi Oleh Dokter</a>)</center></h1>
     <div class="form-content">
@@ -53,8 +53,7 @@
                     </div>
                     <div class="row align-items-center" id="pemeriksaan_fisik">
                         <div class="col-md-12 mb-3">
-                            <label class="form-label fw-bold">Pemeriksaan Fisik</label>
-                            <textarea class="form-control" name="pfisik" id="pfisik" rows="3"></textarea>
+                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.pemeriksaan_fisik_rajal',['section' => '#rjg_dokter'])
                         </div>
                         <div class="col-md-12">
                             <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
@@ -86,13 +85,8 @@
                         </h5>
                     </div>
                     <div class="row align-items-center">
-                        <div class="col-md-12">
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label fw-bold">Tolok Ukur / Sasaran yang Dicapai</label>
-                                <textarea class="form-control" name="tu" id="tu" rows="3"></textarea>
-                            </div>
-                            <label class="form-label fw-bold">Terapi / Tindakan</label>
-                            <textarea class="form-control" name="terapi_tind" id="terapi_tind" rows="3"></textarea>
+                        <div class="col-md-12 mb-3">
+                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.tolok_ukur_terapi',['section' => '#rjg_dokter'])
                         </div>
                     </div>
                 </div>
@@ -102,142 +96,11 @@
             </div>
         </div>
     </div>
-    <div class="form-footer">
-        <button class="btn btn-secondary">
-            <i class="ri-close-line me-1"></i> Batal
-        </button>
-        <button class="btn btn-danger" onclick="saveDataPengkajianRJGd(this)">
-            <i class="ri-save-line me-1"></i> Simpan Pengkajian
-        </button>
-    </div>
+    @include('pages.v2.medicalrecord.detail.form.finalisasi', [
+        'jenis' => 'rajal_geriatri',
+        'formKey' => 'rjg_dokter',
+        'form' => 'pengkajian-rajal-geriatri',
+        'sub' => 'DOKTER',
+        'kunjungan' => $list['kunjungan'],
+    ])
 </div>
-
-<script>
-
-    $(document).ready(function () {
-        loadDataPengkajianRJGd();
-    });
-
-    function formatAngkaBulat(value) {
-        if (value === null || value === undefined || value === '') {
-            return '-';
-        }
-
-        return Number(value).toLocaleString('id-ID', {
-            maximumFractionDigits: 0
-        });
-    }
-
-    function formatSuhu(value) {
-        if (value === null || value === undefined || value === '') {
-            return '-';
-        }
-
-        return Number(value).toLocaleString('id-ID', {
-            maximumFractionDigits: 2
-        });
-    }
-
-    function getABNText(value) {
-        if (value == 1) {
-            return 'Ya';
-        }
-        if (value == 2) {
-            return 'Tidak';
-        }
-        return '-';
-    }
-
-    function loadDataPengkajianRJGd() {
-        const kunjungan = $('#rjg_dokter').data('kunjungan');
-
-        $.ajax({
-            url: `/api/v2/emr/form/pengkajian/rjg/dr/get/${kunjungan}`,
-            type: 'GET',
-            success:function(res){
-                isiFormPengkajianRJGd(res);
-            }
-        });
-    }
-
-    function setValIfExists(selector, value) {
-        if (value !== null && value !== undefined && value !== '') {
-            $(selector).val(value);
-        }
-    }
-
-    function setCheckedIfExists(selector, value) {
-        if (value !== null && value !== undefined && value !== '') {
-            $(selector)
-                .prop('checked', Number(value) === 1)
-                .trigger('change');
-        }
-    }
-
-    function setRadioIfExists(name, value) {
-        if (value !== null && value !== undefined && value !== '') {
-            $('input[name="' + name + '"][value="' + value + '"]')
-                .prop('checked', true)
-                .trigger('change');
-        }
-    }
-
-    function isiFormPengkajianRJGd(data){
-
-        $("#pfisik").val(data.pfisik);
-
-        $("#tu").val(data.tu);
-        $("#terapi_tind").val(data.terapi_tind);
-
-    }
-
-    function saveDataPengkajianRJGd(btn) {
-        const $button = $(btn);
-        const $section = $('#rjg_dokter');
-
-        const data = getFormDataByName($section, {
-            NOKUNJ: $section.data('kunjungan')
-        });
-
-        $.ajax({
-            url: '/api/v2/emr/form/pengkajian/rjg/dr/simpan',
-            type: 'POST',
-            data: data,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-
-            beforeSend: function () {
-                // $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin me-1"></i> Menyimpan...');
-            },
-
-            success: function (response) {
-                // alert(response.message || 'Data berhasil disimpan.');
-                iziToast.success({
-                    title: 'Pesan Berhasil!',
-                    message: 'Data berhasil disimpan.',
-                    position: 'topRight'
-                });
-            },
-
-            error: function (xhr) {
-                let message = 'Data gagal disimpan.';
-
-                if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors)
-                        .flat()
-                        .join('\n');
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                }
-
-                alert(message);
-            },
-
-            complete: function () {
-                // $button.prop('disabled', false).html('<i class="ri-save-line me-1"></i> Simpan Pengkajian');
-            }
-        });
-    };
-
-</script>

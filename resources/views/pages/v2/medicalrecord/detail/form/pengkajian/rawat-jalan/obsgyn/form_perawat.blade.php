@@ -1,4 +1,4 @@
-<div class="form-wrapper">
+<div class="form-wrapper" id="form_rajal_obsgyn_perawat">
     <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN AWAL KEPERAWATAN <b class="">RAWAT JALAN</b> <b class="text-warning">OBSGYN</b></center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-success">Diisi Oleh Bidan</a>)</center></h1>
     <div class="form-content">
