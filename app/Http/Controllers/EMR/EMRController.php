@@ -290,20 +290,45 @@ class EMRController extends Controller
         }
 
         $data = DB::table('pendaftaran.pendaftaran as pp')
-            ->join(
-                'pendaftaran.kunjungan as pk',
-                'pk.NOPEN',
-                '=',
-                'pp.NOMOR'
-            )
+            ->join('pendaftaran.kunjungan as pk', function($join) {
+                $join->on('pk.NOPEN', '=', 'pp.NOMOR')
+                    ->where('pk.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
+            ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'pk.RUANGAN')
+            ->leftJoin('pendaftaran.penjamin AS pj', 'pj.NOPEN', '=', 'pp.NOMOR')
+            ->leftJoin('master.dokter AS dr', 'dr.ID', '=', 'pk.DPJP')
             ->where('pp.NORM', $norm)
+            ->where('pp.STATUS', '!=', 0)
+            ->where(function ($q) {
+                $q->where('pk.RUANGAN', 'LIKE', '1020101%')
+                ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
+                ->orWhere('pk.RUANGAN', 'LIKE', '1020301%')
+                ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
+            })
             ->select([
                 'pp.NORM',
-                'pp.NOMOR as NO_PENDAFTARAN',
-                // 'pp.TANGGAL as TGL_DAFTAR',
-
-                'pk.NOMOR as NO_KUNJUNGAN',
-                'pk.MASUK as TGL_KUNJUNGAN',
+                DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
+                DB::raw('master.getAlamatPasienCustom(ps.NORM) AS ALAMATPASIEN'),
+                DB::raw('master.getCariUmur(pp.TANGGAL,ps.TANGGAL_LAHIR) AS UMURPASIEN'),
+                'pp.NOMOR as NOPENDAFTARAN',
+                'pp.TANGGAL as TGLDAFTAR',
+                'pk.MASUK as TGLMASUK',
+                'pk.KELUAR as TGLKELUAR',
+                'pk.NOMOR as NOKUNJUNGAN',
+                'pk.MASUK as TGLKUNJUNGAN',
+                'ru.DESKRIPSI as NAMARUANGAN',
+                DB::raw("
+                    master.getNamaLengkapPegawai(
+                        CASE
+                            WHEN dr.NIP IS NULL OR dr.NIP = 0 OR dr.NIP = ''
+                            THEN pj.DPJP_LAYANAN
+                            ELSE dr.NIP
+                        END
+                    ) AS NAMADOKTER
+                "),
+                'pp.STATUS as STATUSDAFTAR',
+                'pk.STATUS as STATUSKUNJUNGAN',
             ])
             ->orderByDesc('pk.MASUK')
             ->get();
@@ -317,6 +342,17 @@ class EMRController extends Controller
     // API
     function getRiwayatKunjungan($NORM)
     {
+        // $prefix = '';
+        // if ($id == 1) {
+        //     $prefix = ['1020101%', '1020702%'];
+        // } elseif ($id == 2) {
+        //     $prefix = ['1020201%'];
+        // } elseif ($id == 3) {
+        //     $prefix = ['1020301%'];
+        // } else {
+        //     return response()->json('Tidak ada Ruangan yang sesuai!', 404);
+        // }
+
         $riwayat = DB::table('pendaftaran.kunjungan AS pk')
             ->select(
                 'pk.NOMOR AS NOKUNJUNGAN',

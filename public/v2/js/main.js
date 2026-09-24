@@ -365,24 +365,21 @@ const searchEMR = () => {
         $info
             .removeClass('d-none')
             .html(`
-                <strong>${data[0].NORM ?? '-'}</strong>
+                <strong>RM. ${data[0].NORM ?? '-'}</strong>
                 &nbsp; — &nbsp;
-                ${data.length} kunjungan ditemukan
+                ${data.length} kunjungan pasien ditemukan
             `);
 
 
         let html = `
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 w-100">
 
                 <thead>
                     <tr>
-                        <th class="px-4">No. Kunjungan</th>
-                        <th>Tgl. Kunjungan</th>
-                        <th>No. Pendaftaran</th>
+                        <th class="px-4">Kunjungan Pasien</th>
+                        <th>Tanggal (<i class="ri-sort-desc text-danger"></i>)</th>
                         <th>Ruangan</th>
-                        <th>DPJP</th>
                         <th>Status</th>
-                        <th class="text-end px-4"></th>
                     </tr>
                 </thead>
 
@@ -392,56 +389,57 @@ const searchEMR = () => {
 
         data.forEach(function (item) {
 
-            let statusClass = 'bg-secondary-subtle text-secondary';
+            let statusClass = '';
+            let statusName = '';
 
-            if (item.STATUS_KUNJUNGAN === 'Aktif') {
+            if (item.STATUSKUNJUNGAN == 1) {
                 statusClass = 'bg-success-subtle text-success';
-            }
-
-            if (item.STATUS_KUNJUNGAN === 'Selesai') {
+                statusName = 'Dilayani';
+            } else if (item.STATUSKUNJUNGAN == 2) {
                 statusClass = 'bg-primary-subtle text-primary';
+                statusName = 'Selesai';
+            } else {
+                statusClass = 'bg-danger-subtle text-danger';
+                statusName = 'Batal';
             }
 
 
             html += `
-                <tr class="js-search-kunjungan"
-                    data-kunjungan="${item.NO_KUNJUNGAN}">
+                <tr class="js-search-kunjungan cursor-pointer" data-kunjungan="${item.NOKUNJUNGAN}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Klik untuk melihat EMR Pasien">
 
-                    <td class="px-4">
-                        <div class="fw-semibold">
-                            ${item.NO_KUNJUNGAN ?? '-'}
+                    <td class="px-4" style="width: 40%; max-width:350px;">
+                        <h5 class="fw-semibold text-wrap mb-0"><b class="text-primary">${item.NORM}</b> - ${item.NAMAPASIEN ?? '-'}</h5>
+                        <p class="text-muted mb-0 text-truncate">${item.ALAMATPASIEN}</p>
+                        <p class="text-muted mb-0 text-truncate"><b>Umur</b> : ${item.UMURPASIEN}</p>
+                    </td>
+
+                    <td style="width: 20%;">
+                        <div class="small">
+                            <div class="mb-1">
+                                <span class="text-muted">Masuk/Diterima</span>
+                                <div class="fw-medium">
+                                    ${item.TGLMASUK ?? '-'}
+                                </div>
+                            </div>
+
+                            <div>
+                                <span class="text-muted">Keluar/Final</span>
+                                <div class="fw-medium">
+                                    ${item.TGLKELUAR ?? '-'}
+                                </div>
+                            </div>
                         </div>
                     </td>
 
-                    <td>
-                        ${item.TGL_KUNJUNGAN ?? '-'}
+                    <td style="width: 25%; max-width: 150px;">
+                        <h5 class="fw-semibold mb-1">${item.NAMARUANGAN ?? '-'}</h5>
+                        <p class="text-truncate">${item.NAMADOKTER ?? ''}</p>
                     </td>
 
-                    <td>
-                        ${item.NO_PENDAFTARAN ?? '-'}
-                    </td>
-
-                    <td>
-                        ${item.RUANGAN ?? '-'}
-                    </td>
-
-                    <td>
-                        ${item.DPJP ?? '-'}
-                    </td>
-
-                    <td>
-                        <span class="badge ${statusClass}">
-                            ${item.STATUS_KUNJUNGAN ?? '-'}
+                    <td style="width: 15%;">
+                        <span class="badge ${statusClass} fs-14">
+                            ${statusName ?? '-'}
                         </span>
-                    </td>
-
-                    <td class="text-end px-4">
-                        <button type="button"
-                            class="btn btn-sm btn-primary js-open-kunjungan"
-                            data-kunjungan="${item.NO_KUNJUNGAN}">
-
-                            <i class="fi fi-rr-arrow-right"></i>
-                        </button>
                     </td>
 
                 </tr>
@@ -458,6 +456,12 @@ const searchEMR = () => {
         $container
             .html(html)
             .removeClass('d-none');
+
+        $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+        $('.tooltip').remove();
+        $('[data-bs-toggle="tooltip"]').tooltip({
+            trigger : 'hover'
+        })
     }
 
 
@@ -592,7 +596,7 @@ const searchEMR = () => {
             // TODO:
             // sesuaikan dengan route EMR Anda
             window.location.href =
-                `/medicalrecord/${kunjungan}`;
+                `/v2/emr/${kunjungan}`;
         }
     );
 
@@ -618,7 +622,7 @@ const searchEMR = () => {
             }
 
             window.location.href =
-                `/medicalrecord/${kunjungan}`;
+                `/v2/emr/${kunjungan}`;
         }
     );
 
@@ -631,6 +635,8 @@ const searchEMR = () => {
         'hidden.bs.modal',
         function () {
             resetSearch();
+            $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+            $('.tooltip').remove();
         }
     );
 
