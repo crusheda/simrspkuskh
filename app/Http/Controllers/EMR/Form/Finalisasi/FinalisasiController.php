@@ -117,6 +117,7 @@ class FinalisasiController extends Controller
         DB::beginTransaction();
 
         try {
+            $created = now();
             $formKey = $request->input('formKey');
 
             if (!$formKey) {
@@ -148,6 +149,39 @@ class FinalisasiController extends Controller
                 ->where('SUB', $sub)
                 ->whereIn('STATUS', [1, 2])
                 ->first();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | GET DATA KUNJUNGAN PASIEN
+            |--------------------------------------------------------------------------
+            */
+            $getKunjungan = DB::table('pendaftaran.kunjungan as pk')
+                                ->join(
+                                    'pendaftaran.pendaftaran as pp',
+                                    'pp.NOMOR',
+                                    '=',
+                                    'pk.NOPEN'
+                                )
+                                ->select(
+                                    'pp.NOPEN',
+                                    'pp.TANGGAL AS TGL_DAFTAR',
+                                    'pk.MASUK AS TGL_MASUK',
+                                    'pk.KELUAR AS TGL_KELUAR',
+                                )
+                                ->where('pk.NOMOR', $kunjungan)
+                                ->whereIn('pk.STATUS',[1,2])
+                                ->first();
+
+            if (!$getKunjungan) {
+
+                DB::rollBack();
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data kunjungan pasien tidak ditemukan, pastikan data pasien adalah VALID dan tidak berstatus Batal Kunjungan.'
+                ], 422);
+            }
 
             /*
             |--------------------------------------------------------------------------
@@ -210,9 +244,12 @@ class FinalisasiController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | FINALISASI
+            | FINALISASI & VALIDATION
             |--------------------------------------------------------------------------
             */
+            if (str_starts_with($form, 'pengkajian-ranap-')) { // KHUSUS SEMUA FORM RAWAT INAP TGL FINALISASI ADALAH 15 JAM SETELAH PASIEN MASUK RANAP
+                $created = Carbon::parse($getKunjungan->TGL_MASUK)->addHours(15);
+            }
 
             if ($finalisasi) {
 
@@ -234,7 +271,7 @@ class FinalisasiController extends Controller
                         'SUB' => $sub,
                         'USER_CREATED' => auth()->id(),
                         'USER_UPDATED' => auth()->id(),
-                        'CREATED' => now(),
+                        'CREATED' => $created,
                         'STATUS' => 2,
                         // 'REASON' => null,
                     ]);

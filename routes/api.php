@@ -76,6 +76,7 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
         Route::get('notifikasi', [NotifikasiController::class, 'index']);
         Route::get('notifikasi/data', [NotifikasiController::class, 'getData']);
         Route::get('notifikasi/data/{id}', [NotifikasiController::class, 'showDetail']);
+        Route::get('search/emr', [EMRController::class, 'searchEMRKunjungan']);
 
     // DISPLAY
         // TEMPAT TIDUR

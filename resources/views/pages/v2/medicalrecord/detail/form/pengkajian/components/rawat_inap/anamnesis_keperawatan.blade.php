@@ -428,10 +428,12 @@
                 }
 
                 const anam1 = anam.anam1;
+                const anam2 = anam.anam2;
+                const anam3 = anam.anam3;
 
                 // Jika data anamnesis belum ada,
                 // biarkan form kosong dan jangan error.
-                if (!anam1) {
+                if (!anam) {
                     console.log('Data anamnesis belum ada, form tetap kosong.');
 
                     updateAnamnesisAnakState();
@@ -443,39 +445,41 @@
                 // ==================================================
                 // ANAMNESIS DIPEROLEH
                 // ==================================================
-                if (String(anam1.AUTOANAMNESIS) === '1') {
-                    const $anamCheckboxes1 = $form.find(
-                        'input[type="checkbox"][name="anam1"]'
-                    );
+                if (anam1) {
+                    if (String(anam1.AUTOANAMNESIS) === '1') {
+                        const $anamCheckboxes1 = $form.find(
+                            'input[type="checkbox"][name="anam1"]'
+                        );
 
-                    // Hanya reset checkbox pada form dokter/perawat ini saja.
-                    $anamCheckboxes1.prop('checked', false);
+                        // Hanya reset checkbox pada form dokter/perawat ini saja.
+                        $anamCheckboxes1.prop('checked', false);
 
-                    // Centang sesuai value hanya pada form ini.
-                    $anamCheckboxes1.prop('checked', true);
-                }
-                if (String(anam1.ALLOANAMNESIS) === '1') {
-                    const $anamCheckboxes2 = $form.find(
-                        'input[type="checkbox"][name="anam2"]'
-                    );
+                        // Centang sesuai value hanya pada form ini.
+                        $anamCheckboxes1.prop('checked', true);
+                    }
+                    if (String(anam1.ALLOANAMNESIS) === '1') {
+                        const $anamCheckboxes2 = $form.find(
+                            'input[type="checkbox"][name="anam2"]'
+                        );
 
-                    // Hanya reset checkbox pada form dokter/perawat ini saja.
-                    $anamCheckboxes2.prop('checked', false);
+                        // Hanya reset checkbox pada form dokter/perawat ini saja.
+                        $anamCheckboxes2.prop('checked', false);
 
-                    // Centang sesuai value hanya pada form ini.
-                    $anamCheckboxes2.prop('checked', true);
-                }
+                        // Centang sesuai value hanya pada form ini.
+                        $anamCheckboxes2.prop('checked', true);
+                    }
 
-                // PENGISIAN dari
-                if (
-                    anam1.DARI &&
-                    FormHelper.hasValue(anam1.DARI)
-                ) {
-                    FormHelper.setValue(
-                        $section,
-                        'dari',
-                        anam1.DARI
-                    );
+                    // PENGISIAN dari
+                    if (
+                        anam1.DARI &&
+                        FormHelper.hasValue(anam1.DARI)
+                    ) {
+                        FormHelper.setValue(
+                            $section,
+                            'dari',
+                            anam1.DARI
+                        );
+                    }
                 }
 
                 // ==================================================
@@ -509,46 +513,57 @@
                 // ==================================================
                 // RIWAYAT PENYAKIT DAHULU
                 // ==================================================
+                // if (
+                //     anam1 &&
+                //     FormHelper.hasValue(anam1.RPD)
+                // ) {
+                //     FormHelper.setValue(
+                //         $section,
+                //         'rpd',
+                //         anam1.RPD
+                //     );
+                // }
+                // LINK DENGAN SIMGOS DAN DOKTER
                 if (
-                    anam1 &&
-                    FormHelper.hasValue(anam1.RPD)
+                    anam2 &&
+                    FormHelper.hasValue(anam2.DESKRIPSI)
                 ) {
                     FormHelper.setValue(
                         $section,
                         'rpd',
-                        anam1.RPD
+                        anam2.DESKRIPSI
                     );
                 }
 
                 // ==================================================
                 // RIWAYAT PENYAKIT KELUARGA
                 // ==================================================
-                if (anam1) {
+                if (anam3) {
                     setCheckboxValue(
                         'rpk_h',
-                        anam1.HIPERTENSI
+                        anam3.HIPERTENSI
                     );
 
                     setCheckboxValue(
                         'rpk_d',
-                        anam1.DIABETES_MELITUS
+                        anam3.DIABETES_MELITUS
                     );
 
                     setCheckboxValue(
                         'rpk_p',
-                        anam1.PENYAKIT_JANTUNG
+                        anam3.PENYAKIT_JANTUNG
                     );
 
                     setCheckboxValue(
                         'rpk_a',
-                        anam1.ASMA
+                        anam3.ASMA
                     );
 
-                    if (FormHelper.hasValue(anam1.LAINNYA)) {
+                    if (FormHelper.hasValue(anam3.LAINNYA)) {
                         FormHelper.setValue(
                             $section,
                             'rpk_lain',
-                            anam1.LAINNYA
+                            anam3.LAINNYA
                         );
                     }
                 }
@@ -556,77 +571,79 @@
                 // ==================================================
                 // DATA ANAK
                 // ==================================================
-                if (isAnamnesisAnak) {
-                    if (
-                        FormHelper.hasValue(
-                            anam1.RIWAYAT_TUMBUH_KEMBANG
-                        )
-                    ) {
-                        FormHelper.setValue(
+                if (anam1) {
+                    if (isAnamnesisAnak) {
+                        if (
+                            FormHelper.hasValue(
+                                anam1.RIWAYAT_TUMBUH_KEMBANG
+                            )
+                        ) {
+                            FormHelper.setValue(
+                                $section,
+                                'anam_rtk',
+                                anam1.RIWAYAT_TUMBUH_KEMBANG
+                            );
+                        }
+
+                        if (
+                            FormHelper.hasValue(
+                                anam1.RIWAYAT_KELAHIRAN
+                            )
+                        ) {
+                            FormHelper.setValue(
+                                $section,
+                                'anam_k',
+                                anam1.RIWAYAT_KELAHIRAN
+                            );
+                        }
+
+                        if (
+                            FormHelper.hasValue(
+                                anam1.USIA_KEHAMILAN
+                            )
+                        ) {
+                            FormHelper.setValue(
+                                $section,
+                                'anam_uk',
+                                anam1.USIA_KEHAMILAN
+                            );
+                        }
+
+                        FormHelper.setSingleCheckbox(
                             $section,
-                            'anam_rtk',
-                            anam1.RIWAYAT_TUMBUH_KEMBANG
+                            'anam_p',
+                            anam1.PERSALINAN
                         );
-                    }
 
-                    if (
-                        FormHelper.hasValue(
-                            anam1.RIWAYAT_KELAHIRAN
-                        )
-                    ) {
-                        FormHelper.setValue(
+                        if (
+                            FormHelper.hasValue(
+                                anam1.PERSALINAN_LAINNYA
+                            )
+                        ) {
+                            FormHelper.setValue(
+                                $section,
+                                'anam_p_lain',
+                                anam1.PERSALINAN_LAINNYA
+                            );
+                        }
+
+                        FormHelper.setSingleCheckbox(
                             $section,
-                            'anam_k',
-                            anam1.RIWAYAT_KELAHIRAN
+                            'imunisasi',
+                            anam1.IMUNISASI
                         );
-                    }
 
-                    if (
-                        FormHelper.hasValue(
-                            anam1.USIA_KEHAMILAN
-                        )
-                    ) {
-                        FormHelper.setValue(
-                            $section,
-                            'anam_uk',
-                            anam1.USIA_KEHAMILAN
-                        );
-                    }
-
-                    FormHelper.setSingleCheckbox(
-                        $section,
-                        'anam_p',
-                        anam1.PERSALINAN
-                    );
-
-                    if (
-                        FormHelper.hasValue(
-                            anam1.PERSALINAN_LAINNYA
-                        )
-                    ) {
-                        FormHelper.setValue(
-                            $section,
-                            'anam_p_lain',
-                            anam1.PERSALINAN_LAINNYA
-                        );
-                    }
-
-                    FormHelper.setSingleCheckbox(
-                        $section,
-                        'imunisasi',
-                        anam1.IMUNISASI
-                    );
-
-                    if (
-                        FormHelper.hasValue(
-                            anam1.IMUNISASI_LAIN
-                        )
-                    ) {
-                        FormHelper.setValue(
-                            $section,
-                            'imunisasi_lain',
-                            anam1.IMUNISASI_LAIN
-                        );
+                        if (
+                            FormHelper.hasValue(
+                                anam1.IMUNISASI_LAIN
+                            )
+                        ) {
+                            FormHelper.setValue(
+                                $section,
+                                'imunisasi_lain',
+                                anam1.IMUNISASI_LAIN
+                            );
+                        }
                     }
                 }
 

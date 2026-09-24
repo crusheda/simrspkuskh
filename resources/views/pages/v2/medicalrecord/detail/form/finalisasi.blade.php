@@ -288,6 +288,10 @@
     const formKey = @json($formKey);
     const kunjungan = @json($kunjungan);
     const initialFinalisasi = @json($initialFinalisasi);
+    const validasiFinalisasi = @json($validasiFinalisasi ?? null);
+
+    // true hanya jika validasiFinalisasi memang diberikan
+    const gunakanValidasiFinalisasi = Array.isArray(validasiFinalisasi);
 
     const $form = $('#' + formId);
 
@@ -340,6 +344,7 @@
 
     const urlPrintPreview =
         `/api/v2/emr/pengkajian/finalisasi/preview/${kunjungan}`;
+
     function formatWaktuFinal(waktu) {
         const bulan = [
             'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
@@ -907,10 +912,103 @@
     });
 
     // ==========================================================
+    // INIT VALIDATION
+    // ==========================================================
+    $form.on('input change', 'input, textarea, select', function () {
+
+        const $field = $(this);
+
+        if ($field.prop('disabled')) {
+            return;
+        }
+
+        if ($field.is(':checkbox, :radio')) {
+
+            // Cari rule yang menggunakan field ini
+            validasiFinalisasi.forEach(function (item) {
+
+                const $fields = $form.find(item.selector);
+
+                if (!$fields.filter($field).length) {
+                    return;
+                }
+
+                const rule = item.rule || 'required';
+
+                // Untuk any/required:
+                // jika salah satu sudah terisi,
+                // hapus is-invalid dari seluruh group
+                if (rule === 'any' || rule === 'required') {
+
+                    let filled = false;
+
+                    $fields.each(function () {
+                        const $el = $(this);
+
+                        if ($el.prop('disabled')) {
+                            return;
+                        }
+
+                        if ($el.is(':checkbox, :radio')) {
+                            if ($el.is(':checked')) {
+                                filled = true;
+                                return false;
+                            }
+                        } else {
+                            if (String($el.val() ?? '').trim() !== '') {
+                                filled = true;
+                                return false;
+                            }
+                        }
+                    });
+
+                    if (filled) {
+                        $fields.removeClass('is-invalid');
+                    }
+
+                    return;
+                }
+
+                // Untuk all:
+                // hanya field yang sudah diisi yang dihilangkan
+                if (rule === 'all') {
+
+                    if ($field.is(':checked')) {
+                        $field.removeClass('is-invalid');
+                    }
+
+                    return;
+                }
+            });
+
+        } else {
+
+            const value = String($field.val() ?? '').trim();
+
+            if (value !== '') {
+                $field.removeClass('is-invalid');
+            }
+        }
+    });
+
+    // ==========================================================
     // FINALISASI
     // ==========================================================
+    $btnFinal.on('click', function() {
 
-    $btnFinal.on('click',function(){
+        // ==========================================
+        // VALIDASI HANYA JIKA DIKONFIGURASIKAN
+        // ==========================================
+        if (gunakanValidasiFinalisasi) {
+
+            if (!validasiFormFinalisasi()) {
+                return;
+            }
+        }
+
+        // ==========================================
+        // LANJUT KE KONFIRMASI FINALISASI
+        // ==========================================
 
         Swal.fire({
             title: 'Finalisasi Pengkajian?',
@@ -920,17 +1018,18 @@
             confirmButtonText: 'Ya, Finalisasi',
             cancelButtonText: 'Batal',
             reverseButtons: true
-        }).then(function(result){
+        }).then(function(result) {
 
-            if(!result.isConfirmed){
+            if (!result.isConfirmed) {
                 return;
             }
 
             $btnFinal
-                .prop('disabled',true)
-                .html(
-                    '<i class="fa-solid fa-spinner fa-spin me-1"></i>Memproses...'
-                );
+                .prop('disabled', true)
+                .html(`
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                    Memproses...
+                `);
 
             $.ajax({
                 url: urlFinalisasi,
@@ -939,67 +1038,14 @@
                     _token: csrfToken,
                     formKey: formKey
                 },
-
-                success: function(response){
-
-                    if(!response || !response.status){
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: response?.message ||
-                                'Finalisasi gagal.'
-                        });
-
-                        return;
-                    }
-
-                    tampilkanFinalisasi();
-
-                    if (typeof window.updatePenandaFinalisasi === 'function') {
-                        window.updatePenandaFinalisasi(formKey, true);
-                    }
-
-                    if (typeof window.tampilkanPenandaFinalisasi === 'function') {
-                        window.tampilkanPenandaFinalisasi();
-                    }
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: response.message ||
-                            'Pengkajian berhasil difinalisasi.',
-                        timer: 1800,
-                        showConfirmButton: false
-                    });
-
+                success: function(response) {
+                    // kode existing Anda
                 },
-
-                error: function(xhr){
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text:
-                            xhr.responseJSON?.message ||
-                            'Terjadi kesalahan saat melakukan finalisasi.'
-                    });
-
-                },
-
-                complete: function(){
-
-                    $btnFinal
-                        .prop('disabled',false)
-                        .html(
-                            '<i class="fa-solid fa-check me-1"></i>Finalisasi'
-                        );
-
+                error: function(xhr) {
+                    // kode existing Anda
                 }
             });
-
         });
-
     });
 
     // ==========================================================
@@ -1202,6 +1248,143 @@
             }
         });
 
+    }
+
+    // ==========================================================
+    // VALIDATION INPUT MODULARIZATION
+    // ==========================================================
+    function validasiFormFinalisasi() {
+        let isValid = true;
+
+        validasiFinalisasi.forEach(function (item) {
+            const selector = item.selector;
+            const rule = item.rule || 'required';
+
+            const $fields = $form.find(selector);
+
+            if (!$fields.length) {
+                return;
+            }
+
+            const $activeFields = $fields.filter(function () {
+                return !$(this).prop('disabled');
+            });
+
+            // Hapus is-invalid terlebih dahulu
+            $activeFields.removeClass('is-invalid');
+
+            // ==========================================
+            // REQUIRED / ANY
+            // Salah satu harus terisi
+            // ==========================================
+            if (rule === 'required' || rule === 'any') {
+
+                let filled = false;
+
+                $activeFields.each(function () {
+                    const $field = $(this);
+
+                    if ($field.is(':checkbox, :radio')) {
+
+                        if ($field.is(':checked')) {
+                            filled = true;
+                            return false;
+                        }
+
+                    } else {
+
+                        const value = String($field.val() ?? '').trim();
+
+                        if (value !== '') {
+                            filled = true;
+                            return false;
+                        }
+                    }
+                });
+
+                if (!filled) {
+                    isValid = false;
+
+                    $activeFields.addClass('is-invalid');
+                }
+
+                return;
+            }
+
+            // ==========================================
+            // ALL
+            // Semua field harus terisi
+            // ==========================================
+            if (rule === 'all') {
+
+                $activeFields.each(function () {
+                    const $field = $(this);
+
+                    let filled = false;
+
+                    if ($field.is(':checkbox, :radio')) {
+
+                        filled = $field.is(':checked');
+
+                    } else {
+
+                        const value = String($field.val() ?? '').trim();
+
+                        filled = value !== '';
+                    }
+
+                    if (!filled) {
+                        isValid = false;
+
+                        $field.addClass('is-invalid');
+                    }
+                });
+
+                return;
+            }
+
+            console.warn(
+                `Rule validasi finalisasi tidak dikenal: ${rule}`,
+                item
+            );
+        });
+
+        // ==========================================
+        // SCROLL KE FIELD INVALID PERTAMA
+        // ==========================================
+        if (!isValid) {
+            scrollToFirstInvalid();
+        }
+
+        return isValid;
+    }
+
+    function scrollToFirstInvalid() {
+        const $firstInvalid = $form.find('.is-invalid').first();
+
+        if (!$firstInvalid.length) {
+            return;
+        }
+
+        const element = $firstInvalid[0];
+
+        setTimeout(function () {
+
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'nearest'
+            });
+
+            // Tambahkan sedikit delay untuk memastikan
+            // browser sudah menyelesaikan scroll
+            setTimeout(function () {
+                if (!$firstInvalid.is(':checkbox, :radio')) {
+                    $firstInvalid.trigger('focus');
+                }
+            }, 500);
+
+        }, 100);
     }
 
     // ==========================================================

@@ -80,15 +80,16 @@
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.asuhan_keperawatan',['section' => '#rjg_perawat'])
             </div>
-            
+
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.asesmen_geriatri',['section' => '#rjg_perawat'])
             </div>
-            
+
         </div>
     </div>
     @include('pages.v2.medicalrecord.detail.form.finalisasi', [
         'jenis' => 'rajal_geriatri',
+        'role' => 'perawat',
         'formKey' => 'rjg_perawat',
         'form' => 'pengkajian-rajal-geriatri',
         'sub' => 'PERAWAT',

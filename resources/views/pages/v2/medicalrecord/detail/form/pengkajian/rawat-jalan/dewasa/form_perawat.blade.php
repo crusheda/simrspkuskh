@@ -93,6 +93,7 @@
     </div>
     @include('pages.v2.medicalrecord.detail.form.finalisasi', [
         'jenis' => 'rajal_dewasa',
+        'role' => 'perawat',
         'formKey' => 'rjd_perawat',
         'form' => 'pengkajian-rajal-dewasa',
         'sub' => 'PERAWAT',

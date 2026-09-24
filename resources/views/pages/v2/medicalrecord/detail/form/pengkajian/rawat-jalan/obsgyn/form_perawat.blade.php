@@ -80,5 +80,13 @@
             </div>
         </div>
     </div>
+    @include('pages.v2.medicalrecord.detail.form.finalisasi', [
+        'jenis' => 'rajal_obsgyn',
+        'role' => 'perawat',
+        'formKey' => 'rjo_perawat',
+        'form' => 'pengkajian-rajal-obsgyn',
+        'sub' => 'PERAWAT',
+        'kunjungan' => $list['kunjungan'],
+    ])
 </div>
 

@@ -91,6 +91,7 @@
     </div>
     @include('pages.v2.medicalrecord.detail.form.finalisasi', [
         'jenis' => 'rajal_anak',
+        'role' => 'dokter',
         'formKey' => 'rja_dokter',
         'form' => 'pengkajian-rajal-anak',
         'sub' => 'DOKTER',

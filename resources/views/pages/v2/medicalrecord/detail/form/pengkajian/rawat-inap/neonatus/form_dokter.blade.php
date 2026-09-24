@@ -88,6 +88,7 @@
 
     @include('pages.v2.medicalrecord.detail.form.finalisasi', [
         'jenis' => 'ranap_neonatus',
+        'role' => 'dokter',
         'formKey' => 'rin_dokter',
         'form' => 'pengkajian-ranap-neonatus',
         'sub' => 'DOKTER',

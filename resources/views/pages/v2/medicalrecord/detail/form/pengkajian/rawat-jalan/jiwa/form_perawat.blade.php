@@ -91,6 +91,7 @@
     </div>
     @include('pages.v2.medicalrecord.detail.form.finalisasi', [
         'jenis' => 'rajal_psikiatri',
+        'role' => 'perawat',
         'formKey' => 'rjj_perawat',
         'form' => 'pengkajian-rajal-psikiatri',
         'sub' => 'PERAWAT',

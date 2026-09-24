@@ -278,6 +278,42 @@ class EMRController extends Controller
         }
     }
 
+    public function searchEMRKunjungan(Request $request)
+    {
+        $norm = trim($request->norm);
+
+        if ($norm === '') {
+            return response()->json([
+                'success' => true,
+                'data' => [],
+            ]);
+        }
+
+        $data = DB::table('pendaftaran.pendaftaran as pp')
+            ->join(
+                'pendaftaran.kunjungan as pk',
+                'pk.NOPEN',
+                '=',
+                'pp.NOMOR'
+            )
+            ->where('pp.NORM', $norm)
+            ->select([
+                'pp.NORM',
+                'pp.NOMOR as NO_PENDAFTARAN',
+                // 'pp.TANGGAL as TGL_DAFTAR',
+
+                'pk.NOMOR as NO_KUNJUNGAN',
+                'pk.MASUK as TGL_KUNJUNGAN',
+            ])
+            ->orderByDesc('pk.MASUK')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+
     // API
     function getRiwayatKunjungan($NORM)
     {

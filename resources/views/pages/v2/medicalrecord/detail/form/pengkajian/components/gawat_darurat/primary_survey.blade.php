@@ -11,7 +11,7 @@
         ========================================================== --}}
     @if ($page === 'dokter')
 
-        <div class="card card-body border border-dashed border-warning">
+        <div class="card card-body border border-dashed border-warning mb-0">
 
             <h5>
                 I. Primary <b class="text-warning">Survey</b>
@@ -928,7 +928,7 @@
 
         <div class="col-md-12 mb-3">
 
-            <div class="card card-body border border-dashed border-warning">
+            <div class="card card-body border border-dashed border-warning mb-0">
 
                 <h6 class="fs-16">
                     Tanda Vital

@@ -492,7 +492,7 @@
     const $section = $(@json($section));
     const page = @json($page);
     const editableFields = @json($editableFields);
-    
+
     const $form = $section.find('[data-ttv-form]');
 
     const idRuangan = String(@json($idRuangan ?? ''))

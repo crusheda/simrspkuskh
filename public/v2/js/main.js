@@ -299,73 +299,354 @@ const passwordToggle = () => {
 
 
 /* ================================
-   SEARCH LIST
+   SEARCH EMR KUNJUNGAN PASIEN
 ================================ */
-const saerchList = () => {
-	let listItems = [];
+const searchEMR = () => {
 
-	// JSON load
-	$.getJSON("/v2/ajax/search.json", function(data) {
-		listItems = data.listItems;
-	});
+    const $input = $('#searchInput');
+    const $container = $('#searchContainer');
+    const $loading = $('#searchLoading');
+    const $empty = $('#searchEmpty');
+    const $info = $('#searchInfo');
 
-	// Search functionality
-	$("#searchInput").on("keyup", function() {
-		let query = $(this).val().toLowerCase();
-		let searchContainer = $("#searchContainer");
-		searchContainer.empty();
-		searchContainer.hide();
+    let searchTimer = null;
 
-		$('#recentlyResults').hide();
 
-		if (query.length === 0) {
-			searchContainer.hide();
-			$('#recentlyResults').show();
-			return;
-		}
+    function resetSearch() {
 
-		let matched = listItems.filter(item =>
-			item.name.toLowerCase().includes(query) ||
-			item.url.toLowerCase().includes(query)
-		);
+        $input.val('');
 
-		if (matched.length > 0) {
-			let grouped = {};
-			matched.forEach(item => {
-				if (!grouped[item.category]) grouped[item.category] = [];
-				grouped[item.category].push(item);
-			});
+        $container.empty();
+        $container.addClass('d-none');
 
-			for (let cat in grouped) {
-				searchContainer.append(
-					`<span class="text-uppercase text-2xs fw-semibold text-muted d-block mb-2">${cat}</span>`
-				);
-				let ul = $("<ul class='list-inline search-list'></ul>");
-				grouped[cat].forEach(item => {
-					ul.append(
-						`<li>
-							<a class="search-item" href="${item.url}">
-								<i class="${item.icon}"></i> <span>${item.name}</span>
-							</a>
-						</li>`
-					);
-				});
-				searchContainer.append(ul);
-			}
-			searchContainer.show();
-		} else {
-			searchContainer.append(`
-				<div class="text-center pb-5 pt-4">
-					<div class="avatar avatar-lg bg-danger-subtle shadow-secondary rounded-circle text-danger mb-3 m-auto">
-						<i class="fi fi-rr-assessment"></i>
-					</div>
-					<h5 class="mb-1">No result found</h5>
-					<div class="text-muted">Please try again with a different query</div>
-				</div>
-			`);
-			searchContainer.show();
-		}
-	});
+        $loading.addClass('d-none');
+        $empty.addClass('d-none');
+
+        $info
+            .removeClass('d-none')
+            .html('Masukkan No. RM untuk mencari kunjungan pasien.');
+    }
+
+
+    function showLoading() {
+
+        $container.empty();
+        $container.addClass('d-none');
+
+        $empty.addClass('d-none');
+
+        $loading.removeClass('d-none');
+
+        $info.addClass('d-none');
+    }
+
+
+    function showEmpty() {
+
+        $loading.addClass('d-none');
+
+        $container.empty();
+        $container.addClass('d-none');
+
+        $empty.removeClass('d-none');
+    }
+
+
+    function showResults(data) {
+
+        $loading.addClass('d-none');
+        $empty.addClass('d-none');
+
+        if (!data || !data.length) {
+            showEmpty();
+            return;
+        }
+
+        $info
+            .removeClass('d-none')
+            .html(`
+                <strong>${data[0].NORM ?? '-'}</strong>
+                &nbsp; — &nbsp;
+                ${data.length} kunjungan ditemukan
+            `);
+
+
+        let html = `
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+                    <tr>
+                        <th class="px-4">No. Kunjungan</th>
+                        <th>Tgl. Kunjungan</th>
+                        <th>No. Pendaftaran</th>
+                        <th>Ruangan</th>
+                        <th>DPJP</th>
+                        <th>Status</th>
+                        <th class="text-end px-4"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+        `;
+
+
+        data.forEach(function (item) {
+
+            let statusClass = 'bg-secondary-subtle text-secondary';
+
+            if (item.STATUS_KUNJUNGAN === 'Aktif') {
+                statusClass = 'bg-success-subtle text-success';
+            }
+
+            if (item.STATUS_KUNJUNGAN === 'Selesai') {
+                statusClass = 'bg-primary-subtle text-primary';
+            }
+
+
+            html += `
+                <tr class="js-search-kunjungan"
+                    data-kunjungan="${item.NO_KUNJUNGAN}">
+
+                    <td class="px-4">
+                        <div class="fw-semibold">
+                            ${item.NO_KUNJUNGAN ?? '-'}
+                        </div>
+                    </td>
+
+                    <td>
+                        ${item.TGL_KUNJUNGAN ?? '-'}
+                    </td>
+
+                    <td>
+                        ${item.NO_PENDAFTARAN ?? '-'}
+                    </td>
+
+                    <td>
+                        ${item.RUANGAN ?? '-'}
+                    </td>
+
+                    <td>
+                        ${item.DPJP ?? '-'}
+                    </td>
+
+                    <td>
+                        <span class="badge ${statusClass}">
+                            ${item.STATUS_KUNJUNGAN ?? '-'}
+                        </span>
+                    </td>
+
+                    <td class="text-end px-4">
+                        <button type="button"
+                            class="btn btn-sm btn-primary js-open-kunjungan"
+                            data-kunjungan="${item.NO_KUNJUNGAN}">
+
+                            <i class="fi fi-rr-arrow-right"></i>
+                        </button>
+                    </td>
+
+                </tr>
+            `;
+        });
+
+
+        html += `
+                </tbody>
+            </table>
+        `;
+
+
+        $container
+            .html(html)
+            .removeClass('d-none');
+    }
+
+
+    function doSearch() {
+
+        const norm = $input.val().trim();
+
+        if (!norm) {
+            resetSearch();
+            return;
+        }
+
+
+        // Bisa Anda sesuaikan minimal karakter
+        if (norm.length < 3) {
+
+            $container.empty().addClass('d-none');
+            $loading.addClass('d-none');
+            $empty.addClass('d-none');
+
+            $info
+                .removeClass('d-none')
+                .html('Masukkan minimal 3 digit No. RM.');
+
+            return;
+        }
+
+
+        showLoading();
+
+
+        $.ajax({
+
+            url: '/api/v2/search/emr',
+
+            type: 'GET',
+
+            data: {
+                norm: norm
+            },
+
+            dataType: 'json',
+
+            success: function (response) {
+
+                if (!response.success) {
+                    showEmpty();
+                    return;
+                }
+
+                showResults(response.data);
+            },
+
+            error: function (xhr) {
+
+                console.error(
+                    'Search EMR Error:',
+                    xhr.responseText
+                );
+
+                $loading.addClass('d-none');
+
+                $container
+                    .removeClass('d-none')
+                    .html(`
+                        <div class="text-center py-5">
+                            <div class="text-danger mb-2">
+                                <i class="fi fi-rr-exclamation"></i>
+                            </div>
+
+                            <div class="fw-semibold">
+                                Terjadi kesalahan
+                            </div>
+
+                            <div class="text-muted small">
+                                Gagal mengambil data kunjungan pasien.
+                            </div>
+                        </div>
+                    `);
+            }
+        });
+    }
+
+
+    // ==========================================
+    // INPUT SEARCH
+    // ==========================================
+
+    $input.on('input', function () {
+
+        clearTimeout(searchTimer);
+
+        searchTimer = setTimeout(function () {
+            doSearch();
+        }, 400);
+
+    });
+
+
+    // ==========================================
+    // SUBMIT FORM
+    // ==========================================
+
+    $('#formSearchEMR').on('submit', function (e) {
+
+        e.preventDefault();
+
+        clearTimeout(searchTimer);
+
+        doSearch();
+    });
+
+
+    // ==========================================
+    // BUKA KUNJUNGAN
+    // ==========================================
+
+    $(document).on(
+        'click',
+        '.js-open-kunjungan',
+        function (e) {
+
+            e.stopPropagation();
+
+            const kunjungan =
+                $(this).data('kunjungan');
+
+            if (!kunjungan) {
+                return;
+            }
+
+            // TODO:
+            // sesuaikan dengan route EMR Anda
+            window.location.href =
+                `/medicalrecord/${kunjungan}`;
+        }
+    );
+
+
+    // ==========================================
+    // KLIK ROW
+    // ==========================================
+
+    $(document).on(
+        'click',
+        '.js-search-kunjungan',
+        function (e) {
+
+            if ($(e.target).closest('button').length) {
+                return;
+            }
+
+            const kunjungan =
+                $(this).data('kunjungan');
+
+            if (!kunjungan) {
+                return;
+            }
+
+            window.location.href =
+                `/medicalrecord/${kunjungan}`;
+        }
+    );
+
+
+    // ==========================================
+    // RESET KETIKA MODAL DITUTUP
+    // ==========================================
+
+    $('#searchResultsModal').on(
+        'hidden.bs.modal',
+        function () {
+            resetSearch();
+        }
+    );
+
+
+    // ==========================================
+    // FOCUS INPUT KETIKA MODAL DIBUKA
+    // ==========================================
+
+    $('#searchResultsModal').on(
+        'shown.bs.modal',
+        function () {
+
+            $('#searchInput')
+                .trigger('focus');
+        }
+    );
 };
 
 
@@ -939,7 +1220,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		initSidebarResponsive();
 
 		passwordToggle();
-		saerchList();
+        searchEMR();
 		setElementHeight();
 		currentYear();
 		initSectionCheckboxSync();

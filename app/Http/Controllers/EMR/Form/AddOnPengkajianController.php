@@ -5288,6 +5288,26 @@ class AddOnPengkajianController extends Controller
             ]
         );
 
+        $anam2 = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.rpp',
+            [
+                'DESKRIPSI',
+            ]
+        );
+
+        $anam3 = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.riwayat_penyakit_keluarga',
+            [
+                'HIPERTENSI',
+                'DIABETES_MELITUS',
+                'PENYAKIT_JANTUNG',
+                'ASMA',
+                'LAINNYA',
+            ]
+        );
+
         // $anam = array_merge(
         //     (array) $anam1
         // );
@@ -5296,7 +5316,9 @@ class AddOnPengkajianController extends Controller
             'status' => true,
 
             'data' => [
-                'anam1' => $anam1
+                'anam1' => $anam1,
+                'anam2' => $anam2,
+                'anam3' => $anam3
             ]
         ]);
 
@@ -5445,13 +5467,13 @@ class AddOnPengkajianController extends Controller
 
     function getTandaVitalRI($PPA, $KUNJUNGAN)
     {
-        // if ($PPA == 'dokter') {
-        //     $PPA = 1;
-        // } else if ($PPA == 'perawat') {
-        //     $PPA = 2;
-        // } else {
+        if ($PPA == 'dokter') {
+            $PPA = 1;
+        } else if ($PPA == 'perawat') {
+            $PPA = 2;
+        } else {
             $PPA = 0;
-        // }
+        }
 
         $ttv1 = DB::table('medicalrecord.tanda_vital')
             ->select(
@@ -5476,7 +5498,7 @@ class AddOnPengkajianController extends Controller
             )
             ->where('KUNJUNGAN', $KUNJUNGAN)
             ->whereIn('STATUS', [1, 2])
-            ->where('PPA', $PPA)
+            // ->where('PPA', $PPA)
             ->orderByDesc('ID')
             ->first();
 
@@ -5518,44 +5540,61 @@ class AddOnPengkajianController extends Controller
 
         try {
 
-            // if ($PPA == 'dokter') {
-            //     $PPA = 1;
-            // } else if ($PPA == 'perawat') {
-            //     $PPA = 2;
-            // } else {
+            if ($PPA == 'dokter') {
+                $PPA = 1;
+            } else if ($PPA == 'perawat') {
+                $PPA = 2;
+            } else {
                 $PPA = 0;
-            // }
+            }
 
-            DB::table('medicalrecord.tanda_vital')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $KUNJUNGAN,
-                    'PPA'       => $PPA
-                ],
-                [
-                    'KEADAAN_UMUM'          => $request->tv_keu ?? '',
-                    'SISTOLIK'              => $request->tv_td_up ?? 0,
-                    'DISTOLIK'              => $request->tv_td_down ?? 0,
-                    'FREKUENSI_NADI'        => $request->tv_nadi ?? 0,
-                    'FREKUENSI_NADI_CB'     => $request->tv_nadi_cb ?? null,
-                    'SUHU'                  => $request->tv_suhu ?? 0,
-                    'SATURASI_O2'           => $request->tv_spo2 ?? 0,
-                    'FREKUENSI_NAFAS'       => $request->tv_nafas ?? 0,
-                    'FREKUENSI_NAFAS_CB'    => $request->tv_nafas_cb ?? null,
-                    'EYE'                   => $request->tv_gcs_e ?? 0,
-                    'VERBAL'                => $request->tv_gcs_v ?? 0,
-                    'MOTORIK'               => $request->tv_gcs_m ?? 0,
-                    'GCS'                   => $request->tv_gcs_t ?? 0,
-                    'KESADARAN_NEONATUS'    => $request->kesadaran_neonatus ?? 0,
-                    'VISUS_OD'              => $request->tv_visus_od ?? 0,
-                    'VISUS_OS'              => $request->tv_visus_os ?? 0,
-                    'TIO_OD'                => $request->tv_tio_od ?? 0,
-                    'TIO_OS'                => $request->tv_tio_os ?? 0,
-                    'WAKTU_PEMERIKSAAN'     => now(),
-                    'OLEH'                  => auth()->id(),
-                    'STATUS'                => 1,
-                    'TANGGAL'               => now()
-                ]
-            );
+            $existing = DB::table('medicalrecord.tanda_vital')
+                ->where('KUNJUNGAN', $KUNJUNGAN)
+                // ->where('PPA', $PPA)
+                ->orderByDesc('ID')
+                ->first();
+
+            $data = [
+                'KEADAAN_UMUM'         => $request->tv_keu ?? '',
+                'SISTOLIK'             => $request->tv_td_up ?? 0,
+                'DISTOLIK'             => $request->tv_td_down ?? 0,
+                'FREKUENSI_NADI'       => $request->tv_nadi ?? 0,
+                'FREKUENSI_NADI_CB'    => $request->tv_nadi_cb ?? null,
+                'SUHU'                 => $request->tv_suhu ?? 0,
+                'SATURASI_O2'          => $request->tv_spo2 ?? 0,
+                'FREKUENSI_NAFAS'      => $request->tv_nafas ?? 0,
+                'FREKUENSI_NAFAS_CB'   => $request->tv_nafas_cb ?? null,
+                'EYE'                  => $request->tv_gcs_e ?? 0,
+                'VERBAL'               => $request->tv_gcs_v ?? 0,
+                'MOTORIK'              => $request->tv_gcs_m ?? 0,
+                'GCS'                  => $request->tv_gcs_t ?? 0,
+                'KESADARAN_NEONATUS'   => $request->kesadaran_neonatus ?? 0,
+                'VISUS_OD'             => $request->tv_visus_od ?? 0,
+                'VISUS_OS'             => $request->tv_visus_os ?? 0,
+                'TIO_OD'               => $request->tv_tio_od ?? 0,
+                'TIO_OS'               => $request->tv_tio_os ?? 0,
+                'WAKTU_PEMERIKSAAN'    => now(),
+                'OLEH'                 => auth()->id(),
+                'STATUS'               => 1,
+                'TANGGAL'              => now(),
+            ];
+
+            if ($existing) {
+
+                DB::table('medicalrecord.tanda_vital')
+                    ->where('ID', $existing->ID)
+                    ->update($data);
+
+            } else {
+
+                DB::table('medicalrecord.tanda_vital')
+                    ->insert(array_merge(
+                        [
+                            'KUNJUNGAN' => $KUNJUNGAN,
+                        ],
+                        $data
+                    ));
+            }
 
             DB::table('medicalrecord.nutrisi')->updateOrInsert(
                 [
@@ -6859,7 +6898,7 @@ class AddOnPengkajianController extends Controller
                         'STATUS'  => 1,
                     ]
                 );
-            
+
             /*
             |--------------------------------------------------------------------------
             | PENILAIAN AWAL BAYI

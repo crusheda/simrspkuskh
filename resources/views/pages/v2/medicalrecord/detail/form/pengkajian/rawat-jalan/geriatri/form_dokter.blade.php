@@ -98,6 +98,7 @@
     </div>
     @include('pages.v2.medicalrecord.detail.form.finalisasi', [
         'jenis' => 'rajal_geriatri',
+        'role' => 'dokter',
         'formKey' => 'rjg_dokter',
         'form' => 'pengkajian-rajal-geriatri',
         'sub' => 'DOKTER',

@@ -362,7 +362,6 @@
         }
     );
 
-
     $form.on(
         'change',
         'select, input[type="checkbox"], input[type="radio"]',
@@ -370,6 +369,44 @@
 
             if (isDataLoading) {
                 return;
+            }
+
+            // Khusus checkbox Tindakan Kolaborasi
+            if ($(this).is(':checkbox')) {
+
+                const name = $(this).attr('name');
+
+                // Hanya checkbox tk_1 s/d tk_18 dan tk_99
+                if (/^tk_(\d+)$/.test(name)) {
+
+                    const no = name.match(/^tk_(\d+)$/)[1];
+
+                    const $time = $form.find(
+                        `[name="tk_${no}_dt"]`
+                    );
+
+                    if ($(this).is(':checked')) {
+
+                        // Centang -> isi jam sekarang
+                        const now = new Date();
+
+                        const hours = String(
+                            now.getHours()
+                        ).padStart(2, '0');
+
+                        const minutes = String(
+                            now.getMinutes()
+                        ).padStart(2, '0');
+
+                        $time.val(`${hours}:${minutes}`);
+
+                    } else {
+
+                        // Uncheck -> hapus jam
+                        $time.val('');
+
+                    }
+                }
             }
 
             simpanData();
