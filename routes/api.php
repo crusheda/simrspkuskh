@@ -374,6 +374,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     // ASESMEN GERIATRI
                         Route::get('emr/pengkajian/rj/asesmengeriatri/{kunjungan}', [AddOnPengkajianController::class, 'getGeriatri']);
                         Route::post('emr/pengkajian/rj/asesmengeriatri/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanGeriatri']);
+                    // TANDA VITAL
+                        Route::get('emr/pengkajian/rj/tandavital/{ppa}/{kunjungan}', [AddOnPengkajianController::class, 'getTandaVitalRJ']);
+                        Route::post('emr/pengkajian/rj/tandavital/{ppa}/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTandaVitalRJ']);
 
                 // KHUSUS GAWAT DARURAT
                     // ATS

@@ -947,7 +947,7 @@
     // ==============================================================
     function getTandaVital() {
         $.ajax({
-            url: `/api/v2/emr/pengkajian/ri/tandavital/${page}/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/rj/tandavital/${page}/${kunjungan}`,
             type: 'GET',
             dataType: 'json',
             beforeSend: function () {
@@ -1274,7 +1274,7 @@
         // POST
         // ----------------------------------------------------------
         $.ajax({
-            url: `/api/v2/emr/pengkajian/ri/tandavital/${page}/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/rj/tandavital/${page}/${kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {

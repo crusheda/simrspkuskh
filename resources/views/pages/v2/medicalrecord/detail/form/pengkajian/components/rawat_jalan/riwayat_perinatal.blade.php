@@ -234,9 +234,9 @@
             </label>
             <textarea class="form-control" rows="3" name="keluhan_tumbuh_kembang"></textarea>
         </div>
-        <div class="mb-3">
+        {{-- <div class="mb-3">
             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_imunisasi')
-        </div>
+        </div> --}}
     </div>
 </div>
 

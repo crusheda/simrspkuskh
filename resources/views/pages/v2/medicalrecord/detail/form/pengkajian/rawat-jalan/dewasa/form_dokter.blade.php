@@ -29,31 +29,31 @@
                     <div class="row align-items-center">
                         <div class="col-md-12 mb-2">
                             @include(
-                                'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
+                                'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.tanda_vital_rajal',
                                 [
                                     'section' => '#rjd_dokter',
                                     'page' => 'dokter',
                                     'idRuangan' => $list['dataKunjungan']->IDRUANGAN ?? $list['dataKunjungan']['IDRUANGAN'] ?? null,
-                                    'editableFields' => [
-                                        'tv_keu',
-                                        'tv_gcs_e',
-                                        'tv_gcs_v',
-                                        'tv_gcs_m',
-                                        'tv_td_up',
-                                        'tv_td_down',
-                                        'tv_nadi',
-                                        'tv_nadi_cb',
-                                        'tv_nafas',
-                                        'tv_nafas_cb',
-                                        'tv_suhu',
-                                        'tv_spo2',
-                                        'tv_bb',
-                                        'tv_tb',
-                                        'tv_visus_od',
-                                        'tv_visus_os',
-                                        'tv_tio_od',
-                                        'tv_tio_os',
-                                    ],
+                                    // 'editableFields' => [
+                                    //     'tv_keu',
+                                    //     'tv_gcs_e',
+                                    //     'tv_gcs_v',
+                                    //     'tv_gcs_m',
+                                    //     'tv_td_up',
+                                    //     'tv_td_down',
+                                    //     'tv_nadi',
+                                    //     'tv_nadi_cb',
+                                    //     'tv_nafas',
+                                    //     'tv_nafas_cb',
+                                    //     'tv_suhu',
+                                    //     'tv_spo2',
+                                    //     'tv_bb',
+                                    //     'tv_tb',
+                                    //     'tv_visus_od',
+                                    //     'tv_visus_os',
+                                    //     'tv_tio_od',
+                                    //     'tv_tio_os',
+                                    // ],
                                 ]
                             )
                         </div>

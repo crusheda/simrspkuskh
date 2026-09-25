@@ -39,7 +39,7 @@
                             Alloanamnesis
                         </label>
                     </div>
-                    <input type="text" class="form-control" name="dari" placeholder="Dari ...">
+                    <input type="text" class="form-control" name="anamnesis_dari" placeholder="Dari ...">
                 </div>
             </div>
 
@@ -430,6 +430,10 @@
                 const anam1 = anam.anam1;
                 const anam2 = anam.anam2;
                 const anam3 = anam.anam3;
+                const anam4 = anam.anam4;
+                const anam5 = anam.anam5;
+                const anam6 = anam.anam6;
+                const anam7 = anam.anam7;
 
                 // Jika data anamnesis belum ada,
                 // biarkan form kosong dan jangan error.
@@ -476,37 +480,83 @@
                     ) {
                         FormHelper.setValue(
                             $section,
-                            'dari',
+                            'anamnesis_dari',
                             anam1.DARI
                         );
                     }
                 }
+                // if (anam1) {
+                //     if (String(anam1.AUTOANAMNESIS) === '1') {
+                //         const $anamCheckboxes1 = $form.find(
+                //             'input[type="checkbox"][name="anam1"]'
+                //         );
+
+                //         // Hanya reset checkbox pada form dokter/perawat ini saja.
+                //         $anamCheckboxes1.prop('checked', false);
+
+                //         // Centang sesuai value hanya pada form ini.
+                //         $anamCheckboxes1.prop('checked', true);
+                //     }
+                //     if (String(anam1.ALLOANAMNESIS) === '1') {
+                //         const $anamCheckboxes2 = $form.find(
+                //             'input[type="checkbox"][name="anam2"]'
+                //         );
+
+                //         // Hanya reset checkbox pada form dokter/perawat ini saja.
+                //         $anamCheckboxes2.prop('checked', false);
+
+                //         // Centang sesuai value hanya pada form ini.
+                //         $anamCheckboxes2.prop('checked', true);
+                //     }
+
+                //     // PENGISIAN dari
+                //     if (
+                //         anam1.DARI &&
+                //         FormHelper.hasValue(anam1.DARI)
+                //     ) {
+                //         FormHelper.setValue(
+                //             $section,
+                //             'dari',
+                //             anam1.DARI
+                //         );
+                //     }
+                // }
 
                 // ==================================================
                 // KELUHAN UTAMA
                 // ==================================================
                 if (
-                    anam1 &&
-                    FormHelper.hasValue(anam1.KELUHAN_UTAMA)
+                    anam2 &&
+                    FormHelper.hasValue(anam2.DESKRIPSI)
                 ) {
                     FormHelper.setValue(
                         $section,
                         'ku',
-                        anam1.KELUHAN_UTAMA
+                        anam2.DESKRIPSI
                     );
                 }
+                // if (
+                //     anam1 &&
+                //     FormHelper.hasValue(anam1.KELUHAN_UTAMA)
+                // ) {
+                //     FormHelper.setValue(
+                //         $section,
+                //         'ku',
+                //         anam1.KELUHAN_UTAMA
+                //     );
+                // }
 
                 // ==================================================
                 // RIWAYAT PENYAKIT SEKARANG
                 // ==================================================
                 if (
-                    anam1 &&
-                    FormHelper.hasValue(anam1.RPS)
+                    anam3 &&
+                    FormHelper.hasValue(anam3.RPS)
                 ) {
                     FormHelper.setValue(
                         $section,
                         'rps',
-                        anam1.RPS
+                        anam3.RPS
                     );
                 }
 
@@ -524,46 +574,85 @@
                 //     );
                 // }
                 // LINK DENGAN SIMGOS DAN DOKTER
+                // if (
+                //     anam2 &&
+                //     FormHelper.hasValue(anam2.DESKRIPSI)
+                // ) {
+                //     FormHelper.setValue(
+                //         $section,
+                //         'rpd',
+                //         anam2.DESKRIPSI
+                //     );
+                // }
                 if (
-                    anam2 &&
-                    FormHelper.hasValue(anam2.DESKRIPSI)
+                    anam4 &&
+                    FormHelper.hasValue(anam4.DESKRIPSI)
                 ) {
                     FormHelper.setValue(
                         $section,
                         'rpd',
-                        anam2.DESKRIPSI
+                        anam4.DESKRIPSI
                     );
                 }
 
                 // ==================================================
                 // RIWAYAT PENYAKIT KELUARGA
                 // ==================================================
-                if (anam3) {
+                // if (anam3) {
+                //     setCheckboxValue(
+                //         'rpk_h',
+                //         anam3.HIPERTENSI
+                //     );
+
+                //     setCheckboxValue(
+                //         'rpk_d',
+                //         anam3.DIABETES_MELITUS
+                //     );
+
+                //     setCheckboxValue(
+                //         'rpk_p',
+                //         anam3.PENYAKIT_JANTUNG
+                //     );
+
+                //     setCheckboxValue(
+                //         'rpk_a',
+                //         anam3.ASMA
+                //     );
+
+                //     if (FormHelper.hasValue(anam3.LAINNYA)) {
+                //         FormHelper.setValue(
+                //             $section,
+                //             'rpk_lain',
+                //             anam3.LAINNYA
+                //         );
+                //     }
+                // }
+                if (anam5) {
                     setCheckboxValue(
                         'rpk_h',
-                        anam3.HIPERTENSI
+                        anam5.HIPERTENSI
                     );
 
                     setCheckboxValue(
                         'rpk_d',
-                        anam3.DIABETES_MELITUS
+                        anam5.DIABETES_MELITUS
                     );
 
                     setCheckboxValue(
                         'rpk_p',
-                        anam3.PENYAKIT_JANTUNG
+                        anam5.PENYAKIT_JANTUNG
                     );
 
                     setCheckboxValue(
                         'rpk_a',
-                        anam3.ASMA
+                        anam5.ASMA
                     );
 
-                    if (FormHelper.hasValue(anam3.LAINNYA)) {
+                    if (FormHelper.hasValue(anam5.LAINNYA)) {
                         FormHelper.setValue(
                             $section,
                             'rpk_lain',
-                            anam3.LAINNYA
+                            anam5.LAINNYA
                         );
                     }
                 }
@@ -571,79 +660,154 @@
                 // ==================================================
                 // DATA ANAK
                 // ==================================================
-                if (anam1) {
-                    if (isAnamnesisAnak) {
-                        if (
-                            FormHelper.hasValue(
-                                anam1.RIWAYAT_TUMBUH_KEMBANG
-                            )
-                        ) {
-                            FormHelper.setValue(
-                                $section,
-                                'anam_rtk',
-                                anam1.RIWAYAT_TUMBUH_KEMBANG
-                            );
-                        }
+                // if (anam1) {
+                //     if (isAnamnesisAnak) {
+                //         if (
+                //             FormHelper.hasValue(
+                //                 anam1.RIWAYAT_TUMBUH_KEMBANG
+                //             )
+                //         ) {
+                //             FormHelper.setValue(
+                //                 $section,
+                //                 'anam_rtk',
+                //                 anam1.RIWAYAT_TUMBUH_KEMBANG
+                //             );
+                //         }
 
-                        if (
-                            FormHelper.hasValue(
-                                anam1.RIWAYAT_KELAHIRAN
-                            )
-                        ) {
-                            FormHelper.setValue(
-                                $section,
-                                'anam_k',
-                                anam1.RIWAYAT_KELAHIRAN
-                            );
-                        }
+                //         if (
+                //             FormHelper.hasValue(
+                //                 anam1.RIWAYAT_KELAHIRAN
+                //             )
+                //         ) {
+                //             FormHelper.setValue(
+                //                 $section,
+                //                 'anam_k',
+                //                 anam1.RIWAYAT_KELAHIRAN
+                //             );
+                //         }
 
-                        if (
-                            FormHelper.hasValue(
-                                anam1.USIA_KEHAMILAN
-                            )
-                        ) {
-                            FormHelper.setValue(
-                                $section,
-                                'anam_uk',
-                                anam1.USIA_KEHAMILAN
-                            );
-                        }
+                //         if (
+                //             FormHelper.hasValue(
+                //                 anam1.USIA_KEHAMILAN
+                //             )
+                //         ) {
+                //             FormHelper.setValue(
+                //                 $section,
+                //                 'anam_uk',
+                //                 anam1.USIA_KEHAMILAN
+                //             );
+                //         }
 
-                        FormHelper.setSingleCheckbox(
+                //         FormHelper.setSingleCheckbox(
+                //             $section,
+                //             'anam_p',
+                //             anam1.PERSALINAN
+                //         );
+
+                //         if (
+                //             FormHelper.hasValue(
+                //                 anam1.PERSALINAN_LAINNYA
+                //             )
+                //         ) {
+                //             FormHelper.setValue(
+                //                 $section,
+                //                 'anam_p_lain',
+                //                 anam1.PERSALINAN_LAINNYA
+                //             );
+                //         }
+
+                //         FormHelper.setSingleCheckbox(
+                //             $section,
+                //             'imunisasi',
+                //             anam1.IMUNISASI
+                //         );
+
+                //         if (
+                //             FormHelper.hasValue(
+                //                 anam1.IMUNISASI_LAIN
+                //             )
+                //         ) {
+                //             FormHelper.setValue(
+                //                 $section,
+                //                 'imunisasi_lain',
+                //                 anam1.IMUNISASI_LAIN
+                //             );
+                //         }
+                //     }
+                // }
+                if (isAnamnesisAnak && anam6) {
+                    if (
+                        FormHelper.hasValue(
+                            anam6.RIWAYAT_TUMBUH_KEMBANG
+                        )
+                    ) {
+                        FormHelper.setValue(
                             $section,
-                            'anam_p',
-                            anam1.PERSALINAN
+                            'anam_rtk',
+                            anam6.RIWAYAT_TUMBUH_KEMBANG
                         );
+                    }
 
-                        if (
-                            FormHelper.hasValue(
-                                anam1.PERSALINAN_LAINNYA
-                            )
-                        ) {
-                            FormHelper.setValue(
-                                $section,
-                                'anam_p_lain',
-                                anam1.PERSALINAN_LAINNYA
-                            );
-                        }
-
-                        FormHelper.setSingleCheckbox(
+                    if (
+                        FormHelper.hasValue(
+                            anam6.RIWAYAT_KELAHIRAN
+                        )
+                    ) {
+                        FormHelper.setValue(
                             $section,
-                            'imunisasi',
-                            anam1.IMUNISASI
+                            'anam_k',
+                            anam6.RIWAYAT_KELAHIRAN
                         );
+                    }
 
-                        if (
-                            FormHelper.hasValue(
-                                anam1.IMUNISASI_LAIN
-                            )
-                        ) {
-                            FormHelper.setValue(
-                                $section,
-                                'imunisasi_lain',
-                                anam1.IMUNISASI_LAIN
-                            );
-                        }
+                    if (
+                        FormHelper.hasValue(
+                            anam6.USIA_KEHAMILAN
+                        )
+                    ) {
+                        FormHelper.setValue(
+                            $section,
+                            'anam_uk',
+                            anam6.USIA_KEHAMILAN
+                        );
+                    }
+
+                    FormHelper.setSingleCheckbox(
+                        $section,
+                        'anam_p',
+                        anam6.PERSALINAN
+                    );
+
+                    if (
+                        FormHelper.hasValue(
+                            anam6.PERSALINAN_LAINNYA
+                        )
+                    ) {
+                        FormHelper.setValue(
+                            $section,
+                            'anam_p_lain',
+                            anam6.PERSALINAN_LAINNYA
+                        );
+                    }
+                }
+
+                if (isAnamnesisAnak && anam7) {
+                    FormHelper.setSingleCheckbox(
+                        $section,
+                        'imunisasi',
+                        anam7.IMUNISASI
+                    );
+
+                    if (
+                        FormHelper.hasValue(
+                            anam7.IMUNISASI_LAIN
+                        )
+                    ) {
+                        FormHelper.setValue(
+                            $section,
+                            'imunisasi_lain',
+                            anam7.IMUNISASI_LAIN
+                        );
                     }
                 }
 

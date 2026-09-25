@@ -105,9 +105,29 @@ class FinalisasiController extends Controller
                     $kunjungan,
                     $sub
                 ),
+            
+            /*
+            |--------------------------------------------------------------------------
+            | RAWAT JALAN
+            |--------------------------------------------------------------------------
+            */
+            'pengkajian-rajal-dewasa',
+            'pengkajian-rajal-anak',
+            'pengkajian-rajal-psikiatri',
+            'pengkajian-rajal-geriatri', =>
+                $this->generateSoapRajalDewasa(
+                    $kunjungan,
+                    $sub
+                ),
+
+            'pengkajian-rajal-obsgyn' =>
+                $this->generateSoapRajalObsgyn(
+                    $kunjungan,
+                    $sub
+                ),
 
             default => throw new \InvalidArgumentException(
-                "Form SOAP Ranap tidak dikenali: {$form}"
+                "Form SOAP tidak dikenali: {$form}"
             ),
         };
     }
