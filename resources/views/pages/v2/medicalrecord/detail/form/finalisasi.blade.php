@@ -914,82 +914,84 @@
     // ==========================================================
     // INIT VALIDATION
     // ==========================================================
-    $form.on('input change', 'input, textarea, select', function () {
+    if (gunakanValidasiFinalisasi) {
+        $form.on('input change', 'input, textarea, select', function () {
 
-        const $field = $(this);
+            const $field = $(this);
 
-        if ($field.prop('disabled')) {
-            return;
-        }
-
-        if ($field.is(':checkbox, :radio')) {
-
-            // Cari rule yang menggunakan field ini
-            validasiFinalisasi.forEach(function (item) {
-
-                const $fields = $form.find(item.selector);
-
-                if (!$fields.filter($field).length) {
-                    return;
-                }
-
-                const rule = item.rule || 'required';
-
-                // Untuk any/required:
-                // jika salah satu sudah terisi,
-                // hapus is-invalid dari seluruh group
-                if (rule === 'any' || rule === 'required') {
-
-                    let filled = false;
-
-                    $fields.each(function () {
-                        const $el = $(this);
-
-                        if ($el.prop('disabled')) {
-                            return;
-                        }
-
-                        if ($el.is(':checkbox, :radio')) {
-                            if ($el.is(':checked')) {
-                                filled = true;
-                                return false;
-                            }
-                        } else {
-                            if (String($el.val() ?? '').trim() !== '') {
-                                filled = true;
-                                return false;
-                            }
-                        }
-                    });
-
-                    if (filled) {
-                        $fields.removeClass('is-invalid');
-                    }
-
-                    return;
-                }
-
-                // Untuk all:
-                // hanya field yang sudah diisi yang dihilangkan
-                if (rule === 'all') {
-
-                    if ($field.is(':checked')) {
-                        $field.removeClass('is-invalid');
-                    }
-
-                    return;
-                }
-            });
-
-        } else {
-
-            const value = String($field.val() ?? '').trim();
-
-            if (value !== '') {
-                $field.removeClass('is-invalid');
+            if ($field.prop('disabled')) {
+                return;
             }
-        }
-    });
+
+            if ($field.is(':checkbox, :radio')) {
+
+                // Cari rule yang menggunakan field ini
+                validasiFinalisasi.forEach(function (item) {
+
+                    const $fields = $form.find(item.selector);
+
+                    if (!$fields.filter($field).length) {
+                        return;
+                    }
+
+                    const rule = item.rule || 'required';
+
+                    // Untuk any/required:
+                    // jika salah satu sudah terisi,
+                    // hapus is-invalid dari seluruh group
+                    if (rule === 'any' || rule === 'required') {
+
+                        let filled = false;
+
+                        $fields.each(function () {
+                            const $el = $(this);
+
+                            if ($el.prop('disabled')) {
+                                return;
+                            }
+
+                            if ($el.is(':checkbox, :radio')) {
+                                if ($el.is(':checked')) {
+                                    filled = true;
+                                    return false;
+                                }
+                            } else {
+                                if (String($el.val() ?? '').trim() !== '') {
+                                    filled = true;
+                                    return false;
+                                }
+                            }
+                        });
+
+                        if (filled) {
+                            $fields.removeClass('is-invalid');
+                        }
+
+                        return;
+                    }
+
+                    // Untuk all:
+                    // hanya field yang sudah diisi yang dihilangkan
+                    if (rule === 'all') {
+
+                        if ($field.is(':checked')) {
+                            $field.removeClass('is-invalid');
+                        }
+
+                        return;
+                    }
+                });
+
+            } else {
+
+                const value = String($field.val() ?? '').trim();
+
+                if (value !== '') {
+                    $field.removeClass('is-invalid');
+                }
+            }
+        });
+    }
 
     // ==========================================================
     // FINALISASI
