@@ -164,7 +164,7 @@ class FinalisasiController extends Controller
                                     'pk.NOPEN'
                                 )
                                 ->select(
-                                    'pp.NOPEN',
+                                    'pp.NOMOR',
                                     'pp.TANGGAL AS TGL_DAFTAR',
                                     'pk.MASUK AS TGL_MASUK',
                                     'pk.KELUAR AS TGL_KELUAR',

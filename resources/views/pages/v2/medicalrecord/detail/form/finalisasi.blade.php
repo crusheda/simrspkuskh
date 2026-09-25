@@ -1008,10 +1008,10 @@
             }
         }
 
-        // ==========================================
-        // LANJUT KE KONFIRMASI FINALISASI
-        // ==========================================
 
+        // ==========================================
+        // KONFIRMASI FINALISASI
+        // ==========================================
         Swal.fire({
             title: 'Finalisasi Pengkajian?',
             text: 'Setelah difinalisasi, data tidak dapat diubah sampai finalisasi dibatalkan.',
@@ -1026,6 +1026,10 @@
                 return;
             }
 
+
+            // ==========================================
+            // BUTTON LOADING
+            // ==========================================
             $btnFinal
                 .prop('disabled', true)
                 .html(`
@@ -1033,21 +1037,142 @@
                     Memproses...
                 `);
 
+
+            // ==========================================
+            // AJAX FINALISASI
+            // ==========================================
             $.ajax({
+
                 url: urlFinalisasi,
+
                 type: 'POST',
+
                 data: {
                     _token: csrfToken,
                     formKey: formKey
                 },
-                success: function(response) {
-                    // kode existing Anda
+
+
+                // ==========================================
+                // SUCCESS
+                // ==========================================
+                success: function(res) {
+
+                    // ======================================
+                    // UPDATE STATUS UI
+                    // ======================================
+
+                    // Tampilkan backdrop
+                    // Sembunyikan tombol Finalisasi
+                    // Tampilkan tombol Batal Final
+                    // Aktifkan Print Preview
+                    tampilkanFinalisasi();
+
+
+                    // ======================================
+                    // TAMPILKAN IDENTITAS FINALISASI
+                    // ======================================
+                    if (res?.data) {
+                        tampilkanFinalIdentity(res.data);
+                    }
+
+
+                    // ======================================
+                    // UPDATE PENANDA FINALISASI DI MENU
+                    // ======================================
+                    if (typeof window.updatePenandaFinalisasi === 'function') {
+                        window.updatePenandaFinalisasi(
+                            formKey,
+                            true
+                        );
+                    }
+
+                    if (typeof window.tampilkanPenandaFinalisasi === 'function') {
+                        window.tampilkanPenandaFinalisasi();
+                    }
+
+
+                    // ======================================
+                    // NOTIFIKASI
+                    // ======================================
+                    Swal.fire({
+                        title: 'Pesan System',
+                        html: res.message ??
+                            'Pengkajian berhasil difinalisasi',
+
+                        icon: 'success',
+
+                        showCloseButton: false,
+
+                        allowOutsideClick: true,
+                        allowEscapeKey: true,
+
+                        showConfirmButton: false,
+                        showCancelButton: true,
+
+                        timer: 5000,
+
+                        timerProgressBar: false,
+
+                        buttonsStyling: false,
+
+                        cancelButtonText: `
+                            <i class="ri-close-line me-1"></i>
+                            Tutup
+                        `,
+
+                        customClass: {
+                            cancelButton: 'btn btn-subtle-primary'
+                        },
+
+                        backdrop: `
+                            rgb(54 22 22 / 40%)
+                            url("/images/nyan-cat.gif")
+                            left top
+                            no-repeat
+                        `
+                    });
+
                 },
+
+
+                // ==========================================
+                // ERROR
+                // ==========================================
                 error: function(xhr) {
-                    // kode existing Anda
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text:
+                            xhr.responseJSON?.message ??
+                            'Terjadi kesalahan saat melakukan finalisasi.'
+                    });
+
+                },
+
+
+                // ==========================================
+                // COMPLETE
+                // ==========================================
+                complete: function() {
+
+                    // Hanya mengembalikan state loading.
+                    // Jangan remove d-none di sini karena
+                    // tampilkanFinalisasi() memang menyembunyikan
+                    // tombol Finalisasi setelah berhasil.
+                    $btnFinal
+                        .prop('disabled', false)
+                        .html(`
+                            <i class="fa-solid fa-check me-1"></i>
+                            Finalisasi
+                        `);
                 }
+
             });
+
         });
+
     });
 
     // ==========================================================
