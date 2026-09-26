@@ -1269,32 +1269,86 @@ class EMRController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $request->validate([
-            'tanggal' => 'required|date',
-            'jam' => 'required',
-            'ppa_id' => 'required|integer',
+        $request->validate(
+            [
+                'tanggal' => 'required|date',
+                'jam' => 'required',
+                'ppa_id' => 'required|integer',
 
-            'mode' => 'required|in:BIASA,SBAR,TBAK',
+                'mode' => 'required|in:BIASA,SBAR,TBAK',
 
-            'dokter_id' => [
-                'nullable',
-                'integer',
-                Rule::requiredIf(
-                    in_array($request->mode, ['SBAR', 'TBAK'])
-                ),
+                'dokter_id' => [
+                    'nullable',
+                    'integer',
+                    Rule::requiredIf(
+                        in_array($request->mode, ['SBAR', 'TBAK'])
+                    ),
+                ],
+
+                's' => 'nullable|string',
+                'o' => 'nullable|string',
+                'a' => 'nullable|string',
+                'p' => 'nullable|string',
+                'i' => 'nullable|string',
+
+                'tulis' => 'nullable|string',
+                'baca' => 'nullable|integer|in:0,1',
+                'konfirmasi' => 'nullable|integer|in:0,1',
             ],
+            [
+                'tanggal.required' => 'Tanggal CPPT wajib diisi.',
+                'tanggal.date' => 'Format tanggal CPPT tidak valid.',
 
-            's' => 'nullable|string',
-            'o' => 'nullable|string',
-            'a' => 'nullable|string',
-            'p' => 'nullable|string',
-            'i' => 'nullable|string',
+                'jam.required' => 'Jam CPPT wajib diisi.',
 
-            'tulis' => 'nullable|string',
-            'baca' => 'nullable|integer|in:0,1',
-            'konfirmasi' => 'nullable|integer|in:0,1',
-        ]);
+                'ppa_id.required' => 'PPA wajib dipilih.',
+                'ppa_id.integer' => 'PPA tidak valid.',
 
+                'mode.required' => 'Mode CPPT wajib dipilih.',
+                'mode.in' => 'Mode CPPT tidak valid.',
+
+                'dokter_id.required' => 'Dokter yang dihubungi wajib dipilih untuk CPPT SBAR atau TBAK.',
+                'dokter_id.integer' => 'Dokter yang dihubungi tidak valid.',
+
+                's.string' => 'Subjective harus berupa teks.',
+                'o.string' => 'Objective harus berupa teks.',
+                'a.string' => 'Assessment harus berupa teks.',
+                'p.string' => 'Planning harus berupa teks.',
+                'i.string' => 'Instruksi harus berupa teks.',
+
+                'tulis.string' => 'Catatan TBAK harus berupa teks.',
+                'baca.in' => 'Status baca TBAK tidak valid.',
+                'konfirmasi.in' => 'Status konfirmasi TBAK tidak valid.',
+            ]
+        );
+
+        if ($request->mode === 'BIASA') {
+
+            $soap = [
+                $request->s,
+                $request->o,
+                $request->a,
+                $request->p,
+                $request->i,
+            ];
+
+            $adaSOAP = collect($soap)
+                ->contains(function ($value) {
+                    return filled(trim((string) $value));
+                });
+
+            if (!$adaSOAP) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'CPPT gagal disimpan.',
+                    'errors' => [
+                        'soap' => [
+                            'Minimal salah satu dari Subjective (S), Objective (O), Assessment (A), Planning (P), atau Instruction (I) harus terisi.'
+                        ]
+                    ]
+                ], 422);
+            }
+        }
         /*
         |--------------------------------------------------------------------------
         | CEK KUNJUNGAN
@@ -1323,16 +1377,16 @@ class EMRController extends Controller
         $getPPA = DB::table('aplikasi.pengguna AS pe')
                 ->leftJoin('master.pegawai AS peg', 'peg.NIP', '=', 'pe.NIP')
 
-                // Profesi PPA (JENIS 32)
-                ->leftJoin('master.referensi AS ref32', function ($join) {
-                    $join->on('peg.PROFESI', '=', 'ref32.ID')
-                        ->where('ref32.JENIS', '=', 32);
+                // JENIS 36
+                ->leftJoin('master.referensi AS ref36', function ($join) {
+                    $join->on('ref36.ID', '=', 'peg.PROFESI')
+                        ->where('ref36.JENIS', '=', 36);
                 })
 
-                // Profesi induk (JENIS 36)
-                ->leftJoin('master.referensi AS ref36', function ($join) {
+                // JENIS 32 berdasarkan REF_ID dari JENIS 36
+                ->leftJoin('master.referensi AS ref32', function ($join) {
                     $join->on('ref32.REF_ID', '=', 'ref36.ID')
-                        ->where('ref36.JENIS', '=', 36);
+                        ->where('ref32.JENIS', '=', 32);
                 })
 
                 ->where('pe.ID', $request->ppa_id)
@@ -1342,14 +1396,14 @@ class EMRController extends Controller
                     'peg.NIP',
                     'peg.PROFESI',
 
+                    'ref36.ID AS PROFESI_ID',
+                    'ref36.DESKRIPSI AS PROFESI',
+
                     'ref32.ID AS PROFESI_PPA_ID',
                     'ref32.DESKRIPSI AS PROFESI_PPA',
-
-                    'ref32.REF_ID AS PROFESI_REF_ID',
-
-                    'ref36.ID AS PROFESI_ID',
-                    'ref36.DESKRIPSI AS PROFESI_NAMA'
                 )
+
+                ->orderBy('ref32.ID', 'asc')
                 ->first();
 
         if (!$getPPA) {
@@ -1403,16 +1457,8 @@ class EMRController extends Controller
             'PLANNING' => '',
             'INSTRUKSI' => '',
 
-            /*
-            | ID pengguna = ID tenaga medis
-            */
-            'TENAGA_MEDIS' => $getPPA->PROFESI_PPA_ID,
-
-            /*
-            | Sementara
-            | Nanti kita isi sesuai jenis PPA
-            */
-            'JENIS' => $getPPA->PROFESI_REF_ID,
+            'TENAGA_MEDIS'  => $getPPA->ID,
+            'JENIS'         => $getPPA->PROFESI_PPA_ID,
 
             'RENCANA_PULANG' => 0,
 
