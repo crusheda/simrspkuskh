@@ -21633,6 +21633,9 @@ span.flatpickr-weekday {
 .bg-pink-500 {
   background: var(--bs-pink-500);
 }
+.text-bg-pink-500 {
+  background: var(--bs-pink-500);
+}
 
 .text-pink-500 {
   color: var(--bs-pink-500);
@@ -21719,6 +21722,10 @@ span.flatpickr-weekday {
 }
 
 .bg-red-700 {
+  background: var(--bs-red-700);
+}
+
+.text-bg-red-700 {
   background: var(--bs-red-700);
 }
 

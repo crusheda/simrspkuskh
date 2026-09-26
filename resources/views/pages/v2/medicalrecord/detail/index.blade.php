@@ -79,14 +79,16 @@
                             <i class="ph-duotone ph-user-switch me-2"></i> Identitas Pasien
                         </button>
                     </li>
-                    @hasanyrole(['admin','dokterumum'])
+                    @can('emr_pengkajian')
+                    {{-- @hasanyrole(['admin','dokterumum','dokterspesialis']) --}}
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fpengkajian" role="tab"
                             aria-selected="false" tabindex="-1" id="tab-fpengkajian" disabled>
                             <i class="ph-duotone ph-user-list me-2"></i> Form Pengkajian
                         </button>
                     </li>
-                    @endhasanyrole
+                    {{-- @endhasanyrole --}}
+                    @endcan
                     @if (Str::startsWith($list['show']->IDRUANGAN, '10207'))
                         <li class="nav-item" role="presentation" hidden> <!-- TIDAK DIPAKAI LAGI -->
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frehab" role="tab"
@@ -615,49 +617,103 @@
                     }
 
                     riwayat += `<div class="cppt-timeline-item">
+
                                     <div class="cppt-timeline-marker bg-${ic_col}">
                                         <i class="${ic}"></i>
                                     </div>
 
                                     <div class="cppt-timeline-content">
-                                        <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
-                                            <div>
-                                                <div class="fw-bold">${item.PPA ?? '-'}</div>
-                                                <small class="text-muted" title="ID # ${item.ID ?? 'xxx'}">${item.JNSPPA ?? '-'} ${item.TANGGAL ? ' <i class="ri-arrow-right-s-line text-danger"></i>' + item.TANGGAL : ''}</small>
-                                            </div>
-                                            
-                                            <div class="d-flex justify-content-end gap-2 mt-3">
-                                                <button type="button"
-                                                        class="btn btn-sm btn-icon btn-subtle-info border border-info text-info-emphasis border-dashed"
-                                                        data-bs-toggle="tooltip" title="Copy Cppt" id="btn-copy-cppt-${item.ID}">
-                                                    <i class="ri-file-copy-2-line"></i>
-                                                </button>
-                                                ${item.CPPT_SIRMED == null ?
-                                                    `<button type="button"
-                                                            class="btn btn-sm btn-icon btn-subtle-warning border border-warning text-warning-emphasis border-dashed"
-                                                            data-bs-toggle="tooltip" title="Ubah Cppt" id="btn-edit-cppt-${item.ID}"
-                                                            onclick="editCPPT('${item.ID}', this)">
-                                                        <i class="ri-edit-line"></i>
+
+                                        <!-- HEADER -->
+                                        <div class="cppt-timeline-header p-3 text-bg-${ic_col} rounded-top">
+
+                                            <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+
+                                                <div>
+                                                    <div class="fw-bold text-white">
+                                                        ${item.PPA ?? 'Non PPA'}
+                                                    </div>
+
+                                                    <small
+                                                        class="text-white-80"
+                                                        title="ID # ${item.ID ?? 'xxx'}"
+                                                    >
+                                                        ${item.JNSPPA ?? '-'}
+
+                                                        ${
+                                                            item.TANGGAL
+                                                                ? `
+                                                                    <i class="ri-arrow-right-s-line text-warning fw-bold"></i>
+                                                                    ${item.TANGGAL}
+                                                                `
+                                                                : ''
+                                                        }
+                                                    </small>
+                                                </div>
+
+
+                                                <!-- ACTION -->
+                                                <div class="d-flex justify-content-end gap-2">
+
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-sm btn-icon btn-subtle-info border border-info border-dashed"
+                                                        data-bs-toggle="tooltip"
+                                                        title="Copy Cppt"
+                                                        id="btn-copy-cppt-${item.ID}"
+                                                    >
+                                                        <i class="ri-file-copy-2-line"></i>
                                                     </button>
-                                                    <button type="button"
-                                                            class="btn btn-sm btn-icon btn-subtle-danger border border-danger text-danger-emphasis border-dashed"
-                                                            data-bs-toggle="tooltip" title="Hapus Cppt" id="btn-hapus-cppt-${item.ID}"
-                                                            onclick="hapusCPPT('${item.ID}')">
-                                                        <i class="ri-delete-bin-line"></i>
-                                                    </button>` : ''
-                                                }
+
+
+                                                    ${
+                                                        item.CPPT_SIRMED == null
+                                                            ? `
+                                                                <button
+                                                                    type="button"
+                                                                    class="btn btn-sm btn-icon btn-subtle-warning border border-warning border-dashed"
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="Ubah Cppt"
+                                                                    id="btn-edit-cppt-${item.ID}"
+                                                                    onclick="editCPPT('${item.ID}', this)"
+                                                                >
+                                                                    <i class="ri-edit-line"></i>
+                                                                </button>
+
+                                                                <button
+                                                                    type="button"
+                                                                    class="btn btn-sm btn-icon btn-subtle-danger border border-danger border-dashed"
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="Hapus Cppt"
+                                                                    id="btn-hapus-cppt-${item.ID}"
+                                                                    onclick="hapusCPPT('${item.ID}')"
+                                                                >
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </button>
+                                                            `
+                                                            : ''
+                                                    }
+
+                                                </div>
+
                                             </div>
+
                                         </div>
 
-                                        <hr class="my-2">
 
-                                        <div class="small lh-lg">
-                                            ${item.CATATAN ?? ''}
+                                        <!-- CONTENT -->
+                                        <div class="cppt-timeline-body p-3">
+
+                                            <div class="small lh-lg">
+                                                ${item.CATATAN ?? ''}
+                                            </div>
+
+                                            ${pushInstruksi}
+
                                         </div>
-
-                                        ${pushInstruksi}
 
                                     </div>
+
                                 </div>
                             `;
                 });
