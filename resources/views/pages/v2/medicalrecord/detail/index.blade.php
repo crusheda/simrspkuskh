@@ -635,7 +635,7 @@
                                                     </div>
 
                                                     <small
-                                                        class="text-white-80"
+                                                        class="text-white"
                                                         title="ID # ${item.ID ?? 'xxx'}"
                                                     >
                                                         ${item.JNSPPA ?? '-'}

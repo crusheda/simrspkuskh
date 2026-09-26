@@ -253,8 +253,9 @@
                 `);
                 res.forEach(pouch => {
                     $("#filter_penjamin").append(`
-                        <option value="${pouch.ID}" ${pouch.ID == 2 ? 'selected' : ''}>${pouch.DESKRIPSI}</option>
+                        <option value="${pouch.ID}">${pouch.DESKRIPSI}</option>
                     `);
+                    // <option value="${pouch.ID}" ${pouch.ID == 2 ? 'selected' : ''}>${pouch.DESKRIPSI}</option>
                 });
             },
             error: function (xhr) {
