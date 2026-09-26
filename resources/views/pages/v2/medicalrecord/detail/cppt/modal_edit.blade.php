@@ -408,6 +408,32 @@
         $badge.text('CPPT Biasa').addClass('bg-dark');
     }
 
+    function setTombolEditCPPT(mode) {
+        const $btn = $('#btn-update-cppt');
+
+        if (mode === 'COPY') {
+            const sourceId = $('#edit_cppt_id').val();
+
+            $btn
+                .removeClass('btn-warning')
+                .addClass('btn-info')
+                .html(`
+                    <i class="ph-duotone ph-copy me-1"></i>
+                    Simpan Copy CPPT ${sourceId ? `<span class="badge bg-warning-subtle text-warning badge-sm ms-1">ID#${sourceId}</span>` : ''}
+                `);
+
+            return;
+        }
+
+        $btn
+            .removeClass('btn-info')
+            .addClass('btn-warning')
+            .html(`
+                <i class="ph-duotone ph-floppy-disk me-1"></i>
+                Simpan Perubahan
+            `);
+    }
+
     function modeDariCPPT(data) {
         const mode = String(data.TBAK_SBAR || '').trim().toUpperCase();
 
@@ -635,6 +661,9 @@
         }
 
         $('#modalEditCPPT').data('mode', mode);
+        $('#modalEditCPPT').data('action', 'EDIT');
+
+        setTombolEditCPPT('EDIT');
     }
 
     function editCPPT(id, button) {
@@ -703,9 +732,112 @@
         });
     }
 
+    function copyCPPT(id, button) {
+        bersihkanTooltipCPPT(button);
+
+        if (!id) {
+            iziToast.error({
+                title: 'Gagal!',
+                message: 'ID CPPT tidak ditemukan.',
+                position: 'topRight'
+            });
+
+            return;
+        }
+
+        const $button = $(`#btn-copy-cppt-${id}`);
+
+        $.ajax({
+            url: `/api/v2/emr/cppt/${kunjungan}/detail/${encodeURIComponent(id)}`,
+            type: 'GET',
+            dataType: 'json',
+
+            beforeSend: function () {
+                $button
+                    .prop('disabled', true)
+                    .html('<i class="ph-duotone ph-spinner ph-spin"></i>');
+            },
+
+            success: function (res) {
+
+                const data = res.data || res;
+
+                if (!data || !data.ID) {
+                    iziToast.error({
+                        title: 'Gagal!',
+                        message: 'Data CPPT tidak ditemukan.',
+                        position: 'topRight'
+                    });
+
+                    return;
+                }
+
+                // Isi modal dengan data CPPT lama
+                isiFormEditCPPT(data);
+
+                /*
+                |--------------------------------------------------------------------------
+                | MODE COPY
+                |--------------------------------------------------------------------------
+                */
+
+                $('#modalEditCPPT').data('mode', 'COPY');
+
+                // Simpan ID CPPT sumber
+                $('#edit_cppt_id').val(data.ID);
+
+                // Ubah tampilan modal
+                $('#modalEditCPPTLabel').text('Copy CPPT');
+
+                $('#edit_cppt_mode_badge')
+                    .removeClass('bg-primary bg-success bg-dark')
+                    .addClass('bg-info')
+                    .text(`Copy CPPT #${data.ID}`);
+
+                // Ubah tombol simpan
+                $('#btn-update-cppt').html(`
+                    <i class="ph-duotone ph-copy me-1"></i>
+                    Simpan Copy CPPT <span class="badge bg-warning-subtle text-warning badge-sm ms-1">ID#${data.ID}</span>
+                `);
+
+                editCPPTKembaliKeRiwayat = true;
+                editCPPTPerluRefresh = false;
+
+                $('#modalCPPT').one('hidden.bs.modal', function () {
+                    $('#modalEditCPPT').modal('show');
+                });
+
+                $('#modalCPPT').modal('hide');
+            },
+
+            error: function (xhr) {
+
+                iziToast.error({
+                    title: 'Gagal!',
+                    message:
+                        xhr.responseJSON?.message ||
+                        'Detail CPPT gagal dimuat.',
+                    position: 'topRight'
+                });
+
+            },
+
+            complete: function () {
+
+                $button
+                    .prop('disabled', false)
+                    .html('<i class="ri-file-copy-2-line"></i>');
+            }
+        });
+    }
+
     function ambilPayloadEditCPPT() {
 
+        const modeModal = $('#modalEditCPPT').data('mode');
+
         const mode = $('#modalEditCPPT').data('mode');
+
+        const action = $('#modalEditCPPT').data('action');
 
         const payload = {
             id: $('#edit_cppt_id').val(),
@@ -774,51 +906,156 @@
     }
 
     function simpanEditCPPT() {
+
         const id = $('#edit_cppt_id').val();
+        const mode = $('#modalEditCPPT').data('mode');
+
         const payload = ambilPayloadEditCPPT();
-        const $btnSimpanEditCppt = $('#btn-update-cppt');
+
+        const $btnSimpanEditCppt =
+            $('#btn-update-cppt');
+
+        /*
+        |--------------------------------------------------------------------------
+        | MODE COPY
+        |--------------------------------------------------------------------------
+        */
+        const isCopy = mode === 'COPY';
+
+        let url;
+        let method;
+
+        if (isCopy) {
+
+            url =
+                `/api/v2/emr/cppt/${kunjungan}/detail/${encodeURIComponent(id)}/copy`;
+
+            method = 'POST';
+
+            payload.source_id = id;
+
+        } else {
+
+            /*
+            |--------------------------------------------------------------------------
+            | MODE EDIT
+            |--------------------------------------------------------------------------
+            */
+
+            url =
+                `/api/v2/emr/cppt/${kunjungan}/detail/${encodeURIComponent(id)}/update`;
+
+            method = 'PUT';
+
+        }
 
         $.ajax({
-            url: `/api/v2/emr/cppt/${kunjungan}/detail/${encodeURIComponent(id)}/update`,
-            type: 'PUT',
+
+            url: url,
+
+            type: method,
+
             dataType: 'json',
+
             data: payload,
+
             headers: {
-                'X-CSRF-TOKEN': $(
-                    'meta[name="csrf-token"]'
-                ).attr('content')
+
+                'X-CSRF-TOKEN':
+                    $('meta[name="csrf-token"]').attr('content')
+
             },
 
             beforeSend: function () {
-                $('#modalEditCPPT button').prop('disabled', true);
-                $btnSimpanEditCppt.html('<i class="ph-duotone ph-spinner ph-spin me-1"></i> Menyimpan...');
+
+                $('#modalEditCPPT button')
+                    .prop('disabled', true);
+
+                $btnSimpanEditCppt.html(`
+                    <i class="ph-duotone ph-spinner ph-spin me-1"></i>
+                    ${isCopy ? 'Menyimpan Copy...' : 'Menyimpan...'}
+                `);
+
             },
 
             success: function (res) {
+
                 iziToast.success({
+
                     title: 'Berhasil!',
-                    message: res.message || 'CPPT berhasil diperbarui.',
+
+                    message:
+                        res.message ||
+                        (
+                            isCopy
+                                ? 'CPPT berhasil disalin.'
+                                : 'CPPT berhasil diperbarui.'
+                        ),
+
                     position: 'topRight'
+
                 });
 
                 editCPPTKembaliKeRiwayat = true;
+
                 editCPPTPerluRefresh = true;
 
                 $('#modalEditCPPT').modal('hide');
+
             },
 
             error: function (xhr) {
+
                 iziToast.error({
+
                     title: 'Gagal!',
-                    message: xhr.responseJSON?.message || 'CPPT gagal diperbarui.',
+
+                    message:
+                        xhr.responseJSON?.message ||
+                        (
+                            isCopy
+                                ? 'CPPT gagal disalin.'
+                                : 'CPPT gagal diperbarui.'
+                        ),
+
                     position: 'topRight'
+
                 });
+
             },
 
             complete: function () {
-                $('#modalEditCPPT button').prop('disabled', false);
-                $btnSimpanEditCppt.html('<i class="ph-duotone ph-floppy-disk me-1"></i> Simpan Perubahan');
+
+                $('#modalEditCPPT button')
+                    .prop('disabled', false);
+
+                /*
+                |--------------------------------------------------------------------------
+                | Kembalikan tombol sesuai mode
+                |--------------------------------------------------------------------------
+                */
+
+                if (isCopy) {
+
+                    const sourceId =
+                        $('#edit_cppt_id').val();
+
+                    $btnSimpanEditCppt.html(`
+                        <i class="ph-duotone ph-copy me-1"></i>
+                        Simpan Copy CPPT ${sourceId ? `<span class="badge bg-warning-subtle text-warning badge-sm ms-1">ID#${sourceId}</span>` : ''}
+                    `);
+
+                } else {
+
+                    $btnSimpanEditCppt.html(`
+                        <i class="ph-duotone ph-floppy-disk me-1"></i>
+                        Simpan Perubahan
+                    `);
+
+                }
+
             }
+
         });
     }
 </script>

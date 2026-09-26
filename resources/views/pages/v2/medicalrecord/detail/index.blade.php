@@ -379,6 +379,8 @@
     let dataDokter = [];
     let ppaSelected = false;
     let currentKunjunganCppt = null;
+    let cpptEditMode = 'edit';
+    let cpptCopyId = null;
 
     $(document).ready(function() {
 
@@ -651,21 +653,16 @@
                                                     </small>
                                                 </div>
 
-
                                                 <!-- ACTION -->
                                                 <div class="d-flex justify-content-end gap-2">
-
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-sm btn-icon btn-subtle-info border border-info border-dashed"
-                                                        data-bs-toggle="tooltip"
-                                                        title="Copy Cppt"
-                                                        id="btn-copy-cppt-${item.ID}"
-                                                    >
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-icon btn-subtle-info border border-info border-dashed"
+                                                            data-bs-toggle="tooltip"
+                                                            title="Copy Cppt"
+                                                            id="btn-copy-cppt-${item.ID}"
+                                                            onclick="copyCPPT('${item.ID}', this)">
                                                         <i class="ri-file-copy-2-line"></i>
                                                     </button>
-
-
                                                     ${
                                                         item.CPPT_SIRMED == null
                                                             ? `
@@ -679,7 +676,6 @@
                                                                 >
                                                                     <i class="ri-edit-line"></i>
                                                                 </button>
-
                                                                 <button
                                                                     type="button"
                                                                     class="btn btn-sm btn-icon btn-subtle-danger border border-danger border-dashed"

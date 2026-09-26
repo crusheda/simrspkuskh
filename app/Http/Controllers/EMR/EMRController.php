@@ -1000,6 +1000,7 @@ class EMRController extends Controller
                 $join->on('pcp.ID_CPPT', '=', 'cp.ID')
                     ->where('pcp.STATUS', '=', 1);
             })
+            ->leftJoin('aplikasi.pengguna as pg', 'cp.TENAGA_MEDIS', '=', 'pg.ID')
             ->leftJoin('master.pegawai as p', 'cp.TENAGA_MEDIS', '=', 'p.ID')
             ->leftJoin('master.dokter as d', 'cp.TENAGA_MEDIS', '=', 'd.ID')
             ->leftJoin('master.dokter as dc', 'cp.DOKTER_TBAK_OR_SBAR', '=', 'dc.ID')
@@ -1275,7 +1276,13 @@ class EMRController extends Controller
 
             'mode' => 'required|in:BIASA,SBAR,TBAK',
 
-            'dokter_id' => 'nullable|integer',
+            'dokter_id' => [
+                'nullable',
+                'integer',
+                Rule::requiredIf(
+                    in_array($request->mode, ['SBAR', 'TBAK'])
+                ),
+            ],
 
             's' => 'nullable|string',
             'o' => 'nullable|string',
@@ -1287,7 +1294,6 @@ class EMRController extends Controller
             'baca' => 'nullable|integer|in:0,1',
             'konfirmasi' => 'nullable|integer|in:0,1',
         ]);
-
 
         /*
         |--------------------------------------------------------------------------
@@ -1314,23 +1320,71 @@ class EMRController extends Controller
         | CARI TENAGA MEDIS BERDASARKAN NIP
         |--------------------------------------------------------------------------
         */
+        $getPPA = DB::table('aplikasi.pengguna AS pe')
+                ->leftJoin('master.pegawai AS peg', 'peg.NIP', '=', 'pe.NIP')
 
-        $tenagaMedis = DB::table('aplikasi.pengguna AS pe')
-            ->leftJoin('master.pegawai AS peg','peg.NIP','=','pe.NIP')
-            ->where('pe.ID', $request->dokter_id)
-            ->select(
-                'peg.ID',
-                'peg.NIP',
-                'peg.PROFESI'
-            )
-            ->first();
+                // Profesi PPA (JENIS 32)
+                ->leftJoin('master.referensi AS ref32', function ($join) {
+                    $join->on('peg.PROFESI', '=', 'ref32.ID')
+                        ->where('ref32.JENIS', '=', 32);
+                })
 
-        if (!$tenagaMedis) {
+                // Profesi induk (JENIS 36)
+                ->leftJoin('master.referensi AS ref36', function ($join) {
+                    $join->on('ref32.REF_ID', '=', 'ref36.ID')
+                        ->where('ref36.JENIS', '=', 36);
+                })
+
+                ->where('pe.ID', $request->ppa_id)
+
+                ->select(
+                    'peg.ID',
+                    'peg.NIP',
+                    'peg.PROFESI',
+
+                    'ref32.ID AS PROFESI_PPA_ID',
+                    'ref32.DESKRIPSI AS PROFESI_PPA',
+
+                    'ref32.REF_ID AS PROFESI_REF_ID',
+
+                    'ref36.ID AS PROFESI_ID',
+                    'ref36.DESKRIPSI AS PROFESI_NAMA'
+                )
+                ->first();
+
+        if (!$getPPA) {
             return response()->json([
-                'message' => 'Data tenaga medis untuk PPA tersebut tidak ditemukan.'
+                'message' => 'Data PPA tersebut tidak ditemukan.'
             ], 422);
         }
 
+        if ($request->mode != "BIASA") {
+            $tenagaMedis = DB::table('aplikasi.pengguna AS pe')
+                ->leftJoin('master.pegawai AS peg','peg.NIP','=','pe.NIP')
+                ->where('pe.ID', $request->dokter_id)
+                ->select(
+                    'peg.ID',
+                    'peg.NIP',
+                    'peg.PROFESI'
+                )
+                ->first();
+        } else {
+            $tenagaMedis = DB::table('aplikasi.pengguna AS pe')
+                ->leftJoin('master.pegawai AS peg','peg.NIP','=','pe.NIP')
+                ->where('pe.ID', auth()->user()->ID)
+                ->select(
+                    'peg.ID',
+                    'peg.NIP',
+                    'peg.PROFESI'
+                )
+                ->first();
+        }
+
+        if (!$tenagaMedis) {
+            return response()->json([
+                'message' => 'Data Dokter '.$request->mode.' tidak ditemukan.'
+            ], 422);
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -1352,13 +1406,13 @@ class EMRController extends Controller
             /*
             | ID pengguna = ID tenaga medis
             */
-            'TENAGA_MEDIS' => $request->ppa_id,
+            'TENAGA_MEDIS' => $getPPA->PROFESI_PPA_ID,
 
             /*
             | Sementara
             | Nanti kita isi sesuai jenis PPA
             */
-            'JENIS' => $tenagaMedis->PROFESI,
+            'JENIS' => $getPPA->PROFESI_REF_ID,
 
             'RENCANA_PULANG' => 0,
 
@@ -1613,6 +1667,137 @@ class EMRController extends Controller
         return response()->json([
             'data' => $cppt
         ]);
+    }
+
+    public function copyCPPT(Request $request, $kunjungan, $id)
+    {
+        try {
+
+            /*
+            |--------------------------------------------------------------------------
+            | CARI CPPT SUMBER
+            |--------------------------------------------------------------------------
+            */
+
+            $cppt = DB::table('medicalrecord.cppt')
+                ->where('ID', $id)
+                ->where('KUNJUNGAN', $kunjungan)
+                ->where('STATUS', '!=', 0)
+                ->first();
+
+            if (!$cppt) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data CPPT tidak ditemukan atau bukan milik kunjungan ini.'
+                ], 404);
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SIAPKAN DATA CPPT BARU
+            |--------------------------------------------------------------------------
+            */
+
+            $data = [
+
+                'KUNJUNGAN' => $kunjungan,
+
+                // CPPT baru dibuat sekarang
+                'TANGGAL' => now(),
+
+                // Isi CPPT
+                'SUBYEKTIF' => $cppt->SUBYEKTIF ?? '',
+                'OBYEKTIF' => $cppt->OBYEKTIF ?? '',
+                'ASSESMENT' => $cppt->ASSESMENT ?? '',
+                'PLANNING' => $cppt->PLANNING ?? '',
+                'INSTRUKSI' => $cppt->INSTRUKSI ?? '',
+
+                // PPA / tenaga medis
+                'TENAGA_MEDIS' => $cppt->TENAGA_MEDIS,
+
+                // Jenis CPPT
+                'JENIS' => $cppt->JENIS,
+
+                // Rencana pulang
+                'RENCANA_PULANG' => $cppt->RENCANA_PULANG ?? 0,
+                'TANGGAL_RENCANA_PULANG' =>
+                    $cppt->TANGGAL_RENCANA_PULANG,
+
+                'SUB_DEVISI' => $cppt->SUB_DEVISI ?? 0,
+
+                /*
+                |--------------------------------------------------------------------------
+                | USER PEMBUAT CPPT BARU
+                |--------------------------------------------------------------------------
+                */
+
+                'OLEH' => auth()->id(),
+
+                /*
+                |--------------------------------------------------------------------------
+                | CPPT BARU
+                |--------------------------------------------------------------------------
+                */
+
+                'VERIFIKASI' => 0,
+                'STATUS' => 1,
+
+                /*
+                |--------------------------------------------------------------------------
+                | TBAK / SBAR
+                |--------------------------------------------------------------------------
+                */
+
+                'TULIS' => $cppt->TULIS ?? '',
+                'STATUS_TBAK' => $cppt->STATUS_TBAK ?? 0,
+                'STATUS_SBAR' => $cppt->STATUS_SBAR ?? 0,
+
+                // Catatan baru belum dibaca/dikonfirmasi
+                'BACA' => 0,
+                'KONFIRMASI' => 0,
+
+                'ADIME' => $cppt->ADIME ?? 0,
+
+                'DOKTER_TBAK_OR_SBAR' =>
+                    $cppt->DOKTER_TBAK_OR_SBAR ?? 0,
+            ];
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | INSERT CPPT BARU
+            |--------------------------------------------------------------------------
+            */
+
+            $newId = DB::table('medicalrecord.cppt')
+                ->insertGetId($data);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | RESPONSE
+            |--------------------------------------------------------------------------
+            */
+
+            return response()->json([
+                'status' => true,
+                'message' => 'CPPT berhasil disalin.',
+                'data' => [
+                    'id' => $newId,
+                    'id_lama' => $id,
+                    'kunjungan' => $kunjungan,
+                ]
+            ]);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'CPPT gagal disalin.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function updateCPPT(Request $request, $kunjungan,$id)

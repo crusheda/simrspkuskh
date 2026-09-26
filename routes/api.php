@@ -448,10 +448,11 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                     Route::post('emr/form/lain/lembartransferpasien/{kunjungan}/simpan', [LembarTransferPasienInternalController::class, 'simpanFormTransfer']);
 
             // PLUGINS
-            Route::get('emr/cppt/{kunjungan}', [EMRController::class, 'showCppt']);
+            Route::get('emr/cppt/{kunjungan}', [EMRController::class, 'showCPPT']);
             Route::post('emr/cppt/{kunjungan}',[EMRController::class, 'simpanCPPT']);
             Route::get('emr/cppt/{kunjungan}/detail/{id}', [EMRController::class, 'detailCPPT']);
             Route::put('emr/cppt/{kunjungan}/detail/{id}/update', [EMRController::class, 'updateCPPT']);
+            Route::post('emr/cppt/{kunjungan}/detail/{id}/copy', [EMRController::class, 'copyCPPT']);
             Route::delete('emr/cppt/{id}',[EMRController::class, 'hapusCPPT']);
 
             // FINALISASI
