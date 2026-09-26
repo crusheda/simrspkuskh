@@ -40,8 +40,8 @@
                             <div class="form-group">
                                 <label class="form-label">Jenis Perawatan</label>
                                 <select id="filter_rawat" class="form-control" onchange="getRuangan()">
-                                    <option value="5">Semua Perawatan</option>
-                                    <option value="1" selected>Rawat Jalan</option>
+                                    <option value="5" selected>Semua Perawatan</option>
+                                    <option value="1">Rawat Jalan</option>
                                     <option value="2">Rawat Darurat (Tanpa Inap)</option>
                                     <option value="3">Rawat Inap</option>
                                 </select>
