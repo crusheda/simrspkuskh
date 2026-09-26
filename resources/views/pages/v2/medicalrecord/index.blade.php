@@ -210,6 +210,7 @@
             $("#filter_ruang").append(`
                 <option value="5" selected>Semua Ruangan</option>
             `);
+            getDPJP();
         } else {
             $.ajax({
                 url: `/api/emr/ruangan/${idRuang}`,
