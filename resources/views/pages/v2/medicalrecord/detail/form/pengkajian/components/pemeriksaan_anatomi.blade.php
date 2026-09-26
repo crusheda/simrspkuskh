@@ -67,7 +67,7 @@
                                 </label>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="pf_anemis" value="0">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="pf_anemis" value="0" checked>
                                         <label class="form-check-label">Tidak</label>
                                     </div>
                                     <div class="form-check m-0">
@@ -82,7 +82,7 @@
                                 </label>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="pf_ikterus" value="0">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="pf_ikterus" value="0" checked>
                                         <label class="form-check-label">Tidak</label>
                                     </div>
                                     <div class="form-check m-0">
@@ -97,7 +97,7 @@
                                 </label>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="form-check m-0">
-                                        <input class="form-check-input single-checkbox" type="checkbox" name="pf_upal" value="0">
+                                        <input class="form-check-input single-checkbox" type="checkbox" name="pf_upal" value="0" checked>
                                         <label class="form-check-label">Tidak</label>
                                     </div>
                                     <div class="form-check m-0">
@@ -134,9 +134,9 @@
                             Diameter Pupil
                         </label>
                         <div class="input-group input-group-sm" style="width: 250px;">
-                            <input type="number" class="form-control" name="pf_dia_up" value="0" min="0" max="7" step="1">
+                            <input type="number" class="form-control" name="pf_dia_up" value="3" min="0" max="7" step="1">
                             <div class="input-group-text">mm /</div>
-                            <input type="number" class="form-control" name="pf_dia_down" value="0" min="0" max="7" step="1">
+                            <input type="number" class="form-control" name="pf_dia_down" value="3" min="0" max="7" step="1">
                             <div class="input-group-text">mm</div>
                         </div>
                     </div>
@@ -277,7 +277,7 @@
                         <input type="text" class="form-control form-control-sm" name="pf_cor">
                         <label class="form-label fw-bold flex-shrink-0">Irama</label>
                         <div class="form-check flex-shrink-0 m-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_cor_cb" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_cor_cb" value="1" checked>
                             <label class="form-check-label">Reguler</label>
                         </div>
                         <div class="form-check flex-shrink-0 m-0">
@@ -331,6 +331,7 @@
                                 pattern="[+\-]"
                                 inputmode="text"
                                 autocomplete="off"
+                                value="-"
                                 style="width:60px;"
                             >
                         </div>
@@ -349,6 +350,7 @@
                                 pattern="[+\-]"
                                 inputmode="text"
                                 autocomplete="off"
+                                value="-"
                                 style="width:60px;"
                             >
                         </div>
@@ -381,6 +383,7 @@
                                 pattern="[+\-]"
                                 inputmode="text"
                                 autocomplete="off"
+                                value="-"
                                 style="width:60px;"
                             >
                         </div>
@@ -399,6 +402,7 @@
                                 pattern="[+\-]"
                                 inputmode="text"
                                 autocomplete="off"
+                                value="-"
                                 style="width:60px;"
                             >
                         </div>
@@ -443,7 +447,7 @@
                         <label class="form-label fw-bold flex-shrink-0">Abdomen : Distended</label>
                         <div class="d-flex align-items-center gap-3 ms-auto">
                             <div class="form-check m-0">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="pf_distended" value="0">
+                                <input class="form-check-input single-checkbox" type="checkbox" name="pf_distended" value="0" checked>
                                 <label class="form-check-label">Tidak</label>
                             </div>
                             <div class="form-check m-0">
@@ -459,7 +463,7 @@
                         <label class="form-label fw-bold flex-shrink-0">Meteorismus</label>
                         <div class="d-flex align-items-center gap-3 ms-auto">
                             <div class="form-check m-0">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="pf_meteor" value="0">
+                                <input class="form-check-input single-checkbox" type="checkbox" name="pf_meteor" value="0" checked>
                                 <label class="form-check-label">Tidak</label>
                             </div>
                             <div class="form-check m-0">
@@ -475,7 +479,7 @@
                         <label class="form-label fw-bold flex-shrink-0">Asites</label>
                         <div class="d-flex align-items-center gap-3 ms-auto">
                             <div class="form-check m-0">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="pf_asites" value="0">
+                                <input class="form-check-input single-checkbox" type="checkbox" name="pf_asites" value="0" checked>
                                 <label class="form-check-label">Tidak</label>
                             </div>
                             <div class="form-check m-0">
@@ -494,7 +498,7 @@
                         <label class="form-label fw-bold flex-shrink-0">Peristaltik</label>
                         <div class="d-flex align-items-center gap-3 ms-auto">
                             <div class="form-check m-0">
-                                <input class="form-check-input" type="checkbox" name="pf_peristal_normal">
+                                <input class="form-check-input" type="checkbox" name="pf_peristal_normal" checked>
                                 <label class="form-check-label">Normal</label>
                             </div>
                             <div class="form-check m-0">
@@ -518,7 +522,7 @@
                         <label class="form-label fw-bold flex-shrink-0">Nyeri Tekan</label>
                         <div class="d-flex align-items-center gap-3 ms-auto">
                             <div class="form-check m-0">
-                                <input class="form-check-input single-checkbox" type="checkbox" data-target="#pf_nyeri_tekan_lain" name="pf_nyeri_tekan" value="0">
+                                <input class="form-check-input single-checkbox" type="checkbox" data-target="#pf_nyeri_tekan_lain" name="pf_nyeri_tekan" value="0" checked>
                                 <label class="form-check-label">Tidak</label>
                             </div>
                             <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
@@ -557,7 +561,7 @@
                         <label class="form-label fw-bold flex-shrink-0">Akral</label>
                         <div class="d-flex align-items-center gap-3 ms-auto">
                             <div class="form-check m-0">
-                                <input class="form-check-input" type="checkbox" name="pf_extremitas_hangat">
+                                <input class="form-check-input" type="checkbox" name="pf_extremitas_hangat" checked>
                                 <label class="form-check-label">Hangat</label>
                             </div>
                             <div class="form-check m-0">
@@ -575,7 +579,7 @@
                         <label class="form-label fw-bold flex-shrink-0">Edema</label>
                         <div class="d-flex align-items-center gap-3 ms-auto">
                             <div class="form-check m-0">
-                                <input class="form-check-input single-checkbox" type="checkbox" data-target="#pf_udem_lain" name="pf_udem" value="0">
+                                <input class="form-check-input single-checkbox" type="checkbox" data-target="#pf_udem_lain" name="pf_udem" value="0" checked>
                                 <label class="form-check-label">Tidak</label>
                             </div>
                             <div class="d-flex align-items-center gap-2 mb-0 flex-grow-1">
