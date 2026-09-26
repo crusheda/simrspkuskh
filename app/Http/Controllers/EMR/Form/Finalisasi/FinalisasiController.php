@@ -3037,6 +3037,771 @@ class FinalisasiController extends Controller
     }
 
     /*
+    |-------------------------------------------------------------------------
+    |RAJAL
+    |-------------------------------------------------------------------------
+    */
+
+    private function generateSoapRajalDewasa($kunjungan, $sub)
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | S
+        |--------------------------------------------------------------------------
+        */
+
+        $anamnesisDiperoleh = DB::table('medicalrecord.anamnesis_diperoleh')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first([
+                'AUTOANAMNESIS',
+                'ALLOANAMNESIS',
+                'DARI',
+            ]);
+
+        $keluhanUtama = DB::table('medicalrecord.keluhan_utama')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first([
+                'DESKRIPSI',
+            ]);
+
+        $anamnesis = DB::table('medicalrecord.anamnesis')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first([
+                'DESKRIPSI',
+            ]);
+
+        $rpp = DB::table('medicalrecord.rpp')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first([
+                'DESKRIPSI',
+            ]);
+
+        $rpk = DB::table('medicalrecord.riwayat_penyakit_keluarga')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first([
+                'HIPERTENSI',
+                'DIABETES_MELITUS',
+                'PENYAKIT_JANTUNG',
+                'ASMA',
+                'LAINNYA',
+            ]);
+
+        $statusReproduksi = DB::table('medicalrecord.sirmed_status_reproduksi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first([
+                'RIWAYAT_TUMBUH_KEMBANG',
+                'RIWAYAT_KELAHIRAN',
+                'USIA_KEHAMILAN',
+                'PERSALINAN',
+                'PERSALINAN_LAINNYA',
+            ]);
+
+        $tumbuhKembang = DB::table('medicalrecord.riwayat_tumbuh_kembang')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first([
+                'IMUNISASI',
+                'IMUNISASI_LAIN',
+            ]);
+
+        $s = [];
+
+        if ($anamnesisDiperoleh) {
+
+            if ((int) $anamnesisDiperoleh->AUTOANAMNESIS === 1) {
+                $s[] = 'Autoanamnesis';
+            }
+
+            if ((int) $anamnesisDiperoleh->ALLOANAMNESIS === 1) {
+                $dari = $this->soapValue($anamnesisDiperoleh->DARI);
+
+                $s[] = 'Alloanamnesis' . (
+                    $dari ? ' dari ' . $dari : ''
+                );
+            }
+        }
+
+        if ($keluhanUtama) {
+            $value = $this->soapValue($keluhanUtama->DESKRIPSI);
+
+            if ($value) {
+                $s[] = 'Keluhan Utama: ' . $value;
+            }
+        }
+
+        if ($anamnesis) {
+            $value = $this->soapValue($anamnesis->DESKRIPSI);
+
+            if ($value) {
+                $s[] = 'Riwayat Penyakit Sekarang: ' . $value;
+            }
+        }
+
+        if ($rpp) {
+            $value = $this->soapValue($rpp->DESKRIPSI);
+
+            if ($value) {
+                $s[] = 'Riwayat Penyakit Dahulu: ' . $value;
+            }
+        }
+
+        if ($rpk) {
+
+            $riwayatKeluarga = [];
+
+            if ((int) $rpk->HIPERTENSI === 1) {
+                $riwayatKeluarga[] = 'Hipertensi';
+            }
+
+            if ((int) $rpk->DIABETES_MELITUS === 1) {
+                $riwayatKeluarga[] = 'Diabetes Melitus';
+            }
+
+            if ((int) $rpk->PENYAKIT_JANTUNG === 1) {
+                $riwayatKeluarga[] = 'Penyakit Jantung';
+            }
+
+            if ((int) $rpk->ASMA === 1) {
+                $riwayatKeluarga[] = 'Asma';
+            }
+
+            $lainnya = $this->soapValue($rpk->LAINNYA);
+
+            if ($lainnya) {
+                $riwayatKeluarga[] = $lainnya;
+            }
+
+            if ($riwayatKeluarga) {
+                $s[] = 'Riwayat Penyakit Keluarga: ' .
+                    implode(', ', $riwayatKeluarga);
+            }
+        }
+
+        if ($statusReproduksi) {
+
+            $rows = [];
+
+            $rows[] = $this->soapLine(
+                'Riwayat Tumbuh Kembang',
+                $statusReproduksi->RIWAYAT_TUMBUH_KEMBANG
+            );
+
+            $rows[] = $this->soapLine(
+                'Riwayat Kelahiran',
+                $statusReproduksi->RIWAYAT_KELAHIRAN
+            );
+
+            $rows[] = $this->soapLine(
+                'Usia Kehamilan',
+                $statusReproduksi->USIA_KEHAMILAN
+            );
+
+            $persalinan = [
+                1 => 'SC',
+                2 => 'SPONTAN',
+                3 => 'VACUM',
+                4 => 'LAINNYA',
+            ];
+
+            $rows[] = $this->soapLine(
+                'Persalinan',
+                $persalinan[$statusReproduksi->PERSALINAN] ?? $statusReproduksi->PERSALINAN
+            );
+
+            $rows[] = $this->soapLine(
+                'Persalinan Lainnya',
+                $statusReproduksi->PERSALINAN_LAINNYA
+            );
+
+            $riwayat = array_values(array_filter($rows));
+
+            if ($riwayat) {
+                $s[] = implode("\n", $riwayat);
+            }
+        }
+
+        if ($tumbuhKembang) {
+
+            $rows = [];
+
+            $imunisasi = [
+                1 => 'Lengkap',
+                2 => 'Tidak Lengkap',
+                3 => 'Tidak Imunisasi',
+                4 => 'Lain-lain',
+            ];
+
+            $rows[] = $this->soapLine(
+                'Imunisasi',
+                $imunisasi[$tumbuhKembang->IMUNISASI] ?? $tumbuhKembang->IMUNISASI
+            );
+
+            $rows[] = $this->soapLine(
+                'Imunisasi Lain',
+                $tumbuhKembang->IMUNISASI_LAIN
+            );
+
+            $imunisasi = array_values(array_filter($rows));
+
+            if ($imunisasi) {
+                $s[] = implode("\n", $imunisasi);
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | O - TANDA VITAL
+        |--------------------------------------------------------------------------
+        */
+
+        $tandaVital = DB::table('medicalrecord.tanda_vital')
+            ->where('KUNJUNGAN', $kunjungan)
+            // ->where('PPA', 1)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first([
+                'KEADAAN_UMUM',
+                'SISTOLIK',
+                'DISTOLIK',
+                'FREKUENSI_NADI',
+                'FREKUENSI_NADI_CB',
+                'SUHU',
+                'SATURASI_O2',
+                'FREKUENSI_NAFAS',
+                'FREKUENSI_NAFAS_CB',
+                'EYE',
+                'VERBAL',
+                'MOTORIK',
+                'GCS',
+                'KESADARAN_NEONATUS',
+            ]);
+
+        $nutrisi = DB::table('medicalrecord.nutrisi')
+            ->where('KUNJUNGAN', $kunjungan)
+            // ->where('PPA', 1)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first([
+                'BERAT_BADAN',
+                'TINGGI_BADAN',
+                'INDEX_MASSA_TUBUH',
+            ]);
+
+        $o = [];
+
+        $o[] = "<b style='color:#9CC96B'>Pemeriksaan Umum</b>";
+
+        if ($tandaVital) {
+
+            $o[] = $this->soapLine(
+                'Keadaan Umum',
+                $tandaVital->KEADAAN_UMUM
+            );
+
+            if (
+                $tandaVital->SISTOLIK !== null ||
+                $tandaVital->DISTOLIK !== null
+            ) {
+                $o[] = 'TD: ' .
+                    ($tandaVital->SISTOLIK !== null ? round($tandaVital->SISTOLIK) : '-') .
+                    '/' .
+                    ($tandaVital->DISTOLIK !== null ? round($tandaVital->DISTOLIK) : '-') .
+                    ' mmHg';
+            }
+
+            $freknadicb = '';
+            if ($tandaVital->FREKUENSI_NADI_CB == 1) {
+                $freknadicb = 'Reguler';
+            } else {
+                $freknadicb = 'Ireguler';
+            }
+
+            if ($tandaVital->FREKUENSI_NADI !== null) {
+                $o[] = 'Nadi: ' .
+                    round($tandaVital->FREKUENSI_NADI) .
+                    ' x/menit' .
+                    ($freknadicb != '' ? " ({$freknadicb})" : "");
+            }
+
+            // SUHU tetap menggunakan angka asli
+            if ($tandaVital->SUHU !== null) {
+                $o[] = 'Suhu: ' .
+                    $tandaVital->SUHU .
+                    ' °C';
+            }
+
+            $freknafascb = '';
+            if ($tandaVital->FREKUENSI_NAFAS_CB == 1) {
+                $freknafascb = 'Simetris';
+            } else {
+                $freknafascb = 'Asimetris';
+            }
+
+            if ($tandaVital->FREKUENSI_NAFAS !== null) {
+                $o[] = 'RR: ' .
+                    round($tandaVital->FREKUENSI_NAFAS) .
+                    ' x/menit' .
+                    ($freknafascb != '' ? " ({$freknafascb})" : "");
+            }
+
+            if ($tandaVital->GCS !== null) {
+                $o[] = 'GCS: ' .
+                    round($tandaVital->GCS) .
+                    ' (E/' .
+                    ($tandaVital->EYE ?? '-') .
+                    ' V/' .
+                    ($tandaVital->VERBAL ?? '-') .
+                    ' M/' .
+                    ($tandaVital->MOTORIK ?? '-') .
+                    ')';
+            }
+        }
+
+        if ($nutrisi) {
+
+            if ($nutrisi->BERAT_BADAN !== null) {
+                $o[] = 'BB: ' .
+                    round($nutrisi->BERAT_BADAN) .
+                    ' kg';
+            }
+
+            if ($nutrisi->TINGGI_BADAN !== null) {
+                $o[] = 'TB: ' .
+                    round($nutrisi->TINGGI_BADAN) .
+                    ' cm';
+            }
+
+            if ($nutrisi->INDEX_MASSA_TUBUH !== null) {
+                $o[] = 'IMT: ' .
+                    round($nutrisi->INDEX_MASSA_TUBUH);
+            }
+        }
+
+        $o[] = "<b style='color:#9CC96B'>Pemeriksaan Fisik</b>";
+
+        $pemfis = DB::table('medicalrecord.pemeriksaan_fisik')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+        if ($pemfis && $pemfis->DESKRIPSI) {
+            $deskripsi = strip_tags(
+                str_replace(
+                    ['<br>', '<br/>', '<br />'],
+                    "\n",
+                    $pemfis->DESKRIPSI
+                )
+            );
+
+            $o[] = $deskripsi;
+        }
+
+        $soapDasar = $this->generateSoapRanapDewasa(
+            $kunjungan,
+            $sub
+        );
+
+        $a[] = $soapDasar['ASSESMENT'];
+
+
+        // Riwayat Terapi
+        $rencanaTerapi = DB::table('medicalrecord.rencana_terapi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+        if ($rencanaTerapi && $rencanaTerapi->DESKRIPSI) {
+            $p[] = 'Rencana Terapi: ' . $this->soapValue($rencanaTerapi->DESKRIPSI);
+        }
+        
+        // Riwayat Terapi
+        $assesment = DB::table('medicalrecord.sirmed_assesment')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->first();
+
+        if ($assesment && $assesment->TOLAK_UKUR) {
+            $p[] = 'Tolok Ukur: ' . $this->soapValue($assesment->TOLAK_UKUR);
+        }
+
+        return [
+            'SUBYEKTIF' => implode("\n", $s),
+            'OBYEKTIF' => implode("\n", $o),
+            'ASSESMENT' => implode("\n", $a),
+            'PLANNING' => implode("\n", $p),
+            'INSTRUKSI' => '-',
+        ];
+
+    }
+
+    
+    private function generateSoapRajalObsgyn($kunjungan, $sub)
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | SOAP DASAR RAWAT INAP DEWASA
+        |--------------------------------------------------------------------------
+        */
+        $soapDasar = $this->generateSoapRajalDewasa(
+            $kunjungan,
+            $sub
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUBYEKTIF
+        |--------------------------------------------------------------------------
+        |
+        | Untuk Obsgyn, SUBYEKTIF dibuat khusus dari Riwayat Obstetri.
+        |
+        */
+        $s = ['SUBYEKTIF'];
+        $s = [];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RIWAYAT OBSTETRI
+        |--------------------------------------------------------------------------
+        */
+        $data = DB::table('medicalrecord.riwayat_obstetri as ro')
+
+            // Usia kehamilan
+            ->leftJoin('master.referensi as uk', function ($join) {
+                $join->on('ro.USIA_KEHAMILAN', '=', 'uk.ID')
+                    ->where('uk.JENIS', 299)
+                    ->where('uk.STATUS', 1);
+            })
+
+            // Jenis persalinan
+            ->leftJoin('master.referensi as jp', function ($join) {
+                $join->on('ro.JENIS_PERSALINAN', '=', 'jp.ID')
+                    ->where('jp.JENIS', 300)
+                    ->where('jp.STATUS', 1);
+            })
+
+            // Penyulit
+            ->leftJoin('master.referensi as py', function ($join) {
+                $join->on('ro.PENYULIT', '=', 'py.ID')
+                    ->where('py.JENIS', 301)
+                    ->where('py.STATUS', 1);
+            })
+
+            // Jenis kelamin
+            ->leftJoin('master.referensi as jk', function ($join) {
+                $join->on('ro.JENIS_KELAMIN', '=', 'jk.ID')
+                    ->where('jk.JENIS', 2)
+                    ->where('jk.STATUS', 1);
+            })
+
+            // Penolong
+            ->leftJoin('master.referensi as pn', function ($join) {
+                $join->on('ro.PENOLONG', '=', 'pn.ID')
+                    ->where('pn.JENIS', 303)
+                    ->where('pn.STATUS', 1);
+            })
+
+            // Tempat
+            ->leftJoin('master.referensi as tp', function ($join) {
+                $join->on('ro.TEMPAT', '=', 'tp.ID')
+                    ->where('tp.JENIS', 304)
+                    ->where('tp.STATUS', 1);
+            })
+
+            // Keadaan saat ini
+            ->leftJoin('master.referensi as ks', function ($join) {
+                $join->on('ro.KEADAAN_SAAT_INI', '=', 'ks.ID')
+                    ->where('ks.JENIS', 302)
+                    ->where('ks.STATUS', 1);
+            })
+
+            ->select(
+                'ro.*',
+                'uk.DESKRIPSI as USIA_KEHAMILAN_DESC',
+                'jp.DESKRIPSI as JENIS_PERSALINAN_DESC',
+                'py.DESKRIPSI as PENYULIT_DESC',
+                'jk.DESKRIPSI as JENIS_KELAMIN_DESC',
+                'pn.DESKRIPSI as PENOLONG_DESC',
+                'tp.DESKRIPSI as TEMPAT_DESC',
+                'ks.DESKRIPSI as KEADAAN_SAAT_INI_DESC'
+            )
+
+            ->where('ro.KUNJUNGAN', $kunjungan)
+            ->where('ro.STATUS', 1)
+
+            ->orderBy('ro.TAHUN', 'desc')
+            ->orderBy('ro.ID', 'desc')
+
+            ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FORMAT RIWAYAT OBSTETRI
+        |--------------------------------------------------------------------------
+        */
+        if ($data->count() > 0) {
+
+            $s[] = "<b style='color:#9CC96B'>Riwayat Obstetri</b>";
+
+            foreach ($data as $i => $ro) {
+
+                $no = $i + 1;
+
+                $riwayat = [];
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Tahun
+                |--------------------------------------------------------------------------
+                */
+                if ($ro->TAHUN !== null) {
+                    $riwayat[] = 'Tahun: ' . $ro->TAHUN;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Usia Kehamilan
+                |--------------------------------------------------------------------------
+                */
+                if ($ro->USIA_KEHAMILAN_DESC !== null) {
+                    $riwayat[] = 'UK: ' . $ro->USIA_KEHAMILAN_DESC;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Jenis Persalinan
+                |--------------------------------------------------------------------------
+                */
+                if ($ro->JENIS_PERSALINAN_DESC !== null) {
+                    $riwayat[] = 'Persalinan: ' . $ro->JENIS_PERSALINAN_DESC;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Penyulit
+                |--------------------------------------------------------------------------
+                */
+                if ($ro->PENYULIT_DESC !== null) {
+                    $riwayat[] = 'Penyulit: ' . $ro->PENYULIT_DESC;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Jenis Kelamin
+                |--------------------------------------------------------------------------
+                */
+                if ($ro->JENIS_KELAMIN_DESC !== null) {
+                    $riwayat[] = 'JK: ' . $ro->JENIS_KELAMIN_DESC;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Berat Badan Lahir
+                |--------------------------------------------------------------------------
+                */
+                if ($ro->BERAT_BADAN !== null) {
+                    $riwayat[] = 'BBL: ' . round($ro->BERAT_BADAN) . ' gram';
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Penolong + Keterangan
+                |--------------------------------------------------------------------------
+                */
+                if ($ro->PENOLONG_DESC !== null) {
+
+                    $penolong = $ro->PENOLONG_DESC;
+
+                    if (
+                        $ro->KETERANGAN_PENOLONG !== null &&
+                        trim($ro->KETERANGAN_PENOLONG) !== ''
+                    ) {
+                        $penolong .= ' (' . trim($ro->KETERANGAN_PENOLONG) . ')';
+                    }
+
+                    $riwayat[] = 'Penolong: ' . $penolong;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Tempat + Keterangan
+                |--------------------------------------------------------------------------
+                */
+                if ($ro->TEMPAT_DESC !== null) {
+
+                    $tempat = $ro->TEMPAT_DESC;
+
+                    if (
+                        $ro->KETERANGAN_TEMPAT !== null &&
+                        trim($ro->KETERANGAN_TEMPAT) !== ''
+                    ) {
+                        $tempat .= ' (' . trim($ro->KETERANGAN_TEMPAT) . ')';
+                    }
+
+                    $riwayat[] = 'Tempat: ' . $tempat;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Keadaan Saat Ini
+                |--------------------------------------------------------------------------
+                */
+                if ($ro->KEADAAN_SAAT_INI_DESC !== null) {
+                    $riwayat[] = 'Keadaan saat ini: ' . $ro->KEADAAN_SAAT_INI_DESC;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Gabungkan satu riwayat
+                |--------------------------------------------------------------------------
+                */
+                if (!empty($riwayat)) {
+                    $s[] = $no . '. ' . implode(', ', $riwayat);
+                }
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | OBYEKTIF DARI SOAP DASAR
+        |--------------------------------------------------------------------------
+        |
+        | generateSoapRanapDewasa() dapat mengembalikan string.
+        | Normalisasi menjadi array supaya bisa ditambahkan data Obsgyn.
+        |
+        */
+        $o = $soapDasar['OBYEKTIF'] ?? [];
+
+        if (!is_array($o)) {
+            $o = !empty($o) ? [$o] : [];
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PEMERIKSAAN FISIK OBSGYN
+        |--------------------------------------------------------------------------
+        */
+        $fisikObsgyn = DB::table('medicalrecord.sirmed_pemeriksaan_fisik_obsgyn')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FORMAT PEMERIKSAAN FISIK OBSGYN
+        |--------------------------------------------------------------------------
+        */
+        if ($fisikObsgyn) {
+
+            $fieldObsgyn = [
+                'RJ_PALPASI'          => 'Palpasi',
+                'RJ_LEOPOLD_1'        => 'Leopold I',
+                'RJ_LEOPOLD_2'        => 'Leopold II',
+                'RJ_LEOPOLD_3'        => 'Leopold III',
+                'RJ_LEOPOLD_4'        => 'Leopold IV',
+                'RJ_DJJ'              => 'DJJ',
+                'RJ_AUSKULTASI'       => 'Auskultasi',
+                'RJ_PEMERIKSAAN_LAIN' => 'Pemeriksaan Lain',
+                'RJ_EXTREMITAS'       => 'Ekstremitas',
+                'RJ_PATELA_1'         => 'Patela Kanan',
+                'RJ_PATELA_2'         => 'Patela Kiri',
+                'RJ_UODEMA_1'         => 'Udem Kaki Kanan',
+                'RJ_UODEMA_2'         => 'Udem Kaki Kiri',
+            ];
+
+
+            $fisikAda = false;
+
+            foreach ($fieldObsgyn as $field => $label) {
+
+                $value = null;
+
+                if (is_object($fisikObsgyn)) {
+
+                    $value = $fisikObsgyn->{$field} ?? null;
+
+                } elseif (is_array($fisikObsgyn)) {
+
+                    $value = $fisikObsgyn[$field] ?? null;
+                }
+
+
+                if (
+                    $value !== null &&
+                    trim((string) $value) !== ''
+                ) {
+
+                    if (!$fisikAda) {
+
+                        $o[] = "<b style='color:#9CC96B'>Pemeriksaan Fisik Obstetri</b>";
+
+                        $fisikAda = true;
+                    }
+
+                    $o[] = $label . ': ' . $value;
+                }
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ASSESMENT
+        |--------------------------------------------------------------------------
+        */
+        $a = $soapDasar['ASSESMENT'] ?? [];
+
+        if (!is_array($a)) {
+            $a = !empty($a) ? [$a] : [];
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PLANNING
+        |--------------------------------------------------------------------------
+        */
+        $p = $soapDasar['PLANNING'] ?? [];
+
+        if (!is_array($p)) {
+            $p = !empty($p) ? [$p] : [];
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RETURN SOAP
+        |--------------------------------------------------------------------------
+        */
+        return [
+            'SUBYEKTIF' => implode("\n", $s),
+            'OBYEKTIF'  => implode("\n", $o),
+            'ASSESMENT' => implode("\n", $a),
+            'PLANNING'  => implode("\n", $p),
+            'INSTRUKSI' => '-',
+        ];
+    }
+
+    /*
     |--------------------------------------------------------------------------
     | HELPER FINALISASI
     |--------------------------------------------------------------------------

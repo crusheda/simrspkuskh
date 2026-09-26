@@ -5846,13 +5846,13 @@ class AddOnPengkajianController extends Controller
 
     function getTandaVitalRJ($PPA, $KUNJUNGAN)
     {
-        if ($PPA == 'dokter') {
-            $PPA = 1;
-        } else if ($PPA == 'perawat') {
-            $PPA = 2;
-        } else {
-            $PPA = 0;
-        }
+        // if ($PPA == 'dokter') {
+        //     $PPA = 1;
+        // } else if ($PPA == 'perawat') {
+        //     $PPA = 2;
+        // } else {
+        //     $PPA = 0;
+        // }
 
         $ttv1 = DB::table('medicalrecord.tanda_vital')
             ->select(
