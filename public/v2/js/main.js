@@ -433,7 +433,8 @@ const searchEMR = () => {
 
                     <td style="width: 25%; max-width: 150px;">
                         <h5 class="fw-semibold mb-1">${item.NAMARUANGAN ?? '-'}</h5>
-                        <p class="text-truncate">${item.NAMADOKTER ?? ''}</p>
+                        <p class="text-truncate mb-0">${item.NAMADOKTER ?? ''}</p>
+                        <p class="text-truncate"><b>Penjamin</b> : ${item.NAMAPENJAMIN ?? ''}</p>
                     </td>
 
                     <td style="width: 15%;">

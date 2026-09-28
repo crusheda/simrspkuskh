@@ -298,13 +298,18 @@ class EMRController extends Controller
             ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'pk.RUANGAN')
             ->leftJoin('pendaftaran.penjamin AS pj', 'pj.NOPEN', '=', 'pp.NOMOR')
             ->leftJoin('master.dokter AS dr', 'dr.ID', '=', 'pk.DPJP')
+            ->leftJoin('master.referensi AS ref', function($join){
+                $join->on('ref.ID','=','pj.JENIS')
+                    ->where('ref.STATUS', 1)
+                    ->where('ref.JENIS', 10);
+            })
             ->where('pp.NORM', $norm)
             ->where('pp.STATUS', '!=', 0)
             ->where(function ($q) {
-                $q->where('pk.RUANGAN', 'LIKE', '1020101%')
-                ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
-                ->orWhere('pk.RUANGAN', 'LIKE', '1020301%')
-                ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
+                $q->where('pk.RUANGAN', 'LIKE', '10201%')
+                ->orWhere('pk.RUANGAN', 'LIKE', '10202%')
+                ->orWhere('pk.RUANGAN', 'LIKE', '10203%')
+                ->orWhere('pk.RUANGAN', 'LIKE', '10207%');
             })
             ->select([
                 'pp.NORM',
@@ -318,6 +323,7 @@ class EMRController extends Controller
                 'pk.NOMOR as NOKUNJUNGAN',
                 'pk.MASUK as TGLKUNJUNGAN',
                 'ru.DESKRIPSI as NAMARUANGAN',
+                'ref.DESKRIPSI AS NAMAPENJAMIN',
                 DB::raw("
                     master.getNamaLengkapPegawai(
                         CASE
@@ -492,6 +498,9 @@ class EMRController extends Controller
         $penjamin = (int) $request->penjamin;
         // $penjamin = 1;
 
+        // print_r($request->all());
+        // die();
+
         $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
 
         // MAIN QUERY
@@ -570,13 +579,13 @@ class EMRController extends Controller
                     $prefix = [];
                     switch ($rawat) {
                         case 1:
-                            $prefix = ['1020101%','1020702%'];
+                            $prefix = ['10201%','10207%'];
                             break;
                         case 2:
-                            $prefix = ['1020201%'];
+                            $prefix = ['10202%'];
                             break;
                         case 3:
-                            $prefix = ['1020301%'];
+                            $prefix = ['10203%'];
                             break;
                     }
 
@@ -588,10 +597,10 @@ class EMRController extends Controller
                 })
                 ->when($rawat == 5, function ($query) {
                     $query->where(function ($q) {
-                        $q->where('pk.RUANGAN', 'LIKE', '1020101%')
-                            ->orWhere('pk.RUANGAN', 'LIKE', '1020702%')
-                            ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
-                            ->orWhere('pk.RUANGAN', 'LIKE', '1020301%');
+                        $q->where('pk.RUANGAN', 'LIKE', '10201%')
+                            ->orWhere('pk.RUANGAN', 'LIKE', '10207%')
+                            ->orWhere('pk.RUANGAN', 'LIKE', '10202%')
+                            ->orWhere('pk.RUANGAN', 'LIKE', '10203%');
                     });
                 })
 

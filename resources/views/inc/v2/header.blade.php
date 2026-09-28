@@ -9,7 +9,7 @@
                     stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </button>
-        @hasrole('admin')
+        {{-- @hasrole('admin') --}}
         <div class="app-header-start d-none d-md-flex">
             <form class="d-flex align-items-center h-100 w-lg-250px w-xxl-300px position-relative"
                 action="#">
@@ -25,7 +25,7 @@
                 <span class="badge bg-primary-subtle text-primary">27</span>
             </div> --}}
         </div>
-        @endhasrole
+        {{-- @endhasrole --}}
         <div class="app-header-end">
             <div class="px-lg-4 px-2 ps-0 d-flex align-items-center">
                 <a href="javascript:void(0);" class="theme-btn">

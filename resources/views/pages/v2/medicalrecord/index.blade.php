@@ -213,7 +213,7 @@
             getDPJP();
         } else {
             $.ajax({
-                url: `/api/emr/ruangan/${idRuang}`,
+                url: `/api/v2/emr/ruangan/${idRuang}`,
                 type: 'GET',
                 dataType: 'json',
                 success: function(res) {
@@ -243,14 +243,14 @@
 
     function getPenjamin() {
         $.ajax({
-            url: `/api/emr/penjamin`,
+            url: `/api/v2/emr/penjamin`,
             type: 'GET',
             dataType: 'json',
             success: function(res) {
                 $('#filter_penjamin').prop('disabled',false);
                 $("#filter_penjamin").find('option').remove();
                 $("#filter_penjamin").append(`
-                    <option value="0" selected>Semua Penjamin</option>
+                    <option value="0">Semua Penjamin</option>
                 `);
                 res.forEach(pouch => {
                     $("#filter_penjamin").append(`
@@ -258,6 +258,7 @@
                     `);
                     // <option value="${pouch.ID}" ${pouch.ID == 2 ? 'selected' : ''}>${pouch.DESKRIPSI}</option>
                 });
+                $("#filter_penjamin").val('0').trigger('change');
             },
             error: function (xhr) {
                 Swal.fire(
@@ -272,7 +273,7 @@
     function getDPJP() {
         let idRuangPerawatan = $('#filter_ruang').val();
         $.ajax({
-            url: `/api/emr/ruangan/${idRuangPerawatan}/dpjp`,
+            url: `/api/v2/emr/ruangan/${idRuangPerawatan}/dpjp`,
             type: 'GET',
             dataType: 'json',
             success: function(res) {
@@ -335,7 +336,7 @@
         }
         // Process
         $.ajax({
-            url: '/api/emr',
+            url: '/api/v2/emr',
             type: 'POST',
             data: {
                 rawat: rawat,
@@ -557,10 +558,10 @@
         // CHANGE FILTER VALUE
         $("#filter_status").val('1');
         $("#filter_rawat").val('5');
-        $("#filter_penjamin").val('2');
+        $("#filter_penjamin").val('0');
         $("#filter_ruang").val('5').prop('disabled',true);
 
-        dpjpChoices.disable();
+        // dpjpChoices.disable();
         dpjpChoices.removeActiveItems();      // hapus semua yang aktif
         dpjpChoices.setChoiceByValue('5');    // pilih option kosong (value="5") => Semua Dokter
 

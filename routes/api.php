@@ -92,6 +92,11 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
 
     // DIGITAL
         // MEDICAL RECORD
+            Route::post('emr', [EMRController::class, 'table']);
+            Route::get('emr/penjamin', [EMRController::class, 'penjamin']);
+            Route::get('emr/ruangan/{id}', [EMRController::class, 'ruangan']);
+            Route::get('emr/ruangan/{ruangan}/dpjp', [EMRController::class, 'dpjp']);
+
             // FORM PENGKAJIAN
                 // AWAL
                     // GAWAT DARURAT
