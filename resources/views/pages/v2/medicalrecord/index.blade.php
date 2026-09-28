@@ -195,7 +195,7 @@
         // alert(@json(auth()->user()->roles->pluck('name')));
         getRuangan();
         getPenjamin();
-        // filter();
+        filter();
 
         // BUTTON FILTER READY
         $('#tombol-tampilkan').prop('disabled', false);
