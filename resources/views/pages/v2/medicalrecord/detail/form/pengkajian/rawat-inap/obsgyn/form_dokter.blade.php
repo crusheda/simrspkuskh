@@ -18,7 +18,7 @@
                     [
                         'section' => '#rio_dokter',
                         'page' => 'dokter',
-                        'editableFields' => [
+                        // 'editableFields' => [
                             // 'tv_keu',
                             // 'tv_gcs_e',
                             // 'tv_gcs_v',
@@ -31,9 +31,9 @@
                             // 'tv_nafas_cb',
                             // 'tv_suhu',
                             // 'tv_spo2',
-                            'tv_bb',
-                            'tv_tb',
-                        ],
+                        //     'tv_bb',
+                        //     'tv_tb',
+                        // ],
                     ]
                 )
             </div>

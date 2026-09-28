@@ -5409,7 +5409,7 @@ class AddOnPengkajianController extends Controller
         DB::beginTransaction();
 
         try {
-            
+
             // ==========================================
             // AUTO & ALLO
             // TABEL ANAMNESIS_DIPEROLEH
@@ -5538,7 +5538,7 @@ class AddOnPengkajianController extends Controller
                     ],
                     $data
                 );
-            
+
             // ==========================================
             // RIWAYAT PENYAKIT DAHULU
             // TABEL RPP
@@ -5728,7 +5728,7 @@ class AddOnPengkajianController extends Controller
             )
             ->where('KUNJUNGAN', $KUNJUNGAN)
             ->whereIn('STATUS', [1, 2])
-            ->where('PPA', $PPA)
+            // ->where('PPA', $PPA)
             ->orderByDesc('ID')
             ->first();
 

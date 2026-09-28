@@ -2505,7 +2505,7 @@ class FinalisasiController extends Controller
 
         $tandaVital = DB::table('medicalrecord.tanda_vital')
             ->where('KUNJUNGAN', $kunjungan)
-            ->where('PPA', 1)
+            // ->where('PPA', 1)
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -2523,7 +2523,7 @@ class FinalisasiController extends Controller
 
         $nutrisi = DB::table('medicalrecord.nutrisi')
             ->where('KUNJUNGAN', $kunjungan)
-            ->where('PPA', 1)
+            // ->where('PPA', 1)
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -2549,6 +2549,17 @@ class FinalisasiController extends Controller
             //         ($tandaVital->DISTOLIK ?? '-') .
             //         ' mmHg';
             // }
+
+            if (
+                $tandaVital->SISTOLIK !== null ||
+                $tandaVital->DISTOLIK !== null
+            ) {
+                $o[] = 'TD: ' .
+                    ($tandaVital->SISTOLIK !== null ? round($tandaVital->SISTOLIK) : '-') .
+                    '/' .
+                    ($tandaVital->DISTOLIK !== null ? round($tandaVital->DISTOLIK) : '-') .
+                    ' mmHg';
+            }
 
             if ($tandaVital->FREKUENSI_NADI !== null) {
                 $o[] = 'Nadi: ' .
