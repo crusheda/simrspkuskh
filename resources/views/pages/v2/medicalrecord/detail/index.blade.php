@@ -389,6 +389,8 @@
         // aktifkan saat pertama kali load
         aktifkanTabsDariHash();
 
+        cekKunjungan();
+
         // console.log("{{ $list['tte_pegawai'] }}");
         if ("{{ $list['tte_pegawai'] }}" != true) {
             // kalau ada tanda tangan pegawai
@@ -1120,6 +1122,39 @@
             $('#btn-top-detail-kunjungan').prop('hidden', false);
             $('#breadcrumb-detail-kunjungan').prop('hidden', false);
         }
+    }
+
+    function cekKunjungan() {
+
+        $.ajax({
+            url: '/api/v2/emr/cek_kunjungan/' + kunjungan,
+            type: 'GET',
+
+            success: function (res) {
+
+                console.log('CEK KUNJUNGAN:', res);
+
+                // Tidak ada notif
+                if (!res.notif) {
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Informasi Kunjungan',
+                    text: res.notif,
+                    icon: 'info',
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                });
+            },
+
+            error: function (xhr) {
+
+                console.error('Gagal cek kunjungan:', xhr);
+
+            }
+        });
     }
 </script>
 @endsection

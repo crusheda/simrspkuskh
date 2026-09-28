@@ -455,6 +455,8 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
             Route::post('emr/cppt/{kunjungan}/detail/{id}/copy', [EMRController::class, 'copyCPPT']);
             Route::delete('emr/cppt/{id}',[EMRController::class, 'hapusCPPT']);
 
+            Route::get('emr/cek_kunjungan/{kunjungan}', [EMRController::class, 'cekKunjungan']);
+
             // FINALISASI
             Route::get('emr/pengkajian/status-finalisasi/{kunjungan}', [EMRController::class, 'statusFinalisasi']);
             Route::get('emr/pengkajian/finalisasi/{kunjungan}', [FinalisasiController::class, 'statusFinalisasiPengkajian']);

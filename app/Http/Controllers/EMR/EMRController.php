@@ -2621,4 +2621,99 @@ class EMRController extends Controller
             'inputdate' => $getData?->TGLMASUK,
         ];
     }
+
+    public function cekKunjungan($KUNJUNGAN)
+    {
+        // Ambil kunjungan sekarang
+        $sekarang = DB::table('pendaftaran.kunjungan AS pk')
+            ->leftJoin('pendaftaran.pendaftaran AS pp', 'pp.NOMOR', '=', 'pk.NOPEN')
+            ->where('pk.NOMOR', $KUNJUNGAN)
+            ->select('pk.*', 'pp.NORM')
+            ->first();
+
+        // Jika kunjungan tidak ditemukan
+        if (!$sekarang) {
+            return response()->json([
+                'status' => false,
+                'notif' => null,
+                'message' => 'Data kunjungan tidak ditemukan.'
+            ], 404);
+        }
+
+        /*
+        * Hanya tampilkan notif untuk ruangan
+        * yang diawali 10201 atau 10207
+        */
+        $ruangan = (string) $sekarang->RUANGAN;
+
+        if (
+            !str_starts_with($ruangan, '10201') &&
+            !str_starts_with($ruangan, '10207')
+        ) {
+            return response()->json([
+                'status' => true,
+                'notif' => null
+            ]);
+        }
+
+        /*
+        * Cari kunjungan sebelumnya
+        */
+        $duluQuery = DB::table('pendaftaran.kunjungan AS pk')
+            ->leftJoin('pendaftaran.pendaftaran AS pp', 'pp.NOMOR', '=', 'pk.NOPEN')
+            ->where('pk.DPJP', $sekarang->DPJP)
+            ->where('pk.NOMOR', '!=', $KUNJUNGAN)
+            ->where('pk.MASUK', '<', $sekarang->MASUK)
+            ->whereIn('pk.STATUS', [1, 2])
+            ->where('pp.NORM', $sekarang->NORM);
+
+        /*
+        * Kelompok ruangan harus sama:
+        *
+        * 10201xxx -> hanya mencari 10201xxx
+        * 10207xxx -> hanya mencari 10207xxx
+        */
+        if (str_starts_with($ruangan, '10201')) {
+
+            $duluQuery->where('pk.RUANGAN', 'like', '10201%');
+
+        } elseif (str_starts_with($ruangan, '10207')) {
+
+            $duluQuery->where('pk.RUANGAN', 'like', '10207%');
+        }
+
+        $dulu = $duluQuery
+            ->orderBy('pk.MASUK', 'DESC')
+            ->first();
+        // dd($dulu);
+
+        // Belum pernah ada kunjungan sebelumnya
+        if (!$dulu) {
+            return response()->json([
+                'status' => true,
+                'notif' => 'Belum ada riwayat kunjungan di poli yang sama dengan dokter yang sama, silahkan mengisi pengkajian awal pasien.'
+            ]);
+        }
+
+        // Hitung selisih hari
+        $tanggalSekarang = Carbon::parse($sekarang->MASUK)->startOfDay();
+        $tanggalDulu     = Carbon::parse($dulu->MASUK)->startOfDay();
+
+        $selisihHari = $tanggalDulu->diffInDays($tanggalSekarang);
+
+        if ($selisihHari <= 30) {
+
+            $notif = 'Kunjungan kurang dari 30 hari, silahkan mengisi di CPPT.';
+
+        } else {
+
+            $notif = 'Kunjungan lebih dari 30 hari, silahkan mengisi pengkajian awal pasien.';
+        }
+
+        return response()->json([
+            'status' => true,
+            'notif' => $notif,
+            'selisih_hari' => $selisihHari
+        ]);
+    }
 }
