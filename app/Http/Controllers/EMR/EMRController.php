@@ -254,28 +254,389 @@ class EMRController extends Controller
                 ->where('pk.NOMOR',$KUNJUNGAN)
                 ->first();
 
-        if ($show) {
-
-            $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')->where('nip',Auth::user()->NIP)->whereNull('deleted_at')->exists();
-
-            $countCppt = DB::table('medicalrecord.cppt as cp')
-                ->join('pendaftaran.kunjungan as pk', 'cp.KUNJUNGAN', '=', 'pk.NOMOR')
-                ->where('cp.STATUS', '!=', 0)
-                ->where('pk.NOPEN', $show->NOPEN)
-                ->where('cp.KUNJUNGAN', $KUNJUNGAN)
-                ->count();
-
-            $data = [
-                'show' => $show,
-                'cpptCount' => $countCppt,
-                'KUNJUNGAN' => $KUNJUNGAN,
-                'tte_pegawai' => $tte_pegawai,
-            ];
-
-            return view('pages.v2.medicalrecord.detail.index')->with('list', $data);
-        } else {
-            return redirect()->back()->withErrors('Kunjungan '.$KUNJUNGAN.' Tidak Ditemukan');
+        if (!$show) {
+            return redirect()
+                ->back()
+                ->withErrors('Kunjungan ' . $KUNJUNGAN . ' Tidak Ditemukan');
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | TANDA TANGAN ELEKTRONIK PEGAWAI
+        |--------------------------------------------------------------------------
+        */
+
+        $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+            ->where('nip', Auth::user()->NIP)
+            ->whereNull('deleted_at')
+            ->exists();
+
+        $countCppt = DB::table('medicalrecord.cppt as cp')
+            ->join('pendaftaran.kunjungan as pk', 'cp.KUNJUNGAN', '=', 'pk.NOMOR')
+            ->where('cp.STATUS', '!=', 0)
+            ->where('pk.NOPEN', $show->NOPEN)
+            ->where('cp.KUNJUNGAN', $KUNJUNGAN)
+            ->count();
+
+        /*
+        |--------------------------------------------------------------------------
+        | FILTER FORM PENGKAJIAN
+        |--------------------------------------------------------------------------
+        |
+        | Hasil akhirnya berupa array:
+        |
+        | [
+        |     'pengkajian-rajal-anak',
+        |     'pengkajian-rajal-dewasa',
+        | ]
+        |
+        */
+
+        $formPengkajian = [];
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA RUANGAN
+        |--------------------------------------------------------------------------
+        */
+
+        $idRuangan = (string) ($show->IDRUANGAN ?? '');
+
+        // 5 digit pertama
+        // 10201 = Rawat Jalan
+        // 10202 = Gawat Darurat
+        // 10203 = Rawat Inap
+        // 10208 = Bedah & Anestesi
+        $kodeRuangan = substr($idRuangan, 0, 5);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HITUNG UMUR
+        |--------------------------------------------------------------------------
+        |
+        | Kita gunakan:
+        | TGLLAHIRPASIEN
+        | dibandingkan dengan
+        | TGLDAFTAR
+        |
+        | Karena neonatus membutuhkan ketelitian sampai hari.
+        */
+
+        $umurHari = null;
+        $umurTahun = null;
+
+        if (
+            !empty($show->TGLLAHIRPASIEN) &&
+            !empty($show->TGLDAFTAR)
+        ) {
+            try {
+
+                $tanggalLahir = Carbon::parse($show->TGLLAHIRPASIEN);
+                $tanggalKunjungan = Carbon::parse($show->TGLDAFTAR);
+
+                $umurHari = $tanggalLahir->diffInDays($tanggalKunjungan);
+                $umurTahun = $tanggalLahir->diffInYears($tanggalKunjungan);
+
+            } catch (\Throwable $e) {
+
+                $umurHari = null;
+                $umurTahun = null;
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RAWAT DARURAT
+        |--------------------------------------------------------------------------
+        |
+        | Semua pasien dengan kode 10202 hanya mendapatkan
+        | Pengkajian Gawat Darurat.
+        */
+
+        if ($kodeRuangan === '10202') {
+
+            $formPengkajian = [
+                'pengkajian-gd',
+            ];
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RAWAT JALAN
+        |--------------------------------------------------------------------------
+        |
+        | 10201xxxx
+        |--------------------------------------------------------------------------
+        */
+
+        elseif ($kodeRuangan === '10201') {
+
+            /*
+            |--------------------------------------------------------------------------
+            | POLI JIWA
+            | 102010114
+            |--------------------------------------------------------------------------
+            */
+
+            if ($idRuangan === '102010114') {
+
+                $formPengkajian = [
+                    'pengkajian-rajal-psikiatri',
+                ];
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | POLI OBSGYN
+            | 102010102
+            |--------------------------------------------------------------------------
+            */
+
+            elseif ($idRuangan === '102010102') {
+
+                $formPengkajian = [
+                    'pengkajian-rajal-obsgyn',
+                ];
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | POLI INTERNA
+            | 102010103
+            |--------------------------------------------------------------------------
+            |
+            | < 18       = Anak
+            | >= 18 <=65 = Dewasa
+            | > 65       = Dewasa + Geriatri
+            |--------------------------------------------------------------------------
+            */
+
+            elseif ($idRuangan === '102010103') {
+
+                if ($umurTahun !== null && $umurTahun < 18) {
+
+                    $formPengkajian = [
+                        'pengkajian-rajal-anak',
+                    ];
+                }
+
+                elseif ($umurTahun !== null && $umurTahun > 65) {
+
+                    $formPengkajian = [
+                        'pengkajian-rajal-dewasa',
+                        'pengkajian-rajal-geriatri',
+                    ];
+                }
+
+                else {
+
+                    $formPengkajian = [
+                        'pengkajian-rajal-dewasa',
+                    ];
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | POLI RAWAT JALAN LAINNYA
+            |--------------------------------------------------------------------------
+            |
+            | < 18 tahun = Anak
+            | >= 18 tahun = Dewasa
+            |--------------------------------------------------------------------------
+            */
+
+            else {
+
+                if ($umurTahun !== null && $umurTahun < 18) {
+
+                    $formPengkajian = [
+                        'pengkajian-rajal-anak',
+                    ];
+                }
+
+                else {
+
+                    $formPengkajian = [
+                        'pengkajian-rajal-dewasa',
+                    ];
+                }
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RAWAT INAP
+        |--------------------------------------------------------------------------
+        |
+        | 10203xxxx
+        |--------------------------------------------------------------------------
+        */
+
+        elseif ($kodeRuangan === '10203') {
+
+            /*
+            |--------------------------------------------------------------------------
+            | RUANG OBSGYN
+            | 102030106
+            |--------------------------------------------------------------------------
+            */
+
+            if ($idRuangan === '102030106') {
+
+                $formPengkajian = [
+                    'pengkajian-ranap-obsgyn',
+                ];
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | NICU / PICU
+            |--------------------------------------------------------------------------
+            |
+            | NICU = 102030203
+            | PICU = 102030204
+            |
+            | ATAU umur <= 28 hari
+            |--------------------------------------------------------------------------
+            */
+
+            elseif (
+                in_array($idRuangan, [
+                    '102030203',
+                    '102030204',
+                ])
+                ||
+                (
+                    $umurHari !== null &&
+                    $umurHari <= 28
+                )
+            ) {
+
+                $formPengkajian = [
+                    'pengkajian-ranap-neonatus',
+                ];
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | RAWAT INAP ANAK
+            |--------------------------------------------------------------------------
+            |
+            | Umur < 18 tahun
+            |--------------------------------------------------------------------------
+            */
+
+            elseif (
+                $umurTahun !== null &&
+                $umurTahun < 18
+            ) {
+
+                $formPengkajian = [
+                    'pengkajian-ranap-anak',
+                ];
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | RAWAT INAP DEWASA
+            |--------------------------------------------------------------------------
+            */
+
+            else {
+
+                $formPengkajian = [
+                    'pengkajian-ranap-dewasa',
+                ];
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BEDAH & ANESTESI
+        |--------------------------------------------------------------------------
+        |
+        | 10208
+        |--------------------------------------------------------------------------
+        */
+
+        elseif ($kodeRuangan === '10208') {
+
+            $formPengkajian = [
+                'pengkajian-prabedah',
+                'pengkajian-praanestesiinduksi',
+                'pengkajian-laporananestesi',
+            ];
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA UNTUK BLADE
+        |--------------------------------------------------------------------------
+        */
+
+        // dd([
+        //     'IDRUANGAN' => $show->IDRUANGAN,
+        //     'KODE_RUANGAN' => $kodeRuangan,
+        //     'TGLLAHIRPASIEN' => $show->TGLLAHIRPASIEN,
+        //     'TGLDAFTAR' => $show->TGLDAFTAR,
+        //     'UMUR_HARI' => $umurHari,
+        //     'UMUR_TAHUN' => $umurTahun,
+        //     'FORM_PENGKAJIAN' => $formPengkajian,
+        // ]);
+
+        $data = [
+            'show' => $show,
+            'KUNJUNGAN' => $KUNJUNGAN,
+            'tte_pegawai' => $tte_pegawai,
+            'cpptCount' => $countCppt,
+
+            // Form yang diperbolehkan untuk kunjungan ini
+            'form_pengkajian' => $formPengkajian,
+
+            // Informasi tambahan apabila diperlukan oleh Blade/JS
+            'umur_hari' => $umurHari,
+            'umur_tahun' => $umurTahun,
+            'kode_ruangan' => $kodeRuangan,
+        ];
+
+        return view('pages.v2.medicalrecord.detail.index')->with('list', $data);
+
+        // if ($show) {
+
+        //     $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')->where('nip',Auth::user()->NIP)->whereNull('deleted_at')->exists();
+
+        //     $countCppt = DB::table('medicalrecord.cppt as cp')
+        //         ->join('pendaftaran.kunjungan as pk', 'cp.KUNJUNGAN', '=', 'pk.NOMOR')
+        //         ->where('cp.STATUS', '!=', 0)
+        //         ->where('pk.NOPEN', $show->NOPEN)
+        //         ->where('cp.KUNJUNGAN', $KUNJUNGAN)
+        //         ->count();
+
+        //     $data = [
+        //         'show' => $show,
+        //         'cpptCount' => $countCppt,
+        //         'KUNJUNGAN' => $KUNJUNGAN,
+        //         'tte_pegawai' => $tte_pegawai,
+        //     ];
+
+        //     return view('pages.v2.medicalrecord.detail.index')->with('list', $data);
+        // } else {
+        //     return redirect()->back()->withErrors('Kunjungan '.$KUNJUNGAN.' Tidak Ditemukan');
+        // }
     }
 
     public function searchEMRKunjungan(Request $request)

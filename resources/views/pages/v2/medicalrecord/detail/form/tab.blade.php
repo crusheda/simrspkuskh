@@ -531,12 +531,22 @@
 </div>
 
 <script>
+    const formPengkajianAllowed = @json($list['form_pengkajian'] ?? []);
     $(function () {
-
         // Nilai kunjungan harus tersedia di scope yang sama dengan fungsi
         // global di bawah. Sebelumnya variabel ini belum pernah dideklarasikan.
         const kunjungan = @json($list['kunjungan'] ?? '');
         const isAdmin = @json($isAdmin);
+
+        console.log('=== DEBUG PENGKAJIAN ===');
+        console.log('KUNJUNGAN:', kunjungan);
+        console.log('IS ADMIN:', isAdmin);
+        console.log('FORM ALLOWED:', formPengkajianAllowed);
+        console.log('ID RUANGAN:', @json($list['show']->IDRUANGAN ?? ''));
+        console.log('NAMA RUANGAN:', @json($list['show']->NAMARUANGAN ?? ''));
+        console.log('TGL LAHIR:', @json($list['show']->TGLLAHIRPASIEN ?? ''));
+        console.log('TGL DAFTAR:', @json($list['show']->TGLDAFTAR ?? ''));
+
 
         // ==========================================================
         // FILTER FORM PENGKAJIAN BERDASARKAN RUANGAN
@@ -628,10 +638,77 @@
                 .css('display', 'none');
         }
 
+        // ==========================================================
+        // FILTER FORM PENGKAJIAN BERDASARKAN HASIL CONTROLLER
+        // ==========================================================
+        function filterPengkajianBerdasarkanForm() {
+
+            // Form utama yang memang kita filter
+            const formYangDifilter = [
+                'pengkajian-gd',
+
+                'pengkajian-rajal-dewasa',
+                'pengkajian-rajal-anak',
+                'pengkajian-rajal-psikiatri',
+                'pengkajian-rajal-geriatri',
+                'pengkajian-rajal-obsgyn',
+
+                'pengkajian-ranap-dewasa',
+                'pengkajian-ranap-anak',
+                'pengkajian-ranap-neonatus',
+                'pengkajian-ranap-obsgyn',
+
+                'pengkajian-prabedah',
+                'pengkajian-praanestesiinduksi',
+                'pengkajian-laporananestesi'
+            ];
+
+            $('#pengkajianMenu [data-form]').each(function () {
+
+                const $element = $(this);
+                const form = String($element.attr('data-form') || '');
+
+                // Hanya filter form yang ada dalam daftar di atas.
+                // Pengkajian Khusus dan Transfer tidak ikut tersentuh.
+                if (!formYangDifilter.includes(form)) {
+                    return;
+                }
+
+                if (formPengkajianAllowed.includes(form)) {
+
+                    $element
+                        .removeClass('d-none')
+                        .removeAttr('data-form-hidden')
+                        .css('display', '');
+
+                } else {
+
+                    $element
+                        .addClass('d-none')
+                        .attr('data-form-hidden', 'true')
+                        .css('display', 'none');
+                }
+            });
+        }
+
+
+        // ==========================================================
+        // APPLY SEMUA FILTER
+        // ==========================================================
+        function applyFilterPengkajian() {
+
+            // Filter berdasarkan ruangan
+            applyFilterRuangan();
+
+            // Filter berdasarkan umur / poli / jenis form
+            filterPengkajianBerdasarkanForm();
+        }
+
         let activeApiRequests = 0;
 
         $(document).ready(function() {
             filterPengkajianBerdasarkanRuangan();
+            filterPengkajianBerdasarkanForm();
             tampilkanPenandaFinalisasi();
         });
 
@@ -769,7 +846,8 @@
                 $menu.find('.menu-child').show();
 
                 // Kembalikan filter ruangan
-                applyFilterRuangan();
+                // applyFilterRuangan();
+                applyFilterPengkajian();
 
                 return;
             }
@@ -835,6 +913,13 @@
 
                     // Jangan tampilkan jika diblokir berdasarkan ruangan
                     if ($item.attr('data-ruangan-hidden') === 'true') {
+                        $item.css('display', 'none');
+                        return;
+                    }
+
+                    // Jangan tampilkan jika diblokir berdasarkan
+                    // umur / poli / jenis pengkajian
+                    if ($item.attr('data-form-hidden') === 'true') {
                         $item.css('display', 'none');
                         return;
                     }
@@ -920,6 +1005,19 @@
                     // =============================================
                     if (isMatch(childText)) {
 
+                        // Jangan tampilkan jika diblokir berdasarkan
+                        // umur / poli / jenis pengkajian
+                        if ($child.attr('data-form-hidden') === 'true') {
+                            $child.css('display', 'none');
+                            return;
+                        }
+
+                        // Jangan tampilkan jika diblokir berdasarkan ruangan
+                        if ($wrapper.attr('data-ruangan-hidden') === 'true') {
+                            $child.css('display', 'none');
+                            return;
+                        }
+
                         $child.css('display', 'flex');
 
                         childMatched = true;
@@ -974,19 +1072,58 @@
                     * tanpa otomatis menampilkan seluruh child.
                     */
 
+                    // if (isMatch(parentText)) {
+
+                    //     $wrapper.css('display', 'block');
+
+                    //     $parent.css('display', 'flex');
+
+                    //     if (group) {
+                    //         matchedGroups.add(group);
+                    //     }
+
+                    // } else {
+
+                    //     $wrapper.css('display', 'none');
+
+                    // }
                     if (isMatch(parentText)) {
+
+                        if ($wrapper.attr('data-ruangan-hidden') === 'true') {
+                            $wrapper.css('display', 'none');
+                            return;
+                        }
 
                         $wrapper.css('display', 'block');
 
                         $parent.css('display', 'flex');
 
+                        // Tampilkan hanya child yang tidak diblokir
+                        $wrapper.find('.menu-child').each(function () {
+
+                            const $child = $(this);
+
+                            if (
+                                $child.attr('data-form-hidden') === 'true' ||
+                                $child.attr('data-ruangan-hidden') === 'true'
+                            ) {
+                                $child.css('display', 'none');
+                            } else {
+                                $child.css('display', 'flex');
+                            }
+
+                        });
+
+                        $wrapper.find('.submenu')
+                            .addClass('show');
+
+                        $wrapper.find('.submenu-icon')
+                            .removeClass('ti-chevron-down')
+                            .addClass('ti-chevron-up');
+
                         if (group) {
                             matchedGroups.add(group);
                         }
-
-                    } else {
-
-                        $wrapper.css('display', 'none');
 
                     }
                 }
@@ -1125,6 +1262,52 @@
     // ==========================
     function loadForm(form)
     {
+        // ==========================================================
+        // CEK FORM YANG DIIZINKAN
+        // ==========================================================
+        const formYangDifilter = [
+            'pengkajian-gd',
+
+            'pengkajian-rajal-dewasa',
+            'pengkajian-rajal-anak',
+            'pengkajian-rajal-psikiatri',
+            'pengkajian-rajal-geriatri',
+            'pengkajian-rajal-obsgyn',
+
+            'pengkajian-ranap-dewasa',
+            'pengkajian-ranap-anak',
+            'pengkajian-ranap-neonatus',
+            'pengkajian-ranap-obsgyn',
+
+            'pengkajian-prabedah',
+            'pengkajian-praanestesiinduksi',
+            'pengkajian-laporananestesi'
+        ];
+
+        if (
+            formYangDifilter.includes(form) &&
+            !formPengkajianAllowed.includes(form)
+        ) {
+
+            console.warn(
+                'Form tidak diizinkan:',
+                form
+            );
+
+            $('#formContent').html(`
+                <div class="card">
+                    <div class="card-body p-3">
+                        <div class="alert alert-warning mb-0">
+                            Form pengkajian ini tidak tersedia
+                            untuk pasien/kunjungan ini.
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            return;
+        }
+
         $('#formContent').html(`
             <div class="card">
                 <div class="card-body p-3">
@@ -1144,16 +1327,29 @@
         $.ajax({
             url: `/v2/erm/form/${form}/${kunjungan}`,
             type: 'GET',
+
             success: function (html) {
-                console.log(form);
-                content = `<div class="card">
-                                <div class="card-body p-3">
-                                    ${html}
-                                </div>
-                            </div>`;
+
+                console.log('Form:', form);
+
+                const content = `
+                    <div class="card">
+                        <div class="card-body p-3">
+                            ${html}
+                        </div>
+                    </div>
+                `;
+
                 $('#formContent').html(content);
             },
-            error: function () {
+
+            error: function (xhr) {
+
+                console.error(
+                    'Gagal load form:',
+                    xhr.responseText
+                );
+
                 $('#formContent').html(`
                     <div class="card">
                         <div class="card-body p-3">
