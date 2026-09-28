@@ -105,7 +105,7 @@ class FinalisasiController extends Controller
                     $kunjungan,
                     $sub
                 ),
-            
+
             /*
             |--------------------------------------------------------------------------
             | RAWAT JALAN
@@ -1173,7 +1173,7 @@ class FinalisasiController extends Controller
 
         $tandaVital = DB::table('medicalrecord.tanda_vital')
             ->where('KUNJUNGAN', $kunjungan)
-            ->where('PPA', 1)
+            // ->where('PPA', 1)
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -1195,7 +1195,7 @@ class FinalisasiController extends Controller
 
         $nutrisi = DB::table('medicalrecord.nutrisi')
             ->where('KUNJUNGAN', $kunjungan)
-            ->where('PPA', 1)
+            // ->where('PPA', 1)
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -3418,7 +3418,7 @@ class FinalisasiController extends Controller
         if ($rencanaTerapi && $rencanaTerapi->DESKRIPSI) {
             $p[] = 'Rencana Terapi: ' . $this->soapValue($rencanaTerapi->DESKRIPSI);
         }
-        
+
         // Riwayat Terapi
         $assesment = DB::table('medicalrecord.sirmed_assesment')
             ->where('KUNJUNGAN', $kunjungan)
@@ -3438,7 +3438,7 @@ class FinalisasiController extends Controller
 
     }
 
-    
+
     private function generateSoapRajalObsgyn($kunjungan, $sub)
     {
         /*
