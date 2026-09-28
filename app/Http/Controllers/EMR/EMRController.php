@@ -1827,8 +1827,8 @@ class EMRController extends Controller
             'PLANNING' => '',
             'INSTRUKSI' => '',
 
-            'TENAGA_MEDIS'  => $getPPA->ID,
             'JENIS'         => $getPPA->PROFESI_PPA_ID,
+            'TENAGA_MEDIS'  => $getPPA->ID,
 
             'RENCANA_PULANG' => 0,
 

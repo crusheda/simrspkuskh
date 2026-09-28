@@ -95,7 +95,7 @@
                         <label class="form-label fw-semibold">
                             S <small class="text-muted">(Subjective)</small>
                         </label>
-                        <textarea class="form-control" id="cppt_s" rows="4" placeholder="Keluhan atau kondisi yang dirasakan pasien..."></textarea>
+                        <textarea class="form-control" id="add_cppt_s" rows="4" placeholder="Keluhan atau kondisi yang dirasakan pasien..."></textarea>
                     </div>
 
                     {{-- O --}}
@@ -103,7 +103,7 @@
                         <label class="form-label fw-semibold">
                             O <small class="text-muted">(Objective)</small>
                         </label>
-                        <textarea class="form-control" id="cppt_o" rows="4" placeholder="Hasil pemeriksaan objektif..."></textarea>
+                        <textarea class="form-control" id="add_cppt_o" rows="4" placeholder="Hasil pemeriksaan objektif..."></textarea>
                     </div>
 
                     {{-- A --}}
@@ -111,7 +111,7 @@
                         <label class="form-label fw-semibold">
                             A <small class="text-muted">(Assessment)</small>
                         </label>
-                        <textarea class="form-control" id="cppt_a" rows="4" placeholder="Assessment atau diagnosis pasien..."></textarea>
+                        <textarea class="form-control" id="add_cppt_a" rows="4" placeholder="Assessment atau diagnosis pasien..."></textarea>
                     </div>
 
                     {{-- P --}}
@@ -119,7 +119,7 @@
                         <label class="form-label fw-semibold">
                             P <small class="text-muted">(Planning)</small>
                         </label>
-                        <textarea class="form-control" id="cppt_p" rows="4" placeholder="Rencana terapi atau tindak lanjut..."></textarea>
+                        <textarea class="form-control" id="add_cppt_p" rows="4" placeholder="Rencana terapi atau tindak lanjut..."></textarea>
                     </div>
 
                     {{-- I --}}
@@ -127,7 +127,7 @@
                         <label class="form-label fw-semibold">
                             I <small class="text-muted">(Instruction)</small>
                         </label>
-                        <textarea class="form-control" id="cppt_i" rows="4" placeholder="Instruksi untuk tindak lanjut pasien..."></textarea>
+                        <textarea class="form-control" id="add_cppt_i" rows="4" placeholder="Instruksi untuk tindak lanjut pasien..."></textarea>
                     </div>
 
                 </div>
@@ -143,7 +143,7 @@
                         <label class="form-label fw-semibold">
                             Situation <small class="text-muted">(Situasi)</small>
                         </label>
-                        <textarea class="form-control" id="cppt_sbar_situation" rows="4" placeholder="Situasi atau kondisi pasien saat ini..."></textarea>
+                        <textarea class="form-control" id="add_cppt_sbar_situation" rows="4" placeholder="Situasi atau kondisi pasien saat ini..."></textarea>
                     </div>
 
                     {{-- BACKGROUND --}}
@@ -151,7 +151,7 @@
                         <label class="form-label fw-semibold">
                             Background <small class="text-muted">(Latar Belakang)</small>
                         </label>
-                        <textarea class="form-control" id="cppt_sbar_background" rows="4" placeholder="Latar belakang atau riwayat yang relevan..."></textarea>
+                        <textarea class="form-control" id="add_cppt_sbar_background" rows="4" placeholder="Latar belakang atau riwayat yang relevan..."></textarea>
                     </div>
 
                     {{-- ASSESSMENT --}}
@@ -159,7 +159,7 @@
                         <label class="form-label fw-semibold">
                             Assessment <small class="text-muted">(Penilaian)</small>
                         </label>
-                        <textarea class="form-control" id="cppt_sbar_assessment" rows="4" placeholder="Penilaian atau hasil analisis kondisi pasien..."></textarea>
+                        <textarea class="form-control" id="add_cppt_sbar_assessment" rows="4" placeholder="Penilaian atau hasil analisis kondisi pasien..."></textarea>
                     </div>
 
                     {{-- RECOMMENDATION --}}
@@ -167,7 +167,7 @@
                         <label class="form-label fw-semibold">
                             Recommendation <small class="text-muted">(Rekomendasi)</small>
                         </label>
-                        <textarea class="form-control" id="cppt_sbar_recommendation" rows="4" placeholder="Rekomendasi atau tindak lanjut..."></textarea>
+                        <textarea class="form-control" id="add_cppt_sbar_recommendation" rows="4" placeholder="Rekomendasi atau tindak lanjut..."></textarea>
                     </div>
 
                     {{-- DOKTER SBAR --}}
@@ -177,13 +177,13 @@
                         </label>
 
                         <input
-                            type="text" class="form-control" id="cppt_dokter_sbar" placeholder="Cari nama atau NIP dokter..."
+                            type="text" class="form-control" id="add_cppt_dokter_sbar" placeholder="Cari nama atau NIP dokter..."
                             autocomplete="off">
 
                         <input
-                            type="hidden" id="cppt_dokter_sbar_id">
+                            type="hidden" id="add_cppt_dokter_sbar_id">
 
-                        <div id="cppt_dokter_sbar_autocomplete" class="list-group position-absolute start-0 end-0 shadow-sm bg-body"
+                        <div id="add_cppt_dokter_sbar_autocomplete" class="list-group position-absolute start-0 end-0 shadow-sm bg-body"
                             style="z-index:1050;display:none;"></div>
                     </div>
 
@@ -210,12 +210,12 @@
                             <input
                                 class="form-check-input"
                                 type="checkbox"
-                                id="cppt_baca"
+                                id="add_cppt_baca"
                                 value="1"
                             >
                             <label
                                 class="form-check-label"
-                                for="cppt_baca"
+                                for="add_cppt_baca"
                             >
                                 Baca
                             </label>
@@ -228,12 +228,12 @@
                             <input
                                 class="form-check-input"
                                 type="checkbox"
-                                id="cppt_konfirmasi"
+                                id="add_cppt_konfirmasi"
                                 value="1"
                             >
                             <label
                                 class="form-check-label"
-                                for="cppt_konfirmasi"
+                                for="add_cppt_konfirmasi"
                             >
                                 Konfirmasi
                             </label>
@@ -247,13 +247,13 @@
                         </label>
 
                         <input
-                            type="text" class="form-control" id="cppt_dokter_tbak" placeholder="Cari nama atau NIP dokter..."
+                            type="text" class="form-control" id="add_cppt_dokter_tbak" placeholder="Cari nama atau NIP dokter..."
                             autocomplete="off">
 
                         <input
-                            type="hidden" id="cppt_dokter_tbak_id">
+                            type="hidden" id="add_cppt_dokter_tbak_id">
 
-                        <div id="cppt_dokter_tbak_autocomplete" class="list-group position-absolute start-0 end-0 shadow-sm bg-body"
+                        <div id="add_cppt_dokter_tbak_autocomplete" class="list-group position-absolute start-0 end-0 shadow-sm bg-body"
                             style="z-index:1050;display:none;"></div>
                     </div>
 
@@ -484,15 +484,15 @@
     function initAutocompleteDokter() {
 
         initAutocompleteDokterField({
-            input: '#cppt_dokter_sbar',
-            hidden: '#cppt_dokter_sbar_id',
-            container: '#cppt_dokter_sbar_autocomplete'
+            input: '#add_cppt_dokter_sbar',
+            hidden: '#add_cppt_dokter_sbar_id',
+            container: '#add_cppt_dokter_sbar_autocomplete'
         });
 
         initAutocompleteDokterField({
-            input: '#cppt_dokter_tbak',
-            hidden: '#cppt_dokter_tbak_id',
-            container: '#cppt_dokter_tbak_autocomplete'
+            input: '#add_cppt_dokter_tbak',
+            hidden: '#add_cppt_dokter_tbak_id',
+            container: '#add_cppt_dokter_tbak_autocomplete'
         });
     }
 
@@ -629,11 +629,11 @@
                     .hide()
                     .empty();
 
-                console.log('Dokter dipilih:', {
-                    id: id,
-                    nip: nip,
-                    nama: nama
-                });
+                // console.log('Dokter dipilih:', {
+                //     id: id,
+                //     nip: nip,
+                //     nama: nama
+                // });
             }
         );
 
@@ -731,11 +731,11 @@
         let dokterId = null;
 
         if (mode === 'SBAR') {
-            dokterId = $('#cppt_dokter_sbar_id').val() || null;
+            dokterId = $('#add_cppt_dokter_sbar_id').val() || null;
         }
 
         if (mode === 'TBAK') {
-            dokterId = $('#cppt_dokter_tbak_id').val() || null;
+            dokterId = $('#add_cppt_dokter_tbak_id').val() || null;
         }
 
 
@@ -762,21 +762,21 @@
             /*
             | CPPT Biasa / SBAR
             */
-            s: $('#cppt_s').val() || '',
-            o: $('#cppt_o').val() || '',
-            a: $('#cppt_a').val() || '',
-            p: $('#cppt_p').val() || '',
-            i: $('#cppt_i').val() || '',
+            s: $('#add_cppt_s').val() || '',
+            o: $('#add_cppt_o').val() || '',
+            a: $('#add_cppt_a').val() || '',
+            p: $('#add_cppt_p').val() || '',
+            i: $('#add_cppt_i').val() || '',
 
 
             /*
             | TBAK
             */
-            tulis: $('#cppt_tulis').val() || '',
+            tulis: $('#add_cppt_tulis').val() || '',
 
-            baca: $('#cppt_baca').is(':checked') ? 1 : 0,
+            baca: $('#add_cppt_baca').is(':checked') ? 1 : 0,
 
-            konfirmasi: $('#cppt_konfirmasi').is(':checked') ? 1 : 0
+            konfirmasi: $('#add_cppt_konfirmasi').is(':checked') ? 1 : 0
         };
 
 
@@ -796,10 +796,10 @@
 
         if (mode === 'SBAR') {
 
-            data.s = $('#cppt_sbar_situation').val() || '';
-            data.o = $('#cppt_sbar_background').val() || '';
-            data.a = $('#cppt_sbar_assessment').val() || '';
-            data.p = $('#cppt_sbar_recommendation').val() || '';
+            data.s = $('#add_cppt_sbar_situation').val() || '';
+            data.o = $('#add_cppt_sbar_background').val() || '';
+            data.a = $('#add_cppt_sbar_assessment').val() || '';
+            data.p = $('#add_cppt_sbar_recommendation').val() || '';
             data.i = '';
         }
 
@@ -818,7 +818,6 @@
             data.p = '';
             data.i = '';
         }
-
 
         /*
         |--------------------------------------------------------------------------

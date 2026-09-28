@@ -892,11 +892,11 @@
         |--------------------------------------------------------------------------
         */
 
-        $('#cppt_s').val('');
-        $('#cppt_o').val('');
-        $('#cppt_a').val('');
-        $('#cppt_p').val('');
-        $('#cppt_i').val('');
+        $('#add_cppt_s').val('');
+        $('#add_cppt_o').val('');
+        $('#add_cppt_a').val('');
+        $('#add_cppt_p').val('');
+        $('#add_cppt_i').val('');
 
 
         /*
@@ -905,13 +905,13 @@
         |--------------------------------------------------------------------------
         */
 
-        $('#cppt_sbar_situation').val('');
-        $('#cppt_sbar_background').val('');
-        $('#cppt_sbar_assessment').val('');
-        $('#cppt_sbar_recommendation').val('');
+        $('#add_cppt_sbar_situation').val('');
+        $('#add_cppt_sbar_background').val('');
+        $('#add_cppt_sbar_assessment').val('');
+        $('#add_cppt_sbar_recommendation').val('');
 
-        $('#cppt_dokter_sbar').val('');
-        $('#cppt_dokter_sbar_id').val('');
+        $('#add_cppt_dokter_sbar').val('');
+        $('#add_cppt_dokter_sbar_id').val('');
 
 
         /*
@@ -920,13 +920,13 @@
         |--------------------------------------------------------------------------
         */
 
-        $('#cppt_tulis').val('');
+        $('#add_cppt_tulis').val('');
 
-        $('#cppt_baca').prop('checked', false);
-        $('#cppt_konfirmasi').prop('checked', false);
+        $('#add_cppt_baca').prop('checked', false);
+        $('#add_cppt_konfirmasi').prop('checked', false);
 
-        $('#cppt_dokter_tbak').val('');
-        $('#cppt_dokter_tbak_id').val('');
+        $('#add_cppt_dokter_tbak').val('');
+        $('#add_cppt_dokter_tbak_id').val('');
 
 
         /*
