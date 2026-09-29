@@ -29,9 +29,10 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('v2.dashboard');
         } else {
-            return view('pages.auth.login');
+            // return view('pages.auth.login');
+            return redirect()->route('v2.login');
         }
     }
 

@@ -43,9 +43,14 @@ Route::get('full', [PasienController::class, 'fullJasper'])->name('report.jrxml.
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // NEW SIRMED VERSI 2
+Route::get('/', function () { return redirect()->route('v2.dashboard'); });
 Route::group(['prefix' => 'v2', 'as' => ''], function () { // SIRMED v.2
     Route::get('/', function () { return redirect()->route('v2.dashboard'); });
-    Route::get('/login', function () { return view('pages.v2.auth.login'); });
+    Route::get('login', function () { return view('pages.v2.auth.login'); })->name('v2.login');
+
+    // Route::fallback(function () {
+    //     return response()->view('pages.errors.custom-404', [], 404);
+    // });
 
 });
 
@@ -105,8 +110,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
     Route::post('ai-klaim/tanya', [AiKlaimController::class, 'tanya']);
 
     // DASHBOARD
-    Route::get('/', function () { return redirect()->route('dashboard'); });
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', function () { return redirect()->route('v2.dashboard'); });
+    // Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('rilis', [RilisController::class, 'index'])->name('rilis.index');
     Route::get('test', [DashboardController::class, 'test'])->name('test');
     Route::get('clearcache', [DashboardController::class, 'clearCache'])->name('clear.cache');
@@ -160,10 +165,6 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             Route::get('klaim', [SmartKlaimController::class, 'index'])->name('klaim.index');
             Route::get('klaim/{KUNJUNGAN}', [SmartKlaimController::class, 'show'])->name('klaim.show');
             Route::get('klaim/farmasi/{KUNJUNGAN}', [SmartKlaimController::class, 'showFarmasi'])->name('klaim.farmasi.show');
-            // RAWAT INAP
-            // Route::get('klaim/smart/ri', [SmartKlaimController::class, 'indexRi'])->name('klaim.pasien.indexRi');
-            // RAWAT DARURAT
-            // Route::get('klaim/smart/rd', [SmartKlaimController::class, 'indexRd'])->name('klaim.pasien.indexRd');
 
     // LOG
         // BERKAS
@@ -171,5 +172,5 @@ Route::group(['middleware' => ['web', 'auth']], function() {
 });
 
 Route::fallback(function () {
-    return response()->view('pages.errors.custom-404', [], 404);
+    return response()->view('pages.v2.errors.custom-404', [], 404);
 });

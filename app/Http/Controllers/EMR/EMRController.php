@@ -3055,13 +3055,20 @@ class EMRController extends Controller
         $dulu = $duluQuery
             ->orderBy('pk.MASUK', 'DESC')
             ->first();
-        // dd($dulu);
+
+        // print_r($dulu);
+        // die();
+
+        $btn_style = 'primary';
+        $isiCppt = false;
 
         // Belum pernah ada kunjungan sebelumnya
         if (!$dulu) {
             return response()->json([
                 'status' => true,
-                'notif' => 'Belum ada riwayat kunjungan di poli yang sama dengan dokter yang sama, silahkan mengisi pengkajian awal pasien.'
+                'btn_style' => $btn_style,
+                'isi_cppt' => $isiCppt,
+                'notif' => 'Belum ada riwayat kunjungan sebelumnya di tujuan poliklinik dan dokter yang sama, silahkan mengisi pengkajian awal pasien.'
             ]);
         }
 
@@ -3071,9 +3078,13 @@ class EMRController extends Controller
 
         $selisihHari = $tanggalDulu->diffInDays($tanggalSekarang);
 
+        $periksaTanggalSebelum = Carbon::parse($dulu->MASUK)->translatedFormat('d F Y');
+
         if ($selisihHari <= 30) {
 
-            $notif = 'Kunjungan kurang dari 30 hari, silahkan mengisi di CPPT.';
+            $btn_style = 'warning';
+            $isiCppt = true;
+            $notif = "Kunjungan pasien kurang dari 30 hari (Periksa Poliklinik sebelumnya pada {$periksaTanggalSebelum}), silahkan melakukan pengisian di CPPT.";
 
         } else {
 
@@ -3083,6 +3094,8 @@ class EMRController extends Controller
         return response()->json([
             'status' => true,
             'notif' => $notif,
+            'btn_style' => $btn_style,
+            'isi_cppt' => $isiCppt,
             'selisih_hari' => $selisihHari
         ]);
     }

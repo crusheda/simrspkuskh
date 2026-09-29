@@ -548,7 +548,7 @@
                                 </div>
                             </div>
                             <div class="text-1xs d-flex gap-1 align-items-center">
-                                <img src="{{ asset('v2/images/icons/google-meet.svg') }}" alt="">
+                                <img src="{{ asset('assets/v2/images/icons/google-meet.svg') }}" alt="">
                                 <span>On Google Meet</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
@@ -582,7 +582,7 @@
                                 </div>
                             </div>
                             <div class="text-1xs d-flex gap-1 align-items-center">
-                                <img src="{{ asset('v2/images/icons/google-meet.svg') }}" alt="">
+                                <img src="{{ asset('assets/v2/images/icons/google-meet.svg') }}" alt="">
                                 <span>On Google Meet</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
@@ -616,7 +616,7 @@
                                 </div>
                             </div>
                             <div class="text-1xs d-flex gap-1 align-items-center">
-                                <img src="{{ asset('v2/images/icons/google-meet.svg') }}" alt="">
+                                <img src="{{ asset('assets/v2/images/icons/google-meet.svg') }}" alt="">
                                 <span>On Google Meet</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
@@ -651,7 +651,7 @@
                                 </div>
                             </div>
                             <div class="text-1xs d-flex gap-1 align-items-center">
-                                <img src="{{ asset('v2/images/icons/google-meet.svg') }}" alt="">
+                                <img src="{{ asset('assets/v2/images/icons/google-meet.svg') }}" alt="">
                                 <span>On Google Meet</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
@@ -685,7 +685,7 @@
                                 </div>
                             </div>
                             <div class="text-1xs d-flex gap-1 align-items-center">
-                                <img src="{{ asset('v2/images/icons/google-meet.svg') }}" alt="">
+                                <img src="{{ asset('assets/v2/images/icons/google-meet.svg') }}" alt="">
                                 <span>On Google Meet</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
@@ -872,7 +872,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-xxs rounded-circle me-2">
-                                                <img src="{{ asset('v2/images/avatar/avatar1.webp') }}" alt="">
+                                                <img src="{{ asset('assets/v2/images/avatar/avatar1.webp') }}" alt="">
                                             </div>
                                             William Johnson
                                         </div>
@@ -915,7 +915,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-xxs rounded-circle me-2">
-                                                <img src="{{ asset('v2/images/avatar/avatar2.webp') }}" alt="">
+                                                <img src="{{ asset('assets/v2/images/avatar/avatar2.webp') }}" alt="">
                                             </div>
                                             Benjamin Martinez
                                         </div>
@@ -958,7 +958,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-xxs rounded-circle me-2">
-                                                <img src="{{ asset('v2/images/avatar/avatar3.webp') }}" alt="Alexander Brown">
+                                                <img src="{{ asset('assets/v2/images/avatar/avatar3.webp') }}" alt="Alexander Brown">
                                             </div>
                                             Alexander Brown
                                         </div>
@@ -1001,7 +1001,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-xxs rounded-circle me-2">
-                                                <img src="{{ asset('v2/images/avatar/avatar4.webp') }}" alt="Michael Davis">
+                                                <img src="{{ asset('assets/v2/images/avatar/avatar4.webp') }}" alt="Michael Davis">
                                             </div>
                                             Michael Davis
                                         </div>
@@ -1044,7 +1044,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-xxs rounded-circle me-2">
-                                                <img src="{{ asset('v2/images/avatar/avatar5.webp') }}" alt="David Wilson">
+                                                <img src="{{ asset('assets/v2/images/avatar/avatar5.webp') }}" alt="David Wilson">
                                             </div>
                                             David Wilson
                                         </div>
@@ -1087,7 +1087,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-xxs rounded-circle me-2">
-                                                <img src="{{ asset('v2/images/avatar/avatar1.webp') }}" alt="Benjamin Martinez">
+                                                <img src="{{ asset('assets/v2/images/avatar/avatar1.webp') }}" alt="Benjamin Martinez">
                                             </div>
                                             Benjamin Martinez
                                         </div>
@@ -1130,7 +1130,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-xxs rounded-circle me-2">
-                                                <img src="{{ asset('v2/images/avatar/avatar2.webp') }}" alt="Benjamin Martinez">
+                                                <img src="{{ asset('assets/v2/images/avatar/avatar2.webp') }}" alt="Benjamin Martinez">
                                             </div>
                                             Benjamin Martinez
                                         </div>
@@ -1173,7 +1173,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-xxs rounded-circle me-2">
-                                                <img src="{{ asset('v2/images/avatar/avatar3.webp') }}" alt="Alexander Brown">
+                                                <img src="{{ asset('assets/v2/images/avatar/avatar3.webp') }}" alt="Alexander Brown">
                                             </div>
                                             Alexander Brown
                                         </div>
@@ -1216,7 +1216,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-xxs rounded-circle me-2">
-                                                <img src="{{ asset('v2/images/avatar/avatar4.webp') }}" alt="Michael Davis">
+                                                <img src="{{ asset('assets/v2/images/avatar/avatar4.webp') }}" alt="Michael Davis">
                                             </div>
                                             Michael Davis
                                         </div>
@@ -1259,7 +1259,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-xxs rounded-circle me-2">
-                                                <img src="{{ asset('v2/images/avatar/avatar2.webp') }}" alt="Benjamin Martinez">
+                                                <img src="{{ asset('assets/v2/images/avatar/avatar2.webp') }}" alt="Benjamin Martinez">
                                             </div>
                                             Benjamin Martinez
                                         </div>
@@ -1302,7 +1302,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-xxs rounded-circle me-2">
-                                                <img src="{{ asset('v2/images/avatar/avatar3.webp') }}" alt="Alexander Brown">
+                                                <img src="{{ asset('assets/v2/images/avatar/avatar3.webp') }}" alt="Alexander Brown">
                                             </div>
                                             Alexander Brown
                                         </div>
@@ -1345,7 +1345,7 @@
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar avatar-xxs rounded-circle me-2">
-                                                <img src="{{ asset('v2/images/avatar/avatar4.webp') }}" alt="Michael Davis">
+                                                <img src="{{ asset('assets/v2/images/avatar/avatar4.webp') }}" alt="Michael Davis">
                                             </div>
                                             Michael Davis
                                         </div>

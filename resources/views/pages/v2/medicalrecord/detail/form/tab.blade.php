@@ -1,5 +1,5 @@
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('v2/css/emr/tab.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/v2/css/emr/tab.css') }}">
 @endpush
 
 @php
@@ -478,7 +478,7 @@
                         style="min-height: 70vh;"
                     >
                         <img
-                            src="{{ asset('v2/images/auth/vector1.svg') }}"
+                            src="{{ asset('assets/v2/images/auth/vector1.svg') }}"
                             alt="" style="width: 600px;height:auto;"
                             class="img-fluid cover-img"
                         >

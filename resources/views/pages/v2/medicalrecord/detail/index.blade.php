@@ -3,7 +3,7 @@
 @section('title','Detail Kunjungan - RM.'.$list["show"]->NORM ?? 'XXXX')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('v2/css/emr/cppt.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/v2/css/emr/cppt.css') }}">
 @endpush
 
 @section('content')
@@ -384,12 +384,36 @@
 
     $(document).ready(function() {
 
+        $('button[data-bs-toggle="tab"]').on('click', function () {
+            const tabId = $(this).attr('id');
+
+            if (tabId === 'tab-frjkfr') {
+                loadFormKfr();
+                loadCpptKfr();
+                loadRiwayatKfr();
+                console.log('masuk form kfr');
+            }
+            else if (tabId === 'tab-pterapi') {
+                batalUpdateFormProgramTerapi();
+                loadFormJadwalPelayanan();
+                loadFormProgramTerapi();
+                loadCpptProgramTerapi();
+                loadRiwayatProgramTerapi();
+                console.log('masuk form terapi');
+            }
+            else if (tabId === 'tab-fpengkajian') {
+                cekKunjungan();
+                console.log('masuk form pengkajian awal');
+            }
+            else {
+                console.log('tab lain');
+            }
+        });
+
         initCppt();
 
         // aktifkan saat pertama kali load
         aktifkanTabsDariHash();
-
-        cekKunjungan();
 
         // console.log("{{ $list['tte_pegawai'] }}");
         if ("{{ $list['tte_pegawai'] }}" != true) {
@@ -1132,26 +1156,54 @@
 
             success: function (res) {
 
-                console.log('CEK KUNJUNGAN:', res);
-
                 // Tidak ada notif
                 if (!res.notif) {
                     return;
                 }
 
+                const isiCppt = res.isi_cppt === true;
+
                 Swal.fire({
                     title: 'Informasi Kunjungan',
-                    text: res.notif,
+
+                    text: res.notif ??
+                        'Silahkan melakukan pengisian Pengkajian Awal Pasien',
+
                     icon: 'info',
-                    confirmButtonText: 'OK',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false
+
+                    confirmButtonText: isiCppt
+                        ? '<i class="ri-file-edit-line me-1"></i> Isi CPPT Sekarang'
+                        : '<i class="ri-thumb-up-line me-1"></i> OK',
+
+                    customClass: {
+                        confirmButton: `btn btn-subtle-${res.btn_style ?? 'info'}`
+                    },
+
+                    timer: isiCppt ? undefined : 5000,
+
+                    timerProgressBar: !isiCppt,
+
+                    allowOutsideClick: isiCppt ? false : true,
+                    allowEscapeKey: isiCppt ? false : true
+
+                }).then(function (result) {
+
+                    if (
+                        isiCppt &&
+                        result.isConfirmed
+                    ) {
+                        showModalCppt(kunjungan);
+                    }
+
                 });
             },
 
             error: function (xhr) {
 
-                console.error('Gagal cek kunjungan:', xhr);
+                console.error(
+                    'Gagal cek kunjungan:',
+                    xhr
+                );
 
             }
         });

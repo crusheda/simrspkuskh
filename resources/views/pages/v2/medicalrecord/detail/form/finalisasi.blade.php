@@ -116,7 +116,7 @@
     BACKDROP FINALISASI
 ========================================================== --}}
 <div id="{{ $formId }}_finalisasi_backdrop"
-    class="position-fixed pe-none bg-white bg-opacity-75 {{ $isInitialFinal ? '' : 'd-none' }} z-3">
+    class="position-fixed pe-none bg-white bg-opacity-25 {{ $isInitialFinal ? '' : 'd-none' }} z-3">
 
     <div class="h-100 d-flex align-items-center justify-content-center text-center px-3">
 
@@ -1112,7 +1112,7 @@
 
                         timer: 5000,
 
-                        timerProgressBar: false,
+                        timerProgressBar: true,
 
                         buttonsStyling: false,
 

@@ -31,32 +31,7 @@
 
 <script>
     $(document).ready(function() {
-        // $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
-            // const tabId = $(e.target).attr('id');
-        $('button[data-bs-toggle="tab"]').on('click', function () {
-            const tabId = $(this).attr('id');
-            // console.log(tabId);
 
-            if (tabId === 'tab-frjkfr') {
-                // console.log('masuk form kfr');
-                loadFormKfr();
-                loadCpptKfr();
-                loadRiwayatKfr();
-            }
-            else if (tabId === 'tab-pterapi') {
-                batalUpdateFormProgramTerapi();
-                loadFormJadwalPelayanan();
-                loadFormProgramTerapi();
-                loadCpptProgramTerapi();
-                loadRiwayatProgramTerapi();
-            }
-            // else if (tabId === 'tab-jpkfr') {
-            //     loadFormJadwalPelayanan();
-            // }
-            else {
-                console.log('tab lain');
-            }
-        });
     });
 
     function loadFormKfr() {

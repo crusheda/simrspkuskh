@@ -107,7 +107,7 @@
                                 <span>Atau lanjutkan dengan</span>
                             </div>
                             <div class="d-grid mt-3">
-                                <a class="btn btn-light-info mb-3" href="{{ route('dashboard') }}">Login SIRMED v.1.0</a>
+                                <a class="btn btn-light-info mb-3" href="{{ route('v2.dashboard') }}">Login SIRMED v.2.0</a>
                                 <a class="btn btn-light-success" href="http://192.168.1.2/apps/SIMpel">Login SIMGOS v.2.x</a>
                             </div>
                         </form>
