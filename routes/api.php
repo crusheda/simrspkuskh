@@ -223,6 +223,7 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // RIWAYAT ALERGI
                     Route::get('emr/pengkajian/riwayat_alergi/{kunjungan}', [AddOnPengkajianController::class, 'getRiwayatAlergi']);
                     Route::post('emr/pengkajian/riwayat_alergi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanRiwayatAlergi']);
+                    Route::delete('emr/pengkajian/riwayat_alergi/{kunjungan}/hapus', [AddOnPengkajianController::class, 'hapusSemuaRiwayatAlergi']);
                     Route::delete('emr/pengkajian/riwayat_alergi/{kunjungan}/hapus/{id}', [AddOnPengkajianController::class, 'hapusRiwayatAlergi']);
                 // RIWAYAT PENGGUNAAN / PEMBERIAN OBAT
                     Route::get('emr/pengkajian/riwayat_pemberian_obat/obat', [AddOnPengkajianController::class, 'cariObat']);

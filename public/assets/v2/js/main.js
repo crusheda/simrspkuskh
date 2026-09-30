@@ -1066,13 +1066,13 @@ const ThemeSwitcher = () => {
 
 	// Inisialisasi
 	const saved = getCookie('theme');
+    const theme = saved || 'light';
 
-	if (saved) {
-		docEl.setAttribute(
-			'data-bs-theme',
-			saved
-		);
-	}
+    if (!saved) {
+        setCookie('theme', 'light');
+    }
+
+    docEl.setAttribute('data-bs-theme', theme);
 
 	$('.theme-btn').on('click', function () {
 

@@ -73,8 +73,8 @@ Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'v2', 'as' => ''], fu
 
     // SETTING - PROFIL
         Route::get('setting/profil', [ProfilController::class, 'indexV2'])->name('v2.profil');
-        // Route::get('setting/roles', [RolesController::class, 'index'])->name('roles');
-        // Route::get('setting/permissions', [PermissionsController::class, 'index'])->name('permissions');
+        Route::get('setting/roles', [RolesController::class, 'indexV2'])->name('v2.roles');
+        Route::get('setting/permissions', [PermissionsController::class, 'indexV2'])->name('v2.permissions');
         Route::get('notifikasi', [NotifikasiController::class, 'index'])->name('v2.notifikasi');
 
     // DIGITAL
@@ -97,23 +97,25 @@ Route::group(['middleware' => ['web', 'auth'], 'prefix' => 'v2', 'as' => ''], fu
         // SMART KLAIM
             Route::get('klaim', [SmartKlaimController::class, 'indexV2'])->name('v2.smartclaim');
             Route::get('klaim/{KUNJUNGAN}', [SmartKlaimController::class, 'showV2'])->name('v2.smartclaim.show');
+            Route::get('klaim/{KUNJUNGAN}/farmasi', [SmartKlaimController::class, 'showV2Farmasi'])->name('v2.smartclaim.farmasi.show');
 
 });
 
 // AUTHENTICATION LARAVEL (AUTH UI BOOTSTRAP + SPATIE ROLES PERMISSIONS)
 Route::get('/lupapassword', [LupaPasswordController::class, 'index'])->name('lupapassword.index');
 Route::post('/lupapassword/update', [LupaPasswordController::class, 'update'])->name('lupapassword.update');
+
 Auth::routes(['register' => false]); // Cannot Access /register
 Route::group(['middleware' => ['web', 'auth']], function() {
 
-    Route::get('ai-klaim', [AiKlaimController::class, 'index']);
-    Route::post('ai-klaim/tanya', [AiKlaimController::class, 'tanya']);
+    // Route::get('ai-klaim', [AiKlaimController::class, 'index']);
+    // Route::post('ai-klaim/tanya', [AiKlaimController::class, 'tanya']);
 
     // DASHBOARD
     Route::get('/', function () { return redirect()->route('v2.dashboard'); });
     // Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('rilis', [RilisController::class, 'index'])->name('rilis.index');
-    Route::get('test', [DashboardController::class, 'test'])->name('test');
+    // Route::get('rilis', [RilisController::class, 'index'])->name('rilis.index');
+    // Route::get('test', [DashboardController::class, 'test'])->name('test');
     Route::get('clearcache', [DashboardController::class, 'clearCache'])->name('clear.cache');
     // Route::get('dashboard', function () {
     //     return view('pages.dashboard.index');
@@ -121,44 +123,44 @@ Route::group(['middleware' => ['web', 'auth']], function() {
 
     // DISPLAY
         // TT - BED
-        Route::get('display/bed', [BedController::class, 'index'])->name('display.bed.index');
+        // Route::get('display/bed', [BedController::class, 'index'])->name('display.bed.index');
         // ANTRIAN POLI
-        Route::get('display/antrian/poli', [AntrianPoliController::class, 'index'])->name('display.antrian.poli.index');
+        // Route::get('display/antrian/poli', [AntrianPoliController::class, 'index'])->name('display.antrian.poli.index');
         // ANTRIAN POLI
-        Route::get('display/antrian/admisi', [AntrianAdmisiController::class, 'index'])->name('display.antrian.admisi.index');
+        // Route::get('display/antrian/admisi', [AntrianAdmisiController::class, 'index'])->name('display.antrian.admisi.index');
         // FARMASI
         // Route::get('display', [DisplayFarmasiController::class, 'index'])->name('display.antrian.farmasi.display.index');
         // RATING
-        Route::get('display/rating', [RatingController::class, 'index'])->name('display.rating.index');
-        Route::get('display/rating/laporan/{bulan}', [RatingController::class, 'laporan'])->name('display.rating.laporan');
+        // Route::get('display/rating', [RatingController::class, 'index'])->name('display.rating.index');
+        // Route::get('display/rating/laporan/{bulan}', [RatingController::class, 'laporan'])->name('display.rating.laporan');
 
     // SETTING - PROFIL
-    Route::get('setting/profil', [ProfilController::class, 'index'])->name('profil');
-    Route::get('setting/roles', [RolesController::class, 'index'])->name('roles');
-    Route::get('setting/permissions', [PermissionsController::class, 'index'])->name('permissions');
+    // Route::get('setting/profil', [ProfilController::class, 'index'])->name('profil');
+    // Route::get('setting/roles', [RolesController::class, 'index'])->name('roles');
+    // Route::get('setting/permissions', [PermissionsController::class, 'index'])->name('permissions');
 
     // PELAYANAN
         // KUNJUNGAN PASIEN
-        Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'indexRj'])->name('pelayanan.pasien');
+        // Route::get('/pelayanan/pasien', [DaftarPasienController::class, 'indexRj'])->name('pelayanan.pasien');
             //IDENTITAS PASIEN
-            Route::get('/pelayanan/pasien/identitas/{KUNJUNGAN}', [PasienController::class, 'indexIdentitas'])->name('pelayanan.pasien.identitas.index');
+            // Route::get('/pelayanan/pasien/identitas/{KUNJUNGAN}', [PasienController::class, 'indexIdentitas'])->name('pelayanan.pasien.identitas.index');
             //RESUME
-            Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}', [ResumeMedisController::class, 'indexResume'])->name('pelayanan.pasien.resume.index');
-            Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}/print', [ResumeMedisController::class, 'printResume'])->name('pelayanan.pasien.resume.print');
+            // Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}', [ResumeMedisController::class, 'indexResume'])->name('pelayanan.pasien.resume.index');
+            // Route::get('/pelayanan/pasien/resume/{KUNJUNGAN}/print', [ResumeMedisController::class, 'printResume'])->name('pelayanan.pasien.resume.print');
         // PENUNJANG MEDIS
             // RIS - RADIOLOGI
-            Route::get('pelayanan/ris', [RISController::class, 'indexRIS'])->name('pelayanan.ris.index');
+            // Route::get('pelayanan/ris', [RISController::class, 'indexRIS'])->name('pelayanan.ris.index');
 
     // EMR
     Route::get('emr', [EMRController::class, 'index'])->name('emr.index');
     Route::get('emr/{KUNJUNGAN}', [EMRController::class, 'detail'])->name('emr.detail');
         // IGD
             // FORM MATRIX
-            Route::get('rme/igd/matrix', [ModulMatrixController::class, 'index'])->name('rme.igd.matrix.index');
+            // Route::get('rme/igd/matrix', [ModulMatrixController::class, 'index'])->name('rme.igd.matrix.index');
 
     // DIGITAL
         // MONITORING
-        Route::get('monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
+        // Route::get('monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
 
         // SMART KLAIM
             // RAWAT JALAN
@@ -168,7 +170,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
 
     // LOG
         // BERKAS
-            Route::get('log/berkas', [BerkasController::class, 'index'])->name('log.berkas.index');
+            // Route::get('log/berkas', [BerkasController::class, 'index'])->name('log.berkas.index');
 });
 
 Route::fallback(function () {

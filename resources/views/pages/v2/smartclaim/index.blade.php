@@ -331,7 +331,7 @@
                         if (canSmartClaim) {
                             content += `/v2/klaim/${item.NOMOR}`;
                         } else if (canSmartClaimFarmasi) {
-                            content += `/klaim/farmasi/${item.NOMOR}`;
+                            content += `/klaim/${item.NOMOR}/farmasi`;
                         } else {
                             content += `#`;
                         }

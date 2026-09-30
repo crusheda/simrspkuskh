@@ -143,7 +143,7 @@ class LoginController extends Controller
 
         $request->session()->regenerateToken();  // Regenerasi token CSRF untuk keamanan
 
-        return redirect('/login');  // Redirect ke halaman login setelah logout
+        return redirect('/v2/login');  // Redirect ke halaman login setelah logout
     }
 
     /**
@@ -152,7 +152,7 @@ class LoginController extends Controller
      * @var string
      */
     // protected $redirectTo = RouteServiceProvider::HOME;
-    protected $redirectTo = '/dashboard';
+    protected $redirectTo = '/v2/dashboard';
 
     /**
      * Create a new controller instance.

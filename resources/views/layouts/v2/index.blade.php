@@ -31,6 +31,20 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/logo/logo.png') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <script>
+    (function () {
+        const match = document.cookie.match(/(?:^|;\s*)theme=([^;]+)/);
+        const theme = match ? decodeURIComponent(match[1]) : 'light';
+
+        if (!match) {
+            const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+            document.cookie = `theme=light; expires=${expires}; path=/`;
+        }
+
+        document.documentElement.setAttribute('data-bs-theme', theme);
+    })();
+    </script>
+
     @include('inc.v2.css')
     @stack('styles')
 

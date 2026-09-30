@@ -68,10 +68,9 @@
     <div class="cl-login04__intro">
 
         {{-- Logo SIRMED --}}
-        <a class="cl-login04__brand"
+        <a class="cl-login04__brand btn btn-outline-light border-0 rounded-circle rounded-pill"
            href="{{ route('v2.dashboard') }}"
-           aria-label="Sirmed v2"
-           style="margin-right:20px">
+           aria-label="Sirmed v2">
 
             <img src="{{ asset('images/logo/logo.png') }}"
                  width="32"
@@ -81,7 +80,7 @@
         </a>
 
         {{-- Logo SIMGOS --}}
-        <a class="cl-login04__brand"
+        <a class="cl-login04__brand btn btn-outline-light border-0 rounded-circle rounded-pill"
            href="http://192.168.1.2/"
            target="_blank"
            aria-label="Simgos v2"
@@ -94,14 +93,14 @@
 
         </a>
 
-        <p class="cl-login04__kicker">
-            Sistem Informasi Rekam Medis Elektronik
+        <p class="cl-login04__kicker mt-4">
+            Sistem Informasi Rekam Medis
         </p>
 
         <p class="cl-login04__headline"
            style="margin-bottom:15px">
 
-            SIR<b style="color:#00B3ED">MED</b> v.2
+            SIR<b style="color:#00B3ED">MED</b> v<b style="color:#6CC40E">.</b>2
 
         </p>
 
@@ -117,7 +116,7 @@
 
             <li>
                 <span style="background:#00B3ED;margin-right:5px"></span>
-                Digital Rekam Medis
+                Rekam Medis Elektronik
             </li>
 
             <li>
@@ -141,7 +140,7 @@
             <h1 class="cl-login04__title"
                 id="cl-login04-title">
 
-                Sign in.
+                Sign <b style="color:#00B3ED">in</b>.
 
             </h1>
 

@@ -228,14 +228,82 @@ class AddOnPengkajianController extends Controller
         return response()->json(['message' => 'Data riwayat alergi berhasil disimpan.'], 200);
     }
 
-    public function hapusRiwayatAlergi($KUNJUNGAN, $ID)
+    public function hapusRiwayatAlergi($kunjungan, $id)
     {
-        DB::table('medicalrecord.riwayat_alergi')
-            ->where('KUNJUNGAN', $KUNJUNGAN)
-            ->where('ID', $ID)
-            ->update(['STATUS' => 0]);
+        try {
 
-        return response()->json(['message' => 'Data riwayat alergi berhasil dihapus.'], 200);
+            $data = DB::table('medicalrecord.riwayat_alergi')
+                ->where('ID', $id)
+                ->where('KUNJUNGAN', $kunjungan)
+                ->where('STATUS', 1)
+                ->first();
+
+            if (!$data) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data riwayat alergi tidak ditemukan.'
+                ], 404);
+            }
+
+            DB::table('medicalrecord.riwayat_alergi')
+                ->where('ID', $id)
+                ->where('KUNJUNGAN', $kunjungan)
+                ->update([
+                    'STATUS' => 0
+                ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data riwayat alergi berhasil dihapus.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Data riwayat alergi gagal dihapus.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function hapusSemuaRiwayatAlergi($kunjungan)
+    {
+        try {
+
+            $jumlah = DB::table('medicalrecord.riwayat_alergi')
+                ->where('KUNJUNGAN', $kunjungan)
+                ->where('STATUS', 1)
+                ->count();
+
+            if ($jumlah === 0) {
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Tidak ada riwayat alergi yang perlu dihapus.'
+                ], 200);
+            }
+
+            DB::table('medicalrecord.riwayat_alergi')
+                ->where('KUNJUNGAN', $kunjungan)
+                ->where('STATUS', 1)
+                ->update([
+                    'STATUS' => 0
+                ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Seluruh riwayat alergi berhasil dihapus.',
+                'jumlah' => $jumlah
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Seluruh riwayat alergi gagal dihapus.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     //Hasil Lab

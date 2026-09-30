@@ -1,45 +1,54 @@
-@extends('layouts.index3')
+@extends('layouts.v2.index')
+
+@section('title','SIRMED v2 - Detail Smart Claim Farmasi')
 
 @section('content')
-    <div class="page-header">
-        <div class="page-block">
-            <div class="row align-items-center">
-                <div class="col-md-12">
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href=""><i class="ti ti-home"></i></a></li>
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Digital</a></li>
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Smart Klaim Farmasi</a></li>
-                        <li class="breadcrumb-item" aria-current="page">Berkas</li>
-                    </ul>
-                </div>
-                <div class="col-md-12">
-                    <div class="page-header-title">
-                        <h2 class="mb-0">Klaim Berkas Farmasi - <b class="text-primary">{{ $list['show']->NAMAPASIEN }}</b></h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
+<div class="container-fluid">
+
+    <!-- [ breadcrumb ] start -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb px-3 py-2 bg-primary-subtle rounded-3">
+            <li class="breadcrumb-item">
+                <a class="link-primary" href="{{ route('v2.dashboard') }}">
+                    <i class="fi fi-rr-home"></i>
+                </a>
+            </li>
+            <li class="breadcrumb-item"><a class="link-primary fw-medium text-decoration-none" href="javascript:void(0);">Digital</a></li>
+            <li class="breadcrumb-item"><a class="link-primary fw-medium text-decoration-none" href="{{ route('v2.smartclaim') }}">Smart Claim</a></li>
+            <li class="breadcrumb-item"><a class="link-primary fw-medium text-decoration-none" href="javascript:void(0);">Farmasi</a></li>
+            <li class="breadcrumb-item active" aria-current="page">KUNJ#{{ $list['KUNJUNGAN'] }}</li>
+        </ol>
+
+        <ol class="breadcrumb mb-0">
+        </ol>
+    </nav>
+    <!-- [ breadcrumb ] end -->
+
     <div class="row">
         <div class="col-md-3 mb-3">
-            <div class="card">
+            <div class="card mb-3">
                 <div class="card-body p-0">
-                    <div data-back-button class="d-flex align-items-center btn btn-link-secondary">
+                    <div data-back-button class="d-flex align-items-center btn btn-outline-secondary border-dashed waves-effect waves-light">
                         <div class="flex-shrink-0 me-3">
                             <i class="ph-duotone ph-caret-double-left align-middle"></i>
                             {{-- <div class="btn btn-icon btn-link-secondary avtar">
                             </div> --}}
                         </div>
                         <div class="flex-grow-1 align-items-left">
-                            <small>Kembali ke Halaman</small>
-                            <h6 class="mb-0">Sebelumnya</h6>
+                            <small>Kembali ke Halaman Sebelumnya</small>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="card list-group mb-0">
-                <div class="card-header p-3">
-                    <h6 class="mb-0"><i class="ti ti-sort-descending-2 me-1"></i> Pilihan Berkas</h6>
+                <div class="card-header p-3 d-flex align-items-center gap-2 bg-teal text-white">
+                    <div class="mb-0 flex-shrink-0 form-check d-flex align-items-center">
+                        <input class="form-check-input" type="checkbox" id="ck_all" style="width: 2em;height: 2.2em;margin-top:0px;cursor:pointer;"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Centang Semua Berkas Klaim Langsung" onchange="checkAll(this)">
+                        <label class="form-check-label ms-2"><b>Centang Semua&nbsp;<b class="text-danger fs-16">*</b></b></label>
+                    </div>
+                    <h6 class="mb-0 flex-grow-1 text-end text-white"><i class="ti ti-sort-descending-2 me-1"></i> Pilihan Berkas</h6>
                 </div>
                 <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
                     <div class="input-group">
@@ -47,7 +56,7 @@
                         data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ sep('{{ $list['KUNJUNGAN'] }}'); }
                         else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                     </div>
-                    <a class="text-nowrap mt-1">SEP</a>
+                    <a class="text-nowrap mt-1 text-dark">SEP</a>
                 </div>
                 <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0">
                     <div class="input-group">
@@ -55,7 +64,7 @@
                         data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ resume('{{ $list['KUNJUNGAN'] }}'); }
                         else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                     </div>
-                    <a class="text-nowrap mt-1">Resume Medis</a>
+                    <a class="text-nowrap mt-1 text-dark">Resume Medis</a>
                 </div>
                 <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                     <div class="input-group">
@@ -63,7 +72,7 @@
                         data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ laboratorium('{{ $list['KUNJUNGAN'] }}'); }
                         else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                     </div>
-                    <a class="text-nowrap mt-1">Laboratorium</a>
+                    <a class="text-nowrap mt-1 text-dark">Laboratorium</a>
                 </div>
                 <div class="list-group-item d-flex align-items-center p-3 border-top-0 border-start-0 border-end-0 border bottom-0">
                     <div class="input-group">
@@ -71,35 +80,38 @@
                         data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ceklist Berkas Klaim" onchange="if(this.checked){ kwitansiresep('{{ $list['KUNJUNGAN'] }}'); }
                         else {$('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);}" disabled>
                     </div>
-                    <a class="text-nowrap mt-1">Kwitansi Resep</a>
+                    <a class="text-nowrap mt-1 text-dark">Kwitansi Resep</a>
                 </div>
                 <div id="dokumen_tambahan"></div>
                 <div id="footer_submit"></div>
             </div>
         </div>
         <div class="col-md-9">
-            <div class="card social-profile">
+            <div class="card mb-3">
                 <div class="card-body p-2">
                     <div class="row justify-content-between d-flex align-items-center p-2">
-                        <div class="col-md-4 col-xl-5 col-xxl-6 text-start">
-                            <h4 class="text-truncate mb-1 align-middle"><a class="text-primary">{{ $list['show']->NAMAPASIEN }}</a></h4>
+                        <div class="col-md-8 col-xl-8 col-xxl-8">
+                            <h5 class="mb-1 align-middle"><i class="ri-user-3-line me-1"></i> <b class="fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis Pasien">RM. {{ str_pad($list['show']->NORM, 8, '0', STR_PAD_LEFT) }}</b></h5>
+                            <h4 class="text-truncate mb-1 fw-bold">{{ $list['show']->NAMAPASIEN }}</h4>
                             <p class="text-truncate mb-1" style="font-size: 12px">
-                                <b>RM. <a class="text-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis Pasien"><u><b>{{ str_pad($list['show']->NORM, 8, '0', STR_PAD_LEFT) }}</b></u></a></b>
-                                | <b>NOBPJS. <a class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kartu BPJS Pasien">{{ $list['show']->NOBPJS }}</a></b>
-                                | <b data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP Tgl. {{ $list['show']->TGLSEP?\Carbon\Carbon::parse($list['show']->TGLSEP)->translatedFormat('d F Y'):'' }}">SEP. <a class="text-info">{{ $list['show']->NOSEP?$list['show']->NOSEP:'Tidak Ditemukan' }}</a></b>
+                                <b>NOBPJS. <a class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kartu BPJS Pasien">{{ $list['show']->NOBPJS }}</a></b>
+                                | <b data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP Tgl. {{ $list['show']->TGLSEP?\Carbon\Carbon::parse($list['show']->TGLSEP)->translatedFormat('d F Y'):'' }}">SEP. <a class="text-purple-700">{{ $list['show']->NOSEP?$list['show']->NOSEP:'Tidak Ditemukan' }}</a></b>
                             </p>
-                            <p class="text-truncate mb-0" style="font-size: 12px"><mark data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                title="DPJP. {{ $list['show']->NAMADOKTER }}"><b>{{ $list['show']->NAMARUANGAN }} - {{ $list['show']->NAMADOKTER }}</b></mark></p>
+                            @if ($list['show']->STATUS == 1)
+                                <span class="badge bg-warning-subtle text-dark border border-warning-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">Pasien Sedang Dilayani</span>
+                            @else
+                                @if ($list['show']->STATUS == 2)
+                                    <span class="badge bg-primary-subtle text-dark border border-primary-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">Kunjungan Pasien Selesai / Final</span>
+                                @else
+                                    <span class="badge bg-danger-subtle text-dark border border-danger-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">Pasien Batal Periksa</span>
+                                @endif
+                            @endif
                         </div>
-                        <div class="col-md-8 col-xl-7 col-xxl-6 text-end">
-                            <p class="text-truncate text-muted mb-2">
-                                <b>Masuk :</b>&nbsp;&nbsp;
-                                {{ \Carbon\Carbon::parse($list['show']->MASUK)->format('d M Y H.i') . ' WIB' }}
-                            </p>
-                            <p class="text-truncate text-muted mb-0">
-                                <b>Keluar :</b>&nbsp;&nbsp;
-                                {{ $list['show']->KELUAR ? \Carbon\Carbon::parse($list['show']->KELUAR)->format('d M Y H.i') . ' WIB' : '-' }}
-                            </p>
+                        <div class="col-md-4 col-xl-4 col-xxl-4 text-end">
+                            <p class="fw-bold mb-1 fs-16"><b>{{ $list['show']->NAMARUANGAN }}</b></p>
+                            <h6 class="text-truncate text-mint mb-1 fs-20"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="DPJP. {{ $list['show']->NAMADOKTER }}">{{ $list['show']->NAMADOKTER }}</b></h6>
+                            <p class="text-truncate mb-0 ms-3" style="font-size: 13px"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tgl. Pasien mulai dilayani / diterima">Masuk :&nbsp;&nbsp;{{ \Carbon\Carbon::parse($list['show']->MASUK)->locale('id')->translatedFormat('d M Y H.i') . ' WIB' }}</b></p>
+                            <p class="text-truncate mb-0 ms-3" style="font-size: 13px"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tgl. Pasien selesai dilayani / dipulangkan">Keluar :&nbsp;&nbsp;{{ $list['show']->KELUAR?\Carbon\Carbon::parse($list['show']->KELUAR)->locale('id')->translatedFormat('d M Y H.i') . ' WIB':'-' }}</b></p>
                         </div>
                     </div>
                 </div>
@@ -131,6 +143,8 @@
             </div>
         </div>
     </div>
+</div>
+
 <div class="modal animate__animated animate__rubberBand fade" id="hapus" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-simple modal-add-new-address modal-dialog-centered">
         <div class="modal-content">
@@ -218,6 +232,7 @@
         </div>
     </div>
 </div>
+
 <script>
     var editorCatatanTambah; // global variable
     var editorCatatanEdit; // global variable
@@ -256,7 +271,7 @@
                     submit = ``;
                     submit += `<div class="card-footer p-3">
                                     <div class="btn-group w-100">`;
-                    submit += `         <button class="btn btn-light-warning btn-sm" onclick="clearCheckbox()"><i class="ti ti-eraser me-1"></i> Clear</button>
+                    submit += `         <button class="btn btn-subtle-warning btn-sm" onclick="clearCheckbox()"><i class="ti ti-eraser me-1"></i> Clear</button>
                                         <button class="btn btn-primary btn-sm" onclick="prosesSubmit('${kunjungan}')" id="btn-submit">Submit <i class="fas fa-paper-plane ms-1"></i></button>`;
                     submit += `     </div>
                                 </div>`;
@@ -268,7 +283,7 @@
                     if (koleksi.includes(6)) { $('#ck_laboratorium').prop('checked', true).prop('disabled', false); } else { $('#ck_laboratorium').prop('checked', false).prop('disabled',false); }
                     if (koleksi.includes(12)) { $('#ck_kwitansiresep').prop('checked', true).prop('disabled', false); } else { $('#ck_kwitansiresep').prop('checked', false).prop('disabled',false); }
 
-                    $('#btn-refresh-klaim').empty().append(`<button class="btn btn-light-primary" onclick="prosesSubmit('${kunjungan}')">Refresh Preview Klaim</button>`);
+                    $('#btn-refresh-klaim').empty().append(`<button class="btn btn-subtle-primary" onclick="prosesSubmit('${kunjungan}')">Refresh Preview Klaim</button>`);
 
                     // DOKUMEN TAMBAHAN
                     $('#dokumen_tambahan').empty();
@@ -757,6 +772,28 @@
                 $('#btn-batal-verif').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-times-circle');
             }
         })
+    }
+
+    function checkAll(el) {
+        if(el.checked){
+            $('#ck_all').prop('disabled',true);
+
+            $('#ck_sep').prop('checked', true);
+            sep('{{ $list['KUNJUNGAN'] }}');
+
+            $('#ck_resume').prop('checked', true);
+            resume('{{ $list['KUNJUNGAN'] }}');
+
+            $('#ck_laboratorium').prop('checked', true);
+            laboratorium('{{ $list['KUNJUNGAN'] }}');
+
+            $('#ck_kwitansiresep').prop('checked', true);
+            kwitansiresep('{{ $list['KUNJUNGAN'] }}');
+        } else {
+            $('#ck_all').prop('disabled',false);
+            $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+            clearCheckbox();
+        }
     }
 
     function clearCheckbox() {

@@ -31,14 +31,14 @@
                     <i class="ph-duotone ph-gauge"></i>
                 </li>
                 <li class="pc-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <a href="{{ route('dashboard') }}" class="pc-link">
+                    <a href="{{ route('v2.dashboard') }}" class="pc-link">
                         <span class="pc-micon">
                             <i class="ph-duotone ph-gauge"></i>
                         </span>
                         <span class="pc-mtext" data-i18n="Dashboard">Dashboard</span>
                     </a>
                 </li>
-                @canany(['display_tt', 'display_antrian_poli'])
+                {{-- @canany(['display_tt', 'display_antrian_poli'])
                 <li class="pc-item pc-caption">
                     <label data-i18n="Navigation">Display</label>
                     <i class="ph-duotone ph-bed"></i>
@@ -84,14 +84,6 @@
                     </a>
                 </li>
                 @endcan
-                {{-- <li class="pc-item {{ request()->routeIs('rilis.index') ? 'active' : '' }}">
-                    <a href="{{ route('rilis.index') }}" class="pc-link">
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-rocket-launch"></i>
-                        </span>
-                        <span class="pc-mtext" data-i18n="Release">Catatan Rilis</span>
-                    </a>
-                </li> --}}
                 @if(auth()->user()->can('setting_jabatan') || auth()->user()->can('setting_akses') || auth()->user()->can('log_berkas'))
                     <li class="pc-item pc-caption">
                         <label data-i18n="Navigation">Setting</label>
@@ -128,39 +120,7 @@
                         </a>
                     </li>
                 @endcan
-
-                {{-- <li class="pc-item pc-caption">
-                    <label>Pelayanan</label>
-                    <i class="ph-duotone ph-chart-pie"></i>
-                </li>
-                <li class="pc-item">
-                    <a href="{{ route('pelayanan.pasien') }}" class="pc-link">
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-users-three"></i>
-                        </span>
-                        <span class="pc-mtext">Kunjungan Pasien</span>
-                    </a>
-                </li> --}}
-
-                {{-- <li class="pc-item pc-hasmenu">
-                    <a href="javascript:void(0);" class="pc-link">
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-gauge"></i>
-                        </span>
-                        <span class="pc-mtext">Pendaftaran</span>
-                        <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
-                        <span class="pc-badge">2</span>
-                    </a>
-                    <ul class="pc-submenu">
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">a</a></li>
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">b</a></li>
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">c</a></li>
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">d</a></li>
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">e</a></li>
-                    </ul>
-                </li> --}}
                 @if(auth()->user()->can('emr'))
-                {{-- @role('admin') --}}
                     <li class="pc-item pc-caption">
                         <label>Electronic</label>
                         <i class="ph-duotone ph-chart-pie"></i>
@@ -173,7 +133,6 @@
                             <span class="pc-mtext">Medical Record</span>
                         </a>
                     </li>
-                {{-- @endrole --}}
                 @endif
                 @if(auth()->user()->can('monitoring') || auth()->user()->can('smart_claim') || auth()->user()->can('smart_claim_farmasi'))
                     <li class="pc-item pc-caption">
@@ -190,7 +149,7 @@
                             <span class="pc-mtext">Monitoring</span>
                         </a>
                     </li>
-                @endcan
+                @endcan --}}
                 @canany(['smart_claim', 'smart_claim_farmasi'])
                     <li class="pc-item {{ request()->routeIs('klaim.index') || request()->routeIs('klaim.show') ? 'active' : '' }}">
                         <a href="{{ route('klaim.index') }}" class="pc-link">
@@ -201,29 +160,7 @@
                         </a>
                     </li>
                 @endcanany
-                {{-- <li class="pc-item pc-hasmenu">
-                    <a href="javascript:void(0);" class="pc-link">
-                        <span class="pc-micon">
-                            <i class="ph-duotone ph-file-lock"></i>
-                        </span>
-                        <span class="pc-mtext">Smart Klaim</span>
-                        <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
-                        <span class="pc-badge">2</span>
-                    </a>
-                    <ul class="pc-submenu">
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">Rawat Jalan</a></li>
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">Rawat Inap</a></li>
-                        <li class="pc-item"><a class="pc-link" href="javascript:void(0);">Rawat Darurat</a></li>
-                    </ul>
-                </li> --}}
             </ul>
-            {{-- <div class="card nav-action-card bg-brand-color-4">
-                <div class="card-body" style="background-image: {{ url('images/layout/nav-card-bg.svg') }}">
-                    <h5 class="text-dark">Tambahan Fitur?</h5>
-                    <p class="text-dark text-opacity-75">Silakan melakukan permintaan fitur melalui tombol di bawah ini.</p>
-                    <a href="javascript:void(0);" class="btn btn-primary" target="_blank">Form Pengajuan</a>
-                </div>
-            </div> --}}
         </div>
     </div>
 </nav>

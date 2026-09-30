@@ -707,9 +707,30 @@
         let activeApiRequests = 0;
 
         $(document).ready(function() {
-            filterPengkajianBerdasarkanRuangan();
-            filterPengkajianBerdasarkanForm();
+
+            if (isAdmin) {
+
+                $('#pengkajianMenu')
+                    .find('.js-filter-ruangan')
+                    .removeClass('d-none')
+                    .removeAttr('data-ruangan-hidden')
+                    .css('display', '');
+
+                $('#pengkajianMenu')
+                    .find('[data-form]')
+                    .removeClass('d-none')
+                    .removeAttr('data-form-hidden')
+                    .css('display', '');
+
+            } else {
+
+                filterPengkajianBerdasarkanRuangan();
+                filterPengkajianBerdasarkanForm();
+
+            }
+
             tampilkanPenandaFinalisasi();
+
         });
 
         $(document).ajaxSend(function () {

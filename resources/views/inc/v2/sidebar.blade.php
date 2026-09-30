@@ -91,30 +91,36 @@
                                     <span class="badge badge-sm text-bg-success">+12%</span>
                                 </a>
                             </li> --}}
+                            @canany(['display_tt', 'display_rating', 'display_antrian_poli'])
                             <li>
                                 <div class="menu-divider"></div>
                             </li>
                             <li class="menu-heading">
                                 <span class="menu-label">Display</span>
                             </li>
+                            @endcanany
+                            @canany(['display_tt', 'display_rating', 'display_antrian_poli'])
                             <li class="menu-item">
-                                {{-- <a class="menu-link" href="{{ route('display.antrian.poli.index') }}" role="button">
-                                    <i class="ri-dashboard-line"></i>
-                                    <span class="menu-label">Antrian Poliklinik</span>
-                                </a> --}}
+                                @can('display_antrian_poli')
                                 <a class="menu-link" href="{{ route('v2.display.antrian.poli') }}" role="button">
                                     <i class="ri-slideshow-2-line"></i>
                                     <span class="menu-label">Antrian Poliklinik</span>
                                 </a>
+                                @endcan
+                                @can('display_tt')
                                 <a class="menu-link" href="{{ route('v2.display.bed') }}" role="button">
                                     <i class="ri-tv-2-line"></i>
                                     <span class="menu-label">Tempat Tidur</span>
                                 </a>
+                                @endcan
+                                @can('display_rating')
                                 <a class="menu-link" href="{{ route('v2.display.rating') }}" role="button">
                                     <i class="ri-emoji-sticker-line"></i>
                                     <span class="menu-label">Rating</span>
                                 </a>
+                                @endcan
                             </li>
+                            @endcanany
                         </ul>
                     </nav>
                 </div>

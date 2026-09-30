@@ -155,7 +155,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // buka halaman profil
-                    window.location.href = "{{ route('profil') }}";
+                    window.location.href = "{{ route('v2.profil') }}";
                 }
             });
         }

@@ -275,7 +275,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card border border-danger border-1">
+            <div class="card border border-danger border-1" hidden>
                 <div class="card-header d-flex align-items-center justify-content-between py-3">
                     <h5 class="text-danger fw-bold mb-0">Ubah Password</h5>
                     <h6 class="mb-0">{!! Auth::user()->TERAKHIR_UBAH_PASSWOD

@@ -25,7 +25,7 @@
                         </div>
                     </li>
                     <li class="list-group-item">
-                        <a href="{{ route('profil') }}" class="dropdown-item">
+                        {{-- <a href="{{ route('profil') }}" class="dropdown-item">
                             <span class="d-flex align-items-center">
                                 <i class="ph-duotone ph-user-circle"></i>
                                 <span>Akun Pengguna</span>
@@ -42,7 +42,7 @@
                                 <i class="ph-duotone ph-windows-logo"></i>
                                 <span>Instal Aplikasi</span>
                             </span>
-                        </a>
+                        </a> --}}
                         <a href="" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">
                             <span class="d-flex align-items-center">
                                 <i class="ph-duotone ph-power"></i>
