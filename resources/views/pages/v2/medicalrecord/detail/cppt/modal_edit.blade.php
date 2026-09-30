@@ -444,26 +444,30 @@
     }
 
     function htmlKeTextCPPT(html) {
-        if (!html) {
-            return '';
-        }
+        if (!html) return '';
 
         const $temp = $('<div>').html(String(html));
 
-        // Buang Simple Translate
         $temp.find('#simple-translate').remove();
-
-        // Buang elemen dari extension
         $temp.find('[src^="chrome-extension://"]').remove();
         $temp.find('[href^="chrome-extension://"]').remove();
 
-        // HTML -> text
+        // Normalisasi newline yang berada di antara tag HTML.
+        $temp.html(
+            $temp.html()
+                .replace(/\r\n/g, '\n')
+                .replace(/\r/g, '\n')
+                .replace(/>\s*\n\s*</g, '><')
+        );
+
+        // <br> = satu newline
         $temp.find('br').replaceWith('\n');
 
         return $temp
             .text()
             .replace(/\u00a0/g, ' ')
             .replace(/\r\n/g, '\n')
+            .replace(/\r/g, '\n')
             .replace(/\n{3,}/g, '\n\n')
             .trim();
     }
@@ -781,7 +785,8 @@
                 |--------------------------------------------------------------------------
                 */
 
-                $('#modalEditCPPT').data('mode', 'COPY');
+                // $('#modalEditCPPT').data('mode', 'COPY');
+                $('#modalEditCPPT').data('action', 'COPY');
 
                 // Simpan ID CPPT sumber
                 $('#edit_cppt_id').val(data.ID);
@@ -795,10 +800,11 @@
                     .text(`Copy CPPT #${data.ID}`);
 
                 // Ubah tombol simpan
-                $('#btn-update-cppt').html(`
-                    <i class="ph-duotone ph-copy me-1"></i>
-                    Simpan Copy CPPT <span class="badge bg-warning-subtle text-warning badge-sm ms-1">ID#${data.ID}</span>
-                `);
+                // $('#btn-update-cppt').html(`
+                //     <i class="ph-duotone ph-copy me-1"></i>
+                //     Simpan Copy CPPT <span class="badge bg-warning-subtle text-warning badge-sm ms-1">ID#${data.ID}</span>
+                // `);
+                setTombolEditCPPT('COPY');
 
                 editCPPTKembaliKeRiwayat = true;
                 editCPPTPerluRefresh = false;
@@ -834,9 +840,7 @@
     function ambilPayloadEditCPPT() {
 
         const modeModal = $('#modalEditCPPT').data('mode');
-
         const mode = $('#modalEditCPPT').data('mode');
-
         const action = $('#modalEditCPPT').data('action');
 
         const payload = {
@@ -920,7 +924,8 @@
         | MODE COPY
         |--------------------------------------------------------------------------
         */
-        const isCopy = mode === 'COPY';
+        const action = $('#modalEditCPPT').data('action');
+        const isCopy = action === 'COPY';
 
         let url;
         let method;

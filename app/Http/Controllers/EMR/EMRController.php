@@ -1841,7 +1841,7 @@ class EMRController extends Controller
             */
             'OLEH' => auth()->id(),
 
-            'VERIFIKASI' => 0,
+            'VERIFIKASI' => 1,
 
             'STATUS' => 1,
 
@@ -2087,6 +2087,29 @@ class EMRController extends Controller
 
     public function copyCPPT(Request $request, $kunjungan, $id)
     {
+        $request->validate([
+            'tanggal' => ['required', 'date_format:Y-m-d'],
+            'jam' => ['required', 'date_format:H:i'],
+            'tbak_sbar' => ['nullable', Rule::in(['', 'SBAR', 'TBAK'])],
+            'instruksi' => ['nullable', 'string'],
+
+            's' => ['nullable', 'string'],
+            'o' => ['nullable', 'string'],
+            'a' => ['nullable', 'string'],
+            'p' => ['nullable', 'string'],
+
+            'situation' => ['nullable', 'string'],
+            'background' => ['nullable', 'string'],
+            'assessment' => ['nullable', 'string'],
+            'recommendation' => ['nullable', 'string'],
+
+            'tulis' => ['nullable', 'string'],
+            'baca' => ['nullable', 'boolean'],
+            'konfirmasi' => ['nullable', 'boolean'],
+
+            'dokter_id' => ['nullable', 'integer'],
+        ]);
+
         try {
 
             /*
@@ -2108,6 +2131,7 @@ class EMRController extends Controller
                 ], 404);
             }
 
+            $modeRequest = strtoupper(trim($request->tbak_sbar ?? ''));
 
             /*
             |--------------------------------------------------------------------------
@@ -2116,69 +2140,98 @@ class EMRController extends Controller
             */
 
             $data = [
-
                 'KUNJUNGAN' => $kunjungan,
+                'TANGGAL' => $request->tanggal . ' ' . $request->jam . ':00',
 
-                // CPPT baru dibuat sekarang
-                'TANGGAL' => now(),
+                'SUBYEKTIF' => '',
+                'OBYEKTIF' => '',
+                'ASSESMENT' => '',
+                'PLANNING' => '',
+                'INSTRUKSI' => '',
 
-                // Isi CPPT
-                'SUBYEKTIF' => $cppt->SUBYEKTIF ?? '',
-                'OBYEKTIF' => $cppt->OBYEKTIF ?? '',
-                'ASSESMENT' => $cppt->ASSESMENT ?? '',
-                'PLANNING' => $cppt->PLANNING ?? '',
-                'INSTRUKSI' => $cppt->INSTRUKSI ?? '',
-
-                // PPA / tenaga medis
                 'TENAGA_MEDIS' => $cppt->TENAGA_MEDIS,
-
-                // Jenis CPPT
                 'JENIS' => $cppt->JENIS,
-
-                // Rencana pulang
                 'RENCANA_PULANG' => $cppt->RENCANA_PULANG ?? 0,
-                'TANGGAL_RENCANA_PULANG' =>
-                    $cppt->TANGGAL_RENCANA_PULANG,
-
+                'TANGGAL_RENCANA_PULANG' => $cppt->TANGGAL_RENCANA_PULANG,
                 'SUB_DEVISI' => $cppt->SUB_DEVISI ?? 0,
-
-                /*
-                |--------------------------------------------------------------------------
-                | USER PEMBUAT CPPT BARU
-                |--------------------------------------------------------------------------
-                */
 
                 'OLEH' => auth()->id(),
 
-                /*
-                |--------------------------------------------------------------------------
-                | CPPT BARU
-                |--------------------------------------------------------------------------
-                */
-
-                'VERIFIKASI' => 0,
+                'VERIFIKASI' => 1,
                 'STATUS' => 1,
 
-                /*
-                |--------------------------------------------------------------------------
-                | TBAK / SBAR
-                |--------------------------------------------------------------------------
-                */
-
-                'TULIS' => $cppt->TULIS ?? '',
-                'STATUS_TBAK' => $cppt->STATUS_TBAK ?? 0,
-                'STATUS_SBAR' => $cppt->STATUS_SBAR ?? 0,
-
-                // Catatan baru belum dibaca/dikonfirmasi
+                'TULIS' => '',
+                'STATUS_TBAK' => 0,
+                'STATUS_SBAR' => 0,
                 'BACA' => 0,
                 'KONFIRMASI' => 0,
-
                 'ADIME' => $cppt->ADIME ?? 0,
-
-                'DOKTER_TBAK_OR_SBAR' =>
-                    $cppt->DOKTER_TBAK_OR_SBAR ?? 0,
+                'DOKTER_TBAK_OR_SBAR' => 0,
             ];
 
+            /*
+            |--------------------------------------------------------------------------
+            | LENGKAPI BERDASARKAN MODE
+            |--------------------------------------------------------------------------
+            */
+            if ($modeRequest === '') {
+
+                $data['SUBYEKTIF'] =
+                    $this->cpptTextKeHtml($request->s ?? '');
+
+                $data['OBYEKTIF'] =
+                    $this->cpptTextKeHtml($request->o ?? '');
+
+                $data['ASSESMENT'] =
+                    $this->cpptTextKeHtml($request->a ?? '');
+
+                $data['PLANNING'] =
+                    $this->cpptTextKeHtml($request->p ?? '');
+
+                $data['INSTRUKSI'] =
+                    $this->cpptTextKeHtml($request->instruksi ?? '');
+
+            } elseif ($modeRequest === 'SBAR') {
+
+                $data['SUBYEKTIF'] =
+                    $this->cpptTextKeHtml($request->situation ?? '');
+
+                $data['OBYEKTIF'] =
+                    $this->cpptTextKeHtml($request->background ?? '');
+
+                $data['ASSESMENT'] =
+                    $this->cpptTextKeHtml($request->assessment ?? '');
+
+                $data['PLANNING'] =
+                    $this->cpptTextKeHtml($request->recommendation ?? '');
+
+                $data['STATUS_TBAK'] = 0;
+                $data['STATUS_SBAR'] = 1;
+
+                $data['DOKTER_TBAK_OR_SBAR'] =
+                    $this->dokterCpptDariPengguna(
+                        $request->dokter_id ?? null
+                    );
+
+            } elseif ($modeRequest === 'TBAK') {
+
+                $data['TULIS'] =
+                    $this->cpptTextKeHtml($request->tulis ?? '');
+
+                $data['BACA'] =
+                    !empty($request->baca) ? 1 : 0;
+
+                $data['KONFIRMASI'] =
+                    !empty($request->konfirmasi) ? 1 : 0;
+
+                $data['STATUS_TBAK'] = 1;
+                $data['STATUS_SBAR'] = 0;
+
+                $data['DOKTER_TBAK_OR_SBAR'] =
+                    $this->dokterCpptDariPengguna(
+                        $request->dokter_id ?? null
+                    );
+            }
 
             /*
             |--------------------------------------------------------------------------
@@ -2430,7 +2483,7 @@ class EMRController extends Controller
         }
     }
 
-    /**
+   /**
      * Ubah HTML yang disimpan di database menjadi teks aman untuk textarea.
      */
     private function cpptHtmlKeText(?string $value): string
@@ -2440,6 +2493,14 @@ class EMRController extends Controller
         if ($value === '') {
             return '';
         }
+
+        // Decode entity TERLEBIH DAHULU.
+        // &lt;br&gt; -> <br>
+        $value = html_entity_decode(
+            $value,
+            ENT_QUOTES | ENT_HTML5,
+            'UTF-8'
+        );
 
         // Ubah ordered list menjadi "1. ...", "2. ...", dst.
         $value = preg_replace_callback(
@@ -2491,34 +2552,55 @@ class EMRController extends Controller
             $value
         );
 
-        // Tag yang secara visual berarti ganti baris.
+        // Normalisasi line ending.
+        $value = str_replace(["\r\n", "\r"], "\n", $value);
+
+        // <br> menjadi enter.
         $value = preg_replace('/<br\s*\/?>/i', "\n", $value);
-        // $value = preg_replace('/<\/div\s*>/i', "\n", $value);
-        // $value = preg_replace('/<\/p\s*>/i', "\n", $value);
 
-        // Baik tag pembuka maupun penutup div/p dianggap sebagai ganti baris.
-        $value = preg_replace('/<\/?(?:div|p)\b[^>]*>/i', "\n", $value);
-
-        $value = preg_replace('/<\/h[1-6]\s*>/i', "\n", $value);
-        $value = preg_replace('/<\/tr\s*>/i', "\n", $value);
-
-        // Antisipasi tag li yang tidak berada dalam ol/ul sempurna.
-        $value = preg_replace('/<li\b[^>]*>/i', "\n- ", $value);
-        $value = preg_replace('/<\/li\s*>/i', "\n", $value);
-
-        // Hilangkan tag HTML tersisa, tetapi pertahankan teks.
-        $value = strip_tags($value);
-
-        // &nbsp; dan entity lain menjadi karakter normal.
-        $value = html_entity_decode(
-            $value,
-            ENT_QUOTES | ENT_HTML5,
-            'UTF-8'
+        // Tag yang secara visual berarti ganti baris.
+        $value = preg_replace(
+            '/<\/?(?:div|p)\b[^>]*>/i',
+            "\n",
+            $value
         );
 
+        $value = preg_replace(
+            '/<\/h[1-6]\s*>/i',
+            "\n",
+            $value
+        );
+
+        $value = preg_replace(
+            '/<\/tr\s*>/i',
+            "\n",
+            $value
+        );
+
+        // Antisipasi tag li.
+        $value = preg_replace(
+            '/<li\b[^>]*>/i',
+            "\n- ",
+            $value
+        );
+
+        $value = preg_replace(
+            '/<\/li\s*>/i',
+            "\n",
+            $value
+        );
+
+        // Hilangkan tag HTML tersisa.
+        $value = strip_tags($value);
+
+        // Bersihkan NBSP.
         $value = str_replace("\xc2\xa0", ' ', $value);
+
+        // Bersihkan spasi di sekitar newline.
         $value = preg_replace("/[ \t]+\n/", "\n", $value);
         $value = preg_replace("/\n[ \t]+/", "\n", $value);
+
+        // Maksimal 1 baris kosong.
         $value = preg_replace("/\n{3,}/", "\n\n", $value);
 
         return trim($value);
@@ -2529,29 +2611,35 @@ class EMRController extends Controller
      */
     private function cpptTextKeHtml(?string $value): string
     {
-        $value = trim((string) $value);
+        $value = (string) $value;
 
-        return nl2br(e($value), false);
-    }
+        // Normalisasi line ending
+        $value = str_replace(["\r\n", "\r"], "\n", $value);
 
-    /**
-     * Konversi ID aplikasi.pengguna menjadi ID master.dokter.
-     *
-     * Front-end autocomplete Anda mengirim ID dari aplikasi.pengguna,
-     * sementara medicalrecord.cppt.DOKTER_TBAK_OR_SBAR memakai master.dokter.ID.
-     */
-    private function dokterCpptDariPengguna(?int $penggunaId): int
-    {
-        if (!$penggunaId) {
-            return 0;
-        }
+        // Decode entity jika ada
+        $value = html_entity_decode(
+            $value,
+            ENT_QUOTES | ENT_HTML5,
+            'UTF-8'
+        );
 
-        $dokterId = DB::table('aplikasi.pengguna as pe')
-            ->join('master.dokter as d', 'd.NIP', '=', 'pe.NIP')
-            ->where('pe.ID', $penggunaId)
-            ->value('d.ID');
+        // Jika masih ada <br>, ubah menjadi newline
+        $value = preg_replace('/<br\s*\/?>/i', "\n", $value);
 
-        return (int) ($dokterId ?? 0);
+        // Bersihkan tag HTML lain
+        $value = strip_tags($value);
+
+        // Normalisasi kembali line ending
+        $value = str_replace(["\r\n", "\r"], "\n", $value);
+
+        // Bersihkan spasi kosong di sekitar newline
+        $value = preg_replace("/[ \t]+\n/", "\n", $value);
+        $value = preg_replace("/\n[ \t]+/", "\n", $value);
+
+        // Jangan izinkan baris kosong berlebihan
+        $value = preg_replace("/\n{2,}/", "\n", $value);
+
+        return trim($value);
     }
 
     /**

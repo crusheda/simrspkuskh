@@ -2022,7 +2022,7 @@ progress {
   margin-bottom: 1rem;
   vertical-align: middle;
   /* border-color: var(--bs-table-border-color); */
-  border-color: #d7d7dc;
+  border-color: #8886864d;
 }
 .table > :not(caption) > * > * {
   padding: 10px 14px;
@@ -2273,7 +2273,7 @@ progress {
   background-color: var(--bs-body-bg);
   background-clip: padding-box;
   /* border: var(--bs-border-width) solid var(--bs-border-color); */
-  border: var(--bs-border-width) solid #d7d7dc;
+  border: var(--bs-border-width) solid #8886864d;
   border-radius: var(--bs-border-radius);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
@@ -2431,7 +2431,7 @@ textarea.form-control-lg {
   background-position: right 1.2rem center;
   background-size: 16px 12px;
   /* border: var(--bs-border-width) solid var(--bs-border-color); */
-  border: var(--bs-border-width) solid #d7d7dc;
+  border: var(--bs-border-width) solid #8886864d;
   border-radius: var(--bs-border-radius);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
@@ -2516,7 +2516,7 @@ textarea.form-control-lg {
   background-position: center;
   background-size: contain;
   /* border: var(--bs-border-width) solid var(--bs-border-color); */
-  border: var(--bs-border-width) solid #d7d7dc;
+  border: var(--bs-border-width) solid #8886864d;
   print-color-adjust: exact;
 }
 .form-check-input[type=checkbox] {
@@ -21088,7 +21088,7 @@ span.flatpickr-weekday {
   /* background-color: #ffffff; */
   padding: 6px 7.5px 3.75px;
   /* border: var(--bs-border-width) solid var(--bs-border-color); */
-  border: var(--bs-border-width) solid #d7d7dc;
+  border: var(--bs-border-width) solid #8886864d;
   border-radius: 8px;
   font-size: 14px;
   /* min-height: 44px; */
