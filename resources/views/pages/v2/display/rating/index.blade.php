@@ -247,7 +247,7 @@
     });
 
     function laporan(bulan) {
-        let url = "{{ route('display.rating.laporan', ':bulan') }}";
+        let url = "{{ route('v2.display.rating.laporan', ':bulan') }}";
         url = url.replace(':bulan', bulan);
         window.open(url, '_blank');
     }
