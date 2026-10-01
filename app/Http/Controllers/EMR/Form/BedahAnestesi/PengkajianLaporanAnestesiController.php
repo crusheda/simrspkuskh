@@ -75,6 +75,10 @@ class PengkajianLaporanAnestesiController extends Controller
             'la_lain' => ['nullable', 'string', 'max:255'],
             'la_asa' => ['nullable', 'string', 'max:10'],
 
+            'la_zat_anestesi' => ['nullable', 'string', 'max:50'],
+            'la_suhu_dari' => ['nullable', 'numeric'],
+            'la_suhu_sampai' => ['nullable', 'numeric'],
+
             'la_tensi_sis' => ['nullable', 'numeric'],
             'la_tensi_dia' => ['nullable', 'numeric'],
 
@@ -110,6 +114,10 @@ class PengkajianLaporanAnestesiController extends Controller
             'LA_AL' => $request->input('la_al'),
             'LA_LAIN' => $request->input('la_lain'),
             'LA_ASA' => $request->input('la_asa'),
+
+            'LA_ZAT_ANESTESI' => $request->input('la_zat_anestesi'),
+            'LA_SUHU_DARI' => $request->input('la_suhu_dari'),
+            'LA_SUHU_SAMPAI' => $request->input('la_suhu_sampai'),
 
             'LA_TENSI_SIS' => $request->input('la_tensi_sis'),
             'LA_TENSI_DIA' => $request->input('la_tensi_dia'),
@@ -244,7 +252,7 @@ class PengkajianLaporanAnestesiController extends Controller
 
             'indikator' => [
                 'required',
-                'in:tensi_rendah,tensi_tinggi,nadi,resp_sr,resp_ar,resp_cr',
+                'in:tensi_rendah,tensi_tinggi,nadi,resp_sr,resp_ar,resp_cr,spo2',
             ],
 
             'keterangan' => [
@@ -252,6 +260,16 @@ class PengkajianLaporanAnestesiController extends Controller
                 'string',
             ],
         ]);
+
+        if (
+            $validated['indikator'] === 'spo2' &&
+            $validated['nilai'] > 100
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nilai SPO2 harus berada antara 0 sampai 100%.',
+            ], 422);
+        }
 
         // Pastikan nilai merupakan kelipatan 20
         // if ($validated['nilai'] % 20 !== 0) {
@@ -359,6 +377,19 @@ class PengkajianLaporanAnestesiController extends Controller
                     'nilai' => $item->NILAI !== null
                         ? (float) $item->NILAI
                         : null,
+                    'infus' => $item->INFUS !== null
+                        ? (float) $item->INFUS
+                        : null,
+                    'transfusi' => $item->TRANSFUSI,
+                    'transfusi_nilai' => $item->TRANSFUSI_NILAI !== null
+                        ? (float) $item->TRANSFUSI_NILAI
+                        : null,
+                    'urin' => $item->URIN !== null
+                        ? (float) $item->URIN
+                        : null,
+                    'darah' => $item->DARAH !== null
+                        ? (float) $item->DARAH
+                        : null,
                     'jenis' => $item->JENIS,
                     'zat' => $item->ZAT,
                     'keterangan' => $item->KETERANGAN,
@@ -439,6 +470,35 @@ class PengkajianLaporanAnestesiController extends Controller
                 'nullable',
                 'string',
                 'max:100',
+            ],
+
+            'infus' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+
+            'transfusi' => [
+                'nullable',
+                'in:PRC,WB,TC,FFP',
+            ],
+
+            'transfusi_nilai' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+
+            'urin' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+
+            'darah' => [
+                'nullable',
+                'numeric',
+                'min:0',
             ],
 
             'keterangan' => [
@@ -532,13 +592,12 @@ class PengkajianLaporanAnestesiController extends Controller
             $validated['zat'] = null;
         }
 
-        /*
-        |--------------------------------------------------------------------------
+        /*--------------------------------------------------------------------
         | VALIDASI CAIRAN
-        |--------------------------------------------------------------------------
-        */
+        |--------------------------------------------------------------------*/
 
         if ($jenisData === 'cairan') {
+
             if (
                 !in_array(
                     $validated['jenis'] ?? '',
@@ -552,14 +611,38 @@ class PengkajianLaporanAnestesiController extends Controller
                 ], 422);
             }
 
-            if (
-                !isset($validated['nilai']) ||
-                $validated['nilai'] === ''
-            ) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Jumlah cairan wajib diisi.',
-                ], 422);
+            if ($validated['jenis'] === 'masuk') {
+
+                $infus = $request->input('infus');
+                $transfusi = $request->input('transfusi');
+                $transfusiNilai = $request->input('transfusi_nilai');
+
+                if (
+                    ($infus === null || $infus === '') &&
+                    ($transfusiNilai === null || $transfusiNilai === '')
+                ) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Nilai Infus atau Transfusi wajib diisi.',
+                    ], 422);
+                }
+
+            }
+
+            if ($validated['jenis'] === 'keluar') {
+
+                $urin = $request->input('urin');
+                $darah = $request->input('darah');
+
+                if (
+                    ($urin === null || $urin === '') &&
+                    ($darah === null || $darah === '')
+                ) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Nilai Urin atau Darah wajib diisi.',
+                    ], 422);
+                }
             }
 
             $validated['baris'] = null;
@@ -572,12 +655,19 @@ class PengkajianLaporanAnestesiController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        $keterangan = $validated['keterangan'] ?? null;
+
         $data = [
             'KUNJUNGAN' => $KUNJUNGAN,
             'JENIS_DATA' => $jenisData,
             'BARIS' => $validated['baris'] ?? null,
             'WAKTU' => $waktu,
             'NILAI' => $validated['nilai'] ?? null,
+            'INFUS' => $request->input('infus'),
+            'TRANSFUSI' => $request->input('transfusi'),
+            'TRANSFUSI_NILAI' => $request->input('transfusi_nilai'),
+            'URIN' => $request->input('urin'),
+            'DARAH' => $request->input('darah'),
             'JENIS' => $validated['jenis'] ?? null,
             'ZAT' => isset($validated['zat'])
                 ? trim($validated['zat'])
@@ -769,6 +859,23 @@ class PengkajianLaporanAnestesiController extends Controller
                 ),
                 'nilai' => $result->NILAI !== null
                     ? (float) $result->NILAI
+                    : null,
+                'infus' => $result->INFUS !== null
+                    ? (float) $result->INFUS
+                    : null,
+
+                'transfusi' => $result->TRANSFUSI,
+
+                'transfusi_nilai' => $result->TRANSFUSI_NILAI !== null
+                    ? (float) $result->TRANSFUSI_NILAI
+                    : null,
+
+                'urin' => $result->URIN !== null
+                    ? (float) $result->URIN
+                    : null,
+
+                'darah' => $result->DARAH !== null
+                    ? (float) $result->DARAH
                     : null,
                 'jenis' => $result->JENIS,
                 'zat' => $result->ZAT,

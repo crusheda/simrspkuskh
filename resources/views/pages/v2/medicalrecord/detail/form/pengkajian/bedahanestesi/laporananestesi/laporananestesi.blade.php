@@ -272,6 +272,32 @@
                                 </h6>
 
                                 <small class="text-muted">
+
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <select class="form-select" name="la_zat_anestesi">
+                                <option value="0">Pilih</option>
+                                <option value="1">Sevoflurane</option>
+                                <option value="2">Isoflurane</option>
+                                <option value="3">Halothane</option>
+                                <option value="4">Desflurane</option>
+                            </select>
+                        </div>
+
+
+                        <hr>
+                        {{-- <div class="d-flex align-items-center justify-content-between p-2">
+
+                            <div>
+                                <h6 class="mb-0 fw-semibold">
+                                    Zat Anestesi
+                                </h6>
+
+                                <small class="text-muted">
                                     Klik titik pada baris untuk memasukkan zat anestesi
                                 </small>
                             </div>
@@ -293,13 +319,45 @@
                         ></div>
 
 
-                        <hr>
+                        <hr> --}}
 
 
                         {{-- ==================================================
                             GRAFIK TEMPERATUR
                         =================================================== --}}
                         <div class="d-flex align-items-center justify-content-between p-2">
+
+                            <div>
+                                <h6 class="mb-0 fw-semibold">
+                                    Suhu
+                                </h6>
+
+                                <small class="text-muted">
+
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group">
+                                    <div class="input-group-text">Dari</div>
+                                    <input class="form-control" type="text" name="la_suhu_dari">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <div class="input-group-text">Sampai</div>
+                                    <input class="form-control" type="text" name="la_suhu_sampai">
+                                    <div class="input-group-text">°C</div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <hr>
+                        {{-- <div class="d-flex align-items-center justify-content-between p-2">
 
                             <div>
                                 <h6 class="mb-0 fw-semibold">
@@ -328,7 +386,7 @@
                         ></div>
 
 
-                        <hr>
+                        <hr> --}}
 
 
                         {{-- ==================================================
@@ -361,6 +419,25 @@
                             style="min-height:250px;"
                             class="p-2"
                         ></div>
+
+                        <div
+                            id="cairanTotalSummary"
+                            class="border rounded p-2 mt-2"
+                        >
+                            <div>
+                                <strong>Cairan Masuk</strong> :
+                                Infus <span id="totalCairanInfus">0</span> ml,
+                                Transfusi <span id="totalCairanTransfusi">0</span> ml,
+                                Total <strong><span id="totalCairanMasuk">0</span> ml</strong>
+                            </div>
+
+                            <div class="mt-1">
+                                <strong>Cairan Keluar</strong> :
+                                Urin <span id="totalCairanUrin">0</span> ml,
+                                Darah <span id="totalCairanDarah">0</span> ml,
+                                Total <strong><span id="totalCairanKeluar">0</span> ml</strong>
+                            </div>
+                        </div>
 
                         <hr>
 
@@ -717,22 +794,23 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Nilai</label>
-                        <input type="number" class="form-control" id="anestesiMonitoringNilai" min="0" max="300" step="1">
-                        <small class="text-muted">Nilai bebas 0–300</small>
-                    </div>
-
-                    <div class="mb-3">
                         <label class="form-label">Indikator</label>
                         <select class="form-select" id="anestesiMonitoringIndikator">
                             <option value="">Pilih indikator</option>
-                            <option value="tensi_rendah">Tensi Rendah</option>
-                            <option value="tensi_tinggi">Tensi Tinggi</option>
-                            <option value="nadi">Nadi</option>
+                            <option value="tensi_rendah">Tekanan Darah Sistolik</option>
+                            <option value="tensi_tinggi">Tekanan Darah Diastolik</option>
+                            <option value="nadi">Frekuensi Nadi</option>
                             <option value="resp_sr">Resp SR</option>
                             <option value="resp_ar">Resp AR</option>
                             <option value="resp_cr">Resp CR</option>
+                            <option value="spo2">SPO2</option>
                         </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nilai</label>
+                        <input type="number" class="form-control" id="anestesiMonitoringNilai" min="0" max="300" step="1">
+                        <small class="text-muted" id="anestesiMonitoringNilaiInfo">Acuan nilai bebas </small>
                     </div>
 
                     <div>
@@ -1117,31 +1195,111 @@
                     </div>
 
 
-                    <div class="mb-3">
+                    <div id="cairanMasukFields" hidden>
 
-                        <label class="form-label">
-                            Jumlah
-                        </label>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Cairan Infus
+                            </label>
 
-                        <div class="input-group">
+                            <div class="input-group">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="cairanInfus"
+                                    min="0"
+                                    step="1"
+                                >
 
-                            <input
-                                type="number"
-                                class="form-control"
-                                id="cairanNilai"
-                                min="0"
-                                max="300"
-                                step="1"
+                                <span class="input-group-text">
+                                    ml
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Transfusi
+                            </label>
+
+                            <select
+                                class="form-select"
+                                id="cairanTransfusi"
                             >
+                                <option value="">Tidak ada</option>
+                                <option value="PRC">PRC</option>
+                                <option value="WB">WB</option>
+                                <option value="TC">TC</option>
+                                <option value="FFP">FFP</option>
+                            </select>
+                        </div>
 
-                            <span class="input-group-text">
-                                ml
-                            </span>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Jumlah Transfusi
+                            </label>
 
+                            <div class="input-group">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="cairanTransfusiNilai"
+                                    min="0"
+                                    step="1"
+                                >
+
+                                <span class="input-group-text">
+                                    ml
+                                </span>
+                            </div>
                         </div>
 
                     </div>
 
+
+                    <div id="cairanKeluarFields" hidden>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Urin
+                            </label>
+
+                            <div class="input-group">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="cairanUrin"
+                                    min="0"
+                                    step="1"
+                                >
+
+                                <span class="input-group-text">
+                                    ml
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Darah
+                            </label>
+
+                            <div class="input-group">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    id="cairanDarah"
+                                    min="0"
+                                    step="1"
+                                >
+
+                                <span class="input-group-text">
+                                    ml
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
 
                     <div>
 
@@ -1223,12 +1381,34 @@
         keterangan: null
     };
     const indikatorMonitoring = {
-        tensi_rendah: { label: 'Tensi Rendah' },
-        tensi_tinggi: { label: 'Tensi Tinggi' },
-        nadi: { label: 'Nadi' },
-        resp_sr: { label: 'Resp SR' },
-        resp_ar: { label: 'Resp AR' },
-        resp_cr: { label: 'Resp CR' }
+        tensi_rendah: {
+            label: 'Tekanan Darah Sistolik',
+            marker: 'ꓦ'
+        },
+        tensi_tinggi: {
+            label: 'Tekanan Darah Diastolik',
+            marker: 'ꓥ'
+        },
+        nadi: {
+            label: 'Frekuensi Nadi',
+            marker: '●'
+        },
+        resp_sr: {
+            label: 'Resp SR',
+            marker: '+'
+        },
+        resp_ar: {
+            label: 'Resp AR',
+            marker: '+'
+        },
+        resp_cr: {
+            label: 'Resp CR',
+            marker: '+'
+        },
+        spo2: {
+            label: 'SPO2',
+            marker: '%'
+        }
     };
     const mappingForm = {
         LA_BB: 'la_bb',
@@ -1242,6 +1422,11 @@
         LA_HT: 'la_ht',
         LA_GD: 'la_gd',
         LA_PUASA: 'la_puasa',
+
+        LA_ZAT_ANESTESI: 'la_zat_anestesi',
+        LA_SUHU_DARI: 'la_suhu_dari',
+        LA_SUHU_SAMPAI: 'la_suhu_sampai',
+
         LA_PREM: 'la_prem',
         LA_PREM_JAM: 'la_prem_jam',
         LA_PREM_RUTE: 'la_prem_rute',
@@ -1285,6 +1470,28 @@
         LA_POS_LATERAL: 'la_pos_lateral',
         LA_CATATAN: 'la_catatan',
     };
+    $('#anestesiMonitoringIndikator').on('change', function () {
+        const indikator = $(this).val();
+
+        if (indikator === 'spo2') {
+            $('#anestesiMonitoringNilai')
+                .attr('max', 100)
+                .val(function () {
+                    const value = Number(this.value);
+
+                    return value > 100 ? 100 : this.value;
+                });
+
+            $('#anestesiMonitoringNilaiInfo')
+                .text('Nilai SPO2 0–100%');
+        } else {
+            $('#anestesiMonitoringNilai')
+                .attr('max', 300);
+
+            $('#anestesiMonitoringNilaiInfo')
+                .text('Nilai 0–300');
+        }
+    });
     function getForm() {
         if (isFormLoading) return;
         isFormLoading = true;
@@ -1483,19 +1690,38 @@
             dataLabels: {
                 enabled: true,
                 offsetY: -8,
+
                 style: {
-                    fontSize: '10px',
-                    fontWeight: 500
+                    fontSize: '11px',
+                    fontWeight: 700
                 },
+
                 background: {
                     enabled: true,
-                    borderRadius: 2,
+                    borderRadius: 50,
                     borderWidth: 1,
-                    opacity: 0.8
+                    opacity: 1,
+                    padding: 4
                 },
-                formatter: function (value) {
-                    if (value === null || value === undefined) return '';
-                    return value;
+
+                formatter: function (value, {
+                    seriesIndex
+                }) {
+                    if (
+                        value === null ||
+                        value === undefined
+                    ) {
+                        return '';
+                    }
+
+                    const indikator =
+                        indikatorKeys[seriesIndex];
+
+                    if (indikator === 'spo2') {
+                        return `${value}%`;
+                    }
+
+                    return indikatorMonitoring[indikator].marker;
                 }
             },
             xaxis: {
@@ -1607,7 +1833,10 @@
                             <div>${nama}</div>
                             <div class="mt-1">
                                 Nilai:
-                                <strong>${formatNilai(item.nilai)}</strong>
+                                <strong>
+                                    ${formatNilai(item.nilai)}
+                                    ${indikatorKey === 'spo2' ? '%' : ''}
+                                </strong>
                             </div>
                             ${keterangan}
                             <div class="mt-1 text-muted">
@@ -1773,6 +2002,8 @@
         $('#anestesiMonitoringMenit').text('Menit Ke - 0');
         $('#anestesiMonitoringWaktu').val('');
         $('#anestesiMonitoringNilai').val('');
+        $('#anestesiMonitoringNilai').attr('max', 300);
+        $('#anestesiMonitoringNilaiInfo').text('Nilai 0–300');
         $('#anestesiMonitoringIndikator').val('');
         $('#anestesiMonitoringKeterangan').val('');
     }
@@ -1789,14 +2020,18 @@
         );
         const indikator = $('#anestesiMonitoringIndikator').val();
         const keterangan = $('#anestesiMonitoringKeterangan').val();
+        const maxNilai = indikator === 'spo2' ? 100 : 300;
+
         if (
             Number.isNaN(nilai) ||
             nilai < 0 ||
-            nilai > 300
+            nilai > maxNilai
         ) {
             iziToast.warning({
                 title: 'Perhatian',
-                message: 'Nilai harus berada antara 0 sampai 300.',
+                message: indikator === 'spo2'
+                    ? 'Nilai SPO2 harus berada antara 0 sampai 100%.'
+                    : 'Nilai harus berada antara 0 sampai 300.',
                 position: 'topRight'
             });
             return;
@@ -2116,14 +2351,15 @@
                         ? data.temperatur
                         : [];
                 cairanData =
-                    Array.isArray(
-                        data.cairan
-                    )
+                    Array.isArray(data.cairan)
                         ? data.cairan
                         : [];
-                renderZatAnestesiChart();
-                renderTemperaturChart();
+
+                // renderZatAnestesiChart();
+                // renderTemperaturChart();
+
                 renderCairanChart();
+                updateCairanTotal();
             },
             error: function (xhr) {
                 console.error(
@@ -3170,18 +3406,20 @@
                         seriesIndex,
                         dataPointIndex
                     }) {
+
                         const jenis =
                             seriesIndex === 0
                                 ? 'masuk'
                                 : 'keluar';
+
                         const label =
                             seriesIndex === 0
                                 ? 'Masuk'
                                 : 'Keluar';
+
                         const minute =
-                            minutes[
-                                dataPointIndex
-                            ];
+                            minutes[dataPointIndex];
+
                         const item =
                             cairanData.find(
                                 function (row) {
@@ -3195,22 +3433,66 @@
                                     );
                                 }
                             );
+
                         return `
                             <div class="p-2">
+
                                 <strong>
                                     Cairan ${label}
                                 </strong>
+
                                 <div class="text-muted">
                                     ${minute} menit
                                     (${minuteToDuration(minute)})
                                 </div>
-                                <div class="mt-1">
-                                    ${
-                                        item
-                                            ? `${item.nilai} ml`
-                                            : 'Belum ada data'
-                                    }
-                                </div>
+
+                                ${
+                                    item
+                                        ? jenis === 'masuk'
+                                            ? `
+                                                <div class="mt-1">
+                                                    Infus :
+                                                    ${Number(item.infus || 0)} ml
+                                                </div>
+
+                                                <div>
+                                                    Transfusi :
+                                                    ${item.transfusi || '-'}
+                                                    ${
+                                                        Number(item.transfusi_nilai || 0) > 0
+                                                            ? `(${Number(item.transfusi_nilai)} ml)`
+                                                            : ''
+                                                    }
+                                                </div>
+
+                                                <div class="fw-semibold mt-1">
+                                                    Total :
+                                                    ${Number(item.nilai || 0)} ml
+                                                </div>
+                                            `
+                                            : `
+                                                <div class="mt-1">
+                                                    Urin :
+                                                    ${Number(item.urin || 0)} ml
+                                                </div>
+
+                                                <div>
+                                                    Darah :
+                                                    ${Number(item.darah || 0)} ml
+                                                </div>
+
+                                                <div class="fw-semibold mt-1">
+                                                    Total :
+                                                    ${Number(item.nilai || 0)} ml
+                                                </div>
+                                            `
+                                        : `
+                                            <div class="mt-1">
+                                                Belum ada data
+                                            </div>
+                                        `
+                                }
+
                             </div>
                         `;
                     }
@@ -3232,6 +3514,31 @@
                 options
             );
         cairanChart.render();
+    }
+    function updateCairanFields() {
+
+        const jenis = $('#cairanJenis').val();
+
+        $('#cairanMasukFields').prop(
+            'hidden',
+            jenis !== 'masuk'
+        );
+
+        $('#cairanKeluarFields').prop(
+            'hidden',
+            jenis !== 'keluar'
+        );
+
+        if (jenis !== 'masuk') {
+            $('#cairanInfus').val('');
+            $('#cairanTransfusi').val('');
+            $('#cairanTransfusiNilai').val('');
+        }
+
+        if (jenis !== 'keluar') {
+            $('#cairanUrin').val('');
+            $('#cairanDarah').val('');
+        }
     }
     // ==========================================================
     // CLICK CAIRAN
@@ -3302,38 +3609,47 @@
         jenis,
         existing = null
     ) {
+
         selectedCairan = {
-            id:
-                existing?.id || null,
-            menit:
-                minute,
-            jenis:
-                existing?.jenis || jenis,
-            nilai:
-                existing?.nilai ?? '',
-            keterangan:
-                existing?.keterangan || ''
+            id: existing?.id || null,
+            menit: minute,
+            jenis: existing?.jenis || jenis,
+            nilai: existing?.nilai ?? '',
+            keterangan: existing?.keterangan ?? ''
         };
+
         $('#cairanMenitBadge')
-            .text(
-                `Menit ${minute}`
-            );
+            .text(`Menit ${minute}`);
+
         $('#cairanWaktu')
             .val(
+                existing?.waktu ||
                 minuteToDuration(minute)
             );
+
         $('#cairanJenis')
-            .val(
-                selectedCairan.jenis
-            );
-        $('#cairanNilai')
-            .val(
-                selectedCairan.nilai
-            );
+            .val(selectedCairan.jenis);
+
+        $('#cairanInfus')
+            .val(existing?.infus ?? '');
+
+        $('#cairanTransfusi')
+            .val(existing?.transfusi ?? '');
+
+        $('#cairanTransfusiNilai')
+            .val(existing?.transfusi_nilai ?? '');
+
+        $('#cairanUrin')
+            .val(existing?.urin ?? '');
+
+        $('#cairanDarah')
+            .val(existing?.darah ?? '');
+
         $('#cairanKeterangan')
-            .val(
-                selectedCairan.keterangan
-            );
+            .val(selectedCairan.keterangan);
+
+        updateCairanFields();
+
         bootstrap.Modal
             .getOrCreateInstance(
                 document.getElementById(
@@ -3346,60 +3662,164 @@
     // SIMPAN CAIRAN
     // ==========================================================
     function simpanCairan() {
-        const jenis =
-            $('#cairanJenis').val();
-        const nilai =
-            Number(
-                $('#cairanNilai').val()
-            );
-        const keterangan =
-            $('#cairanKeterangan').val();
+
+        const jenis = $('#cairanJenis').val();
+        const waktu = $('#cairanWaktu').val();
+        const keterangan = $('#cairanKeterangan').val();
+
         if (!jenis) {
             iziToast.warning({
-                title:
-                    'Perhatian',
-                message:
-                    'Silakan pilih jenis cairan.',
-                position:
-                    'topRight'
+                title: 'Perhatian',
+                message: 'Silakan pilih jenis cairan.',
+                position: 'topRight'
             });
+
             return;
         }
-        if (
-            Number.isNaN(nilai) ||
-            nilai < 0 ||
-            nilai > 300
-        ) {
-            iziToast.warning({
-                title:
-                    'Perhatian',
-                message:
-                    'Jumlah cairan harus berada antara 0–300 ml.',
-                position:
-                    'topRight'
-            });
-            return;
+
+        const infus =
+            Number($('#cairanInfus').val()) || 0;
+
+        const transfusi =
+            $('#cairanTransfusi').val();
+
+        const transfusiNilai =
+            Number($('#cairanTransfusiNilai').val()) || 0;
+
+        const urin =
+            Number($('#cairanUrin').val()) || 0;
+
+        const darah =
+            Number($('#cairanDarah').val()) || 0;
+
+        let nilai = 0;
+
+        if (jenis === 'masuk') {
+
+            nilai =
+                infus +
+                transfusiNilai;
+
+            if (nilai <= 0) {
+                iziToast.warning({
+                    title: 'Perhatian',
+                    message: 'Nilai Infus atau Transfusi harus diisi.',
+                    position: 'topRight'
+                });
+
+                return;
+            }
         }
+
+        if (jenis === 'keluar') {
+
+            nilai =
+                urin +
+                darah;
+
+            if (nilai <= 0) {
+                iziToast.warning({
+                    title: 'Perhatian',
+                    message: 'Nilai Urin atau Darah harus diisi.',
+                    position: 'topRight'
+                });
+
+                return;
+            }
+        }
+
         saveDetail({
-            id:
-                selectedCairan.id,
-            jenis_data:
-                'cairan',
-            waktu:
-                minuteToDuration(
-                    selectedCairan.menit
-                ),
-            baris:
-                null,
-            zat:
-                null,
-            nilai:
-                nilai,
-            jenis:
-                jenis,
-            keterangan:
-                keterangan
+
+            id: selectedCairan.id,
+
+            jenis_data: 'cairan',
+
+            waktu: waktu,
+
+            baris: null,
+
+            zat: null,
+
+            nilai: nilai,
+
+            jenis: jenis,
+
+            infus: jenis === 'masuk'
+                ? infus
+                : null,
+
+            transfusi: jenis === 'masuk'
+                ? transfusi
+                : null,
+
+            transfusi_nilai: jenis === 'masuk'
+                ? transfusiNilai
+                : null,
+
+            urin: jenis === 'keluar'
+                ? urin
+                : null,
+
+            darah: jenis === 'keluar'
+                ? darah
+                : null,
+
+            keterangan: keterangan
         });
+    }
+    function updateCairanTotal() {
+
+        let totalInfus = 0;
+        let totalTransfusi = 0;
+        let totalUrin = 0;
+        let totalDarah = 0;
+
+        cairanData.forEach(function (item) {
+
+            if (item.jenis === 'masuk') {
+
+                totalInfus +=
+                    Number(item.infus || 0);
+
+                totalTransfusi +=
+                    Number(item.transfusi_nilai || 0);
+            }
+
+            if (item.jenis === 'keluar') {
+
+                totalUrin +=
+                    Number(item.urin || 0);
+
+                totalDarah +=
+                    Number(item.darah || 0);
+            }
+        });
+
+        const totalMasuk =
+            totalInfus +
+            totalTransfusi;
+
+        const totalKeluar =
+            totalUrin +
+            totalDarah;
+
+        $('#totalCairanInfus')
+            .text(totalInfus);
+
+        $('#totalCairanTransfusi')
+            .text(totalTransfusi);
+
+        $('#totalCairanMasuk')
+            .text(totalMasuk);
+
+        $('#totalCairanUrin')
+            .text(totalUrin);
+
+        $('#totalCairanDarah')
+            .text(totalDarah);
+
+        $('#totalCairanKeluar')
+            .text(totalKeluar);
     }
     // ==========================================================
     // SAVE DETAIL
@@ -3527,6 +3947,7 @@
             .val('');
     }
     function resetCairanModal() {
+
         selectedCairan = {
             id: null,
             menit: null,
@@ -3534,20 +3955,55 @@
             nilai: null,
             keterangan: ''
         };
+
         $('#cairanMenitBadge')
             .text('Menit 0');
+
         $('#cairanWaktu')
             .val('');
+
         $('#cairanJenis')
             .val('');
-        $('#cairanNilai')
+
+        $('#cairanInfus')
             .val('');
+
+        $('#cairanTransfusi')
+            .val('');
+
+        $('#cairanTransfusiNilai')
+            .val('');
+
+        $('#cairanUrin')
+            .val('');
+
+        $('#cairanDarah')
+            .val('');
+
         $('#cairanKeterangan')
             .val('');
+
+        updateCairanFields();
     }
     // ==========================================================
     // EVENT
     // ==========================================================
+    // $form.on('change', '#cairanJenis', function () {
+
+    //     const jenis = $(this).val();
+
+    //     $('#cairanMasukWrapper').addClass('d-none');
+    //     $('#cairanKeluarWrapper').addClass('d-none');
+
+    //     if (jenis === 'masuk') {
+    //         $('#cairanMasukWrapper').removeClass('d-none');
+    //     }
+
+    //     if (jenis === 'keluar') {
+    //         $('#cairanKeluarWrapper').removeClass('d-none');
+    //     }
+
+    // });
     $form.on(
         'click',
         '#btnSimpanZatAnestesi',
@@ -3597,6 +4053,13 @@
         '#btnRefreshCairan',
         function () {
             getMonitoringDetail();
+        }
+    );
+    $form.on(
+        'change',
+        '#cairanJenis',
+        function () {
+            updateCairanFields();
         }
     );
     // ==========================================================

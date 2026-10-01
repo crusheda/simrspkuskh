@@ -473,6 +473,15 @@
         );
 
         loadRiwayatKunjunganPasien();
+
+        // ----------------------------------------------------
+        // Saat Buka Halaman Medical Record, Sidebar Terbuka
+        // ----------------------------------------------------
+        $('html').attr('data-app-sidebar', 'full');
+        $('a[role="tab"]').removeClass('active');
+        $('div[role="tabpanel"]').removeClass('active show');
+        $('a[href="#digitalTab"]').addClass('active').attr('aria-selected', 'true');
+        $('#digitalTab').removeClass('active show').addClass('active show');
     });
 
     function initCppt() {
