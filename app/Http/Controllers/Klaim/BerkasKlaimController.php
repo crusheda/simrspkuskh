@@ -362,13 +362,14 @@ class BerkasKlaimController extends Controller
                         '/doc/klaim/lab/cetakBerkasLab.docx'
                     )
                 );
+                // dd($nipAnalis);
 
                 // ==========================
                 // GET TTD ANALIS
                 // ==========================
                 $ttd_analis = DB::table('simrspku_klaim.tanda_tangan_pegawai')
-                    // ->where('nip', $nipAnalis)
-                    ->where('nip', 1912314)
+                    ->where('nip', $nipAnalis)
+                    // ->where('nip', 1912314)
                     ->where('status', 1)
                     ->whereNull('deleted_at')
                     ->inRandomOrder()
@@ -401,35 +402,51 @@ class BerkasKlaimController extends Controller
                 // ==========================
                 // GET TTD DOKTER
                 // ==========================
-                $ttd_dokter = DB::table('simrspku_klaim.tanda_tangan_pegawai')
-                    // ->where('nip', $getLabValue($lab,'DOKTER'))
-                    ->where('nip', 1912314)
-                    ->where('status', 1)
-                    ->whereNull('deleted_at')
-                    ->inRandomOrder()
-                    ->first();
+                // $ttd_dokter = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+                //     ->where('nip', $getLabValue($lab,'DOKTER'))
+                //     // ->where('nip', 1912314)
+                //     ->where('status', 1)
+                //     ->whereNull('deleted_at')
+                //     ->inRandomOrder()
+                //     ->first();
+                // dd($getLabValue($lab,'NIPDPJP'));
 
-                if (!$ttd_dokter) {
-                    throw new \Exception('TTD Dokter Laboratorium tidak ditemukan');
-                }
+                // if (!$ttd_dokter) {
+                //     throw new \Exception('TTD Dokter Laboratorium tidak ditemukan');
+                // }
 
-                if (
-                    Storage::disk('public')->exists(
-                        $ttd_dokter->signature_path
-                    )
-                ) {
+                // if (
+                //     Storage::disk('public')->exists(
+                //         $ttd_dokter->signature_path
+                //     )
+                // ) {
+                //     $this->setImgWord(
+                //         $templateProcessor,
+                //         'TTD_DOKTER',
+                //         Storage::disk('public')->path(
+                //             $ttd_dokter->signature_path
+                //         ),
+                //         200
+                //     );
+                // } else {
+                //     throw new \Exception(
+                //         'File TTD Dokter Laboratorium tidak ditemukan: '
+                //         . $ttd_dokter->signature_path
+                //     );
+                // }
+                $ttd_dokter = public_path() . "/doc/input/laborat/ttd-dokter.png";
+
+                if (File::exists($ttd_dokter)) {
                     $this->setImgWord(
                         $templateProcessor,
                         'TTD_DOKTER',
-                        Storage::disk('public')->path(
-                            $ttd_dokter->signature_path
-                        ),
+                        $ttd_dokter,
                         200
                     );
                 } else {
                     throw new \Exception(
                         'File TTD Dokter Laboratorium tidak ditemukan: '
-                        . $ttd_dokter->signature_path
+                        . $ttd_dokter
                     );
                 }
 
@@ -910,9 +927,200 @@ class BerkasKlaimController extends Controller
             | JIKA HANYA ADA SATU PDF
             |--------------------------------------------------------------------------
             */
-            if (count($temporaryFiles) === 1) {
+            // if (count($temporaryFiles) === 1) {
 
-                $finalPdf = $output . '.pdf';
+            //     $finalPdf = $output . '.pdf';
+
+            //     if (File::exists($finalPdf)) {
+            //         File::delete($finalPdf);
+            //     }
+
+            //     File::move(
+            //         $temporaryFiles[0],
+            //         $finalPdf
+            //     );
+
+            //     return true;
+            // }
+
+            // /*
+            // |--------------------------------------------------------------------------
+            // | MERGE SEMUA PDF
+            // |--------------------------------------------------------------------------
+            // */
+            // $pdf = new Fpdi();
+
+            // foreach ($temporaryFiles as $temporaryPdf) {
+
+            //     if (!File::exists($temporaryPdf)) {
+            //         continue;
+            //     }
+
+            //     /*
+            //     |--------------------------------------------------------------------------
+            //     | AMBIL JUMLAH HALAMAN PDF
+            //     |--------------------------------------------------------------------------
+            //     */
+            //     $pageCount = $pdf->setSourceFile(
+            //         $temporaryPdf
+            //     );
+
+            //     /*
+            //     |--------------------------------------------------------------------------
+            //     | IMPORT SETIAP HALAMAN
+            //     |--------------------------------------------------------------------------
+            //     */
+            //     for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+
+            //         $templateId = $pdf->importPage(
+            //             $pageNo
+            //         );
+
+            //         $size = $pdf->getTemplateSize(
+            //             $templateId
+            //         );
+
+            //         /*
+            //         |--------------------------------------------------------------------------
+            //         | ORIENTASI
+            //         |--------------------------------------------------------------------------
+            //         */
+            //         $orientation = (
+            //             $size['width'] > $size['height']
+            //         )
+            //             ? 'L'
+            //             : 'P';
+
+            //         /*
+            //         |--------------------------------------------------------------------------
+            //         | BUAT HALAMAN DENGAN UKURAN YANG SAMA
+            //         |--------------------------------------------------------------------------
+            //         */
+            //         $pdf->AddPage(
+            //             $orientation,
+            //             [
+            //                 $size['width'],
+            //                 $size['height']
+            //             ]
+            //         );
+
+            //         /*
+            //         |--------------------------------------------------------------------------
+            //         | LETAKKAN HALAMAN HASIL
+            //         |--------------------------------------------------------------------------
+            //         */
+            //         $pdf->useTemplate(
+            //             $templateId,
+            //             0,
+            //             0,
+            //             $size['width'],
+            //             $size['height']
+            //         );
+            //     }
+            // }
+
+            // /*
+            // |--------------------------------------------------------------------------
+            // | OUTPUT PDF FINAL
+            // |--------------------------------------------------------------------------
+            // */
+            // $finalPdf = $output . '.pdf';
+
+            // /*
+            // |--------------------------------------------------------------------------
+            // | SAVE TO DB
+            // |--------------------------------------------------------------------------
+            // */
+            // DB::table('simrspku_klaim.klaim_file')
+            //     ->updateOrInsert(
+            //         [
+            //             'nomor' => $kunjungan,
+            //             'jenis' => 6,
+            //         ],
+            //         [
+            //             'title' => $fileName . '.pdf',
+            //             'filename' => $path . '.pdf',
+            //             'user' => auth()->user()->ID,
+            //             'status' => true,
+            //             'deleted_at' => null,
+            //             'created_at' => now(),
+            //             'updated_at' => now(),
+            //         ]
+            //     );
+
+            // /*
+            // |--------------------------------------------------------------------------
+            // | HAPUS PDF FINAL LAMA
+            // |--------------------------------------------------------------------------
+            // */
+            // if (File::exists($finalPdf)) {
+
+            //     File::delete($finalPdf);
+            // }
+
+            // /*
+            // |--------------------------------------------------------------------------
+            // | SAVE PDF FINAL
+            // |--------------------------------------------------------------------------
+            // */
+            // $pdf->Output(
+            //     $finalPdf,
+            //     'F'
+            // );
+
+            // /*
+            // |--------------------------------------------------------------------------
+            // | HAPUS SEMUA FILE SEMENTARA
+            // |--------------------------------------------------------------------------
+            // */
+            // foreach ($temporaryFiles as $temporaryPdf) {
+
+            //     if (File::exists($temporaryPdf)) {
+
+            //         File::delete($temporaryPdf);
+            //     }
+            // }
+
+            // /*
+            // |--------------------------------------------------------------------------
+            // | VALIDASI FINAL
+            // |--------------------------------------------------------------------------
+            // */
+            // if (!File::exists($finalPdf)) {
+            //     throw new \Exception(
+            //         'PDF hasil lab gagal dibuat'
+            //     );
+            // }
+
+            // DB::commit();
+
+            // return response()->file($finalPdf, [
+            //     'Content-Type' => 'application/pdf',
+            //     'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            //     'Pragma'        => 'no-cache',
+            //     'Expires'       => '0',
+            // ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | OUTPUT PDF FINAL
+            |--------------------------------------------------------------------------
+            */
+
+            $finalPdf = $output . '.pdf';
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | JIKA HANYA ADA SATU PDF
+            |--------------------------------------------------------------------------
+            |
+            | Tidak perlu merge dengan FPDI.
+            | Cukup pindahkan PDF sementara menjadi PDF final.
+            |
+            */
+
+            if (count($temporaryFiles) === 1) {
 
                 if (File::exists($finalPdf)) {
                     File::delete($finalPdf);
@@ -923,97 +1131,112 @@ class BerkasKlaimController extends Controller
                     $finalPdf
                 );
 
-                return true;
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | MERGE SEMUA PDF
-            |--------------------------------------------------------------------------
-            */
-            $pdf = new Fpdi();
-
-            foreach ($temporaryFiles as $temporaryPdf) {
-
-                if (!File::exists($temporaryPdf)) {
-                    continue;
-                }
+            } else {
 
                 /*
                 |--------------------------------------------------------------------------
-                | AMBIL JUMLAH HALAMAN PDF
+                | MERGE SEMUA PDF
                 |--------------------------------------------------------------------------
                 */
-                $pageCount = $pdf->setSourceFile(
-                    $temporaryPdf
-                );
 
-                /*
-                |--------------------------------------------------------------------------
-                | IMPORT SETIAP HALAMAN
-                |--------------------------------------------------------------------------
-                */
-                for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $pdf = new Fpdi();
 
-                    $templateId = $pdf->importPage(
-                        $pageNo
-                    );
+                foreach ($temporaryFiles as $temporaryPdf) {
 
-                    $size = $pdf->getTemplateSize(
-                        $templateId
-                    );
+                    if (!File::exists($temporaryPdf)) {
+                        continue;
+                    }
 
                     /*
                     |--------------------------------------------------------------------------
-                    | ORIENTASI
+                    | AMBIL JUMLAH HALAMAN PDF
                     |--------------------------------------------------------------------------
                     */
-                    $orientation = (
-                        $size['width'] > $size['height']
-                    )
-                        ? 'L'
-                        : 'P';
+
+                    $pageCount = $pdf->setSourceFile(
+                        $temporaryPdf
+                    );
+
 
                     /*
                     |--------------------------------------------------------------------------
-                    | BUAT HALAMAN DENGAN UKURAN YANG SAMA
+                    | IMPORT SETIAP HALAMAN
                     |--------------------------------------------------------------------------
                     */
-                    $pdf->AddPage(
-                        $orientation,
-                        [
+
+                    for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+
+                        $templateId = $pdf->importPage(
+                            $pageNo
+                        );
+
+                        $size = $pdf->getTemplateSize(
+                            $templateId
+                        );
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | ORIENTASI
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $orientation = (
+                            $size['width'] > $size['height']
+                        )
+                            ? 'L'
+                            : 'P';
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | BUAT HALAMAN DENGAN UKURAN YANG SAMA
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $pdf->AddPage(
+                            $orientation,
+                            [
+                                $size['width'],
+                                $size['height']
+                            ]
+                        );
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | LETAKKAN HALAMAN HASIL
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $pdf->useTemplate(
+                            $templateId,
+                            0,
+                            0,
                             $size['width'],
                             $size['height']
-                        ]
-                    );
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | LETAKKAN HALAMAN HASIL
-                    |--------------------------------------------------------------------------
-                    */
-                    $pdf->useTemplate(
-                        $templateId,
-                        0,
-                        0,
-                        $size['width'],
-                        $size['height']
-                    );
+                        );
+                    }
                 }
-            }
 
-            /*
-            |--------------------------------------------------------------------------
-            | OUTPUT PDF FINAL
-            |--------------------------------------------------------------------------
-            */
-            $finalPdf = $output . '.pdf';
+                /*
+                |--------------------------------------------------------------------------
+                | SIMPAN PDF HASIL MERGE
+                |--------------------------------------------------------------------------
+                */
+
+                $pdf->Output(
+                    $finalPdf,
+                    'F'
+                );
+            }
 
             /*
             |--------------------------------------------------------------------------
             | SAVE TO DB
             |--------------------------------------------------------------------------
             */
+
             DB::table('simrspku_klaim.klaim_file')
                 ->updateOrInsert(
                     [
@@ -1031,51 +1254,49 @@ class BerkasKlaimController extends Controller
                     ]
                 );
 
-            /*
-            |--------------------------------------------------------------------------
-            | HAPUS PDF FINAL LAMA
-            |--------------------------------------------------------------------------
-            */
-            if (File::exists($finalPdf)) {
-
-                File::delete($finalPdf);
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | SAVE PDF FINAL
-            |--------------------------------------------------------------------------
-            */
-            $pdf->Output(
-                $finalPdf,
-                'F'
-            );
 
             /*
             |--------------------------------------------------------------------------
             | HAPUS SEMUA FILE SEMENTARA
             |--------------------------------------------------------------------------
             */
+
             foreach ($temporaryFiles as $temporaryPdf) {
 
                 if (File::exists($temporaryPdf)) {
-
                     File::delete($temporaryPdf);
                 }
             }
+
 
             /*
             |--------------------------------------------------------------------------
             | VALIDASI FINAL
             |--------------------------------------------------------------------------
             */
+
             if (!File::exists($finalPdf)) {
+
                 throw new \Exception(
                     'PDF hasil lab gagal dibuat'
                 );
             }
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | COMMIT
+            |--------------------------------------------------------------------------
+            */
+
             DB::commit();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | RETURN PDF
+            |--------------------------------------------------------------------------
+            */
 
             return response()->file($finalPdf, [
                 'Content-Type' => 'application/pdf',
