@@ -36,7 +36,7 @@ class PengkajianPraAnestesiInduksiController extends Controller
             ->select('dok.ID', DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'), 'ag.DESKRIPSI AS AGAMA', 'kj.DESKRIPSI AS PEKERJAAN')
             ->where('pk.NOMOR', $kunjungan)
             ->first();
-        
+
         $dokterAnestesi = DB::table('master.dokter_ruangan AS dr')
             ->leftJoin(
                 'master.dokter AS dok',
@@ -65,27 +65,39 @@ class PengkajianPraAnestesiInduksiController extends Controller
     function getForm($kunjungan)
     {
         $data = DB::table('simrspku_pengkajian.pengkajian_praanestesi')
+        ->where('KUNJUNGAN', $kunjungan)
+        ->first();
+
+        $ttv = DB::table('simrspku_pengkajian.pengkajian_prabedah')
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
 
         return response()->json([
             'success' => true,
-            'data' => $data
+            'data' => $data,
+            'ttv' => $ttv
         ]);
     }
 
     function simpanForm(Request $request, $kunjungan)
     {
+        DB::beginTransaction();
+
         try {
-            
+
             $ppa = $request->input('pai_ppa');
 
             $ppaKhusus = $ppa == 3
                 ? $request->input('pai_ppa_rawat_khusus')
                 : null;
 
+            $darah = $request->darah;
+
             $data = [
                 'KUNJUNGAN' => $kunjungan,
+
+                'DS_TANGGAL' => $request->pa_ds_tanggal,
+                'DS_JAM'     => $request->pa_ds_jam,
 
                 'HILANG_GIGI' => $request->pai_cb_hg,
                 'MOBILISASI_LEHER' => $request->pai_cb_mbl,
@@ -112,6 +124,14 @@ class PengkajianPraAnestesiInduksiController extends Controller
                 'THORAKS_PULMO' => $request->pai_thrpul,
                 'ABDOMEN' => $request->pai_abd,
                 'EKSTREMITAS' => $request->pai_eks,
+
+                'DARAH' => $darah,
+                'DARAH_JUMLAH' => $darah == 2
+                    ? $request->darah_jumlah
+                    : null,
+                'DARAH_JENIS' => $darah == 2
+                    ? $request->darah_jenis
+                    : null,
 
                 'DIAGNOSIS_1' => $request->pai_diag1,
                 'DIAGNOSIS_2' => $request->pai_diag2,
@@ -164,12 +184,51 @@ class PengkajianPraAnestesiInduksiController extends Controller
                     ->insert($data);
             }
 
+            // ==========================================================
+            // TANDA VITAL
+            // Disimpan di pengkajian_prabedah
+            // ==========================================================
+
+            $ttv = [
+                'TV_TD_UP' => $request->input('pa_tv_td_up'),
+                'TV_TD_DOWN' => $request->input('pa_tv_td_down'),
+                'TV_NADI' => $request->input('pa_tv_nadi'),
+                'TV_NADI_CB' => $request->input('pa_tv_nadi_cb'),
+                'TV_NAFAS' => $request->input('pa_tv_nafas'),
+                'TV_NAFAS_CB' => $request->input('pa_tv_nafas_cb'),
+                'TV_SUHU' => $request->input('pa_tv_suhu'),
+                'TV_SPO2' => $request->input('pa_tv_spo2'),
+                'updated_at' => now(),
+            ];
+
+            $adaTtv = collect($ttv)
+                ->except('updated_at')
+                ->contains(function ($value) {
+                    return $value !== null && $value !== '';
+                });
+
+            if ($adaTtv) {
+
+                $ttv['KUNJUNGAN'] = $kunjungan;
+
+                DB::table('simrspku_pengkajian.pengkajian_prabedah')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $kunjungan
+                        ],
+                        $ttv
+                    );
+            }
+
+            DB::commit();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data pengkajian pra anestesi berhasil disimpan.'
             ]);
 
         } catch (\Throwable $e) {
+            DB::rollBack();
 
             return response()->json([
                 'success' => false,

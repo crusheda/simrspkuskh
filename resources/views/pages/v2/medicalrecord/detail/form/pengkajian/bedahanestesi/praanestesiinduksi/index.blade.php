@@ -2,6 +2,20 @@
     <h1 class="display-6 mb-1 mt-2 fs-23 fw-medium"><center>PENGKAJIAN AWAL <b class="text-success">PRA ANESTESI DAN INDUKSI</b></center></h1>
     <div class="form-content mt-3">
         <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="form-group mb-2">
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <h6 class="mb-2">Tanggal</h6>
+                            <input type="date" class="form-control" name="pa_ds_tanggal" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-2">Jam</h6>
+                            <input type="time" class="form-control" name="pa_ds_jam" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="col-md-6">
                 <div class="d-flex align-items-center justify-content-between pe-md-3 mb-2">
                     <label class="form-label mb-0 text-nowrap">
@@ -10,7 +24,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_hg" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_hg" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -26,7 +40,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_mbl" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_mbl" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -42,7 +56,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_lp" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_lp" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -58,7 +72,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_bat" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_bat" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -74,7 +88,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_sn" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_sn" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -90,7 +104,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_bsmi" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_bsmi" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -106,7 +120,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_pmtn" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_pmtn" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -122,7 +136,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_str" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_str" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -141,7 +155,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_sda" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_sda" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -157,7 +171,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_djtn" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_djtn" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -173,7 +187,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_mth" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_mth" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -189,7 +203,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_skg" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_skg" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -205,7 +219,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_kjg" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_kjg" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -221,7 +235,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_shl" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_shl" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -237,7 +251,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_pgs" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_pgs" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -253,7 +267,7 @@
 
                     <div class="d-flex align-items-center gap-3">
                         <div class="form-check mb-0">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_obs" value="1">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pai_cb_obs" value="1" checked>
                             <label class="form-check-label">Tidak</label>
                         </div>
                         <div class="form-check mb-0">
@@ -264,13 +278,123 @@
                 </div>
             </div>
             <div class="col-md-12">
-                @include(
-                    'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.tanda_vital',
-                    [
-                        'section' => '#form_praanestesi',
-                        'page' => 'dokter',
-                    ]
-                )
+                <h4 class="mb-2 text-primary">Tanda Vital</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        {{-- TEKANAN DARAH --}}
+                        <div class="form-group mb-3" data-ttv-neonatus>
+                            <label class="form-label">
+                                Tekanan Darah
+                            </label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="pa_tv_td_up">
+                                <div class="input-group-text">
+                                    /
+                                </div>
+                                <input type="number" class="form-control" name="pa_tv_td_down">
+                                <div class="input-group-text">
+                                    mmHg
+                                </div>
+                            </div>
+                        </div>
+                        {{-- FREKUENSI NADI --}}
+                        <div class="form-group mb-3">
+                            <label class="form-label">
+                                Frekuensi Nadi
+                            </label>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="input-group flex-grow-1">
+                                    <input type="number" class="form-control" name="pa_tv_nadi">
+                                    <span class="input-group-text">
+                                        X/menit
+                                    </span>
+                                </div>
+
+                                {{-- REGULER --}}
+                                <div class="form-check m-0">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="pa_tv_nadi_cb"value="1" checked>
+                                    <label class="form-check-label">
+                                        Reguler
+                                    </label>
+                                </div>
+
+                                {{-- IREGULER --}}
+                                <div class="form-check m-0">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="pa_tv_nadi_cb"value="2">
+                                    <label class="form-check-label">
+                                        Ireguler
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        {{-- FREKUENSI NAFAS --}}
+                        <div class="form-group mb-3">
+                            <label class="form-label">
+                                Frekuensi Nafas
+                            </label>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="input-group flex-grow-1">
+                                    <input type="number" class="form-control" name="pa_tv_nafas">
+                                    <span class="input-group-text">
+                                        X/menit
+                                    </span>
+                                </div>
+
+                                {{-- SIMETRIS --}}
+                                <div class="form-check m-0">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="pa_tv_nafas_cb"value="1" checked>
+                                    <label class="form-check-label">
+                                        Simetris
+                                    </label>
+                                </div>
+
+                                {{-- ASIMETRIS --}}
+                                <div class="form-check m-0">
+                                    <input class="form-check-input single-checkbox" type="checkbox" name="pa_tv_nafas_cb"value="2">
+                                    <label class="form-check-label">
+                                        Asimetris
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- SUHU + SPO2 --}}
+                        <div class="row">
+
+                            {{-- SUHU --}}
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">
+                                        Suhu
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" name="pa_tv_suhu">
+                                        <div class="input-group-text">
+                                            °C
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- SPO2 --}}
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">
+                                        SpO2
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" name="pa_tv_spo2">
+                                        <div class="input-group-text">
+                                            %
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-12">
                 <div class="form-group mb-3">
@@ -313,6 +437,40 @@
                 </div>
                 <div class="mb-3">
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_radiologi')
+                </div>
+            </div>
+            <div class="col-md-12">
+                <h6>Ketersediaan Darah</h6>
+                <div class="form-group mb-3">
+                    <div class="d-flex gap-2 align-items-center mb-2">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="darah" id="darah_tidak" value="1" checked>
+                            <label class="form-check-label mb-0 flex-shrink-0">
+                                Tidak
+                            </label>
+                        </div>
+                        <div class="form-check mb-0">
+                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="darah" id="darah_ada" value="2">
+                            <label class="form-check-label mb-0 flex-shrink-0">
+                                Ada
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row" id="detail-ketersediaan-darah" style="display: none;">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold" for="">Jumlah</label>
+                            <input class="form-control form-control-sm" type="text" name="darah_jumlah">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold" for="">Jenis</label>
+                            <select class="form-select form-select-sm" name="darah_jenis" id="darah_jenis">
+                                <option value="PRC">PRC (Packed Red Cell)</option>
+                                <option value="WB">WB (Whole Blood)</option>
+                                <option value="TC">TC (Trombosit Concentrate)</option>
+                                <option value="FFP">FFP (Fresh Frozen Plasma)</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-12">
@@ -526,6 +684,42 @@
     let isDataLoading = false;
     let isDataSaving = false;
 
+    function setDefaultTanggalJam() {
+
+        const $tanggal = $form.find('[name="pa_ds_tanggal"]');
+        const $jam = $form.find('[name="pa_ds_jam"]');
+
+        if (!$tanggal.length || !$jam.length) {
+            return;
+        }
+
+        const now = new Date();
+
+        const tanggal =
+            now.getFullYear() +
+            '-' +
+            String(now.getMonth() + 1).padStart(2, '0') +
+            '-' +
+            String(now.getDate()).padStart(2, '0');
+
+        const jam =
+            String(now.getHours()).padStart(2, '0') +
+            ':' +
+            String(now.getMinutes()).padStart(2, '0');
+
+        // Hanya default jika kosong
+        if (!$tanggal.val()) {
+            $tanggal.val(tanggal);
+        }
+
+        if (!$jam.val()) {
+            $jam.val(jam);
+        }
+
+        $tanggal.prop('readonly', true);
+        $jam.prop('readonly', true);
+    }
+
     // ==========================================================
     // GET DATA
     // ==========================================================
@@ -545,11 +739,100 @@
 
             success: function (res) {
 
-                const tlt = res.data;
+                const tlt = res.data || {};
+                const ttv = res.ttv || {};
 
-                if (!tlt) {
+                // ==================================================
+                // TANDA VITAL
+                // ==================================================
+
+                if (FormHelper.hasValue(ttv.TV_TD_UP)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pa_tv_td_up',
+                        ttv.TV_TD_UP
+                    );
+                }
+
+                if (FormHelper.hasValue(ttv.TV_TD_DOWN)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pa_tv_td_down',
+                        ttv.TV_TD_DOWN
+                    );
+                }
+
+                if (FormHelper.hasValue(ttv.TV_NADI)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pa_tv_nadi',
+                        ttv.TV_NADI
+                    );
+                }
+
+                setCheckboxValue(
+                    'pa_tv_nadi_cb',
+                    ttv.TV_NADI_CB
+                );
+
+                if (FormHelper.hasValue(ttv.TV_NAFAS)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pa_tv_nafas',
+                        ttv.TV_NAFAS
+                    );
+                }
+
+                setCheckboxValue(
+                    'pa_tv_nafas_cb',
+                    ttv.TV_NAFAS_CB
+                );
+
+                if (FormHelper.hasValue(ttv.TV_SUHU)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pa_tv_suhu',
+                        ttv.TV_SUHU
+                    );
+                }
+
+                if (FormHelper.hasValue(ttv.TV_SPO2)) {
+                    FormHelper.setValue(
+                        $form,
+                        'pa_tv_spo2',
+                        ttv.TV_SPO2
+                    );
+                }
+
+                // ==================================================
+                // JIKA DATA PRA ANESTESI BELUM ADA
+                // TTV TETAP SUDAH BISA DITAMPILKAN
+                // ==================================================
+
+                if (!res.data) {
                     return;
                 }
+
+                // ==========================================
+                // DATA TANGGAL & JAM DARI DATABASE
+                // ==========================================
+
+                if (tlt.DS_TANGGAL) {
+                    $form
+                        .find('[name="pa_ds_tanggal"]')
+                        .val(tlt.DS_TANGGAL);
+                }
+
+                if (tlt.DS_JAM) {
+                    $form
+                        .find('[name="pa_ds_jam"]')
+                        .val(String(tlt.DS_JAM).substring(0, 5));
+                }
+
+                // Pastikan tetap readonly
+                $form
+                    .find('[name="pa_ds_tanggal"], [name="pa_ds_jam"]')
+                    .prop('readonly', true);
 
                 // ==================================================
                 // KONDISI / ANAMNESIS
@@ -622,6 +905,24 @@
                         tlt.EKSTREMITAS
                     );
                 }
+
+                // DARAH
+
+                setCheckboxValue('darah', tlt.DARAH);
+
+                FormHelper.setValue(
+                    $form,
+                    'darah_jumlah',
+                    tlt.DARAH_JUMLAH
+                );
+
+                FormHelper.setValue(
+                    $form,
+                    'darah_jenis',
+                    tlt.DARAH_JENIS
+                );
+
+                toggleKetersediaanDarah();
 
                 // ==================================================
                 // DIAGNOSIS
@@ -696,6 +997,8 @@
                         tlt.GA_KETERANGAN
                     );
                 }
+
+                updateEnableWhen($form);
 
                 setCheckboxValue('pai_reg_s', tlt.REGIONAL_SPINAL);
                 setCheckboxValue('pai_reg_e', tlt.REGIONAL_EPIDURAL);
@@ -875,7 +1178,31 @@
                 .prop('checked', false);
         });
 
+        setDefaultTanggalJam();
+
+        toggleKetersediaanDarah();
+
         getData();
+
+        $form.on(
+            'change',
+            'input[name="darah"]',
+            function () {
+                toggleKetersediaanDarah();
+            }
+        );
+
+        updateEnableWhen($form);
+
+        $form.on(
+            'change',
+            'input[type="checkbox"]',
+            function () {
+
+                updateEnableWhen($form);
+
+            }
+        );
 
         $form.on(
             'blur',
@@ -913,6 +1240,42 @@
             }
         );
     });
+
+    function toggleKetersediaanDarah() {
+
+        const darah = $('input[name="darah"]:checked').val();
+
+        if (darah === '2') {
+
+            $('#detail-ketersediaan-darah').show();
+
+        } else {
+
+            $('#detail-ketersediaan-darah').hide();
+
+            $('input[name="darah_jumlah"]').val('');
+            $('#darah_jenis').val('PRC');
+        }
+    }
+
+    function updateEnableWhen($container) {
+
+        $container.find('[data-enable-when]').each(function () {
+
+            const $target = $(this);
+            const fieldName = $target.data('enable-when');
+
+            const $trigger = $container.find(
+                '[name="' + fieldName + '"]'
+            );
+
+            $target.prop(
+                'disabled',
+                !$trigger.is(':checked')
+            );
+
+        });
+    }
 
     function setCheckboxValue(name, value) {
         const $checkboxes = $('input[type="checkbox"][name="' + name + '"]');

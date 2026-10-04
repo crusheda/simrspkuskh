@@ -121,6 +121,9 @@ class PengkajianPraBedahController extends Controller
 
                 'KUNJUNGAN' => $kunjungan,
 
+                'DS_TANGGAL' => $request->input('pb_ds_tanggal'),
+                'DS_JAM'     => $request->input('pb_ds_jam'),
+
                 // =====================================================
                 // DATA SUBYEKTIF
                 // =====================================================
@@ -162,6 +165,36 @@ class PengkajianPraBedahController extends Controller
                 // =====================================================
 
                 'DO' => $request->input('pb_do'),
+
+                // DATA OBYEKTIF - PERSIAPAN OPERASI
+                'DO_GELANG'       => $request->boolean('pb_do_gelang'),
+                'DO_GIGI'         => $request->boolean('pb_do_gigi'),
+                'DO_SOFTLENS'     => $request->boolean('pb_do_softlens'),
+                'DO_LIPSTIK'      => $request->boolean('pb_do_lipstik'),
+                'DO_PERHIASAN'    => $request->boolean('pb_do_perhiasan'),
+                'DO_HEARING'      => $request->boolean('pb_do_hearing'),
+                'DO_BAPIL'        => $request->boolean('pb_do_bapil'),
+
+                'DO_ORAL'         => $request->boolean('pb_do_oral'),
+                'DO_LATIHAN'      => $request->boolean('pb_do_latihan'),
+                'DO_FIKSASI'      => $request->boolean('pb_do_fiksasi'),
+                'DO_NGT'          => $request->boolean('pb_do_ngt'),
+                'DO_DRAINAGE'     => $request->boolean('pb_do_drainage'),
+                'DO_WSD'          => $request->boolean('pb_do_wsd'),
+                'DO_LAVEMENT'     => $request->boolean('pb_do_lavement'),
+
+                'DO_HAID'         => $request->boolean('pb_do_haid'),
+                'DO_SKEREN'       => $request->boolean('pb_do_skeren'),
+                'DO_DISTRAKSI'    => $request->boolean('pb_do_distraksi'),
+
+                'DO_DC'           => $request->boolean('pb_do_dc'),
+                'DO_DC_TEXT'      => $request->input('pb_do_dc_text'),
+
+                'DO_INFUS'        => $request->boolean('pb_do_infus'),
+                'DO_INFUS_TEXT'   => $request->input('pb_do_infus_text'),
+
+                'DO_LAINNYA'      => $request->boolean('pb_do_lainnya'),
+                'DO_LAINNYA_TEXT' => $request->input('pb_do_lainnya_text'),
 
 
                 // =====================================================
