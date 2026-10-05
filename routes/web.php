@@ -152,8 +152,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
             // Route::get('pelayanan/ris', [RISController::class, 'indexRIS'])->name('pelayanan.ris.index');
 
     // EMR
-    Route::get('emr', [EMRController::class, 'index'])->name('emr.index');
-    Route::get('emr/{KUNJUNGAN}', [EMRController::class, 'detail'])->name('emr.detail');
+    // Route::get('emr', [EMRController::class, 'index'])->name('emr.index');
+    // Route::get('emr/{KUNJUNGAN}', [EMRController::class, 'detail'])->name('emr.detail');
         // IGD
             // FORM MATRIX
             // Route::get('rme/igd/matrix', [ModulMatrixController::class, 'index'])->name('rme.igd.matrix.index');
@@ -164,9 +164,9 @@ Route::group(['middleware' => ['web', 'auth']], function() {
 
         // SMART KLAIM
             // RAWAT JALAN
-            Route::get('klaim', [SmartKlaimController::class, 'index'])->name('klaim.index');
-            Route::get('klaim/{KUNJUNGAN}', [SmartKlaimController::class, 'show'])->name('klaim.show');
-            Route::get('klaim/farmasi/{KUNJUNGAN}', [SmartKlaimController::class, 'showFarmasi'])->name('klaim.farmasi.show');
+            // Route::get('klaim', [SmartKlaimController::class, 'index'])->name('klaim.index');
+            // Route::get('klaim/{KUNJUNGAN}', [SmartKlaimController::class, 'show'])->name('klaim.show');
+            // Route::get('klaim/farmasi/{KUNJUNGAN}', [SmartKlaimController::class, 'showFarmasi'])->name('klaim.farmasi.show');
 
     // LOG
         // BERKAS

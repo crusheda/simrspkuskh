@@ -833,8 +833,8 @@ const initSidebarMenu = () => {
 	// reset
 	$('.app-navbar a').removeClass('active open');
 	$('.app-navbar li').removeClass('active');
-	$('.app-menubar-tabs .menu-link').removeClass('active');
-	$('.app-tab-content .tab-pane').removeClass('active show');
+	$('#appMenubar .menu-link').removeClass('active');
+	$('#appMenubarTabsContent .tab-pane').removeClass('active show');
 
     const $activeLink = $('.app-navbar a').filter(function () {
 

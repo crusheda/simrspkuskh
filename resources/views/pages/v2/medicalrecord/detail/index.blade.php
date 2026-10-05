@@ -479,7 +479,7 @@
         // ----------------------------------------------------
         $('html').attr('data-app-sidebar', 'full');
         $('a[role="tab"]').removeClass('active');
-        $('div[role="tabpanel"]').removeClass('active show');
+        $('.app-menubar-tabs div[role="tabpanel"]').removeClass('active show');
         $('a[href="#digitalTab"]').addClass('active').attr('aria-selected', 'true');
         $('#digitalTab').removeClass('active show').addClass('active show');
     });
