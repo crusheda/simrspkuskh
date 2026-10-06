@@ -17,6 +17,11 @@ class RolesController extends Controller
         return view('pages.setting.roles');
     }
 
+    function indexV2()
+    {
+        return view('pages.v2.setting.roles');
+    }
+
     // API ------------------------------------------------------------------------------------------------------------------
 
     function dataRoles()
