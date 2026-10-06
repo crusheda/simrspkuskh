@@ -188,12 +188,14 @@
                         <a class="dropdown-item d-flex align-items-center gap-2" href="task-management.html">
                             <i class="fi fi-rr-note scale-1x"></i> My Task
                         </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profil') }}">
-                            <i class="fi fi-rr-settings scale-1x"></i> Account Settings
-                        </a>
                     </li> --}}
+                    @hasrole('admin')
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('v2.roles') }}">
+                            <i class="ri-git-repository-private-line"></i> Hak Akses & Pengguna
+                        </a>
+                    </li>
+                    @endhasrole
                     <li>
                         <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('clear.cache') }}">
                             <i class="fi fi-rr-sun scale-1x"></i> Clear Cache

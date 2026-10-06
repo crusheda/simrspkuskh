@@ -23,6 +23,17 @@ class PermissionsController extends Controller
         return view('pages.setting.permissions')->with('list', $data);
     }
 
+    function indexV2()
+    {
+        $show = '';
+
+        $data = [
+            'show' => $show,
+        ];
+
+        return view('pages.v2.setting.permissions')->with('list', $data);
+    }
+
     function dataPermissions()
     {
         $show = Permission::get();
