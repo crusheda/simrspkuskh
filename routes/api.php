@@ -41,6 +41,7 @@ use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususKorbanKekerasanControll
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususPenyakitMenularController;
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususLanjutanController;
 use App\Http\Controllers\EMR\Form\Lain\LembarTransferPasienInternalController;
+use App\Http\Controllers\EMR\Form\Lain\DischargePlanningController;
 use App\Http\Controllers\EMR\ApiRehabMedikController;
 use App\Http\Controllers\EMR\ApiNewRehabMedikController;
 use App\Http\Controllers\EMR\ApiMatriksController;
@@ -452,6 +453,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // LEMBAR TRANSFER INTERNAL
                     Route::get('emr/form/lain/lembartransferpasien/{kunjungan}', [LembarTransferPasienInternalController::class, 'getFormTransfer']);
                     Route::post('emr/form/lain/lembartransferpasien/{kunjungan}/simpan', [LembarTransferPasienInternalController::class, 'simpanFormTransfer']);
+                // CEKLIST DISCHARGE PLANNING
+                    Route::get('emr/form/lain/dischargeplanning/{kunjungan}', [DischargePlanningController::class, 'getDischarge']);
+                    Route::post('emr/form/lain/dischargeplanning/{kunjungan}/simpan', [DischargePlanningController::class, 'simpanDischarge']);
 
             // PLUGINS
             Route::get('emr/cppt/{kunjungan}', [EMRController::class, 'showCPPT']);

@@ -463,6 +463,18 @@
                                         title="Sudah difinalisasi"></i>
                                 </span>
                             </a>
+                            <a href="javascript:void(0);"
+                                class="list-group-item list-group-item-action menu-item menu-parent js-final d-flex align-items-center"
+                                data-form="form-discharge-planning"
+                                data-group="lain">
+                                <span>Ceklist Discharge Planning</span>
+
+                                <span class="ms-auto d-flex align-items-center gap-1">
+                                    <i class="ri-nurse-line text-bg-warning d-none js-final-icon px-1 rounded"
+                                        data-final-key="ln_discharge"
+                                        title="Sudah difinalisasi"></i>
+                                </span>
+                            </a>
                         </div>
                     </div>
                 </div>

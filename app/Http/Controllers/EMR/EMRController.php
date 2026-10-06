@@ -45,6 +45,7 @@ use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususPenyakitMenularControll
 use App\Http\Controllers\EMR\Form\Khusus\PengkajianKhususLanjutanController;
 
 use App\Http\Controllers\EMR\Form\Lain\LembarTransferPasienInternalController;
+use App\Http\Controllers\EMR\Form\Lain\DischargePlanningController;
 
 use App\Support\FinalisasiMap;
 
@@ -1088,6 +1089,7 @@ class EMRController extends Controller
             'pengkajian-khusus-lanjutan'                => PengkajianKhususLanjutanController::class,
 
             'form-transfer-pasien'                      => LembarTransferPasienInternalController::class,
+            'form-discharge-planning'                   => DischargePlanningController::class,
         ];
 
         abort_unless(isset($controllers[$form]), 404);
