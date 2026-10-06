@@ -818,6 +818,8 @@ class EMRController extends Controller
             $prefix = ['1020201%'];
         } elseif ($id == 3) {
             $prefix = ['1020301%'];
+        } elseif ($id == 4) {
+            $prefix = ['1020801%'];
         } else {
             return response()->json('Tidak ada Ruangan yang sesuai!', 404);
         }
@@ -985,7 +987,7 @@ class EMRController extends Controller
                 // ->where('jk.STATUS', 1) // STATUS RENCANA KONTROL AKTIF
 
                 // FILTER JENIS PERAWATAN
-                ->when(in_array($rawat, [1, 2, 3]), function ($query) use ($rawat) {
+                ->when(in_array($rawat, [1, 2, 3, 4]), function ($query) use ($rawat) {
                     $prefix = [];
                     switch ($rawat) {
                         case 1:
@@ -996,6 +998,9 @@ class EMRController extends Controller
                             break;
                         case 3:
                             $prefix = ['10203%'];
+                            break;
+                        case 4:
+                            $prefix = ['10208%'];
                             break;
                     }
 
@@ -1010,7 +1015,8 @@ class EMRController extends Controller
                         $q->where('pk.RUANGAN', 'LIKE', '10201%')
                             ->orWhere('pk.RUANGAN', 'LIKE', '10207%')
                             ->orWhere('pk.RUANGAN', 'LIKE', '10202%')
-                            ->orWhere('pk.RUANGAN', 'LIKE', '10203%');
+                            ->orWhere('pk.RUANGAN', 'LIKE', '10203%')
+                            ->orWhere('pk.RUANGAN', 'LIKE', '10208%');
                     });
                 })
 

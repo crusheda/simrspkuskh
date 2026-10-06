@@ -44,6 +44,7 @@
                                     <option value="1">Rawat Jalan</option>
                                     <option value="2">Rawat Darurat (Tanpa Inap)</option>
                                     <option value="3">Rawat Inap</option>
+                                    <option value="4">Operatif (OK)</option>
                                 </select>
                             </div>
                         </div>
