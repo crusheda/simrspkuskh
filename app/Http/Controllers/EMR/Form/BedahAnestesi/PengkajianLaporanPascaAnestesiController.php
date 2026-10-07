@@ -72,7 +72,10 @@ class PengkajianLaporanPascaAnestesiController extends Controller
             'NOKUNJ' => ['nullable', 'string', 'max:50'],
 
             'ipa_posisi' => ['nullable', 'string'],
-            'ipa_oksigen' => ['nullable', 'string'],
+            'ipa_nrm' => ['nullable'],
+            'ipa_nasal' => ['nullable'],
+            'ipa_lmnt' => ['nullable'],
+
             'ipa_tensitiap' => ['nullable', 'string'],
             'ipa_tensibawah' => ['nullable', 'string'],
             'ipa_tensiberi' => ['nullable', 'string'],
@@ -81,14 +84,14 @@ class PengkajianLaporanPascaAnestesiController extends Controller
             'ipa_extra' => ['nullable', 'string'],
 
             'ipa_transfusi' => ['nullable', 'string'],
-            'ipa_tetesan' => ['nullable', 'string'],
             'ipa_cairan' => ['nullable', 'string'],
+            'ipa_tetesan' => ['nullable', 'string'],
 
-            'ipa_ujp_1' => ['nullable', 'string'],
-            'ipa_ujp_2' => ['nullable', 'string'],
-            'ipa_ujp_3' => ['nullable', 'string'],
-            'ipa_ujp_4' => ['nullable', 'string'],
-            'ipa_ujp_tetesan' => ['nullable', 'string'],
+            // 'ipa_ujp_1' => ['nullable', 'string'],
+            // 'ipa_ujp_2' => ['nullable', 'string'],
+            // 'ipa_ujp_3' => ['nullable', 'string'],
+            // 'ipa_ujp_4' => ['nullable', 'string'],
+            // 'ipa_ujp_tetesan' => ['nullable', 'string'],
 
             'ipa_ss_resep' => ['nullable', 'string'],
             'ipa_ss_nd' => ['nullable', 'string'],
@@ -102,6 +105,7 @@ class PengkajianLaporanPascaAnestesiController extends Controller
             'ipa_obt_2' => ['nullable', 'string'],
             'ipa_obt_3' => ['nullable', 'string'],
 
+            'ipa_masukrr' => ['nullable', 'date_format:H:i'],
             'ipa_sadarjam' => ['nullable', 'date_format:H:i'],
             'ipa_pindahjam' => ['nullable', 'date_format:H:i'],
 
@@ -114,7 +118,9 @@ class PengkajianLaporanPascaAnestesiController extends Controller
             'NOKUNJ' => $NOKUNJ,
 
             'ipa_posisi' => $request->input('ipa_posisi'),
-            'ipa_oksigen' => $request->input('ipa_oksigen'),
+            'ipa_nrm' => $request->boolean('ipa_nrm'),
+            'ipa_nasal' => $request->boolean('ipa_nasal'),
+            'ipa_lmnt' => $request->input('ipa_lmnt'),
             'ipa_tensitiap' => $request->input('ipa_tensitiap'),
             'ipa_tensibawah' => $request->input('ipa_tensibawah'),
             'ipa_tensiberi' => $request->input('ipa_tensiberi'),
@@ -123,14 +129,14 @@ class PengkajianLaporanPascaAnestesiController extends Controller
             'ipa_extra' => $request->input('ipa_extra'),
 
             'ipa_transfusi' => $request->input('ipa_transfusi'),
-            'ipa_tetesan' => $request->input('ipa_tetesan'),
             'ipa_cairan' => $request->input('ipa_cairan'),
+            'ipa_tetesan' => $request->input('ipa_tetesan'),
 
-            'ipa_ujp_1' => $request->input('ipa_ujp_1'),
-            'ipa_ujp_2' => $request->input('ipa_ujp_2'),
-            'ipa_ujp_3' => $request->input('ipa_ujp_3'),
-            'ipa_ujp_4' => $request->input('ipa_ujp_4'),
-            'ipa_ujp_tetesan' => $request->input('ipa_ujp_tetesan'),
+            // 'ipa_ujp_1' => $request->input('ipa_ujp_1'),
+            // 'ipa_ujp_2' => $request->input('ipa_ujp_2'),
+            // 'ipa_ujp_3' => $request->input('ipa_ujp_3'),
+            // 'ipa_ujp_4' => $request->input('ipa_ujp_4'),
+            // 'ipa_ujp_tetesan' => $request->input('ipa_ujp_tetesan'),
 
             'ipa_ss_resep' => $request->input('ipa_ss_resep'),
             'ipa_ss_nd' => $request->input('ipa_ss_nd'),
@@ -144,6 +150,7 @@ class PengkajianLaporanPascaAnestesiController extends Controller
             'ipa_obt_2' => $request->input('ipa_obt_2'),
             'ipa_obt_3' => $request->input('ipa_obt_3'),
 
+            'ipa_masukrr' => $request->input('ipa_masukrr'),
             'ipa_sadarjam' => $request->input('ipa_sadarjam'),
             'ipa_pindahjam' => $request->input('ipa_pindahjam'),
             'ipa_penyulit' => $request->input('ipa_penyulit'),
@@ -194,10 +201,20 @@ class PengkajianLaporanPascaAnestesiController extends Controller
             'indikator' => [
                 'required',
                 'string',
-                'in:tensi_rendah,tensi_tinggi,nadi,resp_sr,resp_ar,resp_cr'
+                'in:tensi_rendah,tensi_tinggi,nadi,resp_sr,resp_ar,resp_cr,spo2',
             ],
             'keterangan' => ['nullable', 'string'],
         ]);
+
+        if (
+            $validated['indikator'] === 'spo2' &&
+            $validated['nilai'] > 100
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nilai SPO2 harus berada antara 0 sampai 100%.',
+            ], 422);
+        }
 
         if (!empty($validated['id'])) {
 

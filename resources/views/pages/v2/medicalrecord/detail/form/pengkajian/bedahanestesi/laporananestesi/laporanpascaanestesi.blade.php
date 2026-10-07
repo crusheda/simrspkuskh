@@ -12,21 +12,28 @@
                     <div class="d-flex gap-2 align-items-center w-100">
                         <label class="form-label flex-shrink-0 mb-0">Rawat penderita di R.R. - Posisi</label>
                         <input type="text" class="form-control form-control-sm flex-grow-1" name="ipa_posisi" placeholder="...">
-                        <label class="form-label flex-shrink-0 mb-0">Oksigen</label>
-                        <input type="text" class="form-control form-control-sm flex-grow-1" name="ipa_oksigen" placeholder="...">
-                        <label class="form-label flex-shrink-0 mb-0">L/mnt.nasal./E</label>
+                        <div class="d-flex form-check mb-0 flex-shrink-0 gap-2">
+                            <input class="form-check-input check-primary" type="checkbox" name="ipa_nrm">
+                            <label class="form-check-label flex-shrink-0">NRM</label>
+                        </div>
+                        <div class="d-flex form-check mb-0 flex-shrink-0 gap-2">
+                            <input class="form-check-input check-primary" type="checkbox" name="ipa_nasal">
+                            <label class="form-check-label flex-shrink-0">Nasal Canul</label>
+                        </div>
+                        <input type="number" class="form-control form-control-sm flex-grow-1" name="ipa_lmnt" style="width: 70px; flex: 0 0 60px;" placeholder="...">
+                        <label class="form-label flex-shrink-0 mb-0">L/mnt</label>
                     </div>
                 </div>
                 <div class="form-group mb-3">
                     <div class="d-flex align-items-center gap-2 w-100">
-                        <label class="form-label flex-shrink-0 mb-0">Awasi Respirasi / nadi / tensi tiap</label>
+                        <label class="form-label flex-shrink-0 mb-0">Awasi Respirasi / nadi / tekanan darah tiap</label>
                         <input type="text" class="form-control form-control-sm flex-grow-1" name="ipa_tensitiap" placeholder="...">
                         <label class="form-label flex-shrink-0 mb-0">mnt</label>
                     </div>
                 </div>
                 <div class="form-group mb-3">
                     <div class="d-flex gap-2 align-items-center w-100">
-                        <label class="form-label flex-shrink-0 mb-0">Bila tensi turun di bawah</label>
+                        <label class="form-label flex-shrink-0 mb-0">Bila tekanan darah turun di bawah</label>
                         <input type="text" class="form-control form-control-sm flex-grow-1" name="ipa_tensibawah" placeholder="...">
                         <label class="form-label flex-shrink-0 mb-0">mmHg, berikan</label>
                         <input type="text" class="form-control form-control-sm flex-grow-1" name="ipa_tensiberi" placeholder="...">
@@ -46,21 +53,21 @@
                         <input type="text" class="form-control form-control-sm flex-grow-1" name="ipa_extra" placeholder="...">
                     </div>
                 </div>
-                <label class="form-label mb-3">Infus :</label>
+                <label class="form-label mb-3 fw-bold">Infus :</label>
                 <div class="form-group mb-3">
                     <div class="d-flex gap-2 align-items-center w-100">
-                        <label class="form-label flex-shrink-0 mb-0">transfusi</label>
+                        <label class="form-label flex-shrink-0 mb-0">Transfusi</label>
                         <input type="text" class="form-control form-control-sm flex-grow-1" name="ipa_transfusi" placeholder="...">
-                        <label class="form-label flex-shrink-0 mb-0">boto, tetesan</label>
-                        <input type="text" class="form-control form-control-sm flex-grow-1" name="ipa_tetesan" placeholder="...">
-                        <label class="form-label flex-shrink-0 mb-0">/ mnt</label>
+                        <label class="form-label flex-shrink-0 mb-0">Colf</label>
                     </div>
                 </div>
                 <div class="form-group mb-3">
                     <div class="d-flex gap-2 align-items-center w-100">
                         <label class="form-label flex-shrink-0 mb-0">Cairan</label>
                         <input type="text" class="form-control form-control-sm flex-grow-1" name="ipa_cairan" placeholder="...">
-                        <label class="form-label flex-shrink-0 mb-0">cc / 24 jam terdiri atas :</label>
+                        <label class="form-label flex-shrink-0 mb-0">cc, Tetesan</label>
+                        <input type="text" class="form-control form-control-sm flex-grow-1" name="ipa_tetesan" placeholder="...">
+                        <label class="form-label flex-shrink-0 mb-0">/mnt</label>
                     </div>
                 </div>
             </div>
@@ -68,7 +75,7 @@
             {{-- ==========================================================
                 UNTUK 24 JAM PERTAMA
             =========================================================== --}}
-            <div class="col-md-6">
+            {{-- <div class="col-md-6">
                 <label class="form-label mb-3">Untuk 24 jam pertama</label>
                 <div class="form-group mb-2">
                     <div class="d-flex gap-2 align-items-center w-100">
@@ -101,14 +108,14 @@
                         <label class="form-label flex-shrink-0 mb-0">mnt</label>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             {{-- ==========================================================
                 SESUDAH SADAR / OBAT
             =========================================================== --}}
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="mb-3">
-                    <label class="form-label mb-3">Sesudah sadar</label>
+                    <label class="form-label mb-3 fw-bold">Sesudah sadar</label>
                     <div class="form-group mb-3">
                         <div class="d-flex gap-2 align-items-center w-100">
                             <label class="form-label flex-shrink-0 mb-0">Resep</label>
@@ -119,7 +126,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <div class="d-flex gap-2 align-items-center">
-                            <label class="form-label flex-shrink-0 mb-0">Tensi</label>
+                            <label class="form-label flex-shrink-0 mb-0">Tekanan Darah</label>
                             <input type="text" class="form-control form-control-sm flex-grow-1" name="ipa_ss_tensi" placeholder="...">
                             <div class="form-check mb-0 flex-shrink-0">
                                 <input class="form-check-input single-checkbox" type="checkbox" name="ipa_ss_ranap" value="1">
@@ -136,8 +143,8 @@
                         </div>
                     </div>
                 </div>
-                <div>
-                    <label class="form-label mb-3">Obat-obat</label>
+                <div class="mb-3">
+                    <label class="form-label mb-3 fw-bold">Obat-obat</label>
                     <div class="form-group mb-2">
                         <div class="d-flex gap-2 align-items-center w-100">
                             <label class="form-label flex-shrink-0 mb-0">1 .</label>
@@ -179,7 +186,15 @@
                         <div id="monitoringPascaAnestesiChart" style="min-height:500px;" class="p-2"></div>
                         <hr>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <div class="d-flex align-items-center gap-2 w-100">
+                                        <label class="form-label flex-shrink-0 mb-0">Jam Masuk ke R.R. </label>
+                                        <input type="time" class="form-control form-control-sm flex-grow-1" name="ipa_masukrr" placeholder="...">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-group mb-3">
                                     <div class="d-flex align-items-center gap-2 w-100">
                                         <label class="form-label flex-shrink-0 mb-0">Penderita sadar pada jam </label>
@@ -187,7 +202,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group mb-3">
                                     <div class="d-flex align-items-center gap-2 w-100">
                                         <label class="form-label flex-shrink-0 mb-0">Dipindahkan dari RR pada jam </label>
@@ -235,12 +250,13 @@
                         <label class="form-label">Indikator</label>
                         <select class="form-select" id="pascaAnestesiMonitoringIndikator">
                             <option value="">Pilih indikator</option>
-                            <option value="tensi_rendah">Tensi Rendah</option>
-                            <option value="tensi_tinggi">Tensi Tinggi</option>
-                            <option value="nadi">Nadi</option>
+                            <option value="tensi_rendah">Tekanan Darah Sistolik</option>
+                            <option value="tensi_tinggi">Tekanan Darah Diastolik</option>
+                            <option value="nadi">Frekuensi Nadi</option>
                             <option value="resp_sr">Resp SR</option>
                             <option value="resp_ar">Resp AR</option>
                             <option value="resp_cr">Resp CR</option>
+                            <option value="spo2">SPO2</option>
                         </select>
                     </div>
                     <div>
@@ -315,22 +331,32 @@
     =========================================================== */
     const indikatorMonitoring = {
         tensi_rendah: {
-            label: 'Tensi Rendah'
+            label: 'Tekanan Darah Sistolik',
+            marker: 'ꓦ'
         },
         tensi_tinggi: {
-            label: 'Tensi Tinggi'
+            label: 'Tekanan Darah Diastolik',
+            marker: 'ꓥ'
         },
         nadi: {
-            label: 'Nadi'
+            label: 'Frekuensi Nadi',
+            marker: '●'
         },
         resp_sr: {
-            label: 'Resp SR'
+            label: 'Resp SR',
+            marker: '+'
         },
         resp_ar: {
-            label: 'Resp AR'
+            label: 'Resp AR',
+            marker: '+'
         },
         resp_cr: {
-            label: 'Resp CR'
+            label: 'Resp CR',
+            marker: '+'
+        },
+        spo2: {
+            label: 'SPO2',
+            marker: '%'
         }
     };
 
@@ -339,7 +365,9 @@
     =========================================================== */
     const mappingForm = {
         IPA_POSISI: 'ipa_posisi',
-        IPA_OKSIGEN: 'ipa_oksigen',
+        IPA_NRM: 'ipa_nrm',
+        IPA_NASAL: 'ipa_nasal',
+        IPA_LMNT: 'ipa_lmnt',
         IPA_TENSITIAP: 'ipa_tensitiap',
         IPA_TENSIBAWAH: 'ipa_tensibawah',
         IPA_TENSIBERI: 'ipa_tensiberi',
@@ -347,13 +375,8 @@
         IPA_SAKITBERI: 'ipa_sakitberi',
         IPA_EXTRA: 'ipa_extra',
         IPA_TRANSFUSI: 'ipa_transfusi',
-        IPA_TETESAN: 'ipa_tetesan',
         IPA_CAIRAN: 'ipa_cairan',
-        IPA_UJP_1: 'ipa_ujp_1',
-        IPA_UJP_2: 'ipa_ujp_2',
-        IPA_UJP_3: 'ipa_ujp_3',
-        IPA_UJP_4: 'ipa_ujp_4',
-        IPA_UJP_TETESAN: 'ipa_ujp_tetesan',
+        IPA_TETESAN: 'ipa_tetesan',
         IPA_SS_RESEP: 'ipa_ss_resep',
         IPA_SS_ND: 'ipa_ss_nd',
         IPA_SS_TENSI: 'ipa_ss_tensi',
@@ -363,6 +386,7 @@
         IPA_OBT_1: 'ipa_obt_1',
         IPA_OBT_2: 'ipa_obt_2',
         IPA_OBT_3: 'ipa_obt_3',
+        IPA_MASUKRR: 'ipa_masukrr',
         IPA_SADARJAM: 'ipa_sadarjam',
         IPA_PINDAHJAM: 'ipa_pindahjam',
         IPA_PENYULIT: 'ipa_penyulit'
@@ -726,30 +750,20 @@
     =========================================================== */
     function renderMonitoringChart() {
         const minutes = generateMinuteSlots();
+        const indikatorKeys = Object.keys(indikatorMonitoring);
 
-        const indikatorKeys = Object.keys(
-            indikatorMonitoring
-        );
+        const series = indikatorKeys.map(function (indikator) {
+            return {
+                name: indikatorMonitoring[indikator].label,
+                data: minutes.map(function (minute) {
+                    const item = findMonitoring(minute, indikator);
 
-        const series = indikatorKeys.map(
-            function (indikator) {
-                return {
-                    name: indikatorMonitoring[indikator].label,
-                    data: minutes.map(
-                        function (minute) {
-                            const item = findMonitoring(
-                                minute,
-                                indikator
-                            );
-
-                            return item
-                                ? Number(item.nilai)
-                                : null;
-                        }
-                    )
-                };
-            }
-        );
+                    return item
+                        ? Number(item.nilai)
+                        : null;
+                })
+            };
+        });
 
         const options = {
             chart: {
@@ -767,40 +781,35 @@
                     speed: 250
                 },
                 events: {
-                    click: function (
-                        event,
-                        chartContext,
-                        config
-                    ) {
+                    click: function (event, chartContext, config) {
                         handleChartClick(
                             event,
                             chartContext,
                             config
                         );
                     },
-                    mouseMove: function (
-                        event,
-                        chartContext
-                    ) {
+
+                    mouseMove: function (event, chartContext) {
                         handleChartMouseMove(
                             event,
                             chartContext
                         );
                     },
+
                     mouseLeave: function () {
-                        $(
-                            '#monitoringPascaAnestesiCursorPosition'
-                        ).text(
-                            'Arahkan cursor ke diagram'
-                        );
+                        $('#monitoringPascaAnestesiCursorPosition')
+                            .text('Arahkan cursor ke diagram');
                     }
                 }
             },
+
             series: series,
+
             stroke: {
                 width: 0,
                 curve: 'straight'
             },
+
             markers: {
                 size: 6,
                 strokeWidth: 2,
@@ -811,17 +820,23 @@
             dataLabels: {
                 enabled: true,
                 offsetY: -8,
+
                 style: {
-                    fontSize: '10px',
-                    fontWeight: 500
+                    fontSize: '11px',
+                    fontWeight: 700
                 },
+
                 background: {
                     enabled: true,
-                    borderRadius: 2,
+                    borderRadius: 50,
                     borderWidth: 1,
-                    opacity: 0.8
+                    opacity: 1,
+                    padding: 4
                 },
-                formatter: function (value) {
+
+                formatter: function (value, {
+                    seriesIndex
+                }) {
                     if (
                         value === null ||
                         value === undefined
@@ -829,35 +844,49 @@
                         return '';
                     }
 
-                    return value;
+                    const indikator =
+                        indikatorKeys[seriesIndex];
+
+                    if (indikator === 'spo2') {
+                        return `${value}%`;
+                    }
+
+                    return indikatorMonitoring[indikator].marker;
                 }
             },
             xaxis: {
                 type: 'category',
                 categories: minutes.map(String),
                 tickPlacement: 'on',
+
                 axisBorder: {
                     show: true
                 },
+
                 axisTicks: {
                     show: true
                 },
+
                 title: {
                     text: 'Menit (Kelipatan 5)',
                     offsetY: 0
                 },
+
                 labels: {
                     rotate: -45,
                     rotateAlways: true,
                     hideOverlappingLabels: false,
                     trim: false,
+
                     formatter: function (value) {
                         return value;
                     },
+
                     style: {
                         fontSize: '10px'
                     }
                 },
+
                 crosshairs: {
                     show: true,
                     width: 1,
@@ -868,36 +897,43 @@
                     }
                 }
             },
+
             yaxis: {
                 min: 0,
                 max: 300,
                 tickAmount: 15,
                 forceNiceScale: false,
                 decimalsInFloat: 0,
+
                 title: {
                     text: 'Nilai'
                 },
+
                 labels: {
                     formatter: function (value) {
                         return Math.round(value);
                     }
                 }
             },
+
             grid: {
                 show: true,
                 borderColor: undefined,
                 strokeDashArray: 0,
                 position: 'back',
+
                 xaxis: {
                     lines: {
                         show: true
                     }
                 },
+
                 yaxis: {
                     lines: {
                         show: true
                     }
                 },
+
                 padding: {
                     top: 10,
                     right: 20,
@@ -905,14 +941,17 @@
                     left: 10
                 }
             },
+
             tooltip: {
                 enabled: true,
                 shared: false,
                 intersect: true,
                 followCursor: false,
+
                 x: {
                     show: true
                 },
+
                 custom: function ({
                     seriesIndex,
                     dataPointIndex
@@ -941,10 +980,13 @@
                                 <div>
                                     <strong>${menit} menit</strong>
                                 </div>
+
                                 <div class="text-muted">
                                     ${waktu}
                                 </div>
+
                                 <div>${nama}</div>
+
                                 <div class="mt-1">
                                     Belum ada data
                                 </div>
@@ -966,17 +1008,22 @@
                             <div>
                                 <strong>${menit} menit</strong>
                             </div>
+
                             <div class="text-muted">
                                 ${waktu}
                             </div>
+
                             <div>${nama}</div>
+
                             <div class="mt-1">
                                 Nilai:
                                 <strong>
                                     ${formatNilai(item.nilai)}
                                 </strong>
                             </div>
+
                             ${keterangan}
+
                             <div class="mt-1 text-muted">
                                 Klik titik untuk mengubah
                             </div>
@@ -984,18 +1031,22 @@
                     `;
                 }
             },
+
             legend: {
                 show: true,
                 position: 'top',
                 horizontalAlign: 'center'
             },
+
             responsive: [
                 {
                     breakpoint: 768,
+
                     options: {
                         chart: {
                             height: 450
                         },
+
                         xaxis: {
                             labels: {
                                 rotate: -90,

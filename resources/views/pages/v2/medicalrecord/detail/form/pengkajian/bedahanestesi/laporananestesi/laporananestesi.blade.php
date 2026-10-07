@@ -4,7 +4,60 @@
     </h1>
 
     <div class="form-content mt-3">
-        <div class="row">
+        <div class="row align-items-center">
+            {{-- RUANG DAN CHECKBOX --}}
+            <div class="col-md-3 mb-3">
+                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                    <label class="form-check-label">
+                        Tanggal
+                    </label>
+                    <input type="date" class="form-control form-control-sm" name="la_tanggal" value="{{ now()->format('Y-m-d') }}">
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                    <label class="form-check-label">
+                        Ruang
+                    </label>
+                    <select class="form-select form-select-sm" name="la_ruang">
+                        <option value="">Pilih</option>
+                        <option value="1">Pra Operasi</option>
+                        <option value="2">Intra Operasi</option>
+                        <option value="3">Recovery Room</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="d-flex form-check mb-0 flex-shrink-0 gap-2">
+                            <input class="form-check-input check-primary" type="checkbox" name="la_ijin_operasi">
+                            <label class="form-check-label flex-shrink-0">Ijin Operasi</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="d-flex form-check mb-0 flex-shrink-0 gap-2">
+                            <input class="form-check-input check-primary" type="checkbox" name="la_cek_identitas">
+                            <label class="form-check-label flex-shrink-0">Cek Identitas</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="d-flex form-check mb-0 flex-shrink-0 gap-2">
+                            <input class="form-check-input check-primary" type="checkbox" name="la_terencana">
+                            <label class="form-check-label flex-shrink-0">Terencana</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="d-flex form-check mb-0 flex-shrink-0 gap-2">
+                            <input class="form-check-input check-primary" type="checkbox" name="la_emergency">
+                            <label class="form-check-label flex-shrink-0">Emergency</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
             {{-- IDENTITAS / PEMERIKSAAN AWAL --}}
             <div class="col-md-2">
                 <div class="form-group mb-3">
@@ -52,7 +105,7 @@
 
             <div class="col-md-3">
                 <div class="form-group mb-3">
-                    <label class="form-label">Tensi</label>
+                    <label class="form-label">Tekanan Darah</label>
                     <div class="input-group">
                         <input type="number" class="form-control" name="la_tensi_sis">
                         <span class="input-group-text">/</span>
@@ -126,14 +179,14 @@
             </div>
 
             {{-- DIAGNOSA --}}
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="form-group mb-3">
                     <label class="form-label">Diagnosa Preoperatif</label>
                     <textarea class="form-control" name="la_diag_pre" rows="1"></textarea>
                 </div>
             </div>
 
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="form-group mb-3">
                     <label class="form-label">Diagnosa Postoperatif</label>
                     <textarea class="form-control" name="la_diag_post" rows="1"></textarea>
@@ -144,28 +197,35 @@
             <div class="col-md-12">
                 <div class="form-group mb-3">
                     <label class="form-label">Nama / Macam Operasi</label>
-                    <textarea class="form-control" name="la_nama_operasi" rows="1"></textarea>
+                    <input type="text" class="form-control" name="la_nama_operasi"></input>
                 </div>
             </div>
 
             <div class="col-md-12">
                 <div class="form-group mb-3">
                     <label class="form-label">Nama Ahli Bedah</label>
-                    <textarea class="form-control" name="la_nama_ahli_bedah" rows="1"></textarea>
+                    <input type="text" class="form-control" name="la_nama_ahli_bedah"></input>
                 </div>
             </div>
 
             <div class="col-md-12">
                 <div class="form-group mb-3">
                     <label class="form-label">Nama Ahli Anestesi</label>
-                    <textarea class="form-control" name="la_nama_ahli_anestesi" rows="1"></textarea>
+                    <input type="text" class="form-control" name="la_nama_ahli_anestesi"></input>
                 </div>
             </div>
 
             <div class="col-md-12">
                 <div class="form-group mb-3">
-                    <label class="form-label">Nama Perawat / Bidan Tanggal</label>
-                    <textarea class="form-control" name="la_nama_perawat_bidan" rows="1"></textarea>
+                    <label class="form-label">Nama Perawat / Penata Anestesi</label>
+                    <input type="text" class="form-control" name="la_nama_perawat_penata"></input>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="form-group mb-3">
+                    <label class="form-label">Tanggal Operasi</label>
+                    <input type="date" class="form-control" name="la_tgl_operasi"></input>
                 </div>
             </div>
 
@@ -264,30 +324,56 @@
                         {{-- ==================================================
                             GRAFIK ZAT ANESTESI
                         =================================================== --}}
-                        <div class="d-flex align-items-center justify-content-between p-2">
+                        <div class="row p-2">
+                            <div class="col-md-4 mb-2">
+                                <div class="d-flex align-items-center justify-content-between p-2">
 
-                            <div>
-                                <h6 class="mb-0 fw-semibold">
-                                    Zat Anestesi
-                                </h6>
+                                    <div>
+                                        <h6 class="mb-0 fw-semibold">
+                                            Zat Anestesi
+                                        </h6>
 
-                                <small class="text-muted">
+                                        <small class="text-muted">
 
-                                </small>
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group">
+                                    <select class="form-select" name="la_zat_anestesi">
+                                        <option value="0">Pilih</option>
+                                        <option value="1">Sevoflurane</option>
+                                        <option value="2">Isoflurane</option>
+                                        <option value="3">Halothane</option>
+                                        <option value="4">Desflurane</option>
+                                    </select>
+                                </div>
                             </div>
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center justify-content-between p-2">
 
+                                    <div>
+                                        <h6 class="mb-0 fw-semibold">
+                                            Suhu ( <b>°C</b> )
+                                        </h6>
+
+                                        <small class="text-muted">
+
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                                <div class="input-group">
+                                    <div class="input-group-text">Dari</div>
+                                    <input class="form-control" type="text" name="la_suhu_dari">
+                                    <div class="input-group-text">Sampai</div>
+                                    <input class="form-control" type="text" name="la_suhu_sampai">
+                                    <div class="input-group-text">°C</div>
+                                </div>
+                            </div>
                         </div>
-
-                        <div class="form-group">
-                            <select class="form-select" name="la_zat_anestesi">
-                                <option value="0">Pilih</option>
-                                <option value="1">Sevoflurane</option>
-                                <option value="2">Isoflurane</option>
-                                <option value="3">Halothane</option>
-                                <option value="4">Desflurane</option>
-                            </select>
-                        </div>
-
 
                         <hr>
                         {{-- <div class="d-flex align-items-center justify-content-between p-2">
@@ -325,38 +411,6 @@
                         {{-- ==================================================
                             GRAFIK TEMPERATUR
                         =================================================== --}}
-                        <div class="d-flex align-items-center justify-content-between p-2">
-
-                            <div>
-                                <h6 class="mb-0 fw-semibold">
-                                    Suhu
-                                </h6>
-
-                                <small class="text-muted">
-
-                                </small>
-                            </div>
-
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="input-group">
-                                    <div class="input-group-text">Dari</div>
-                                    <input class="form-control" type="text" name="la_suhu_dari">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="input-group">
-                                    <div class="input-group-text">Sampai</div>
-                                    <input class="form-control" type="text" name="la_suhu_sampai">
-                                    <div class="input-group-text">°C</div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <hr>
                         {{-- <div class="d-flex align-items-center justify-content-between p-2">
 
                             <div>
@@ -392,50 +446,52 @@
                         {{-- ==================================================
                             GRAFIK CAIRAN
                         =================================================== --}}
-                        <div class="d-flex align-items-center justify-content-between p-2">
+                        <div class="p-2">
+                            <div class="d-flex align-items-center justify-content-between p-2">
 
-                            <div>
-                                <h6 class="mb-0 fw-semibold">
-                                    Cairan
-                                </h6>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">
+                                        Cairan
+                                    </h6>
 
-                                <small class="text-muted">
-                                    Masuk &amp; Keluar — interval 15 menit
-                                </small>
+                                    <small class="text-muted">
+                                        Masuk &amp; Keluar — interval 15 menit
+                                    </small>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-subtle-warning"
+                                    id="btnRefreshCairan"
+                                >
+                                    <i class="ri-refresh-line"></i>
+                                </button>
+
                             </div>
 
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-subtle-warning"
-                                id="btnRefreshCairan"
+                            <div
+                                id="monitoringCairanChart"
+                                style="min-height:250px;"
+                                class="p-2"
+                            ></div>
+
+                            <div
+                                id="cairanTotalSummary"
+                                class="border rounded p-2 mt-2"
                             >
-                                <i class="ri-refresh-line"></i>
-                            </button>
+                                <div>
+                                    <strong>Cairan Masuk</strong> :
+                                    Infus <span id="totalCairanInfus">0</span> ml,
+                                    Transfusi <span id="totalCairanTransfusi">0</span> ml,
+                                    Total <strong><span id="totalCairanMasuk">0</span> ml</strong>
+                                </div>
 
-                        </div>
-
-                        <div
-                            id="monitoringCairanChart"
-                            style="min-height:250px;"
-                            class="p-2"
-                        ></div>
-
-                        <div
-                            id="cairanTotalSummary"
-                            class="border rounded p-2 mt-2"
-                        >
-                            <div>
-                                <strong>Cairan Masuk</strong> :
-                                Infus <span id="totalCairanInfus">0</span> ml,
-                                Transfusi <span id="totalCairanTransfusi">0</span> ml,
-                                Total <strong><span id="totalCairanMasuk">0</span> ml</strong>
-                            </div>
-
-                            <div class="mt-1">
-                                <strong>Cairan Keluar</strong> :
-                                Urin <span id="totalCairanUrin">0</span> ml,
-                                Darah <span id="totalCairanDarah">0</span> ml,
-                                Total <strong><span id="totalCairanKeluar">0</span> ml</strong>
+                                <div class="mt-1">
+                                    <strong>Cairan Keluar</strong> :
+                                    Urin <span id="totalCairanUrin">0</span> ml,
+                                    Darah <span id="totalCairanDarah">0</span> ml,
+                                    Total <strong><span id="totalCairanKeluar">0</span> ml</strong>
+                                </div>
                             </div>
                         </div>
 
@@ -449,7 +505,7 @@
                             <div class="p-2">
                                 <div class="form-group mb-3">
 
-                                    <label class="form-labelflex-shrink-0 mb-2">
+                                    <label class="form-label flex-shrink-0 mb-2">
                                         Teknik :
                                     </label>
 
@@ -470,10 +526,10 @@
                                             <input
                                                 class="form-check-input check-primary"
                                                 type="checkbox"
-                                                name="la_teknik_sc"
+                                                name="la_teknik_um"
                                             >
                                             <label class="form-check-label mb-0 flex-shrink-0">
-                                                SC
+                                                Umum
                                             </label>
                                         </div>
 
@@ -481,10 +537,10 @@
                                             <input
                                                 class="form-check-input check-primary"
                                                 type="checkbox"
-                                                name="la_teknik_taf"
+                                                name="la_teknik_bal"
                                             >
                                             <label class="form-check-label mb-0 flex-shrink-0">
-                                                To and Fro
+                                                Balance
                                             </label>
                                         </div>
 
@@ -492,21 +548,10 @@
                                             <input
                                                 class="form-check-input check-primary"
                                                 type="checkbox"
-                                                name="la_teknik_cir"
+                                                name="la_teknik_loc"
                                             >
                                             <label class="form-check-label mb-0 flex-shrink-0">
-                                                Circle
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check mb-0">
-                                            <input
-                                                class="form-check-input check-primary"
-                                                type="checkbox"
-                                                name="la_teknik_jr"
-                                            >
-                                            <label class="form-check-label mb-0 flex-shrink-0">
-                                                Jackson Reese
+                                                Local
                                             </label>
                                         </div>
 
@@ -537,8 +582,120 @@
 
                                 <div class="form-group mb-3">
 
-                                    <label class="form-labelflex-shrink-0 mb-2">
-                                        Obat Anestesi :
+                                    <label class="form-label flex-shrink-0 mb-2">
+                                        Induksi :
+                                    </label>
+
+                                    <div class="d-flex gap-2 align-items-center mb-2">
+
+                                        <div class="form-check mb-0">
+                                            <input
+                                                class="form-check-input check-primary"
+                                                type="checkbox"
+                                                name="la_induksi_ket"
+                                            >
+                                            <label class="form-check-label mb-0 flex-shrink-0">
+                                                Ketamine
+                                            </label>
+                                        </div>
+
+                                        <div class="form-check mb-0">
+                                            <input
+                                                class="form-check-input check-primary"
+                                                type="checkbox"
+                                                name="la_induksi_pro"
+                                            >
+                                            <label class="form-check-label mb-0 flex-shrink-0">
+                                                Propofol
+                                            </label>
+                                        </div>
+
+                                        <div class="form-check mb-0">
+                                            <input
+                                                class="form-check-input check-primary"
+                                                type="checkbox"
+                                                name="la_induksi_fen"
+                                            >
+                                            <label class="form-check-label mb-0 flex-shrink-0">
+                                                Fentanyl
+                                            </label>
+                                        </div>
+
+                                        <div class="form-check mb-0">
+                                            <input
+                                                class="form-check-input check-primary"
+                                                type="checkbox"
+                                                name="la_induksi_mil"
+                                            >
+                                            <label class="form-check-label mb-0 flex-shrink-0">
+                                                Miloz
+                                            </label>
+                                        </div>
+
+                                        <div class="form-check mb-0 d-flex align-items-center gap-2 flex-shrink-0 ps-1">
+                                            <input
+                                                class="form-check-input check-primary m-0"
+                                                type="checkbox"
+                                                name="la_induksi_lid"
+                                            >
+
+                                            <label class="form-check-label mb-0 flex-shrink-0">
+                                                Lidocaine
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                class="form-control form-control-sm flex-grow-1 mb-0"
+                                                data-enable-when="la_induksi_lid"
+                                                name="la_induksi_lid_lain"
+                                                style="width: 70px; flex: 0 0 60px;"
+                                                placeholder="..."
+                                                disabled
+                                            >
+
+                                            <label class="form-check-label mb-0 flex-shrink-0">
+                                                %
+                                            </label>
+                                        </div>
+
+                                        <div class="form-check mb-0">
+                                            <input
+                                                class="form-check-input check-primary"
+                                                type="checkbox"
+                                                name="la_induksi_bup"
+                                            >
+                                            <label class="form-check-label mb-0 flex-shrink-0">
+                                                Bupivacaine
+                                            </label>
+                                        </div>
+
+                                    </div>
+
+                                    <label class="form-label flex-shrink-0 mb-2">
+                                        Induksi Lainnya :
+                                    </label>
+
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <div class="d-flex align-items-center gap-2 mb-0">
+                                            <div class="form-check mb-0 flex-shrink-0">
+                                                <input class="form-check-input" type="checkbox" name="la_induksi_lain1">
+                                            </div>
+                                            <input type="text" class="form-control form-control-sm flex-grow-1" data-enable-when="la_induksi_lain1" name="la_induksi_lain1_des" placeholder="..." disabled="">
+                                        </div>
+
+                                        <div class="d-flex align-items-center gap-2 mb-0">
+                                            <div class="form-check mb-0 flex-shrink-0">
+                                                <input class="form-check-input" type="checkbox" name="la_induksi_lain2">
+                                            </div>
+                                            <input type="text" class="form-control form-control-sm flex-grow-1" data-enable-when="la_induksi_lain2" name="la_induksi_lain2_des" placeholder="..." disabled="">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+
+                                    <label class="form-label flex-shrink-0 mb-2">
+                                        Maintenance :
                                     </label>
 
                                     <div class="d-flex gap-2 align-items-center">
@@ -547,29 +704,7 @@
                                             <input
                                                 class="form-check-input check-primary"
                                                 type="checkbox"
-                                                name="la_obatanes_pen"
-                                            >
-                                            <label class="form-check-label mb-0 flex-shrink-0">
-                                                Penthotal
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check mb-0">
-                                            <input
-                                                class="form-check-input check-primary"
-                                                type="checkbox"
-                                                name="la_obatanes_ket"
-                                            >
-                                            <label class="form-check-label mb-0 flex-shrink-0">
-                                                Ketalar
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check mb-0">
-                                            <input
-                                                class="form-check-input check-primary"
-                                                type="checkbox"
-                                                name="la_obatanes_n2o"
+                                                name="la_maintenance_n2o"
                                             >
                                             <label class="form-check-label mb-0 flex-shrink-0">
                                                 N2O
@@ -580,10 +715,10 @@
                                             <input
                                                 class="form-check-input check-primary"
                                                 type="checkbox"
-                                                name="la_obatanes_eth"
+                                                name="la_maintenance_o2"
                                             >
                                             <label class="form-check-label mb-0 flex-shrink-0">
-                                                Ether
+                                                O2
                                             </label>
                                         </div>
 
@@ -591,10 +726,10 @@
                                             <input
                                                 class="form-check-input check-primary"
                                                 type="checkbox"
-                                                name="la_obatanes_flo"
+                                                name="la_maintenance_sev"
                                             >
                                             <label class="form-check-label mb-0 flex-shrink-0">
-                                                Flouthane
+                                                Sevoflurane
                                             </label>
                                         </div>
 
@@ -602,10 +737,10 @@
                                             <input
                                                 class="form-check-input check-primary"
                                                 type="checkbox"
-                                                name="la_obatanes_etr"
+                                                name="la_maintenance_iso"
                                             >
                                             <label class="form-check-label mb-0 flex-shrink-0">
-                                                Ethrane
+                                                Isoflurane
                                             </label>
                                         </div>
 
@@ -613,10 +748,10 @@
                                             <input
                                                 class="form-check-input check-primary"
                                                 type="checkbox"
-                                                name="la_obatanes_suc"
+                                                name="la_maintenance_hal"
                                             >
                                             <label class="form-check-label mb-0 flex-shrink-0">
-                                                Succinyicholine
+                                                Halothane
                                             </label>
                                         </div>
 
@@ -624,25 +759,11 @@
                                             <input
                                                 class="form-check-input check-primary"
                                                 type="checkbox"
-                                                name="la_obatanes_pav"
+                                                name="la_maintenance_des"
                                             >
                                             <label class="form-check-label mb-0 flex-shrink-0">
-                                                Pavulon
+                                                Desflurane
                                             </label>
-                                        </div>
-
-                                        <div class="d-flex align-items-center gap-2 mb-0">
-                                            <div class="form-check mb-0 flex-shrink-0">
-                                                <input class="form-check-input" type="checkbox" name="la_obatanes_lain1">
-                                            </div>
-                                            <input type="text" class="form-control form-control-sm flex-grow-1" data-enable-when="la_obatanes_lain1" name="la_obatanes_lain1_des" placeholder="..." disabled="">
-                                        </div>
-
-                                        <div class="d-flex align-items-center gap-2 mb-0">
-                                            <div class="form-check mb-0 flex-shrink-0">
-                                                <input class="form-check-input" type="checkbox" name="la_obatanes_lain2">
-                                            </div>
-                                            <input type="text" class="form-control form-control-sm flex-grow-1" data-enable-when="la_obatanes_lain2" name="la_obatanes_lain2_des" placeholder="..." disabled="">
                                         </div>
 
                                     </div>
@@ -650,7 +771,7 @@
 
                                 <div class="form-group mb-3">
 
-                                    <label class="form-labelflex-shrink-0 mb-2">
+                                    <label class="form-label flex-shrink-0 mb-2">
                                         E.T. :
                                     </label>
 
@@ -1411,6 +1532,13 @@
         }
     };
     const mappingForm = {
+        LA_TANGGAL: 'la_tanggal',
+        LA_RUANG: 'la_ruang',
+        LA_IJIN_OPERASI: 'la_ijin_operasi',
+        LA_CEK_IDENTITAS: 'la_cek_identitas',
+        LA_TERENCANA: 'la_terencana',
+        LA_EMERGENCY: 'la_emergency',
+
         LA_BB: 'la_bb',
         LA_EKG: 'la_ekg',
         LA_AL: 'la_al',
@@ -1435,39 +1563,50 @@
         LA_NAMA_OPERASI: 'la_nama_operasi',
         LA_NAMA_AHLI_BEDAH: 'la_nama_ahli_bedah',
         LA_NAMA_AHLI_ANESTESI: 'la_nama_ahli_anestesi',
-        LA_NAMA_PERAWAT_BIDAN: 'la_nama_perawat_bidan',
+        LA_NAMA_PERAWAT_PENATA: 'la_nama_perawat_penata',
+        LA_TGL_OPERASI: 'la_tgl_operasi',
+
         LA_ANES_MULAI: 'la_anes_mulai',
         LA_ANES_SELESAI: 'la_anes_selesai',
         LA_OP_MULAI: 'la_op_mulai',
         LA_OP_SELESAI: 'la_op_selesai',
 
         LA_TEKNIK_IV: 'la_teknik_iv',
-        LA_TEKNIK_SC: 'la_teknik_sc',
-        LA_TEKNIK_TAF: 'la_teknik_taf',
-        LA_TEKNIK_CIR: 'la_teknik_cir',
-        LA_TEKNIK_JR: 'la_teknik_jr',
+        LA_TEKNIK_UM: 'la_teknik_um',
+        LA_TEKNIK_BAL: 'la_teknik_bal',
+        LA_TEKNIK_LOC: 'la_teknik_loc',
         LA_TEKNIK_SPI: 'la_teknik_spi',
         LA_TEKNIK_EPI: 'la_teknik_epi',
-        LA_OBATANES_PEN: 'la_obatanes_pen',
-        LA_OBATANES_KET: 'la_obatanes_ket',
-        LA_OBATANES_N2O: 'la_obatanes_n2o',
-        LA_OBATANES_ETH: 'la_obatanes_eth',
-        LA_OBATANES_FLO: 'la_obatanes_flo',
-        LA_OBATANES_ETR: 'la_obatanes_etr',
-        LA_OBATANES_SUC: 'la_obatanes_suc',
-        LA_OBATANES_PAV: 'la_obatanes_pav',
-        LA_OBATANES_LAIN1: 'la_obatanes_lain1',
-        LA_OBATANES_LAIN1_DES: 'la_obatanes_lain1_des',
-        LA_OBATANES_LAIN2: 'la_obatanes_lain2',
-        LA_OBATANES_LAIN2_DES: 'la_obatanes_lain2_des',
+
+        LA_INDUKSI_KET: 'la_induksi_ket',
+        LA_INDUKSI_PRO: 'la_induksi_pro',
+        LA_INDUKSI_FEN: 'la_induksi_fen',
+        LA_INDUKSI_MIL: 'la_induksi_mil',
+        LA_INDUKSI_LID: 'la_induksi_lid',
+        LA_INDUKSI_LID_LAIN: 'la_induksi_lid_lain',
+        LA_INDUKSI_BUP: 'la_induksi_bup',
+        LA_INDUKSI_LAIN1: 'la_induksi_lain1',
+        LA_INDUKSI_LAIN1_DES: 'la_induksi_lain1_des',
+        LA_INDUKSI_LAIN2: 'la_induksi_lain2',
+        LA_INDUKSI_LAIN2_DES: 'la_induksi_lain2_des',
+
+        LA_MAINTENANCE_N2O: 'la_maintenance_n2o',
+        LA_MAINTENANCE_O2: 'la_maintenance_o2',
+        LA_MAINTENANCE_SEV: 'la_maintenance_sev',
+        LA_MAINTENANCE_ISO: 'la_maintenance_iso',
+        LA_MAINTENANCE_HAL: 'la_maintenance_hal',
+        LA_MAINTENANCE_DES: 'la_maintenance_des',
+
         LA_ET_UKURAN: 'la_et_ukuran',
         LA_ET_NASAL: 'la_et_nasal',
         LA_ET_ORAL: 'la_et_oral',
         LA_ET_CUFF: 'la_et_cuff',
         LA_ET_PACK: 'la_et_pack',
+
         LA_POS_SUPINE: 'la_pos_supine',
         LA_POS_PRONE: 'la_pos_prone',
         LA_POS_LATERAL: 'la_pos_lateral',
+
         LA_CATATAN: 'la_catatan',
     };
     $('#anestesiMonitoringIndikator').on('change', function () {
