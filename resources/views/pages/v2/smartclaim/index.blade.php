@@ -41,7 +41,7 @@
                         <button class="btn btn-sm btn-light-danger"><i class="fas fa-sync"></i></button>
                     </div> --}}
                 </div>
-                <div class="card-body p-0 table-body">
+                <div class="card-body p-3 pb-0 table-body">
                     <div class="table-responsive pb-3">
                         <table class="table mb-0 table-hover table-striped" id="dttable">
                             <thead>
@@ -357,12 +357,8 @@
                     })
                 }
                 var table = $('#dttable').DataTable({
-                    // dom: 'Bfrtip',
                     order: [
                         [1, "desc"]
-                    ],
-                    bAutoWidth: false,
-                    aoColumns : [
                     ],
                     columnDefs: [
                         { targets: [0], sortable: true },
@@ -371,9 +367,6 @@
                         // { visible: false, targets: [7] },
                     ],
                     displayLength: 10,
-                    lengthChange: true,
-                    lengthMenu: [10, 30, 50, 75, 100, 250, 500, 1000, 3000, 7000, 15000, 50000, 100000],
-                    buttons: ['excel', 'pdf'] // 'copy','colvis'
                 });
                 // Showing Tooltip
                 $('[data-bs-toggle="tooltip"]').tooltip('dispose');

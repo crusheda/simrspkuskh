@@ -115,7 +115,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body p-1 pb-3">
+                <div class="card-body p-3">
                     <div class="table-responsive">
                         <table class="table table-striped" id="dttable">
                             <thead>
@@ -688,11 +688,9 @@
                         trigger : 'hover'
                     })
                     var table = $('#dttable').DataTable({
-                        // dom: 'Bfrtip',
                         order: [
                             [1, "desc"]
                         ],
-                        bAutoWidth: false,
                         aoColumns : [
                             { sWidth: '65%' },
                             { sWidth: '17%' },
@@ -709,9 +707,6 @@
                             { targets: [1], sortable: false },
                         ],
                         displayLength: 20,
-                        lengthChange: true,
-                        lengthMenu: [20, 50, 75, 100, 250, 500, 1000, 3000, 7000, 15000, 50000, 100000],
-                        buttons: ['excel', 'pdf'] // 'copy','colvis'
                     });
                     $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fa-sync fa-spin').addClass('fa-filter');
                 }, error: function(xhr, status, error) {

@@ -48,7 +48,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body pt-3 pb-0">
+                <div class="card-body p-3">
                     <div class="table-responsive">
                         <table class="table table-hover" id="vantable">
                             <thead>
@@ -88,9 +88,9 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body p-2 pb-1">
+            <div class="modal-body p-3">
                 <div class="table-responsive">
-                    <table class="table table-hover" id="vantableAkses">
+                    <table class="table table-hover" id="vantableAkses" style="width:100%">
                         <thead>
                             <tr>
                                 <th>#ID</th>
@@ -324,11 +324,9 @@
                 })
                 $('#tampil-tbody').empty().append(content);
                 table = $('#vantable').DataTable({
-                    // dom: 'Bfrtip',
                     order: [
                         [0, "desc"]
                     ],
-                    bAutoWidth: false,
                     aoColumns : [
                         { sWidth: '10%' },
                         { sWidth: '20%' },
@@ -339,9 +337,6 @@
                         { targets: [3], sortable: false },
                     ],
                     displayLength: 20,
-                    lengthChange: true,
-                    lengthMenu: [20, 50, 75, 100, 250, 500, 1000, 3000, 7000, 15000, 50000, 100000],
-                    buttons: ['excel', 'pdf'] // 'copy','colvis'
                 });
                 // Showing Tooltip
                 $('[data-bs-toggle="tooltip"]').tooltip({
@@ -565,11 +560,9 @@
                 })
                 $('#tampil-tbody-akses').empty().append(content);
                 tableAkses = $('#vantableAkses').DataTable({
-                    // dom: 'Bfrtip',
                     order: [
-                        [0, "desc"]
+                        [3, "desc"]
                     ],
-                    bAutoWidth: false,
                     aoColumns : [
                         { sWidth: '10%' },
                         { sWidth: '50%' },
@@ -581,9 +574,6 @@
                         { targets: [4], sortable: false },
                     ],
                     displayLength: 20,
-                    lengthChange: true,
-                    lengthMenu: [20, 50, 75, 100, 250, 500, 1000, 3000, 7000, 15000, 50000, 100000],
-                    buttons: ['excel', 'pdf'] // 'copy','colvis'
                 });
                 $('#btn-refresh-akses').prop('disabled',false).find('i').removeClass('fa-spin');
             }, error: function(xhr, status, error) {

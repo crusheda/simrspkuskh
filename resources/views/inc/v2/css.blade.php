@@ -35,12 +35,17 @@
 <link rel="stylesheet" href="{{ asset('assets/v2/libs/bootstrap-select/css/bootstrap-select.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/v2/libs/flatpickr/flatpickr.min.css') }}">
 
-<link rel="stylesheet" href="{{ asset('assets/v2/libs/datatables/datatables.min.css') }}">
+<script src="{{ asset('js/jquery.min.js') }}"></script>
+
+{{-- <link rel="stylesheet" href="{{ asset('assets/v2/libs/datatables/datatables.min.css') }}"> --}}
+<link rel="stylesheet" href="{{ asset('assets/v2/libs/datatable/css/dataTables.bootstrap5.min.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/v2/libs/datatable/css/responsive.bootstrap.min.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/v2/libs/datatable/css/buttons.bootstrap5.min.css') }}">
+
 <link rel="stylesheet" href="{{ asset('assets/v2/libs/tagify/tagify.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/v2/css/styles.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/v2/css/custom.css') }}">
 
-<script src="{{ asset('js/jquery.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script>
 {{-- <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}" /> --}}
 {{-- <link rel="stylesheet" href="{{ asset('assets/v2/css/styles-ui.css') }}"> --}}

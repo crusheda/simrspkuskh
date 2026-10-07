@@ -43,7 +43,8 @@
                                     <option value="5" selected>Semua Perawatan</option>
                                     <option value="1">Rawat Jalan</option>
                                     <option value="2">Rawat Darurat (Tanpa Inap)</option>
-                                    <option value="3">Rawat Inap</option>
+                                    {{-- <option value="">Rawat Darurat (Rencana Inap)</option> --}}
+                                    <option value="3">Rawat Inap & Intensif</option>
                                     <option value="4">Operatif (OK)</option>
                                 </select>
                             </div>
@@ -93,7 +94,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="table-responsive border-top" id="show_table" hidden>
+                    <div class="table-responsive border-top p-3" id="show_table" hidden>
                         <table class="table mb-0 table-hover table-display" id="vantable">
                             <thead>
                                 <tr>
@@ -484,24 +485,15 @@
                 }
                 // VANILLA TABLE
                 tableEMR = $('#vantable').DataTable({
-                    processing: true,
-                    pageLength: 10,
-                    lengthMenu: [
-                        [10, 20, 50, 100, 300, 500],
-                        [10, 20, 50, 100, 300, 500]
-                    ],
-                    ordering: true,
-                    searching: true,
-                    info: true,
-                    paging: true,
-                    bAutoWidth: false,
+                    // processing: true,
+                    displayLength: 10,
+                    lengthMenu: [10, 20, 50, 100, 300, 500],
                     aoColumns : [
                         { sWidth: '10%' },
                         { sWidth: '75%' },
                         { sWidth: '15%' },
                     ],
                     order: [[2, 'desc']], // kolom ke-3 descending
-
                     columnDefs: [
                         {
                             targets: [0, 1],

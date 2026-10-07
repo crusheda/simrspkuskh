@@ -798,6 +798,7 @@ class EMRController extends Controller
                 $q->where('pk.RUANGAN', 'LIKE', '1020101%')
                     ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
                     ->orWhere('pk.RUANGAN', 'LIKE', '1020301%')
+                    ->orWhere('pk.RUANGAN', 'LIKE', '1020302%')
                     ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
             })
             ->where('pp.NORM', $NORM)
@@ -818,7 +819,7 @@ class EMRController extends Controller
         } elseif ($id == 2) {
             $prefix = ['1020201%'];
         } elseif ($id == 3) {
-            $prefix = ['1020301%'];
+            $prefix = ['1020301%', '1020302%'];
         } elseif ($id == 4) {
             $prefix = ['1020801%'];
         } else {

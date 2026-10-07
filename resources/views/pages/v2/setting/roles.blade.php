@@ -181,11 +181,9 @@
                     $('#tampil-tbody').empty().append(content);
                 }
                 table = $('#vantable').DataTable({
-                    // dom: 'Bfrtip',
                     order: [
                         [3, "desc"]
                     ],
-                    bAutoWidth: false,
                     aoColumns : [
                         { sWidth: '5%' },
                         { sWidth: '50%' },
@@ -198,9 +196,6 @@
                         { targets: [5], sortable: false },
                     ],
                     displayLength: 20,
-                    lengthChange: true,
-                    lengthMenu: [20, 50, 75, 100, 250, 500, 1000, 3000, 7000, 15000, 50000, 100000],
-                    buttons: ['excel', 'pdf'] // 'copy','colvis'
                 });
                 // Showing Tooltip
                 $('[data-bs-toggle="tooltip"]').tooltip({
