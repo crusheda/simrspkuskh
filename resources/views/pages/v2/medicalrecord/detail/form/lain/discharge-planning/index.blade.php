@@ -3,6 +3,8 @@
     <h1 class="display-6 mb-3 mt-2 fs-23 fw-medium">
         <center>
             RENCANA PEMULANGAN PASIEN
+        </center>
+        <center>
             <b class="text-success">(DISCHARGE PLANNING CHECKLIST)</b>
         </center>
     </h1>
@@ -20,26 +22,14 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <h6>Tanggal</h6>
-                        <input
-                            type="date"
-                            class="form-control"
-                            name="dp_tanggal"
-                            id="dp_tanggal"
-                            readonly
-                        >
+                        <input type="date" class="form-control" name="dp_tanggal" id="dp_tanggal" readonly>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-group">
                         <h6>Jam</h6>
-                        <input
-                            type="time"
-                            class="form-control"
-                            name="dp_jam"
-                            id="dp_jam"
-                            readonly
-                        >
+                        <input type="time" class="form-control" name="dp_jam" id="dp_jam" readonly>
                     </div>
                 </div>
 
