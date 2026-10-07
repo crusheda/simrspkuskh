@@ -197,7 +197,6 @@
         // alert(@json(auth()->user()->roles->pluck('name')));
         getRuangan();
         getPenjamin();
-        filter();
 
         // BUTTON FILTER READY
         $('#tombol-tampilkan').prop('disabled', false);
@@ -298,6 +297,8 @@
                 if (idRuangPerawatan == 5 && res.user) {
                     dpjpChoices.setChoiceByValue(res.user);
                 }
+
+                filter();
             },
             error: function (xhr) {
                 Swal.fire(
