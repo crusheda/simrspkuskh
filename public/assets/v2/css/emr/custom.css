@@ -1,0 +1,27 @@
+.alergi-badge {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.alergi-text {
+    display: inline-block;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.alergi-badge.alergi-expanded {
+    white-space: normal;
+    align-items: flex-start;
+}
+
+.alergi-badge.alergi-expanded .alergi-text {
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: anywhere;
+}

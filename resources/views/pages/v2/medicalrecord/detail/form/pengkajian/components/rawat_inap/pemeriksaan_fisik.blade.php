@@ -217,11 +217,11 @@
                             </div>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text">Jenis</span>
-                                <input type="text" class="form-control form-control-sm flex-grow-1" name="pfn_abn_jenis" placeholder="" disabled>
+                                <input type="text" class="form-control form-control-sm flex-grow-1" name="pfn_abn_jenis" data-enable-when="pfn_abn:2" placeholder="" disabled>
                             </div>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text">Flow</span>
-                                <input type="number" class="form-control form-control-sm flex-grow-1" name="pfn_abn_flow" placeholder="" disabled>
+                                <input type="number" class="form-control form-control-sm flex-grow-1" name="pfn_abn_flow" data-enable-when="pfn_abn:2" placeholder="" disabled>
                                 <span class="input-group-text">it/mt</span>
                             </div>
                         </div>
@@ -1498,35 +1498,59 @@
     // ==========================================================
     // ==========================================================
     function updateConditionalInputs() {
-    $form.find('input[name]').each(function () {
-        const $input = $(this);
+        $form.find('input[name]').each(function () {
+            const $input = $(this);
 
-        if (
-            $input.is(':checkbox') ||
-            $input.is(':radio')
-        ) {
-            return;
-        }
+            if (
+                $input.is(':checkbox') ||
+                $input.is(':radio')
+            ) {
+                return;
+            }
 
-        const $parent = $input.parent();
+            // Jika menggunakan data-enable-when
+            const enableWhen = $input.data('enable-when');
 
-        const $checkbox = $parent.find(
-            'input.single-checkbox[type="checkbox"]'
-        );
+            if (enableWhen) {
+                const [name, value] = String(enableWhen).split(':');
 
-        if (!$checkbox.length) {
-            return;
-        }
+                const isChecked = $form
+                    .find('input.single-checkbox[type="checkbox"]')
+                    .filter(function () {
+                        return this.name === name &&
+                            this.value === value &&
+                            this.checked;
+                    }).length > 0;
 
-        const isChecked = $checkbox.is(':checked');
+                $input.prop('disabled', !isChecked);
 
-        $input.prop('disabled', !isChecked);
+                if (!isChecked) {
+                    $input.val('');
+                }
 
-        if (!isChecked) {
-            $input.val('');
-        }
-    });
-}
+                return;
+            }
+
+            // Logika awal tetap dipertahankan
+            const $parent = $input.parent();
+
+            const $checkbox = $parent.find(
+                'input.single-checkbox[type="checkbox"]'
+            );
+
+            if (!$checkbox.length) {
+                return;
+            }
+
+            const isChecked = $checkbox.is(':checked');
+
+            $input.prop('disabled', !isChecked);
+
+            if (!isChecked) {
+                $input.val('');
+            }
+        });
+    }
 
     // ==========================================================
     // GET DATA

@@ -4,6 +4,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/v2/css/emr/cppt.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/v2/css/emr/custom.css') }}">
 @endpush
 
 @section('content')
@@ -41,25 +42,109 @@
                 </div>
             </div>
         </div>
+        <div id="alert-potensi-readmisi">
+            @if ($list['readmisi']['potensi_readmisi'])
+                <div class="card mb-2">
+                    <div class="card-body p-2">
+                        <div class="d-flex align-items-center justify-content-between gap-3 p-2 px-3 rounded-3 border border-danger-subtle bg-danger-subtle">
+
+                            {{-- Left Content --}}
+                            <div class="d-flex align-items-center gap-2 min-w-0">
+                                <div class="d-flex align-items-center justify-content-center rounded-circle bg-danger text-white flex-shrink-0"
+                                    style="width: 36px; height: 36px;">
+                                    <i class="ri-alarm-warning-line fs-5"></i>
+                                </div>
+
+                                <div class="min-w-0">
+                                    <div class="fw-bold text-danger">
+                                        Potensi Readmisi
+                                    </div>
+                                    <div class="small text-body-secondary">
+                                        Riwayat kepulangan dalam rentang 30 hari
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Right Content --}}
+                            <div class="d-flex align-items-center gap-3 flex-shrink-0">
+                                <div class="text-end">
+                                    <div class="small text-body-secondary">
+                                        <i class="ri-calendar-check-line me-1"></i>
+                                        Pulang Sebelumnya
+                                    </div>
+                                    <div class="fw-semibold text-body">
+                                        {{ \Carbon\Carbon::parse($list['readmisi']['tanggal_pulang_sebelumnya'])->translatedFormat('d M Y') }}
+                                    </div>
+                                </div>
+
+                                <div class="vr opacity-25" style="height: 32px;"></div>
+
+                                <div class="text-end">
+                                    <div class="small text-body-secondary">
+                                        <i class="ri-time-line me-1"></i>
+                                        Selisih
+                                    </div>
+                                    <div class="fw-bold text-danger">
+                                        {{ $list['readmisi']['selisih_hari'] }} hari
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
         <div class="card mb-2">
             <div class="card-body p-2">
                 <div class="row justify-content-between d-flex align-items-center p-2">
                     <div class="col-xl-8 col-md-8 col-sm-8">
-                        <h5 class="mb-1 align-middle"><i class="ri-user-3-line me-1"></i> <b class="fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis Pasien">RM. {{ str_pad($list['show']->NORM, 8, '0', STR_PAD_LEFT) }}</b></h5>
+                        <h5 class="mb-1 d-flex align-items-center gap-2">
+                            <i class="ri-user-3-line me-1"></i>
+                            <b class="fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis Pasien">
+                                RM. {{ str_pad($list['show']->NORM, 8, '0', STR_PAD_LEFT) }}
+                            </b>
+                            @if ($list['show']->PRBPASIEN)
+                                <span class="badge bg-danger border border-danger badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">{{ $list['show']->PRBPASIEN }}</span>
+                            @endif
+                        </h5>
                         <h4 class="text-truncate mb-1 fw-bold">{{ $list['show']->NAMAPASIEN }}</h4>
                         <p class="text-truncate mb-1" style="font-size: 12px">
                             <b>NOBPJS. <a class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kartu BPJS Pasien">{{ $list['show']->NOBPJS }}</a></b>
                             | <b data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP Tgl. {{ $list['show']->TGLSEP?\Carbon\Carbon::parse($list['show']->TGLSEP)->translatedFormat('d F Y'):'' }}">SEP. <a class="text-purple-700">{{ $list['show']->NOSEP?$list['show']->NOSEP:'Tidak Ditemukan' }}</a></b>
                         </p>
-                        @if ($list['show']->STATUS == 1)
-                            <span class="badge bg-warning-subtle text-dark border border-warning-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">Pasien Sedang Dilayani</span>
-                        @else
-                            @if ($list['show']->STATUS == 2)
-                                <span class="badge bg-primary-subtle text-dark border border-primary-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">Kunjungan Pasien Selesai / Final</span>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            @if ($list['show']->STATUS == 1)
+                                <span class="badge bg-warning-subtle text-dark border border-warning-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien Sedang Dilayani">Pasien Sedang Dilayani</span>
                             @else
-                                <span class="badge bg-danger-subtle text-dark border border-danger-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">Pasien Batal Periksa</span>
+                                @if ($list['show']->STATUS == 2)
+                                    <span class="badge bg-primary-subtle text-dark border border-primary-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien Selesai / Final">Kunjungan Pasien Selesai / Final</span>
+                                @else
+                                    <span class="badge bg-danger-subtle text-dark border border-danger-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien Batal Periksa">Pasien Batal Periksa</span>
+                                @endif
                             @endif
-                        @endif
+                            @if ($list['riwayat_alergi']->isNotEmpty())
+                                @php
+                                    $alergi = 'Alergi ' . $list['riwayat_alergi']->map(function ($item) {
+                                        return $item->DESKRIPSI . ' (' . $item->JENIS_ALERGI . ')';
+                                    })->implode(', ');
+                                @endphp
+
+                                <span
+                                    class="badge bg-danger-subtle text-danger border border-danger-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium alergi-badge"
+                                    role="button"
+                                    tabindex="0"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="bottom"
+                                    title="Riwayat Alergi Pasien"
+                                    onclick="this.classList.toggle('alergi-expanded')"
+                                    onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.classList.toggle('alergi-expanded'); }"
+                                >
+                                    <i class="ri-alert-line me-1"></i>
+                                    <span class="alergi-text">{{ $alergi }}</span>
+                                </span>
+                            @endif
+                        </div>
                     </div>
                     <div class="col-xl-4 col-md-4 col-sm-4 text-end">
                         <p class="fw-bold mb-1 fs-16"><b>{{ $list['show']->NAMARUANGAN }}</b></p>
@@ -1166,10 +1251,12 @@
         if (target === '#fpengkajian') {
             // Form Pengkajian
             $('#btn-top-detail-kunjungan').prop('hidden', true);
+            $('#alert-potensi-readmisi').prop('hidden', true);
             $('#breadcrumb-detail-kunjungan').prop('hidden', true);
         } else {
             // Tab lainnya
             $('#btn-top-detail-kunjungan').prop('hidden', false);
+            $('#alert-potensi-readmisi').prop('hidden', false);
             $('#breadcrumb-detail-kunjungan').prop('hidden', false);
         }
     }

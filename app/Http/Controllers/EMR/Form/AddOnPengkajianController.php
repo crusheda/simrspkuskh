@@ -175,14 +175,32 @@ class AddOnPengkajianController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
+        $getRM = DB::table('pendaftaran.kunjungan as pk')
+            ->join('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
+            ->select('pp.NORM')
+            ->where('pk.NOMOR', $kunjungan)
+            ->first();
+
+        if (!$getRM) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Kunjungan Pasien tidak ditemukan.'
+            ], 404);
+        }
+
         $riwayat_alergi = DB::table('medicalrecord.riwayat_alergi as ra')
             ->leftJoin('master.referensi as ref', function($join){
                 $join->on('ra.JENIS', '=', 'ref.ID')
                     ->where('ref.JENIS',180)
                     ->where('ref.STATUS',1);
             })
-            ->select('ra.*', 'ref.DESKRIPSI as JENIS_ALERGI')
-            ->where('ra.KUNJUNGAN', $kunjungan)
+            ->join('pendaftaran.kunjungan as pk', 'ra.KUNJUNGAN', '=', 'pk.NOMOR')
+            ->join('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
+            ->leftJoin('master.ruangan as ru', 'ru.ID', '=', 'pk.RUANGAN')
+            ->leftJoin('aplikasi.pengguna as pe', 'pe.ID', '=', 'ra.OLEH')
+            ->select('ra.*', 'ref.DESKRIPSI as JENIS_ALERGI', 'ru.DESKRIPSI as NAMA_RUANGAN', DB::raw('master.getNamaLengkapPegawai(pe.NIP) as NAMA_USER'))
+            // ->where('ra.KUNJUNGAN', $kunjungan)
+            ->where('pp.NORM', $getRM->NORM)
             ->where('ra.STATUS', 1)
             ->get();
 

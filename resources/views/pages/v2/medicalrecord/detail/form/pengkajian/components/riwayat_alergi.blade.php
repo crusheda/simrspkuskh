@@ -79,7 +79,6 @@
             <table class="table table-bordered align-middle mb-1">
                 <colgroup>
                     <col style="width: 1%;">
-                    <col style="width: 20%;">
                     <col>
                     <col style="width: 1%;">
                 </colgroup>
@@ -87,8 +86,7 @@
                 <thead>
                     <tr class="table-info">
                         <th>No</th>
-                        <th>Jenis</th>
-                        <th>Deskripsi</th>
+                        <th>Deskripsi Alergi</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -176,14 +174,45 @@
                     $.each(res.riw_alergi, function (i, v) {
                         html += `
                             <tr>
-                                <td>${i + 1}</td>
-                                <td>${v.JENIS_ALERGI}</td>
-                                <td>${v.DESKRIPSI}</td>
-                                <td class="text-center">
+                                <td class="text-center text-body-secondary align-middle">
+                                    ${i + 1}
+                                </td>
+                                <td class="align-middle">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <span class="badge bg-danger-subtle text-dark border border-danger-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">
+                                            <i class="ri-alert-line me-1"></i>
+                                            ${v.JENIS_ALERGI ?? '-'}
+                                        </span>
+                                        <div class="fw-semibold text-body">
+                                            ${v.DESKRIPSI ?? '-'}
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-wrap align-items-center gap-3 text-body-secondary small">
+                                        <span>
+                                            <i class="ri-hospital-line me-1"></i>
+                                            ${v.NAMA_RUANGAN ?? '-'}
+                                        </span>
+
+                                        <span>
+                                            <i class="ri-user-line me-1"></i>
+                                            ${v.NAMA_USER ?? '-'}
+                                        </span>
+
+                                        <span>
+                                            <i class="ri-calendar-line me-1"></i>
+                                            ${v.TANGGAL ?? '-'}
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td class="text-center align-middle">
                                     <button
-                                        class="btn btn-subtle-danger waves-effect waves-light btn-icon btn-sm"
-                                        onclick="hapusRiwayatAlergi(${v.ID})">
-                                        <i class="ri-delete-bin-line"></i>
+                                        type="button"
+                                        class="btn btn-subtle-danger btn-icon btn-sm rounded-circle"
+                                        onclick="hapusRiwayatAlergi(${v.ID})"
+                                        title="Hapus riwayat alergi"
+                                        aria-label="Hapus riwayat alergi">
+                                        <i class="ri-delete-bin-line fs-5"></i>
                                     </button>
                                 </td>
                             </tr>

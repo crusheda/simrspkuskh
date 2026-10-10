@@ -197,6 +197,8 @@ class EMRController extends Controller
                     'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
                     'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
                     'kjs.noKartu AS NOBPJS',
+                    'pjs.prolanisPRB AS PRBPASIEN',
+                    'pjs.ketStatusPeserta AS STATUSBPJS',
                     'ru.ID AS IDRUANGAN',
                     'ru.DESKRIPSI AS NAMARUANGAN',
                     'kips.NOMOR AS NIKPASIEN',
@@ -246,6 +248,9 @@ class EMRController extends Controller
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
                 ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
+                ->leftJoin('bpjs.peserta AS pjs', function($join){
+                    $join->on('pjs.noKartu','=','kjs.noKartu');
+                })
                 ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
                 ->leftJoin('master.kontak_pasien AS kps','ps.NORM','=','kps.NORM')
                 ->leftJoin('master.keluarga_pasien AS kgs','ps.NORM','=','kgs.NORM')
@@ -260,6 +265,27 @@ class EMRController extends Controller
                 ->back()
                 ->withErrors('Kunjungan ' . $KUNJUNGAN . ' Tidak Ditemukan');
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | RIWAYAT ALERGI
+        |--------------------------------------------------------------------------
+        */
+        $riwayat_alergi = DB::table('medicalrecord.riwayat_alergi as ra')
+            ->leftJoin('master.referensi as ref', function($join){
+                $join->on('ra.JENIS', '=', 'ref.ID')
+                    ->where('ref.JENIS',180)
+                    ->where('ref.STATUS',1);
+            })
+            ->join('pendaftaran.kunjungan as pk', 'ra.KUNJUNGAN', '=', 'pk.NOMOR')
+            ->join('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
+            ->leftJoin('master.ruangan as ru', 'ru.ID', '=', 'pk.RUANGAN')
+            ->leftJoin('aplikasi.pengguna as pe', 'pe.ID', '=', 'ra.OLEH')
+            ->select('ra.*', 'ref.DESKRIPSI as JENIS_ALERGI', 'ru.DESKRIPSI as NAMA_RUANGAN', DB::raw('master.getNamaLengkapPegawai(pe.NIP) as NAMA_USER'))
+            // ->where('ra.KUNJUNGAN', $kunjungan)
+            ->where('pp.NORM', $show->NORM)
+            ->where('ra.STATUS', 1)
+            ->get();
 
         /*
         |--------------------------------------------------------------------------
@@ -601,6 +627,9 @@ class EMRController extends Controller
 
         $data = [
             'show' => $show,
+            'readmisi' => $this->potensiReadmisi($KUNJUNGAN),
+            'riwayat_alergi' => $riwayat_alergi,
+
             'KUNJUNGAN' => $KUNJUNGAN,
             'tte_pegawai' => $tte_pegawai,
             'cpptCount' => $countCppt,
@@ -615,6 +644,83 @@ class EMRController extends Controller
         ];
 
         return view('pages.v2.medicalrecord.detail.index')->with('list', $data);
+    }
+
+    private function potensiReadmisi(string $kunjungan): array
+    {
+        // Ambil data kunjungan saat ini
+        $kunjunganSaatIni = DB::table('pendaftaran.kunjungan as k')
+            ->join('pendaftaran.pendaftaran as p', 'p.NOMOR', '=', 'k.NOPEN')
+            ->where('k.NOMOR', $kunjungan)
+            ->select(
+                'k.NOMOR',
+                'k.NOPEN',
+                'k.MASUK',
+                'k.RUANGAN',
+                'p.NORM'
+            )
+            ->first();
+
+        if (!$kunjunganSaatIni) {
+            return [
+                'potensi_readmisi' => false,
+                'keterangan' => 'Data kunjungan tidak ditemukan',
+                'tanggal_kunjungan' => null,
+                'tanggal_pulang_sebelumnya' => null,
+                'selisih_hari' => null,
+                'kunjungan_sebelumnya' => null,
+            ];
+        }
+
+        // Cari kepulangan sebelumnya dari pasien yang sama.
+        // Kepulangan Lanjut Rawat Inap bukan kepulangan akhir.
+        $pulangSebelumnya = DB::table('layanan.pasien_pulang as pp')
+            ->join('pendaftaran.pendaftaran as p', 'p.NOMOR', '=', 'pp.NOPEN')
+            ->where('p.NORM', $kunjunganSaatIni->NORM)
+            ->where('pp.STATUS', 1)
+            ->where('pp.KUNJUNGAN', '!=', $kunjunganSaatIni->NOMOR)
+            ->where('pp.TANGGAL', '<=', $kunjunganSaatIni->MASUK)
+            ->whereNotIn('pp.CARA', [6, 7, 50])
+            ->where('pp.KEADAAN', '!=', 60)
+            ->orderByDesc('pp.TANGGAL')
+            ->select(
+                'pp.ID',
+                'pp.KUNJUNGAN',
+                'pp.NOPEN',
+                'pp.TANGGAL',
+                'pp.CARA',
+                'pp.KEADAAN'
+            )
+            ->first();
+
+        if (!$pulangSebelumnya) {
+            return [
+                'potensi_readmisi' => false,
+                'keterangan' => 'Tidak ditemukan kepulangan sebelumnya yang memenuhi kriteria',
+                'tanggal_kunjungan' => $kunjunganSaatIni->MASUK,
+                'tanggal_pulang_sebelumnya' => null,
+                'selisih_hari' => null,
+                'kunjungan_sebelumnya' => null,
+            ];
+        }
+
+        $tanggalKunjungan = Carbon::parse($kunjunganSaatIni->MASUK)->startOfDay();
+        $tanggalPulang = Carbon::parse($pulangSebelumnya->TANGGAL)->startOfDay();
+
+        $selisihHari = $tanggalPulang->diffInDays($tanggalKunjungan, false);
+
+        $potensiReadmisi = $selisihHari >= 0 && $selisihHari <= 30;
+
+        return [
+            'potensi_readmisi' => $potensiReadmisi,
+            'keterangan' => $potensiReadmisi
+                ? 'Potensi Readmisi'
+                : 'Tidak terindikasi Potensi Readmisi',
+            'tanggal_kunjungan' => $kunjunganSaatIni->MASUK,
+            'tanggal_pulang_sebelumnya' => $pulangSebelumnya->TANGGAL,
+            'selisih_hari' => $selisihHari,
+            'kunjungan_sebelumnya' => $pulangSebelumnya->KUNJUNGAN,
+        ];
     }
 
     function showIdentitasPasien($KUNJUNGAN)
