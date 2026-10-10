@@ -22,6 +22,7 @@ use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanAnakController;
+use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanNeonatusController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanJiwaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanGeriatriController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanObsgynController;
@@ -450,6 +451,7 @@ class EMRController extends Controller
 
                     $formPengkajian = [
                         'pengkajian-rajal-anak',
+                        'pengkajian-rajal-neonatus',
                     ];
                 }
 
@@ -486,6 +488,7 @@ class EMRController extends Controller
 
                     $formPengkajian = [
                         'pengkajian-rajal-anak',
+                        'pengkajian-rajal-neonatus',
                     ];
                 }
 
@@ -1173,6 +1176,7 @@ class EMRController extends Controller
 
             'pengkajian-rajal-dewasa'                   => PengkajianRawatJalanDewasaController::class,
             'pengkajian-rajal-anak'                     => PengkajianRawatJalanAnakController::class,
+            'pengkajian-rajal-neonatus'                 => PengkajianRawatJalanNeonatusController::class,
             'pengkajian-rajal-psikiatri'                => PengkajianRawatJalanJiwaController::class,
             'pengkajian-rajal-geriatri'                 => PengkajianRawatJalanGeriatriController::class,
             'pengkajian-rajal-obsgyn'                   => PengkajianRawatJalanObsgynController::class,
@@ -1233,6 +1237,14 @@ class EMRController extends Controller
                 ],
                 'rja_perawat' => [
                     'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.anak.form_perawat',
+                ],
+
+                // Anak
+                'rjn_dokter' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.neonatus.form_dokter',
+                ],
+                'rjn_perawat' => [
+                    'view' => 'pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.neonatus.form_perawat',
                 ],
 
                 // Geriatri
@@ -1372,6 +1384,8 @@ class EMRController extends Controller
                     'rjd_perawat',
                     'rja_dokter',
                     'rja_perawat',
+                    'rjn_dokter',
+                    'rjn_perawat',
                     'rjg_dokter',
                     'rjg_perawat',
                     'rjj_dokter',

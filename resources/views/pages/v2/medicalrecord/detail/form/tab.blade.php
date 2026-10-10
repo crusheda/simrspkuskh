@@ -126,6 +126,13 @@
                                         </a>
                                         <a href="javascript:void(0);"
                                             class="list-group-item list-group-item-action ps-5 menu-child"
+                                            data-form="pengkajian-rajal-neonatus"
+                                            data-group="awal">
+                                            <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>
+                                            Form Neonatus
+                                        </a>
+                                        <a href="javascript:void(0);"
+                                            class="list-group-item list-group-item-action ps-5 menu-child"
                                             data-form="pengkajian-rajal-psikiatri"
                                             data-group="awal">
                                             <i class="ph-duotone ph-arrow-elbow-down-right me-1"></i>

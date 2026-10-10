@@ -147,7 +147,7 @@
                     </div>
                 </div>
 
-                <div class="row mb-1 align-items-center">
+                {{-- <div class="row mb-1 align-items-center">
                     <label class="col-md-4 col-form-label">Susu Formula Mulai</label>
                     <div class="col-md-4">
                         <input type="number" class="form-control form-control-sm" name="sufor_mulai" id="sufor_mulai">
@@ -171,6 +171,16 @@
                             <option value="TAHUN">Tahun</option>
                         </select>
                     </div>
+                </div> --}}
+
+                <div class="row mb-1 align-items-center">
+                    <label class="col-md-4 col-form-label">Tengkurap</label>
+                    <div class="col-md-4">
+                        <input type="number" class="form-control form-control-sm" name="tengkurap" id="tengkurap">
+                    </div>
+                    <div class="col-md-4">
+                        Bulan
+                    </div>
                 </div>
             </div>
 
@@ -179,7 +189,7 @@
 
                 @php
                 $milestone = [
-                    'tengkurap' => 'Tengkurap',
+                    // 'tengkurap' => 'Tengkurap',
                     'duduk' => 'Duduk',
                     'merangkak' => 'Merangkak',
                     'berdiri' => 'Berdiri',
@@ -199,6 +209,13 @@
                     </div>
                 </div>
                 @endforeach
+
+                <div class="row mb-1 align-items-center">
+                    <label class="col-md-4 col-form-label">Lainnya</label>
+                    <div class="col-md-5">
+                        <textarea class="form-control form-control-sm" rows="1" name="lainnya" id="lainnya"></textarea>
+                    </div>
+                </div>
             </div>
         </div>
         <hr>
@@ -357,6 +374,8 @@
 
                         $form.find('[name="berjalan"]')
                             .val(tumbuhKembang.BERJALAN ?? '');
+                        $form.find('[name="lainnya"]')
+                            .val(tumbuhKembang.LAINNYA ?? '');
 
 
                         // Neonatus

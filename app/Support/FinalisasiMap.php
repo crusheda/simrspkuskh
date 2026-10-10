@@ -10,6 +10,7 @@ use App\Services\EMR\Print\GDPrintService;
 // Rawat Jalan
 use App\Services\EMR\Print\RJDewasaPrintService;
 use App\Services\EMR\Print\RJAnakPrintService;
+use App\Services\EMR\Print\RJNeonatusPrintService;
 use App\Services\EMR\Print\RJJiwaPrintService;
 use App\Services\EMR\Print\RJGeriatriPrintService;
 use App\Services\EMR\Print\RJObsgynPrintService;
@@ -100,6 +101,22 @@ final class FinalisasiMap
             'template' => 'print_rajal_anak_perawat.docx',
             'title' => 'Pengkajian Awal Rawat Jalan Anak - Perawat',
             'service' => RJAnakPrintService::class,
+        ],
+
+        'rjn_dokter' => [
+            'form' => 'pengkajian-rajal-neonatus',
+            'sub' => 'DOKTER',
+            'template' => 'print_rajal_neonatus_dokter.docx',
+            'title' => 'Pengkajian Awal Rawat Jalan Neonatus - Dokter',
+            'service' => RJNeonatusPrintService::class,
+        ],
+
+        'rjn_perawat' => [
+            'form' => 'pengkajian-rajal-neonatus',
+            'sub' => 'PERAWAT',
+            'template' => 'print_rajal_neonatus_perawat.docx',
+            'title' => 'Pengkajian Awal Rawat Jalan Neonatus - Perawat',
+            'service' => RJNeonatusPrintService::class,
         ],
 
         'rjj_dokter' => [

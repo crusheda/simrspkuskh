@@ -12595,6 +12595,7 @@ class AddOnPengkajianController extends Controller
                     'MERANGKAK'     => $request->merangkak,
                     'BERDIRI'       => $request->berdiri,
                     'BERJALAN'      => $request->berjalan,
+                    'LAINNYA'      => $request->lainnya,
 
                     'NEONATUS'      => $request->neonatus,
                     'NEONATUS_KET'  => $request->neonatus_ket,

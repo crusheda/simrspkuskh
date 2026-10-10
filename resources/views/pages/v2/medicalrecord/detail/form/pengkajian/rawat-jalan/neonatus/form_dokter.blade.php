@@ -1,5 +1,5 @@
-<div class="form-wrapper" id="form_rajal_obsgyn_dokter">
-    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN AWAL MEDIS <b class="">RAWAT JALAN</b> <b class="text-warning">OBSGYN</b></center></h1>
+<div class="form-wrapper" id="form_rajal_neonatus_dokter">
+    <h1 class="display-6 mb-1 fs-27 fw-bold"><center>PENGKAJIAN AWAL MEDIS <b class="">RAWAT JALAN</b> <b class="text-warning">NEONATUS</b></center></h1>
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-danger">Diisi Oleh Dokter</a>)</center></h1>
     <div class="form-content">
         <div class="row">
@@ -10,19 +10,14 @@
                             <strong><em>Subjective </em>(S) : </strong>
                         </h5>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12 mb-2">
-                            @include(
-                                'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
-                                [
-                                    'section' => '#rjo_dokter',
-                                    'anak' => 'false',
-                                ]
-                            )
-                        </div>
-                        <div class="col-md-12">
-                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_obstetri')
-                        </div>
+                    <div class="col-md-12 mb-2">
+                        @include(
+                            'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
+                            [
+                                'section' => '#rjn_dokter',
+                                'anak' => 'true',
+                            ]
+                        )
                     </div>
                     <div class="form-group mb-2">
                         <h5 class="border-bottom pb-2 mb-3 text-primary">
@@ -33,8 +28,9 @@
                         @include(
                             'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.tanda_vital_rajal',
                             [
-                                'section' => '#rjo_dokter',
+                                'section' => '#rjn_dokter',
                                 'page' => 'dokter',
+                                'neonatus' => 'true',
                                 // 'editableFields' => [
                                 //     'tv_keu',
                                 //     'tv_gcs_e',
@@ -55,8 +51,8 @@
                         )
                     </div>
                     <div class="col-md-12 mb-3">
-                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.pemeriksaan_fisik_obsgyn_rj',['section' => '#rjo_dokter'])
-                    </div>
+                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.pemeriksaan_fisik_rajal',['section' => '#rjn_dokter'])
+                        </div>
                     <div class="col-md-12">
                         <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
                         <div class="mb-3">
@@ -66,43 +62,39 @@
                             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad')
                         </div>
                     </div>
-                    <div class="col-md-12 mb-3">
-                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_penunjang',['section' => '#rjo_dokter'])
-                    </div>
                     <div class="form-group mb-2">
                         <h5 class="border-bottom pb-2 mb-3 text-primary">
                             <strong><em>Assessment </em>(A) : </strong>
                         </h5>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h4 class="text-danger">Diagnosis (<b class="text-warning">ICD</b>)</h4>
-                            <div class="mb-3">
-                                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.diagnosis_icd')
-                            </div>
+                    <div class="col-md-12">
+                        <h4 class="text-danger">Diagnosis (<b class="text-warning">ICD</b>)</h4>
+                        <div class="mb-3">
+                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.diagnosis_icd')
                         </div>
                     </div>
-
                     <div class="form-group mb-2">
                         <h5 class="border-bottom pb-2 mb-3 text-primary">
                             <strong><em>Plan </em>(P) : </strong>
                         </h5>
                     </div>
-                    <div class="col-md-12 mb-3">
-                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.tolok_ukur_terapi',['section' => '#rjo_dokter'])
+                    <div class="row align-items-center">
+                        <div class="col-md-12 mb-3">
+                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.tolok_ukur_terapi',['section' => '#rjn_dokter'])
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.admission_note',['section' => '#rjo_dokter'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.admission_note',['section' => '#rjn_dokter'])
             </div>
         </div>
     </div>
     @include('pages.v2.medicalrecord.detail.form.finalisasi', [
-        'jenis' => 'rajal_obsgyn',
+        'jenis' => 'rajal_neonatus',
         'role' => 'dokter',
-        'formKey' => 'rjo_dokter',
-        'form' => 'pengkajian-rajal-obsgyn',
+        'formKey' => 'rjn_dokter',
+        'form' => 'pengkajian-rajal-neonatus',
         'sub' => 'DOKTER',
         'kunjungan' => $list['kunjungan'],
     ])

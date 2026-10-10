@@ -113,6 +113,7 @@ class FinalisasiController extends Controller
             */
             'pengkajian-rajal-dewasa',
             'pengkajian-rajal-anak',
+            'pengkajian-rajal-neonatus',
             'pengkajian-rajal-psikiatri',
             'pengkajian-rajal-geriatri', =>
                 $this->generateSoapRajalDewasa(

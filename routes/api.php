@@ -22,6 +22,7 @@ use App\Http\Controllers\EMR\Form\Finalisasi\FinalisasiController;
 use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanAnakController;
+use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanNeonatusController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanJiwaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanGeriatriController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanObsgynController;
@@ -146,6 +147,13 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                             //PERAWAT
                             Route::post('emr/form/pengkajian/rja/pr/simpan', [PengkajianRawatJalanAnakController::class, 'simpanFormPerawatRJA']);
                             Route::get('emr/form/pengkajian/rja/pr/get/{kunjungan}',[PengkajianRawatJalanAnakController::class, 'getFormPerawatRJA']);
+                        // NEONATUS
+                            //DOKTER
+                            Route::post('emr/form/pengkajian/rjn/dr/simpan', [PengkajianRawatJalanNeonatusController::class, 'simpanFormDokterRJN']);
+                            Route::get('emr/form/pengkajian/rjn/dr/get/{kunjungan}',[PengkajianRawatJalanNeonatusController::class, 'getFormDokterRJN']);
+                            //PERAWAT
+                            Route::post('emr/form/pengkajian/rjn/pr/simpan', [PengkajianRawatJalanNeonatusController::class, 'simpanFormPerawatRJN']);
+                            Route::get('emr/form/pengkajian/rjn/pr/get/{kunjungan}',[PengkajianRawatJalanNeonatusController::class, 'getFormPerawatRJN']);
                         // JIWA
                             //DOKTER
                             Route::post('emr/form/pengkajian/rjj/dr/simpan', [PengkajianRawatJalanJiwaController::class, 'simpanFormDokterRJJ']);
