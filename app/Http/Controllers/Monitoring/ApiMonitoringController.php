@@ -1656,6 +1656,275 @@ class ApiMonitoringController extends Controller
             ]);
         }
 
+        // function compileBilling($kunjungan)
+        // {
+        //     $getSEP = DB::table('pendaftaran.kunjungan AS pk')
+        //             ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+        //             ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+        //             ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pp.NOMOR')
+        //             ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','tp.TAGIHAN AS TAGIHAN','tp.STATUS AS STATUS','pk.MASUK AS TANGGALMASUK')
+        //             ->where('pk.NOMOR',$kunjungan)
+        //             ->where(function ($query) {
+        //                 $query->where('tp.STATUS', '=', '1')
+        //                         ->orWhere('tp.UTAMA', '=', '1');
+        //             })
+        //             ->first();
+
+        //     // $show = DB::select('CALL simrspku_klaim.CetakRincianPasienPerDokterCustom(?,?)',[$getSEP->TAGIHAN,$getSEP->STATUS]);
+
+        //     $show = DB::table('pembayaran.tagihan as t')
+        //         ->leftJoin('master.pasien as p', 'p.NORM', '=', 't.REF')
+        //         // ->leftJoin('master.keluarga_pasien as kpx', 't.REF', '=', 'kpx.NORM') // opsional
+        //         ->leftJoin('master.referensi as rjk', function ($join) {
+        //             $join->on('p.JENIS_KELAMIN', '=', 'rjk.ID')->where('rjk.JENIS', '=', 2);
+        //         })
+        //         ->leftJoin('pembayaran.tagihan_pendaftaran as tp', function ($join) {
+        //             $join->on('tp.TAGIHAN', '=', 't.ID')
+        //                 ->where('tp.UTAMA', '=', 1)
+        //                 ->where('tp.STATUS', '=', 1);
+        //         })
+        //         ->leftJoin('pendaftaran.pendaftaran as pd', 'pd.NOMOR', '=', 'tp.PENDAFTARAN')
+        //         ->leftJoin('master.kartu_asuransi_pasien as kap', function ($join) {
+        //             $join->on('pd.NORM', '=', 'kap.NORM')->where('kap.JENIS', '=', 2);
+        //         })
+        //         ->leftJoin('pendaftaran.penjamin as pj', 'pd.NOMOR', '=', 'pj.NOPEN')
+        //         ->leftJoin('master.referensi as rf', function ($join) {
+        //             $join->on('pj.JENIS', '=', 'rf.ID')->where('rf.JENIS', '=', 10);
+        //         })
+        //         ->leftJoin('pembayaran.pembayaran_tagihan as pt', function ($join) {
+        //             $join->on('pt.TAGIHAN', '=', 't.ID')
+        //                 ->where('pt.JENIS', '=', 1)
+        //                 ->where('pt.STATUS', '=', 2);
+        //         })
+        //         ->leftJoin('pembayaran.penjamin_tagihan as pjt', function ($join) {
+        //             $join->on('t.ID', '=', 'pjt.TAGIHAN')->where('pjt.KE', '=', 1);
+        //         })
+        //         ->leftJoin('aplikasi.pengguna as us', 'us.ID', '=', 'pt.OLEH')
+        //         ->leftJoin('master.pegawai as mp', 'mp.NIP', '=', 'us.NIP')
+        //         ->leftJoin('simrspku_klaim.klaim_qrcode_pegawai as qp', 'qp.nomor', '=', 'mp.NIP')
+        //         ->leftJoin('simrspku_klaim.klaim_qrcode as kq', 'kq.nomor', '=', 'pd.NORM')
+        //         ->leftJoin('master.diagnosa_masuk as dm', 'dm.ID', '=', 'pd.DIAGNOSA_MASUK')
+        //         ->crossJoin('aplikasi.instansi as i')
+        //         ->crossJoin('master.ppk as ppk')
+        //         ->crossJoin('master.wilayah as w')
+        //         ->where('t.ID', $getSEP->TAGIHAN)
+        //         ->where('t.JENIS', 1)
+        //         ->whereIn('t.STATUS', [1, 2])
+        //         ->whereColumn('ppk.ID', '=', 'i.PPK')
+        //         ->whereColumn('w.ID', '=', 'ppk.WILAYAH')
+        //         ->select([
+        //             // 'i.PPK',
+        //             // 'ppk.NAMA as NAMAINSTANSI',
+        //             // 'ppk.ALAMAT as ALAMATINSTANSI',
+        //             't.ID as NOMOR_TAGIHAN',
+        //             // DB::raw("INSERT(INSERT(INSERT(LPAD(p.NORM,8,'0'),3,0,'-'),6,0,'-'),9,0,'-') as NORM"),
+        //             'p.NORM as RM',
+        //             // 'pd.NOMOR as NOPEN',
+        //             // DB::raw("(SELECT tp.PENDAFTARAN FROM pembayaran.tagihan_pendaftaran tp WHERE tp.TAGIHAN = t.ID ORDER BY tp.PENDAFTARAN ASC LIMIT 1) as PENDAFTARAN_PERTAMA"),
+        //             // DB::raw("(SELECT DATE_FORMAT(pd2.TANGGAL,'%d-%m-%Y %H:%i:%s') FROM pendaftaran.pendaftaran pd2 WHERE pd2.NOMOR = PENDAFTARAN_PERTAMA) as TANGGALREG"),
+        //             DB::raw("master.getNamaLengkap(p.NORM) as NAMALENGKAP"),
+        //             // DB::raw("master.getAlamatPasienCustom(p.NORM) as ALAMATLENGKAP"),
+        //             // DB::raw("master.getNamaLengkapPegawai((SELECT dkt.NIP FROM master.dokter dkt JOIN pendaftaran.kunjungan kjg ON kjg.NOPEN = pd.NOMOR WHERE dkt.ID = kjg.DPJP AND kjg.REF IS NULL ORDER BY kjg.MASUK DESC LIMIT 1)) as DPJP"),
+        //             // DB::raw("master.getNamaLengkapKeluarga(p.NORM) as NAMA_KELUARGA_PASIEN"),
+        //             // DB::raw("NOW() as NOW"),
+        //             // 'pj.JENIS as IDCARABAYAR',
+        //             // 'kap.NOMOR as NOMORKARTU',
+        //             // 'rf.DESKRIPSI as CARABAYAR',
+        //             // 'p.TANGGAL_LAHIR',
+        //             // DB::raw("CONCAT(CAST(rjk.DESKRIPSI AS CHAR(15)),' (',master.getCariUmur(pd.TANGGAL,p.TANGGAL_LAHIR),')') as UMUR"),
+        //             'mp.NIP',
+        //             // 'qp.filename as QR1',
+        //             // 'kq.filename as QR2',
+        //             DB::raw("IF(pt.OLEH=0, pt.DESKRIPSI, master.getNamaLengkapPegawai(mp.NIP)) as PENGGUNA"),
+        //             // 't.ID as IDTAGIHAN',
+        //             // DB::raw("(t.TOTAL + pembayaran.getTarifAmbulance(t.ID)) as TOTALRS"),
+        //             // 'w.DESKRIPSI as WILAYAH',
+        //             // DB::raw("pembayaran.getInfoTagihanKunjungan(t.ID) as JENISKUNJUNGAN"),
+        //             // DB::raw("IF(pt.TANGGAL IS NULL, SYSDATE(), pt.TANGGAL) as TANGGALBAYAR"),
+        //             // 't.TANGGAL as TANGGALTAGIHAN',
+        //             // DB::raw("IF(pj.JENIS=2 AND pjt.NAIK_KELAS=1, pjt.TOTAL_NAIK_KELAS,
+        //             //         IF(pj.JENIS=2 AND pjt.NAIK_KELAS_VIP=1, pjt.TARIF_INACBG_KELAS1,
+        //             //         (t.TOTAL + pembayaran.getTarifAmbulance(t.ID)))) + IFNULL(pjt.SELISIH_MINIMAL,0) as TOTALTAGIHAN"),
+        //             // DB::raw("(pembayaran.getTotalDiskon(t.ID) + pembayaran.getTotalDiskonDokter(t.ID)) as TOTALDISKON"),
+        //             // DB::raw("pembayaran.getTotalNonTunai(t.ID) as TOTALEDC"),
+        //             // DB::raw("pembayaran.getTotalPenjaminTagihan(t.ID) as TOTALPENJAMINTAGIHAN"),
+        //             // DB::raw("(pembayaran.getTotalPiutangPasien(t.ID) + pembayaran.getTotalPiutangPerusahaan(t.ID)) as TOTALPIUTANG"),
+        //             // DB::raw("(pembayaran.getTotalDeposit(t.ID) - pembayaran.getTotalPengembalianDeposit(t.ID)) as TOTALDEPOSIT"),
+        //             // DB::raw("pembayaran.getTotalSubsidiTagihan(t.ID) as TOTALSUBSIDI"),
+        //             // DB::raw("((IF(pt.TOTAL IS NULL,
+        //             //                 IF((ROUND(pembayaran.getTotalTagihanPembayaran(t.ID)) + ROUND(t.PEMBULATAN)) < 0,
+        //             //                     0,
+        //             //                     (ROUND(pembayaran.getTotalTagihanPembayaran(t.ID)) + ROUND(t.PEMBULATAN))
+        //             //                 ),
+        //             //                 pt.TOTAL
+        //             //             )) + pembayaran.getTarifAmbulance(t.ID)) as TOTALJUMLAHBAYAR"),
+        //             // DB::raw("((IF(pt.TOTAL IS NULL,
+        //             //                 IF((ROUND(pembayaran.getTotalTagihanPembayaran(t.ID)) + ROUND(t.PEMBULATAN)) < 0,
+        //             //                     0,
+        //             //                     (ROUND(pembayaran.getTotalTagihanPembayaran(t.ID)) + ROUND(t.PEMBULATAN))
+        //             //                 ),
+        //             //                 pt.TOTAL
+        //             //             ) - (pembayaran.getTotalDeposit(t.ID) - pembayaran.getTotalPengembalianDeposit(t.ID)))
+        //             //             + pembayaran.getTarifAmbulance(t.ID)) as JUMLAHBAYAR"),
+        //             // DB::raw("ROUND(t.PEMBULATAN) as PEMBULATAN"),
+        //             // DB::raw("IF(INSTR(dm.DIAGNOSA, 'B20') > 1 OR INSTR(dm.DIAGNOSA, 'HIV') > 1,'',dm.DIAGNOSA) as DIAGNOSA"),
+        //             // DB::raw("(SELECT DATE_FORMAT(pl.TANGGAL,'%d-%m-%Y %H:%i:%s') FROM layanan.pasien_pulang pl WHERE pl.NOPEN=pd.NOMOR AND pl.STATUS!=0 LIMIT 1) as TGLKELUAR"),
+        //             // 'pj.NOMOR as NOSEP'
+        //         ])
+        //         ->first();
+
+        //     //-----------------------------------------------------------------------
+        //     //GENERATE QR CODE
+        //     $generator = new DNS2D();
+        //     $pegawai = $show->NIP . '-' . $show->PENGGUNA;
+
+        //     // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
+        //     $image = $generator->getBarcodePNG($pegawai, 'QRCODE');
+
+        //     if ($show && $show->NIP) {
+        //         // Decode base64 jadi binary PNG
+        //         $decodedImage = base64_decode($image);
+        //         $token = Crypt::encrypt($show->NIP);
+        //         $titleQrcode = Crypt::encrypt($show->NIP).'.png';
+        //         $verif = klaim_qrcode_pegawai::where('nomor',$show->NIP)->first();
+
+        //         // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
+        //         $pathQrcode = 'files/qrcode/' . $titleQrcode;
+        //         $outputQrcode = storage_path('/app/public/' . $pathQrcode);
+        //         $outputQrcodeMerged = dirname($outputQrcode);
+        //         if (!File::exists($outputQrcodeMerged)) {
+        //             File::makeDirectory($outputQrcodeMerged, 0755, true); // true = recursive
+        //         }
+
+        //         // SAVE TO DB
+        //         if (!$verif) {
+        //             file_put_contents($outputQrcode, $decodedImage);
+        //             $post = new klaim_qrcode_pegawai;
+        //             $post->token = $token;
+        //             $post->nomor = $show->NIP;
+        //             $post->title = $titleQrcode;
+        //             $post->filename = $pathQrcode;
+        //             $post->save();
+        //         } else {
+        //             if (!Storage::disk('public')->exists($verif->filename)) {
+        //                 file_put_contents($outputQrcode, $decodedImage);
+        //                 $verif->token = $token;
+        //                 $verif->title = $titleQrcode;
+        //                 $verif->filename = $pathQrcode;
+        //                 $verif->save();
+        //             }
+        //         }
+        //     }
+
+        //     //GENERATE QR CODE
+        //     $generator2 = new DNS2D();
+        //     $pasien = $show->RM .'-'.$show->NAMALENGKAP;
+
+        //     // Generate QR code PNG base64 (bukan data:image/png;base64,... hanya base64 murni)
+        //     $image2 = $generator2->getBarcodePNG($pasien, 'QRCODE');
+
+        //     // Decode base64 jadi binary PNG
+        //     $decodedImage2 = base64_decode($image2);
+        //     $token2 = Crypt::encrypt($show->RM);
+        //     $titleQrcode2 = Crypt::encrypt($show->RM).'.png';
+        //     $verif2 = klaim_qrcode::where('nomor',$show->RM)->where('jenis',1)->first();
+
+        //     // Simpan ke file storage Laravel (storage/app/public/files/qrcode{nip}.png)
+        //     $pathQrcode2 = 'files/qrcode/' . $titleQrcode2;
+        //     $outputQrcode2 = storage_path('app/public/' . $pathQrcode2);
+
+        //     // SAVE TO DB
+        //     if (!$verif2) {
+        //         // \Log::info('Menyimpan file ke: ' . $outputQrcode2);
+        //         file_put_contents($outputQrcode2, $decodedImage2);
+        //         $post = new klaim_qrcode;
+        //         $post->jenis = 1;
+        //         $post->token = $token2;
+        //         $post->nomor = $show->RM;
+        //         $post->title = $titleQrcode2;
+        //         $post->filename = $pathQrcode2;
+        //         $post->save();
+        //     } else {
+        //         if (!Storage::disk('public')->exists($verif2->filename)) {
+        //             file_put_contents($outputQrcode2, $decodedImage2);
+        //             $verif2->token = $token2;
+        //             $verif2->title = $titleQrcode2;
+        //             $verif2->filename = $pathQrcode2;
+        //             $verif2->save();
+        //         }
+        //     }
+
+        //     //-----------------------------------------------------------------------
+        //     if (!$getSEP) {
+        //         return response()->json($show, 400);
+        //     }
+        //     // ----------------------------------------------------------------------
+        //     $getTgl = Carbon::parse($getSEP->TANGGALMASUK);
+        //     $tgl = $getTgl->isoFormat('DD');
+        //     $bulan = $getTgl->isoFormat('MM');
+        //     $tahun = $getTgl->isoFormat('YYYY');
+        //     // ----------------------------------------------------------------------
+        //     $input = public_path().'/doc/input/billing/CetakBillingmaster.jrxml';
+        //     $path = 'files/billing/'.$tahun.'/'.$bulan.'/'.$tgl.'/'.$kunjungan;
+        //     $output = storage_path().'/app/public/'.$path;
+
+        //     // SAVE TO DB
+        //     $verify = klaim_file::where('nomor',$kunjungan)->where('jenis',5)->where('status',true)->first();
+        //     if (!$verify) {
+        //         $post = new klaim_file;
+        //         $post->jenis = 5;
+        //         $post->nomor = $kunjungan;
+        //         $post->title = $kunjungan.'.pdf';
+        //         $post->filename = $path.'.pdf';
+        //         $post->status = true;
+        //         $post->user = Auth::user()->ID;
+        //         $post->save();
+        //     }
+
+        //     // Pastikan folder tujuan ada
+        //     $outputDir = dirname($output);
+        //     if (!File::exists($outputDir)) {
+        //         File::makeDirectory($outputDir, 0755, true); // true = recursive
+        //     }
+
+        //     $params = [
+        //         'PTAGIHAN' => $getSEP->TAGIHAN ?? '',
+        //         'PSTATUS'  => $getSEP->STATUS ?? '',
+        //         'IMAGES_PATH' => public_path() . "/doc/input/billing/",
+        //         'QRCODE_PATH' => storage_path() . "/app/public/",
+        //     ];
+
+        //     $options = [
+        //         'format' => ['pdf'],
+        //         'params' => $params,
+        //         'db_connection' => [
+        //             'driver'   => config('database.connections.db_custom.driver'),
+        //             'host'     => config('database.connections.db_custom.host'),
+        //             'port'     => config('database.connections.db_custom.port'),
+        //             'username' => config('database.connections.db_custom.username'),
+        //             'password' => config('database.connections.db_custom.password'),
+        //             'database' => config('database.connections.db_custom.database'),
+        //         ],
+        //     ];
+
+        //     $jasper = new PHPJasper;
+
+        //     $jasper->process(
+        //         $input,
+        //         $output,
+        //         $options
+        //     )->execute();
+
+
+
+        //     return response()->file($output.'.pdf',[
+        //         'Content-Type' => 'application/pdf',
+        //         'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+        //         'Pragma'        => 'no-cache',
+        //         'Expires'       => '0',
+        //     ]);
+        // }
+
         function compileBilling($kunjungan)
         {
             $getSEP = DB::table('pendaftaran.kunjungan AS pk')
@@ -1773,6 +2042,8 @@ class ApiMonitoringController extends Controller
                 ])
                 ->first();
 
+            // print_r($show);
+            // die();
             //-----------------------------------------------------------------------
             //GENERATE QR CODE
             $generator = new DNS2D();

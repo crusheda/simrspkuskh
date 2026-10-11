@@ -486,6 +486,8 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
 
         // KLAIM
         Route::get('generate/lab/{kunjungan}', [BerkasKlaimController::class, 'generateLab']);
+        Route::get('generate/billing/{kunjungan}', [BerkasKlaimController::class, 'generateBilling']);
+        // Route::get('generate/billing/cek/{NOMOR_TAGIHAN}', [BerkasKlaimController::class, 'queryBillingAdministrasi']);
 });
 
 // SIRMED v.1

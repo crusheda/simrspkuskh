@@ -1862,6 +1862,1652 @@ class BerkasKlaimController extends Controller
         ];
     }
 
+    public function generateBilling($kunjungan)
+    {
+        try {
+            $getSEP = DB::table('pendaftaran.kunjungan AS pk')
+                    ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+                    ->leftJoin('pendaftaran.penjamin AS pj','pp.NOMOR','=','pj.NOPEN')
+                    ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pp.NOMOR')
+                    ->select('pj.NOMOR AS NOSEP','pp.NOMOR AS NOPEN','tp.TAGIHAN AS TAGIHAN','tp.STATUS AS STATUS','pk.MASUK AS TANGGALMASUK')
+                    ->where('pk.NOMOR',$kunjungan)
+                    ->where(function ($query) {
+                        $query->where('tp.STATUS', '=', '1')
+                                ->orWhere('tp.UTAMA', '=', '1');
+                    })
+                    ->first();
+
+            // $show = DB::table('pembayaran.tagihan as t')
+            //     ->leftJoin('master.pasien as p', 'p.NORM', '=', 't.REF')
+            //     // ->leftJoin('master.keluarga_pasien as kpx', 't.REF', '=', 'kpx.NORM') // opsional
+            //     ->leftJoin('master.referensi as rjk', function ($join) {
+            //         $join->on('p.JENIS_KELAMIN', '=', 'rjk.ID')->where('rjk.JENIS', '=', 2);
+            //     })
+            //     ->leftJoin('pembayaran.tagihan_pendaftaran as tp', function ($join) {
+            //         $join->on('tp.TAGIHAN', '=', 't.ID')
+            //             ->where('tp.UTAMA', '=', 1)
+            //             ->where('tp.STATUS', '=', 1);
+            //     })
+            //     ->leftJoin('pendaftaran.pendaftaran as pd', 'pd.NOMOR', '=', 'tp.PENDAFTARAN')
+            //     ->leftJoin('master.kartu_asuransi_pasien as kap', function ($join) {
+            //         $join->on('pd.NORM', '=', 'kap.NORM')->where('kap.JENIS', '=', 2);
+            //     })
+            //     ->leftJoin('pendaftaran.penjamin as pj', 'pd.NOMOR', '=', 'pj.NOPEN')
+            //     ->leftJoin('master.referensi as rf', function ($join) {
+            //         $join->on('pj.JENIS', '=', 'rf.ID')->where('rf.JENIS', '=', 10);
+            //     })
+            //     ->leftJoin('pembayaran.pembayaran_tagihan as pt', function ($join) {
+            //         $join->on('pt.TAGIHAN', '=', 't.ID')
+            //             ->where('pt.JENIS', '=', 1)
+            //             ->where('pt.STATUS', '=', 2);
+            //     })
+            //     ->leftJoin('pembayaran.penjamin_tagihan as pjt', function ($join) {
+            //         $join->on('t.ID', '=', 'pjt.TAGIHAN')->where('pjt.KE', '=', 1);
+            //     })
+            //     ->leftJoin('aplikasi.pengguna as us', 'us.ID', '=', 'pt.OLEH')
+            //     ->leftJoin('master.pegawai as mp', 'mp.NIP', '=', 'us.NIP')
+            //     ->leftJoin('simrspku_klaim.klaim_qrcode_pegawai as qp', 'qp.nomor', '=', 'mp.NIP')
+            //     ->leftJoin('simrspku_klaim.klaim_qrcode as kq', 'kq.nomor', '=', 'pd.NORM')
+            //     ->leftJoin('master.diagnosa_masuk as dm', 'dm.ID', '=', 'pd.DIAGNOSA_MASUK')
+            //     ->crossJoin('aplikasi.instansi as i')
+            //     ->crossJoin('master.ppk as ppk')
+            //     ->crossJoin('master.wilayah as w')
+            //     ->where('t.ID', $getSEP->TAGIHAN)
+            //     ->where('t.JENIS', 1)
+            //     ->whereIn('t.STATUS', [1, 2])
+            //     ->whereColumn('ppk.ID', '=', 'i.PPK')
+            //     ->whereColumn('w.ID', '=', 'ppk.WILAYAH')
+            //     ->select([
+            //         't.ID as NOMOR_TAGIHAN',
+            //         'p.NORM as RM',
+            //         DB::raw("master.getNamaLengkap(p.NORM) as NAMALENGKAP"),
+            //     ])
+            //     ->first();
+            /*
+            |--------------------------------------------------------------------------
+            | 1. AMBIL HEADER DAN DETAIL BILLING
+            |--------------------------------------------------------------------------
+            |
+            | Parameter $kunjungan di sini harus berupa ID TAGIHAN,
+            | bukan nomor kunjungan pendaftaran.
+            |
+            | Jika parameter dari route Anda memang berupa nomor kunjungan,
+            | perlu dibuat query untuk mendapatkan ID tagihan terlebih dahulu.
+            |
+            */
+
+            $nomorTagihan = $getSEP->TAGIHAN;
+
+            // return response()->json($this->queryBillingJenisLain($nomorTagihan)->get());
+
+            $header = $this->getBillingHeader($nomorTagihan);
+
+            if (!$header) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Data tagihan tidak ditemukan.',
+                ], 404);
+            }
+
+            $detail = $this->getBillingDetail($nomorTagihan);
+
+            $penjamin = $this->getBillingPenjamin($nomorTagihan);
+
+            /*
+            |--------------------------------------------------------------------------
+            | 2. PERSIAPAN DATA HEADER
+            |--------------------------------------------------------------------------
+            */
+
+            $header->TGLKELUAR = $header->TGLKELUAR
+                ?: $header->TANGGALREG;
+
+            $header->NAMA_KASIR = $header->PENGGUNA
+                ?: Auth::user()?->name
+                ?: '';
+
+            /*
+            |--------------------------------------------------------------------------
+            | 3. FORMAT DETAIL BILLING
+            |--------------------------------------------------------------------------
+            */
+
+            $detail = collect($detail)->map(function ($item) {
+                $item->JUMLAH = (float) ($item->JUMLAH ?? 0);
+                $item->TARIF = (float) ($item->TARIF ?? 0);
+
+                $item->TOTAL = $item->TARIF * $item->JUMLAH;
+
+                return $item;
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | 4. GROUP DETAIL BERDASARKAN JENIS KUNJUNGAN DAN RUANGAN
+            |--------------------------------------------------------------------------
+            */
+
+            $detailGrouped = $detail
+                ->groupBy('JENIS_KUNJUNGAN')
+                ->map(function ($items) {
+                    return $items->groupBy('RUANGAN');
+                });
+
+            /*
+            |--------------------------------------------------------------------------
+            | 5. HITUNG SUBTOTAL PER RUANGAN
+            |--------------------------------------------------------------------------
+            */
+
+            $subtotalRuangan = [];
+
+            foreach ($detailGrouped as $jenisKunjungan => $ruanganList) {
+                foreach ($ruanganList as $namaRuangan => $items) {
+                    $subtotalRuangan[$jenisKunjungan][$namaRuangan] =
+                        $items->sum('TOTAL');
+                }
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 6. SIAPKAN TEMPLATE WORD
+            |--------------------------------------------------------------------------
+            */
+
+            $templatePath = public_path(
+                'doc/klaim/billing/cetakBerkasBilling.docx'
+            );
+
+            if (!File::exists($templatePath)) {
+                throw new \Exception(
+                    'Template Word tidak ditemukan: ' . $templatePath
+                );
+            }
+
+            $templateProcessor = new TemplateProcessor($templatePath);
+
+            /*
+            |--------------------------------------------------------------------------
+            | 7. ISI HEADER WORD
+            |--------------------------------------------------------------------------
+            */
+
+            $templateProcessor->setValue(
+                'NAMAINSTANSI',
+                $header->NAMAINSTANSI ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'ALAMATINSTANSI',
+                $header->ALAMATINSTANSI ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'NORM',
+                $header->NORM ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'NAMALENGKAP',
+                $header->NAMALENGKAP ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'NOPEN',
+                $header->NOPEN ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'TANGGALREG',
+                $header->TANGGALREG ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'IDTAGIHAN',
+                $header->IDTAGIHAN ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'NOMORKARTU',
+                $header->NOMORKARTU ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'CARABAYAR',
+                $header->CARABAYAR ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'UMUR',
+                $header->UMUR ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'ALAMATLENGKAP',
+                $header->ALAMATLENGKAP ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'NOSEP',
+                $header->NOSEP ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'TGLKELUAR',
+                $header->TGLKELUAR ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'DPJP',
+                $header->DPJP ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'DIAGNOSA',
+                $header->DIAGNOSA ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'WILAYAH',
+                $header->WILAYAH ?? ''
+            );
+
+            $templateProcessor->setValue(
+                'TANGGALBAYAR',
+                $header->TANGGALBAYAR
+                    ? Carbon::parse($header->TANGGALBAYAR)
+                        ->translatedFormat('d F Y')
+                    : ''
+            );
+
+            $templateProcessor->setValue(
+                'PENGGUNA',
+                $header->PENGGUNA ?: ($header->NAMA_KASIR ?? '')
+            );
+
+            $templateProcessor->setValue(
+                'NAMA_KELUARGA_PASIEN',
+                $header->NAMA_KELUARGA_PASIEN ?? ''
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | 8. ISI TOTAL TAGIHAN
+            |--------------------------------------------------------------------------
+            */
+
+            $kolomNominal = [
+                'TOTALTAGIHAN',
+                'TOTALDISKON',
+                'TOTALEDC',
+                'TOTALPENJAMINTAGIHAN',
+                'TOTALPIUTANG',
+                'TOTALDEPOSIT',
+                'TOTALSUBSIDI',
+                'JUMLAHBAYAR',
+                'TOTALJUMLAHBAYAR',
+                'PEMBULATAN',
+            ];
+
+            foreach ($kolomNominal as $kolom) {
+                $templateProcessor->setValue(
+                    $kolom,
+                    number_format(
+                        (float) ($header->{$kolom} ?? 0),
+                        0,
+                        ',',
+                        '.'
+                    )
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 9. RINCIAN PENJAMIN
+            |--------------------------------------------------------------------------
+            |
+            | Bagian ini menggunakan cloneRow agar jumlah penjamin
+            | bisa lebih dari satu.
+            |
+            */
+
+            if ($penjamin->isNotEmpty()) {
+                $templateProcessor->cloneRow(
+                    'NAMAPENJAMIN',
+                    $penjamin->count()
+                );
+
+                foreach ($penjamin as $index => $item) {
+                    $row = $index + 1;
+
+                    $templateProcessor->setValue(
+                        "NAMAPENJAMIN#{$row}",
+                        $item->NAMAPENJAMIN ?? ''
+                    );
+
+                    $templateProcessor->setValue(
+                        "TOTALPENJAMIN#{$row}",
+                        number_format(
+                            (float) ($item->TOTAL ?? 0),
+                            0,
+                            ',',
+                            '.'
+                        )
+                    );
+                }
+            } else {
+                $templateProcessor->setValue('NAMAPENJAMIN', '-');
+                $templateProcessor->setValue('TOTALPENJAMIN', '0');
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 10. GENERATE DETAIL BILLING
+            |--------------------------------------------------------------------------
+            |
+            | Template Word menggunakan satu baris detail berulang.
+            |
+            */
+
+            if ($detail->isNotEmpty()) {
+                $templateProcessor->cloneRow(
+                    'LAYANAN1',
+                    $detail->count()
+                );
+
+                foreach ($detail->values() as $index => $item) {
+                    $row = $index + 1;
+
+                    $templateProcessor->setValue(
+                        "RUANGAN#{$row}",
+                        $item->RUANGAN ?? ''
+                    );
+
+                    $templateProcessor->setValue(
+                        "LAYANAN1#{$row}",
+                        $item->LAYANAN1 ?? ''
+                    );
+
+                    $templateProcessor->setValue(
+                        "TANGGAL#{$row}",
+                        $item->TANGGAL
+                            ? Carbon::parse($item->TANGGAL)
+                                ->format('d/m/Y H:i:s')
+                            : ''
+                    );
+
+                    $templateProcessor->setValue(
+                        "JUMLAH#{$row}",
+                        number_format(
+                            (float) ($item->JUMLAH ?? 0),
+                            2,
+                            ',',
+                            '.'
+                        )
+                    );
+
+                    $templateProcessor->setValue(
+                        "TARIF#{$row}",
+                        number_format(
+                            (float) ($item->TARIF ?? 0),
+                            0,
+                            ',',
+                            '.'
+                        )
+                    );
+
+                    $templateProcessor->setValue(
+                        "TOTAL#{$row}",
+                        number_format(
+                            (float) ($item->TOTAL ?? 0),
+                            0,
+                            ',',
+                            '.'
+                        )
+                    );
+
+                    $templateProcessor->setValue(
+                        "DOKTER#{$row}",
+                        $item->DOKTER ?? ''
+                    );
+
+                    $templateProcessor->setValue(
+                        "DOKTERKEDUA#{$row}",
+                        $item->DOKTERKEDUA ?? ''
+                    );
+
+                    $templateProcessor->setValue(
+                        "DOKTERANASTESI#{$row}",
+                        $item->DOKTERANASTESI ?? ''
+                    );
+
+                    $templateProcessor->setValue(
+                        "LAYANAN_OK#{$row}",
+                        $item->LAYANAN_OK ?? ''
+                    );
+
+                    $templateProcessor->setValue(
+                        "TARIF_LAYANAN_OK#{$row}",
+                        $item->TARIF_LAYANAN_OK ?? ''
+                    );
+
+                    $templateProcessor->setValue(
+                        "RP#{$row}",
+                        $item->RP ?? ''
+                    );
+                }
+            } else {
+                $templateProcessor->setValue('RUANGAN', '-');
+                $templateProcessor->setValue('LAYANAN1', 'Tidak ada rincian');
+                $templateProcessor->setValue('TANGGAL', '-');
+                $templateProcessor->setValue('JUMLAH', '0');
+                $templateProcessor->setValue('TARIF', '0');
+                $templateProcessor->setValue('TOTAL', '0');
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 11. SIAPKAN DIREKTORI OUTPUT
+            |--------------------------------------------------------------------------
+            */
+
+            $tahun = Carbon::now()->format('Y');
+            $bulan = Carbon::now()->format('m');
+            $tgl   = Carbon::now()->format('d');
+
+            $fileName = $nomorTagihan . '_billing';
+
+            $relativePath = 'files/klaim/'
+                . $tahun . '/'
+                . $bulan . '/'
+                . $tgl . '/'
+                . $fileName;
+
+            $outputDir = storage_path(
+                'app/public/files/klaim/'
+                . $tahun . '/'
+                . $bulan . '/'
+                . $tgl
+            );
+
+            if (!File::exists($outputDir)) {
+                File::makeDirectory(
+                    $outputDir,
+                    0755,
+                    true
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 12. SIMPAN DOCX SEMENTARA
+            |--------------------------------------------------------------------------
+            */
+
+            $docxPath = $outputDir . '/' . $fileName . '.docx';
+
+            $templateProcessor->saveAs($docxPath);
+
+            /*
+            |--------------------------------------------------------------------------
+            | 13. KONVERSI DOCX KE PDF
+            |--------------------------------------------------------------------------
+            |
+            | Gunakan LibreOfficeService yang sudah ada di project Anda.
+            |
+            | Nama method di bawah perlu disesuaikan dengan signature
+            | LibreOfficeService yang saat ini Anda gunakan.
+            |
+            */
+
+            $pdfPath = $outputDir . '/' . $fileName . '.pdf';
+
+            $this->libreOffice->generatePdf(
+                $docxPath,
+                $pdfPath
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | 14. VALIDASI HASIL PDF
+            |--------------------------------------------------------------------------
+            */
+
+            if (!File::exists($pdfPath)) {
+                throw new \Exception(
+                    'PDF billing gagal dibuat oleh LibreOffice.'
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 15. HAPUS FILE WORD SEMENTARA
+            |--------------------------------------------------------------------------
+            */
+
+            File::delete($docxPath);
+
+            /*
+            |--------------------------------------------------------------------------
+            | 16. KEMBALIKAN PDF
+            |--------------------------------------------------------------------------
+            */
+
+            return response()->file($pdfPath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="'
+                    . $fileName . '.pdf"',
+            ]);
+
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'status'  => false,
+                'message' => 'Gagal membuat PDF billing.',
+                'error'   => config('app.debug')
+                    ? $e->getMessage()
+                    : null,
+            ], 500);
+        }
+    }
+
+    private function getBillingHeader(string $nomorTagihan): ?object
+    {
+        return DB::table('pembayaran.tagihan as t')
+            ->leftJoin('master.pasien as p', 'p.NORM', '=', 't.REF')
+            ->leftJoin('master.referensi as rjk', function ($join) {
+                $join->on('rjk.ID', '=', 'p.JENIS_KELAMIN')
+                    ->where('rjk.JENIS', '=', 2);
+            })
+            ->leftJoin('pembayaran.tagihan_pendaftaran as tp', function ($join) {
+                $join->on('tp.TAGIHAN', '=', 't.ID')
+                    ->where('tp.UTAMA', '=', 1)
+                    ->where('tp.STATUS', '=', 1);
+            })
+            ->leftJoin('pendaftaran.pendaftaran as pd', 'pd.NOMOR', '=', 'tp.PENDAFTARAN')
+            ->leftJoin('master.kartu_asuransi_pasien as kap', function ($join) {
+                $join->on('kap.NORM', '=', 'pd.NORM')
+                    ->where('kap.JENIS', '=', 2);
+            })
+            ->leftJoin('pendaftaran.penjamin as pj', 'pj.NOPEN', '=', 'pd.NOMOR')
+            ->leftJoin('master.referensi as rf', function ($join) {
+                $join->on('rf.ID', '=', 'pj.JENIS')
+                    ->where('rf.JENIS', '=', 10);
+            })
+            ->leftJoin('pembayaran.pembayaran_tagihan as pt', function ($join) {
+                $join->on('pt.TAGIHAN', '=', 't.ID')
+                    ->where('pt.JENIS', '=', 1)
+                    ->where('pt.STATUS', '=', 2);
+            })
+            ->leftJoin('pembayaran.penjamin_tagihan as pjt', function ($join) {
+                $join->on('pjt.TAGIHAN', '=', 't.ID')
+                    ->where('pjt.KE', '=', 1);
+            })
+            ->leftJoin('aplikasi.pengguna as us', 'us.ID', '=', 'pt.OLEH')
+            ->leftJoin('master.pegawai as mp', 'mp.NIP', '=', 'us.NIP')
+            ->leftJoin('simrspku_klaim.klaim_qrcode_pegawai as qp', 'qp.nomor', '=', 'mp.NIP')
+            ->leftJoin('simrspku_klaim.klaim_qrcode as kq', 'kq.nomor', '=', 'pd.NORM')
+            ->leftJoin('master.diagnosa_masuk as dm', 'dm.ID', '=', 'pd.DIAGNOSA_MASUK')
+            ->join('aplikasi.instansi as i', DB::raw('1'), '=', DB::raw('1'))
+            ->join('master.ppk as ppk', 'ppk.ID', '=', 'i.PPK')
+            ->join('master.wilayah as w', 'w.ID', '=', 'ppk.WILAYAH')
+            ->where('t.ID', $nomorTagihan)
+            ->where('t.JENIS', 1)
+            ->whereIn('t.STATUS', [1, 2])
+            ->selectRaw("
+                i.PPK,
+                ppk.NAMA AS NAMAINSTANSI,
+                ppk.ALAMAT AS ALAMATINSTANSI,
+                t.ID AS NOMOR_TAGIHAN,
+
+                INSERT(
+                    INSERT(
+                        INSERT(LPAD(p.NORM, 8, '0'), 3, 0, '-'),
+                        6, 0, '-'
+                    ),
+                    9, 0, '-'
+                ) AS NORM,
+
+                p.NORM AS RM,
+                pd.NOMOR AS NOPEN,
+
+                (
+                    SELECT tp2.PENDAFTARAN
+                    FROM pembayaran.tagihan_pendaftaran tp2
+                    WHERE tp2.TAGIHAN = t.ID
+                    ORDER BY tp2.PENDAFTARAN ASC
+                    LIMIT 1
+                ) AS PENDAFTARAN_PERTAMA,
+
+                (
+                    SELECT DATE_FORMAT(pd2.TANGGAL, '%d-%m-%Y %H:%i:%s')
+                    FROM pembayaran.tagihan_pendaftaran tp2
+                    JOIN pendaftaran.pendaftaran pd2
+                        ON pd2.NOMOR = tp2.PENDAFTARAN
+                    WHERE tp2.TAGIHAN = t.ID
+                    ORDER BY tp2.PENDAFTARAN ASC
+                    LIMIT 1
+                ) AS TANGGALREG,
+
+                master.getNamaLengkap(p.NORM) AS NAMALENGKAP,
+                master.getAlamatPasienCustom(p.NORM) AS ALAMATLENGKAP,
+
+                master.getNamaLengkapPegawai((
+                    SELECT dkt.NIP
+                    FROM master.dokter dkt
+                    JOIN pendaftaran.kunjungan kjg
+                        ON kjg.NOPEN = pd.NOMOR
+                    WHERE dkt.ID = kjg.DPJP
+                    AND kjg.REF IS NULL
+                    ORDER BY kjg.MASUK DESC
+                    LIMIT 1
+                )) AS DPJP,
+
+                master.getNamaLengkapKeluarga(p.NORM)
+                    AS NAMA_KELUARGA_PASIEN,
+
+                NOW() AS `NOW`,
+                pj.JENIS AS IDCARABAYAR,
+                kap.NOMOR AS NOMORKARTU,
+                rf.DESKRIPSI AS CARABAYAR,
+                p.TANGGAL_LAHIR,
+
+                CONCAT(
+                    CAST(rjk.DESKRIPSI AS CHAR(15)),
+                    ' (',
+                    master.getCariUmur(pd.TANGGAL, p.TANGGAL_LAHIR),
+                    ')'
+                ) AS UMUR,
+
+                mp.NIP AS NIP,
+                qp.filename AS QR1,
+                kq.filename AS QR2,
+
+                IF(
+                    pt.OLEH = 0,
+                    pt.DESKRIPSI,
+                    master.getNamaLengkapPegawai(mp.NIP)
+                ) AS PENGGUNA,
+
+                t.ID AS IDTAGIHAN,
+                t.TOTAL + pembayaran.getTarifAmbulance(t.ID) AS TOTALRS,
+                w.DESKRIPSI AS WILAYAH,
+
+                pembayaran.getInfoTagihanKunjungan(t.ID)
+                    AS JENISKUNJUNGAN,
+
+                IF(pt.TANGGAL IS NULL, SYSDATE(), pt.TANGGAL)
+                    AS TANGGALBAYAR,
+
+                t.TANGGAL AS TANGGALTAGIHAN,
+
+                (
+                    IF(
+                        pj.JENIS = 2 AND pjt.NAIK_KELAS = 1,
+                        pjt.TOTAL_NAIK_KELAS,
+                        IF(
+                            pj.JENIS = 2 AND pjt.NAIK_KELAS_VIP = 1,
+                            pjt.TARIF_INACBG_KELAS1,
+                            t.TOTAL + pembayaran.getTarifAmbulance(t.ID)
+                        )
+                    )
+                    + IFNULL(pjt.SELISIH_MINIMAL, 0)
+                ) AS TOTALTAGIHAN,
+
+                (
+                    pembayaran.getTotalDiskon(t.ID)
+                    + pembayaran.getTotalDiskonDokter(t.ID)
+                ) AS TOTALDISKON,
+
+                pembayaran.getTotalNonTunai(t.ID) AS TOTALEDC,
+
+                pembayaran.getTotalPenjaminTagihan(t.ID)
+                    AS TOTALPENJAMINTAGIHAN,
+
+                (
+                    pembayaran.getTotalPiutangPasien(t.ID)
+                    + pembayaran.getTotalPiutangPerusahaan(t.ID)
+                ) AS TOTALPIUTANG,
+
+                (
+                    pembayaran.getTotalDeposit(t.ID)
+                    - pembayaran.getTotalPengembalianDeposit(t.ID)
+                ) AS TOTALDEPOSIT,
+
+                pembayaran.getTotalSubsidiTagihan(t.ID)
+                    AS TOTALSUBSIDI,
+
+                (
+                    IF(
+                        pt.TOTAL IS NULL,
+                        IF(
+                            ROUND(pembayaran.getTotalTagihanPembayaran(t.ID))
+                            + ROUND(t.PEMBULATAN) < 0,
+                            0,
+                            ROUND(pembayaran.getTotalTagihanPembayaran(t.ID))
+                            + ROUND(t.PEMBULATAN)
+                        ),
+                        pt.TOTAL
+                    )
+                    + pembayaran.getTarifAmbulance(t.ID)
+                ) AS TOTALJUMLAHBAYAR,
+
+                (
+                    IF(
+                        pt.TOTAL IS NULL,
+                        IF(
+                            ROUND(pembayaran.getTotalTagihanPembayaran(t.ID))
+                            + ROUND(t.PEMBULATAN) < 0,
+                            0,
+                            ROUND(pembayaran.getTotalTagihanPembayaran(t.ID))
+                            + ROUND(t.PEMBULATAN)
+                        ),
+                        pt.TOTAL
+                    )
+                    - (
+                        pembayaran.getTotalDeposit(t.ID)
+                        - pembayaran.getTotalPengembalianDeposit(t.ID)
+                    )
+                    + pembayaran.getTarifAmbulance(t.ID)
+                ) AS JUMLAHBAYAR,
+
+                ROUND(t.PEMBULATAN) AS PEMBULATAN,
+
+                IF(
+                    INSTR(dm.DIAGNOSA, 'B20') > 1
+                    OR INSTR(dm.DIAGNOSA, 'HIV') > 1,
+                    '',
+                    dm.DIAGNOSA
+                ) AS DIAGNOSA,
+
+                (
+                    SELECT DATE_FORMAT(pl.TANGGAL, '%d-%m-%Y %H:%i:%s')
+                    FROM layanan.pasien_pulang pl
+                    WHERE pl.NOPEN = pd.NOMOR
+                    AND pl.STATUS != 0
+                    LIMIT 1
+                ) AS TGLKELUAR,
+
+                pj.NOMOR AS NOSEP
+            ")
+            ->first();
+    }
+
+    private function getBillingPenjamin(string $nomorTagihan)
+    {
+        return DB::table('pembayaran.penjamin_tagihan as ppt')
+            ->leftJoin('master.referensi as crbyr', function ($join) {
+                $join->on('ppt.PENJAMIN', '=', 'crbyr.ID')
+                    ->where('crbyr.JENIS', '=', 10);
+            })
+            ->where('ppt.TAGIHAN', $nomorTagihan)
+            ->selectRaw("
+                crbyr.DESKRIPSI AS NAMAPENJAMIN,
+                SUM(ppt.TOTAL) AS TOTAL
+            ")
+            ->groupBy('ppt.PENJAMIN', 'crbyr.DESKRIPSI')
+            ->get();
+    }
+
+    private function getBillingDetail(string $nomorTagihan)
+    {
+        $administrasi = $this->queryBillingAdministrasi($nomorTagihan);
+        $paket = $this->queryBillingPaket($nomorTagihan);
+        $kunjungan = $this->queryBillingKunjungan($nomorTagihan);
+        $tindakanMedis = $this->queryBillingTindakanMedis($nomorTagihan);
+        $tindakanKeperawatan = $this->queryBillingTindakanKeperawatan($nomorTagihan);
+        $farmasi = $this->queryBillingFarmasi($nomorTagihan);
+        $jenisLain = $this->queryBillingJenisLain($nomorTagihan);
+
+        /*
+        * Semua query wajib menghasilkan kolom yang sama dan dalam
+        * urutan yang sama seperti TEMP_DETIL_RINCIAN.
+        *
+        * Termasuk:
+        * TAGIHAN, RUANGAN, LAYANAN, TANGGAL, JUMLAH, TARIF,
+        * JENIS_KUNJUNGAN, DOKTER, DOKTERKEDUA, DOKTERANASTESI,
+        * ADMINISTRASI, SARANA, BHP, DOKTER_OPERATOR,
+        * DOKTER_ANASTESI, DOKTER_LAINNYA, PENATA_ANASTESI,
+        * PARAMEDIS, NON_MEDIS, STATUSTINDAKANRINCIAN,
+        * LAYANAN1, LAYANAN_OK, TARIF_LAYANAN_OK, RP.
+        */
+
+        $query = $administrasi
+            ->unionAll($paket)
+            ->unionAll($kunjungan)
+            ->unionAll($tindakanMedis)
+            ->unionAll($tindakanKeperawatan)
+            ->unionAll($farmasi)
+            ->unionAll($jenisLain);
+
+        return DB::query()
+            ->fromSub($query, 'billing')
+            ->orderBy('JENIS_KUNJUNGAN')
+            ->orderBy('TANGGAL')
+            ->get();
+    }
+
+    private function queryBillingAdministrasi(string $nomorTagihan)
+    {
+        return DB::table('pembayaran.rincian_tagihan as rt')
+            ->leftJoin('cetakan.kartu_pasien as krtp', 'krtp.ID', '=', 'rt.REF_ID')
+            ->leftJoin('cetakan.karcis_pasien as kp', function ($join) {
+                $join->on('kp.ID', '=', 'rt.REF_ID')
+                    ->where('rt.JENIS', '=', 1);
+            })
+            ->leftJoin('pendaftaran.pendaftaran as p', function ($join) {
+                $join->on('p.NOMOR', '=', 'kp.NOPEN')
+                    ->where('p.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.tarif_administrasi as tadm', 'tadm.ID', '=', 'rt.TARIF_ID')
+            ->leftJoin('master.administrasi as adm', 'adm.ID', '=', 'tadm.ADMINISTRASI')
+            ->leftJoin('pendaftaran.tujuan_pasien as tp', 'tp.NOPEN', '=', 'p.NOMOR')
+            ->leftJoin('pendaftaran.reservasi as res', 'res.NOMOR', '=', 'tp.RESERVASI')
+            ->leftJoin('master.ruang_kamar_tidur as rkt', 'rkt.ID', '=', 'res.RUANG_KAMAR_TIDUR')
+            ->leftJoin('master.ruang_kamar as rk', 'rk.ID', '=', 'rkt.RUANG_KAMAR')
+            ->leftJoin('master.ruangan as r', 'r.ID', '=', 'rk.RUANGAN')
+            ->leftJoin('master.ruangan as r1', 'r1.ID', '=', 'tp.RUANGAN')
+            ->leftJoin('master.referensi as kls', function ($join) {
+                $join->on('kls.ID', '=', 'rk.KELAS')
+                    ->where('kls.JENIS', '=', 19);
+            })
+            ->leftJoin('pendaftaran.kunjungan as kj', function ($join) {
+                $join->on('kj.NOMOR', '=', 'rt.REF_ID')
+                    ->whereIn('rt.TARIF_ID', [3, 4]);
+            })
+            ->leftJoin('master.ruangan as r2', 'r2.ID', '=', 'kj.RUANGAN')
+            ->where('rt.TAGIHAN', $nomorTagihan)
+            ->where('rt.JENIS', 1)
+            ->where('rt.STATUS', 1)
+            ->selectRaw("
+                rt.TAGIHAN,
+
+                CONCAT(
+                    IF(
+                        r.JENIS_KUNJUNGAN = 3,
+                        CONCAT(
+                            CONVERT(r.DESKRIPSI USING utf8mb4),
+                            _utf8mb4' (',
+                            CONVERT(rk.KAMAR USING utf8mb4),
+                            _utf8mb4'/',
+                            CONVERT(rkt.TEMPAT_TIDUR USING utf8mb4),
+                            _utf8mb4'/',
+                            CONVERT(kls.DESKRIPSI USING utf8mb4),
+                            _utf8mb4')'
+                        ),
+                        CONVERT(
+                            IF(
+                                r1.DESKRIPSI IS NOT NULL,
+                                r1.DESKRIPSI,
+                                r2.DESKRIPSI
+                            ) USING utf8mb4
+                        )
+                    )
+                ) AS RUANGAN,
+
+                IF(
+                    r1.JENIS_KUNJUNGAN = 15,
+                    'Administrasi',
+                    adm.NAMA
+                ) AS LAYANAN,
+
+                IF(
+                    r1.JENIS_KUNJUNGAN = 15,
+                    p.TANGGAL,
+                    IF(
+                        rt.JENIS = 1,
+                        IF(
+                            tadm.ADMINISTRASI = 1,
+                            krtp.TANGGAL,
+                            IF(tadm.ADMINISTRASI = 2, kp.TANGGAL, kj.KELUAR)
+                        ),
+                        NULL
+                    )
+                ) AS TANGGAL,
+
+                rt.JUMLAH,
+                rt.TARIF,
+
+                IF(
+                    r.JENIS_KUNJUNGAN = 3,
+                    r.JENIS_KUNJUNGAN,
+                    r1.JENIS_KUNJUNGAN
+                ) AS JENIS_KUNJUNGAN,
+
+                '' AS DOKTER,
+                '' AS DOKTERKEDUA,
+                '' AS DOKTERANASTESI,
+
+                0 AS ADMINISTRASI,
+                0 AS SARANA,
+                0 AS BHP,
+                0 AS DOKTER_OPERATOR,
+                0 AS DOKTER_ANASTESI,
+                0 AS DOKTER_LAINNYA,
+                0 AS PENATA_ANASTESI,
+                0 AS PARAMEDIS,
+                0 AS NON_MEDIS,
+                0 AS STATUSTINDAKANRINCIAN,
+
+                IF(
+                    r1.JENIS_KUNJUNGAN = 15,
+                    'Administrasi',
+                    adm.NAMA
+                ) AS LAYANAN1,
+
+                '' AS LAYANAN_OK,
+                '' AS TARIF_LAYANAN_OK,
+                '' AS RP
+            ");
+    }
+
+    private function queryBillingPaket(string $nomorTagihan)
+    {
+        return DB::table('pembayaran.rincian_tagihan as rt')
+            ->leftJoin('pendaftaran.pendaftaran as p', function ($join) {
+                $join->on('p.NOMOR', '=', 'rt.REF_ID')
+                    ->where('rt.JENIS', '=', 5)
+                    ->where('p.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.paket as pkt', 'pkt.ID', '=', 'p.PAKET')
+            ->leftJoin('master.distribusi_tarif_paket as dtp', function ($join) {
+                $join->on('dtp.PAKET', '=', 'pkt.ID')
+                    ->where('dtp.STATUS', '=', 1);
+            })
+            ->leftJoin('pendaftaran.tujuan_pasien as tp', 'tp.NOPEN', '=', 'p.NOMOR')
+            ->leftJoin('pendaftaran.reservasi as res', 'res.NOMOR', '=', 'tp.RESERVASI')
+            ->leftJoin('master.ruang_kamar_tidur as rkt', 'rkt.ID', '=', 'res.RUANG_KAMAR_TIDUR')
+            ->leftJoin('master.ruang_kamar as rk', 'rk.ID', '=', 'rkt.RUANG_KAMAR')
+            ->leftJoin('master.ruangan as r', 'r.ID', '=', 'rk.RUANGAN')
+            ->leftJoin('master.referensi as kls', function ($join) {
+                $join->on('kls.ID', '=', 'rk.KELAS')
+                    ->where('kls.JENIS', '=', 19);
+            })
+            ->where('rt.TAGIHAN', $nomorTagihan)
+            ->where('rt.JENIS', 5)
+            ->where('rt.STATUS', 1)
+            ->selectRaw("
+                rt.TAGIHAN,
+
+                CONCAT(
+                    r.DESKRIPSI,
+                    IF(
+                        r.JENIS_KUNJUNGAN = 3,
+                        CONCAT(
+                            ' (', rk.KAMAR, '/',
+                            rkt.TEMPAT_TIDUR, '/',
+                            kls.DESKRIPSI, ')'
+                        ),
+                        ''
+                    )
+                ) AS RUANGAN,
+
+                pkt.NAMA AS LAYANAN,
+
+                p.TANGGAL AS TANGGAL,
+                rt.JUMLAH,
+                rt.TARIF,
+                r.JENIS_KUNJUNGAN,
+
+                '' AS DOKTER,
+                '' AS DOKTERKEDUA,
+                '' AS DOKTERANASTESI,
+
+                0 AS ADMINISTRASI,
+                0 AS SARANA,
+                0 AS BHP,
+                0 AS DOKTER_OPERATOR,
+                0 AS DOKTER_ANASTESI,
+                0 AS DOKTER_LAINNYA,
+                0 AS PENATA_ANASTESI,
+                0 AS PARAMEDIS,
+                0 AS NON_MEDIS,
+                0 AS STATUSTINDAKANRINCIAN,
+
+                pkt.NAMA AS LAYANAN1,
+                '' AS LAYANAN_OK,
+                '' AS TARIF_LAYANAN_OK,
+                '' AS RP
+            ");
+    }
+
+    private function queryBillingKunjungan(string $nomorTagihan)
+    {
+        return DB::table('pembayaran.rincian_tagihan as rt')
+            ->leftJoin('pendaftaran.kunjungan as kjgn', function ($join) {
+                $join->on('kjgn.NOMOR', '=', 'rt.REF_ID')
+                    ->where('rt.JENIS', '=', 2)
+                    ->where('kjgn.STATUS', '!=', 0);
+            })
+            ->leftJoin('pendaftaran.pendaftaran as p', function ($join) {
+                $join->on('p.NOMOR', '=', 'kjgn.NOPEN')
+                    ->where('p.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.ruangan as r', 'r.ID', '=', 'kjgn.RUANGAN')
+            ->leftJoin('master.ruang_kamar_tidur as rkt', 'rkt.ID', '=', 'kjgn.RUANG_KAMAR_TIDUR')
+            ->leftJoin('master.ruang_kamar as rk', 'rk.ID', '=', 'rkt.RUANG_KAMAR')
+            ->leftJoin('master.referensi as kls', function ($join) {
+                $join->on('kls.ID', '=', 'rk.KELAS')
+                    ->where('kls.JENIS', '=', 19);
+            })
+            ->where('rt.TAGIHAN', $nomorTagihan)
+            ->where('rt.JENIS', 2)
+            ->where('rt.STATUS', 1)
+            ->selectRaw("
+                rt.TAGIHAN,
+
+                CONCAT(
+                    r.DESKRIPSI,
+                    IF(
+                        r.JENIS_KUNJUNGAN = 3,
+                        CONCAT(
+                            ' (', rk.KAMAR, '/',
+                            rkt.TEMPAT_TIDUR, '/',
+                            kls.DESKRIPSI, ')'
+                        ),
+                        ''
+                    )
+                ) AS RUANGAN,
+
+                IF(
+                    r.JENIS_KUNJUNGAN = 3,
+                    CONCAT(
+                        ' (', rk.KAMAR, '/',
+                        rkt.TEMPAT_TIDUR, '/',
+                        kls.DESKRIPSI, ')'
+                    ),
+                    ''
+                ) AS LAYANAN,
+
+                kjgn.MASUK AS TANGGAL,
+                rt.JUMLAH,
+
+                rt.TARIF - IF(
+                    rt.PERSENTASE_DISKON = 0,
+                    rt.DISKON,
+                    rt.TARIF * (rt.DISKON / 100)
+                ) AS TARIF,
+
+                r.JENIS_KUNJUNGAN,
+
+                '' AS DOKTER,
+                '' AS DOKTERKEDUA,
+                '' AS DOKTERANASTESI,
+
+                0 AS ADMINISTRASI,
+                0 AS SARANA,
+                0 AS BHP,
+                0 AS DOKTER_OPERATOR,
+                0 AS DOKTER_ANASTESI,
+                0 AS DOKTER_LAINNYA,
+                0 AS PENATA_ANASTESI,
+                0 AS PARAMEDIS,
+                0 AS NON_MEDIS,
+                0 AS STATUSTINDAKANRINCIAN,
+
+                IF(
+                    r.JENIS_KUNJUNGAN = 3,
+                    CONCAT(
+                        ' (', rk.KAMAR, '/',
+                        rkt.TEMPAT_TIDUR, '/',
+                        kls.DESKRIPSI, ')'
+                    ),
+                    ''
+                ) AS LAYANAN1,
+
+                '' AS LAYANAN_OK,
+                '' AS TARIF_LAYANAN_OK,
+                '' AS RP
+            ");
+    }
+
+    private function queryBillingTindakanMedis($tagihan)
+    {
+        $dokterOperator = "
+            (
+                SELECT CONVERT(
+                    master.getNamaLengkapPegawai(mpdok.NIP)
+                    USING utf8mb4
+                )
+                FROM layanan.petugas_tindakan_medis ptm
+                LEFT JOIN master.dokter dok
+                    ON ptm.MEDIS = dok.ID
+                LEFT JOIN master.pegawai mpdok
+                    ON dok.NIP = mpdok.NIP
+                WHERE ptm.TINDAKAN_MEDIS = rt.REF_ID
+                    AND ptm.JENIS = 1
+                    AND ptm.MEDIS != 0
+                    AND ptm.KE = 1
+                    AND ptm.STATUS != 0
+                LIMIT 1
+            )
+        ";
+
+        $dokterAsisten = "
+            (
+                SELECT master.getNamaLengkapPegawai(mpdok.NIP)
+                FROM layanan.petugas_tindakan_medis ptm
+                LEFT JOIN master.dokter dok
+                    ON ptm.MEDIS = dok.ID
+                LEFT JOIN master.pegawai mpdok
+                    ON dok.NIP = mpdok.NIP
+                WHERE ptm.TINDAKAN_MEDIS = rt.REF_ID
+                    AND ptm.JENIS = 1
+                    AND ptm.MEDIS != 0
+                    AND ptm.KE = 2
+                    AND ptm.STATUS != 0
+                LIMIT 1
+            )
+        ";
+
+        $dokterAnestesi = "
+            (
+                SELECT master.getNamaLengkapPegawai(mpdok.NIP)
+                FROM layanan.petugas_tindakan_medis ptm
+                LEFT JOIN master.dokter dok
+                    ON ptm.MEDIS = dok.ID
+                LEFT JOIN master.pegawai mpdok
+                    ON dok.NIP = mpdok.NIP
+                WHERE ptm.TINDAKAN_MEDIS = rt.REF_ID
+                    AND ptm.JENIS = 2
+                    AND ptm.MEDIS != 0
+                    AND ptm.KE = 1
+                    AND ptm.STATUS != 0
+                LIMIT 1
+            )
+        ";
+
+        $query = DB::table('pembayaran.rincian_tagihan as rt')
+            ->leftJoin('layanan.tindakan_medis as tm', function ($join) {
+                $join->on('tm.ID', '=', 'rt.REF_ID')
+                    ->where('tm.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.tindakan as t', 't.ID', '=', 'tm.TINDAKAN')
+            ->leftJoin('pendaftaran.kunjungan as kjgn', function ($join) {
+                $join->on('kjgn.NOMOR', '=', 'tm.KUNJUNGAN')
+                    ->where('kjgn.STATUS', '!=', 0);
+            })
+            ->leftJoin('pendaftaran.pendaftaran as p', function ($join) {
+                $join->on('p.NOMOR', '=', 'kjgn.NOPEN')
+                    ->where('p.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.ruangan as r', 'r.ID', '=', 'kjgn.RUANGAN')
+            ->leftJoin(
+                'master.ruang_kamar_tidur as rkt',
+                'rkt.ID',
+                '=',
+                'kjgn.RUANG_KAMAR_TIDUR'
+            )
+            ->leftJoin('master.ruang_kamar as rk', 'rk.ID', '=', 'rkt.RUANG_KAMAR')
+            ->leftJoin('master.referensi as kls', function ($join) {
+                $join->on('kls.ID', '=', 'rk.KELAS')
+                    ->where('kls.JENIS', '=', 19);
+            })
+            ->leftJoin('master.tarif_tindakan as mtt', 'mtt.ID', '=', 'rt.TARIF_ID')
+            ->leftJoin('master.tindakan_rincian as tr', function ($join) {
+                $join->on('tr.TINDAKAN', '=', 'mtt.TINDAKAN')
+                    ->where('tr.STATUS', '=', 1);
+            })
+            ->leftJoin('master.tindakan_keperawatan as tk', function ($join) {
+                $join->on('tk.TINDAKAN', '=', 'tm.TINDAKAN')
+                    ->where('tk.STATUS', '=', 1);
+            })
+            ->where('rt.TAGIHAN', $tagihan)
+            ->where('rt.JENIS', 3)
+            ->where('rt.STATUS', 1)
+            ->whereNull('tk.ID')
+            ->selectRaw("
+                rt.TAGIHAN,
+
+                CONCAT(
+                    CONVERT(r.DESKRIPSI USING utf8mb4),
+                    IF(
+                        r.JENIS_KUNJUNGAN = 3,
+                        CONCAT(
+                            _utf8mb4' (',
+                            CONVERT(rk.KAMAR USING utf8mb4),
+                            _utf8mb4'/',
+                            CONVERT(rkt.TEMPAT_TIDUR USING utf8mb4),
+                            _utf8mb4'/',
+                            CONVERT(kls.DESKRIPSI USING utf8mb4),
+                            _utf8mb4')'
+                        ),
+                        _utf8mb4''
+                    )
+                ) AS RUANGAN,
+
+                CONVERT(t.NAMA USING utf8mb4) AS LAYANAN,
+                tm.TANGGAL AS TANGGAL,
+                rt.JUMLAH,
+                rt.TARIF + pembayaran.getTarifAmbulance(rt.TAGIHAN) AS TARIF,
+                r.JENIS_KUNJUNGAN,
+
+                IF(
+                    {$dokterOperator} IS NULL,
+                    '',
+                    CONCAT(' [', {$dokterOperator}, ']')
+                ) AS DOKTER,
+
+                IF(
+                    {$dokterAsisten} IS NULL,
+                    '',
+                    CONCAT(' [', {$dokterAsisten}, ']')
+                ) AS DOKTERKEDUA,
+
+                IF(
+                    {$dokterAnestesi} IS NULL,
+                    '',
+                    CONCAT(' [', {$dokterAnestesi}, ']')
+                ) AS DOKTERANASTESI,
+
+                mtt.ADMINISTRASI,
+                mtt.SARANA,
+                mtt.BHP,
+                mtt.DOKTER_OPERATOR,
+                mtt.DOKTER_ANASTESI,
+                mtt.DOKTER_LAINNYA,
+                mtt.PENATA_ANASTESI,
+                mtt.PARAMEDIS,
+                mtt.NON_MEDIS,
+
+                IF(tr.ID IS NULL, 0, 1) AS STATUSTINDAKANRINCIAN,
+
+                CONCAT(
+                    CONVERT(t.NAMA USING utf8mb4),
+                    IF(
+                        {$dokterOperator} IS NULL,
+                        _utf8mb4'',
+                        CONCAT(
+                            _utf8mb4' [',
+                            {$dokterOperator},
+                            _utf8mb4']'
+                        )
+                    )
+                ) AS LAYANAN1,
+
+                CONCAT(
+                    t.NAMA, '\\r',
+                    SPACE(3), 'Jasa dr. Operator ',
+                    IFNULL({$dokterOperator}, ''), '\\r',
+                    SPACE(3), 'Jasa dr. Anastesi ',
+                    IFNULL({$dokterAnestesi}, ''), '\\r',
+                    SPACE(3), 'Jasa dr. Asisten ',
+                    IFNULL({$dokterAsisten}, ''), '\\r',
+                    SPACE(3), 'Jasa Penata Anastesi ', '\\r'
+                ) AS LAYANAN_OK,
+
+                CONCAT(
+                    ' ', '\\r',
+                    REPLACE(FORMAT(mtt.DOKTER_OPERATOR, 0), ',', '.'), '\\r',
+                    REPLACE(FORMAT(mtt.DOKTER_ANASTESI, 0), ',', '.'), '\\r',
+                    REPLACE(FORMAT(mtt.DOKTER_LAINNYA, 0), ',', '.'), '\\r',
+                    REPLACE(FORMAT(mtt.PENATA_ANASTESI, 0), ',', '.'), '\\r'
+                ) AS TARIF_LAYANAN_OK,
+
+                CONCAT(
+                    ' ', '\\r',
+                    'Rp.', '\\r',
+                    'Rp.', '\\r',
+                    'Rp.', '\\r',
+                    'Rp.'
+                ) AS RP
+            ");
+
+        return $query;
+    }
+
+    private function queryBillingTindakanKeperawatan($tagihan)
+    {
+        $dokterOperator = "
+            (
+                SELECT master.getNamaLengkapPegawai(mpdok.NIP)
+                FROM layanan.petugas_tindakan_medis ptm
+                LEFT JOIN master.dokter dok
+                    ON ptm.MEDIS = dok.ID
+                LEFT JOIN master.pegawai mpdok
+                    ON dok.NIP = mpdok.NIP
+                WHERE ptm.TINDAKAN_MEDIS = rt.REF_ID
+                    AND ptm.JENIS = 1
+                    AND ptm.MEDIS != 0
+                    AND ptm.KE = 1
+                    AND ptm.STATUS != 0
+                LIMIT 1
+            )
+        ";
+
+        $dokterAsisten = "
+            (
+                SELECT master.getNamaLengkapPegawai(mpdok.NIP)
+                FROM layanan.petugas_tindakan_medis ptm
+                LEFT JOIN master.dokter dok
+                    ON ptm.MEDIS = dok.ID
+                LEFT JOIN master.pegawai mpdok
+                    ON dok.NIP = mpdok.NIP
+                WHERE ptm.TINDAKAN_MEDIS = rt.REF_ID
+                    AND ptm.JENIS = 1
+                    AND ptm.MEDIS != 0
+                    AND ptm.KE = 2
+                    AND ptm.STATUS != 0
+                LIMIT 1
+            )
+        ";
+
+        $dokterAnestesi = "
+            (
+                SELECT master.getNamaLengkapPegawai(mpdok.NIP)
+                FROM layanan.petugas_tindakan_medis ptm
+                LEFT JOIN master.dokter dok
+                    ON ptm.MEDIS = dok.ID
+                LEFT JOIN master.pegawai mpdok
+                    ON dok.NIP = mpdok.NIP
+                WHERE ptm.TINDAKAN_MEDIS = rt.REF_ID
+                    AND ptm.JENIS = 2
+                    AND ptm.MEDIS != 0
+                    AND ptm.KE = 1
+                    AND ptm.STATUS != 0
+                LIMIT 1
+            )
+        ";
+
+        return DB::table('pembayaran.rincian_tagihan as rt')
+            ->leftJoin('layanan.tindakan_medis as tm', function ($join) {
+                $join->on('tm.ID', '=', 'rt.REF_ID')
+                    ->where('tm.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.tindakan as t', 't.ID', '=', 'tm.TINDAKAN')
+            ->leftJoin('pendaftaran.kunjungan as kjgn', function ($join) {
+                $join->on('kjgn.NOMOR', '=', 'tm.KUNJUNGAN')
+                    ->where('kjgn.STATUS', '!=', 0);
+            })
+            ->leftJoin('pendaftaran.pendaftaran as p', function ($join) {
+                $join->on('p.NOMOR', '=', 'kjgn.NOPEN')
+                    ->where('p.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.ruangan as r', 'r.ID', '=', 'kjgn.RUANGAN')
+            ->leftJoin(
+                'master.ruang_kamar_tidur as rkt',
+                'rkt.ID',
+                '=',
+                'kjgn.RUANG_KAMAR_TIDUR'
+            )
+            ->leftJoin('master.ruang_kamar as rk', 'rk.ID', '=', 'rkt.RUANG_KAMAR')
+            ->leftJoin('master.referensi as kls', function ($join) {
+                $join->on('kls.ID', '=', 'rk.KELAS')
+                    ->where('kls.JENIS', '=', 19);
+            })
+            ->leftJoin('master.tarif_tindakan as mtt', 'mtt.ID', '=', 'rt.TARIF_ID')
+            ->leftJoin('master.tindakan_rincian as tr', function ($join) {
+                $join->on('tr.TINDAKAN', '=', 'mtt.TINDAKAN')
+                    ->where('tr.STATUS', '=', 1);
+            })
+            ->leftJoin('master.tindakan_keperawatan as tk', function ($join) {
+                $join->on('tk.TINDAKAN', '=', 'tm.TINDAKAN')
+                    ->where('tk.STATUS', '=', 1);
+            })
+            ->where('rt.TAGIHAN', $tagihan)
+            ->where('rt.JENIS', 3)
+            ->where('rt.STATUS', 1)
+            ->whereNotNull('tk.ID')
+            ->selectRaw("
+                rt.TAGIHAN,
+
+                CONCAT(
+                    r.DESKRIPSI,
+                    IF(
+                        r.JENIS_KUNJUNGAN = 3,
+                        CONCAT(
+                            ' (',
+                            rk.KAMAR,
+                            '/',
+                            rkt.TEMPAT_TIDUR,
+                            '/',
+                            kls.DESKRIPSI,
+                            ')'
+                        ),
+                        ''
+                    )
+                ) AS RUANGAN,
+
+                'Tindakan Keperawatan' AS LAYANAN,
+                tm.TANGGAL AS TANGGAL,
+                rt.JUMLAH,
+                SUM(rt.TARIF) AS TARIF,
+                r.JENIS_KUNJUNGAN,
+
+                IF(
+                    {$dokterOperator} IS NULL,
+                    '',
+                    CONCAT(' [', {$dokterOperator}, ']')
+                ) AS DOKTER,
+
+                IF(
+                    {$dokterAsisten} IS NULL,
+                    '',
+                    CONCAT(' [', {$dokterAsisten}, ']')
+                ) AS DOKTERKEDUA,
+
+                IF(
+                    {$dokterAnestesi} IS NULL,
+                    '',
+                    CONCAT(' [', {$dokterAnestesi}, ']')
+                ) AS DOKTERANASTESI,
+
+                mtt.ADMINISTRASI,
+                mtt.SARANA,
+                mtt.BHP,
+                mtt.DOKTER_OPERATOR,
+                mtt.DOKTER_ANASTESI,
+                mtt.DOKTER_LAINNYA,
+                mtt.PENATA_ANASTESI,
+                mtt.PARAMEDIS,
+                mtt.NON_MEDIS,
+
+                IF(tr.ID IS NULL, 0, 1) AS STATUSTINDAKANRINCIAN,
+
+                'Tindakan Keperawatan' AS LAYANAN1,
+
+                CONCAT(
+                    t.NAMA, '\\r',
+                    SPACE(3), 'Jasa dr. Operator ',
+                    IFNULL({$dokterOperator}, ''), '\\r',
+                    SPACE(3), 'Jasa dr. Anastesi ',
+                    IFNULL({$dokterAnestesi}, ''), '\\r',
+                    SPACE(3), 'Jasa dr. Asisten ',
+                    IFNULL({$dokterAsisten}, ''), '\\r',
+                    SPACE(3), 'Jasa Penata Anastesi ', '\\r'
+                ) AS LAYANAN_OK,
+
+                CONCAT(
+                    ' ', '\\r',
+                    REPLACE(FORMAT(mtt.DOKTER_OPERATOR, 0), ',', '.'), '\\r',
+                    REPLACE(FORMAT(mtt.DOKTER_ANASTESI, 0), ',', '.'), '\\r',
+                    REPLACE(FORMAT(mtt.DOKTER_LAINNYA, 0), ',', '.'), '\\r',
+                    REPLACE(FORMAT(mtt.PENATA_ANASTESI, 0), ',', '.'), '\\r'
+                ) AS TARIF_LAYANAN_OK,
+
+                CONCAT(
+                    ' ', '\\r',
+                    'Rp.', '\\r',
+                    'Rp.', '\\r',
+                    'Rp.', '\\r',
+                    'Rp.'
+                ) AS RP
+            ")
+            ->groupByRaw('RUANGAN, LAYANAN')
+            ->orderBy('JENIS_KUNJUNGAN');
+    }
+
+    private function queryBillingFarmasi(string $nomorTagihan)
+    {
+        return DB::table('pembayaran.rincian_tagihan as rt')
+            ->leftJoin('layanan.farmasi as f', function ($join) {
+                $join->on('f.ID', '=', 'rt.REF_ID')
+                    ->where('rt.JENIS', '=', 4)
+                    ->where('f.STATUS', '!=', 0);
+            })
+            ->leftJoin('inventory.barang as b', 'b.ID', '=', 'f.FARMASI')
+            ->leftJoin('pendaftaran.kunjungan as kjgn', function ($join) {
+                $join->on('kjgn.NOMOR', '=', 'f.KUNJUNGAN')
+                    ->where('kjgn.STATUS', '!=', 0);
+            })
+            ->leftJoin('pendaftaran.pendaftaran as p', function ($join) {
+                $join->on('p.NOMOR', '=', 'kjgn.NOPEN')
+                    ->where('p.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.ruangan as r', 'r.ID', '=', 'kjgn.RUANGAN')
+            ->leftJoin('master.ruang_kamar_tidur as rkt', 'rkt.ID', '=', 'kjgn.RUANG_KAMAR_TIDUR')
+            ->leftJoin('master.ruang_kamar as rk', 'rk.ID', '=', 'rkt.RUANG_KAMAR')
+            ->leftJoin('master.referensi as kls', function ($join) {
+                $join->on('kls.ID', '=', 'rk.KELAS')
+                    ->where('kls.JENIS', '=', 19);
+            })
+            ->where('rt.TAGIHAN', $nomorTagihan)
+            ->where('rt.JENIS', 4)
+            ->where('rt.STATUS', 1)
+            ->selectRaw("
+                rt.TAGIHAN,
+
+                CONCAT(
+                    r.DESKRIPSI,
+                    IF(
+                        r.JENIS_KUNJUNGAN = 3,
+                        CONCAT(
+                            ' (', rk.KAMAR, '/',
+                            rkt.TEMPAT_TIDUR, '/',
+                            kls.DESKRIPSI, ')'
+                        ),
+                        ''
+                    )
+                ) AS RUANGAN,
+
+                b.NAMA AS LAYANAN,
+                f.TANGGAL AS TANGGAL,
+                rt.JUMLAH,
+                rt.TARIF,
+                r.JENIS_KUNJUNGAN,
+
+                '' AS DOKTER,
+                '' AS DOKTERKEDUA,
+                '' AS DOKTERANASTESI,
+
+                0 AS ADMINISTRASI,
+                0 AS SARANA,
+                0 AS BHP,
+                0 AS DOKTER_OPERATOR,
+                0 AS DOKTER_ANASTESI,
+                0 AS DOKTER_LAINNYA,
+                0 AS PENATA_ANASTESI,
+                0 AS PARAMEDIS,
+                0 AS NON_MEDIS,
+                0 AS STATUSTINDAKANRINCIAN,
+
+                b.NAMA AS LAYANAN1,
+                '' AS LAYANAN_OK,
+                '' AS TARIF_LAYANAN_OK,
+                '' AS RP
+            ");
+    }
+
+    private function queryBillingJenisLain(string $nomorTagihan)
+    {
+        return DB::table('pembayaran.rincian_tagihan as rt')
+            ->leftJoin('pendaftaran.kunjungan as kjgn', function ($join) {
+                $join->on('kjgn.NOMOR', '=', 'rt.REF_ID')
+                    ->where('kjgn.STATUS', '!=', 0);
+            })
+            ->leftJoin('pendaftaran.pendaftaran as p', function ($join) {
+                $join->on('p.NOMOR', '=', 'kjgn.NOPEN')
+                    ->where('p.STATUS', '!=', 0);
+            })
+            ->leftJoin('master.ruangan as r', 'r.ID', '=', 'kjgn.RUANGAN')
+            ->leftJoin('master.ruang_kamar_tidur as rkt', 'rkt.ID', '=', 'kjgn.RUANG_KAMAR_TIDUR')
+            ->leftJoin('master.ruang_kamar as rk', 'rk.ID', '=', 'rkt.RUANG_KAMAR')
+            ->leftJoin('master.referensi as kls', function ($join) {
+                $join->on('kls.ID', '=', 'rk.KELAS')
+                    ->where('kls.JENIS', '=', 19);
+            })
+            ->leftJoin('master.referensi as ref', function ($join) {
+                $join->on('ref.ID', '=', 'rt.JENIS')
+                    ->where('ref.JENIS', '=', 30);
+            })
+            ->where('rt.TAGIHAN', $nomorTagihan)
+            ->where('rt.JENIS', 6)
+            ->where('rt.STATUS', 1)
+            ->selectRaw("
+                rt.TAGIHAN,
+
+                CONCAT(
+                    r.DESKRIPSI,
+                    IF(
+                        r.JENIS_KUNJUNGAN = 3,
+                        CONCAT(
+                            ' (', rk.KAMAR, '/',
+                            rkt.TEMPAT_TIDUR, '/',
+                            kls.DESKRIPSI, ')'
+                        ),
+                        ''
+                    )
+                ) AS RUANGAN,
+
+                ref.DESKRIPSI AS LAYANAN,
+                kjgn.MASUK AS TANGGAL,
+                rt.JUMLAH,
+                rt.TARIF,
+                r.JENIS_KUNJUNGAN,
+
+                '' AS DOKTER,
+                '' AS DOKTERKEDUA,
+                '' AS DOKTERANASTESI,
+
+                0 AS ADMINISTRASI,
+                0 AS SARANA,
+                0 AS BHP,
+                0 AS DOKTER_OPERATOR,
+                0 AS DOKTER_ANASTESI,
+                0 AS DOKTER_LAINNYA,
+                0 AS PENATA_ANASTESI,
+                0 AS PARAMEDIS,
+                0 AS NON_MEDIS,
+                0 AS STATUSTINDAKANRINCIAN,
+
+                ref.DESKRIPSI AS LAYANAN1,
+                '' AS LAYANAN_OK,
+                '' AS TARIF_LAYANAN_OK,
+                '' AS RP
+            ");
+    }
+
+    private function billingSelectColumns(): string
+    {
+        return "
+            rt.TAGIHAN,
+            '' AS RUANGAN,
+            '' AS LAYANAN,
+            NULL AS TANGGAL,
+            rt.JUMLAH,
+            rt.TARIF,
+            0 AS JENIS_KUNJUNGAN,
+            '' AS DOKTER,
+            '' AS DOKTERKEDUA,
+            '' AS DOKTERANASTESI,
+            0 AS ADMINISTRASI,
+            0 AS SARANA,
+            0 AS BHP,
+            0 AS DOKTER_OPERATOR,
+            0 AS DOKTER_ANASTESI,
+            0 AS DOKTER_LAINNYA,
+            0 AS PENATA_ANASTESI,
+            0 AS PARAMEDIS,
+            0 AS NON_MEDIS,
+            0 AS STATUSTINDAKANRINCIAN,
+            '' AS LAYANAN1,
+            '' AS LAYANAN_OK,
+            '' AS TARIF_LAYANAN_OK,
+            '' AS RP
+        ";
+    }
+
     // ====================================================================================================================================
     // =============================================================  ADD ONS  ============================================================
     // ====================================================================================================================================
