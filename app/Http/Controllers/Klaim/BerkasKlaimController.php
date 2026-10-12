@@ -87,6 +87,29 @@ class BerkasKlaimController extends Controller
 
             /*
             |--------------------------------------------------------------------------
+            | JUDUL DOKUMEN = NOSEP
+            |--------------------------------------------------------------------------
+            */
+
+            $NODOKUMEN = trim((string) ($getSEP->NOSEP ?? ''));
+
+            if ($NODOKUMEN === '') {
+                $NODOKUMEN = (string) $kunjungan;
+            }
+
+            // Pastikan aman digunakan sebagai nama file.
+            $NODOKUMEN = preg_replace(
+                '/[^A-Za-z0-9._-]/',
+                '_',
+                $NODOKUMEN
+            );
+
+            if ($NODOKUMEN === '') {
+                $NODOKUMEN = (string) $kunjungan;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
             | AMBIL SEMUA PENDAFTARAN DALAM TAGIHAN YANG SAMA
             |--------------------------------------------------------------------------
             */
@@ -195,7 +218,7 @@ class BerkasKlaimController extends Controller
             | PATH OUTPUT FINAL
             |--------------------------------------------------------------------------
             */
-            $fileName = $kunjungan . '_lab';
+            $fileName = $NODOKUMEN . '_lab';
 
             $path = 'files/klaim/'
                 . $tahun . '/'
@@ -871,6 +894,69 @@ class BerkasKlaimController extends Controller
 
                 /*
                 |--------------------------------------------------------------------------
+                | UBAH METADATA TITLE DOCX
+                |--------------------------------------------------------------------------
+                |
+                | LibreOffice menggunakan properti dokumen sebagai salah satu
+                | sumber metadata judul PDF yang dihasilkan.
+                |
+                */
+
+                $zip = new \ZipArchive();
+
+                if ($zip->open($temporaryWord) !== true) {
+                    throw new \Exception(
+                        'Gagal membuka DOCX untuk mengubah judul dokumen.'
+                    );
+                }
+
+                $coreXml = $zip->getFromName('docProps/core.xml');
+
+                if ($coreXml === false) {
+                    $zip->close();
+
+                    throw new \Exception(
+                        'Metadata dokumen DOCX tidak ditemukan.'
+                    );
+                }
+
+                $titleXml = htmlspecialchars(
+                    $NODOKUMEN.'_lab',
+                    ENT_XML1 | ENT_COMPAT,
+                    'UTF-8'
+                );
+
+                if (preg_match('~<dc:title(?:\s[^>]*)?>.*?</dc:title>~s', $coreXml)) {
+
+                    $coreXml = preg_replace(
+                        '~<dc:title(?:\s[^>]*)?>.*?</dc:title>~s',
+                        '<dc:title>' . $titleXml . '</dc:title>',
+                        $coreXml,
+                        1
+                    );
+
+                } else {
+
+                    $coreXml = preg_replace(
+                        '~</cp:coreProperties>~',
+                        '<dc:title>' . $titleXml . '</dc:title></cp:coreProperties>',
+                        $coreXml,
+                        1
+                    );
+                }
+
+                if (!$zip->addFromString('docProps/core.xml', $coreXml)) {
+                    $zip->close();
+
+                    throw new \Exception(
+                        'Gagal menyimpan metadata judul dokumen.'
+                    );
+                }
+
+                $zip->close();
+
+                /*
+                |--------------------------------------------------------------------------
                 | CONVERT DOCX KE PDF
                 |--------------------------------------------------------------------------
                 */
@@ -1297,9 +1383,9 @@ class BerkasKlaimController extends Controller
             | RETURN PDF
             |--------------------------------------------------------------------------
             */
-
             return response()->file($finalPdf, [
                 'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $NODOKUMEN . '_lab.pdf"',
                 'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
                 'Pragma'        => 'no-cache',
                 'Expires'       => '0',
@@ -1877,52 +1963,36 @@ class BerkasKlaimController extends Controller
                     })
                     ->first();
 
-            // $show = DB::table('pembayaran.tagihan as t')
-            //     ->leftJoin('master.pasien as p', 'p.NORM', '=', 't.REF')
-            //     // ->leftJoin('master.keluarga_pasien as kpx', 't.REF', '=', 'kpx.NORM') // opsional
-            //     ->leftJoin('master.referensi as rjk', function ($join) {
-            //         $join->on('p.JENIS_KELAMIN', '=', 'rjk.ID')->where('rjk.JENIS', '=', 2);
-            //     })
-            //     ->leftJoin('pembayaran.tagihan_pendaftaran as tp', function ($join) {
-            //         $join->on('tp.TAGIHAN', '=', 't.ID')
-            //             ->where('tp.UTAMA', '=', 1)
-            //             ->where('tp.STATUS', '=', 1);
-            //     })
-            //     ->leftJoin('pendaftaran.pendaftaran as pd', 'pd.NOMOR', '=', 'tp.PENDAFTARAN')
-            //     ->leftJoin('master.kartu_asuransi_pasien as kap', function ($join) {
-            //         $join->on('pd.NORM', '=', 'kap.NORM')->where('kap.JENIS', '=', 2);
-            //     })
-            //     ->leftJoin('pendaftaran.penjamin as pj', 'pd.NOMOR', '=', 'pj.NOPEN')
-            //     ->leftJoin('master.referensi as rf', function ($join) {
-            //         $join->on('pj.JENIS', '=', 'rf.ID')->where('rf.JENIS', '=', 10);
-            //     })
-            //     ->leftJoin('pembayaran.pembayaran_tagihan as pt', function ($join) {
-            //         $join->on('pt.TAGIHAN', '=', 't.ID')
-            //             ->where('pt.JENIS', '=', 1)
-            //             ->where('pt.STATUS', '=', 2);
-            //     })
-            //     ->leftJoin('pembayaran.penjamin_tagihan as pjt', function ($join) {
-            //         $join->on('t.ID', '=', 'pjt.TAGIHAN')->where('pjt.KE', '=', 1);
-            //     })
-            //     ->leftJoin('aplikasi.pengguna as us', 'us.ID', '=', 'pt.OLEH')
-            //     ->leftJoin('master.pegawai as mp', 'mp.NIP', '=', 'us.NIP')
-            //     ->leftJoin('simrspku_klaim.klaim_qrcode_pegawai as qp', 'qp.nomor', '=', 'mp.NIP')
-            //     ->leftJoin('simrspku_klaim.klaim_qrcode as kq', 'kq.nomor', '=', 'pd.NORM')
-            //     ->leftJoin('master.diagnosa_masuk as dm', 'dm.ID', '=', 'pd.DIAGNOSA_MASUK')
-            //     ->crossJoin('aplikasi.instansi as i')
-            //     ->crossJoin('master.ppk as ppk')
-            //     ->crossJoin('master.wilayah as w')
-            //     ->where('t.ID', $getSEP->TAGIHAN)
-            //     ->where('t.JENIS', 1)
-            //     ->whereIn('t.STATUS', [1, 2])
-            //     ->whereColumn('ppk.ID', '=', 'i.PPK')
-            //     ->whereColumn('w.ID', '=', 'ppk.WILAYAH')
-            //     ->select([
-            //         't.ID as NOMOR_TAGIHAN',
-            //         'p.NORM as RM',
-            //         DB::raw("master.getNamaLengkap(p.NORM) as NAMALENGKAP"),
-            //     ])
-            //     ->first();
+            if (!$getSEP || !$getSEP->TAGIHAN) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data kunjungan atau tagihan tidak ditemukan.',
+                ], 404);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | JUDUL DOKUMEN = NOSEP
+            |--------------------------------------------------------------------------
+            */
+
+            $NODOKUMEN = trim((string) ($getSEP->NOSEP ?? ''));
+
+            if ($NODOKUMEN === '') {
+                $NODOKUMEN = (string) $kunjungan;
+            }
+
+            // Pastikan aman digunakan sebagai nama file.
+            $NODOKUMEN = preg_replace(
+                '/[^A-Za-z0-9._-]/',
+                '_',
+                $NODOKUMEN
+            );
+
+            if ($NODOKUMEN === '') {
+                $NODOKUMEN = (string) $kunjungan;
+            }
+
             /*
             |--------------------------------------------------------------------------
             | 1. AMBIL HEADER DAN DETAIL BILLING
@@ -1983,29 +2053,167 @@ class BerkasKlaimController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | 4. GROUP DETAIL BERDASARKAN JENIS KUNJUNGAN DAN RUANGAN
+            | 4. SUSUN BARIS BILLING SEPERTI JRXML
             |--------------------------------------------------------------------------
+            |
+            | Urutan yang akan dicetak:
+            |   - Header jenis kunjungan / nomor pendaftaran
+            |   - Header ruangan (sekali per grup)
+            |   - Rincian layanan (menjorok ke dalam)
+            |   - Jumlah per ruangan di sisi kanan
+            |
             */
+
+            $billingRows = [];
+
+            $jenisKunjunganLabel = trim((string) ($header->JENISKUNJUNGAN ?? ''));
+            $nomorPendaftaran = trim((string) ($header->NOPEN ?? ''));
+            $tanggalPendaftaran = trim((string) ($header->TANGGALREG ?? ''));
+
+            $visitLabel = $jenisKunjunganLabel !== ''
+                ? $jenisKunjunganLabel
+                : 'Kunjungan';
+
+            if ($nomorPendaftaran !== '') {
+                $visitLabel .= ' [' . $nomorPendaftaran . ']';
+            }
+
+            if ($tanggalPendaftaran !== '') {
+                $visitLabel .= ' / ' . $tanggalPendaftaran;
+            }
+
+            $billingRows[] = [
+                'type' => 'visit',
+                'values' => [
+                    'BILLING_VISIT_LABEL' => $visitLabel,
+                ],
+            ];
 
             $detailGrouped = $detail
                 ->groupBy('JENIS_KUNJUNGAN')
                 ->map(function ($items) {
-                    return $items->groupBy('RUANGAN');
+                    return $items->groupBy(function ($item) {
+                        $ruangan = trim((string) ($item->RUANGAN ?? ''));
+
+                        return $ruangan !== '' ? $ruangan : 'Layanan Lainnya';
+                    });
                 });
 
-            /*
-            |--------------------------------------------------------------------------
-            | 5. HITUNG SUBTOTAL PER RUANGAN
-            |--------------------------------------------------------------------------
-            */
+            $normalizeLineBreaks = static function ($value): string {
+                return str_replace(
+                    ["\\r\\n", "\\n", "\\r", "\r\n", "\r"],
+                    "\n",
+                    (string) ($value ?? '')
+                );
+            };
 
-            $subtotalRuangan = [];
-
-            foreach ($detailGrouped as $jenisKunjungan => $ruanganList) {
+            foreach ($detailGrouped as $ruanganList) {
                 foreach ($ruanganList as $namaRuangan => $items) {
-                    $subtotalRuangan[$jenisKunjungan][$namaRuangan] =
-                        $items->sum('TOTAL');
+                    $billingRows[] = [
+                        'type' => 'room',
+                        'values' => [
+                            'BILLING_ROOM_LABEL' => (string) $namaRuangan,
+                        ],
+                    ];
+
+                    foreach ($items as $item) {
+                        $isRincianTindakan = (int) ($item->STATUSTINDAKANRINCIAN ?? 0) === 1;
+
+                        $tanggal = '';
+                        if (!empty($item->TANGGAL)) {
+                            try {
+                                $tanggal = Carbon::parse($item->TANGGAL)->format('d/m/Y H:i:s');
+                            } catch (\Throwable $e) {
+                                $tanggal = (string) $item->TANGGAL;
+                            }
+                        }
+
+                        if ($isRincianTindakan) {
+                            $layanan = $normalizeLineBreaks(
+                                $item->LAYANAN_OK ?? $item->LAYANAN1 ?? ''
+                            );
+                            $rp = $normalizeLineBreaks($item->RP ?? '');
+                            $tarif = $normalizeLineBreaks($item->TARIF_LAYANAN_OK ?? '');
+                            $total = $normalizeLineBreaks($item->TARIF_LAYANAN_OK ?? '');
+                        } else {
+                            $layanan = (string) ($item->LAYANAN1 ?? '');
+                            $rp = 'Rp. ';
+                            $tarif = number_format(
+                                (float) ($item->TARIF ?? 0),
+                                0,
+                                '.',
+                                ','
+                            );
+                            $total = number_format(
+                                (float) ($item->TOTAL ?? 0),
+                                0,
+                                '.',
+                                ','
+                            );
+                        }
+
+                        $billingRows[] = [
+                            'type' => 'item',
+                            'values' => [
+                                'LAYANAN1' => $layanan,
+                                'TANGGAL' => $tanggal,
+                                'JUMLAH' => number_format(
+                                    (float) ($item->JUMLAH ?? 0),
+                                    2,
+                                    '.',
+                                    ','
+                                ),
+                                'RP' => $rp,
+                                'TARIF' => $tarif,
+                                'TOTAL' => $total,
+                            ],
+                        ];
+                    }
+
+                    $subtotal = (float) $items->sum(function ($item) {
+                        return (float) ($item->TOTAL ?? 0);
+                    });
+
+                    $billingRows[] = [
+                        'type' => 'subtotal',
+                        'values' => [
+                            'BILLING_SUBTOTAL_LABEL' => 'Jumlah ' . $namaRuangan,
+                            'BILLING_SUBTOTAL_VALUE' => 'Rp. ' . number_format(
+                                $subtotal,
+                                0,
+                                '.',
+                                ','
+                            ),
+                        ],
+                    ];
                 }
+            }
+
+            if ($detail->isEmpty()) {
+                $billingRows[] = [
+                    'type' => 'room',
+                    'values' => [
+                        'BILLING_ROOM_LABEL' => 'Rincian Billing',
+                    ],
+                ];
+                $billingRows[] = [
+                    'type' => 'item',
+                    'values' => [
+                        'LAYANAN1' => 'Tidak ada rincian',
+                        'TANGGAL' => '',
+                        'JUMLAH' => '0.00',
+                        'RP' => 'Rp. ',
+                        'TARIF' => '0',
+                        'TOTAL' => '0',
+                    ],
+                ];
+                $billingRows[] = [
+                    'type' => 'subtotal',
+                    'values' => [
+                        'BILLING_SUBTOTAL_LABEL' => 'Jumlah Rincian Billing',
+                        'BILLING_SUBTOTAL_VALUE' => 'Rp. 0',
+                    ],
+                ];
             }
 
             /*
@@ -2202,120 +2410,58 @@ class BerkasKlaimController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | 10. GENERATE DETAIL BILLING
+            | 10. GET TTD PETUGAS
             |--------------------------------------------------------------------------
-            |
-            | Template Word menggunakan satu baris detail berulang.
-            |
             */
+            $ttd_petugas = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+                ->where('nip', $header->NIP)
+                // ->where('nip', 1912314)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->inRandomOrder()
+                ->first();
 
-            if ($detail->isNotEmpty()) {
-                $templateProcessor->cloneRow(
-                    'LAYANAN1',
-                    $detail->count()
+            if (!$ttd_petugas) {
+                throw new \Exception('TTD petugas tidak ditemukan');
+            }
+
+            if (
+                Storage::disk('public')->exists(
+                    $ttd_petugas->signature_path
+                )
+            ) {
+                $this->setImgWord(
+                    $templateProcessor,
+                    'TTD_PETUGAS',
+                    Storage::disk('public')->path(
+                        $ttd_petugas->signature_path
+                    ),
+                    200
                 );
-
-                foreach ($detail->values() as $index => $item) {
-                    $row = $index + 1;
-
-                    $templateProcessor->setValue(
-                        "RUANGAN#{$row}",
-                        $item->RUANGAN ?? ''
-                    );
-
-                    $templateProcessor->setValue(
-                        "LAYANAN1#{$row}",
-                        $item->LAYANAN1 ?? ''
-                    );
-
-                    $templateProcessor->setValue(
-                        "TANGGAL#{$row}",
-                        $item->TANGGAL
-                            ? Carbon::parse($item->TANGGAL)
-                                ->format('d/m/Y H:i:s')
-                            : ''
-                    );
-
-                    $templateProcessor->setValue(
-                        "JUMLAH#{$row}",
-                        number_format(
-                            (float) ($item->JUMLAH ?? 0),
-                            2,
-                            ',',
-                            '.'
-                        )
-                    );
-
-                    $templateProcessor->setValue(
-                        "TARIF#{$row}",
-                        number_format(
-                            (float) ($item->TARIF ?? 0),
-                            0,
-                            ',',
-                            '.'
-                        )
-                    );
-
-                    $templateProcessor->setValue(
-                        "TOTAL#{$row}",
-                        number_format(
-                            (float) ($item->TOTAL ?? 0),
-                            0,
-                            ',',
-                            '.'
-                        )
-                    );
-
-                    $templateProcessor->setValue(
-                        "DOKTER#{$row}",
-                        $item->DOKTER ?? ''
-                    );
-
-                    $templateProcessor->setValue(
-                        "DOKTERKEDUA#{$row}",
-                        $item->DOKTERKEDUA ?? ''
-                    );
-
-                    $templateProcessor->setValue(
-                        "DOKTERANASTESI#{$row}",
-                        $item->DOKTERANASTESI ?? ''
-                    );
-
-                    $templateProcessor->setValue(
-                        "LAYANAN_OK#{$row}",
-                        $item->LAYANAN_OK ?? ''
-                    );
-
-                    $templateProcessor->setValue(
-                        "TARIF_LAYANAN_OK#{$row}",
-                        $item->TARIF_LAYANAN_OK ?? ''
-                    );
-
-                    $templateProcessor->setValue(
-                        "RP#{$row}",
-                        $item->RP ?? ''
-                    );
-                }
             } else {
-                $templateProcessor->setValue('RUANGAN', '-');
-                $templateProcessor->setValue('LAYANAN1', 'Tidak ada rincian');
-                $templateProcessor->setValue('TANGGAL', '-');
-                $templateProcessor->setValue('JUMLAH', '0');
-                $templateProcessor->setValue('TARIF', '0');
-                $templateProcessor->setValue('TOTAL', '0');
+                throw new \Exception(
+                    'File TTD petugas tidak ditemukan: '
+                    . $ttd_petugas->signature_path
+                );
             }
 
             /*
             |--------------------------------------------------------------------------
-            | 11. SIAPKAN DIREKTORI OUTPUT
+            | 11. SIAPKAN DIREKTORI OUTPUT (SAMA DENGAN generateLab)
             |--------------------------------------------------------------------------
             */
 
-            $tahun = Carbon::now()->format('Y');
-            $bulan = Carbon::now()->format('m');
-            $tgl   = Carbon::now()->format('d');
+            // Gunakan tanggal masuk kunjungan, bukan tanggal saat PDF dibuat.
+            $getTgl = $getSEP->TANGGALMASUK
+                ? Carbon::parse($getSEP->TANGGALMASUK)
+                : Carbon::now();
 
-            $fileName = $nomorTagihan . '_billing';
+            $tahun = $getTgl->format('Y');
+            $bulan = $getTgl->format('m');
+            $tgl   = $getTgl->format('d');
+
+            // Nama wajib berdasarkan nomor kunjungan, bukan ID tagihan.
+            $fileName = $NODOKUMEN . '_billing';
 
             $relativePath = 'files/klaim/'
                 . $tahun . '/'
@@ -2331,11 +2477,7 @@ class BerkasKlaimController extends Controller
             );
 
             if (!File::exists($outputDir)) {
-                File::makeDirectory(
-                    $outputDir,
-                    0755,
-                    true
-                );
+                File::makeDirectory($outputDir, 0755, true);
             }
 
             /*
@@ -2344,28 +2486,96 @@ class BerkasKlaimController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            $docxPath = $outputDir . '/' . $fileName . '.docx';
+            $docxPath = $outputDir . DIRECTORY_SEPARATOR . $fileName . '.docx';
+            $pdfPath  = $outputDir . DIRECTORY_SEPARATOR . $fileName . '.pdf';
 
             $templateProcessor->saveAs($docxPath);
+
+            if (!File::exists($docxPath)) {
+                throw new \Exception('Gagal menyimpan DOCX billing: ' . $docxPath);
+            }
+
+            // Susun baris visit, ruangan, detail, dan subtotal mengikuti JRXML.
+            $this->injectBillingRowsIntoDocx($docxPath, $billingRows);
+
+            /*
+            |--------------------------------------------------------------------------
+            | UBAH METADATA TITLE DOCX
+            |--------------------------------------------------------------------------
+            |
+            | LibreOffice menggunakan properti dokumen sebagai salah satu
+            | sumber metadata judul PDF yang dihasilkan.
+            |
+            */
+
+            $zip = new \ZipArchive();
+
+            if ($zip->open($docxPath) !== true) {
+                throw new \Exception(
+                    'Gagal membuka DOCX untuk mengubah judul dokumen.'
+                );
+            }
+
+            $coreXml = $zip->getFromName('docProps/core.xml');
+
+            if ($coreXml === false) {
+                $zip->close();
+
+                throw new \Exception(
+                    'Metadata dokumen DOCX tidak ditemukan.'
+                );
+            }
+
+            $titleXml = htmlspecialchars(
+                $NODOKUMEN.'_billing',
+                ENT_XML1 | ENT_COMPAT,
+                'UTF-8'
+            );
+
+            if (preg_match('~<dc:title(?:\s[^>]*)?>.*?</dc:title>~s', $coreXml)) {
+
+                $coreXml = preg_replace(
+                    '~<dc:title(?:\s[^>]*)?>.*?</dc:title>~s',
+                    '<dc:title>' . $titleXml . '</dc:title>',
+                    $coreXml,
+                    1
+                );
+
+            } else {
+
+                $coreXml = preg_replace(
+                    '~</cp:coreProperties>~',
+                    '<dc:title>' . $titleXml . '</dc:title></cp:coreProperties>',
+                    $coreXml,
+                    1
+                );
+            }
+
+            if (!$zip->addFromString('docProps/core.xml', $coreXml)) {
+                $zip->close();
+
+                throw new \Exception(
+                    'Gagal menyimpan metadata judul dokumen.'
+                );
+            }
+
+            $zip->close();
 
             /*
             |--------------------------------------------------------------------------
             | 13. KONVERSI DOCX KE PDF
             |--------------------------------------------------------------------------
             |
-            | Gunakan LibreOfficeService yang sudah ada di project Anda.
-            |
-            | Nama method di bawah perlu disesuaikan dengan signature
-            | LibreOfficeService yang saat ini Anda gunakan.
-            |
+            | Parameter kedua LibreOfficeService adalah DIREKTORI output,
+            | bukan path lengkap file PDF.
             */
 
-            $pdfPath = $outputDir . '/' . $fileName . '.pdf';
+            // Hapus hasil lama supaya file dengan nama sama selalu dibuat ulang.
+            if (File::exists($pdfPath)) {
+                File::delete($pdfPath);
+            }
 
-            $this->libreOffice->generatePdf(
-                $docxPath,
-                $pdfPath
-            );
+            [$pdfSuccess, $convertResult, $convertExitCode] = $this->libreOffice->generatePdf($docxPath, $outputDir);
 
             /*
             |--------------------------------------------------------------------------
@@ -2373,15 +2583,46 @@ class BerkasKlaimController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            if (!File::exists($pdfPath)) {
+            if (!$pdfSuccess || !File::exists($pdfPath)) {
+                $convertLog = is_array($convertResult)
+                    ? implode(PHP_EOL, $convertResult)
+                    : (string) $convertResult;
+
                 throw new \Exception(
-                    'PDF billing gagal dibuat oleh LibreOffice.'
+                    'PDF billing gagal dibuat oleh LibreOffice. '
+                    . 'Exit code: ' . $convertExitCode
+                    . ($convertLog !== '' ? '. Detail: ' . $convertLog : '')
+                    . '. Target: ' . $pdfPath
                 );
             }
 
             /*
             |--------------------------------------------------------------------------
-            | 15. HAPUS FILE WORD SEMENTARA
+            | SAVE TO DB
+            |--------------------------------------------------------------------------
+            */
+
+            DB::table('simrspku_klaim.klaim_file')
+                ->updateOrInsert(
+                    [
+                        'nomor' => $kunjungan,
+                        'jenis' => 5,
+                    ],
+                    [
+                        'title' => $fileName . '.pdf',
+                        'filename' => $relativePath . '.pdf',
+                        'user' => auth()->user()->ID,
+                        'status' => true,
+                        'deleted_at' => null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | 15. HAPUS DOCX SEMENTARA
             |--------------------------------------------------------------------------
             */
 
@@ -2395,20 +2636,179 @@ class BerkasKlaimController extends Controller
 
             return response()->file($pdfPath, [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="'
-                    . $fileName . '.pdf"',
+
+                'Content-Disposition' => 'inline; filename="' . $NODOKUMEN . '_billing.pdf"',
+
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'        => 'no-cache',
+                'Expires'       => '0',
             ]);
 
         } catch (\Throwable $e) {
             report($e);
 
             return response()->json([
-                'status'  => false,
-                'message' => 'Gagal membuat PDF billing.',
-                'error'   => config('app.debug')
-                    ? $e->getMessage()
-                    : null,
+                'success' => false,
+                'message' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    /**
+     * Mengganti empat baris prototype di tabel rincian billing dengan baris
+     * yang tersusun dinamis: visit, ruangan, detail, lalu subtotal.
+     *
+     * Proses ini menjaga layout masing-masing jenis baris di template DOCX.
+     */
+    private function injectBillingRowsIntoDocx(string $docxPath, array $billingRows): void
+    {
+        $zip = new \ZipArchive();
+        $opened = $zip->open($docxPath);
+
+        if ($opened !== true) {
+            throw new \RuntimeException('Tidak dapat membuka DOCX untuk menyusun baris billing.');
+        }
+
+        try {
+            $xml = $zip->getFromName('word/document.xml');
+
+            if ($xml === false) {
+                throw new \RuntimeException('Dokumen Word tidak memiliki word/document.xml.');
+            }
+
+            $dom = new \DOMDocument('1.0', 'UTF-8');
+            $dom->preserveWhiteSpace = true;
+            $dom->formatOutput = false;
+
+            if (!$dom->loadXML($xml, LIBXML_NONET)) {
+                throw new \RuntimeException('Gagal membaca XML template billing.');
+            }
+
+            $wordNs = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+            $xpath = new \DOMXPath($dom);
+            $xpath->registerNamespace('w', $wordNs);
+
+            $markers = [
+                'visit' => '${BILLING_VISIT_LABEL}',
+                'room' => '${BILLING_ROOM_LABEL}',
+                'item' => '${LAYANAN1}',
+                'subtotal' => '${BILLING_SUBTOTAL_LABEL}',
+            ];
+
+            $targetTable = null;
+            $prototypeNodes = [];
+
+            foreach ($xpath->query('//w:tbl') as $tableNode) {
+                $found = [];
+
+                foreach ($xpath->query('./w:tr', $tableNode) as $rowNode) {
+                    $rowText = $rowNode->textContent;
+
+                    foreach ($markers as $type => $marker) {
+                        if (strpos($rowText, $marker) !== false) {
+                            $found[$type] = $rowNode;
+                        }
+                    }
+                }
+
+                if (count($found) === count($markers)) {
+                    $targetTable = $tableNode;
+                    $prototypeNodes = $found;
+                    break;
+                }
+            }
+
+            if (!$targetTable || count($prototypeNodes) !== count($markers)) {
+                throw new \RuntimeException(
+                    'Prototype baris billing tidak lengkap. Pastikan template DOCX terbaru digunakan.'
+                );
+            }
+
+            // Simpan salinan prototype sebelum baris sumber dihapus dari tabel.
+            $prototypeXml = [];
+            foreach ($prototypeNodes as $type => $node) {
+                $prototypeXml[$type] = $node->cloneNode(true);
+            }
+
+            foreach ($prototypeNodes as $node) {
+                if ($node->parentNode === $targetTable) {
+                    $targetTable->removeChild($node);
+                }
+            }
+
+            foreach ($billingRows as $billingRow) {
+                $type = $billingRow['type'] ?? '';
+
+                if (!isset($prototypeXml[$type])) {
+                    throw new \RuntimeException('Jenis baris billing tidak dikenal: ' . $type);
+                }
+
+                /** @var \DOMElement $newRow */
+                $newRow = $prototypeXml[$type]->cloneNode(true);
+                $values = $billingRow['values'] ?? [];
+                $textNodes = [];
+
+                foreach ($xpath->query('.//w:t', $newRow) as $textNode) {
+                    $textNodes[] = $textNode;
+                }
+
+                foreach ($textNodes as $textNode) {
+                    $newText = $textNode->nodeValue;
+
+                    foreach ($values as $key => $value) {
+                        $newText = str_replace(
+                            '${' . $key . '}',
+                            (string) ($value ?? ''),
+                            $newText
+                        );
+                    }
+
+                    if ($newText === $textNode->nodeValue) {
+                        continue;
+                    }
+
+                    // Word membutuhkan w:br untuk line break, bukan newline literal di w:t.
+                    $parts = preg_split('/\r\n|\r|\n/', $newText);
+                    $parent = $textNode->parentNode;
+
+                    if (!$parent) {
+                        continue;
+                    }
+
+                    foreach ($parts as $index => $part) {
+                        $newTextNode = $dom->createElementNS($wordNs, 'w:t');
+                        $newTextNode->appendChild($dom->createTextNode($part));
+
+                        if ($part !== trim($part) || $part === '') {
+                            $newTextNode->setAttributeNS(
+                                'http://www.w3.org/XML/1998/namespace',
+                                'xml:space',
+                                'preserve'
+                            );
+                        }
+
+                        $parent->insertBefore($newTextNode, $textNode);
+
+                        if ($index < count($parts) - 1) {
+                            $breakNode = $dom->createElementNS($wordNs, 'w:br');
+                            $parent->insertBefore($breakNode, $textNode);
+                        }
+                    }
+
+                    $parent->removeChild($textNode);
+                }
+
+                // Appending after the column heading preserves the row sequence above.
+                $targetTable->appendChild($newRow);
+            }
+
+            $zip->deleteName('word/document.xml');
+
+            if (!$zip->addFromString('word/document.xml', $dom->saveXML())) {
+                throw new \RuntimeException('Gagal menulis XML hasil billing ke DOCX.');
+            }
+        } finally {
+            $zip->close();
         }
     }
 

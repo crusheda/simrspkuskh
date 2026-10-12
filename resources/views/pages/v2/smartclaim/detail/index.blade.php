@@ -1252,41 +1252,104 @@
         }
 
         function billing(kunjungan) {
-            $('#ck_billing').prop('disabled',true);
+            $('#ck_billing').prop('disabled', true);
             $('#preview').empty().append(`
                 <div class="spinner-grow align-middle me-2" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
                 Area ini akan menampilkan Preview Berkas Klaim yang dipilih
             `);
-
-            // AJAX FETCH
-            fetch("/api/pasien/"+kunjungan+"/billing")
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('File tidak ditemukan atau gagal diambil.');
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                // Buat object URL dari blob
-                const fileURL = URL.createObjectURL(blob);
-
-                // Tampilkan ke iframe dalam modal
-                $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-                $('#ck_billing').prop('disabled',false);
-            })
-            .catch(error => {
-                iziToast.error({
-                    title: 'Maaf!',
-                    message: error.message ?? "Data Billing tidak ditemukan atau belum dibuatkan oleh Simgos.",
-                    position: 'topRight'
+            fetch("/api/v2/generate/billing/" + kunjungan)
+                .then(async response => {
+                    if (!response.ok) {
+                        let message = 'File tidak ditemukan atau gagal diambil.';
+                        try {
+                            const data = await response.json();
+                            message =
+                                data.message ??
+                                data.detail ??
+                                data.error ??
+                                message;
+                        } catch (e) {
+                            console.error(
+                                'Response bukan JSON:',
+                                e
+                            );
+                        }
+                        throw new Error(message);
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const fileURL = URL.createObjectURL(blob);
+                    $('#preview')
+                        .empty()
+                        .html(`
+                            <iframe
+                                src="${fileURL}"
+                                width="100%"
+                                height="500px"
+                                frameborder="0">
+                            </iframe>
+                        `);
+                    $('#ck_billing').prop('disabled', false);
+                })
+                .catch(error => {
+                    console.error(
+                        'Generate Billing Error:',
+                        error
+                    );
+                    iziToast.error({
+                        title: 'Maaf!',
+                        message: error.message,
+                        position: 'topRight'
+                    });
+                    $('#preview')
+                        .empty()
+                        .append(`
+                            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+                        `);
+                    $('#ck_billing')
+                        .prop('checked', false)
+                        .prop('disabled', false);
                 });
-                console.error(error);
-                $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-                $('#ck_billing').prop('checked', false).prop('disabled',false);
-            });
         }
+        // function billing(kunjungan) {
+        //     $('#ck_billing').prop('disabled',true);
+        //     $('#preview').empty().append(`
+        //         <div class="spinner-grow align-middle me-2" role="status">
+        //             <span class="sr-only">Loading...</span>
+        //         </div>
+        //         Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        //     `);
+
+        //     // AJAX FETCH
+        //     fetch("/api/pasien/"+kunjungan+"/billing")
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error('File tidak ditemukan atau gagal diambil.');
+        //         }
+        //         return response.blob();
+        //     })
+        //     .then(blob => {
+        //         // Buat object URL dari blob
+        //         const fileURL = URL.createObjectURL(blob);
+
+        //         // Tampilkan ke iframe dalam modal
+        //         $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+        //         $('#ck_billing').prop('disabled',false);
+        //     })
+        //     .catch(error => {
+        //         iziToast.error({
+        //             title: 'Maaf!',
+        //             message: error.message ?? "Data Billing tidak ditemukan atau belum dibuatkan oleh Simgos.",
+        //             position: 'topRight'
+        //         });
+        //         console.error(error);
+        //         $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+        //         $('#ck_billing').prop('checked', false).prop('disabled',false);
+        //     });
+        // }
 
         function individual(kunjungan) {
             $('#ck_individual').prop('disabled',true);
@@ -1327,74 +1390,47 @@
 
         function laboratorium(kunjungan) {
             $('#ck_laboratorium').prop('disabled', true);
+
             $('#preview').empty().append(`
                 <div class="spinner-grow align-middle me-2" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
                 Area ini akan menampilkan Preview Berkas Klaim yang dipilih
             `);
-            fetch("/api/v2/generate/lab/" + kunjungan)
+
+            fetch("/api/v2/generate/lab/" + encodeURIComponent(kunjungan))
                 .then(async response => {
-
-                    // ==========================================
-                    // RESPONSE ERROR
-                    // ==========================================
                     if (!response.ok) {
-
-                        let message =
-                            'File tidak ditemukan atau gagal diambil.';
+                        let message = 'File tidak ditemukan atau gagal diambil.';
 
                         try {
-
                             const data = await response.json();
-
-                            message =
-                                data.message ??
-                                data.detail ??
-                                data.error ??
-                                message;
-
+                            message = data.message ?? data.detail ?? data.error ?? message;
                         } catch (e) {
-
-                            console.error(
-                                'Response bukan JSON:',
-                                e
-                            );
+                            console.error('Response bukan JSON:', e);
                         }
 
                         throw new Error(message);
                     }
 
-                    // ==========================================
-                    // RESPONSE PDF
-                    // ==========================================
                     return response.blob();
                 })
                 .then(blob => {
+                    const fileURL = URL.createObjectURL(blob);
 
-                    const fileURL =
-                        URL.createObjectURL(blob);
+                    $('#preview').empty().html(`
+                        <iframe
+                            src="${fileURL}"
+                            width="100%"
+                            height="500px"
+                            frameborder="0">
+                        </iframe>
+                    `);
 
-                    $('#preview')
-                        .empty()
-                        .html(`
-                            <iframe
-                                src="${fileURL}"
-                                width="100%"
-                                height="500px"
-                                frameborder="0">
-                            </iframe>
-                        `);
-
-                    $('#ck_laboratorium')
-                        .prop('disabled', false);
+                    $('#ck_laboratorium').prop('disabled', false);
                 })
                 .catch(error => {
-
-                    console.error(
-                        'Generate Lab Error:',
-                        error
-                    );
+                    console.error('Generate Lab Error:', error);
 
                     iziToast.error({
                         title: 'Maaf!',
@@ -1402,11 +1438,9 @@
                         position: 'topRight'
                     });
 
-                    $('#preview')
-                        .empty()
-                        .append(`
-                            Area ini akan menampilkan Preview Berkas Klaim yang dipilih
-                        `);
+                    $('#preview').html(`
+                        Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+                    `);
 
                     $('#ck_laboratorium')
                         .prop('checked', false)
