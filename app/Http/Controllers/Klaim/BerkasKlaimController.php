@@ -37,6 +37,585 @@ class BerkasKlaimController extends Controller
         $this->libreOffice = $libreOffice;
     }
 
+    // ====================================================================================================================================
+    // =============================================================  SEP  ================================================================
+    // ====================================================================================================================================
+    public function generateSEP($kunjungan)
+    {
+        $docxPath = null;
+        $finalPdf = null;
+
+        try {
+            /* ================================================================
+            * 1. DATA SEP DARI PENDAFTARAN
+            * ================================================================ */
+            $getSEP = DB::table('pendaftaran.kunjungan AS pk')
+                ->leftJoin('pendaftaran.pendaftaran AS pp', 'pp.NOMOR', '=', 'pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin AS pj', 'pp.NOMOR', '=', 'pj.NOPEN')
+                ->select('pj.NOMOR AS NOSEP')
+                ->where('pk.NOMOR', $kunjungan)
+                ->first();
+
+            $NODOKUMEN = trim((string) ($getSEP->NOSEP ?? ''));
+
+            if ($NODOKUMEN === '') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nomor SEP tidak ditemukan untuk kunjungan ini.',
+                ], 404);
+            }
+
+            // Amankan nomor SEP jika dipakai sebagai nama file.
+            $NODOKUMEN = preg_replace('/[^A-Za-z0-9._-]/', '_', $NODOKUMEN);
+
+            DB::beginTransaction();
+
+            /* ================================================================
+            * 2. DATA INSTANSI
+            * ================================================================ */
+            $namaInstansi = DB::table('aplikasi.instansi AS ai')
+                ->join('master.ppk AS mp', 'ai.PPK', '=', 'mp.ID')
+                ->value('mp.NAMA') ?? 'RS PKU MUHAMMADIYAH SUKOHARJO';
+
+            /* ================================================================
+            * 3. INCREMENT JUMLAH CETAK SEP
+            *    Meniru proses UPDATE di stored procedure CetakSEP.
+            * ================================================================ */
+            DB::table('bpjs.kunjungan')
+                ->where('noSEP', $getSEP->NOSEP)
+                ->update([
+                    'jmlCetak' => DB::raw('IFNULL(jmlCetak, 0) + 1'),
+                ]);
+
+            /* ================================================================
+            * 4. QUERY SEP - PENGGANTI SELECT DI STORED PROCEDURE CetakSEP
+            * ================================================================ */
+            $query = DB::table('bpjs.kunjungan AS k')
+                ->leftJoin('bpjs.peserta AS p', 'k.noKartu', '=', 'p.noKartu')
+                ->leftJoin('simrspku_klaim.klaim_qrcode_pegawai AS qp', 'qp.nomor', '=', 'p.noKartu')
+                ->leftJoin('master.ppk AS rp', 'k.ppkRujukan', '=', 'rp.BPJS')
+                ->leftJoin('master.mrconso AS r', function ($join) {
+                    $join->on('k.diagAwal', '=', 'r.CODE')
+                        ->whereIn('r.SAB', ['ICD10_2020', 'ICD10_1998'])
+                        ->whereNotIn('r.TTY', ['HT', 'PS']);
+                })
+                ->leftJoin('pendaftaran.penjamin AS pp', 'k.noSEP', '=', 'pp.NOMOR')
+                ->leftJoin('pendaftaran.surat_rujukan_pasien AS srp', 'srp.NOMOR', '=', 'pp.NOMOR')
+                ->leftJoin('pendaftaran.tujuan_pasien AS tp', 'pp.NOPEN', '=', 'tp.NOPEN')
+                ->leftJoin('pendaftaran.pendaftaran AS pd', 'pd.NOMOR', '=', 'pp.NOPEN')
+                ->leftJoin('master.pasien AS mp', 'pd.NORM', '=', 'mp.NORM')
+                ->leftJoin('master.kontak_pasien AS hp', function ($join) {
+                    $join->on('pd.NORM', '=', 'hp.NORM')->where('hp.JENIS', 3);
+                })
+                ->leftJoin('master.referensi AS smf', function ($join) {
+                    $join->on('tp.SMF', '=', 'smf.ID')->where('smf.JENIS', 26);
+                })
+                ->leftJoin('master.ruangan AS mr', function ($join) {
+                    $join->on('tp.RUANGAN', '=', 'mr.ID')->where('mr.JENIS', 5);
+                })
+                ->leftJoin('master.referensi AS penj', function ($join) {
+                    $join->on('k.penjamin', '=', 'penj.ID')->where('penj.JENIS', 80);
+                })
+                ->leftJoin('bpjs.poli AS pl', 'k.poliTujuan', '=', 'pl.kode')
+                ->leftJoin('bpjs.dpjp AS dr', 'k.dpjpSKDP', '=', 'dr.kode')
+                ->leftJoin('bpjs.dpjp AS drl', 'k.dpjpLayan', '=', 'drl.kode')
+                ->leftJoin('bpjs.referensi AS tjk', function ($join) {
+                    $join->on('k.tujuanKunj', '=', 'tjk.kode')->where('tjk.jenis_referensi_id', 7);
+                })
+                ->leftJoin('bpjs.referensi AS proc', function ($join) {
+                    $join->on('k.flagProcedure', '=', 'proc.kode')->where('proc.jenis_referensi_id', 8);
+                })
+                ->leftJoin('bpjs.referensi AS kdp', function ($join) {
+                    $join->on('k.kdPenunjang', '=', 'kdp.kode')->where('kdp.jenis_referensi_id', 9);
+                })
+                ->leftJoin('bpjs.referensi AS assp', function ($join) {
+                    $join->on('k.assesmentPel', '=', 'assp.kode')->where('assp.jenis_referensi_id', 10);
+                })
+                ->leftJoin('bpjs.referensi AS klsr', function ($join) {
+                    $join->on('k.klsRawat', '=', 'klsr.kode')->where('klsr.jenis_referensi_id', 3);
+                })
+                ->leftJoin('bpjs.referensi AS klsn', function ($join) {
+                    $join->on('k.klsRawatNaik', '=', 'klsn.kode')->where('klsn.jenis_referensi_id', 11);
+                })
+                ->leftJoin('penjamin_rs.dpjp AS drs', function ($join) {
+                    $join->on('drs.DPJP_PENJAMIN', '=', 'k.dpjpSKDP')
+                        ->where('drs.PENJAMIN', 2)
+                        ->where('drs.STATUS', 1);
+                })
+                ->leftJoin('master.dokter AS md', function ($join) {
+                    $join->on('drs.DPJP_RS', '=', 'md.ID')->where('md.STATUS', 1);
+                })
+                ->leftJoin('master.dokter_smf AS mds', function ($join) {
+                    $join->on('md.ID', '=', 'mds.DOKTER')->where('mds.STATUS', 1);
+                })
+                ->leftJoin('master.penjamin_sub_spesialistik AS pss', function ($join) {
+                    $join->on('pss.SUB_SPESIALIS_RS', '=', 'mds.SMF')->where('pss.PENJAMIN', 2);
+                })
+                ->leftJoin('bpjs.poli AS pls', 'pss.SUB_SPESIALIS_PENJAMIN', '=', 'pls.kode')
+                ->leftJoin('bpjs.poli AS bpnr', 'srp.BAGIAN_DOKTER', '=', 'bpnr.nama')
+                ->leftJoin('bpjs.rujukan_masuk AS rjm', 'k.noRujukan', '=', 'rjm.noKunjungan')
+                ->leftJoin('regonline.reservasi AS rr', function ($join) {
+                    $join->on('k.noKartu', '=', 'rr.NO_KARTU_BPJS')
+                        ->on(DB::raw("DATE_FORMAT(k.tglSEP, '%y-%m-%d')"), '=', 'rr.TANGGALKUNJUNGAN')
+                        ->where('rr.STATUS', '!=', 0);
+                })
+                ->selectRaw('? AS NAMAINSTANSI', [$namaInstansi])
+                ->selectRaw("
+                    k.noSEP AS NOMORSEP,
+                    DATE_FORMAT(k.tglSEP, '%d-%m-%Y') AS TGLSEP,
+                    k.tglSEP AS TGLSEP_RAW,
+                    IF(
+                        k.klsRawatNaik = 0,
+                        CONVERT(klsr.deskripsi USING utf8mb4) COLLATE utf8mb4_unicode_ci,
+                        CONVERT(klsn.deskripsi USING utf8mb4) COLLATE utf8mb4_unicode_ci
+                    ) AS klsRawat,
+                    p.noKartu AS NOMORKARTU,
+                    pd.NORM AS NORM,
+                    CASE
+                        WHEN CONVERT(k.poliTujuan USING utf8mb4) COLLATE utf8mb4_unicode_ci = 'HDL'
+                            OR CONVERT(k.poliTujuan USING utf8mb4) COLLATE utf8mb4_unicode_ci LIKE '%HEMO%'
+                        THEN 'HEMODIALISA'
+                        WHEN k.poliTujuan IS NULL OR k.poliTujuan = ''
+                        THEN CONVERT(pls.nama USING utf8mb4) COLLATE utf8mb4_unicode_ci
+                        ELSE CONVERT(pl.nama USING utf8mb4) COLLATE utf8mb4_unicode_ci
+                    END AS poliTujuan,
+                    mr.DESKRIPSI AS UNITPELAYANAN,
+                    IF(
+                        IFNULL(k.jmlCetak, 0) > 0,
+                        CONCAT('*Cetakan Ke ', k.jmlCetak, ' ', DATE_FORMAT(k.tglSEP, '%d-%m-%Y %H:%i:%s')),
+                        ''
+                    ) AS CETAKAN,
+                    k.catatan AS CATATAN,
+                    p.nmJenisPeserta AS PESERTA,
+                    p.nama AS NAMALENGKAP,
+                    CONCAT(
+                        DATE_FORMAT(p.tglLahir, '%d-%m-%Y'),
+                        _utf8mb4'  Kelamin : ' COLLATE utf8mb4_unicode_ci,
+                        CASE
+                            WHEN CONVERT(p.sex USING utf8mb4) COLLATE utf8mb4_unicode_ci = 'L'
+                            THEN _utf8mb4'Laki-laki' COLLATE utf8mb4_unicode_ci
+                            ELSE _utf8mb4'Perempuan' COLLATE utf8mb4_unicode_ci
+                        END
+                    ) AS TGL_LAHIR,
+                    IF(
+                        k.jenisPelayanan = 1,
+                        _utf8mb4'Rawat Inap' COLLATE utf8mb4_unicode_ci,
+                        _utf8mb4'Rawat Jalan' COLLATE utf8mb4_unicode_ci
+                    ) AS JENISRAWAT,
+                    IF(
+                        k.tujuanKunj = 0 AND k.assesmentPel IN ('1','2','3','4'),
+                        _utf8mb4'Rujukan Internal' COLLATE utf8mb4_unicode_ci,
+                        CONVERT(tjk.deskripsi USING utf8mb4) COLLATE utf8mb4_unicode_ci
+                    ) AS TJKUNJ,
+                    proc.deskripsi AS PROC,
+                    kdp.deskripsi AS PENUNJANG,
+                    assp.deskripsi AS ASPEL,
+                    IF(
+                        CONVERT(p.sex USING utf8mb4) COLLATE utf8mb4_unicode_ci = _utf8mb4'L' COLLATE utf8mb4_unicode_ci,
+                        _utf8mb4'Laki-laki' COLLATE utf8mb4_unicode_ci,
+                        _utf8mb4'Perempuan' COLLATE utf8mb4_unicode_ci
+                    ) AS JENISKELAMIN,
+                    p.nmKelas AS KELAS,
+                    CONVERT(
+                        IF(
+                            r.CODE IS NULL,
+                            IFNULL((
+                                SELECT CONCAT(ro.CODE, ' (', ro.STR, ')')
+                                FROM master.mrconso AS ro
+                                WHERE ro.STR LIKE CONVERT(k.diagAwal USING utf8mb3)
+                                AND ro.SAB IN ('ICD10_2020','ICD10_1998')
+                                AND ro.TTY NOT IN ('HT','PS')
+                                LIMIT 1
+                            ), CONVERT(k.diagAwal USING utf8mb3)),
+                            CONCAT(r.CODE, ' (', r.STR, ')')
+                        ) USING utf8mb4
+                    ) COLLATE utf8mb4_unicode_ci AS DIAGNOSA,
+                    IF(
+                        k.ppkRujukan IS NULL,
+                        CONVERT(
+                            IFNULL(
+                                (
+                                    SELECT masp.NAMA
+                                    FROM bpjs.kunjungan AS bk
+                                    LEFT JOIN master.ppk AS masp
+                                        ON masp.BPJS = bk.ppkRujukan
+                                    WHERE bk.noRujukan = k.noRujukan
+                                    AND bk.ppkRujukan IS NOT NULL
+                                    LIMIT 1
+                                ),
+                                'RS PKU MUHAMMADIYAH SUKOHARJO'
+                            ) USING utf8mb4
+                        ) COLLATE utf8mb4_unicode_ci,
+                        CONVERT(rp.NAMA USING utf8mb4) COLLATE utf8mb4_unicode_ci
+                    ) AS RUJUKAN,
+                    p.prolanisPRB AS PRB,
+                    penj.DESKRIPSI AS PENJAMIN,
+                    IF(
+                        k.cob = 0,
+                        _utf8mb4'-' COLLATE utf8mb4_unicode_ci,
+                        _utf8mb4'Ya' COLLATE utf8mb4_unicode_ci
+                    ) AS COB,
+                    hp.NOMOR AS NOTELP,
+                    IF(
+                        k.katarak = 1,
+                        _utf8mb4'* PASIEN OPERASI KATARAK' COLLATE utf8mb4_unicode_ci,
+                        _utf8mb4'' COLLATE utf8mb4_unicode_ci
+                    ) AS KATARAK,
+                    IF(
+                        dr.kode IS NULL AND drl.kode IS NULL,
+                        IFNULL((
+                            SELECT CONVERT(dp.nama USING utf8mb4) COLLATE utf8mb4_unicode_ci
+                            FROM bpjs.kunjungan AS bk
+                            LEFT JOIN bpjs.dpjp AS dp ON dp.kode = bk.dpjpSKDP
+                            WHERE bk.noRujukan = k.noRujukan
+                            AND bk.dpjpSKDP IS NOT NULL
+                            AND bk.noSEP = k.noSEP
+                            LIMIT 1
+                        ), IFNULL((
+                            SELECT CONVERT(master.getNamaLengkapPegawai(dokt.NIP) USING utf8mb4) COLLATE utf8mb4_unicode_ci
+                            FROM pendaftaran.kunjungan AS kj
+                            LEFT JOIN master.dokter AS dokt ON dokt.ID = kj.DPJP
+                            WHERE kj.NOPEN = pd.NOMOR AND kj.REF IS NULL
+                            LIMIT 1
+                        ), IFNULL((
+                            SELECT CONVERT(dpl.nama USING utf8mb4) COLLATE utf8mb4_unicode_ci
+                            FROM pendaftaran.penjamin AS pjst
+                            LEFT JOIN bpjs.dpjp AS dpl ON dpl.kode = pjst.DPJP_LAYANAN
+                            WHERE pjst.NOMOR = k.noSEP
+                            AND pjst.DPJP_LAYANAN IS NOT NULL
+                            LIMIT 1
+                        ), '-'))),
+                        IF(
+                            dr.kode = drl.kode,
+                            CONVERT(dr.nama USING utf8mb4) COLLATE utf8mb4_unicode_ci,
+                            CONVERT(drl.nama USING utf8mb4) COLLATE utf8mb4_unicode_ci
+                        )
+                    ) AS DOKTER,
+                    IF(
+                        k.tujuanKunj = 0 AND k.assesmentPel IN ('1','2','3','4'),
+                        rjm.poliRujukan->>'$.nama',
+                        NULL
+                    ) AS POLIPERUJUK,
+                    IF(
+                        CONVERT(k.noRujukan USING utf8mb4) COLLATE utf8mb4_unicode_ci LIKE _utf8mb4'%V%' COLLATE utf8mb4_unicode_ci,
+                        CONVERT(pp.NOMOR USING utf8mb4) COLLATE utf8mb4_unicode_ci,
+                        CONVERT(IFNULL(k.noRujukan, '') USING utf8mb4) COLLATE utf8mb4_unicode_ci
+                    ) AS NORJK,
+                    IF(
+                        k.noRujukan LIKE '%V%',
+                        DATE_FORMAT(p.TANGGAL, '%d-%m-%Y'),
+                        IFNULL(DATE_FORMAT(rjm.tglKunjungan, '%d-%m-%Y'), '')
+                    ) AS TGLRJK,
+                    IF(
+                        k.noRujukan LIKE '%V%',
+                        'Digunakan 1 kali kunjungan Pasca Rawat Inap',
+                        DATE_FORMAT(DATE_ADD(IFNULL(k.tglRujukan, srp.TANGGAL), INTERVAL 89 DAY), '%d-%m-%Y')
+                    ) AS MASABERLAKU,
+                    rjm.poliRujukan->>'$.kode' AS kode,
+                    rjm.poliRujukan->>'$.nama' AS nama,
+                    IF(
+                        mr.JENIS_KUNJUNGAN != 3,
+                        CONVERT(rjm.poliRujukan->>'$.nama' USING utf8mb4) COLLATE utf8mb4_unicode_ci,
+                        CONVERT(smf.DESKRIPSI USING utf8mb4) COLLATE utf8mb4_unicode_ci
+                    ) AS TUJUANRUJUK,
+                    IFNULL(CONCAT(rr.POS_ANTRIAN, '-', rr.`NO`), 'TIDAK ADA ANTRIAN') AS ANTRIAN_ADMISI,
+                    IFNULL(rr.ANTRIAN_POLI, 'TIDAK ADA ANTRIAN') AS ANTRIAN_POLI,
+                    IFNULL(rr.NOMOR_ANTRIAN, 'TIDAK ADA ANTRIAN') AS ANTRIAN_DOKTER,
+                    IFNULL(master.getAlamatPasien(p.NORM), mp.ALAMAT) AS ALAMATPASIEN,
+                    qp.filename AS QR1,
+                    IFNULL(k.jmlCetak, 0) AS JMLCETAK
+                ")
+                ->where('k.cetak', 0)
+                ->where('k.noSEP', $getSEP->NOSEP)
+                ->groupBy('k.noSEP');
+
+            $show = $query->first();
+
+            if (!$show) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data SEP tidak ditemukan atau status cetaknya bukan 0.',
+                ], 404);
+            }
+
+            /* ================================================================
+            * 5. TANGGAL DAN PATH OUTPUT
+            * ================================================================ */
+            $tglSEP = Carbon::parse($show->TGLSEP_RAW);
+            $tgl = $tglSEP->format('d');
+            $bulan = $tglSEP->format('m');
+            $tahun = $tglSEP->format('Y');
+
+            $fileName = $NODOKUMEN . '_sep';
+            $relativePath = "files/sep/{$tahun}/{$bulan}/{$tgl}/{$fileName}";
+            $output = storage_path('app/public/' . $relativePath);
+            $outputDir = dirname($output);
+            $finalPdf = $output . '.pdf';
+            $docxPath = $output . '.docx';
+
+            if (!File::exists($outputDir)) {
+                File::makeDirectory($outputDir, 0755, true);
+            }
+
+            if (File::exists($docxPath)) {
+                File::delete($docxPath);
+            }
+            if (File::exists($finalPdf)) {
+                File::delete($finalPdf);
+            }
+
+            /* ================================================================
+            * 6. SIAPKAN FILE QR CODE NOMOR KARTU
+            * ================================================================ */
+            $nomorKartu = trim((string) ($show->NOMORKARTU ?? ''));
+            if ($nomorKartu === '') {
+                throw new \RuntimeException('Nomor kartu BPJS tidak ditemukan.');
+            }
+
+            $qrRecord = DB::table('simrspku_klaim.klaim_qrcode_pegawai')
+                ->where('nomor', $nomorKartu)
+                ->first();
+
+            $qrRelativePath = $qrRecord->filename ?? null;
+            $qrFileExists = $qrRelativePath
+                && Storage::disk('public')->exists($qrRelativePath);
+
+            if (!$qrFileExists) {
+                $qrImage = (new \Milon\Barcode\DNS2D())->getBarcodePNG($nomorKartu, 'QRCODE');
+                $qrBinary = base64_decode($qrImage, true);
+
+                if ($qrBinary === false) {
+                    throw new \RuntimeException('Gagal membuat gambar QR Code nomor kartu.');
+                }
+
+                // Nama file hash aman untuk path, token tetap disimpan terenkripsi.
+                $qrRelativePath = $qrRelativePath ?: ('files/qrcode/' . hash('sha256', $nomorKartu) . '.png');
+                $qrAbsolutePath = Storage::disk('public')->path($qrRelativePath);
+                $qrDirectory = dirname($qrAbsolutePath);
+
+                if (!File::exists($qrDirectory)) {
+                    File::makeDirectory($qrDirectory, 0755, true);
+                }
+
+                if (file_put_contents($qrAbsolutePath, $qrBinary) === false) {
+                    throw new \RuntimeException('Gagal menyimpan gambar QR Code nomor kartu.');
+                }
+
+                $qrData = [
+                    'token' => Crypt::encrypt($nomorKartu),
+                    'nomor' => $nomorKartu,
+                    'title' => $qrRecord->title ?? basename($qrRelativePath),
+                    'filename' => $qrRelativePath,
+                    'updated_at' => now(),
+                ];
+
+                if (!$qrRecord) {
+                    $qrData['created_at'] = now();
+                }
+
+                if ($qrRecord) {
+                    DB::table('simrspku_klaim.klaim_qrcode_pegawai')
+                        ->where('nomor', $nomorKartu)
+                        ->update($qrData);
+                } else {
+                    DB::table('simrspku_klaim.klaim_qrcode_pegawai')->insert($qrData);
+                }
+            }
+
+            $qrAbsolutePath = Storage::disk('public')->path($qrRelativePath);
+
+            /* ================================================================
+            * 7. ISI TEMPLATE DOCX SEP
+            *    Simpan template ke public/doc/klaim/sep/cetakBerkasSEP.docx
+            * ================================================================ */
+            $templatePath = public_path('doc/klaim/sep/cetakBerkasSEP.docx');
+            if (!File::exists($templatePath)) {
+                throw new \RuntimeException('Template DOCX SEP tidak ditemukan: ' . $templatePath);
+            }
+
+            $templateProcessor = new \PhpOffice\PhpWord\TemplateProcessor($templatePath);
+
+            $display = static function ($value, $fallback = '-') {
+                if ($value === null || trim((string) $value) === '') {
+                    return $fallback;
+                }
+                return trim((string) $value);
+            };
+
+            $jenisRawat = $display($show->JENISRAWAT, '');
+            $faskesRujukan = $jenisRawat === 'Rawat Jalan'
+                ? $display($show->RUJUKAN)
+                : 'RS PKU MUHAMMADIYAH SUKOHARJO';
+
+            $kelasRawat = $jenisRawat === 'Rawat Jalan'
+                ? '-'
+                : $display($show->klsRawat, $display($show->KELAS));
+
+            $templateValues = [
+                'NAMAINSTANSI' => $display($show->NAMAINSTANSI),
+                'PRB' => $display($show->PRB, ''),
+                'NOMORSEP' => $display($show->NOMORSEP),
+                'TGLSEP' => $display($show->TGLSEP),
+                'NOMORKARTU_NORM' => $display($show->NOMORKARTU) . ' ( MR. ' . $display($show->NORM) . ' )',
+                'NAMALENGKAP' => $display($show->NAMALENGKAP),
+                'TGL_LAHIR' => $display($show->TGL_LAHIR),
+                'NOTELP' => $display($show->NOTELP, ''),
+                'POLITUJUAN' => $display($show->poliTujuan),
+                'DOKTER' => $display($show->DOKTER),
+                'FASKESRUJUKAN' => $faskesRujukan,
+                'DIAGNOSA' => $display($show->DIAGNOSA),
+                'CATATAN' => $display($show->CATATAN, ''),
+                'KATARAK' => $display($show->KATARAK, ''),
+                'PESERTA' => $display($show->PESERTA),
+                'COB' => $display($show->COB, '-'),
+                'JENISRAWAT' => $display($show->JENISRAWAT),
+                'TJKUNJ' => $display($show->TJKUNJ),
+                'PROC' => $display($show->PROC, '-'),
+                'POLIPERUJUK' => $display($show->POLIPERUJUK),
+                'KELAS' => $display($show->KELAS),
+                'KELASRAWAT' => $kelasRawat,
+                'PENJAMIN' => $display($show->PENJAMIN, ''),
+                'UNITPELAYANAN' => $display($show->UNITPELAYANAN, ''),
+                'CETAKAN' => $display($show->CETAKAN, ''),
+            ];
+
+            foreach ($templateValues as $key => $value) {
+                $templateProcessor->setValue($key, (string) $value);
+            }
+
+            // $logoPath = public_path('doc/input/sep/logo-bpjs.png');
+            // if (File::exists($logoPath)) {
+            //     $templateProcessor->setImageValue('LOGO_BPJS', [
+            //         'path' => $logoPath,
+            //         'width' => 180,
+            //         'height' => 39,
+            //         'ratio' => true,
+            //     ]);
+            // } else {
+            //     $templateProcessor->setValue('LOGO_BPJS', 'BPJS Kesehatan');
+            // }
+
+            if (File::exists($qrAbsolutePath)) {
+                $templateProcessor->setImageValue('QR1', [
+                    'path' => $qrAbsolutePath,
+                    'width' => 48,
+                    'height' => 48,
+                    'ratio' => true,
+                ]);
+            } else {
+                $templateProcessor->setValue('QR1', '');
+            }
+
+            $templateProcessor->saveAs($docxPath);
+
+            if (!File::exists($docxPath)) {
+                throw new \RuntimeException('Gagal membuat DOCX SEP.');
+            }
+
+            /* ================================================================
+            * 8. SET METADATA TITLE DOCX = NOMOR SEP
+            * ================================================================ */
+            $zip = new \ZipArchive();
+            if ($zip->open($docxPath) !== true) {
+                throw new \RuntimeException('Gagal membuka DOCX untuk mengatur judul dokumen.');
+            }
+
+            $coreXml = $zip->getFromName('docProps/core.xml');
+            if ($coreXml !== false) {
+                $titleXml = htmlspecialchars($fileName, ENT_XML1 | ENT_COMPAT, 'UTF-8');
+
+                if (preg_match('~<dc:title(?:\s[^>]*)?>.*?</dc:title>~s', $coreXml)) {
+                    $coreXml = preg_replace(
+                        '~<dc:title(?:\s[^>]*)?>.*?</dc:title>~s',
+                        '<dc:title>' . $titleXml . '</dc:title>',
+                        $coreXml,
+                        1
+                    );
+                } else {
+                    $coreXml = preg_replace(
+                        '~</cp:coreProperties>~',
+                        '<dc:title>' . $titleXml . '</dc:title></cp:coreProperties>',
+                        $coreXml,
+                        1
+                    );
+                }
+
+                if (!$zip->addFromString('docProps/core.xml', $coreXml)) {
+                    $zip->close();
+                    throw new \RuntimeException('Gagal menyimpan metadata judul DOCX SEP.');
+                }
+            }
+            $zip->close();
+
+            /* ================================================================
+            * 9. KONVERSI DOCX KE PDF DENGAN LibreOfficeService
+            * ================================================================ */
+            [$success, $generatedPdf] = $this->libreOffice->generatePdf($docxPath, $outputDir);
+
+            if (File::exists($docxPath)) {
+                File::delete($docxPath);
+            }
+
+            if (!$success || !File::exists($finalPdf)) {
+                // Fallback jika service mengembalikan lokasi output yang berbeda.
+                if ($success && !empty($generatedPdf) && File::exists($generatedPdf) && $generatedPdf !== $finalPdf) {
+                    File::move($generatedPdf, $finalPdf);
+                }
+            }
+
+            if (!$success || !File::exists($finalPdf)) {
+                throw new \RuntimeException('Gagal membuat PDF SEP.');
+            }
+
+            /* ================================================================
+            * 10. SIMPAN / PERBARUI DATA klaim_file
+            * ================================================================ */
+            DB::table('simrspku_klaim.klaim_file')->updateOrInsert(
+                [
+                    'nomor' => $kunjungan,
+                    'jenis' => 1,
+                ],
+                [
+                    'title' => $fileName . '.pdf',
+                    'filename' => $relativePath . '.pdf',
+                    'user' => auth()->user()->ID,
+                    'status' => true,
+                    'deleted_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+
+            DB::commit();
+
+            return response()->file($finalPdf, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $fileName . '.pdf"',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
+            ]);
+        } catch (\Throwable $e) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+
+            if ($docxPath && File::exists($docxPath)) {
+                File::delete($docxPath);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membuat PDF SEP.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // ====================================================================================================================================
+    // =========================================================  LABORATORIUM  ===========================================================
+    // ====================================================================================================================================
     public function generateLab($kunjungan)
     {
         try {
@@ -1948,6 +2527,9 @@ class BerkasKlaimController extends Controller
         ];
     }
 
+    // ====================================================================================================================================
+    // ===========================================================  BILLING  ==============================================================
+    // ====================================================================================================================================
     public function generateBilling($kunjungan)
     {
         try {

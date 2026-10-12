@@ -484,9 +484,11 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
             // PRINT PREVIEW
             Route::get( '/emr/pengkajian/finalisasi/preview/{kunjungan}', [PrintPreviewController::class, 'printPreview']);
 
-        // KLAIM
-        Route::get('generate/lab/{kunjungan}', [BerkasKlaimController::class, 'generateLab']);
+        // SMARTCLAIM
+        Route::get('generate/sep/{kunjungan}', [BerkasKlaimController::class, 'generateSEP']);
         Route::get('generate/billing/{kunjungan}', [BerkasKlaimController::class, 'generateBilling']);
+        Route::get('generate/lab/{kunjungan}', [BerkasKlaimController::class, 'generateLab']);
+
         // Route::get('generate/billing/cek/{NOMOR_TAGIHAN}', [BerkasKlaimController::class, 'queryBillingAdministrasi']);
 });
 
