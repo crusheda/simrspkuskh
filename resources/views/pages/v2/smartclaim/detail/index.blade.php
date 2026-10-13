@@ -1142,88 +1142,90 @@
             })
         }
 
-        function individual(kunjungan) {
-            $('#ck_individual').prop('disabled', true);
+        // function individual(kunjungan) { // can showing ${NODOKUMEN}_individual.pdf, but error while checkAll not undisabled after load
+        //     return new Promise((resolve, reject) => {
+        //         $('#ck_individual').prop('disabled', true);
 
-            $('#preview').empty().append(`
-                <div id="loading-individual" class="">
-                    <div class="spinner-grow align-middle me-2" role="status">
-                        <span class="sr-only">Loading...</span>
-                    </div>
-                    Area ini akan menampilkan Preview Berkas Klaim yang dipilih
-                </div>
-            `);
+        //         $('#preview').empty().append(`
+        //             <div id="loading-individual">
+        //                 <div class="spinner-grow align-middle me-2" role="status">
+        //                     <span class="visually-hidden">Loading...</span>
+        //                 </div>
+        //                 Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        //             </div>
+        //         `);
 
-            const fileURL = `/api/v2/generate/individual/${kunjungan}`;
+        //         const fileURL = `/api/v2/generate/individual/${encodeURIComponent(kunjungan)}`;
 
-            const iframe = $(`
-                <iframe
-                    width="100%"
-                    height="500px"
-                    frameborder="0"
-                    style="display: none;">
-                </iframe>
-            `);
+        //         const iframe = $(`
+        //             <iframe
+        //                 width="100%"
+        //                 height="500px"
+        //                 frameborder="0"
+        //                 style="display: none;">
+        //             </iframe>
+        //         `);
 
-            iframe.on('load', function () {
-                $('#loading-individual').remove();
-                $(this).show();
+        //         iframe.on('load', function () {
+        //             $('#loading-individual').remove();
+        //             $('#ck_individual').prop('disabled', false);
+        //             $(this).show();
 
-                $('#ck_individual').prop('disabled', false);
-            });
-
-            iframe.on('error', function () {
-                $('#ck_individual')
-                    .prop('checked', false)
-                    .prop('disabled', false);
-
-                $('#preview').empty().append(`
-                    Area ini akan menampilkan Preview Berkas Klaim yang dipilih
-                `);
-            });
-
-            // Masukkan iframe tanpa menghapus spinner.
-            $('#preview').append(iframe);
-
-            // Mulai memuat PDF setelah iframe berada di DOM.
-            iframe.attr('src', fileURL);
-        }
-        // function individual(kunjungan) {
-        //     $('#ck_individual').prop('disabled',true);
-        //     $('#preview').empty().append(`
-        //         <div class="spinner-grow align-middle me-2" role="status">
-        //             <span class="sr-only">Loading...</span>
-        //         </div>
-        //         Area ini akan menampilkan Preview Berkas Klaim yang dipilih
-        //     `);
-
-        //     // AJAX FETCH
-        //     fetch("/api/pasien/"+kunjungan+"/individual")
-        //     .then(response => {
-        //         if (!response.ok) {
-        //             throw new Error('File tidak ditemukan atau gagal diambil.');
-        //         }
-        //         return response.blob();
-        //     })
-        //     .then(blob => {
-        //         // Buat object URL dari blob
-        //         const fileURL = URL.createObjectURL(blob);
-
-        //         // Tampilkan ke iframe dalam modal
-        //         $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-        //         $('#ck_individual').prop('disabled',false);
-        //     })
-        //     .catch(error => {
-        //         iziToast.error({
-        //             title: 'Maaf!',
-        //             message: error.message ?? "Data Individual tidak ditemukan atau belum dibuatkan oleh Simgos.",
-        //             position: 'topRight'
+        //             resolve();
         //         });
-        //         console.error(error);
-        //         $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-        //         $('#ck_individual').prop('checked', false).prop('disabled',false);
+
+        //         iframe.on('error', function () {
+        //             $('#ck_individual')
+        //                 .prop('checked', false)
+        //                 .prop('disabled', false);
+
+        //             $('#preview').empty().append(`
+        //                 Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        //             `);
+
+        //             reject(new Error('Gagal memuat berkas individual.'));
+        //         });
+
+        //         $('#preview').append(iframe);
+        //         iframe.attr('src', fileURL);
         //     });
         // }
+        function individual(kunjungan) {
+            $('#ck_individual').prop('disabled',true);
+            $('#preview').empty().append(`
+                <div class="spinner-grow align-middle me-2" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+            `);
+
+            // AJAX FETCH
+            fetch(`/api/v2/generate/individual/${encodeURIComponent(kunjungan)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('File tidak ditemukan atau gagal diambil.');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Buat object URL dari blob
+                const fileURL = URL.createObjectURL(blob);
+
+                // Tampilkan ke iframe dalam modal
+                $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+                $('#ck_individual').prop('disabled',false);
+            })
+            .catch(error => {
+                iziToast.error({
+                    title: 'Maaf!',
+                    message: error.message ?? "Data Individual tidak ditemukan atau belum dibuatkan oleh Simgos.",
+                    position: 'topRight'
+                });
+                console.error(error);
+                $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+                $('#ck_individual').prop('checked', false).prop('disabled',false);
+            });
+        }
 
         function sep(kunjungan) {
             $('#ck_sep').prop('disabled', true);
@@ -2432,39 +2434,82 @@
             }
         }
 
-        function checkAll(el) {
-            if(el.checked){
-                $('#ck_all').prop('disabled',true);
+        async function executeSafely(callback, nama) {
+            try {
+                await callback();
+            } catch (error) {
+                console.error(`${nama} gagal:`, error);
+            }
+        }
 
-                $('#ck_individual').prop('checked', true);
-                individual('{{ $list['KUNJUNGAN'] }}');
+        async function checkAll(el) {
+            if (el.checked) {
+                $('#ck_all').prop('disabled', true);
 
-                $('#ck_resume').prop('checked', true);
-                resume('{{ $list['KUNJUNGAN'] }}');
+                try {
+                    $('#ck_individual').prop('checked', true);
+                    await executeSafely(
+                        () => individual('{{ $list['KUNJUNGAN'] }}'),
+                        'Individual'
+                    );
 
-                $('#ck_sep').prop('checked', true);
-                sep('{{ $list['KUNJUNGAN'] }}');
+                    $('#ck_resume').prop('checked', true);
+                    await executeSafely(
+                        () => resume('{{ $list['KUNJUNGAN'] }}'),
+                        'Resume'
+                    );
 
-                $('#ck_skdp').prop('checked', true);
-                skdp('{{ $list['KUNJUNGAN'] }}');
+                    $('#ck_sep').prop('checked', true);
+                    await executeSafely(
+                        () => sep('{{ $list['KUNJUNGAN'] }}'),
+                        'SEP'
+                    );
 
-                $('#ck_billing').prop('checked', true);
-                billing('{{ $list['KUNJUNGAN'] }}');
+                    $('#ck_skdp').prop('checked', true);
+                    await executeSafely(
+                        () => skdp('{{ $list['KUNJUNGAN'] }}'),
+                        'SKDP'
+                    );
 
-                $('#ck_laboratorium').prop('checked', true);
-                laboratorium('{{ $list['KUNJUNGAN'] }}');
+                    $('#ck_billing').prop('checked', true);
+                    await executeSafely(
+                        () => billing('{{ $list['KUNJUNGAN'] }}'),
+                        'Billing'
+                    );
 
-                $('#ck_radiologi').prop('checked', true);
-                radiologi('{{ $list['KUNJUNGAN'] }}');
+                    $('#ck_laboratorium').prop('checked', true);
+                    await executeSafely(
+                        () => laboratorium('{{ $list['KUNJUNGAN'] }}'),
+                        'Laboratorium'
+                    );
 
-                $('#ck_triage').prop('checked', true);
-                triage('{{ $list['KUNJUNGAN'] }}');
+                    $('#ck_radiologi').prop('checked', true);
+                    await executeSafely(
+                        () => radiologi('{{ $list['KUNJUNGAN'] }}'),
+                        'Radiologi'
+                    );
 
-                $('#ck_operasi').prop('checked', true);
-                operasi('{{ $list['KUNJUNGAN'] }}');
+                    $('#ck_triage').prop('checked', true);
+                    await executeSafely(
+                        () => triage('{{ $list['KUNJUNGAN'] }}'),
+                        'Triage'
+                    );
+
+                    $('#ck_operasi').prop('checked', true);
+                    await executeSafely(
+                        () => operasi('{{ $list['KUNJUNGAN'] }}'),
+                        'Operasi'
+                    );
+                } finally {
+                    $('#ck_all').prop('disabled', false);
+                }
             } else {
-                $('#ck_all').prop('disabled',false);
-                $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+                $('#ck_all').prop('disabled', false);
+
+                $('#preview')
+                    .empty()
+                    .append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+
                 clearCheckbox();
             }
         }
