@@ -38,6 +38,665 @@ class BerkasKlaimController extends Controller
     }
 
     // ====================================================================================================================================
+    // ==========================================================  INDIVIDUAL  ============================================================
+    // ====================================================================================================================================
+    public function generateIndividual($kunjungan)
+    {
+        $docxPath = null;
+
+        try {
+            /* ================================================================
+            * 0. KONFIGURASI
+            * ================================================================
+            * Default tetap kelas 3. Untuk mengubah sewaktu-waktu, edit
+            * KLAIM_INDIVIDUAL_KELAS di .env atau config/klaim.php.
+            */
+            $pKelas = (int) config('klaim.individual_kelas', 3);
+
+            if (!in_array($pKelas, [1, 2, 3], true)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'PKELAS harus bernilai 1, 2, atau 3.',
+                ], 422);
+            }
+
+            /* ================================================================
+            * 1. AMBIL NOPEN, TANGGAL REGISTRASI, DAN SEP DARI KUNJUNGAN
+            * ================================================================ */
+            $getSEP = DB::table('pendaftaran.kunjungan as pk')
+                ->leftJoin('pendaftaran.pendaftaran as pd', 'pd.NOMOR', '=', 'pk.NOPEN')
+                ->leftJoin('pendaftaran.penjamin as pj', 'pd.NOMOR', '=', 'pj.NOPEN')
+                ->select([
+                    'pj.NOMOR as NOSEP',
+                    'pd.NOMOR as NOPEN',
+                    'pd.TANGGAL as TGLREG',
+                ])
+                ->where('pk.NOMOR', $kunjungan)
+                ->first();
+
+            if (!$getSEP || !$getSEP->NOPEN) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'SEP / pendaftaran tidak ditemukan. Periksa data kunjungan sekali lagi.',
+                ], 404);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | JUDUL DOKUMEN = NOSEP
+            |--------------------------------------------------------------------------
+            */
+            $NODOKUMEN = trim((string) ($getSEP->NOSEP ?? ''));
+
+            if ($NODOKUMEN === '') {
+                $NODOKUMEN = (string) $kunjungan;
+            }
+
+            // Pastikan aman digunakan sebagai nama file.
+            $NODOKUMEN = preg_replace(
+                '/[^A-Za-z0-9._-]/',
+                '_',
+                $NODOKUMEN
+            );
+
+            if ($NODOKUMEN === '') {
+                $NODOKUMEN = (string) $kunjungan;
+            }
+
+            /* ================================================================
+            * 2. QUERY HEADER INDIVIDUAL
+            * ================================================================
+            * Query Builder menggantikan CALL CetakLapIndividual5().
+            * Fungsi skalar database (mis. getNamaLengkap/getValuePropertyJSON)
+            * tetap digunakan agar hasilnya sejalan dengan laporan sebelumnya;
+            * stored procedure tidak dipanggil.
+            */
+            $header = DB::table('master.pasien as p')
+                ->join('pendaftaran.pendaftaran as pd', 'pd.NORM', '=', 'p.NORM')
+                ->leftJoin('pendaftaran.penjamin as pj', 'pd.NOMOR', '=', 'pj.NOPEN')
+                ->leftJoin('master.referensi as ref', function ($join) {
+                    $join->on('pj.JENIS', '=', 'ref.ID')
+                        ->where('ref.JENIS', '=', 10);
+                })
+                ->leftJoin('master.kartu_asuransi_pasien as kap', function ($join) {
+                    $join->on('pd.NORM', '=', 'kap.NORM')
+                        ->on('ref.ID', '=', 'kap.JENIS');
+                })
+                ->leftJoin('layanan.pasien_pulang as pp', function ($join) {
+                    $join->on('pd.NOMOR', '=', 'pp.NOPEN')
+                        ->whereIn('pp.STATUS', [1, 2]);
+                })
+                ->leftJoin('inacbg.map_inacbg_simrs as kl', function ($join) {
+                    $join->on('pj.KELAS', '=', 'kl.SIMRS')
+                        ->where('kl.JENIS', '=', 4);
+                })
+                ->leftJoin('inacbg.inacbg as kls', function ($join) {
+                    $join->on('kl.INACBG', '=', 'kls.KODE')
+                        ->where('kls.JENIS', '=', 8);
+                })
+                ->leftJoin('inacbg.hasil_grouping as hl', 'pd.NOMOR', '=', 'hl.NOPEN')
+                ->leftJoin('inacbg.inacbg as sp', function ($join) {
+                    $join->on(DB::raw("REPLACE(LEFT(hl.UNUSP, 5), '-', '')"), '=', 'sp.KODE')
+                        ->where('sp.JENIS', '=', 6)
+                        ->where('sp.VERSION', '=', 5);
+                })
+                ->leftJoin('inacbg.inacbg as sa', function ($join) {
+                    $join->on(DB::raw("REPLACE(LEFT(hl.UNUSA, 5), '-', '')"), '=', 'sa.KODE')
+                        ->where('sa.JENIS', '=', 1)
+                        ->where('sa.VERSION', '=', 5);
+                })
+                ->leftJoin('inacbg.inacbg as sr', function ($join) {
+                    $join->on(DB::raw("REPLACE(LEFT(hl.UNUSR, 5), '-', '')"), '=', 'sr.KODE')
+                        ->where('sr.JENIS', '=', 4)
+                        ->where('sr.VERSION', '=', 5);
+                })
+                ->leftJoin('inacbg.inacbg as si', function ($join) {
+                    $join->on(DB::raw("REPLACE(LEFT(hl.UNUSI, 5), '-', '')"), '=', 'si.KODE')
+                        ->where('si.JENIS', '=', 5)
+                        ->where('si.VERSION', '=', 5);
+                })
+                ->leftJoin('inacbg.inacbg as sd', function ($join) {
+                    $join->on(DB::raw("REPLACE(LEFT(hl.UNUSD, 5), '-', '')"), '=', 'sd.KODE')
+                        ->where('sd.JENIS', '=', 3)
+                        ->where('sd.VERSION', '=', 5);
+                })
+                ->leftJoin('inacbg.inacbg as sc', function ($join) {
+                    $join->on(DB::raw("REPLACE(LEFT(hl.UNUSC, 5), '-', '')"), '=', 'sc.KODE')
+                        ->where('sc.JENIS', '=', 1)
+                        ->where('sc.VERSION', '=', 5);
+                })
+                ->leftJoin('inacbg.inacbg as kd', function ($join) {
+                    $join->on('hl.CODECBG', '=', 'kd.KODE')
+                        ->where('kd.JENIS', '=', 1)
+                        ->where('kd.VERSION', '=', 5);
+                })
+                ->leftJoin('inacbg.grouping as gr', 'pd.NOMOR', '=', 'gr.NOPEN')
+                ->leftJoin('inacbg.no_urut_berkas as nobr', 'pd.NOMOR', '=', 'nobr.NOPEN')
+                ->leftJoin('aplikasi.pengguna as pg', function ($join) {
+                    $join->on('hl.USER', '=', 'pg.ID')
+                        ->where('pg.STATUS', '!=', 0);
+                })
+                ->leftJoin('master.pegawai as pw', function ($join) {
+                    $join->on('pg.NIP', '=', 'pw.NIP')
+                        ->where('pw.STATUS', '!=', 0);
+                })
+                ->leftJoin('medicalrecord.diagnosa as dgs', function ($join) {
+                    $join->on('pd.NOMOR', '=', 'dgs.NOPEN')
+                        ->where('dgs.UTAMA', '=', 1)
+                        ->where('dgs.INACBG', '=', 1)
+                        ->where('dgs.INA_GROUPER', '=', 0)
+                        ->where('dgs.STATUS', '=', 1);
+                })
+                ->leftJoin('aplikasi.pengguna as cd', function ($join) {
+                    $join->on('dgs.OLEH', '=', 'cd.ID')
+                        ->where('cd.STATUS', '!=', 0);
+                })
+                ->leftJoin('master.pegawai as pwc', function ($join) {
+                    $join->on('cd.NIP', '=', 'pwc.NIP')
+                        ->where('pwc.STATUS', '!=', 0)
+                        ->where('pwc.PROFESI', '=', 7);
+                })
+                ->leftJoin('pendaftaran.kunjungan as pk', function ($join) {
+                    $join->on('pk.NOMOR', '=', 'pp.KUNJUNGAN')
+                        ->whereIn('pk.STATUS', [1, 2]);
+                })
+                ->leftJoin('master.ruangan as rg', 'pk.RUANGAN', '=', 'rg.ID')
+                ->join('pendaftaran.tujuan_pasien as tp', 'pd.NOMOR', '=', 'tp.NOPEN')
+                ->leftJoin('master.ruangan as r', function ($join) {
+                    $join->on('tp.RUANGAN', '=', 'r.ID')
+                        ->where('r.JENIS', '=', 5);
+                })
+                ->leftJoin('inacbg.map_inacbg_simrs as s', function ($join) {
+                    $join->on('tp.RUANGAN', '=', 's.SIMRS')
+                        ->where('s.JENIS', '=', 5)
+                        ->where('s.INACBG', '=', 1)
+                        ->where('s.VERSION', '=', 5);
+                })
+                ->crossJoin('aplikasi.instansi as ai')
+                ->join('master.ppk as inst', 'ai.PPK', '=', 'inst.ID')
+                ->where('pd.NOMOR', $getSEP->NOPEN)
+                ->select([
+                    'inst.KODE as KODERS',
+                    'inst.KELAS as KELASRS',
+                    'inst.KEPEMILIKAN as KEPEMILIKAN',
+                    'ai.PPK as PPK_INSTANSI',
+                    DB::raw('UPPER(inst.NAMA) as NAMAINSTANSI'),
+                    DB::raw("LPAD(p.NORM, 8, '0') as NORM"),
+                    DB::raw('master.getNamaLengkap(p.NORM) as NAMALENGKAP'),
+                    'p.TANGGAL_LAHIR as TANGGAL_LAHIR',
+                    DB::raw("IF((UNIX_TIMESTAMP(pd.TANGGAL) - UNIX_TIMESTAMP(p.TANGGAL_LAHIR)) < 691200, 0, FLOOR(DATEDIFF(pd.TANGGAL, p.TANGGAL_LAHIR) / 365)) as UMURTAHUN"),
+                    DB::raw('DATEDIFF(pd.TANGGAL, p.TANGGAL_LAHIR) as UMURHARI'),
+                    DB::raw("IF(p.JENIS_KELAMIN = 1, '1 - Laki-laki', '2 - Perempuan') as JENISKELAMIN"),
+                    'kap.NOMOR as NOKARTU',
+                    'pd.NOMOR as NOPEN',
+                    'pd.TANGGAL as TGLREG',
+                    DB::raw("IF(r.JENIS_KUNJUNGAN = 3, DATE_FORMAT(pp.TANGGAL, '%d/%m/%Y'), DATE_FORMAT(pd.TANGGAL, '%d/%m/%Y')) as TGLKELUAR"),
+                    DB::raw("CONCAT(DATEDIFF(IF(r.JENIS_KUNJUNGAN = 3, pp.TANGGAL, pd.TANGGAL), pd.TANGGAL) + 1, ' hari') as LOS"),
+                    'ref.DESKRIPSI as CARABAYAR',
+                    'pj.NOMOR as NOMORSEP',
+                    DB::raw("IF(r.JENIS_KUNJUNGAN = 3, '1 - Rawat Inap', '2 - Rawat Jalan') as JENISPASIEN"),
+                    DB::raw("aplikasi.getValuePropertyJSON(gr.DATA, 'cara_keluar') as CARA_KELUAR_KODE"),
+                    DB::raw("IF(aplikasi.getValuePropertyJSON(gr.DATA, 'berat_lahir') = '', '-', aplikasi.getValuePropertyJSON(gr.DATA, 'berat_lahir')) as BERATLAHIR"),
+                    DB::raw("IF(r.JENIS_KUNJUNGAN = 3, CONCAT(kls.KODE, ' - ', kls.DESKRIPSI), IF(r.JENIS_KUNJUNGAN != 3 AND s.INACBG = 1, 'Eksekutif', 'Reguler')) as KELASHAK"),
+                    DB::raw("IF((aplikasi.getValuePropertyJSON(gr.DATA, 'adl_sub_acute') = '' OR aplikasi.getValuePropertyJSON(gr.DATA, 'adl_sub_acute') = '0'), '-', aplikasi.getValuePropertyJSON(gr.DATA, 'adl_sub_acute')) as ADLAKUT"),
+                    DB::raw("IF((aplikasi.getValuePropertyJSON(gr.DATA, 'adl_chronic') = '' OR aplikasi.getValuePropertyJSON(gr.DATA, 'adl_chronic') = '0'), '-', aplikasi.getValuePropertyJSON(gr.DATA, 'adl_chronic')) as ADLKRONIK"),
+                    'hl.CODECBG as INACBG',
+                    'kd.DESKRIPSI as DESKRIPSIINACBG',
+                    DB::raw("'-' as ALOS"),
+                    'hl.TIPE as TIPE',
+                    'hl.TARIFRS as BIAYARS',
+                    'hl.UNUSR as UNUSR_RAW',
+                    'hl.UNUSI as UNUSI_RAW',
+                    'hl.UNUSP as UNUSP_RAW',
+                    'hl.UNUSD as UNUSD_RAW',
+                    'hl.UNUSA as UNUSA_RAW',
+                    'hl.UNUSC as UNUSC_RAW',
+                    'hl.TARIFSR as TARIFSR_RAW',
+                    'hl.TARIFSI as TARIFSI_RAW',
+                    'hl.TARIFSP as TARIFSP_RAW',
+                    'hl.TARIFSD as TARIFSD_RAW',
+                    'hl.TARIFSA as TARIFSA_RAW',
+                    'hl.TARIFSC as TARIFSC_RAW',
+                    'sr.DESKRIPSI as DESK_UNUSR',
+                    'si.DESKRIPSI as DESK_UNUSI',
+                    'sp.DESKRIPSI as DESK_UNUSP',
+                    'sd.DESKRIPSI as DESK_UNUSD',
+                    DB::raw("IF(hl.UNUSA = 'None', '-', IF(hl.UNUSA = aplikasi.getValuePropertyJSON(aplikasi.getValuePropertyJSON(hl.RESPONSE, 'sub_acute'), 'code'), aplikasi.getValuePropertyJSON(aplikasi.getValuePropertyJSON(hl.RESPONSE, 'sub_acute'), 'description'), sa.DESKRIPSI)) as DESUNUSA"),
+                    DB::raw("IF(UPPER(hl.UNUSC) = 'NONE', '-', IF(hl.UNUSC = aplikasi.getValuePropertyJSON(aplikasi.getValuePropertyJSON(hl.RESPONSE, 'chronic'), 'code'), aplikasi.getValuePropertyJSON(aplikasi.getValuePropertyJSON(hl.RESPONSE, 'chronic'), 'description'), sc.DESKRIPSI)) as DESUNUSC"),
+                    DB::raw("IF(hl.UNUSA = 'None', 0, hl.TARIFSA) as TARIFUNUSA"),
+                    DB::raw("IF(hl.UNUSC = 'None', 0, hl.TARIFSC) as TARIFUNUSC"),
+                    'hl.TARIFCBG as TARIFCBG_RAW',
+                    'hl.TARIFKLS1 as TARIFKLS1_RAW',
+                    'hl.TARIFKLS2 as TARIFKLS2_RAW',
+                    'hl.TOTALTARIF as TOTALTARIF_RAW',
+                    'hl.TARIFSP as TARIFSP_TOTAL',
+                    'hl.TARIFSR as TARIFSR_TOTAL',
+                    'hl.TARIFSI as TARIFSI_TOTAL',
+                    'hl.TARIFSD as TARIFSD_TOTAL',
+                    'hl.TARIFSA as TARIFSA_TOTAL',
+                    'hl.TARIFSC as TARIFSC_TOTAL',
+                    'nobr.NOMOR as NOMOR_URUT_RAW',
+                    'pw.PROFESI as PROFESI_VERIFIKATOR',
+                    'pw.NIP as NIP_VERIFIKATOR',
+                    'pwc.NIP as NIP_CODER',
+                    'r.JENIS_KUNJUNGAN as JENIS_KUNJUNGAN',
+                    'r.DESKRIPSI as DESKRIPSI_RUANGAN',
+                    'rg.DESKRIPSI as DESKRIPSI_RUANGAN_INAP',
+                    'hl.USER as USER_GROUPING',
+                ])
+                ->selectRaw(
+                    "IF(? = kls.KODE, hl.TARIFCBG, IF(? = 1, hl.TARIFKLS1, IF(? = 2, hl.TARIFKLS2, hl.TARIFCBG))) as TARIFINACBG",
+                    [$pKelas, $pKelas, $pKelas]
+                )
+                ->selectRaw(
+                    "IF(? = kls.KODE, hl.TOTALTARIF, IF(? = 1, (hl.TARIFKLS1 + hl.TARIFSP + hl.TARIFSR + hl.TARIFSI + hl.TARIFSD + hl.TARIFSA + hl.TARIFSC), IF(? = 2, (hl.TARIFKLS2 + hl.TARIFSP + hl.TARIFSR + hl.TARIFSI + hl.TARIFSD + hl.TARIFSA + hl.TARIFSC), hl.TOTALTARIF))) as TOTALTARIFINACBG",
+                    [$pKelas, $pKelas, $pKelas]
+                )
+                ->selectRaw(
+                    "IF(? = 1, 'TOTAL TARIF INACBG Kelas 1', IF(? = 2, 'TOTAL TARIF INACBG Kelas 2', IF(r.JENIS_KUNJUNGAN = 3, CONCAT('TOTAL TARIF INACBG ', kls.DESKRIPSI), 'TOTAL TARIF INACBG Kelas 3'))) as CATATAN",
+                    [$pKelas, $pKelas]
+                )
+                ->first();
+
+            if (!$header) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data laporan individual tidak ditemukan untuk NOPEN ' . $getSEP->NOPEN . '.',
+                ], 404);
+            }
+
+            /* ================================================================
+            * 3. DIAGNOSA UTAMA DAN SEKUNDER
+            * ================================================================ */
+            $diagnosaUtamaKode = DB::table('medicalrecord.diagnosa as md')
+                ->where('md.NOPEN', $getSEP->NOPEN)
+                ->where('md.UTAMA', 1)
+                ->where('md.STATUS', 1)
+                ->where('md.INA_GROUPER', 0)
+                ->where('md.INACBG', 1)
+                ->value('md.KODE');
+
+            $diagnosaUtamaNama = DB::table('master.mrconso as mr')
+                ->join('medicalrecord.diagnosa as md', 'mr.CODE', '=', 'md.KODE')
+                ->where('md.NOPEN', $getSEP->NOPEN)
+                ->where('md.UTAMA', 1)
+                ->where('md.STATUS', 1)
+                ->where('md.INA_GROUPER', 0)
+                ->where('md.INACBG', 1)
+                ->where('mr.SAB', 'ICD10_1998')
+                ->whereIn('mr.TTY', ['PX', 'PT'])
+                ->where('mr.VERSION', '!=', 4)
+                ->select('mr.STR')
+                ->value('mr.STR');
+
+            $diagnosaSekunderRows = DB::table('master.mrconso as mr')
+                ->join('medicalrecord.diagnosa as md', 'mr.CODE', '=', 'md.KODE')
+                ->where('md.NOPEN', $getSEP->NOPEN)
+                ->where('md.UTAMA', 2)
+                ->where('md.STATUS', 1)
+                ->where('md.INA_GROUPER', 0)
+                ->where('md.INACBG', 1)
+                ->where('mr.SAB', 'ICD10_1998')
+                ->whereIn('mr.TTY', ['PX', 'PT'])
+                ->where('mr.VERSION', '!=', 4)
+                ->select(['md.ID as ID_DIAGNOSA', 'mr.CODE as KODE', 'mr.STR as DESKRIPSI'])
+                ->orderBy('md.ID')
+                ->get()
+                ->unique('KODE')
+                ->values();
+
+            $kodeDiagnosaSekunder = $diagnosaSekunderRows->pluck('KODE')->implode("\n");
+            $namaDiagnosaSekunder = $diagnosaSekunderRows->pluck('DESKRIPSI')->implode("\n");
+
+            /* ================================================================
+            * 4. PROSEDUR / TINDAKAN ICD-9-CM
+            * ================================================================ */
+            $prosedurRows = DB::table('master.mrconso as mr')
+                ->join('medicalrecord.prosedur as pr', 'mr.CODE', '=', 'pr.KODE')
+                ->where('pr.NOPEN', $getSEP->NOPEN)
+                ->where('pr.STATUS', 1)
+                ->where('pr.INA_GROUPER', 0)
+                ->where('pr.INACBG', 1)
+                ->where('mr.SAB', 'ICD9CM_2005')
+                ->whereIn('mr.TTY', ['PX', 'PT'])
+                ->select(['pr.ID as ID_PROSEDUR', 'mr.CODE as KODE', 'mr.STR as DESKRIPSI'])
+                ->orderBy('pr.ID')
+                ->get()
+                ->unique('KODE')
+                ->values();
+
+            $kodeTindakan = $prosedurRows->pluck('KODE')->implode("\n");
+            $namaTindakan = $prosedurRows->pluck('DESKRIPSI')->implode("\n");
+
+            /* ================================================================
+            * 5. NILAI TURUNAN YANG DAHULU DIHASILKAN OLEH JRXML / PROSEDUR
+            * ================================================================ */
+            $rujuk = DB::table('pendaftaran.rujukan_keluar')
+                ->where('NOPEN', $getSEP->NOPEN)
+                ->where('STATUS', 1)
+                ->orderByDesc('NOMOR')
+                ->value('NOMOR');
+
+            $caraPulang = null;
+            if ((int) $header->JENIS_KUNJUNGAN === 1) {
+                $caraPulang = '1 - Atas Persetujuan Dokter';
+            } elseif (!empty($header->CARA_KELUAR_KODE)) {
+                $cara = DB::table('inacbg.inacbg')
+                    ->where('KODE', $header->CARA_KELUAR_KODE)
+                    ->where('JENIS', 9)
+                    ->where('VERSION', 5)
+                    ->select(['KODE', 'DESKRIPSI'])
+                    ->first();
+
+                if ($cara) {
+                    $caraPulang = $cara->KODE . ' - ' . $cara->DESKRIPSI;
+                }
+            }
+
+            if ($rujuk) {
+                $caraPulang = '2 - Rujuk';
+            }
+
+            $jenisTarif = null;
+            if ((int) $header->TIPE === 3) {
+                $kepemilikanTarif = ((string) $header->KEPEMILIKAN === '14') ? 'S' : 'P';
+
+                $jenisTarif = DB::table('inacbg.map_tarif as mt')
+                    ->join('inacbg.inacbg as i', 'mt.JENISTARIF', '=', 'i.KODE')
+                    ->where('i.JENIS', 10)
+                    ->where('mt.KELASRS', $header->KELASRS)
+                    ->where('mt.KEPEMILIKAN', $kepemilikanTarif)
+                    ->value('i.DESKRIPSI');
+            } else {
+                $kodePPK = DB::table('aplikasi.instansi as ai')
+                    ->join('master.ppk as ppk', 'ai.PPK', '=', 'ppk.ID')
+                    ->value('ppk.KODE');
+
+                $pemetaanKodeTarif = [
+                    'RSAB' => '3174260',
+                    'RSCM' => '3173014',
+                    'RSD'  => '3174063',
+                    'RSJP' => '3174282',
+                ];
+                $kodeInacbgTarif = array_search((string) $kodePPK, $pemetaanKodeTarif, true);
+
+                if ($kodeInacbgTarif !== false) {
+                    $jenisTarif = DB::table('inacbg.inacbg')
+                        ->where('JENIS', 10)
+                        ->where('KODE', $kodeInacbgTarif)
+                        ->value('DESKRIPSI');
+                }
+            }
+
+            $specialItems = [
+                ['code' => $header->UNUSR_RAW, 'description' => $header->DESK_UNUSR, 'tariff' => $header->TARIFSR_RAW],
+                ['code' => $header->UNUSI_RAW, 'description' => $header->DESK_UNUSI, 'tariff' => $header->TARIFSI_RAW],
+                ['code' => $header->UNUSP_RAW, 'description' => $header->DESK_UNUSP, 'tariff' => $header->TARIFSP_RAW],
+                ['code' => $header->UNUSD_RAW, 'description' => $header->DESK_UNUSD, 'tariff' => $header->TARIFSD_RAW],
+            ];
+
+            $specialItems = array_values(array_filter($specialItems, function ($item) {
+                $value = trim((string) ($item['code'] ?? ''));
+                return $value !== '' && strcasecmp($value, 'None') !== 0 && strcasecmp($value, 'null') !== 0;
+            }));
+
+            $kodeSpesial = $specialItems
+                ? implode("\n", array_map(fn ($item) => ': ' . trim((string) $item['code']), $specialItems))
+                : ': -';
+            $deskripsiSpesial = $specialItems
+                ? implode("\n", array_map(fn ($item) => trim((string) ($item['description'] ?? '-')) ?: '-', $specialItems))
+                : '-';
+            $tarifSpesial = $specialItems
+                ? implode("\n", array_map(fn ($item) => number_format((float) ($item['tariff'] ?? 0), 2, ',', '.'), $specialItems))
+                : '0,00';
+            $rupiahSpesial = $specialItems
+                ? implode("\n", array_fill(0, count($specialItems), 'Rp'))
+                : 'Rp';
+
+            $unusaRaw = trim((string) ($header->UNUSA_RAW ?? ''));
+            $unuscRaw = trim((string) ($header->UNUSC_RAW ?? ''));
+            $unusa = ($unusaRaw === '' || strcasecmp($unusaRaw, 'None') === 0) ? '-' : $unusaRaw;
+            $unusc = ($unuscRaw === '' || strcasecmp($unuscRaw, 'None') === 0) ? '-' : $unuscRaw;
+            $tarifUnusa = ((float) ($header->TARIFUNUSA ?? 0) == 0.0) ? '0,00' : (string) $header->TARIFUNUSA;
+            $tarifUnusc = ((float) ($header->TARIFUNUSC ?? 0) == 0.0) ? '0,00' : (string) $header->TARIFUNUSC;
+
+            $nomorUrut = ((string) $header->PPK_INSTANSI !== '1') ? '' : (string) ($header->NOMOR_URUT_RAW ?? '');
+            $verifikator = ((int) ($header->PROFESI_VERIFIKATOR ?? 0) === 7 || empty($header->NIP_VERIFIKATOR))
+                ? ''
+                : (string) (DB::table('master.pegawai')
+                    ->where('NIP', $header->NIP_VERIFIKATOR)
+                    ->selectRaw('master.getNamaLengkapPegawai(NIP) as NAMA')
+                    ->first()?->NAMA ?? '');
+            $coder = empty($header->NIP_CODER)
+                ? ''
+                : (string) (DB::table('master.pegawai')
+                    ->where('NIP', $header->NIP_CODER)
+                    ->selectRaw('master.getNamaLengkapPegawai(NIP) as NAMA')
+                    ->first()?->NAMA ?? '');
+            $ruangRawat = ((int) $header->JENIS_KUNJUNGAN === 3)
+                ? (string) ($header->DESKRIPSI_RUANGAN_INAP ?? '')
+                : (string) ($header->DESKRIPSI_RUANGAN ?? '');
+
+            $tanggalRegistrasi = !empty($header->TGLREG)
+                ? Carbon::parse($header->TGLREG)->format('d/m/Y')
+                : '';
+            $tanggalLahir = !empty($header->TANGGAL_LAHIR)
+                ? Carbon::parse($header->TANGGAL_LAHIR)->format('d/m/Y')
+                : '';
+            $tanggalKeluar = (string) ($header->TGLKELUAR ?? '');
+
+            /* ================================================================
+            * 6. SIAPKAN NILAI UNTUK TEMPLATE WORD
+            * ================================================================ */
+            $values = [
+                'KODERS' => $header->KODERS ?? '',
+                'KELASRS' => $header->KELASRS ?? '',
+                'NAMAINSTANSI' => $header->NAMAINSTANSI ?? '',
+                'JENISTARIF' => $jenisTarif ?: 'TARIF RS KELAS C SWASTA',
+                'NORM' => $header->NORM ?? '',
+                'NAMALENGKAP' => $header->NAMALENGKAP ?? '',
+                'TANGGAL_LAHIR' => $tanggalLahir,
+                'UMURTAHUN' => $header->UMURTAHUN ?? '0',
+                'UMURHARI' => $header->UMURHARI ?? '0',
+                'JENISKELAMIN' => $header->JENISKELAMIN ?? '',
+                'NOKARTU' => $header->NOKARTU ?? '',
+                'NOPEN' => $header->NOPEN ?? '',
+                'TGLREG' => $tanggalRegistrasi,
+                'TGLKELUAR' => $tanggalKeluar,
+                'LOS' => $header->LOS ?? '',
+                'CARABAYAR' => $header->CARABAYAR ?? '',
+                'NOMORSEP' => $header->NOMORSEP ?? '',
+                'JENISPASIEN' => $header->JENISPASIEN ?? '',
+                'CARAPULANG' => $caraPulang ?: '-',
+                'BERATLAHIR' => (trim((string) ($header->BERATLAHIR ?? '')) === '' || strtolower(trim((string) $header->BERATLAHIR)) === 'null') ? '-' : $header->BERATLAHIR,
+                'KELASHAK' => $header->KELASHAK ?? '',
+                'KODEDIAGNOSAUTAMA' => $diagnosaUtamaKode ?: '-',
+                'DIAGNOSAUTAMA' => $diagnosaUtamaNama ?: '-',
+                'KODEDIAGNOSASEKUNDER' => $kodeDiagnosaSekunder ?: '-',
+                'DIAGNOSASEKUNDER' => $namaDiagnosaSekunder ?: '-',
+                'KODETINDAKAN' => $kodeTindakan ?: '-',
+                'TINDAKAN' => $namaTindakan ?: '-',
+                'ADLAKUT' => $header->ADLAKUT ?: '-',
+                'ADLKRONIK' => $header->ADLKRONIK ?: '-',
+                'INACBG' => $header->INACBG ?: '-',
+                'DESKRIPSIINACBG' => $header->DESKRIPSIINACBG ?: '-',
+                'ALOS' => $header->ALOS ?? '-',
+                'TARIFINACBG' => ($header->TARIFINACBG === null || $header->TARIFINACBG === '') ? '-' : (string) $header->TARIFINACBG,
+                'SPECIALPROSEDUR' => str_ireplace('None', '', implode('', array_map(fn ($item) => (string) ($item['code'] ?? ''), [
+                    ['code' => $header->UNUSR_RAW], ['code' => $header->UNUSI_RAW], ['code' => $header->UNUSP_RAW], ['code' => $header->UNUSD_RAW], ['code' => $header->UNUSA_RAW],
+                ]))),
+                'UNUSA' => $unusa,
+                'UNUSC' => $unusc,
+                'DESUNUSA' => $header->DESUNUSA ?: '-',
+                'DESUNUSC' => $header->DESUNUSC ?: '-',
+                'TARIFUNUSA' => $tarifUnusa,
+                'TARIFUNUSC' => $tarifUnusc,
+                'KODESPESIAL' => $kodeSpesial,
+                'DESKKODE' => $deskripsiSpesial,
+                'TARIFKODE' => $tarifSpesial,
+                'RPKODE' => $rupiahSpesial,
+                'BIAYARS' => $header->BIAYARS ?? '-',
+                'TOTALTARIFINACBG' => ($header->TOTALTARIFINACBG === null || $header->TOTALTARIFINACBG === '') ? '-' : (string) $header->TOTALTARIFINACBG,
+                'CATATAN' => $header->CATATAN ?? '',
+                'NO_URUT' => $nomorUrut,
+                'VERIFIKATOR' => $verifikator,
+                'CODER' => $coder,
+                'RUANG_RAWAT' => $ruangRawat,
+                'RUJUK' => $rujuk ?: '',
+                'GENERATED_AT' => Carbon::now('Asia/Jakarta')->format('d/m/Y H:i:s'),
+            ];
+
+            /* ================================================================
+            * 7. PATH TEMPLATE DAN PATH OUTPUT
+            * ================================================================ */
+            $templatePath = public_path('doc/klaim/individual/cetakBerkasIndividual.docx');
+
+            if (!File::exists($templatePath)) {
+                throw new \RuntimeException('Template Word tidak ditemukan: ' . $templatePath);
+            }
+
+            $tanggalPath = !empty($getSEP->TGLREG)
+                ? Carbon::parse($getSEP->TGLREG)
+                : Carbon::now('Asia/Jakarta');
+
+            $tgl = $tanggalPath->format('d');
+            $bulan = $tanggalPath->format('m');
+            $tahun = $tanggalPath->format('Y');
+            $relativePath = "files/klaim/{$tahun}/{$bulan}/{$tgl}/{$NODOKUMEN}_individual";
+            $outputDir = storage_path('app/public/' . dirname($relativePath));
+            $fileName = basename($relativePath);
+            $docxPath = $outputDir . DIRECTORY_SEPARATOR . $fileName . '.docx';
+            $pdfPath = $outputDir . DIRECTORY_SEPARATOR . $fileName . '.pdf';
+
+            File::ensureDirectoryExists($outputDir, 0755, true);
+
+            /* ================================================================
+            * 8. ISI TEMPLATE WORD
+            * ================================================================ */
+            $templateProcessor = new TemplateProcessor($templatePath);
+
+            $logoPath = public_path('doc/klaim/individual/kemenkesbaru.jpg');
+            if (File::exists($logoPath)) {
+                $templateProcessor->setImageValue('LOGO_KEMENKES', [
+                    'path' => $logoPath,
+                    'width' => 52,
+                    'height' => 57,
+                    'ratio' => true,
+                ]);
+            } else {
+                $templateProcessor->setValue('LOGO_KEMENKES', '');
+            }
+
+            $multilineKeys = [
+                'KODEDIAGNOSASEKUNDER',
+                'DIAGNOSASEKUNDER',
+                'KODETINDAKAN',
+                'TINDAKAN',
+                'KODESPESIAL',
+                'DESKKODE',
+                'TARIFKODE',
+                'RPKODE',
+            ];
+
+            foreach ($values as $key => $value) {
+                if (in_array($key, $multilineKeys, true)) {
+                    continue;
+                }
+                $templateProcessor->setValue($key, (string) ($value ?? ''));
+            }
+
+            $setMultiline = function (string $key, $value) use ($templateProcessor) {
+                $text = (string) ($value ?? '');
+                $lines = preg_split('/\r\n|\r|\n/', $text);
+                $run = new TextRun();
+                foreach ($lines as $index => $line) {
+                    if ($index > 0) {
+                        $run->addTextBreak();
+                    }
+                    $run->addText($line === '' ? ' ' : $line);
+                }
+                $templateProcessor->setComplexValue($key, $run);
+            };
+
+            foreach ($multilineKeys as $key) {
+                $setMultiline($key, $values[$key] ?? '-');
+            }
+
+            $templateProcessor->saveAs($docxPath);
+
+            if (!File::exists($docxPath) || File::size($docxPath) === 0) {
+                throw new \RuntimeException('Gagal membuat DOCX berkas individual.');
+            }
+
+            /* ================================================================
+            * 9. KONVERSI DOCX KE PDF MELALUI LIBREOFFICE
+            * ================================================================ */
+            if (File::exists($pdfPath)) {
+                File::delete($pdfPath);
+            }
+
+            [$pdfSuccess, $convertResult, $convertExitCode] = $this->libreOffice->generatePdf($docxPath, $outputDir);
+
+            if (!$pdfSuccess || !File::exists($pdfPath) || File::size($pdfPath) === 0) {
+                $convertLog = is_array($convertResult)
+                    ? implode(PHP_EOL, $convertResult)
+                    : (string) $convertResult;
+
+                throw new \RuntimeException(
+                    'PDF individual gagal dibuat oleh LibreOffice. Exit code: ' . $convertExitCode
+                    . ($convertLog !== '' ? '. Detail: ' . $convertLog : '')
+                    . '. Target: ' . $pdfPath
+                );
+            }
+
+            if (File::exists($docxPath)) {
+                File::delete($docxPath);
+            }
+
+            /* ================================================================
+            * 10. SIMPAN METADATA BERKAS KE simrspku_klaim.klaim_file
+            * ================================================================ */
+            $verify = klaim_file::where('nomor', $kunjungan)
+                ->where('jenis', 4)
+                ->where('status', true)
+                ->first();
+
+            if (!$verify) {
+                $post = new klaim_file();
+                $post->jenis = 4;
+                $post->nomor = $kunjungan;
+                $post->title = $fileName . '.pdf';
+                $post->filename = $relativePath . '.pdf';
+                $post->status = true;
+                $post->user = Auth::user()?->ID ?? Auth::id();
+                $post->save();
+            }
+
+            /* ================================================================
+            * 11. KEMBALIKAN FILE PDF
+            * ================================================================ */
+            return response()->file($pdfPath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $fileName . '.pdf"',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
+            ]);
+        } catch (\Throwable $e) {
+            if ($docxPath && File::exists($docxPath)) {
+                File::delete($docxPath);
+            }
+
+            report($e);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    // ====================================================================================================================================
     // =============================================================  SEP  ================================================================
     // ====================================================================================================================================
     public function generateSEP($kunjungan)
@@ -348,7 +1007,7 @@ class BerkasKlaimController extends Controller
             $tahun = $tglSEP->format('Y');
 
             $fileName = $NODOKUMEN . '_sep';
-            $relativePath = "files/sep/{$tahun}/{$bulan}/{$tgl}/{$fileName}";
+            $relativePath = "files/klaim/{$tahun}/{$bulan}/{$tgl}/{$fileName}";
             $output = storage_path('app/public/' . $relativePath);
             $outputDir = dirname($output);
             $finalPdf = $output . '.pdf';
@@ -2513,6 +3172,7 @@ class BerkasKlaimController extends Controller
 
                 DB::raw($rows . ' as `ROWS`'),
             ])
+            ->distinct()
             ->orderBy('ggl.ID')
             ->orderBy('kgl.ID')
             ->orderBy('mt.ID')
@@ -2995,16 +3655,17 @@ class BerkasKlaimController extends Controller
             | 10. GET TTD PETUGAS
             |--------------------------------------------------------------------------
             */
-            $ttd_petugas = DB::table('simrspku_klaim.tanda_tangan_pegawai')
-                ->where('nip', $header->NIP)
+            $ttd_petugas = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttd')
+                ->where('ttd.nip', $header->NIP)
                 // ->where('nip', 1912314)
-                ->where('status', 1)
-                ->whereNull('deleted_at')
+                ->where('ttd.status', 1)
+                ->whereNull('ttd.deleted_at')
+                // ->select('ttd.*', DB::raw('master.getNamaLengkapPegawai(ttd.nip) as nama_pegawai'))
                 ->inRandomOrder()
                 ->first();
 
             if (!$ttd_petugas) {
-                throw new \Exception('TTD petugas tidak ditemukan');
+                throw new \Exception("Tanda Tangan {$header->PENGGUNA} tidak ditemukan atau belum dilakukan Enrollment.");
             }
 
             if (

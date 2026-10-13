@@ -26,6 +26,27 @@
 
     <!-- [ Main Content ] start -->
     <div class="row">
+        <div class="col-md-12">
+            @if ($list['show']->JENIS_KUNJUNGAN == 'KONSUL')
+                @if ($list['show']->RUANGAN_KONSUL && $list['show']->DOKTER_KONSUL && $list['show']->NO_KUNJUNGAN_KONSUL && $list['show']->TGL_KUNJUNGAN_KONSUL)
+                    <div class="alert alert-warning d-flex align-items-center justify-content-between p-1 ps-2" role="alert">
+                        <div>
+                            <i class="ri-alert-line fs-20 me-2"></i> Kunjungan Pasien <span class="badge bg-warning badge-sm ms-1 me-1">KONSUL</span>
+                            Dari Ruangan {{ $list['show']->RUANGAN_KONSUL }} Oleh <b class="ms-1 me-1"><u>{{ $list['show']->DOKTER_KONSUL }}</u></b> Pada {{ \Carbon\Carbon::parse($list['show']->TGL_KUNJUNGAN_KONSUL)->translatedFormat('d F Y \P\u\k\u\l H:i:s') }} WIB
+                        </div>
+                        <a type="button" class="btn btn-warning btn-sm py-1" target="_blank" href="{{ route('v2.smartclaim.show', ['KUNJUNGAN' => $list['show']->NO_KUNJUNGAN_KONSUL] ) }}"><i class="ri-file-lock-line fs-20 me-1"></i> Lihat Klaim Berkas Kunjungan Utama</a>
+                    </div>
+                @else
+                    <div class="alert alert-warning d-flex align-items-center" role="alert">
+                        <i class="ri-alert-line me-2"></i> Kunjungan <span class="badge bg-warning-subtle text-warning border border-warning-subtle badge-sm ms-1 me-1">KONSUL</span> Pasien
+                    </div>
+                @endif
+            @else
+                {{-- <div class="alert alert-success d-flex align-items-center" role="alert">
+                    <i class="ri-shield-check-line me-2"></i> Kunjungan <span class="badge bg-primary badge-sm ms-1 me-1">UTAMA</span> Pasien
+                </div> --}}
+            @endif
+        </div>
         <div class="col-md-3">
             <div class="card mb-3">
                 <div class="card-body p-0">
@@ -133,7 +154,9 @@
                 <div class="card-body p-2">
                     <div class="row justify-content-between d-flex align-items-center p-2">
                         <div class="col-md-8 col-xl-8 col-xxl-8">
-                            <h5 class="mb-1 align-middle"><i class="ri-user-3-line me-1"></i> <b class="fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis Pasien">RM. {{ str_pad($list['show']->NORM, 8, '0', STR_PAD_LEFT) }}</b></h5>
+                            <h5 class="mb-1 d-flex align-items-center align-middle"><i class="ri-user-3-line me-1"></i> <b class="fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis Pasien">RM. {{ str_pad($list['show']->NORM, 8, '0', STR_PAD_LEFT) }}</b>
+                                @if ($list['show']->JENIS_KUNJUNGAN == 'UTAMA') <span class="badge bg-success badge-sm ms-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Kunjungan Pasien saat ini adalah Kunjungan Utama / Bukan Konsul">UTAMA</span> @endif
+                            </h5>
                             <h4 class="text-truncate mb-1 fw-bold">{{ $list['show']->NAMAPASIEN }}</h4>
                             <p class="text-truncate mb-1" style="font-size: 12px">
                                 <b>NOBPJS. <a class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kartu BPJS Pasien">{{ $list['show']->NOBPJS }}</a></b>
@@ -655,7 +678,7 @@
                                                         <li><button class="dropdown-item text-danger" id="btn-hapus-tambahan${item.id}" onclick="hapusTambahan(${item.id})"><i class="fas fa-trash me-1" style="font-size:13px"></i> Hapus</button></li>
                                                     </ul>
                                                 </div>
-                                                <a class="text-nowrap mt-1 text-dark" style="margin-left:auto;">${item.nama_tambahan}</a>
+                                                <a class="text-nowrap mt-1 text-dark" style="margin-left:auto;">${item.nama_tambahan ?? '<b class="text-warning"><s>Tidak Ada Nama</s></b>'}</a>
                                             </div>`;
                             }
                         });
@@ -889,7 +912,7 @@
 
                                                     </ul>
                                                 </div>
-                                                <a class="text-nowrap mt-1 text-dark" style="margin-left:auto;">${item.nama_tambahan}</a>
+                                                <a class="text-nowrap mt-1 text-dark" style="margin-left:auto;">${item.nama_tambahan ?? '<b class="text-warning"><s>Tidak Ada Nama</s></b>'}</a>
                                             </div>`;
                                 // console.log('muncul');
                             }
@@ -1118,6 +1141,89 @@
                 }
             })
         }
+
+        function individual(kunjungan) {
+            $('#ck_individual').prop('disabled', true);
+
+            $('#preview').empty().append(`
+                <div id="loading-individual" class="">
+                    <div class="spinner-grow align-middle me-2" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+                </div>
+            `);
+
+            const fileURL = `/api/v2/generate/individual/${kunjungan}`;
+
+            const iframe = $(`
+                <iframe
+                    width="100%"
+                    height="500px"
+                    frameborder="0"
+                    style="display: none;">
+                </iframe>
+            `);
+
+            iframe.on('load', function () {
+                $('#loading-individual').remove();
+                $(this).show();
+
+                $('#ck_individual').prop('disabled', false);
+            });
+
+            iframe.on('error', function () {
+                $('#ck_individual')
+                    .prop('checked', false)
+                    .prop('disabled', false);
+
+                $('#preview').empty().append(`
+                    Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+                `);
+            });
+
+            // Masukkan iframe tanpa menghapus spinner.
+            $('#preview').append(iframe);
+
+            // Mulai memuat PDF setelah iframe berada di DOM.
+            iframe.attr('src', fileURL);
+        }
+        // function individual(kunjungan) {
+        //     $('#ck_individual').prop('disabled',true);
+        //     $('#preview').empty().append(`
+        //         <div class="spinner-grow align-middle me-2" role="status">
+        //             <span class="sr-only">Loading...</span>
+        //         </div>
+        //         Area ini akan menampilkan Preview Berkas Klaim yang dipilih
+        //     `);
+
+        //     // AJAX FETCH
+        //     fetch("/api/pasien/"+kunjungan+"/individual")
+        //     .then(response => {
+        //         if (!response.ok) {
+        //             throw new Error('File tidak ditemukan atau gagal diambil.');
+        //         }
+        //         return response.blob();
+        //     })
+        //     .then(blob => {
+        //         // Buat object URL dari blob
+        //         const fileURL = URL.createObjectURL(blob);
+
+        //         // Tampilkan ke iframe dalam modal
+        //         $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
+        //         $('#ck_individual').prop('disabled',false);
+        //     })
+        //     .catch(error => {
+        //         iziToast.error({
+        //             title: 'Maaf!',
+        //             message: error.message ?? "Data Individual tidak ditemukan atau belum dibuatkan oleh Simgos.",
+        //             position: 'topRight'
+        //         });
+        //         console.error(error);
+        //         $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
+        //         $('#ck_individual').prop('checked', false).prop('disabled',false);
+        //     });
+        // }
 
         function sep(kunjungan) {
             $('#ck_sep').prop('disabled', true);
@@ -1413,43 +1519,6 @@
         //         $('#ck_billing').prop('checked', false).prop('disabled',false);
         //     });
         // }
-
-        function individual(kunjungan) {
-            $('#ck_individual').prop('disabled',true);
-            $('#preview').empty().append(`
-                <div class="spinner-grow align-middle me-2" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-                Area ini akan menampilkan Preview Berkas Klaim yang dipilih
-            `);
-
-            // AJAX FETCH
-            fetch("/api/pasien/"+kunjungan+"/individual")
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('File tidak ditemukan atau gagal diambil.');
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                // Buat object URL dari blob
-                const fileURL = URL.createObjectURL(blob);
-
-                // Tampilkan ke iframe dalam modal
-                $('#preview').empty().html(`<iframe src="${fileURL}" width="100%" height="500px" frameborder="0"></iframe>`);
-                $('#ck_individual').prop('disabled',false);
-            })
-            .catch(error => {
-                iziToast.error({
-                    title: 'Maaf!',
-                    message: error.message ?? "Data Individual tidak ditemukan atau belum dibuatkan oleh Simgos.",
-                    position: 'topRight'
-                });
-                console.error(error);
-                $('#preview').empty().append(`Area ini akan menampilkan Preview Berkas Klaim yang dipilih`);
-                $('#ck_individual').prop('checked', false).prop('disabled',false);
-            });
-        }
 
         function laboratorium(kunjungan) {
             $('#ck_laboratorium').prop('disabled', true);

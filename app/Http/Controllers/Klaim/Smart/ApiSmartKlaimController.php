@@ -145,7 +145,7 @@ class ApiSmartKlaimController extends Controller
                                 $prefix = ['1020201%'];
                                 break;
                             case 3:
-                                $prefix = ['1020301%'];
+                                $prefix = ['1020301%','1020302%'];
                                 break;
                         }
 
@@ -160,6 +160,7 @@ class ApiSmartKlaimController extends Controller
                             $q->where('pk.RUANGAN', 'LIKE', '1020101%')
                                 ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
                                 ->orWhere('pk.RUANGAN', 'LIKE', '1020301%')
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020302%')
                                 ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
                         });
                     })

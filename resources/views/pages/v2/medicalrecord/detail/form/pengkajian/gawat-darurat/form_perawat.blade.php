@@ -35,6 +35,7 @@
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_humpty_dumpty', ['section' => '#gd_perawat'])
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_skala_morse', ['section' => '#gd_perawat'])
                     @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_epfra', ['section' => '#gd_perawat'])
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_gtg', ['section' => '#gd_perawat'])
                 </div>
             </div>
             <div class="col-md-12">
