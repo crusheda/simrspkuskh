@@ -1637,7 +1637,7 @@ class BerkasKlaimController extends Controller
                     ->first();
 
                 if (!$ttd_analis) {
-                    throw new \Exception('TTD analis tidak ditemukan');
+                    throw new \Exception("TTD {$namaAnalis} (Analis) tidak ditemukan atau belum melakukan Enrollment pada menu Profil");
                 }
 
                 if (
@@ -1655,7 +1655,7 @@ class BerkasKlaimController extends Controller
                     );
                 } else {
                     throw new \Exception(
-                        'File TTD analis tidak ditemukan: '
+                        "File TTD {$namaAnalis} (Analis) tidak ditemukan: "
                         . $ttd_analis->signature_path
                     );
                 }
@@ -1673,7 +1673,7 @@ class BerkasKlaimController extends Controller
                 // dd($getLabValue($lab,'NIPDPJP'));
 
                 // if (!$ttd_dokter) {
-                //     throw new \Exception('TTD Dokter Laboratorium tidak ditemukan');
+                //     throw new \Exception("TTD Dokter Laboratorium ({$getLabValue($lab,'NIPDPJP')}) tidak ditemukan atau belum melakukan Enrollment pada menu Profil");
                 // }
 
                 // if (
@@ -1695,6 +1695,8 @@ class BerkasKlaimController extends Controller
                 //         . $ttd_dokter->signature_path
                 //     );
                 // }
+
+                // TTD DOKTER LABORATORIUM STATIC
                 $ttd_dokter = public_path() . "/doc/input/laborat/ttd-dokter.png";
 
                 if (File::exists($ttd_dokter)) {
