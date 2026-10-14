@@ -3681,7 +3681,7 @@ class BerkasKlaimController extends Controller
                     Storage::disk('public')->path(
                         $ttd_petugas->signature_path
                     ),
-                    00
+                    150
                 );
             } else {
                 throw new \Exception(
