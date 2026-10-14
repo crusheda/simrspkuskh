@@ -391,6 +391,7 @@ const searchEMR = () => {
 
             let statusClass = '';
             let statusName = '';
+            let clrTextPjm = '';
 
             if (item.STATUSKUNJUNGAN == 1) {
                 statusClass = 'bg-success-subtle text-success';
@@ -403,6 +404,13 @@ const searchEMR = () => {
                 statusName = 'Batal';
             }
 
+            if(item.IDPENJAMIN == 1) {
+                clrTextPjm = 'text-warning';
+            } else if(item.IDPENJAMIN == 2) {
+                clrTextPjm = 'text-success';
+            } else {
+                clrTextPjm = 'text-dark';
+            }
 
             html += `
                 <tr class="js-search-kunjungan cursor-pointer" data-kunjungan="${item.NOKUNJUNGAN}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Klik untuk melihat EMR Pasien">
@@ -434,7 +442,7 @@ const searchEMR = () => {
                     <td style="width: 25%; max-width: 150px;">
                         <h5 class="fw-semibold mb-1">${item.NAMARUANGAN ?? '-'}</h5>
                         <p class="text-truncate mb-0">${item.NAMADOKTER ?? ''}</p>
-                        <p class="text-truncate"><b>Penjamin</b> : ${item.NAMAPENJAMIN ?? ''}</p>
+                        <p class="text-truncate"><b>Penjamin</b> : <b class="${clrTextPjm}">${item.NAMAPENJAMIN ?? ''}</b></p>
                     </td>
 
                     <td style="width: 15%;">

@@ -175,16 +175,99 @@ class EMRController extends Controller
         }
     }
 
-    function indexV2() // SIRMED v.2
+    public function indexV2() // SIRMED v2
     {
         $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
 
-        $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')->where('nip',Auth::user()->NIP)->whereNull('deleted_at')->exists();
+        $user = Auth::user();
+
+        $tte_pegawai = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+            ->where('nip', $user->NIP)
+            ->whereNull('deleted_at')
+            ->exists();
+
+        // Daftar kategori dan prefix ruangan
+        $kategoriRuangan = [
+            1 => ['10201', '10207'],
+            2 => ['10202'],
+            3 => ['10203'],
+            4 => ['10208'],
+        ];
+
+        // Admin mendapatkan seluruh pilihan
+        if ($user->hasRole('admin')) {
+            $jenisPerawatan = [
+                1 => 'Rawat Jalan',
+                2 => 'Rawat Darurat (Tanpa Inap)',
+                3 => 'Rawat Inap & Intensif',
+                4 => 'Operatif (OK)',
+                5 => 'Semua Perawatan',
+            ];
+        } else {
+            // Ambil seluruh akses ruangan aktif milik pengguna
+            $aksesRuangan = DB::table('aplikasi.pengguna_akses_ruangan')
+                ->where('PENGGUNA', $user->ID)
+                ->where('STATUS', 1)
+                ->pluck('RUANGAN')
+                ->map(fn ($ruangan) => (string) $ruangan)
+                ->unique()
+                ->values()
+                ->all();
+
+            $punyaAksesKategori = [];
+
+            foreach ($kategoriRuangan as $kategori => $prefixes) {
+                $punyaAksesKategori[$kategori] = false;
+
+                foreach ($aksesRuangan as $ruangan) {
+                    foreach ($prefixes as $prefix) {
+                        // Akses ke ruangan induk maupun turunannya
+                        if (
+                            str_starts_with($ruangan, $prefix) ||
+                            str_starts_with($prefix, $ruangan)
+                        ) {
+                            $punyaAksesKategori[$kategori] = true;
+                            break 2;
+                        }
+                    }
+                }
+            }
+
+            $jenisPerawatan = [];
+
+            // Opsi 1–4 hanya muncul jika pengguna memiliki akses
+            $namaKategori = [
+                1 => 'Rawat Jalan',
+                2 => 'Rawat Darurat (Tanpa Inap)',
+                3 => 'Rawat Inap & Intensif',
+                4 => 'Operatif (OK)',
+            ];
+
+            foreach ($namaKategori as $kategori => $nama) {
+                if ($punyaAksesKategori[$kategori]) {
+                    $jenisPerawatan[$kategori] = $nama;
+                }
+            }
+
+            // Opsi 5 muncul jika:
+            // 1. Pengguna memiliki akses ke ruangan induk 102; atau
+            // 2. Pengguna memiliki akses ke seluruh kategori 1–4.
+            $aksesRuanganInduk = in_array('102', $aksesRuangan, true);
+
+            $aksesSemuaKategori = !in_array(false, $punyaAksesKategori, true);
+
+            if ($aksesRuanganInduk || $aksesSemuaKategori) {
+                $jenisPerawatan[5] = 'Semua Perawatan';
+            }
+
+            // Urutkan berdasarkan value opsi
+            ksort($jenisPerawatan);
+        }
 
         $data = [
             'yearMonth' => $yearMonth,
-            // 'dr' => $dr,
             'tte_pegawai' => $tte_pegawai,
+            'jenisPerawatan' => $jenisPerawatan,
         ];
 
         return view('pages.v2.medicalrecord.index')->with('list', $data);
@@ -809,33 +892,53 @@ class EMRController extends Controller
             ]);
         }
 
+        $user = auth()->user();
+
+        // Admin dapat mengakses semua ruangan.
+        // Sesuaikan 'admin' jika nama role admin di Spatie berbeda.
+        $isAdmin = $user->hasRole('admin');
+
         $data = DB::table('pendaftaran.pendaftaran as pp')
-            ->join('pendaftaran.kunjungan as pk', function($join) {
+            ->join('pendaftaran.kunjungan as pk', function ($join) {
                 $join->on('pk.NOPEN', '=', 'pp.NOMOR')
                     ->where('pk.STATUS', '!=', 0);
             })
-            ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
-            ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'pk.RUANGAN')
-            ->leftJoin('pendaftaran.penjamin AS pj', 'pj.NOPEN', '=', 'pp.NOMOR')
-            ->leftJoin('master.dokter AS dr', 'dr.ID', '=', 'pk.DPJP')
-            ->leftJoin('master.referensi AS ref', function($join){
-                $join->on('ref.ID','=','pj.JENIS')
+            ->leftJoin('master.pasien as ps', 'ps.NORM', '=', 'pp.NORM')
+            ->leftJoin('master.ruangan as ru', 'ru.ID', '=', 'pk.RUANGAN')
+            ->leftJoin('pendaftaran.penjamin as pj', 'pj.NOPEN', '=', 'pp.NOMOR')
+            ->leftJoin('master.dokter as dr', 'dr.ID', '=', 'pk.DPJP')
+            ->leftJoin('master.referensi as ref', function ($join) {
+                $join->on('ref.ID', '=', 'pj.JENIS')
                     ->where('ref.STATUS', 1)
                     ->where('ref.JENIS', 10);
             })
             ->where('pp.NORM', $norm)
             ->where('pp.STATUS', '!=', 0)
+
+            // Filter ruangan yang diizinkan untuk pencarian EMR
             ->where(function ($q) {
                 $q->where('pk.RUANGAN', 'LIKE', '10201%')
-                ->orWhere('pk.RUANGAN', 'LIKE', '10202%')
-                ->orWhere('pk.RUANGAN', 'LIKE', '10203%')
-                ->orWhere('pk.RUANGAN', 'LIKE', '10207%');
+                    ->orWhere('pk.RUANGAN', 'LIKE', '10202%')
+                    ->orWhere('pk.RUANGAN', 'LIKE', '10203%')
+                    ->orWhere('pk.RUANGAN', 'LIKE', '10207%');
             })
+
+            // Pembatasan akses ruangan untuk non-admin
+            ->when(!$isAdmin, function ($query) use ($user) {
+                $query->whereExists(function ($subquery) use ($user) {
+                    $subquery->select(DB::raw(1))
+                        ->from('aplikasi.pengguna_akses_ruangan as par')
+                        ->whereColumn('par.RUANGAN', 'pk.RUANGAN')
+                        ->where('par.PENGGUNA', $user->ID)
+                        ->where('par.STATUS', 1);
+                });
+            })
+
             ->select([
                 'pp.NORM',
                 DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                 DB::raw('master.getAlamatPasienCustom(ps.NORM) AS ALAMATPASIEN'),
-                DB::raw('master.getCariUmur(pp.TANGGAL,ps.TANGGAL_LAHIR) AS UMURPASIEN'),
+                DB::raw('master.getCariUmur(pp.TANGGAL, ps.TANGGAL_LAHIR) AS UMURPASIEN'),
                 'pp.NOMOR as NOPENDAFTARAN',
                 'pp.TANGGAL as TGLDAFTAR',
                 'pk.MASUK as TGLMASUK',
@@ -843,6 +946,7 @@ class EMRController extends Controller
                 'pk.NOMOR as NOKUNJUNGAN',
                 'pk.MASUK as TGLKUNJUNGAN',
                 'ru.DESKRIPSI as NAMARUANGAN',
+                'ref.ID AS IDPENJAMIN',
                 'ref.DESKRIPSI AS NAMAPENJAMIN',
                 DB::raw("
                     master.getNamaLengkapPegawai(

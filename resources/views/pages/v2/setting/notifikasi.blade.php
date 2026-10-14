@@ -39,22 +39,30 @@
                             </p>
                         </div>
 
-                        <button type="button"
-                            class="btn btn-sm btn-outline-warning"
-                            onclick="getData()"
-                            id="btn-refresh-notifikasi">
+                        <div class="input-group input-group-sm w-auto" >
+                            <select class="form-select form-select-sm"
+                                id="filter-notifikasi-status">
 
-                            <i class="fas fa-sync-alt me-1"></i>
-                            Segarkan
-                        </button>
+                                <option value="">Semua Status</option>
+                                <option value="1" selected>Pending</option>
+                                <option value="0">Selesai</option>
+                            </select>
+                            <button type="button"
+                                class="btn btn-sm btn-outline-warning"
+                                onclick="getData()"
+                                id="btn-refresh-notifikasi">
+
+                                <i class="fas fa-sync-alt me-1"></i>
+                                Muat Ulang
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="card-body pt-0">
 
                     <div class="table-responsive">
-                        <table class="table table-borderless table-hover align-middle"
-                            id="table-notifikasi">
+                        <table class="table table-borderless table-hover align-middle" id="table-notifikasi">
 
                             <thead>
                                 <tr>
@@ -103,7 +111,7 @@
 
             <div class="modal-header">
                 <h5 class="modal-title">
-                    Detail Notifikasi
+                    <i class="ri-notification-line me-2"></i> Detail Notifikasi
                 </h5>
 
                 <button type="button"
@@ -134,11 +142,11 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label text-muted mb-1">
-                            Catatan
+                        <label class="form-label text-muted d-flex align-items-center mb-1">
+                            <i class="ri-alert-line text-danger fs-20 me-1"></i> Catatan
                         </label>
                         <div id="detailDeskripsi"
-                            class="border rounded p-3">
+                            class="border border-danger border-dashed rounded p-3">
                         </div>
                     </div>
                     <div class="row">
@@ -163,9 +171,21 @@
             </div>
 
             <div class="modal-footer d-flex justify-content-between">
-                <a href="javascript:void(0);" class="btn btn-sm btn-subtle-primary" id="btn-lihat-kunjungan" target="_blank">
-                    <i class="ri-git-repository-line me-1"></i> Lihat Kunjungan Pasien
-                </a>
+                <div class="d-flex gap-2">
+                    <a href="javascript:void(0);" class="btn btn-sm btn-subtle-primary" id="btn-lihat-kunjungan" target="_blank">
+                        <i class="ri-git-repository-line me-1"></i> Lihat Kunjungan Pasien
+                    </a>
+                    @can('smart_claim')
+                        <a href="javascript:void(0);" class="btn btn-sm btn-subtle-danger" id="btn-lihat-klaim" target="_blank">
+                            <i class="ri-git-repository-line me-1"></i> Lihat Berkas Klaim Pasien
+                        </a>
+                    @endcan
+                    @can('smart_claim_farmasi')
+                        <a href="javascript:void(0);" class="btn btn-sm btn-subtle-warning" id="btn-lihat-klaim-farmasi" target="_blank">
+                            <i class="ri-git-repository-line me-1"></i> Lihat Berkas Klaim Farmasi Pasien
+                        </a>
+                    @endcan
+                </div>
                 <button type="button"
                     class="btn btn-subtle-secondary"
                     data-bs-dismiss="modal">
@@ -202,8 +222,9 @@
 
     function getData() {
 
-        if (tableNotifikasi) {
+        if ($.fn.DataTable.isDataTable('#table-notifikasi')) {
             tableNotifikasi.destroy();
+            tableNotifikasi = null;
         }
 
         const $tbody = $('#table-notifikasi-body');
@@ -213,7 +234,9 @@
             url: "/api/v2/notifikasi/data",
             type: 'GET',
             dataType: 'json',
-
+            data: {
+                status: $('#filter-notifikasi-status').val()
+            },
             beforeSend: function () {
                 $btnRefresh.prop('disabled', true).find('i').addClass('fa-spin');
                 $tbody.html(`
@@ -226,9 +249,8 @@
                 `);
             },
             success: function (res) {
-                $tbody.empty();
-                if (!res.status || !Array.isArray(res.data) || !res.data.length) {
-                    $tbody.html(`
+                if (!res.status || !Array.isArray(res.data) || res.data.length == 0) {
+                    $tbody.empty().html(`
                         <tr>
                             <td colspan="6" class="text-center text-muted py-4">
                                 <i class="fas fa-bell-slash fs-3 d-block mb-2"></i>
@@ -238,6 +260,8 @@
                     `);
                     return;
                 }
+
+                $tbody.empty();
 
                 let totalNotifikasiPending = 0;
                 let totalNotifikasiSelesai = 0;
@@ -377,6 +401,8 @@
         const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
         const $btnShowDetail = $(`#btn-detail-${id}`);
         const $btnLihatKunjungan = $('#btn-lihat-kunjungan');
+        const $btnLihatKlaim = $('#btn-lihat-klaim');
+        const $btnLihatKlaimFarmasi = $('#btn-lihat-klaim-farmasi');
 
         $('#detailNotifikasiLoading').removeClass('d-none');
         $('#detailNotifikasiContent').addClass('d-none');
@@ -394,7 +420,9 @@
             dataType: 'json',
             beforeSend: function () {
                 $btnShowDetail.prop('disabled', true).find('i').removeClass('fa-eye').addClass('fa-sync fa-spin');
-                $btnLihatKunjungan.prop('disabled',true);
+                $btnLihatKunjungan.prop('disabled',true).attr('href', 'javascript:void(0);');
+                $btnLihatKlaim.prop('disabled',true).attr('href', 'javascript:void(0);');
+                $btnLihatKlaimFarmasi.prop('disabled',true).attr('href', 'javascript:void(0);');
             },
             success: function (res) {
 
@@ -414,7 +442,9 @@
 
                 const unit = getNamaUnit(item.unit);
 
-                $btnLihatKunjungan.prop('disabled',false).attr('href', `/v2/emr/${item.nomor}` || 'javascript:void(0);');
+                $btnLihatKunjungan.attr('href', `/v2/emr/${item.nomor}` || 'javascript:void(0);');
+                $btnLihatKlaim.attr('href', `/v2/klaim/${item.nomor}` || 'javascript:void(0);');
+                $btnLihatKlaimFarmasi.attr('href', `/v2/klaim/${item.nomor}/farmasi` || 'javascript:void(0);');
 
                 let html = '';
                 html += `<div class="row">
@@ -514,6 +544,9 @@
             },
             complete: function () {
                 $btnShowDetail.prop('disabled', false).find('i').removeClass('fa-sync fa-spin').addClass('fa-eye');
+                $btnLihatKunjungan.prop('disabled',false);
+                $btnLihatKlaim.prop('disabled',false);
+                $btnLihatKlaimFarmasi.prop('disabled',false);
             }
         });
     }

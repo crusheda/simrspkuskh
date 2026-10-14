@@ -178,16 +178,20 @@ class ApiSmartKlaimController extends Controller
                     //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                     // })
                     ->when($tgls !== '0' && $tgle !== '0' && $bln === '0', function ($query) use ($tgls, $tgle) {
-                        // PRIORITAS: Jika filter tanggal tersedia → gunakan ini
-                        $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
+                        $query->where('pk.MASUK', '>=', $tgls . ' 00:00:00')
+                            ->where('pk.MASUK', '<', Carbon::parse($tgle)->addDay()->toDateString() . ' 00:00:00');
                     })
-                    ->when($tgls === '0' && $tgle === '0' && $bln !== '0', function ($query) use ($bln) { //  && strpos($bln, '-') !== false
-                        // HANYA jika tanggal tidak tersedia dan bulan valid → gunakan bulan
+                    ->when($tgls === '0' && $tgle === '0' && $bln !== '0', function ($query) use ($bln) {
                         [$year, $month] = explode('-', $bln);
-                        $query->whereYear('pk.MASUK', $year)
-                            ->whereMonth('pk.MASUK', $month);
-                    })
 
+                        $startDate = Carbon::createFromDate((int) $year, (int) $month, 1)
+                            ->startOfDay();
+
+                        $endDate = $startDate->copy()->addMonth();
+
+                        $query->where('pk.MASUK', '>=', $startDate)
+                            ->where('pk.MASUK', '<', $endDate);
+                    })
 
                     // KHUSUS RAWAT DARURAT
                     ->when($pel == 2, function ($query) use ($pel) {

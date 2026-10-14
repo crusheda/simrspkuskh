@@ -97,6 +97,8 @@ class NotifikasiController extends Controller
 
     public function getData(Request $request)
     {
+        $status = $request->get('status');
+
         $user = Auth::user();
         $isAdmin = $user->hasRole('admin');
 
@@ -109,7 +111,9 @@ class NotifikasiController extends Controller
         $unitUser = array_map('strval', $unitUser);
 
         $data = klaim_verifikasi_catatan::whereNull('deleted_at')
-            ->where('status', 1)
+            ->when($status !== null, function ($query) use ($status) {
+                return $query->where('status', $status);
+            })
             // ->where('solved', 0)
             ->orderByDesc('updated_at')
             ->get([

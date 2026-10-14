@@ -39,13 +39,16 @@
                         <div class="col-md-3 mb-3">
                             <div class="form-group">
                                 <label class="form-label">Jenis Perawatan</label>
+
                                 <select id="filter_rawat" class="form-control" onchange="getRuangan()">
-                                    <option value="5" selected>Semua Perawatan</option>
-                                    <option value="1">Rawat Jalan</option>
-                                    <option value="2">Rawat Darurat (Tanpa Inap)</option>
-                                    {{-- <option value="">Rawat Darurat (Rencana Inap)</option> --}}
-                                    <option value="3">Rawat Inap & Intensif</option>
-                                    <option value="4">Operatif (OK)</option>
+                                    @foreach ($list['jenisPerawatan'] as $value => $label)
+                                        <option
+                                            value="{{ $value }}"
+                                            {{ $value == 5 ? 'selected' : '' }}
+                                        >
+                                            {{ $label }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>

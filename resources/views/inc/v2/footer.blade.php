@@ -1,7 +1,10 @@
 <footer class="footer-wrapper bg-body">
     <div class="container-fluid mt-1">
         <div class="row g-2">
-            <p class="mb-0">Dibuat dengan <a href="javascript:void(0);" class="text-danger">♥</a> oleh <b>Tim Programmer RS PKU Muhammadiyah Sukoharjo</b></p>
+            <p class="mb-0">Dibuat dengan <a href="javascript:void(0);" class="text-danger">♥</a>
+                untuk <b>RS PKU Muhammadiyah Sukoharjo</b>
+                {{-- oleh <b>Tim Programmer RS PKU Muhammadiyah Sukoharjo</b> --}}
+            </p>
             {{-- <div class="col-lg-6 col-md-7 text-center text-md-start">
             </div> --}}
             {{-- <div class="col-lg-6 col-md-5 justify-content-md-end text-center text-md-end">
