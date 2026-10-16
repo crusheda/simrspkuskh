@@ -9595,7 +9595,7 @@ class AddOnPengkajianController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Materi Edukasi berhasil diperbarui.'
+                'message' => 'Pemeriksaan Fisik berhasil diperbarui.'
             ], 200);
 
         } catch (\Throwable $e) {
@@ -9604,7 +9604,7 @@ class AddOnPengkajianController extends Controller
 
             return response()->json([
                 'status' => false,
-                'message' => 'Data Materi Edukasi gagal disimpan.',
+                'message' => 'Data Pemeriksaan Fisik gagal disimpan.',
                 'error' => $e->getMessage(),
             ], 500);
         }
