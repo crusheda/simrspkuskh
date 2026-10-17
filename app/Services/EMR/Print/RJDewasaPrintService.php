@@ -628,33 +628,837 @@ class RJDewasaPrintService implements PrintDataInterface
      * PERAWAT
      * ========================================================================
      */
-    private function getDataPerawat(
-        string $kunjungan
-    ): array {
-
-        $data = DB::table(
-            'simrspku_pengkajian.pengkajian_rajal_dewasa'
+    private function getDataPerawat(string $kunjungan): array
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | TTD USER FINALISASI
+        |--------------------------------------------------------------------------
+        */
+        $finalisasi_dokter = DB::table(
+            'simrspku_pengkajian.finalisasi as fin'
         )
-            ->where('KUNJUNGAN', $kunjungan)
+            ->leftJoin('aplikasi.pengguna as usr', 'usr.ID', '=', 'fin.USER_CREATED')
+            ->select('fin.*', 'usr.NIP as NIP_USER_FINALISASI', DB::raw('master.getNamaLengkapPegawai(usr.NIP) as NAMA_USER_FINALISASI'))
+            ->where('fin.KUNJUNGAN', $kunjungan)
+            ->where('fin.FORM', 'pengkajian-rajal-dewasa')
+            ->where('fin.SUB', 'DOKTER')
+            ->where('fin.STATUS', 2)
             ->first();
 
-        if (!$data) {
-            return [];
+        $ttd_finalisasi_dokter = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+            ->where('nip', $finalisasi_dokter->NIP_USER_FINALISASI)
+            // ->where('nip', 1912314)
+            ->where('status', 1)
+            ->whereNull('deleted_at')
+            ->inRandomOrder()
+            ->first();
+
+        $finalisasi = DB::table(
+            'simrspku_pengkajian.finalisasi as fin'
+        )
+            ->leftJoin('aplikasi.pengguna as usr', 'usr.ID', '=', 'fin.USER_CREATED')
+            ->select('fin.*', 'usr.NIP as NIP_USER_FINALISASI', DB::raw('master.getNamaLengkapPegawai(usr.NIP) as NAMA_USER_FINALISASI'))
+            ->where('fin.KUNJUNGAN', $kunjungan)
+            ->where('fin.FORM', 'pengkajian-rajal-dewasa')
+            ->where('fin.SUB', 'PERAWAT')
+            ->where('fin.STATUS', 2)
+            ->first();
+
+        $ttd_finalisasi = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+            ->where('nip', $finalisasi->NIP_USER_FINALISASI)
+            // ->where('nip', 1912314)
+            ->where('status', 1)
+            ->whereNull('deleted_at')
+            ->inRandomOrder()
+            ->first();
+
+        /*
+        |--------------------------------------------------------------------------
+        | ANAMNESIS DIPEROLEH
+        |--------------------------------------------------------------------------
+        */
+        $anamnesisDiperoleh = DB::table(
+            'medicalrecord.anamnesis_diperoleh'
+        )
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first([
+                'AUTOANAMNESIS',
+                'ALLOANAMNESIS',
+                'DARI',
+            ]);
+
+        $anamnesis = [];
+
+        if ($anamnesisDiperoleh) {
+            // $anamnesis[] = (int) $anamnesisDiperoleh->AUTOANAMNESIS;
+            if ((int) $anamnesisDiperoleh->AUTOANAMNESIS === 1) {
+                $anamnesis[] = 'Autoanamnesis';
+            }
+
+            if ((int) $anamnesisDiperoleh->ALLOANAMNESIS === 1) {
+                $dari = $this->value($anamnesisDiperoleh->DARI);
+
+                $anamnesis[] = 'Alloanamnesis'
+                    . ($dari !== '' ? " dari {$dari}" : '');
+            }
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | KELUHAN UTAMA
+        |--------------------------------------------------------------------------
+        */
+
+        $keluhanUtama = DB::table('medicalrecord.keluhan_utama')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->value('DESKRIPSI');
+
+        /*
+        |--------------------------------------------------------------------------
+        | RIWAYAT PENYAKIT SEKARANG
+        |--------------------------------------------------------------------------
+        */
+
+        $riwayatPenyakitSekarang = DB::table('medicalrecord.anamnesis')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->value('DESKRIPSI');
+
+        /*
+        |--------------------------------------------------------------------------
+        | RIWAYAT PENYAKIT DAHULU
+        |--------------------------------------------------------------------------
+        */
+
+        $riwayatPenyakitDahulu = DB::table('medicalrecord.rpp')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->value('DESKRIPSI');
+
+        /*
+        |--------------------------------------------------------------------------
+        | RIWAYAT PENYAKIT KELUARGA
+        |--------------------------------------------------------------------------
+        */
+
+        $riwayatKeluarga = DB::table(
+            'medicalrecord.riwayat_penyakit_keluarga'
+        )
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first([
+                'HIPERTENSI',
+                'DIABETES_MELITUS',
+                'PENYAKIT_JANTUNG',
+                'ASMA',
+                'LAINNYA',
+            ]);
+
+        $daftarRiwayatKeluarga = [];
+
+        if ($riwayatKeluarga) {
+            if ((int) $riwayatKeluarga->HIPERTENSI === 1) {
+                $daftarRiwayatKeluarga[] = 'Hipertensi';
+            }
+
+            if ((int) $riwayatKeluarga->DIABETES_MELITUS === 1) {
+                $daftarRiwayatKeluarga[] = 'Diabetes Melitus';
+            }
+
+            if ((int) $riwayatKeluarga->PENYAKIT_JANTUNG === 1) {
+                $daftarRiwayatKeluarga[] = 'Penyakit Jantung';
+            }
+
+            if ((int) $riwayatKeluarga->ASMA === 1) {
+                $daftarRiwayatKeluarga[] = 'Asma';
+            }
+
+            $lainnya = $this->value($riwayatKeluarga->LAINNYA);
+
+            if ($lainnya !== '') {
+                $daftarRiwayatKeluarga[] = $lainnya;
+            }
+        }
+        /*
+        |--------------------------------------------------------------------------
+        | TANDA VITAL
+        |--------------------------------------------------------------------------
+        */
+
+        $tandaVital = DB::table('medicalrecord.tanda_vital')
+            ->where('KUNJUNGAN', $kunjungan)
+            // ->where('PPA', 1)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first([
+                'KEADAAN_UMUM',
+                'SISTOLIK',
+                'DISTOLIK',
+                'FREKUENSI_NADI',
+                'FREKUENSI_NADI_CB',
+                'SUHU',
+                'SATURASI_O2',
+                'FREKUENSI_NAFAS',
+                'FREKUENSI_NAFAS_CB',
+                'EYE',
+                'VERBAL',
+                'MOTORIK',
+                'GCS',
+            ]);
+
+        $nutrisi = DB::table('medicalrecord.nutrisi')
+            ->where('KUNJUNGAN', $kunjungan)
+            // ->where('PPA', 1)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first([
+                'BERAT_BADAN',
+                'TINGGI_BADAN',
+                'INDEX_MASSA_TUBUH',
+            ]);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FORMAT TANDA VITAL
+        |--------------------------------------------------------------------------
+        */
+
+        $tekananDarah = '-';
+
+        if (
+            $tandaVital &&
+            (
+                $tandaVital->SISTOLIK !== null ||
+                $tandaVital->DISTOLIK !== null
+            )
+        ) {
+            $tekananDarah =
+                ((int) $tandaVital->SISTOLIK ?? '-')
+                . '/'
+                . ((int) $tandaVital->DISTOLIK ?? '-')
+                . ' mmHg';
+        }
+
+        $nadi = '-';
+
+        if ($tandaVital && $tandaVital->FREKUENSI_NADI !== null) {
+            $nadi = (int) $tandaVital->FREKUENSI_NADI . ' x/menit';
+
+            if ($tandaVital->FREKUENSI_NADI_CB) {
+                $nadi .= ' (' . ($tandaVital->FREKUENSI_NADI_CB == 1 ? 'Reguler' : 'Ireguler')  . ')';
+            }
+        }
+
+        $frekuensiNapas = '-';
+
+        if ($tandaVital && $tandaVital->FREKUENSI_NAFAS !== null) {
+            $frekuensiNapas = (int) $tandaVital->FREKUENSI_NAFAS . ' x/menit';
+
+            if ($tandaVital->FREKUENSI_NAFAS_CB) {
+                $frekuensiNapas .=
+                    ' (' . ($tandaVital->FREKUENSI_NAFAS_CB == 1 ? 'Simetris' : 'Asimetris') . ')';
+            }
+        }
+
+        $kesadaranGcs = '-';
+
+        if ($tandaVital) {
+            $gcs = (int) $this->value($tandaVital->GCS);
+
+            $kesadaranGcs = $gcs;
+
+            if (
+                $tandaVital->EYE !== null ||
+                $tandaVital->VERBAL !== null ||
+                $tandaVital->MOTORIK !== null
+            ) {
+                $kesadaranGcs .= ' (E'
+                    . ($tandaVital->EYE ?? '-')
+                    . ' V'
+                    . ($tandaVital->VERBAL ?? '-')
+                    . ' M'
+                    . ($tandaVital->MOTORIK ?? '-')
+                    . ')';
+            }
+
+            $kesadaranGcs = trim($kesadaranGcs);
+        }
+
+                /*
+        |--------------------------------------------------------------------------
+        | PSIKOLOGI, SOSIAL, EKONOMI, DAN SPIRITUAL
+        |--------------------------------------------------------------------------
+        */
+        $kondisiSosial = DB::table('medicalrecord.kondisi_sosial')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first();
+
+        $refPasien = DB::table('pendaftaran.kunjungan as pk')
+            ->leftJoin('pendaftaran.pendaftaran as pd', 'pd.NOMOR', '=', 'pk.NOPEN')
+            ->leftJoin('master.pasien as p', 'p.NORM', '=', 'pd.NORM')
+            ->leftJoin('master.referensi as ag', function ($join) {
+                $join->on('ag.ID', '=', 'p.AGAMA')
+                    ->where('ag.JENIS', '=', '1');
+            })
+            ->leftJoin('master.referensi as kj', function ($join) {
+                $join->on('kj.ID', '=', 'p.PEKERJAAN')
+                    ->where('kj.JENIS', '=', '4');
+            })
+            ->where('pk.NOMOR', $kunjungan)
+            ->select([
+                'ag.DESKRIPSI as AGAMA',
+                'kj.DESKRIPSI as PEKERJAAN',
+            ])
+            ->first();
+
+        $daftarPsikologi = [];
+
+        if ($kondisiSosial) {
+            if ((int) $kondisiSosial->TIDAK_ADA_KELAINAN === 1) {
+                $daftarPsikologi[] = 'Tidak ada kelainan';
+            }
+
+            foreach ([
+                'MARAH' => 'Marah',
+                'CEMAS' => 'Cemas',
+                'TAKUT' => 'Takut',
+                'SEDIH' => 'Sedih',
+                'BUNUH_DIRI' => 'Kecenderungan bunuh diri',
+            ] as $kolom => $label) {
+                if ((int) ($kondisiSosial->{$kolom} ?? 0) === 1) {
+                    $daftarPsikologi[] = $label;
+                }
+            }
+
+            $psikologiLainnya = $this->value($kondisiSosial->LAINNYA ?? null);
+            if ($psikologiLainnya !== '') {
+                $daftarPsikologi[] = 'Lainnya: ' . $psikologiLainnya;
+            }
+        }
+
+        $statusMental = match ((string) ($kondisiSosial->STATUS_MENTAL ?? '')) {
+            '1' => 'Sadar dan orientasi baik',
+            '2' => 'Ada masalah perilaku'
+                . (($detail = $this->value($kondisiSosial->MASALAH_PERILAKU ?? null)) !== ''
+                    ? ': ' . $detail
+                    : ''),
+            '3' => 'Perilaku kekerasan yang dialami pasien sebelumnya'
+                . (($detail = $this->value($kondisiSosial->PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA ?? null)) !== ''
+                    ? ': ' . $detail
+                    : ''),
+            default => '',
+        };
+
+        $hubunganKeluarga = match ((string) ($kondisiSosial->HUBUNGAN_PASIEN_DENGAN_KELUARGA ?? '')) {
+            '1' => 'Baik',
+            '2' => 'Tidak baik',
+            default => '',
+        };
+
+        $tempatTinggal = match ((string) ($kondisiSosial->TEMPAT_TINGGAL ?? '')) {
+            '1' => 'Rumah',
+            '2' => 'Panti',
+            '3' => 'Lainnya'
+                . (($detail = $this->value($kondisiSosial->TEMPAT_TINGGAL_LAINNYA ?? null)) !== ''
+                    ? ': ' . $detail
+                    : ''),
+            default => '',
+        };
+
+        $kebiasaanIbadah = match ((string) ($kondisiSosial->KEBIASAAN_BERIBADAH_TERATUR ?? '')) {
+            '1' => 'Ya',
+            '2' => 'Tidak',
+            default => '',
+        };
+
+        $nilaiKepercayaan = match ((string) ($kondisiSosial->NILAI_KEPERCAYAAN ?? '')) {
+            '1' => 'Ada'
+                . (($detail = $this->value($kondisiSosial->NILAI_KEPERCAYAAN_DESKRIPSI ?? null)) !== ''
+                    ? ': ' . $detail
+                    : ''),
+            '2' => 'Tidak ada',
+            default => '',
+        };
+
+        $penghasilan = match ((string) ($kondisiSosial->PENGHASILAN_PERBULAN ?? '')) {
+            '1' => '< Rp. 5.000.000',
+            '2' => 'Rp. 5.000.000 - Rp. 10.000.000',
+            '3' => '> Rp. 10.000.000',
+            default => '',
+        };
+
+        $daftarPsikososial = array_filter([
+            'Status psikologi: ' . implode(', ', $daftarPsikologi),
+            'Status mental: ' . $statusMental,
+            'Hubungan dengan keluarga: ' . $hubunganKeluarga,
+            'Tempat tinggal: ' . $tempatTinggal,
+            'Agama: ' . $this->value($refPasien->AGAMA ?? null),
+            'Kebiasaan beribadah teratur: ' . $kebiasaanIbadah,
+            'Nilai kepercayaan: ' . $nilaiKepercayaan,
+            'Pengambil keputusan dalam keluarga: '
+                . $this->value($kondisiSosial->PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA ?? null),
+            'Pekerjaan: ' . $this->value($refPasien->PEKERJAAN ?? null),
+            'Penghasilan per bulan: ' . $penghasilan,
+        ], function ($baris) {
+            return !str_ends_with($baris, ': ');
+        });
+
+        $statusFungsional = DB::table('medicalrecord.status_fungsional')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first();
+
+                $alatBantuFungsional = [];
+
+        if ($statusFungsional) {
+            foreach ([
+                'TANPA_ALAT_BANTU' => 'Tanpa alat bantu',
+                'TONGKAT' => 'Tongkat',
+                'KURSI_RODA' => 'Kursi roda',
+                'BRANKARD' => 'Brankard',
+                'WALKER' => 'Walker',
+            ] as $kolom => $label) {
+                if ((int) ($statusFungsional->{$kolom} ?? 0) === 1) {
+                    $alatBantuFungsional[] = $label;
+                }
+            }
+
+            $alatBantuLainnya = $this->value(
+                $statusFungsional->ALAT_BANTU ?? null
+            );
+
+            if ($alatBantuLainnya !== '') {
+                $alatBantuFungsional[] = 'Lainnya: ' . $alatBantuLainnya;
+            }
+        }
+
+        $cacatTubuh = match (true) {
+            (int) ($statusFungsional->CACAT_TUBUH_TIDAK ?? 0) === 1 => 'Tidak',
+            (int) ($statusFungsional->CACAT_TUBUH_YA ?? 0) === 1 => 'Ya',
+            default => '',
+        };
+
+        if (
+            $cacatTubuh === 'Ya' &&
+            ($keteranganCacat = $this->value(
+                $statusFungsional->KET_CACAT_TUBUH ?? null
+            )) !== ''
+        ) {
+            $cacatTubuh .= ': ' . $keteranganCacat;
+        }
+
+        $daftarFungsional = array_filter([
+            'Alat bantu: ' . implode(', ', $alatBantuFungsional),
+            'Cacat tubuh: ' . $cacatTubuh,
+        ], function ($baris) {
+            return !str_ends_with($baris, ': ');
+        });
+
+                /*
+        |--------------------------------------------------------------------------
+        | SKRINING NYERI
+        |--------------------------------------------------------------------------
+        */
+        $nyeri = DB::table('medicalrecord.penilaian_nyeri')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first();
+
+        $metodeNyeri = match ((string) ($nyeri->METODE ?? '')) {
+            '1' => 'NRS',
+            '2' => 'BPS',
+            '3' => 'NIPS',
+            '4' => 'FLACC',
+            '5' => 'VAS',
+            default => '',
+        };
+
+        $onsetNyeri = match ((string) ($nyeri->ONSET ?? '')) {
+            '1' => 'Akut',
+            '2' => 'Kronis',
+            default => '',
+        };
+
+        $detailNyeri = [];
+
+        if ($nyeri) {
+            $detailNyeri[] = 'Nyeri: '
+                . ((int) $nyeri->NYERI === 1 ? 'Ya' : 'Tidak');
+
+            if ($onsetNyeri !== '') {
+                $detailNyeri[] = 'Onset: ' . $onsetNyeri;
+            }
+
+            if ($metodeNyeri !== '') {
+                $detailNyeri[] = 'Metode: ' . $metodeNyeri;
+            }
+
+            $detailNyeri[] = 'Skala: ' . $this->value($nyeri->SKALA ?? null);
+
+            foreach ([
+                'SKOR1' => 'Skor 1',
+                'SKOR2' => 'Skor 2',
+                'SKOR3' => 'Skor 3',
+                'SKOR4' => 'Skor 4',
+                'SKOR5' => 'Skor 5',
+                'SKOR6' => 'Skor 6',
+            ] as $kolom => $label) {
+                if (
+                    isset($nyeri->{$kolom}) &&
+                    (int) $nyeri->{$kolom} !== 0
+                ) {
+                    $detailNyeri[] = $label . ': ' . $nyeri->{$kolom};
+                }
+            }
+
+            foreach ([
+                'PENCETUS' => 'Pencetus',
+                'GAMBARAN' => 'Gambaran',
+                'DURASI' => 'Durasi',
+                'LOKASI' => 'Lokasi',
+            ] as $kolom => $label) {
+                $nilai = $this->value($nyeri->{$kolom} ?? null);
+
+                if ($nilai !== '') {
+                    $detailNyeri[] = $label . ': ' . $nilai;
+                }
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING RISIKO JATUH GET UP AND GO
+        |--------------------------------------------------------------------------
+        */
+        $getUpAndGo = DB::table('medicalrecord.penilaian_getup_and_go')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first();
+
+        $jawabanYaTidak = static function ($nilai) {
+            return match ((string) $nilai) {
+                '1' => 'Ya',
+                '0' => 'Tidak',
+                default => '',
+            };
+        };
+
+        $detailRisikoJatuh = [];
+
+        if ($getUpAndGo) {
+            foreach ([
+                'CARA_BERJALAN_PASIEN' => 'Cara berjalan tidak seimbang atau menggunakan alat bantu',
+                'FAKTOR_RESIKO' => 'Faktor risiko',
+                'OBAT_YANG_DIMINUM' => 'Obat yang berisiko menyebabkan jatuh',
+            ] as $kolom => $label) {
+                $jawaban = $jawabanYaTidak($getUpAndGo->{$kolom} ?? null);
+
+                if ($jawaban !== '') {
+                    $detailRisikoJatuh[] = $label . ': ' . $jawaban;
+                }
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING GIZI MUST
+        |--------------------------------------------------------------------------
+        */
+        $skriningGizi = DB::table('medicalrecord.permasalahan_gizi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first();
+
+        $detailSkriningGizi = [];
+
+        if ($skriningGizi) {
+            foreach ([
+                'BERAT_BADAN_SIGNIFIKAN' => 'Perubahan berat badan signifikan',
+                'PERUBAHAN_BERAT_BADAN' => 'Jumlah perubahan berat badan',
+                'INTAKE_MAKANAN' => 'Intake makanan berkurang',
+                'KONDISI_KHUSUS' => 'Kondisi khusus',
+                'SKOR' => 'Skor MUST',
+                'STATUS_SKOR' => 'Status skor',
+            ] as $kolom => $label) {
+                $nilaiRaw = $skriningGizi->{$kolom} ?? null;
+
+                if (!in_array($kolom, ['SKOR', 'STATUS_SKOR'], true)) {
+                    if ($nilaiRaw === 0 || $nilaiRaw === '0') {
+                        $nilai = 'Tidak';
+                    } elseif ($nilaiRaw === 1 || $nilaiRaw === '1') {
+                        $nilai = 'Ya';
+                    } else {
+                        $nilai = $this->value($nilaiRaw);
+                    }
+                } else {
+                    $nilai = $this->value($nilaiRaw);
+                }
+
+                if ($nilai !== '') {
+                    $detailSkriningGizi[] = $label . ': ' . $nilai;
+                }
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | KEBUTUHAN EDUKASI
+        |--------------------------------------------------------------------------
+        */
+        $kebutuhanEdukasi = DB::table('medicalrecord.edukasi_pasien_keluarga')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first();
+
+        $detailKebutuhanEdukasi = [];
+
+        if ($kebutuhanEdukasi) {
+            $topikEdukasi = [
+                'EDUKASI_DIAGNOSA' => 'Diagnosis',
+                'EDUKASI_REHAB_MEDIK' => 'Rehabilitasi medik',
+                'EDUKASI_HKP' => 'Hak dan kewajiban pasien',
+                'EDUKASI_PEMBERIAN_INFORMED_CONSENT' => 'Informed consent',
+                'EDUKASI_CUCI_TANGAN' => 'Cuci tangan',
+                'EDUKASI_PERENCANAAN_PULANG' => 'Perencanaan pulang',
+                'EDUKASI_OBAT' => 'Obat',
+                'EDUKASI_NYERI' => 'Nyeri',
+                'EDUKASI_HAK_BERPARTISIPASI' => 'Hak berpartisipasi',
+                'EDUKASI_PENUNDAAN_PELAYANAN' => 'Penundaan pelayanan',
+                'EDUKASI_BAHAYA_MEROKO' => 'Bahaya merokok',
+                'EDUKASI_NUTRISI' => 'Nutrisi',
+                'EDUKASI_PENGGUNAAN_ALAT' => 'Penggunaan alat',
+                'EDUKASI_PROSEDURE_PENUNJANG' => 'Prosedur penunjang',
+                'EDUKASI_KELAMBATAN_PELAYANAN' => 'Kelambatan pelayanan',
+                'EDUKASI_RUJUKAN_PASIEN' => 'Rujukan pasien',
+            ];
+
+            foreach ($topikEdukasi as $kolom => $label) {
+                if ((int) ($kebutuhanEdukasi->{$kolom} ?? 0) === 1) {
+                    $detailKebutuhanEdukasi[] = $label;
+                }
+            }
+
+            $edukasiLainnya = $this->value(
+                $kebutuhanEdukasi->DESKRIPSI_LAINYA ?? null
+            );
+
+            if (
+                (int) ($kebutuhanEdukasi->STATUS_LAIN ?? 0) === 1 &&
+                $edukasiLainnya !== ''
+            ) {
+                $detailKebutuhanEdukasi[] = 'Lainnya: ' . $edukasiLainnya;
+            }
+        }
+
+                /*
+        |--------------------------------------------------------------------------
+        | MASALAH KEPERAWATAN
+        |--------------------------------------------------------------------------
+        */
+        $masalahKeperawatan = DB::table('medicalrecord.masalah_keperawatan')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first();
+
+        $daftarMasalahKeperawatan = [];
+
+        $opsiMasalahKeperawatan = [
+            'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF' => 'Bersihan jalan nafas tidak efektif',
+            'POLA_NAFAS_TIDAK_EFEKTIF' => 'Pola nafas tidak efektif',
+            'PERFUSI_PERIFER_TIDAK_EFEKTIF' => 'Perfusi perifer tidak efektif',
+            'DIARE' => 'Diare',
+            'NYERI_AKUT' => 'Nyeri akut',
+            'NAUSEA' => 'Nausea',
+            'HIPERTERMI' => 'Hipertermia',
+            'ANSIETAS' => 'Ansietas',
+            'GANGGUAN_INTEGRITAS_KULIT_JARINGAN' => 'Gangguan integritas kulit/jaringan',
+            'GANGGUAN_ELIMINASI_URINE' => 'Gangguan eliminasi urine',
+            'INTOLERANSI_AKTIVITAS' => 'Intoleransi aktivitas',
+            'GANGGUAN_MOBILITAS_FISIK' => 'Gangguan mobilitas fisik',
+            'GANGGUAN_PERTUKARAN_GAS' => 'Gangguan pertukaran gas',
+        ];
+
+        if ($masalahKeperawatan) {
+            foreach ($opsiMasalahKeperawatan as $kolom => $label) {
+                if ((int) ($masalahKeperawatan->{$kolom} ?? 0) === 1) {
+                    $daftarMasalahKeperawatan[] = $label;
+                }
+            }
+
+            $masalahLain = $this->value(
+                $masalahKeperawatan->MASALAH_LAIN ?? null
+            );
+
+            if ($masalahLain !== '') {
+                $daftarMasalahKeperawatan[] = 'Masalah lain: ' . $masalahLain;
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | PERENCANAAN DAN TINDAKAN
+        |--------------------------------------------------------------------------
+        */
+        $perencanaan = DB::table('medicalrecord.masalah_keperawatan')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first();
+
+        $daftarPerencanaan = [];
+
+        if ($perencanaan) {
+            foreach ([
+                'TINDAKAN_RELAKSASI_NAFAS_DALAM' => 'Ajarkan teknik relaksasi dan nafas dalam',
+                'TINDAKAN_BODY_ALIGNMENT' => 'Pertahankan body alignment dan posisi yang nyaman',
+                'TINDAKAN_TENANGKAN_PASIEN' => 'Tenangkan pasien',
+                'TINDAKAN_PENDIDIKAN_KESEHATAN' => 'Berikan pendidikan kesehatan kepada pasien dan keluarga',
+                'TINDAKAN_RAWAT_LUKA' => 'Rawat luka',
+            ] as $kolom => $label) {
+                if ((int) ($perencanaan->{$kolom} ?? 0) === 1) {
+                    $daftarPerencanaan[] = $label;
+                }
+            }
+
+            if ((int) ($perencanaan->TERAPI_ORAL ?? 0) === 1) {
+                $detail = $this->value($perencanaan->TERAPI_ORAL_DETAIL ?? null);
+                $daftarPerencanaan[] = 'Terapi oral'
+                    . ($detail !== '' ? ': ' . $detail : '');
+            }
+
+            if ((int) ($perencanaan->TERAPI_IV_SC_IM ?? 0) === 1) {
+                $detail = $this->value($perencanaan->TERAPI_IV_SC_IM_DETAIL ?? null);
+                $daftarPerencanaan[] = 'Terapi IV/SC/IM'
+                    . ($detail !== '' ? ': ' . $detail : '');
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | RENCANA ASUHAN KEPERAWATAN
+        |--------------------------------------------------------------------------
+        */
+        $rencanaAsuhanKeperawatan = DB::table(
+            'medicalrecord.sirmed_diagnosa_keperawatan'
+        )
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->value('RENCANA_ASUHAN_KEPERAWATAN');
+
+
+
+        // print_r($hasilLaboratorium);
+        // die();
+
+        /*
+        |--------------------------------------------------------------------------
+        | RETURN DATA TEMPLATE
+        |--------------------------------------------------------------------------
+        */
+
         return [
+            /*
+            | ANAMNESIS
+            */
 
-            'STATUS_FUNGSIONAL' =>
-                $data->STATUS_FUNGSIONAL ?? '',
+            'ANAMNESIS_DIPEROLEH' => $this->placeholder(
+                implode(', ', $anamnesis)
+            ),
+            'KELUHAN_UTAMA' => $this->placeholder($keluhanUtama),
+            'RIWAYAT_PENYAKIT_SEKARANG' => $this->placeholder(
+                $riwayatPenyakitSekarang
+            ),
+            'RIWAYAT_PENYAKIT_DAHULU' => $this->placeholder(
+                $riwayatPenyakitDahulu
+            ),
+            'RIWAYAT_PENYAKIT_KELUARGA' => $this->placeholder(
+                implode(', ', $daftarRiwayatKeluarga)
+            ),
 
-            'RISIKO_JATUH' =>
-                $data->RISIKO_JATUH ?? '',
+            /*
+            | TANDA VITAL DAN ANTROPOMETRI
+            */
 
-            'SKRINING_NYERI' =>
-                $data->SKRINING_NYERI ?? '',
+            'KEADAAN_UMUM' => $this->placeholder(
+                $tandaVital->KEADAAN_UMUM ?? null
+            ),
+            'TEKANAN_DARAH' => $tekananDarah,
+            'NADI' => $nadi,
+            'FREKUENSI_NAPAS' => $frekuensiNapas,
+            'SUHU' => $tandaVital && $tandaVital->SUHU !== null
+                ? $tandaVital->SUHU . ' °C'
+                : '-',
+            'SATURASI_O2' => $tandaVital && $tandaVital->SATURASI_O2 !== null
+                ? ((int) $tandaVital->SATURASI_O2) . ' %'
+                : '-',
+            'KESADARAN_GCS' => $kesadaranGcs,
 
-            'KEBUTUHAN_KEPERAWATAN' =>
-                $data->KEBUTUHAN_KEPERAWATAN ?? '',
+            'BERAT_BADAN' => $nutrisi && $nutrisi->BERAT_BADAN !== null
+                ? ((int) $nutrisi->BERAT_BADAN) . ' kg'
+                : '-',
+            'TINGGI_BADAN' => $nutrisi && $nutrisi->TINGGI_BADAN !== null
+                ? ((int) $nutrisi->TINGGI_BADAN) . ' cm'
+                : '-',
+            'IMT' => $this->placeholder(
+                $nutrisi->INDEX_MASSA_TUBUH ?? null
+            ),
+
+            'PSIKOLOGI_SOSIAL_EKONOMI_SPIRITUAL' => $this->placeholder(
+                implode("\n", $daftarPsikososial)
+            ),
+
+            'STATUS_FUNGSIONAL' => $this->placeholder(
+                implode("\n", $daftarFungsional)
+            ),
+
+            'SKRINING_NYERI' => $this->placeholder(
+                implode("\n", $detailNyeri)
+            ),
+
+            'SKRINING_RISIKO_JATUH' => $this->placeholder(
+                implode("\n", $detailRisikoJatuh)
+            ),
+
+            'SKRINING_GIZI' => $this->placeholder(
+                implode("\n", $detailSkriningGizi)
+            ),
+
+            'KEBUTUHAN_EDUKASI' => $this->placeholder(
+                implode(', ', $detailKebutuhanEdukasi)
+            ),
+
+            'MASALAH_KEPERAWATAN' => $this->placeholder(
+                implode("\n", $daftarMasalahKeperawatan)
+            ),
+            'PERENCANAAN_TINDAKAN' => $this->placeholder(
+                implode("\n", $daftarPerencanaan)
+            ),
+            'RENCANA_ASUHAN_KEPERAWATAN' => $this->placeholder(
+                $rencanaAsuhanKeperawatan
+            ),
+
+            /*
+            | TANDA TANGAN USER FINALISASI
+            */
+            'NAMA_DOKTER_FINALISASI' => $finalisasi_dokter ? $finalisasi_dokter->NAMA_USER_FINALISASI : null,
+            'TTD_DOKTER_FINALISASI' => $ttd_finalisasi_dokter ? $ttd_finalisasi_dokter->signature_path : null,
+            'NAMA_PERAWAT_FINALISASI' => $finalisasi ? $finalisasi->NAMA_USER_FINALISASI : null,
+            'TTD_PERAWAT_FINALISASI' => $ttd_finalisasi ? $ttd_finalisasi->signature_path : null,
         ];
     }
 

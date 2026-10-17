@@ -94,9 +94,9 @@ class PrintPreviewController extends Controller
 
             if (!empty($finalisasi->CREATED)) {
                 $tanggalFinalisasi = Carbon::parse($finalisasi->CREATED)
-                    ->isoFormat('dddd, D MMMM YYYY')
+                    ->isoFormat('dddd, D MMMM YYYY');
+                $jamFinalisasi = Carbon::parse($finalisasi->CREATED)->isoFormat('[Pukul] H:mm:ss')
                     . ' WIB';
-                $jamFinalisasi = Carbon::parse($finalisasi->CREATED)->isoFormat('[Pukul] H:mm:ss');
             }
 
             // print_r($ttd_finalisasi);
@@ -230,113 +230,206 @@ class PrintPreviewController extends Controller
             | SET VALUE WORD
             |--------------------------------------------------------------------------
             */
-            foreach ($data as $key => $value) {
+            // foreach ($data as $key => $value) {
 
-                /*
-                |--------------------------------------------------------------------------
-                | TANDA TANGAN DOKTER
-                |--------------------------------------------------------------------------
-                */
-                if ($key === 'TTD_DOKTER_FINALISASI') {
+            //     /*
+            //     |--------------------------------------------------------------------------
+            //     | TANDA TANGAN DOKTER
+            //     |--------------------------------------------------------------------------
+            //     */
+            //     if ($key === 'TTD_DOKTER_FINALISASI') {
 
-                    // Ambil path TTD dokter
-                    $namaDokter = $data['NAMA_DOKTER_FINALISASI'] ?? '';
-                    $ttdDokter = $data['TTD_DOKTER_FINALISASI'] ?? null;
+            //         // Ambil path TTD dokter
+            //         $namaDokter = $data['NAMA_DOKTER_FINALISASI'] ?? '';
+            //         $ttdDokter = $data['TTD_DOKTER_FINALISASI'] ?? null;
 
-                    // Keluarkan TTD dari array agar tidak diproses sebagai teks
-                    unset($data['TTD_DOKTER_FINALISASI']);
+            //         // Keluarkan TTD dari array agar tidak diproses sebagai teks
+            //         unset($data['TTD_DOKTER_FINALISASI']);
 
-                    // Isi seluruh placeholder teks
-                    foreach ($data as $key => $value) {
-                        $templateProcessor->setValue(
-                            $key,
-                            (string) ($value ?? '')
-                        );
-                    }
+            //         // Isi seluruh placeholder teks
+            //         foreach ($data as $key => $value) {
+            //             $templateProcessor->setValue(
+            //                 $key,
+            //                 (string) ($value ?? '')
+            //             );
+            //         }
 
-                    // Masukkan gambar TTD dokter
-                    if (
-                        $ttdDokter &&
-                        Storage::disk('public')->exists($ttdDokter)
-                    ) {
-                        $this->setImgWord(
-                            $templateProcessor,
-                            'TTD_DOKTER_FINALISASI',
-                            Storage::disk('public')->path($ttdDokter),
-                            200
-                        );
-                    } else {
-                        throw new \Exception(
-                            "File TTD {$namaDokter} (Dokter) tidak ditemukan: "
-                            . ($ttdDokter ?? '-')
-                        );
-                    }
+            //         // Masukkan gambar TTD dokter
+            //         if (
+            //             $ttdDokter &&
+            //             Storage::disk('public')->exists($ttdDokter)
+            //         ) {
+            //             $this->setImgWord(
+            //                 $templateProcessor,
+            //                 'TTD_DOKTER_FINALISASI',
+            //                 Storage::disk('public')->path($ttdDokter),
+            //                 200
+            //             );
+            //         } else {
+            //             throw new \Exception(
+            //                 "File TTD {$namaDokter} (Dokter) tidak ditemukan: "
+            //                 . ($ttdDokter ?? '-')
+            //             );
+            //         }
+            //     }
+
+            //     /*
+            //     |--------------------------------------------------------------------------
+            //     | HASIL LABORATORIUM DAN RADIOLOGI
+            //     |--------------------------------------------------------------------------
+            //     */
+
+            //     // if (in_array($key, [
+            //     //     'HASIL_LABORATORIUM',
+            //     //     'HASIL_RADIOLOGI',
+            //     // ], true)) {
+
+            //     //     $textRun = new TextRun();
+
+            //     //     $baris = explode(
+            //     //         "\n",
+            //     //         (string) ($value ?? '')
+            //     //     );
+
+            //     //     foreach ($baris as $index => $teks) {
+
+            //     //         if ($index > 0) {
+            //     //             $textRun->addTextBreak();
+            //     //         }
+
+            //     //         $teks = rtrim($teks);
+
+            //     //         if ($teks === '') {
+            //     //             continue;
+            //     //         }
+
+            //     //         /*
+            //     //         * Judul laporan dan subjudul menggunakan huruf tebal.
+            //     //         */
+            //     //         $judul = (
+            //     //             mb_strtoupper($teks, 'UTF-8') === $teks
+            //     //             && preg_match('/[A-Z]/', $teks)
+            //     //             && mb_strlen($teks, 'UTF-8') < 80
+            //     //         );
+
+            //     //         $textRun->addText(
+            //     //             $teks,
+            //     //             $judul
+            //     //                 ? ['bold' => true, 'size' => 9]
+            //     //                 : ['size' => 9]
+            //     //         );
+            //     //     }
+
+            //     //     $templateProcessor->setComplexValue(
+            //     //         $key,
+            //     //         $textRun
+            //     //     );
+
+            //     //     continue;
+            //     // }
+
+            //     /*
+            //     |--------------------------------------------------------------------------
+            //     | DATA TEKS LAINNYA
+            //     |--------------------------------------------------------------------------
+            //     */
+            //     $templateProcessor->setValue(
+            //         $key,
+            //         (string) ($value ?? '')
+            //     );
+            // }
+                        /*
+            |--------------------------------------------------------------------------
+            | DATA TANDA TANGAN DOKTER DAN PERAWAT
+            |--------------------------------------------------------------------------
+            */
+            foreach ([
+                'DOKTER' => [
+                    'nama' => 'NAMA_DOKTER_FINALISASI',
+                    'ttd' => 'TTD_DOKTER_FINALISASI',
+                ],
+                'PERAWAT' => [
+                    'nama' => 'NAMA_PERAWAT_FINALISASI',
+                    'ttd' => 'TTD_PERAWAT_FINALISASI',
+                ],
+            ] as $subTtd => $keys) {
+                $finalisasiTtd = DB::table(
+                    'simrspku_pengkajian.finalisasi as fin'
+                )
+                    ->leftJoin('aplikasi.pengguna as usr', 'usr.ID', '=', 'fin.USER_CREATED')
+                    ->select(
+                        'usr.NIP as NIP_USER_FINALISASI',
+                        DB::raw(
+                            'master.getNamaLengkapPegawai(usr.NIP) as NAMA_USER_FINALISASI'
+                        )
+                    )
+                    ->where('fin.KUNJUNGAN', $kunjungan)
+                    ->where('fin.FORM', $form)
+                    ->where('fin.SUB', $subTtd)
+                    ->where('fin.STATUS', 2)
+                    ->first();
+
+                $ttdPegawai = null;
+
+                if ($finalisasiTtd) {
+                    $ttdPegawai = DB::table(
+                        'simrspku_klaim.tanda_tangan_pegawai'
+                    )
+                        ->where('nip', $finalisasiTtd->NIP_USER_FINALISASI)
+                        ->where('status', 1)
+                        ->whereNull('deleted_at')
+                        ->inRandomOrder()
+                        ->first();
                 }
 
-                /*
-                |--------------------------------------------------------------------------
-                | HASIL LABORATORIUM DAN RADIOLOGI
-                |--------------------------------------------------------------------------
-                */
+                $data[$keys['nama']] =
+                    $finalisasiTtd->NAMA_USER_FINALISASI ?? '';
 
-                // if (in_array($key, [
-                //     'HASIL_LABORATORIUM',
-                //     'HASIL_RADIOLOGI',
-                // ], true)) {
+                $data[$keys['ttd']] =
+                    $ttdPegawai->signature_path ?? null;
+            }
 
-                //     $textRun = new TextRun();
+            /*
+            |--------------------------------------------------------------------------
+            | ISI PLACEHOLDER TEKS
+            |--------------------------------------------------------------------------
+            */
+            foreach ($data as $key => $value) {
+                if (in_array($key, [
+                    'TTD_DOKTER_FINALISASI',
+                    'TTD_PERAWAT_FINALISASI',
+                ], true)) {
+                    continue;
+                }
 
-                //     $baris = explode(
-                //         "\n",
-                //         (string) ($value ?? '')
-                //     );
-
-                //     foreach ($baris as $index => $teks) {
-
-                //         if ($index > 0) {
-                //             $textRun->addTextBreak();
-                //         }
-
-                //         $teks = rtrim($teks);
-
-                //         if ($teks === '') {
-                //             continue;
-                //         }
-
-                //         /*
-                //         * Judul laporan dan subjudul menggunakan huruf tebal.
-                //         */
-                //         $judul = (
-                //             mb_strtoupper($teks, 'UTF-8') === $teks
-                //             && preg_match('/[A-Z]/', $teks)
-                //             && mb_strlen($teks, 'UTF-8') < 80
-                //         );
-
-                //         $textRun->addText(
-                //             $teks,
-                //             $judul
-                //                 ? ['bold' => true, 'size' => 9]
-                //                 : ['size' => 9]
-                //         );
-                //     }
-
-                //     $templateProcessor->setComplexValue(
-                //         $key,
-                //         $textRun
-                //     );
-
-                //     continue;
-                // }
-
-                /*
-                |--------------------------------------------------------------------------
-                | DATA TEKS LAINNYA
-                |--------------------------------------------------------------------------
-                */
                 $templateProcessor->setValue(
                     $key,
                     (string) ($value ?? '')
                 );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | MASUKKAN GAMBAR TANDA TANGAN YANG TERSEDIA
+            |--------------------------------------------------------------------------
+            */
+            foreach ([
+                'TTD_DOKTER_FINALISASI' => 'Dokter',
+                'TTD_PERAWAT_FINALISASI' => 'Perawat',
+            ] as $key => $label) {
+                $path = $data[$key] ?? null;
+
+                if ($path && Storage::disk('public')->exists($path)) {
+                    $this->setImgWord(
+                        $templateProcessor,
+                        $key,
+                        Storage::disk('public')->path($path),
+                        200
+                    );
+                } else {
+                    // Kosongkan placeholder gambar jika tanda tangan belum tersedia.
+                    $templateProcessor->setValue($key, '');
+                }
             }
 
             /*
