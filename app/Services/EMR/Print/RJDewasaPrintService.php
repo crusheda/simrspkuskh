@@ -645,14 +645,17 @@ class RJDewasaPrintService implements PrintDataInterface
             ->where('fin.SUB', 'DOKTER')
             ->where('fin.STATUS', 2)
             ->first();
-
-        $ttd_finalisasi_dokter = DB::table('simrspku_klaim.tanda_tangan_pegawai')
-            ->where('nip', $finalisasi_dokter->NIP_USER_FINALISASI)
-            // ->where('nip', 1912314)
-            ->where('status', 1)
-            ->whereNull('deleted_at')
-            ->inRandomOrder()
-            ->first();
+        if ($finalisasi_dokter) {
+            $ttd_finalisasi_dokter = DB::table('simrspku_klaim.tanda_tangan_pegawai')
+                ->where('nip', $finalisasi_dokter->NIP_USER_FINALISASI)
+                // ->where('nip', 1912314)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->inRandomOrder()
+                ->first();
+        } else {
+            $ttd_finalisasi_dokter = '';
+        }
 
         $finalisasi = DB::table(
             'simrspku_pengkajian.finalisasi as fin'
@@ -823,6 +826,10 @@ class RJDewasaPrintService implements PrintDataInterface
                 'INDEX_MASSA_TUBUH',
             ]);
 
+        $labelPilihan = static function ($nilai, array $opsi): string {
+            $nilai = trim((string) ($nilai ?? ''));
+            return $nilai !== '' ? ($opsi[$nilai] ?? $nilai) : '';
+        };
 
         /*
         |--------------------------------------------------------------------------
@@ -1217,53 +1224,86 @@ class RJDewasaPrintService implements PrintDataInterface
         | KEBUTUHAN EDUKASI
         |--------------------------------------------------------------------------
         */
-        $kebutuhanEdukasi = DB::table('medicalrecord.edukasi_pasien_keluarga')
+                $edukasiPasien = DB::table('medicalrecord.edukasi_pasien_keluarga')
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
             ->orderByDesc('ID')
             ->first();
 
-        $detailKebutuhanEdukasi = [];
+        $centang = static function ($nilai, $pilihan = 1): string {
+            return (string) ($nilai ?? '') === (string) $pilihan ? '☑' : '☐';
+        };
 
-        if ($kebutuhanEdukasi) {
-            $topikEdukasi = [
-                'EDUKASI_DIAGNOSA' => 'Diagnosis',
-                'EDUKASI_REHAB_MEDIK' => 'Rehabilitasi medik',
+        // Kelompok 1: edukasi awal
+        $barisEdukasiAwal = [
+            ' Kesediaan pasien/keluarga menerima informasi : '
+                . $centang($edukasiPasien->KESEDIAAN ?? null, 1) . 'Ya' . ' '
+                . $centang($edukasiPasien->KESEDIAAN ?? null, 0) . 'Tidak',
+            ' Terdapat hambatan dalam edukasi : '
+                . $centang($edukasiPasien->HAMBATAN ?? null, 1) . 'Ya' . ' '
+                . $centang($edukasiPasien->HAMBATAN ?? null, 0) . 'Tidak',
+            ' Dibutuhkan penerjemah : '
+                . $centang($edukasiPasien->PENERJEMAH ?? null, 1) . 'Ya' . ' '
+                . $centang($edukasiPasien->PENERJEMAH ?? null, 0) . 'Tidak',
+        ];
+
+        $kolomEdukasi = [
+            [
+                'EDUKASI_DIAGNOSA' => 'Kondisi kesehatan dan diagnosa serta penatalaksanaannya',
+                'EDUKASI_REHAB_MEDIK' => 'Teknik rehabilitasi',
                 'EDUKASI_HKP' => 'Hak dan kewajiban pasien',
-                'EDUKASI_PEMBERIAN_INFORMED_CONSENT' => 'Informed consent',
-                'EDUKASI_CUCI_TANGAN' => 'Cuci tangan',
-                'EDUKASI_PERENCANAAN_PULANG' => 'Perencanaan pulang',
-                'EDUKASI_OBAT' => 'Obat',
-                'EDUKASI_NYERI' => 'Nyeri',
-                'EDUKASI_HAK_BERPARTISIPASI' => 'Hak berpartisipasi',
+                'EDUKASI_PEMBERIAN_INFORMED_CONSENT' => 'Proses pemberian informed consent',
+                'EDUKASI_CUCI_TANGAN' => 'Cuci tangan dengan benar',
+                'EDUKASI_PERENCANAAN_PULANG' => 'Edukasi perencanaan pulang',
+            ],
+            [
+                'EDUKASI_OBAT' => 'Penggunaan obat secara efektif dan efek samping/interaksinya',
+                'EDUKASI_NYERI' => 'Manajemen nyeri',
+                'EDUKASI_HAK_BERPARTISIPASI' => 'Hak berpartisipasi pada pelayanan',
                 'EDUKASI_PENUNDAAN_PELAYANAN' => 'Penundaan pelayanan',
                 'EDUKASI_BAHAYA_MEROKO' => 'Bahaya merokok',
-                'EDUKASI_NUTRISI' => 'Nutrisi',
-                'EDUKASI_PENGGUNAAN_ALAT' => 'Penggunaan alat',
-                'EDUKASI_PROSEDURE_PENUNJANG' => 'Prosedur penunjang',
-                'EDUKASI_KELAMBATAN_PELAYANAN' => 'Kelambatan pelayanan',
-                'EDUKASI_RUJUKAN_PASIEN' => 'Rujukan pasien',
-            ];
+                'EDUKASI_RUJUKAN_PASIEN' => 'Edukasi rujukan pasien',
+            ],
+            [
+                'EDUKASI_NUTRISI' => 'Diet dan nutrisi',
+                'EDUKASI_PENGGUNAAN_ALAT' => 'Penggunaan alat medis yang aman',
+                'EDUKASI_PROSEDURE_PENUNJANG' => 'Prosedur pemeriksaan penunjang',
+                'EDUKASI_KELAMBATAN_PELAYANAN' => 'Keterlambatan pelayanan',
+                'STATUS_LAIN' => 'Lain-lainnya',
+            ],
+        ];
 
-            foreach ($topikEdukasi as $kolom => $label) {
-                if ((int) ($kebutuhanEdukasi->{$kolom} ?? 0) === 1) {
-                    $detailKebutuhanEdukasi[] = $label;
-                }
+        $barisKolomEdukasi = [];
+
+        foreach ($kolomEdukasi as $kolom) {
+            $baris = [];
+
+            foreach ($kolom as $field => $label) {
+                $baris[] = $centang($edukasiPasien->{$field} ?? null)
+                    . ' ' . $label;
             }
 
-            $edukasiLainnya = $this->value(
-                $kebutuhanEdukasi->DESKRIPSI_LAINYA ?? null
-            );
-
-            if (
-                (int) ($kebutuhanEdukasi->STATUS_LAIN ?? 0) === 1 &&
-                $edukasiLainnya !== ''
-            ) {
-                $detailKebutuhanEdukasi[] = 'Lainnya: ' . $edukasiLainnya;
-            }
+            $barisKolomEdukasi[] = implode("\n", $baris);
         }
 
-                /*
+        $edukasiLainnya = $this->value(
+            $edukasiPasien->DESKRIPSI_LAINYA ?? null
+        );
+
+        if ($edukasiLainnya !== '') {
+            $barisKolomEdukasi[2] .= "\nKeterangan lainnya: " . $edukasiLainnya;
+        }
+
+        $dataKebutuhanEdukasi = [
+            'KESEDIAAN_DAN_HAMBATAN' => implode("\n", [
+                ...$barisEdukasiAwal,
+            ]),
+            'KEBUTUHAN_EDUKASI_KOLOM_1' => $barisKolomEdukasi[0],
+            'KEBUTUHAN_EDUKASI_KOLOM_2' => $barisKolomEdukasi[1],
+            'KEBUTUHAN_EDUKASI_KOLOM_3' => $barisKolomEdukasi[2],
+        ];
+
+        /*
         |--------------------------------------------------------------------------
         | MASALAH KEPERAWATAN
         |--------------------------------------------------------------------------
@@ -1294,9 +1334,11 @@ class RJDewasaPrintService implements PrintDataInterface
 
         if ($masalahKeperawatan) {
             foreach ($opsiMasalahKeperawatan as $kolom => $label) {
-                if ((int) ($masalahKeperawatan->{$kolom} ?? 0) === 1) {
-                    $daftarMasalahKeperawatan[] = $label;
-                }
+                $nilai = (int) ($masalahKeperawatan->{$kolom} ?? 0);
+
+                $kotak = $nilai === 1 ? '☑' : '☐';
+
+                $daftarMasalahKeperawatan[] = $kotak . ' ' . $label;
             }
 
             $masalahLain = $this->value(
@@ -1304,9 +1346,22 @@ class RJDewasaPrintService implements PrintDataInterface
             );
 
             if ($masalahLain !== '') {
-                $daftarMasalahKeperawatan[] = 'Masalah lain: ' . $masalahLain;
+                $daftarMasalahKeperawatan[] = '☐ Masalah lain: ' . $masalahLain;
             }
         }
+
+        $jumlahPerKolom = (int) ceil(count($daftarMasalahKeperawatan) / 3);
+
+        $kolomMasalahKeperawatan = array_chunk(
+            $daftarMasalahKeperawatan,
+            max(1, $jumlahPerKolom)
+        );
+
+        $kolomMasalahKeperawatan = array_pad(
+            $kolomMasalahKeperawatan,
+            3,
+            []
+        );
 
         /*
         |--------------------------------------------------------------------------
@@ -1319,32 +1374,56 @@ class RJDewasaPrintService implements PrintDataInterface
             ->orderByDesc('ID')
             ->first();
 
-        $daftarPerencanaan = [];
+        $daftarTindakan = [];
+        $daftarRawatLuka = [];
+        $daftarTerapi = [];
 
         if ($perencanaan) {
+
+            // KELOMPOK TINDAKAN
             foreach ([
                 'TINDAKAN_RELAKSASI_NAFAS_DALAM' => 'Ajarkan teknik relaksasi dan nafas dalam',
                 'TINDAKAN_BODY_ALIGNMENT' => 'Pertahankan body alignment dan posisi yang nyaman',
                 'TINDAKAN_TENANGKAN_PASIEN' => 'Tenangkan pasien',
                 'TINDAKAN_PENDIDIKAN_KESEHATAN' => 'Berikan pendidikan kesehatan kepada pasien dan keluarga',
-                'TINDAKAN_RAWAT_LUKA' => 'Rawat luka',
             ] as $kolom => $label) {
-                if ((int) ($perencanaan->{$kolom} ?? 0) === 1) {
-                    $daftarPerencanaan[] = $label;
-                }
+
+                $nilai = (int) ($perencanaan->{$kolom} ?? 0);
+                $kotak = $nilai === 1 ? '☑' : '☐';
+
+                $daftarTindakan[] = $kotak . ' ' . $label;
             }
 
-            if ((int) ($perencanaan->TERAPI_ORAL ?? 0) === 1) {
-                $detail = $this->value($perencanaan->TERAPI_ORAL_DETAIL ?? null);
-                $daftarPerencanaan[] = 'Terapi oral'
-                    . ($detail !== '' ? ': ' . $detail : '');
-            }
+            // KELOMPOK RAWAT LUKA
+            $nilaiRawatLuka = (int) (
+                $perencanaan->TINDAKAN_RAWAT_LUKA ?? 0
+            );
 
-            if ((int) ($perencanaan->TERAPI_IV_SC_IM ?? 0) === 1) {
-                $detail = $this->value($perencanaan->TERAPI_IV_SC_IM_DETAIL ?? null);
-                $daftarPerencanaan[] = 'Terapi IV/SC/IM'
-                    . ($detail !== '' ? ': ' . $detail : '');
-            }
+            $kotakRawatLuka = $nilaiRawatLuka === 1 ? '☑' : '☐';
+
+            $daftarRawatLuka[] = $kotakRawatLuka . ' Rawat luka';
+
+            // KELOMPOK TERAPI ORAL
+            $nilaiOral = (int) ($perencanaan->TERAPI_ORAL ?? 0);
+            $kotakOral = $nilaiOral === 1 ? '☑' : '☐';
+
+            $detailOral = $this->value(
+                $perencanaan->TERAPI_ORAL_DETAIL ?? null
+            );
+
+            $daftarTerapi[] = $kotakOral . ' Terapi oral'
+                . ($detailOral !== '' ? ': ' . $detailOral : '');
+
+            // KELOMPOK TERAPI IV/SC/IM
+            $nilaiIV = (int) ($perencanaan->TERAPI_IV_SC_IM ?? 0);
+            $kotakIV = $nilaiIV === 1 ? '☑' : '☐';
+
+            $detailIV = $this->value(
+                $perencanaan->TERAPI_IV_SC_IM_DETAIL ?? null
+            );
+
+            $daftarTerapi[] = $kotakIV . ' Terapi IV/SC/IM'
+                . ($detailIV !== '' ? ': ' . $detailIV : '');
         }
 
         /*
@@ -1438,16 +1517,43 @@ class RJDewasaPrintService implements PrintDataInterface
                 implode("\n", $detailSkriningGizi)
             ),
 
-            'KEBUTUHAN_EDUKASI' => $this->placeholder(
-                implode(', ', $detailKebutuhanEdukasi)
+            'KESEDIAAN_DAN_HAMBATAN' => $this->placeholder(
+                $dataKebutuhanEdukasi['KESEDIAAN_DAN_HAMBATAN']
+            ),
+            'KEBUTUHAN_EDUKASI_1' => $this->placeholder(
+                $dataKebutuhanEdukasi['KEBUTUHAN_EDUKASI_KOLOM_1']
+            ),
+            'KEBUTUHAN_EDUKASI_2' => $this->placeholder(
+                $dataKebutuhanEdukasi['KEBUTUHAN_EDUKASI_KOLOM_2']
+            ),
+            'KEBUTUHAN_EDUKASI_3' => $this->placeholder(
+                $dataKebutuhanEdukasi['KEBUTUHAN_EDUKASI_KOLOM_3']
             ),
 
-            'MASALAH_KEPERAWATAN' => $this->placeholder(
-                implode("\n", $daftarMasalahKeperawatan)
+            'MASALAH_KEPERAWATAN_1' => $this->placeholder(
+                implode("\n", $kolomMasalahKeperawatan[0])
             ),
-            'PERENCANAAN_TINDAKAN' => $this->placeholder(
-                implode("\n", $daftarPerencanaan)
+
+            'MASALAH_KEPERAWATAN_2' => $this->placeholder(
+                implode("\n", $kolomMasalahKeperawatan[1])
             ),
+
+            'MASALAH_KEPERAWATAN_3' => $this->placeholder(
+                implode("\n", $kolomMasalahKeperawatan[2])
+            ),
+
+            'TINDAKAN' => $this->placeholder(
+                implode("\n", $daftarTindakan)
+            ),
+
+            'RAWAT_LUKA' => $this->placeholder(
+                implode("\n", $daftarRawatLuka)
+            ),
+
+            'TERAPI' => $this->placeholder(
+                implode("\n", $daftarTerapi)
+            ),
+
             'RENCANA_ASUHAN_KEPERAWATAN' => $this->placeholder(
                 $rencanaAsuhanKeperawatan
             ),
