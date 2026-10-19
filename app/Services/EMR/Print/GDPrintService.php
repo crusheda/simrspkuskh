@@ -2,7 +2,9 @@
 
 namespace App\Services\EMR\Print;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GDPrintService implements PrintDataInterface
 {
@@ -10,16 +12,10 @@ class GDPrintService implements PrintDataInterface
         string $kunjungan,
         ?string $sub = null
     ): array {
-
-        return match ($sub) {
-
-            'DOKTER' =>
-                $this->getDataDokter($kunjungan),
-
-            'PERAWAT' =>
-                $this->getDataPerawat($kunjungan),
-
-            default => [],
+        return match (strtoupper((string) $sub)) {
+            'DOKTER'  => $this->getDataDokter($kunjungan),
+            'PERAWAT' => $this->getDataPerawat($kunjungan),
+            default   => [],
         };
     }
 
@@ -266,7 +262,7 @@ class GDPrintService implements PrintDataInterface
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first(); // Ambil seluruh kolom Primary Survey yang disimpan controller.
-        
+
         $tingkat_kesadaran = DB::table('master.referensi')
             ->where('JENIS',179)
             ->where('STATUS',1)
@@ -649,7 +645,7 @@ class GDPrintService implements PrintDataInterface
             'ATS_KRITERIA' => $this->placeholder($atsKriteria),
             'ATS_PLAN' => $this->placeholder($atsPlan),
             'ATS_DETAIL' => $this->placeholder(implode("\n", $atsDetail)),
-            
+
             /*
             | PRIMARY SURVEY
             | Kunci-kunci ini menjadi sumber data baru untuk placeholder DOCX.
@@ -734,23 +730,1963 @@ class GDPrintService implements PrintDataInterface
      * PERAWAT
      * ========================================================================
      */
-    private function getDataPerawat(
-        string $kunjungan
-    ): array {
+    private function getDataPerawat(string $kunjungan): array
+    {
+        $value = static function ($raw): string {
+            if ($raw === null) {
+                return '';
+            }
 
-        $data = DB::table(
-            'simrspku_pengkajian.??'
-        )
-            ->where('KUNJUNGAN', $kunjungan)
+            if (is_bool($raw)) {
+                return $raw ? '1' : '0';
+            }
+
+            return trim((string) $raw);
+        };
+
+        $placeholder = static function ($raw) use ($value): string {
+            $raw = $value($raw);
+
+            return $raw !== '' ? $raw : '-';
+        };
+
+        $mapValue = static function ($raw, array $map) use ($value): string {
+            $key = $value($raw);
+
+            if ($key === '') {
+                return '-';
+            }
+
+            if (array_key_exists($key, $map)) {
+                return $map[$key];
+            }
+
+            // Hindari mencetak angka 0 sebagai pilihan yang sudah dipilih
+            // apabila pada pilihan tersebut 0 merupakan nilai default.
+            if ($key === '0' && $map !== []) {
+                return 'Belum diisi';
+            }
+
+            return $key;
+        };
+
+        $yesNo = static function ($raw): string {
+            if ($raw === null || $raw === '') {
+                return '-';
+            }
+
+            return (string) $raw === '1'
+                ? 'Ya'
+                : ((string) $raw === '0' ? 'Tidak' : (string) $raw);
+        };
+
+        $formatLines = static function (array $lines): string {
+            $lines = array_values(
+                array_filter(
+                    $lines,
+                    static fn ($line) =>
+                        $line !== null && trim((string) $line) !== ''
+                )
+            );
+
+            return $lines ? implode("\n", $lines) : '-';
+        };
+
+        $push = static function (
+            array &$lines,
+            string $label,
+            $raw,
+            array $map = []
+        ) use ($value): void {
+            $key = $value($raw);
+
+            if ($key === '') {
+                return;
+            }
+
+            $mapped = array_key_exists($key, $map)
+                ? $map[$key]
+                : (($key === '0' && $map !== []) ? 'Belum diisi' : $key);
+
+            $lines[] = $label . ': ' . $mapped;
+        };
+
+        $decodeJson = static function ($raw): array {
+            if (is_array($raw)) {
+                return $raw;
+            }
+
+            if (is_object($raw)) {
+                return (array) $raw;
+            }
+
+            if (!is_string($raw) || trim($raw) === '') {
+                return [];
+            }
+
+            $decoded = json_decode($raw, true);
+
+            return is_array($decoded) ? $decoded : [];
+        };
+
+        $getLatest = static function (
+            string $table,
+            array $statuses = [1, 2]
+        ) use ($kunjungan) {
+            $query = DB::table($table)
+                ->where('KUNJUNGAN', $kunjungan);
+
+            if ($statuses !== []) {
+                $query->whereIn('STATUS', $statuses);
+            }
+
+            return $query->orderByDesc('ID')->first();
+        };
+
+        $checkedItems = static function (
+            $row,
+            array $columns
+        ) use ($value): string {
+            if (!$row) {
+                return '-';
+            }
+
+            $items = [];
+
+            foreach ($columns as $column => $label) {
+                if ($value($row->{$column} ?? null) === '1') {
+                    $items[] = $label;
+                }
+            }
+
+            return $items ? implode(', ', $items) : '-';
+        };
+
+        /*
+        |--------------------------------------------------------------------------
+        | IDENTITAS PASIEN DAN KUNJUNGAN
+        |--------------------------------------------------------------------------
+        */
+
+        $pasien = DB::table('pendaftaran.kunjungan as pk')
+            ->join(
+                'pendaftaran.pendaftaran as pp',
+                'pp.NOMOR',
+                '=',
+                'pk.NOPEN'
+            )
+            ->join(
+                'master.pasien as p',
+                'p.NORM',
+                '=',
+                'pp.NORM'
+            )
+            ->leftJoin('master.referensi as rjk', function ($join) {
+                $join->on('rjk.ID', '=', 'p.JENIS_KELAMIN')
+                    ->where('rjk.JENIS', 2);
+            })
+            ->leftJoin('master.referensi as ag', function ($join) {
+                $join->on('ag.ID', '=', 'p.AGAMA')
+                    ->where('ag.JENIS', 1);
+            })
+            ->leftJoin('master.referensi as pek', function ($join) {
+                $join->on('pek.ID', '=', 'p.PEKERJAAN')
+                    ->where('pek.JENIS', 4);
+            })
+            ->leftJoin('master.ruangan as r', function ($join) {
+                $join->on('r.ID', '=', 'pk.RUANGAN')
+                    ->where('r.JENIS', 5);
+            })
+            ->leftJoin(
+                'master.dokter as dok',
+                'dok.ID',
+                '=',
+                'pk.DPJP'
+            )
+            ->select([
+                'pk.NOMOR as KUNJUNGAN',
+                'pk.NOPEN',
+                'pk.MASUK as TANGGAL_MASUK',
+                'pk.KELUAR as TANGGAL_KELUAR',
+                'pk.RUANGAN',
+                'pk.DPJP',
+
+                DB::raw("LPAD(pp.NORM, 8, '0') as NORM_FORMATTED"),
+                DB::raw('master.getNamaLengkap(p.NORM) as NAMA_PASIEN'),
+                'p.TANGGAL_LAHIR',
+                'p.ALAMAT',
+
+                'rjk.DESKRIPSI as JENIS_KELAMIN',
+                'ag.DESKRIPSI as AGAMA',
+                'pek.DESKRIPSI as PEKERJAAN',
+                'r.DESKRIPSI as NAMA_RUANGAN',
+
+                DB::raw(
+                    'master.getNamaLengkapPegawai(dok.NIP) as NAMA_DPJP'
+                ),
+            ])
+            ->where('pk.NOMOR', $kunjungan)
             ->first();
 
-        if (!$data) {
-            return [];
+        $norm = $value($pasien->NORM_FORMATTED ?? null);
+        $namaPasien = $value($pasien->NAMA_PASIEN ?? null);
+        $tanggalLahirRaw = $value($pasien->TANGGAL_LAHIR ?? null);
+
+        $umur = '-';
+
+        if ($tanggalLahirRaw !== '') {
+            try {
+                $umur = \Carbon\Carbon::parse($tanggalLahirRaw)->age
+                    . ' tahun';
+            } catch (\Throwable $e) {
+                $umur = '-';
+            }
         }
 
-        return [
+        /*
+        |--------------------------------------------------------------------------
+        | DATA FORM PERAWAT
+        |--------------------------------------------------------------------------
+        */
 
+        $triage = $getLatest('medicalrecord.triage');
+
+        $anamnesisDiperoleh = $getLatest(
+            'medicalrecord.anamnesis_diperoleh'
+        );
+
+        $tandaVital = $getLatest(
+            'medicalrecord.tanda_vital'
+        );
+
+        $statusReproduksi = $getLatest(
+            'medicalrecord.sirmed_status_reproduksi'
+        );
+
+        $psikososial = $getLatest(
+            'medicalrecord.kondisi_sosial'
+        );
+
+        $fungsional = $getLatest(
+            'medicalrecord.status_fungsional'
+        );
+
+        $nyeri = $getLatest(
+            'medicalrecord.penilaian_nyeri'
+        );
+
+        $humpty = $getLatest(
+            'medicalrecord.penilaian_skala_humpty_dumpty'
+        );
+
+        $morse = $getLatest(
+            'medicalrecord.penilaian_skala_morse'
+        );
+
+        $epfra = $getLatest(
+            'medicalrecord.penilaian_epfra'
+        );
+
+        $getUpAndGo = $getLatest(
+            'medicalrecord.penilaian_getup_and_go'
+        );
+
+        $must = $getLatest(
+            'medicalrecord.permasalahan_gizi'
+        );
+
+        $strongKid = $getLatest(
+            'medicalrecord.penilaian_strong_kid'
+        );
+
+        $implementasi = $getLatest(
+            'medicalrecord.sirmed_implementasi_keperawatan'
+        );
+
+        $kolaborasi = $getLatest(
+            'medicalrecord.sirmed_tindakan_kolaborasi'
+        );
+
+        $masalah = $getLatest(
+            'medicalrecord.masalah_keperawatan'
+        );
+
+        $discharge1 = $getLatest(
+            'medicalrecord.discharge_planning_faktor_risiko'
+        );
+
+        $discharge2 = $getLatest(
+            'medicalrecord.discharge_planning_skrining'
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | FINALISASI DAN TANDA TANGAN PERAWAT
+        |--------------------------------------------------------------------------
+        */
+
+        $finalisasi = DB::table(
+            'simrspku_pengkajian.finalisasi as fin'
+        )
+            ->leftJoin(
+                'aplikasi.pengguna as usr',
+                'usr.ID',
+                '=',
+                'fin.USER_CREATED'
+            )
+            ->select([
+                'fin.KUNJUNGAN',
+                'fin.FORM',
+                'fin.SUB',
+                'fin.STATUS',
+
+                'usr.NIP as NIP_USER_FINALISASI',
+
+                DB::raw(
+                    'master.getNamaLengkapPegawai(usr.NIP) as NAMA_USER_FINALISASI'
+                ),
+            ])
+            ->where('fin.KUNJUNGAN', $kunjungan)
+            ->where('fin.FORM', 'pengkajian-radar')
+            ->where('fin.SUB', 'PERAWAT')
+            ->where('fin.STATUS', 2)
+            ->first();
+
+        $ttdPerawat = null;
+
+        $nipFinalisasi = $value(
+            $finalisasi->NIP_USER_FINALISASI ?? null
+        );
+
+        if ($nipFinalisasi !== '') {
+            $ttdPerawat = DB::table(
+                'simrspku_klaim.tanda_tangan_pegawai'
+            )
+                ->where('nip', $nipFinalisasi)
+                ->where('status', 1)
+                ->whereNull('deleted_at')
+                ->inRandomOrder()
+                ->first();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | TRIAGE: CARA KEDATANGAN
+        |--------------------------------------------------------------------------
+        */
+
+        $kedatangan = $decodeJson(
+            $triage->KEDATANGAN ?? null
+        );
+
+        $jenisKedatangan = $value(
+            $kedatangan['JENIS'] ?? null
+        );
+
+        $caraKedatanganMap = [
+            '1' => 'Datang sendiri, diantar oleh',
+            '2' => 'Rujukan dari',
+            '3' => 'Dikirim oleh Polisi dari',
         ];
+
+        $caraKedatangan = [];
+
+        $push(
+            $caraKedatangan,
+            'Cara kedatangan',
+            $jenisKedatangan,
+            $caraKedatanganMap
+        );
+
+        if ($jenisKedatangan === '1') {
+            $push(
+                $caraKedatangan,
+                'Nama pengantar',
+                $kedatangan['PENGANTAR'] ?? null
+            );
+        } elseif ($jenisKedatangan === '2') {
+            $push(
+                $caraKedatangan,
+                'Asal rujukan',
+                $kedatangan['ASAL_RUJUKAN'] ?? null
+            );
+        } elseif ($jenisKedatangan === '3') {
+            $push(
+                $caraKedatangan,
+                'Kepolisian',
+                $kedatangan['KEPOLISIAN'] ?? null
+            );
+
+            if (array_key_exists('VISUM', $kedatangan)) {
+                $push(
+                    $caraKedatangan,
+                    'Permintaan visum et repertum',
+                    $yesNo($kedatangan['VISUM'])
+                );
+            }
+        }
+
+        $tanggalDatang = $value(
+            $kedatangan['TANGGAL'] ?? null
+        );
+
+        if ($tanggalDatang !== '') {
+            $caraKedatangan[] =
+                'Tanggal kedatangan: '
+                . $this->formatTanggalWaktuMedis($tanggalDatang);
+        }
+
+        $push(
+            $caraKedatangan,
+            'Alat transportasi',
+            $kedatangan['ALAT_TRANSPORTASI'] ?? null
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | TRIAGE: JENIS KASUS
+        |--------------------------------------------------------------------------
+        */
+
+        $kasus = $decodeJson(
+            $triage->KASUS ?? null
+        );
+
+        $jenisKasus = $value(
+            $kasus['JENIS'] ?? null
+        );
+
+        $jenisKasusMap = [
+            '1' => 'Trauma',
+            '0' => 'Non trauma',
+        ];
+
+        $detailKasus = [];
+
+        $push(
+            $detailKasus,
+            'Jenis kasus',
+            $jenisKasus,
+            $jenisKasusMap
+        );
+
+        if ($jenisKasus === '1') {
+            $detailTrauma = [];
+
+            foreach ([
+                'LAKA_LANTAS' => 'Kecelakaan lalu lintas',
+                'KECELAKAAN_KERJA' => 'Kecelakaan kerja',
+                'UPPA' => 'Kasus perempuan dan anak (UPPA)',
+            ] as $column => $label) {
+                if ($value($kasus[$column] ?? null) === '1') {
+                    $detailTrauma[] = $label;
+                }
+            }
+
+            if ($detailTrauma) {
+                $detailKasus[] =
+                    'Rincian trauma: '
+                    . implode(', ', $detailTrauma);
+            }
+        } elseif ($jenisKasus === '0') {
+            $push(
+                $detailKasus,
+                'Daerah endemis / keterangan',
+                $kasus['DIMANA'] ?? null
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | RISIKO PENULARAN INFEKSI
+        |--------------------------------------------------------------------------
+        */
+
+        $risikoInfeksiMap = [
+            '1' => 'Batuk > 2 minggu dengan demam dan sesak napas',
+            '2' => 'Rujukan dengan suspek/konfirmasi airborne disease',
+            '3' => 'Tidak berisiko penularan airborne disease',
+            '4' => 'B-20',
+        ];
+
+        $risikoInfeksiRaw = $value(
+            $triage->RISIKO_PENULARAN_INFEKSI ?? null
+        );
+
+        $risikoInfeksi = (
+            $risikoInfeksiRaw === ''
+            || $risikoInfeksiRaw === '0'
+        )
+            ? '-'
+            : (
+                $risikoInfeksiMap[$risikoInfeksiRaw]
+                ?? $risikoInfeksiRaw
+            );
+
+        /*
+        |--------------------------------------------------------------------------
+        | ANAMNESIS PADA TRIAGE
+        |--------------------------------------------------------------------------
+        */
+
+        $anamneseTriage = $decodeJson(
+            $triage->ANAMNESE ?? null
+        );
+
+        $detailAnamnesis = [];
+
+        $push(
+            $detailAnamnesis,
+            'Keluhan utama',
+            $anamneseTriage['KELUHAN_UTAMA'] ?? null
+        );
+
+        $push(
+            $detailAnamnesis,
+            'Anamnesis terpimpin',
+            $anamneseTriage['TERPIMPIN'] ?? null
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | ATS / KATEGORI TRIAGE
+        |--------------------------------------------------------------------------
+        */
+
+        $atsMap = [
+            'RESUSITASI' => [
+                'prioritas' => 'P1',
+                'label' => 'Ruang Resusitasi / Zona Merah',
+            ],
+            'EMERGENCY' => [
+                'prioritas' => 'P2',
+                'label' => 'Ruang Kritis / Zona Merah',
+            ],
+            'URGENT' => [
+                'prioritas' => 'P3',
+                'label' => 'Zona Kuning',
+            ],
+            'LESS_URGENT' => [
+                'prioritas' => 'P4',
+                'label' => 'Zona Hijau',
+            ],
+            'NON_URGENT' => [
+                'prioritas' => 'P5',
+                'label' => 'Zona Hijau / Non-Urgent',
+            ],
+            'DOA' => [
+                'prioritas' => 'DOA',
+                'label' => 'Zona Hitam / DOA',
+            ],
+        ];
+
+        $atsKategori = '-';
+        $atsPrioritas = '-';
+        $atsDetail = [];
+
+        foreach ($atsMap as $column => $info) {
+            $kategori = $decodeJson(
+                $triage->{$column} ?? null
+            );
+
+            if (empty($kategori['CHECKED'])) {
+                continue;
+            }
+
+            $atsKategori = $info['label'];
+            $atsPrioritas = $info['prioritas'];
+
+            $push(
+                $atsDetail,
+                'Kesadaran',
+                $kategori['KESADARAN'] ?? null
+            );
+
+            foreach ([
+                'JALAN_NAPAS' => 'Jalan napas',
+                'PERNAPASAN' => 'Pernapasan',
+                'SIRKULASI' => 'Sirkulasi',
+            ] as $key => $label) {
+                $values = $kategori[$key] ?? [];
+                $selected = [];
+
+                if (is_array($values)) {
+                    foreach ($values as $subKey => $subValue) {
+                        if (
+                            (string) $subKey === 'CHECKED'
+                            || is_array($subValue)
+                            || !in_array(
+                                $subValue,
+                                [1, true, '1'],
+                                true
+                            )
+                        ) {
+                            continue;
+                        }
+
+                        $selected[] = ucwords(
+                            strtolower(
+                                str_replace(
+                                    '_',
+                                    ' ',
+                                    (string) $subKey
+                                )
+                            )
+                        );
+                    }
+                }
+
+                if ($selected) {
+                    $atsDetail[] =
+                        $label . ': ' . implode(', ', $selected);
+                }
+            }
+
+            break;
+        }
+
+        $planMap = [
+            '1' => 'Resusitasi / Emergency',
+            '2' => 'Urgent',
+            '3' => 'Non-Urgent',
+            '4' => 'DOA',
+        ];
+
+        $atsPlan = $mapValue(
+            $triage->PLAN ?? null,
+            $planMap
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | PRIMARY SURVEY / TANDA VITAL
+        |--------------------------------------------------------------------------
+        */
+
+        $tingkatKesadaran = $value(
+            $tandaVital->TINGKAT_KESADARAN ?? null
+        );
+
+        if ($tingkatKesadaran === '0') {
+            $tingkatKesadaran = '';
+        }
+
+        if ($tingkatKesadaran !== '') {
+            $deskripsiKesadaran = DB::table('master.referensi')
+                ->where('JENIS', 179)
+                ->where('STATUS', 1)
+                ->where('ID', $tingkatKesadaran)
+                ->value('DESKRIPSI');
+
+            if ($deskripsiKesadaran) {
+                $tingkatKesadaran = (string) $deskripsiKesadaran;
+            }
+        }
+
+        $nadiRegulerMap = [
+            '1' => 'Reguler',
+            '2' => 'Ireguler',
+        ];
+
+        $napasMap = [
+            '1' => 'Simetris',
+            '2' => 'Asimetris',
+        ];
+
+        $airwayMap = [
+            '1' => 'Paten',
+            '2' => 'Obstruksi parsial',
+            '3' => 'Obstruksi total',
+        ];
+
+        $pupilMap = [
+            '1' => 'Isokor',
+            '2' => 'Anisokor',
+        ];
+
+        $kulitMap = [
+            '1' => 'Normal',
+            '2' => 'Jaundice',
+            '3' => 'Akral dingin',
+            '4' => 'Sianotik',
+            '5' => 'Berkeringat',
+        ];
+
+        $primarySurvey = [];
+
+        $push(
+            $primarySurvey,
+            'Keadaan umum',
+            $tandaVital->KEADAAN_UMUM ?? null
+        );
+
+        $push(
+            $primarySurvey,
+            'Airway / jalan napas',
+            $tandaVital->JALAN_NAFAS ?? null,
+            $airwayMap
+        );
+
+        $push(
+            $primarySurvey,
+            'Alat bantu napas',
+            $tandaVital->ALAT_BANTU_NAFAS ?? null,
+            ['0' => 'Tidak', '1' => 'Ya']
+        );
+
+        $frekuensiNapas = $value(
+            $tandaVital->FREKUENSI_NAFAS ?? null
+        );
+
+        if ($frekuensiNapas !== '') {
+            $frekuensiNapas .= ' x/menit';
+
+            $napas = $value(
+                $tandaVital->FREKUENSI_NAFAS_CB ?? null
+            );
+
+            if ($napas !== '') {
+                $frekuensiNapas .=
+                    ' (' . ($napasMap[$napas] ?? $napas) . ')';
+            }
+
+            $primarySurvey[] =
+                'Frekuensi napas: ' . $frekuensiNapas;
+        }
+
+        $sistolik = $value(
+            $tandaVital->SISTOLIK ?? null
+        );
+
+        $distolik = $value(
+            $tandaVital->DISTOLIK ?? null
+        );
+
+        if ($sistolik !== '' || $distolik !== '') {
+            $primarySurvey[] =
+                'Tekanan darah: '
+                . ($sistolik !== '' ? $sistolik : '-')
+                . '/'
+                . ($distolik !== '' ? $distolik : '-')
+                . ' mmHg';
+        }
+
+        $frekuensiNadi = $value(
+            $tandaVital->FREKUENSI_NADI ?? null
+        );
+
+        if ($frekuensiNadi !== '') {
+            $frekuensiNadi .= ' x/menit';
+
+            $nadi = $value(
+                $tandaVital->FREKUENSI_NADI_CB ?? null
+            );
+
+            if ($nadi !== '') {
+                $frekuensiNadi .=
+                    ' (' . ($nadiRegulerMap[$nadi] ?? $nadi) . ')';
+            }
+
+            $primarySurvey[] =
+                'Nadi: ' . $frekuensiNadi;
+        }
+
+        $suhu = $value(
+            $tandaVital->SUHU ?? null
+        );
+
+        if ($suhu !== '') {
+            $primarySurvey[] = 'Suhu: ' . $suhu . ' °C';
+        }
+
+        $spo2 = $value(
+            $tandaVital->SATURASI_O2 ?? null
+        );
+
+        if ($spo2 !== '') {
+            $primarySurvey[] = 'SpO₂: ' . $spo2 . '%';
+        }
+
+        $push(
+            $primarySurvey,
+            'Tingkat kesadaran',
+            $tingkatKesadaran
+        );
+
+        $gcsTotal = $value(
+            $tandaVital->GCS ?? null
+        );
+
+        $eye = $value(
+            $tandaVital->EYE ?? null
+        );
+
+        $verbal = $value(
+            $tandaVital->VERBAL ?? null
+        );
+
+        $motorik = $value(
+            $tandaVital->MOTORIK ?? null
+        );
+
+        if (
+            $gcsTotal !== ''
+            || $eye !== ''
+            || $verbal !== ''
+            || $motorik !== ''
+        ) {
+            $primarySurvey[] =
+                'GCS: '
+                . ($gcsTotal !== '' ? $gcsTotal : '-')
+                . ' (E' . ($eye !== '' ? $eye : '-')
+                . ' V' . ($verbal !== '' ? $verbal : '-')
+                . ' M' . ($motorik !== '' ? $motorik : '-')
+                . ')';
+        }
+
+        $push(
+            $primarySurvey,
+            'Pupil',
+            $tandaVital->PUPIL ?? null,
+            $pupilMap
+        );
+
+        $diameterKanan = $value(
+            $tandaVital->DIAMETER_PUPIL_UP ?? null
+        );
+
+        $diameterKiri = $value(
+            $tandaVital->DIAMETER_PUPIL_DOWN ?? null
+        );
+
+        if ($diameterKanan !== '' || $diameterKiri !== '') {
+            $primarySurvey[] =
+                'Diameter pupil kanan/kiri: '
+                . ($diameterKanan !== '' ? $diameterKanan : '-')
+                . '/'
+                . ($diameterKiri !== '' ? $diameterKiri : '-')
+                . ' mm';
+        }
+
+        $refleksKanan = $value(
+            $tandaVital->RC_UP ?? null
+        );
+
+        $refleksKiri = $value(
+            $tandaVital->RC_DOWN ?? null
+        );
+
+        if ($refleksKanan !== '' || $refleksKiri !== '') {
+            $primarySurvey[] =
+                'Refleks cahaya kanan/kiri: '
+                . ($refleksKanan !== '' ? $refleksKanan : '-')
+                . '/'
+                . ($refleksKiri !== '' ? $refleksKiri : '-');
+        }
+
+        $push(
+            $primarySurvey,
+            'VAS / nyeri',
+            $tandaVital->VAS ?? null
+        );
+
+        $push(
+            $primarySurvey,
+            'Kulit',
+            $tandaVital->KULIT ?? null,
+            $kulitMap
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS KEHAMILAN, OBGYN, DAN KEBUTUHAN KHUSUS
+        |--------------------------------------------------------------------------
+        */
+
+        $statusKehamilan = [];
+
+        $statusHamil = $value(
+            $statusReproduksi->STATUS_REPRODUKSI ?? null
+        );
+
+        $push(
+            $statusKehamilan,
+            'Hamil',
+            $statusHamil,
+            ['0' => 'Tidak', '1' => 'Ya']
+        );
+
+        $push(
+            $statusKehamilan,
+            'G (Gravida)',
+            $statusReproduksi->HAMIL_GRAVIDA ?? null
+        );
+
+        $push(
+            $statusKehamilan,
+            'P (Paritas)',
+            $statusReproduksi->HAMIL_PARITAS ?? null
+        );
+
+        $push(
+            $statusKehamilan,
+            'A (Abortus)',
+            $statusReproduksi->HAMIL_ABORTUS ?? null
+        );
+
+        $hpht = $value(
+            $statusReproduksi->HPHT ?? null
+        );
+
+        if ($hpht !== '') {
+            $hphtFormatted = $this->formatTanggal($hpht);
+
+            $statusKehamilan[] =
+                'HPHT: '
+                . ($hphtFormatted !== '-' ? $hphtFormatted : $hpht);
+        }
+
+        $obgyn = $decodeJson(
+            $triage->OBGYN ?? null
+        );
+
+        $push(
+            $statusKehamilan,
+            'Usia gestasi',
+            $obgyn['USIA_GESTASI'] ?? null
+        );
+
+        if ($value($obgyn['USIA_GESTASI'] ?? null) !== '') {
+            $statusKehamilan[count($statusKehamilan) - 1] .= ' minggu';
+        }
+
+        $push(
+            $statusKehamilan,
+            'Kontraksi uterus',
+            $obgyn['KONTRAKSI_UTERUS'] ?? null
+        );
+
+        $push(
+            $statusKehamilan,
+            'Detak jantung janin',
+            $obgyn['DETAK_JANTUNG'] ?? null
+        );
+
+        if ($value($obgyn['DETAK_JANTUNG'] ?? null) !== '') {
+            $statusKehamilan[count($statusKehamilan) - 1] .= ' x/menit';
+        }
+
+        $push(
+            $statusKehamilan,
+            'Dilatasi serviks',
+            $obgyn['DILATASI_SERVIKS'] ?? null
+        );
+
+        if ($value($obgyn['DILATASI_SERVIKS'] ?? null) !== '') {
+            $statusKehamilan[count($statusKehamilan) - 1] .= ' cm';
+        }
+
+        $kebutuhanKhusus = $decodeJson(
+            $triage->KEBUTUHAN_KHUSUS ?? null
+        );
+
+        $push(
+            $statusKehamilan,
+            'Kebutuhan khusus - Airborne',
+            $kebutuhanKhusus['AIRBONE'] ?? null
+        );
+
+        $push(
+            $statusKehamilan,
+            'Kebutuhan khusus - Dekontaminan',
+            $kebutuhanKhusus['DEKONTAMINAN'] ?? null
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | ANAMNESIS DIPEROLEH
+        |--------------------------------------------------------------------------
+        */
+
+        $anamnesisDiperolehText = [];
+
+        if ($value($anamnesisDiperoleh->AUTOANAMNESIS ?? null) === '1') {
+            $anamnesisDiperolehText[] = 'Autoanamnesis';
+        }
+
+        if ($value($anamnesisDiperoleh->ALLOANAMNESIS ?? null) === '1') {
+            $dari = $value($anamnesisDiperoleh->DARI ?? null);
+
+            $anamnesisDiperolehText[] =
+                'Alloanamnesis'
+                . ($dari !== '' ? ' dari ' . $dari : '');
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | PSIKOSOSIAL, SPIRITUAL, DAN EKONOMI
+        |--------------------------------------------------------------------------
+        */
+
+        $psikososialText = [];
+
+        $psikologi = $checkedItems($psikososial, [
+            'TIDAK_ADA_KELAINAN' => 'Tidak ada kelainan',
+            'MARAH' => 'Marah',
+            'CEMAS' => 'Cemas',
+            'TAKUT' => 'Takut',
+            'SEDIH' => 'Sedih',
+            'BUNUH_DIRI' => 'Kecenderungan bunuh diri',
+        ]);
+
+        if ($psikologi !== '-') {
+            $psikososialText[] =
+                'Status psikologi: ' . $psikologi;
+        }
+
+        $psikologiLain = $value(
+            $psikososial->LAINNYA ?? null
+        );
+
+        if ($psikologiLain !== '') {
+            $psikososialText[] =
+                'Status psikologi lainnya: ' . $psikologiLain;
+        }
+
+        $statusMentalMap = [
+            '1' => 'Sadar dan orientasi baik',
+            '2' => 'Ada masalah perilaku',
+            '3' => 'Perilaku kekerasan yang dialami pasien sebelumnya',
+        ];
+
+        $statusMentalRaw = $value(
+            $psikososial->STATUS_MENTAL ?? null
+        );
+
+        if (isset($statusMentalMap[$statusMentalRaw])) {
+            $psikososialText[] =
+                'Status mental: ' . $statusMentalMap[$statusMentalRaw];
+        }
+
+        $masalahPerilaku = $value(
+            $psikososial->MASALAH_PERILAKU ?? null
+        );
+
+        if ($masalahPerilaku !== '') {
+            $psikososialText[] =
+                'Keterangan masalah perilaku: ' . $masalahPerilaku;
+        }
+
+        $riwayatKekerasan = $value(
+            $psikososial->PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA ?? null
+        );
+
+        if ($riwayatKekerasan !== '') {
+            $psikososialText[] =
+                'Keterangan perilaku kekerasan sebelumnya: '
+                . $riwayatKekerasan;
+        }
+
+        $push(
+            $psikososialText,
+            'Hubungan pasien dengan keluarga',
+            $psikososial->HUBUNGAN_PASIEN_DENGAN_KELUARGA ?? null,
+            ['1' => 'Baik', '2' => 'Tidak baik']
+        );
+
+        $push(
+            $psikososialText,
+            'Tempat tinggal',
+            $psikososial->TEMPAT_TINGGAL ?? null,
+            ['1' => 'Rumah', '2' => 'Panti', '3' => 'Lainnya']
+        );
+
+        $tempatTinggalLain = $value(
+            $psikososial->TEMPAT_TINGGAL_LAINNYA ?? null
+        );
+
+        if ($tempatTinggalLain !== '') {
+            $psikososialText[] =
+                'Keterangan tempat tinggal: ' . $tempatTinggalLain;
+        }
+
+        $push(
+            $psikososialText,
+            'Agama',
+            $pasien->AGAMA ?? null
+        );
+
+        $push(
+            $psikososialText,
+            'Kebiasaan beribadah teratur',
+            $psikososial->KEBIASAAN_BERIBADAH_TERATUR ?? null,
+            ['1' => 'Ya', '2' => 'Tidak']
+        );
+
+        $push(
+            $psikososialText,
+            'Nilai-nilai kepercayaan',
+            $psikososial->NILAI_KEPERCAYAAN ?? null,
+            ['1' => 'Ada', '2' => 'Tidak ada']
+        );
+
+        $nilaiKepercayaan = $value(
+            $psikososial->NILAI_KEPERCAYAAN_DESKRIPSI ?? null
+        );
+
+        if ($nilaiKepercayaan !== '') {
+            $psikososialText[] =
+                'Keterangan nilai kepercayaan: ' . $nilaiKepercayaan;
+        }
+
+        $push(
+            $psikososialText,
+            'Pengambil keputusan dalam keluarga',
+            $psikososial->PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA ?? null
+        );
+
+        $push(
+            $psikososialText,
+            'Pekerjaan',
+            $pasien->PEKERJAAN ?? null
+        );
+
+        $push(
+            $psikososialText,
+            'Penghasilan per bulan',
+            $psikososial->PENGHASILAN_PERBULAN ?? null,
+            [
+                '1' => '< Rp 5.000.000',
+                '2' => 'Rp 5.000.000 - Rp 10.000.000',
+                '3' => '> Rp 10.000.000',
+            ]
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUS FUNGSIONAL
+        |--------------------------------------------------------------------------
+        */
+
+        $fungsionalText = [];
+
+        $alatBantu = $checkedItems($fungsional, [
+            'TANPA_ALAT_BANTU' => 'Tanpa alat bantu',
+            'TONGKAT' => 'Tongkat',
+            'KURSI_RODA' => 'Kursi roda',
+            'BRANKARD' => 'Brankard',
+            'WALKER' => 'Walker',
+        ]);
+
+        if ($alatBantu !== '-') {
+            $fungsionalText[] =
+                'Alat bantu mobilitas: ' . $alatBantu;
+        }
+
+        $alatBantuLain = $value(
+            $fungsional->ALAT_BANTU ?? null
+        );
+
+        if ($alatBantuLain !== '') {
+            $fungsionalText[] =
+                'Alat bantu lainnya: ' . $alatBantuLain;
+        }
+
+        $cacatTubuh = '-';
+
+        if ($value($fungsional->CACAT_TUBUH_YA ?? null) === '1') {
+            $cacatTubuh = 'Ya';
+        } elseif ($value($fungsional->CACAT_TUBUH_TIDAK ?? null) === '1') {
+            $cacatTubuh = 'Tidak';
+        }
+
+        if ($cacatTubuh !== '-') {
+            $fungsionalText[] = 'Cacat tubuh: ' . $cacatTubuh;
+        }
+
+        $ketCacat = $value(
+            $fungsional->KET_CACAT_TUBUH ?? null
+        );
+
+        if ($ketCacat !== '') {
+            $fungsionalText[] =
+                'Keterangan cacat tubuh: ' . $ketCacat;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING NYERI
+        |--------------------------------------------------------------------------
+        */
+
+        $nyeriText = [];
+
+        $push(
+            $nyeriText,
+            'Nyeri',
+            $nyeri->NYERI ?? null,
+            ['0' => 'Tidak', '1' => 'Ya']
+        );
+
+        $push(
+            $nyeriText,
+            'Onset',
+            $nyeri->ONSET ?? null,
+            ['1' => 'Akut', '2' => 'Kronis']
+        );
+
+        $skalaNyeri = $value(
+            $nyeri->SKALA ?? null
+        );
+
+        if ($skalaNyeri !== '') {
+            $nyeriText[] = 'Skala nyeri: ' . $skalaNyeri;
+
+            $metodeRaw = $value(
+                $nyeri->METODE ?? null
+            );
+
+            if (in_array($metodeRaw, ['1', '5'], true)) {
+                $skor = (int) $skalaNyeri;
+
+                $interpretasi = $skor === 0
+                    ? 'Tidak nyeri'
+                    : (
+                        $skor <= 3
+                            ? 'Nyeri ringan'
+                            : (
+                                $skor <= 6
+                                    ? 'Nyeri sedang'
+                                    : 'Nyeri berat'
+                            )
+                    );
+
+                $nyeriText[] =
+                    'Interpretasi skala: ' . $interpretasi;
+            }
+        }
+
+        $metodeNyeriMap = [
+            '1' => 'NRS',
+            '2' => 'BPS',
+            '3' => 'NIPS',
+            '4' => 'FLACC',
+            '5' => 'VAS',
+        ];
+
+        $metodeNyeriRaw = $value(
+            $nyeri->METODE ?? null
+        );
+
+        $push(
+            $nyeriText,
+            'Metode penilaian',
+            $metodeNyeriRaw,
+            $metodeNyeriMap
+        );
+
+        if (in_array($metodeNyeriRaw, ['2', '3', '4'], true)) {
+            $maks = $metodeNyeriRaw === '2'
+                ? 3
+                : ($metodeNyeriRaw === '3' ? 6 : 5);
+
+            $komponen = [];
+
+            for ($i = 1; $i <= $maks; $i++) {
+                $score = $value(
+                    $nyeri->{'SKOR' . $i} ?? null
+                );
+
+                if ($score !== '') {
+                    $komponen[] =
+                        'Komponen ' . $i . ': ' . $score;
+                }
+            }
+
+            if ($komponen) {
+                $nyeriText[] =
+                    'Rincian skor '
+                    . ($metodeNyeriMap[$metodeNyeriRaw] ?? '')
+                    . ': '
+                    . implode('; ', $komponen);
+            }
+        }
+
+        foreach ([
+            'PENCETUS' => 'Pencetus',
+            'GAMBARAN' => 'Gambaran nyeri',
+            'DURASI' => 'Durasi',
+            'LOKASI' => 'Lokasi',
+        ] as $column => $label) {
+            $push(
+                $nyeriText,
+                $label,
+                $nyeri->{$column} ?? null
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING RISIKO JATUH — HUMPTY DUMPTY
+        |--------------------------------------------------------------------------
+        */
+
+        $humptyText = [];
+
+        $humptyMaps = [
+            'UMUR' => [
+                '1' => '< 3 tahun',
+                '2' => '3 s.d. < 7 tahun',
+                '3' => '7 s.d. < 13 tahun',
+                '4' => '>= 13 tahun',
+            ],
+            'JENIS_KELAMIN' => [
+                '1' => 'Laki-laki',
+                '2' => 'Perempuan',
+            ],
+            'DIAGNOSA' => [
+                '1' => 'Diagnosis lainnya',
+                '2' => 'Perubahan oksigenasi',
+                '3' => 'Gangguan perilaku / psikiatri',
+                '4' => 'Kelainan neurologis (meningitis, ensefalitis, kejang dan/atau gelisah)',
+            ],
+            'GANGGUAN_KONGNITIF' => [
+                '1' => 'Orientasi terhadap kemampuan diri',
+                '2' => 'Lupa kondisi sakit / kadang gelisah',
+                '3' => 'Belum memiliki kontrol diri / gelisah',
+            ],
+            'FAKTOR_LINGKUNGAN' => [
+                '1' => 'Area di luar rumah sakit',
+                '2' => 'Tempat tidur bayi / khusus anak',
+                '3' => 'Kursi / pangkuan',
+                '4' => 'Riwayat jatuh / tempat tidur dewasa',
+            ],
+            'RESPON' => [
+                '1' => '48 jam / tidak menjalani operasi',
+                '2' => 'Dalam 48 jam',
+                '3' => 'Dalam 24 jam',
+            ],
+            'PENGGUNAAN_OBAT' => [
+                '1' => 'Obat lain / tidak menggunakan obat berisiko',
+                '2' => 'Menggunakan salah satu obat berisiko',
+                '3' => 'Multiple sedatif / hipnotik / barbiturat / antidepresan / laksatif / diuretik / narkose',
+            ],
+        ];
+
+        foreach ($humptyMaps as $column => $map) {
+            $push(
+                $humptyText,
+                str_replace('_', ' ', ucfirst(strtolower($column))),
+                $humpty->{$column} ?? null,
+                $map
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING RISIKO JATUH — MORSE
+        |--------------------------------------------------------------------------
+        */
+
+        $morseText = [];
+
+        $morseMaps = [
+            'RIWAYAT_JATUH' => [
+                '1' => 'Tidak',
+                '2' => 'Ya',
+            ],
+            'DIAGNOSIS' => [
+                '1' => 'Tidak',
+                '2' => 'Ya',
+            ],
+            'ALAT_BANTU' => [
+                '1' => 'Tidak ada / bed rest',
+                '2' => 'Tongkat / alat penopang / walker',
+                '3' => 'Furnitur',
+            ],
+            'HEPARIN' => [
+                '1' => 'Tidak',
+                '2' => 'Ya',
+            ],
+            'GAYA_BERJALAN' => [
+                '1' => 'Normal',
+                '2' => 'Lemah',
+                '3' => 'Terganggu',
+            ],
+            'KESADARAN' => [
+                '1' => 'Baik',
+                '2' => 'Lupa / pelupa',
+            ],
+        ];
+
+        foreach ($morseMaps as $column => $map) {
+            $label = [
+                'RIWAYAT_JATUH' => 'Riwayat jatuh (3 bulan terakhir)',
+                'DIAGNOSIS' => 'Diagnosis sekunder',
+                'ALAT_BANTU' => 'Alat bantu',
+                'HEPARIN' => 'Penggunaan obat yang memengaruhi keseimbangan',
+                'GAYA_BERJALAN' => 'Gaya berjalan',
+                'KESADARAN' => 'Kesadaran',
+            ][$column];
+
+            $push(
+                $morseText,
+                $label,
+                $morse->{$column} ?? null,
+                $map
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING RISIKO JATUH — EPFRA
+        |--------------------------------------------------------------------------
+        */
+
+        $epfraText = [];
+
+        $usiaEpfra = $value(
+            $epfra->USIA ?? null
+        );
+
+        if ($usiaEpfra !== '') {
+            $deskripsiUsia = DB::table('master.referensi')
+                ->where('ID', $usiaEpfra)
+                ->where('STATUS', 1)
+                ->value('DESKRIPSI');
+
+            $epfraText[] =
+                'Usia pasien: '
+                . ($deskripsiUsia ?: $usiaEpfra);
+        }
+
+        $epfraMaps = [
+            'STATUS_MENTAL' => [
+                '1' => 'Sadar penuh dan orientasi waktu baik',
+                '2' => 'Agitasi / cemas',
+                '3' => 'Sering bingung',
+                '4' => 'Bingung dan disorientasi',
+            ],
+            'ELIMINASI' => [
+                '1' => 'Mandiri BAB dan BAK',
+                '2' => 'Memakai kateter / ostomy',
+                '3' => 'BAB dan BAK dengan bantuan',
+                '4' => 'Gangguan eliminasi',
+                '5' => 'Inkontinensia tetapi bisa ambulasi mandiri',
+            ],
+            'MEDIKASI' => [
+                '1' => 'Tidak ada pengobatan',
+                '2' => 'Obat-obatan jantung',
+                '3' => 'Obat psikiatri termasuk benzodiazepin / antidepresan',
+                '4' => 'Dosis obat meningkat / ditambahkan dalam 24 jam terakhir',
+            ],
+            'DIAGNOSIS' => [
+                '1' => 'Bipolar / gangguan skizoafektif',
+                '2' => 'Penyalahgunaan zat terlarang dan alkohol',
+                '3' => 'Gangguan depresi mayor',
+                '4' => 'Demensia / delirium',
+            ],
+            'AMBULASI' => [
+                '1' => 'Mandiri / langkah stabil atau imobil',
+                '2' => 'Menggunakan alat bantu yang tepat',
+                '3' => 'Vertigo / hipotensi ortostatik / kelemahan',
+                '4' => 'Langkah tidak stabil, butuh bantuan dan menyadari kemampuan',
+                '5' => 'Langkah tidak stabil, butuh bantuan dan tidak menyadari ketidakmampuan',
+            ],
+            'NUTRISI' => [
+                '1' => 'Asupan makanan / minum sedikit dalam 24 jam terakhir',
+                '2' => 'Nafsu makan baik',
+            ],
+            'GANGGUAN_TIDUR' => [
+                '1' => 'Tidak ada gangguan tidur',
+                '2' => 'Ada gangguan tidur',
+            ],
+            'RIWAYAT_JATUH' => [
+                '1' => 'Tidak ada riwayat jatuh',
+                '2' => 'Ada riwayat jatuh dalam 3 bulan terakhir',
+            ],
+        ];
+
+        foreach ($epfraMaps as $column => $map) {
+            $push(
+                $epfraText,
+                str_replace('_', ' ', ucfirst(strtolower($column))),
+                $epfra->{$column} ?? null,
+                $map
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING RISIKO JATUH — GET UP AND GO
+        |--------------------------------------------------------------------------
+        */
+
+        $getUpAndGoText = [];
+
+        $push(
+            $getUpAndGoText,
+            'Cara berjalan pasien berisiko',
+            $getUpAndGo->CARA_BERJALAN_PASIEN ?? null,
+            ['0' => 'Tidak', '1' => 'Ya']
+        );
+
+        $push(
+            $getUpAndGoText,
+            'Faktor risiko',
+            $getUpAndGo->FAKTOR_RESIKO ?? null,
+            ['0' => 'Tidak', '1' => 'Ya']
+        );
+
+        $push(
+            $getUpAndGoText,
+            'Obat yang diminum berisiko',
+            $getUpAndGo->OBAT_YANG_DIMINUM ?? null,
+            ['0' => 'Tidak', '1' => 'Ya']
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING GIZI — MUST
+        |--------------------------------------------------------------------------
+        */
+
+        $mustText = [];
+
+        $push(
+            $mustText,
+            'Perubahan berat badan signifikan 3 bulan terakhir',
+            $must->BERAT_BADAN_SIGNIFIKAN ?? null,
+            ['0' => 'Tidak', '1' => 'Ya']
+        );
+
+        $push(
+            $mustText,
+            'Jumlah perubahan berat badan',
+            $must->PERUBAHAN_BERAT_BADAN ?? null,
+            [
+                '1' => '0,5 - 5 kg',
+                '2' => '> 5 - 10 kg',
+                '3' => '> 10 - 15 kg',
+                '4' => '> 15 kg',
+            ]
+        );
+
+        $push(
+            $mustText,
+            'Intake makanan berkurang karena tidak ada nafsu makan',
+            $must->INTAKE_MAKANAN ?? null,
+            ['0' => 'Tidak', '1' => 'Ya']
+        );
+
+        $push(
+            $mustText,
+            'Kondisi khusus',
+            $must->KONDISI_KHUSUS ?? null
+        );
+
+        $mustScore = $value(
+            $must->SKOR ?? null
+        );
+
+        if ($mustScore !== '') {
+            $mustCategory = ((int) $mustScore >= 4)
+                ? 'Risiko Berat'
+                : (
+                    ((int) $mustScore >= 2)
+                        ? 'Risiko Sedang'
+                        : 'Risiko Ringan'
+                );
+
+            $mustText[] =
+                'Skor MUST: ' . $mustScore
+                . ' (' . $mustCategory . ')';
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING GIZI — STRONG KID
+        |--------------------------------------------------------------------------
+        */
+
+        $strongKidText = [];
+
+        $push(
+            $strongKidText,
+            'Pasien tampak kurus',
+            $strongKid->TAMPAK_KURUS ?? null,
+            ['0' => 'Tidak', '1' => 'Ya']
+        );
+
+        $push(
+            $strongKidText,
+            'Penurunan berat badan',
+            $strongKid->PENURUNAN_BERAT_BADAN ?? null,
+            ['0' => 'Tidak', '1' => 'Ya']
+        );
+
+        $push(
+            $strongKidText,
+            'Diare / intake makanan berkurang',
+            $strongKid->DIARE_INTAKE_MAKANAN ?? null,
+            ['0' => 'Tidak', '1' => 'Ya']
+        );
+
+        $push(
+            $strongKidText,
+            'Penyakit / keadaan berisiko malnutrisi',
+            $strongKid->RESIKO_MALNUTRISI ?? null,
+            ['0' => 'Tidak', '1' => 'Ya']
+        );
+
+        $strongKidScore = $value(
+            $strongKid->SKOR ?? null
+        );
+
+        if ($strongKidScore !== '') {
+            $strongKidCategory = ((int) $strongKidScore >= 3)
+                ? 'Risiko Tinggi'
+                : (
+                    ((int) $strongKidScore === 2)
+                        ? 'Risiko Sedang'
+                        : 'Tidak Berisiko'
+                );
+
+            $strongKidText[] =
+                'Skor STRONG KID: ' . $strongKidScore
+                . ' (' . $strongKidCategory . ')';
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | IMPLEMENTASI KEPERAWATAN
+        |--------------------------------------------------------------------------
+        */
+
+        $implementasiText = [];
+
+        $implementasiLabels = [
+            'IK1' => 'Melakukan observasi TTV',
+            'IK2' => 'Melakukan observasi keadaan umum pasien',
+            'IK3' => 'Memonitor intake output',
+            'IK4' => 'Memonitor pernapasan: irama, pengembangan dinding dada, otot bantu dan bunyi napas',
+            'IK5' => 'Melakukan pemasangan oximetri',
+            'IK6' => 'Mengobservasi produk sputum, jumlah, warna dan kekentalan',
+            'IK7' => 'Memberikan posisi semi Fowler atau posisi miring yang nyaman',
+            'IK8' => 'Melakukan pemasangan OPA',
+            'IK9' => 'Melakukan suction bila perlu',
+            'IK10' => 'Mengajarkan napas dalam dan batuk efektif',
+            'IK11' => 'Memberikan oksigen',
+            'IK12' => 'Mengimobilisasikan daerah cedera (bidai / spalk / sling)',
+            'IK13' => 'Melakukan perawatan luka',
+            'IK14' => 'Mengajarkan manajemen pengelolaan nyeri',
+            'IK15' => 'Melakukan tindakan dengan teknik aseptik',
+        ];
+
+        foreach ($implementasiLabels as $column => $label) {
+            if ($value($implementasi->{$column} ?? null) === '1') {
+                if ($column === 'IK11') {
+                    $liter = $value(
+                        $implementasi->IK11_LAIN ?? null
+                    );
+
+                    if ($liter !== '') {
+                        $label .= ' (' . $liter . ' liter/menit)';
+                    }
+                }
+
+                $implementasiText[] = $label;
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | TINDAKAN KOLABORASI
+        |--------------------------------------------------------------------------
+        */
+
+        $kolaborasiText = [];
+
+        $kolaborasiLabels = [
+            1 => 'Terapi oksigenasi',
+            2 => 'Infus',
+            3 => 'Injeksi',
+            4 => 'NGT / OGT',
+            5 => 'Kateter urin (DC)',
+            6 => 'EKG',
+            7 => 'Suction',
+            8 => 'OPA',
+            9 => 'Collar neck',
+            10 => 'Resusitasi',
+            11 => 'Nebulizer',
+            12 => 'Medikasi',
+            13 => 'Ekstraksi corpal',
+            14 => 'Hecting',
+            15 => 'Bilas lambung',
+            16 => 'Bidai',
+            18 => 'Tampon',
+            99 => 'Lain-lain',
+        ];
+
+        foreach ($kolaborasiLabels as $number => $label) {
+            $column = 'TK' . $number;
+
+            if ($value($kolaborasi->{$column} ?? null) !== '1') {
+                continue;
+            }
+
+            if ($number === 99) {
+                $lain = $value(
+                    $kolaborasi->TK99_LAIN ?? null
+                );
+
+                if ($lain !== '') {
+                    $label .= ': ' . $lain;
+                }
+            }
+
+            $time = $value(
+                $kolaborasi->{'TK' . $number . '_TIME'} ?? null
+            );
+
+            if ($time !== '') {
+                try {
+                    $time = \Carbon\Carbon::parse($time)->format('H:i');
+                } catch (\Throwable $e) {
+                    $time = substr($time, 0, 5);
+                }
+
+                $label .= ' (pukul ' . $time . ')';
+            }
+
+            $kolaborasiText[] = $label;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | DIAGNOSIS / MASALAH KEPERAWATAN
+        |--------------------------------------------------------------------------
+        */
+
+        $masalahText = [];
+
+        $masalahLabels = [
+            'NYERI' => 'Nyeri',
+            'CEMAS' => 'Cemas',
+            'PERUBAHAN_NUTRISI' => 'Perubahan nutrisi',
+            'GANGGUAN_PERNAFASAN' => 'Gangguan pernapasan',
+            'GANGGUAN_PERFUSI_JARINGAN' => 'Gangguan perfusi jaringan',
+            'GANGGUAN_VOLUME_CAIRAN' => 'Gangguan volume cairan',
+            'POTENSI_INFEKSI' => 'Potensi infeksi',
+            'HIPERTERMI' => 'Hipertermi',
+            'TAKUT' => 'Takut (pada anak)',
+            'KETIDAKEFEKTIFAN_POLA_MAKAN' => 'Ketidakefektifan pola makan',
+        ];
+
+        foreach ($masalahLabels as $column => $label) {
+            if ($value($masalah->{$column} ?? null) === '1') {
+                $masalahText[] = $label;
+            }
+        }
+
+        $masalahLain = $value(
+            $masalah->MASALAH_LAIN ?? null
+        );
+
+        if ($masalahLain !== '') {
+            $masalahText[] =
+                'Masalah keperawatan lain: ' . $masalahLain;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | DISCHARGE PLANNING
+        |--------------------------------------------------------------------------
+        */
+
+        $dischargeText = [];
+
+        foreach ([
+            'PASIEN_TINGGAL_SENDIRI' => 'Pasien tinggal sendiri',
+            'PASIEN_KHAWATIR_KETIKA_DIRUMAH' => 'Pasien / keluarga khawatir ketika kembali ke rumah',
+            'PASIEN_TAK_ADA_YANG_MERAWAT' => 'Pasien tidak ada yang merawat di rumah',
+            'PASIEN_DILANTAI_ATAS' => 'Pasien tinggal di lantai atas rumah',
+        ] as $column => $label) {
+            $push(
+                $dischargeText,
+                $label,
+                $discharge1->{$column} ?? null,
+                ['0' => 'Tidak', '1' => 'Ya']
+            );
+        }
+
+        $dischargeBooleanFields = [
+            'PASIEN_PULANG' => 'Pasien pulang dengan jumlah obat > 6',
+            'PASIEN_MENGAJUKAN' => 'Pasien mengajukan pendampingan ke rumah sakit',
+            'TIDAK_ADA_KRITERIA' => 'Tidak ada kriteria pasien',
+            'PERAWATAN_LANJUTAN_MEDIS' => 'Perawatan lanjutan / penggunaan alat medis di rumah',
+            'KEBUTUHAN_PELAYANAN_BERKELANJUTAN_KPB' => 'Kebutuhan pelayanan berkelanjutan',
+            'PENGGUNAAN_ALAT_MEDIS_PAM' => 'Penggunaan alat medis / bantu',
+            'SKRINING_LANJUTAN' => 'Skrining lanjutan',
+        ];
+
+        foreach ($dischargeBooleanFields as $column => $label) {
+            $push(
+                $dischargeText,
+                $label,
+                $discharge2->{$column} ?? null,
+                ['0' => 'Tidak', '1' => 'Ya']
+            );
+        }
+
+        $plm = $checkedItems($discharge2, [
+            'PLM_KATETER_URIN' => 'Kateter urin',
+            'PLM_TRAECHOSTOMY' => 'Trakeostomi',
+            'PLM_NGT' => 'NGT',
+            'PLM_COLOSTOMY' => 'Kolostomi',
+        ]);
+
+        if ($plm !== '-') {
+            $dischargeText[] =
+                'Rincian perawatan lanjutan: ' . $plm;
+        }
+
+        $lainLanjutan = $value(
+            $discharge2->KEBUTUHAN_PELAYANAN_BERKELANJUTAN_LAINNYA ?? null
+        );
+
+        if ($lainLanjutan !== '') {
+            $dischargeText[] =
+                'Perawatan / pelayanan berkelanjutan lainnya: '
+                . $lainLanjutan;
+        }
+
+        $kpb = $checkedItems($discharge2, [
+            'KPB_RAWAT_LUKA' => 'Rawat luka',
+            'KPB_TB' => 'TB',
+            'KPB_DM_TERAPI_INSULIN' => 'DM dengan terapi insulin',
+            'KPB_PPOK' => 'PPOK',
+            'KPB_PASIEN_KEMO' => 'Pasien kemoterapi',
+            'KPB_HIV' => 'HIV / AIDS',
+            'KPB_DM' => 'DM',
+            'KPB_STROKE' => 'Stroke',
+            'KPB_CKD' => 'CKD',
+        ]);
+
+        if ($kpb !== '-') {
+            $dischargeText[] =
+                'Rincian kebutuhan pelayanan berkelanjutan: ' . $kpb;
+        }
+
+        $pam = $checkedItems($discharge2, [
+            'PAM_KATETER_URIN' => 'Kateter urin',
+            'PAM_TRAECHOSTOMY' => 'Trakeostomi',
+            'PAM_NGT' => 'NGT',
+            'PAM_COLOSTOMY' => 'Kolostomi',
+        ]);
+
+        if ($pam !== '-') {
+            $dischargeText[] =
+                'Rincian penggunaan alat medis / bantu: ' . $pam;
+        }
+
+        $pamLain = $value(
+            $discharge2->PAM_LAINNYA ?? null
+        );
+
+        if ($pamLain !== '') {
+            $dischargeText[] =
+                'Alat medis / bantu lainnya: ' . $pamLain;
+        }
+
+        $push(
+            $dischargeText,
+            'Jenis skrining lanjutan',
+            $discharge2->SKRINING ?? null,
+            ['1' => 'Konsul MPP', '2' => 'Edukasi']
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA RETURN UNTUK TEMPLATE print_radar_perawat.docx
+        |--------------------------------------------------------------------------
+        */
+
+        $data = [
+            // Identitas pasien dan kunjungan
+            'NAMA_PASIEN' => $placeholder($namaPasien),
+            'NORM' => $placeholder($norm),
+            'JENIS_KELAMIN' => $placeholder(
+                $pasien->JENIS_KELAMIN ?? null
+            ),
+            'TANGGAL_LAHIR' => $this->formatTanggal($tanggalLahirRaw),
+            'UMUR' => $umur,
+            'NOPEN' => $placeholder($pasien->NOPEN ?? null),
+            'KUNJUNGAN' => $placeholder(
+                $pasien->KUNJUNGAN ?? $kunjungan
+            ),
+            'TANGGAL_MASUK' => $this->formatTanggalWaktuMedis(
+                $pasien->TANGGAL_MASUK ?? null
+            ) ?: '-',
+            'TANGGAL_KELUAR' => $this->formatTanggalWaktuMedis(
+                $pasien->TANGGAL_KELUAR ?? null
+            ) ?: '-',
+            'RUANGAN' => $placeholder(
+                $pasien->NAMA_RUANGAN ?? null
+            ),
+            'DPJP' => $placeholder(
+                $pasien->NAMA_DPJP ?? null
+            ),
+
+            // Triage
+            'TRIAGE_CARA_KEDATANGAN' => $formatLines($caraKedatangan),
+            'TRIAGE_JENIS_KASUS' => $formatLines($detailKasus),
+            'TRIAGE_RISIKO_INFEKSI' => $risikoInfeksi,
+            'TRIAGE_KRITERIA' => $placeholder(
+                $triage->KRITERIA ?? null
+            ),
+            'ATS_KATEGORI' => $atsKategori,
+            'ATS_PRIORITAS' => $atsPrioritas,
+            'ATS_PLAN' => $atsPlan,
+            'ATS_DETAIL' => $formatLines($atsDetail),
+            'TRIAGE_ANAMNESIS' => $formatLines($detailAnamnesis),
+
+            // Primary survey dan status reproduksi
+            'PRIMARY_SURVEY' => $formatLines($primarySurvey),
+            'STATUS_KEHAMILAN' => $formatLines($statusKehamilan),
+            'ANAMNESIS_DIPEROLEH' => $formatLines($anamnesisDiperolehText),
+
+            // Asesmen psikososial dan fungsional
+            'PSIKOSOSIAL' => $formatLines($psikososialText),
+            'STATUS_FUNGSIONAL' => $formatLines($fungsionalText),
+
+            // Skrining
+            'SKRINING_NYERI' => $formatLines($nyeriText),
+            'RISIKO_JATUH_HUMPTY_DUMPTY' => $formatLines($humptyText),
+            'RISIKO_JATUH_MORSE' => $formatLines($morseText),
+            'RISIKO_JATUH_EPFRA' => $formatLines($epfraText),
+            'RISIKO_JATUH_GET_UP_AND_GO' => $formatLines($getUpAndGoText),
+            'SKRINING_GIZI_MUST' => $formatLines($mustText),
+            'SKRINING_GIZI_STRONG_KID' => $formatLines($strongKidText),
+
+            // Implementasi dan tindakan
+            'IMPLEMENTASI_KEPERAWATAN' => $formatLines($implementasiText),
+            'TINDAKAN_KOLABORASI' => $formatLines($kolaborasiText),
+            'DIAGNOSIS_KEPERAWATAN' => $formatLines($masalahText),
+            'DISCHARGE_PLANNING' => $formatLines($dischargeText),
+
+            // Finalisasi perawat
+            'NAMA_PERAWAT_FINALISASI' => $placeholder(
+                $finalisasi->NAMA_USER_FINALISASI ?? null
+            ),
+            'NIP_PERAWAT_FINALISASI' => $placeholder($nipFinalisasi),
+            'TTD_PERAWAT_FINALISASI' => $ttdPerawat->signature_path ?? null,
+        ];
+
+        // print_r($data);
+        // die();
+
+        return $data;
     }
 
     /**

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use PhpOffice\PhpWord\TemplateProcessor;
+use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\Element\TextRun;
 use Illuminate\Support\Facades\Log;
 use Storage;
@@ -182,7 +183,7 @@ class PrintPreviewController extends Controller
             | TEMPLATE PROCESSOR
             |--------------------------------------------------------------------------
             */
-
+            Settings::setOutputEscapingEnabled(true);
             $templateProcessor = new TemplateProcessor(
                 $templatePath
             );
@@ -448,6 +449,17 @@ class PrintPreviewController extends Controller
                 );
             }
 
+            // Log::info('Print Preview: validasi DOCX sebelum konversi', [
+            //     'temporaryWord' => $temporaryWord,
+            //     'realpath' => realpath($temporaryWord),
+            //     'exists' => file_exists($temporaryWord),
+            //     'is_file' => is_file($temporaryWord),
+            //     'readable' => is_readable($temporaryWord),
+            //     'size' => file_exists($temporaryWord)
+            //         ? filesize($temporaryWord)
+            //         : null,
+            // ]);
+
             /*
             |--------------------------------------------------------------------------
             | CONVERT DOCX -> PDF
@@ -466,22 +478,22 @@ class PrintPreviewController extends Controller
                 !File::exists($finalPdf) ||
                 File::size($finalPdf) === 0
             ) {
-                Log::error(
-                    'Print Preview: gagal generate PDF',
-                    [
-                        'kunjungan' => $kunjungan,
-                        'formKey' => $formKey,
-                        'temporaryWord' => $temporaryWord,
-                        'expectedPdf' => $finalPdf,
-                        'pdfExists' => File::exists($finalPdf),
-                        'pdfSize' => File::exists($finalPdf)
-                            ? File::size($finalPdf)
-                            : 0,
-                        'success' => $success,
-                        'exitCode' => $exitCode,
-                        'convertLog' => $convertLog,
-                    ]
-                );
+                // Log::error(
+                //     'Print Preview: gagal generate PDF',
+                //     [
+                //         'kunjungan' => $kunjungan,
+                //         'formKey' => $formKey,
+                //         'temporaryWord' => $temporaryWord,
+                //         'expectedPdf' => $finalPdf,
+                //         'pdfExists' => File::exists($finalPdf),
+                //         'pdfSize' => File::exists($finalPdf)
+                //             ? File::size($finalPdf)
+                //             : 0,
+                //         'success' => $success,
+                //         'exitCode' => $exitCode,
+                //         'convertLog' => $convertLog,
+                //     ]
+                // );
 
                 throw new \Exception(
                     'Gagal generate PDF print preview. Periksa storage/logs/laravel.log.'
