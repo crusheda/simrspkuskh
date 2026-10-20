@@ -4091,6 +4091,7 @@ class BerkasKlaimController extends Controller
             })
             ->leftJoin('aplikasi.pengguna as us', 'us.ID', '=', 'pt.OLEH')
             ->leftJoin('master.pegawai as mp', 'mp.NIP', '=', 'us.NIP')
+            ->leftJoin('aplikasi.pengguna as usu', 'usu.ID', '=', 'pt.DIUBAH_OLEH')
             ->leftJoin('simrspku_klaim.klaim_qrcode_pegawai as qp', 'qp.nomor', '=', 'mp.NIP')
             ->leftJoin('simrspku_klaim.klaim_qrcode as kq', 'kq.nomor', '=', 'pd.NORM')
             ->leftJoin('master.diagnosa_masuk as dm', 'dm.ID', '=', 'pd.DIAGNOSA_MASUK')
@@ -4165,14 +4166,23 @@ class BerkasKlaimController extends Controller
                     ')'
                 ) AS UMUR,
 
-                mp.NIP AS NIP,
+                COALESCE(
+                    NULLIF(us.NIP, 0),
+                    NULLIF(mp.NIP, 0),
+                    NULLIF(usu.NIP, 0)
+                ) AS NIP,
+
                 qp.filename AS QR1,
                 kq.filename AS QR2,
 
                 IF(
-                    pt.OLEH = 0,
-                    pt.DESKRIPSI,
-                    master.getNamaLengkapPegawai(mp.NIP)
+                    us.NIP IS NOT NULL AND us.NIP != 0,
+                    master.getNamaLengkapPegawai(us.NIP),
+                    IF(
+                        mp.NIP IS NOT NULL AND mp.NIP != 0,
+                        master.getNamaLengkapPegawai(mp.NIP),
+                        master.getNamaLengkapPegawai(usu.NIP)
+                    )
                 ) AS PENGGUNA,
 
                 t.ID AS IDTAGIHAN,
