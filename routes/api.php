@@ -487,6 +487,7 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
         // SMARTCLAIM
         Route::get('generate/individual/{kunjungan}', [BerkasKlaimController::class, 'generateIndividual']);
         Route::get('generate/sep/{kunjungan}', [BerkasKlaimController::class, 'generateSEP']);
+        Route::get('generate/resumemedis/{kunjungan}', [BerkasKlaimController::class, 'generateResumeMedis']);
         Route::get('generate/billing/{kunjungan}', [BerkasKlaimController::class, 'generateBilling']);
         Route::get('generate/lab/{kunjungan}', [BerkasKlaimController::class, 'generateLab']);
 

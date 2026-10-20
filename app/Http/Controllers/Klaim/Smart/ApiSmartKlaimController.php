@@ -111,8 +111,8 @@ class ApiSmartKlaimController extends Controller
                     ->leftJoin('master.ruangan AS ru_asal','ru_asal.ID','=','pk_asal.RUANGAN')
 
                     ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
-                    // ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
-                    // ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
+                    ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
+                    ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
                     ->join('bpjs.kunjungan AS kjs', function ($join) {
                         $join->on('kjs.noSEP', '=', 'pj.NOMOR')
                             ->whereNotNull('pj.NOMOR')
