@@ -898,179 +898,257 @@ class RJDewasaPrintService implements PrintDataInterface
             $kesadaranGcs = trim($kesadaranGcs);
         }
 
-                /*
-        |--------------------------------------------------------------------------
-        | PSIKOLOGI, SOSIAL, EKONOMI, DAN SPIRITUAL
-        |--------------------------------------------------------------------------
-        */
-        $kondisiSosial = DB::table('medicalrecord.kondisi_sosial')
+        // ==========================================================
+        // HUBUNGAN STATUS PSIKOSOSIAL
+        // ==========================================================
+        $psikososial = DB::table('medicalrecord.kondisi_sosial')
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
-            ->orderByDesc('ID')
             ->first();
 
-        $refPasien = DB::table('pendaftaran.kunjungan as pk')
-            ->leftJoin('pendaftaran.pendaftaran as pd', 'pd.NOMOR', '=', 'pk.NOPEN')
-            ->leftJoin('master.pasien as p', 'p.NORM', '=', 'pd.NORM')
-            ->leftJoin('master.referensi as ag', function ($join) {
+        // Referensi agama dan pekerjaan pasien
+        $refPsikososial = DB::table('pendaftaran.kunjungan AS pk')
+            ->leftJoin('pendaftaran.pendaftaran AS pd', 'pd.NOMOR', '=', 'pk.NOPEN')
+            ->leftJoin('master.pasien AS p', 'p.NORM', '=', 'pd.NORM')
+            ->leftJoin('master.referensi AS ag', function ($join) {
                 $join->on('ag.ID', '=', 'p.AGAMA')
                     ->where('ag.JENIS', '=', '1');
             })
-            ->leftJoin('master.referensi as kj', function ($join) {
+            ->leftJoin('master.referensi AS kj', function ($join) {
                 $join->on('kj.ID', '=', 'p.PEKERJAAN')
                     ->where('kj.JENIS', '=', '4');
             })
             ->where('pk.NOMOR', $kunjungan)
-            ->select([
-                'ag.DESKRIPSI as AGAMA',
-                'kj.DESKRIPSI as PEKERJAAN',
-            ])
+            ->select(
+                'ag.DESKRIPSI AS AGAMA',
+                'kj.DESKRIPSI AS PEKERJAAN'
+            )
             ->first();
 
-        $daftarPsikologi = [];
+        // Helper checkbox untuk pilihan tunggal
+        $centangPsikososial = function ($aktual, $nilai) {
+            return (string) $aktual === (string) $nilai ? '☑' : '☐';
+        };
 
-        if ($kondisiSosial) {
-            if ((int) $kondisiSosial->TIDAK_ADA_KELAINAN === 1) {
-                $daftarPsikologi[] = 'Tidak ada kelainan';
-            }
+        // Helper checkbox untuk kolom boolean 0/1
+        $centangBoolean = function ($nilai) {
+            return (int) $nilai === 1 ? '☑' : '☐';
+        };
 
-            foreach ([
-                'MARAH' => 'Marah',
-                'CEMAS' => 'Cemas',
-                'TAKUT' => 'Takut',
-                'SEDIH' => 'Sedih',
-                'BUNUH_DIRI' => 'Kecenderungan bunuh diri',
-            ] as $kolom => $label) {
-                if ((int) ($kondisiSosial->{$kolom} ?? 0) === 1) {
-                    $daftarPsikologi[] = $label;
-                }
-            }
+        $detailPsikososial = [];
 
-            $psikologiLainnya = $this->value($kondisiSosial->LAINNYA ?? null);
-            if ($psikologiLainnya !== '') {
-                $daftarPsikologi[] = 'Lainnya: ' . $psikologiLainnya;
-            }
+        if ($psikososial) {
+            // ------------------------------------------------------
+            // STATUS PSIKOLOGI
+            // ------------------------------------------------------
+            $detailPsikososial[] = 'STATUS PSIKOLOGI';
+
+            $detailPsikososial[] =
+                $centangBoolean($psikososial->TIDAK_ADA_KELAINAN)
+                . ' Tidak ada kelainan';
+
+            $detailPsikososial[] =
+                $centangBoolean($psikososial->MARAH)
+                . ' Marah';
+
+            $detailPsikososial[] =
+                $centangBoolean($psikososial->CEMAS)
+                . ' Cemas';
+
+            $detailPsikososial[] =
+                $centangBoolean($psikososial->TAKUT)
+                . ' Takut';
+
+            $detailPsikososial[] =
+                $centangBoolean($psikososial->SEDIH)
+                . ' Sedih';
+
+            $detailPsikososial[] =
+                $centangBoolean($psikososial->BUNUH_DIRI)
+                . ' Kecenderungan bunuh diri';
+
+            $detailPsikososial[] =
+                $centangPsikososial(
+                    !empty($psikososial->LAINNYA) ? 1 : 0,
+                    1
+                )
+                . ' Lainnya: '
+                . ($psikososial->LAINNYA ?: '-');
+
+            $detailPsikososial[] = '';
+
+            // ------------------------------------------------------
+            // STATUS MENTAL
+            // ------------------------------------------------------
+            $detailPsikososial[] = 'STATUS MENTAL';
+
+            $detailPsikososial[] =
+                $centangPsikososial($psikososial->STATUS_MENTAL, 1)
+                . ' Sadar dan orientasi baik';
+
+            $detailPsikososial[] =
+                $centangPsikososial($psikososial->STATUS_MENTAL, 2)
+                . ' Ada masalah perilaku'
+                . (
+                    !empty($psikososial->MASALAH_PERILAKU)
+                        ? ': ' . $psikososial->MASALAH_PERILAKU
+                        : ''
+                );
+
+            $detailPsikososial[] =
+                $centangPsikososial($psikososial->STATUS_MENTAL, 3)
+                . ' Perilaku kekerasan yang dialami pasien sebelumnya'
+                . (
+                    !empty($psikososial->PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA)
+                        ? ': ' . $psikososial->PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA
+                        : ''
+                );
+
+            $detailPsikososial[] = '';
+
+            // ------------------------------------------------------
+            // HUBUNGAN SOSIAL
+            // ------------------------------------------------------
+            $detailPsikososial[] = 'HUBUNGAN SOSIAL';
+
+            $detailPsikososial[] =
+                'Hubungan pasien dengan anggota keluarga: '
+                . $centangPsikososial(
+                    $psikososial->HUBUNGAN_PASIEN_DENGAN_KELUARGA,
+                    1
+                ) . ' Baik  '
+                . $centangPsikososial(
+                    $psikososial->HUBUNGAN_PASIEN_DENGAN_KELUARGA,
+                    2
+                ) . ' Tidak baik';
+
+            $detailPsikososial[] =
+                'Tempat tinggal: '
+                . $centangPsikososial($psikososial->TEMPAT_TINGGAL, 1)
+                . ' Rumah  '
+                . $centangPsikososial($psikososial->TEMPAT_TINGGAL, 2)
+                . ' Panti  '
+                . $centangPsikososial($psikososial->TEMPAT_TINGGAL, 3)
+                . ' Lainnya'
+                . (
+                    !empty($psikososial->TEMPAT_TINGGAL_LAINNYA)
+                        ? ': ' . $psikososial->TEMPAT_TINGGAL_LAINNYA
+                        : ''
+                );
+
+            $detailPsikososial[] = '';
+
+            // ------------------------------------------------------
+            // HUBUNGAN SPIRITUAL
+            // ------------------------------------------------------
+            $detailPsikososial[] = 'HUBUNGAN SPIRITUAL';
+
+            $detailPsikososial[] =
+                'Agama: ' . ($refPsikososial->AGAMA ?? '-');
+
+            $detailPsikososial[] =
+                'Kebiasaan beribadah teratur: '
+                . $centangPsikososial(
+                    $psikososial->KEBIASAAN_BERIBADAH_TERATUR,
+                    1
+                ) . ' Ya  '
+                . $centangPsikososial(
+                    $psikososial->KEBIASAAN_BERIBADAH_TERATUR,
+                    2
+                ) . ' Tidak';
+
+            $detailPsikososial[] =
+                'Nilai-nilai kepercayaan: '
+                . $centangPsikososial(
+                    $psikososial->NILAI_KEPERCAYAAN,
+                    1
+                ) . ' Ada  '
+                . $centangPsikososial(
+                    $psikososial->NILAI_KEPERCAYAAN,
+                    2
+                ) . ' Tidak ada'
+                . (
+                    !empty($psikososial->NILAI_KEPERCAYAAN_DESKRIPSI)
+                        ? ' — ' . $psikososial->NILAI_KEPERCAYAAN_DESKRIPSI
+                        : ''
+                );
+
+            $detailPsikososial[] =
+                'Pengambil keputusan dalam keluarga: '
+                . ($psikososial->PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA ?: '-');
+
+            $detailPsikososial[] = '';
+
+            // ------------------------------------------------------
+            // EKONOMI
+            // ------------------------------------------------------
+            $detailPsikososial[] = 'EKONOMI';
+
+            $detailPsikososial[] =
+                'Pekerjaan: ' . ($refPsikososial->PEKERJAAN ?? '-');
+
+            $detailPsikososial[] =
+                'Penghasilan per bulan: '
+                . $centangPsikososial($psikososial->PENGHASILAN_PERBULAN, 1)
+                . ' < Rp. 5.000.000  '
+                . $centangPsikososial($psikososial->PENGHASILAN_PERBULAN, 2)
+                . ' Rp. 5.000.000 - Rp. 10.000.000  '
+                . $centangPsikososial($psikososial->PENGHASILAN_PERBULAN, 3)
+                . ' > Rp. 10.000.000';
         }
 
-        $statusMental = match ((string) ($kondisiSosial->STATUS_MENTAL ?? '')) {
-            '1' => 'Sadar dan orientasi baik',
-            '2' => 'Ada masalah perilaku'
-                . (($detail = $this->value($kondisiSosial->MASALAH_PERILAKU ?? null)) !== ''
-                    ? ': ' . $detail
-                    : ''),
-            '3' => 'Perilaku kekerasan yang dialami pasien sebelumnya'
-                . (($detail = $this->value($kondisiSosial->PERILAKU_KEKERASAN_DIALAMI_SEBELUMNYA ?? null)) !== ''
-                    ? ': ' . $detail
-                    : ''),
-            default => '',
-        };
+        $detailPsikososial = array_filter(
+            $detailPsikososial,
+            fn ($baris) => $baris !== null
+        );
 
-        $hubunganKeluarga = match ((string) ($kondisiSosial->HUBUNGAN_PASIEN_DENGAN_KELUARGA ?? '')) {
-            '1' => 'Baik',
-            '2' => 'Tidak baik',
-            default => '',
-        };
+        $detailPsikososial = implode("\n", $detailPsikososial);
 
-        $tempatTinggal = match ((string) ($kondisiSosial->TEMPAT_TINGGAL ?? '')) {
-            '1' => 'Rumah',
-            '2' => 'Panti',
-            '3' => 'Lainnya'
-                . (($detail = $this->value($kondisiSosial->TEMPAT_TINGGAL_LAINNYA ?? null)) !== ''
-                    ? ': ' . $detail
-                    : ''),
-            default => '',
-        };
 
-        $kebiasaanIbadah = match ((string) ($kondisiSosial->KEBIASAAN_BERIBADAH_TERATUR ?? '')) {
-            '1' => 'Ya',
-            '2' => 'Tidak',
-            default => '',
-        };
-
-        $nilaiKepercayaan = match ((string) ($kondisiSosial->NILAI_KEPERCAYAAN ?? '')) {
-            '1' => 'Ada'
-                . (($detail = $this->value($kondisiSosial->NILAI_KEPERCAYAAN_DESKRIPSI ?? null)) !== ''
-                    ? ': ' . $detail
-                    : ''),
-            '2' => 'Tidak ada',
-            default => '',
-        };
-
-        $penghasilan = match ((string) ($kondisiSosial->PENGHASILAN_PERBULAN ?? '')) {
-            '1' => '< Rp. 5.000.000',
-            '2' => 'Rp. 5.000.000 - Rp. 10.000.000',
-            '3' => '> Rp. 10.000.000',
-            default => '',
-        };
-
-        $daftarPsikososial = array_filter([
-            'Status psikologi: ' . implode(', ', $daftarPsikologi),
-            'Status mental: ' . $statusMental,
-            'Hubungan dengan keluarga: ' . $hubunganKeluarga,
-            'Tempat tinggal: ' . $tempatTinggal,
-            'Agama: ' . $this->value($refPasien->AGAMA ?? null),
-            'Kebiasaan beribadah teratur: ' . $kebiasaanIbadah,
-            'Nilai kepercayaan: ' . $nilaiKepercayaan,
-            'Pengambil keputusan dalam keluarga: '
-                . $this->value($kondisiSosial->PENGAMBIL_KEPUTUSAN_DALAM_KELUARGA ?? null),
-            'Pekerjaan: ' . $this->value($refPasien->PEKERJAAN ?? null),
-            'Penghasilan per bulan: ' . $penghasilan,
-        ], function ($baris) {
-            return !str_ends_with($baris, ': ');
-        });
-
+        // ==========================================================
+        // STATUS FUNGSIONAL
+        // ==========================================================
         $statusFungsional = DB::table('medicalrecord.status_fungsional')
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
             ->first();
 
-                $alatBantuFungsional = [];
+        $detailFungsional = [];
 
         if ($statusFungsional) {
-            foreach ([
-                'TANPA_ALAT_BANTU' => 'Tanpa alat bantu',
-                'TONGKAT' => 'Tongkat',
-                'KURSI_RODA' => 'Kursi roda',
-                'BRANKARD' => 'Brankard',
-                'WALKER' => 'Walker',
-            ] as $kolom => $label) {
-                if ((int) ($statusFungsional->{$kolom} ?? 0) === 1) {
-                    $alatBantuFungsional[] = $label;
-                }
-            }
+            $detailFungsional[] = 'STATUS FUNGSIONAL';
 
-            $alatBantuLainnya = $this->value(
-                $statusFungsional->ALAT_BANTU ?? null
-            );
+            $detailFungsional[] = 'Alat bantu mobilitas: '
+                . $centangBoolean($statusFungsional->TANPA_ALAT_BANTU)
+                . ' Tanpa alat bantu  '
+                . $centangBoolean($statusFungsional->TONGKAT)
+                . ' Tongkat  '
+                . $centangBoolean($statusFungsional->KURSI_RODA)
+                . ' Kursi roda  '
+                . $centangBoolean($statusFungsional->BRANKARD)
+                . ' Brankard  '
+                . $centangBoolean($statusFungsional->WALKER)
+                . ' Walker';
 
-            if ($alatBantuLainnya !== '') {
-                $alatBantuFungsional[] = 'Lainnya: ' . $alatBantuLainnya;
-            }
+            $detailFungsional[] =
+                'Alat bantu lainnya: '
+                . ($statusFungsional->ALAT_BANTU ?: '-');
+
+            $detailFungsional[] =
+                'Cacat tubuh: '
+                . $centangBoolean($statusFungsional->CACAT_TUBUH_TIDAK)
+                . ' Tidak  '
+                . $centangBoolean($statusFungsional->CACAT_TUBUH_YA)
+                . ' Ya';
+
+            $detailFungsional[] =
+                'Keterangan cacat tubuh: '
+                . ($statusFungsional->KET_CACAT_TUBUH ?: '-');
         }
 
-        $cacatTubuh = match (true) {
-            (int) ($statusFungsional->CACAT_TUBUH_TIDAK ?? 0) === 1 => 'Tidak',
-            (int) ($statusFungsional->CACAT_TUBUH_YA ?? 0) === 1 => 'Ya',
-            default => '',
-        };
-
-        if (
-            $cacatTubuh === 'Ya' &&
-            ($keteranganCacat = $this->value(
-                $statusFungsional->KET_CACAT_TUBUH ?? null
-            )) !== ''
-        ) {
-            $cacatTubuh .= ': ' . $keteranganCacat;
-        }
-
-        $daftarFungsional = array_filter([
-            'Alat bantu: ' . implode(', ', $alatBantuFungsional),
-            'Cacat tubuh: ' . $cacatTubuh,
-        ], function ($baris) {
-            return !str_ends_with($baris, ': ');
-        });
-
-                /*
+        $detailFungsional = implode("\n", $detailFungsional);
+        
+        /*
         |--------------------------------------------------------------------------
         | SKRINING NYERI
         |--------------------------------------------------------------------------
@@ -1079,69 +1157,216 @@ class RJDewasaPrintService implements PrintDataInterface
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
             ->orderByDesc('ID')
-            ->first();
+            ->first([
+                'NYERI',
+                'ONSET',
+                'SKALA',
+                'METODE',
+                'SKOR1',
+                'SKOR2',
+                'SKOR3',
+                'SKOR4',
+                'SKOR5',
+                'SKOR6',
+                'PENCETUS',
+                'GAMBARAN',
+                'DURASI',
+                'LOKASI',
+            ]);
 
-        $metodeNyeri = match ((string) ($nyeri->METODE ?? '')) {
-            '1' => 'NRS',
-            '2' => 'BPS',
-            '3' => 'NIPS',
-            '4' => 'FLACC',
-            '5' => 'VAS',
-            default => '',
-        };
-
-        $onsetNyeri = match ((string) ($nyeri->ONSET ?? '')) {
-            '1' => 'Akut',
-            '2' => 'Kronis',
-            default => '',
+        $centangNyeri = static function ($nilai, $pilihan): string {
+            return (string) ($nilai ?? '') === (string) $pilihan
+                ? '☑'
+                : '☐';
         };
 
         $detailNyeri = [];
 
         if ($nyeri) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | STATUS NYERI
+            |--------------------------------------------------------------------------
+            */
             $detailNyeri[] = 'Nyeri: '
-                . ((int) $nyeri->NYERI === 1 ? 'Ya' : 'Tidak');
+                . $centangNyeri($nyeri->NYERI, 1) . ' Ya'
+                . '     '
+                . $centangNyeri($nyeri->NYERI, 0) . ' Tidak';
 
-            if ($onsetNyeri !== '') {
-                $detailNyeri[] = 'Onset: ' . $onsetNyeri;
+            /*
+            |--------------------------------------------------------------------------
+            | ONSET
+            |--------------------------------------------------------------------------
+            */
+            $detailNyeri[] = 'Onset: '
+                . $centangNyeri($nyeri->ONSET, 1) . ' Akut'
+                . '     '
+                . $centangNyeri($nyeri->ONSET, 2) . ' Kronis';
+
+            /*
+            |--------------------------------------------------------------------------
+            | METODE PENILAIAN
+            |--------------------------------------------------------------------------
+            */
+            $metodeNyeri = [
+                1 => 'NRS',
+                2 => 'BPS',
+                3 => 'NIPS',
+                4 => 'FLACC',
+                5 => 'VAS',
+            ];
+
+            $barisMetode = [];
+
+            foreach ($metodeNyeri as $nilai => $label) {
+                $barisMetode[] =
+                    $centangNyeri($nyeri->METODE, $nilai)
+                    . ' ' . $label;
             }
 
-            if ($metodeNyeri !== '') {
-                $detailNyeri[] = 'Metode: ' . $metodeNyeri;
-            }
+            $detailNyeri[] = 'Metode: '
+                . implode('     ', $barisMetode);
 
-            $detailNyeri[] = 'Skala: ' . $this->value($nyeri->SKALA ?? null);
+            /*
+            |--------------------------------------------------------------------------
+            | SKALA NYERI
+            |--------------------------------------------------------------------------
+            | NRS dan VAS cukup menampilkan skala langsung.
+            | BPS, NIPS dan FLACC menampilkan rincian skor indikator.
+            |--------------------------------------------------------------------------
+            */
+            $metode = (string) ($nyeri->METODE ?? '');
+            $skala = $this->value($nyeri->SKALA ?? null);
 
-            foreach ([
-                'SKOR1' => 'Skor 1',
-                'SKOR2' => 'Skor 2',
-                'SKOR3' => 'Skor 3',
-                'SKOR4' => 'Skor 4',
-                'SKOR5' => 'Skor 5',
-                'SKOR6' => 'Skor 6',
-            ] as $kolom => $label) {
-                if (
-                    isset($nyeri->{$kolom}) &&
-                    (int) $nyeri->{$kolom} !== 0
-                ) {
-                    $detailNyeri[] = $label . ': ' . $nyeri->{$kolom};
+            if (in_array($metode, ['1', '5'], true)) {
+
+                // NRS / VAS: tanpa slider dan tanpa rincian indikator
+                $detailNyeri[] = 'Skala Nyeri: '
+                    . ($skala !== '' ? $skala : '-');
+
+                $interpretasiNyeri = '';
+
+                if ($skala !== '' && is_numeric($skala)) {
+                    $nilaiSkala = (float) $skala;
+
+                    if ($nilaiSkala == 0) {
+                        $interpretasiNyeri = 'Tidak nyeri';
+                    } elseif ($nilaiSkala <= 3) {
+                        $interpretasiNyeri = 'Nyeri ringan';
+                    } elseif ($nilaiSkala <= 6) {
+                        $interpretasiNyeri = 'Nyeri sedang';
+                    } else {
+                        $interpretasiNyeri = 'Nyeri berat';
+                    }
                 }
+
+                if ($interpretasiNyeri !== '') {
+                    $detailNyeri[] =
+                        'Interpretasi: ' . $interpretasiNyeri;
+                }
+
+            } elseif ($metode === '2') {
+
+                // BPS
+                $detailNyeri[] = 'Rincian Skor BPS:';
+
+                foreach ([
+                    'SKOR1' => 'Indikator 1',
+                    'SKOR2' => 'Indikator 2',
+                    'SKOR3' => 'Indikator 3',
+                ] as $kolom => $label) {
+                    $detailNyeri[] = '   '
+                        . $label . ': '
+                        . $this->value($nyeri->{$kolom} ?? null);
+                }
+
+                $detailNyeri[] = 'Skala Nyeri Total: '
+                    . ($skala !== '' ? $skala : '-');
+
+                if ($skala !== '' && is_numeric($skala)) {
+                    $nilaiSkala = (float) $skala;
+
+                    $interpretasiNyeri = match (true) {
+                        $nilaiSkala <= 3 => 'Tidak nyeri',
+                        $nilaiSkala <= 6 => 'Nyeri ringan',
+                        $nilaiSkala <= 9 => 'Nyeri sedang',
+                        default => 'Nyeri berat',
+                    };
+
+                    $detailNyeri[] =
+                        'Interpretasi: ' . $interpretasiNyeri;
+                }
+
+            } elseif ($metode === '3') {
+
+                // NIPS
+                $detailNyeri[] = 'Rincian Skor NIPS:';
+
+                foreach ([
+                    'SKOR1' => 'Ekspresi wajah',
+                    'SKOR2' => 'Tangisan',
+                    'SKOR3' => 'Gerakan lengan',
+                    'SKOR4' => 'Gerakan tungkai',
+                    'SKOR5' => 'Status terjaga',
+                    'SKOR6' => 'Pola napas',
+                ] as $kolom => $label) {
+                    $detailNyeri[] = '   '
+                        . $label . ': '
+                        . $this->value($nyeri->{$kolom} ?? null);
+                }
+
+                $detailNyeri[] = 'Skala Nyeri Total: '
+                    . ($skala !== '' ? $skala : '-');
+
+                if ($skala !== '' && is_numeric($skala)) {
+                    $detailNyeri[] =
+                        'Interpretasi: '
+                        . ((float) $skala > 3
+                            ? 'Nyeri'
+                            : 'Tidak nyeri');
+                }
+
+            } elseif ($metode === '4') {
+
+                // FLACC
+                $detailNyeri[] = 'Rincian Skor FLACC:';
+
+                foreach ([
+                    'SKOR1' => 'Wajah',
+                    'SKOR2' => 'Kaki',
+                    'SKOR3' => 'Aktivitas',
+                    'SKOR4' => 'Menangis',
+                    'SKOR5' => 'Bersuara',
+                ] as $kolom => $label) {
+                    $detailNyeri[] = '   '
+                        . $label . ': '
+                        . $this->value($nyeri->{$kolom} ?? null);
+                }
+
+                $detailNyeri[] = 'Skala Nyeri Total: '
+                    . ($skala !== '' ? $skala : '-');
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | DETAIL KELUHAN NYERI
+            |--------------------------------------------------------------------------
+            */
             foreach ([
                 'PENCETUS' => 'Pencetus',
                 'GAMBARAN' => 'Gambaran',
-                'DURASI' => 'Durasi',
-                'LOKASI' => 'Lokasi',
+                'DURASI'   => 'Durasi',
+                'LOKASI'   => 'Lokasi',
             ] as $kolom => $label) {
+
                 $nilai = $this->value($nyeri->{$kolom} ?? null);
 
-                if ($nilai !== '') {
-                    $detailNyeri[] = $label . ': ' . $nilai;
-                }
+                $detailNyeri[] = $label . ': '
+                    . ($nilai !== '' ? $nilai : '-');
             }
         }
-
+        
         /*
         |--------------------------------------------------------------------------
         | SKRINING RISIKO JATUH GET UP AND GO
@@ -1151,71 +1376,288 @@ class RJDewasaPrintService implements PrintDataInterface
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
             ->orderByDesc('ID')
-            ->first();
+            ->first([
+                'CARA_BERJALAN_PASIEN',
+                'FAKTOR_RESIKO',
+                'OBAT_YANG_DIMINUM',
+            ]);
 
-        $jawabanYaTidak = static function ($nilai) {
-            return match ((string) $nilai) {
-                '1' => 'Ya',
-                '0' => 'Tidak',
-                default => '',
-            };
+        // Helper checkbox khusus Get Up and Go
+        $centangGetUpAndGo = static function ($nilai, $pilihan): string {
+            return (string) ($nilai ?? '') === (string) $pilihan
+                ? '☑'
+                : '☐';
         };
 
         $detailRisikoJatuh = [];
 
         if ($getUpAndGo) {
-            foreach ([
-                'CARA_BERJALAN_PASIEN' => 'Cara berjalan tidak seimbang atau menggunakan alat bantu',
-                'FAKTOR_RESIKO' => 'Faktor risiko',
-                'OBAT_YANG_DIMINUM' => 'Obat yang berisiko menyebabkan jatuh',
-            ] as $kolom => $label) {
-                $jawaban = $jawabanYaTidak($getUpAndGo->{$kolom} ?? null);
 
-                if ($jawaban !== '') {
-                    $detailRisikoJatuh[] = $label . ': ' . $jawaban;
-                }
+            /*
+            |--------------------------------------------------------------------------
+            | 1. CARA BERJALAN PASIEN
+            |--------------------------------------------------------------------------
+            */
+            $caraBerjalan =
+                $getUpAndGo->CARA_BERJALAN_PASIEN ?? null;
+
+            $detailRisikoJatuh[] =
+                '1. Cara Berjalan Pasien (Salah Satu atau Lebih):';
+
+            $detailRisikoJatuh[] =
+                '   a. Tidak seimbang / menyopang / limbung';
+
+            $detailRisikoJatuh[] =
+                '   b. Jalan menggunakan alat bantu '
+                . '(tongkat, kursi roda, dibantu orang lain)';
+
+            $detailRisikoJatuh[] =
+                '   '
+                . $centangGetUpAndGo($caraBerjalan, 1) . ' Ya'
+                . '     '
+                . $centangGetUpAndGo($caraBerjalan, 0) . ' Tidak';
+
+            /*
+            |--------------------------------------------------------------------------
+            | 2. FAKTOR RISIKO
+            |--------------------------------------------------------------------------
+            */
+            $faktorResiko =
+                $getUpAndGo->FAKTOR_RESIKO ?? null;
+
+            $detailRisikoJatuh[] = '';
+
+            $detailRisikoJatuh[] =
+                '2. Faktor Risiko:';
+
+            $detailRisikoJatuh[] =
+                '   A. Umur ≥ 60 tahun, anak < 3 tahun';
+
+            $detailRisikoJatuh[] =
+                '   B. Diagnosis penyakit / situasi / keluhan '
+                . 'yang mungkin menyebabkan pasien berisiko jatuh:';
+
+            $detailRisikoJatuh[] =
+                '      - Vertigo / Pusing';
+
+            $detailRisikoJatuh[] =
+                '      - Parkinson';
+
+            $detailRisikoJatuh[] =
+                '      - Gangguan penglihatan yang belum terkoreksi '
+                . '(Glaukoma, Katarak, Gangguan Lapangan Penglihatan)';
+
+            $detailRisikoJatuh[] =
+                '      - Riwayat tirah baring lama yang akan '
+                . 'dipindahkan untuk pemeriksaan penunjang';
+
+            $detailRisikoJatuh[] =
+                '      - Pasien yang mendapat sedasi';
+
+            $detailRisikoJatuh[] =
+                '   C. Lingkungan:';
+
+            $detailRisikoJatuh[] =
+                '      - Area berisiko jatuh (tangga, penerangan kurang, '
+                . 'jalan menurun / menanjak)';
+
+            $detailRisikoJatuh[] =
+                '      - Poli tujuan: Rehabilitasi Medik, '
+                . 'Radiologi, Radioterapi';
+
+            $detailRisikoJatuh[] =
+                '   '
+                . $centangGetUpAndGo($faktorResiko, 1) . ' Ya'
+                . '     '
+                . $centangGetUpAndGo($faktorResiko, 0) . ' Tidak';
+
+            /*
+            |--------------------------------------------------------------------------
+            | 3. OBAT-OBATAN
+            |--------------------------------------------------------------------------
+            */
+            $obat = $getUpAndGo->OBAT_YANG_DIMINUM ?? null;
+
+            $detailRisikoJatuh[] = '';
+
+            $detailRisikoJatuh[] =
+                '3. Obat-obatan yang diminum pasien saat ini '
+                . 'yang mungkin menyebabkan risiko jatuh:';
+
+            $detailRisikoJatuh[] =
+                '   - Narkotik';
+
+            $detailRisikoJatuh[] =
+                '   - Anti hipertensi';
+
+            $detailRisikoJatuh[] =
+                '   - Diuretik';
+
+            $detailRisikoJatuh[] =
+                '   - Obat penyakit jantung';
+
+            $detailRisikoJatuh[] =
+                '   - Pengencer darah';
+
+            $detailRisikoJatuh[] =
+                '   - Tetes mata yang menyebabkan midriasis';
+
+            $detailRisikoJatuh[] =
+                '   - Antihistamin dengan dosis tinggi';
+
+            $detailRisikoJatuh[] =
+                '   - Obat antidiabetes / insulin';
+
+            $detailRisikoJatuh[] =
+                '   '
+                . $centangGetUpAndGo($obat, 1) . ' Ya'
+                . '     '
+                . $centangGetUpAndGo($obat, 0) . ' Tidak';
+
+            /*
+            |--------------------------------------------------------------------------
+            | HASIL SKOR DAN KATEGORI
+            |--------------------------------------------------------------------------
+            */
+            // Mengikuti rumus pada JavaScript form Get Up and Go
+            $skorGetUpAndGo =
+                (int) ($caraBerjalan ?? 0)
+                + (int) ($faktorResiko ?? 0)
+                + (int) ($obat ?? 0);
+
+            // Skor dianggap valid jika ketiga penilaian sudah terisi
+            $dataLengkap =
+                $caraBerjalan !== null
+                && $faktorResiko !== null
+                && $obat !== null;
+
+            if ($dataLengkap) {
+                $kategoriRisikoJatuh = $skorGetUpAndGo > 0
+                    ? 'Berisiko Jatuh'
+                    : 'Tidak Berisiko Jatuh';
+
+                $detailRisikoJatuh[] = '';
+
+                $detailRisikoJatuh[] =
+                    'Skor Risiko Jatuh: ' . $skorGetUpAndGo;
+
+                $detailRisikoJatuh[] =
+                    'Kesimpulan: ' . $kategoriRisikoJatuh;
             }
         }
 
+        
         /*
         |--------------------------------------------------------------------------
-        | SKRINING GIZI MUST
+        | SKRINING GIZI MST
         |--------------------------------------------------------------------------
         */
         $skriningGizi = DB::table('medicalrecord.permasalahan_gizi')
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
             ->orderByDesc('ID')
-            ->first();
+            ->first([
+                'BERAT_BADAN_SIGNIFIKAN',
+                'PERUBAHAN_BERAT_BADAN',
+                'INTAKE_MAKANAN',
+                'KONDISI_KHUSUS',
+                'SKOR',
+                'STATUS_SKOR',
+            ]);
+
+        // Helper kotak centang untuk pilihan MST
+        $centangGizi = static function ($nilai, $pilihan): string {
+            return (string) ($nilai ?? '') === (string) $pilihan
+                ? '☑'
+                : '☐';
+        };
 
         $detailSkriningGizi = [];
 
         if ($skriningGizi) {
-            foreach ([
-                'BERAT_BADAN_SIGNIFIKAN' => 'Perubahan berat badan signifikan',
-                'PERUBAHAN_BERAT_BADAN' => 'Jumlah perubahan berat badan',
-                'INTAKE_MAKANAN' => 'Intake makanan berkurang',
-                'KONDISI_KHUSUS' => 'Kondisi khusus',
-                'SKOR' => 'Skor MUST',
-                'STATUS_SKOR' => 'Status skor',
-            ] as $kolom => $label) {
-                $nilaiRaw = $skriningGizi->{$kolom} ?? null;
 
-                if (!in_array($kolom, ['SKOR', 'STATUS_SKOR'], true)) {
-                    if ($nilaiRaw === 0 || $nilaiRaw === '0') {
-                        $nilai = 'Tidak';
-                    } elseif ($nilaiRaw === 1 || $nilaiRaw === '1') {
-                        $nilai = 'Ya';
-                    } else {
-                        $nilai = $this->value($nilaiRaw);
-                    }
+            // Pertanyaan 1: Perubahan berat badan signifikan
+            $beratBadanSignifikan =
+                $skriningGizi->BERAT_BADAN_SIGNIFIKAN ?? null;
+
+            $detailSkriningGizi[] =
+                '1. Adakah perubahan berat badan signifikan dalam 3 bulan terakhir?';
+
+            $detailSkriningGizi[] =
+                '   '
+                . $centangGizi($beratBadanSignifikan, 0) . ' Tidak'
+                . '     '
+                . $centangGizi($beratBadanSignifikan, 1) . ' Ya';
+
+            // Pertanyaan 2: Jumlah perubahan berat badan
+            $jumlahBeratBadan =
+                $skriningGizi->PERUBAHAN_BERAT_BADAN ?? null;
+
+            $detailSkriningGizi[] =
+                '   Jumlah perubahan berat badan:';
+
+            $opsiBeratBadan = [
+                1 => '0,5 - 5 kg',
+                2 => '> 5 - 10 kg',
+                3 => '> 10 - 15 kg',
+                4 => '> 15 kg',
+            ];
+
+            $barisBeratBadan = [];
+
+            foreach ($opsiBeratBadan as $nilai => $label) {
+                $barisBeratBadan[] =
+                    $centangGizi($jumlahBeratBadan, $nilai)
+                    . ' ' . $label;
+            }
+
+            $detailSkriningGizi[] =
+                '   ' . implode('     ', $barisBeratBadan);
+
+            // Pertanyaan 3: Intake makanan
+            $intakeMakanan =
+                $skriningGizi->INTAKE_MAKANAN ?? null;
+
+            $detailSkriningGizi[] =
+                '2. Intake makanan kurang karena tidak ada nafsu makan?';
+
+            $detailSkriningGizi[] =
+                '   '
+                . $centangGizi($intakeMakanan, 0) . ' Tidak'
+                . '     '
+                . $centangGizi($intakeMakanan, 1) . ' Ya';
+
+            // Pertanyaan 4: Kondisi khusus berupa isian teks
+            $kondisiKhusus = $this->value(
+                $skriningGizi->KONDISI_KHUSUS ?? null
+            );
+
+            $detailSkriningGizi[] =
+                '3. Kondisi khusus: '
+                . ($kondisiKhusus !== '' ? $kondisiKhusus : '........................');
+
+            // Hasil skor MST
+            $skorMST = $skriningGizi->SKOR ?? null;
+
+            $kategoriMST = '';
+
+            if ($skorMST !== null && $skorMST !== '') {
+                $skorMST = (int) $skorMST;
+
+                if ($skorMST >= 4) {
+                    $kategoriMST = 'Risiko Berat';
+                } elseif ($skorMST >= 2) {
+                    $kategoriMST = 'Risiko Sedang';
                 } else {
-                    $nilai = $this->value($nilaiRaw);
+                    $kategoriMST = 'Risiko Ringan';
                 }
 
-                if ($nilai !== '') {
-                    $detailSkriningGizi[] = $label . ': ' . $nilai;
-                }
+                $detailSkriningGizi[] = '';
+                $detailSkriningGizi[] =
+                    'Skor MST: ' . $skorMST;
+
+                $detailSkriningGizi[] =
+                    'Kategori: ' . $kategoriMST;
             }
         }
 
@@ -1497,12 +1939,12 @@ class RJDewasaPrintService implements PrintDataInterface
                 $nutrisi->INDEX_MASSA_TUBUH ?? null
             ),
 
-            'PSIKOLOGI_SOSIAL_EKONOMI_SPIRITUAL' => $this->placeholder(
-                implode("\n", $daftarPsikososial)
+            'HUBUNGAN_STATUS_PSIKOSOSIAL' => $this->placeholder(
+                $detailPsikososial
             ),
 
             'STATUS_FUNGSIONAL' => $this->placeholder(
-                implode("\n", $daftarFungsional)
+                $detailFungsional
             ),
 
             'SKRINING_NYERI' => $this->placeholder(
@@ -1516,7 +1958,7 @@ class RJDewasaPrintService implements PrintDataInterface
             'SKRINING_GIZI' => $this->placeholder(
                 implode("\n", $detailSkriningGizi)
             ),
-
+            
             'KESEDIAAN_DAN_HAMBATAN' => $this->placeholder(
                 $dataKebutuhanEdukasi['KESEDIAAN_DAN_HAMBATAN']
             ),
