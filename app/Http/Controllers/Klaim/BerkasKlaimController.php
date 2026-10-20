@@ -457,8 +457,8 @@ class BerkasKlaimController extends Controller
             $unuscRaw = trim((string) ($header->UNUSC_RAW ?? ''));
             $unusa = ($unusaRaw === '' || strcasecmp($unusaRaw, 'None') === 0) ? '-' : $unusaRaw;
             $unusc = ($unuscRaw === '' || strcasecmp($unuscRaw, 'None') === 0) ? '-' : $unuscRaw;
-            $tarifUnusa = ((float) ($header->TARIFUNUSA ?? 0) == 0.0) ? '0,00' : (string) $header->TARIFUNUSA;
-            $tarifUnusc = ((float) ($header->TARIFUNUSC ?? 0) == 0.0) ? '0,00' : (string) $header->TARIFUNUSC;
+            $tarifUnusa = ((float) ($header->TARIFUNUSA ?? 0) == 0.0) ? '0,00' : number_format((float) $header->TARIFUNUSA, 0, ',', '.');
+            $tarifUnusc = ((float) ($header->TARIFUNUSC ?? 0) == 0.0) ? '0,00' : number_format((float) $header->TARIFUNUSC, 0, ',', '.');
 
             $nomorUrut = ((string) $header->PPK_INSTANSI !== '1') ? '' : (string) ($header->NOMOR_URUT_RAW ?? '');
             $verifikator = ((int) ($header->PROFESI_VERIFIKATOR ?? 0) === 7 || empty($header->NIP_VERIFIKATOR))
@@ -521,7 +521,7 @@ class BerkasKlaimController extends Controller
                 'INACBG' => $header->INACBG ?: '-',
                 'DESKRIPSIINACBG' => $header->DESKRIPSIINACBG ?: '-',
                 'ALOS' => $header->ALOS ?? '-',
-                'TARIFINACBG' => ($header->TARIFINACBG === null || $header->TARIFINACBG === '') ? '-' : (string) $header->TARIFINACBG,
+                'TARIFINACBG' => ($header->TARIFINACBG === null || $header->TARIFINACBG === '') ? '-' : number_format((float) $header->TARIFINACBG, 0, ',', '.'),
                 'SPECIALPROSEDUR' => str_ireplace('None', '', implode('', array_map(fn ($item) => (string) ($item['code'] ?? ''), [
                     ['code' => $header->UNUSR_RAW], ['code' => $header->UNUSI_RAW], ['code' => $header->UNUSP_RAW], ['code' => $header->UNUSD_RAW], ['code' => $header->UNUSA_RAW],
                 ]))),
@@ -536,7 +536,7 @@ class BerkasKlaimController extends Controller
                 'TARIFKODE' => $tarifSpesial,
                 'RPKODE' => $rupiahSpesial,
                 'BIAYARS' => $header->BIAYARS ?? '-',
-                'TOTALTARIFINACBG' => ($header->TOTALTARIFINACBG === null || $header->TOTALTARIFINACBG === '') ? '-' : (string) $header->TOTALTARIFINACBG,
+                'TOTALTARIFINACBG' => ($header->TOTALTARIFINACBG === null || $header->TOTALTARIFINACBG === '') ? '-' : number_format((float) $header->TOTALTARIFINACBG, 0, ',', '.'),
                 'CATATAN' => $header->CATATAN ?? '',
                 'NO_URUT' => $nomorUrut,
                 'VERIFIKATOR' => $verifikator,
