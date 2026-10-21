@@ -1380,6 +1380,37 @@ class BerkasKlaimController extends Controller
                 return (string) $read($row, $key, '0') === '1' ? '☑' : '☐';
             };
 
+
+            // Decode JSON kolom resume di PHP agar tidak perlu JSON_TABLE/temp table SQL.
+            $decodeJson = function ($value): array {
+                if (is_array($value)) {
+                    return $value;
+                }
+                if ($value === null || $value === '') {
+                    return [];
+                }
+                $decoded = json_decode((string) $value, true);
+                return is_array($decoded) ? $decoded : [];
+            };
+
+            // Memanggil fungsi database yang sudah ada. Query tabel lainnya tetap Query Builder.
+            $callDbValue = function (string $expression, array $bindings = [], string $alias = 'hasil') use ($dbCustom) {
+                $result = $dbCustom->query()
+                    ->selectRaw($expression . ' AS ' . $alias, $bindings)
+                    ->first();
+                return $result->{$alias} ?? null;
+            };
+
+            $formatTanggal = function ($tanggal, string $format = 'd-m-Y H:i:s') {
+                return $tanggal ? Carbon::parse($tanggal)->format($format) : null;
+            };
+
+            $bulanIndonesia = [
+                1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+                9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember',
+            ];
+
             $getSignature = function (
                 $visitNumber,
                 $doctorId,
@@ -1473,85 +1504,73 @@ class BerkasKlaimController extends Controller
 
             /* ---------------------------------------------------------------
             * 3. QUERY OBAT SESUAI TEMPLATE LAMA
+            *    Menggunakan Query Builder, menghindari JOIN rincian_tagihan yang
+            *    dapat menggandakan baris dan membuang JOIN yang tidak dipakai.
             * ------------------------------------------------------------- */
             $getObatRows = function (bool $radar) use ($dbCustom, $nopen) {
+                $query = $dbCustom->table('layanan.farmasi AS lf')
+                    ->join('pendaftaran.kunjungan AS pk', 'lf.KUNJUNGAN', '=', 'pk.NOMOR')
+                    ->join('inventory.barang AS ib', 'lf.FARMASI', '=', 'ib.ID')
+                    ->where('lf.STATUS', '!=', 0)
+                    ->whereIn('pk.STATUS', [1, 2])
+                    ->where('pk.NOPEN', $nopen)
+                    ->whereExists(function ($q) {
+                        $q->select('rt.REF_ID')
+                            ->from('pembayaran.rincian_tagihan AS rt')
+                            ->whereColumn('rt.REF_ID', 'lf.ID')
+                            ->where('rt.JENIS', 4);
+                    })
+                    ->orderBy('lf.RACIKAN')
+                    ->orderBy('lf.GROUP_RACIKAN');
+
                 if ($radar) {
-                    $sql = "
-                        SELECT pk.NOPEN,
-                            ib.NAMA AS NAMAOBAT,
-                            lf.JUMLAH,
-                            f.FREKUENSI,
-                            lf.DOSIS,
-                            lf.KETERANGAN,
-                            CONCAT(lf.RACIKAN, lf.GROUP_RACIKAN) AS RACIKAN,
-                            lf.PETUNJUK_RACIKAN,
-                            lf.`STATUS` AS STATUSLAYANAN
-                        FROM layanan.farmasi AS lf
-                        LEFT JOIN master.referensi AS ref
-                            ON ref.ID = lf.ATURAN_PAKAI AND ref.JENIS = 41
-                        LEFT JOIN master.frekuensi_aturan_resep AS f
-                            ON lf.FREKUENSI = f.ID AND f.`STATUS` != 0
-                        INNER JOIN pendaftaran.kunjungan AS pk
-                                ON lf.KUNJUNGAN = pk.NOMOR
-                        LEFT JOIN layanan.order_resep AS o ON o.NOMOR = pk.REF
-                        LEFT JOIN master.dokter AS md ON o.DOKTER_DPJP = md.ID
-                        LEFT JOIN master.pegawai AS mp ON md.NIP = mp.NIP
-                        LEFT JOIN pendaftaran.kunjungan AS asal ON o.KUNJUNGAN = asal.NOMOR
-                        LEFT JOIN master.ruangan AS r ON asal.RUANGAN = r.ID AND r.JENIS = 5
-                        LEFT JOIN master.referensi AS jenisk
-                            ON r.JENIS_KUNJUNGAN = jenisk.ID AND jenisk.JENIS = 15
-                        INNER JOIN pendaftaran.pendaftaran AS pp ON pk.NOPEN = pp.NOMOR
-                        INNER JOIN inventory.barang AS ib ON lf.FARMASI = ib.ID
-                        INNER JOIN pembayaran.rincian_tagihan AS rt
-                                ON lf.ID = rt.REF_ID AND rt.JENIS = 4
-                        WHERE lf.`STATUS` != 0
-                        AND pk.`STATUS` IN (1, 2)
-                        AND pk.NOPEN = ?
-                        AND o.RESEP_PASIEN_PULANG = 1
-                        AND LEFT(ib.KATEGORI, 3) IN ('101', '102')
-                        ORDER BY lf.RACIKAN, lf.GROUP_RACIKAN
-                    ";
+                    $query->join('layanan.order_resep AS o', 'o.NOMOR', '=', 'pk.REF')
+                        ->leftJoin('master.frekuensi_aturan_resep AS f', function ($join) {
+                            $join->on('lf.FREKUENSI', '=', 'f.ID')
+                                ->where('f.STATUS', '!=', 0);
+                        })
+                        ->where('o.RESEP_PASIEN_PULANG', 1)
+                        ->where(function ($q) {
+                            $q->where('ib.KATEGORI', 'like', '101%')
+                                ->orWhere('ib.KATEGORI', 'like', '102%');
+                        })
+                        ->select(
+                            'pk.NOPEN', 'ib.NAMA AS NAMAOBAT', 'lf.JUMLAH', 'f.FREKUENSI',
+                            'lf.DOSIS', 'lf.KETERANGAN', 'lf.PETUNJUK_RACIKAN',
+                            'lf.RACIKAN AS RACIKAN_DASAR', 'lf.GROUP_RACIKAN AS GROUP_RACIKAN',
+                            'lf.STATUS AS STATUSLAYANAN'
+                        );
                 } else {
-                    $sql = "
-                        SELECT pk.NOPEN,
-                            ib.NAMA AS NAMAOBAT,
-                            lf.JUMLAH,
-                            IF(ref.DESKRIPSI IS NULL, lf.ATURAN_PAKAI, ref.DESKRIPSI) AS ATURANPAKAI,
-                            lf.KETERANGAN,
-                            CONCAT(lf.RACIKAN, lf.GROUP_RACIKAN) AS RACIKAN,
-                            lf.PETUNJUK_RACIKAN,
-                            lf.`STATUS` AS STATUSLAYANAN
-                        FROM layanan.farmasi AS lf
-                        LEFT JOIN master.referensi AS ref
-                            ON ref.ID = lf.ATURAN_PAKAI AND ref.JENIS = 41
-                        INNER JOIN pendaftaran.kunjungan AS pk
-                                ON lf.KUNJUNGAN = pk.NOMOR
-                        LEFT JOIN layanan.order_resep AS o ON o.NOMOR = pk.REF
-                        LEFT JOIN master.dokter AS md ON o.DOKTER_DPJP = md.ID
-                        LEFT JOIN master.pegawai AS mp ON md.NIP = mp.NIP
-                        LEFT JOIN pendaftaran.kunjungan AS asal ON o.KUNJUNGAN = asal.NOMOR
-                        LEFT JOIN master.ruangan AS r ON asal.RUANGAN = r.ID AND r.JENIS = 5
-                        LEFT JOIN master.referensi AS jenisk
-                            ON r.JENIS_KUNJUNGAN = jenisk.ID AND jenisk.JENIS = 15
-                        INNER JOIN pendaftaran.pendaftaran AS pp ON pk.NOPEN = pp.NOMOR
-                        INNER JOIN inventory.barang AS ib ON lf.FARMASI = ib.ID
-                        INNER JOIN pembayaran.rincian_tagihan AS rt
-                                ON lf.ID = rt.REF_ID AND rt.JENIS = 4
-                        WHERE lf.`STATUS` != 0
-                        AND pk.`STATUS` IN (1, 2)
-                        AND pk.NOPEN = ?
-                        AND LEFT(ib.KATEGORI, 3) = '101'
-                        ORDER BY lf.RACIKAN, lf.GROUP_RACIKAN
-                    ";
+                    $query->leftJoin('master.referensi AS ref', function ($join) {
+                        $join->on('ref.ID', '=', 'lf.ATURAN_PAKAI')
+                            ->where('ref.JENIS', 41);
+                    })
+                        ->where('ib.KATEGORI', 'like', '101%')
+                        ->select(
+                            'pk.NOPEN', 'ib.NAMA AS NAMAOBAT', 'lf.JUMLAH',
+                            'lf.ATURAN_PAKAI', 'ref.DESKRIPSI AS DESKRIPSI_ATURAN',
+                            'lf.KETERANGAN', 'lf.PETUNJUK_RACIKAN',
+                            'lf.RACIKAN AS RACIKAN_DASAR', 'lf.GROUP_RACIKAN AS GROUP_RACIKAN',
+                            'lf.STATUS AS STATUSLAYANAN'
+                        );
                 }
 
-                return $dbCustom->select($sql, [$nopen]);
+                $rows = $query->get();
+                $rows->transform(function ($row) use ($radar) {
+                    $row->RACIKAN = (string) ($row->RACIKAN_DASAR ?? '') . (string) ($row->GROUP_RACIKAN ?? '');
+                    unset($row->RACIKAN_DASAR, $row->GROUP_RACIKAN);
+                    if (!$radar) {
+                        $row->ATURANPAKAI = $row->DESKRIPSI_ATURAN ?? $row->ATURAN_PAKAI;
+                        unset($row->DESKRIPSI_ATURAN, $row->ATURAN_PAKAI);
+                    }
+                    return $row;
+                });
+                return $rows->all();
             };
 
             /* ---------------------------------------------------------------
              * 4. QUERY RESUME UTAMA, DIAGNOSIS, PROSEDUR, OBAT, DAN TANDA TANGAN
-             *    Seluruh query stored procedure dijalankan langsung di function ini.
-             *    Tidak menggunakan CALL dan tidak membuat function/model tambahan.
+             *    Pengambilan data menggunakan Laravel Query Builder; fungsi database yang tersedia dipanggil via selectRaw.
              * ------------------------------------------------------------- */
             $signatureMain = $getSignature(
                 $resume->NOMOR,
@@ -1580,634 +1599,524 @@ class BerkasKlaimController extends Controller
 
             if ($isRadar) {
                 /* =============================================================
-                 * A. RESUME UTAMA: pengganti simrspku_klaim.CetakMR2Custom
+                 * A. DATA RESUME UTAMA RAWAT DARURAT
+                 *    Semua relasi tabel memakai Laravel Query Builder.
+                 *    Fungsi SIMRS existing dipanggil melalui selectRaw.
                  * =========================================================== */
-                $dbCustom->statement('SET @PNOPEN = ?', [$nopen]);
+                $patient = $dbCustom->table('pendaftaran.pendaftaran AS pd')
+                    ->join('master.pasien AS p', 'p.NORM', '=', 'pd.NORM')
+                    ->leftJoin('master.referensi AS rjk', function ($join) {
+                        $join->on('p.JENIS_KELAMIN', '=', 'rjk.ID')->where('rjk.JENIS', 2);
+                    })
+                    ->where('pd.NOMOR', $nopen)
+                    ->where('pd.STATUS', '!=', 0)
+                    ->whereExists(function ($q) {
+                        $q->select('tp.NOPEN')->from('pendaftaran.tujuan_pasien AS tp')
+                            ->whereColumn('tp.NOPEN', 'pd.NOMOR');
+                    })
+                    ->select(
+                        'pd.NOMOR AS NOPEN', 'pd.NORM AS NORM_CEK', 'pd.TANGGAL AS TANGGAL_REG',
+                        'p.NORM', 'p.TANGGAL_LAHIR', 'p.JENIS_KELAMIN', 'p.TEMPAT_LAHIR',
+                        'rjk.DESKRIPSI AS JENISKELAMIN'
+                    )
+                    ->first();
 
-                $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA_HASIL_LAB');
-                $dbCustom->statement("
-                    CREATE TEMPORARY TABLE TEMP_DATA_HASIL_LAB ENGINE=MEMORY
-                    SELECT DISTINCT hl.ID
-                    FROM medicalrecord.`resume` r,
-                        JSON_TABLE(r.HASIL_LAB,
-                        '$[*]' COLUMNS(ID CHAR(12) PATH '$.ID')
-                        ) AS hl
-                    WHERE r.NOPEN = @PNOPEN AND r.`STATUS` != 0
-                ");
-
-                $dbCustom->statement('
-                    ALTER TABLE TEMP_DATA_HASIL_LAB
-                        CHANGE COLUMN ID ID CHAR(12) NOT NULL,
-                        ADD PRIMARY KEY (ID)
-                ');
-
-                $mainRows = $dbCustom->select("
-                    SELECT inst.PPK IDPPK,UPPER(inst.NAMA) NAMAINSTANSI, inst.KOTA KOTA, inst.ALAMAT ALAMATINST
-                            , inst.TELEPON TLP, inst.FAX, inst.EMAIL, inst.WEBSITE
-                            , INSERT(INSERT(INSERT(LPAD(p.NORM,8,'0'),3,0,'-'),6,0,'-'),9,0,'-') NORM
-                            , INSERT(INSERT(INSERT(LPAD(p.NORM,8,'0'),3,0,''),6,0,''),9,0,'') NO_RM
-                            , master.getNamaLengkap(p.NORM) NAMALENGKAP
-                            , DATE_FORMAT(p.TANGGAL_LAHIR,'%d-%m-%Y') TANGGAL_LAHIR
-                            , rjk.DESKRIPSI JENISKELAMIN
-                            , DATE_FORMAT(pd.TANGGAL,'%d-%m-%Y %H:%i:%s') TGLREG
-                            , DATE_FORMAT(pl.TANGGAL,'%d-%m-%Y %H:%i:%s') TGLKELUAR
-                            , CONCAT(
-                                DAY(IF(pl.TANGGAL IS NULL, pd.TANGGAL, pl.TANGGAL)),
-                                ' ',
-                                ELT(
-                                    MONTH(IF(pl.TANGGAL IS NULL, pd.TANGGAL, pl.TANGGAL)),
-                                    'Januari','Februari','Maret','April','Mei','Juni',
-                                    'Juli','Agustus','September','Oktober','November','Desember'
-                                ),
-                                ' ',
-                                YEAR(IF(pl.TANGGAL IS NULL, pd.TANGGAL, pl.TANGGAL))
-                            ) AS TGLSURAT
-                            , DATE_FORMAT(pd.TANGGAL,'%d-%m-%Y') TANGGALKELUAR
-                            , DATEDIFF(pl.TANGGAL, pd.TANGGAL) LAMADIRAWAT
-                            , CONCAT(u.DESKRIPSI,IF(pk.RUANG_KAMAR_TIDUR = null,'',CONCAT(' - ',rk.KAMAR))) RUANG_RAWAT_TERAKHIR
-                            , cr.DESKRIPSI CARA_BAYAR
-                            , pd.NOMOR NOPEN
-                            , p.NORM NORM_CEK
-                            , IF(IFNULL(an.DESKRIPSI,(SELECT a.DESKRIPSI
-                                    FROM medicalrecord.anamnesis a, pendaftaran.kunjungan kg, `master`.ruangan rg
-                                    WHERE a.PENDAFTARAN=pd.NOMOR AND a.KUNJUNGAN=kg.NOMOR AND kg.RUANGAN=rg.ID AND kg.STATUS!=0 AND rg.JENIS_KUNJUNGAN=3
-                                    ORDER BY a.TANGGAL DESC
-                                    LIMIT 1))='-','Tidak Ada',
-                                                IFNULL(an.DESKRIPSI,(SELECT a.DESKRIPSI
-                                    FROM medicalrecord.anamnesis a, pendaftaran.kunjungan kg, `master`.ruangan rg
-                                    WHERE a.PENDAFTARAN=pd.NOMOR AND a.KUNJUNGAN=kg.NOMOR AND kg.RUANGAN=rg.ID AND kg.STATUS!=0 AND rg.JENIS_KUNJUNGAN=3
-                                    ORDER BY a.TANGGAL DESC
-                                    LIMIT 1))) anamnesis
-                            , IF(IFNULL(rpp.DESKRIPSI,(SELECT rp.DESKRIPSI
-                                    FROM medicalrecord.rpp rp
-                                    LEFT JOIN pendaftaran.kunjungan pkrp ON pkrp.NOMOR=rp.KUNJUNGAN
-                                    WHERE pkrp.NOPEN=pd.NOMOR ORDER BY rp.TANGGAL LIMIT 1))='-','Tidak Ada',IFNULL(rpp.DESKRIPSI,(SELECT rp.DESKRIPSI
-                                    FROM medicalrecord.rpp rp
-                                    LEFT JOIN pendaftaran.kunjungan pkrp ON pkrp.NOMOR=rp.KUNJUNGAN
-                                    WHERE pkrp.NOPEN=pd.NOMOR ORDER BY rp.TANGGAL LIMIT 1))) RPP
-                            , IF(IFNULL(rps.DESKRIPSI,(SELECT rp.DESKRIPSI
-                                    FROM medicalrecord.rps rp
-                                    LEFT JOIN pendaftaran.kunjungan pkrp ON pkrp.NOMOR=rp.KUNJUNGAN
-                                    WHERE pkrp.NOPEN=pd.NOMOR ORDER BY rp.TANGGAL LIMIT 1))='-','Tidak Ada',IFNULL(rps.DESKRIPSI,(SELECT rp.DESKRIPSI
-                                    FROM medicalrecord.rps rp
-                                    LEFT JOIN pendaftaran.kunjungan pkrp ON pkrp.NOMOR=rp.KUNJUNGAN
-                                    WHERE pkrp.NOPEN=pd.NOMOR ORDER BY rp.TANGGAL LIMIT 1))) RPS
-                            , IF(IFNULL(ku.DESKRIPSI, (SELECT ku.DESKRIPSI
-                                    FROM medicalrecord.keluhan_utama ku
-                                    LEFT JOIN pendaftaran.kunjungan pku ON pku.NOMOR=ku.KUNJUNGAN
-                                    WHERE pku.NOPEN=pd.NOMOR AND pku.REF IS NULL
-                                    ORDER BY ku.TANGGAL DESC LIMIT 1))='-','Tidak Ada',IFNULL(ku.DESKRIPSI, (SELECT ku.DESKRIPSI
-                                    FROM medicalrecord.keluhan_utama ku
-                                    LEFT JOIN pendaftaran.kunjungan pku ON pku.NOMOR=ku.KUNJUNGAN
-                                    WHERE pku.NOPEN=pd.NOMOR AND pku.REF IS NULL
-                                    ORDER BY ku.TANGGAL DESC LIMIT 1))) keluhan_utama
-                            , IF(ck.ID IN (6,7),'Tidak ada',(SELECT CONCAT(ROUND(pn.NYERI),' Metode : ',mny.DESKRIPSI)
-                                    FROM medicalrecord.penilaian_nyeri pn
-                                    LEFT JOIN pendaftaran.kunjungan pkrp ON pkrp.NOMOR=pn.KUNJUNGAN
-                                    LEFT JOIN master.referensi mny ON pn.METODE=mny.ID AND mny.JENIS=71
-                                    WHERE pkrp.NOPEN=pd.NOMOR LIMIT 1)) NYERI
-                            , tv.KESADARAN, rtv.DESKRIPSI TINGKAT_KESADARAN
-                            , (SELECT CONCAT(ROUND(tvt.SISTOLIK),'/',ROUND(tvt.DISTOLIK))
-                                FROM medicalrecord.tanda_vital tvt
-                                LEFT JOIN pendaftaran.kunjungan pkt ON tvt.KUNJUNGAN=pkt.NOMOR AND pkt.`STATUS`!=0
-                                LEFT JOIN layanan.pasien_pulang plt ON pkt.NOMOR=plt.KUNJUNGAN AND plt.`STATUS`=1
-                                LEFT JOIN pendaftaran.pendaftaran pdt ON plt.NOPEN=pdt.NOMOR
-                                    WHERE plt.NOPEN=pd.NOMOR
-                                    ORDER BY tvt.WAKTU_PEMERIKSAAN DESC LIMIT 1) TEKANAN_DARAH
-                            , (SELECT tvt.KEADAAN_UMUM
-                                FROM medicalrecord.tanda_vital tvt
-                                LEFT JOIN pendaftaran.kunjungan pkt ON tvt.KUNJUNGAN=pkt.NOMOR AND pkt.`STATUS`!=0
-                                LEFT JOIN layanan.pasien_pulang plt ON pkt.NOMOR=plt.KUNJUNGAN AND plt.`STATUS`=1
-                                LEFT JOIN pendaftaran.pendaftaran pdt ON plt.NOPEN=pdt.NOMOR
-                                    WHERE plt.NOPEN=pd.NOMOR
-                                    ORDER BY tvt.WAKTU_PEMERIKSAAN DESC LIMIT 1) KEADAANUMUM
-                            , (SELECT ROUND(tvt.FREKUENSI_NADI)
-                                FROM medicalrecord.tanda_vital tvt
-                                LEFT JOIN pendaftaran.kunjungan pkt ON tvt.KUNJUNGAN=pkt.NOMOR AND pkt.`STATUS`!=0
-                                LEFT JOIN layanan.pasien_pulang plt ON pkt.NOMOR=plt.KUNJUNGAN AND plt.`STATUS`=1
-                                LEFT JOIN pendaftaran.pendaftaran pdt ON plt.NOPEN=pdt.NOMOR
-                                    WHERE plt.NOPEN=pd.NOMOR
-                                    ORDER BY tvt.WAKTU_PEMERIKSAAN DESC LIMIT 1) FREKUENSI_NADI
-                            , (SELECT ROUND(tvt.FREKUENSI_NAFAS)
-                                FROM medicalrecord.tanda_vital tvt
-                                LEFT JOIN pendaftaran.kunjungan pkt ON tvt.KUNJUNGAN=pkt.NOMOR AND pkt.`STATUS`!=0
-                                LEFT JOIN layanan.pasien_pulang plt ON pkt.NOMOR=plt.KUNJUNGAN AND plt.`STATUS`=1
-                                LEFT JOIN pendaftaran.pendaftaran pdt ON plt.NOPEN=pdt.NOMOR
-                                    WHERE plt.NOPEN=pd.NOMOR
-                                    ORDER BY tvt.WAKTU_PEMERIKSAAN DESC LIMIT 1) FREKUENSI_NAFAS
-                            , (SELECT ROUND(tvt.SUHU)
-                                FROM medicalrecord.tanda_vital tvt
-                                LEFT JOIN pendaftaran.kunjungan pkt ON tvt.KUNJUNGAN=pkt.NOMOR AND pkt.`STATUS`!=0
-                                LEFT JOIN layanan.pasien_pulang plt ON pkt.NOMOR=plt.KUNJUNGAN AND plt.`STATUS`=1
-                                LEFT JOIN pendaftaran.pendaftaran pdt ON plt.NOPEN=pdt.NOMOR
-                                    WHERE plt.NOPEN=pd.NOMOR
-                                    ORDER BY tvt.WAKTU_PEMERIKSAAN DESC LIMIT 1) SUHU
-                            , (SELECT ROUND(tvt.SATURASI_O2)
-                                FROM medicalrecord.tanda_vital tvt
-                                LEFT JOIN pendaftaran.kunjungan pkt ON tvt.KUNJUNGAN=pkt.NOMOR AND pkt.`STATUS`!=0
-                                LEFT JOIN layanan.pasien_pulang plt ON pkt.NOMOR=plt.KUNJUNGAN AND plt.`STATUS`=1
-                                LEFT JOIN pendaftaran.pendaftaran pdt ON plt.NOPEN=pdt.NOMOR
-                                    WHERE plt.NOPEN=pd.NOMOR
-                                    ORDER BY tvt.WAKTU_PEMERIKSAAN DESC LIMIT 1) SATURASI_O2
-                            , (SELECT ROUND(tvt.GCS)
-                                FROM medicalrecord.tanda_vital tvt
-                                LEFT JOIN pendaftaran.kunjungan pkt ON tvt.KUNJUNGAN=pkt.NOMOR AND pkt.`STATUS`!=0
-                                LEFT JOIN layanan.pasien_pulang plt ON pkt.NOMOR=plt.KUNJUNGAN AND plt.`STATUS`=1
-                                LEFT JOIN pendaftaran.pendaftaran pdt ON plt.NOPEN=pdt.NOMOR
-                                    WHERE plt.NOPEN=pd.NOMOR
-                                    ORDER BY tvt.WAKTU_PEMERIKSAAN DESC LIMIT 1) GCS
-                            , rt.DESKRIPSI rencana_terapi
-                            , rm.DESKRIPSI_KONSUL DESKRIPSI_KONSUL
-                            , IF(kd.ID IN (4,5),'Tidak Ada',IFNULL(ee.EDUKASI, (SELECT e.EDUKASI
-                                        FROM medicalrecord.edukasi_emergency e
-                                            , pendaftaran.kunjungan pk
-                                        WHERE e.KUNJUNGAN=pk.NOMOR AND e.`STATUS`!=0
-                                        AND pk.NOPEN=pd.NOMOR
-                                        ORDER BY e.TANGGAL DESC LIMIT 1))) EDUKASI
-                            , IF(kd.ID IN (4,5),'Tidak Ada',IFNULL(ee.KEMBALI_KE_UGD, (SELECT e.KEMBALI_KE_UGD
-                                        FROM medicalrecord.edukasi_emergency e
-                                            , pendaftaran.kunjungan pk
-                                        WHERE e.KUNJUNGAN=pk.NOMOR AND e.`STATUS`!=0
-                                        AND pk.NOPEN=pd.NOMOR
-                                        ORDER BY e.TANGGAL DESC LIMIT 1))) KEMBALI_KE_UGD
-                            , IF(kd.ID IN (4,5),'Tidak Ada',jd.NOMOR) NOMOR_KONTROL
-                            , IF(kd.ID IN (4,5),null,jd.TANGGAL) TANGGAL_KONTROL
-                            , IF(kd.ID IN (4,5),'Tidak Ada',r.DESKRIPSI) RUANG_KONTROL
-                            , '' KET_KONTROL
-                            , IF(kd.ID IN (4,5),'Tidak Ada',jd.NOMOR_REFERENSI) NOMOR_REFERENSI
-                            , IF(kd.ID IN (4,5),0,IF(jd.NOMOR IS NOT NULL,1,0)) POLIKLINIK_RS
-                            , rm.INDIKASI_RAWAT_INAP
-                            , (SELECT CONCAT(pri.INDIKASI,'\r',pri.DESKRIPSI)
-                                FROM pendaftaran.kunjungan k
-                                    LEFT JOIN medicalrecord.perencanaan_rawat_inap pri ON pri.KUNJUNGAN=k.NOMOR AND pri.`STATUS`!=0
-                                    , pendaftaran.pendaftaran d
-                                    , `master`.ruangan r
-                                WHERE   k.NOPEN=d.NOMOR AND k.`STATUS`!=0 AND k.RUANGAN=r.ID AND r.JENIS_KUNJUNGAN NOT IN (0,3,4,5,6,11,13,14)
-                                AND d.`STATUS`!=0 AND d.NORM=pd.NORM AND d.TANGGAL < pd.TANGGAL
-                                ORDER BY d.TANGGAL DESC
-                                LIMIT 1) INDIKASI_RANAP
-                            , IF(pl.DOKTER IS NULL,`master`.getDPJP(pd.NOMOR, 2),master.getNamaLengkapPegawai(mpdokdpjp.NIP)) DPJP
-                            , pdr.NIP NIP
-                            , IF(IF(rm.DESKRIPSI_KONSUL='-' OR rm.DESKRIPSI_KONSUL='', master.getJawabanKonsul(rm.NOPEN), rm.DESKRIPSI_KONSUL)='','Tidak Ada'
-                                , IF(rm.DESKRIPSI_KONSUL='-' OR rm.DESKRIPSI_KONSUL='', master.getJawabanKonsul(rm.NOPEN), rm.DESKRIPSI_KONSUL)) KONSULTASI
-                            , NOW() HARI_INI
-                            , DATE_FORMAT(pd.TANGGAL,'%d %M %Y') TANGGAL_HARI_INI
-                        , kd.DESKRIPSI KEADAAN_KELUAR
-                        , IF(psx.NAMA IS NULL OR psx.NAMA = '', IF(pesx.NAMA IS NULL OR pesx.NAMA = '', 'Mohon Inputkan Data Penanggungjawab/Pengantar Pasien', pesx.NAMA), psx.NAMA) PENANGGUNG_JAWAB_PASIEN
-                        , kps.NAMA NAMA_KELUARGA_PASIEN
-                        , master.getNamaLengkapPegawai(pdr.NIP) DOKTER
-                            , IF(kd.ID=1,1,0) SEMBUH
-                            , IF(kd.ID=2,1,0) MEMBAIK
-                            , IF(kd.ID=3,1,0) BELUM_SEMBUH
-                            , IF(kd.ID=4,1,0) MENINGGAL_KURANG48
-                            , IF(kd.ID=5,1,0) MENINGGAL_LEBIH48
-                            , IF(kd.ID=6,1,0) KDOA
-                            , IF(kd.ID=7,1,0) KRUJUK
-                            , ck.DESKRIPSI CARA_KELUAR
-                            , IF(ck.ID=1,1,0) DIIJINKAN_PULANG
-                            , IF(ck.ID=2,1,0) PULANG_PAKSA
-                            , IF(ck.ID=3,1,0) DIRUJUK
-                            , IF(ck.ID=4,1,0) LAIN_LAIN
-                            , IF(ck.ID=5,1,0) PINDAH_RS
-                            , IF(ck.ID=6,1,0) CMENINGGAL
-                            , IF(ck.ID=7,1,0) CDOA
-                        , IF(rm.ALERGI_REAKSI_OBAT='-' OR rm.ALERGI_REAKSI_OBAT='','Tidak Ada',rm.ALERGI_REAKSI_OBAT) ALERGI
-                        , IF(rm.DESKRIPSI_HASIL_LAB=''
-                                    ,(SELECT REPLACE(GROUP_CONCAT(hasil SEPARATOR ';'),';','\r')
-                                        FROM (
-                                                SELECT CONCAT(
-                                                    'Tgl Hasil ',
-                                                    DATE_FORMAT(MIN(hlab.TANGGAL), '%d-%m-%Y'),
-                                                    ', ',
-                                                    GROUP_CONCAT(
-                                                        CONCAT(
-                                                            ptl.PARAMETER,
-                                                            '=',
-                                                            hlab.HASIL,
-                                                            ' ',
-                                                            IF(sl.DESKRIPSI IS NULL, '', sl.DESKRIPSI)
-                                                        )
-                                                    )
-                                                ) AS hasil
-                                                FROM TEMP_DATA_HASIL_LAB r,
-                                                    layanan.hasil_lab hlab
-                                                LEFT JOIN master.parameter_tindakan_lab ptl
-                                                    ON hlab.PARAMETER_TINDAKAN = ptl.ID
-                                                    AND ptl.`STATUS` != 0
-                                                LEFT JOIN master.referensi sl
-                                                    ON ptl.SATUAN = sl.ID
-                                                    AND sl.JENIS = 35
-                                                WHERE hlab.ID = r.ID
-                                                AND hlab.`STATUS` != 0
-                                                GROUP BY DATE(hlab.TANGGAL)
-                                            ) gh), rm.DESKRIPSI_HASIL_LAB) LAB
-                            , IF(rm.DESKRIPSI_HASIL_RAD='',(SELECT GROUP_CONCAT(t.NAMA,' = ',hr.KESAN)
-                                    FROM medicalrecord.`resume` r,
-                                            JSON_TABLE(r.HASIL_RAD,
-                                            '$[*]' COLUMNS(
-                                                    ID INT PATH '$.ID'
-                                                )
-                                        ) AS hl
-                                        , layanan.hasil_rad hr
-                                        , layanan.tindakan_medis tm
-                                        , `master`.tindakan t
-                                    WHERE r.NOPEN=@PNOPEN AND hl.ID=hr.ID AND hr.`STATUS`!=0 AND hr.TINDAKAN_MEDIS=tm.ID AND tm.`STATUS`!=0 AND r.`STATUS`!=0
-                                        AND tm.TINDAKAN=t.ID), rm.DESKRIPSI_HASIL_RAD) RAD
-                            , IFNULL(layanan.getResepPulang(@PNOPEN),0) RESEPPULANG
-                            , IFNULL((SELECT jt.ID  IDDIAGNOSA
-                                        FROM medicalrecord.`resume` r,
-                                                JSON_TABLE(r.DIAGNOSA_PROSEDUR,
-                                                '$[*]' COLUMNS(
-                                                        ID INT PATH '$.ID',
-                                                        UTAMA INT PATH '$.UTAMA',
-                                                        NESTED PATH '$.PROSEDUR[*]'
-                                                            COLUMNS (
-                                                            IDPROSEDUR VARCHAR(10) PATH '$.IDPROSEDUR',
-                                                            TINDAKANMEDIS CHAR(11) PATH '$.TINDAKANMEDIS'
-                                                            )
-                                                    )
-                                            ) AS jt
-                                        WHERE r.NOPEN=pd.NOMOR AND UTAMA=1 AND r.`STATUS`!=0
-                                        LIMIT 1),0) STS_DIAG_UTAMA
-                            , IFNULL((SELECT jt.ID  IDDIAGNOSA
-                                        FROM medicalrecord.`resume` r,
-                                                JSON_TABLE(r.DIAGNOSA_PROSEDUR,
-                                                '$[*]' COLUMNS(
-                                                        ID INT PATH '$.ID',
-                                                        UTAMA INT PATH '$.UTAMA',
-                                                        NESTED PATH '$.PROSEDUR[*]'
-                                                            COLUMNS (
-                                                            IDPROSEDUR VARCHAR(10) PATH '$.IDPROSEDUR',
-                                                            TINDAKANMEDIS CHAR(11) PATH '$.TINDAKANMEDIS'
-                                                            )
-                                                    )
-                                            ) AS jt
-                                        WHERE r.NOPEN=pd.NOMOR AND UTAMA=2 AND r.`STATUS`!=0
-                                        LIMIT 1),0) STS_DIAG_SEKUNDER
-                            , IFNULL(master.getKodeICD9CM(@PNOPEN),0) STS_PROSEDUR
-                            , UPPER((master.getDiagnosa(@PNOPEN,1))) DIAGNOSAUTAMA, (master.getKodeDiagnosa(@PNOPEN,1)) KODEDIAGNOSAUTAMA
-                            , (master.getDiagnosa(@PNOPEN,2)) DIAGNOSASEKUNDER, (master.getKodeDiagnosa(@PNOPEN,2)) KODEDIAGNOSASEKUNDER
-                            , (SELECT REPLACE(REPLACE(pf1.DESKRIPSI,'<div','<br><div'),'<p','<br><p')
-                                FROM medicalrecord.pemeriksaan_fisik pf1
-                                    WHERE pf1.PENDAFTARAN=pd.NOMOR
-                                    ORDER BY pf1.TANGGAL DESC LIMIT 1) FISIK
-                            , IF
-                            (
-                                    (SELECT DISTINCT dgg.`DIAGNOSA`
-                                FROM medicalrecord.`diagnosa` dgg
-                                    WHERE dgg.NOPEN=pd.NOMOR AND dgg.`STATUS` = 1 AND dgg.INA_GROUPER = 1 ORDER BY dgg.`DIAGNOSA` DESC LIMIT 1
-                                    ) = '','Tidak ada tambahan diagnosa Dokter',
-                                    /*CONCAT(
-                                        (
-                                            SELECT DISTINCT dgg.`DIAGNOSA` FROM medicalrecord.`diagnosa` dgg
-                                            WHERE dgg.NOPEN=pd.NOMOR AND dgg.`STATUS` = 1 AND dgg.UTAMA = 1
-                                        ),
-                                        (
-                                            SELECT DISTINCT dgg.`DIAGNOSA` FROM medicalrecord.`diagnosa` dgg
-                                            WHERE dgg.NOPEN=pd.NOMOR AND dgg.`STATUS` = 1 AND dgg.UTAMA = 2 ORDER BY dgg.ID ASC
-                                        )
-                                    )*/
-                                    (
-                                        SELECT GROUP_CONCAT(DISTINCT dgg.`DIAGNOSA` ORDER BY dgg.UTAMA ASC, dgg.id SEPARATOR ',')
-                                    FROM medicalrecord.`diagnosa` dgg
-                                        WHERE dgg.NOPEN=pd.NOMOR AND dgg.`STATUS` = 1 AND dgg.INA_GROUPER = 1 ORDER BY dgg.ID ASC
-                                    )
-                                ) DIAGNOSA_DOKTER_ICD10
-                            , IF((SELECT DISTINCT psr.KODE
-                                FROM medicalrecord.`prosedur` psr
-                                    WHERE psr.NOPEN=pd.NOMOR AND psr.`STATUS` = 1 LIMIT 1
-                                    ) IS NULL,'Tidak ada tambahan',(SELECT CONCAT('(',GROUP_CONCAT(DISTINCT psr.KODE),') ',GROUP_CONCAT(DISTINCT psr.TINDAKAN SEPARATOR ','))
-                                    FROM medicalrecord.`prosedur` psr
-                                    WHERE psr.NOPEN=pd.NOMOR AND psr.`STATUS` = 1
-                                    )) DIAGNOSA_DOKTER_ICD9
-                            , IF(DESKRIPSI_HASIL_PENUNJANG_LAINYA='','Tidak Ada',DESKRIPSI_HASIL_PENUNJANG_LAINYA) DESKRIPSI_HASIL_PENUNJANG_LAINYA
-                            , IF(kd.ID IN (4,5),'Tidak Ada',IF(RENCANA_DIET='','Tidak Ada',RENCANA_DIET)) RENCANA_DIET
-                            , IF(tg.LABORATORIUM != '0,00','Terlampir','Tidak Ada') BERKAS_LAB
-                            , IF(tg.RADIOLOGI != '0,00','Terlampir','Tidak Ada') BERKAS_RAD
-                            , DATE_FORMAT((SELECT p1.TANGGAL FROM pendaftaran.pendaftaran p1 LEFT JOIN pembayaran.tagihan_pendaftaran tp1 ON p1.NOMOR=tp1.PENDAFTARAN
-                                WHERE tp1.TAGIHAN=tpdf.TAGIHAN AND tp1.`STATUS`!=0
-                                ORDER BY p1.TANGGAL ASC LIMIT 1),'%d-%m-%Y %H:%i:%s') TGL_DAFTAR_AWAL
-                        FROM pendaftaran.pendaftaran pd
-                            LEFT JOIN master.keluarga_pasien kps ON pd.NORM = kps.NORM
-                            LEFT JOIN pendaftaran.penanggung_jawab_pasien psx ON psx.NOPEN AND pd.NOMOR
-                            LEFT JOIN pendaftaran.pengantar_pasien pesx ON pesx.NOPEN AND pd.NOMOR
-                        LEFT JOIN layanan.pasien_pulang pl ON pd.NOMOR=pl.NOPEN AND pl.`STATUS`=1
-                        LEFT JOIN pendaftaran.penjamin pj ON pd.NOMOR=pj.NOPEN
-                            LEFT JOIN master.referensi cr ON pj.JENIS=cr.ID AND cr.JENIS=10
-                            LEFT JOIN pendaftaran.kunjungan pk ON pl.KUNJUNGAN=pk.NOMOR AND pk.`STATUS`!=0
-                            LEFT JOIN medicalrecord.penilaian_nyeri pny ON pk.NOMOR=pny.KUNJUNGAN
-                            LEFT JOIN master.referensi mny ON pny.METODE=mny.ID AND mny.JENIS=71
-                            LEFT JOIN master.ruangan u ON pk.RUANGAN=u.ID AND u.JENIS=5
-                            LEFT JOIN master.ruang_kamar_tidur rkt ON pk.RUANG_KAMAR_TIDUR = rkt.ID
-                            LEFT JOIN master.ruang_kamar rk ON rkt.RUANG_KAMAR = rk.ID
-                            LEFT JOIN master.dokter dokdpjp ON pl.DOKTER=dokdpjp.ID
-                            LEFT JOIN master.pegawai mpdokdpjp ON dokdpjp.NIP=mpdokdpjp.NIP
-                            LEFT JOIN master.referensi kd ON pl.KEADAAN=kd.ID AND kd.JENIS=46
-                            LEFT JOIN master.referensi ck ON pl.CARA=ck.ID AND ck.JENIS=45
-                            LEFT JOIN pembayaran.tagihan_pendaftaran tpdf ON pd.NOMOR=tpdf.PENDAFTARAN AND tpdf.UTAMA=1 AND tpdf.`STATUS`!=0
-                            LEFT JOIN pembayaran.tagihan tg ON tpdf.TAGIHAN = tg.ID AND tg.`STATUS`!=0
-                            LEFT JOIN medicalrecord.`resume` rm ON rm.NOPEN=pd.NOMOR AND rm.`STATUS`!=0
-                        LEFT JOIN medicalrecord.anamnesis an ON pk.NOMOR=an.KUNJUNGAN AND an.`STATUS`!=0
-                        LEFT JOIN medicalrecord.rpp ON pk.NOMOR=rpp.KUNJUNGAN AND rpp.`STATUS`!=0
-                        LEFT JOIN medicalrecord.rps ON pk.NOMOR=rps.KUNJUNGAN AND rps.`STATUS`!=0
-                        LEFT JOIN medicalrecord.keluhan_utama ku ON pk.NOMOR=ku.KUNJUNGAN AND ku.`STATUS`!=0
-                        LEFT JOIN medicalrecord.tanda_vital tv ON pk.NOMOR=tv.KUNJUNGAN AND tv.`STATUS`!=0
-                        LEFT JOIN master.referensi rtv ON tv.TINGKAT_KESADARAN=rtv.ID AND rtv.JENIS=179
-                        LEFT JOIN medicalrecord.rencana_terapi rt ON pk.NOMOR=rt.KUNJUNGAN AND rt.`STATUS`!=0
-                        LEFT JOIN medicalrecord.edukasi_emergency ee ON pk.NOMOR=ee.KUNJUNGAN AND ee.`STATUS`!=0
-                        LEFT JOIN medicalrecord.jadwal_kontrol jd ON pk.NOMOR=jd.KUNJUNGAN AND jd.`STATUS`!=0
-                        LEFT JOIN `master`.ruangan r ON jd.RUANGAN=r.ID AND r.`STATUS`!=0
-                            , pendaftaran.tujuan_pasien tp
-                                LEFT JOIN master.ruangan rg ON tp.RUANGAN=rg.ID AND rg.JENIS=5
-                                LEFT JOIN master.dokter drreg ON tp.DOKTER=drreg.ID
-                                LEFT JOIN master.pegawai pdr ON pdr.NIP=drreg.NIP
-                        ,  master.pasien p
-                                LEFT JOIN master.referensi rjk ON p.JENIS_KELAMIN=rjk.ID AND rjk.JENIS=2
-                                #LEFT JOIN master.keluarga_pasien kps ON kps.NORM AND p.NORM
-                            , (SELECT mp.NAMA, ai.PPK, w.DESKRIPSI KOTA, mp.ALAMAT , mp.TELEPON, mp.FAX
-                                        , ai.EMAIL, ai.WEBSITE
-                                        FROM aplikasi.instansi ai
-                                            , master.ppk mp
-                                            , master.wilayah w
-                                        WHERE ai.PPK=mp.ID AND mp.WILAYAH=w.ID) inst
-                        WHERE pd.NOMOR=@PNOPEN  AND pd.`STATUS`!=0 AND pd.NORM=p.NORM
-                            AND pd.NOMOR=tp.NOPEN
-                ");
-
-                $resumeRadarRow = $mainRows[0] ?? null;
-
-                if (!$resumeRadarRow) {
-                    $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA_HASIL_LAB');
+                if (!$patient) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Data Resume Medis Radar dari query resume utama tidak ditemukan.',
                     ], 404);
                 }
 
-                $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA_HASIL_LAB');
+                $inst = $dbCustom->table('aplikasi.instansi AS ai')
+                    ->join('master.ppk AS mp', 'ai.PPK', '=', 'mp.ID')
+                    ->join('master.wilayah AS w', 'mp.WILAYAH', '=', 'w.ID')
+                    ->select(
+                        'ai.PPK', 'mp.NAMA', 'w.DESKRIPSI AS KOTA', 'mp.ALAMAT',
+                        'mp.TELEPON', 'mp.FAX', 'ai.EMAIL', 'ai.WEBSITE'
+                    )
+                    ->first();
+
+                $pl = $dbCustom->table('layanan.pasien_pulang')
+                    ->where('NOPEN', $nopen)->where('STATUS', 1)->first();
+                $pk = $pl? $dbCustom->table('pendaftaran.kunjungan')
+                    ->where('NOMOR', $pl->KUNJUNGAN)->where('STATUS', '!=', 0)->first() : null;
+                $pj = $dbCustom->table('pendaftaran.penjamin')->where('NOPEN', $nopen)->first();
+                $caraBayar = $pj ? $dbCustom->table('master.referensi')
+                    ->where('ID', $pj->JENIS)->where('JENIS', 10)->value('DESKRIPSI') : null;
+                $tagihanPendaftaran = $dbCustom->table('pembayaran.tagihan_pendaftaran AS tpdf')
+                    ->where('tpdf.PENDAFTARAN', $nopen)->where('tpdf.UTAMA', 1)
+                    ->where('tpdf.STATUS', '!=', 0)->first();
+                $tagihan = $tagihanPendaftaran ? $dbCustom->table('pembayaran.tagihan')
+                    ->where('ID', $tagihanPendaftaran->TAGIHAN)->where('STATUS', '!=', 0)->first() : null;
+                $rm = $dbCustom->table('medicalrecord.resume')->where('NOPEN', $nopen)
+                    ->where('STATUS', '!=', 0)->first();
+                $keluarga = $dbCustom->table('master.keluarga_pasien')->where('NORM', $patient->NORM)->first();
+                $penanggungJawab = $dbCustom->table('pendaftaran.penanggung_jawab_pasien')
+                    ->where('NOPEN', $nopen)->first();
+                $pengantar = $dbCustom->table('pendaftaran.pengantar_pasien')
+                    ->where('NOPEN', $nopen)->first();
+                $tujuan = $dbCustom->table('pendaftaran.tujuan_pasien')->where('NOPEN', $nopen)->first();
+
+                $ruangan = $pk ? $dbCustom->table('master.ruangan')->where('ID', $pk->RUANGAN)->where('JENIS', 5)->first() : null;
+                $ruangKamarTidur = ($pk && $pk->RUANG_KAMAR_TIDUR)
+                    ? $dbCustom->table('master.ruang_kamar_tidur')->where('ID', $pk->RUANG_KAMAR_TIDUR)->first() : null;
+                $ruangKamar = $ruangKamarTidur
+                    ? $dbCustom->table('master.ruang_kamar')->where('ID', $ruangKamarTidur->RUANG_KAMAR)->value('KAMAR') : null;
+                $dokterPulang = ($pl && $pl->DOKTER)
+                    ? $dbCustom->table('master.dokter')->where('ID', $pl->DOKTER)->first() : null;
+                $pegawaiDokterPulang = $dokterPulang
+                    ? $dbCustom->table('master.pegawai')->where('NIP', $dokterPulang->NIP)->first() : null;
+                $keadaanKeluar = ($pl && $pl->KEADAAN)
+                    ? $dbCustom->table('master.referensi')->where('ID', $pl->KEADAAN)->where('JENIS', 46)->first() : null;
+                $caraKeluar = ($pl && $pl->CARA)
+                    ? $dbCustom->table('master.referensi')->where('ID', $pl->CARA)->where('JENIS', 45)->first() : null;
+
+                $anamnesis = $pk ? $dbCustom->table('medicalrecord.anamnesis')
+                    ->where('KUNJUNGAN', $pk->NOMOR)->where('STATUS', '!=', 0)->first() : null;
+                if (!$anamnesis || $anamnesis->DESKRIPSI === null) {
+                    $anamnesisFallback = $dbCustom->table('medicalrecord.anamnesis AS a')
+                        ->join('pendaftaran.kunjungan AS kg', 'a.KUNJUNGAN', '=', 'kg.NOMOR')
+                        ->join('master.ruangan AS rg', 'kg.RUANGAN', '=', 'rg.ID')
+                        ->where('a.PENDAFTARAN', $nopen)->where('kg.STATUS', '!=', 0)
+                        ->where('rg.JENIS_KUNJUNGAN', 3)->orderByDesc('a.TANGGAL')->value('a.DESKRIPSI');
+                    $anamnesisText = $anamnesisFallback;
+                } else {
+                    $anamnesisText = $anamnesis->DESKRIPSI;
+                }
+
+                $rpp = $pk ? $dbCustom->table('medicalrecord.rpp')->where('KUNJUNGAN', $pk->NOMOR)->where('STATUS', '!=', 0)->first() : null;
+                if (!$rpp || $rpp->DESKRIPSI === null) {
+                    $rppText = $dbCustom->table('medicalrecord.rpp AS rp')
+                        ->join('pendaftaran.kunjungan AS pkrp', 'pkrp.NOMOR', '=', 'rp.KUNJUNGAN')
+                        ->where('pkrp.NOPEN', $nopen)->orderBy('rp.TANGGAL')->value('rp.DESKRIPSI');
+                } else {
+                    $rppText = $rpp->DESKRIPSI;
+                }
+                $rps = $pk ? $dbCustom->table('medicalrecord.rps')->where('KUNJUNGAN', $pk->NOMOR)->where('STATUS', '!=', 0)->first() : null;
+                if (!$rps || $rps->DESKRIPSI === null) {
+                    $rpsText = $dbCustom->table('medicalrecord.rps AS rp')
+                        ->join('pendaftaran.kunjungan AS pkrp', 'pkrp.NOMOR', '=', 'rp.KUNJUNGAN')
+                        ->where('pkrp.NOPEN', $nopen)->orderBy('rp.TANGGAL')->value('rp.DESKRIPSI');
+                } else {
+                    $rpsText = $rps->DESKRIPSI;
+                }
+                $keluhan = $pk ? $dbCustom->table('medicalrecord.keluhan_utama')
+                    ->where('KUNJUNGAN', $pk->NOMOR)->where('STATUS', '!=', 0)->first() : null;
+                $keluhanText = $keluhan->DESKRIPSI ?? $dbCustom->table('medicalrecord.keluhan_utama AS ku')
+                    ->join('pendaftaran.kunjungan AS pku', 'pku.NOMOR', '=', 'ku.KUNJUNGAN')
+                    ->where('pku.NOPEN', $nopen)->whereNull('pku.REF')->orderByDesc('ku.TANGGAL')->value('ku.DESKRIPSI');
+                if ($keluhanText === '-') $keluhanText = 'Tidak Ada';
+
+                $nyeri = $dbCustom->table('medicalrecord.penilaian_nyeri AS pn')
+                    ->join('pendaftaran.kunjungan AS pkrp', 'pkrp.NOMOR', '=', 'pn.KUNJUNGAN')
+                    ->leftJoin('master.referensi AS mny', function ($join) {
+                        $join->on('pn.METODE', '=', 'mny.ID')->where('mny.JENIS', 71);
+                    })
+                    ->where('pkrp.NOPEN', $nopen)->select('pn.NYERI', 'mny.DESKRIPSI AS METODE')->first();
+                $nyeriText = in_array((int) ($caraKeluar->ID ?? 0), [6, 7], true)
+                    ? 'Tidak ada'
+                    : ($nyeri ? (round((float) $nyeri->NYERI) . ' Metode : ' . ($nyeri->METODE ?? '')) : null);
+
+                $tvDirect = $pk ? $dbCustom->table('medicalrecord.tanda_vital')->where('KUNJUNGAN', $pk->NOMOR)
+                    ->where('STATUS', '!=', 0)->first() : null;
+                $tingkatKesadaran = ($tvDirect && $tvDirect->TINGKAT_KESADARAN)
+                    ? $dbCustom->table('master.referensi')->where('ID', $tvDirect->TINGKAT_KESADARAN)->where('JENIS', 179)->value('DESKRIPSI') : null;
+                $tvTerbaru = $dbCustom->table('medicalrecord.tanda_vital AS tv')
+                    ->join('pendaftaran.kunjungan AS pkt', 'tv.KUNJUNGAN', '=', 'pkt.NOMOR')
+                    ->join('layanan.pasien_pulang AS plt', 'pkt.NOMOR', '=', 'plt.KUNJUNGAN')
+                    ->where('plt.NOPEN', $nopen)->where('plt.STATUS', 1)->where('pkt.STATUS', '!=', 0)
+                    ->where('tv.STATUS', '!=', 0)->orderByDesc('tv.WAKTU_PEMERIKSAAN')->first();
+
+                $rencanaTerapi = $pk ? $dbCustom->table('medicalrecord.rencana_terapi')
+                    ->where('KUNJUNGAN', $pk->NOMOR)->where('STATUS', '!=', 0)->value('DESKRIPSI') : null;
+                $edukasi = $pk ? $dbCustom->table('medicalrecord.edukasi_emergency')
+                    ->where('KUNJUNGAN', $pk->NOMOR)->where('STATUS', '!=', 0)->first() : null;
+                if (!$edukasi) {
+                    $edukasi = $dbCustom->table('medicalrecord.edukasi_emergency AS e')
+                        ->join('pendaftaran.kunjungan AS ev', 'e.KUNJUNGAN', '=', 'ev.NOMOR')
+                        ->where('ev.NOPEN', $nopen)->where('e.STATUS', '!=', 0)->orderByDesc('e.TANGGAL')->first();
+                }
+                $jadwalKontrol = $pk ? $dbCustom->table('medicalrecord.jadwal_kontrol')
+                    ->where('KUNJUNGAN', $pk->NOMOR)->where('STATUS', '!=', 0)->first() : null;
+                $ruangKontrol = $jadwalKontrol
+                    ? $dbCustom->table('master.ruangan')->where('ID', $jadwalKontrol->RUANGAN)->where('STATUS', '!=', 0)->value('DESKRIPSI') : null;
+
+                $jsonResume = $rm ?: (object) [];
+                $jsonHasilLab = $decodeJson($jsonResume->HASIL_LAB ?? null);
+                $hasilLabIds = collect($jsonHasilLab)->pluck('ID')->filter()->unique()->values()->all();
+                $hasilLabText = $jsonResume->DESKRIPSI_HASIL_LAB ?? null;
+                if ($hasilLabText === '') {
+                    $hasilLabRows = empty($hasilLabIds) ? collect() : $dbCustom->table('layanan.hasil_lab AS hlab')
+                        ->leftJoin('master.parameter_tindakan_lab AS ptl', function ($join) {
+                            $join->on('hlab.PARAMETER_TINDAKAN', '=', 'ptl.ID')->where('ptl.STATUS', '!=', 0);
+                        })
+                        ->leftJoin('master.referensi AS sl', function ($join) {
+                            $join->on('ptl.SATUAN', '=', 'sl.ID')->where('sl.JENIS', 35);
+                        })
+                        ->whereIn('hlab.ID', $hasilLabIds)->where('hlab.STATUS', '!=', 0)
+                        ->orderBy('hlab.TANGGAL')->get(['hlab.TANGGAL', 'ptl.PARAMETER', 'hlab.HASIL', 'sl.DESKRIPSI AS SATUAN']);
+                    $hasilLabGroups = [];
+                    foreach ($hasilLabRows as $lab) {
+                        $tgl = $lab->TANGGAL ? Carbon::parse($lab->TANGGAL)->format('d-m-Y') : '';
+                        $hasilLabGroups[$tgl][] = ($lab->PARAMETER ?? '') . '=' . ($lab->HASIL ?? '') . ' ' . ($lab->SATUAN ?? '');
+                    }
+                    $hasilLabLines = [];
+                    foreach ($hasilLabGroups as $tgl => $items) {
+                        $hasilLabLines[] = 'Tgl Hasil ' . $tgl . ', ' . implode(',', $items);
+                    }
+                    $hasilLabText = implode("\r", $hasilLabLines);
+                }
+
+                $jsonHasilRad = $decodeJson($jsonResume->HASIL_RAD ?? null);
+                $hasilRadIds = collect($jsonHasilRad)->pluck('ID')->filter()->unique()->values()->all();
+                $hasilRadText = $jsonResume->DESKRIPSI_HASIL_RAD ?? null;
+                if ($hasilRadText === '') {
+                    $hasilRadRows = empty($hasilRadIds) ? collect() : $dbCustom->table('layanan.hasil_rad AS hr')
+                        ->join('layanan.tindakan_medis AS tm', function ($join) {
+                            $join->on('hr.TINDAKAN_MEDIS', '=', 'tm.ID')->where('tm.STATUS', '!=', 0);
+                        })
+                        ->join('master.tindakan AS t', 'tm.TINDAKAN', '=', 't.ID')
+                        ->whereIn('hr.ID', $hasilRadIds)->where('hr.STATUS', '!=', 0)
+                        ->get(['t.NAMA', 'hr.KESAN']);
+                    $hasilRadText = $hasilRadRows->map(fn ($x) => $x->NAMA . ' = ' . $x->KESAN)->implode(',');
+                }
+
+                $tanggalDaftarAwal = null;
+                if ($tagihanPendaftaran) {
+                    $tanggalDaftarAwal = $dbCustom->table('pendaftaran.pendaftaran AS p1')
+                        ->join('pembayaran.tagihan_pendaftaran AS tp1', 'p1.NOMOR', '=', 'tp1.PENDAFTARAN')
+                        ->where('tp1.TAGIHAN', $tagihanPendaftaran->TAGIHAN)->where('tp1.STATUS', '!=', 0)
+                        ->orderBy('p1.TANGGAL')->value('p1.TANGGAL');
+                }
+
+                $inapSebelumnya = $dbCustom->table('pendaftaran.kunjungan AS k')
+                    ->join('pendaftaran.pendaftaran AS d', 'k.NOPEN', '=', 'd.NOMOR')
+                    ->join('master.ruangan AS ri', 'k.RUANGAN', '=', 'ri.ID')
+                    ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri', function ($join) {
+                        $join->on('pri.KUNJUNGAN', '=', 'k.NOMOR')->where('pri.STATUS', '!=', 0);
+                    })
+                    ->where('k.STATUS', '!=', 0)->whereNotIn('ri.JENIS_KUNJUNGAN', [0, 3, 4, 5, 6, 11, 13, 14])
+                    ->where('d.STATUS', '!=', 0)->where('d.NORM', $patient->NORM)
+                    ->where('d.TANGGAL', '<', $patient->TANGGAL_REG)
+                    ->orderByDesc('d.TANGGAL')->select('pri.INDIKASI', 'pri.DESKRIPSI')->first();
+                $indikasiRanap = $inapSebelumnya
+                    ? (($inapSebelumnya->INDIKASI ?? '') . "\r" . ($inapSebelumnya->DESKRIPSI ?? '')) : null;
+
+                $diagnosaIcd10Rows = $dbCustom->table('medicalrecord.diagnosa AS dgg')
+                    ->where('dgg.NOPEN', $nopen)->where('dgg.STATUS', 1)->where('dgg.INA_GROUPER', 1)
+                    ->orderBy('dgg.UTAMA')->orderBy('dgg.ID')->get(['dgg.DIAGNOSA', 'dgg.UTAMA', 'dgg.ID']);
+                $diagnosaIcd10 = $diagnosaIcd10Rows->pluck('DIAGNOSA')->filter(fn ($x) => $x !== null && $x !== '')->unique()->values();
+                $diagnosaIcd10Terakhir = $diagnosaIcd10Rows->sortByDesc('DIAGNOSA')->first();
+                $diagnosaIcd10Text = (($diagnosaIcd10Terakhir->DIAGNOSA ?? null) === '')
+                    ? 'Tidak ada tambahan diagnosa Dokter'
+                    : ($diagnosaIcd10->isEmpty() ? null : $diagnosaIcd10->implode(','));
+
+                $diagnosaIcd9Rows = $dbCustom->table('medicalrecord.prosedur AS psr')
+                    ->where('psr.NOPEN', $nopen)->where('psr.STATUS', 1)->get(['psr.KODE', 'psr.TINDAKAN']);
+                $diagnosaIcd9Kodes = $diagnosaIcd9Rows->pluck('KODE')->filter()->unique()->values();
+                $diagnosaIcd9Tindakan = $diagnosaIcd9Rows->pluck('TINDAKAN')->filter(fn ($x) => $x !== null && $x !== '')->unique()->values();
+                $diagnosaIcd9Text = $diagnosaIcd9Kodes->isEmpty()
+                    ? 'Tidak ada tambahan'
+                    : '(' . $diagnosaIcd9Kodes->implode(',') . ') ' . $diagnosaIcd9Tindakan->implode(',');
+
+                $statusJsonProsedur = $decodeJson($jsonResume->DIAGNOSA_PROSEDUR ?? null);
+                $statusDiagUtama = collect($statusJsonProsedur)->first(fn ($x) => (int) ($x['UTAMA'] ?? 0) === 1);
+                $statusDiagSekunder = collect($statusJsonProsedur)->first(fn ($x) => (int) ($x['UTAMA'] ?? 0) === 2);
+                $functionsResume = $dbCustom->query()->selectRaw(
+                    'master.getKodeICD9CM(?) AS STS_PROSEDUR,
+                     master.getDiagnosa(?, 1) AS DIAGNOSAUTAMA,
+                     master.getKodeDiagnosa(?, 1) AS KODEDIAGNOSAUTAMA,
+                     master.getDiagnosa(?, 2) AS DIAGNOSASEKUNDER,
+                     master.getKodeDiagnosa(?, 2) AS KODEDIAGNOSASEKUNDER,
+                     IFNULL(layanan.getResepPulang(?), 0) AS RESEPPULANG,
+                     master.getJawabanKonsul(?) AS JAWABAN_KONSUL',
+                    [$nopen, $nopen, $nopen, $nopen, $nopen, $nopen, $nopen]
+                )->first();
+
+                $resumeRadarRow = (object) [];
+                $resumeRadarRow->IDPPK = $inst->PPK ?? null;
+                $resumeRadarRow->NAMAINSTANSI = isset($inst->NAMA) ? mb_strtoupper($inst->NAMA) : null;
+                $resumeRadarRow->KOTA = $inst->KOTA ?? null;
+                $resumeRadarRow->ALAMATINST = $inst->ALAMAT ?? null;
+                $resumeRadarRow->TLP = $inst->TELEPON ?? null;
+                $resumeRadarRow->FAX = $inst->FAX ?? null;
+                $resumeRadarRow->EMAIL = $inst->EMAIL ?? null;
+                $resumeRadarRow->WEBSITE = $inst->WEBSITE ?? null;
+                $normAngka = str_pad((string) $patient->NORM, 8, '0', STR_PAD_LEFT);
+                $resumeRadarRow->NORM = substr($normAngka, 0, 2) . '-' . substr($normAngka, 2, 2) . '-' . substr($normAngka, 4, 2) . '-' . substr($normAngka, 6);
+                $resumeRadarRow->NO_RM = $normAngka;
+                $resumeRadarRow->NAMALENGKAP = $callDbValue('master.getNamaLengkap(?)', [$patient->NORM]);
+                $resumeRadarRow->TANGGAL_LAHIR = $formatTanggal($patient->TANGGAL_LAHIR, 'd-m-Y');
+                $resumeRadarRow->JENISKELAMIN = $patient->JENISKELAMIN;
+                $resumeRadarRow->TGLREG = $formatTanggal($patient->TANGGAL_REG);
+                $resumeRadarRow->TGLKELUAR = $formatTanggal($pl->TANGGAL ?? null);
+                $dateSurat = $pl->TANGGAL ?? $patient->TANGGAL_REG;
+                $carbonSurat = $dateSurat ? Carbon::parse($dateSurat) : Carbon::now();
+                $resumeRadarRow->TGLSURAT = $carbonSurat->day . ' ' . $bulanIndonesia[$carbonSurat->month] . ' ' . $carbonSurat->year;
+                $resumeRadarRow->TANGGALKELUAR = $formatTanggal($patient->TANGGAL_REG, 'd-m-Y');
+                $resumeRadarRow->RUANG_RAWAT_TERAKHIR = $ruangan
+                    ? trim($ruangan->DESKRIPSI . (($ruangKamar !== null && $ruangKamar !== '') ? ' - ' . $ruangKamar : '')) : null;
+                $resumeRadarRow->CARA_BAYAR = $caraBayar;
+                $resumeRadarRow->NOPEN = $nopen;
+                $resumeRadarRow->NORM_CEK = $patient->NORM;
+                $resumeRadarRow->ANAMNESIS = ($anamnesisText === '-' || $anamnesisText === null || $anamnesisText === '') ? 'Tidak Ada' : $anamnesisText;
+                $resumeRadarRow->RPP = ($rppText === '-' || $rppText === null || $rppText === '') ? 'Tidak Ada' : $rppText;
+                $resumeRadarRow->RPS = ($rpsText === '-' || $rpsText === null || $rpsText === '') ? 'Tidak Ada' : $rpsText;
+                $resumeRadarRow->keluhan_utama = ($keluhanText === '-' || $keluhanText === null || $keluhanText === '') ? 'Tidak Ada' : $keluhanText;
+                $resumeRadarRow->NYERI = $nyeriText;
+                $resumeRadarRow->KESADARAN = $tvDirect->KESADARAN ?? null;
+                $resumeRadarRow->TINGKAT_KESADARAN = $tingkatKesadaran;
+                $resumeRadarRow->TEKANAN_DARAH = ($tvTerbaru && $tvTerbaru->SISTOLIK !== null && $tvTerbaru->DISTOLIK !== null)
+                    ? round((float) $tvTerbaru->SISTOLIK) . '/' . round((float) $tvTerbaru->DISTOLIK) : null;
+                $resumeRadarRow->KEADAANUMUM = $tvTerbaru->KEADAAN_UMUM ?? null;
+                $resumeRadarRow->FREKUENSI_NADI = isset($tvTerbaru->FREKUENSI_NADI) ? round((float) $tvTerbaru->FREKUENSI_NADI) : null;
+                $resumeRadarRow->FREKUENSI_NAFAS = isset($tvTerbaru->FREKUENSI_NAFAS) ? round((float) $tvTerbaru->FREKUENSI_NAFAS) : null;
+                $resumeRadarRow->SUHU = isset($tvTerbaru->SUHU) ? round((float) $tvTerbaru->SUHU) : null;
+                $resumeRadarRow->SATURASI_O2 = isset($tvTerbaru->SATURASI_O2) ? round((float) $tvTerbaru->SATURASI_O2) : null;
+                $resumeRadarRow->GCS = isset($tvTerbaru->GCS) ? round((float) $tvTerbaru->GCS) : null;
+                $resumeRadarRow->rencana_terapi = $rencanaTerapi;
+                $resumeRadarRow->DESKRIPSI_KONSUL = $jsonResume->DESKRIPSI_KONSUL ?? null;
+                $resumeRadarRow->EDUKASI = in_array((int) ($keadaanKeluar->ID ?? 0), [4, 5], true) ? 'Tidak Ada' : ($edukasi->EDUKASI ?? null);
+                $resumeRadarRow->KEMBALI_KE_UGD = in_array((int) ($keadaanKeluar->ID ?? 0), [4, 5], true) ? 'Tidak Ada' : ($edukasi->KEMBALI_KE_UGD ?? null);
+                $resumeRadarRow->NOMOR_KONTROL = in_array((int) ($keadaanKeluar->ID ?? 0), [4, 5], true) ? 'Tidak Ada' : ($jadwalKontrol->NOMOR ?? null);
+                $resumeRadarRow->TANGGAL_KONTROL = in_array((int) ($keadaanKeluar->ID ?? 0), [4, 5], true) ? null : ($jadwalKontrol->TANGGAL ?? null);
+                $resumeRadarRow->RUANG_KONTROL = in_array((int) ($keadaanKeluar->ID ?? 0), [4, 5], true) ? 'Tidak Ada' : $ruangKontrol;
+                $resumeRadarRow->NOMOR_REFERENSI = in_array((int) ($keadaanKeluar->ID ?? 0), [4, 5], true) ? 'Tidak Ada' : ($jadwalKontrol->NOMOR_REFERENSI ?? null);
+                $resumeRadarRow->POLIKLINIK_RS = in_array((int) ($keadaanKeluar->ID ?? 0), [4, 5], true) ? 0 : (($jadwalKontrol && $jadwalKontrol->NOMOR) ? 1 : 0);
+                $resumeRadarRow->INDIKASI_RAWAT_INAP = $jsonResume->INDIKASI_RAWAT_INAP ?? null;
+                $resumeRadarRow->INDIKASI_RANAP = $indikasiRanap;
+                $resumeRadarRow->DPJP = ($pl && $pl->DOKTER && $pegawaiDokterPulang)
+                    ? $callDbValue('master.getNamaLengkapPegawai(?)', [$pegawaiDokterPulang->NIP])
+                    : $callDbValue('master.getDPJP(?, 2)', [$nopen]);
+                $resumeRadarRow->NIP = $tujuan && $tujuan->DOKTER
+                    ? $dbCustom->table('master.dokter')->where('ID', $tujuan->DOKTER)->value('NIP') : null;
+                $konsultasi = $jsonResume->DESKRIPSI_KONSUL ?? null;
+                if ($konsultasi === '-' || $konsultasi === '') $konsultasi = $functionsResume->JAWABAN_KONSUL ?? null;
+                $resumeRadarRow->KONSULTASI = ($konsultasi === null || $konsultasi === '') ? 'Tidak Ada' : $konsultasi;
+                $resumeRadarRow->HARI_INI = Carbon::now()->format('Y-m-d H:i:s');
+                $tanggalHariIni = Carbon::parse($patient->TANGGAL_REG);
+                $resumeRadarRow->TANGGAL_HARI_INI = $tanggalHariIni->day . ' ' . $bulanIndonesia[$tanggalHariIni->month] . ' ' . $tanggalHariIni->year;
+                $resumeRadarRow->KEADAAN_KELUAR = $keadaanKeluar->DESKRIPSI ?? null;
+                $resumeRadarRow->PENANGGUNG_JAWAB_PASIEN = !empty($penanggungJawab->NAMA)
+                    ? $penanggungJawab->NAMA
+                    : (!empty($pengantar->NAMA) ? $pengantar->NAMA : 'Mohon Inputkan Data Penanggungjawab/Pengantar Pasien');
+                $resumeRadarRow->NAMA_KELUARGA_PASIEN = $keluarga->NAMA ?? null;
+                $resumeRadarRow->DOKTER = $resumeRadarRow->NIP
+                    ? $callDbValue('master.getNamaLengkapPegawai(?)', [$resumeRadarRow->NIP]) : null;
+                $resumeRadarRow->SEMBUH = (int) (($keadaanKeluar->ID ?? 0) === 1);
+                $resumeRadarRow->MEMBAIK = (int) (($keadaanKeluar->ID ?? 0) === 2);
+                $resumeRadarRow->BELUM_SEMBUH = (int) (($keadaanKeluar->ID ?? 0) === 3);
+                $resumeRadarRow->MENINGGAL_KURANG48 = (int) (($keadaanKeluar->ID ?? 0) === 4);
+                $resumeRadarRow->MENINGGAL_LEBIH48 = (int) (($keadaanKeluar->ID ?? 0) === 5);
+                $resumeRadarRow->KDOA = (int) (($keadaanKeluar->ID ?? 0) === 6);
+                $resumeRadarRow->KRUJUK = (int) (($keadaanKeluar->ID ?? 0) === 7);
+                $resumeRadarRow->CARA_KELUAR = $caraKeluar->DESKRIPSI ?? null;
+                $resumeRadarRow->DIIJINKAN_PULANG = (int) (($caraKeluar->ID ?? 0) === 1);
+                $resumeRadarRow->PULANG_PAKSA = (int) (($caraKeluar->ID ?? 0) === 2);
+                $resumeRadarRow->DIRUJUK = (int) (($caraKeluar->ID ?? 0) === 3);
+                $resumeRadarRow->LAIN_LAIN = (int) (($caraKeluar->ID ?? 0) === 4);
+                $resumeRadarRow->PINDAH_RS = (int) (($caraKeluar->ID ?? 0) === 5);
+                $resumeRadarRow->CMENINGGAL = (int) (($caraKeluar->ID ?? 0) === 6);
+                $resumeRadarRow->CDOA = (int) (($caraKeluar->ID ?? 0) === 7);
+                $alergi = $jsonResume->ALERGI_REAKSI_OBAT ?? null;
+                $resumeRadarRow->ALERGI = ($alergi === '-' || $alergi === '' || $alergi === null) ? 'Tidak Ada' : $alergi;
+                $resumeRadarRow->LAB = $hasilLabText;
+                $resumeRadarRow->RAD = $hasilRadText;
+                $resumeRadarRow->DESKRIPSI_HASIL_PENUNJANG_LAINYA = $jsonResume->DESKRIPSI_HASIL_PENUNJANG_LAINYA ?? null;
+                $resumeRadarRow->DIAGNOSA_DOKTER_ICD10 = $diagnosaIcd10Text;
+                $resumeRadarRow->DIAGNOSA_DOKTER_ICD9 = $diagnosaIcd9Text;
+                $diet = $jsonResume->RENCANA_DIET ?? null;
+                $resumeRadarRow->RENCANA_DIET = in_array((int) ($keadaanKeluar->ID ?? 0), [4, 5], true) || $diet === '' ? 'Tidak Ada' : $diet;
+                $resumeRadarRow->BERKAS_LAB = ($tagihan && $tagihan->LABORATORIUM !== null && (string) $tagihan->LABORATORIUM !== '0,00') ? 'Terlampir' : 'Tidak Ada';
+                $resumeRadarRow->BERKAS_RAD = ($tagihan && $tagihan->RADIOLOGI !== null && (string) $tagihan->RADIOLOGI !== '0,00') ? 'Terlampir' : 'Tidak Ada';
+                $resumeRadarRow->TGL_DAFTAR_AWAL = $formatTanggal($tanggalDaftarAwal);
+                $resumeRadarRow->RESEPPULANG = $functionsResume->RESEPPULANG ?? 0;
+                $resumeRadarRow->STS_DIAG_UTAMA = $statusDiagUtama['ID'] ?? 0;
+                $resumeRadarRow->STS_DIAG_SEKUNDER = $statusDiagSekunder['ID'] ?? 0;
+                $resumeRadarRow->STS_PROSEDUR = $functionsResume->STS_PROSEDUR ?? 0;
+                $resumeRadarRow->DIAGNOSAUTAMA = isset($functionsResume->DIAGNOSAUTAMA) ? mb_strtoupper($functionsResume->DIAGNOSAUTAMA) : null;
+                $resumeRadarRow->KODEDIAGNOSAUTAMA = $functionsResume->KODEDIAGNOSAUTAMA ?? null;
+                $resumeRadarRow->DIAGNOSASEKUNDER = $functionsResume->DIAGNOSASEKUNDER ?? null;
+                $resumeRadarRow->KODEDIAGNOSASEKUNDER = $functionsResume->KODEDIAGNOSASEKUNDER ?? null;
+                $fisik = $dbCustom->table('medicalrecord.pemeriksaan_fisik')
+                    ->where('PENDAFTARAN', $nopen)->orderByDesc('TANGGAL')->value('DESKRIPSI');
+                $resumeRadarRow->FISIK = $fisik ? str_replace(['<div', '<p'], ['<br><div', '<br><p'], $fisik) : null;
 
                 /* =============================================================
-                 * B. DIAGNOSIS UTAMA & SEKUNDER
-                 *    Pengganti medicalrecord.CetakMR2Diagnosa(PNOPEN, PUTAMA).
-                 *    Temp table dan query ditulis langsung di function ini.
+                 * B. DIAGNOSIS / PROSEDUR / FARMASI. JSON diproses di PHP;
+                 *    detail tabel dibaca melalui Query Builder, tanpa temp table.
                  * =========================================================== */
+                $resumeJsonRecord = $rm ?: (object) [];
+                $jsonProsedur = $decodeJson($resumeJsonRecord->DIAGNOSA_PROSEDUR ?? null);
+                $jsonFarmasi = $decodeJson($resumeJsonRecord->DIAGNOSA_FARMASI ?? null);
+                $jsonAllDiagnosisIds = [];
+                $jsonAllDiagnosisIdsByU = [1 => [], 2 => []];
+                $allProcedureIds = [];
+                $procedureLinesByU = [1 => [], 2 => []];
+                $pharmacyLinesByU = [1 => [], 2 => []];
+
+                foreach ($jsonProsedur as $diagItem) {
+                    $utama = (int) ($diagItem['UTAMA'] ?? 0);
+                    $id = (int) ($diagItem['ID'] ?? 0);
+                    if ($id > 0) {
+                        $jsonAllDiagnosisIds[$id] = true;
+                        if (isset($jsonAllDiagnosisIdsByU[$utama])) $jsonAllDiagnosisIdsByU[$utama][$id] = true;
+                    }
+                    foreach (($diagItem['PROSEDUR'] ?? []) as $line) {
+                        $line['ID_DIAGNOSA_JSON'] = $id;
+                        $line['UTAMA_JSON'] = $utama;
+                        $procedureLinesByU[$utama][$id][] = $line;
+                        if (!empty($line['IDPROSEDUR'])) $allProcedureIds[] = $line['IDPROSEDUR'];
+                    }
+                    if (empty($diagItem['PROSEDUR'])) $procedureLinesByU[$utama][$id] = [];
+                }
+                foreach ($jsonFarmasi as $diagItem) {
+                    $utama = (int) ($diagItem['UTAMA'] ?? 0);
+                    $id = (int) ($diagItem['ID'] ?? 0);
+                    if ($id > 0) {
+                        $jsonAllDiagnosisIds[$id] = true;
+                        if (isset($jsonAllDiagnosisIdsByU[$utama])) $jsonAllDiagnosisIdsByU[$utama][$id] = true;
+                    }
+                    foreach (($diagItem['FARMASI'] ?? []) as $line) {
+                        $line['ID_DIAGNOSA_JSON'] = $id;
+                        $line['UTAMA_JSON'] = $utama;
+                        $pharmacyLinesByU[$utama][$id][] = $line;
+                    }
+                    if (empty($diagItem['FARMASI'])) $pharmacyLinesByU[$utama][$id] = [];
+                }
+                // TEMP_DATA_FARMASI_TEMP versi lama memakai DISTINCT pada diagnosis, farmasi, dan nama barang.
+                foreach ($pharmacyLinesByU as $utamaJson => $diagPharmacyLines) {
+                    foreach ($diagPharmacyLines as $diagId => $lines) {
+                        $unique = [];
+                        $seenFarmasi = [];
+                        foreach ($lines as $line) {
+                            $farmasiKey = (string) ($line['IDFARMASI'] ?? '');
+                            if (isset($seenFarmasi[$farmasiKey])) continue;
+                            $seenFarmasi[$farmasiKey] = true;
+                            $unique[] = $line;
+                        }
+                        $pharmacyLinesByU[$utamaJson][$diagId] = $unique;
+                    }
+                }
+                $allProcedureIds = array_values(array_unique($allProcedureIds));
+
+                $diagnosesByU = [];
                 foreach ([1, 2] as $utama) {
-                    $dbCustom->statement('SET @PNOPEN = ?', [$nopen]);
-                    $dbCustom->statement('SET @PUTAMA = ?', [$utama]);
-                    $dbCustom->statement('SET @id=0, @idd=0, @idf=0, @iddf=0, @id1=0, @idd1=0, @idf1=0, @iddf1=0, @idg=0');
+                    $idsForU = array_unique(array_merge(
+                        array_keys($procedureLinesByU[$utama]),
+                        array_keys($pharmacyLinesByU[$utama])
+                    ));
+                    $dbDiagnoses = empty($idsForU) ? collect() : $dbCustom->table('medicalrecord.diagnosa AS dg')
+                        ->where('dg.NOPEN', $nopen)->where('dg.UTAMA', $utama)->where('dg.STATUS', '!=', 0)
+                        ->where('dg.INA_GROUPER', 0)->where('dg.INACBG', 1)->whereIn('dg.ID', $idsForU)
+                        ->select('dg.ID', 'dg.NOPEN', 'dg.UTAMA', 'dg.KODE', 'dg.DIAGNOSA')
+                        ->selectRaw('master.getDeskripsiICD(dg.KODE) AS DESKRIPSI_DIAGNOSA')->get()->keyBy('ID');
 
-                    $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA');
-                    $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA_PROSEDUR');
-                    $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA_FARMASI');
-                    $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA_FARMASI_TEMP');
-                    $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA_ALL');
+                    $procIdList = [];
+                    foreach ($procedureLinesByU[$utama] as $diagId => $lines) {
+                        foreach ($lines as $line) if (!empty($line['IDPROSEDUR'])) $procIdList[] = $line['IDPROSEDUR'];
+                    }
+                    $procedureDetails = empty($procIdList) ? collect() : $dbCustom->table('medicalrecord.prosedur AS pr')
+                        ->whereIn('pr.ID', array_unique($procIdList))->where('pr.STATUS', '!=', 0)->where('pr.INA_GROUPER', 0)
+                        ->select('pr.ID', 'pr.KODE', 'pr.TINDAKAN')
+                        ->selectRaw('master.getDeskripsiICD(pr.KODE) AS DESKRIPSI_PROSEDUR')
+                        ->get()->keyBy('ID');
+                    $actionIds = [];
+                    foreach ($procedureLinesByU[$utama] as $lines) {
+                        foreach ($lines as $line) if (!empty($line['TINDAKANMEDIS'])) $actionIds[] = $line['TINDAKANMEDIS'];
+                    }
+                    $actions = empty($actionIds) ? collect() : $dbCustom->table('layanan.tindakan_medis AS tm')
+                        ->leftJoin('master.tindakan AS t', 'tm.TINDAKAN', '=', 't.ID')
+                        ->whereIn('tm.ID', array_unique($actionIds))->where('tm.STATUS', '!=', 0)
+                        ->get(['tm.ID', 't.NAMA'])->keyBy('ID');
+                    $pharmacyIds = [];
+                    foreach ($pharmacyLinesByU[$utama] as $lines) {
+                        foreach ($lines as $line) if (!empty($line['IDFARMASI'])) $pharmacyIds[] = $line['IDFARMASI'];
+                    }
+                    $pharmacyDetails = empty($pharmacyIds) ? collect() : $dbCustom->table('layanan.farmasi AS f')
+                        ->leftJoin('inventory.barang AS ib', 'f.FARMASI', '=', 'ib.ID')
+                        ->whereIn('f.ID', array_unique($pharmacyIds))->where('f.STATUS', '!=', 0)
+                        ->get(['f.ID', 'ib.NAMA AS NAMABARANG'])->keyBy('ID');
 
-                    $dbCustom->statement("
-                        CREATE TEMPORARY TABLE TEMP_DATA ENGINE=MEMORY
-                        SELECT NOPEN, BARIS, IDDIAGNOSA
-                        FROM (
-                            SELECT r.NOPEN,
-                                IF(@idd1 != jt.ID, @id1 := 1, @id1 := @id1 + 1) AS BARIS,
-                                @idd1 := jt.ID AS IDDIAGNOSA,
-                                jt.UTAMA
-                            FROM medicalrecord.`resume` r,
-                                JSON_TABLE(r.DIAGNOSA_PROSEDUR,
-                                    '$[*]' COLUMNS(
-                                        ID INT PATH '$.ID',
-                                        UTAMA TINYINT PATH '$.UTAMA',
-                                        NESTED PATH '$.PROSEDUR[*]' COLUMNS(
-                                            IDPROSEDUR VARCHAR(10) PATH '$.IDPROSEDUR',
-                                            TINDAKANMEDIS CHAR(11) PATH '$.TINDAKANMEDIS'
-                                        )
-                                    )
-                                ) AS jt
-                            WHERE r.NOPEN = @PNOPEN AND jt.UTAMA = @PUTAMA
-
-                            UNION ALL
-
-                            SELECT r.NOPEN,
-                                IF(@iddf1 != jt.ID, @idf1 := 1, @idf1 := @idf1 + 1) AS BARIS,
-                                @iddf1 := jt.ID AS IDDIAGNOSA,
-                                jt.UTAMA
-                            FROM medicalrecord.`resume` r,
-                                JSON_TABLE(r.DIAGNOSA_FARMASI,
-                                    '$[*]' COLUMNS(
-                                        ID INT PATH '$.ID',
-                                        UTAMA TINYINT PATH '$.UTAMA',
-                                        NESTED PATH '$.FARMASI[*]' COLUMNS(
-                                            IDFARMASI CHAR(11) PATH '$.IDFARMASI'
-                                        )
-                                    )
-                                ) AS jt
-                            WHERE r.NOPEN = @PNOPEN AND jt.UTAMA = @PUTAMA
-                        ) AS cd
-                        GROUP BY NOPEN, IDDIAGNOSA, BARIS
-                    ");
-
-                    $dbCustom->statement("
-                        CREATE TEMPORARY TABLE TEMP_DATA_ALL ENGINE=MEMORY
-                        SELECT NOPEN, IDDIAGNOSA
-                        FROM (
-                            SELECT r.NOPEN, jt.ID AS IDDIAGNOSA, jt.UTAMA
-                            FROM medicalrecord.`resume` r,
-                                JSON_TABLE(r.DIAGNOSA_PROSEDUR,
-                                    '$[*]' COLUMNS(
-                                        ID INT PATH '$.ID',
-                                        UTAMA TINYINT PATH '$.UTAMA',
-                                        NESTED PATH '$.PROSEDUR[*]' COLUMNS(
-                                            IDPROSEDUR VARCHAR(10) PATH '$.IDPROSEDUR',
-                                            TINDAKANMEDIS CHAR(11) PATH '$.TINDAKANMEDIS'
-                                        )
-                                    )
-                                ) AS jt
-                            WHERE r.NOPEN = @PNOPEN AND jt.UTAMA = @PUTAMA
-
-                            UNION ALL
-
-                            SELECT r.NOPEN, jt.ID AS IDDIAGNOSA, jt.UTAMA
-                            FROM medicalrecord.`resume` r,
-                                JSON_TABLE(r.DIAGNOSA_FARMASI,
-                                    '$[*]' COLUMNS(
-                                        ID INT PATH '$.ID',
-                                        UTAMA TINYINT PATH '$.UTAMA',
-                                        NESTED PATH '$.FARMASI[*]' COLUMNS(
-                                            IDFARMASI CHAR(11) PATH '$.IDFARMASI'
-                                        )
-                                    )
-                                ) AS jt
-                            WHERE r.NOPEN = @PNOPEN AND jt.UTAMA = @PUTAMA
-                        ) AS cd
-                        GROUP BY NOPEN, IDDIAGNOSA
-                    ");
-
-                    $dbCustom->statement("
-                        CREATE TEMPORARY TABLE TEMP_DATA_PROSEDUR ENGINE=MEMORY
-                        SELECT r.NOPEN,
-                            IF(@idd != jt.ID, @id := 1, @id := @id + 1) AS BARIS,
-                            @idd := jt.ID AS IDDIAGNOSA,
-                            jt.UTAMA,
-                            jt.TINDAKANMEDIS,
-                            jt.IDPROSEDUR
-                        FROM medicalrecord.`resume` r,
-                            JSON_TABLE(r.DIAGNOSA_PROSEDUR,
-                                '$[*]' COLUMNS(
-                                    ID INT PATH '$.ID',
-                                    UTAMA TINYINT PATH '$.UTAMA',
-                                    NESTED PATH '$.PROSEDUR[*]' COLUMNS(
-                                        IDPROSEDUR VARCHAR(10) PATH '$.IDPROSEDUR',
-                                        TINDAKANMEDIS CHAR(11) PATH '$.TINDAKANMEDIS'
-                                    )
-                                )
-                            ) AS jt
-                        WHERE r.NOPEN = @PNOPEN AND jt.UTAMA = @PUTAMA
-                    ");
-
-                    $dbCustom->statement("
-                        CREATE TEMPORARY TABLE TEMP_DATA_FARMASI ENGINE=MEMORY
-                        SELECT r.NOPEN, jt.ID AS IDDIAGNOSA, jt.UTAMA, jt.IDFARMASI
-                        FROM medicalrecord.`resume` r,
-                            JSON_TABLE(r.DIAGNOSA_FARMASI,
-                                '$[*]' COLUMNS(
-                                    ID INT PATH '$.ID',
-                                    UTAMA TINYINT PATH '$.UTAMA',
-                                    NESTED PATH '$.FARMASI[*]' COLUMNS(
-                                        IDFARMASI CHAR(11) PATH '$.IDFARMASI'
-                                    )
-                                )
-                            ) AS jt
-                        WHERE r.NOPEN = @PNOPEN AND jt.UTAMA = @PUTAMA
-                    ");
-
-                    $dbCustom->statement("
-                        CREATE TEMPORARY TABLE TEMP_DATA_FARMASI_TEMP ENGINE=MEMORY
-                        SELECT NOPEN,
-                            IF(@iddf != ef.IDDIAGNOSA, @idf := 1, @idf := @idf + 1) AS BARIS,
-                            @iddf := ef.IDDIAGNOSA AS IDDIAGNOSA,
-                            ef.UTAMA,
-                            ef.IDFARMASI,
-                            ef.NAMABARANG
-                        FROM (
-                            SELECT DISTINCT
-                                fr.NOPEN,
-                                fr.IDDIAGNOSA,
-                                fr.UTAMA,
-                                fr.IDFARMASI,
-                                ib.NAMA AS NAMABARANG
-                            FROM TEMP_DATA_FARMASI fr
-                            LEFT JOIN layanan.farmasi f
-                                ON fr.IDFARMASI = f.ID
-                                AND f.`STATUS` != 0
-                            LEFT JOIN inventory.barang ib
-                                ON f.FARMASI = ib.ID
-                            WHERE fr.NOPEN = @PNOPEN
-                            AND fr.UTAMA = @PUTAMA
-                        ) AS ef
-                    ");
-
-                    /* Hasil akhir diagnosis dari query CetakMR2Diagnosa */
-                    $diagnosaRows = $dbCustom->select("
-                        SELECT *
-                        FROM (
-                            SELECT NOPEN, BARIS, TINDAKANMEDIS, IDPROSEDUR, IDFARMASI,
-                                IF(@idg != IDDIAGNOSA, KODE_DIAGNOSA, '') AS KODE_DIAGNOSA,
-                                IF(@idg != IDDIAGNOSA, DESKRIPSI_DIAGNOSA, '') AS DESKRIPSI_DIAGNOSA,
-                                @idg := IDDIAGNOSA AS IDDIAGNOSA,
-                                DIAGNOSA, NAMATINDAKAN, KODE_PROSEDUR, DESKRIPSI_PROSEDUR, NAMABARANG
-                            FROM (
-                                SELECT d.NOPEN, d.BARIS, p.TINDAKANMEDIS, p.IDPROSEDUR, frs.IDFARMASI,
-                                    dg.KODE AS KODE_DIAGNOSA,
-                                    `master`.getDeskripsiICD(dg.KODE) AS DESKRIPSI_DIAGNOSA,
-                                    d.IDDIAGNOSA,
-                                    dg.DIAGNOSA,
-                                    t.NAMA AS NAMATINDAKAN,
-                                    pr.KODE AS KODE_PROSEDUR,
-                                    `master`.getDeskripsiICD(pr.KODE) AS DESKRIPSI_PROSEDUR,
-                                    frs.NAMABARANG
-                                FROM TEMP_DATA d
-                                LEFT JOIN TEMP_DATA_PROSEDUR p
-                                    ON d.NOPEN = p.NOPEN AND d.IDDIAGNOSA = p.IDDIAGNOSA AND d.BARIS = p.BARIS
-                                LEFT JOIN TEMP_DATA_FARMASI_TEMP frs
-                                    ON d.NOPEN = frs.NOPEN AND d.IDDIAGNOSA = frs.IDDIAGNOSA AND d.BARIS = frs.BARIS
-                                LEFT JOIN layanan.tindakan_medis tm
-                                    ON p.TINDAKANMEDIS = tm.ID AND tm.`STATUS` != 0
-                                LEFT JOIN `master`.tindakan t ON tm.TINDAKAN = t.ID
-                                LEFT JOIN medicalrecord.prosedur pr
-                                    ON p.IDPROSEDUR = pr.ID AND pr.`STATUS` != 0 AND pr.INA_GROUPER = 0,
-                                    medicalrecord.diagnosa dg
-                                WHERE d.IDDIAGNOSA = dg.ID
-                                AND d.NOPEN = dg.NOPEN
-                                AND dg.`STATUS` != 0
-                                AND dg.INA_GROUPER = 0
-                                AND dg.NOPEN = @PNOPEN
-                                AND dg.UTAMA = @PUTAMA
-                                AND dg.INACBG = 1
-                                ORDER BY IDDIAGNOSA, BARIS
-                            ) AS ab
-
-                            UNION ALL
-
-                            SELECT ds.NOPEN, 1 AS BARIS, NULL AS TINDAKANMEDIS, NULL AS IDPROSEDUR,
-                                NULL AS IDFARMASI, ds.KODE AS KODE_DIAGNOSA,
-                                `master`.getDeskripsiICD(ds.KODE) AS DESKRIPSI_DIAGNOSA,
-                                ds.ID AS IDDIAGNOSA, ds.DIAGNOSA,
-                                NULL AS NAMATINDAKAN, NULL AS KODE_PROSEDUR,
-                                NULL AS DESKRIPSI_PROSEDUR, NULL AS NAMABARANG
-                            FROM medicalrecord.diagnosa ds
-                            WHERE ds.NOPEN = @PNOPEN
-                            AND ds.UTAMA = @PUTAMA
-                            AND ds.`STATUS` != 0
-                            AND ds.INA_GROUPER = 0
-                            AND ds.INACBG = 1
-                            AND ds.ID NOT IN (
-                                SELECT IDDIAGNOSA FROM TEMP_DATA_ALL WHERE IDDIAGNOSA = ds.ID
-                            )
-                        ) AS cd
-                        WHERE KODE_DIAGNOSA != '' OR NAMATINDAKAN IS NOT NULL OR NAMABARANG IS NOT NULL
-                    ");
-
-                    if ($utama === 1) {
-                        $diagnosaUtamaRows = $diagnosaRows;
-                    } else {
-                        $diagnosaSekunderRows = $diagnosaRows;
+                    $rowsForU = [];
+                    $diagnosisIdsForU = array_unique(array_merge(
+                        array_keys($procedureLinesByU[$utama]), array_keys($pharmacyLinesByU[$utama])
+                    ));
+                    sort($diagnosisIdsForU, SORT_NUMERIC);
+                    foreach ($diagnosisIdsForU as $diagId) {
+                        $diag = $dbDiagnoses->get($diagId);
+                        if (!$diag) continue;
+                        $procLines = $procedureLinesByU[$utama][$diagId] ?? [];
+                        $farmLines = $pharmacyLinesByU[$utama][$diagId] ?? [];
+                        $lineCount = max(1, count($procLines), count($farmLines));
+                        for ($lineIndex = 0; $lineIndex < $lineCount; $lineIndex++) {
+                            $procLine = $procLines[$lineIndex] ?? [];
+                            $farmLine = $farmLines[$lineIndex] ?? [];
+                            $procDetail = !empty($procLine['IDPROSEDUR']) ? $procedureDetails->get($procLine['IDPROSEDUR']) : null;
+                            $actionDetail = !empty($procLine['TINDAKANMEDIS']) ? $actions->get($procLine['TINDAKANMEDIS']) : null;
+                            $farmDetail = !empty($farmLine['IDFARMASI']) ? $pharmacyDetails->get($farmLine['IDFARMASI']) : null;
+                            $rowsForU[] = (object) [
+                                'NOPEN' => $nopen,
+                                'BARIS' => $lineIndex + 1,
+                                'TINDAKANMEDIS' => $procLine['TINDAKANMEDIS'] ?? null,
+                                'IDPROSEDUR' => $procLine['IDPROSEDUR'] ?? null,
+                                'IDFARMASI' => $farmLine['IDFARMASI'] ?? null,
+                                'KODE_DIAGNOSA' => $lineIndex === 0 ? ($diag->KODE ?? '') : '',
+                                'DESKRIPSI_DIAGNOSA' => $lineIndex === 0 ? ($diag->DESKRIPSI_DIAGNOSA ?? '') : '',
+                                'IDDIAGNOSA' => $diagId,
+                                'DIAGNOSA' => $diag->DIAGNOSA ?? null,
+                                'NAMATINDAKAN' => $actionDetail->NAMA ?? null,
+                                'KODE_PROSEDUR' => $procDetail->KODE ?? null,
+                                'DESKRIPSI_PROSEDUR' => $procDetail->DESKRIPSI_PROSEDUR ?? ($procDetail->TINDAKAN ?? null),
+                                'NAMABARANG' => $farmDetail->NAMABARANG ?? null,
+                            ];
+                        }
                     }
 
-                    $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA');
-                    $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA_PROSEDUR');
-                    $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA_FARMASI');
-                    $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA_FARMASI_TEMP');
-                    $dbCustom->statement('DROP TEMPORARY TABLE IF EXISTS TEMP_DATA_ALL');
+                    // Diagnosis INACBG yang tidak terdaftar dalam JSON tetap ditampilkan seperti UNION ALL lama.
+                    $fallbackQuery = $dbCustom->table('medicalrecord.diagnosa AS ds')
+                        ->where('ds.NOPEN', $nopen)->where('ds.UTAMA', $utama)->where('ds.STATUS', '!=', 0)
+                        ->where('ds.INA_GROUPER', 0)->where('ds.INACBG', 1);
+                    if (!empty($jsonAllDiagnosisIdsByU[$utama])) {
+                        $fallbackQuery->whereNotIn('ds.ID', array_keys($jsonAllDiagnosisIdsByU[$utama]));
+                    }
+                    $fallbacks = $fallbackQuery->select('ds.ID', 'ds.NOPEN', 'ds.KODE', 'ds.DIAGNOSA')
+                        ->selectRaw('master.getDeskripsiICD(ds.KODE) AS DESKRIPSI_DIAGNOSA')->get();
+                    foreach ($fallbacks as $fallback) {
+                        if ($fallback->KODE === null || $fallback->KODE === '') continue;
+                        $rowsForU[] = (object) [
+                            'NOPEN' => $fallback->NOPEN, 'BARIS' => 1, 'TINDAKANMEDIS' => null,
+                            'IDPROSEDUR' => null, 'IDFARMASI' => null, 'KODE_DIAGNOSA' => $fallback->KODE,
+                            'DESKRIPSI_DIAGNOSA' => $fallback->DESKRIPSI_DIAGNOSA, 'IDDIAGNOSA' => $fallback->ID,
+                            'DIAGNOSA' => $fallback->DIAGNOSA, 'NAMATINDAKAN' => null, 'KODE_PROSEDUR' => null,
+                            'DESKRIPSI_PROSEDUR' => null, 'NAMABARANG' => null,
+                        ];
+                    }
+                    $diagnosesByU[$utama] = array_values(array_filter($rowsForU, fn ($x) =>
+                        (($x->KODE_DIAGNOSA ?? '') !== '') || $x->NAMATINDAKAN !== null || $x->NAMABARANG !== null
+                    ));
                 }
+                $diagnosaUtamaRows = $diagnosesByU[1] ?? [];
+                $diagnosaSekunderRows = $diagnosesByU[2] ?? [];
 
                 /* =============================================================
                  * C. PROSEDUR LAIN
-                 *    Pengganti medicalrecord.CetakMR2ProsedurLain.
-                 *    TEMP_DATA_PROSEDUR diganti dengan NOT EXISTS + JSON_TABLE.
                  * =========================================================== */
-                $prosedurRows = $dbCustom->select("
-                    SELECT pr.NOPEN,
-                        pr.KODE AS KODE_PROSEDUR,
-                        IFNULL(`master`.getDeskripsiICD(pr.KODE), pr.TINDAKAN) AS DESKRIPSI_PROSEDUR
-                    FROM medicalrecord.prosedur pr
-                    WHERE pr.`STATUS` != 0
-                    AND pr.INA_GROUPER = 0
-                    AND pr.NOPEN = ?
-                    AND pr.INACBG = 1
-                    AND NOT EXISTS (
-                        SELECT 1
-                        FROM medicalrecord.`resume` r,
-                            JSON_TABLE(r.DIAGNOSA_PROSEDUR,
-                                '$[*]' COLUMNS(
-                                    ID INT PATH '$.ID',
-                                    UTAMA INT PATH '$.UTAMA',
-                                    NESTED PATH '$.PROSEDUR[*]' COLUMNS(
-                                        IDPROSEDUR VARCHAR(10) PATH '$.IDPROSEDUR'
-                                    )
-                                )
-                            ) AS jt
-                        WHERE r.NOPEN = pr.NOPEN
-                            AND jt.IDPROSEDUR = pr.ID
-                    )
-                ", [$nopen]);
+                $prosedurQuery = $dbCustom->table('medicalrecord.prosedur AS pr')
+                    ->where('pr.STATUS', '!=', 0)->where('pr.INA_GROUPER', 0)
+                    ->where('pr.NOPEN', $nopen)->where('pr.INACBG', 1);
+                if (!empty($allProcedureIds)) $prosedurQuery->whereNotIn('pr.ID', $allProcedureIds);
+                $prosedurRows = $prosedurQuery
+                    ->select('pr.NOPEN', 'pr.KODE AS KODE_PROSEDUR', 'pr.TINDAKAN')
+                    ->selectRaw('master.getDeskripsiICD(pr.KODE) AS DESKRIPSI_ICD')
+                    ->get();
+                $prosedurRows->transform(function ($item) {
+                    $item->DESKRIPSI_PROSEDUR = $item->DESKRIPSI_ICD ?? $item->TINDAKAN;
+                    unset($item->DESKRIPSI_ICD);
+                    return $item;
+                });
+                $prosedurRows = $prosedurRows->all();
             }
 
             /* ---------------------------------------------------------------
@@ -2561,17 +2470,142 @@ class BerkasKlaimController extends Controller
                         ], 404);
                     }
 
-                    $rjRows = $dbCustom->select(
-                        'CALL simrspku_klaim.CetakMR5Custom(?, ?)',
-                        [$nopen, $visitNumber]
-                    );
-                    $row = $rjRows[0] ?? null;
+                    // Resume rawat jalan diambil melalui Laravel Query Builder.
+                    $row = $dbCustom->table('pendaftaran.pendaftaran AS pp')
+                        ->join('master.pasien AS p', 'pp.NORM', '=', 'p.NORM')
+                        ->join('pendaftaran.kunjungan AS pk', 'pp.NOMOR', '=', 'pk.NOPEN')
+                        ->join('master.ruangan AS r', 'pk.RUANGAN', '=', 'r.ID')
+                        ->leftJoin('master.referensi AS rjk', function ($join) {
+                            $join->on('p.JENIS_KELAMIN', '=', 'rjk.ID')->where('rjk.JENIS', 2);
+                        })
+                        ->leftJoin('master.wilayah AS wl', 'p.TEMPAT_LAHIR', '=', 'wl.ID')
+                        ->where('pp.STATUS', '!=', 0)->where('pk.STATUS', '!=', 0)
+                        ->where('pk.NOPEN', $nopen)->where('pk.NOMOR', $visitNumber)
+                        ->select(
+                            'pp.NOMOR AS NOPEN', 'pp.NORM', 'p.TANGGAL_LAHIR', 'p.TEMPAT_LAHIR',
+                            'p.JENIS_KELAMIN', 'rjk.DESKRIPSI AS JENISKELAMIN', 'wl.DESKRIPSI AS TEMPATLHR',
+                            'pk.NOMOR AS KUNJUNGAN', 'pk.MASUK', 'pk.REF', 'pk.DPJP', 'pk.RUANGAN',
+                            'r.DESKRIPSI AS UNIT'
+                        )
+                        ->selectRaw('master.getNamaLengkap(pp.NORM) AS NAMAPASIEN')
+                        ->first();
 
                     if (!$row) {
-                        throw new \RuntimeException(
-                            'Data CetakMR5Custom tidak ditemukan untuk kunjungan ' . $visitNumber
-                        );
+                        throw new \RuntimeException('Data CetakMR5Custom tidak ditemukan untuk kunjungan ' . $visitNumber);
                     }
+
+                    $instRj = $dbCustom->table('aplikasi.instansi AS ai')
+                        ->join('master.ppk AS mp', 'ai.PPK', '=', 'mp.ID')
+                        ->join('master.wilayah AS w', 'mp.WILAYAH', '=', 'w.ID')
+                        ->select('ai.PPK', 'mp.NAMA', 'mp.ALAMAT', 'w.DESKRIPSI AS KOTA')->first();
+                    $row->NAMAINSTANSI = isset($instRj->NAMA) ? mb_strtoupper($instRj->NAMA) : null;
+                    $row->ALAMAT = $instRj->ALAMAT ?? null;
+                    $row->TGLMASUK = $formatTanggal($row->MASUK);
+                    $row->TGLPERIKSA = $formatTanggal($row->MASUK, 'd-m-Y');
+                    $row->JAMPERIKSA = $formatTanggal($row->MASUK, 'H:i:s');
+                    $row->TANGGAL_LAHIR = $formatTanggal($row->TANGGAL_LAHIR, 'd-m-Y') . ' (' . ($row->JENISKELAMIN ?? '') . ')';
+                    $normAngkaRj = str_pad((string) $row->NORM, 8, '0', STR_PAD_LEFT);
+                    $row->NORM = substr($normAngkaRj, 0, 2) . '-' . substr($normAngkaRj, 2, 2) . '-' . substr($normAngkaRj, 4, 2) . '-' . substr($normAngkaRj, 6);
+                    $row->HARI_INI = Carbon::now()->format('Y-m-d H:i:s');
+
+                    $tv = $dbCustom->table('medicalrecord.tanda_vital')->where('KUNJUNGAN', $visitNumber)
+                        ->where('STATUS', '!=', 0)->orderByDesc('TANGGAL')->first();
+                    $row->KEADAAN_UMUM = $tv->KEADAAN_UMUM ?? null;
+                    $row->FREKUENSI_NAFAS = $tv->FREKUENSI_NAFAS ?? null;
+                    $row->FREKUENSI_NADI = $tv->FREKUENSI_NADI ?? null;
+                    $row->SATURASIO2 = $tv->SATURASI_O2 ?? null;
+                    $row->ABN = $tv->ALAT_BANTU_NAFAS ?? null;
+                    $row->SUHU = $tv->SUHU ?? null;
+                    $row->DARAH = ($tv && $tv->SISTOLIK !== null && $tv->DISTOLIK !== null)
+                        ? $tv->SISTOLIK . '/' . $tv->DISTOLIK : null;
+
+                    $keluhan = $dbCustom->table('medicalrecord.keluhan_utama')
+                        ->where('KUNJUNGAN', $visitNumber)->where('STATUS', '!=', 0)->value('DESKRIPSI');
+                    if ($keluhan === null) {
+                        $keluhan = $dbCustom->table('medicalrecord.keluhan_utama AS ku')
+                            ->join('pendaftaran.kunjungan AS pku', 'pku.NOMOR', '=', 'ku.KUNJUNGAN')
+                            ->where('pku.NOPEN', $nopen)->whereNull('pku.REF')->value('ku.DESKRIPSI');
+                    }
+                    $row->KELUHAN = ($keluhan === null || $keluhan === '-') ? 'Tidak Ada' : $keluhan;
+
+                    $rpp = $dbCustom->table('medicalrecord.rpp')->where('KUNJUNGAN', $visitNumber)->where('STATUS', '!=', 0)->value('DESKRIPSI');
+                    if ($rpp === null) $rpp = $dbCustom->table('medicalrecord.rpp')->where('KUNJUNGAN', $visitNumber)->value('DESKRIPSI');
+                    $row->RIWAYATPENYAKIT = ($rpp === '-' || $rpp === null) ? 'Tidak Ada' : $rpp;
+                    $rps = $dbCustom->table('medicalrecord.rps')->where('KUNJUNGAN', $visitNumber)->where('STATUS', '!=', 0)->value('DESKRIPSI');
+                    if ($rps === null) $rps = $dbCustom->table('medicalrecord.rps')->where('KUNJUNGAN', $visitNumber)->value('DESKRIPSI');
+                    $row->RPS = ($rps === '-' || $rps === null) ? 'Tidak Ada' : $rps;
+                    $row->FISIK = $dbCustom->table('medicalrecord.pemeriksaan_fisik')->where('PENDAFTARAN', $nopen)
+                        ->orderByDesc('TANGGAL')->value('DESKRIPSI');
+
+                    $diagnosisVisit = $dbCustom->table('medicalrecord.diagnosis')->where('KUNJUNGAN', $visitNumber)
+                        ->where('STATUS', '!=', 0)->value('DIAGNOSIS');
+                    $row->DIAGNOSIS = $callDbValue('master.getDiagnosaPasien(?)', [$nopen]) ?: $diagnosisVisit;
+                    $jenisKunjungan = $dbCustom->table('master.ruangan')->where('ID', $row->RUANGAN)->value('JENIS_KUNJUNGAN');
+                    $row->KODEMR1 = $jenisKunjungan !== null
+                        ? $dbCustom->table('master.jenis_berkas_rm')->where('JENIS', $jenisKunjungan)->where('ID', 2)->value('KODE')
+                        : null;
+
+                    $keluhanAnamnesis = $dbCustom->table('medicalrecord.anamnesis')->where('KUNJUNGAN', $visitNumber)
+                        ->where('STATUS', '!=', 0)->value('DESKRIPSI') ?: '-';
+                    $cppt = $dbCustom->table('medicalrecord.cppt')->where('KUNJUNGAN', $visitNumber)
+                        ->where('STATUS', 1)->orderByDesc('TANGGAL')->first();
+                    $subjektif = 'Anamnesis / Riwayat Penyakit Sekarang : ' . $keluhanAnamnesis
+                        . '<br>Keluhan Utama : ' . (($row->KELUHAN === 'Tidak Ada') ? '-' : $row->KELUHAN);
+                    if (!empty($cppt->SUBYEKTIF)) $subjektif .= '<br><br>' . $cppt->SUBYEKTIF;
+                    $textFields = $dbCustom->query()->selectRaw(
+                        'master.getReplaceFont(?) AS SUBYEKTIF,
+                         master.getReplaceFont(?) AS OBYEKTIF,
+                         master.getReplaceFont(?) AS ASSESMENT,
+                         master.getReplaceFont(?) AS PLANNING,
+                         master.getReplaceFont(?) AS INSTRUKSI',
+                        [
+                            $subjektif,
+                            (string) ($cppt->OBYEKTIF ?? '-'),
+                            (string) ($cppt->ASSESMENT ?? '-'),
+                            (string) ($cppt->PLANNING ?? '-'),
+                            (string) ($cppt->INSTRUKSI ?? '-'),
+                        ]
+                    )->first();
+                    $row->SUBYEKTIF = $textFields->SUBYEKTIF ?? $subjektif;
+                    $row->OBYEKTIF = $textFields->OBYEKTIF ?? ($cppt->OBYEKTIF ?? '-');
+                    $row->ASSESMENT = $textFields->ASSESMENT ?? ($cppt->ASSESMENT ?? '-');
+                    $row->PLANNING = $textFields->PLANNING ?? ($cppt->PLANNING ?? '-');
+                    $row->INSTRUKSI = $textFields->INSTRUKSI ?? ($cppt->INSTRUKSI ?? '-');
+
+                    $hasKonsulVisit = $dbCustom->table('pendaftaran.konsul')->where('KUNJUNGAN', $visitNumber)->exists();
+                    $tindakanFunctions = $dbCustom->query()->selectRaw(
+                        'master.getTindakanKunjungan(?) AS TINDAKAN_KUNJUNGAN,
+                         master.getTindakanKonsulCustom(?) AS TINDAKAN_KONSUL',
+                        [$visitNumber, $nopen]
+                    )->first();
+                    $tindakan = (string) ($tindakanFunctions->TINDAKAN_KUNJUNGAN ?? '');
+                    if ($hasKonsulVisit) $tindakan .= (string) ($tindakanFunctions->TINDAKAN_KONSUL ?? '');
+                    $row->TINDAKAN = str_replace(['; -', '- '], [',', ''], $tindakan);
+
+                    $hasJawabanKonsul = $dbCustom->table('pendaftaran.jawaban_konsul AS jk')
+                        ->join('pendaftaran.kunjungan AS kunj', 'kunj.REF', '=', 'jk.KONSUL_NOMOR')
+                        ->where('kunj.NOPEN', $nopen)->exists();
+                    $row->KONSUL = $hasJawabanKonsul
+                        ? $callDbValue('master.getJawabanKonsulCustom(?)', [$nopen])
+                        : $callDbValue('master.getRuangKonsulCustom(?)', [$nopen]);
+
+                    $dpjpNip = $visit['NIPDOKTER'] ?? null;
+                    if (!$dpjpNip && !empty($row->DPJP)) {
+                        $dpjpNip = $dbCustom->table('master.dokter')->where('ID', $row->DPJP)->value('NIP');
+                    }
+                    $tujuanJalan = $dbCustom->table('pendaftaran.tujuan_pasien')->where('NOPEN', $nopen)->first();
+                    $dokterRegNip = $tujuanJalan && $tujuanJalan->DOKTER
+                        ? $dbCustom->table('master.dokter')->where('ID', $tujuanJalan->DOKTER)->value('NIP') : null;
+                    $row->NIP = $dpjpNip ?: $dokterRegNip;
+                    $namaDokterDpjp = $dpjpNip ? $callDbValue('master.getNamaLengkapPegawai(?)', [$dpjpNip]) : null;
+                    $namaDokterReg = $dokterRegNip ? $callDbValue('master.getNamaLengkapPegawai(?)', [$dokterRegNip]) : null;
+                    $row->DOKTER = $namaDokterDpjp ?: ($namaDokterReg ?: $doctorName);
+                    $row->RNCTERAPI = $dbCustom->table('medicalrecord.rencana_terapi')->where('KUNJUNGAN', $visitNumber)
+                        ->where('STATUS', '!=', 0)->value('DESKRIPSI');
+                    $row->JADWAL = null;
+                    $row->RIWAYATOBAT = null;
+                    $row->ORDEROBAT = null;
+                    $row->OBATRJ = null;
 
                     $values = [
                         'NAMAINSTANSI' => $read($row, 'NAMAINSTANSI'),

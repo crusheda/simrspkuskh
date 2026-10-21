@@ -92,7 +92,7 @@
                         </div>
                         <div class="col-md-12">
                             <div class="d-sm-flex align-items-center justify-content-between">
-                                <button class="btn btn-outline-warning border-dashed waves-effect waves-light" href="javascript: void(0);" id="clear_text" onclick="clearFilter()"><i class="ph-duotone ph-eraser me-1"></i> Kosongkan Filter</button>
+                                <button class="btn btn-outline-warning border-dashed waves-effect waves-light me-2" href="javascript: void(0);" id="clear_text" onclick="clearFilter()"><i class="ph-duotone ph-eraser me-1"></i> Kosongkan Filter</button>
                                 <button class="btn btn-primary" id="tombol-tampilkan" onclick="filter()" disabled><i class="ph-duotone ph-sort-ascending me-1"></i> Refresh Table</button>
                             </div>
                         </div>
@@ -322,7 +322,6 @@
         if (tableEMR) {
             tableEMR.destroy();
         }
-        $('#tombol-tampilkan').prop('disabled',true).find('i').removeClass('ph-duotone ph-sort-ascending').addClass('fas fa-sync fa-spin').css('font-size', '15px');
         $('#show_table').prop('hidden',false);
         $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
         // Initialize
@@ -357,7 +356,8 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             beforeSend: function () {
-                $('#jumlah_data').empty().html(`<i class="fas fa-sync fa-spin ms-1"></i>`);
+                $('#tombol-tampilkan').prop('disabled',true).find('i').removeClass('ph-duotone ph-sort-ascending').addClass('ri-loader-line ri-spin').css('font-size', '15px');
+                $('#jumlah_data').empty().html(`<i class="ri-loader-line ri-spin"></i>`);
             },
             success: function(res) {
                 $("#tampil-tbody").empty();
@@ -515,7 +515,6 @@
                     trigger : 'hover'
                 })
                 // TOMBOL FILTER TAMPILKAN
-                $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fas fa-sync fa-spin').addClass('ph-duotone ph-sort-ascending').css('font-size', '');
                 $(document).on('click', '.clickable', function() {
                     window.location.href = $(this).data('href');
                 });
@@ -526,8 +525,8 @@
                     'error'
                 );
                 $('#jumlah_data').empty().text('0 Data');
-                $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('fas fa-sync fa-spin').addClass('ph-duotone ph-sort-ascending').css('font-size', '');
             }, complete: function() {
+                $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('ri-loader-line ri-spin').addClass('ph-duotone ph-sort-ascending').css('font-size', '');
                 const cache = JSON.parse(sessionStorage.getItem('emr_filter'));
 
                 if (cache) {

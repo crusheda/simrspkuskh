@@ -44,8 +44,8 @@
                                 id="filter-notifikasi-status">
 
                                 <option value="">Semua Status</option>
-                                <option value="1" selected>Pending</option>
-                                <option value="0">Selesai</option>
+                                <option value="0" selected>Pending</option>
+                                <option value="1">Selesai</option>
                             </select>
                             <button type="button"
                                 class="btn btn-sm btn-outline-warning"
@@ -266,15 +266,22 @@
                 let totalNotifikasiPending = 0;
                 let totalNotifikasiSelesai = 0;
 
+                // Di dalam success AJAX:
+                totalNotifikasiPending = res.totalNotifikasiPending ?? 0;
+                totalNotifikasiSelesai = res.totalNotifikasiSelesai ?? 0;
+
+                $('#total-notifikasi-pending').text('Pending : '+totalNotifikasiPending);
+                $('#total-notifikasi-selesai').text('Selesai : '+totalNotifikasiSelesai);
+
                 res.data.forEach(function (item, index) {
 
                     const unit = getNamaUnit(item.unit);
 
-                    if (!item.solved) {
-                        totalNotifikasiPending++;
-                    } else {
-                        totalNotifikasiSelesai++;
-                    }
+                    // if (!item.solved) {
+                    //     totalNotifikasiPending++;
+                    // } else {
+                    //     totalNotifikasiSelesai++;
+                    // }
 
                     $tbody.append(`
                         <tr>
@@ -336,9 +343,6 @@
                     `);
 
                 });
-
-                $('#total-notifikasi-pending').text('Pending : '+totalNotifikasiPending);
-                $('#total-notifikasi-selesai').text('Selesai : '+totalNotifikasiSelesai);
 
                 tableNotifikasi = $('#table-notifikasi').DataTable({
                     processing: true,

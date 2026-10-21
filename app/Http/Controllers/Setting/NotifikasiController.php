@@ -110,11 +110,46 @@ class NotifikasiController extends Controller
 
         $unitUser = array_map('strval', $unitUser);
 
+                // Query dasar untuk menghitung total notifikasi
+        $queryTotal = klaim_verifikasi_catatan::whereNull('deleted_at')
+            ->when(!$isAdmin, function ($query) use ($unitUser) {
+                $query->where(function ($query) use ($unitUser) {
+                    // Unit kosong/null dapat dilihat semua user
+                    $query->whereNull('unit')
+                        ->orWhere('unit', '')
+                        ->orWhereRaw("JSON_LENGTH(unit) = 0");
+
+                    // Unit yang sesuai dengan unit user
+                    foreach ($unitUser as $unit) {
+                        $query->orWhereJsonContains('unit', $unit);
+                    }
+                });
+            });
+
+        // Total pending: status = 1 dan solved = 0
+        $totalNotifikasiPending = (clone $queryTotal)
+            ->where('status', 1)
+            ->where('solved', 0)
+            ->count();
+
+        // Total selesai: status = 1 dan solved = 1
+        $totalNotifikasiSelesai = (clone $queryTotal)
+            ->where('status', 1)
+            ->where('solved', 1)
+            ->count();
+
         $data = klaim_verifikasi_catatan::whereNull('deleted_at')
-            ->when($status !== null, function ($query) use ($status) {
-                return $query->where('status', $status);
+            ->when($status !== null && $status !== '', function ($query) use ($status) {
+                if ((string) $status === '0') {
+                    // Pending: status = 1 dan solved = 0
+                    $query->where('status', 1)
+                        ->where('solved', 0);
+                } elseif ((string) $status === '1') {
+                    // Selesai: status = 1 dan solved = 1
+                    $query->where('status', 1)
+                        ->where('solved', 1);
+                }
             })
-            // ->where('solved', 0)
             ->orderByDesc('updated_at')
             ->get([
                 'id',
@@ -172,6 +207,8 @@ class NotifikasiController extends Controller
         return response()->json([
             'status' => true,
             'data' => $data,
+            'totalNotifikasiPending' => $totalNotifikasiPending,
+            'totalNotifikasiSelesai' => $totalNotifikasiSelesai,
         ]);
     }
 

@@ -50,7 +50,7 @@
                 </div>
                 <div class="card-body p-3">
                     <div class="table-responsive">
-                        <table class="table table-hover" id="vantable">
+                        <table class="table table-hover w-100" id="vantable">
                             <thead>
                                 <tr>
                                     <th>#ID</th>
