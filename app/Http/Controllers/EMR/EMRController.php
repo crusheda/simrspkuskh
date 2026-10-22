@@ -534,7 +534,7 @@ class EMRController extends Controller
 
                     $formPengkajian = [
                         'pengkajian-rajal-anak',
-                        'pengkajian-rajal-neonatus',
+                        // 'pengkajian-rajal-neonatus',
                     ];
                 }
 

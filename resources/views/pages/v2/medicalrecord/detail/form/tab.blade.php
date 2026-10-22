@@ -668,6 +668,7 @@
 
                 'pengkajian-rajal-dewasa',
                 'pengkajian-rajal-anak',
+                'pengkajian-rajal-neonatus',
                 'pengkajian-rajal-psikiatri',
                 'pengkajian-rajal-geriatri',
                 'pengkajian-rajal-obsgyn',
