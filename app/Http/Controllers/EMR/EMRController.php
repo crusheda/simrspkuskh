@@ -1622,7 +1622,7 @@ class EMRController extends Controller
             ->header('Expires', '0');
     }
 
-    public function showCPPT($PKUNJUNGAN)
+    public function showCPPT($PKUNJUNGAN, $OLD)
     {
         $getInit = DB::table('pendaftaran.kunjungan AS pk')
             ->leftJoin('pendaftaran.pendaftaran AS pp', 'pp.NOMOR', '=', 'pk.NOPEN')
@@ -1660,9 +1660,24 @@ class EMRController extends Controller
             ->leftJoin('medicalrecord.verifikasi_cppt as vcp', 'cp.VERIFIKASI', '=', 'vcp.ID')
             ->leftJoin('aplikasi.pengguna as vr', 'vcp.OLEH', '=', 'vr.ID')
             ->leftJoin('pendaftaran.kunjungan as pk', 'cp.KUNJUNGAN', '=', 'pk.NOMOR')
+            ->leftJoin('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
             ->where('cp.STATUS', '!=', 0)
-            ->where('pk.NOPEN', $PNOPEN)
-            ->where('cp.KUNJUNGAN', $PKUNJUNGAN)
+            ->when((int) $OLD === 0, function ($query) use ($getInit, $PKUNJUNGAN) {
+                // Riwayat CPPT dari kunjungan sebelumnya saja
+                $query->where('pp.NORM', $getInit->NORM)
+                    ->where('cp.KUNJUNGAN', '!=', $PKUNJUNGAN)
+                    ->where('pk.MASUK', '<', function ($subquery) use ($PKUNJUNGAN) {
+                        $subquery->select('pk2.MASUK')
+                            ->from('pendaftaran.kunjungan as pk2')
+                            ->where('pk2.NOMOR', $PKUNJUNGAN)
+                            ->limit(1);
+                    });
+            })
+            ->when((int) $OLD === 1, function ($query) use ($PNOPEN, $PKUNJUNGAN) {
+                // CPPT hanya pada kunjungan saat ini
+                $query->where('pk.NOPEN', $PNOPEN)
+                    ->where('cp.KUNJUNGAN', $PKUNJUNGAN);
+            })
             ->select([
                 'cp.ID',
                 'pcp.ID_CPPT AS CPPT_SIRMED',
@@ -1787,6 +1802,7 @@ class EMRController extends Controller
                 "),
             ])
             ->orderBy('cp.TANGGAL', 'DESC')
+            ->orderBy('cp.ID', 'DESC')
             ->get();
 
         $show->transform(function ($item) {
@@ -2006,12 +2022,21 @@ class EMRController extends Controller
         | CEK KUNJUNGAN
         |--------------------------------------------------------------------------
         */
-
         $kunjungan = DB::table('pendaftaran.kunjungan AS pk')
+            ->leftJoin('master.dokter AS dr', function ($join) {
+                $join->on('dr.ID','=','pk.DPJP')
+                    ->where('dr.STATUS', '=', 1);
+            })
+            ->leftJoin('aplikasi.pengguna AS pe', function ($join) {
+                $join->on('pe.NIP','=','dr.NIP')
+                    ->where('dr.STATUS', '=', 1);
+            })
             ->where('pk.NOMOR', $PKUNJUNGAN)
             ->select(
                 'pk.NOMOR',
-                'pk.NOPEN'
+                'pk.NOPEN',
+                'pk.DPJP',
+                'pe.ID as ID_VERIFIKATOR_CPPT'
             )
             ->first();
 
@@ -2019,6 +2044,18 @@ class EMRController extends Controller
             return response()->json([
                 'message' => 'Data kunjungan tidak ditemukan.'
             ], 404);
+        }
+
+        // Jika DPJP null atau 0, ambil dokter dari tujuan_pasien
+        if (empty($kunjungan->DPJP)) {
+            $pushDPJP = DB::table('pendaftaran.tujuan_pasien AS tp')
+                ->where('tp.NOPEN', $kunjungan->NOPEN)
+                ->whereIn('tp.STATUS', [1, 2])
+                ->select('tp.DOKTER')
+                ->first();
+
+            // Masukkan DOKTER ke properti DPJP
+            $kunjungan->DPJP = $pushDPJP->DOKTER ?? null;
         }
 
         /*
@@ -2064,6 +2101,46 @@ class EMRController extends Controller
             ], 422);
         }
 
+        if ($getPPA->PROFESI_PPA_ID != 1) { // JIKA BUKAN DOKTER
+            $getPPA = DB::table('master.perawat as per')
+                ->leftJoin('master.pegawai AS peg', 'peg.NIP', '=', 'per.NIP')
+
+                // JENIS 36
+                ->leftJoin('master.referensi AS ref36', function ($join) {
+                    $join->on('ref36.ID', '=', 'peg.PROFESI')
+                        ->where('ref36.JENIS', '=', 36);
+                })
+
+                // JENIS 32 berdasarkan REF_ID dari JENIS 36
+                ->leftJoin('master.referensi AS ref32', function ($join) {
+                    $join->on('ref32.REF_ID', '=', 'ref36.ID')
+                        ->where('ref32.JENIS', '=', 32);
+                })
+
+                ->where('per.NIP', $getPPA->NIP)
+                ->where('per.STATUS', 1)
+                ->select(
+                    'per.ID',
+                    'per.NIP',
+                    'peg.PROFESI',
+
+                    'ref36.ID AS PROFESI_ID',
+                    'ref36.DESKRIPSI AS PROFESI',
+
+                    'ref32.ID AS PROFESI_PPA_ID',
+                    'ref32.DESKRIPSI AS PROFESI_PPA',
+                )
+
+                ->orderBy('ref32.ID', 'asc')
+                ->first();
+        }
+
+        if (!$getPPA) {
+            return response()->json([
+                'message' => 'Data PPA tersebut tidak ditemukan.'
+            ], 422);
+        }
+
         if ($request->mode != "BIASA") {
             $tenagaMedis = DB::table('aplikasi.pengguna AS pe')
                 ->leftJoin('master.pegawai AS peg','peg.NIP','=','pe.NIP')
@@ -2092,6 +2169,26 @@ class EMRController extends Controller
             ], 422);
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | GET VERIFIKASI CPPT
+        |--------------------------------------------------------------------------
+        */
+        $verifikasi = DB::table('medicalrecord.verifikasi_cppt')
+                    ->updateOrInsert(
+                        [
+                            'KUNJUNGAN' => $PKUNJUNGAN,
+                        ],
+                        [
+                            'BATAS_TANGGAL' => now(),
+                            'OLEH'          => $kunjungan->ID_VERIFIKATOR_CPPT,
+                            'STATUS'        => 1,
+                        ]
+                    );
+
+        $idVerifikasi = DB::table('medicalrecord.verifikasi_cppt')
+                    ->where('KUNJUNGAN', $PKUNJUNGAN)
+                    ->value('ID');
         /*
         |--------------------------------------------------------------------------
         | DATA DASAR CPPT
@@ -2123,7 +2220,7 @@ class EMRController extends Controller
             */
             'OLEH' => auth()->id(),
 
-            'VERIFIKASI' => 1,
+            'VERIFIKASI' => $idVerifikasi,
 
             'STATUS' => 1,
 
@@ -2439,7 +2536,7 @@ class EMRController extends Controller
 
                 'OLEH' => auth()->id(),
 
-                'VERIFIKASI' => 1,
+                'VERIFIKASI' => $cppt->VERIFIKASI,
                 'STATUS' => 1,
 
                 'TULIS' => '',
@@ -2716,7 +2813,7 @@ class EMRController extends Controller
             | CARI DATA CPPT
             |--------------------------------------------------------------------------
             */
-
+            $kunjungan = null;
             $cppt = DB::table('medicalrecord.cppt')
                 ->where('ID', $id)
                 ->first();
@@ -2726,6 +2823,8 @@ class EMRController extends Controller
                     'status' => false,
                     'message' => 'Data CPPT tidak ditemukan.'
                 ], 404);
+            } else {
+                $kunjungan = $cppt->KUNJUNGAN;
             }
 
 
@@ -2740,6 +2839,11 @@ class EMRController extends Controller
             //     ->delete();
             DB::table('medicalrecord.cppt')
                 ->where('ID', $id)
+                ->update([
+                    'STATUS' => 0
+                ]);
+            DB::table('medicalrecord.verifikasi_cppt')
+                ->where('KUNJUNGAN', $kunjungan)
                 ->update([
                     'STATUS' => 0
                 ]);

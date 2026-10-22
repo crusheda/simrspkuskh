@@ -352,7 +352,7 @@
         FLOATING CPPT BUTTON
     ============================================================ --}}
     <div class="cppt-floating-container">
-        <button type="button" id="btn-floating-cppt" class="cppt-floating-btn" onclick="showModalCppt('{{ $list['KUNJUNGAN'] }}')">
+        <button type="button" id="btn-floating-cppt" class="cppt-floating-btn" onclick="showModalCppt('{{ $list['KUNJUNGAN'] }}',1)">
             <span class="cppt-floating-icon">
                 <i class="ph-duotone ph-notepad"></i>
             </span>
@@ -431,13 +431,18 @@
                 </div>
 
                 {{-- FOOTER --}}
-                <div class="modal-footer border-0 p-3">
-                    <button type="button" class="btn btn-outline-light border-dashed waves-effect waves-light" data-bs-dismiss="modal" data-bs-toggle="tooltip" title="Tutup Cppt">
-                        <i class="ph-duotone ph-x me-1"></i> Tutup
+                <div class="modal-footer d-flex justify-content-between border-0 p-3">
+                    <button type="button" class="btn btn-subtle-danger" onclick="showModalCppt('{{ $list['KUNJUNGAN'] }}', 0)" data-bs-toggle="tooltip" title="Refresh Data Riwayat CPPT Kunjungan Sebelum Ini">
+                        <i class="ph-duotone ph-arrow-counter-clockwise me-1"></i> Riwayat CPPT
                     </button>
-                    <button type="button" class="btn btn-subtle-warning" onclick="showModalCppt('{{ $list['KUNJUNGAN'] }}')" data-bs-toggle="tooltip" title="Refresh Data Riwayat CPPT">
-                        <i class="ph-duotone ph-arrows-clockwise me-1"></i> Refresh
-                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light border-dashed waves-effect waves-light" data-bs-dismiss="modal" data-bs-toggle="tooltip" title="Tutup Cppt">
+                            <i class="ph-duotone ph-x me-1"></i> Tutup
+                        </button>
+                        <button type="button" class="btn btn-subtle-warning" onclick="showModalCppt('{{ $list['KUNJUNGAN'] }}', 1)" data-bs-toggle="tooltip" title="Refresh Data Riwayat CPPT Kunjungan Saat Ini">
+                            <i class="ph-duotone ph-arrows-clockwise me-1"></i> Refresh
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -636,11 +641,12 @@
         }
     }
 
-    function showModalCppt(kunjungan){
+    function showModalCppt(kunjungan, old)
+    {
         currentKunjunganCppt = kunjungan;
         const $btnCppt=$('#btn-floating-cppt');
         $.ajax({
-            url:"/api/v2/emr/cppt/"+kunjungan,
+            url: `/api/v2/emr/cppt/${kunjungan}/${old}`,
             type:'GET',
             dataType:'json',
             beforeSend:function(){
