@@ -1,0 +1,306 @@
+
+/* =========================================================
+   SIRMED V3 — GLOBAL BOOTSTRAP CARDS
+   Mengikuti design system app.css
+========================================================= */
+
+:root {
+    --app-card-radius: 16px;
+    --app-card-border: var(--border, var(--bs-border-color, #e8edf5));
+    --app-card-bg: var(--surface, var(--bs-card-bg, #fff));
+    --app-card-color: var(--text, var(--bs-card-color, #17233c));
+    --app-card-muted: var(--muted, var(--bs-secondary-color, #7b879d));
+
+    --app-card-shadow:
+        0 3px 10px rgba(30, 49, 91, 0.025),
+        0 8px 24px rgba(30, 49, 91, 0.035);
+
+    --app-card-shadow-hover:
+        0 5px 14px rgba(30, 49, 91, 0.045),
+        0 12px 28px rgba(30, 49, 91, 0.07);
+}
+
+/* =========================================================
+   1. CARD UTAMA
+========================================================= */
+
+.card {
+    color: var(--app-card-color);
+    background-color: var(--app-card-bg);
+    border: 1px solid var(--app-card-border);
+    border-radius: var(--app-card-radius);
+    box-shadow: var(--app-card-shadow);
+
+    /* Jangan memaksakan overflow hidden:
+       tabel, dropdown, dan popover perlu tetap terlihat. */
+}
+
+/* Card dengan utility Bootstrap */
+.card.rounded-0 {
+    border-radius: 0 !important;
+}
+
+.card.border-0 {
+    border: 0 !important;
+}
+
+.card.shadow-none {
+    box-shadow: none !important;
+}
+
+/* =========================================================
+   2. CARD HEADER
+========================================================= */
+
+.card > .card-header {
+    padding: 16px 20px;
+    color: var(--app-card-color);
+    background-color: transparent;
+    border-bottom: 1px solid var(--app-card-border);
+    border-radius: 0;
+}
+
+/* Pertahankan utility spacing Bootstrap */
+.card > .card-header.p-0 {
+    padding: 0 !important;
+}
+
+.card > .card-header.p-1 {
+    padding: 0.25rem !important;
+}
+
+.card > .card-header.p-2 {
+    padding: 0.5rem !important;
+}
+
+.card > .card-header.p-3 {
+    padding: 1rem !important;
+}
+
+.card > .card-header.p-4 {
+    padding: 1.5rem !important;
+}
+
+.card > .card-header.p-5 {
+    padding: 3rem !important;
+}
+
+/* Judul header */
+.card > .card-header h1,
+.card > .card-header h2,
+.card > .card-header h3,
+.card > .card-header h4,
+.card > .card-header h5,
+.card > .card-header h6 {
+    margin-bottom: 0;
+    color: inherit;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+/* Hilangkan garis bawah jika diminta */
+.card > .card-header.border-0 {
+    border-bottom: 0 !important;
+}
+
+/* =========================================================
+   3. CARD BODY
+========================================================= */
+
+.card > .card-body {
+    padding: 20px;
+    color: var(--app-card-color);
+    background-color: transparent;
+}
+
+/* Pertahankan utility spacing Bootstrap */
+.card > .card-body.p-0 {
+    padding: 0 !important;
+}
+
+.card > .card-body.p-1 {
+    padding: 0.25rem !important;
+}
+
+.card > .card-body.p-2 {
+    padding: 0.5rem !important;
+}
+
+.card > .card-body.p-3 {
+    padding: 1rem !important;
+}
+
+.card > .card-body.p-4 {
+    padding: 1.5rem !important;
+}
+
+.card > .card-body.p-5 {
+    padding: 3rem !important;
+}
+
+/* =========================================================
+   4. CARD FOOTER
+========================================================= */
+
+.card > .card-footer {
+    padding: 14px 20px;
+    color: var(--app-card-muted);
+    background-color: transparent;
+    border-top: 1px solid var(--app-card-border);
+    border-radius: 0;
+}
+
+/* Pertahankan utility spacing Bootstrap */
+.card > .card-footer.p-0 {
+    padding: 0 !important;
+}
+
+.card > .card-footer.p-1 {
+    padding: 0.25rem !important;
+}
+
+.card > .card-footer.p-2 {
+    padding: 0.5rem !important;
+}
+
+.card > .card-footer.p-3 {
+    padding: 1rem !important;
+}
+
+.card > .card-footer.p-4 {
+    padding: 1.5rem !important;
+}
+
+.card > .card-footer.p-5 {
+    padding: 3rem !important;
+}
+
+.card > .card-footer.border-0 {
+    border-top: 0 !important;
+}
+
+/* =========================================================
+   5. CARD IMAGE
+========================================================= */
+
+.card > .card-img-top {
+    display: block;
+    width: 100%;
+    border-radius:
+        calc(var(--app-card-radius) - 1px)
+        calc(var(--app-card-radius) - 1px)
+        0 0;
+}
+
+.card > .card-img-bottom {
+    display: block;
+    width: 100%;
+    border-radius:
+        0 0
+        calc(var(--app-card-radius) - 1px)
+        calc(var(--app-card-radius) - 1px);
+}
+
+/* =========================================================
+   6. CARD HOVER OPSIONAL
+   Aktif hanya jika memakai .card-hoverable
+========================================================= */
+
+.card-hoverable {
+    transition:
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.card-hoverable:hover {
+    border-color: color-mix(
+        in srgb,
+        var(--primary, #5148e5) 25%,
+        var(--app-card-border)
+    );
+
+    box-shadow: var(--app-card-shadow-hover);
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   7. CARD BERUPA LINK
+========================================================= */
+
+a.card {
+    color: inherit;
+    text-decoration: none !important;
+}
+
+a.card:hover,
+a.card:focus {
+    color: inherit;
+    text-decoration: none !important;
+}
+
+/* =========================================================
+   8. CARD DI DALAM MODAL
+========================================================= */
+
+.modal .card {
+    box-shadow: none;
+}
+
+/* =========================================================
+   9. DARK MODE
+   Warna mengikuti variabel app.css
+========================================================= */
+
+[data-bs-theme="dark"] {
+    --app-card-border: var(--border, var(--bs-border-color, #2b3850));
+    --app-card-bg: var(--surface, var(--bs-card-bg, #182235));
+    --app-card-color: var(--text, var(--bs-card-color, #e7edf8));
+    --app-card-muted: var(--muted, var(--bs-secondary-color, #9baac1));
+
+    --app-card-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.08),
+        0 8px 24px rgba(0, 0, 0, 0.1);
+
+    --app-card-shadow-hover:
+        0 5px 14px rgba(0, 0, 0, 0.12),
+        0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+/* =========================================================
+   10. RESPONSIVE
+========================================================= */
+
+@media (max-width: 767.98px) {
+    :root {
+        --app-card-radius: 14px;
+    }
+
+    .card > .card-header {
+        padding: 14px 16px;
+    }
+
+    .card > .card-body {
+        padding: 16px;
+    }
+
+    .card > .card-body.p-0 {
+        padding: 0 !important;
+    }
+
+    .card > .card-footer {
+        padding: 12px 16px;
+    }
+}
+
+/* =========================================================
+   11. REDUCE MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .card-hoverable,
+    .card-hoverable:hover {
+        transition: none;
+        transform: none;
+    }
+}

@@ -1,0 +1,278 @@
+
+/* =========================================
+   SIRMED V3 - EMR PAGE
+   Semua styling dibatasi ke #emrPage
+========================================= */
+
+#emrPage {
+    --emr-primary: #4361ee;
+    --emr-border: #e8edf5;
+    --emr-muted: #748096;
+    --emr-surface: #ffffff;
+    color: #273248;
+}
+
+#emrPage nav[aria-label="breadcrumb"] .breadcrumb {
+    background: linear-gradient(110deg, #eef2ff, #f5f7ff) !important;
+    border: 1px solid #e4e9ff;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    margin-bottom: 20px;
+}
+
+#emrPage .breadcrumb-item,
+#emrPage .breadcrumb-item a {
+    font-size: 0.84rem;
+}
+
+#emrPage .card {
+    border: 1px solid var(--emr-border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--emr-surface);
+    box-shadow: 0 5px 24px rgb(34 50 84 / 5%);
+    transition: box-shadow 0.2s ease;
+}
+
+#emrPage .card-header {
+    padding: 20px 22px !important;
+    background: var(--emr-surface);
+    border-bottom: 1px solid var(--emr-border);
+}
+
+#emrPage .card-header h5 {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+#emrPage #jumlah_data {
+    color: var(--emr-primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+#emrPage .card-body > .row {
+    padding: 22px !important;
+}
+
+#emrPage .form-label {
+    margin-bottom: 8px;
+    color: #526078;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+#emrPage .form-control,
+#emrPage .form-select,
+#emrPage .choices__inner {
+    min-height: 43px;
+    border: 1px solid #dfe5ef;
+    border-radius: 9px;
+    background-color: var(--emr-surface);
+    color: inherit;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#emrPage .form-control:focus,
+#emrPage .form-select:focus {
+    border-color: #9aafff;
+    box-shadow: 0 0 0 3px rgb(67 97 238 / 10%);
+}
+
+#emrPage .form-control:disabled,
+#emrPage .form-select:disabled {
+    background-color: #f4f6fa;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+#emrPage .input-group .input-group-text {
+    border-color: #dfe5ef;
+    border-radius: 0 9px 9px 0;
+    background: #f7f8fc;
+    color: var(--emr-muted);
+}
+
+#emrPage .input-group .form-control {
+    border-radius: 9px 0 0 9px;
+}
+
+#emrPage .btn {
+    min-height: 38px;
+    border-radius: 9px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+#emrPage .btn:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+
+#emrPage #tombol-tampilkan {
+    min-width: 155px;
+    box-shadow: 0 4px 10px rgb(67 97 238 / 17%);
+}
+
+#emrPage #clear_text {
+    border-style: dashed;
+}
+
+#emrPage #show_table {
+    padding: 0 22px 22px !important;
+    border-top: 1px solid var(--emr-border) !important;
+}
+
+#emrPage #vantable {
+    width: 100% !important;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85rem;
+}
+
+#emrPage #vantable thead th {
+    padding: 15px 12px;
+    border-bottom: 1px solid var(--emr-border);
+    background: #f7f9fd;
+    color: #637089;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.055em;
+    white-space: nowrap;
+}
+
+#emrPage #vantable tbody td {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #edf0f6;
+    vertical-align: middle;
+}
+
+#emrPage #vantable tbody tr.clickable {
+    transition: background-color 0.15s ease;
+}
+
+#emrPage #vantable tbody tr.clickable:hover {
+    background-color: #f4f7ff;
+}
+
+#emrPage #vantable tbody tr.clickable:focus-within {
+    outline: 2px solid #b9c7ff;
+    outline-offset: -2px;
+}
+
+#emrPage #vantable tbody h4 {
+    font-size: 0.96rem;
+    line-height: 1.6;
+    font-weight: 600;
+}
+
+#emrPage #vantable tbody .badge {
+    border-radius: 6px;
+    line-height: 1.5;
+}
+
+#emrPage .dataTables_wrapper .dataTables_length,
+#emrPage .dataTables_wrapper .dataTables_filter,
+#emrPage .dataTables_wrapper .dataTables_info,
+#emrPage .dataTables_wrapper .dataTables_paginate {
+    padding-top: 14px;
+    padding-bottom: 8px;
+    font-size: 0.82rem;
+    color: var(--emr-muted);
+}
+
+#emrPage .dataTables_wrapper .dataTables_filter input,
+#emrPage .dataTables_wrapper .dataTables_length select {
+    min-height: 36px;
+    padding: 5px 10px;
+    border: 1px solid #dfe5ef;
+    border-radius: 8px;
+    background: var(--emr-surface);
+    color: inherit;
+}
+
+#emrPage .dataTables_wrapper .pagination .page-link {
+    margin: 0 2px;
+    border-radius: 7px;
+}
+
+#emrPage .dataTables_wrapper .page-item.active .page-link {
+    background: var(--emr-primary);
+    border-color: var(--emr-primary);
+}
+
+#emrPage .choices {
+    margin-bottom: 0;
+}
+
+#emrPage .choices__inner {
+    display: flex;
+    align-items: center;
+    padding: 5px 8px;
+}
+
+#emrPage .choices__list--dropdown,
+#emrPage .choices__list[aria-expanded] {
+    z-index: 20;
+    border-color: var(--emr-border);
+    border-radius: 9px;
+    box-shadow: 0 8px 24px rgb(34 50 84 / 10%);
+}
+
+@media (max-width: 767.98px) {
+    #emrPage {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    #emrPage .card-header {
+        padding: 16px !important;
+    }
+
+    #emrPage .card-body > .row {
+        padding: 16px !important;
+    }
+
+    #emrPage #show_table {
+        padding: 0 12px 16px !important;
+    }
+
+    #emrPage .card-header h5 {
+        font-size: 0.94rem;
+    }
+
+    #emrPage #clear_text,
+    #emrPage #tombol-tampilkan {
+        width: 100%;
+        margin: 4px 0 !important;
+    }
+
+    #emrPage #vantable tbody h4 {
+        font-size: 0.88rem;
+    }
+
+    #emrPage .dataTables_wrapper .dataTables_filter {
+        text-align: left;
+    }
+
+    #emrPage .dataTables_wrapper .dataTables_filter input {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #emrPage *,
+    #emrPage *::before,
+    #emrPage *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}

@@ -1,15 +1,35 @@
 <!DOCTYPE html>
-<html lang="id" data-bs-theme="light">
-
+<html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'SIRMED v3') · SIRMED</title>
+
+    <title>@yield('title', 'BOT') · Sirmed v3</title>
     <link rel="icon" href="{{ asset('images/logo/logo.png') }}">
 
-    @include('inc.v3.css')
+    {{-- Inisialisasi tema sebelum CSS --}}
+    <script>
+        (() => {
+            let theme = 'light';
 
+            try {
+                const saved = localStorage.getItem('sirmed-theme');
+
+                theme = saved === 'dark' || saved === 'light'
+                    ? saved
+                    : (
+                        window.matchMedia('(prefers-color-scheme: dark)').matches
+                            ? 'dark'
+                            : 'light'
+                    );
+            } catch (e) {}
+
+            document.documentElement.setAttribute('data-bs-theme', theme);
+        })();
+    </script>
+
+    @include('inc.v3.css')
     @livewireStyles
 </head>
 
