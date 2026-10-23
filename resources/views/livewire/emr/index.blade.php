@@ -1,0 +1,574 @@
+<div class="container-fluid py-3">
+
+    <!-- [ breadcrumb ] start -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb px-3 py-2 bg-primary-subtle rounded-3">
+            <li class="breadcrumb-item">
+                <a class="link-primary" href="{{ route('v3.dashboard') }}">
+                    <i class="fi fi-rr-home"></i>
+                </a>
+            </li>
+            <li class="breadcrumb-item"><a class="link-primary fw-medium text-decoration-none" href="javascript:void(0);">Digital</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Medical Record</li>
+        </ol>
+
+        <ol class="breadcrumb mb-0">
+        </ol>
+    </nav>
+    <!-- [ breadcrumb ] end -->
+
+    <!-- [ main content ] start -->
+    <div class="row gy-4">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header p-2">
+                    <div class="d-sm-flex align-items-center justify-content-between ms-2">
+                        <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Table Kunjungan Pasien <span class="ms-2 f-14 px-2 badge bg-secondary-subtle text-secondary">Total : <a id="jumlah_data">0 Data</a></span></h5>
+                        {{-- <a class="btn btn-link-info btn-sm text-end" href="javascript: void(0);" onclick="tataCara()"><i class="fas fa-info-circle text-info me-2"></i> <s>Tata Cara Penggunaan</s></a> --}}
+                        {{-- <button class="btn btn-link-info btn-sm rounded me-1 mb-1 mt-1" type="button" data-bs-toggle="collapse" data-bs-target="#filter-collapse" aria-expanded="false" aria-controls="collapseExample">Filter <i class="ph-duotone ph-caret-down ms-1"></i></button> --}}
+                    </div>
+                </div>
+                <div class="card-body p-0 pb-2">
+                    <div class="row p-3">
+                        <div class="col-md-3 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Jenis Perawatan</label>
+
+                                <select id="filter_rawat" class="form-control" onchange="EMRPage.getRuangan()">
+                                    @foreach ($list['jenisPerawatan'] as $value => $label)
+                                        <option
+                                            value="{{ $value }}"
+                                            {{ $value == 5 ? 'selected' : '' }}
+                                        >
+                                            {{ $label }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Ruangan</label>
+                                <select id="filter_ruang" class="form-control" onchange="EMRPage.getDPJP()" disabled><option value="5" selected>...</option></select>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Status Kunjungan</label>
+                                <select class="form-control" id="filter_status">
+                                    <option value="5">Semua Kunjungan</option>
+                                    <option value="0">Batal Kunjungan</option>
+                                    <option value="1" selected>Sedang Dilayani</option>
+                                    <option value="2">Selesai Kunjungan</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Rentang Tgl Kunjungan</label>
+                                <div class="input-group">
+                                    <input type="text" id="filter_tgl" class="form-control flatpickr-input active" placeholder="Pilih Rentang Tanggal" readonly="readonly">
+                                    <span class="input-group-text"><i class="feather icon-calendar"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">DPJP</label>
+                                <select class="form-select" id="filter_dpjp" disabled><option value="5" selected>...</option></select>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Jenis Penjamin</label>
+                                <select id="filter_penjamin" class="form-control" disabled><option value="0" selected>...</option></select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="d-sm-flex align-items-center justify-content-between">
+                                <button class="btn btn-outline-warning border-dashed waves-effect waves-light me-2" href="javascript: void(0);" id="clear_text" onclick="EMRPage.clearFilter()"><i class="ph-duotone ph-eraser me-1"></i> Kosongkan Filter</button>
+                                <button class="btn btn-primary" id="tombol-tampilkan" onclick="EMRPage.filter()" disabled><i class="ph-duotone ph-sort-ascending me-1"></i> Refresh Table</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive border-top p-3" id="show_table" hidden>
+                        <table class="table mb-0 table-hover table-display" id="vantable">
+                            <thead>
+                                <tr>
+                                    <th class="kolom-antrian">ANTRIAN</th>
+                                    <th>KUNJUNGAN PASIEN</th>
+                                    <th class="text-start">WAKTU BERKUNJUNG</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tampil-tbody">
+                                <tr style='font-size:13px'>
+                                    <td colspan="5">
+                                        <center>
+                                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                                        </center>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {{-- <div class="text-end">
+                <a href="ecom_product.html" class="btn btn-link-secondary d-inline-flex align-items-center"><i class="ti ti-chevron-left me-2"></i> Back to Shopping</a>
+            </div> --}}
+        </div>
+    </div>
+    <!-- [ main content ] end -->
+
+</div>
+
+<script>
+    (() => {
+        // Variabel di-reset setiap kali script EMR dieksekusi
+        let dpjpChoices = null;
+        let tableEMR = null;
+
+        window.EMRPage = {
+            getRuangan,
+            getDPJP,
+            filter,
+            clearFilter
+        };
+
+        $(document).ready(function() {
+            if ("{{ $list['tte_pegawai'] }}" != true) {
+                // kalau tidak ada tanda tangan pegawai
+                Swal.fire({
+                    title: `Tanda Tangan tidak ditemukan!`,
+                    text: 'Silakan menambahkan tanda tangan di menu Profil Akun Pengguna sebelum melakukan pengisian pada halaman Elektronik Medical Record.',
+                    icon: `warning`,
+                    theme: 'bootstrap-5',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    focusConfirm: false,
+                    confirmButtonText: `
+                        <i class="fa fa-thumbs-up"></i> Tanda Tangan
+                    `,
+                    confirmButtonAriaLabel: "Tanda Tangan",
+                    cancelButtonText: `
+                        <i class="fa fa-thumbs-down"></i> Tutup
+                    `,
+                    cancelButtonAriaLabel: "Tutup",
+                    // backdrop: `
+                    //     rgba(0,0,0,0.6)
+                    //     left top
+                    //     no-repeat
+                    // `,
+                    allowOutsideClick: false, // supaya user fokus ke alert
+                    allowEscapeKey: false,    // tidak bisa ditutup pakai tombol ESC
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // buka halaman profil
+                        window.location.href = "{{ route('v2.profil') }}";
+                    }
+                });
+            }
+
+            // FLATPICKR DATE
+            const today = new Date(); // Hari ini
+            const fiveYearsAgo = new Date();
+            fiveYearsAgo.setFullYear(today.getFullYear() - 5); // 5 tahun ke belakang
+            $("#filter_tgl").flatpickr(
+                {
+                    // enableTime: true,
+                    // dateFormat: "Y-m-d H:i",
+                    mode: 'range',
+                    minDate: fiveYearsAgo, // Mulai dari 5 tahun yang lalu
+                    maxDate: today,        // Sampai hari ini
+                    dateFormat: 'Y-m-d',
+                    defaultDate: [today,today]
+                }
+            );
+
+            // SELECT CHOICES
+            dpjpChoices = new Choices('#filter_dpjp', {
+                shouldSort: false,
+                allowHTML: true
+            });
+
+            // // ENTER TAMPILKAN
+            // $('#filter_rawat, #filter_bulan, #filter_dpjp').on('keydown', function (e) {
+            //     if (e.key === 'Enter') {
+            //         e.preventDefault(); // mencegah aksi default
+            //         filter(); // panggil fungsi filter
+            //     }
+            // });
+
+            // filter();
+            // alert(@json(auth()->user()->roles->first()?->name));
+            // alert(@json(auth()->user()->roles->pluck('name')));
+            getRuangan();
+            getPenjamin();
+
+            // BUTTON FILTER READY
+            $('#tombol-tampilkan').prop('disabled', false);
+        });
+
+        // function-function
+        function getRuangan() {
+            idRuang = $('#filter_rawat').val();
+            if (idRuang == 5) {
+                $('#filter_ruang').prop('disabled',true);
+                $("#filter_ruang").find('option').remove();
+                $("#filter_ruang").append(`
+                    <option value="5" selected>Semua Ruangan</option>
+                `);
+                getDPJP();
+            } else {
+                $.ajax({
+                    url: `/api/v2/emr/ruangan/${idRuang}`,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(res) {
+                        $('#filter_ruang').prop('disabled',false);
+                        $("#filter_ruang").find('option').remove();
+                        $("#filter_ruang").append(`
+                            <option value="5" selected>Semua Ruangan</option>
+                        `);
+                        res.forEach(pouch => {
+                            $("#filter_ruang").append(`
+                                <option value="${pouch.ID}">${pouch.DESKRIPSI}</option>
+                            `);
+                        });
+                        getDPJP();
+                        // $("#filter_ruang").val(up).change();
+                    },
+                    error: function (xhr) {
+                        Swal.fire(
+                            'Gagal',
+                            xhr.responseJSON?.message ?? 'Terjadi kesalahan / Gagal memanggil Function!',
+                            'error'
+                        );
+                    },
+                })
+            }
+        }
+
+        function getPenjamin() {
+            $.ajax({
+                url: `/api/v2/emr/penjamin`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $('#filter_penjamin').prop('disabled',false);
+                    $("#filter_penjamin").find('option').remove();
+                    $("#filter_penjamin").append(`
+                        <option value="0">Semua Penjamin</option>
+                    `);
+                    res.forEach(pouch => {
+                        $("#filter_penjamin").append(`
+                            <option value="${pouch.ID}">${pouch.DESKRIPSI}</option>
+                        `);
+                        // <option value="${pouch.ID}" ${pouch.ID == 2 ? 'selected' : ''}>${pouch.DESKRIPSI}</option>
+                    });
+                    $("#filter_penjamin").val('0').trigger('change');
+                },
+                error: function (xhr) {
+                    Swal.fire(
+                        'Gagal',
+                        xhr.responseJSON?.message ?? 'Terjadi kesalahan / Gagal memanggil Function!',
+                        'error'
+                    );
+                },
+            })
+        }
+
+        function getDPJP() {
+            let idRuangPerawatan = $('#filter_ruang').val();
+            $.ajax({
+                url: `/api/v2/emr/ruangan/${idRuangPerawatan}/dpjp`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    dpjpChoices.enable();
+                    dpjpChoices.removeActiveItems();
+                    dpjpChoices.clearChoices();
+                    dpjpChoices.setChoices([
+                        { value: '5', label: 'Semua Dokter', selected: true }
+                    ], 'value', 'label', false);
+
+                    res.show.forEach(pouch => {
+                        dpjpChoices.setChoices([
+                            {
+                                value: pouch.NIP,
+                                label: `${pouch.NAMADOKTER} (${pouch.DESKRIPSI})`
+                            }
+                        ], 'value', 'label', false);
+                    });
+
+                    if (idRuangPerawatan == 5 && res.user) {
+                        dpjpChoices.setChoiceByValue(res.user);
+                    }
+
+                    filter();
+                },
+                error: function (xhr) {
+                    Swal.fire(
+                        'Gagal',
+                        xhr.responseJSON?.message ?? 'Terjadi kesalahan / Gagal memanggil Function!',
+                        'error'
+                    );
+                    dpjpChoices.disable();
+                    dpjpChoices.clearChoices();
+                    dpjpChoices.setChoices([
+                        { value: '0', label: 'Tidak Ada Dokter', selected: true }
+                    ], 'value', 'label', false);
+                },
+            })
+        }
+
+        function filter() {
+            if (tableEMR) {
+                tableEMR.destroy();
+            }
+            $('#show_table').prop('hidden',false);
+            $("#tampil-tbody").empty().append(`<tr style='font-size:13px'><td colspan="15"><center><div class="spinner-border spinner-border-sm" role="status"></div></center></td></tr>`);
+            // Initialize
+            var rawat = $("#filter_rawat").val();
+            var ruang = $("#filter_ruang").val();
+            var status = $("#filter_status").val();
+            var tgl = $("#filter_tgl").val();
+            var dpjp = $("#filter_dpjp").val() ? $("#filter_dpjp").val() : '0'; // JIKA DPJP KOSONG = 0
+            var penjamin = $("#filter_penjamin").val();
+            var exTgl = tgl.split(' to ');
+            if (exTgl.length == 2) { // SPLIT FROM = "2024-01-01 to 2025-01-01"
+                tgls = exTgl[0];
+                tgle = exTgl[1];
+            } else { // SPLIT FROM = "2024-01-01"
+                tgls = exTgl[0];
+                tgle = exTgl[0];
+            }
+            // Process
+            $.ajax({
+                url: '/api/v2/emr',
+                type: 'POST',
+                data: {
+                    rawat: rawat,
+                    ruang: ruang,
+                    status: status,
+                    tgls: tgls,
+                    tgle: tgle,
+                    dpjp: dpjp,
+                    penjamin: penjamin,
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                beforeSend: function () {
+                    $('#tombol-tampilkan').prop('disabled',true).find('i').removeClass('ph-duotone ph-sort-ascending').addClass('ri-loader-line ri-spin').css('font-size', '15px');
+                    $('#jumlah_data').empty().html(`<i class="ri-loader-line ri-spin"></i>`);
+                },
+                success: function(res) {
+                    $("#tampil-tbody").empty();
+                    $('#jumlah_data').empty().text(res.show.length + ' Data');
+                    if (res.show && Array.isArray(res.show)) {
+                        content = ``;
+                        res.show.forEach(item => {
+                            if (item.STATUS == 1) {
+                                status = '<span class="badge bg-warning-subtle text-dark border border-warning-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Pasien berada di ruangan ini / sedang dilayani</span>';
+                            } else {
+                                if (item.STATUS == 2) {
+                                    status = '<span class="badge bg-success-subtle text-dark border border-success-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Kunjungan Selesai</span>';
+                                } else {
+                                    status = '<span class="badge bg-danger-subtle text-dark border border-danger-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" style="font-size:8pt" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien">Kunjungan Dibatalkan</span>';
+                                }
+                            }
+                            sepNF = false;
+                            if (item.NOSEP) {
+                                valSEP = item.NOSEP.substring(8, 12); // 0624
+                                parts = item.TGLSEP.split("-"); // hasil: ['08', '06', '2024'] || e.g. 2024-01-12 00:00:00
+                                valTGLSEP = parts[1]+parts[0].slice(-2); // '0624'
+                                if (valSEP == valTGLSEP) {
+                                    SEP = '<b class="text-purple-700">'+item.NOSEP+'</b>';
+                                    btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-success" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Detail SEP" onclick="showSEP('`+item.NOMOR+`')">
+                                                    <i class="fas fa-check text-success"></i>
+                                                </button>`;
+                                } else {
+                                    SEP = '<b class="text-danger">Tanggal SEP Tidak Sesuai!</b>';
+                                    btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-danger" id="sep`+item.NOMOR+`" data-bs-toggle="tooltip" data-bs-placement="bottom" title="No.SEP tidak sesuai dengan Tanggal SEP" onclick="showSEP('`+item.NOMOR+`')">
+                                                    <i class="fas fa-check fs-5 text-danger"></i>
+                                                </button>`;
+                                }
+                                sepNF = false;
+                            } else {
+                                SEP = '<b class="text-secondary">SEP Tidak Ditemukan</b>';
+                                btnSEP = `<button type="button" class="btn btn-sm btn-icon btn-link-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP tidak ditemukan">
+                                                <i class="fas fa-times fs-5 text-secondary"></i>
+                                            </button>`;
+                                sepNF = true;
+                            }
+                            if (item.JENISPENJAMIN == 1) {
+                                clrTxPj = 'text-emerald';
+                            } else {
+                                if (item.JENISPENJAMIN == 2) {
+                                    clrTxPj = 'text-blue';
+                                } else {
+                                    clrTxPj = 'text-orange';
+                                }
+                            }
+
+                            const showAntrian =
+                                item.RUANGAN?.startsWith('10201') ||
+                                item.RUANGAN?.startsWith('10207');
+
+                            if (showAntrian && item.POS_ANTRIAN && item.NOMOR_ANTRIAN) {
+                                const nomorAntrian = String(item.NOMOR_ANTRIAN).padStart(3, '0');
+
+                                antrian = `
+                                    <span class="badge bg-light-subtle border border-primary-subtle text-secondary shadow-lg"
+                                        style="font-size:35pt;width:100%;height:auto;cursor:pointer;">
+                                        ${item.POS_ANTRIAN}-${nomorAntrian}
+                                    </span>
+                                `;
+                            } else {
+                                antrian = '';
+                            }
+
+                            content += `<tr class="clickable" data-href="/v2/emr/${item.NOMOR}" style="cursor:pointer;">
+
+                                            <!-- Nomor Antrian -->
+                                            <td class="text-center align-middle kolom-antrian">${antrian}</td>
+
+                                            <!-- Informasi Pasien -->
+                                            <td class="ps-3">
+                                                <h4 class="mb-1">
+                                                    <b data-bs-toggle="tooltip" data-bs-placement="top" title="Nomor Rekam Medis">
+                                                        RM. ${item.NORM}
+                                                    </b>
+                                                    -
+                                                    <b class="text-primary">${item.NAMAPASIEN}</b>
+                                                </h4>
+
+                                                <a class="text-dark" href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" title="Dokter Penanggung Jawab Pasien">
+                                                    <b>DPJP</b> : ${item.NAMADOKTER}
+                                                </a><br>
+
+                                                <a class="fw-medium text-dark" href="javascript:void(0);">
+                                                    Ruangan <b class="text-pink">${item.NAMARUANGAN}</b> <i class="ri-subtract-line"></i>
+                                                    <b ${sepNF?'hidden':''}><b class="text-lavender" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b> <i class="ri-subtract-line"></i></b>
+                                                    <b class="${clrTxPj}">${item.NAMAPENJAMIN}</b>
+                                                </a>
+
+                                                <br>
+
+                                                ${status}
+                                            </td>
+
+                                            <!-- Waktu -->
+                                            <td class="text-start align-middle">
+                                                <button type="button" class="btn btn-link-info btn-sm mb-0"
+                                                    onclick="event.stopPropagation();">
+                                                    Masuk
+                                                    <span class="badge bg-light text-dark ms-2">
+                                                        ${item.MASUK}
+                                                    </span>
+                                                </button>
+
+                                                <br>
+
+                                                <button type="button" class="btn btn-link-danger btn-sm mb-0"
+                                                    onclick="event.stopPropagation();">
+                                                    Keluar
+                                                    <span class="badge bg-light text-dark ms-2">
+                                                        ${item.KELUAR ?? '-'}
+                                                    </span>
+                                                </button>
+                                            </td>
+
+                                        </tr>`;
+                        })
+
+                        $('#tampil-tbody').append(content);
+
+                        // if (rawat == 5 || rawat == 1) {
+                        //     $('.kolom-antrian').prop('hidden',false);
+                        // } else {
+                        //     $('.kolom-antrian').prop('hidden',true);
+                        // }
+                    }
+                    // VANILLA TABLE
+                    tableEMR = $('#vantable').DataTable({
+                        // processing: true,
+                        displayLength: 10,
+                        lengthMenu: [10, 20, 50, 100, 300, 500],
+                        aoColumns : [
+                            { sWidth: '10%' },
+                            { sWidth: '75%' },
+                            { sWidth: '15%' },
+                        ],
+                        order: [[2, 'desc']], // kolom ke-3 descending
+                        columnDefs: [
+                            {
+                                targets: [0, 1],
+                                orderable: false
+                            }
+                        ],
+                    });
+
+                    tableEMR.column(0).visible(rawat == 1 || rawat == 5);
+
+                    // Showing Tooltip
+                    $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                    $('.tooltip').remove();
+                    $('[data-bs-toggle="tooltip"]').tooltip({
+                        trigger : 'hover'
+                    })
+                    // TOMBOL FILTER TAMPILKAN
+                    $(document).on('click', '.clickable', function() {
+                        window.location.href = $(this).data('href');
+                    });
+                }, error: function(xhr, status, error) {
+                    Swal.fire(
+                        'Gagal',
+                        xhr.responseJSON?.message ?? 'Terjadi kesalahan saat pengambilan data',
+                        'error'
+                    );
+                    $('#jumlah_data').empty().text('0 Data');
+                }, complete: function() {
+                    $('#tombol-tampilkan').prop('disabled',false).find('i').removeClass('ri-loader-line ri-spin').addClass('ph-duotone ph-sort-ascending').css('font-size', '');
+                    const cache = JSON.parse(sessionStorage.getItem('emr_filter'));
+
+                    if (cache) {
+                        setTimeout(function () {
+                            window.scrollTo({
+                                top: cache.scroll || 0,
+                                behavior: 'instant'
+                            });
+                        }, 100);
+                    }
+                }
+            })
+        }
+
+        function clearFilter() {
+            // RESET COUNT
+            $('#jumlah_data').text('0 Data');
+
+            // GET TODAY DATE
+            const today = new Date(); // Hari ini
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // bulan dimulai dari 0
+            const dd = String(today.getDate()).padStart(2, '0');
+
+            // CHANGE FILTER VALUE
+            $("#filter_status").val('1');
+            $("#filter_rawat").val('5');
+            $("#filter_penjamin").val('0');
+            $("#filter_ruang").val('5').prop('disabled',true);
+
+            // dpjpChoices.disable();
+            dpjpChoices.removeActiveItems();      // hapus semua yang aktif
+            dpjpChoices.setChoiceByValue('5');    // pilih option kosong (value="5") => Semua Dokter
+
+            // EMPTY TABLE AND HIDE DIV
+            $("#tampil-tbody").empty();
+            $('#show_table').prop('hidden',true);
+        }
+
+    })();
+</script>

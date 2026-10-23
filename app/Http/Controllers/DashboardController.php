@@ -33,6 +33,17 @@ class DashboardController extends Controller
         return view('pages.v2.dashboard.index')->with('list', $data);
     }
 
+    function indexV3() // SIRMED v.3
+    {
+        $yearMonth = Carbon::now()->isoFormat('YYYY-MM-DD');
+
+        $data = [
+            'yearMonth' => $yearMonth,
+        ];
+
+        return view('pages.v3.dashboard.index')->with('list', $data);
+    }
+
     function clearCache()
     {
         \Artisan::call('view:clear');

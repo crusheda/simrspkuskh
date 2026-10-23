@@ -27,6 +27,47 @@ use App\Http\Controllers\Jasper\JasperReportsController;
 use App\Modules\AiKlaim\Controllers\AiKlaimController;
 use App\Http\Controllers\Display\RatingController;
 
+//---------------------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------------
+// NEW SIRMED v3 WITH LIVEWIRE v4
+use App\Livewire\Auth\Login;
+use App\Livewire\Dashboard;
+use App\Livewire\Monitoring;
+use App\Livewire\EMR;
+use App\Livewire\SmartClaim;
+use App\Http\Controllers\Auth\LoginController;
+
+// =====================================================
+// SIRMED v3 - LIVEWIRE
+// =====================================================
+Route::prefix('v3')->group(function () {
+
+    Route::get('/', function () {
+        return redirect()->route('v3.dashboard');
+    });
+
+    // Halaman login Livewire
+    Route::get('/login', Login::class)->middleware('guest')->name('v3.login');
+
+    // Proses autentikasi tetap melalui LoginController
+    Route::post('/login', [LoginController::class, 'login'])->middleware('guest')->name('v3.login.process');
+});
+
+
+// =====================================================
+// SIRMED v3 - DASHBOARD
+// =====================================================
+Route::middleware(['auth'])
+    ->prefix('v3')
+    ->group(function () {
+        Route::get('/dashboard', Dashboard::class)->name('v3.dashboard');
+        Route::get('/monitoring', Monitoring::class)->name('v3.monitoring');
+        Route::get('/emr', EMR::class)->name('v3.emr');
+        Route::get('/smartclaim', SmartClaim::class)->name('v3.smartclaim');
+    });
+//---------------------------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------------------
+
 // STARTING CREATIONS
 // Route::get('/new', function () {
 //     return view('pages.v2.dashboard.index');
