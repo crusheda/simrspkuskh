@@ -1188,30 +1188,28 @@ class RJAnakPrintService implements PrintDataInterface
             // ------------------------------------------------------
             $detailPsikososial[] = 'STATUS PSIKOLOGI';
 
-            $detailPsikososial[] =
-                $centangBoolean($psikososial->TIDAK_ADA_KELAINAN)
-                . ' Tidak ada kelainan';
+            $opsiPsikologi = [
+                'TIDAK_ADA_KELAINAN' => 'Tidak ada kelainan',
+                'MARAH' => 'Marah',
+                'CEMAS' => 'Cemas',
+                'TAKUT' => 'Takut',
+                'SEDIH' => 'Sedih',
+                'BUNUH_DIRI' => 'Kecenderungan bunuh diri',
+            ];
 
-            $detailPsikososial[] =
-                $centangBoolean($psikososial->MARAH)
-                . ' Marah';
+            foreach (array_chunk($opsiPsikologi, 3, true) as $baris) {
+                $pilihanPerBaris = [];
 
-            $detailPsikososial[] =
-                $centangBoolean($psikososial->CEMAS)
-                . ' Cemas';
+                foreach ($baris as $kolom => $label) {
+                    $pilihanPerBaris[] = $centangBoolean(
+                        $psikososial->{$kolom} ?? 0
+                    ) . ' ' . $label;
+                }
 
-            $detailPsikososial[] =
-                $centangBoolean($psikososial->TAKUT)
-                . ' Takut';
+                $detailPsikososial[] = implode('    ', $pilihanPerBaris);
+            }
 
-            $detailPsikososial[] =
-                $centangBoolean($psikososial->SEDIH)
-                . ' Sedih';
-
-            $detailPsikososial[] =
-                $centangBoolean($psikososial->BUNUH_DIRI)
-                . ' Kecenderungan bunuh diri';
-
+            // Pilihan lainnya
             $detailPsikososial[] =
                 $centangPsikososial(
                     !empty($psikososial->LAINNYA) ? 1 : 0,

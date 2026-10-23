@@ -3,11 +3,20 @@
     <h1 class="display-6 mb-4 fs-18"><center>(<a class="text-success">Diisi Oleh Bidan</a>)</center></h1>
     <div class="form-content">
         <div class="row">
-            <div class="col-md-12 mb-3">
-                <div class="form-group">
-                    <label class="form-label fw-bold"> Keluhan Utama </label>
-                    <input class="form-control form-control" type="text" name="anm_ku" id="anm_ku">
-                </div>
+            <div class="col-md-12 mb-2">
+                @include(
+                    'pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.anamnesis',
+                    [
+                        'section' => '#rjo_perawat',
+                        'anak' => 'false',
+                    ]
+                )
+            </div>
+            <div class="col-md-12 mb-1">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_obstetri')
+            </div>
+            <div class="col-md-12">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_menstruasi_kb')
             </div>
             <div class="col-md-12 mb-2">
                 @include(
@@ -15,6 +24,7 @@
                     [
                         'section' => '#rjo_perawat',
                         'page' => 'perawat',
+                        'idRuangan' => $list['dataKunjungan']->IDRUANGAN ?? $list['dataKunjungan']['IDRUANGAN'] ?? null,
                         // 'editableFields' => [
                         //     'tv_keu',
                         //     'tv_gcs_e',
@@ -26,12 +36,6 @@
                     ]
                 )
             </div>
-        </div>
-        <div class="col-md-12 mb-1">
-            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_obstetri')
-        </div>
-        <div class="col-md-12">
-            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.riwayat_menstruasi_kb')
         </div>
         <div class="row">
             <div class="col-md-12 mb-3">
@@ -45,7 +49,7 @@
                 </div>
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_nyeri',
                     [
-                        'section' => '#rio_perawat',
+                        'section' => '#rjo_perawat',
                         'metodeNyeri' => ['nrs', 'vas', 'bps']
                     ]
                 )
@@ -57,7 +61,8 @@
                     </h5>
                 </div>
                 {{-- @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_humpty_dumpty', ['section' => '#rjo_perawat']) --}}
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_skala_morse', ['section' => '#rjo_perawat'])
+                {{-- @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_skala_morse', ['section' => '#rjo_perawat']) --}}
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_resiko_jatuh_gtg', ['section' => '#rjo_perawat'])
             </div>
             <div class="col-md-12 mb-3">
                 <div class="form-group mb-2">
@@ -68,10 +73,21 @@
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.skrining_gizi_must', ['section' => '#rjo_perawat'])
             </div>
             <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.kebutuhan_edukasi',['section' => '#rjo_perawat'])
+            </div>
+            <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.masalah_keperawatan_rj',
                     [
                         'section' => '#rjo_perawat',
                         'form' => 'obsgyn' // pilihan = 'dewasa' / 'anak' / 'neonatus' / 'obsgyn'
+                    ]
+                )
+            </div>
+            <div class="col-md-12 mb-1">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.perencanaan_tindakan',
+                    [
+                        'section' => '#rjo_perawat',
+                        'form' => 'umum' // pilihan = 'umum' / 'psikiatri'
                     ]
                 )
             </div>

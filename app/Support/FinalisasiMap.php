@@ -11,7 +11,7 @@ use App\Services\EMR\Print\GDPrintService;
 use App\Services\EMR\Print\RJDewasaPrintService;
 use App\Services\EMR\Print\RJAnakPrintService;
 use App\Services\EMR\Print\RJNeonatusPrintService;
-use App\Services\EMR\Print\RJJiwaPrintService;
+use App\Services\EMR\Print\RJPsikiatriPrintService;
 use App\Services\EMR\Print\RJGeriatriPrintService;
 use App\Services\EMR\Print\RJObsgynPrintService;
 
@@ -120,19 +120,19 @@ final class FinalisasiMap
         ],
 
         'rjj_dokter' => [
-            'form' => 'pengkajian-rajal-jiwa',
+            'form' => 'pengkajian-rajal-psikiatri',
             'sub' => 'DOKTER',
             'template' => 'print_rajal_jiwa_dokter.docx',
             'title' => 'Pengkajian Awal Rawat Jalan Jiwa - Dokter',
-            'service' => RJJiwaPrintService::class,
+            'service' => RJPsikiatriPrintService::class,
         ],
 
         'rjj_perawat' => [
-            'form' => 'pengkajian-rajal-jiwa',
+            'form' => 'pengkajian-rajal-psikiatri',
             'sub' => 'PERAWAT',
             'template' => 'print_rajal_jiwa_perawat.docx',
             'title' => 'Pengkajian Awal Rawat Jalan Jiwa - Perawat',
-            'service' => RJJiwaPrintService::class,
+            'service' => RJPsikiatriPrintService::class,
         ],
 
         'rjg_dokter' => [

@@ -116,11 +116,11 @@
             </div>
             <div class="col-md-8 mb-2">
                 <div class="input-group input-group-sm">
-                    <input type="number" class="form-control form-control-sm" name="uodema1" id="uodema1">
+                    <input type="text" class="form-control form-control-sm" name="uodema1" id="uodema1">
                     <span class="input-group-text">
                         /
                     </span>
-                    <input type="number" class="form-control form-control-sm" name="uodema2" id="uodema2">
+                    <input type="text" class="form-control form-control-sm" name="uodema2" id="uodema2">
                 </div>
             </div>
         </div>
