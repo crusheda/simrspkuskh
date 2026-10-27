@@ -219,7 +219,6 @@ class RJNeonatusPrintService implements PrintDataInterface
 
         $tandaVital = DB::table('medicalrecord.tanda_vital')
             ->where('KUNJUNGAN', $kunjungan)
-            // ->where('PPA', 1)
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -236,11 +235,11 @@ class RJNeonatusPrintService implements PrintDataInterface
                 'VERBAL',
                 'MOTORIK',
                 'GCS',
+                'KESADARAN_NEONATUS', // kolom ini sebelumnya belum diambil
             ]);
 
         $nutrisi = DB::table('medicalrecord.nutrisi')
             ->where('KUNJUNGAN', $kunjungan)
-            // ->where('PPA', 1)
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -248,6 +247,73 @@ class RJNeonatusPrintService implements PrintDataInterface
                 'TINGGI_BADAN',
                 'INDEX_MASSA_TUBUH',
             ]);
+
+        $angkaAtauStrip = static function ($nilai): string {
+            return $nilai !== null && $nilai !== ''
+                ? (string) (int) round((float) $nilai)
+                : '-';
+        };
+
+        $sistolik = $angkaAtauStrip($tandaVital->SISTOLIK ?? null);
+        $diastolik = $angkaAtauStrip($tandaVital->DISTOLIK ?? null);
+
+        $tekananDarah = $sistolik !== '-' || $diastolik !== '-'
+            ? $sistolik . '/' . $diastolik . ' mmHg'
+            : '-';
+
+        $nadiReguler = match ((string) ($tandaVital->FREKUENSI_NADI_CB ?? '')) {
+            '1' => 'Reguler',
+            '2' => 'Ireguler',
+            default => '',
+        };
+
+        $nadi = $angkaAtauStrip($tandaVital->FREKUENSI_NADI ?? null);
+        $nadi = $nadi !== '-'
+            ? $nadi . ' x/menit' . ($nadiReguler !== '' ? ' (' . $nadiReguler . ')' : '')
+            : '-';
+
+        $napasSimetris = match ((string) ($tandaVital->FREKUENSI_NAFAS_CB ?? '')) {
+            '1' => 'Simetris',
+            '2' => 'Asimetris',
+            default => '',
+        };
+
+        $frekuensiNapas = $angkaAtauStrip(
+            $tandaVital->FREKUENSI_NAFAS ?? null
+        );
+
+        $frekuensiNapas = $frekuensiNapas !== '-'
+            ? $frekuensiNapas . ' x/menit'
+                . ($napasSimetris !== '' ? ' (' . $napasSimetris . ')' : '')
+            : '-';
+
+        /*
+        |--------------------------------------------------------------------------
+        | KESADARAN NEONATUS / GCS
+        |--------------------------------------------------------------------------
+        */
+        $kodeKesadaranNeonatus = $tandaVital->KESADARAN_NEONATUS;
+
+        $labelKesadaranNeonatus = [
+            1 => 'S1 - Mata tertutup, menangis -, gerak -',
+            2 => 'S2 - Mata tertutup, menangis -, gerak +',
+            3 => 'S3 - Mata terbuka, menangis -, gerak -',
+            4 => 'S4 - Mata terbuka, menangis -, gerak +',
+            5 => 'S5 - Mata terbuka, menangis +, gerak +',
+        ];
+
+        if (isset($labelKesadaranNeonatus[$kodeKesadaranNeonatus])) {
+            $kesadaranGcs = $labelKesadaranNeonatus[$kodeKesadaranNeonatus];
+        } else {
+            $eye = (int) ($tandaVital->EYE ?? 0);
+            $verbal = (int) ($tandaVital->VERBAL ?? 0);
+            $motorik = (int) ($tandaVital->MOTORIK ?? 0);
+            $gcs = (int) ($tandaVital->GCS ?? 0);
+
+            $kesadaranGcs = ($eye || $verbal || $motorik || $gcs)
+                ? "E{$eye} V{$verbal} M{$motorik} (GCS {$gcs})"
+                : '-';
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -345,7 +411,7 @@ class RJNeonatusPrintService implements PrintDataInterface
                 . ($kode !== '' ? " [{$kode}]" : '');
         }
 
-                /*
+        /*
         |--------------------------------------------------------------------------
         | TOLAK UKUR DAN TERAPI
         |--------------------------------------------------------------------------
@@ -390,11 +456,6 @@ class RJNeonatusPrintService implements PrintDataInterface
         }
 
         /*
-        |--------------------------------------------------------------------------
-        | TINDAK LANJUT
-        |--------------------------------------------------------------------------
-        */
-                /*
         |--------------------------------------------------------------------------
         | TINDAK LANJUT DAN PERENCANAAN RAWAT INAP
         |--------------------------------------------------------------------------
@@ -524,30 +585,6 @@ class RJNeonatusPrintService implements PrintDataInterface
             }
         }
 
-        $kesadaranGcs = '-';
-
-        if ($tandaVital) {
-            $gcs = (int) $this->value($tandaVital->GCS);
-
-            $kesadaranGcs = $gcs;
-
-            if (
-                $tandaVital->EYE !== null ||
-                $tandaVital->VERBAL !== null ||
-                $tandaVital->MOTORIK !== null
-            ) {
-                $kesadaranGcs .= ' (E'
-                    . ($tandaVital->EYE ?? '-')
-                    . ' V'
-                    . ($tandaVital->VERBAL ?? '-')
-                    . ' M'
-                    . ($tandaVital->MOTORIK ?? '-')
-                    . ')';
-            }
-
-            $kesadaranGcs = trim($kesadaranGcs);
-        }
-
         /*
         |--------------------------------------------------------------------------
         | HASIL PEMERIKSAAN FISIK
@@ -629,7 +666,7 @@ class RJNeonatusPrintService implements PrintDataInterface
             'SATURASI_O2' => $tandaVital && $tandaVital->SATURASI_O2 !== null
                 ? ((int) $tandaVital->SATURASI_O2) . ' %'
                 : '-',
-            'KESADARAN_GCS' => $kesadaranGcs,
+            'KESADARAN_GCS' => $this->placeholder($kesadaranGcs),
 
             'BERAT_BADAN' => $nutrisi && $nutrisi->BERAT_BADAN !== null
                 ? ((int) $nutrisi->BERAT_BADAN) . ' kg'
@@ -1041,7 +1078,6 @@ class RJNeonatusPrintService implements PrintDataInterface
 
         $tandaVital = DB::table('medicalrecord.tanda_vital')
             ->where('KUNJUNGAN', $kunjungan)
-            // ->where('PPA', 1)
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -1058,11 +1094,11 @@ class RJNeonatusPrintService implements PrintDataInterface
                 'VERBAL',
                 'MOTORIK',
                 'GCS',
+                'KESADARAN_NEONATUS', // kolom ini sebelumnya belum diambil
             ]);
 
         $nutrisi = DB::table('medicalrecord.nutrisi')
             ->where('KUNJUNGAN', $kunjungan)
-            // ->where('PPA', 1)
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -1071,10 +1107,72 @@ class RJNeonatusPrintService implements PrintDataInterface
                 'INDEX_MASSA_TUBUH',
             ]);
 
-        $labelPilihan = static function ($nilai, array $opsi): string {
-            $nilai = trim((string) ($nilai ?? ''));
-            return $nilai !== '' ? ($opsi[$nilai] ?? $nilai) : '';
+        $angkaAtauStrip = static function ($nilai): string {
+            return $nilai !== null && $nilai !== ''
+                ? (string) (int) round((float) $nilai)
+                : '-';
         };
+
+        $sistolik = $angkaAtauStrip($tandaVital->SISTOLIK ?? null);
+        $diastolik = $angkaAtauStrip($tandaVital->DISTOLIK ?? null);
+
+        $tekananDarah = $sistolik !== '-' || $diastolik !== '-'
+            ? $sistolik . '/' . $diastolik . ' mmHg'
+            : '-';
+
+        $nadiReguler = match ((string) ($tandaVital->FREKUENSI_NADI_CB ?? '')) {
+            '1' => 'Reguler',
+            '2' => 'Ireguler',
+            default => '',
+        };
+
+        $nadi = $angkaAtauStrip($tandaVital->FREKUENSI_NADI ?? null);
+        $nadi = $nadi !== '-'
+            ? $nadi . ' x/menit' . ($nadiReguler !== '' ? ' (' . $nadiReguler . ')' : '')
+            : '-';
+
+        $napasSimetris = match ((string) ($tandaVital->FREKUENSI_NAFAS_CB ?? '')) {
+            '1' => 'Simetris',
+            '2' => 'Asimetris',
+            default => '',
+        };
+
+        $frekuensiNapas = $angkaAtauStrip(
+            $tandaVital->FREKUENSI_NAFAS ?? null
+        );
+
+        $frekuensiNapas = $frekuensiNapas !== '-'
+            ? $frekuensiNapas . ' x/menit'
+                . ($napasSimetris !== '' ? ' (' . $napasSimetris . ')' : '')
+            : '-';
+
+        /*
+        |--------------------------------------------------------------------------
+        | KESADARAN NEONATUS / GCS
+        |--------------------------------------------------------------------------
+        */
+        $kodeKesadaranNeonatus = $tandaVital->KESADARAN_NEONATUS;
+
+        $labelKesadaranNeonatus = [
+            1 => 'S1 - Mata tertutup, menangis -, gerak -',
+            2 => 'S2 - Mata tertutup, menangis -, gerak +',
+            3 => 'S3 - Mata terbuka, menangis -, gerak -',
+            4 => 'S4 - Mata terbuka, menangis -, gerak +',
+            5 => 'S5 - Mata terbuka, menangis +, gerak +',
+        ];
+
+        if (isset($labelKesadaranNeonatus[$kodeKesadaranNeonatus])) {
+            $kesadaranGcs = $labelKesadaranNeonatus[$kodeKesadaranNeonatus];
+        } else {
+            $eye = (int) ($tandaVital->EYE ?? 0);
+            $verbal = (int) ($tandaVital->VERBAL ?? 0);
+            $motorik = (int) ($tandaVital->MOTORIK ?? 0);
+            $gcs = (int) ($tandaVital->GCS ?? 0);
+
+            $kesadaranGcs = ($eye || $verbal || $motorik || $gcs)
+                ? "E{$eye} V{$verbal} M{$motorik} (GCS {$gcs})"
+                : '-';
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -1117,30 +1215,6 @@ class RJNeonatusPrintService implements PrintDataInterface
                 $frekuensiNapas .=
                     ' (' . ($tandaVital->FREKUENSI_NAFAS_CB == 1 ? 'Simetris' : 'Asimetris') . ')';
             }
-        }
-
-        $kesadaranGcs = '-';
-
-        if ($tandaVital) {
-            $gcs = (int) $this->value($tandaVital->GCS);
-
-            $kesadaranGcs = $gcs;
-
-            if (
-                $tandaVital->EYE !== null ||
-                $tandaVital->VERBAL !== null ||
-                $tandaVital->MOTORIK !== null
-            ) {
-                $kesadaranGcs .= ' (E'
-                    . ($tandaVital->EYE ?? '-')
-                    . ' V'
-                    . ($tandaVital->VERBAL ?? '-')
-                    . ' M'
-                    . ($tandaVital->MOTORIK ?? '-')
-                    . ')';
-            }
-
-            $kesadaranGcs = trim($kesadaranGcs);
         }
 
         // ==========================================================
@@ -2133,7 +2207,7 @@ class RJNeonatusPrintService implements PrintDataInterface
             'SATURASI_O2' => $tandaVital && $tandaVital->SATURASI_O2 !== null
                 ? ((int) $tandaVital->SATURASI_O2) . ' %'
                 : '-',
-            'KESADARAN_GCS' => $kesadaranGcs,
+            'KESADARAN_GCS' => $this->placeholder($kesadaranGcs),
 
             'BERAT_BADAN' => $nutrisi && $nutrisi->BERAT_BADAN !== null
                 ? ((int) $nutrisi->BERAT_BADAN) . ' kg'

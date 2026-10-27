@@ -52,6 +52,277 @@ class RINeonatusPrintService implements PrintDataInterface
 
         /*
         |--------------------------------------------------------------------------
+        | STATUS OBSTETRI DAN NEONATUS
+        |--------------------------------------------------------------------------
+        */
+        $statusObstetri = DB::table('medicalrecord.sirmed_status_obstetri')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first();
+
+        $statusNeonatus = DB::table('medicalrecord.sirmed_status_neonatus')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first();
+
+        $centangPilihan = static function ($nilai, array $pilihan): array {
+            $hasil = [];
+
+            foreach ($pilihan as $value => $label) {
+                $hasil[] = ((string) ($nilai ?? '') === (string) $value ? '☑' : '☐')
+                    . ' ' . $label;
+            }
+
+            return $hasil;
+        };
+
+        $nilaiInteger = function ($nilai): string {
+            $nilai = $this->value($nilai);
+
+            return $nilai !== '' && is_numeric($nilai)
+                ? (string) (int) round((float) $nilai)
+                : $nilai;
+        };
+
+        $centangSatuBaris = static function ($nilai, array $pilihan): string {
+            $hasil = [];
+
+            foreach ($pilihan as $value => $label) {
+                $hasil[] = ((string) ($nilai ?? '') === (string) $value ? '☑' : '☐')
+                    . ' ' . $label;
+            }
+
+            return implode('   ', $hasil);
+        };
+
+        $detailStatusObstetri = [];
+        $detailStatusNeonatus = [];
+
+        if ($statusObstetri || $statusNeonatus) {
+            $detailStatusObstetri[] =
+                '☑ Bayi lahir di RS PKU Muhammadiyah Sukoharjo';
+
+            if ($statusObstetri) {
+                $detailStatusObstetri[] = '';
+
+                foreach ([
+                    'Umur ibu' => $statusObstetri->UMUR_IBU ?? null,
+                    'G' => $statusObstetri->G ?? null,
+                    'P' => $statusObstetri->P ?? null,
+                    'A' => $statusObstetri->A ?? null,
+                    'Umur kehamilan (minggu)' =>
+                        $statusObstetri->UMUR_KEHAMILAN ?? null,
+                ] as $label => $nilai) {
+                    $nilai = $this->value($nilai);
+                    if ($nilai !== '') {
+                        $detailStatusObstetri[] = "{$label}: {$nilai}";
+                    }
+                }
+
+                $detailStatusObstetri[] = 'Komplikasi: '
+                    . $centangSatuBaris($statusObstetri->KOMPLIKASI ?? null, [
+                        '0' => 'Tidak ada',
+                        '1' => 'Ada',
+                    ]);
+
+                $komplikasiKet = $this->value(
+                    $statusObstetri->KOMPLIKASI_KET ?? null
+                );
+
+                if ($komplikasiKet !== '') {
+                    $detailStatusObstetri[] = 'Keterangan komplikasi: ' . $komplikasiKet;
+                }
+
+                $golonganDarahAyah =
+                        (int) ($statusObstetri->GOL_AYAH_TIDAK ?? 0) === 1
+                            ? 'Tidak diketahui'
+                            : $this->value($statusObstetri->GOL_DARAH_AYAH ?? null);
+
+                foreach ([
+                    'Golongan darah ibu' =>
+                        $statusObstetri->GOL_DARAH_IBU ?? null,
+                    'Rhesus ibu' => $statusObstetri->RH_IBU ?? null,
+                    'Golongan darah ayah' => $golonganDarahAyah ?? null,
+                    'Rhesus ayah' => $statusObstetri->RH_AYAH ?? null,
+                    'Ketuban pecah jam' =>
+                        $statusObstetri->KK_PECAH_JAM ?? null,
+                ] as $label => $nilai) {
+                    $nilai = $this->value($nilai);
+                    if ($nilai !== '') {
+                        $detailStatusObstetri[] = "{$label}: {$nilai}";
+                    }
+                }
+            }
+
+            if ($statusNeonatus) {
+                $detailStatusNeonatus[] = '';
+
+                foreach ([
+                    'Tanggal lahir' => $statusNeonatus->TANGGAL_LAHIR ?? null,
+                    'Jam lahir' => $statusNeonatus->JAM_LAHIR ?? null,
+                ] as $label => $nilai) {
+                    $nilai = $this->value($nilai);
+                    if ($nilai !== '') {
+                        $detailStatusNeonatus[] = "{$label}: {$nilai}";
+                    }
+                }
+
+                $detailStatusNeonatus[] = 'Jenis kelamin: '
+                    . $centangSatuBaris($statusNeonatus->JENIS_KELAMIN ?? null, [
+                        'L' => 'Laki-laki',
+                        'P' => 'Perempuan',
+                    ]);
+
+                foreach ([
+                    'Berat badan lahir (gram)' => $statusNeonatus->BB_LAHIR ?? null,
+                    'Panjang badan lahir' => $nilaiInteger($statusNeonatus->PB_LAHIR) ?? null,
+                    'Lingkar kepala' => $nilaiInteger($statusNeonatus->LK) ?? null,
+                    'Lingkar dada' => $nilaiInteger($statusNeonatus->LD) ?? null,
+                    'Lingkar perut' => $nilaiInteger($statusNeonatus->LP) ?? null,
+                    'LILA' => $nilaiInteger($statusNeonatus->LILA) ?? null,
+                    'Resusitasi intubasi' =>
+                        $statusNeonatus->RESUSITASI_INTUBASI ?? null,
+                    'Resusitasi pompa' =>
+                        $statusNeonatus->RESUSITASI_POMPA ?? null,
+                    'Berulang' => $statusNeonatus->BERULANG ?? null,
+                    'Indikasi' => $statusNeonatus->INDIKASI ?? null,
+                ] as $label => $nilai) {
+                    $nilai = $this->value($nilai);
+                    if ($nilai !== '') {
+                        $detailStatusNeonatus[] = "{$label}: {$nilai}";
+                    }
+                }
+
+                $detailStatusNeonatus[] = 'Jenis partus: '
+                    . $centangSatuBaris($statusNeonatus->JENIS_PARTUS ?? null, [
+                        'SC' => 'SC',
+                        'V' => 'Spontan',
+                        'S' => 'Lainnya',
+                    ]);
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | PENILAIAN AWAL BAYI BARU LAHIR
+        |--------------------------------------------------------------------------
+        */
+        $dataAwalBayi = DB::table('medicalrecord.sirmed_penilaian_awal_bayi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->first();
+
+        $angkaAtauStrip = static function ($nilai): string {
+            return $nilai !== null && $nilai !== ''
+                ? (string) (int) round((float) $nilai)
+                : '-';
+        };
+
+        $centangNilai = static function ($nilai, $pilihan): string {
+            return (string) ($nilai ?? '') === (string) $pilihan ? '☑' : '☐';
+        };
+
+        $dataApgar = [];
+
+        if ($dataAwalBayi) {
+            foreach ([1, 5, 10] as $menit) {
+                $prefix = "APGAR_{$menit}_MENIT_";
+
+                foreach ([
+                    'DENYUT' => 'DENYUT',
+                    'PERNAFASAN' => 'PERNAFASAN',
+                    'TONUS' => 'TONUS',
+                    'RANGSANG' => 'RANGSANG',
+                    'WARNA' => 'WARNA',
+                ] as $key => $kolom) {
+                    $dataApgar["APGAR_{$menit}_{$key}"] =
+                        $angkaAtauStrip($dataAwalBayi->{$prefix . $kolom} ?? null);
+                }
+
+                $dataApgar["APGAR_TOTAL_{$menit}"] =
+                    $angkaAtauStrip(
+                        $dataAwalBayi->{"APGAR_TOTAL_{$menit}_MENIT"} ?? null
+                    );
+            }
+
+            $statusBayi = (string) ($dataAwalBayi->APGAR_STATUS_BAYI ?? '');
+
+            $dataApgar['BAYI_BUGAR'] =
+                $centangNilai($statusBayi, 'bugar') . ' Bayi Bugar';
+
+            $dataApgar['BAYI_TIDAK_BUGAR'] =
+                $centangNilai($statusBayi, 'tidak_bugar') . ' Bayi Tidak Bugar';
+
+            /*
+            * Hasil resusitasi hanya diisi bila status bayi tidak bugar.
+            * Saat bayi bugar, seluruh isi blok ini dikosongkan.
+            */
+            $detailResusitasi = [];
+
+            if ($statusBayi === 'tidak_bugar') {
+                $resusitasi = (string) ($dataAwalBayi->APGAR_RESUSITASI ?? '');
+
+                $detailResusitasi[] = 'Resusitasi: '
+                    . $centangNilai($resusitasi, 'dilakukan') . ' Dilakukan   '
+                    . $centangNilai($resusitasi, 'tidak_dilakukan') . ' Tidak dilakukan';
+
+                foreach ([
+                    'APGAR_LANGKAH_AWAL' => [
+                        'label' => 'Langkah awal',
+                        'detik' => 'APGAR_LANGKAH_AWAL_DETIK',
+                    ],
+                    'APGAR_VTP' => [
+                        'label' => 'VTP',
+                        'detik' => 'APGAR_VTP_DETIK',
+                    ],
+                    'APGAR_KOMPRESI_DADA' => [
+                        'label' => 'Kompresi dada',
+                        'detik' => 'APGAR_KOMPRESI_DADA_DETIK',
+                    ],
+                    'APGAR_ETT' => [
+                        'label' => 'ETT',
+                        'detik' => null,
+                    ],
+                ] as $kolom => $item) {
+                    $dipilih = (int) ($dataAwalBayi->{$kolom} ?? 0) === 1;
+                    $baris = $centangNilai($dipilih ? 1 : 0, 1)
+                        . ' ' . $item['label'];
+
+                    if ($item['detik']) {
+                        $detik = $angkaAtauStrip(
+                            $dataAwalBayi->{$item['detik']} ?? null
+                        );
+
+                        if ($detik !== '-') {
+                            $baris .= ' selama ' . $detik . ' detik';
+                        }
+                    }
+
+                    $detailResusitasi[] = $baris;
+                }
+
+                $dihentikan =
+                    (int) ($dataAwalBayi->APGAR_RESUSITASI_DIHENTIKAN ?? 0) === 1;
+
+                $barisBerhenti = $centangNilai($dihentikan ? 1 : 0, 1)
+                    . ' Resusitasi dihentikan';
+
+                $menitBerhenti = $angkaAtauStrip(
+                    $dataAwalBayi->APGAR_RESUSITASI_DIHENTIKAN_MENIT ?? null
+                );
+
+                if ($menitBerhenti !== '-') {
+                    $barisBerhenti .= ' pada menit ke-' . $menitBerhenti;
+                }
+
+                $detailResusitasi[] = $barisBerhenti;
+            }
+
+            $dataApgar['RESUSITASI_DETAIL'] = implode("\n", $detailResusitasi);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
         | ANAMNESIS DIPEROLEH
         |--------------------------------------------------------------------------
         */
@@ -171,7 +442,6 @@ class RINeonatusPrintService implements PrintDataInterface
 
         $tandaVital = DB::table('medicalrecord.tanda_vital')
             ->where('KUNJUNGAN', $kunjungan)
-            // ->where('PPA', 1)
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -188,11 +458,11 @@ class RINeonatusPrintService implements PrintDataInterface
                 'VERBAL',
                 'MOTORIK',
                 'GCS',
+                'KESADARAN_NEONATUS', // kolom ini sebelumnya belum diambil
             ]);
 
         $nutrisi = DB::table('medicalrecord.nutrisi')
             ->where('KUNJUNGAN', $kunjungan)
-            // ->where('PPA', 1)
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -200,6 +470,73 @@ class RINeonatusPrintService implements PrintDataInterface
                 'TINGGI_BADAN',
                 'INDEX_MASSA_TUBUH',
             ]);
+
+        $angkaAtauStrip = static function ($nilai): string {
+            return $nilai !== null && $nilai !== ''
+                ? (string) (int) round((float) $nilai)
+                : '-';
+        };
+
+        $sistolik = $angkaAtauStrip($tandaVital->SISTOLIK ?? null);
+        $diastolik = $angkaAtauStrip($tandaVital->DISTOLIK ?? null);
+
+        $tekananDarah = $sistolik !== '-' || $diastolik !== '-'
+            ? $sistolik . '/' . $diastolik . ' mmHg'
+            : '-';
+
+        $nadiReguler = match ((string) ($tandaVital->FREKUENSI_NADI_CB ?? '')) {
+            '1' => 'Reguler',
+            '2' => 'Ireguler',
+            default => '',
+        };
+
+        $nadi = $angkaAtauStrip($tandaVital->FREKUENSI_NADI ?? null);
+        $nadi = $nadi !== '-'
+            ? $nadi . ' x/menit' . ($nadiReguler !== '' ? ' (' . $nadiReguler . ')' : '')
+            : '-';
+
+        $napasSimetris = match ((string) ($tandaVital->FREKUENSI_NAFAS_CB ?? '')) {
+            '1' => 'Simetris',
+            '2' => 'Asimetris',
+            default => '',
+        };
+
+        $frekuensiNapas = $angkaAtauStrip(
+            $tandaVital->FREKUENSI_NAFAS ?? null
+        );
+
+        $frekuensiNapas = $frekuensiNapas !== '-'
+            ? $frekuensiNapas . ' x/menit'
+                . ($napasSimetris !== '' ? ' (' . $napasSimetris . ')' : '')
+            : '-';
+
+        /*
+        |--------------------------------------------------------------------------
+        | KESADARAN NEONATUS / GCS
+        |--------------------------------------------------------------------------
+        */
+        $kodeKesadaranNeonatus = $tandaVital->KESADARAN_NEONATUS;
+
+        $labelKesadaranNeonatus = [
+            1 => 'S1 - Mata tertutup, menangis -, gerak -',
+            2 => 'S2 - Mata tertutup, menangis -, gerak +',
+            3 => 'S3 - Mata terbuka, menangis -, gerak -',
+            4 => 'S4 - Mata terbuka, menangis -, gerak +',
+            5 => 'S5 - Mata terbuka, menangis +, gerak +',
+        ];
+
+        if (isset($labelKesadaranNeonatus[$kodeKesadaranNeonatus])) {
+            $kesadaranGcs = $labelKesadaranNeonatus[$kodeKesadaranNeonatus];
+        } else {
+            $eye = (int) ($tandaVital->EYE ?? 0);
+            $verbal = (int) ($tandaVital->VERBAL ?? 0);
+            $motorik = (int) ($tandaVital->MOTORIK ?? 0);
+            $gcs = (int) ($tandaVital->GCS ?? 0);
+
+            $kesadaranGcs = ($eye || $verbal || $motorik || $gcs)
+                ? "E{$eye} V{$verbal} M{$motorik} (GCS {$gcs})"
+                : '-';
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -396,30 +733,6 @@ class RINeonatusPrintService implements PrintDataInterface
             }
         }
 
-        $kesadaranGcs = '-';
-
-        if ($tandaVital) {
-            $gcs = (int) $this->value($tandaVital->GCS);
-
-            $kesadaranGcs = $gcs;
-
-            if (
-                $tandaVital->EYE !== null ||
-                $tandaVital->VERBAL !== null ||
-                $tandaVital->MOTORIK !== null
-            ) {
-                $kesadaranGcs .= ' (E'
-                    . ($tandaVital->EYE ?? '-')
-                    . ' V'
-                    . ($tandaVital->VERBAL ?? '-')
-                    . ' M'
-                    . ($tandaVital->MOTORIK ?? '-')
-                    . ')';
-            }
-
-            $kesadaranGcs = trim($kesadaranGcs);
-        }
-
         /*
         |--------------------------------------------------------------------------
         | HASIL PEMERIKSAAN FISIK
@@ -454,6 +767,45 @@ class RINeonatusPrintService implements PrintDataInterface
         */
 
         return [
+
+            'STATUS_OBSTETRI' => $this->placeholder(
+                implode("\n", $detailStatusObstetri)
+            ),
+
+            'STATUS_NEONATUS' => $this->placeholder(
+                implode("\n", $detailStatusNeonatus)
+            ),
+
+            'BAYI_BUGAR' => $this->placeholder($dataApgar['BAYI_BUGAR'] ?? ''),
+            'BAYI_TIDAK_BUGAR' => $this->placeholder($dataApgar['BAYI_TIDAK_BUGAR'] ?? ''),
+
+            'APGAR_1_DENYUT' => $this->placeholder($dataApgar['APGAR_1_DENYUT'] ?? '-'),
+            'APGAR_5_DENYUT' => $this->placeholder($dataApgar['APGAR_5_DENYUT'] ?? '-'),
+            'APGAR_10_DENYUT' => $this->placeholder($dataApgar['APGAR_10_DENYUT'] ?? '-'),
+
+            'APGAR_1_PERNAFASAN' => $this->placeholder($dataApgar['APGAR_1_PERNAFASAN'] ?? '-'),
+            'APGAR_5_PERNAFASAN' => $this->placeholder($dataApgar['APGAR_5_PERNAFASAN'] ?? '-'),
+            'APGAR_10_PERNAFASAN' => $this->placeholder($dataApgar['APGAR_10_PERNAFASAN'] ?? '-'),
+
+            'APGAR_1_TONUS' => $this->placeholder($dataApgar['APGAR_1_TONUS'] ?? '-'),
+            'APGAR_5_TONUS' => $this->placeholder($dataApgar['APGAR_5_TONUS'] ?? '-'),
+            'APGAR_10_TONUS' => $this->placeholder($dataApgar['APGAR_10_TONUS'] ?? '-'),
+
+            'APGAR_1_RANGSANG' => $this->placeholder($dataApgar['APGAR_1_RANGSANG'] ?? '-'),
+            'APGAR_5_RANGSANG' => $this->placeholder($dataApgar['APGAR_5_RANGSANG'] ?? '-'),
+            'APGAR_10_RANGSANG' => $this->placeholder($dataApgar['APGAR_10_RANGSANG'] ?? '-'),
+
+            'APGAR_1_WARNA' => $this->placeholder($dataApgar['APGAR_1_WARNA'] ?? '-'),
+            'APGAR_5_WARNA' => $this->placeholder($dataApgar['APGAR_5_WARNA'] ?? '-'),
+            'APGAR_10_WARNA' => $this->placeholder($dataApgar['APGAR_10_WARNA'] ?? '-'),
+
+            'APGAR_TOTAL_1' => $this->placeholder($dataApgar['APGAR_TOTAL_1'] ?? '-'),
+            'APGAR_TOTAL_5' => $this->placeholder($dataApgar['APGAR_TOTAL_5'] ?? '-'),
+            'APGAR_TOTAL_10' => $this->placeholder($dataApgar['APGAR_TOTAL_10'] ?? '-'),
+
+            'RESUSITASI_DETAIL' => $this->placeholder(
+                $dataApgar['RESUSITASI_DETAIL'] ?? ''
+            ),
             /*
             | ANAMNESIS
             */
@@ -479,26 +831,32 @@ class RINeonatusPrintService implements PrintDataInterface
             'KEADAAN_UMUM' => $this->placeholder(
                 $tandaVital->KEADAAN_UMUM ?? null
             ),
-            'TEKANAN_DARAH' => $tekananDarah,
-            'NADI' => $nadi,
-            'FREKUENSI_NAPAS' => $frekuensiNapas,
+
+            'TEKANAN_DARAH' => $this->placeholder($tekananDarah),
+            'NADI' => $this->placeholder($nadi),
+            'FREKUENSI_NAPAS' => $this->placeholder($frekuensiNapas),
+
             'SUHU' => $tandaVital && $tandaVital->SUHU !== null
                 ? $tandaVital->SUHU . ' °C'
                 : '-',
-            'SATURASI_O2' => $tandaVital && $tandaVital->SATURASI_O2 !== null
-                ? ((int) $tandaVital->SATURASI_O2) . ' %'
+
+            'SATURASI_O2' => $tandaVital
+                ? $angkaAtauStrip($tandaVital->SATURASI_O2 ?? null) . ' %'
                 : '-',
-            'KESADARAN_GCS' => $kesadaranGcs,
+
+            'KESADARAN_GCS' => $this->placeholder($kesadaranGcs),
 
             'BERAT_BADAN' => $nutrisi && $nutrisi->BERAT_BADAN !== null
-                ? ((int) $nutrisi->BERAT_BADAN) . ' kg'
+                ? $angkaAtauStrip($nutrisi->BERAT_BADAN) . ' kg'
                 : '-',
+
             'TINGGI_BADAN' => $nutrisi && $nutrisi->TINGGI_BADAN !== null
-                ? ((int) $nutrisi->TINGGI_BADAN) . ' cm'
+                ? $angkaAtauStrip($nutrisi->TINGGI_BADAN) . ' cm'
                 : '-',
-            'IMT' => $this->placeholder(
-                $nutrisi->INDEX_MASSA_TUBUH ?? null
-            ),
+
+            'IMT' => $nutrisi && $nutrisi->INDEX_MASSA_TUBUH !== null
+                ? $angkaAtauStrip($nutrisi->INDEX_MASSA_TUBUH)
+                : '-',
 
             /*
             | PEMERIKSAAN FISIK
