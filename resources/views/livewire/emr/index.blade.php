@@ -1,23 +1,7 @@
-<div class="container-fluid py-3">
+@section('title', 'Medical Record')
+@section('page-title', 'Data Kunjungan Pasien')
 
-    <!-- [ breadcrumb ] start -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb px-3 py-2 bg-primary-subtle rounded-3">
-            <li class="breadcrumb-item">
-                <a class="link-primary" href="{{ route('v3.dashboard') }}">
-                    <i class="fi fi-rr-home"></i>
-                </a>
-            </li>
-            <li class="breadcrumb-item"><a class="link-primary fw-medium text-decoration-none" href="javascript:void(0);">Digital</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Medical Record</li>
-        </ol>
-
-        <ol class="breadcrumb mb-0">
-        </ol>
-    </nav>
-    <!-- [ breadcrumb ] end -->
-
-    <!-- [ main content ] start -->
+<section>
     <div class="row gy-4">
         <div class="col-xl-12">
             <div class="card">
@@ -74,8 +58,10 @@
                         </div>
                         <div class="col-md-5 mb-3">
                             <div class="form-group">
-                                <label class="form-label">DPJP</label>
-                                <select class="form-select" id="filter_dpjp" disabled><option value="5" selected>...</option></select>
+                                <label class="form-label" for="filter_dpjp">DPJP</label>
+                                <select class="form-select" id="filter_dpjp" disabled>
+                                    <option value="5" selected>Memuat dokter...</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
@@ -118,14 +104,11 @@
             </div> --}}
         </div>
     </div>
-    <!-- [ main content ] end -->
-
-</div>
+</section>
 
 <script>
     (() => {
         // Variabel di-reset setiap kali script EMR dieksekusi
-        let dpjpChoices = null;
         let tableEMR = null;
 
         window.EMRPage = {
@@ -185,12 +168,6 @@
                 }
             );
 
-            // SELECT CHOICES
-            dpjpChoices = new Choices('#filter_dpjp', {
-                shouldSort: false,
-                allowHTML: true
-            });
-
             // // ENTER TAMPILKAN
             // $('#filter_rawat, #filter_bulan, #filter_dpjp').on('keydown', function (e) {
             //     if (e.key === 'Enter') {
@@ -202,6 +179,7 @@
             // filter();
             // alert(@json(auth()->user()->roles->first()?->name));
             // alert(@json(auth()->user()->roles->pluck('name')));
+            initSelectDPJP();
             getRuangan();
             getPenjamin();
 
@@ -209,7 +187,35 @@
             $('#tombol-tampilkan').prop('disabled', false);
         });
 
-        // function-function
+        /**
+         * SELECT2 DPJP
+         * Select biasa dengan fitur pencarian.
+         */
+        function initSelectDPJP() {
+            const $dpjp = $('#filter_dpjp');
+
+            // Hindari inisialisasi ganda saat navigasi Livewire
+            if ($dpjp.hasClass('select2-hidden-accessible')) {
+                $dpjp.select2('destroy');
+            }
+
+            $dpjp.select2({
+                width: '100%',
+                placeholder: 'Pilih Dokter',
+                allowClear: false,
+                closeOnSelect: true,
+                minimumResultsForSearch: 0,
+                language: {
+                    noResults: function () {
+                        return 'Dokter tidak ditemukan';
+                    },
+                    searching: function () {
+                        return 'Mencari dokter...';
+                    }
+                }
+            });
+        }
+
         function getRuangan() {
             idRuang = $('#filter_rawat').val();
             if (idRuang == 5) {
@@ -279,47 +285,86 @@
         }
 
         function getDPJP() {
-            let idRuangPerawatan = $('#filter_ruang').val();
+            const idRuangPerawatan = $('#filter_ruang').val();
+            const $dpjp = $('#filter_dpjp');
+
+            // Reset pilihan dokter
+            $dpjp
+                .prop('disabled', true)
+                .empty()
+                .append(new Option('Memuat dokter...', '5', true, true))
+                .trigger('change.select2');
+
             $.ajax({
                 url: `/api/v2/emr/ruangan/${idRuangPerawatan}/dpjp`,
                 type: 'GET',
                 dataType: 'json',
-                success: function(res) {
-                    dpjpChoices.enable();
-                    dpjpChoices.removeActiveItems();
-                    dpjpChoices.clearChoices();
-                    dpjpChoices.setChoices([
-                        { value: '5', label: 'Semua Dokter', selected: true }
-                    ], 'value', 'label', false);
 
-                    res.show.forEach(pouch => {
-                        dpjpChoices.setChoices([
-                            {
-                                value: pouch.NIP,
-                                label: `${pouch.NAMADOKTER} (${pouch.DESKRIPSI})`
-                            }
-                        ], 'value', 'label', false);
-                    });
+                success: function (res) {
+                    const pilihanDokter = [
+                        new Option('Semua Dokter', '5', false, false)
+                    ];
 
-                    if (idRuangPerawatan == 5 && res.user) {
-                        dpjpChoices.setChoiceByValue(res.user);
+                    if (Array.isArray(res.show)) {
+                        res.show.forEach(function (dokter) {
+                            pilihanDokter.push(
+                                new Option(
+                                    `${dokter.NAMADOKTER} (${dokter.DESKRIPSI})`,
+                                    String(dokter.NIP),
+                                    false,
+                                    false
+                                )
+                            );
+                        });
                     }
 
+                    // Ganti seluruh pilihan dokter
+                    $dpjp.empty().append(pilihanDokter);
+
+                    // Default: semua dokter
+                    let dokterTerpilih = '5';
+
+                    // Jika semua ruangan, pilih DPJP user jika tersedia
+                    if (
+                        String(idRuangPerawatan) === '5' &&
+                        res.user !== null &&
+                        res.user !== undefined
+                    ) {
+                        const userDPJP = String(res.user);
+
+                        const tersedia = $dpjp.find('option').filter(function () {
+                            return this.value === userDPJP;
+                        }).length > 0;
+
+                        if (tersedia) {
+                            dokterTerpilih = userDPJP;
+                        }
+                    }
+
+                    $dpjp
+                        .val(dokterTerpilih)
+                        .prop('disabled', false)
+                        .trigger('change.select2');
+
+                    // Perbarui tabel menggunakan filter yang terpilih
                     filter();
                 },
+
                 error: function (xhr) {
+                    $dpjp
+                        .empty()
+                        .append(new Option('Tidak Ada Dokter', '0', true, true))
+                        .prop('disabled', true)
+                        .trigger('change.select2');
+
                     Swal.fire(
                         'Gagal',
-                        xhr.responseJSON?.message ?? 'Terjadi kesalahan / Gagal memanggil Function!',
+                        xhr.responseJSON?.message ??
+                            'Terjadi kesalahan saat mengambil data dokter.',
                         'error'
                     );
-                    dpjpChoices.disable();
-                    dpjpChoices.clearChoices();
-                    dpjpChoices.setChoices([
-                        { value: '0', label: 'Tidak Ada Dokter', selected: true }
-                    ], 'value', 'label', false);
-                },
-            })
+                }
+            });
         }
 
         function filter() {
@@ -546,28 +591,23 @@
         }
 
         function clearFilter() {
-            // RESET COUNT
             $('#jumlah_data').text('0 Data');
 
-            // GET TODAY DATE
-            const today = new Date(); // Hari ini
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0'); // bulan dimulai dari 0
-            const dd = String(today.getDate()).padStart(2, '0');
+            $('#filter_status').val('1');
+            $('#filter_rawat').val('5');
+            $('#filter_penjamin').val('0');
+            $('#filter_ruang').val('5').prop('disabled', true);
 
-            // CHANGE FILTER VALUE
-            $("#filter_status").val('1');
-            $("#filter_rawat").val('5');
-            $("#filter_penjamin").val('0');
-            $("#filter_ruang").val('5').prop('disabled',true);
+            $('#filter_dpjp')
+                .val('5')
+                .trigger('change');
 
-            // dpjpChoices.disable();
-            dpjpChoices.removeActiveItems();      // hapus semua yang aktif
-            dpjpChoices.setChoiceByValue('5');    // pilih option kosong (value="5") => Semua Dokter
+            // Kosongkan tabel dan sembunyikan area tabel
+            $('#tampil-tbody').empty();
+            $('#show_table').prop('hidden', true);
 
-            // EMPTY TABLE AND HIDE DIV
-            $("#tampil-tbody").empty();
-            $('#show_table').prop('hidden',true);
+            // Muat ulang daftar dokter sesuai kondisi semua ruangan
+            getDPJP();
         }
 
     })();

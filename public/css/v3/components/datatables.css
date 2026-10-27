@@ -1,0 +1,690 @@
+
+/* =========================================================
+   SIRMED V3 — GLOBAL DATATABLES
+   Bootstrap 5 | DataTables 1.x / 2.x
+========================================================= */
+
+:root {
+    --dt-border: var(--bs-border-color, #e5e7eb);
+    --dt-bg: var(--bs-body-bg, #fff);
+    --dt-color: var(--bs-body-color, #212529);
+    --dt-muted: var(--bs-secondary-color, #6c757d);
+    --dt-head-bg: var(--bs-tertiary-bg, #f8fafc);
+    --dt-hover-bg: rgba(13, 110, 253, .045);
+    --dt-radius: 9px;
+}
+
+/* =========================================================
+   1. TABLE WRAPPER
+========================================================= */
+
+.dataTables_wrapper,
+.dt-container {
+    width: 100%;
+    min-width: 0;
+    color: var(--dt-color);
+    font-size: .875rem;
+}
+
+.dataTables_wrapper .row,
+.dt-container .row {
+    --bs-gutter-y: .75rem;
+}
+
+/* Wrapper tidak boleh memotong dropdown atau tooltip */
+.dataTables_wrapper,
+.dt-container {
+    overflow: visible;
+}
+
+/* =========================================================
+   2. TABLE BASE
+========================================================= */
+
+table.dataTable,
+table.dataTable.table {
+    width: 100% !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0;
+    color: var(--dt-color);
+    background: var(--dt-bg);
+    vertical-align: middle;
+}
+
+table.dataTable > thead > tr > th,
+table.dataTable > thead > tr > td {
+    padding: 13px 14px;
+    color: var(--dt-muted);
+    background: var(--dt-head-bg);
+    border-bottom: 1px solid var(--dt-border);
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .035em;
+    vertical-align: middle;
+}
+
+table.dataTable > thead > tr > th:first-child {
+    border-top-left-radius: var(--dt-radius);
+}
+
+table.dataTable > thead > tr > th:last-child {
+    border-top-right-radius: var(--dt-radius);
+}
+
+table.dataTable > tbody > tr > td {
+    padding: 13px 14px;
+    color: var(--dt-color);
+    background: var(--dt-bg);
+    border-bottom: 1px solid var(--dt-border);
+    vertical-align: middle;
+    transition: background-color .15s ease;
+}
+
+table.dataTable > tbody > tr:last-child > td {
+    border-bottom: 0;
+}
+
+/* Hindari warna Bootstrap striped mengalahkan warna dasar */
+table.dataTable.table-striped > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-bg-type: transparent;
+    background: var(--dt-bg);
+    color: var(--dt-color);
+}
+
+/* =========================================================
+   3. ROW HOVER & SELECTED
+========================================================= */
+
+table.dataTable.table-hover > tbody > tr:hover > *,
+table.dataTable > tbody > tr:hover > * {
+    background: var(--dt-hover-bg);
+    color: var(--dt-color);
+}
+
+table.dataTable > tbody > tr.selected > *,
+table.dataTable > tbody > tr > *.selected {
+    background: rgba(13, 110, 253, .09);
+    color: var(--dt-color);
+}
+
+/* Untuk baris yang memang dapat diklik */
+table.dataTable > tbody > tr.clickable {
+    cursor: pointer;
+}
+
+/* =========================================================
+   4. SORTING HEADER
+========================================================= */
+
+table.dataTable > thead > tr > th.dt-orderable-asc,
+table.dataTable > thead > tr > th.dt-orderable-desc,
+table.dataTable > thead > tr > th.sorting,
+table.dataTable > thead > tr > th.sorting_asc,
+table.dataTable > thead > tr > th.sorting_desc {
+    cursor: pointer;
+}
+
+table.dataTable > thead > tr > th.dt-orderable-asc:hover,
+table.dataTable > thead > tr > th.dt-orderable-desc:hover,
+table.dataTable > thead > tr > th.sorting:hover,
+table.dataTable > thead > tr > th.sorting_asc:hover,
+table.dataTable > thead > tr > th.sorting_desc:hover {
+    color: var(--bs-primary, #0d6efd);
+}
+
+/* Ikon sorting DataTables 1.x */
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc,
+table.dataTable thead .sorting_desc,
+table.dataTable thead .sorting_asc_disabled,
+table.dataTable thead .sorting_desc_disabled {
+    background-position: right 8px center;
+}
+
+/* =========================================================
+   5. SEARCH & LENGTH SELECT
+========================================================= */
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dt-container .dt-length,
+.dt-container .dt-search {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    color: var(--dt-muted);
+    font-size: .8125rem;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    justify-content: flex-end;
+}
+
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_length label,
+.dt-container .dt-search label,
+.dt-container .dt-length label {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    font-weight: 500;
+}
+
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select,
+.dt-container .dt-search input,
+.dt-container .dt-length select {
+    min-height: 38px;
+    padding: 7px 11px;
+    border: 1px solid var(--dt-border);
+    border-radius: 8px;
+    background-color: var(--dt-bg) !important;
+    color: var(--dt-color);
+    font-family: inherit;
+    font-size: .8125rem;
+    outline: none;
+    box-shadow: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.dataTables_wrapper .dataTables_filter input,
+.dt-container .dt-search input {
+    width: min(240px, 100%);
+    margin-left: 0;
+}
+
+.dataTables_wrapper .dataTables_length select,
+.dt-container .dt-length select {
+    min-width: 72px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus,
+.dataTables_wrapper .dataTables_length select:focus,
+.dt-container .dt-search input:focus,
+.dt-container .dt-length select:focus {
+    border-color: var(--bs-primary, #0d6efd);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, .10);
+}
+
+/* Placeholder */
+.dataTables_wrapper .dataTables_filter input::placeholder,
+.dt-container .dt-search input::placeholder {
+    color: var(--dt-muted);
+    opacity: .8;
+}
+
+/* =========================================================
+   6. PAGINATION
+========================================================= */
+
+.dataTables_wrapper .dataTables_paginate,
+.dt-container .dt-paging {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding-top: 12px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button,
+.dt-container .dt-paging .dt-paging-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    min-height: 34px;
+    margin: 0 !important;
+    padding: 6px 10px !important;
+
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    color: var(--dt-color) !important;
+
+    font-size: .8125rem;
+    line-height: 1.2;
+    text-decoration: none !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+.dt-container .dt-paging .dt-paging-button:hover:not(.disabled) {
+    border-color: transparent !important;
+    background: var(--dt-hover-bg) !important;
+    color: var(--bs-primary, #0d6efd) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover,
+.dt-container .dt-paging .dt-paging-button.current,
+.dt-container .dt-paging .dt-paging-button.current:hover {
+    border-color: var(--bs-primary, #0d6efd) !important;
+    background: var(--bs-primary, #0d6efd) !important;
+    color: #fff !important;
+    font-weight: 600;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+.dt-container .dt-paging .dt-paging-button.disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   7. INFO & EMPTY STATE
+========================================================= */
+
+.dataTables_wrapper .dataTables_info,
+.dt-container .dt-info {
+    padding-top: 18px;
+    color: var(--dt-muted);
+    font-size: .8125rem;
+    line-height: 1.6;
+}
+
+table.dataTable td.dataTables_empty,
+table.dataTable td.dt-empty {
+    padding: 32px 16px;
+    color: var(--dt-muted);
+    text-align: center;
+    font-size: .875rem;
+}
+
+/* =========================================================
+   8. PROCESSING / LOADING
+========================================================= */
+
+.dataTables_wrapper .dataTables_processing,
+.dt-container .dt-processing {
+    z-index: 5;
+    padding: 16px 20px;
+    border: 1px solid var(--dt-border);
+    border-radius: 10px;
+    background: var(--dt-bg);
+    color: var(--dt-color);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+    font-size: .875rem;
+}
+
+/* =========================================================
+   9. SCROLLABLE TABLE
+========================================================= */
+
+div.dataTables_scrollHead,
+div.dataTables_scrollHead table.dataTable {
+    margin-bottom: 0 !important;
+}
+
+div.dataTables_scrollBody {
+    border-bottom: 1px solid var(--dt-border);
+}
+
+div.dataTables_scrollBody table.dataTable > tbody > tr:first-child > td {
+    border-top: 0;
+}
+
+/* =========================================================
+   10. BOOTSTRAP RESPONSIVE WRAPPER
+========================================================= */
+
+.table-responsive > table.dataTable {
+    margin-bottom: 0 !important;
+}
+
+/* =========================================================
+   11. DARK MODE
+========================================================= */
+
+[data-bs-theme="dark"] {
+    --dt-border: var(--bs-border-color, #343a40);
+    --dt-bg: var(--bs-body-bg, #212529);
+    --dt-color: var(--bs-body-color, #dee2e6);
+    --dt-muted: var(--bs-secondary-color, #adb5bd);
+    --dt-head-bg: var(--bs-tertiary-bg, #2b3035);
+    --dt-hover-bg: rgba(59, 130, 246, .10);
+}
+
+[data-bs-theme="dark"] table.dataTable > tbody > tr > td,
+[data-bs-theme="dark"] table.dataTable > thead > tr > th {
+    border-color: var(--dt-border);
+}
+
+[data-bs-theme="dark"] table.dataTable.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background: var(--dt-bg);
+    color: var(--dt-color);
+}
+
+[data-bs-theme="dark"] .dataTables_wrapper .dataTables_filter input,
+[data-bs-theme="dark"] .dataTables_wrapper .dataTables_length select,
+[data-bs-theme="dark"] .dt-container .dt-search input,
+[data-bs-theme="dark"] .dt-container .dt-length select {
+    color: var(--dt-color);
+    background-color: var(--dt-bg);
+    border-color: var(--dt-border);
+}
+
+[data-bs-theme="dark"] .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+[data-bs-theme="dark"] .dt-container .dt-paging .dt-paging-button.current {
+    color: #fff !important;
+}
+
+/* =========================================================
+   12. RESPONSIVE
+========================================================= */
+
+@media (max-width: 767.98px) {
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_length,
+    .dt-container .dt-search,
+    .dt-container .dt-length {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .dataTables_wrapper .dataTables_filter input,
+    .dt-container .dt-search input {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .dataTables_wrapper .dataTables_paginate,
+    .dt-container .dt-paging {
+        justify-content: flex-start;
+    }
+
+    .dataTables_wrapper .dataTables_info,
+    .dt-container .dt-info {
+        padding-top: 12px;
+    }
+
+    table.dataTable > thead > tr > th,
+    table.dataTable > tbody > tr > td {
+        padding: 11px 10px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    table.dataTable > tbody > tr > td,
+    .dataTables_wrapper .dataTables_filter input,
+    .dataTables_wrapper .dataTables_paginate .paginate_button,
+    .dt-container .dt-paging .dt-paging-button {
+        transition: none;
+    }
+}
+
+
+/* DataTables toolbar - SIRMED v3 */
+
+.dataTables_wrapper .dt-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.dataTables_wrapper .dt-buttons .btn {
+    margin: 0 !important;
+    border-radius: 7px;
+    font-weight: 500;
+}
+
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_length label {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    color: var(--bs-secondary-color);
+    font-size: .8125rem;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    width: 230px;
+    max-width: 100%;
+    margin: 0 !important;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    width: auto;
+    min-width: 75px;
+    margin: 0 !important;
+}
+
+.dataTables_wrapper .dataTables_info {
+    padding-top: 0;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    padding-top: 0;
+}
+
+@media (max-width: 767.98px) {
+    .dataTables_wrapper .dataTables_filter input {
+        width: 100%;
+    }
+
+    .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_length {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   SIRMED V3 — DATATABLES THEME ENHANCEMENT
+   Light / Dark Mode | Bootstrap 5 | DataTables 1.x / 2.x
+========================================================= */
+
+/* ---------- LIGHT MODE ---------- */
+:root {
+    --dt-bg: #ffffff;
+    --dt-color: #263449;
+    --dt-muted: #64748b;
+    --dt-border: #e2e8f0;
+
+    --dt-head-bg: #f1f5f9;
+    --dt-head-color: #334155;
+
+    --dt-row-bg: #ffffff;
+    --dt-row-alt: #f8fafc;
+    --dt-hover-bg: #eaf3ff;
+    --dt-hover-color: #1e3a5f;
+
+    --dt-selected-bg: #dbeafe;
+    --dt-selected-color: #1e40af;
+
+    --dt-accent: #2563eb;
+    --dt-focus-ring: rgba(37, 99, 235, .18);
+}
+
+/* ---------- DARK MODE ---------- */
+[data-bs-theme="dark"] {
+    --dt-bg: #171e2b;
+    --dt-color: #e2e8f0;
+    --dt-muted: #a7b4c8;
+    --dt-border: #344155;
+
+    --dt-head-bg: #222d3e;
+    --dt-head-color: #dce8f8;
+
+    --dt-row-bg: #171e2b;
+    --dt-row-alt: #1c2636;
+    --dt-hover-bg: #293c57;
+    --dt-hover-color: #ffffff;
+
+    --dt-selected-bg: #244574;
+    --dt-selected-color: #eff6ff;
+
+    --dt-accent: #7db4ff;
+    --dt-focus-ring: rgba(125, 180, 255, .24);
+}
+
+/* ---------- TABLE BASE ---------- */
+table.dataTable,
+table.dataTable.table {
+    color: var(--dt-color) !important;
+    background-color: var(--dt-bg) !important;
+    border-color: var(--dt-border) !important;
+}
+
+table.dataTable > thead > tr > th,
+table.dataTable > thead > tr > td {
+    color: var(--dt-head-color) !important;
+    background: var(--dt-head-bg) !important;
+    border-color: var(--dt-border) !important;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* Garis aksen halus di bawah header */
+table.dataTable > thead > tr:last-child > th {
+    border-bottom: 2px solid var(--dt-border) !important;
+}
+
+/* ---------- BODY TEXT & CELL ---------- */
+table.dataTable > tbody > tr > td {
+    color: var(--dt-color) !important;
+    background-color: var(--dt-row-bg) !important;
+    border-color: var(--dt-border) !important;
+    transition:
+        background-color .15s ease,
+        color .15s ease;
+}
+
+/* ---------- STRIPED ROWS ---------- */
+/* Warna selang-seling agar data mudah dibaca */
+table.dataTable.table-striped > tbody > tr:nth-of-type(odd) > *,
+table.dataTable > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-bg-type: var(--dt-row-alt);
+    background-color: var(--dt-row-alt) !important;
+    color: var(--dt-color) !important;
+}
+
+/* ---------- ROW HOVER ---------- */
+table.dataTable.table-hover > tbody > tr:hover > *,
+table.dataTable > tbody > tr:hover > * {
+    --bs-table-bg-state: var(--dt-hover-bg);
+    background-color: var(--dt-hover-bg) !important;
+    color: var(--dt-hover-color) !important;
+}
+
+/* ---------- SELECTED ROW ---------- */
+table.dataTable > tbody > tr.selected > *,
+table.dataTable > tbody > tr > *.selected {
+    --bs-table-bg-state: var(--dt-selected-bg);
+    background-color: var(--dt-selected-bg) !important;
+    color: var(--dt-selected-color) !important;
+}
+
+/* ---------- LINKS INSIDE TABLE ---------- */
+table.dataTable > tbody > tr > td a:not(.btn) {
+    color: var(--dt-accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+table.dataTable > tbody > tr > td a:not(.btn):hover {
+    text-decoration: underline;
+}
+
+/* ---------- SORTING ICONS ---------- */
+table.dataTable > thead .dt-column-order {
+    color: var(--dt-muted);
+}
+
+table.dataTable > thead > tr > th.dt-ordering-asc,
+table.dataTable > thead > tr > th.dt-ordering-desc,
+table.dataTable > thead > tr > th.sorting_asc,
+table.dataTable > thead > tr > th.sorting_desc {
+    color: var(--dt-accent) !important;
+}
+
+/* ---------- SEARCH & SELECT ---------- */
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select,
+.dt-container .dt-search input,
+.dt-container .dt-length select {
+    background-color: var(--dt-bg) !important;
+    color: var(--dt-color) !important;
+    border: 1px solid var(--dt-border) !important;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus,
+.dataTables_wrapper .dataTables_length select:focus,
+.dt-container .dt-search input:focus,
+.dt-container .dt-length select:focus {
+    border-color: var(--dt-accent) !important;
+    box-shadow: 0 0 0 3px var(--dt-focus-ring) !important;
+}
+
+.dataTables_wrapper .dataTables_filter input::placeholder,
+.dt-container .dt-search input::placeholder {
+    color: var(--dt-muted) !important;
+    opacity: .85;
+}
+
+/* ---------- INFO & EMPTY STATE ---------- */
+.dataTables_wrapper .dataTables_info,
+.dt-container .dt-info,
+table.dataTable td.dataTables_empty,
+table.dataTable td.dt-empty {
+    color: var(--dt-muted) !important;
+}
+
+/* ---------- PAGINATION ---------- */
+.dataTables_wrapper .dataTables_paginate .paginate_button,
+.dt-container .dt-paging .dt-paging-button {
+    color: var(--dt-color) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.disabled),
+.dt-container .dt-paging .dt-paging-button:hover:not(.disabled) {
+    background: var(--dt-hover-bg) !important;
+    color: var(--dt-accent) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover,
+.dt-container .dt-paging .dt-paging-button.current,
+.dt-container .dt-paging .dt-paging-button.current:hover {
+    background: var(--bs-primary, #0d6efd) !important;
+    color: #ffffff !important;
+    border-color: var(--bs-primary, #0d6efd) !important;
+}
+
+/* ---------- PROCESSING / LOADING ---------- */
+.dataTables_wrapper .dataTables_processing,
+.dt-container .dt-processing {
+    background: var(--dt-bg) !important;
+    color: var(--dt-color) !important;
+    border: 1px solid var(--dt-border) !important;
+}
+
+/* ---------- RESPONSIVE SCROLL ---------- */
+div.dataTables_scrollHead,
+div.dataTables_scrollHead table.dataTable {
+    background-color: var(--dt-head-bg) !important;
+}
+
+div.dataTables_scrollBody {
+    border-color: var(--dt-border) !important;
+}
+
+/* ---------- REDUCED MOTION ---------- */
+@media (prefers-reduced-motion: reduce) {
+    table.dataTable > tbody > tr > td {
+        transition: none;
+    }
+}

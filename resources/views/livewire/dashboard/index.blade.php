@@ -1,10 +1,13 @@
+@section('title', 'Dashboard')
+@section('page-title', 'Dashboard Interaktif')
+
 <section>
-    <div class="page-heading">
+    {{-- <div class="page-heading">
         <div><span class="page-eyebrow">RINGKASAN SISTEM</span>
             <h1 class="page-title">Dashboard</h1>
             <p class="page-description">Selamat datang kembali. Berikut ringkasan dan pintasan aplikasi SIRMED.</p>
         </div><span class="date-chip"><i class="bi bi-calendar3 me-1"></i>{{ now()->translatedFormat('d F Y') }}</span>
-    </div>
+    </div> --}}
     <div class="welcome-banner mb-4">
         <h2>Halo, {{ Auth::user()->NAMA ?? (Auth::user()->name ?? 'Pengguna') }} 👋</h2>
         <p>Semoga aktivitas hari ini berjalan lancar. Pilih modul yang Anda perlukan melalui menu di samping atau akses

@@ -14,7 +14,7 @@
             </span>
 
             <div class="breadcrumb-title">
-                @yield('page-title', 'Dashboard')
+                @yield('page-title', 'Rekam Medis Elektronik')
             </div>
         </div>
     </div>

@@ -1,0 +1,918 @@
+
+/* =========================================================
+   SIRMED V3 — UNIFIED FORM CONTROLS
+   File: public/css/v3/components/form-controls.css
+   Berlaku untuk komponen form di dalam .app-shell
+========================================================= */
+
+.app-shell {
+    --form-control-height: 44px;
+    --form-control-radius: 10px;
+    --form-control-border: var(--form-border, #dfe5ef);
+    --form-control-bg: var(--form-bg, #ffffff);
+    --form-control-color: var(--form-text, #263248);
+    --form-control-muted: #77839a;
+    --form-control-primary: var(--primary, #4361ee);
+    --form-control-focus-ring: rgb(67 97 238 / 13%);
+}
+
+/* ---------- LABEL ---------- */
+
+.app-shell .form-label,
+.app-shell label.form-label {
+    display: inline-block;
+    margin-bottom: 7px;
+    color: var(--form-label-color, #526078);
+    font-size: 0.84rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.app-shell .form-text,
+.app-shell .form-hint {
+    display: block;
+    margin-top: 6px;
+    color: var(--form-control-muted);
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+
+/* ---------- INPUT, SELECT, TEXTAREA ---------- */
+
+.app-shell .form-control,
+.app-shell .form-select,
+.app-shell textarea.form-control,
+.app-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="hidden"]),
+.app-shell select:not(.choices__input),
+.app-shell textarea:not(.choices__input) {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: var(--form-control-height);
+    padding: 10px 13px;
+    border: 1px solid var(--form-control-border);
+    border-radius: var(--form-control-radius);
+    background-color: var(--form-control-bg);
+    color: var(--form-control-color);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.45;
+    box-shadow: none;
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease,
+        background-color 0.18s ease;
+}
+
+/* Textarea tidak dipaksa memiliki tinggi input biasa */
+.app-shell textarea.form-control,
+.app-shell textarea:not(.choices__input) {
+    min-height: 110px;
+    resize: vertical;
+}
+
+/* Input kecil dari Bootstrap */
+.app-shell .form-control-sm,
+.app-shell .form-select-sm {
+    min-height: 36px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+}
+
+/* Placeholder */
+.app-shell .form-control::placeholder,
+.app-shell input::placeholder,
+.app-shell textarea::placeholder {
+    color: #9aa5b7;
+    opacity: 1;
+}
+
+/* Hover */
+.app-shell .form-control:hover:not(:disabled):not([readonly]),
+.app-shell .form-select:hover:not(:disabled),
+.app-shell input:hover:not(:disabled):not([readonly]),
+.app-shell textarea:hover:not(:disabled):not([readonly]) {
+    border-color: #bdc9dc;
+}
+
+/* Focus */
+.app-shell .form-control:focus,
+.app-shell .form-select:focus,
+.app-shell input:focus,
+.app-shell textarea:focus {
+    border-color: var(--form-control-primary);
+    outline: 0;
+    background-color: var(--form-control-bg);
+    color: var(--form-control-color);
+    box-shadow: 0 0 0 3px var(--form-control-focus-ring);
+}
+
+/* Readonly */
+.app-shell .form-control[readonly],
+.app-shell input[readonly],
+.app-shell textarea[readonly] {
+    background-color: var(--form-readonly-bg, #f6f8fc);
+    cursor: default;
+}
+
+/* Disabled */
+.app-shell .form-control:disabled,
+.app-shell .form-select:disabled,
+.app-shell input:disabled,
+.app-shell select:disabled,
+.app-shell textarea:disabled {
+    background-color: var(--form-disabled-bg, #f1f3f7);
+    color: #8b96a8;
+    border-color: #e1e5ed;
+    opacity: 1;
+    cursor: not-allowed;
+}
+
+/* ---------- INPUT GROUP ---------- */
+
+.app-shell .input-group {
+    align-items: stretch;
+    flex-wrap: nowrap;
+}
+
+.app-shell .input-group > .form-control,
+.app-shell .input-group > .form-select {
+    min-width: 0;
+}
+
+.app-shell .input-group > .input-group-text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 13px;
+    border-color: var(--form-control-border);
+    background-color: var(--form-addon-bg, #f6f8fc);
+    color: var(--form-control-muted);
+    font-size: 0.85rem;
+}
+
+.app-shell .input-group > .form-control:first-child,
+.app-shell .input-group > .form-select:first-child {
+    border-radius: var(--form-control-radius) 0 0 var(--form-control-radius);
+}
+
+.app-shell .input-group > .form-control:last-child,
+.app-shell .input-group > .form-select:last-child {
+    border-radius: 0 var(--form-control-radius) var(--form-control-radius) 0;
+}
+
+/* ---------- VALIDATION ---------- */
+
+.app-shell .form-control.is-invalid,
+.app-shell .form-select.is-invalid,
+.app-shell .form-control:invalid:not(:placeholder-shown) {
+    border-color: #dc3545;
+}
+
+.app-shell .form-control.is-invalid:focus,
+.app-shell .form-select.is-invalid:focus {
+    box-shadow: 0 0 0 3px rgb(220 53 69 / 12%);
+}
+
+.app-shell .form-control.is-valid,
+.app-shell .form-select.is-valid {
+    border-color: #198754;
+}
+
+.app-shell .invalid-feedback,
+.app-shell .valid-feedback {
+    margin-top: 5px;
+    font-size: 0.78rem;
+}
+
+/* ---------- SELECT2 ---------- */
+
+.app-shell .select2-container {
+    width: 100% !important;
+    min-width: 0;
+}
+
+.app-shell .select2-container .select2-selection--single {
+    display: flex;
+    align-items: center;
+    height: var(--form-control-height);
+    border: 1px solid var(--form-control-border);
+    border-radius: var(--form-control-radius);
+    background-color: var(--form-control-bg);
+}
+
+.app-shell .select2-container .select2-selection--single .select2-selection__rendered {
+    padding-right: 35px;
+    padding-left: 13px;
+    color: var(--form-control-color);
+    font-size: 0.875rem;
+    line-height: normal;
+}
+
+.app-shell .select2-container .select2-selection--single .select2-selection__arrow {
+    top: 0;
+    right: 5px;
+    height: 100%;
+}
+
+.app-shell .select2-container--open .select2-selection,
+.app-shell .select2-container--focus .select2-selection {
+    border-color: var(--form-control-primary);
+    box-shadow: 0 0 0 3px var(--form-control-focus-ring);
+}
+
+.app-shell .select2-dropdown {
+    overflow: hidden;
+    border-color: var(--form-control-border);
+    border-radius: 10px;
+    background-color: var(--form-control-bg);
+    box-shadow: 0 8px 24px rgb(30 45 75 / 12%);
+}
+
+.app-shell .select2-results__option {
+    padding: 9px 12px;
+    color: var(--form-control-color);
+    font-size: 0.85rem;
+}
+
+.app-shell .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: var(--form-control-primary);
+}
+
+/* ---------- CHOICES.JS ---------- */
+
+.app-shell .choices {
+    margin-bottom: 0;
+    font-size: 0.875rem;
+}
+
+.app-shell .choices__inner {
+    display: flex;
+    align-items: center;
+    min-height: var(--form-control-height);
+    padding: 4px 9px;
+    border: 1px solid var(--form-control-border);
+    border-radius: var(--form-control-radius);
+    background-color: var(--form-control-bg);
+    color: var(--form-control-color);
+    font-size: 0.875rem;
+}
+
+.app-shell .choices.is-focused .choices__inner,
+.app-shell .choices.is-open .choices__inner {
+    border-color: var(--form-control-primary);
+    box-shadow: 0 0 0 3px var(--form-control-focus-ring);
+}
+
+.app-shell .choices__input {
+    margin: 0;
+    padding: 4px;
+    background-color: transparent;
+    color: var(--form-control-color);
+    font-size: 0.875rem;
+}
+
+.app-shell .choices__list--dropdown,
+.app-shell .choices__list[aria-expanded] {
+    z-index: 1060;
+    margin-top: 5px;
+    overflow: hidden;
+    border: 1px solid var(--form-control-border);
+    border-radius: 10px;
+    background-color: var(--form-control-bg);
+    box-shadow: 0 10px 25px rgb(30 45 75 / 12%);
+}
+
+.app-shell .choices__list--dropdown .choices__item,
+.app-shell .choices__list[aria-expanded] .choices__item {
+    padding: 10px 12px;
+    color: var(--form-control-color);
+    font-size: 0.84rem;
+}
+
+.app-shell .choices__list--dropdown .choices__item--selectable.is-highlighted {
+    background-color: #eef2ff;
+    color: #334cc5;
+}
+
+/* ---------- FLATPICKR ---------- */
+
+.flatpickr-calendar {
+    z-index: 1090 !important;
+    overflow: hidden;
+    border: 1px solid #e3e8f1;
+    border-radius: 14px;
+    box-shadow: 0 12px 35px rgb(25 40 70 / 16%);
+    font-family: inherit;
+}
+
+.flatpickr-calendar .flatpickr-months {
+    padding-top: 5px;
+}
+
+.flatpickr-calendar .flatpickr-day {
+    border-radius: 8px;
+}
+
+.flatpickr-calendar .flatpickr-day.selected,
+.flatpickr-calendar .flatpickr-day.startRange,
+.flatpickr-calendar .flatpickr-day.endRange,
+.flatpickr-calendar .flatpickr-day.selected:hover {
+    border-color: var(--form-control-primary, #4361ee);
+    background: var(--form-control-primary, #4361ee);
+}
+
+.flatpickr-calendar .flatpickr-day.today {
+    border-color: var(--form-control-primary, #4361ee);
+}
+
+/* ---------- CHECKBOX & RADIO ---------- */
+
+.app-shell .form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    min-height: 24px;
+    padding-left: 0;
+    margin-bottom: 8px;
+}
+
+.app-shell .form-check-input,
+.app-shell input[type="checkbox"],
+.app-shell input[type="radio"] {
+    flex: 0 0 auto;
+    width: 17px;
+    height: 17px;
+    margin: 3px 0 0;
+    border: 1px solid #c5cede;
+    background-color: var(--form-control-bg);
+    box-shadow: none;
+    cursor: pointer;
+    accent-color: var(--form-control-primary);
+}
+
+.app-shell input[type="checkbox"],
+.app-shell .form-check-input[type="checkbox"] {
+    border-radius: 5px;
+}
+
+.app-shell input[type="radio"],
+.app-shell .form-check-input[type="radio"] {
+    border-radius: 50%;
+}
+
+.app-shell .form-check-input:checked,
+.app-shell input[type="checkbox"]:checked,
+.app-shell input[type="radio"]:checked {
+    border-color: var(--form-control-primary);
+    background-color: var(--form-control-primary);
+}
+
+.app-shell .form-check-input:focus,
+.app-shell input[type="checkbox"]:focus,
+.app-shell input[type="radio"]:focus {
+    border-color: var(--form-control-primary);
+    outline: 0;
+    box-shadow: 0 0 0 3px var(--form-control-focus-ring);
+}
+
+.app-shell .form-check-label {
+    color: var(--form-label-color, #526078);
+    font-size: 0.875rem;
+    line-height: 1.55;
+    cursor: pointer;
+}
+
+/* ---------- RANGE SLIDER ---------- */
+
+.app-shell input[type="range"] {
+    width: 100%;
+    accent-color: var(--form-control-primary);
+    cursor: pointer;
+}
+
+/* ---------- FILE INPUT ---------- */
+
+.app-shell input[type="file"].form-control {
+    padding: 6px;
+    overflow: hidden;
+}
+
+.app-shell input[type="file"]::file-selector-button {
+    margin: 0 10px 0 0;
+    padding: 7px 12px;
+    border: 0;
+    border-radius: 7px;
+    background: #eef2ff;
+    color: #334cc5;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* ---------- DROPDOWN ---------- */
+
+.app-shell .dropdown-menu {
+    padding: 7px;
+    border: 1px solid var(--form-control-border);
+    border-radius: 11px;
+    background-color: var(--form-control-bg);
+    box-shadow: 0 10px 30px rgb(25 40 70 / 12%);
+}
+
+.app-shell .dropdown-menu .dropdown-item {
+    padding: 9px 11px;
+    border-radius: 7px;
+    color: var(--form-control-color);
+    font-size: 0.85rem;
+}
+
+.app-shell .dropdown-menu .dropdown-item:hover,
+.app-shell .dropdown-menu .dropdown-item:focus {
+    background-color: #f0f3ff;
+    color: #334cc5;
+}
+
+/* ---------- DARK MODE ---------- */
+
+.app-shell[data-theme="dark"],
+html[data-bs-theme="dark"] .app-shell,
+html[data-theme="dark"] .app-shell {
+    --form-control-border: #39445a;
+    --form-control-bg: #202a3b;
+    --form-control-color: #e6ebf5;
+    --form-label-color: #c5cede;
+    --form-control-muted: #9ba8bd;
+    --form-control-focus-ring: rgb(115 139 255 / 20%);
+    --form-readonly-bg: #252f41;
+    --form-disabled-bg: #2a3446;
+    --form-addon-bg: #293449;
+}
+
+html[data-bs-theme="dark"] .app-shell .form-control:focus,
+html[data-bs-theme="dark"] .app-shell .form-select:focus {
+    color: var(--form-control-color);
+}
+
+html[data-bs-theme="dark"] .app-shell .choices__list--dropdown,
+html[data-bs-theme="dark"] .app-shell .choices__list[aria-expanded],
+html[data-bs-theme="dark"] .app-shell .select2-dropdown {
+    background-color: var(--form-control-bg);
+    border-color: var(--form-control-border);
+}
+
+html[data-bs-theme="dark"] .app-shell .choices__list--dropdown .choices__item,
+html[data-bs-theme="dark"] .app-shell .choices__list[aria-expanded] .choices__item,
+html[data-bs-theme="dark"] .app-shell .select2-results__option {
+    color: var(--form-control-color);
+}
+
+html[data-bs-theme="dark"] .app-shell .choices__list--dropdown .choices__item--selectable.is-highlighted,
+html[data-bs-theme="dark"] .app-shell .select2-results__option--highlighted.select2-results__option--selectable,
+html[data-bs-theme="dark"] .app-shell .dropdown-menu .dropdown-item:hover {
+    background-color: #303e5c;
+    color: #e6ebff;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 575.98px) {
+    .app-shell {
+        --form-control-height: 42px;
+        --form-control-radius: 9px;
+    }
+
+    .app-shell .form-label {
+        font-size: 0.82rem;
+    }
+
+    .app-shell .form-control,
+    .app-shell .form-select,
+    .app-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="hidden"]),
+    .app-shell select:not(.choices__input),
+    .app-shell textarea:not(.choices__input) {
+        font-size: 16px;
+    }
+}
+
+
+/* =========================================================
+   FORM CONTROLS - SELECT2
+   Bootstrap 5.3 / SIRMED v3
+   Single, Multiple, Search & Dropdown
+========================================================= */
+
+:root {
+    --form-control-height: 42px;
+    --form-control-radius: 8px;
+    --form-control-border: var(--bs-border-color, #dee2e6);
+    --form-control-bg: var(--bs-body-bg, #fff);
+    --form-control-color: var(--bs-body-color, #212529);
+    --form-control-placeholder: var(--bs-secondary-color, #6c757d);
+    --form-control-focus: var(--bs-primary, #0d6efd);
+    --form-control-focus-ring: rgba(13, 110, 253, 0.15);
+}
+
+/* =========================================================
+   1. SELECT2 CONTAINER
+========================================================= */
+
+.select2-container {
+    width: 100% !important;
+    max-width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--form-control-color);
+}
+
+.select2-container .select2-selection {
+    width: 100%;
+    min-height: var(--form-control-height);
+    border: 1px solid var(--form-control-border);
+    border-radius: var(--form-control-radius);
+    background-color: var(--form-control-bg);
+    color: var(--form-control-color);
+    transition:
+        border-color .15s ease-in-out,
+        box-shadow .15s ease-in-out;
+}
+
+/* =========================================================
+   2. SINGLE SELECT
+========================================================= */
+
+.select2-container--default .select2-selection--single {
+    height: var(--form-control-height);
+    padding: 0 38px 0 12px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.select2-container--default
+.select2-selection--single
+.select2-selection__rendered {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    line-height: normal;
+    color: var(--form-control-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.select2-container--default
+.select2-selection--single
+.select2-selection__placeholder {
+    color: var(--form-control-placeholder);
+}
+
+.select2-container--default
+.select2-selection--single
+.select2-selection__arrow {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    width: 18px;
+    height: 100%;
+}
+
+.select2-container--default
+.select2-selection--single
+.select2-selection__arrow b {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -2px 0 0 -4px;
+    border-color: var(--form-control-placeholder) transparent transparent;
+    border-style: solid;
+    border-width: 5px 4px 0;
+}
+
+/* =========================================================
+   3. MULTIPLE SELECT
+========================================================= */
+
+.select2-container--default .select2-selection--multiple {
+    min-height: var(--form-control-height);
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    cursor: text;
+}
+
+.select2-container--default
+.select2-selection--multiple
+.select2-selection__rendered {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.select2-container--default
+.select2-selection--multiple
+.select2-selection__choice {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    max-width: 100%;
+    margin: 0;
+    padding: 4px 8px;
+    border: 1px solid var(--form-control-border);
+    border-radius: 6px;
+    background-color: var(--bs-secondary-bg, #f8f9fa);
+    color: var(--form-control-color);
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.select2-container--default
+.select2-selection--multiple
+.select2-selection__choice__remove {
+    order: 2;
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 2px;
+    border: 0;
+    background: transparent;
+    color: var(--form-control-placeholder);
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.select2-container--default
+.select2-selection--multiple
+.select2-selection__choice__remove:hover {
+    color: var(--bs-danger, #dc3545);
+    background: transparent;
+}
+
+.select2-container--default
+.select2-selection--multiple
+.select2-search--inline {
+    display: inline-flex;
+    align-items: center;
+    flex: 1 1 80px;
+    min-width: 70px;
+    margin: 0;
+}
+
+.select2-container--default
+.select2-selection--multiple
+.select2-search--inline
+.select2-search__field {
+    width: 100% !important;
+    max-width: 100%;
+    min-height: 24px;
+    margin: 0;
+    padding: 2px 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--form-control-color);
+    font-family: inherit;
+    font-size: inherit;
+    box-shadow: none;
+}
+
+.select2-container--default
+.select2-selection--multiple
+.select2-search--inline
+.select2-search__field::placeholder {
+    color: var(--form-control-placeholder);
+    opacity: 1;
+}
+
+/* =========================================================
+   4. FOCUS & OPEN STATE
+========================================================= */
+
+.select2-container--default.select2-container--focus
+.select2-selection--single,
+.select2-container--default.select2-container--open
+.select2-selection--single,
+.select2-container--default.select2-container--focus
+.select2-selection--multiple,
+.select2-container--default.select2-container--open
+.select2-selection--multiple {
+    border-color: var(--form-control-focus);
+    outline: 0;
+    box-shadow: 0 0 0 .2rem var(--form-control-focus-ring);
+}
+
+/* Hilangkan ring ganda pada multiple saat mengetik */
+.select2-container--default.select2-container--focus
+.select2-selection--multiple {
+    outline: 0;
+}
+
+/* =========================================================
+   5. DISABLED STATE
+========================================================= */
+
+.select2-container--default.select2-container--disabled
+.select2-selection--single,
+.select2-container--default.select2-container--disabled
+.select2-selection--multiple {
+    background-color: var(--bs-secondary-bg, #e9ecef);
+    opacity: .7;
+    cursor: not-allowed;
+}
+
+.select2-container--default.select2-container--disabled
+.select2-selection__rendered {
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   6. DROPDOWN
+========================================================= */
+
+.select2-dropdown {
+    z-index: 1060;
+    overflow: hidden;
+    border: 1px solid var(--form-control-border);
+    border-radius: var(--form-control-radius);
+    background-color: var(--form-control-bg);
+    color: var(--form-control-color);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
+}
+
+.select2-container--default .select2-results__option {
+    padding: 9px 12px;
+    color: var(--form-control-color);
+    overflow-wrap: anywhere;
+}
+
+.select2-container--default
+.select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: var(--bs-primary, #0d6efd);
+    color: #fff;
+}
+
+.select2-container--default
+.select2-results__option--selected {
+    background-color: var(--bs-primary-bg-subtle, #cfe2ff);
+    color: var(--bs-primary-text-emphasis, #084298);
+}
+
+.select2-container--default
+.select2-results__option--selected.select2-results__option--highlighted {
+    background-color: var(--bs-primary, #0d6efd);
+    color: #fff;
+}
+
+.select2-container--default .select2-results__option[aria-disabled="true"] {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.select2-container--default .select2-results__group {
+    padding: 8px 12px;
+    color: var(--form-control-placeholder);
+    font-weight: 600;
+}
+
+/* =========================================================
+   7. SEARCH FIELD DI DALAM DROPDOWN
+========================================================= */
+
+.select2-container--default .select2-search--dropdown {
+    padding: 8px;
+    background-color: var(--form-control-bg);
+}
+
+.select2-container--default
+.select2-search--dropdown
+.select2-search__field {
+    display: block;
+    width: 100%;
+    min-height: var(--form-control-height);
+    padding: 8px 12px;
+    border: 1px solid var(--form-control-border);
+    border-radius: 6px;
+    outline: 0;
+    background-color: var(--form-control-bg);
+    color: var(--form-control-color);
+    font-family: inherit;
+    font-size: inherit;
+    box-shadow: none;
+}
+
+.select2-container--default
+.select2-search--dropdown
+.select2-search__field:focus {
+    border-color: var(--form-control-focus);
+    box-shadow: 0 0 0 .15rem var(--form-control-focus-ring);
+}
+
+.select2-container--default .select2-results__message {
+    padding: 10px 12px;
+    color: var(--form-control-placeholder);
+}
+
+/* =========================================================
+   8. CLEAR BUTTON SINGLE SELECT
+========================================================= */
+
+.select2-container--default
+.select2-selection--single
+.select2-selection__clear {
+    position: absolute;
+    top: 50%;
+    right: 30px;
+    float: none;
+    margin: 0;
+    padding: 0 4px;
+    transform: translateY(-50%);
+    color: var(--form-control-placeholder);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.select2-container--default
+.select2-selection--single
+.select2-selection__clear:hover {
+    color: var(--bs-danger, #dc3545);
+}
+
+/* =========================================================
+   9. INTEGRASI DENGAN INPUT-GROUP BOOTSTRAP
+========================================================= */
+
+.input-group > .select2-container {
+    flex: 1 1 auto;
+    width: 1% !important;
+    min-width: 0;
+}
+
+.input-group > .select2-container .select2-selection {
+    border-radius: 0;
+}
+
+.input-group > .select2-container:first-child
+.select2-selection {
+    border-top-left-radius: var(--form-control-radius);
+    border-bottom-left-radius: var(--form-control-radius);
+}
+
+.input-group > .select2-container:last-child
+.select2-selection {
+    border-top-right-radius: var(--form-control-radius);
+    border-bottom-right-radius: var(--form-control-radius);
+}
+
+/* =========================================================
+   10. VALIDATION BOOTSTRAP
+========================================================= */
+
+.was-validated select:invalid + .select2-container
+.select2-selection,
+select.is-invalid + .select2-container
+.select2-selection,
+.is-invalid + .select2-container
+.select2-selection {
+    border-color: var(--bs-form-invalid-border-color, #dc3545);
+}
+
+.was-validated select:valid + .select2-container
+.select2-selection,
+select.is-valid + .select2-container
+.select2-selection,
+.is-valid + .select2-container
+.select2-selection {
+    border-color: var(--bs-form-valid-border-color, #198754);
+}
+
+/* =========================================================
+   11. RESPONSIVE
+========================================================= */
+
+@media (max-width: 576px) {
+    .select2-container--default .select2-selection--single {
+        min-height: 40px;
+    }
+
+    .select2-container--default .select2-selection--multiple {
+        min-height: 40px;
+    }
+
+    .select2-dropdown {
+        max-width: calc(100vw - 24px);
+    }
+}

@@ -2,11 +2,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" data-navigate-once></script>
 
 {{-- SIGNATURE PAD --}}
-<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js" data-navigate-once>
-</script>
-
-{{-- SIRMED V3 --}}
-<script src="{{ asset('js/v3/app.js') }}" data-navigate-once></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js" data-navigate-once></script>
 
 {{-- NOTIFIKASI KLAIM --}}
 <script src="{{ asset('assets/v2/js/notifikasi/klaim.js') }}" data-navigate-once></script>
@@ -43,8 +39,6 @@
 
 <script src="{{ asset('assets/v2/libs/datatable/js/jszip.min.js') }}" data-navigate-once></script>
 
-<script src="{{ asset('assets/v2/js/datatables.js') }}" data-navigate-once></script>
-
 {{-- CHOICES --}}
 <script src="{{ asset('js/plugins/choices.min.js') }}" data-navigate-once></script>
 
@@ -74,11 +68,15 @@
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/locale/id.js" data-navigate-once></script>
 
 {{-- AUTOCOMPLETE --}}
-<script src="{{ asset('assets/v2/libs/@tarekraafat/autocomplete.js/autoComplete.min.js') }}" data-navigate-once>
-</script>
+<script src="{{ asset('assets/v2/libs/@tarekraafat/autocomplete.js/autoComplete.min.js') }}" data-navigate-once></script>
 
 {{-- FORM HELPER --}}
 <script src="{{ asset('assets/v2/js/form-helper.js') }}" data-navigate-once></script>
+
+{{-- SIRMED V3 --}}
+<script src="{{ asset('js/v3/app.js') }}" data-navigate-once></script>
+<script src="{{ asset('js/v3/components/datatables.js') }}" data-navigate-once></script>
+<script src="{{ asset('js/v3/components/buttons.js') }}" data-navigate-once></script>
 
 {{-- INISIALISASI DAYJS --}}
 <script data-navigate-once>

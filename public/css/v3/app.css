@@ -33,11 +33,12 @@ body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
+    background-color: #101827 !important;
     font: 14px Inter, system-ui, sans-serif
 }
 
 a {
-    text-decoration: none
+    text-decoration: none !important
 }
 
 .app-sidebar {
@@ -54,52 +55,154 @@ a {
     transition: transform .25s
 }
 
+/* =========================================
+   SIRMED BRAND — MODERN SIDEBAR
+========================================= */
+
 .brand {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 11px;
-    padding: 0 8px 24px;
-    color: var(--text)
+    min-width: 0;
+    padding: 4px 8px 24px;
+    color: var(--text);
+    text-decoration: none !important;
+    transition: opacity 0.2s ease;
 }
 
+.brand:hover {
+    color: var(--text);
+    opacity: 0.92;
+    text-decoration: none !important;
+}
+
+/* Logo container */
 .brand-mark {
-    width: 42px;
-    height: 42px;
-    display: inline-grid;
-    place-items: center;
-    flex-shrink: 0;
-    color: #fff;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #706bff, #4941d7);
-    box-shadow: 0 8px 18px #4f46e53d;
-    font-size: 21px
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    overflow: hidden;
+    /* border: 1px solid rgba(99, 102, 241, 0.13); */
+    /* border-radius: 14px; */
+    /* background: linear-gradient(
+        145deg,
+        #ffffff 0%,
+        #f0f3ff 100%
+    ); */
+    /* box-shadow:
+        0 3px 8px rgba(15, 23, 42, 0.05),
+        0 8px 20px rgba(79, 70, 229, 0.08); */
+    transition:
+        transform 0.25s ease,
+        /* box-shadow 0.25s ease; */
 }
 
+.brand-mark img {
+    display: block;
+    width: 78% !important;
+    height: 78%;
+    object-fit: contain;
+    transition: transform 0.25s ease;
+}
+
+.brand:hover .brand-mark {
+    transform: translateY(-1px);
+    /* box-shadow:
+        0 5px 12px rgba(15, 23, 42, 0.07),
+        0 10px 24px rgba(79, 70, 229, 0.13); */
+}
+
+.brand:hover .brand-mark img {
+    transform: scale(1.05);
+}
+
+/* Brand name */
 .brand-copy {
     display: flex;
+    flex: 0 1 auto;
     flex-direction: column;
-    line-height: 1.25
+    min-width: 0;
+    line-height: 1;
 }
 
 .brand-copy strong {
-    font-size: 18px;
-    font-weight: 800
+    color: var(--text);
+    font-size: 21px;
+    font-weight: 850;
+    letter-spacing: -1.1px;
+    white-space: nowrap;
 }
 
-.brand-copy small {
-    margin-top: 4px;
-    color: var(--muted);
-    font-size: 10px
+.brand-copy strong b {
+    /* color: var(--primary, #4f46e5) !important; */
+    font-weight: 850;
 }
 
+/* Version badge */
 .brand-version {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
     margin-left: auto;
-    padding: 4px 7px;
-    border-radius: 7px;
-    color: var(--primary);
-    background: var(--primary-soft);
+    padding: 5px 8px;
+    border: 1px solid rgba(99, 102, 241, 0.12);
+    border-radius: 8px;
+    color: var(--primary, #4f46e5);
+    background: var(--primary-soft, #eef2ff);
     font-size: 10px;
-    font-weight: 800
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.3px;
+    box-shadow: 0 2px 5px rgba(79, 70, 229, 0.04);
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] .brand-mark {
+    border-color: rgba(148, 163, 184, 0.15);
+    background: linear-gradient(
+        145deg,
+        #20283a 0%,
+        #151b2a 100%
+    );
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.16);
+}
+
+[data-bs-theme="dark"] .brand-version {
+    border-color: rgba(129, 140, 248, 0.2);
+    color: #a5b4fc;
+    background: rgba(99, 102, 241, 0.13);
+}
+
+/* Responsive */
+@media (max-width: 575.98px) {
+    .brand {
+        gap: 9px;
+    }
+
+    .brand-mark {
+        flex-basis: 40px;
+        width: 40px;
+        height: 40px;
+        /* border-radius: 12px; */
+    }
+
+    .brand-copy strong {
+        font-size: 19px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .brand,
+    .brand-mark,
+    .brand-mark img {
+        transition: none;
+    }
 }
 
 .sidebar-profile {

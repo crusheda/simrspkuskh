@@ -3,12 +3,11 @@
 <aside class="app-sidebar" id="appSidebar">
     <a class="brand" href="{{ route('v3.dashboard') }}" wire:navigate>
         <span class="brand-mark">
-            <i class="bi bi-heart-pulse-fill"></i>
+            <img src="{{ asset('images/logo/logo.png') }}" class="w-100" alt="Dashboard Logo">
         </span>
 
         <span class="brand-copy">
-            <strong>SIRMED</strong>
-            <small>RS PKU Muhammadiyah</small>
+            <strong>SIR<b class="text-muted">MED</b></strong>
         </span>
 
         <span class="brand-version">v3</span>
@@ -115,8 +114,8 @@
             </a>
         </div>
 
-        <div class="sidebar-footer">
+        {{-- <div class="sidebar-footer">
             © {{ date('Y') }} RS PKU Muhammadiyah Sukoharjo
-        </div>
+        </div> --}}
     </div>
 </aside>

@@ -1,42 +1,147 @@
+
 (() => {
     'use strict';
-    const root = document.documentElement;
-    const sidebar = document.getElementById('appSidebar');
-    const backdrop = document.querySelector('.sidebar-backdrop');
 
-    const savedTheme = localStorage.getItem('sirmed-theme');
-    root.setAttribute('data-bs-theme', savedTheme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    // Hindari inisialisasi global berulang.
+    if (window.SIRMEDAppInitialized) return;
+    window.SIRMEDAppInitialized = true;
+
+    const root = document.documentElement;
+
+    function getTheme() {
+        return root.getAttribute('data-bs-theme') === 'dark'
+            ? 'dark'
+            : 'light';
+    }
 
     function refreshThemeControls() {
-        const dark = root.getAttribute('data-bs-theme') === 'dark';
-        document.querySelectorAll('#themeToggle, #themeToggleTop').forEach((button) => {
+        const dark = getTheme() === 'dark';
+
+        document.querySelectorAll(
+            '#themeToggle, #themeToggleTop'
+        ).forEach((button) => {
             const icon = button.querySelector('i');
-            if (icon) icon.className = dark ? 'bi bi-sun' : (button.id === 'themeToggleTop' ? 'bi bi-moon-stars' : 'bi bi-moon-stars');
-            const label = button.querySelector('span:not(.nav-trailing)');
-            if (label && button.id === 'themeToggle') label.textContent = dark ? 'Mode terang' : 'Mode gelap';
+
+            if (icon) {
+                icon.className = dark
+                    ? 'bi bi-sun'
+                    : 'bi bi-moon-stars';
+            }
+
+            const label = button.querySelector(
+                'span:not(.nav-trailing)'
+            );
+
+            if (label && button.id === 'themeToggle') {
+                label.textContent = dark
+                    ? 'Mode terang'
+                    : 'Mode gelap';
+            }
+
+            button.setAttribute(
+                'aria-pressed',
+                String(dark)
+            );
         });
     }
+
     function toggleTheme() {
-        const next = root.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+        const next = getTheme() === 'dark' ? 'light' : 'dark';
+
         root.setAttribute('data-bs-theme', next);
-        localStorage.setItem('sirmed-theme', next);
+
+        try {
+            localStorage.setItem('sirmed-theme', next);
+        } catch (e) {}
+
         refreshThemeControls();
     }
-    document.querySelectorAll('#themeToggle, #themeToggleTop').forEach((button) => button.addEventListener('click', toggleTheme));
 
-    function closeSidebar() {
-        sidebar?.classList.remove('is-open');
-        backdrop?.classList.remove('is-visible');
+    function applyTheme(theme) {
+        root.setAttribute('data-bs-theme', theme);
+
+        try {
+            localStorage.setItem('sirmed-theme', theme);
+        } catch (e) {}
+
+        refreshThemeControls();
     }
-    document.getElementById('sidebarToggle')?.addEventListener('click', () => {
-        sidebar?.classList.add('is-open');
-        backdrop?.classList.add('is-visible');
+
+    function syncSavedTheme() {
+        let theme = 'light';
+
+        try {
+            const savedTheme = localStorage.getItem('sirmed-theme');
+
+            if (savedTheme === 'dark' || savedTheme === 'light') {
+                theme = savedTheme;
+            } else {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches
+                    ? 'dark'
+                    : 'light';
+            }
+        } catch (e) {}
+
+        applyTheme(theme);
+    }
+
+    // Delegasi klik: tetap bekerja ketika Livewire mengganti tombol.
+    document.addEventListener('click', (event) => {
+        const button = event.target.closest(
+            '#themeToggle, #themeToggleTop'
+        );
+
+        if (!button) return;
+
+        event.preventDefault();
+        toggleTheme();
     });
-    backdrop?.addEventListener('click', closeSidebar);
-    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeSidebar(); });
-    sidebar?.querySelectorAll('a[wire\\:navigate]').forEach((link) => link.addEventListener('click', () => {
-        if (matchMedia('(max-width: 991.98px)').matches) closeSidebar();
-    }));
-    document.addEventListener('livewire:navigated', () => { closeSidebar(); refreshThemeControls(); });
+
+    // Sidebar
+    function closeSidebar() {
+        document.getElementById('appSidebar')
+            ?.classList.remove('is-open');
+
+        document.querySelector('.sidebar-backdrop')
+            ?.classList.remove('is-visible');
+    }
+
+    document.addEventListener('click', (event) => {
+        if (event.target.closest('#sidebarToggle')) {
+            document.getElementById('appSidebar')
+                ?.classList.add('is-open');
+
+            document.querySelector('.sidebar-backdrop')
+                ?.classList.add('is-visible');
+
+            return;
+        }
+
+        if (event.target.closest('.sidebar-backdrop')) {
+            closeSidebar();
+            return;
+        }
+
+        const link = event.target.closest(
+            '#appSidebar a[wire\\:navigate]'
+        );
+
+        if (
+            link &&
+            window.matchMedia('(max-width: 991.98px)').matches
+        ) {
+            closeSidebar();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeSidebar();
+    });
+
+    document.addEventListener('livewire:navigated', () => {
+        closeSidebar();
+        syncSavedTheme();
+    });
+
     refreshThemeControls();
 })();

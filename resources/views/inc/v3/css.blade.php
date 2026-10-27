@@ -1,9 +1,11 @@
 {{-- JQUERY --}}
 <script src="{{ asset('js/jquery.min.js') }}" data-navigate-once></script>
 
+{{-- SIRMED V3 --}}
+<link href="{{ asset('css/v3/app.css') }}" rel="stylesheet">
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-<link href="{{ asset('css/v3/app.css') }}" rel="stylesheet">
 
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
@@ -21,7 +23,6 @@
 <link rel="stylesheet" href="{{ asset('assets/v2/libs/datatable/css/buttons.bootstrap5.min.css') }}">
 
 <link rel="stylesheet" href="{{ asset('assets/v2/libs/tagify/tagify.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/v2/css/custom.css') }}">
 
 {{-- <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js"></script> --}}
 
@@ -36,11 +37,19 @@
 <link rel="stylesheet" href="{{ asset('assets/v2/fonts/fontawesome.css') }}">
 
 <link rel="stylesheet" href="{{ asset('assets/v2/fonts/material.css') }}">
+
 <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}" />
 
 <link rel="stylesheet" href="{{ asset('css/iziToast.css') }}" />
 
 <link rel="stylesheet" href="{{ asset('assets/v2/libs/@tarekraafat/autocomplete.js/css/autoComplete.css') }}">
+
+{{-- CSS EACH PAGES --}}
+<link rel="stylesheet" href="{{ asset('assets/v2/css/custom.css') }}">
+<link rel="stylesheet" href="{{ asset('css/v3/components/form-controls.css') }}">
+<link rel="stylesheet" href="{{ asset('css/v3/components/cards.css') }}">
+<link rel="stylesheet" href="{{ asset('css/v3/components/datatables.css') }}">
+<link rel="stylesheet" href="{{ asset('css/v3/components/buttons.css') }}">
 
 <style>
     canvas {
