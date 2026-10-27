@@ -662,8 +662,13 @@
         getDischargePlanning();
 
         $form.on('change', 'input[type="checkbox"]', function () {
-            updateAdditionalFieldState();
-            simpanDischargePlanning();
+            setTimeout(function () {
+                updateAdditionalFieldState();
+
+                if (!isDischargePlanningLoading) {
+                    simpanDischargePlanning();
+                }
+            }, 0);
         });
 
         $form.on('blur', 'input[type="text"]', function () {
