@@ -37,7 +37,7 @@ class RINeonatusPrintService implements PrintDataInterface
             ->leftJoin('aplikasi.pengguna as usr', 'usr.ID', '=', 'fin.USER_CREATED')
             ->select('fin.*', 'usr.NIP as NIP_USER_FINALISASI', DB::raw('master.getNamaLengkapPegawai(usr.NIP) as NAMA_USER_FINALISASI'))
             ->where('fin.KUNJUNGAN', $kunjungan)
-            ->where('fin.FORM', 'pengkajian-ranap-dewasa')
+            ->where('fin.FORM', 'pengkajian-ranap-neonatus')
             ->where('fin.SUB', 'DOKTER')
             ->where('fin.STATUS', 2)
             ->first();
@@ -644,7 +644,7 @@ class RINeonatusPrintService implements PrintDataInterface
     private function getDataPerawat(string $kunjungan): array
     {
         $data = DB::table(
-            'simrspku_pengkajian.pengkajian_ranap_dewasa'
+            'simrspku_pengkajian.pengkajian_ranap_neonatus'
         )
             ->where('KUNJUNGAN', $kunjungan)
             ->first();
