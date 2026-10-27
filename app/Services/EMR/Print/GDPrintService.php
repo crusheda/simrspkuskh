@@ -906,42 +906,42 @@ class GDPrintService implements PrintDataInterface
             ->select([
                 'pk.NOMOR as KUNJUNGAN',
                 'pk.NOPEN',
-                'pk.MASUK as TANGGAL_MASUK',
-                'pk.KELUAR as TANGGAL_KELUAR',
-                'pk.RUANGAN',
-                'pk.DPJP',
+                // 'pk.MASUK as TANGGAL_MASUK',
+                // 'pk.KELUAR as TANGGAL_KELUAR',
+                // 'pk.RUANGAN',
+                // 'pk.DPJP',
 
-                DB::raw("LPAD(pp.NORM, 8, '0') as NORM_FORMATTED"),
-                DB::raw('master.getNamaLengkap(p.NORM) as NAMA_PASIEN'),
-                'p.TANGGAL_LAHIR',
-                'p.ALAMAT',
+                // DB::raw("LPAD(pp.NORM, 8, '0') as NORM_FORMATTED"),
+                // DB::raw('master.getNamaLengkap(p.NORM) as NAMA_PASIEN'),
+                // 'p.TGLLAHIR',
+                // 'p.ALAMAT',
 
-                'rjk.DESKRIPSI as JENIS_KELAMIN',
+                // 'rjk.DESKRIPSI as JENIS_KELAMIN',
                 'ag.DESKRIPSI as AGAMA',
                 'pek.DESKRIPSI as PEKERJAAN',
-                'r.DESKRIPSI as NAMA_RUANGAN',
+                // 'r.DESKRIPSI as NAMA_RUANGAN',
 
-                DB::raw(
-                    'master.getNamaLengkapPegawai(dok.NIP) as NAMA_DPJP'
-                ),
+                // DB::raw(
+                //     'master.getNamaLengkapPegawai(dok.NIP) as NAMA_DPJP'
+                // ),
             ])
             ->where('pk.NOMOR', $kunjungan)
             ->first();
 
-        $norm = $value($pasien->NORM_FORMATTED ?? null);
-        $namaPasien = $value($pasien->NAMA_PASIEN ?? null);
-        $tanggalLahirRaw = $value($pasien->TANGGAL_LAHIR ?? null);
+        // $norm = $value($pasien->NORM_FORMATTED ?? null);
+        // $namaPasien = $value($pasien->NAMA_PASIEN ?? null);
+        // $tanggalLahirRaw = $value($pasien->TANGGAL_LAHIR ?? null);
 
-        $umur = '-';
+        // $umur = '-';
 
-        if ($tanggalLahirRaw !== '') {
-            try {
-                $umur = \Carbon\Carbon::parse($tanggalLahirRaw)->age
-                    . ' tahun';
-            } catch (\Throwable $e) {
-                $umur = '-';
-            }
-        }
+        // if ($tanggalLahirRaw !== '') {
+        //     try {
+        //         $umur = \Carbon\Carbon::parse($tanggalLahirRaw)->age
+        //             . ' tahun';
+        //     } catch (\Throwable $e) {
+        //         $umur = '-';
+        //     }
+        // }
 
         /*
         |--------------------------------------------------------------------------
@@ -2614,29 +2614,30 @@ class GDPrintService implements PrintDataInterface
 
         $data = [
             // Identitas pasien dan kunjungan
-            'NAMA_PASIEN' => $placeholder($namaPasien),
-            'NORM' => $placeholder($norm),
-            'JENIS_KELAMIN' => $placeholder(
-                $pasien->JENIS_KELAMIN ?? null
-            ),
-            'TANGGAL_LAHIR' => $this->formatTanggal($tanggalLahirRaw),
-            'UMUR' => $umur,
-            'NOPEN' => $placeholder($pasien->NOPEN ?? null),
-            'KUNJUNGAN' => $placeholder(
-                $pasien->KUNJUNGAN ?? $kunjungan
-            ),
-            'TANGGAL_MASUK' => $this->formatTanggalWaktuMedis(
-                $pasien->TANGGAL_MASUK ?? null
-            ) ?: '-',
-            'TANGGAL_KELUAR' => $this->formatTanggalWaktuMedis(
-                $pasien->TANGGAL_KELUAR ?? null
-            ) ?: '-',
-            'RUANGAN' => $placeholder(
-                $pasien->NAMA_RUANGAN ?? null
-            ),
-            'DPJP' => $placeholder(
-                $pasien->NAMA_DPJP ?? null
-            ),
+
+            // 'NAMA_PASIEN' => $placeholder($namaPasien),
+            // 'NORM' => $placeholder($norm),
+            // 'JENIS_KELAMIN' => $placeholder(
+            //     $pasien->JENIS_KELAMIN ?? null
+            // ),
+            // 'TANGGAL_LAHIR' => $this->formatTanggal($tanggalLahirRaw),
+            // 'UMUR' => $umur,
+            // 'NOPEN' => $placeholder($pasien->NOPEN ?? null),
+            // 'KUNJUNGAN' => $placeholder(
+            //     $pasien->KUNJUNGAN ?? $kunjungan
+            // ),
+            // 'TANGGAL_MASUK' => $this->formatTanggalWaktuMedis(
+            //     $pasien->TANGGAL_MASUK ?? null
+            // ) ?: '-',
+            // 'TANGGAL_KELUAR' => $this->formatTanggalWaktuMedis(
+            //     $pasien->TANGGAL_KELUAR ?? null
+            // ) ?: '-',
+            // 'RUANGAN' => $placeholder(
+            //     $pasien->NAMA_RUANGAN ?? null
+            // ),
+            // 'DPJP' => $placeholder(
+            //     $pasien->NAMA_DPJP ?? null
+            // ),
 
             // Triage
             'TRIAGE_CARA_KEDATANGAN' => $formatLines($caraKedatangan),

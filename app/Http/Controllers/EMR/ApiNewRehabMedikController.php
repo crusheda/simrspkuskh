@@ -1930,13 +1930,17 @@ class ApiNewRehabMedikController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => $validasi
+            'data' => $validasi,
+
             // 'data' => [
             //     's' => $data->SUBYEKTIF,
             //     'o' => $data->OBYEKTIF,
             //     'a' => $data->ASSESMENT,
             //     'p' => $data->PROCEDURE,
             // ]
+
+            // Tambahan data tanda vital dan nutrisi.
+            'ttv' => $this->ambilTTVProgramTerapi($KUNJUNGAN),
         ], 200);
     }
 
@@ -2055,7 +2059,7 @@ class ApiNewRehabMedikController extends Controller
         ]);
     }
 
-    function copyCpptProgram($KUNJUNGAN,$IDCPPT)
+    function copyCpptProgram($KUNJUNGAN, $IDCPPT)
     {
         $data = DB::table('medicalrecord.cppt AS cppt')
             ->select(
@@ -2073,20 +2077,24 @@ class ApiNewRehabMedikController extends Controller
         if (!$data) {
             return response()->json([
                 'status' => false,
-                'message'=> 'Data CPPT tidak ditemukan atau telah terhapus'
+                'message' => 'Data CPPT tidak ditemukan atau telah terhapus',
             ], 404);
         }
 
         return response()->json([
             'status' => true,
-            'data' => $data
+
+            'data' => $data,
+
+            // Tanda vital terbaru dari kunjungan tujuan.
+            'ttv' => $this->ambilTTVProgramTerapi($KUNJUNGAN),
         ]);
     }
 
     function getProgramEdit($KUNJUNGAN, $GROUP, $QUEUE)
     {
         $data = DB::table('simrspku_klaim.emr_form_terapi AS ftr')
-            ->join('medicalrecord.cppt AS cppt', function($join) {
+            ->join('medicalrecord.cppt AS cppt', function ($join) {
                 $join->on('cppt.ID', '=', 'ftr.id_cppt')
                     ->where('cppt.STATUS', '=', 1);
             })
@@ -2096,7 +2104,7 @@ class ApiNewRehabMedikController extends Controller
                 'cppt.SUBYEKTIF',
                 'cppt.OBYEKTIF',
                 'cppt.ASSESMENT',
-                'cppt.PLANNING as PROCEDURE'
+                'cppt.PLANNING AS PROCEDURE'
             )
             ->where('ftr.nomor', $KUNJUNGAN)
             ->where('ftr.group', $GROUP)
@@ -2109,16 +2117,20 @@ class ApiNewRehabMedikController extends Controller
         if (!$data) {
             return response()->json([
                 'status' => false,
-                'message'=> 'Data Formulir Program Terapi tidak ditemukan pada kunjungan ini'
-            ]);
+                'message' => 'Data Formulir Program Terapi tidak ditemukan pada kunjungan ini',
+            ], 404);
         }
 
         return response()->json([
             'status' => true,
             'data' => $data,
+
             'kunjungan' => $KUNJUNGAN,
             'group' => $GROUP,
             'queue' => $QUEUE,
+
+            // Muat kembali data TTV dan nutrisi.
+            'ttv' => $this->ambilTTVProgramTerapi($KUNJUNGAN),
         ], 200);
     }
 
@@ -2303,11 +2315,28 @@ class ApiNewRehabMedikController extends Controller
                 ], 404);
             }
 
+            // $id_cppt = DB::table('medicalrecord.cppt')->insertGetId([
+            //     'KUNJUNGAN'    => $kunjungan,
+            //     'TANGGAL'      => $tglPush,
+            //     'SUBYEKTIF'    => $request->cppt_s_t,
+            //     'OBYEKTIF'     => $request->cppt_o_t,
+            //     'ASSESMENT'    => $request->cppt_a_t,
+            //     'PLANNING'     => $request->cppt_p_t,
+            //     'INSTRUKSI'    => '-',
+            //     'JENIS'        => $jenis,
+            //     'TENAGA_MEDIS' => $nakes,
+            //     'OLEH'         => auth()->id(),
+            //     'STATUS'       => 1,
+            // ]);
+
             $id_cppt = DB::table('medicalrecord.cppt')->insertGetId([
                 'KUNJUNGAN'    => $kunjungan,
                 'TANGGAL'      => $tglPush,
                 'SUBYEKTIF'    => $request->cppt_s_t,
-                'OBYEKTIF'     => $request->cppt_o_t,
+
+                // TTV otomatis diletakkan di atas teks Objective.
+                'OBYEKTIF'     => $this->objectiveDenganTTVProgramTerapi($request),
+
                 'ASSESMENT'    => $request->cppt_a_t,
                 'PLANNING'     => $request->cppt_p_t,
                 'INSTRUKSI'    => '-',
@@ -2354,6 +2383,20 @@ class ApiNewRehabMedikController extends Controller
                 'created_at'    => now(),
                 'updated_at'    => now()
             ]);
+
+            /*
+            * 2B. SIMPAN TANDA VITAL DAN NUTRISI
+            *
+            * dokterspesialis => PPA 1
+            * profesi lainnya => PPA 0
+            */
+            $ppaTtv = ((int) $jenis === 1) ? 1 : 0;
+
+            $this->simpanTandaVitalProgramTerapi(
+                $request,
+                $kunjungan,
+                $ppaTtv
+            );
 
             /* ==========================
             * 3. BANGUN DATA UNTUK PDF (tanpa query ulang)
@@ -2404,6 +2447,147 @@ class ApiNewRehabMedikController extends Controller
                 'message'=> $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Menyimpan tanda vital dan nutrisi dari form Program Terapi.
+     *
+     * $ppa:
+     *   1 = dokter
+     *   0 = selain dokter, mengikuti pola penyimpanan yang diberikan.
+     *
+     * Method ini tidak melakukan commit/rollback karena dijalankan
+     * di dalam transaksi storeProgram() atau updateProgramTerapi().
+     */
+    private function simpanTandaVitalProgramTerapi(
+        Request $request,
+        $kunjungan,
+        int $ppa
+    ): void {
+        $existing = DB::table('medicalrecord.tanda_vital')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->orderByDesc('ID')
+            ->first();
+
+        /*
+        * Nilai angka kosong diubah menjadi 0, mengikuti pola
+        * function simpanTandaVitalRJ() yang diberikan.
+        */
+        $angka = function (string $key, $default = 0) use ($request) {
+            $value = $request->input($key);
+
+            if ($value === null || $value === '' || !is_numeric($value)) {
+                return $default;
+            }
+
+            return $value;
+        };
+
+        /*
+        * Checkbox yang tidak dipilih disimpan sebagai NULL.
+        */
+        $pilihan = function (string $key) use ($request) {
+            $value = $request->input($key);
+
+            return ($value === '' || $value === null)
+                ? null
+                : $value;
+        };
+
+        $dataVital = [
+            'KEADAAN_UMUM' => $request->input(
+                'tv_keu',
+                $existing->KEADAAN_UMUM ?? ''
+            ),
+
+            'SISTOLIK' => $angka('tv_td_up'),
+            'DISTOLIK' => $angka('tv_td_down'),
+
+            'FREKUENSI_NADI' => $angka('tv_nadi'),
+            'FREKUENSI_NADI_CB' => $pilihan('tv_nadi_cb'),
+
+            'SUHU' => $angka('tv_suhu'),
+            'SATURASI_O2' => $angka('tv_spo2'),
+
+            'FREKUENSI_NAFAS' => $angka('tv_nafas'),
+            'FREKUENSI_NAFAS_CB' => $pilihan('tv_nafas_cb'),
+
+            'EYE' => $angka('tv_gcs_e'),
+            'VERBAL' => $angka('tv_gcs_v'),
+            'MOTORIK' => $angka('tv_gcs_m'),
+            'GCS' => $angka('tv_gcs_t'),
+
+            /*
+            * Input ini tidak ada pada Blade yang dilampirkan.
+            * Jika tidak dikirim, nilai sebelumnya tidak dihapus.
+            */
+            'KESADARAN_NEONATUS' => $request->has('tv_kesadaran_neonatus')
+                ? $angka('tv_kesadaran_neonatus')
+                : ($existing->KESADARAN_NEONATUS ?? 0),
+
+            'VISUS_OD' => $request->has('tv_visus_od')
+                ? $angka('tv_visus_od')
+                : ($existing->VISUS_OD ?? 0),
+
+            'VISUS_OS' => $request->has('tv_visus_os')
+                ? $angka('tv_visus_os')
+                : ($existing->VISUS_OS ?? 0),
+
+            'TIO_OD' => $request->has('tv_tio_od')
+                ? $angka('tv_tio_od')
+                : ($existing->TIO_OD ?? 0),
+
+            'TIO_OS' => $request->has('tv_tio_os')
+                ? $angka('tv_tio_os')
+                : ($existing->TIO_OS ?? 0),
+
+            'WAKTU_PEMERIKSAAN' => now(),
+            'OLEH' => auth()->id(),
+            'STATUS' => 1,
+            'TANGGAL' => now(),
+        ];
+
+        if ($existing) {
+            DB::table('medicalrecord.tanda_vital')
+                ->where('ID', $existing->ID)
+                ->update($dataVital);
+        } else {
+            DB::table('medicalrecord.tanda_vital')
+                ->insert(
+                    array_merge(
+                        [
+                            'KUNJUNGAN' => $kunjungan,
+                        ],
+                        $dataVital
+                    )
+                );
+        }
+
+        /*
+        * Simpan data nutrisi.
+        * Gunakan PPA 1 untuk dokter dan PPA 0 untuk non-dokter,
+        * mengikuti pola pemetaan pada contoh yang diberikan.
+        */
+        $bb = $angka('tv_bb');
+        $tb = $angka('tv_tb');
+        $imt = $angka('gizi_imt');
+
+        DB::table('medicalrecord.nutrisi')->updateOrInsert(
+            [
+                'KUNJUNGAN' => $kunjungan,
+                'PPA' => $ppa,
+            ],
+            [
+                'DATA_PENGUKURAN' => 1,
+                'BERAT_BADAN' => $bb,
+                'TINGGI_BADAN' => $tb,
+                'INDEX_MASSA_TUBUH' => round((float) $imt, 2),
+                'TANGGAL_PEMERIKSAAN' => now(),
+                'OLEH' => auth()->id(),
+                'STATUS' => 1,
+                'TANGGAL' => now(),
+            ]
+        );
     }
 
     function updateProgramTerapi(Request $request)
@@ -2618,15 +2802,29 @@ class ApiNewRehabMedikController extends Controller
             /* ==========================
             * 1. UPDATE CPPT
             * ========================== */
-            DB::table('medicalrecord.cppt')->where('ID', $getFtr->id_cppt)->update([
-                'TANGGAL'      => $tglPush,
-                'SUBYEKTIF'    => $request->cppt_s_t,
-                'OBYEKTIF'     => $request->cppt_o_t,
-                'ASSESMENT'    => $request->cppt_a_t,
-                'PLANNING'     => $request->cppt_p_t,
-                'INSTRUKSI'    => '-',
-                'STATUS'       => 1,
-            ]);
+            // DB::table('medicalrecord.cppt')->where('ID', $getFtr->id_cppt)->update([
+            //     'TANGGAL'      => $tglPush,
+            //     'SUBYEKTIF'    => $request->cppt_s_t,
+            //     'OBYEKTIF'     => $request->cppt_o_t,
+            //     'ASSESMENT'    => $request->cppt_a_t,
+            //     'PLANNING'     => $request->cppt_p_t,
+            //     'INSTRUKSI'    => '-',
+            //     'STATUS'       => 1,
+            // ]);
+            DB::table('medicalrecord.cppt')
+                ->where('ID', $getFtr->id_cppt)
+                ->update([
+                    'TANGGAL'      => $tglPush,
+                    'SUBYEKTIF'    => $request->cppt_s_t,
+
+                    // Perbarui TTV di bagian atas Objective tanpa duplikasi.
+                    'OBYEKTIF'     => $this->objectiveDenganTTVProgramTerapi($request),
+
+                    'ASSESMENT'    => $request->cppt_a_t,
+                    'PLANNING'     => $request->cppt_p_t,
+                    'INSTRUKSI'    => '-',
+                    'STATUS'       => 1,
+                ]);
 
             /* ==========================
             * 2. UPDATE EMR FORM PROGRAM TERAPI
@@ -2653,6 +2851,19 @@ class ApiNewRehabMedikController extends Controller
                 'updated_at'    => now()
             ]);
 
+            /*
+            * SIMPAN PERUBAHAN TANDA VITAL DAN NUTRISI.
+            *
+            * Admin mempertahankan jenis profesi formulir yang sedang diperbarui.
+            */
+            $ppaTtv = ((int) $jenisAdm === 1) ? 1 : 0;
+
+            $this->simpanTandaVitalProgramTerapi(
+                $request,
+                $request->kunjungan,
+                $ppaTtv
+            );
+
             /* ==========================
             * 3. BANGUN DATA UNTUK PDF (tanpa query ulang)
             * ========================== */
@@ -2670,13 +2881,15 @@ class ApiNewRehabMedikController extends Controller
                 'UMURPASIEN'        => $dataPasien->UMURPASIEN ?? '',
                 'ALAMATPASIEN'      => $dataPasien->ALAMATPASIEN ?? '',
                 'SUBYEKTIF'         => $request->cppt_s_t,
-                'OBYEKTIF'          => $request->cppt_o_t,
+                'OBYEKTIF'          => $this->objectiveDenganTTVProgramTerapi($request),
                 'ASSESMENT'         => $request->cppt_a_t,
                 'PROCEDURE'         => $request->cppt_p_t,
                 'PATH_TTE_DOKTER'   => $ttd_pegawai_dr->signature_path,
                 'PATH_TTE_TIM'      => $ttd_pegawai_tr->signature_path,
             ];
 
+            // print_r($show);
+            // die();
 
             /* 4. KIRIM LANGSUNG KE GENERATOR */
             $generateForm = $this->generateFormProgramTerapi($show);
@@ -2687,6 +2900,9 @@ class ApiNewRehabMedikController extends Controller
                     'message'=> 'Gagal generate Form Program Terapi'
                 ], 500);
             }
+
+            // print_r($generateForm);
+            // die();
 
             DB::commit();
 
@@ -2703,6 +2919,329 @@ class ApiNewRehabMedikController extends Controller
                 'message'=> $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Membentuk Objective CPPT dengan tanda vital di bagian atas.
+     *
+     * Semua nilai numerik dibulatkan menjadi bilangan bulat,
+     * kecuali SUHU yang tetap mendukung angka desimal.
+     *
+     * Teks Objective asli tetap dipertahankan setelah blok TTV.
+     */
+    private function objectiveDenganTTVProgramTerapi(Request $request): string
+    {
+        /*
+        * 1. Ambil teks Objective asli.
+        */
+        $objective = trim((string) $request->input('cppt_o_t', ''));
+
+        /*
+        * 2. Hapus blok TTV sebelumnya agar tidak duplikat
+        *    saat proses update CPPT.
+        */
+        $objective = preg_replace(
+            '/^Tanda Vital \(Program Terapi\):\R.*?(?:\R{2,}|$)/s',
+            '',
+            $objective,
+            1
+        ) ?? $objective;
+
+        $objective = trim($objective);
+
+        /*
+        * 3. Helper untuk mengambil teks.
+        */
+        $getValue = static function (string $key) use ($request): string {
+            $value = $request->input($key);
+
+            if ($value === null) {
+                return '';
+            }
+
+            return trim((string) $value);
+        };
+
+        /*
+        * 4. Helper untuk angka bulat.
+        *
+        * Contoh:
+        * 109.00 -> 109
+        * 97.00  -> 97
+        * 32.79  -> 33
+        *
+        * Nilai kosong, tidak numerik, atau nol tidak ditampilkan.
+        */
+        $getIntegerValue = static function (string $key) use ($request): string {
+            $value = $request->input($key);
+
+            if (
+                $value === null ||
+                trim((string) $value) === '' ||
+                !is_numeric($value)
+            ) {
+                return '';
+            }
+
+            $number = (int) round((float) $value);
+
+            return $number === 0 ? '' : (string) $number;
+        };
+
+        /*
+        * 5. Helper khusus SUHU.
+        *
+        * Contoh:
+        * 27.00  -> 27
+        * 36.50  -> 36.5
+        * 36.25  -> 36.25
+        *
+        * Desimal dipertahankan jika memang diperlukan.
+        * Nol di belakang angka desimal dihilangkan.
+        */
+        $getSuhuValue = static function (string $key) use ($request): string {
+            $value = $request->input($key);
+
+            if (
+                $value === null ||
+                trim((string) $value) === '' ||
+                !is_numeric($value)
+            ) {
+                return '';
+            }
+
+            $number = (float) $value;
+
+            if ($number == 0.0) {
+                return '';
+            }
+
+            $formatted = number_format($number, 2, '.', '');
+
+            return rtrim(rtrim($formatted, '0'), '.');
+        };
+
+        /*
+        * 6. Susun baris tanda vital.
+        */
+        $baris = [];
+
+        // KEADAAN UMUM
+        $keadaanUmum = $getValue('tv_keu');
+
+        if ($keadaanUmum !== '') {
+            $baris[] = 'Keadaan Umum: ' . $keadaanUmum;
+        }
+
+        // GCS
+        $gcsParts = [];
+
+        foreach ([
+            'tv_gcs_e' => 'E',
+            'tv_gcs_v' => 'V',
+            'tv_gcs_m' => 'M',
+            'tv_gcs_t' => 'Total',
+        ] as $key => $label) {
+            $value = $getIntegerValue($key);
+
+            if ($value !== '') {
+                $gcsParts[] = $label . ': ' . $value;
+            }
+        }
+
+        if (!empty($gcsParts)) {
+            $baris[] = 'GCS: ' . implode(', ', $gcsParts);
+        }
+
+        // TEKANAN DARAH
+        $sistolik = $getIntegerValue('tv_td_up');
+        $distolik = $getIntegerValue('tv_td_down');
+
+        if ($sistolik !== '' || $distolik !== '') {
+            $baris[] = 'Tekanan Darah: '
+                . ($sistolik !== '' ? $sistolik : '-')
+                . '/'
+                . ($distolik !== '' ? $distolik : '-')
+                . ' mmHg';
+        }
+
+        // FREKUENSI NADI
+        $nadi = $getIntegerValue('tv_nadi');
+
+        if ($nadi !== '') {
+            $pilihanNadi = (string) $request->input('tv_nadi_cb', '');
+
+            $ritmeNadi = [
+                '1' => 'Reguler',
+                '2' => 'Ireguler',
+            ][$pilihanNadi] ?? '';
+
+            $baris[] = 'Frekuensi Nadi: '
+                . $nadi
+                . ' x/menit'
+                . ($ritmeNadi !== '' ? ' (' . $ritmeNadi . ')' : '');
+        }
+
+        // FREKUENSI PERNAPASAN
+        $nafas = $getIntegerValue('tv_nafas');
+
+        if ($nafas !== '') {
+            $pilihanNafas = (string) $request->input('tv_nafas_cb', '');
+
+            $polaNafas = [
+                '1' => 'Simetris',
+                '2' => 'Asimetris',
+            ][$pilihanNafas] ?? '';
+
+            $baris[] = 'Frekuensi Pernapasan: '
+                . $nafas
+                . ' x/menit'
+                . ($polaNafas !== '' ? ' (' . $polaNafas . ')' : '');
+        }
+
+        // SUHU: SATU-SATUNYA NILAI YANG MENDUKUNG DESIMAL
+        $suhu = $getSuhuValue('tv_suhu');
+
+        if ($suhu !== '') {
+            $baris[] = 'Suhu: ' . $suhu . ' °C';
+        }
+
+        // SpO2
+        $spo2 = $getIntegerValue('tv_spo2');
+
+        if ($spo2 !== '') {
+            $baris[] = 'SpO2: ' . $spo2 . '%';
+        }
+
+        /*
+        * 7. ANTROPOMETRI DAN NUTRISI
+        *
+        * BB, TB, dan IMT ditampilkan sebagai angka bulat.
+        */
+        $bb = $getIntegerValue('tv_bb');
+
+        if ($bb !== '') {
+            $baris[] = 'BB: ' . $bb . ' Kg';
+        }
+
+        $tb = $getIntegerValue('tv_tb');
+
+        if ($tb !== '') {
+            $baris[] = 'TB: ' . $tb . ' Cm';
+        }
+
+        $imt = $getIntegerValue('gizi_imt');
+
+        if ($imt !== '') {
+            $baris[] = 'IMT: ' . $imt;
+        }
+
+        /*
+        * 8. Jika tidak ada data TTV yang terisi,
+        *    kembalikan Objective asli.
+        */
+        if (empty($baris)) {
+            return $objective;
+        }
+
+        /*
+        * 9. TTV diletakkan di atas teks Objective.
+        *
+        * PENTING:
+        * Jangan mengosongkan $blokTTV karena seluruh data
+        * TTV tidak akan muncul apabila nilainya string kosong.
+        */
+        $blokTTV = "Tanda Vital :\n"
+            . implode("\n", $baris);
+
+        return trim(
+            $blokTTV
+            . ($objective !== '' ? "\n\n" . $objective : '')
+        );
+    }
+
+    /**
+     * Mengambil data tanda vital dan nutrisi terakhir untuk suatu kunjungan.
+     *
+     * Nama key disamakan dengan input Blade agar mudah dimuat kembali.
+     */
+    private function ambilTTVProgramTerapi($kunjungan): array
+    {
+        $tv = DB::table('medicalrecord.tanda_vital')
+            ->select(
+                'KEADAAN_UMUM',
+                'SISTOLIK',
+                'DISTOLIK',
+                'FREKUENSI_NADI',
+                'FREKUENSI_NADI_CB',
+                'SUHU',
+                'SATURASI_O2',
+                'FREKUENSI_NAFAS',
+                'FREKUENSI_NAFAS_CB',
+                'EYE',
+                'VERBAL',
+                'MOTORIK',
+                'GCS',
+                'KESADARAN_NEONATUS',
+                'VISUS_OD',
+                'VISUS_OS',
+                'TIO_OD',
+                'TIO_OS'
+            )
+            ->where('KUNJUNGAN', $kunjungan)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first();
+
+        $nutrisi = DB::table('medicalrecord.nutrisi')
+            ->select(
+                'BERAT_BADAN',
+                'TINGGI_BADAN',
+                'INDEX_MASSA_TUBUH'
+            )
+            ->where('KUNJUNGAN', $kunjungan)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first();
+
+        return [
+            // Keadaan umum
+            'keu' => $tv->KEADAAN_UMUM ?? '',
+
+            // GCS
+            'gcs_e' => $tv->EYE ?? '',
+            'gcs_v' => $tv->VERBAL ?? '',
+            'gcs_m' => $tv->MOTORIK ?? '',
+            'gcs_t' => $tv->GCS ?? '',
+
+            // Tekanan darah
+            'td_up' => $tv->SISTOLIK ?? '',
+            'td_down' => $tv->DISTOLIK ?? '',
+
+            // Nadi
+            'nadi' => $tv->FREKUENSI_NADI ?? '',
+            'nadi_cb' => $tv->FREKUENSI_NADI_CB ?? '',
+
+            // Pernapasan
+            'nafas' => $tv->FREKUENSI_NAFAS ?? '',
+            'nafas_cb' => $tv->FREKUENSI_NAFAS_CB ?? '',
+
+            // Suhu dan saturasi
+            'suhu' => $tv->SUHU ?? '',
+            'spo2' => $tv->SATURASI_O2 ?? '',
+
+            // Nutrisi
+            'bb' => $nutrisi->BERAT_BADAN ?? '',
+            'tb' => $nutrisi->TINGGI_BADAN ?? '',
+            'imt' => $nutrisi->INDEX_MASSA_TUBUH ?? '',
+
+            // Field tambahan, jika inputnya tersedia pada form.
+            'kesadaran_neonatus' => $tv->KESADARAN_NEONATUS ?? '',
+            'visus_od' => $tv->VISUS_OD ?? '',
+            'visus_os' => $tv->VISUS_OS ?? '',
+            'tio_od' => $tv->TIO_OD ?? '',
+            'tio_os' => $tv->TIO_OS ?? '',
+        ];
     }
 
     function generateFormProgramTerapi(object $show)
@@ -3103,11 +3642,6 @@ class ApiNewRehabMedikController extends Controller
 
             /* 4. KIRIM LANGSUNG KE GENERATOR */
             $generateForm = $this->generateFormProgramTerapi($show);
-
-            // return response()->json([
-            //     'status' => false,
-            //     'message'=> 'File Berkas Klaim Form Program Terapi tidak ditemukan di server'
-            // ], 404);
         }
 
         return response()->file($path, [
@@ -3231,7 +3765,7 @@ class ApiNewRehabMedikController extends Controller
     }
 
     // ====================================================================================================================================
-    // ===================================================  FORMULIR PROGRAM TERAPI  ======================================================
+    // ==================================================  FORMULIR JADWAL PELAYANAN  =====================================================
     // ====================================================================================================================================
     function getFormJadwalPelayanan($KUNJUNGAN)
     {
