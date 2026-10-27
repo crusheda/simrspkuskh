@@ -32,28 +32,334 @@
             <div class="card-body p-3">
                 <div class="row">
                     <input type="text" class="form-control" id="kode_program_terapi" hidden>
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
                             <label class="form-label"><i><b>Subjective</b></i> <a class="text-danger">*</a></label>
                             <textarea id="cppt_s_t" rows="4" class="form-control" placeholder="..."></textarea>
                         </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <label class="form-label"><i><b>Objective</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_o_t" rows="4" class="form-control" placeholder="..."></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="form-group">
-                            <label class="form-label"><i><b>Assessment</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_a_t" rows="4" class="form-control" placeholder="..."></textarea>
+                            <div class="row" id="ttv_objective">
+                                <div class="col-md-12" id="ttv_full">
+                                    {{-- KEADAAN UMUM --}}
+                                    <div class="form-group">
+                                        <div class="form-group mb-3">
+                                            <label class="form-label">
+                                                Keadaan Umum
+                                            </label>
+                                            <textarea
+                                                class="form-control"
+                                                name="keu"
+                                                rows="1" placeholder="..."
+                                            ></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- ==========================================================
+                                    KOLOM KIRI
+                                =========================================================== --}}
+                                <div class="col-md-6" id="ttv_kiri">
+
+                                    {{-- GCS --}}
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">
+                                            GCS (<i>Glasgow Coma Scale</i>)
+                                        </label>
+                                        <div class="d-flex align-items-center column-gap-3 row-gap-3 flex-wrap">
+
+                                            {{-- EYE --}}
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <label class="form-check-label">
+                                                    Eye
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    class="form-control form-control-sm"
+                                                    name="gcs_e"
+                                                    min="1"
+                                                    max="4"
+                                                    style="width: 70px; flex: 0 0 60px;"
+                                                    placeholder=""
+                                                >
+                                            </div>
+
+                                            {{-- VERBAL --}}
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <label class="form-check-label">
+                                                    Verbal
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    class="form-control form-control-sm"
+                                                    name="gcs_v"
+                                                    min="1"
+                                                    max="5"
+                                                    style="width: 70px; flex: 0 0 60px;"
+                                                    placeholder=""
+                                                >
+                                            </div>
+
+                                            {{-- MOTOR --}}
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <label class="form-check-label">
+                                                    Move
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    class="form-control form-control-sm"
+                                                    name="gcs_m"
+                                                    min="1"
+                                                    max="6"
+                                                    style="width: 70px; flex: 0 0 60px;"
+                                                    placeholder=""
+                                                >
+                                            </div>
+
+                                            {{-- TOTAL --}}
+                                            <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                                <label class="form-check-label">
+                                                    Total
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    class="form-control form-control-sm"
+                                                    name="gcs_t"
+                                                    style="width: 70px; flex: 0 0 60px;"
+                                                    placeholder=""
+                                                    readonly
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- TEKANAN DARAH --}}
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">
+                                            Tekanan Darah
+                                        </label>
+                                        <div class="input-group">
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                name="td_up"
+                                            >
+                                            <div class="input-group-text">
+                                                /
+                                            </div>
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                name="td_down"
+                                            >
+                                            <div class="input-group-text">
+                                                mmHg
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- FREKUENSI NADI --}}
+                                    <div class="form-group mb-3" id="frekuensi_nadi">
+                                        <label class="form-label">
+                                            Frekuensi Nadi
+                                        </label>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="input-group flex-grow-1">
+                                                <input
+                                                    type="number"
+                                                    class="form-control"
+                                                    name="nadi"
+                                                >
+                                                <span class="input-group-text">
+                                                    X/menit
+                                                </span>
+                                            </div>
+
+                                            {{-- REGULER --}}
+                                            <div class="form-check m-0">
+                                                <input
+                                                    class="form-check-input single-checkbox"
+                                                    type="checkbox"
+                                                    name="nadi_cb"
+                                                    value="1"
+                                                    checked
+                                                >
+                                                <label class="form-check-label">
+                                                    Reguler
+                                                </label>
+                                            </div>
+
+                                            {{-- IREGULER --}}
+                                            <div class="form-check m-0">
+                                                <input
+                                                    class="form-check-input single-checkbox"
+                                                    type="checkbox"
+                                                    name="nadi_cb"
+                                                    value="2"
+                                                >
+                                                <label class="form-check-label">
+                                                    Ireguler
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- ==========================================================
+                                    KOLOM KANAN
+                                =========================================================== --}}
+                                <div class="col-md-6" id="ttv_kanan">
+                                    <div id="posisi_nadi_neonatus"></div>
+
+                                    {{-- FREKUENSI NAFAS --}}
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">
+                                            Frekuensi Nafas
+                                        </label>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="input-group flex-grow-1">
+                                                <input
+                                                    type="number"
+                                                    class="form-control"
+                                                    name="nafas"
+                                                >
+                                                <span class="input-group-text">
+                                                    X/menit
+                                                </span>
+                                            </div>
+
+                                            {{-- SIMETRIS --}}
+                                            <div class="form-check m-0">
+                                                <input
+                                                    class="form-check-input single-checkbox"
+                                                    type="checkbox"
+                                                    name="nafas_cb"
+                                                    value="1"
+                                                    checked
+                                                >
+                                                <label class="form-check-label">
+                                                    Simetris
+                                                </label>
+                                            </div>
+
+                                            {{-- ASIMETRIS --}}
+                                            <div class="form-check m-0">
+                                                <input
+                                                    class="form-check-input single-checkbox"
+                                                    type="checkbox"
+                                                    name="nafas_cb"
+                                                    value="2"
+                                                >
+                                                <label class="form-check-label">
+                                                    Asimetris
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- SUHU + SPO2 --}}
+                                    <div class="row">
+
+                                        {{-- SUHU --}}
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">
+                                                    Suhu
+                                                </label>
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control" name="suhu">
+                                                    <div class="input-group-text">
+                                                        °C
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- SPO2 --}}
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">
+                                                    SpO2
+                                                </label>
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control" name="spo2">
+                                                    <div class="input-group-text">
+                                                        %
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- BB + TB --}}
+                                    <div class="row">
+
+                                        {{-- BB --}}
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">
+                                                    BB
+                                                </label>
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control" name="bb"
+                                                        step="0.1"
+                                                        min="0">
+                                                    <div class="input-group-text">
+                                                        Kg
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- TB --}}
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">
+                                                    TB
+                                                </label>
+                                                <div class="input-group">
+                                                    <input type="number" class="form-control" name="tb"
+                                                        step="0.1"
+                                                        min="0">
+                                                    <div class="input-group-text">
+                                                        Cm
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- IMT --}}
+                                    <div class="form-group mt-2">
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            name="imt"
+                                            hidden
+                                        >
+                                        <div
+                                            id="hasil_imt"
+                                            class="alert alert-danger d-flex align-items-center d-none"
+                                            role="alert"
+                                        >
+                                            <i class="ri-spam-line me-2"></i>
+                                            <span id="hasil_imt_text"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <label class="form-label">Pemeriksaan Fisik</label>
+                            <textarea id="cppt_o_t" rows="3" class="form-control" placeholder="..."></textarea>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="form-group mb-3">
+                            <label class="form-label"><i><b>Assessment</b></i> <a class="text-danger">*</a></label>
+                            <textarea id="cppt_a_t" rows="4" class="form-control" placeholder="..."></textarea>
+                        </div>
+                        <div class="form-group mb-3">
                             <label class="form-label"><i><b>Procedure</b></i> <a class="text-danger">*</a></label>
-                            <textarea id="cppt_p_t" rows="4" class="form-control" placeholder="..."></textarea>
+                            <textarea id="cppt_p_t" rows="19" class="form-control" placeholder="..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -222,29 +528,346 @@
         });
     });
 
+    // ==========================================================
+    // HITUNG GCS
+    // ==========================================================
+    function hitungGCS() {
+        const $ttv = $('#ttv_objective');
+
+        const eye = parseInt($ttv.find('[name="gcs_e"]').val(), 10);
+        const verbal = parseInt($ttv.find('[name="gcs_v"]').val(), 10);
+        const motorik = parseInt($ttv.find('[name="gcs_m"]').val(), 10);
+
+        const valid =
+            Number.isInteger(eye) &&
+            Number.isInteger(verbal) &&
+            Number.isInteger(motorik) &&
+            eye >= 1 && eye <= 4 &&
+            verbal >= 1 && verbal <= 5 &&
+            motorik >= 1 && motorik <= 6;
+
+        if (!valid) {
+            $ttv.find('[name="gcs_t"]').val('');
+            return;
+        }
+
+        $ttv.find('[name="gcs_t"]').val(
+            eye + verbal + motorik
+        );
+    }
+
+    // ==========================================================
+    // HITUNG IMT
+    // ==========================================================
+    function hitungIMT() {
+        const $ttv = $('#ttv_objective');
+
+        const $imt = $ttv.find('[name="imt"]');
+        const $hasil = $ttv.find('#hasil_imt');
+
+        // Gunakan nama input yang benar sesuai Blade.
+        const bb = parseFloat(
+            $ttv.find('[name="bb"]').val()
+        );
+
+        const tbCm = parseFloat(
+            $ttv.find('[name="tb"]').val()
+        );
+
+        if (
+            !Number.isFinite(bb) ||
+            !Number.isFinite(tbCm) ||
+            bb <= 0 ||
+            tbCm <= 0
+        ) {
+            $imt.val('');
+
+            $hasil
+                .addClass('d-none')
+                .empty();
+
+            return;
+        }
+
+        const tbMeter = tbCm / 100;
+        const imt = bb / (tbMeter * tbMeter);
+
+        $imt.val(imt.toFixed(2));
+
+        let kategori;
+        let alertClass;
+        let icon;
+
+        if (imt < 18.5) {
+            kategori = 'Berat Badan Kurang (Underweight)';
+            alertClass = 'alert-danger';
+            icon = 'ri-spam-line';
+        } else if (imt <= 22.9) {
+            kategori = 'Berat Badan Normal';
+            alertClass = 'alert-success';
+            icon = 'ri-checkbox-circle-line';
+        } else if (imt <= 24.9) {
+            kategori = 'Kelebihan Berat Badan (Overweight) dengan Risiko';
+            alertClass = 'alert-warning';
+            icon = 'ri-alert-line';
+        } else if (imt <= 29.9) {
+            kategori = 'Obesitas I';
+            alertClass = 'alert-danger';
+            icon = 'ri-spam-line';
+        } else {
+            kategori = 'Obesitas II';
+            alertClass = 'alert-danger';
+            icon = 'ri-spam-line';
+        }
+
+        $hasil
+            .removeClass(
+                'alert-success alert-danger alert-warning alert-info'
+            )
+            .addClass(alertClass)
+            .html(`
+                <i class="${icon} me-2"></i>
+                IMT: <strong>${imt.toFixed(2)}</strong>
+                — ${kategori}
+            `)
+            .removeClass('d-none');
+    }
+
+    // ==========================================================
+    // EVENT INPUT TTV
+    // Namespace mencegah handler menumpuk saat script diinisialisasi ulang.
+    // ==========================================================
+    $(document)
+        .off('.programTerapiTTV')
+        .on(
+            'input.programTerapiTTV change.programTerapiTTV',
+            '#ttv_objective input',
+            function () {
+                if (
+                    ['gcs_e', 'gcs_v', 'gcs_m'].includes(this.name)
+                ) {
+                    hitungGCS();
+                }
+                if (
+                    ['bb', 'tb'].includes(this.name)
+                ) {
+                    hitungIMT();
+                }
+            }
+        );
+
+    // ==========================================================
+    // PROGRAM TERAPI — HELPER TANDA VITAL
+    // ==========================================================
+    function getPayloadTTVProgramTerapi() {
+        const $ttv = $('#ttv_objective');
+
+        if (!$ttv.length) {
+            return {};
+        }
+
+        const getValue = (name) => {
+            return $ttv.find(`[name="${name}"]`).val() ?? '';
+        };
+
+        const getNumber = (name) => {
+            const value = getValue(name);
+
+            return value === '' || value === null
+                ? 0
+                : value;
+        };
+
+        const data = {
+            // Keadaan umum
+            tv_keu: getValue('keu'),
+
+            // Glasgow Coma Scale
+            tv_gcs_e: getNumber('gcs_e'),
+            tv_gcs_v: getNumber('gcs_v'),
+            tv_gcs_m: getNumber('gcs_m'),
+            tv_gcs_t: getNumber('gcs_t'),
+
+            // Tekanan darah
+            tv_td_up: getNumber('td_up'),
+            tv_td_down: getNumber('td_down'),
+
+            // Frekuensi nadi
+            tv_nadi: getNumber('nadi'),
+            tv_nadi_cb: $ttv.find(
+                '[name="nadi_cb"]:checked'
+            ).val() ?? null,
+
+            // Frekuensi pernapasan
+            tv_nafas: getNumber('nafas'),
+            tv_nafas_cb: $ttv.find(
+                '[name="nafas_cb"]:checked'
+            ).val() ?? null,
+
+            // Suhu dan saturasi oksigen
+            tv_suhu: getNumber('suhu'),
+            tv_spo2: getNumber('spo2'),
+
+            // Nutrisi
+            tv_bb: getNumber('bb'),
+            tv_tb: getNumber('tb'),
+            gizi_imt: getNumber('imt')
+        };
+
+        /*
+        * Field ini belum tersedia pada HTML yang dilampirkan.
+        * Kirim hanya jika inputnya memang tersedia.
+        * Ini juga memungkinkan form dikembangkan tanpa harus
+        * mengubah helper kembali.
+        */
+        const optionalFields = {
+            kesadaran_neonatus: 'tv_kesadaran_neonatus',
+            visus_od: 'tv_visus_od',
+            visus_os: 'tv_visus_os',
+            tio_od: 'tv_tio_od',
+            tio_os: 'tv_tio_os'
+        };
+
+        Object.entries(optionalFields).forEach(([name, key]) => {
+            const $input = $ttv.find(`[name="${name}"]`);
+
+            if ($input.length) {
+                data[key] = $input.val() ?? '';
+            }
+        });
+
+        return data;
+    }
+
+    // ==========================================================
+    // MEMASUKKAN DATA TTV KE FORM
+    // ==========================================================
+    function isiTTVProgramTerapi(ttv) {
+        const $ttv = $('#ttv_objective');
+
+        if (!$ttv.length) {
+            return;
+        }
+
+        const fields = [
+            'keu',
+            'gcs_e',
+            'gcs_v',
+            'gcs_m',
+            'gcs_t',
+            'td_up',
+            'td_down',
+            'nadi',
+            'nafas',
+            'suhu',
+            'spo2',
+            'bb',
+            'tb',
+            'imt',
+            'kesadaran_neonatus',
+            'visus_od',
+            'visus_os',
+            'tio_od',
+            'tio_os'
+        ];
+
+        // Bersihkan isian sebelumnya.
+        fields.forEach((name) => {
+            $ttv.find(`[name="${name}"]`).val('');
+        });
+
+        $ttv.find('[name="nadi_cb"], [name="nafas_cb"]')
+            .prop('checked', false);
+
+        if (!ttv) {
+            // Default untuk form baru.
+            $ttv.find('[name="nadi_cb"][value="1"]')
+                .prop('checked', true);
+
+            $ttv.find('[name="nafas_cb"][value="1"]')
+                .prop('checked', true);
+
+            hitungGCS();
+            hitungIMT();
+
+            return;
+        }
+
+        fields.forEach((name) => {
+            if (ttv[name] !== undefined && ttv[name] !== null) {
+                $ttv.find(`[name="${name}"]`).val(ttv[name]);
+            }
+        });
+
+        if (ttv.nadi_cb !== undefined && ttv.nadi_cb !== null && ttv.nadi_cb !== '') {
+            $ttv.find('[name="nadi_cb"]')
+                .filter(function () {
+                    return String(this.value) === String(ttv.nadi_cb);
+                })
+                .prop('checked', true);
+        }
+
+        if (ttv.nafas_cb !== undefined && ttv.nafas_cb !== null && ttv.nafas_cb !== '') {
+            $ttv.find('[name="nafas_cb"]')
+                .filter(function () {
+                    return String(this.value) === String(ttv.nafas_cb);
+                })
+                .prop('checked', true);
+        }
+
+        hitungGCS();
+        hitungIMT();
+    }
+
+    // ==========================================================
+    // MEMBERSIHKAN BLOK TTV DARI TEKS OBJECTIVE CPPT
+    // ==========================================================
+    function objectiveTanpaTTVProgramTerapi(value) {
+        return String(value ?? '')
+            .replace(/\r\n/g, '\n')
+            .replace(
+                /^Tanda Vital \(Program Terapi\):\n[\s\S]*?(?:\n{2,}|$)/i,
+                ''
+            )
+            .trim();
+    }
+
+    // ==========================================================
+    // SIMPAN FORM PROGRAM TERAPI
+    // ==========================================================
     function storeFormProgramTerapi() {
         const btn = $('#btn-simpan-form-program-Terapi');
 
-        let data = {
-            _token      : $('meta[name="csrf-token"]').attr('content'),
-            rm          : rm,
-            kunjungan   : kunjungan,
-            sep         : sep ?? 0,
-            tgl_sep     : tgl_sep ?? tgl_masuk,
-            tgl         : tgl_kfr,
-            tgl_masuk   : tgl_masuk,
-            tgl_keluar  : tgl_keluar,
+        if (btn.prop('disabled')) {
+            return;
+        }
 
-            cppt_s_t    : $('#cppt_s_t').val(),
-            cppt_o_t    : $('#cppt_o_t').val(),
-            cppt_a_t    : $('#cppt_a_t').val(),
-            cppt_p_t    : $('#cppt_p_t').val()
+        const data = {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+
+            rm: rm,
+            kunjungan: kunjungan,
+            sep: sep ?? 0,
+            tgl_sep: tgl_sep ?? tgl_masuk,
+            tgl: tgl_kfr,
+            tgl_masuk: tgl_masuk,
+            tgl_keluar: tgl_keluar,
+
+            // CPPT
+            cppt_s_t: $('#cppt_s_t').val(),
+            cppt_o_t: $('#cppt_o_t').val(),
+            cppt_a_t: $('#cppt_a_t').val(),
+            cppt_p_t: $('#cppt_p_t').val(),
+
+            // Tanda vital dan nutrisi
+            ...getPayloadTTVProgramTerapi()
         };
 
         $.ajax({
-            url: "/api/emr/pterapi/store",
-            type: "POST",
+            url: '/api/emr/pterapi/store',
+            type: 'POST',
             data: data,
+
             beforeSend: function () {
                 btn.prop('disabled', true)
                     .find('i')
@@ -262,13 +885,23 @@
                     }
                 });
             },
+
             success: function (res) {
-                Swal.fire({title: 'Proses Simpan Berhasil', text: res.message, icon: 'success', timer: 5000, timerProgressBar: true});
+                Swal.fire({
+                    title: 'Proses Simpan Berhasil',
+                    text: res.message,
+                    icon: 'success',
+                    timer: 5000,
+                    timerProgressBar: true
+                });
+
                 loadFormProgramTerapi();
                 loadCpptProgramTerapi();
                 loadRiwayatProgramTerapi();
+
                 kosongiFormProgramTerapi();
             },
+
             error: function (xhr) {
                 Swal.fire(
                     'Gagal',
@@ -276,12 +909,13 @@
                     'error'
                 );
             },
+
             complete: function () {
-                // always reset button (baik success maupun error)
                 btn.prop('disabled', false)
                     .find('i')
                     .removeClass('fa-sync fa-spin')
                     .addClass('fa-save');
+
                 loadFormJadwalPelayanan();
             }
         });
@@ -454,58 +1088,94 @@
 
     function copyCpptFormProgramTerapi(IDCPPT) {
         const btn = $('#btn-copy-cppt-form-program-terapi-' + IDCPPT);
-        // const tgl_sep_date = tgl_sep.substring(0, 10);
+
         $.ajax({
             url: `/api/emr/pterapi/${kunjungan}/cppt/${IDCPPT}/copy`,
             type: 'GET',
+
             beforeSend: function () {
                 btn.prop('disabled', true)
                     .find('i')
                     .removeClass('fa-copy')
                     .addClass('fa-sync fa-spin');
             },
-            success: function(res) {
+
+            success: function (res) {
                 if (!res.status) {
-                    Swal.fire({title: 'Maaf!', text: res.message, icon: 'warning', timer: 5000, timerProgressBar: true});
-                    btn.prop('disabled', false)
-                        .find('i')
-                        .removeClass('fa-sync fa-spin')
-                        .addClass('fa-copy');
-                    $('#btn-batal-update-form-program-terapi').prop('hidden', true);
-                    $('#btn-update-form-program-Terapi').prop('hidden', true);
-                    $('#btn-lihat-form-program-terapi').removeData('kunjungan group queue').prop('hidden', true);
-                    loadFormProgramTerapi();
+                    Swal.fire({
+                        title: 'Maaf!',
+                        text: res.message,
+                        icon: 'warning',
+                        timer: 5000,
+                        timerProgressBar: true
+                    });
+
                     return;
                 }
 
+                // Mode formulir baru, bukan mengedit formulir lama.
                 $('#kode_program_terapi').val('');
-                $('#cppt_s_t').val(htmlToTextarea(res.data.SUBYEKTIF));
-                $('#cppt_o_t').val(htmlToTextarea(res.data.OBYEKTIF));
-                $('#cppt_a_t').val(htmlToTextarea(res.data.ASSESMENT));
-                $('#cppt_p_t').val(htmlToTextarea(res.data.PROCEDURE));
 
-                $('#btn-batal-update-form-program-terapi').prop('hidden', false);
-                $('#btn-update-form-program-Terapi').prop('hidden', true);
-                $('#btn-lihat-form-program-terapi').removeData('kunjungan group queue').prop('hidden', true);
-                $('#btn-kosongi-form-program-terapi').prop('disabled', false).prop('hidden', false);
-                $('#btn-simpan-form-program-Terapi').prop('disabled', false).prop('hidden', false);
+                // Data CPPT.
+                $('#cppt_s_t').val(
+                    htmlToTextarea(res.data.SUBYEKTIF)
+                );
 
-            }, error: function (xhr) {
+                // $('#cppt_o_t').val(
+                //     htmlToTextarea(res.data.OBYEKTIF)
+                // );
+                $('#cppt_o_t').val(
+                    objectiveTanpaTTVProgramTerapi(
+                        htmlToTextarea(res.data.OBYEKTIF ?? '')
+                    )
+                );
+
+                $('#cppt_a_t').val(
+                    htmlToTextarea(res.data.ASSESMENT)
+                );
+
+                $('#cppt_p_t').val(
+                    htmlToTextarea(res.data.PROCEDURE)
+                );
+
+                // Tanda vital kunjungan saat ini.
+                isiTTVProgramTerapi(res.ttv ?? null);
+
+                // Tampilkan tombol sesuai mode formulir baru.
+                $('#btn-batal-update-form-program-terapi')
+                    .prop('hidden', false);
+
+                $('#btn-update-form-program-Terapi')
+                    .prop('hidden', true);
+
+                $('#btn-lihat-form-program-terapi')
+                    .removeData('kunjungan group queue')
+                    .prop('hidden', true);
+
+                $('#btn-kosongi-form-program-terapi')
+                    .prop('disabled', false)
+                    .prop('hidden', false);
+
+                $('#btn-simpan-form-program-Terapi')
+                    .prop('disabled', false)
+                    .prop('hidden', false);
+            },
+
+            error: function (xhr) {
                 Swal.fire(
                     'Gagal',
                     xhr.responseJSON?.message ?? 'Terjadi kesalahan',
                     'error'
                 );
             },
+
             complete: function () {
-                // always reset button (baik success maupun error)
                 btn.prop('disabled', false)
                     .find('i')
                     .removeClass('fa-sync fa-spin')
                     .addClass('fa-copy');
-                // loadCpptProgramTerapi();
             }
-        })
+        });
     }
 
     function loadRiwayatProgramTerapi() {// RIWAYAT DI GRID KANAN
@@ -729,19 +1399,22 @@
 
     function editFormProgramTerapi(kunjungan, group, queue) {
         const btn = $('#btn-edit-form-ptr[data-queue="' + queue + '"]');
+
         kosongiFormProgramTerapi();
+
         $.ajax({
             url: `/api/emr/pterapi/get/${kunjungan}/${group}/${queue}`,
             type: 'GET',
+
             beforeSend: function () {
                 btn.prop('disabled', true)
                     .find('i')
                     .removeClass('fa-edit')
                     .addClass('fa-sync fa-spin');
             },
-            success: function(res) {
+
+            success: function (res) {
                 if (!res.status) {
-                    kosongiFormProgramTerapi();
                     Swal.fire({
                         title: 'Ahh Maaf!',
                         text: res.message,
@@ -749,45 +1422,63 @@
                         timer: 10000,
                         timerProgressBar: true
                     });
-                    $('#btn-batal-update-form-program-terapi').prop('hidden', true);
-                    $('#btn-update-form-program-Terapi').prop('hidden', true);
-                    $('#btn-lihat-form-program-terapi').removeData('kunjungan group queue').prop('hidden', true);
-                    $('#btn-kosongi-form-program-terapi').prop('disabled', false).prop('hidden', false);
-                    $('#btn-simpan-form-program-Terapi').prop('disabled', false).prop('hidden', false);
+
                     return;
                 }
 
                 $('#kode_program_terapi').val(queue);
 
-                $('#cppt_s_t').val(res.data.SUBYEKTIF);
-                $('#cppt_o_t').val(res.data.OBYEKTIF);
-                $('#cppt_a_t').val(res.data.ASSESMENT);
-                $('#cppt_p_t').val(res.data.PROCEDURE);
+                // Data CPPT.
+                // $('#cppt_s_t').val(res.data.SUBYEKTIF ?? '');
+                // $('#cppt_o_t').val(res.data.OBYEKTIF ?? '');
+                // $('#cppt_a_t').val(res.data.ASSESMENT ?? '');
+                // $('#cppt_p_t').val(res.data.PROCEDURE ?? '');
+                $('#cppt_s_t').val(res.data.SUBYEKTIF ?? '');
+                $('#cppt_o_t').val(
+                    objectiveTanpaTTVProgramTerapi(
+                        res.data.OBYEKTIF ?? ''
+                    )
+                );
+                $('#cppt_a_t').val(res.data.ASSESMENT ?? '');
+                $('#cppt_p_t').val(res.data.PROCEDURE ?? '');
 
-                $('#btn-batal-update-form-program-terapi').prop('hidden', false);
-                $('#btn-update-form-program-Terapi').prop('hidden', false);
-                $('#btn-lihat-form-program-terapi').data('kunjungan', res.kunjungan)
-                                                    .data('group', res.group)
-                                                    .data('queue', res.queue)
-                                                    .prop('hidden', false);
-                $('#btn-kosongi-form-program-terapi').prop('disabled', true).prop('hidden', true);
-                $('#btn-simpan-form-program-Terapi').prop('disabled', true).prop('hidden', true);
+                // Data TTV dan nutrisi dari controller.
+                isiTTVProgramTerapi(res.ttv ?? null);
+
+                // Data TTV dan nutrisi dari controller.
+                isiTTVProgramTerapi(res.ttv ?? null);
+
+                // Tampilkan tombol mode edit.
+                $('#btn-batal-update-form-program-terapi')
+                    .prop('hidden', false);
+
+                $('#btn-update-form-program-Terapi')
+                    .prop('hidden', false);
+
+                $('#btn-lihat-form-program-terapi')
+                    .data('kunjungan', res.kunjungan)
+                    .data('group', res.group)
+                    .data('queue', res.queue)
+                    .prop('hidden', false);
+
+                $('#btn-kosongi-form-program-terapi')
+                    .prop('disabled', true)
+                    .prop('hidden', true);
+
+                $('#btn-simpan-form-program-Terapi')
+                    .prop('disabled', true)
+                    .prop('hidden', true);
             },
+
             error: function (xhr) {
                 Swal.fire(
                     'Gagal',
                     xhr.responseJSON?.message ?? 'Terjadi kesalahan',
                     'error'
                 );
-                kosongiFormProgramTerapi();
-                $('#btn-batal-update-form-program-terapi').prop('hidden', true);
-                $('#btn-update-form-program-Terapi').prop('hidden', true);
-                $('#btn-lihat-form-program-terapi').removeData('kunjungan group queue').prop('hidden', true);
-                $('#btn-kosongi-form-program-terapi').prop('disabled', false).prop('hidden', false);
-                $('#btn-simpan-form-program-Terapi').prop('disabled', false).prop('hidden', false);
             },
+
             complete: function () {
-                // always reset button (baik success maupun error)
                 btn.prop('disabled', false)
                     .find('i')
                     .removeClass('fa-sync fa-spin')
@@ -797,34 +1488,48 @@
     }
 
     function prosesEditProgramTerapi() {
-        let data = {
-            _token      : $('meta[name="csrf-token"]').attr('content'),
-            rm          : rm,
-            kunjungan   : kunjungan,
-            queue       : $('#kode_program_terapi').val(),
-            sep         : sep ?? 0,
-            tgl_sep     : tgl_sep ?? tgl_masuk,
-            tgl         : tgl_kfr,
-            tgl_masuk   : tgl_masuk,
-            tgl_keluar  : tgl_keluar,
+        const btn = $('#btn-update-form-program-Terapi');
 
-            cppt_s_t    : $('#cppt_s_t').val(),
-            cppt_o_t    : $('#cppt_o_t').val(),
-            cppt_a_t    : $('#cppt_a_t').val(),
-            cppt_p_t    : $('#cppt_p_t').val()
+        if (btn.prop('disabled')) {
+            return;
+        }
+
+        const data = {
+            _token: $('meta[name="csrf-token"]').attr('content'),
+
+            rm: rm,
+            kunjungan: kunjungan,
+            queue: $('#kode_program_terapi').val(),
+
+            sep: sep ?? 0,
+            tgl_sep: tgl_sep ?? tgl_masuk,
+            tgl: tgl_kfr,
+            tgl_masuk: tgl_masuk,
+            tgl_keluar: tgl_keluar,
+
+            // CPPT
+            cppt_s_t: $('#cppt_s_t').val(),
+            cppt_o_t: $('#cppt_o_t').val(),
+            cppt_a_t: $('#cppt_a_t').val(),
+            cppt_p_t: $('#cppt_p_t').val(),
+
+            // Tanda vital dan nutrisi
+            ...getPayloadTTVProgramTerapi()
         };
 
         $.ajax({
-            url: `/api/emr/pterapi/update`,
+            url: '/api/emr/pterapi/update',
             type: 'PUT',
             data: data,
+
             beforeSend: function () {
-                $('#btn-update-form-program-Terapi').prop('disabled', true)
+                btn.prop('disabled', true)
                     .find('i')
                     .removeClass('fa-edit')
                     .addClass('fa-sync fa-spin');
             },
-            success: function(res) {
+
+            success: function (res) {
                 if (!res.status) {
                     Swal.fire({
                         title: 'Ahh Maaf!',
@@ -833,6 +1538,7 @@
                         timer: 10000,
                         timerProgressBar: true
                     });
+
                     return;
                 }
 
@@ -845,11 +1551,14 @@
                 });
 
                 batalUpdateFormProgramTerapi();
+
                 loadFormProgramTerapi();
                 loadCpptProgramTerapi();
                 loadRiwayatProgramTerapi();
+
                 kosongiFormProgramTerapi();
             },
+
             error: function (xhr) {
                 Swal.fire(
                     'Gagal',
@@ -857,9 +1566,9 @@
                     'error'
                 );
             },
+
             complete: function () {
-                // always reset button (baik success maupun error)
-                $('#btn-update-form-program-Terapi').prop('disabled', false)
+                btn.prop('disabled', false)
                     .find('i')
                     .removeClass('fa-sync fa-spin')
                     .addClass('fa-edit');
@@ -959,10 +1668,36 @@
 
     function kosongiFormProgramTerapi() {
         $('#kode_program_terapi').val('');
+
+        // Bersihkan CPPT.
         $('#cppt_s_t').val('');
         $('#cppt_o_t').val('');
         $('#cppt_a_t').val('');
         $('#cppt_p_t').val('');
+
+        // Bersihkan seluruh input TTV.
+        const $ttv = $('#ttv_objective');
+
+        $ttv.find('input[type="number"], input[type="text"], textarea')
+            .val('');
+
+        $ttv.find('[name="nadi_cb"], [name="nafas_cb"]')
+            .prop('checked', false);
+
+        // Default awal.
+        $ttv.find('[name="nadi_cb"][value="1"]')
+            .prop('checked', true);
+
+        $ttv.find('[name="nafas_cb"][value="1"]')
+            .prop('checked', true);
+
+        $ttv.find('#hasil_imt')
+            .removeClass('alert-success alert-danger alert-warning alert-info')
+            .addClass('d-none')
+            .empty();
+
+        hitungGCS();
+        hitungIMT();
     }
 
     // ---------------------------------------------------------------------------------------
