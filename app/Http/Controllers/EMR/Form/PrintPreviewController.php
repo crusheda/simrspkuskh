@@ -91,13 +91,13 @@ class PrintPreviewController extends Controller
             $namaFinalisasi = $finalisasi->NAMA_USER_FINALISASI ?? '-';
 
             $tanggalFinalisasi = '-';
+            $tanggalFinalisasiTTE = '-';
             $jamFinalisasi = '-';
 
             if (!empty($finalisasi->CREATED)) {
-                $tanggalFinalisasi = Carbon::parse($finalisasi->CREATED)
-                    ->isoFormat('dddd, D MMMM YYYY');
-                $jamFinalisasi = Carbon::parse($finalisasi->CREATED)->isoFormat('[Pukul] H:mm:ss')
-                    . ' WIB';
+                $tanggalFinalisasi = Carbon::parse($finalisasi->CREATED)->isoFormat('dddd, D MMMM YYYY');
+                $tanggalFinalisasiTTE = Carbon::parse($finalisasi->CREATED)->isoFormat('D MMMM YYYY');
+                $jamFinalisasi = Carbon::parse($finalisasi->CREATED)->isoFormat('[Pukul] H:mm') . ' WIB';
             }
 
             // print_r($ttd_finalisasi);
@@ -201,6 +201,7 @@ class PrintPreviewController extends Controller
                 $title,
                 $namaFinalisasi,
                 $tanggalFinalisasi,
+                $tanggalFinalisasiTTE,
                 $jamFinalisasi
             );
 
@@ -553,6 +554,7 @@ class PrintPreviewController extends Controller
         $title,
         $namaFinalisasi,
         $tanggalFinalisasi,
+        $tanggalFinalisasiTTE,
         $jamFinalisasi
     ): array {
 
@@ -689,6 +691,9 @@ class PrintPreviewController extends Controller
             'FINALISASI_OLEH' => $namaFinalisasi,
             'FINALISASI_TANGGAL' => $tanggalFinalisasi,
             'FINALISASI_JAM' => $jamFinalisasi,
+
+            // TGL TTE
+            'TTE_TANGGAL' => $tanggalFinalisasiTTE,
 
             // CETAK
             'TANGGAL_CETAK' => now('Asia/Jakarta')

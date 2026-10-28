@@ -906,42 +906,11 @@ class GDPrintService implements PrintDataInterface
             ->select([
                 'pk.NOMOR as KUNJUNGAN',
                 'pk.NOPEN',
-                // 'pk.MASUK as TANGGAL_MASUK',
-                // 'pk.KELUAR as TANGGAL_KELUAR',
-                // 'pk.RUANGAN',
-                // 'pk.DPJP',
-
-                // DB::raw("LPAD(pp.NORM, 8, '0') as NORM_FORMATTED"),
-                // DB::raw('master.getNamaLengkap(p.NORM) as NAMA_PASIEN'),
-                // 'p.TGLLAHIR',
-                // 'p.ALAMAT',
-
-                // 'rjk.DESKRIPSI as JENIS_KELAMIN',
                 'ag.DESKRIPSI as AGAMA',
                 'pek.DESKRIPSI as PEKERJAAN',
-                // 'r.DESKRIPSI as NAMA_RUANGAN',
-
-                // DB::raw(
-                //     'master.getNamaLengkapPegawai(dok.NIP) as NAMA_DPJP'
-                // ),
             ])
             ->where('pk.NOMOR', $kunjungan)
             ->first();
-
-        // $norm = $value($pasien->NORM_FORMATTED ?? null);
-        // $namaPasien = $value($pasien->NAMA_PASIEN ?? null);
-        // $tanggalLahirRaw = $value($pasien->TANGGAL_LAHIR ?? null);
-
-        // $umur = '-';
-
-        // if ($tanggalLahirRaw !== '') {
-        //     try {
-        //         $umur = \Carbon\Carbon::parse($tanggalLahirRaw)->age
-        //             . ' tahun';
-        //     } catch (\Throwable $e) {
-        //         $umur = '-';
-        //     }
-        // }
 
         /*
         |--------------------------------------------------------------------------
@@ -950,10 +919,6 @@ class GDPrintService implements PrintDataInterface
         */
 
         $triage = $getLatest('medicalrecord.triage');
-
-        $anamnesisDiperoleh = $getLatest(
-            'medicalrecord.anamnesis_diperoleh'
-        );
 
         $tandaVital = $getLatest(
             'medicalrecord.tanda_vital'
@@ -1201,7 +1166,6 @@ class GDPrintService implements PrintDataInterface
         | RISIKO PENULARAN INFEKSI
         |--------------------------------------------------------------------------
         */
-
         $risikoInfeksiMap = [
             '1' => 'Batuk > 2 minggu dengan demam dan sesak napas',
             '2' => 'Rujukan dengan suspek/konfirmasi airborne disease',
@@ -1213,15 +1177,45 @@ class GDPrintService implements PrintDataInterface
             $triage->RISIKO_PENULARAN_INFEKSI ?? null
         );
 
-        $risikoInfeksi = (
+        // Inisialisasi array risiko infeksi.
+        $risikoInfeksi = [];
+
+        // Risiko penularan infeksi.
+        $risikoInfeksiValue = (
             $risikoInfeksiRaw === ''
             || $risikoInfeksiRaw === '0'
         )
             ? '-'
-            : (
-                $risikoInfeksiMap[$risikoInfeksiRaw]
-                ?? $risikoInfeksiRaw
+            : ($risikoInfeksiMap[$risikoInfeksiRaw] ?? $risikoInfeksiRaw);
+
+        $push(
+            $risikoInfeksi,
+            'Risiko penularan infeksi',
+            $risikoInfeksiValue
+        );
+
+        // Kebutuhan khusus.
+        $kebutuhanKhusus = $decodeJson(
+            $triage->KEBUTUHAN_KHUSUS ?? null
+        );
+
+        foreach ([
+            'AIRBONE' => 'Airborne',
+            'DEKONTAMINAN' => 'Dekontaminan',
+        ] as $key => $label) {
+            $valueKhusus = trim(
+                (string) ($kebutuhanKhusus[$key] ?? '')
             );
+
+            // Tampilkan hanya jika nilai tidak null dan tidak kosong.
+            if ($valueKhusus !== '') {
+                $push(
+                    $risikoInfeksi,
+                    $label,
+                    $valueKhusus
+                );
+            }
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -1439,6 +1433,7 @@ class GDPrintService implements PrintDataInterface
         );
 
         if ($frekuensiNapas !== '') {
+            $frekuensiNapas = (string) (int) round((float) $frekuensiNapas);
             $frekuensiNapas .= ' x/menit';
 
             $napas = $value(
@@ -1463,10 +1458,12 @@ class GDPrintService implements PrintDataInterface
         );
 
         if ($sistolik !== '' || $distolik !== '') {
+            $sistolik = (string) (int) round((float) $sistolik);
+            $distolik = (string) (int) round((float) $distolik);
             $primarySurvey[] =
                 'Tekanan darah: '
                 . ($sistolik !== '' ? $sistolik : '-')
-                . '/'
+                . ' / '
                 . ($distolik !== '' ? $distolik : '-')
                 . ' mmHg';
         }
@@ -1476,6 +1473,7 @@ class GDPrintService implements PrintDataInterface
         );
 
         if ($frekuensiNadi !== '') {
+            $frekuensiNadi = (string) (int) round((float) $frekuensiNadi);
             $frekuensiNadi .= ' x/menit';
 
             $nadi = $value(
@@ -1504,6 +1502,7 @@ class GDPrintService implements PrintDataInterface
         );
 
         if ($spo2 !== '') {
+            $spo2 = (string) (int) round((float) $spo2);
             $primarySurvey[] = 'SpO₂: ' . $spo2 . '%';
         }
 
@@ -1535,6 +1534,7 @@ class GDPrintService implements PrintDataInterface
             || $verbal !== ''
             || $motorik !== ''
         ) {
+            $gcsTotal = (string) (int) round((float) $gcsTotal);
             $primarySurvey[] =
                 'GCS: '
                 . ($gcsTotal !== '' ? $gcsTotal : '-')
@@ -1587,7 +1587,9 @@ class GDPrintService implements PrintDataInterface
         $push(
             $primarySurvey,
             'VAS / nyeri',
-            $tandaVital->VAS ?? null
+            isset($tandaVital->VAS)
+                ? abs((float) $tandaVital->VAS)
+                : null
         );
 
         $push(
@@ -1602,37 +1604,48 @@ class GDPrintService implements PrintDataInterface
         | STATUS KEHAMILAN, OBGYN, DAN KEBUTUHAN KHUSUS
         |--------------------------------------------------------------------------
         */
-
         $statusKehamilan = [];
 
         $statusHamil = $value(
             $statusReproduksi->STATUS_REPRODUKSI ?? null
         );
 
-        $push(
-            $statusKehamilan,
-            'Hamil',
-            $statusHamil,
-            ['0' => 'Tidak', '1' => 'Ya']
-        );
+        $hamil = [
+            'Hamil: ' . (
+                ['0' => 'Tidak', '1' => 'Ya'][$statusHamil] ?? $statusHamil
+            ),
+        ];
 
-        $push(
-            $statusKehamilan,
-            'G (Gravida)',
+        $gravida = $value(
             $statusReproduksi->HAMIL_GRAVIDA ?? null
         );
 
-        $push(
-            $statusKehamilan,
-            'P (Paritas)',
+        $paritas = $value(
             $statusReproduksi->HAMIL_PARITAS ?? null
         );
 
-        $push(
-            $statusKehamilan,
-            'A (Abortus)',
+        $abortus = $value(
             $statusReproduksi->HAMIL_ABORTUS ?? null
         );
+
+        $hamil[] = 'G: ' . ($gravida !== '' ? $gravida : '-');
+        $hamil[] = 'P: ' . ($paritas !== '' ? $paritas : '-');
+        $hamil[] = 'A: ' . ($abortus !== '' ? $abortus : '-');
+
+        $obgyn = $decodeJson(
+            $triage->OBGYN ?? null
+        );
+
+        $usiaGestasi = $value(
+            $obgyn['USIA_GESTASI'] ?? null
+        );
+
+        if ($usiaGestasi !== '') {
+            $hamil[] = 'Usia Gestasi: ' . $usiaGestasi . ' minggu';
+        }
+
+        // Gabungkan seluruh informasi menjadi satu baris.
+        $statusKehamilan[] = implode(' | ', $hamil);
 
         $hpht = $value(
             $statusReproduksi->HPHT ?? null
@@ -1649,16 +1662,6 @@ class GDPrintService implements PrintDataInterface
         $obgyn = $decodeJson(
             $triage->OBGYN ?? null
         );
-
-        $push(
-            $statusKehamilan,
-            'Usia gestasi',
-            $obgyn['USIA_GESTASI'] ?? null
-        );
-
-        if ($value($obgyn['USIA_GESTASI'] ?? null) !== '') {
-            $statusKehamilan[count($statusKehamilan) - 1] .= ' minggu';
-        }
 
         $push(
             $statusKehamilan,
@@ -1684,42 +1687,6 @@ class GDPrintService implements PrintDataInterface
 
         if ($value($obgyn['DILATASI_SERVIKS'] ?? null) !== '') {
             $statusKehamilan[count($statusKehamilan) - 1] .= ' cm';
-        }
-
-        $kebutuhanKhusus = $decodeJson(
-            $triage->KEBUTUHAN_KHUSUS ?? null
-        );
-
-        $push(
-            $statusKehamilan,
-            'Kebutuhan khusus - Airborne',
-            $kebutuhanKhusus['AIRBONE'] ?? null
-        );
-
-        $push(
-            $statusKehamilan,
-            'Kebutuhan khusus - Dekontaminan',
-            $kebutuhanKhusus['DEKONTAMINAN'] ?? null
-        );
-
-        /*
-        |--------------------------------------------------------------------------
-        | ANAMNESIS DIPEROLEH
-        |--------------------------------------------------------------------------
-        */
-
-        $anamnesisDiperolehText = [];
-
-        if ($value($anamnesisDiperoleh->AUTOANAMNESIS ?? null) === '1') {
-            $anamnesisDiperolehText[] = 'Autoanamnesis';
-        }
-
-        if ($value($anamnesisDiperoleh->ALLOANAMNESIS ?? null) === '1') {
-            $dari = $value($anamnesisDiperoleh->DARI ?? null);
-
-            $anamnesisDiperolehText[] =
-                'Alloanamnesis'
-                . ($dari !== '' ? ' dari ' . $dari : '');
         }
 
         /*
@@ -2451,7 +2418,7 @@ class GDPrintService implements PrintDataInterface
 
             if ($time !== '') {
                 try {
-                    $time = \Carbon\Carbon::parse($time)->format('H:i');
+                    $time = Carbon::parse($time)->format('H:i');
                 } catch (\Throwable $e) {
                     $time = substr($time, 0, 5);
                 }
@@ -2608,6 +2575,115 @@ class GDPrintService implements PrintDataInterface
 
         /*
         |--------------------------------------------------------------------------
+        | GABUNGAN HASIL SKRINING UNTUK TEMPLATE
+        |--------------------------------------------------------------------------
+        */
+
+        // Membersihkan baris yang tidak memiliki jawaban aktual.
+        $cleanScreeningLines = static function (array $lines): array {
+            return array_values(
+                array_filter(
+                    $lines,
+                    static function ($line): bool {
+                        $line = trim((string) $line);
+
+                        // Abaikan baris kosong atau tanda pengganti.
+                        if ($line === '' || $line === '-') {
+                            return false;
+                        }
+
+                        // Abaikan pilihan yang belum diisi.
+                        if (preg_match('/:\s*Belum diisi$/u', $line)) {
+                            return false;
+                        }
+
+                        return true;
+                    }
+                )
+            );
+        };
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING NYERI
+        |--------------------------------------------------------------------------
+        */
+
+        $nyeriLines = $cleanScreeningLines($nyeriText);
+
+        $skriningNyeri = !empty($nyeriLines)
+            ? implode("\n", $nyeriLines)
+            : 'Tidak Ada';
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING RISIKO JATUH
+        |--------------------------------------------------------------------------
+        |
+        | Hanya skrining yang memiliki jawaban aktual yang ditampilkan.
+        | Jika seluruh skrining kosong, tampilkan "Tidak Ada" satu kali.
+        */
+
+        $risikoJatuhSections = [
+            'Skrining Risiko Jatuh — Humpty Dumpty' => $humptyText,
+            'Skrining Risiko Jatuh — Skala Morse' => $morseText,
+            'Skrining Risiko Jatuh — EPFRA' => $epfraText,
+            'Skrining Risiko Jatuh — Get Up And Go' => $getUpAndGoText,
+        ];
+
+        $risikoJatuhHasil = [];
+
+        foreach ($risikoJatuhSections as $judul => $lines) {
+            $lines = $cleanScreeningLines($lines);
+
+            // Lewati skrining yang belum memiliki jawaban aktual.
+            if (empty($lines)) {
+                continue;
+            }
+
+            $risikoJatuhHasil[] = $judul
+                . "\n"
+                . implode("\n", $lines);
+        }
+
+        $risikoJatuh = !empty($risikoJatuhHasil)
+            ? implode("\n\n", $risikoJatuhHasil)
+            : 'Tidak Ada';
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING GIZI
+        |--------------------------------------------------------------------------
+        |
+        | Hanya skrining yang memiliki jawaban aktual yang ditampilkan.
+        */
+
+        $skriningGiziSections = [
+            'Skrining Gizi — MST' => $mustText,
+            'Skrining Gizi — STRONG KID' => $strongKidText,
+        ];
+
+        $skriningGiziHasil = [];
+
+        foreach ($skriningGiziSections as $judul => $lines) {
+            $lines = $cleanScreeningLines($lines);
+
+            // Lewati skrining yang belum memiliki jawaban aktual.
+            if (empty($lines)) {
+                continue;
+            }
+
+            $skriningGiziHasil[] = $judul
+                . "\n"
+                . implode("\n", $lines);
+        }
+
+        $skriningGizi = !empty($skriningGiziHasil)
+            ? implode("\n\n", $skriningGiziHasil)
+            : 'Tidak Ada';
+
+        /*
+        |--------------------------------------------------------------------------
         | DATA RETURN UNTUK TEMPLATE print_radar_perawat.docx
         |--------------------------------------------------------------------------
         */
@@ -2642,33 +2718,28 @@ class GDPrintService implements PrintDataInterface
             // Triage
             'TRIAGE_CARA_KEDATANGAN' => $formatLines($caraKedatangan),
             'TRIAGE_JENIS_KASUS' => $formatLines($detailKasus),
-            'TRIAGE_RISIKO_INFEKSI' => $risikoInfeksi,
-            'TRIAGE_KRITERIA' => $placeholder(
-                $triage->KRITERIA ?? null
-            ),
-            'ATS_KATEGORI' => $atsKategori,
-            'ATS_PRIORITAS' => $atsPrioritas,
-            'ATS_PLAN' => $atsPlan,
-            'ATS_DETAIL' => $formatLines($atsDetail),
+            'TRIAGE_RISIKO_INFEKSI' => $formatLines($risikoInfeksi),
             'TRIAGE_ANAMNESIS' => $formatLines($detailAnamnesis),
 
             // Primary survey dan status reproduksi
-            'PRIMARY_SURVEY' => $formatLines($primarySurvey),
+            'TANDA_VITAL' => $formatLines($primarySurvey),
             'STATUS_KEHAMILAN' => $formatLines($statusKehamilan),
-            'ANAMNESIS_DIPEROLEH' => $formatLines($anamnesisDiperolehText),
 
             // Asesmen psikososial dan fungsional
             'PSIKOSOSIAL' => $formatLines($psikososialText),
             'STATUS_FUNGSIONAL' => $formatLines($fungsionalText),
 
             // Skrining
-            'SKRINING_NYERI' => $formatLines($nyeriText),
-            'RISIKO_JATUH_HUMPTY_DUMPTY' => $formatLines($humptyText),
-            'RISIKO_JATUH_MORSE' => $formatLines($morseText),
-            'RISIKO_JATUH_EPFRA' => $formatLines($epfraText),
-            'RISIKO_JATUH_GET_UP_AND_GO' => $formatLines($getUpAndGoText),
-            'SKRINING_GIZI_MUST' => $formatLines($mustText),
-            'SKRINING_GIZI_STRONG_KID' => $formatLines($strongKidText),
+            // 'SKRINING_NYERI' => $formatLines($nyeriText),
+            // 'RISIKO_JATUH_HUMPTY_DUMPTY' => $formatLines($humptyText),
+            // 'RISIKO_JATUH_MORSE' => $formatLines($morseText),
+            // 'RISIKO_JATUH_EPFRA' => $formatLines($epfraText),
+            // 'RISIKO_JATUH_GET_UP_AND_GO' => $formatLines($getUpAndGoText),
+            // 'SKRINING_GIZI_MUST' => $formatLines($mustText),
+            // 'SKRINING_GIZI_STRONG_KID' => $formatLines($strongKidText),
+            'SKRINING_NYERI' => $skriningNyeri,
+            'RISIKO_JATUH' => $risikoJatuh,
+            'SKRINING_GIZI' => $skriningGizi,
 
             // Implementasi dan tindakan
             'IMPLEMENTASI_KEPERAWATAN' => $formatLines($implementasiText),
