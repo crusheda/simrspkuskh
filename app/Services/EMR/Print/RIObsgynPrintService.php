@@ -2390,19 +2390,23 @@ class RIObsgynPrintService implements PrintDataInterface
         $daftarMasalahKeperawatan = [];
 
         $opsiMasalahKeperawatan = [
+            'NYERI' => 'Nyeri',
+            'RESIKO_PERDARAHAN' => 'Resiko perdarahan',
+            'RESIKO_INFEKSI' => 'Resiko infeksi',
+            'RESIKO_SYOK' => 'Resiko syok',
+            'RETENSI_URINE' => 'Retensi urine',
+            'DEFISIT_NUTRISI' => 'Defisit nutrisi',
             'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF' => 'Bersihan jalan nafas tidak efektif',
-            'POLA_NAFAS_TIDAK_EFEKTIF' => 'Pola nafas tidak efektif',
-            'PERFUSI_PERIFER_TIDAK_EFEKTIF' => 'Perfusi perifer tidak efektif',
+            'CEMAS' => 'Cemas',
             'DIARE' => 'Diare',
-            'NYERI_AKUT' => 'Nyeri akut',
-            'NAUSEA' => 'Nausea',
-            'HIPERTERMI' => 'Hipertermia',
-            'ANSIETAS' => 'Ansietas',
             'GANGGUAN_INTEGRITAS_KULIT_JARINGAN' => 'Gangguan integritas kulit/jaringan',
-            'GANGGUAN_ELIMINASI_URINE' => 'Gangguan eliminasi urine',
-            'INTOLERANSI_AKTIVITAS' => 'Intoleransi aktivitas',
+            'GANGGUAN_KOMUNIKASI_VERBAL' => 'Gangguan komunikasi verbal',
             'GANGGUAN_MOBILITAS_FISIK' => 'Gangguan mobilitas fisik',
-            'GANGGUAN_PERTUKARAN_GAS' => 'Gangguan pertukaran gas',
+            'GANGGUAN_POLA_TIDUR' => 'Gangguan pola tidur',
+            'HIPERTERMI' => 'Hipertermia',
+            'HIPOTERMI' => 'Hipotermia',
+            'KURANG_PERAWATAN_DIRI' => 'Kurang perawatan diri',
+            'RESIKO_JATUH' => 'Resiko jatuh',
         ];
 
         if ($masalahKeperawatan) {
