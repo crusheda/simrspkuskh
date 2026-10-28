@@ -1,0 +1,1507 @@
+/* =========================================================
+   SIRMED V3 — TYPOGRAPHY
+   File: public/css/v3/components/typography.css
+   Theme: Bootstrap 5.3 data-bs-theme (light / dark)
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. TYPOGRAPHY TOKENS — LIGHT MODE
+   --------------------------------------------------------- */
+
+.app-shell {
+    --typo-font-family: var(--bs-body-font-family, inherit);
+
+    --typo-heading: #263248;
+    --typo-body: #3d4a60;
+    --typo-secondary: #68758b;
+    --typo-muted: #8792a5;
+    --typo-subtle: #a0a9b8;
+
+    --typo-link: #4361ee;
+    --typo-link-hover: #3048c7;
+    --typo-link-visited: #6554c0;
+
+    --typo-border: #dfe5ef;
+    --typo-code: #be185d;
+    --typo-code-bg: #f5f3f7;
+    --typo-pre-bg: #f6f8fc;
+    --typo-mark-bg: #fff0b3;
+    --typo-mark-color: #664d03;
+    --typo-quote-border: #cbd5e1;
+    --typo-quote-bg: #f8fafc;
+
+    --typo-selection-bg: rgb(67 97 238 / 20%);
+    --typo-selection-color: inherit;
+}
+
+/* ---------------------------------------------------------
+   2. TYPOGRAPHY TOKENS — DARK MODE
+   --------------------------------------------------------- */
+
+[data-bs-theme="dark"] .app-shell {
+    --typo-heading: #e8edf7;
+    --typo-body: #cbd5e1;
+    --typo-secondary: #a4b0c3;
+    --typo-muted: #8996aa;
+    --typo-subtle: #748197;
+
+    --typo-link: #8ba4ff;
+    --typo-link-hover: #b2c2ff;
+    --typo-link-visited: #c0a9ff;
+
+    --typo-border: #344156;
+    --typo-code: #f9a8d4;
+    --typo-code-bg: #302637;
+    --typo-pre-bg: #171e2b;
+    --typo-mark-bg: #594719;
+    --typo-mark-color: #ffecad;
+    --typo-quote-border: #45536a;
+    --typo-quote-bg: #1b2433;
+
+    --typo-selection-bg: rgb(139 164 255 / 30%);
+    --typo-selection-color: #fff;
+}
+
+/* ---------------------------------------------------------
+   3. BODY & GENERAL TEXT
+   --------------------------------------------------------- */
+
+.app-shell {
+    font-family: var(--typo-font-family);
+    color: var(--typo-body);
+}
+
+.app-shell p,
+.app-shell li,
+.app-shell dd,
+.app-shell dt,
+.app-shell figcaption {
+    color: inherit;
+}
+
+.app-shell p {
+    margin-bottom: 1rem;
+    line-height: 1.7;
+}
+
+.app-shell strong,
+.app-shell b {
+    color: var(--typo-heading);
+    font-weight: 600;
+}
+
+.app-shell em,
+.app-shell i {
+    color: inherit;
+}
+
+.app-shell small,
+.app-shell .small {
+    font-size: 0.8125rem;
+}
+
+.app-shell .text-body {
+    color: var(--typo-body) !important;
+}
+
+.app-shell .text-body-secondary,
+.app-shell .text-secondary {
+    color: var(--typo-secondary) !important;
+}
+
+.app-shell .text-muted {
+    color: var(--typo-muted) !important;
+}
+
+.app-shell .text-body-tertiary {
+    color: var(--typo-muted) !important;
+}
+
+.app-shell .text-subtle {
+    color: var(--typo-subtle) !important;
+}
+
+/* ---------------------------------------------------------
+   4. HEADINGS
+   --------------------------------------------------------- */
+
+.app-shell h1,
+.app-shell h2,
+.app-shell h3,
+.app-shell h4,
+.app-shell h5,
+.app-shell h6,
+.app-shell .h1,
+.app-shell .h2,
+.app-shell .h3,
+.app-shell .h4,
+.app-shell .h5,
+.app-shell .h6 {
+    color: var(--typo-heading);
+    font-family: inherit;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+}
+
+.app-shell h1,
+.app-shell .h1 {
+    font-size: clamp(1.75rem, 2.5vw, 2.25rem);
+}
+
+.app-shell h2,
+.app-shell .h2 {
+    font-size: clamp(1.5rem, 2vw, 1.875rem);
+}
+
+.app-shell h3,
+.app-shell .h3 {
+    font-size: 1.375rem;
+}
+
+.app-shell h4,
+.app-shell .h4 {
+    font-size: 1.125rem;
+}
+
+.app-shell h5,
+.app-shell .h5 {
+    font-size: 1rem;
+}
+
+.app-shell h6,
+.app-shell .h6 {
+    font-size: 0.875rem;
+    letter-spacing: 0;
+}
+
+.app-shell .display-1,
+.app-shell .display-2,
+.app-shell .display-3,
+.app-shell .display-4,
+.app-shell .display-5,
+.app-shell .display-6 {
+    color: var(--typo-heading);
+    font-weight: 700;
+}
+
+/* ---------------------------------------------------------
+   5. LINKS
+   --------------------------------------------------------- */
+
+/* .app-shell a:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link) {
+    color: var(--typo-link);
+    text-decoration-color: transparent;
+    text-underline-offset: 0.18em;
+    transition:
+        color 0.18s ease,
+        text-decoration-color 0.18s ease;
+}
+
+.app-shell a:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link):hover {
+    color: var(--typo-link-hover);
+    text-decoration-color: currentColor;
+}
+
+.app-shell a:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link):focus-visible {
+    outline: 2px solid var(--typo-link);
+    outline-offset: 3px;
+    border-radius: 2px;
+} */
+
+/* .app-shell a:visited:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link) {
+    color: var(--typo-link-visited);
+} */
+
+/* ---------------------------------------------------------
+   6. LABELS & FORM TEXT
+   --------------------------------------------------------- */
+
+.app-shell label,
+.app-shell .form-label,
+.app-shell .col-form-label,
+.app-shell legend {
+    color: var(--typo-heading);
+    font-weight: 500;
+}
+
+.app-shell .form-text,
+.app-shell .form-hint,
+.app-shell .help-text {
+    color: var(--typo-secondary);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.app-shell .invalid-feedback {
+    color: var(--bs-form-invalid-color, #dc3545);
+}
+
+.app-shell .valid-feedback {
+    color: var(--bs-form-valid-color, #198754);
+}
+
+/* ---------------------------------------------------------
+   7. LISTS
+   --------------------------------------------------------- */
+
+.app-shell ul,
+.app-shell ol {
+    color: var(--typo-body);
+}
+
+.app-shell li {
+    line-height: 1.65;
+}
+
+.app-shell li + li {
+    margin-top: 0.2rem;
+}
+
+.app-shell dl {
+    color: var(--typo-body);
+}
+
+.app-shell dt {
+    color: var(--typo-heading);
+    font-weight: 600;
+}
+
+.app-shell dd {
+    margin-bottom: 0.75rem;
+}
+
+/* ---------------------------------------------------------
+   8. BLOCKQUOTE
+   --------------------------------------------------------- */
+
+.app-shell blockquote,
+.app-shell .blockquote {
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--typo-quote-border);
+    border-radius: 0 8px 8px 0;
+    background: var(--typo-quote-bg);
+    color: var(--typo-secondary);
+}
+
+.app-shell blockquote > :last-child,
+.app-shell .blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+.app-shell .blockquote-footer {
+    color: var(--typo-muted);
+}
+
+/* ---------------------------------------------------------
+   9. INLINE CODE & PRE
+   --------------------------------------------------------- */
+
+.app-shell code,
+.app-shell kbd,
+.app-shell samp {
+    font-family: var(--bs-font-monospace, monospace);
+}
+
+.app-shell :not(pre) > code {
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    background: var(--typo-code-bg);
+    color: var(--typo-code);
+    font-size: 0.875em;
+}
+
+.app-shell pre {
+    padding: 1rem;
+    overflow-x: auto;
+    border: 1px solid var(--typo-border);
+    border-radius: 10px;
+    background: var(--typo-pre-bg);
+    color: var(--typo-body);
+    font-size: 0.875rem;
+    line-height: 1.65;
+}
+
+.app-shell pre code {
+    padding: 0;
+    background: transparent;
+    color: inherit;
+}
+
+.app-shell kbd {
+    padding: 0.2rem 0.4rem;
+    border: 1px solid var(--typo-border);
+    border-radius: 4px;
+    background: var(--typo-pre-bg);
+    color: var(--typo-heading);
+    font-size: 0.8em;
+}
+
+/* ---------------------------------------------------------
+   10. MARK, ABBR, HR & CAPTION
+   --------------------------------------------------------- */
+
+.app-shell mark,
+.app-shell .mark {
+    padding: 0.1em 0.25em;
+    border-radius: 3px;
+    background: var(--typo-mark-bg);
+    color: var(--typo-mark-color);
+}
+
+.app-shell abbr[title] {
+    text-decoration: underline dotted;
+    text-underline-offset: 0.2em;
+    cursor: help;
+}
+
+.app-shell hr {
+    border-color: var(--typo-border);
+    opacity: 1;
+}
+
+.app-shell figcaption,
+.app-shell caption,
+.app-shell .caption,
+.app-shell .text-caption {
+    color: var(--typo-muted);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.app-shell caption {
+    text-align: left;
+}
+
+/* ---------------------------------------------------------
+   11. TEXT SELECTION
+   --------------------------------------------------------- */
+
+.app-shell ::selection {
+    background: var(--typo-selection-bg);
+    color: var(--typo-selection-color);
+}
+
+/* ---------------------------------------------------------
+   12. TYPOGRAPHY UTILITIES
+   --------------------------------------------------------- */
+
+.app-shell .text-heading {
+    color: var(--typo-heading) !important;
+}
+
+.app-shell .text-primary-content {
+    color: var(--typo-link) !important;
+}
+
+.app-shell .text-secondary-content {
+    color: var(--typo-secondary) !important;
+}
+
+.app-shell .text-muted-content {
+    color: var(--typo-muted) !important;
+}
+
+.app-shell .fw-medium {
+    font-weight: 500 !important;
+}
+
+.app-shell .fw-semibold {
+    font-weight: 600 !important;
+}
+
+.app-shell .text-balance {
+    text-wrap: balance;
+}
+
+.app-shell .text-pretty {
+    text-wrap: pretty;
+}
+
+/* ---------------------------------------------------------
+   13. RESPONSIVE
+   --------------------------------------------------------- */
+
+@media (max-width: 575.98px) {
+    .app-shell h1,
+    .app-shell .h1 {
+        line-height: 1.3;
+    }
+
+    .app-shell h2,
+    .app-shell .h2 {
+        line-height: 1.35;
+    }
+
+    .app-shell p {
+        line-height: 1.65;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-shell a:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link) {
+        transition: none;
+    }
+}
+
+/* COLORED TEXT */
+/* ===== Basic Colors ===== */
+.text-white { color: #ffffff !important; }
+.text-black { color: #000000 !important; }
+.text-gray { color: #6c757d !important; }
+.text-lightgray { color: #adb5bd !important; }
+.text-darkgray { color: #495057 !important; }
+
+/* ===== Red ===== */
+.text-red { color: #dc3545 !important; }
+.text-darkred { color: #8b0000 !important; }
+.text-lightred { color: #ff6b6b !important; }
+.text-crimson { color: #dc143c !important; }
+
+/* ===== Pink ===== */
+.text-pink { color: #e83e8c !important; }
+.text-hotpink { color: #ff69b4 !important; }
+.text-lightpink { color: #ffb6c1 !important; }
+.text-deeppink { color: #ff1493 !important; }
+
+/* ===== Purple ===== */
+.text-purple { color: #6f42c1 !important; }
+.text-indigo { color: #6610f2 !important; }
+.text-violet { color: #8a2be2 !important; }
+.text-lavender { color: #b57edc !important; }
+
+/* ===== Blue ===== */
+.text-blue { color: #0d6efd !important; }
+.text-skyblue { color: #0dcaf0 !important; }
+.text-lightblue { color: #87cefa !important; }
+.text-darkblue { color: #0b5ed7 !important; }
+.text-navy { color: #03407D !important; }
+.text-cyan { color: #17a2b8 !important; }
+.text-teal { color: #20c997 !important; }
+.bg-teal { background-color: #20c997 !important; }
+
+/* ===== Green ===== */
+.text-green { color: #198754 !important; }
+.text-lightgreen { color: #90ee90 !important; }
+.text-lime { color: #32cd32 !important; }
+.text-darkgreen { color: #006400 !important; }
+.text-emerald { color: #10b981 !important; }
+.text-mint { color: #3eb489 !important; }
+
+/* ===== Yellow ===== */
+.text-yellow { color: #ffc107 !important; }
+.text-gold { color: #ffd700 !important; }
+.text-khaki { color: #f0e68c !important; }
+.text-amber { color: #ffbf00 !important; }
+
+/* ===== Orange ===== */
+.text-orange { color: #fd7e14 !important; }
+.text-darkorange { color: #ff8c00 !important; }
+.text-coral { color: #ff7f50 !important; }
+.text-peach { color: #ffb07c !important; }
+
+/* ===== Brown ===== */
+.text-brown { color: #8b4513 !important; }
+.text-chocolate { color: #d2691e !important; }
+.text-tan { color: #d2b48c !important; }
+
+/* ===== Neutral ===== */
+.text-silver { color: #c0c0c0 !important; }
+.text-charcoal { color: #36454f !important; }
+.text-slate { color: #708090 !important; }
+
+/* ===== Fancy Colors ===== */
+.text-turquoise { color: #40e0d0 !important; }
+.text-aqua { color: #00ffff !important; }
+.text-olive { color: #808000 !important; }
+.text-maroon { color: #800000 !important; }
+.text-magenta { color: #ff00ff !important; }
+.text-plum { color: #dda0dd !important; }
+.text-orchid { color: #da70d6 !important; }
+.text-salmon { color: #fa8072 !important; }
+.text-tomato { color: #ff6347 !important; }
+.text-ivory { color: #fffff0 !important; }
+.text-beige { color: #f5f5dc !important; }
+.text-azure { color: #007fff !important; }
+.text-rose { color: #ff007f !important; }
+.text-ruby { color: #e0115f !important; }
+.text-wine { color: #722f37 !important; }
+.text-bronze { color: #cd7f32 !important; }
+.text-copper { color: #b87333 !important; }
+
+/*====== more bootstrap colors start ======*/
+.bg-blue-100 {
+  background: var(--bs-blue-100);
+}
+
+.text-blue-100 {
+  color: var(--bs-blue-100);
+}
+
+.bg-blue-200 {
+  background: var(--bs-blue-200);
+}
+
+.text-blue-200 {
+  color: var(--bs-blue-200);
+}
+
+.bg-blue-300 {
+  background: var(--bs-blue-300);
+}
+
+.text-blue-300 {
+  color: var(--bs-blue-300);
+}
+
+.bg-blue-400 {
+  background: var(--bs-blue-400);
+}
+
+.text-blue-400 {
+  color: var(--bs-blue-400);
+}
+
+.bg-blue-500 {
+  background: var(--bs-blue-500);
+}
+
+.text-blue-500 {
+  color: var(--bs-blue-500);
+}
+
+.bg-blue-600 {
+  background: var(--bs-blue-600);
+}
+
+.text-blue-600 {
+  color: var(--bs-blue-600);
+}
+
+.bg-blue-700 {
+  background: var(--bs-blue-700);
+}
+
+.text-blue-700 {
+  color: var(--bs-blue-700);
+}
+
+.bg-blue-800 {
+  background: var(--bs-blue-800);
+}
+
+.text-blue-800 {
+  color: var(--bs-blue-800);
+}
+
+.bg-blue-900 {
+  background: var(--bs-blue-900);
+}
+
+.text-blue-900 {
+  color: var(--bs-blue-900);
+}
+
+.bg-indigo-100 {
+  background: var(--bs-indigo-100);
+}
+
+.text-indigo-100 {
+  color: var(--bs-indigo-100);
+}
+
+.bg-indigo-200 {
+  background: var(--bs-indigo-200);
+}
+
+.text-indigo-200 {
+  color: var(--bs-indigo-200);
+}
+
+.bg-indigo-300 {
+  background: var(--bs-indigo-300);
+}
+
+.text-indigo-300 {
+  color: var(--bs-indigo-300);
+}
+
+.bg-indigo-400 {
+  background: var(--bs-indigo-400);
+}
+
+.text-indigo-400 {
+  color: var(--bs-indigo-400);
+}
+
+.bg-indigo-500 {
+  background: var(--bs-indigo-500);
+}
+
+.text-indigo-500 {
+  color: var(--bs-indigo-500);
+}
+
+.bg-indigo-600 {
+  background: var(--bs-indigo-600);
+}
+
+.text-indigo-600 {
+  color: var(--bs-indigo-600);
+}
+
+.bg-indigo-700 {
+  background: var(--bs-indigo-700);
+}
+
+.text-indigo-700 {
+  color: var(--bs-indigo-700);
+}
+
+.bg-indigo-800 {
+  background: var(--bs-indigo-800);
+}
+
+.text-indigo-800 {
+  color: var(--bs-indigo-800);
+}
+
+.bg-indigo-900 {
+  background: var(--bs-indigo-900);
+}
+
+.text-indigo-900 {
+  color: var(--bs-indigo-900);
+}
+
+.bg-purple-100 {
+  background: var(--bs-purple-100);
+}
+
+.text-purple-100 {
+  color: var(--bs-purple-100);
+}
+
+.bg-purple-200 {
+  background: var(--bs-purple-200);
+}
+
+.text-purple-200 {
+  color: var(--bs-purple-200);
+}
+
+.bg-purple-300 {
+  background: var(--bs-purple-300);
+}
+
+.text-purple-300 {
+  color: var(--bs-purple-300);
+}
+
+.bg-purple-400 {
+  background: var(--bs-purple-400);
+}
+
+.text-purple-400 {
+  color: var(--bs-purple-400);
+}
+
+.bg-purple-500 {
+  background: var(--bs-purple-500);
+}
+
+.text-purple-500 {
+  color: var(--bs-purple-500);
+}
+
+.bg-purple-600 {
+  background: var(--bs-purple-600);
+}
+
+.text-purple-600 {
+  color: var(--bs-purple-600);
+}
+
+.bg-purple-700 {
+  background: var(--bs-purple-700);
+}
+
+.text-purple-700 {
+  color: var(--bs-purple-700);
+}
+
+.bg-purple-800 {
+  background: var(--bs-purple-800);
+}
+
+.text-purple-800 {
+  color: var(--bs-purple-800);
+}
+
+.bg-purple-900 {
+  background: var(--bs-purple-900);
+}
+
+.text-purple-900 {
+  color: var(--bs-purple-900);
+}
+
+.bg-pink-100 {
+  background: var(--bs-pink-100);
+}
+
+.text-pink-100 {
+  color: var(--bs-pink-100);
+}
+
+.bg-pink-200 {
+  background: var(--bs-pink-200);
+}
+
+.text-pink-200 {
+  color: var(--bs-pink-200);
+}
+
+.bg-pink-300 {
+  background: var(--bs-pink-300);
+}
+
+.text-pink-300 {
+  color: var(--bs-pink-300);
+}
+
+.bg-pink-400 {
+  background: var(--bs-pink-400);
+}
+
+.text-pink-400 {
+  color: var(--bs-pink-400);
+}
+
+.bg-pink-500 {
+  background: var(--bs-pink-500);
+}
+.text-bg-pink-500 {
+  background: var(--bs-pink-500);
+}
+
+.text-pink-500 {
+  color: var(--bs-pink-500);
+}
+
+.bg-pink-600 {
+  background: var(--bs-pink-600);
+}
+
+.text-pink-600 {
+  color: var(--bs-pink-600);
+}
+
+.bg-pink-700 {
+  background: var(--bs-pink-700);
+}
+
+.text-pink-700 {
+  color: var(--bs-pink-700);
+}
+
+.bg-pink-800 {
+  background: var(--bs-pink-800);
+}
+
+.text-pink-800 {
+  color: var(--bs-pink-800);
+}
+
+.bg-pink-900 {
+  background: var(--bs-pink-900);
+}
+
+.text-pink-900 {
+  color: var(--bs-pink-900);
+}
+
+.bg-red-100 {
+  background: var(--bs-red-100);
+}
+
+.text-red-100 {
+  color: var(--bs-red-100);
+}
+
+.bg-red-200 {
+  background: var(--bs-red-200);
+}
+
+.text-red-200 {
+  color: var(--bs-red-200);
+}
+
+.bg-red-300 {
+  background: var(--bs-red-300);
+}
+
+.text-red-300 {
+  color: var(--bs-red-300);
+}
+
+.bg-red-400 {
+  background: var(--bs-red-400);
+}
+
+.text-red-400 {
+  color: var(--bs-red-400);
+}
+
+.bg-red-500 {
+  background: var(--bs-red-500);
+}
+
+.text-red-500 {
+  color: var(--bs-red-500);
+}
+
+.bg-red-600 {
+  background: var(--bs-red-600);
+}
+
+.text-red-600 {
+  color: var(--bs-red-600);
+}
+
+.bg-red-700 {
+  background: var(--bs-red-700);
+}
+
+.text-bg-red-700 {
+  background: var(--bs-red-700);
+}
+
+.text-red-700 {
+  color: var(--bs-red-700);
+}
+
+.bg-red-800 {
+  background: var(--bs-red-800);
+}
+
+.text-red-800 {
+  color: var(--bs-red-800);
+}
+
+.bg-red-900 {
+  background: var(--bs-red-900);
+}
+
+.text-red-900 {
+  color: var(--bs-red-900);
+}
+
+.bg-orange-100 {
+  background: var(--bs-orange-100);
+}
+
+.text-orange-100 {
+  color: var(--bs-orange-100);
+}
+
+.bg-orange-200 {
+  background: var(--bs-orange-200);
+}
+
+.text-orange-200 {
+  color: var(--bs-orange-200);
+}
+
+.bg-orange-300 {
+  background: var(--bs-orange-300);
+}
+
+.text-orange-300 {
+  color: var(--bs-orange-300);
+}
+
+.bg-orange-400 {
+  background: var(--bs-orange-400);
+}
+
+.text-orange-400 {
+  color: var(--bs-orange-400);
+}
+
+.bg-orange-500 {
+  background: var(--bs-orange-500);
+}
+
+.text-orange-500 {
+  color: var(--bs-orange-500);
+}
+
+.bg-orange-600 {
+  background: var(--bs-orange-600);
+}
+
+.text-orange-600 {
+  color: var(--bs-orange-600);
+}
+
+.bg-orange-700 {
+  background: var(--bs-orange-700);
+}
+
+.text-orange-700 {
+  color: var(--bs-orange-700);
+}
+
+.bg-orange-800 {
+  background: var(--bs-orange-800);
+}
+
+.text-orange-800 {
+  color: var(--bs-orange-800);
+}
+
+.bg-orange-900 {
+  background: var(--bs-orange-900);
+}
+
+.text-orange-900 {
+  color: var(--bs-orange-900);
+}
+
+.bg-yellow-100 {
+  background: var(--bs-yellow-100);
+}
+
+.text-yellow-100 {
+  color: var(--bs-yellow-100);
+}
+
+.bg-yellow-200 {
+  background: var(--bs-yellow-200);
+}
+
+.text-yellow-200 {
+  color: var(--bs-yellow-200);
+}
+
+.bg-yellow-300 {
+  background: var(--bs-yellow-300);
+}
+
+.text-yellow-300 {
+  color: var(--bs-yellow-300);
+}
+
+.bg-yellow-400 {
+  background: var(--bs-yellow-400);
+}
+
+.text-yellow-400 {
+  color: var(--bs-yellow-400);
+}
+
+.bg-yellow-500 {
+  background: var(--bs-yellow-500);
+}
+
+.text-yellow-500 {
+  color: var(--bs-yellow-500);
+}
+
+.bg-yellow-600 {
+  background: var(--bs-yellow-600);
+}
+
+.text-yellow-600 {
+  color: var(--bs-yellow-600);
+}
+
+.bg-yellow-700 {
+  background: var(--bs-yellow-700);
+}
+
+.text-yellow-700 {
+  color: var(--bs-yellow-700);
+}
+
+.bg-yellow-800 {
+  background: var(--bs-yellow-800);
+}
+
+.text-yellow-800 {
+  color: var(--bs-yellow-800);
+}
+
+.bg-yellow-900 {
+  background: var(--bs-yellow-900);
+}
+
+.text-yellow-900 {
+  color: var(--bs-yellow-900);
+}
+
+.bg-green-100 {
+  background: var(--bs-green-100);
+}
+
+.text-green-100 {
+  color: var(--bs-green-100);
+}
+
+.bg-green-200 {
+  background: var(--bs-green-200);
+}
+
+.text-green-200 {
+  color: var(--bs-green-200);
+}
+
+.bg-green-300 {
+  background: var(--bs-green-300);
+}
+
+.text-green-300 {
+  color: var(--bs-green-300);
+}
+
+.bg-green-400 {
+  background: var(--bs-green-400);
+}
+
+.text-green-400 {
+  color: var(--bs-green-400);
+}
+
+.bg-green-500 {
+  background: var(--bs-green-500);
+}
+
+.text-green-500 {
+  color: var(--bs-green-500);
+}
+
+.bg-green-600 {
+  background: var(--bs-green-600);
+}
+
+.text-green-600 {
+  color: var(--bs-green-600);
+}
+
+.bg-green-700 {
+  background: var(--bs-green-700);
+}
+
+.text-green-700 {
+  color: var(--bs-green-700);
+}
+
+.bg-green-800 {
+  background: var(--bs-green-800);
+}
+
+.text-green-800 {
+  color: var(--bs-green-800);
+}
+
+.bg-green-900 {
+  background: var(--bs-green-900);
+}
+
+.text-green-900 {
+  color: var(--bs-green-900);
+}
+
+.bg-teal-100 {
+  background: var(--bs-teal-100);
+}
+
+.text-teal-100 {
+  color: var(--bs-teal-100);
+}
+
+.bg-teal-200 {
+  background: var(--bs-teal-200);
+}
+
+.text-teal-200 {
+  color: var(--bs-teal-200);
+}
+
+.bg-teal-300 {
+  background: var(--bs-teal-300);
+}
+
+.text-teal-300 {
+  color: var(--bs-teal-300);
+}
+
+.bg-teal-400 {
+  background: var(--bs-teal-400);
+}
+
+.text-teal-400 {
+  color: var(--bs-teal-400);
+}
+
+.bg-teal-500 {
+  background: var(--bs-teal-500);
+}
+
+.text-teal-500 {
+  color: var(--bs-teal-500);
+}
+
+.bg-teal-600 {
+  background: var(--bs-teal-600);
+}
+
+.text-teal-600 {
+  color: var(--bs-teal-600);
+}
+
+.bg-teal-700 {
+  background: var(--bs-teal-700);
+}
+
+.text-teal-700 {
+  color: var(--bs-teal-700);
+}
+
+.bg-teal-800 {
+  background: var(--bs-teal-800);
+}
+
+.text-teal-800 {
+  color: var(--bs-teal-800);
+}
+
+.bg-teal-900 {
+  background: var(--bs-teal-900);
+}
+
+.text-teal-900 {
+  color: var(--bs-teal-900);
+}
+
+.bg-cyan-100 {
+  background: var(--bs-cyan-100);
+}
+
+.text-cyan-100 {
+  color: var(--bs-cyan-100);
+}
+
+.bg-cyan-200 {
+  background: var(--bs-cyan-200);
+}
+
+.text-cyan-200 {
+  color: var(--bs-cyan-200);
+}
+
+.bg-cyan-300 {
+  background: var(--bs-cyan-300);
+}
+
+.text-cyan-300 {
+  color: var(--bs-cyan-300);
+}
+
+.bg-cyan-400 {
+  background: var(--bs-cyan-400);
+}
+
+.text-cyan-400 {
+  color: var(--bs-cyan-400);
+}
+
+.bg-cyan-500 {
+  background: var(--bs-cyan-500);
+}
+
+.text-cyan-500 {
+  color: var(--bs-cyan-500);
+}
+
+.bg-cyan-600 {
+  background: var(--bs-cyan-600);
+}
+
+.text-cyan-600 {
+  color: var(--bs-cyan-600);
+}
+
+.bg-cyan-700 {
+  background: var(--bs-cyan-700);
+}
+
+.text-cyan-700 {
+  color: var(--bs-cyan-700);
+}
+
+.bg-cyan-800 {
+  background: var(--bs-cyan-800);
+}
+
+.text-cyan-800 {
+  color: var(--bs-cyan-800);
+}
+
+.bg-cyan-900 {
+  background: var(--bs-cyan-900);
+}
+
+.text-cyan-900 {
+  color: var(--bs-cyan-900);
+}
+
+.bg-gray-100 {
+  background: var(--bs-gray-100);
+}
+
+.text-gray-100 {
+  color: var(--bs-gray-100);
+}
+
+.bg-gray-200 {
+  background: var(--bs-gray-200);
+}
+
+.text-gray-200 {
+  color: var(--bs-gray-200);
+}
+
+.bg-gray-300 {
+  background: var(--bs-gray-300);
+}
+
+.text-gray-300 {
+  color: var(--bs-gray-300);
+}
+
+.bg-gray-400 {
+  background: var(--bs-gray-400);
+}
+
+.text-gray-400 {
+  color: var(--bs-gray-400);
+}
+
+.bg-gray-500 {
+  background: var(--bs-gray-500);
+}
+
+.text-gray-500 {
+  color: var(--bs-gray-500);
+}
+
+.bg-gray-600 {
+  background: var(--bs-gray-600);
+}
+
+.text-gray-600 {
+  color: var(--bs-gray-600);
+}
+
+.bg-gray-700 {
+  background: var(--bs-gray-700);
+}
+
+.text-gray-700 {
+  color: var(--bs-gray-700);
+}
+
+.bg-gray-800 {
+  background: var(--bs-gray-800);
+}
+
+.text-gray-800 {
+  color: var(--bs-gray-800);
+}
+
+.bg-gray-900 {
+  background: var(--bs-gray-900);
+}
+
+.text-gray-900 {
+  color: var(--bs-gray-900);
+}
+
+:root {
+  --bs-blue-100: #b4e5fc;
+  --bs-blue-200: #82d4fa;
+  --bs-blue-300: #4fc3f8;
+  --bs-blue-400: #2ab6f7;
+  --bs-blue-500: #04a9f5;
+  --bs-blue-600: #03a2f4;
+  --bs-blue-700: #0398f2;
+  --bs-blue-800: #028ff0;
+  --bs-blue-900: #017eee;
+  --bs-indigo-100: #d1b7fb;
+  --bs-indigo-200: #b388f9;
+  --bs-indigo-300: #9458f6;
+  --bs-indigo-400: #7d34f4;
+  --bs-indigo-500: #6610f2;
+  --bs-indigo-600: #5e0ef0;
+  --bs-indigo-700: #530cee;
+  --bs-indigo-800: #4909ec;
+  --bs-indigo-900: #3805e8;
+  --bs-purple-100: #d1c4e9;
+  --bs-purple-200: #b39ddb;
+  --bs-purple-300: #9575cd;
+  --bs-purple-400: #7e58c2;
+  --bs-purple-500: #673ab7;
+  --bs-purple-600: #5f34b0;
+  --bs-purple-700: #542ca7;
+  --bs-purple-800: #4a259f;
+  --bs-purple-900: #391890;
+  --bs-pink-100: #f8c5dd;
+  --bs-pink-200: #f49fc6;
+  --bs-pink-300: #ef78af;
+  --bs-pink-400: #eb5b9d;
+  --bs-pink-500: #e83e8c;
+  --bs-pink-600: #e53884;
+  --bs-pink-700: #e23079;
+  --bs-pink-800: #de286f;
+  --bs-pink-900: #d81b5c;
+  --bs-red-100: #f99b94;
+  --bs-red-200: #f88077;
+  --bs-red-300: #f76e64;
+  --bs-red-400: #f55247;
+  --bs-red-500: #f44236;
+  --bs-red-600: #f21c0d;
+  --bs-red-700: #da190c;
+  --bs-red-800: #c1160b;
+  --bs-red-900: #a9130a;
+  --bs-orange-100: #fed8b9;
+  --bs-orange-200: #febf8a;
+  --bs-orange-300: #fea55b;
+  --bs-orange-400: #fd9137;
+  --bs-orange-500: #fd7e14;
+  --bs-orange-600: #fd7612;
+  --bs-orange-700: #fc6b0e;
+  --bs-orange-800: #fc610b;
+  --bs-orange-900: #fc4e06;
+  --bs-yellow-100: #f8dc86;
+  --bs-yellow-200: #f7d56e;
+  --bs-yellow-300: #f6ce55;
+  --bs-yellow-400: #f5c73d;
+  --bs-yellow-500: #f4c22b;
+  --bs-yellow-600: #f2b90d;
+  --bs-yellow-700: #daa70b;
+  --bs-yellow-800: #c2950a;
+  --bs-yellow-900: #aa8209;
+  --bs-green-100: #bbf8e9;
+  --bs-green-200: #8ef4db;
+  --bs-green-300: #61f0cc;
+  --bs-green-400: #3fecc1;
+  --bs-green-500: #1de9b6;
+  --bs-green-600: #1ae6af;
+  --bs-green-700: #15e3a6;
+  --bs-green-800: #11df9e;
+  --bs-green-900: #0ad98e;
+  --bs-teal-100: #b3d9d9;
+  --bs-teal-200: #80c0c0;
+  --bs-teal-300: #4da6a6;
+  --bs-teal-400: #269393;
+  --bs-teal-500: #008080;
+  --bs-teal-600: #007878;
+  --bs-teal-700: #006d6d;
+  --bs-teal-800: #006363;
+  --bs-teal-900: #005050;
+  --bs-cyan-100: #c5ecf9;
+  --bs-cyan-200: #9fdff5;
+  --bs-cyan-300: #78d2f0;
+  --bs-cyan-400: #5bc9ed;
+  --bs-cyan-500: #3ebfea;
+  --bs-cyan-600: #38b9e7;
+  --bs-cyan-700: #30b1e4;
+  --bs-cyan-800: #28a9e1;
+  --bs-cyan-900: #1b9bdb;
+  --bs-gray-100: #f8f9fa;
+  --bs-gray-200: #f3f5f7;
+  --bs-gray-300: #dbe0e5;
+  --bs-gray-400: #bec8d0;
+  --bs-gray-500: #8996a4;
+  --bs-gray-600: #5b6b79;
+  --bs-gray-700: #3e4853;
+  --bs-gray-800: #1d2630;
+  --bs-gray-900: #131920;
+}
+/* =========================================================
+   SIRMED V3 — TYPOGRAPHY COLOR FIX
+   ========================================================= */
+
+/* Warna teks netral yang mengikuti tema */
+.app-shell .text-body {
+    color: var(--typo-body) !important;
+}
+
+.app-shell .text-heading {
+    color: var(--typo-heading) !important;
+}
+
+.app-shell .text-secondary-content {
+    color: var(--typo-secondary) !important;
+}
+
+/* Dark mode: aksen dengan kontras lebih baik */
+[data-bs-theme="dark"] .app-shell .text-primary {
+    color: #8ba4ff !important;
+}
+
+[data-bs-theme="dark"] .app-shell .text-pink {
+    color: #ff8fc7 !important;
+}
+
+[data-bs-theme="dark"] .app-shell .text-lavender {
+    color: #d0b4ff !important;
+}
+
+[data-bs-theme="dark"] .app-shell .text-emerald {
+    color: #6ee7b7 !important;
+}
+
+/* Dark mode: badge dengan background terang tetap memakai teks gelap */
+.app-shell .badge.bg-light.text-dark {
+    color: #212529 !important;
+}
+
+/* =========================================================
+   SIRMED V3 — ADAPTIVE TEXT-DARK
+   Light mode : teks gelap
+   Dark mode  : teks terang
+   ========================================================= */
+
+/* LIGHT MODE */
+[data-bs-theme="light"] .app-shell .text-dark,
+.app-shell .text-dark {
+    color: #263248 !important;
+}
+
+/* DARK MODE */
+[data-bs-theme="dark"] .app-shell .text-dark {
+    color: #e8edf7 !important;
+}
+
+/* =========================================================
+   SIRMED V3 — ADAPTIVE TEXT-DARK IN BADGES
+   ========================================================= */
+
+/* Light mode */
+[data-bs-theme="light"] .app-shell .badge.text-dark,
+.app-shell .badge.text-dark {
+    color: #263248 !important;
+}
+
+/* Dark mode: badge dengan background terang */
+[data-bs-theme="dark"] .app-shell .badge.bg-light.text-dark {
+    color: #263248 !important;
+}
+
+/* Dark mode: text-dark pada badge dengan background gelap */
+[data-bs-theme="dark"] .app-shell .badge.text-dark:not(.bg-light) {
+    color: #e8edf7 !important;
+}

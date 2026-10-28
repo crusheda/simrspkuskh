@@ -490,7 +490,7 @@
                                                 </h4>
 
                                                 <a class="text-dark" href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" title="Dokter Penanggung Jawab Pasien">
-                                                    <b>DPJP</b> : ${item.NAMADOKTER}
+                                                    <b>DPJP : ${item.NAMADOKTER}</b>
                                                 </a><br>
 
                                                 <a class="fw-medium text-dark" href="javascript:void(0);">
@@ -509,7 +509,7 @@
                                                 <button type="button" class="btn btn-link-info btn-sm mb-0"
                                                     onclick="event.stopPropagation();">
                                                     Masuk
-                                                    <span class="badge bg-light text-dark ms-2">
+                                                    <span class="badge badge-soft-light text-dark ms-2">
                                                         ${item.MASUK}
                                                     </span>
                                                 </button>
@@ -519,7 +519,7 @@
                                                 <button type="button" class="btn btn-link-danger btn-sm mb-0"
                                                     onclick="event.stopPropagation();">
                                                     Keluar
-                                                    <span class="badge bg-light text-dark ms-2">
+                                                    <span class="badge badge-soft-light text-dark ms-2">
                                                         ${item.KELUAR ?? '-'}
                                                     </span>
                                                 </button>

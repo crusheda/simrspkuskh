@@ -33,7 +33,7 @@ body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
-    background-color: #101827 !important;
+    background-color: var(--bg) !important;
     font: 14px Inter, system-ui, sans-serif
 }
 

@@ -1,0 +1,531 @@
+
+/* =========================================================
+   SIRMED V3 — BADGES
+   Bootstrap 5.3.3 | Light & Dark Theme
+   Theme source: html[data-bs-theme]
+========================================================= */
+
+/* ---------------------------------------------------------
+   1. BASE VARIABLES — LIGHT MODE
+--------------------------------------------------------- */
+:root,
+[data-bs-theme="light"] {
+    --sirmed-badge-radius: 6px;
+    --sirmed-badge-font-size: .75rem;
+    --sirmed-badge-font-weight: 600;
+    --sirmed-badge-padding-y: .35em;
+    --sirmed-badge-padding-x: .65em;
+
+    --sirmed-badge-primary-bg: #dbeafe;
+    --sirmed-badge-primary-color: #1d4ed8;
+    --sirmed-badge-primary-border: #bfdbfe;
+
+    --sirmed-badge-secondary-bg: #e2e8f0;
+    --sirmed-badge-secondary-color: #334155;
+    --sirmed-badge-secondary-border: #cbd5e1;
+
+    --sirmed-badge-success-bg: #dcfce7;
+    --sirmed-badge-success-color: #166534;
+    --sirmed-badge-success-border: #bbf7d0;
+
+    --sirmed-badge-danger-bg: #fee2e2;
+    --sirmed-badge-danger-color: #991b1b;
+    --sirmed-badge-danger-border: #fecaca;
+
+    --sirmed-badge-warning-bg: #fef3c7;
+    --sirmed-badge-warning-color: #92400e;
+    --sirmed-badge-warning-border: #fde68a;
+
+    --sirmed-badge-info-bg: #cffafe;
+    --sirmed-badge-info-color: #155e75;
+    --sirmed-badge-info-border: #a5f3fc;
+
+    --sirmed-badge-light-bg: #f1f5f9;
+    --sirmed-badge-light-color: #334155;
+    --sirmed-badge-light-border: #e2e8f0;
+
+    --sirmed-badge-dark-bg: #334155;
+    --sirmed-badge-dark-color: #ffffff;
+    --sirmed-badge-dark-border: #475569;
+}
+
+/* ---------------------------------------------------------
+   2. DARK MODE
+--------------------------------------------------------- */
+[data-bs-theme="dark"] {
+    --sirmed-badge-primary-bg: #1e3a5f;
+    --sirmed-badge-primary-color: #bfdbfe;
+    --sirmed-badge-primary-border: #315781;
+
+    --sirmed-badge-secondary-bg: #303b4d;
+    --sirmed-badge-secondary-color: #dbe4f0;
+    --sirmed-badge-secondary-border: #475569;
+
+    --sirmed-badge-success-bg: #153d2b;
+    --sirmed-badge-success-color: #a7f3c0;
+    --sirmed-badge-success-border: #246344;
+
+    --sirmed-badge-danger-bg: #4b2228;
+    --sirmed-badge-danger-color: #fecaca;
+    --sirmed-badge-danger-border: #7f303b;
+
+    --sirmed-badge-warning-bg: #493719;
+    --sirmed-badge-warning-color: #fde68a;
+    --sirmed-badge-warning-border: #765522;
+
+    --sirmed-badge-info-bg: #153b49;
+    --sirmed-badge-info-color: #a5f3fc;
+    --sirmed-badge-info-border: #246071;
+
+    --sirmed-badge-light-bg: #303b4d;
+    --sirmed-badge-light-color: #e2e8f0;
+    --sirmed-badge-light-border: #475569;
+
+    --sirmed-badge-dark-bg: #263244;
+    --sirmed-badge-dark-color: #e2e8f0;
+    --sirmed-badge-dark-border: #475569;
+}
+
+/* ---------------------------------------------------------
+   3. BASE BADGE
+--------------------------------------------------------- */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .3rem;
+
+    padding: var(--sirmed-badge-padding-y)
+             var(--sirmed-badge-padding-x);
+
+    border-radius: var(--sirmed-badge-radius);
+
+    font-size: var(--sirmed-badge-font-size);
+    font-weight: var(--sirmed-badge-font-weight);
+    line-height: 1.4;
+    letter-spacing: .01em;
+
+    vertical-align: middle;
+    white-space: nowrap;
+
+    border: 1px solid transparent;
+
+    transition:
+        background-color .15s ease,
+        color .15s ease,
+        border-color .15s ease;
+}
+
+/* ---------------------------------------------------------
+   4. PRIMARY
+--------------------------------------------------------- */
+.badge.text-bg-primary,
+.badge.bg-primary {
+    color: var(--sirmed-badge-primary-color) !important;
+    background-color: var(--sirmed-badge-primary-bg) !important;
+    border-color: var(--sirmed-badge-primary-border);
+}
+
+/* ---------------------------------------------------------
+   5. SECONDARY
+--------------------------------------------------------- */
+.badge.text-bg-secondary,
+.badge.bg-secondary {
+    color: var(--sirmed-badge-secondary-color) !important;
+    background-color: var(--sirmed-badge-secondary-bg) !important;
+    border-color: var(--sirmed-badge-secondary-border);
+}
+
+/* ---------------------------------------------------------
+   6. SUCCESS
+--------------------------------------------------------- */
+.badge.text-bg-success,
+.badge.bg-success {
+    color: var(--sirmed-badge-success-color) !important;
+    background-color: var(--sirmed-badge-success-bg) !important;
+    border-color: var(--sirmed-badge-success-border);
+}
+
+/* ---------------------------------------------------------
+   7. DANGER
+--------------------------------------------------------- */
+.badge.text-bg-danger,
+.badge.bg-danger {
+    color: var(--sirmed-badge-danger-color) !important;
+    background-color: var(--sirmed-badge-danger-bg) !important;
+    border-color: var(--sirmed-badge-danger-border);
+}
+
+/* ---------------------------------------------------------
+   8. WARNING
+--------------------------------------------------------- */
+.badge.text-bg-warning,
+.badge.bg-warning {
+    color: var(--sirmed-badge-warning-color) !important;
+    background-color: var(--sirmed-badge-warning-bg) !important;
+    border-color: var(--sirmed-badge-warning-border);
+}
+
+/* ---------------------------------------------------------
+   9. INFO
+--------------------------------------------------------- */
+.badge.text-bg-info,
+.badge.bg-info {
+    color: var(--sirmed-badge-info-color) !important;
+    background-color: var(--sirmed-badge-info-bg) !important;
+    border-color: var(--sirmed-badge-info-border);
+}
+
+/* ---------------------------------------------------------
+   10. LIGHT
+--------------------------------------------------------- */
+.badge.text-bg-light,
+.badge.bg-light {
+    color: var(--sirmed-badge-light-color) !important;
+    background-color: var(--sirmed-badge-light-bg) !important;
+    border-color: var(--sirmed-badge-light-border);
+}
+
+/* ---------------------------------------------------------
+   11. DARK
+--------------------------------------------------------- */
+.badge.text-bg-dark,
+.badge.bg-dark {
+    color: var(--sirmed-badge-dark-color) !important;
+    background-color: var(--sirmed-badge-dark-bg) !important;
+    border-color: var(--sirmed-badge-dark-border);
+}
+
+/* ---------------------------------------------------------
+   12. BADGE OUTLINE
+   Gunakan class tambahan .badge-outline-*
+--------------------------------------------------------- */
+.badge-outline-primary {
+    color: var(--sirmed-badge-primary-color);
+    background: transparent;
+    border-color: var(--sirmed-badge-primary-border);
+}
+
+.badge-outline-secondary {
+    color: var(--sirmed-badge-secondary-color);
+    background: transparent;
+    border-color: var(--sirmed-badge-secondary-border);
+}
+
+.badge-outline-success {
+    color: var(--sirmed-badge-success-color);
+    background: transparent;
+    border-color: var(--sirmed-badge-success-border);
+}
+
+.badge-outline-danger {
+    color: var(--sirmed-badge-danger-color);
+    background: transparent;
+    border-color: var(--sirmed-badge-danger-border);
+}
+
+.badge-outline-warning {
+    color: var(--sirmed-badge-warning-color);
+    background: transparent;
+    border-color: var(--sirmed-badge-warning-border);
+}
+
+.badge-outline-info {
+    color: var(--sirmed-badge-info-color);
+    background: transparent;
+    border-color: var(--sirmed-badge-info-border);
+}
+
+/* ---------------------------------------------------------
+   13. PILL BADGE
+--------------------------------------------------------- */
+.badge.rounded-pill {
+    border-radius: 50rem;
+    padding-inline: .7em;
+}
+
+/* ---------------------------------------------------------
+   14. BADGE WITH ICON
+--------------------------------------------------------- */
+.badge > i,
+.badge > svg {
+    flex-shrink: 0;
+    font-size: 1em;
+}
+
+/* ---------------------------------------------------------
+   15. BADGE IN DATATABLES
+--------------------------------------------------------- */
+table.dataTable .badge,
+.table .badge {
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+/* ---------------------------------------------------------
+   16. BADGE AS LINK
+--------------------------------------------------------- */
+a.badge {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a.badge:hover {
+    filter: brightness(.96);
+}
+
+[data-bs-theme="dark"] a.badge:hover {
+    filter: brightness(1.15);
+}
+
+/* ---------------------------------------------------------
+   17. ACCESSIBILITY
+--------------------------------------------------------- */
+.badge:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .badge {
+        transition: none;
+    }
+}
+
+/* =========================================================
+   SIRMED V3 — SOFT BADGES
+   Bootstrap 5.3.3 | Light & Dark Mode
+========================================================= */
+
+/* LIGHT MODE */
+:root,
+[data-bs-theme="light"] {
+    --badge-soft-primary-bg: #e8f0ff;
+    --badge-soft-primary-color: #2458b8;
+    --badge-soft-primary-border: #d4e2ff;
+
+    --badge-soft-secondary-bg: #edf0f4;
+    --badge-soft-secondary-color: #526174;
+    --badge-soft-secondary-border: #dce2e9;
+
+    --badge-soft-success-bg: #e4f7ec;
+    --badge-soft-success-color: #187345;
+    --badge-soft-success-border: #c9eed9;
+
+    --badge-soft-danger-bg: #ffebeb;
+    --badge-soft-danger-color: #b42332;
+    --badge-soft-danger-border: #ffd5d8;
+
+    --badge-soft-warning-bg: #fff4d6;
+    --badge-soft-warning-color: #8a5a00;
+    --badge-soft-warning-border: #f8e5ae;
+
+    --badge-soft-info-bg: #e1f7fc;
+    --badge-soft-info-color: #12677b;
+    --badge-soft-info-border: #c5edf5;
+
+    --badge-soft-light-bg: #f8fafc;
+    --badge-soft-light-color: #475569;
+    --badge-soft-light-border: #e2e8f0;
+
+    --badge-soft-dark-bg: #e2e8f0;
+    --badge-soft-dark-color: #273449;
+    --badge-soft-dark-border: #cbd5e1;
+}
+
+/* DARK MODE */
+[data-bs-theme="dark"] {
+    --badge-soft-primary-bg: #1e3559;
+    --badge-soft-primary-color: #b9d4ff;
+    --badge-soft-primary-border: #304e7a;
+
+    --badge-soft-secondary-bg: #303b4d;
+    --badge-soft-secondary-color: #d2dbea;
+    --badge-soft-secondary-border: #465369;
+
+    --badge-soft-success-bg: #183c2d;
+    --badge-soft-success-color: #a5e8bf;
+    --badge-soft-success-border: #285c43;
+
+    --badge-soft-danger-bg: #48272e;
+    --badge-soft-danger-color: #ffbdc4;
+    --badge-soft-danger-border: #713640;
+
+    --badge-soft-warning-bg: #49391e;
+    --badge-soft-warning-color: #ffdf91;
+    --badge-soft-warning-border: #71572a;
+
+    --badge-soft-info-bg: #173b49;
+    --badge-soft-info-color: #a6e9f5;
+    --badge-soft-info-border: #285a6b;
+
+    --badge-soft-light-bg: #303b4d;
+    --badge-soft-light-color: #dce5f1;
+    --badge-soft-light-border: #465369;
+
+    --badge-soft-dark-bg: #263244;
+    --badge-soft-dark-color: #cbd5e1;
+    --badge-soft-dark-border: #3b495d;
+}
+
+/* BASE */
+.badge[class*="badge-soft-"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .3rem;
+
+    padding: .35em .65em;
+    border: 1px solid transparent;
+    border-radius: 6px;
+
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    vertical-align: middle;
+
+    transition:
+        background-color .15s ease,
+        color .15s ease,
+        border-color .15s ease;
+}
+
+/* VARIANTS */
+.badge-soft-primary {
+    color: var(--badge-soft-primary-color) !important;
+    background-color: var(--badge-soft-primary-bg) !important;
+    border-color: var(--badge-soft-primary-border) !important;
+}
+
+.badge-soft-secondary {
+    color: var(--badge-soft-secondary-color) !important;
+    background-color: var(--badge-soft-secondary-bg) !important;
+    border-color: var(--badge-soft-secondary-border) !important;
+}
+
+.badge-soft-success {
+    color: var(--badge-soft-success-color) !important;
+    background-color: var(--badge-soft-success-bg) !important;
+    border-color: var(--badge-soft-success-border) !important;
+}
+
+.badge-soft-danger {
+    color: var(--badge-soft-danger-color) !important;
+    background-color: var(--badge-soft-danger-bg) !important;
+    border-color: var(--badge-soft-danger-border) !important;
+}
+
+.badge-soft-warning {
+    color: var(--badge-soft-warning-color) !important;
+    background-color: var(--badge-soft-warning-bg) !important;
+    border-color: var(--badge-soft-warning-border) !important;
+}
+
+.badge-soft-info {
+    color: var(--badge-soft-info-color) !important;
+    background-color: var(--badge-soft-info-bg) !important;
+    border-color: var(--badge-soft-info-border) !important;
+}
+
+.badge-soft-light {
+    color: var(--badge-soft-light-color) !important;
+    background-color: var(--badge-soft-light-bg) !important;
+    border-color: var(--badge-soft-light-border) !important;
+}
+
+.badge-soft-dark {
+    color: var(--badge-soft-dark-color) !important;
+    background-color: var(--badge-soft-dark-bg) !important;
+    border-color: var(--badge-soft-dark-border) !important;
+}
+
+/* PILL */
+.badge[class*="badge-soft-"].rounded-pill {
+    border-radius: 50rem;
+}
+
+/* ICON */
+.badge[class*="badge-soft-"] > i,
+.badge[class*="badge-soft-"] > svg {
+    flex-shrink: 0;
+}
+
+/* HOVER LINK */
+a.badge[class*="badge-soft-"] {
+    text-decoration: none;
+}
+
+a.badge[class*="badge-soft-"]:hover {
+    filter: brightness(.96);
+}
+
+[data-bs-theme="dark"] a.badge[class*="badge-soft-"]:hover {
+    filter: brightness(1.15);
+}
+
+/* ACCESSIBILITY */
+.badge[class*="badge-soft-"]:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .badge[class*="badge-soft-"] {
+        transition: none;
+    }
+}
+
+/* =========================================================
+   SIRMED V3 — BADGE SIZE FIX
+   Letakkan paling bawah badges.css
+========================================================= */
+
+/* EXTRA SMALL */
+.badge.badge-xs {
+    font-size: 10px !important;
+    padding: 2px 5px !important;
+    line-height: 1.35 !important;
+    border-radius: 4px;
+}
+
+/* SMALL */
+.badge.badge-sm {
+    font-size: 11px !important;
+    padding: 3px 6px !important;
+    line-height: 1.4 !important;
+    border-radius: 5px;
+}
+
+/* MEDIUM */
+.badge.badge-md {
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    line-height: 1.4 !important;
+    border-radius: 6px;
+}
+
+/* LARGE */
+.badge.badge-lg {
+    font-size: 14px !important;
+    padding: 5px 10px !important;
+    line-height: 1.4 !important;
+    border-radius: 7px;
+}
+
+/* EXTRA LARGE */
+.badge.badge-xl {
+    font-size: 16px !important;
+    padding: 6px 12px !important;
+    line-height: 1.4 !important;
+    border-radius: 8px;
+}
+
+/* PILL: pertahankan bentuk kapsul */
+.badge.badge-xs.rounded-pill,
+.badge.badge-sm.rounded-pill,
+.badge.badge-md.rounded-pill,
+.badge.badge-lg.rounded-pill,
+.badge.badge-xl.rounded-pill {
+    border-radius: 50rem !important;
+}

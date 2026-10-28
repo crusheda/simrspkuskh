@@ -46,8 +46,11 @@
 
 {{-- CSS EACH PAGES --}}
 <link rel="stylesheet" href="{{ asset('assets/v2/css/custom.css') }}">
+<link rel="stylesheet" href="{{ asset('css/v3/components/typography.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/components/form-controls.css') }}">
+<link rel="stylesheet" href="{{ asset('css/v3/components/badges.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/components/cards.css') }}">
+<link rel="stylesheet" href="{{ asset('css/v3/components/tables.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/components/datatables.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/components/buttons.css') }}">
 

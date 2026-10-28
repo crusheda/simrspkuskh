@@ -1,0 +1,249 @@
+
+/* =========================================================
+   SIRMED V3 — BOOTSTRAP TABLES
+   Bootstrap 5.3.3 | Light & Dark Theme
+   Theme source: html[data-bs-theme]
+========================================================= */
+
+/* ---------------------------------------------------------
+   1. PALET WARNA LIGHT MODE
+--------------------------------------------------------- */
+:root,
+[data-bs-theme="light"] {
+    color-scheme: light;
+
+    --sirmed-table-bg: #ffffff;
+    --sirmed-table-color: #263449;
+    --sirmed-table-muted: #64748b;
+    --sirmed-table-border: #e2e8f0;
+
+    --sirmed-table-head-bg: #f1f5f9;
+    --sirmed-table-head-color: #334155;
+
+    --sirmed-table-striped-bg: #f7f9fc;
+    --sirmed-table-striped-color: #263449;
+
+    --sirmed-table-hover-bg: #eaf3ff;
+    --sirmed-table-hover-color: #1e3a5f;
+
+    --sirmed-table-active-bg: #dbeafe;
+    --sirmed-table-active-color: #1e40af;
+
+    --sirmed-table-selection-bg: #dbeafe;
+    --sirmed-table-selection-color: #1e40af;
+
+    --sirmed-table-caption-color: #64748b;
+}
+
+/* ---------------------------------------------------------
+   2. PALET WARNA DARK MODE
+--------------------------------------------------------- */
+[data-bs-theme="dark"] {
+    color-scheme: dark;
+
+    --sirmed-table-bg: #171e2b;
+    --sirmed-table-color: #e2e8f0;
+    --sirmed-table-muted: #a7b4c8;
+    --sirmed-table-border: #344155;
+
+    --sirmed-table-head-bg: #222d3e;
+    --sirmed-table-head-color: #dce8f8;
+
+    --sirmed-table-striped-bg: #1c2636;
+    --sirmed-table-striped-color: #e2e8f0;
+
+    --sirmed-table-hover-bg: #293c57;
+    --sirmed-table-hover-color: #ffffff;
+
+    --sirmed-table-active-bg: #244574;
+    --sirmed-table-active-color: #eff6ff;
+
+    --sirmed-table-selection-bg: #244574;
+    --sirmed-table-selection-color: #eff6ff;
+
+    --sirmed-table-caption-color: #a7b4c8;
+}
+
+/* ---------------------------------------------------------
+   3. VARIABEL UTAMA BOOTSTRAP TABLE
+--------------------------------------------------------- */
+.table {
+    --bs-table-color: var(--sirmed-table-color);
+    --bs-table-bg: var(--sirmed-table-bg);
+    --bs-table-border-color: var(--sirmed-table-border);
+    --bs-table-accent-bg: transparent;
+
+    --bs-table-striped-color: var(--sirmed-table-striped-color);
+    --bs-table-striped-bg: var(--sirmed-table-striped-bg);
+
+    --bs-table-active-color: var(--sirmed-table-active-color);
+    --bs-table-active-bg: var(--sirmed-table-active-bg);
+
+    --bs-table-hover-color: var(--sirmed-table-hover-color);
+    --bs-table-hover-bg: var(--sirmed-table-hover-bg);
+
+    border-color: var(--bs-table-border-color);
+    color: var(--bs-table-color);
+    background-color: var(--bs-table-bg);
+}
+
+/* ---------------------------------------------------------
+   4. SEL TABEL
+--------------------------------------------------------- */
+.table > :not(caption) > * > * {
+    color: var(
+        --bs-table-color-state,
+        var(--bs-table-color-type, var(--bs-table-color))
+    );
+
+    background-color: var(--bs-table-bg);
+
+    border-bottom-color: var(--bs-table-border-color);
+
+    box-shadow: inset 0 0 0 9999px
+        var(
+            --bs-table-bg-state,
+            var(--bs-table-bg-type, var(--bs-table-accent-bg))
+        );
+}
+
+/* ---------------------------------------------------------
+   5. HEADER TABEL
+--------------------------------------------------------- */
+.table > thead > tr > th,
+.table > thead > tr > td {
+    color: var(--sirmed-table-head-color);
+    background-color: var(--sirmed-table-head-bg);
+    border-color: var(--sirmed-table-border);
+
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+.table > thead > tr > th {
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+}
+
+.table > thead {
+    border-bottom: 2px solid var(--sirmed-table-border);
+}
+
+/* ---------------------------------------------------------
+   6. BODY TABEL
+--------------------------------------------------------- */
+.table > tbody > tr > td,
+.table > tbody > tr > th {
+    vertical-align: middle;
+}
+
+.table > tbody > tr {
+    transition: background-color .15s ease, color .15s ease;
+}
+
+/* ---------------------------------------------------------
+   7. STRIPED
+   Menggunakan mekanisme variabel bawaan Bootstrap.
+--------------------------------------------------------- */
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-color-type: var(--bs-table-striped-color);
+    --bs-table-bg-type: var(--bs-table-striped-bg);
+}
+
+/* ---------------------------------------------------------
+   8. HOVER
+--------------------------------------------------------- */
+.table-hover > tbody > tr:hover > * {
+    --bs-table-color-state: var(--bs-table-hover-color);
+    --bs-table-bg-state: var(--bs-table-hover-bg);
+}
+
+/* ---------------------------------------------------------
+   9. ACTIVE ROW
+--------------------------------------------------------- */
+.table > tbody > tr.table-active > * {
+    --bs-table-color-state: var(--bs-table-active-color);
+    --bs-table-bg-state: var(--bs-table-active-bg);
+}
+
+/* ---------------------------------------------------------
+   10. SELECTED ROW
+   Opsional: tambahkan class .sirmed-row-selected
+   pada baris yang ingin ditandai.
+--------------------------------------------------------- */
+.table > tbody > tr.sirmed-row-selected > * {
+    --bs-table-color-state: var(--sirmed-table-selection-color);
+    --bs-table-bg-state: var(--sirmed-table-selection-bg);
+
+    font-weight: 500;
+}
+
+/* ---------------------------------------------------------
+   11. BORDERED
+--------------------------------------------------------- */
+.table-bordered > :not(caption) > * {
+    border-width: 1px 0;
+}
+
+.table-bordered > :not(caption) > * > * {
+    border-width: 0 1px;
+    border-color: var(--sirmed-table-border);
+}
+
+/* ---------------------------------------------------------
+   12. CAPTION
+--------------------------------------------------------- */
+.table > caption {
+    color: var(--sirmed-table-caption-color);
+}
+
+/* ---------------------------------------------------------
+   13. LINK DALAM TABEL
+--------------------------------------------------------- */
+.table > tbody > tr > td a:not(.btn) {
+    color: var(--bs-link-color);
+    text-decoration: none;
+}
+
+.table > tbody > tr > td a:not(.btn):hover {
+    color: var(--bs-link-hover-color);
+    text-decoration: underline;
+}
+
+/* ---------------------------------------------------------
+   14. FORM CONTROLS DI DALAM TABEL
+--------------------------------------------------------- */
+.table .form-control,
+.table .form-select,
+.table .form-check-input {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+}
+
+.table .form-control:focus,
+.table .form-select:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 .2rem
+        color-mix(in srgb, var(--bs-primary) 18%, transparent);
+}
+
+/* ---------------------------------------------------------
+   15. RESPONSIVE TABLE
+--------------------------------------------------------- */
+.table-responsive {
+    border-color: var(--sirmed-table-border);
+}
+
+.table-responsive > .table {
+    margin-bottom: 0;
+}
+
+/* ---------------------------------------------------------
+   16. TRANSISI TEMA
+--------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    .table > tbody > tr {
+        transition: none;
+    }
+}

@@ -50,8 +50,6 @@
     min-width: 0;
     min-height: var(--form-control-height);
     padding: 10px 13px;
-    border: 1px solid var(--form-control-border);
-    border-radius: var(--form-control-radius);
     background-color: var(--form-control-bg);
     color: var(--form-control-color);
     font-family: inherit;
@@ -123,9 +121,8 @@
 .app-shell input:disabled,
 .app-shell select:disabled,
 .app-shell textarea:disabled {
-    background-color: var(--form-disabled-bg, #f1f3f7);
-    color: #8b96a8;
-    border-color: #e1e5ed;
+    background-color: var(--form-control-bg);
+    color: var(--form-control-muted);
     opacity: 1;
     cursor: not-allowed;
 }
