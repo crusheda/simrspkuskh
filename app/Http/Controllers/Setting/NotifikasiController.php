@@ -78,7 +78,88 @@ class NotifikasiController extends Controller
                     'unit'       => $item->unit,
                     'deskripsi'  => strip_tags($item->deskripsi),
                     'created_at' => $item->updated_at,
+                    // 'url'        => url('/v2/emr/' . $item->nomor),
                     'url'        => url('/v2/emr/' . $item->nomor),
+                ];
+            })
+            ->values();
+
+        return response()->json([
+            'status' => true,
+            'total'  => $total,
+            'data'   => $data,
+        ]);
+    }
+
+    public function notifikasiKlaimV3(Request $request)
+    {
+        $unitUser = auth()->user()->unit;
+
+        if (!is_array($unitUser)) {
+            $unitUser = [$unitUser];
+        }
+
+        $unitUser = array_map('strval', $unitUser);
+
+        $data = klaim_verifikasi_catatan::where('solved', 0)
+            ->whereNull('deleted_at')
+            ->orderByDesc('updated_at')
+            ->get([
+                'id',
+                'nomor',
+                'unit',
+                'user',
+                'deskripsi',
+                'status',
+                'solved',
+                'created_at',
+                'updated_at',
+            ])
+            ->filter(function ($item) use ($unitUser) {
+
+                /*
+                * Unit kosong/null = tampil ke semua user
+                */
+                if (empty($item->unit)) {
+                    return true;
+                }
+
+                /*
+                * Karena model menggunakan $casts:
+                * 'unit' => 'array'
+                *
+                * maka $item->unit sudah berupa array.
+                */
+                if (!is_array($item->unit)) {
+                    return false;
+                }
+
+                $unit = array_map('strval', $item->unit);
+
+                /*
+                * Tampilkan jika minimal ada 1 unit
+                * yang sama dengan unit user.
+                */
+                return !empty(array_intersect($unitUser, $unit));
+            })
+            ->values();
+
+        $total = $data->count();
+
+        $data = $data
+            ->take(20)
+            ->map(function ($item) {
+                return [
+                    'id'         => $item->id,
+                    'nomor'      => $item->nomor,
+                    'unit'       => $item->unit,
+                    'deskripsi'  => strip_tags($item->deskripsi),
+                    'created_at' => $item->updated_at,
+                    // URL detail kunjungan untuk iframe workspace SIRMED V3.
+                    'url' => url(
+                        '/v3/emr/' . rawurlencode((string) $item->nomor)
+                        . '?workspace=1'
+                    ),
                 ];
             })
             ->values();
@@ -261,6 +342,7 @@ class NotifikasiController extends Controller
             ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'pk.RUANGAN')
             ->leftJoin('master.dokter AS dok', 'dok.ID', '=', 'pk.DPJP')
             ->select(
+                'p.NORM AS NORM',
                 'pd.TANGGAL as TGLPENDAFTARAN',
                 DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'),
                 DB::raw('master.getCariUmur(now(), (p.TANGGAL_LAHIR)) AS UMURPASIEN'),

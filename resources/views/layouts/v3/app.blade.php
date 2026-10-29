@@ -50,11 +50,10 @@
             {{ $slot }}
         </main>
 
+
     @else
 
-        {{-- ==================================================
-             MODE APLIKASI UTAMA
-        =================================================== --}}
+        {{-- MODE APLIKASI UTAMA --}}
         <div class="app-shell" id="sirmedApp">
 
             {{-- Sidebar global --}}
@@ -65,96 +64,94 @@
                 {{-- Header global --}}
                 @include('inc.v3.header')
 
-                {{-- Workspace --}}
-                <div class="emr-workspace" id="emrWorkspace">
+                @if (request()->routeIs('v3.emr'))
 
-                    {{-- ======================================
-                         TAB BAR
-                    ======================================= --}}
-                    <div class="emr-tabbar">
+                    {{-- WORKSPACE KHUSUS HALAMAN MEDICAL RECORD --}}
+                    <div class="emr-workspace" id="emrWorkspace">
 
-                        <div
-                            class="emr-tabbar-scroll"
-                            id="emrTabBar"
-                            role="tablist"
-                            aria-label="Tab Rekam Medis"
-                        >
+                        <div class="emr-tabbar">
 
-                            {{-- Tab halaman awal --}}
                             <div
-                                class="emr-tab active"
-                                id="emrTab-home"
-                                data-tab-id="home"
-                                role="tab"
-                                aria-controls="emrPanel-home"
-                                aria-selected="true"
-                                tabindex="0"
+                                class="emr-tabbar-scroll"
+                                id="emrTabBar"
+                                role="tablist"
+                                aria-label="Tab Rekam Medis"
                             >
-                                <i class="bi bi-house-door"></i>
+                                <div
+                                    class="emr-tab active"
+                                    id="emrTab-home"
+                                    data-tab-id="home"
+                                    role="tab"
+                                    aria-controls="emrPanel-home"
+                                    aria-selected="true"
+                                    tabindex="0"
+                                >
+                                    <i class="bi bi-house-door"></i>
 
-                                <span class="emr-tab-label">
-                                    Daftar Kunjungan
-                                </span>
+                                    <span class="emr-tab-label">
+                                        My Pasien
+                                    </span>
+                                </div>
                             </div>
 
+                            <div class="emr-tabbar-actions">
+
+                                <button
+                                    type="button"
+                                    class="emr-tab-action"
+                                    id="emrCloseOtherTabs"
+                                    title="Tutup tab lainnya"
+                                    aria-label="Tutup tab lainnya"
+                                >
+                                    <i class="bi bi-copy"></i>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="emr-tab-action"
+                                    id="emrCloseAllTabs"
+                                    title="Tutup semua tab pasien"
+                                    aria-label="Tutup semua tab pasien"
+                                >
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+
+                            </div>
                         </div>
 
-                        {{-- Aksi pengelolaan tab --}}
-                        <div class="emr-tabbar-actions">
+                        <main class="app-content">
 
-                            <button
-                                type="button"
-                                class="emr-tab-action"
-                                id="emrCloseOtherTabs"
-                                title="Tutup tab lainnya"
-                                aria-label="Tutup tab lainnya"
-                            >
-                                <i class="bi bi-copy"></i>
-                            </button>
+                            <div id="emrWorkspaceContent">
 
-                            <button
-                                type="button"
-                                class="emr-tab-action"
-                                id="emrCloseAllTabs"
-                                title="Tutup semua tab pasien"
-                                aria-label="Tutup semua tab pasien"
-                            >
-                                <i class="bi bi-x-lg"></i>
-                            </button>
+                                <section
+                                    class="emr-workspace-panel active"
+                                    id="emrPanel-home"
+                                    data-panel-id="home"
+                                    role="tabpanel"
+                                    aria-labelledby="emrTab-home"
+                                >
+                                    {{ $slot }}
+                                </section>
 
-                        </div>
+                            </div>
+
+                            @include('inc.v3.footer')
+
+                        </main>
 
                     </div>
 
-                    {{-- ======================================
-                         WORKSPACE CONTENT
-                    ======================================= --}}
+                @else
+
+                    {{-- HALAMAN APLIKASI SELAIN MEDICAL RECORD --}}
                     <main class="app-content">
-
-                        <div id="emrWorkspaceContent">
-
-                            {{-- Panel halaman awal --}}
-                            <section
-                                class="emr-workspace-panel active"
-                                id="emrPanel-home"
-                                data-panel-id="home"
-                                role="tabpanel"
-                                aria-labelledby="emrTab-home"
-                            >
-                                {{ $slot }}
-                            </section>
-
-                        </div>
-
-                        {{-- Footer global --}}
+                        {{ $slot }}
                         @include('inc.v3.footer')
-
                     </main>
 
-                </div>
+                @endif
 
             </div>
-
         </div>
 
     @endif

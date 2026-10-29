@@ -54,6 +54,7 @@
 <link rel="stylesheet" href="{{ asset('css/v3/components/tables.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/components/datatables.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/components/buttons.css') }}">
+<link rel="stylesheet" href="{{ asset('css/v3/pages/notifikasi.css') }}">
 
 <style>
     canvas {

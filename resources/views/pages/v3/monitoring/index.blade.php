@@ -1,8 +1,10 @@
 @section('title', 'Monitoring Berkas')
 @section('page-title', 'Monitoring Berkas Pasien')
 
-<div class="container-fluid py-3">
-
-    ini monitoring
-
-</div>
+<section>
+    <div class="row gy-4">
+        <div class="col-xl-12">
+            ini monitoring
+        </div>
+    </div>
+</section>

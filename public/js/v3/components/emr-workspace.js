@@ -15,11 +15,28 @@
 
    Detail pasien tetap dirender oleh Laravel melalui SSR.
 ========================================================= */
-
 (() => {
     'use strict';
 
+    // Cegah bootstrap dan event listener terdaftar berulang kali.
+    if (window.__SIRMED_EMR_WORKSPACE_BOOTSTRAP__) {
+        return;
+    }
+
+    window.__SIRMED_EMR_WORKSPACE_BOOTSTRAP__ = true;
+
+    // State hanya hidup selama dokumen browser ini berjalan.
+    // Tidak menggunakan localStorage maupun sessionStorage.
+    const workspaceState =
+        window.__SIRMED_EMR_WORKSPACE_STATE__ ||
+        (window.__SIRMED_EMR_WORKSPACE_STATE__ = {
+            tabs: new Map(),
+            activeNomor: 'home',
+            tabSequence: 0
+        });
+
     function initializeEMRWorkspace() {
+
         const root = document.getElementById('emrWorkspace');
 
         // Tidak melakukan inisialisasi jika halaman bukan workspace.
@@ -78,9 +95,12 @@
          * Pasien yang sama dengan kunjungan berbeda tetap
          * dapat memiliki beberapa tab.
          */
+
+        // Map lokal berisi record beserta elemen DOM untuk halaman saat ini.
         const patientTabs = new Map();
 
-        let tabSequence = 0;
+        // Nomor urut dan tab aktif berasal dari state global.
+        let tabSequence = workspaceState.tabSequence;
         let activeTabId = 'home';
 
         /* =====================================================
@@ -197,6 +217,13 @@
 
             activeTabId = tabId;
 
+            const activeRecord = findRecordByTabId(tabId);
+
+            workspaceState.activeNomor =
+                tabId === 'home'
+                    ? 'home'
+                    : (activeRecord?.nomor || 'home');
+
             // Status tab.
             tabBar.querySelectorAll('.emr-tab').forEach((tab) => {
                 const isActive = tab.dataset.tabId === tabId;
@@ -234,7 +261,12 @@
                 // Tidak melakukan apa pun jika opsi tidak didukung.
             }
 
+            // Muat iframe hanya ketika tab pasien benar-benar diaktifkan.
             const record = findRecordByTabId(tabId);
+
+            if (record && !record.loaded && !record.loading) {
+                loadRecordFrame(record);
+            }
 
             // Beri tahu komponen lain bahwa tab berpindah.
             document.dispatchEvent(
@@ -501,6 +533,9 @@
             record.panel?.remove();
 
             patientTabs.delete(record.key);
+
+            // Hapus permanen dari state memori untuk sesi halaman ini.
+            workspaceState.tabs.delete(record.key);
         }
 
         /* =====================================================
@@ -586,8 +621,8 @@
                url: '/v3/emr/123456'
            });
         ===================================================== */
-
-        function openPatient(patient = {}) {
+        function openPatient(patient = {}, options = {}) {
+            const activateAfterOpen = options.activate !== false;
             const nomor = normalizeVisitId(patient.nomor);
 
             const norm = String(
@@ -639,6 +674,8 @@
             }
 
             const tabId = `patient-${++tabSequence}`;
+
+            workspaceState.tabSequence = tabSequence;
 
             const labelText =
                 `RM. ${formatRM(norm)} · ${nama}`;
@@ -762,7 +799,6 @@
             /* ===============================================
                SIMPAN DATA TAB
             =============================================== */
-
             const record = {
                 key: nomor,
                 tabId,
@@ -783,13 +819,21 @@
 
             patientTabs.set(nomor, record);
 
-            // Aktifkan tab pasien yang baru dibuat.
-            activate(tabId);
+            // Simpan metadata tab di memori JavaScript global.
+            workspaceState.tabs.set(nomor, {
+                nomor,
+                norm,
+                nama,
+                url: frameUrl
+            });
 
-            // Mulai render detail pasien melalui server.
-            loadRecordFrame(record);
+            // Aktifkan hanya jika diminta.
+            if (activateAfterOpen) {
+                activate(tabId);
+            }
 
             return true;
+
         }
 
         /* =====================================================
@@ -921,15 +965,65 @@
         // Tampilkan halaman awal ketika workspace pertama kali aktif.
         activate('home');
 
+        // Buka kunjungan yang sebelumnya dipilih dari notifikasi.
+        // Simpan identitas tab aktif sebelum membangun ulang DOM.
+        // Bangun seluruh tab tanpa memuat iframe.
+        for (const patient of workspaceState.tabs.values()) {
+            openPatient(patient, { activate: false });
+        }
+
+        // Pulihkan tab yang terakhir aktif.
+        const savedActiveNomor = workspaceState.activeNomor || 'home';
+
+        if (
+            savedActiveNomor !== 'home' &&
+            patientTabs.has(savedActiveNomor)
+        ) {
+            activate(patientTabs.get(savedActiveNomor).tabId);
+        } else {
+            activate('home');
+        }
+
+        // Buka kunjungan yang sebelumnya dipilih dari notifikasi.
+        // Alur notifikasi yang sudah ada tetap dipertahankan.
+        try {
+            const pendingPatient = sessionStorage.getItem(
+                'sirmed.pendingEmrPatient'
+            );
+
+            if (pendingPatient) {
+                // Hapus terlebih dahulu agar tidak dibuka berulang.
+                sessionStorage.removeItem(
+                    'sirmed.pendingEmrPatient'
+                );
+
+                const patient = JSON.parse(pendingPatient);
+
+                if (patient && patient.nomor && patient.url) {
+                    openPatient(patient);
+                }
+            }
+        } catch (error) {
+            console.error(
+                '[EMRWorkspace] Gagal membuka kunjungan tertunda:',
+                error
+            );
+
+            sessionStorage.removeItem(
+                'sirmed.pendingEmrPatient'
+            );
+        }
+
         console.info(
             '[EMRWorkspace] Workspace berhasil diinisialisasi.'
         );
+
     }
 
     /* =========================================================
        INISIALISASI
     ========================================================= */
-
+    // Inisialisasi awal, termasuk ketika script dimuat di halaman lain.
     if (document.readyState === 'loading') {
         document.addEventListener(
             'DOMContentLoaded',
@@ -939,5 +1033,12 @@
     } else {
         initializeEMRWorkspace();
     }
+
+    // Saat Livewire mengganti halaman, bangun ulang workspace
+    // menggunakan state global yang masih berada di memori.
+    document.addEventListener(
+        'livewire:navigated',
+        initializeEMRWorkspace
+    );
 
 })();

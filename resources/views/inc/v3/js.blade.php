@@ -77,6 +77,7 @@
 <script src="{{ asset('js/v3/app.js') }}" data-navigate-once></script>
 <script src="{{ asset('js/v3/components/datatables.js') }}" data-navigate-once></script>
 <script src="{{ asset('js/v3/components/buttons.js') }}" data-navigate-once></script>
+<script src="{{ asset('js/v3/pages/notifikasi-klaim.js') }}" data-navigate-once></script>
 
 {{-- INISIALISASI DAYJS --}}
 <script data-navigate-once>

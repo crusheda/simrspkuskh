@@ -25,6 +25,77 @@
             {{ now()->translatedFormat('l, d F Y') }}
         </span>
 
+        <div class="dropdown notification-dropdown"
+            data-endpoint="{{ route('v3.notifikasi.klaim') }}"
+            data-all-url="{{ route('v3.setting.notifikasi') }}"
+        >
+            <button
+                type="button"
+                class="icon-button notification-trigger"
+                id="notificationDropdown"
+                data-bs-toggle="dropdown"
+                data-bs-auto-close="outside"
+                aria-expanded="false"
+                aria-label="Buka notifikasi"
+            >
+                <i class="bi bi-bell"></i>
+
+                <span
+                    id="notificationBadge"
+                    class="notification-dot"
+                    style="display: none;"
+                ></span>
+            </button>
+
+            <div
+                class="dropdown-menu dropdown-menu-end notification-menu"
+                aria-labelledby="notificationDropdown"
+            >
+                <div class="notification-menu-header">
+                    <div class="notification-heading-icon">
+                        <i class="bi bi-bell"></i>
+                    </div>
+
+                    <div class="notification-heading-copy">
+                        <h6>Notifikasi</h6>
+                        <p>Informasi terbaru terkait klaim dan kunjungan</p>
+                    </div>
+
+                    <span
+                        id="notificationHeaderBadge"
+                        class="notification-count"
+                        style="display: none;"
+                    >0</span>
+                </div>
+
+                <div class="notification-menu-caption">
+                    <span class="notification-live-indicator"></span>
+                    Pembaruan otomatis setiap 30 detik
+                </div>
+
+                <ul
+                    id="notificationList"
+                    class="notification-list"
+                    aria-live="polite"
+                >
+                    <li class="notification-state">
+                        <span class="spinner-border spinner-border-sm"></span>
+                        <span>Memuat notifikasi...</span>
+                    </li>
+                </ul>
+
+                <div class="notification-menu-footer">
+                    <a
+                        href="{{ route('v3.setting.notifikasi') }}"
+                        class="notification-all-link"
+                    >
+                        <span>Buka Semua Notifikasi</span>
+                        <i class="bi bi-arrow-up-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <button
             class="icon-button"
             id="themeToggleTop"

@@ -6,8 +6,8 @@
 ========================================================== */
 
 .emr-detail-page {
-    --emr-nav-primary: #2563eb;
-    --emr-nav-primary-hover: #1d4ed8;
+    --emr-nav-primary: #5c55ed;
+    --emr-nav-primary-hover: #4941d7;
     --emr-nav-primary-soft: rgba(37, 99, 235, 0.09);
 
     --emr-nav-text: #64748b;
@@ -237,8 +237,8 @@
 ========================================================== */
 
 [data-bs-theme="dark"] .emr-detail-page {
-    --emr-nav-primary: #3b82f6;
-    --emr-nav-primary-hover: #60a5fa;
+    --emr-nav-primary: #5c55ed;
+    --emr-nav-primary-hover: #4941d7;
     --emr-nav-primary-soft: rgba(59, 130, 246, 0.14);
 
     --emr-nav-text: #a1a1aa;

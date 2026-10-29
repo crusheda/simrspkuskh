@@ -35,6 +35,7 @@ use App\Livewire\Dashboard;
 use App\Livewire\Monitoring;
 use App\Livewire\EMR;
 use App\Livewire\SmartClaim;
+use App\Livewire\Setting\Notifikasi;
 use App\Http\Controllers\Auth\LoginController;
 
 // =====================================================
@@ -73,6 +74,15 @@ Route::middleware(['auth'])
             ->name('v3.emr.detail');
 
         Route::get('/smartclaim', SmartClaim::class)->name('v3.smartclaim');
+        Route::get('/notifikasi', Notifikasi::class)->name('v3.notifikasi');
+
+        // Dropdown navbar
+        Route::get('/notifikasi/klaim', [NotifikasiController::class, 'notifikasiKlaimV3'])->name('v3.notifikasi.klaim');
+        // Halaman seluruh notifikasi
+        Route::get('/setting/notifikasi', Notifikasi::class)->name('v3.setting.notifikasi');
+        // Data tabel dan detail notifikasi
+        Route::get('/setting/notifikasi/data', [NotifikasiController::class, 'getData'])->name('v3.notifikasi.data');
+        Route::get('/setting/notifikasi/data/{id}', [NotifikasiController::class, 'showDetail'])->name('v3.notifikasi.detail');
     });
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------------------------------

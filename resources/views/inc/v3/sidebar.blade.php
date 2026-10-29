@@ -55,8 +55,7 @@
         <a
             href="{{ route('v3.emr') }}"
             wire:navigate
-            wire:current="active"
-            class="app-nav-link"
+            class="app-nav-link {{ request()->routeIs('v3.emr', 'v3.emr.detail') ? 'active' : '' }}"
         >
             <i class="bi bi-clipboard2-pulse"></i>
             <span>Medical Record</span>

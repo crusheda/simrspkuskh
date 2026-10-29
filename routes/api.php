@@ -69,6 +69,10 @@ Route::get('/surkon/table', [App\Http\Controllers\Simgos\RegOnline\surkonControl
 Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\DaftarPasienController::class, 'table'])->name('simgos.kunjungan.pasien');
 
 //---------------------------------------------------------------    A  P  I    L  O  K  A  L    -----------------------------------------------------------------
+Route::prefix('v3')->middleware(['web','auth'])->group(function () { // SIRMED v.3
+    // Route::get('notifikasi/klaim', [NotifikasiController::class, 'notifikasiKlaimV3']);
+});
+
 Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v.2
     // SETTING
         // ROLES
