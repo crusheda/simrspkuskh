@@ -2288,188 +2288,188 @@ class RINeonatusPrintService implements PrintDataInterface
 
         $detailNyeri = [];
 
-        if ($nyeri) {
+        if (!$nyeri) {
 
-            /*
-            |--------------------------------------------------------------------------
-            | STATUS NYERI
-            |--------------------------------------------------------------------------
-            */
-            $detailNyeri[] = 'Nyeri: '
-                . $centangNyeri($nyeri->NYERI, 1) . ' Ya'
-                . '     '
-                . $centangNyeri($nyeri->NYERI, 0) . ' Tidak';
+            $detailNyeri[] = 'Nyeri: Tidak';
 
-            /*
-            |--------------------------------------------------------------------------
-            | ONSET
-            |--------------------------------------------------------------------------
-            */
-            $detailNyeri[] = 'Onset: '
-                . $centangNyeri($nyeri->ONSET, 1) . ' Akut'
-                . '     '
-                . $centangNyeri($nyeri->ONSET, 2) . ' Kronis';
+        } else {
 
-            /*
-            |--------------------------------------------------------------------------
-            | METODE PENILAIAN
-            |--------------------------------------------------------------------------
-            */
-            $metodeNyeri = [
-                1 => 'NRS',
-                2 => 'BPS',
-                3 => 'NIPS',
-                4 => 'FLACC',
-                5 => 'VAS',
-            ];
+            $nyeriYa = (string) ($nyeri->NYERI ?? '') === '1';
 
-            $barisMetode = [];
+            $detailNyeri[] = $nyeriYa ? 'Nyeri: Ya' : 'Nyeri: Tidak';
 
-            foreach ($metodeNyeri as $nilai => $label) {
-                $barisMetode[] =
-                    $centangNyeri($nyeri->METODE, $nilai)
-                    . ' ' . $label;
-            }
+            if ($nyeriYa) {
+                /*
+                |--------------------------------------------------------------------------
+                | ONSET
+                |--------------------------------------------------------------------------
+                */
+                $detailNyeri[] = 'Onset: '
+                    . $centangNyeri($nyeri->ONSET, 1) . ' Akut'
+                    . '     '
+                    . $centangNyeri($nyeri->ONSET, 2) . ' Kronis';
 
-            $detailNyeri[] = 'Metode: '
-                . implode('     ', $barisMetode);
+                /*
+                |--------------------------------------------------------------------------
+                | METODE PENILAIAN
+                |--------------------------------------------------------------------------
+                */
+                $metodeNyeri = [
+                    1 => 'NRS',
+                    2 => 'BPS',
+                    3 => 'NIPS',
+                    4 => 'FLACC',
+                    5 => 'VAS',
+                ];
 
-            /*
-            |--------------------------------------------------------------------------
-            | SKALA NYERI
-            |--------------------------------------------------------------------------
-            | NRS dan VAS cukup menampilkan skala langsung.
-            | BPS, NIPS dan FLACC menampilkan rincian skor indikator.
-            |--------------------------------------------------------------------------
-            */
-            $metode = (string) ($nyeri->METODE ?? '');
-            $skala = $this->value($nyeri->SKALA ?? null);
+                $barisMetode = [];
 
-            if (in_array($metode, ['1', '5'], true)) {
+                foreach ($metodeNyeri as $nilai => $label) {
+                    $barisMetode[] =
+                        $centangNyeri($nyeri->METODE, $nilai)
+                        . ' ' . $label;
+                }
 
-                // NRS / VAS: tanpa slider dan tanpa rincian indikator
-                $detailNyeri[] = 'Skala Nyeri: '
-                    . ($skala !== '' ? $skala : '-');
+                $detailNyeri[] = 'Metode: '
+                    . implode('     ', $barisMetode);
 
-                $interpretasiNyeri = '';
+                /*
+                |--------------------------------------------------------------------------
+                | SKALA NYERI
+                |--------------------------------------------------------------------------
+                | NRS dan VAS cukup menampilkan skala langsung.
+                | BPS, NIPS dan FLACC menampilkan rincian skor indikator.
+                |--------------------------------------------------------------------------
+                */
+                $metode = (string) ($nyeri->METODE ?? '');
+                $skala = $this->value($nyeri->SKALA ?? null);
 
-                if ($skala !== '' && is_numeric($skala)) {
-                    $nilaiSkala = (float) $skala;
+                if (in_array($metode, ['1', '5'], true)) {
 
-                    if ($nilaiSkala == 0) {
-                        $interpretasiNyeri = 'Tidak nyeri';
-                    } elseif ($nilaiSkala <= 3) {
-                        $interpretasiNyeri = 'Nyeri ringan';
-                    } elseif ($nilaiSkala <= 6) {
-                        $interpretasiNyeri = 'Nyeri sedang';
-                    } else {
-                        $interpretasiNyeri = 'Nyeri berat';
+                    // NRS / VAS: tanpa slider dan tanpa rincian indikator
+                    $detailNyeri[] = 'Skala Nyeri: '
+                        . ($skala !== '' ? $skala : '-');
+
+                    $interpretasiNyeri = '';
+
+                    if ($skala !== '' && is_numeric($skala)) {
+                        $nilaiSkala = (float) $skala;
+
+                        if ($nilaiSkala == 0) {
+                            $interpretasiNyeri = 'Tidak nyeri';
+                        } elseif ($nilaiSkala <= 3) {
+                            $interpretasiNyeri = 'Nyeri ringan';
+                        } elseif ($nilaiSkala <= 6) {
+                            $interpretasiNyeri = 'Nyeri sedang';
+                        } else {
+                            $interpretasiNyeri = 'Nyeri berat';
+                        }
                     }
+
+                    if ($interpretasiNyeri !== '') {
+                        $detailNyeri[] =
+                            'Interpretasi: ' . $interpretasiNyeri;
+                    }
+
+                } elseif ($metode === '2') {
+
+                    // BPS
+                    $detailNyeri[] = 'Rincian Skor BPS:';
+
+                    foreach ([
+                        'SKOR1' => 'Indikator 1',
+                        'SKOR2' => 'Indikator 2',
+                        'SKOR3' => 'Indikator 3',
+                    ] as $kolom => $label) {
+                        $detailNyeri[] = '   '
+                            . $label . ': '
+                            . $this->value($nyeri->{$kolom} ?? null);
+                    }
+
+                    $detailNyeri[] = 'Skala Nyeri Total: '
+                        . ($skala !== '' ? $skala : '-');
+
+                    if ($skala !== '' && is_numeric($skala)) {
+                        $nilaiSkala = (float) $skala;
+
+                        $interpretasiNyeri = match (true) {
+                            $nilaiSkala <= 3 => 'Tidak nyeri',
+                            $nilaiSkala <= 6 => 'Nyeri ringan',
+                            $nilaiSkala <= 9 => 'Nyeri sedang',
+                            default => 'Nyeri berat',
+                        };
+
+                        $detailNyeri[] =
+                            'Interpretasi: ' . $interpretasiNyeri;
+                    }
+
+                } elseif ($metode === '3') {
+
+                    // NIPS
+                    $detailNyeri[] = 'Rincian Skor NIPS:';
+
+                    foreach ([
+                        'SKOR1' => 'Ekspresi wajah',
+                        'SKOR2' => 'Tangisan',
+                        'SKOR3' => 'Gerakan lengan',
+                        'SKOR4' => 'Gerakan tungkai',
+                        'SKOR5' => 'Status terjaga',
+                        'SKOR6' => 'Pola napas',
+                    ] as $kolom => $label) {
+                        $detailNyeri[] = '   '
+                            . $label . ': '
+                            . $this->value($nyeri->{$kolom} ?? null);
+                    }
+
+                    $detailNyeri[] = 'Skala Nyeri Total: '
+                        . ($skala !== '' ? $skala : '-');
+
+                    if ($skala !== '' && is_numeric($skala)) {
+                        $detailNyeri[] =
+                            'Interpretasi: '
+                            . ((float) $skala > 3
+                                ? 'Nyeri'
+                                : 'Tidak nyeri');
+                    }
+
+                } elseif ($metode === '4') {
+
+                    // FLACC
+                    $detailNyeri[] = 'Rincian Skor FLACC:';
+
+                    foreach ([
+                        'SKOR1' => 'Wajah',
+                        'SKOR2' => 'Kaki',
+                        'SKOR3' => 'Aktivitas',
+                        'SKOR4' => 'Menangis',
+                        'SKOR5' => 'Bersuara',
+                    ] as $kolom => $label) {
+                        $detailNyeri[] = '   '
+                            . $label . ': '
+                            . $this->value($nyeri->{$kolom} ?? null);
+                    }
+
+                    $detailNyeri[] = 'Skala Nyeri Total: '
+                        . ($skala !== '' ? $skala : '-');
                 }
 
-                if ($interpretasiNyeri !== '') {
-                    $detailNyeri[] =
-                        'Interpretasi: ' . $interpretasiNyeri;
-                }
-
-            } elseif ($metode === '2') {
-
-                // BPS
-                $detailNyeri[] = 'Rincian Skor BPS:';
-
+                /*
+                |--------------------------------------------------------------------------
+                | DETAIL KELUHAN NYERI
+                |--------------------------------------------------------------------------
+                */
                 foreach ([
-                    'SKOR1' => 'Indikator 1',
-                    'SKOR2' => 'Indikator 2',
-                    'SKOR3' => 'Indikator 3',
+                    'PENCETUS' => 'Pencetus',
+                    'GAMBARAN' => 'Gambaran',
+                    'DURASI'   => 'Durasi',
+                    'LOKASI'   => 'Lokasi',
                 ] as $kolom => $label) {
-                    $detailNyeri[] = '   '
-                        . $label . ': '
-                        . $this->value($nyeri->{$kolom} ?? null);
+
+                    $nilai = $this->value($nyeri->{$kolom} ?? null);
+
+                    $detailNyeri[] = $label . ': '
+                        . ($nilai !== '' ? $nilai : '-');
                 }
-
-                $detailNyeri[] = 'Skala Nyeri Total: '
-                    . ($skala !== '' ? $skala : '-');
-
-                if ($skala !== '' && is_numeric($skala)) {
-                    $nilaiSkala = (float) $skala;
-
-                    $interpretasiNyeri = match (true) {
-                        $nilaiSkala <= 3 => 'Tidak nyeri',
-                        $nilaiSkala <= 6 => 'Nyeri ringan',
-                        $nilaiSkala <= 9 => 'Nyeri sedang',
-                        default => 'Nyeri berat',
-                    };
-
-                    $detailNyeri[] =
-                        'Interpretasi: ' . $interpretasiNyeri;
-                }
-
-            } elseif ($metode === '3') {
-
-                // NIPS
-                $detailNyeri[] = 'Rincian Skor NIPS:';
-
-                foreach ([
-                    'SKOR1' => 'Ekspresi wajah',
-                    'SKOR2' => 'Tangisan',
-                    'SKOR3' => 'Gerakan lengan',
-                    'SKOR4' => 'Gerakan tungkai',
-                    'SKOR5' => 'Status terjaga',
-                    'SKOR6' => 'Pola napas',
-                ] as $kolom => $label) {
-                    $detailNyeri[] = '   '
-                        . $label . ': '
-                        . $this->value($nyeri->{$kolom} ?? null);
-                }
-
-                $detailNyeri[] = 'Skala Nyeri Total: '
-                    . ($skala !== '' ? $skala : '-');
-
-                if ($skala !== '' && is_numeric($skala)) {
-                    $detailNyeri[] =
-                        'Interpretasi: '
-                        . ((float) $skala > 3
-                            ? 'Nyeri'
-                            : 'Tidak nyeri');
-                }
-
-            } elseif ($metode === '4') {
-
-                // FLACC
-                $detailNyeri[] = 'Rincian Skor FLACC:';
-
-                foreach ([
-                    'SKOR1' => 'Wajah',
-                    'SKOR2' => 'Kaki',
-                    'SKOR3' => 'Aktivitas',
-                    'SKOR4' => 'Menangis',
-                    'SKOR5' => 'Bersuara',
-                ] as $kolom => $label) {
-                    $detailNyeri[] = '   '
-                        . $label . ': '
-                        . $this->value($nyeri->{$kolom} ?? null);
-                }
-
-                $detailNyeri[] = 'Skala Nyeri Total: '
-                    . ($skala !== '' ? $skala : '-');
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | DETAIL KELUHAN NYERI
-            |--------------------------------------------------------------------------
-            */
-            foreach ([
-                'PENCETUS' => 'Pencetus',
-                'GAMBARAN' => 'Gambaran',
-                'DURASI'   => 'Durasi',
-                'LOKASI'   => 'Lokasi',
-            ] as $kolom => $label) {
-
-                $nilai = $this->value($nyeri->{$kolom} ?? null);
-
-                $detailNyeri[] = $label . ': '
-                    . ($nilai !== '' ? $nilai : '-');
             }
         }
 
@@ -2653,7 +2653,7 @@ class RINeonatusPrintService implements PrintDataInterface
                     default => 'Tidak Berisiko',
                 };
 
-                $detailSkriningGizi[] = 'Skor: ' . $skor;
+                $detailSkriningGizi[] = 'Skor Strong Kid: ' . $skor;
                 $detailSkriningGizi[] = 'Kategori: ' . $kategoriStrongKid;
             }
         }
@@ -2758,17 +2758,23 @@ class RINeonatusPrintService implements PrintDataInterface
         $opsiMasalahKeperawatan = [
             'BERSIHAN_JALAN_NAFAS_TIDAK_EFEKTIF' => 'Bersihan jalan nafas tidak efektif',
             'POLA_NAFAS_TIDAK_EFEKTIF' => 'Pola nafas tidak efektif',
-            'PERFUSI_PERIFER_TIDAK_EFEKTIF' => 'Perfusi perifer tidak efektif',
-            'DIARE' => 'Diare',
-            'NYERI_AKUT' => 'Nyeri akut',
-            'NAUSEA' => 'Nausea',
-            'HIPERTERMI' => 'Hipertermia',
-            'ANSIETAS' => 'Ansietas',
-            'GANGGUAN_INTEGRITAS_KULIT_JARINGAN' => 'Gangguan integritas kulit/jaringan',
-            'GANGGUAN_ELIMINASI_URINE' => 'Gangguan eliminasi urine',
-            'INTOLERANSI_AKTIVITAS' => 'Intoleransi aktivitas',
-            'GANGGUAN_MOBILITAS_FISIK' => 'Gangguan mobilitas fisik',
             'GANGGUAN_PERTUKARAN_GAS' => 'Gangguan pertukaran gas',
+            'PERFUSI_JARINGAN_TIDAK_EFEKTIF' => 'Perfusi jaringan tidak efektif',
+            'HIPOTERMI' => 'Hipotermia',
+            'GANGGUAN_KESEIMBANGAN_CAIRAN_ELEKTROLIT' => 'Gangguan keseimbangan cairan dan elektrolit',
+            'RESIKO_KERUSAKAN_INTEGRITAS_KULIT' => 'Resiko kerusakan integritas kulit',
+            'HIPERTERMI' => 'Hipertermia',
+            'GANGGUAN_PERFUSI_JARINGAN_CEREBRAL' => 'Gangguan perfusi jaringan cerebral',
+            'KONSTIPASI' => 'Konstipasi',
+            'DIARE' => 'Diare',
+            'RESIKO_TINGGI_MALNUTRISI' => 'Resiko tinggi malnutrisi',
+            'KOPING_KELUARGA_TIDAK_EFEKTIF' => 'Koping keluarga tidak efektif',
+            'RESIKO_TERHADAP_ASPIRASI' => 'Resiko terhadap aspirasi',
+            'KETIDAKSEIMBANGAN_NUTRISI' => 'Ketidakseimbangan nutrisi',
+            'GANGGUAN_ELIMINASI' => 'Gangguan eliminasi',
+            'RETENSI_URINE' => 'Retensi urine',
+            'KECEMASAN_ORANG_TUA' => 'Kecemasan orang tua',
+            'NYERI' => 'Nyeri',
         ];
 
         if ($masalahKeperawatan) {
