@@ -557,16 +557,6 @@
         const kunjungan = @json($list['kunjungan'] ?? '');
         const isAdmin = @json($isAdmin);
 
-        console.log('=== DEBUG PENGKAJIAN ===');
-        console.log('KUNJUNGAN:', kunjungan);
-        console.log('IS ADMIN:', isAdmin);
-        console.log('FORM ALLOWED:', formPengkajianAllowed);
-        console.log('ID RUANGAN:', @json($list['show']->IDRUANGAN ?? ''));
-        console.log('NAMA RUANGAN:', @json($list['show']->NAMARUANGAN ?? ''));
-        console.log('TGL LAHIR:', @json($list['show']->TGLLAHIRPASIEN ?? ''));
-        console.log('TGL DAFTAR:', @json($list['show']->TGLDAFTAR ?? ''));
-
-
         // ==========================================================
         // FILTER FORM PENGKAJIAN BERDASARKAN RUANGAN
         // ==========================================================

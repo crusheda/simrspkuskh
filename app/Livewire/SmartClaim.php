@@ -8,6 +8,6 @@ class SmartClaim extends Component
 {
     public function render()
     {
-        return view('livewire.smartclaim.index')->layout('layouts.v3.app');
+        return view('pages.v3.smartclaim.index')->layout('layouts.v3.app');
     }
 }

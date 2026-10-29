@@ -1,0 +1,308 @@
+/* ==========================================================
+   SIRMED V3 — EMR NAVIGATION
+   Modern Clinical Navigation
+   Bootstrap 5 Compatible
+   Light & Dark Mode
+========================================================== */
+
+.emr-detail-page {
+    --emr-nav-primary: #2563eb;
+    --emr-nav-primary-hover: #1d4ed8;
+    --emr-nav-primary-soft: rgba(37, 99, 235, 0.09);
+
+    --emr-nav-text: #64748b;
+    --emr-nav-text-hover: #1e293b;
+
+    --emr-nav-border: #e2e8f0;
+    --emr-nav-surface: #ffffff;
+    --emr-nav-surface-hover: #f1f5f9;
+
+    --emr-nav-radius: 10px;
+    --emr-nav-transition: 180ms ease;
+}
+
+/* ==========================================================
+   CONTAINER NAVIGASI
+========================================================== */
+
+.emr-detail-page .emr-main-nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 6px !important;
+
+    width: 100%;
+    min-width: 0;
+
+    margin: 0;
+    padding: 10px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    background: var(--emr-nav-surface);
+    border: 1px solid var(--emr-nav-border);
+    border-radius: 14px;
+
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Scrollbar Chrome, Edge, dan Safari */
+
+.emr-detail-page .emr-main-nav::-webkit-scrollbar {
+    height: 4px;
+}
+
+.emr-detail-page .emr-main-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.emr-detail-page .emr-main-nav::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+}
+
+/* ==========================================================
+   ITEM NAVIGASI
+========================================================== */
+
+.emr-detail-page .emr-main-nav .nav-item {
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+/* ==========================================================
+   TOMBOL NAVIGASI
+========================================================== */
+
+.emr-detail-page .emr-main-nav .nav-link {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 42px;
+    padding: 10px 15px;
+
+    color: var(--emr-nav-text);
+    background: transparent;
+
+    border: 1px solid transparent;
+    border-radius: var(--emr-nav-radius);
+
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+    white-space: nowrap;
+    text-decoration: none;
+
+    transition:
+        color var(--emr-nav-transition),
+        background-color var(--emr-nav-transition),
+        border-color var(--emr-nav-transition),
+        box-shadow var(--emr-nav-transition),
+        transform var(--emr-nav-transition);
+}
+
+/* Ikon */
+
+.emr-detail-page .emr-main-nav .nav-link > i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 18px;
+    height: 18px;
+
+    margin: 0 !important;
+
+    font-size: 17px;
+    line-height: 1;
+    opacity: 0.85;
+
+    transition:
+        color var(--emr-nav-transition),
+        opacity var(--emr-nav-transition);
+}
+
+/* ==========================================================
+   HOVER
+========================================================== */
+
+.emr-detail-page .emr-main-nav .nav-link:not(.active):not(:disabled):hover {
+    color: var(--emr-nav-text-hover);
+    background: var(--emr-nav-surface-hover);
+    border-color: var(--emr-nav-border);
+}
+
+.emr-detail-page .emr-main-nav .nav-link:not(.active):not(:disabled):hover > i {
+    opacity: 1;
+}
+
+/* ==========================================================
+   TAB AKTIF
+========================================================== */
+
+.emr-detail-page .emr-main-nav .nav-link.active,
+.emr-detail-page .emr-main-nav .show > .nav-link {
+    color: #ffffff !important;
+
+    background: var(--emr-nav-primary) !important;
+    border-color: var(--emr-nav-primary) !important;
+
+    box-shadow:
+        0 2px 5px rgba(37, 99, 235, 0.15),
+        0 4px 12px rgba(37, 99, 235, 0.12);
+
+    font-weight: 700;
+}
+
+.emr-detail-page .emr-main-nav .nav-link.active > i,
+.emr-detail-page .emr-main-nav .show > .nav-link > i {
+    color: #ffffff;
+    opacity: 1;
+}
+
+/* Efek saat tab aktif diklik */
+
+.emr-detail-page .emr-main-nav .nav-link.active:active {
+    transform: scale(0.98);
+}
+
+/* ==========================================================
+   TAB DISABLED
+========================================================== */
+
+.emr-detail-page .emr-main-nav .nav-link:disabled,
+.emr-detail-page .emr-main-nav .nav-link[disabled],
+.emr-detail-page .emr-main-nav .nav-link.disabled {
+    color: var(--emr-nav-text);
+
+    background: transparent;
+    border-color: transparent;
+
+    opacity: 0.42;
+    cursor: not-allowed;
+
+    box-shadow: none;
+    pointer-events: none;
+}
+
+/* ==========================================================
+   FOCUS ACCESSIBILITY
+========================================================== */
+
+.emr-detail-page .emr-main-nav .nav-link:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.25);
+    outline-offset: 2px;
+}
+
+/* ==========================================================
+   CARD HEADER PEMBUNGKUS NAVIGASI
+========================================================== */
+
+.emr-detail-page .card-header:has(.emr-main-nav) {
+    padding: 10px 12px;
+
+    background: var(--emr-nav-surface);
+    border-bottom: 1px solid var(--emr-nav-border);
+}
+
+/* Hilangkan padding atau margin bawaan yang mengganggu */
+
+.emr-detail-page .card-header .emr-main-nav {
+    margin-bottom: 0;
+}
+
+/* ==========================================================
+   PANEL KONTEN TAB
+========================================================== */
+
+.emr-detail-page .tab-content {
+    min-width: 0;
+}
+
+.emr-detail-page .tab-content > .tab-pane {
+    min-width: 0;
+}
+
+/* ==========================================================
+   DARK MODE
+   Mendukung Bootstrap data-bs-theme="dark"
+========================================================== */
+
+[data-bs-theme="dark"] .emr-detail-page {
+    --emr-nav-primary: #3b82f6;
+    --emr-nav-primary-hover: #60a5fa;
+    --emr-nav-primary-soft: rgba(59, 130, 246, 0.14);
+
+    --emr-nav-text: #a1a1aa;
+    --emr-nav-text-hover: #f1f5f9;
+
+    --emr-nav-border: #374151;
+    --emr-nav-surface: #1f2937;
+    --emr-nav-surface-hover: #374151;
+}
+
+[data-bs-theme="dark"] .emr-detail-page .emr-main-nav .nav-link.active,
+[data-bs-theme="dark"] .emr-detail-page .emr-main-nav .show > .nav-link {
+    color: #ffffff !important;
+    background: var(--emr-nav-primary) !important;
+    border-color: var(--emr-nav-primary) !important;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+}
+
+[data-bs-theme="dark"] .emr-detail-page .emr-main-nav::-webkit-scrollbar-thumb {
+    background: #4b5563;
+}
+
+[data-bs-theme="dark"] .emr-detail-page .card-header:has(.emr-main-nav) {
+    border-bottom-color: var(--emr-nav-border);
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 768px) {
+    .emr-detail-page .emr-main-nav {
+        gap: 4px !important;
+        padding: 5px;
+        border-radius: 11px;
+    }
+
+    .emr-detail-page .emr-main-nav .nav-link {
+        min-height: 38px;
+        padding: 9px 12px;
+        gap: 6px;
+
+        font-size: 12px;
+    }
+
+    .emr-detail-page .emr-main-nav .nav-link > i {
+        width: 16px;
+        height: 16px;
+        font-size: 15px;
+    }
+
+    .emr-detail-page .card-header:has(.emr-main-nav) {
+        padding: 8px;
+    }
+}
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .emr-detail-page .emr-main-nav .nav-link,
+    .emr-detail-page .emr-main-nav .nav-link > i {
+        transition: none;
+    }
+}

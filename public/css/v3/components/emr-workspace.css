@@ -1,0 +1,767 @@
+/* SIRMED V3 — EMR WORKSPACE STYLES */
+
+/* =========================================================
+   SIRMED V3 — EMR WORKSPACE
+   Floating Glass Tab Bar
+   Mengikuti token warna app.css
+========================================================= */
+
+.emr-workspace {
+    --emr-glass-bg: color-mix(in srgb, var(--surface) 78%, transparent);
+    --emr-glass-border: color-mix(in srgb, var(--border) 75%, transparent);
+    --emr-glass-shadow: 0 8px 28px rgb(15 23 42 / 8%);
+    --emr-tab-radius: 12px;
+
+    min-width: 0;
+    width: 100%;
+}
+
+/* =========================================================
+   FLOATING GLASS TAB BAR
+========================================================= */
+
+.emr-tabbar {
+    position: sticky;
+    top: 82px;
+    z-index: 1010;
+
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+
+    min-width: 0;
+    min-height: 54px;
+    padding: 5px 32px 0;
+
+    background: var(--emr-glass-bg);
+    border-bottom: 1px solid var(--emr-glass-border);
+
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+
+    box-shadow: 0 5px 18px rgb(15 23 42 / 4%);
+
+    transition:
+        background-color .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease,
+        backdrop-filter .25s ease;
+}
+
+/* Garis cahaya tipis di bagian atas tab bar */
+.emr-tabbar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 32px;
+    right: 32px;
+    height: 1px;
+    pointer-events: none;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--primary) 35%, transparent),
+        transparent
+    );
+
+    opacity: .7;
+}
+
+/* =========================================================
+   AREA SCROLL TAB
+========================================================= */
+
+.emr-tabbar-scroll {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+
+    flex: 1 1 auto;
+    min-width: 0;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+
+    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;
+}
+
+.emr-tabbar-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.emr-tabbar-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.emr-tabbar-scroll::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--primary) 35%, var(--border));
+    border-radius: 10px;
+}
+
+.emr-tabbar-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* =========================================================
+   TAB
+========================================================= */
+
+.emr-tab {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    flex: 0 0 auto;
+    min-width: 0;
+    max-width: 310px;
+    min-height: 49px;
+
+    padding: 0 14px;
+
+    border: 1px solid transparent;
+    border-bottom-color: var(--emr-glass-border);
+    border-radius: var(--emr-tab-radius) var(--emr-tab-radius) 0 0;
+
+    background: color-mix(in srgb, var(--soft) 65%, transparent);
+    color: var(--muted);
+
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+
+    white-space: nowrap;
+    cursor: pointer;
+
+    transition:
+        color .2s ease,
+        background-color .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+.emr-tab > i {
+    flex: 0 0 auto;
+    font-size: 15px;
+    transition: transform .2s ease;
+}
+
+/* Hover dengan efek mengambang */
+.emr-tab:hover {
+    background: color-mix(in srgb, var(--primary-soft) 80%, transparent);
+    color: var(--primary);
+    border-color: color-mix(in srgb, var(--primary) 15%, var(--border));
+    transform: translateY(-2px);
+}
+
+.emr-tab:hover > i {
+    transform: scale(1.08);
+}
+
+.emr-tab:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: -3px;
+}
+
+/* =========================================================
+   TAB AKTIF
+========================================================= */
+
+.emr-tab.active {
+    z-index: 1;
+
+    background: var(--surface);
+    color: var(--primary);
+
+    border-color: var(--emr-glass-border);
+    border-bottom-color: var(--surface);
+
+    box-shadow:
+        0 -2px 10px rgb(15 23 42 / 3%),
+        0 3px 12px rgb(15 23 42 / 5%),
+        inset 0 2px 0 var(--primary);
+
+    transform: translateY(0);
+}
+
+/* Indikator aktif yang halus */
+.emr-tab.active::after {
+    content: "";
+    position: absolute;
+    right: 14px;
+    bottom: -1px;
+    left: 14px;
+
+    height: 2px;
+    border-radius: 4px 4px 0 0;
+    background: var(--primary);
+
+    opacity: .8;
+}
+
+.emr-tab.active > i {
+    color: var(--primary);
+}
+
+/* =========================================================
+   LABEL TAB
+========================================================= */
+
+.emr-tab-label {
+    display: block;
+    min-width: 0;
+    max-width: 235px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   TOMBOL TUTUP TAB
+========================================================= */
+
+.emr-tab-close {
+    display: inline-grid;
+    place-items: center;
+
+    flex: 0 0 21px;
+    width: 21px;
+    height: 21px;
+
+    margin-left: 1px;
+    padding: 0;
+
+    border: 0;
+    border-radius: 6px;
+
+    background: transparent;
+    color: var(--muted);
+
+    font-size: 12px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        color .18s ease,
+        background-color .18s ease,
+        transform .18s ease;
+}
+
+.emr-tab-close:hover {
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+    color: var(--primary);
+    transform: scale(1.08);
+}
+
+.emr-tab-close:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+}
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.emr-tabbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    flex: 0 0 auto;
+    padding-bottom: 1px;
+}
+
+.emr-tab-action {
+    display: inline-grid;
+    place-items: center;
+
+    width: 35px;
+    height: 35px;
+    padding: 0;
+
+    border: 1px solid transparent;
+    border-radius: 10px;
+
+    background: transparent;
+    color: var(--muted);
+
+    font-size: 14px;
+    cursor: pointer;
+
+    transition:
+        background-color .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.emr-tab-action:hover {
+    border-color: var(--emr-glass-border);
+    background: var(--surface);
+    color: var(--primary);
+    box-shadow: 0 3px 10px rgb(15 23 42 / 6%);
+    transform: translateY(-1px);
+}
+
+.emr-tab-action:active {
+    transform: scale(.95);
+}
+
+.emr-tab-action:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* =========================================================
+   CONTENT PANEL
+========================================================= */
+
+#emrWorkspaceContent {
+    min-width: 0;
+    width: 100%;
+}
+
+.emr-workspace-panel {
+    display: none;
+    position: relative;
+    min-width: 0;
+    width: 100%;
+}
+
+.emr-workspace-panel.active {
+    display: block;
+}
+
+/* =========================================================
+   PATIENT IFRAME
+========================================================= */
+
+.emr-patient-frame {
+    display: block;
+    width: 100%;
+    height: calc(100vh - 205px);
+    min-height: 480px;
+
+    border: 0;
+    border-radius: 12px;
+
+    background: var(--bg);
+}
+
+/* =========================================================
+   LOADING OVERLAY — EMR IFRAME
+========================================================= */
+
+.emr-workspace-panel {
+    position: relative;
+    isolation: isolate;
+}
+
+.emr-panel-loading {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+
+    padding: 30px 20px 20px;
+    box-sizing: border-box;
+
+    color: var(--text);
+    text-align: center;
+
+    /* Menggelapkan seluruh panel */
+    background: rgba(15, 23, 42, 0.78);
+
+    /* Efek kaca */
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+
+    /* Mencegah interaksi dengan iframe */
+    pointer-events: auto;
+    cursor: wait;
+
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease;
+}
+
+/* Pastikan overlay benar-benar hilang */
+.emr-panel-loading[hidden] {
+    display: none !important;
+}
+
+/* Spinner */
+.emr-panel-loading .spinner-border {
+    position: relative;
+    z-index: 1;
+
+    width: 42px;
+    height: 42px;
+
+    border: 3px solid rgba(255, 255, 255, 0.25);
+    border-top-color: #ffffff;
+    border-right-color: var(--primary);
+
+    animation: emr-loading-spin 0.8s linear infinite;
+}
+
+/* Teks loading */
+.emr-panel-loading > span:last-child {
+    position: relative;
+    z-index: 1;
+
+    max-width: 320px;
+
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.7;
+}
+
+/* Animasi spinner */
+@keyframes emr-loading-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Aksesibilitas */
+@media (prefers-reduced-motion: reduce) {
+    .emr-panel-loading,
+    .emr-panel-loading .spinner-border {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* =========================================================
+   IFRAME MODE
+========================================================= */
+
+body.emr-workspace-frame {
+    min-width: 0;
+    min-height: 100vh;
+    margin: 0;
+
+    overflow-x: hidden;
+
+    background: var(--bg);
+    color: var(--text);
+}
+
+.emr-frame-content {
+    min-width: 0;
+    min-height: 100vh;
+    padding: 16px;
+}
+
+.emr-frame-content > section {
+    min-width: 0;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1199.98px) {
+    .emr-tabbar {
+        padding-inline: 24px;
+    }
+
+    .emr-tabbar::before {
+        left: 24px;
+        right: 24px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .emr-tabbar {
+        top: 72px;
+        min-height: 51px;
+        padding-inline: 18px;
+    }
+
+    .emr-tabbar::before {
+        left: 18px;
+        right: 18px;
+    }
+
+    .emr-tab {
+        max-width: 270px;
+        padding-inline: 10px;
+    }
+
+    .emr-tab-label {
+        max-width: 195px;
+    }
+
+    .emr-patient-frame {
+        height: calc(100vh - 185px);
+    }
+}
+
+@media (max-width: 575.98px) {
+    .emr-tabbar {
+        gap: 6px;
+        min-height: 48px;
+        padding: 3px 13px 0;
+    }
+
+    .emr-tabbar::before {
+        left: 13px;
+        right: 13px;
+    }
+
+    .emr-tabbar-scroll {
+        gap: 4px;
+    }
+
+    .emr-tab {
+        gap: 7px;
+        max-width: 235px;
+        min-height: 45px;
+        padding-inline: 9px;
+        font-size: 11px;
+    }
+
+    .emr-tab-label {
+        max-width: 155px;
+    }
+
+    .emr-tabbar-actions {
+        gap: 2px;
+    }
+
+    .emr-tab-action {
+        width: 30px;
+        height: 32px;
+        font-size: 13px;
+    }
+
+    .emr-patient-frame {
+        height: calc(100vh - 160px);
+        min-height: 440px;
+    }
+
+    .emr-frame-content {
+        padding: 10px;
+    }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .emr-tab,
+    .emr-tab-close,
+    .emr-tab-action,
+    .emr-tab > i,
+    .emr-tabbar {
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+
+
+/* =========================================================
+   ERROR PANEL
+========================================================= */
+
+.emr-panel-error {
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    color: var(--text);
+}
+
+.emr-panel-error .error-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    background: var(--soft);
+    color: #dc3545;
+    font-size: 20px;
+}
+
+.emr-panel-error p {
+    margin: 7px 0 15px;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.emr-panel-error .btn {
+    border-radius: 9px;
+}
+
+/* =========================================================
+   SIRMED V3 — EMR WORKSPACE
+   Layout iframe dan non-iframe
+========================================================= */
+
+/* =========================================================
+   MODE IFRAME
+   Tab bar tetap, iframe mengisi ruang yang tersedia
+========================================================= */
+
+@media (min-width: 576px) {
+
+    /* Workspace mengisi ruang di bawah header */
+    .emr-workspace:has(.emr-workspace-panel.active .emr-patient-frame) {
+        display: flex;
+        flex: 1 1 0;
+        flex-direction: column;
+
+        height: 0;
+        min-height: 0;
+        min-width: 0;
+        width: 100%;
+
+        overflow: hidden;
+    }
+
+    /* Tab bar tetap di atas konten */
+    .emr-workspace:has(.emr-workspace-panel.active .emr-patient-frame)
+    > .emr-tabbar {
+        position: relative;
+        top: auto;
+        z-index: 1010;
+
+        flex: 0 0 auto;
+        width: 100%;
+        margin: 0;
+    }
+
+    /* Area konten menggunakan sisa ruang */
+    .emr-workspace:has(.emr-workspace-panel.active .emr-patient-frame)
+    > .app-content {
+        display: flex;
+        flex: 1 1 0;
+        flex-direction: column;
+
+        height: 0;
+        min-height: 0;
+        min-width: 0;
+
+        /* Footer berada di luar alur karena position: fixed */
+        padding: 0 32px 56px;
+
+        overflow: hidden;
+    }
+
+    /* Wrapper langsung di dalam app-content */
+    .emr-workspace:has(.emr-workspace-panel.active .emr-patient-frame)
+    > .app-content > div {
+        display: flex;
+        flex: 1 1 0;
+        flex-direction: column;
+
+        height: 0;
+        min-height: 0;
+        min-width: 0;
+    }
+
+    /* Container panel */
+    .emr-workspace:has(.emr-workspace-panel.active .emr-patient-frame)
+    #emrWorkspaceContent {
+        display: flex;
+        flex: 1 1 0;
+        flex-direction: column;
+
+        height: 0;
+        min-height: 0;
+        min-width: 0;
+    }
+
+    /* Panel iframe yang aktif */
+    .emr-workspace:has(.emr-workspace-panel.active .emr-patient-frame)
+    .emr-workspace-panel.active {
+        display: flex;
+        flex: 1 1 0;
+        flex-direction: column;
+
+        height: 0;
+        min-height: 0;
+        min-width: 0;
+
+        /* Jarak atas/bawah iframe */
+        padding: 30px 0 20px;
+        box-sizing: border-box;
+    }
+
+    /* Iframe mengisi seluruh tinggi panel */
+    .emr-workspace:has(.emr-workspace-panel.active .emr-patient-frame)
+    .emr-patient-frame {
+        display: block;
+        flex: 1 1 0;
+
+        width: 100%;
+        height: 0;
+        min-height: 0;
+
+        border: 0;
+        border-radius: 12px;
+    }
+}
+
+
+/* =========================================================
+   MODE NON-IFRAME
+   Contoh: /v3/emr dan Daftar Kunjungan
+========================================================= */
+
+@media (min-width: 576px) {
+
+    /* Workspace mengikuti tinggi layout utama */
+    .emr-workspace:not(:has(.emr-workspace-panel.active .emr-patient-frame)) {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+
+        min-width: 0;
+        min-height: 0;
+        width: 100%;
+    }
+
+    /* Tab bar tepat di bawah header */
+    .emr-workspace:not(:has(.emr-workspace-panel.active .emr-patient-frame))
+    > .emr-tabbar {
+        position: relative;
+        top: auto;
+        z-index: 1010;
+
+        flex: 0 0 auto;
+        width: 100%;
+        margin: 0;
+    }
+
+    /* Konten non-iframe tetap mengikuti perilaku normal */
+    .emr-workspace:not(:has(.emr-workspace-panel.active .emr-patient-frame))
+    > .app-content {
+        flex: 1 1 auto;
+        min-width: 0;
+        min-height: 0;
+    }
+}

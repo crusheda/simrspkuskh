@@ -137,7 +137,7 @@
 .app-shell .h4,
 .app-shell .h5,
 .app-shell .h6 {
-    color: var(--typo-heading);
+    /* color: var(--typo-heading); */
     font-family: inherit;
     font-weight: 600;
     line-height: 1.35;

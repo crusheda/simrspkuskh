@@ -197,6 +197,204 @@ a {
     }
 }
 
+/* =========================================================
+   SIRMED V3 — SIDEBAR BRAND
+   Modern Medical Dashboard Branding
+   ========================================================= */
+
+.app-sidebar {
+    --brand-primary: #4f46e5;
+    --brand-primary-soft: #eef2ff;
+    --brand-text: #202b40;
+    --brand-muted: #7b879b;
+    --brand-mark-bg: #ffffff;
+    --brand-mark-border: #e7eaf2;
+}
+
+/* Brand Container */
+.app-sidebar .brand {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border, #e9edf5);
+    margin-bottom: 20px;
+    background: transparent;
+    transition: background-color 0.2s ease;
+}
+
+/* Brand Hover */
+/* .app-sidebar .brand:hover {
+    background: var(--hover-bg, rgb(79 70 229 / 3%));
+} */
+
+/* Logo Container */
+.app-sidebar .brand-mark {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
+    padding: 7px;
+    overflow: hidden;
+    border: 1px solid var(--brand-mark-border);
+    border-radius: 14px;
+    background: var(--brand-mark-bg);
+    box-shadow:
+        0 2px 5px rgb(15 23 42 / 4%),
+        0 5px 14px rgb(79 70 229 / 5%);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Logo Hover */
+.app-sidebar .brand:hover .brand-mark {
+    transform: translateY(-1px);
+    box-shadow:
+        0 4px 8px rgb(15 23 42 / 5%),
+        0 7px 18px rgb(79 70 229 / 12%);
+}
+
+/* Logo Image */
+.app-sidebar .brand-mark img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Brand Text */
+.app-sidebar .brand-copy {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    min-width: 0;
+    line-height: 1;
+}
+
+/* SIRMED Wordmark */
+.app-sidebar .brand-copy strong {
+    display: inline-flex;
+    align-items: baseline;
+    color: var(--brand-text);
+    font-size: 22px;
+    font-weight: 850;
+    letter-spacing: -1.1px;
+    white-space: nowrap;
+}
+
+/* MED Accent */
+.app-sidebar .brand-copy .brand-accent {
+    color: var(--brand-primary);
+    font-weight: 850;
+}
+
+/* Brand Tagline */
+.app-sidebar .brand-tagline {
+    display: block;
+    overflow: hidden;
+    color: var(--brand-muted);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.55px;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Version Badge */
+.app-sidebar .brand-version {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    min-width: 31px;
+    margin-left: auto;
+    padding: 6px 7px;
+    border: 1px solid rgb(79 70 229 / 15%);
+    border-radius: 8px;
+    background: var(--brand-primary-soft);
+    color: var(--brand-primary);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    line-height: 1;
+}
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+[data-bs-theme="dark"] .app-sidebar {
+    --brand-primary: #a5b4fc;
+    --brand-primary-soft: rgb(99 102 241 / 14%);
+    --brand-text: #f1f5f9;
+    --brand-muted: #94a3b8;
+    --brand-mark-bg: #20283a;
+    --brand-mark-border: rgb(148 163 184 / 16%);
+}
+
+[data-bs-theme="dark"] .app-sidebar .brand {
+    border-bottom-color: rgb(148 163 184 / 12%);
+}
+
+[data-bs-theme="dark"] .app-sidebar .brand:hover {
+    background: rgb(148 163 184 / 4%);
+}
+
+[data-bs-theme="dark"] .app-sidebar .brand-mark {
+    box-shadow:
+        0 3px 8px rgb(0 0 0 / 16%),
+        0 6px 16px rgb(0 0 0 / 10%);
+}
+
+[data-bs-theme="dark"] .app-sidebar .brand-version {
+    border-color: rgb(165 180 252 / 20%);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 575.98px) {
+    .app-sidebar .brand {
+        gap: 10px;
+        padding: 14px;
+    }
+
+    .app-sidebar .brand-mark {
+        flex-basis: 42px;
+        width: 42px;
+        height: 42px;
+        padding: 6px;
+        border-radius: 12px;
+    }
+
+    .app-sidebar .brand-copy strong {
+        font-size: 20px;
+    }
+
+    .app-sidebar .brand-tagline {
+        font-size: 8px;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .app-sidebar .brand,
+    .app-sidebar .brand-mark {
+        transition: none;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .brand,
     .brand-mark,
@@ -368,8 +566,12 @@ a {
 }
 
 .app-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
     min-height: 100vh;
-    margin-left: var(--sidebar)
+    min-height: 100dvh;
+    margin-left: var(--sidebar);
 }
 
 .app-topbar {
@@ -486,34 +688,172 @@ a {
 }
 
 .app-content {
-    padding: 30px 32px 18px
+    --content-footer-height: 56px;
+
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    /* Selalu sisakan ruang untuk footer fixed. */
+    padding: 30px 32px calc(18px + var(--content-footer-height));
+    box-sizing: border-box;
 }
 
 .content-container {
+    flex: 1 0 auto;
+    width: 100%;
     max-width: 1600px;
-    margin: auto;
-    min-height: calc(100vh - 160px)
+    min-height: 0;
+    margin: 0 auto;
 }
 
+/* =========================================================
+   CONTENT FOOTER — FIXED BOTTOM
+========================================================= */
 .content-footer {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: var(--sidebar);
+    z-index: 1010;
+
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 24px 2px 4px;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+
+    min-height: var(--content-footer-height, 56px);
+    margin: 0;
+    padding: 12px 32px;
+
+    border-top: 1px solid var(--border);
+    background: var(--surface);
     color: var(--muted);
-    font-size: 10px
+
+    font-size: 11px;
+    line-height: 1.6;
+    box-sizing: border-box;
+}
+
+/* Teks footer */
+.content-footer > span {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
 }
 
 .content-footer strong {
-    color: var(--text)
+    color: var(--text);
+    font-weight: 700;
+    letter-spacing: 0.2px;
 }
 
-.about-modal {
-    border: 1px solid var(--border);
-    border-radius: 18px;
+/* Brand */
+.content-footer .footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Ikon hati */
+.content-footer .footer-heart {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 3px;
+    color: #ef4444;
+    font-size: 10px;
+    animation: footer-heartbeat 2s ease-in-out infinite;
+}
+
+/* Tablet */
+@media (max-width: 1199.98px) {
+    .content-footer {
+        padding-right: 24px;
+        padding-left: 24px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 991.98px) {
+    .content-footer {
+        left: 0;
+        padding-inline: 18px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .content-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 10px 13px;
+    }
+
+
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] .content-footer {
+    border-top-color: var(--border);
     background: var(--surface);
+    color: var(--muted);
+    box-shadow: 0 -4px 16px rgb(0 0 0 / 12%);
+}
+
+[data-bs-theme="dark"] .content-footer strong {
     color: var(--text);
-    box-shadow: var(--shadow)
+}
+
+/* Aksesibilitas */
+@media (prefers-reduced-motion: reduce) {
+    .content-footer .footer-heart {
+        animation: none;
+    }
+}
+
+/* Animasi halus */
+@keyframes footer-heartbeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.12);
+    }
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] .content-footer {
+    border-top-color: var(--bs-border-color, #374151);
+    color: #9ca3af;
+}
+
+[data-bs-theme="dark"] .content-footer strong {
+    color: #e5e7eb;
+}
+
+/* Responsive */
+@media (max-width: 575.98px) {
+    .content-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 15px 2px 8px;
+        font-size: 10px;
+    }
+
+    .content-footer > span {
+        line-height: 1.7;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .content-footer .footer-heart {
+        animation: none;
+    }
 }
 
 .page-heading {
@@ -775,7 +1115,7 @@ a {
     }
 
     .app-content {
-        padding: 25px 24px 16px
+        padding: 25px 24px calc(16px + var(--content-footer-height))
     }
 }
 
@@ -813,7 +1153,7 @@ a {
     }
 
     .app-content {
-        padding: 22px 18px 14px
+        padding: 22px 18px calc(14px + var(--content-footer-height))
     }
 }
 
@@ -841,18 +1181,14 @@ a {
     }
 
     .app-content {
-        padding: 17px 13px 12px
+        --content-footer-height: 64px;
+        padding: 17px 13px calc(12px + var(--content-footer-height))
     }
 
     .page-heading {
         align-items: flex-start;
         flex-direction: column;
         margin-bottom: 18px
-    }
-
-    .content-footer {
-        flex-direction: column;
-        padding-top: 18px
     }
 
     .card-surface {
@@ -862,5 +1198,64 @@ a {
 
     .welcome-banner {
         padding: 23px 20px
+    }
+}
+
+
+/* =========================================================
+   SIRMED V3 — GLOBAL APP LAYOUT
+   Pengaturan global aplikasi; komponen EMR berada di emr-workspace.css
+========================================================= */
+
+html,
+body {
+    min-height: 100%;
+}
+
+/* Aplikasi dibatasi pada tinggi viewport */
+.app-shell {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Area utama: header di atas, konten menggunakan sisa ruang */
+.app-main {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    min-width: 0;
+    min-height: 0;
+    margin-left: var(--sidebar);
+    overflow: hidden;
+}
+
+/* Header tidak ikut menyusut */
+.app-topbar {
+    flex: 0 0 auto;
+}
+
+/* Konten global dapat di-scroll; mode iframe dioverride di emr-workspace.css */
+.app-content {
+    flex: 1 1 auto;
+    height: 0;
+    min-height: 0;
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+}
+
+/* Footer fixed tidak ikut menyusut sebagai item flex */
+.app-content > .content-footer {
+    flex: 0 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .app-main {
+        margin-left: 0;
     }
 }

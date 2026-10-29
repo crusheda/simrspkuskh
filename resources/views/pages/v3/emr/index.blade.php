@@ -185,6 +185,78 @@
 
             // BUTTON FILTER READY
             $('#tombol-tampilkan').prop('disabled', false);
+
+            // =====================================================
+            // EMR WORKSPACE — OPEN PATIENT TAB
+            // =====================================================
+            $(document)
+                .off(
+                    'click.emrWorkspace',
+                    '#vantable tbody tr.emr-patient-row'
+                )
+                .on(
+                    'click.emrWorkspace',
+                    '#vantable tbody tr.emr-patient-row',
+                    function (event) {
+
+                        // Jangan membuka tab ketika tombol atau kontrol
+                        // interaktif pada baris sedang diklik.
+                        if (
+                            $(event.target).closest(
+                                'button, input, select, textarea, form, a'
+                            ).length
+                        ) {
+                            return;
+                        }
+
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        const nomor = this.dataset.nomor;
+                        const norm = this.dataset.norm;
+                        const url = this.dataset.href;
+
+                        let nama = '';
+
+                        try {
+                            nama = decodeURIComponent(
+                                this.dataset.nama || ''
+                            );
+                        } catch (error) {
+                            nama = this.dataset.nama || '';
+                        }
+
+                        if (!nomor || !url) {
+                            console.error(
+                                'Nomor kunjungan atau URL detail tidak tersedia.'
+                            );
+                            return;
+                        }
+
+                        // Jangan diam-diam melakukan navigasi biasa apabila
+                        // workspace belum aktif.
+                        if (
+                            !window.EMRWorkspace ||
+                            typeof window.EMRWorkspace.openPatient !== 'function'
+                        ) {
+                            console.error(
+                                'EMRWorkspace belum terinisialisasi. ' +
+                                'Periksa pemuatan emr-workspace.js dan layout.'
+                            );
+
+                            return;
+                        }
+
+                        // Buka tab pasien. Halaman induk tidak berpindah URL.
+                        window.EMRWorkspace.openPatient({
+                            nomor: nomor,
+                            norm: norm,
+                            nama: nama,
+                            url: url
+                        });
+
+                    }
+                );
         });
 
         /**
@@ -465,7 +537,7 @@
                                 const nomorAntrian = String(item.NOMOR_ANTRIAN).padStart(3, '0');
 
                                 antrian = `
-                                    <span class="badge bg-light-subtle border border-primary-subtle text-secondary shadow-lg"
+                                    <span class="badge bg-light-subtle border border-primary-subtle text-secondary"
                                         style="font-size:35pt;width:100%;height:auto;cursor:pointer;">
                                         ${item.POS_ANTRIAN}-${nomorAntrian}
                                     </span>
@@ -474,8 +546,14 @@
                                 antrian = '';
                             }
 
-                            content += `<tr class="clickable" data-href="/v2/emr/${item.NOMOR}" style="cursor:pointer;">
-
+                            content += `<tr
+                                            class="emr-patient-row"
+                                            data-nomor="${item.NOMOR}"
+                                            data-norm="${item.NORM}"
+                                            data-nama="${encodeURIComponent(item.NAMAPASIEN ?? '')}"
+                                            data-href="/v3/emr/${encodeURIComponent(item.NOMOR)}"
+                                            style="cursor:pointer;"
+                                        >
                                             <!-- Nomor Antrian -->
                                             <td class="text-center align-middle kolom-antrian">${antrian}</td>
 
@@ -563,10 +641,6 @@
                     $('[data-bs-toggle="tooltip"]').tooltip({
                         trigger : 'hover'
                     })
-                    // TOMBOL FILTER TAMPILKAN
-                    $(document).on('click', '.clickable', function() {
-                        window.location.href = $(this).data('href');
-                    });
                 }, error: function(xhr, status, error) {
                     Swal.fire(
                         'Gagal',

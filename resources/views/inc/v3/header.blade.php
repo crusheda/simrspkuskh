@@ -13,7 +13,7 @@
                 SISTEM INFORMASI RUMAH SAKIT
             </span>
 
-            <div class="breadcrumb-title">
+            <div class="breadcrumb-title" id="pageTitleTopbar">
                 @yield('page-title', 'Rekam Medis Elektronik')
             </div>
         </div>

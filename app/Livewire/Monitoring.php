@@ -8,6 +8,6 @@ class Monitoring extends Component
 {
     public function render()
     {
-        return view('livewire.monitoring.index')->layout('layouts.v3.app');
+        return view('pages.v3.monitoring.index')->layout('layouts.v3.app');
     }
 }

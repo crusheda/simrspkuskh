@@ -1,0 +1,1386 @@
+@extends('layouts.v3.emr')
+
+@section('title', 'Detail Rekam Medis')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/v3/components/emr/cppt.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/v3/components/emr/nav.css') }}">
+@endpush
+
+@section('content')
+<div class="row gy-4">
+    <div class="col-sm-12">
+        <div class="card mb-2" id="btn-top-detail-kunjungan">
+            <div class="card-body p-2">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div data-back-button class="btn btn-outline-primary">
+                        <i class="ph-duotone ph-caret-double-left align-middle me-1"></i> Kembali
+                    </div>
+                    <div class="btn btn-outline-warning" id="btn-icare" onclick="EMRDetailPage.showICare()">
+                        <i class="fas fa-clipboard-list align-middle me-1"></i> Lihat I-Care
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="alert-potensi-readmisi">
+            @if ($list['readmisi']['potensi_readmisi'])
+                <div class="card mb-2">
+                    <div class="card-body p-2">
+                        <div class="d-flex align-items-center justify-content-between gap-3 p-2 px-3 rounded-3 border border-danger-subtle bg-danger-subtle">
+
+                            {{-- Left Content --}}
+                            <div class="d-flex align-items-center gap-2 min-w-0">
+                                <div class="d-flex align-items-center justify-content-center rounded-circle bg-danger text-white flex-shrink-0"
+                                    style="width: 36px; height: 36px;">
+                                    <i class="ri-alarm-warning-line fs-5"></i>
+                                </div>
+
+                                <div class="min-w-0">
+                                    <div class="fw-bold text-danger">
+                                        Potensi Readmisi
+                                    </div>
+                                    <div class="small text-body-secondary">
+                                        Riwayat kepulangan dalam rentang 30 hari
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Right Content --}}
+                            <div class="d-flex align-items-center gap-3 flex-shrink-0">
+                                <div class="text-end">
+                                    <div class="small text-body-secondary">
+                                        <i class="ri-calendar-check-line me-1"></i>
+                                        Pulang Sebelumnya
+                                    </div>
+                                    <div class="fw-semibold text-body">
+                                        {{ \Carbon\Carbon::parse($list['readmisi']['tanggal_pulang_sebelumnya'])->translatedFormat('d M Y') }}
+                                    </div>
+                                </div>
+
+                                <div class="vr opacity-25" style="height: 32px;"></div>
+
+                                <div class="text-end">
+                                    <div class="small text-body-secondary">
+                                        <i class="ri-time-line me-1"></i>
+                                        Selisih
+                                    </div>
+                                    <div class="fw-bold text-danger">
+                                        {{ $list['readmisi']['selisih_hari'] }} hari
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+        <div class="card mb-2">
+            <div class="card-body p-2">
+                <div class="row justify-content-between d-flex align-items-center p-2">
+                    <div class="col-xl-8 col-md-8 col-sm-8">
+                        <h5 class="mb-1 d-flex align-items-center gap-2">
+                            <i class="ri-user-3-line me-1"></i>
+                            <b class="fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis Pasien">
+                                RM. {{ str_pad($list['show']->NORM, 8, '0', STR_PAD_LEFT) }}
+                            </b>
+                            @if ($list['show']->PRBPASIEN)
+                                <span class="badge bg-danger border border-danger badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">{{ $list['show']->PRBPASIEN }}</span>
+                            @endif
+                        </h5>
+                        <h4 class="text-truncate mb-1 fw-bold">{{ $list['show']->NAMAPASIEN }}</h4>
+                        <p class="text-truncate mb-1" style="font-size: 12px">
+                            <b>NOBPJS. <a class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kartu BPJS Pasien">{{ $list['show']->NOBPJS }}</a></b>
+                            | <b data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP Tgl. {{ $list['show']->TGLSEP?\Carbon\Carbon::parse($list['show']->TGLSEP)->translatedFormat('d F Y'):'' }}">SEP. <a class="text-purple-700">{{ $list['show']->NOSEP?$list['show']->NOSEP:'Tidak Ditemukan' }}</a></b>
+                        </p>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            @if ($list['show']->STATUS == 1)
+                                <span class="badge bg-warning-subtle text-dark border border-warning-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien Sedang Dilayani">Pasien Sedang Dilayani</span>
+                            @else
+                                @if ($list['show']->STATUS == 2)
+                                    <span class="badge bg-primary-subtle text-dark border border-primary-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien Selesai / Final">Kunjungan Pasien Selesai / Final</span>
+                                @else
+                                    <span class="badge bg-danger-subtle text-dark border border-danger-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien Batal Periksa">Pasien Batal Periksa</span>
+                                @endif
+                            @endif
+                            @if ($list['riwayat_alergi']->isNotEmpty())
+                                @php
+                                    $alergi = 'Alergi ' . $list['riwayat_alergi']->map(function ($item) {
+                                        return $item->DESKRIPSI . ' (' . $item->JENIS_ALERGI . ')';
+                                    })->implode(', ');
+                                @endphp
+
+                                <span
+                                    class="badge bg-danger-subtle text-danger border border-danger-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium alergi-badge"
+                                    role="button"
+                                    tabindex="0"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="bottom"
+                                    title="Riwayat Alergi Pasien"
+                                    onclick="this.classList.toggle('alergi-expanded')"
+                                    onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.classList.toggle('alergi-expanded'); }"
+                                >
+                                    <i class="ri-alert-line me-1"></i>
+                                    <span class="alergi-text">{{ $alergi }}</span>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-md-4 col-sm-4 text-end">
+                        <p class="fw-bold mb-1 fs-16"><b>{{ $list['show']->NAMARUANGAN }}</b></p>
+                        <h6 class="text-truncate text-mint mb-1 fs-20"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="DPJP. {{ $list['show']->NAMADOKTER }}">{{ $list['show']->NAMADOKTER }}</b></h6>
+                        <p class="text-truncate mb-0 ms-3" style="font-size: 13px"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tgl. Pasien mulai dilayani / diterima">Masuk :&nbsp;&nbsp;{{ \Carbon\Carbon::parse($list['show']->MASUK)->locale('id')->translatedFormat('d M Y H.i') . ' WIB' }}</b></p>
+                        <p class="text-truncate mb-0 ms-3" style="font-size: 13px"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tgl. Pasien selesai dilayani / dipulangkan">Keluar :&nbsp;&nbsp;{{ $list['show']->KELUAR?\Carbon\Carbon::parse($list['show']->KELUAR)->locale('id')->translatedFormat('d M Y H.i') . ' WIB':'-' }}</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ul class="nav nav-pills card-header-pills emr-main-nav mb-2" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#identitas" role="tab"
+                    aria-selected="false" tabindex="-1" aria-controls="identitas">
+                    <i class="ph-duotone ph-user-switch me-2"></i> Identitas Pasien
+                </button>
+            </li>
+            @can('emr_pengkajian')
+            {{-- @hasanyrole(['admin','dokterumum','dokterspesialis']) --}}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fpengkajian" role="tab"
+                    aria-selected="false" tabindex="-1" id="tab-fpengkajian" disabled>
+                    <i class="ph-duotone ph-user-list me-2"></i> Form Pengkajian
+                </button>
+            </li>
+            {{-- @endhasanyrole --}}
+            @endcan
+            @if (Str::startsWith($list['show']->IDRUANGAN, '10207'))
+                <li class="nav-item" role="presentation" hidden> <!-- TIDAK DIPAKAI LAGI -->
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frehab" role="tab"
+                        aria-selected="false" tabindex="-1" id="tab-frehab" disabled>
+                        <i class="ph-duotone ph-archive-tray me-2"></i> Program Rehab Medik
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fmrehab" role="tab"
+                        aria-selected="false" tabindex="-1" id="tab-fmrehab" disabled>
+                        <i class="ph-duotone ph-archive-box me-2"></i> Program Rehab Medik
+                    </button>
+                </li>
+            @endif
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="" data-bs-toggle="tab" href="#konsul" role="tab"
+                    aria-selected="false" tabindex="-1" id="tab-konsul" disabled>
+                    <i class="ph-duotone ph-files me-2"></i> Form Konsul
+                </a>
+            </li>
+            @if (Str::startsWith($list['show']->IDRUANGAN, '10202'))
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="" data-bs-toggle="tab" href="#fmatriks" role="tab"
+                        aria-selected="false" tabindex="-1" id="tab-fmatriks" disabled>
+                        <i class="ph-duotone ph-film-script me-2"></i> Matriks
+                    </a>
+                </li>
+            @endif
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="" data-bs-toggle="tab" href="#fuploads" role="tab"
+                    aria-selected="false" tabindex="-1" id="tab-fuploads" disabled>
+                    <i class="ph-duotone ph-upload-simple me-2"></i> Upload File
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active show" id="identitas" role="tabpanel">
+                <div class="row">
+                    <div class="col-lg-7 col-xxl-8">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center justify-content-between">
+                                <h5>Biodata Pasien</h5>
+                                <div class="dropdown" hidden>
+                                    <a class="btn btn-secondary-subtle arrow-none" href="javascript: void(0);"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="ph-duotone ph-dots-three-outline-vertical"></i></a>
+                                    <div class="dropdown-menu dropdown-menu-end" style="">
+                                        <a class="dropdown-item" href="javascript: void(0);"><s>Ubah Data</s></a>
+                                        {{-- <a class="dropdown-item" href="#">Delete</a> --}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item px-0 pt-0">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Nama Lengkap</p>
+                                                <p class="mb-0">{{ $list['show']->NAMALENGKAPPASIEN }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Panggilan</p>
+                                                <p class="mb-0">{{ $list['show']->PANGGILANPASIEN }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item px-0">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Nomor Induk Kependudukan</p>
+                                                <p class="mb-0">{{ $list['show']->NIKPASIEN }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">No.HP</p>
+                                                <p class="mb-0">{{ $list['show']->NOHPPASIEN }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item px-0">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Lahir di</p>
+                                                <p class="mb-0 text-uppercase">{{ $list['show']->TLPASIEN.', ' }}{{ \Carbon\Carbon::parse($list['show']->TGLLAHIRPASIEN)->translatedFormat('d F Y') }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Umur Sekarang</p>
+                                                <p class="mb-0">{{ $list['show']->UMURPASIEN }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item px-0">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Jenis Kelamin</p>
+                                                <p class="mb-0">{{ $list['show']->JKPASIEN }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1 text-muted">Keluarga/Orang Terdekat</p>
+                                                <p class="mb-0 text-uppercase">{{ $list['show']->KELUARGAPASIEN?$list['show']->KELUARGAPASIEN:'-' }}{{ $list['show']->STKELUARGAPASIEN?' ('.$list['show']->STKELUARGAPASIEN.')':'' }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item px-0 pb-0">
+                                        <p class="mb-1 text-muted">Alamat Lengkap</p>
+                                        <p class="mb-0"> {{ $list['show']->ALAMATPASIEN }}</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 col-xxl-4">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center justify-content-between">
+                                <h5 class="card-title">Riwayat Kunjungan Pasien</h5>
+                                <button class="btn btn-sm btn-outline-warning" onclick="EMRDetailPage.loadRiwayatKunjunganPasien()" id="btn-refresh-riwayat-kunjungan"
+                                    data-bs-toggle="tooltip" title="Refresh Riwayat Kunjungan Pasien"><i class="fas fa-sync"></i></button>
+                            </div>
+                            <div style="max-height: 420px; overflow-y: auto;" class="rounded-bottom">
+                                <ul class="list-group list-group-flush" id="load-riwayat-kunjungan-pasien">
+                                    <li class="list-group-item"><center><i class="fas fa-sync fa-spin me-1"></i> Menginisialisasi Riwayat Kunjungan</center></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane" id="fpengkajian" role="tabpanel">
+                @include('pages.v3.emr.detail.form.tab')
+            </div>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane" id="fmrehab" role="tabpanel">
+                @include('pages.v2.medicalrecord.detail.rehabmedik.tab_rehab')
+            </div>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane" id="konsul" role="tabpanel">
+                @include('pages.v2.medicalrecord.detail.konsul.form')
+            </div>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane" id="fuploads" role="tabpanel">
+                @include('pages.v2.medicalrecord.detail.upload')
+            </div>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane" id="fmatriks" role="tabpanel">
+                @include('pages.v2.medicalrecord.detail.matriks')
+            </div>
+        </div>
+    </div>
+
+    {{-- MODAL STARTED --}}
+    <div id="modalICare" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="catatanLabel" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><span class="badge text-bg-info">i-Care</span> <a id="show-id-icare" class="text-dark ms-1"></a></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="show-icare"></div>
+                <div class="modal-footer">
+                    <div id="btn-refresh-catatan"></div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- MODAL ENDED --}}
+
+    {{-- ============================================================
+        FLOATING CPPT BUTTON
+    ============================================================ --}}
+    <div class="cppt-floating-container">
+        <button type="button" id="btn-floating-cppt" class="cppt-floating-btn" onclick="EMRDetailPage.showModalCppt('{{ $list['KUNJUNGAN'] }}',1)">
+            <span class="cppt-floating-icon">
+                <i class="ph-duotone ph-notepad"></i>
+            </span>
+            <span class="cppt-floating-label">
+                CPPT
+            </span>
+            <span class="cppt-floating-badge" id="btn-count-cppt">
+                {{ $list['cpptCount'] }}
+            </span>
+        </button>
+    </div>
+
+    {{-- ============================================================
+        OPEN MODAL NEW CPPT
+    ============================================================ --}}
+    <div class="modal fade" id="modalCPPT" tabindex="-1" aria-labelledby="modalCPPTLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 rounded-4 overflow-hidden">
+
+                {{-- HEADER --}}
+                <div class="modal-header bg-primary text-white border-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="cppt-modal-icon">
+                            <i class="ph-duotone ph-notepad fs-24"></i>
+                        </div>
+                        <div>
+                            <h5 class="text-white fw-bold mb-0"
+                                id="modalCPPTLabel">
+                                CPPT
+                            </h5>
+                            <small class="opacity-75">
+                                Catatan Perkembangan Pasien Terintegrasi
+                            </small>
+                        </div>
+                    </div>
+                    <button type="button"
+                            class="btn-close btn-close-white"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+                </div>
+
+                {{-- BODY --}}
+                <div class="modal-body p-3 p-md-4 position-relative">
+
+                    <div class="cppt-patient-info rounded-3 p-3 mb-3">
+                        <div class="row g-3" id="cppt_header"></div>
+                    </div>
+
+                    {{-- MODAL TAMBAH CPPT --}}
+                    @include('pages.v2.medicalrecord.detail.cppt.modal_tambah')
+
+                    {{-- RIWAYAT CPPT --}}
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="ph-duotone ph-clock-counter-clockwise text-primary fs-20"></i>
+                            <strong>Riwayat CPPT</strong>
+                        </div>
+                        <span class="badge text-bg-primary" id="cppt_count"></span>
+                    </div>
+
+                    {{-- TIMELINE --}}
+                    <div class="cppt-timeline" id="cppt_riwayat"></div>
+
+                    {{-- SCROLL TO TOP --}}
+                    <div class="position-sticky bottom-0 d-flex justify-content-end pe-1 pb-1"
+                        style="z-index:1050;pointer-events:none;">
+                        <button type="button"
+                                id="btn-cppt-scroll-top"
+                                class="btn btn-primary rounded-circle shadow d-flex align-items-center justify-content-center"
+                                style="width:45px;height:45px;pointer-events:auto;" data-bs-toggle="tooltip" title="Kembali ke atas">
+                            <i class="ph-duotone ph-arrow-fat-lines-up fs-20"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+                {{-- FOOTER --}}
+                <div class="modal-footer d-flex justify-content-between border-0 p-3">
+                    <button type="button" class="btn btn-subtle-danger" onclick="EMRDetailPage.showModalCppt('{{ $list['KUNJUNGAN'] }}', 0)" data-bs-toggle="tooltip" title="Refresh Data Riwayat CPPT Kunjungan Sebelum Ini">
+                        <i class="ph-duotone ph-arrow-counter-clockwise me-1"></i> Riwayat CPPT
+                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light border-dashed waves-effect waves-light" data-bs-dismiss="modal" data-bs-toggle="tooltip" title="Tutup Cppt">
+                            <i class="ph-duotone ph-x me-1"></i> Tutup
+                        </button>
+                        <button type="button" class="btn btn-subtle-warning" onclick="EMRDetailPage.showModalCppt('{{ $list['KUNJUNGAN'] }}', 1)" data-bs-toggle="tooltip" title="Refresh Data Riwayat CPPT Kunjungan Saat Ini">
+                            <i class="ph-duotone ph-arrows-clockwise me-1"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- MODAL EDIT CPPT --}}
+    @include('pages.v2.medicalrecord.detail.cppt.modal_edit')
+
+</div>
+
+<script>
+    (() => {
+        // Variabel di-reset setiap kali script EMR dieksekusi
+        let tableEMR = null;
+
+        window.EMRDetailPage = {
+            initCppt,
+            showModalCppt,
+            hapusCPPT,
+            resetFormCPPT
+        };
+
+        // INIT VARIABLE
+        const kunjungan = @json($list["KUNJUNGAN"]);
+        const ruangan = @json($list["show"]->IDRUANGAN);
+        const rm = @json($list["show"]->NORM);
+        const namaPasien = @json($list["show"]->NAMAPASIEN);
+        const tgl_sep = @json($list["show"]->TGLSEP);
+        const sep = @json($list["show"]->NOSEP);
+        const tgl_kfr = @json(now()->format('Y-m-d H:i:s'));
+        const tgl_masuk = @json($list["show"]->MASUK);
+        const tgl_keluar = @json($list['show']->KELUAR);
+        const tgl_sep_date = tgl_sep?tgl_sep.substring(0, 10):null;
+
+        let dataPPA = [];
+        let dataDokter = [];
+        let ppaSelected = false;
+        let currentKunjunganCppt = null;
+        let cpptEditMode = 'edit';
+        let cpptCopyId = null;
+
+        $(document).ready(function() {
+
+            $('button[data-bs-toggle="tab"]').on('click', function () {
+                const tabId = $(this).attr('id');
+
+                if (tabId === 'tab-frjkfr') {
+                    loadFormKfr();
+                    loadCpptKfr();
+                    loadRiwayatKfr();
+                    console.log('masuk form kfr');
+                }
+                else if (tabId === 'tab-pterapi') {
+                    batalUpdateFormProgramTerapi();
+                    loadFormJadwalPelayanan();
+                    loadFormProgramTerapi();
+                    loadCpptProgramTerapi();
+                    loadRiwayatProgramTerapi();
+                    console.log('masuk form terapi');
+                }
+                else if (tabId === 'tab-fpengkajian') {
+                    cekKunjungan();
+                    console.log('masuk form pengkajian awal');
+                }
+                else {
+                    console.log('tab lain');
+                }
+            });
+
+            initCppt();
+
+            // aktifkan saat pertama kali load
+            aktifkanTabsDariHash();
+
+            // console.log("{{ $list['tte_pegawai'] }}");
+            if ("{{ $list['tte_pegawai'] }}" != true) {
+                // kalau ada tanda tangan pegawai
+                Swal.fire({
+                    title: `Tanda Tangan tidak ditemukan!`,
+                    text: 'Silakan menambahkan tanda tangan di menu Profil Akun Pengguna sebelum melakukan pengisian pada halaman Elektronik Medical Record.',
+                    icon: `warning`,
+                    theme: 'bootstrap-5',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    focusConfirm: false,
+                    confirmButtonText: `
+                        <i class="fa fa-thumbs-up"></i> Tanda Tangan
+                    `,
+                    confirmButtonAriaLabel: "Tanda Tangan",
+                    cancelButtonText: `
+                        <i class="fa fa-thumbs-down"></i> Tutup
+                    `,
+                    cancelButtonAriaLabel: "Tutup",
+                    // backdrop: `
+                    //     rgba(0,0,0,0.6)
+                    //     left top
+                    //     no-repeat
+                    // `,
+                    allowOutsideClick: false, // supaya user fokus ke alert
+                    allowEscapeKey: false,    // tidak bisa ditutup pakai tombol ESC
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // buka halaman profil
+                        window.location.href = "{{ route('v2.profil') }}";
+                    }
+                });
+            }
+
+            // TOMBOL KEMBALI
+            // =====================================================
+            // TOMBOL KEMBALI
+            // Jika detail dibuka dalam workspace, aktifkan kembali
+            // tab daftar kunjungan tanpa menghilangkan tab pasien.
+            // =====================================================
+
+            $('[data-back-button]').on('click', function () {
+
+                if (
+                    window.parent !== window &&
+                    window.parent.EMRWorkspace
+                ) {
+                    window.parent.EMRWorkspace.activate('home');
+                    return;
+                }
+
+                // Perilaku normal ketika halaman dibuka langsung.
+                if (document.referrer) {
+                    window.history.back();
+                } else {
+                    window.location.href = "{{ route('v2.emr') }}";
+                }
+
+            });
+
+            $('[data-bs-toggle="tooltip"]').tooltip();
+            $('.nav-link').prop('disabled', false);
+
+            // Jalankan setiap kali berpindah tab
+            $('button[data-bs-toggle="tab"], a[data-bs-toggle="tab"]').on(
+                'shown.bs.tab',
+                function (e) {
+
+                    const target = $(e.target).attr('data-bs-target') || $(e.target).attr('href');
+
+                    handleTabVisibility(target);
+                }
+            );
+
+            loadRiwayatKunjunganPasien();
+
+            // ----------------------------------------------------
+            // Saat Buka Halaman Medical Record, Sidebar Terbuka
+            // ----------------------------------------------------
+            $('html').attr('data-app-sidebar', 'full');
+            $('a[role="tab"]').removeClass('active');
+            $('.app-menubar-tabs div[role="tabpanel"]').removeClass('active show');
+            $('a[href="#digitalTab"]').addClass('active').attr('aria-selected', 'true');
+            $('#digitalTab').removeClass('active show').addClass('active show');
+
+            // =====================================================
+            // BUKA KUNJUNGAN LAIN DARI RIWAYAT PASIEN
+            // =====================================================
+            $(document)
+            .off(
+                'click.emrOpenKunjungan',
+                '[data-open-kunjungan]'
+            )
+            .on(
+                'click.emrOpenKunjungan',
+                '[data-open-kunjungan]',
+                function (event) {
+
+                    event.preventDefault();
+
+                    const nomor = this.dataset.openKunjungan;
+
+                    if (!nomor || this.disabled) {
+                        return;
+                    }
+
+                    // Detail pasien berjalan di dalam workspace.
+                    // Buka kunjungan di tab baru pada halaman induk.
+                    if (
+                        window.parent !== window &&
+                        window.parent.EMRWorkspace
+                    ) {
+                        window.parent.EMRWorkspace.openPatient({
+                            nomor: nomor,
+                            norm: rm,
+                            nama: namaPasien,
+                            url: `/v2/emr/${encodeURIComponent(nomor)}`
+                        });
+
+                        return;
+                    }
+
+                    // Fallback jika halaman detail dibuka langsung.
+                    window.location.href =
+                        `/v2/emr/${encodeURIComponent(nomor)}`;
+
+                }
+            );
+        });
+
+        function initCppt() {
+            /* ============================================================
+            CPPT INIT STARTED
+            ============================================================ */
+            const tanggalCppt = document.getElementById('cppt_tanggal');
+            const jamCppt = document.getElementById('cppt_jam');
+
+            if (tanggalCppt) {
+                const now = new Date();
+                const year =
+                    now.getFullYear();
+                const month =
+                    String(now.getMonth() + 1).padStart(2, '0');
+                const day =
+                    String(now.getDate()).padStart(2, '0');
+                tanggalCppt.value =
+                    `${year}-${month}-${day}`;
+            }
+
+            if (jamCppt) {
+                const now = new Date();
+                jamCppt.value = now.toTimeString().substring(0, 5);
+            }
+
+            /* ============================================================
+            DUMMY SIMPAN
+            ============================================================ */
+            const btnSimpanCppt = document.getElementById('btn-dummy-simpan-cppt');
+            if (btnSimpanCppt) {
+                btnSimpanCppt.addEventListener('click', function () {
+                    const original =
+                        this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = `
+                        <span class="spinner-border spinner-border-sm me-1"></span>
+                        Menyimpan...
+                    `;
+                    setTimeout(() => {
+                        this.innerHTML = `
+                            <i class="ph-duotone ph-check-circle me-1"></i>
+                            Tersimpan
+                        `;
+                        setTimeout(() => {
+                            this.disabled = false;
+                            this.innerHTML =
+                                original;
+                        }, 1500);
+                    }, 800);
+                });
+            }
+
+            /* ============================================================
+            ANIMASI KLIK FAB
+            ============================================================ */
+            const btnFloatingCppt = document.getElementById('btn-floating-cppt');
+            if (btnFloatingCppt) {
+                btnFloatingCppt.addEventListener(
+                    'click',
+                    function () {
+                        this.style.animation = 'none';
+                        void this.offsetWidth;
+                        this.style.animation = 'cpptFloating .45s ease';
+                    }
+                );
+            }
+        }
+
+        function showModalCppt(kunjungan, old)
+        {
+            currentKunjunganCppt = kunjungan;
+            const $btnCppt=$('#btn-floating-cppt');
+            $.ajax({
+                url: `/api/v2/emr/cppt/${kunjungan}/${old}`,
+                type:'GET',
+                dataType:'json',
+                beforeSend:function(){
+                    $btnCppt.prop('disabled',true).find('i').removeClass('ph-duotone ph-notepad').addClass('ri-refresh-line ri-spin');
+                    $('#cppt_riwayat').empty().append(`<center><div class="spinner-border spinner-border-sm" role="status"></div></center>`);
+                },
+                success:function(res){
+                    if(!res){
+                        iziToast.error({
+                            title:'Maaf!',
+                            message:'Data CPPT tidak ditemukan / belum diisi',
+                            position:'topRight'
+                        });
+                        return;
+                    }
+
+                    // Init Scroll to Top
+                    const modalCpptBody = document.querySelector('#modalCPPT .modal-body');
+                    const btnCpptScrollTop = document.getElementById('btn-cppt-scroll-top');
+                    if (modalCpptBody && btnCpptScrollTop) {
+                        modalCpptBody.addEventListener('scroll', function() {
+                            if (this.scrollTop > 300) {
+                                btnCpptScrollTop.classList.remove('d-none');
+                            } else {
+                                btnCpptScrollTop.classList.add('d-none');
+                            }
+                        });
+                        btnCpptScrollTop.addEventListener('click', function() {
+                            modalCpptBody.scrollTo({
+                                top: 0,
+                                behavior: 'smooth'
+                            });
+                        });
+                    }
+
+                    dataPPA=(res.ppa||[]).filter(item=>item.ID&&item.NAMA);
+                    dataDokter=(res.dokter||[]).filter(item=>item.ID&&item.NAMA);
+
+                    $('#cppt_ppa_autocomplete').hide().empty();
+                    $('#cppt_ppa').data('ppa',dataPPA);
+                    $('#cppt_dokter_sbar').data('dokter',dataDokter);
+
+                    // ============================================================
+                    // DEFAULT PPA SESUAI USER LOGIN
+                    // ============================================================
+                    if (res.ppa_login && res.ppa_login.ID) {
+
+                        $('#cppt_ppa').val(res.ppa_login.NAMA);
+                        $('#cppt_ppa_id').val(res.ppa_login.ID);
+                        $('#cppt_ppa').data('nip', res.ppa_login.NIP || '');
+
+                        ppaSelected = true;
+
+                    } else {
+
+                        $('#cppt_ppa').val('');
+                        $('#cppt_ppa_id').val('');
+                        $('#cppt_ppa').removeData('nip');
+
+                        ppaSelected = false;
+                    }
+
+                    let header='';
+                    let riwayat='';
+
+                    header+=`
+                        <div class="col-md-5">
+                            <div class="small text-muted">Pasien</div>
+                            <div class="fw-bold text-truncate">${res.namapasien??'-'}</div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="small text-muted">No. RM</div>
+                            <div class="fw-bold">${res.norm??'-'}</div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="small text-muted">Kunjungan</div>
+                            <div class="fw-bold">${kunjungan}</div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="small text-muted">CPPT</div>
+                            <span class="badge text-bg-primary">${res.count??0} Catatan</span>
+                        </div>
+                    `;
+                    $('#cppt_header').empty().append(header);
+                    $('#cppt_count').text((res.count??0)+' Catatan');
+                    $('#btn-count-cppt').text(res.count??0);
+                    (res.show||[]).forEach(item=>{
+                        let ic='ph-duotone ph-notepad';
+                        let ic_col='primary';
+                        if(item.JNSPPA=='Dokter'){
+                            ic='ph-duotone ph-stethoscope';
+                            ic_col='primary';
+                        }else if(item.JNSPPA=='Paramedis'){
+                            ic='ph-duotone ph-heartbeat';
+                            ic_col='success';
+                        }else if(item.JNSPPA=='Apoteker'){
+                            ic='ph-duotone ph-pill';
+                            ic_col='warning';
+                        }else if(item.JNSPPA=='Nutrisionis'){
+                            ic='ph-duotone ph-bowl-food';
+                            ic_col='pink-500';
+                        }else {
+                            ic='ph-duotone ph-x';
+                            ic_col='red-700';
+                        }
+
+                        let pushInstruksi = '';
+                        if (item.INSTRUKSI != null && String(item.INSTRUKSI).trim() !== '') {
+                            let instruksi = htmlKeTextCPPT(item.INSTRUKSI);
+                            pushInstruksi = `<div class="small lh-lg">
+                                            <b>I/ :</b> ${escapeHtmlCPPT(instruksi).replace(/\n/g, '<br>') ?? '-'}
+                                        </div>`;
+                        }
+
+                        riwayat += `<div class="cppt-timeline-item">
+
+                                        <div class="cppt-timeline-marker bg-${ic_col}">
+                                            <i class="${ic}"></i>
+                                        </div>
+
+                                        <div class="cppt-timeline-content">
+
+                                            <!-- HEADER -->
+                                            <div class="cppt-timeline-header p-3 text-bg-${ic_col} rounded-top">
+
+                                                <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+
+                                                    <div>
+                                                        <div class="fw-bold text-white">
+                                                            ${item.PPA ?? 'Non PPA'}
+                                                        </div>
+
+                                                        <small
+                                                            class="text-white"
+                                                            title="ID # ${item.ID ?? 'xxx'}"
+                                                        >
+                                                            ${item.JNSPPA ?? '-'}
+
+                                                            ${
+                                                                item.TANGGAL
+                                                                    ? `
+                                                                        <i class="ri-arrow-right-s-line text-warning fw-bold"></i>
+                                                                        ${item.TANGGAL}
+                                                                    `
+                                                                    : ''
+                                                            }
+                                                        </small>
+                                                    </div>
+
+                                                    <!-- ACTION -->
+                                                    <div class="d-flex justify-content-end gap-2">
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-icon btn-subtle-info border border-info border-dashed"
+                                                                data-bs-toggle="tooltip"
+                                                                title="Copy Cppt"
+                                                                id="btn-copy-cppt-${item.ID}"
+                                                                onclick="copyCPPT('${item.ID}', this)">
+                                                            <i class="ri-file-copy-2-line"></i>
+                                                        </button>
+                                                        ${
+                                                            item.CPPT_SIRMED == null
+                                                                ? `
+                                                                    <button
+                                                                        type="button"
+                                                                        class="btn btn-sm btn-icon btn-subtle-warning border border-warning border-dashed"
+                                                                        data-bs-toggle="tooltip"
+                                                                        title="Ubah Cppt"
+                                                                        id="btn-edit-cppt-${item.ID}"
+                                                                        onclick="editCPPT('${item.ID}', this)"
+                                                                    >
+                                                                        <i class="ri-edit-line"></i>
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        class="btn btn-sm btn-icon btn-subtle-danger border border-danger border-dashed"
+                                                                        data-bs-toggle="tooltip"
+                                                                        title="Hapus Cppt"
+                                                                        id="btn-hapus-cppt-${item.ID}"
+                                                                        onclick="hapusCPPT('${item.ID}')"
+                                                                    >
+                                                                        <i class="ri-delete-bin-line"></i>
+                                                                    </button>
+                                                                `
+                                                                : ''
+                                                        }
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <!-- CONTENT -->
+                                            <div class="cppt-timeline-body p-3">
+
+                                                <div class="small lh-lg">
+                                                    ${item.CATATAN ?? ''}
+                                                </div>
+
+                                                ${pushInstruksi}
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                `;
+                    });
+                    $('#cppt_riwayat').empty().append(riwayat||'<div class="text-center text-muted py-4">Belum ada catatan CPPT.</div>');
+
+                    $('#modalCPPT').modal('show');
+
+                    initAutocompletePPA();
+                    initAutocompleteDokter();
+                },
+                error:function(xhr){
+                    let message='Data gagal ditampilkan.';
+                    if(xhr.status===422&&xhr.responseJSON?.errors){
+                        message=Object.values(xhr.responseJSON.errors).flat().join('<br>');
+                    }else if(xhr.responseJSON?.message){
+                        message=xhr.responseJSON.message;
+                    }
+                    iziToast.error({
+                        title:'Proses Gagal!',
+                        message:message,
+                        position:'topRight'
+                    });
+                },
+                complete:function(){
+                    $btnCppt.prop('disabled',false).find('i').removeClass('ri-refresh-line ri-spin').addClass('ph-duotone ph-notepad');
+                    // Showing Tooltip
+                    $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                    $('.tooltip').remove();
+                    $('[data-bs-toggle="tooltip"]').tooltip({
+                        trigger : 'hover'
+                    })
+                }
+            });
+        }
+
+        function hapusCPPT(id) {
+
+            if (!id) {
+                iziToast.warning({
+                    title: 'Peringatan',
+                    message: 'ID CPPT tidak ditemukan.',
+                    position: 'topRight'
+                });
+                return;
+            }
+
+            const $btnHapus = $('#btn-hapus-cppt-' + id);
+
+            Swal.fire({
+                title: 'Hapus CPPT?',
+                text: 'Catatan CPPT yang dipilih akan dihapus. Tindakan ini tidak dapat dibatalkan.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+
+                if (!result.isConfirmed) {
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/v2/emr/cppt/' + id,
+                    type: 'DELETE',
+                    dataType: 'json',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+
+                    beforeSend: function () {
+                        Swal.fire({
+                            title: 'Menghapus...',
+                            text: 'Mohon tunggu.',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        $btnHapus.prop('disabled', true);
+                        $btnHapus.html('<i class="ph-duotone ph-spinner ph-spin"></i>');
+                    },
+
+                    success: function (res) {
+
+                        Swal.close();
+
+                        if (res.status) {
+
+                            iziToast.success({
+                                title: 'Berhasil',
+                                message: res.message || 'CPPT berhasil dihapus.',
+                                position: 'topRight'
+                            });
+
+                            // Refresh data CPPT
+                            if (currentKunjunganCppt) {
+                                showModalCppt(currentKunjunganCppt);
+                            }
+
+                        } else {
+
+                            iziToast.error({
+                                title: 'Gagal',
+                                message: res.message || 'CPPT gagal dihapus.',
+                                position: 'topRight'
+                            });
+
+                        }
+                    },
+
+                    error: function (xhr) {
+
+                        Swal.close();
+
+                        let message = 'CPPT gagal dihapus.';
+
+                        if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                            message = Object.values(xhr.responseJSON.errors)
+                                .flat()
+                                .join('<br>');
+                        } else if (xhr.responseJSON?.message) {
+                            message = xhr.responseJSON.message;
+                        }
+
+                        iziToast.error({
+                            title: 'Proses Gagal!',
+                            message: message,
+                            position: 'topRight'
+                        });
+                    },
+                    complete: function () {
+                        $btnHapus.prop('disabled', false);
+                        $btnHapus.html('<i class="ri-delete-bin-line"></i>');
+                    }
+                });
+            });
+        }
+
+        function resetFormCPPT() {
+
+            /*
+            |--------------------------------------------------------------------------
+            | TANGGAL & JAM
+            |--------------------------------------------------------------------------
+            */
+
+            $('#cppt_tanggal').val('');
+            $('#cppt_jam').val('');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PPA
+            |--------------------------------------------------------------------------
+            |
+            | PPA jangan dikosongkan karena default-nya user login.
+            |
+            */
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | MODE
+            |--------------------------------------------------------------------------
+            */
+
+            $('#cppt_format_sbar').prop('checked', false);
+            $('#cppt_format_tbak').prop('checked', false);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | CPPT BIASA
+            |--------------------------------------------------------------------------
+            */
+
+            $('#add_cppt_s').val('');
+            $('#add_cppt_o').val('');
+            $('#add_cppt_a').val('');
+            $('#add_cppt_p').val('');
+            $('#add_cppt_i').val('');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | SBAR
+            |--------------------------------------------------------------------------
+            */
+
+            $('#add_cppt_sbar_situation').val('');
+            $('#add_cppt_sbar_background').val('');
+            $('#add_cppt_sbar_assessment').val('');
+            $('#add_cppt_sbar_recommendation').val('');
+
+            $('#add_cppt_dokter_sbar').val('');
+            $('#add_cppt_dokter_sbar_id').val('');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | TBAK
+            |--------------------------------------------------------------------------
+            */
+
+            $('#add_cppt_tulis').val('');
+
+            $('#add_cppt_baca').prop('checked', false);
+            $('#add_cppt_konfirmasi').prop('checked', false);
+
+            $('#add_cppt_dokter_tbak').val('');
+            $('#add_cppt_dokter_tbak_id').val('');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | KEMBALIKAN KE MODE CPPT BIASA
+            |--------------------------------------------------------------------------
+            */
+
+            setModeCPPT('BIASA');
+        }
+
+        function showICare() {
+            const btn = $('#btn-icare');
+            $.ajax({
+                url: `/api/emr/bpjs/icare/${rm}`,
+                type: 'GET',
+                beforeSend: function () {
+                    btn.addClass('disabled')
+                        .find('i')
+                        .removeClass('fa-clipboard-list')
+                        .addClass('fa-sync fa-spin');
+                },
+                success: function(res) {
+                    if (res.status) {
+                        $('#show-icare').empty().append(`<iframe
+                                                            src="${res.url}"
+                                                            width="100%"
+                                                            height="800"
+                                                            frameborder="0">
+                                                        </iframe>`);
+                        $('#show-id-icare').empty().html('NO BPJS PESERTA : <b class="text-success">'+res.no_kartu+'</b>' ?? '');
+                        $('#modalICare').modal('show');
+                    } else {
+                        Swal.fire(
+                            'Gagal',
+                            res.message ?? 'Terjadi kegagalan saat menampilkan data pasien',
+                            'error'
+                        );
+                    }
+
+                }, error: function (xhr) {
+                    Swal.fire(
+                        'Gagal',
+                        xhr.responseJSON?.message ?? 'Terjadi kesalahan saat memproses data',
+                        'error'
+                    );
+                },
+                complete: function () {
+                    // always reset button (baik success maupun error)
+                    btn.removeClass('disabled')
+                        .find('i')
+                        .removeClass('fa-sync fa-spin')
+                        .addClass('fa-clipboard-list');
+                }
+            });
+        }
+
+        function loadRiwayatKunjunganPasien() { // RIWAYAT DI GRID KANAN
+            const btn = $('#btn-refresh-riwayat-kunjungan');
+
+            $.ajax({
+                url: `/api/emr/riwayat/kunjungan/${rm}`,
+                type: 'GET',
+                beforeSend: function () {
+                    btn.prop('disabled', true)
+                        .find('i')
+                        .addClass('fa-spin');
+                    $('#load-riwayat-kunjungan-pasien').empty().append(`
+                        <li class="list-group-item"><center><i class="fas fa-sync fa-spin me-1"></i> Memuat Data Kunjungan</center></li>
+                    `);
+                },
+                success: function(res) {
+                    content = ``;
+
+                    res.show.forEach((item, index) => {
+
+                        let statusdaftar = '';
+                        let dokter = '...';
+
+                        if (item.STATUSDAFTAR == 1) {
+                            statusdaftar = '<badge class="badge badge-sm text-bg-success">Aktif</badge>';
+                        } else if (item.STATUSDAFTAR == 2) {
+                            statusdaftar = '<badge class="badge badge-sm text-bg-primary">Selesai</badge>';
+                        } else {
+                            statusdaftar = '<badge class="badge badge-sm text-bg-danger">Non Aktif/Batal</badge>';
+                        }
+
+                        if (item.NAMADOKTER) {
+                            if (item.NAMADOKTER.length > 25) {
+                                dokter = item.NAMADOKTER.substring(0,25) + '...';
+                            } else {
+                                dokter = item.NAMADOKTER;
+                            }
+                        }
+
+                        content += `
+                            <li class="list-group-item border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <button
+                                            class="btn btn-sm btn-outline-${item.NOKUNJUNGAN == kunjungan ? 'warning' : 'secondary'} border-dashed waves-effect waves-light flex-shrink-0 me-2"
+                                            data-bs-toggle="tooltip"
+                                            title="Lihat Detail Kunjungan"
+                                            data-open-kunjungan="${item.NOKUNJUNGAN}"
+                                            ${item.NOKUNJUNGAN == kunjungan ? 'disabled' : ''}
+                                        >
+                                            <i class="ph-duotone ph-stethoscope fs-20"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="flex-grow-1 mx-2">
+                                        <h6 class="mb-0">${item.NAMARUANGAN} ${item.NOKUNJUNGAN == kunjungan? `<badge class="badge badge-sm text-bg-warning p-1">SAAT INI</badge>` : ``}</h6>
+                                        <p class="mb-0">${dokter}</p>
+                                    </div>
+
+                                    <div class="flex-shrink-0">
+                                        <p class="mb-0 text-end" style="font-size:12px" data-bs-toggle="tooltip" title="Status Kunjungan">
+                                            Status : ${statusdaftar}
+                                        </p>
+
+                                        <span class="badge bg-secondary-subtle text-secondary"
+                                            style="font-size:12px"
+                                            data-bs-toggle="tooltip"
+                                            title="Pasien didaftarkan ${dayjs(item.TGLDAFTAR).fromNow()}">
+                                            ${dayjs(item.TGLDAFTAR).format('DD MMMM YYYY, HH:mm WIB')}
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                        `;
+                    });
+
+                    content += `</ul>`;
+
+                    $('#load-riwayat-kunjungan-pasien').empty().append(content);
+                },
+                error: function (xhr) {
+                    Swal.fire(
+                        'Gagal',
+                        xhr.responseJSON?.message ?? 'Terjadi kesalahan / Gagal memanggil Function loadRiwayatKfr',
+                        'error'
+                    );
+                },
+                complete: function () {
+                    // always reset button (baik success maupun error)
+                    btn.prop('disabled', false)
+                        .find('i')
+                        .removeClass('fa-spin');
+
+                    // Showing Tooltip
+                    $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                    $('.tooltip').remove();
+                    $('[data-bs-toggle="tooltip"]').tooltip({
+                        trigger : 'hover'
+                    })
+                }
+            });
+        }
+
+        function aktifkanTabsDariHash() {
+            const hash = window.location.hash;
+            if (!hash) return;
+            const ids = hash.split('#').filter(Boolean);
+            ids.forEach((id) => {
+                const selector = '#' + id;
+                const $tabBtn = $('[data-bs-target="' + selector + '"], a[href="' + selector + '"]');
+                if ($tabBtn.length) {
+                    const tab = new bootstrap.Tab($tabBtn[0]);
+                    tab.show();
+                    // Logic khusus lainnya tetap di sini
+                    if (selector === '#frehab' || selector === '#formlayanankfr') {
+                        validPageFormKfr();
+                    } else if (selector === '#formjadwalpelayanan') {
+                        validPageFormJp();
+                    } else if (selector === '#formkonsulkfr') {
+                        validPageFormKs();
+                    } else if (selector === '#fmrehab' || selector === '#frjkfr') {
+                        loadFormKfr();
+                        loadCpptKfr();
+                        loadRiwayatKfr();
+                    } else if (selector === '#pterapi') {
+                        // Form program terapi
+                    }
+                }
+            });
+        }
+
+        function handleTabVisibility(target) { // HIDE BREADCRUMB & BACK / ICARE BUTTON
+
+            if (target === '#fpengkajian') {
+                // Form Pengkajian
+                $('#btn-top-detail-kunjungan').prop('hidden', true);
+                $('#alert-potensi-readmisi').prop('hidden', true);
+                $('#breadcrumb-detail-kunjungan').prop('hidden', true);
+            } else {
+                // Tab lainnya
+                $('#btn-top-detail-kunjungan').prop('hidden', false);
+                $('#alert-potensi-readmisi').prop('hidden', false);
+                $('#breadcrumb-detail-kunjungan').prop('hidden', false);
+            }
+        }
+
+        function cekKunjungan() {
+
+            $.ajax({
+                url: '/api/v2/emr/cek_kunjungan/' + kunjungan,
+                type: 'GET',
+
+                success: function (res) {
+
+                    // Tidak ada notif
+                    if (!res.notif) {
+                        return;
+                    }
+
+                    const isiCppt = res.isi_cppt === true;
+
+                    Swal.fire({
+                        title: 'Informasi Kunjungan',
+
+                        text: res.notif ??
+                            'Silahkan melakukan pengisian Pengkajian Awal Pasien',
+
+                        icon: 'info',
+
+                        confirmButtonText: isiCppt
+                            ? '<i class="ri-file-edit-line me-1"></i> Isi CPPT Sekarang'
+                            : '<i class="ri-thumb-up-line me-1"></i> OK',
+
+                        customClass: {
+                            confirmButton: `btn btn-subtle-${res.btn_style ?? 'info'}`
+                        },
+
+                        timer: isiCppt ? undefined : 5000,
+
+                        timerProgressBar: !isiCppt,
+
+                        allowOutsideClick: isiCppt ? false : true,
+                        allowEscapeKey: isiCppt ? false : true
+
+                    }).then(function (result) {
+
+                        if (
+                            isiCppt &&
+                            result.isConfirmed
+                        ) {
+                            showModalCppt(kunjungan);
+                        }
+
+                    });
+                },
+
+                error: function (xhr) {
+
+                    console.error(
+                        'Gagal cek kunjungan:',
+                        xhr
+                    );
+
+                }
+            });
+        }
+
+    })();
+</script>
+
+@endsection

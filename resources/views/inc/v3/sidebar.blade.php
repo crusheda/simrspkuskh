@@ -1,16 +1,14 @@
 <div class="sidebar-backdrop" data-sidebar-close></div>
 
 <aside class="app-sidebar" id="appSidebar">
-    <a class="brand" href="{{ route('v3.dashboard') }}" wire:navigate>
-        <span class="brand-mark">
-            <img src="{{ asset('images/logo/logo.png') }}" class="w-100" alt="Dashboard Logo">
-        </span>
+    <a class="brand" href="{{ route('v3.dashboard') }}" wire:navigate> <span class="brand-mark"> <img src="{{ asset('images/logo/logo.png') }}" alt="SIRMED Logo"> </span>
 
         <span class="brand-copy">
-            <strong>SIR<b class="text-muted">MED</b></strong>
+            <strong>SIR<span class="brand-accent">MED</span></strong>
+            <small class="brand-tagline">Hospital Information System</small>
         </span>
 
-        <span class="brand-version">v3</span>
+        <span class="brand-version">V3</span>
     </a>
 
     <div class="sidebar-profile">
@@ -119,3 +117,27 @@
         </div> --}}
     </div>
 </aside>
+
+<div class="modal fade" id="aboutSirmed" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm modal-dialog-scrollable">
+        <div class="modal-content modal-accent">
+            <div class="modal-header border-0">
+                <span class="modal-icon modal-icon-primary">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </span>
+
+                <h5 class="modal-title">Tentang SIRMED</h5>
+
+                <button type="button" class="btn-close"
+                        data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+
+            <div class="modal-body pt-0">
+                <p class="fw-semibold mb-2">Sistem Informasi Rekam Medis</p>
+                <p class="modal-description mb-0">
+                    RS PKU Muhammadiyah Sukoharjo · Laravel + Livewire.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

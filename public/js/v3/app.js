@@ -1,4 +1,3 @@
-
 (() => {
     'use strict';
 
@@ -7,11 +6,20 @@
     window.SIRMEDAppInitialized = true;
 
     const root = document.documentElement;
+    const THEME_KEY = 'sirmed-theme';
+
+    /* =========================================================
+       THEME
+    ========================================================= */
 
     function getTheme() {
         return root.getAttribute('data-bs-theme') === 'dark'
             ? 'dark'
             : 'light';
+    }
+
+    function normalizeTheme(theme) {
+        return theme === 'dark' ? 'dark' : 'light';
     }
 
     function refreshThemeControls() {
@@ -45,47 +53,103 @@
         });
     }
 
-    function toggleTheme() {
-        const next = getTheme() === 'dark' ? 'light' : 'dark';
+    /**
+     * Kirim tema ke seluruh iframe yang berasal dari origin sama.
+     */
+    function syncThemeToIframes(theme = getTheme()) {
+        const currentTheme = normalizeTheme(theme);
 
-        root.setAttribute('data-bs-theme', next);
+        document.querySelectorAll('iframe').forEach((iframe) => {
+            try {
+                if (!iframe.contentWindow) return;
 
-        try {
-            localStorage.setItem('sirmed-theme', next);
-        } catch (e) {}
-
-        refreshThemeControls();
+                iframe.contentWindow.postMessage(
+                    {
+                        type: 'SIRMED_THEME_CHANGE',
+                        theme: currentTheme
+                    },
+                    window.location.origin
+                );
+            } catch (error) {
+                // Iframe mungkin belum siap atau berasal dari origin lain.
+            }
+        });
     }
 
-    function applyTheme(theme) {
-        root.setAttribute('data-bs-theme', theme);
+    /**
+     * Terapkan tema pada halaman utama dan sinkronkan ke iframe.
+     */
+    function applyTheme(theme, options = {}) {
+        const {
+            save = true,
+            syncIframes = true
+        } = options;
 
-        try {
-            localStorage.setItem('sirmed-theme', theme);
-        } catch (e) {}
+        const nextTheme = normalizeTheme(theme);
+
+        root.setAttribute('data-bs-theme', nextTheme);
+        root.style.colorScheme = nextTheme;
+
+        if (save) {
+            try {
+                localStorage.setItem(THEME_KEY, nextTheme);
+            } catch (error) {
+                // localStorage mungkin tidak tersedia.
+            }
+        }
 
         refreshThemeControls();
+
+        if (syncIframes) {
+            syncThemeToIframes(nextTheme);
+        }
     }
 
+    /**
+     * Ambil tema tersimpan atau gunakan preferensi sistem.
+     */
     function syncSavedTheme() {
         let theme = 'light';
 
         try {
-            const savedTheme = localStorage.getItem('sirmed-theme');
+            const savedTheme = localStorage.getItem(THEME_KEY);
 
             if (savedTheme === 'dark' || savedTheme === 'light') {
                 theme = savedTheme;
             } else {
-                theme = window.matchMedia('(prefers-color-scheme: dark)').matches
+                theme = window.matchMedia(
+                    '(prefers-color-scheme: dark)'
+                ).matches
                     ? 'dark'
                     : 'light';
             }
-        } catch (e) {}
+        } catch (error) {
+            theme = window.matchMedia(
+                '(prefers-color-scheme: dark)'
+            ).matches
+                ? 'dark'
+                : 'light';
+        }
 
         applyTheme(theme);
     }
 
-    // Delegasi klik: tetap bekerja ketika Livewire mengganti tombol.
+    /**
+     * Toggle tema.
+     */
+    function toggleTheme() {
+        const nextTheme = getTheme() === 'dark'
+            ? 'light'
+            : 'dark';
+
+        applyTheme(nextTheme);
+    }
+
+    /* =========================================================
+       EVENT TOMBOL TEMA
+    ========================================================= */
+
+    // Delegasi klik tetap bekerja ketika Livewire mengganti tombol.
     document.addEventListener('click', (event) => {
         const button = event.target.closest(
             '#themeToggle, #themeToggleTop'
@@ -97,7 +161,67 @@
         toggleTheme();
     });
 
-    // Sidebar
+    /* =========================================================
+       SINKRONISASI TEMA ANTAR TAB BROWSER
+    ========================================================= */
+
+    window.addEventListener('storage', (event) => {
+        if (event.key === THEME_KEY || event.key === null) {
+            syncSavedTheme();
+        }
+    });
+
+    /* =========================================================
+       SINKRONISASI IFRAME
+    ========================================================= */
+
+    /**
+     * Iframe yang selesai dimuat langsung menerima tema aktif.
+     */
+    function bindIframeThemeSync() {
+        document.querySelectorAll('iframe').forEach((iframe) => {
+            if (iframe.dataset.sirmedThemeListener === 'true') {
+                return;
+            }
+
+            iframe.dataset.sirmedThemeListener = 'true';
+
+            iframe.addEventListener('load', () => {
+                syncThemeToIframes(getTheme());
+            });
+
+            // Sinkronisasi awal untuk iframe yang sudah dimuat.
+            try {
+                iframe.contentWindow?.postMessage(
+                    {
+                        type: 'SIRMED_THEME_CHANGE',
+                        theme: getTheme()
+                    },
+                    window.location.origin
+                );
+            } catch (error) {
+                // Abaikan iframe yang tidak dapat diakses.
+            }
+        });
+    }
+
+    /**
+     * Amati iframe yang ditambahkan secara dinamis,
+     * misalnya ketika tab EMR dibuka.
+     */
+    const iframeObserver = new MutationObserver(() => {
+        bindIframeThemeSync();
+    });
+
+    iframeObserver.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+    });
+
+    /* =========================================================
+       SIDEBAR
+    ========================================================= */
+
     function closeSidebar() {
         document.getElementById('appSidebar')
             ?.classList.remove('is-open');
@@ -135,13 +259,32 @@
     });
 
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') closeSidebar();
+        if (event.key === 'Escape') {
+            closeSidebar();
+        }
     });
+
+    /* =========================================================
+       LIVEWIRE NAVIGATION
+    ========================================================= */
 
     document.addEventListener('livewire:navigated', () => {
         closeSidebar();
+
+        // Baca ulang pilihan tema dan sinkronkan iframe.
         syncSavedTheme();
+
+        // Perbarui kontrol jika tombol dirender ulang.
+        refreshThemeControls();
+
+        // Pastikan iframe baru terdeteksi.
+        bindIframeThemeSync();
     });
 
+    /* =========================================================
+       INITIALIZATION
+    ========================================================= */
+
     refreshThemeControls();
+    bindIframeThemeSync();
 })();

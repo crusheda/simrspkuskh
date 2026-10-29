@@ -63,6 +63,15 @@ Route::middleware(['auth'])
         Route::get('/dashboard', Dashboard::class)->name('v3.dashboard');
         Route::get('/monitoring', Monitoring::class)->name('v3.monitoring');
         Route::get('/emr', EMR::class)->name('v3.emr');
+
+        // Detail kunjungan pasien — SSR
+        Route::get('/emr/{KUNJUNGAN}', [
+            EMR::class,
+            'detailV3',
+        ])
+            ->where('KUNJUNGAN', '[^/]+')
+            ->name('v3.emr.detail');
+
         Route::get('/smartclaim', SmartClaim::class)->name('v3.smartclaim');
     });
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
