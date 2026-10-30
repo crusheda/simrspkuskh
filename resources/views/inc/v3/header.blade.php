@@ -87,6 +87,7 @@
                 <div class="notification-menu-footer">
                     <a
                         href="{{ route('v3.setting.notifikasi') }}"
+                        wire:navigate
                         class="notification-all-link"
                     >
                         <span>Buka Semua Notifikasi</span>
