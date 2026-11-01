@@ -13,8 +13,8 @@
             <div class="input-group input-group-sm flex-grow-1">
                 <select class="form-select form-select-sm" name="rj_epfra_usia" data-epfra-required data-epfra-score>
                     <option value="">Pilih</option>
-                    @if ($list['usia'])
-                        @foreach ($list['usia'] as $item)
+                    @if ($list['usia_epfra'])
+                        @foreach ($list['usia_epfra'] as $item)
                             <option value="{{ $item->ID }}">{{ $item->DESKRIPSI }}</option>
                         @endforeach
                     @endif
@@ -60,7 +60,7 @@
         </div>
         <div class="col-md-6 mb-3">
             <div class="form-group">
-                <label class="form-label">Status Mental</label>
+                <label class="form-label">Diagnosis</label>
                 <select class="form-select form-select-sm" name="rj_epfra_4" data-epfra-required data-epfra-score>
                     <option value="" data-score="0">Pilih</option>
                     <option value="1" data-score="10">Bipolar / gangguan scizo affective</option>
@@ -72,7 +72,7 @@
         </div>
         <div class="col-md-6 mb-3">
             <div class="form-group">
-                <label class="form-label">Status Mental</label>
+                <label class="form-label">Ambulansi / Keseimbangan</label>
                 <select class="form-select form-select-sm" name="rj_epfra_5" data-epfra-required data-epfra-score>
                     <option value="" data-score="0">Pilih</option>
                     <option value="1" data-score="7">Ambulasi mandiri dan langkah stabil atau pasien imobil</option>
@@ -85,7 +85,7 @@
         </div>
         <div class="col-md-6 mb-3">
             <div class="form-group">
-                <label class="form-label">Status Mental</label>
+                <label class="form-label">Nutrisi</label>
                 <select class="form-select form-select-sm" name="rj_epfra_6" data-epfra-required data-epfra-score>
                     <option value="" data-score="0">Pilih</option>
                     <option value="1" data-score="12">Hanya sedikit mendapatkan asupan makanan / minum dalam 24 jam terakhir</option>
@@ -95,7 +95,7 @@
         </div>
         <div class="col-md-6 mb-3">
             <div class="form-group">
-                <label class="form-label">Status Mental</label>
+                <label class="form-label">Gangguan Tidur</label>
                 <select class="form-select form-select-sm" name="rj_epfra_7" data-epfra-required data-epfra-score>
                     <option value="" data-score="0">Pilih</option>
                     <option value="1" data-score="8">Tidak ada gangguan tidur</option>
@@ -105,7 +105,7 @@
         </div>
         <div class="col-md-6 mb-3">
             <div class="form-group mb-3">
-                <label class="form-label">Status Mental</label>
+                <label class="form-label">Riwayat Jatuh</label>
                 <select class="form-select form-select-sm" name="rj_epfra_8" data-epfra-required data-epfra-score>
                     <option value="" data-score="0">Pilih</option>
                     <option value="1" data-score="8">Tidak ada riwayat jatuh</option>

@@ -848,14 +848,14 @@ class AddOnPengkajianController extends Controller
             [
                 'tahun' => ['required', 'integer', 'min:1900', 'max:2100'],
                 'usia_kehamilan' => ['required'],
-                'jenis_persalinan' => ['required'],
+                'jenis_persalinan' => ['nullable'],
                 'penyulit' => ['nullable'],
-                'penolong' => ['required'],
+                'penolong' => ['nullable'],
                 'keterangan_penolong' => ['nullable'],
-                'tempat' => ['required'],
+                'tempat' => ['nullable'],
                 'keterangan_tempat' => ['nullable'],
-                'jenis_kelamin' => ['required'],
-                'berat_badan' => ['required', 'integer', 'min:0'],
+                'jenis_kelamin' => ['nullable'],
+                'berat_badan' => ['nullable', 'integer', 'min:0'],
                 'keadaan_saat_ini' => ['required'],
             ],
             [
@@ -905,28 +905,28 @@ class AddOnPengkajianController extends Controller
                 $request->usia_kehamilan,
 
             'JENIS_PERSALINAN' =>
-                $request->jenis_persalinan,
+                $request->jenis_persalinan ?? 0,
 
             'PENYULIT' =>
                 $request->penyulit,
 
             'PENOLONG' =>
-                $request->penolong,
+                $request->penolong ?? 0,
 
             'KETERANGAN_PENOLONG' =>
                 $request->keterangan_penolong ?? '',
 
             'TEMPAT' =>
-                $request->tempat,
+                $request->tempat ?? 0,
 
             'KETERANGAN_TEMPAT' =>
                 $request->keterangan_tempat ?? '',
 
             'JENIS_KELAMIN' =>
-                $request->jenis_kelamin,
+                $request->jenis_kelamin ?? 0,
 
             'BERAT_BADAN' =>
-                $request->berat_badan,
+                $request->berat_badan ?? 0,
 
             'KEADAAN_SAAT_INI' =>
                 $request->keadaan_saat_ini,

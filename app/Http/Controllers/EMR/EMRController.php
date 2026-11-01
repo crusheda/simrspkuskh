@@ -3342,6 +3342,13 @@ class EMRController extends Controller
                 ->orderBy('TABEL_ID','ASC')
                 ->get();
 
+        $usia_epfra = DB::table('master.referensi')
+                ->select('ID','DESKRIPSI')
+                ->where('JENIS',199)
+                ->where('STATUS',1)
+                ->orderBy('TABEL_ID','ASC')
+                ->get();
+
         $jk = DB::table('master.referensi')
                 ->select('ID','DESKRIPSI')
                 ->where('JENIS',193)
@@ -3432,6 +3439,7 @@ class EMRController extends Controller
             'tempat' => $tempat,
             'keadaan_sat_ini' => $keadaan_sat_ini,
             'usia' => $usia,
+            'usia_epfra' => $usia_epfra,
             'jk' => $jk,
             'cara_keluar' => $cara_keluar,
             'keadaan_keluar' => $keadaan_keluar,

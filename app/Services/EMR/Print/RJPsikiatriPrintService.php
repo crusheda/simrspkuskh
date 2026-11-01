@@ -320,32 +320,80 @@ class RJPsikiatriPrintService implements PrintDataInterface
         */
         $edukasi = DB::table('medicalrecord.edukasi_rajal')
             ->where('KUNJUNGAN', $kunjungan)
-            ->first();
+            ->orderByDesc('ID')
+            ->first([
+                'ME_TANDA_GEJALA',
+                'ME_HASIL_PEMERIKSAAN',
+                'ME_DIAGNOSIS',
+                'ME_RENCANA_PENATALAKSANAAN',
+                'ME_TINDAKAN_TUJUAN_TERAPI',
+                'SIE_LEAFLET',
+                'SIE_LISAN',
+                'EVAL_SUDAH_MENGERTI',
+                'EVAL_RE_EDUKASI',
+            ]);
 
-        $daftarMateriEdukasi = [];
+        $centangEdukasi = static function ($nilai): string {
+            return (int) ($nilai ?? 0) === 1 ? '☑' : '☐';
+        };
 
+        $defaultEdukasi = [
+            'ME_TANDA_GEJALA' => 1,
+            'ME_HASIL_PEMERIKSAAN' => 1,
+            'ME_DIAGNOSIS' => 1,
+            'ME_RENCANA_PENATALAKSANAAN' => 1,
+            'ME_TINDAKAN_TUJUAN_TERAPI' => 1,
+            'SIE_LEAFLET' => 0,
+            'SIE_LISAN' => 1,
+            'EVAL_SUDAH_MENGERTI' => 1,
+            'EVAL_RE_EDUKASI' => 0,
+        ];
+
+        $nilaiEdukasi = $defaultEdukasi;
+
+        // Jika ada row, gunakan nilainya.
+        // Kolom NULL tetap memakai default form; nilai 0 tetap tidak tercentang.
         if ($edukasi) {
-            $materiEdukasi = [
-                'ME_TANDA_GEJALA' => 'Tanda dan gejala',
-                'ME_HASIL_PEMERIKSAAN' => 'Hasil pemeriksaan',
-                'ME_DIAGNOSIS' => 'Diagnosis',
-                'ME_RENCANA_PENATALAKSANAAN' => 'Rencana penatalaksanaan',
-                'ME_TINDAKAN_TUJUAN_TERAPI' => 'Tindakan dan tujuan terapi',
-            ];
-
-            foreach ($materiEdukasi as $kolom => $label) {
-                if ((int) ($edukasi->{$kolom} ?? 0) === 1) {
-                    $daftarMateriEdukasi[] = $label;
+            foreach ($defaultEdukasi as $kolom => $nilaiDefault) {
+                if (
+                    isset($edukasi->{$kolom}) &&
+                    $edukasi->{$kolom} !== null
+                ) {
+                    $nilaiEdukasi[$kolom] = $edukasi->{$kolom};
                 }
             }
         }
 
+        $centangEdukasi = static function ($nilai): string {
+            return (int) ($nilai ?? 0) === 1 ? '☑' : '☐';
+        };
+
+        $barisMateriEdukasi = 'Materi Edukasi: ' . implode("\n", [
+            $centangEdukasi($nilaiEdukasi['ME_TANDA_GEJALA'])
+                . ' Tanda dan gejala suatu penyakit',
+            $centangEdukasi($nilaiEdukasi['ME_HASIL_PEMERIKSAAN'])
+                . ' Hasil pemeriksaan',
+            $centangEdukasi($nilaiEdukasi['ME_DIAGNOSIS'])
+                . ' Diagnosis',
+            $centangEdukasi($nilaiEdukasi['ME_RENCANA_PENATALAKSANAAN'])
+                . ' Rencana penatalaksanaan penyakit',
+            $centangEdukasi($nilaiEdukasi['ME_TINDAKAN_TUJUAN_TERAPI'])
+                . ' Tindakan dan tujuan terapi',
+        ]);
+
+        $barisSaranaEdukasi = 'Sarana Informasi / Edukasi: ' . implode('   ', [
+            $centangEdukasi($nilaiEdukasi['SIE_LEAFLET']) . ' Leaflet',
+            $centangEdukasi($nilaiEdukasi['SIE_LISAN']) . ' Lisan',
+        ]);
+
+        $barisEvaluasiEdukasi = 'Evaluasi: ' . implode('   ', [
+            $centangEdukasi($nilaiEdukasi['EVAL_SUDAH_MENGERTI'])
+                . ' Sudah mengerti',
+            $centangEdukasi($nilaiEdukasi['EVAL_RE_EDUKASI'])
+                . ' Re-edukasi',
+        ]);
+
         /*
-        |--------------------------------------------------------------------------
-        | TINDAK LANJUT
-        |--------------------------------------------------------------------------
-        */
-                /*
         |--------------------------------------------------------------------------
         | TINDAK LANJUT DAN PERENCANAAN RAWAT INAP
         |--------------------------------------------------------------------------
@@ -607,9 +655,9 @@ class RJPsikiatriPrintService implements PrintDataInterface
 
             'TOLOK_UKUR' => $this->placeholder($tolokUkur),
             'TERAPI' => $this->placeholder($terapi),
-            'MATERI_EDUKASI' => $this->placeholder(
-                implode(', ', $daftarMateriEdukasi)
-            ),
+            'MATERI_EDUKASI' => $this->placeholder($barisMateriEdukasi),
+            'SARANA_EDUKASI' => $this->placeholder($barisSaranaEdukasi),
+            'EVALUASI_EDUKASI' => $this->placeholder($barisEvaluasiEdukasi),
             'TINDAK_LANJUT' => $this->placeholder($tindakLanjut),
 
             /*
@@ -1543,7 +1591,185 @@ class RJPsikiatriPrintService implements PrintDataInterface
                     'Kesimpulan: ' . $kategoriRisikoJatuh;
             }
         }
+        /*
+        |--------------------------------------------------------------------------
+        | SKRINING RISIKO JATUH EPFRA
+        |--------------------------------------------------------------------------
+        */
+        $epfra = DB::table('medicalrecord.penilaian_epfra')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first([
+                'USIA',
+                'STATUS_MENTAL',
+                'ELIMINASI',
+                'MEDIKASI',
+                'DIAGNOSIS',
+                'AMBULASI',
+                'NUTRISI',
+                'GANGGUAN_TIDUR',
+                'RIWAYAT_JATUH',
+            ]);
 
+        if ($epfra) {
+            $kolomEpFra = [
+                'USIA',
+                'STATUS_MENTAL',
+                'ELIMINASI',
+                'MEDIKASI',
+                'DIAGNOSIS',
+                'AMBULASI',
+                'NUTRISI',
+                'GANGGUAN_TIDUR',
+                'RIWAYAT_JATUH',
+            ];
+
+            // Cetak EPFRA hanya jika seluruh pilihannya sudah terisi.
+            $epfraLengkap = true;
+
+            foreach ($kolomEpFra as $kolom) {
+                $nilai = $epfra->{$kolom} ?? null;
+
+                if ($nilai === null || (string) $nilai === '' || (string) $nilai === '0') {
+                    $epfraLengkap = false;
+                    break;
+                }
+            }
+
+            if ($epfraLengkap) {
+                $centangEpFra = static function ($nilai, $pilihan): string {
+                    return (string) ($nilai ?? '') === (string) $pilihan
+                        ? '☑'
+                        : '☐';
+                };
+
+                $detailRisikoJatuh[] = 'Penilaian Risiko Jatuh EPFRA:';
+
+                // Usia menggunakan daftar master pada form; tampilkan deskripsi, bukan ID.
+                $usiaEpFra = $this->value($epfra->USIA ?? null);
+
+                if ($usiaEpFra !== '') {
+                    $deskripsiUsiaEpFra = DB::table('master.referensi')
+                        ->where('ID', $epfra->USIA)
+                        ->where('JENIS',199)
+                        ->where('STATUS', 1)
+                        ->value('DESKRIPSI');
+
+                    $detailRisikoJatuh[] = 'Usia pasien: '
+                        . $this->value($deskripsiUsiaEpFra ?? $usiaEpFra);
+                }
+
+                $opsiEpFra = [
+                    'Status mental' => [
+                        'kolom' => 'STATUS_MENTAL',
+                        'opsi' => [
+                            1 => ['Sadar penuh dan orientasi waktu baik', 4],
+                            2 => ['Agitasi / cemas', 13],
+                            3 => ['Sering bingung', 12],
+                            4 => ['Bingung dan disorientasi', 14],
+                        ],
+                    ],
+                    'Eliminasi' => [
+                        'kolom' => 'ELIMINASI',
+                        'opsi' => [
+                            1 => ['Mandiri untuk BAB dan BAK', 8],
+                            2 => ['Memakai kateter / ostomy', 12],
+                            3 => ['BAB dan BAK dengan bantuan', 10],
+                            4 => ['Gangguan eliminasi', 12],
+                            5 => ['Inkontinensia, tetapi ambulasi mandiri', 12],
+                        ],
+                    ],
+                    'Medikasi' => [
+                        'kolom' => 'MEDIKASI',
+                        'opsi' => [
+                            1 => ['Tidak ada pengobatan yang diberikan', 10],
+                            2 => ['Obat-obatan jantung', 10],
+                            3 => ['Obat psikiatri', 8],
+                            4 => ['Dosis obat meningkat / ada tambahan dalam 24 jam', 12],
+                        ],
+                    ],
+                    'Diagnosis' => [
+                        'kolom' => 'DIAGNOSIS',
+                        'opsi' => [
+                            1 => ['Bipolar / gangguan schizo affective', 10],
+                            2 => ['Penyalahgunaan zat terlarang dan alkohol', 8],
+                            3 => ['Gangguan depresi mayor', 10],
+                            4 => ['Demensia / delirium', 12],
+                        ],
+                    ],
+                    'Ambulasi / keseimbangan' => [
+                        'kolom' => 'AMBULASI',
+                        'opsi' => [
+                            1 => ['Mandiri dan langkah stabil / pasien imobil', 7],
+                            2 => ['Menggunakan alat bantu dengan tepat', 8],
+                            3 => ['Vertigo / hipotensi ortostatik / kelemahan', 10],
+                            4 => ['Langkah tidak stabil, menyadari kemampuannya', 8],
+                            5 => ['Langkah tidak stabil, tidak menyadari keterbatasannya', 15],
+                        ],
+                    ],
+                    'Nutrisi' => [
+                        'kolom' => 'NUTRISI',
+                        'opsi' => [
+                            1 => ['Asupan makan / minum sedikit dalam 24 jam terakhir', 12],
+                            2 => ['Nafsu makan baik', 0],
+                        ],
+                    ],
+                    'Gangguan tidur' => [
+                        'kolom' => 'GANGGUAN_TIDUR',
+                        'opsi' => [
+                            1 => ['Tidak ada gangguan tidur', 8],
+                            2 => ['Ada gangguan tidur', 12],
+                        ],
+                    ],
+                    'Riwayat jatuh' => [
+                        'kolom' => 'RIWAYAT_JATUH',
+                        'opsi' => [
+                            1 => ['Tidak ada riwayat jatuh', 8],
+                            2 => ['Ada riwayat jatuh dalam 3 bulan terakhir', 14],
+                        ],
+                    ],
+                ];
+
+                $totalSkorEpFra = 0;
+
+                foreach ($opsiEpFra as $label => $item) {
+                    $nilai = $epfra->{$item['kolom']} ?? null;
+                    $pilihan = [];
+
+                    foreach ($item['opsi'] as $kode => [$namaOpsi, $skor]) {
+                        $pilihan[] = $centangEpFra($nilai, $kode)
+                            . ' ' . $namaOpsi;
+
+                        if ((string) $nilai === (string) $kode) {
+                            $totalSkorEpFra += $skor;
+                        }
+                    }
+
+                    $detailRisikoJatuh[] = $label . ': '
+                        . implode('   ', $pilihan);
+                }
+
+                if ($totalSkorEpFra >= 50) {
+                    $kategoriEpFra = 'Risiko Tinggi';
+                    $keteranganEpFra =
+                        'Lakukan pencegahan risiko jatuh risiko tinggi.';
+                } elseif ($totalSkorEpFra >= 30) {
+                    $kategoriEpFra = 'Risiko Sedang';
+                    $keteranganEpFra =
+                        'Lakukan pencegahan risiko jatuh risiko sedang.';
+                } else {
+                    $kategoriEpFra = 'Risiko Rendah';
+                    $keteranganEpFra =
+                        'Monitoring dan evaluasi sesuai prosedur.';
+                }
+
+                $detailRisikoJatuh[] = 'Skor EPFRA: '
+                    . $totalSkorEpFra . ' (' . $kategoriEpFra . ')';
+                $detailRisikoJatuh[] = $keteranganEpFra;
+                $detailRisikoJatuh[] = '';
+            }
+        }
 
         /*
         |--------------------------------------------------------------------------

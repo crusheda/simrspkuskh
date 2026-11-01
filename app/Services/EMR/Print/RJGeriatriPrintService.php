@@ -320,25 +320,78 @@ class RJGeriatriPrintService implements PrintDataInterface
         */
         $edukasi = DB::table('medicalrecord.edukasi_rajal')
             ->where('KUNJUNGAN', $kunjungan)
-            ->first();
+            ->orderByDesc('ID')
+            ->first([
+                'ME_TANDA_GEJALA',
+                'ME_HASIL_PEMERIKSAAN',
+                'ME_DIAGNOSIS',
+                'ME_RENCANA_PENATALAKSANAAN',
+                'ME_TINDAKAN_TUJUAN_TERAPI',
+                'SIE_LEAFLET',
+                'SIE_LISAN',
+                'EVAL_SUDAH_MENGERTI',
+                'EVAL_RE_EDUKASI',
+            ]);
 
-        $daftarMateriEdukasi = [];
+        $centangEdukasi = static function ($nilai): string {
+            return (int) ($nilai ?? 0) === 1 ? '☑' : '☐';
+        };
 
+        $defaultEdukasi = [
+            'ME_TANDA_GEJALA' => 1,
+            'ME_HASIL_PEMERIKSAAN' => 1,
+            'ME_DIAGNOSIS' => 1,
+            'ME_RENCANA_PENATALAKSANAAN' => 1,
+            'ME_TINDAKAN_TUJUAN_TERAPI' => 1,
+            'SIE_LEAFLET' => 0,
+            'SIE_LISAN' => 1,
+            'EVAL_SUDAH_MENGERTI' => 1,
+            'EVAL_RE_EDUKASI' => 0,
+        ];
+
+        $nilaiEdukasi = $defaultEdukasi;
+
+        // Jika ada row, gunakan nilainya.
+        // Kolom NULL tetap memakai default form; nilai 0 tetap tidak tercentang.
         if ($edukasi) {
-            $materiEdukasi = [
-                'ME_TANDA_GEJALA' => 'Tanda dan gejala',
-                'ME_HASIL_PEMERIKSAAN' => 'Hasil pemeriksaan',
-                'ME_DIAGNOSIS' => 'Diagnosis',
-                'ME_RENCANA_PENATALAKSANAAN' => 'Rencana penatalaksanaan',
-                'ME_TINDAKAN_TUJUAN_TERAPI' => 'Tindakan dan tujuan terapi',
-            ];
-
-            foreach ($materiEdukasi as $kolom => $label) {
-                if ((int) ($edukasi->{$kolom} ?? 0) === 1) {
-                    $daftarMateriEdukasi[] = $label;
+            foreach ($defaultEdukasi as $kolom => $nilaiDefault) {
+                if (
+                    isset($edukasi->{$kolom}) &&
+                    $edukasi->{$kolom} !== null
+                ) {
+                    $nilaiEdukasi[$kolom] = $edukasi->{$kolom};
                 }
             }
         }
+
+        $centangEdukasi = static function ($nilai): string {
+            return (int) ($nilai ?? 0) === 1 ? '☑' : '☐';
+        };
+
+        $barisMateriEdukasi = 'Materi Edukasi: ' . implode("\n", [
+            $centangEdukasi($nilaiEdukasi['ME_TANDA_GEJALA'])
+                . ' Tanda dan gejala suatu penyakit',
+            $centangEdukasi($nilaiEdukasi['ME_HASIL_PEMERIKSAAN'])
+                . ' Hasil pemeriksaan',
+            $centangEdukasi($nilaiEdukasi['ME_DIAGNOSIS'])
+                . ' Diagnosis',
+            $centangEdukasi($nilaiEdukasi['ME_RENCANA_PENATALAKSANAAN'])
+                . ' Rencana penatalaksanaan penyakit',
+            $centangEdukasi($nilaiEdukasi['ME_TINDAKAN_TUJUAN_TERAPI'])
+                . ' Tindakan dan tujuan terapi',
+        ]);
+
+        $barisSaranaEdukasi = 'Sarana Informasi / Edukasi: ' . implode('   ', [
+            $centangEdukasi($nilaiEdukasi['SIE_LEAFLET']) . ' Leaflet',
+            $centangEdukasi($nilaiEdukasi['SIE_LISAN']) . ' Lisan',
+        ]);
+
+        $barisEvaluasiEdukasi = 'Evaluasi: ' . implode('   ', [
+            $centangEdukasi($nilaiEdukasi['EVAL_SUDAH_MENGERTI'])
+                . ' Sudah mengerti',
+            $centangEdukasi($nilaiEdukasi['EVAL_RE_EDUKASI'])
+                . ' Re-edukasi',
+        ]);
 
         /*
         |--------------------------------------------------------------------------
@@ -607,9 +660,9 @@ class RJGeriatriPrintService implements PrintDataInterface
 
             'TOLOK_UKUR' => $this->placeholder($tolokUkur),
             'TERAPI' => $this->placeholder($terapi),
-            'MATERI_EDUKASI' => $this->placeholder(
-                implode(', ', $daftarMateriEdukasi)
-            ),
+            'MATERI_EDUKASI' => $this->placeholder($barisMateriEdukasi),
+            'SARANA_EDUKASI' => $this->placeholder($barisSaranaEdukasi),
+            'EVALUASI_EDUKASI' => $this->placeholder($barisEvaluasiEdukasi),
             'TINDAK_LANJUT' => $this->placeholder($tindakLanjut),
 
             /*
