@@ -345,7 +345,7 @@ class GDPrintService implements PrintDataInterface
         $statusReproduksiText = [];
         if ($statusReproduksi) {
             if($statusReproduksi->KASUS_OBSTETRI_GINEKOLOGI == 1) {
-                $statusReproduksiText[] = 'Kasus obstetri/ginekologi: Tidak';
+                $statusReproduksiText[] = 'Tidak Ada';
             } else if($statusReproduksi->KASUS_OBSTETRI_GINEKOLOGI == 2) {
                 $statusReproduksiText[] = 'Kasus obstetri/ginekologi: Ya';
                 if ($this->value($statusReproduksi->HPHT ?? null) !== '') $statusReproduksiText[] = 'HPHT: ' . $this->value($statusReproduksi->HPHT);

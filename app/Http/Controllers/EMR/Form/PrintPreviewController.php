@@ -675,8 +675,19 @@ class PrintPreviewController extends Controller
                 ->copy()
                 ->isoFormat('[Pukul] H:mm') . ' WIB';
 
+            // Tanggal Kunjungan
+            $tglKunjungan = $tanggalKunjungan
+                ->copy()
+                ->locale('id')
+                ->isoFormat('D MMMM YYYY');
+
+            // Jam Kunjungan
+            $jamKunjungan = $tanggalKunjungan
+                ->copy()
+                ->isoFormat('[Pukul] H:mm') . ' WIB';
+
             // Tanggal Pengisian
-            $tanggalPengisian = $tanggalPengisianCarbon
+            $tglPengisian = $tanggalPengisianCarbon
                 ->copy()
                 ->locale('id')
                 ->isoFormat('D MMMM YYYY');
@@ -757,11 +768,11 @@ class PrintPreviewController extends Controller
             ),
 
             'TGLKUNJUNGAN' => $this->formatTanggal(
-                $pasien->TGLKUNJUNGAN
+                $tglKunjungan
             ),
 
             'JAMKUNJUNGAN' => $this->formatJam(
-                $pasien->TGLKUNJUNGAN
+                $jamKunjungan
             ),
 
             'TGLKELUAR' => $this->formatTanggal(
@@ -786,7 +797,7 @@ class PrintPreviewController extends Controller
             'TTE_TANGGAL' => $tanggalFinalisasiTTE,
 
             // TANGGAL PENGISIAN
-            'TGL_PENGISIAN' => $tanggalPengisian,
+            'TGL_PENGISIAN' => $tglPengisian,
             'JAM_PENGISIAN' => $jamPengisian,
 
             // CETAK
