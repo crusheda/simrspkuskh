@@ -83,23 +83,6 @@ class PrintPreviewController extends Controller
                 ], 403);
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | DATA FINALISASI
-            |--------------------------------------------------------------------------
-            */
-            $namaFinalisasi = $finalisasi->NAMA_USER_FINALISASI ?? '-';
-
-            $tanggalFinalisasi = '-';
-            $tanggalFinalisasiTTE = '-';
-            $jamFinalisasi = '-';
-
-            if (!empty($finalisasi->CREATED)) {
-                $tanggalFinalisasi = Carbon::parse($finalisasi->CREATED)->isoFormat('dddd, D MMMM YYYY');
-                $tanggalFinalisasiTTE = Carbon::parse($finalisasi->CREATED)->isoFormat('D MMMM YYYY');
-                $jamFinalisasi = Carbon::parse($finalisasi->CREATED)->isoFormat('[Pukul] H:mm') . ' WIB';
-            }
-
             // print_r($ttd_finalisasi);
             // die();
             /*
@@ -199,10 +182,11 @@ class PrintPreviewController extends Controller
                 $form,
                 $sub,
                 $title,
-                $namaFinalisasi,
-                $tanggalFinalisasi,
-                $tanggalFinalisasiTTE,
-                $jamFinalisasi
+                $finalisasi
+                // $namaFinalisasi,
+                // $tanggalFinalisasi,
+                // $tanggalFinalisasiTTE,
+                // $jamFinalisasi
             );
 
             /*
@@ -540,7 +524,6 @@ class PrintPreviewController extends Controller
         }
     }
 
-
     /**
      * ========================================================================
      * DATA UMUM
@@ -552,10 +535,11 @@ class PrintPreviewController extends Controller
         $form,
         $sub,
         $title,
-        $namaFinalisasi,
-        $tanggalFinalisasi,
-        $tanggalFinalisasiTTE,
-        $jamFinalisasi
+        $finalisasi
+        // $namaFinalisasi,
+        // $tanggalFinalisasi,
+        // $tanggalFinalisasiTTE,
+        // $jamFinalisasi
     ): array {
 
         /*
@@ -630,10 +614,116 @@ class PrintPreviewController extends Controller
 
         /*
         |--------------------------------------------------------------------------
+        | DATA FINALISASI DAN TANGGAL PENGISIAN
+        |--------------------------------------------------------------------------
+        */
+        $namaFinalisasi = $finalisasi->NAMA_USER_FINALISASI ?? '-';
+        $tanggalFinalisasi = '-';
+        $tanggalFinalisasiTTE = '-';
+        $jamFinalisasi = '-';
+        $tanggalPengisian = '-';
+        $jamPengisian = '-';
+
+        if (!empty($finalisasi->CREATED)) {
+
+            $tanggalKunjungan = !empty($pasien->TGLKUNJUNGAN)
+                ? Carbon::parse($pasien->TGLKUNJUNGAN)
+                : null;
+
+            $tanggalFinal = Carbon::parse($finalisasi->CREATED);
+
+            /*
+            |--------------------------------------------------------------------------
+            | KLAUSUL SELISIH WAKTU
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                $tanggalKunjungan &&
+                $tanggalKunjungan->diffInHours($tanggalFinal) >= 24
+            ) {
+
+                // Jika selisih >= 24 jam
+                $tanggalPengisianCarbon = $tanggalKunjungan
+                    ->copy()
+                    ->addHours(15);
+
+            } else {
+
+                // Jika selisih < 24 jam
+                $tanggalPengisianCarbon = $tanggalFinal
+                    ->copy();
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | FORMAT TANGGAL DAN JAM
+            |--------------------------------------------------------------------------
+            */
+
+            $tanggalFinalisasi = $tanggalPengisianCarbon
+                ->copy()
+                ->locale('id')
+                ->isoFormat('dddd, D MMMM YYYY');
+
+            $tanggalFinalisasiTTE = $tanggalPengisianCarbon
+                ->copy()
+                ->locale('id')
+                ->isoFormat('D MMMM YYYY');
+
+            $jamFinalisasi = $tanggalPengisianCarbon
+                ->copy()
+                ->isoFormat('[Pukul] H:mm') . ' WIB';
+
+            // Tanggal Pengisian
+            $tanggalPengisian = $tanggalPengisianCarbon
+                ->copy()
+                ->locale('id')
+                ->isoFormat('D MMMM YYYY');
+
+            // Jam Pengisian
+            $jamPengisian = $tanggalPengisianCarbon
+                ->copy()
+                ->isoFormat('[Pukul] H:mm') . ' WIB';
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | TANGGAL TTE
+        |--------------------------------------------------------------------------
+        */
+        // $tteTanggal = $tanggalFinalisasiTTE;
+
+        // if (!empty($pasien->TGLKUNJUNGAN) && !empty($finalisasi->CREATED)) {
+
+        //     $tanggalKunjungan = Carbon::parse($pasien->TGLKUNJUNGAN);
+        //     $tanggalFinal = Carbon::parse($finalisasi->CREATED);
+
+        //     // Jika selisih waktu >= 24 jam
+        //     if ($tanggalKunjungan->diffInHours($tanggalFinal) >= 24) {
+
+        //         // Tanggal kunjungan ditambah 15 jam
+        //         $tteTanggal = $tanggalKunjungan
+        //             ->copy()
+        //             ->addHours(15)
+        //             ->locale('id')
+        //             ->isoFormat('D MMMM YYYY');
+
+        //     } else {
+
+        //         // Jika selisih < 24 jam, gunakan tanggal finalisasi
+        //         $tteTanggal = $tanggalFinal
+        //             ->copy()
+        //             ->locale('id')
+        //             ->isoFormat('D MMMM YYYY');
+        //     }
+        // }
+
+        /*
+        |--------------------------------------------------------------------------
         | RETURN DATA TEMPLATE
         |--------------------------------------------------------------------------
         */
-
         return [
 
             // INSTANSI
@@ -692,8 +782,12 @@ class PrintPreviewController extends Controller
             'FINALISASI_TANGGAL' => $tanggalFinalisasi,
             'FINALISASI_JAM' => $jamFinalisasi,
 
-            // TGL TTE
+            // TTE
             'TTE_TANGGAL' => $tanggalFinalisasiTTE,
+
+            // TANGGAL PENGISIAN
+            'TGL_PENGISIAN' => $tanggalPengisian,
+            'JAM_PENGISIAN' => $jamPengisian,
 
             // CETAK
             'TANGGAL_CETAK' => now('Asia/Jakarta')

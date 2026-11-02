@@ -344,14 +344,19 @@ class GDPrintService implements PrintDataInterface
 
         $statusReproduksiText = [];
         if ($statusReproduksi) {
-            $kasusObgyn = $this->value($statusReproduksi->KASUS_OBSTETRI_GINEKOLOGI ?? null);
-            if ($kasusObgyn !== '') $statusReproduksiText[] = 'Kasus obstetri/ginekologi: ' . $kasusObgyn;
-            if ($this->value($statusReproduksi->HPHT ?? null) !== '') $statusReproduksiText[] = 'HPHT: ' . $this->value($statusReproduksi->HPHT);
-            if ($this->value($statusReproduksi->SIKLUS ?? null) !== '') $statusReproduksiText[] = 'Siklus: ' . $this->value($statusReproduksi->SIKLUS);
-            if ($this->value($statusReproduksi->KB ?? null) !== '') $statusReproduksiText[] = 'KB: ' . $this->value($statusReproduksi->KB);
-            if ($this->value($statusReproduksi->HAMIL_GRAVIDA ?? null) !== '') $statusReproduksiText[] = 'Gravida: ' . $this->value($statusReproduksi->HAMIL_GRAVIDA);
-            if ($this->value($statusReproduksi->HAMIL_PARITAS ?? null) !== '') $statusReproduksiText[] = 'Paritas: ' . $this->value($statusReproduksi->HAMIL_PARITAS);
-            if ($this->value($statusReproduksi->HAMIL_ABORTUS ?? null) !== '') $statusReproduksiText[] = 'Abortus: ' . $this->value($statusReproduksi->HAMIL_ABORTUS);
+            if($statusReproduksi->KASUS_OBSTETRI_GINEKOLOGI == 1) {
+                $statusReproduksiText[] = 'Kasus obstetri/ginekologi: Tidak';
+            } else if($statusReproduksi->KASUS_OBSTETRI_GINEKOLOGI == 2) {
+                $statusReproduksiText[] = 'Kasus obstetri/ginekologi: Ya';
+                if ($this->value($statusReproduksi->HPHT ?? null) !== '') $statusReproduksiText[] = 'HPHT: ' . $this->value($statusReproduksi->HPHT);
+                if ($this->value($statusReproduksi->SIKLUS ?? null) !== '') $statusReproduksiText[] = 'Siklus: ' . $this->value($statusReproduksi->SIKLUS);
+                if ($this->value($statusReproduksi->KB ?? null) !== '') $statusReproduksiText[] = 'KB: ' . $this->value($statusReproduksi->KB);
+                if ($this->value($statusReproduksi->HAMIL_GRAVIDA ?? null) !== '') $statusReproduksiText[] = 'Gravida: ' . $this->value($statusReproduksi->HAMIL_GRAVIDA);
+                if ($this->value($statusReproduksi->HAMIL_PARITAS ?? null) !== '') $statusReproduksiText[] = 'Paritas: ' . $this->value($statusReproduksi->HAMIL_PARITAS);
+                if ($this->value($statusReproduksi->HAMIL_ABORTUS ?? null) !== '') $statusReproduksiText[] = 'Abortus: ' . $this->value($statusReproduksi->HAMIL_ABORTUS);
+            }
+            // $kasusObgyn = $this->value($statusReproduksi->KASUS_OBSTETRI_GINEKOLOGI ?? null);
+            // if ($kasusObgyn !== '') $statusReproduksiText[] = 'Kasus obstetri/ginekologi: ' . $kasusObgyn;
         }
         if ($statusReproduksiText) {
             $primarySurveyText .= "\nStatus reproduksi: " . implode('; ', $statusReproduksiText);
