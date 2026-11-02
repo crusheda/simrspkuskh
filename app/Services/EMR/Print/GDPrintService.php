@@ -6,8 +6,15 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
+use App\Services\EMR\Print\components\skrining_nyeri;
+
 class GDPrintService implements PrintDataInterface
 {
+    public function __construct()
+    {
+        $this->skrining_nyeri = new skrining_nyeri();
+    }
+
     public function getData(
         string $kunjungan,
         ?string $sub = null
@@ -1946,219 +1953,219 @@ class GDPrintService implements PrintDataInterface
         | SKRINING NYERI
         |--------------------------------------------------------------------------
         */
-        $nyeri = DB::table('medicalrecord.penilaian_nyeri')
-            ->where('KUNJUNGAN', $kunjungan)
-            ->where('STATUS', 1)
-            ->orderByDesc('ID')
-            ->first([
-                'NYERI',
-                'ONSET',
-                'SKALA',
-                'METODE',
-                'SKOR1',
-                'SKOR2',
-                'SKOR3',
-                'SKOR4',
-                'SKOR5',
-                'SKOR6',
-                'PENCETUS',
-                'GAMBARAN',
-                'DURASI',
-                'LOKASI',
-            ]);
+        // $nyeri = DB::table('medicalrecord.penilaian_nyeri')
+        //     ->where('KUNJUNGAN', $kunjungan)
+        //     ->where('STATUS', 1)
+        //     ->orderByDesc('ID')
+        //     ->first([
+        //         'NYERI',
+        //         'ONSET',
+        //         'SKALA',
+        //         'METODE',
+        //         'SKOR1',
+        //         'SKOR2',
+        //         'SKOR3',
+        //         'SKOR4',
+        //         'SKOR5',
+        //         'SKOR6',
+        //         'PENCETUS',
+        //         'GAMBARAN',
+        //         'DURASI',
+        //         'LOKASI',
+        //     ]);
 
-        $centangNyeri = static function ($nilai, $pilihan): string {
-            return (string) ($nilai ?? '') === (string) $pilihan
-                ? '☑'
-                : '☐';
-        };
+        // $centangNyeri = static function ($nilai, $pilihan): string {
+        //     return (string) ($nilai ?? '') === (string) $pilihan
+        //         ? '☑'
+        //         : '☐';
+        // };
 
-        $detailNyeri = [];
+        // $detailNyeri = [];
 
-        if (!$nyeri) {
+        // if (!$nyeri) {
 
-            $detailNyeri[] = 'Nyeri: Tidak';
+        //     $detailNyeri[] = 'Nyeri: Tidak';
 
-        } else {
+        // } else {
 
-            $nyeriYa = (string) ($nyeri->NYERI ?? '') === '1';
+        //     $nyeriYa = (string) ($nyeri->NYERI ?? '') === '1';
 
-            $detailNyeri[] = $nyeriYa ? 'Nyeri: Ya' : 'Nyeri: Tidak';
+        //     $detailNyeri[] = $nyeriYa ? 'Nyeri: Ya' : 'Nyeri: Tidak';
 
-            if ($nyeriYa) {
-                /*
-                |--------------------------------------------------------------------------
-                | ONSET
-                |--------------------------------------------------------------------------
-                */
-                $detailNyeri[] = 'Onset: '
-                    . $centangNyeri($nyeri->ONSET, 1) . ' Akut'
-                    . '     '
-                    . $centangNyeri($nyeri->ONSET, 2) . ' Kronis';
+        //     if ($nyeriYa) {
+        //         /*
+        //         |--------------------------------------------------------------------------
+        //         | ONSET
+        //         |--------------------------------------------------------------------------
+        //         */
+        //         $detailNyeri[] = 'Onset: '
+        //             . $centangNyeri($nyeri->ONSET, 1) . ' Akut'
+        //             . '     '
+        //             . $centangNyeri($nyeri->ONSET, 2) . ' Kronis';
 
-                /*
-                |--------------------------------------------------------------------------
-                | METODE PENILAIAN
-                |--------------------------------------------------------------------------
-                */
-                $metodeNyeri = [
-                    1 => 'NRS',
-                    2 => 'BPS',
-                    3 => 'NIPS',
-                    4 => 'FLACC',
-                    5 => 'VAS',
-                ];
+        //         /*
+        //         |--------------------------------------------------------------------------
+        //         | METODE PENILAIAN
+        //         |--------------------------------------------------------------------------
+        //         */
+        //         $metodeNyeri = [
+        //             1 => 'NRS',
+        //             2 => 'BPS',
+        //             3 => 'NIPS',
+        //             4 => 'FLACC',
+        //             5 => 'VAS',
+        //         ];
 
-                $barisMetode = [];
+        //         $barisMetode = [];
 
-                foreach ($metodeNyeri as $nilai => $label) {
-                    $barisMetode[] =
-                        $centangNyeri($nyeri->METODE, $nilai)
-                        . ' ' . $label;
-                }
+        //         foreach ($metodeNyeri as $nilai => $label) {
+        //             $barisMetode[] =
+        //                 $centangNyeri($nyeri->METODE, $nilai)
+        //                 . ' ' . $label;
+        //         }
 
-                $detailNyeri[] = 'Metode: '
-                    . implode('     ', $barisMetode);
+        //         $detailNyeri[] = 'Metode: '
+        //             . implode('     ', $barisMetode);
 
-                /*
-                |--------------------------------------------------------------------------
-                | SKALA NYERI
-                |--------------------------------------------------------------------------
-                | NRS dan VAS cukup menampilkan skala langsung.
-                | BPS, NIPS dan FLACC menampilkan rincian skor indikator.
-                |--------------------------------------------------------------------------
-                */
-                $metode = (string) ($nyeri->METODE ?? '');
-                $skala = $this->value($nyeri->SKALA ?? null);
+        //         /*
+        //         |--------------------------------------------------------------------------
+        //         | SKALA NYERI
+        //         |--------------------------------------------------------------------------
+        //         | NRS dan VAS cukup menampilkan skala langsung.
+        //         | BPS, NIPS dan FLACC menampilkan rincian skor indikator.
+        //         |--------------------------------------------------------------------------
+        //         */
+        //         $metode = (string) ($nyeri->METODE ?? '');
+        //         $skala = $this->value($nyeri->SKALA ?? null);
 
-                if (in_array($metode, ['1', '5'], true)) {
+        //         if (in_array($metode, ['1', '5'], true)) {
 
-                    // NRS / VAS: tanpa slider dan tanpa rincian indikator
-                    $detailNyeri[] = 'Skala Nyeri: '
-                        . ($skala !== '' ? $skala : '-');
+        //             // NRS / VAS: tanpa slider dan tanpa rincian indikator
+        //             $detailNyeri[] = 'Skala Nyeri: '
+        //                 . ($skala !== '' ? $skala : '-');
 
-                    $interpretasiNyeri = '';
+        //             $interpretasiNyeri = '';
 
-                    if ($skala !== '' && is_numeric($skala)) {
-                        $nilaiSkala = (float) $skala;
+        //             if ($skala !== '' && is_numeric($skala)) {
+        //                 $nilaiSkala = (float) $skala;
 
-                        if ($nilaiSkala == 0) {
-                            $interpretasiNyeri = 'Tidak nyeri';
-                        } elseif ($nilaiSkala <= 3) {
-                            $interpretasiNyeri = 'Nyeri ringan';
-                        } elseif ($nilaiSkala <= 6) {
-                            $interpretasiNyeri = 'Nyeri sedang';
-                        } else {
-                            $interpretasiNyeri = 'Nyeri berat';
-                        }
-                    }
+        //                 if ($nilaiSkala == 0) {
+        //                     $interpretasiNyeri = 'Tidak nyeri';
+        //                 } elseif ($nilaiSkala <= 3) {
+        //                     $interpretasiNyeri = 'Nyeri ringan';
+        //                 } elseif ($nilaiSkala <= 6) {
+        //                     $interpretasiNyeri = 'Nyeri sedang';
+        //                 } else {
+        //                     $interpretasiNyeri = 'Nyeri berat';
+        //                 }
+        //             }
 
-                    if ($interpretasiNyeri !== '') {
-                        $detailNyeri[] =
-                            'Interpretasi: ' . $interpretasiNyeri;
-                    }
+        //             if ($interpretasiNyeri !== '') {
+        //                 $detailNyeri[] =
+        //                     'Interpretasi: ' . $interpretasiNyeri;
+        //             }
 
-                } elseif ($metode === '2') {
+        //         } elseif ($metode === '2') {
 
-                    // BPS
-                    $detailNyeri[] = 'Rincian Skor BPS:';
+        //             // BPS
+        //             $detailNyeri[] = 'Rincian Skor BPS:';
 
-                    foreach ([
-                        'SKOR1' => 'Indikator 1',
-                        'SKOR2' => 'Indikator 2',
-                        'SKOR3' => 'Indikator 3',
-                    ] as $kolom => $label) {
-                        $detailNyeri[] = '   '
-                            . $label . ': '
-                            . $this->value($nyeri->{$kolom} ?? null);
-                    }
+        //             foreach ([
+        //                 'SKOR1' => 'Indikator 1',
+        //                 'SKOR2' => 'Indikator 2',
+        //                 'SKOR3' => 'Indikator 3',
+        //             ] as $kolom => $label) {
+        //                 $detailNyeri[] = '   '
+        //                     . $label . ': '
+        //                     . $this->value($nyeri->{$kolom} ?? null);
+        //             }
 
-                    $detailNyeri[] = 'Skala Nyeri Total: '
-                        . ($skala !== '' ? $skala : '-');
+        //             $detailNyeri[] = 'Skala Nyeri Total: '
+        //                 . ($skala !== '' ? $skala : '-');
 
-                    if ($skala !== '' && is_numeric($skala)) {
-                        $nilaiSkala = (float) $skala;
+        //             if ($skala !== '' && is_numeric($skala)) {
+        //                 $nilaiSkala = (float) $skala;
 
-                        $interpretasiNyeri = match (true) {
-                            $nilaiSkala <= 3 => 'Tidak nyeri',
-                            $nilaiSkala <= 6 => 'Nyeri ringan',
-                            $nilaiSkala <= 9 => 'Nyeri sedang',
-                            default => 'Nyeri berat',
-                        };
+        //                 $interpretasiNyeri = match (true) {
+        //                     $nilaiSkala <= 3 => 'Tidak nyeri',
+        //                     $nilaiSkala <= 6 => 'Nyeri ringan',
+        //                     $nilaiSkala <= 9 => 'Nyeri sedang',
+        //                     default => 'Nyeri berat',
+        //                 };
 
-                        $detailNyeri[] =
-                            'Interpretasi: ' . $interpretasiNyeri;
-                    }
+        //                 $detailNyeri[] =
+        //                     'Interpretasi: ' . $interpretasiNyeri;
+        //             }
 
-                } elseif ($metode === '3') {
+        //         } elseif ($metode === '3') {
 
-                    // NIPS
-                    $detailNyeri[] = 'Rincian Skor NIPS:';
+        //             // NIPS
+        //             $detailNyeri[] = 'Rincian Skor NIPS:';
 
-                    foreach ([
-                        'SKOR1' => 'Ekspresi wajah',
-                        'SKOR2' => 'Tangisan',
-                        'SKOR3' => 'Gerakan lengan',
-                        'SKOR4' => 'Gerakan tungkai',
-                        'SKOR5' => 'Status terjaga',
-                        'SKOR6' => 'Pola napas',
-                    ] as $kolom => $label) {
-                        $detailNyeri[] = '   '
-                            . $label . ': '
-                            . $this->value($nyeri->{$kolom} ?? null);
-                    }
+        //             foreach ([
+        //                 'SKOR1' => 'Ekspresi wajah',
+        //                 'SKOR2' => 'Tangisan',
+        //                 'SKOR3' => 'Gerakan lengan',
+        //                 'SKOR4' => 'Gerakan tungkai',
+        //                 'SKOR5' => 'Status terjaga',
+        //                 'SKOR6' => 'Pola napas',
+        //             ] as $kolom => $label) {
+        //                 $detailNyeri[] = '   '
+        //                     . $label . ': '
+        //                     . $this->value($nyeri->{$kolom} ?? null);
+        //             }
 
-                    $detailNyeri[] = 'Skala Nyeri Total: '
-                        . ($skala !== '' ? $skala : '-');
+        //             $detailNyeri[] = 'Skala Nyeri Total: '
+        //                 . ($skala !== '' ? $skala : '-');
 
-                    if ($skala !== '' && is_numeric($skala)) {
-                        $detailNyeri[] =
-                            'Interpretasi: '
-                            . ((float) $skala > 3
-                                ? 'Nyeri'
-                                : 'Tidak nyeri');
-                    }
+        //             if ($skala !== '' && is_numeric($skala)) {
+        //                 $detailNyeri[] =
+        //                     'Interpretasi: '
+        //                     . ((float) $skala > 3
+        //                         ? 'Nyeri'
+        //                         : 'Tidak nyeri');
+        //             }
 
-                } elseif ($metode === '4') {
+        //         } elseif ($metode === '4') {
 
-                    // FLACC
-                    $detailNyeri[] = 'Rincian Skor FLACC:';
+        //             // FLACC
+        //             $detailNyeri[] = 'Rincian Skor FLACC:';
 
-                    foreach ([
-                        'SKOR1' => 'Wajah',
-                        'SKOR2' => 'Kaki',
-                        'SKOR3' => 'Aktivitas',
-                        'SKOR4' => 'Menangis',
-                        'SKOR5' => 'Bersuara',
-                    ] as $kolom => $label) {
-                        $detailNyeri[] = '   '
-                            . $label . ': '
-                            . $this->value($nyeri->{$kolom} ?? null);
-                    }
+        //             foreach ([
+        //                 'SKOR1' => 'Wajah',
+        //                 'SKOR2' => 'Kaki',
+        //                 'SKOR3' => 'Aktivitas',
+        //                 'SKOR4' => 'Menangis',
+        //                 'SKOR5' => 'Bersuara',
+        //             ] as $kolom => $label) {
+        //                 $detailNyeri[] = '   '
+        //                     . $label . ': '
+        //                     . $this->value($nyeri->{$kolom} ?? null);
+        //             }
 
-                    $detailNyeri[] = 'Skala Nyeri Total: '
-                        . ($skala !== '' ? $skala : '-');
-                }
+        //             $detailNyeri[] = 'Skala Nyeri Total: '
+        //                 . ($skala !== '' ? $skala : '-');
+        //         }
 
-                /*
-                |--------------------------------------------------------------------------
-                | DETAIL KELUHAN NYERI
-                |--------------------------------------------------------------------------
-                */
-                foreach ([
-                    'PENCETUS' => 'Pencetus',
-                    'GAMBARAN' => 'Gambaran',
-                    'DURASI'   => 'Durasi',
-                    'LOKASI'   => 'Lokasi',
-                ] as $kolom => $label) {
+        //         /*
+        //         |--------------------------------------------------------------------------
+        //         | DETAIL KELUHAN NYERI
+        //         |--------------------------------------------------------------------------
+        //         */
+        //         foreach ([
+        //             'PENCETUS' => 'Pencetus',
+        //             'GAMBARAN' => 'Gambaran',
+        //             'DURASI'   => 'Durasi',
+        //             'LOKASI'   => 'Lokasi',
+        //         ] as $kolom => $label) {
 
-                    $nilai = $this->value($nyeri->{$kolom} ?? null);
+        //             $nilai = $this->value($nyeri->{$kolom} ?? null);
 
-                    $detailNyeri[] = $label . ': '
-                        . ($nilai !== '' ? $nilai : '-');
-                }
-            }
-        }
+        //             $detailNyeri[] = $label . ': '
+        //                 . ($nilai !== '' ? $nilai : '-');
+        //         }
+        //     }
+        // }
 
         /*
         |--------------------------------------------------------------------------
@@ -2996,9 +3003,10 @@ class GDPrintService implements PrintDataInterface
             // 'RISIKO_JATUH_GET_UP_AND_GO' => $formatLines($getUpAndGoText),
             // 'SKRINING_GIZI_MUST' => $formatLines($mustText),
             // 'SKRINING_GIZI_STRONG_KID' => $formatLines($strongKidText),
-            'SKRINING_NYERI' => $this->placeholder(
-                implode("\n", $detailNyeri)
-            ),
+            // 'SKRINING_NYERI' => $this->placeholder(
+            //     implode("\n", $detailNyeri)
+            // ),
+            'SKRINING_NYERI' => $this->skrining_nyeri->getData($kunjungan),
             'RISIKO_JATUH' => $risikoJatuh,
             'SKRINING_GIZI' => $skriningGizi,
 

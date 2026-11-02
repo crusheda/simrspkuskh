@@ -568,11 +568,11 @@
                 }
 
                 // Perilaku normal ketika halaman dibuka langsung.
-                if (document.referrer) {
-                    window.history.back();
-                } else {
-                    window.location.href = "{{ route('v2.emr') }}";
-                }
+                // if (document.referrer) {
+                //     window.history.back();
+                // } else {
+                //     window.location.href = "{{ route('v2.emr') }}";
+                // }
 
             });
 

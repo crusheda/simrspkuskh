@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Services\EMR\Print\components;
+namespace App\Services\EMR\Print\components;
 
 use Illuminate\Support\Facades\DB;
 
@@ -12,229 +12,237 @@ class skrining_nyeri
      * Query database dan format hasil skrining nyeri.
      * ========================================================================
      */
-    public static function getData(string $kunjungan): string
+    public function getData(string $kunjungan): string
     {
-        /*
-        |--------------------------------------------------------------------------
-        | QUERY DATA SKRINING NYERI
-        |--------------------------------------------------------------------------
-        */
-
         $nyeri = DB::table('medicalrecord.penilaian_nyeri')
             ->where('KUNJUNGAN', $kunjungan)
-            ->whereIn('STATUS', [1, 2])
+            ->where('STATUS', 1)
             ->orderByDesc('ID')
-            ->first();
+            ->first([
+                'NYERI',
+                'ONSET',
+                'SKALA',
+                'METODE',
+                'SKOR1',
+                'SKOR2',
+                'SKOR3',
+                'SKOR4',
+                'SKOR5',
+                'SKOR6',
+                'PENCETUS',
+                'GAMBARAN',
+                'DURASI',
+                'LOKASI',
+            ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | JIKA DATA TIDAK ADA
-        |--------------------------------------------------------------------------
-        */
+        $centangNyeri = static function ($nilai, $pilihan): string {
+            return (string) ($nilai ?? '') === (string) $pilihan
+                ? '☑'
+                : '☐';
+        };
+
+        $detailNyeri = [];
 
         if (!$nyeri) {
-            return 'Tidak Ada';
-        }
 
-        /*
-        |--------------------------------------------------------------------------
-        | HELPER VALUE
-        |--------------------------------------------------------------------------
-        */
+            $detailNyeri[] = 'Nyeri: Tidak';
 
-        $value = static function ($raw): string {
-            if ($raw === null) {
-                return '';
-            }
+        } else {
 
-            if (is_bool($raw)) {
-                return $raw ? '1' : '0';
-            }
+            $nyeriYa = (string) ($nyeri->NYERI ?? '') === '1';
 
-            return trim((string) $raw);
-        };
+            $detailNyeri[] = $nyeriYa ? 'Nyeri: Ya' : 'Nyeri: Tidak';
 
-        /*
-        |--------------------------------------------------------------------------
-        | HELPER PUSH
-        |--------------------------------------------------------------------------
-        */
+            if ($nyeriYa) {
+                /*
+                |--------------------------------------------------------------------------
+                | ONSET
+                |--------------------------------------------------------------------------
+                */
+                $detailNyeri[] = 'Onset: '
+                    . $centangNyeri($nyeri->ONSET, 1) . ' Akut'
+                    . '     '
+                    . $centangNyeri($nyeri->ONSET, 2) . ' Kronis';
 
-        $push = static function (
-            array &$lines,
-            string $label,
-            $raw,
-            array $map = []
-        ) use ($value): void {
-            $key = $value($raw);
+                /*
+                |--------------------------------------------------------------------------
+                | METODE PENILAIAN
+                |--------------------------------------------------------------------------
+                */
+                $metodeNyeri = [
+                    1 => 'NRS',
+                    2 => 'BPS',
+                    3 => 'NIPS',
+                    4 => 'FLACC',
+                    5 => 'VAS',
+                ];
 
-            if ($key === '') {
-                return;
-            }
+                $barisMetode = [];
 
-            $mapped = array_key_exists($key, $map)
-                ? $map[$key]
-                : (
-                    ($key === '0' && $map !== [])
-                        ? 'Belum diisi'
-                        : $key
-                );
+                foreach ($metodeNyeri as $nilai => $label) {
+                    $barisMetode[] =
+                        $centangNyeri($nyeri->METODE, $nilai)
+                        . ' ' . $label;
+                }
 
-            $lines[] = $label . ': ' . $mapped;
-        };
+                $detailNyeri[] = 'Metode: '
+                    . implode('     ', $barisMetode);
 
-        /*
-        |--------------------------------------------------------------------------
-        | FORMAT SKRINING NYERI
-        |--------------------------------------------------------------------------
-        */
+                /*
+                |--------------------------------------------------------------------------
+                | SKALA NYERI
+                |--------------------------------------------------------------------------
+                | NRS dan VAS cukup menampilkan skala langsung.
+                | BPS, NIPS dan FLACC menampilkan rincian skor indikator.
+                |--------------------------------------------------------------------------
+                */
+                $metode = (string) ($nyeri->METODE ?? '');
+                $skala = $this->value($nyeri->SKALA ?? null);
 
-        $nyeriText = [];
+                if (in_array($metode, ['1', '5'], true)) {
 
-        // Nyeri
-        $push(
-            $nyeriText,
-            'Nyeri',
-            $nyeri->NYERI ?? null,
-            [
-                '0' => 'Tidak',
-                '1' => 'Ya',
-            ]
-        );
+                    // NRS / VAS: tanpa slider dan tanpa rincian indikator
+                    $detailNyeri[] = 'Skala Nyeri: '
+                        . ($skala !== '' ? $skala : '-');
 
-        // Onset
-        $push(
-            $nyeriText,
-            'Onset',
-            $nyeri->ONSET ?? null,
-            [
-                '1' => 'Akut',
-                '2' => 'Kronis',
-            ]
-        );
+                    $interpretasiNyeri = '';
 
-        /*
-        |--------------------------------------------------------------------------
-        | SKALA NYERI
-        |--------------------------------------------------------------------------
-        */
+                    if ($skala !== '' && is_numeric($skala)) {
+                        $nilaiSkala = (float) $skala;
 
-        $skalaNyeri = $value($nyeri->SKALA ?? null);
+                        if ($nilaiSkala == 0) {
+                            $interpretasiNyeri = 'Tidak nyeri';
+                        } elseif ($nilaiSkala <= 3) {
+                            $interpretasiNyeri = 'Nyeri ringan';
+                        } elseif ($nilaiSkala <= 6) {
+                            $interpretasiNyeri = 'Nyeri sedang';
+                        } else {
+                            $interpretasiNyeri = 'Nyeri berat';
+                        }
+                    }
 
-        if ($skalaNyeri !== '') {
-            $nyeriText[] = 'Skala nyeri: ' . $skalaNyeri;
+                    if ($interpretasiNyeri !== '') {
+                        $detailNyeri[] =
+                            'Interpretasi: ' . $interpretasiNyeri;
+                    }
 
-            $metodeRaw = $value($nyeri->METODE ?? null);
+                } elseif ($metode === '2') {
 
-            if (in_array($metodeRaw, ['1', '5'], true)) {
-                $skor = (int) $skalaNyeri;
+                    // BPS
+                    $detailNyeri[] = 'Rincian Skor BPS:';
 
-                $interpretasi = $skor === 0
-                    ? 'Tidak nyeri'
-                    : (
-                        $skor <= 3
-                            ? 'Nyeri ringan'
-                            : (
-                                $skor <= 6
-                                    ? 'Nyeri sedang'
-                                    : 'Nyeri berat'
-                            )
-                    );
+                    foreach ([
+                        'SKOR1' => 'Indikator 1',
+                        'SKOR2' => 'Indikator 2',
+                        'SKOR3' => 'Indikator 3',
+                    ] as $kolom => $label) {
+                        $detailNyeri[] = '   '
+                            . $label . ': '
+                            . $this->value($nyeri->{$kolom} ?? null);
+                    }
 
-                $nyeriText[] = 'Interpretasi skala: ' . $interpretasi;
-            }
-        }
+                    $detailNyeri[] = 'Skala Nyeri Total: '
+                        . ($skala !== '' ? $skala : '-');
 
-        /*
-        |--------------------------------------------------------------------------
-        | METODE PENILAIAN NYERI
-        |--------------------------------------------------------------------------
-        */
+                    if ($skala !== '' && is_numeric($skala)) {
+                        $nilaiSkala = (float) $skala;
 
-        $metodeNyeriMap = [
-            '1' => 'NRS',
-            '2' => 'BPS',
-            '3' => 'NIPS',
-            '4' => 'FLACC',
-            '5' => 'VAS',
-        ];
+                        $interpretasiNyeri = match (true) {
+                            $nilaiSkala <= 3 => 'Tidak nyeri',
+                            $nilaiSkala <= 6 => 'Nyeri ringan',
+                            $nilaiSkala <= 9 => 'Nyeri sedang',
+                            default => 'Nyeri berat',
+                        };
 
-        $metodeNyeriRaw = $value($nyeri->METODE ?? null);
+                        $detailNyeri[] =
+                            'Interpretasi: ' . $interpretasiNyeri;
+                    }
 
-        $push(
-            $nyeriText,
-            'Metode penilaian',
-            $metodeNyeriRaw,
-            $metodeNyeriMap
-        );
+                } elseif ($metode === '3') {
 
-        /*
-        |--------------------------------------------------------------------------
-        | RINCIAN SKOR BPS / NIPS / FLACC
-        |--------------------------------------------------------------------------
-        */
+                    // NIPS
+                    $detailNyeri[] = 'Rincian Skor NIPS:';
 
-        if (in_array($metodeNyeriRaw, ['2', '3', '4'], true)) {
-            $maks = match ($metodeNyeriRaw) {
-                '2' => 3,
-                '3' => 6,
-                '4' => 5,
-                default => 0,
-            };
+                    foreach ([
+                        'SKOR1' => 'Ekspresi wajah',
+                        'SKOR2' => 'Tangisan',
+                        'SKOR3' => 'Gerakan lengan',
+                        'SKOR4' => 'Gerakan tungkai',
+                        'SKOR5' => 'Status terjaga',
+                        'SKOR6' => 'Pola napas',
+                    ] as $kolom => $label) {
+                        $detailNyeri[] = '   '
+                            . $label . ': '
+                            . $this->value($nyeri->{$kolom} ?? null);
+                    }
 
-            $komponen = [];
+                    $detailNyeri[] = 'Skala Nyeri Total: '
+                        . ($skala !== '' ? $skala : '-');
 
-            for ($i = 1; $i <= $maks; $i++) {
-                $score = $value($nyeri->{'SKOR' . $i} ?? null);
+                    if ($skala !== '' && is_numeric($skala)) {
+                        $detailNyeri[] =
+                            'Interpretasi: '
+                            . ((float) $skala > 3
+                                ? 'Nyeri'
+                                : 'Tidak nyeri');
+                    }
 
-                if ($score !== '') {
-                    $komponen[] = 'Komponen ' . $i . ': ' . $score;
+                } elseif ($metode === '4') {
+
+                    // FLACC
+                    $detailNyeri[] = 'Rincian Skor FLACC:';
+
+                    foreach ([
+                        'SKOR1' => 'Wajah',
+                        'SKOR2' => 'Kaki',
+                        'SKOR3' => 'Aktivitas',
+                        'SKOR4' => 'Menangis',
+                        'SKOR5' => 'Bersuara',
+                    ] as $kolom => $label) {
+                        $detailNyeri[] = '   '
+                            . $label . ': '
+                            . $this->value($nyeri->{$kolom} ?? null);
+                    }
+
+                    $detailNyeri[] = 'Skala Nyeri Total: '
+                        . ($skala !== '' ? $skala : '-');
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | DETAIL KELUHAN NYERI
+                |--------------------------------------------------------------------------
+                */
+                foreach ([
+                    'PENCETUS' => 'Pencetus',
+                    'GAMBARAN' => 'Gambaran',
+                    'DURASI'   => 'Durasi',
+                    'LOKASI'   => 'Lokasi',
+                ] as $kolom => $label) {
+
+                    $nilai = $this->value($nyeri->{$kolom} ?? null);
+
+                    $detailNyeri[] = $label . ': '
+                        . ($nilai !== '' ? $nilai : '-');
                 }
             }
-
-            if ($komponen) {
-                $nyeriText[] = 'Rincian skor '
-                    . ($metodeNyeriMap[$metodeNyeriRaw] ?? '')
-                    . ': '
-                    . implode('; ', $komponen);
-            }
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | KETERANGAN TAMBAHAN
-        |--------------------------------------------------------------------------
-        */
-
-        foreach ([
-            'PENCETUS' => 'Pencetus',
-            'GAMBARAN' => 'Gambaran nyeri',
-            'DURASI'   => 'Durasi',
-            'LOKASI'   => 'Lokasi',
-        ] as $column => $label) {
-            $push(
-                $nyeriText,
-                $label,
-                $nyeri->{$column} ?? null
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | RETURN HASIL
-        |--------------------------------------------------------------------------
-        */
-
-        $nyeriText = array_values(
-            array_filter(
-                $nyeriText,
-                static fn ($line) =>
-                    $line !== null && trim((string) $line) !== ''
-            )
-        );
-
-        return $nyeriText
-            ? implode("\n", $nyeriText)
+        return $detailNyeri
+            ? implode("\n", $detailNyeri)
             : 'Tidak Ada';
+    }
+
+    private function value($value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+
+        if (is_bool($value)) {
+            return $value ? 'Ya' : 'Tidak';
+        }
+
+        return trim((string) $value);
     }
 }
