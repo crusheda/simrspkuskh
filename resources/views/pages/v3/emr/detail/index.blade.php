@@ -8,6 +8,27 @@
 @endpush
 
 @section('content')
+{{-- ==========================================================
+    GLOBAL DATA EMR
+========================================================== --}}
+<script>
+    window.EMRData = {
+        kunjungan: @json($list["KUNJUNGAN"]),
+        ruangan: @json($list["show"]->IDRUANGAN),
+        rm: @json($list["show"]->NORM),
+        namaPasien: @json($list["show"]->NAMAPASIEN),
+        tgl_sep: @json($list["show"]->TGLSEP),
+        sep: @json($list["show"]->NOSEP),
+        tgl_kfr: @json(now()->format('Y-m-d H:i:s')),
+        tgl_masuk: @json($list["show"]->MASUK),
+        tgl_keluar: @json($list['show']->KELUAR),
+        tgl_sep_date: @json(
+            $list["show"]->TGLSEP
+                ? substr($list["show"]->TGLSEP, 0, 10)
+                : null
+        )
+    };
+</script>
 <div class="row gy-4">
     <div class="col-sm-12">
         <div class="card mb-2" id="btn-top-detail-kunjungan">
@@ -441,17 +462,19 @@
             resetFormCPPT
         };
 
-        // INIT VARIABLE
-        const kunjungan = @json($list["KUNJUNGAN"]);
-        const ruangan = @json($list["show"]->IDRUANGAN);
-        const rm = @json($list["show"]->NORM);
-        const namaPasien = @json($list["show"]->NAMAPASIEN);
-        const tgl_sep = @json($list["show"]->TGLSEP);
-        const sep = @json($list["show"]->NOSEP);
-        const tgl_kfr = @json(now()->format('Y-m-d H:i:s'));
-        const tgl_masuk = @json($list["show"]->MASUK);
-        const tgl_keluar = @json($list['show']->KELUAR);
-        const tgl_sep_date = tgl_sep?tgl_sep.substring(0, 10):null;
+        // Init Variabel Global into Variabel Constant
+        const {
+            kunjungan,
+            ruangan,
+            rm,
+            namaPasien,
+            tgl_sep,
+            sep,
+            tgl_kfr,
+            tgl_masuk,
+            tgl_keluar,
+            tgl_sep_date
+        } = window.EMRData;
 
         let dataPPA = [];
         let dataDokter = [];

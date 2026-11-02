@@ -598,11 +598,11 @@ class GDPrintService implements PrintDataInterface
         // Cari deskripsi berdasarkan ID master. Jika tidak ditemukan,
         // gunakan ID tersimpan agar informasi tidak hilang saat dicetak.
         $caraKeluar = $caraKeluarId !== null && $caraKeluarId !== ''
-            ? (DB::table('master.referensi')->where('ID', $caraKeluarId)->where('STATUS', 1)->value('DESKRIPSI') ?? (string) $caraKeluarId)
+            ? (DB::table('master.referensi')->where('JENIS', 45)->where('ID', $caraKeluarId)->where('STATUS', 1)->value('DESKRIPSI') ?? (string) $caraKeluarId)
             : null;
 
         $keadaanKeluar = $keadaanKeluarId !== null && $keadaanKeluarId !== ''
-            ? (DB::table('master.referensi')->where('ID', $keadaanKeluarId)->where('STATUS', 1)->value('DESKRIPSI') ?? (string) $keadaanKeluarId)
+            ? (DB::table('master.referensi')->where('JENIS', 46)->where('ID', $keadaanKeluarId)->where('STATUS', 1)->value('DESKRIPSI') ?? (string) $keadaanKeluarId)
             : null;
 
         $caraPulangText = implode("\n", array_filter([
@@ -2429,7 +2429,7 @@ class GDPrintService implements PrintDataInterface
                 );
 
             $mustText[] =
-                'Skor MUST: ' . $mustScore
+                'Skor MST: ' . $mustScore
                 . ' (' . $mustCategory . ')';
         }
 

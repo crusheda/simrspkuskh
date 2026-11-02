@@ -513,4 +513,5 @@ class EMR extends Component
             'kunjungan_sebelumnya' => $pulangSebelumnya->KUNJUNGAN,
         ];
     }
+    
 }

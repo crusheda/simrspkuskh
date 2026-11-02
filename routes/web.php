@@ -56,7 +56,7 @@ Route::prefix('v3')->group(function () {
 
 
 // =====================================================
-// SIRMED v3 - DASHBOARD
+// SIRMED v3
 // =====================================================
 Route::middleware(['auth'])
     ->prefix('v3')

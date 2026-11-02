@@ -78,28 +78,7 @@ class PengkajianRawatJalanAnakController extends Controller
             'jenis_alergi' => $jenis_alergi,
             'kesadaran' => $kesadaran,
         ];
-        // print_r($data);
-        // die();
+
         return view('pages.v2.medicalrecord.detail.form.pengkajian.rawat-jalan.anak.index')->with('list',$data);
-    }
-
-    function simpanFormDokterRJA(Request $request)
-    {
-       
-    }
-
-    public function getFormDokterRJA($kunjungan)
-    {
-        
-    }
-
-    function simpanFormPerawatRJA(Request $request)
-    {
-    
-    }
-
-    public function getFormPerawatRJA($kunjungan)
-    {
-
     }
 }
