@@ -9,17 +9,19 @@
         <table class="table table-bordered table-display mb-0">
             <colgroup>
                 <col style="width: 1%;">
+                <col style="width: 10%;">
                 <col>
                 <col style="width: 5%;">
                 <col style="width: 5%;">
                 <col style="width: 5%;">
-                <col style="width: 5%;">
+                <col>
                 <col style="width: 5%;">
                 <col style="width: 20%;">
             </colgroup>
             <thead>
                 <tr class="table-light">
                     <th>No</th>
+                    <th>Ruangan</th>
                     <th>Nama Tindakan</th>
                     <th>Klinis</th>
                     <th>Kesan</th>
@@ -31,7 +33,7 @@
             </thead>
             <tbody id="tblRadBody">
                 <tr>
-                    <td colspan="8" class="text-center">Tidak ada hasil radiologi</td>
+                    <td colspan="9" class="text-center">Tidak ada hasil radiologi</td>
                 </tr>
             </tbody>
         </table>
@@ -54,7 +56,7 @@
                 $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
                 $("#tblRadBody").html(`
                     <tr>
-                        <td colspan="8" class="text-center">
+                        <td colspan="9" class="text-center">
                             <i class="ri-refresh-line ri-spin me-1"></i>
                             Memuat data...
                         </td>
@@ -69,6 +71,7 @@
                         html += `
                             <tr>
                                 <td>${i + 1}</td>
+                                <td>${v.UNITPENGANTAR ?? ''}</td>
                                 <td>${v.NAMATINDAKAN ?? ''}</td>
                                 <td>${v.KLINIS ?? ''}</td>
                                 <td>${v.KESAN ?? ''}</td>
@@ -82,7 +85,7 @@
                 } else {
                     html = `
                         <tr>
-                            <td colspan="8" class="text-center">
+                            <td colspan="9" class="text-center">
                                 Tidak ada hasil radiologi
                             </td>
                         </tr>
@@ -94,7 +97,7 @@
             error: function (xhr) {
                 $("#tblRadBody").html(`
                     <tr>
-                        <td colspan="7" class="text-center text-danger">
+                        <td colspan="9" class="text-center text-danger">
                             Gagal memuat data.
                         </td>
                     </tr>

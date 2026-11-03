@@ -9,7 +9,8 @@
         <table class="table table-bordered table-display mb-0">
             <colgroup>
                 <col style="width: 1%;">
-                <col style="width: 20%;">
+                <col style="width: 5%;">
+                <col style="width: 15%;">
                 <col>
                 <col style="width: 5%;">
                 <col style="width: 5%;">
@@ -19,17 +20,18 @@
             <thead>
                 <tr class="table-light">
                     <th>No</th>
+                    <th>Ruangan</th>
                     <th>Jenis Pemeriksaan</th>
                     <th>Parameter</th>
                     <th>Hasil</th>
                     <th>Satuan</th>
                     <th>Nilai Normal</th>
-                    <th>Keterangan</th>
+                    <th>Keterangan / Catatan</th>
                 </tr>
             </thead>
             <tbody id="tblLabBody">
                 <tr>
-                    <td colspan="7" class="text-center">Tidak ada hasil laboratorium</td>
+                    <td colspan="8" class="text-center">Tidak ada hasil laboratorium</td>
                 </tr>
             </tbody>
         </table>
@@ -52,7 +54,7 @@
                 $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
                 $("#tblLabBody").html(`
                     <tr>
-                        <td colspan="7" class="text-center">
+                        <td colspan="8" class="text-center">
                             <i class="ri-refresh-line ri-spin me-1"></i>
                             Memuat data...
                         </td>
@@ -67,19 +69,20 @@
                         html += `
                             <tr>
                                 <td>${i + 1}</td>
+                                <td>${v.UNITPENGANTAR ?? ''}</td>
                                 <td>${v.NAMATINDAKAN ?? ''}</td>
                                 <td>${v.PARAMETER ?? ''}</td>
                                 <td>${v.HASIL ?? ''}</td>
                                 <td>${v.SATUAN ?? ''}</td>
                                 <td>${v.NILAI_RUJUKAN ?? ''}</td>
-                                <td>${v.KETERANGAN ?? ''}</td>
+                                <td>${v.CATATAN ?? ''}${v.KETERANGAN ? '<br>' + v.KETERANGAN : ''}</td>
                             </tr>
                         `;
                     });
                 } else {
                     html = `
                         <tr>
-                            <td colspan="7" class="text-center">
+                            <td colspan="8" class="text-center">
                                 Tidak ada hasil laboratorium
                             </td>
                         </tr>
@@ -91,7 +94,7 @@
             error: function (xhr) {
                 $("#tblLabBody").html(`
                     <tr>
-                        <td colspan="7" class="text-center text-danger">
+                        <td colspan="8" class="text-center text-danger">
                             Gagal memuat data.
                         </td>
                     </tr>

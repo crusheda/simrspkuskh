@@ -40,10 +40,10 @@
             <div class="col-md-12 mb-3">
                 <div class="card card-body border border-dashed border-info mb-0">
                     <div class="mb-3">
-                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_lab')
+                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_laborat')
                     </div>
                     <div>
-                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_rad')
+                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_radiologi')
                     </div>
                 </div>
             </div>
