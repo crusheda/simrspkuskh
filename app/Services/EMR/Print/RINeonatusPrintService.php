@@ -433,6 +433,53 @@ class RINeonatusPrintService implements PrintDataInterface
                 $daftarRiwayatKeluarga[] = $lainnya;
             }
         }
+        /*
+        |--------------------------------------------------------------------------
+        | RIWAYAT TUMBUH KEMBANG, KELAHIRAN, DAN IMUNISASI
+        |--------------------------------------------------------------------------
+        */
+        $statusReproduksi = DB::table('medicalrecord.sirmed_status_reproduksi')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first([
+                'RIWAYAT_TUMBUH_KEMBANG',
+                'RIWAYAT_KELAHIRAN',
+                'USIA_KEHAMILAN',
+                'PERSALINAN',
+                'PERSALINAN_LAINNYA',
+            ]);
+
+        $riwayatImunisasi = DB::table('medicalrecord.riwayat_tumbuh_kembang')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->orderByDesc('ID')
+            ->first([
+                'IMUNISASI',
+                'IMUNISASI_LAIN',
+            ]);
+
+        $persalinan = match ((string) ($statusReproduksi->PERSALINAN ?? '')) {
+            '1' => 'Sectio Caesarea',
+            '2' => 'Spontan',
+            '3' => 'Vacum',
+            '4' => 'Lainnya'
+                . (($detail = $this->value(
+                    $statusReproduksi->PERSALINAN_LAINNYA ?? null
+                )) !== '' ? ': ' . $detail : ''),
+            default => '',
+        };
+
+        $imunisasi = match ((string) ($riwayatImunisasi->IMUNISASI ?? '')) {
+            '1' => 'Imunisasi Dasar Lengkap',
+            '2' => 'Imunisasi Dasar Tidak Lengkap',
+            '3' => 'Tidak Imunisasi',
+            '4' => 'Lain-lain'
+                . (($detail = $this->value(
+                    $riwayatImunisasi->IMUNISASI_LAIN ?? null
+                )) !== '' ? ': ' . $detail : ''),
+            default => '',
+        };
 
         /*
         |--------------------------------------------------------------------------
@@ -834,6 +881,19 @@ class RINeonatusPrintService implements PrintDataInterface
             'RIWAYAT_PENYAKIT_KELUARGA' => $this->placeholder(
                 implode(', ', $daftarRiwayatKeluarga)
             ),
+            'RIWAYAT_TUMBUH_KEMBANG' => $this->placeholder(
+                $statusReproduksi->RIWAYAT_TUMBUH_KEMBANG ?? null
+            ),
+            'RIWAYAT_KELAHIRAN' => $this->placeholder(
+                $statusReproduksi->RIWAYAT_KELAHIRAN ?? null
+            ),
+            'USIA_KEHAMILAN' => $this->placeholder(
+                isset($statusReproduksi->USIA_KEHAMILAN)
+                    ? $statusReproduksi->USIA_KEHAMILAN . ' Minggu'
+                    : null
+            ),
+            'PERSALINAN' => $this->placeholder($persalinan),
+            'RIWAYAT_IMUNISASI' => $this->placeholder($imunisasi),
 
             /*
             | TANDA VITAL DAN ANTROPOMETRI
