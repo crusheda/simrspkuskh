@@ -101,6 +101,19 @@
 
 <script>
     var $sectionGdD = $('#gd_dokter');
+
+        const {
+            kunjungan,
+            ruangan,
+            rm,
+            namaPasien,
+            tgl_sep,
+            sep,
+            tgl_kfr,
+            tgl_masuk,
+            tgl_keluar,
+            tgl_sep_date
+        } = window.EMRData;
     $(document).ready(function() {
 
     })

@@ -1483,10 +1483,10 @@
     'use strict';
     const $form = $('#form_laporan_anestesi');
     if (!$form.length) return;
-    const URL_FORM_GET = `/api/v2/emr/form/pengkajian/bedans/laporananestesi/${kunjungan}`;
-    const URL_FORM_SAVE = `/api/v2/emr/form/pengkajian/bedans/laporananestesi/${kunjungan}/simpan`;
-    const URL_MONITORING_GET = `/api/v2/emr/form/pengkajian/bedans/laporananestesi/${kunjungan}/monitoring`;
-    const URL_MONITORING_SAVE = `/api/v2/emr/form/pengkajian/bedans/laporananestesi/${kunjungan}/monitoring/simpan`;
+    const URL_FORM_GET = `/api/v2/emr/form/pengkajian/bedans/laporananestesi/${kunjungan}}`;
+    const URL_FORM_SAVE = `/api/v2/emr/form/pengkajian/bedans/laporananestesi/${kunjungan}}/simpan`;
+    const URL_MONITORING_GET = `/api/v2/emr/form/pengkajian/bedans/laporananestesi/${kunjungan}}/monitoring`;
+    const URL_MONITORING_SAVE = `/api/v2/emr/form/pengkajian/bedans/laporananestesi/${kunjungan}}/monitoring/simpan`;
     const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
     let isFormLoading = false;
     let isFormSaving = false;
@@ -2349,7 +2349,7 @@
     // TERPISAH DARI MONITORING ANESTESI LAMA
     // ==========================================================
     const BASE_URL =
-        `/api/v2/emr/form/pengkajian/bedans/laporananestesi/${kunjungan}`;
+        `/api/v2/emr/form/pengkajian/bedans/laporananestesi/${kunjungan}}`;
     const URL_DETAIL_GET =
         `${BASE_URL}/monitoring-detail`;
     const URL_DETAIL_SAVE =

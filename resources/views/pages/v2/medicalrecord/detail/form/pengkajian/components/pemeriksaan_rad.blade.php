@@ -47,7 +47,7 @@
         const $button = $('#btnRefreshRad');
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rad/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/rad/${kunjungan}}`,
             type: 'GET',
 
             beforeSend: function () {

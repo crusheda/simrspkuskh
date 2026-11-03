@@ -90,7 +90,7 @@
                                     </label>
                                 </div>
                             </div>
-                            
+
                             <div class="col mb-2">
                                 <div class="form-check">
                                     <input class="form-check-input check-primary" type="checkbox" name="tidak_kb" id="tidak_kb" value="1" >

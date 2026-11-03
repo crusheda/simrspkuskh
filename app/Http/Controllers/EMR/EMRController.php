@@ -1275,6 +1275,8 @@ class EMRController extends Controller
 
     public function loadFormPengkajian($form, $kunjungan)
     {
+        // print_r($kunjungan);
+        // die();
         $controllers = [
             'pengkajian-gd'                             => PengkajianGawatDaruratController::class,
 
