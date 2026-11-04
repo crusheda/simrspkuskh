@@ -189,7 +189,7 @@ class EMRController extends Controller
         // Daftar kategori dan prefix ruangan
         $kategoriRuangan = [
             1 => ['10201', '10207'],
-            2 => ['10202'],
+            2 => ['10202', '102010101'],
             3 => ['10203'],
             4 => ['10208'],
         ];
@@ -198,7 +198,7 @@ class EMRController extends Controller
         if ($user->hasRole('admin')) {
             $jenisPerawatan = [
                 1 => 'Rawat Jalan',
-                2 => 'Rawat Darurat (Tanpa Inap)',
+                2 => 'Rawat Darurat',
                 3 => 'Rawat Inap & Intensif',
                 4 => 'Operatif (OK)',
                 5 => 'Semua Perawatan',
@@ -221,6 +221,11 @@ class EMRController extends Controller
 
                 foreach ($aksesRuangan as $ruangan) {
                     foreach ($prefixes as $prefix) {
+                        // Kode Poli Umum ini masuk Rawat Darurat,
+                        // jadi jangan dihitung sebagai Rawat Jalan.
+                        if ($kategori === 1 && $ruangan === '102010101') {
+                            continue;
+                        }
                         // Akses ke ruangan induk maupun turunannya
                         if (
                             str_starts_with($ruangan, $prefix) ||
@@ -238,7 +243,7 @@ class EMRController extends Controller
             // Opsi 1–4 hanya muncul jika pengguna memiliki akses
             $namaKategori = [
                 1 => 'Rawat Jalan',
-                2 => 'Rawat Darurat (Tanpa Inap)',
+                2 => 'Rawat Darurat',
                 3 => 'Rawat Inap & Intensif',
                 4 => 'Operatif (OK)',
             ];
@@ -1174,7 +1179,7 @@ class EMRController extends Controller
                         ->where('ref.STATUS', 1)
                         ->where('ref.JENIS', 10);
                 })
-                ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
+                // ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
                 ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
                 ->leftJoin('bpjs.kunjungan AS kjs', function($join){
                     $join->on('kjs.noSEP','=','pj.NOMOR')
@@ -1245,8 +1250,8 @@ class EMRController extends Controller
                 ->when($rawat == 2, function ($query) use ($rawat) {
                     $query->where(function ($q) {
                         $q->where('tp.UTAMA', 1)
-                            ->where('tp.STATUS', 1)
-                            ->whereNull('pri.KUNJUNGAN');
+                            ->where('tp.STATUS', 1);
+                            // ->whereNull('pri.KUNJUNGAN');
                     });
                 })
 
