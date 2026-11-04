@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\EMR\Form;
 
 use App\Http\Controllers\Controller;
+use App\Helpers\EarlyWarningScoreHelper; // PENENTUAN SKORING EWSS / PEWSS TANDAVITAL
 use App\Traits\FieldEmpty;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -596,7 +597,10 @@ class AddOnPengkajianController extends Controller
             | agar pemeriksaan tanpa parameter tetap muncul
             |--------------------------------------------------------------------------
             */
-            ->join('master.tindakan as mt', 'tm.TINDAKAN', '=', 'mt.ID')
+            ->join('master.tindakan as mt', function ($join) {
+                $join->on('tm.TINDAKAN', '=', 'mt.ID')
+                    ->where('mt.STATUS', 1);
+            })
 
             /*
             |--------------------------------------------------------------------------
@@ -606,7 +610,7 @@ class AddOnPengkajianController extends Controller
             |--------------------------------------------------------------------------
             */
             ->leftJoin('master.parameter_tindakan_lab as ptl', function ($join) {
-                $join->on('mt.ID', '=', 'ptl.TINDAKAN')
+                $join->on('hlab.PARAMETER_TINDAKAN', '=', 'ptl.ID')
                     ->where('ptl.STATUS', 1)
                     ->whereRaw("TRIM(ptl.PARAMETER) <> ''");
             })
@@ -737,6 +741,7 @@ class AddOnPengkajianController extends Controller
                 | Jika belum ada hasil, tampilkan Belum ada hasil
                 |--------------------------------------------------------------------------
                 */
+                'hlab.TINDAKAN_MEDIS as KODE_TINDAKAN_MEDIS',
                 DB::raw("
                     IFNULL(
                         NULLIF(hlab.HASIL, ''),
@@ -11226,7 +11231,6 @@ class AddOnPengkajianController extends Controller
             // ==========================================================
             // DATA KUNJUNGAN
             // ==========================================================
-
             $getDataKunjungan = DB::table(
                 'pendaftaran.kunjungan as pk'
             )
@@ -11236,16 +11240,22 @@ class AddOnPengkajianController extends Controller
                     '=',
                     'pk.NOPEN'
                 )
+                ->leftJoin(
+                    'master.pasien as ps',
+                    'ps.NORM',
+                    '=',
+                    'pp.NORM'
+                )
                 ->select(
                     'pp.NORM',
-                    'pp.NOMOR as NOPEN'
+                    'pp.NOMOR as NOPEN',
+                    'ps.TANGGAL_LAHIR'
                 )
                 ->where(
                     'pk.NOMOR',
                     $request->NOKUNJ
                 )
                 ->first();
-
 
             if (!$getDataKunjungan) {
 
@@ -11257,7 +11267,6 @@ class AddOnPengkajianController extends Controller
                 ], 404);
 
             }
-
 
             // ==========================================================
             // PRIMARY SURVEY / TANDA VITAL
@@ -11346,6 +11355,9 @@ class AddOnPengkajianController extends Controller
 
                     'KULIT' =>
                         $request->input('kulit'),
+
+                    'WAKTU_PEMERIKSAAN' =>
+                        now(),
 
                     'OLEH' =>
                         auth()->id(),
@@ -11446,6 +11458,9 @@ class AddOnPengkajianController extends Controller
                     'KULIT' =>
                         $request->input('p_kulit'),
 
+                    'WAKTU_PEMERIKSAAN' =>
+                        now(),
+
                     'OLEH' =>
                         auth()->id(),
 
@@ -11459,6 +11474,73 @@ class AddOnPengkajianController extends Controller
 
             }
 
+            // ==========================================================
+            // HITUNG EWSS / PEWSS
+            // ==========================================================
+            // Ambil seluruh parameter dari array tanda vital.
+            // Tidak perlu membedakan dokter dan perawat lagi karena
+            // keduanya sudah menggunakan mapping yang sama.
+
+            // INPUT yg dibutuhkan untuk menghitung EWSS / PEWSS adalah:
+            // | No. | Parameter              | Dokter  | Perawat   |
+            // | --- | ---------------------- | ------- | --------- |
+            // | 1   | Frekuensi napas        | `fr`    | `p_fr`    |
+            // | 2   | Saturasi O₂ (SpO₂)     | `spo2`  | `p_spo2`  |
+            // | 3   | Alat bantu napas       | `abn`   | `p_abn`   |
+            // | 4   | Tekanan darah sistolik | `td_up` | `p_td_up` |
+            // | 5   | Frekuensi nadi         | `nadi`  | `p_nadi`  |
+            // | 6   | Suhu                   | `suhu`  | `p_suhu`  |
+            // | 7   | GCS Total              | `gcs_t` | `p_gcs_t` |
+
+            // $hasilSkoring = EarlyWarningScoreHelper::hitung(
+            //     [
+
+            //         'SISTOLIK' =>
+            //             $tandaVital['SISTOLIK'] ?? null,
+
+            //         'DISTOLIK' =>
+            //             $tandaVital['DISTOLIK'] ?? null,
+
+            //         'FREKUENSI_NADI' =>
+            //             $tandaVital['FREKUENSI_NADI'] ?? null,
+
+            //         'FREKUENSI_NAFAS' =>
+            //             $tandaVital['FREKUENSI_NAFAS'] ?? null,
+
+            //         'SUHU' =>
+            //             $tandaVital['SUHU'] ?? null,
+
+            //         'SATURASI_O2' =>
+            //             $tandaVital['SATURASI_O2'] ?? null,
+
+            //         'ALAT_BANTU_NAFAS' =>
+            //             $tandaVital['ALAT_BANTU_NAFAS'] ?? null,
+
+            //         'GCS' =>
+            //             $tandaVital['GCS'] ?? null,
+
+            //         'TINGKAT_KESADARAN' =>
+            //             $tandaVital['TINGKAT_KESADARAN'] ?? null,
+
+            //     ],
+
+            //     $getDataKunjungan->TANGGAL_LAHIR,
+
+            //     now()
+
+            // );
+
+            // ==========================================================
+            // MASUKKAN HASIL SKOR KE ARRAY TANDA VITAL
+            // ==========================================================
+            // $tandaVital['UMUR'] = $hasilSkoring['UMUR'];
+            // $tandaVital['EWSS'] = $hasilSkoring['EWSS'];
+            // $tandaVital['PEWSS'] = $hasilSkoring['PEWSS'];
+
+            // ==========================================================
+            // DEBUG (OPSIONAL)
+            // ==========================================================
+            // logger()->info('HASIL SKORING PRIMARY SURVEY', $hasilSkoring);
 
             // ==========================================================
             // SIMPAN TANDA VITAL

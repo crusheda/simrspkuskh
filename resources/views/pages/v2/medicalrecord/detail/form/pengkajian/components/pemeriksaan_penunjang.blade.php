@@ -8,7 +8,7 @@
         <div class="accordion-item">
             <h2 class="accordion-header">
                 <button
-                    class="accordion-button collapsed"
+                    class="accordion-button"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#PemeriksaanPenunjang-collapseOne"
@@ -20,7 +20,7 @@
 
             <div
                 id="PemeriksaanPenunjang-collapseOne"
-                class="accordion-collapse collapse"
+                class="accordion-collapse collapse show"
                 aria-labelledby="headingLaboratorium">
 
                 <div class="accordion-body">
@@ -33,7 +33,7 @@
         <div class="accordion-item">
             <h2 class="accordion-header">
                 <button
-                    class="accordion-button collapsed"
+                    class="accordion-button"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#PemeriksaanPenunjang-collapseTwo"
@@ -45,7 +45,7 @@
 
             <div
                 id="PemeriksaanPenunjang-collapseTwo"
-                class="accordion-collapse collapse"
+                class="accordion-collapse collapse show"
                 aria-labelledby="headingRadiologi">
 
                 <div class="accordion-body">
