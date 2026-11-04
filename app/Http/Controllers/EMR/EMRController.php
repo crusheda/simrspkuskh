@@ -1198,8 +1198,29 @@ class EMRController extends Controller
                 //     $query->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR');
                 // })
 
-                ->where(function ($query) use ($tgls,$tgle) {
-                    $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
+                // ->where(function ($query) use ($tgls,$tgle) {
+                //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
+                // })
+
+                ->where(function ($query) use ($tgls, $tgle, $rawat, $status) {
+                    if ($rawat === 3 && $status === 1) {
+                        // Rawat Inap yang masih berlangsung
+                        // Tetap tampil meskipun MASUK lebih awal dari tanggal filter.
+                        $query->whereNull('pk.KELUAR')
+                            ->whereDate('pk.MASUK', '<=', $tgle);
+                    } elseif ($status === 2) {
+                        // Kunjungan selesai, untuk Rawat Inap maupun perawatan lainnya.
+                        // Tampilkan jika masa kunjungan beririsan dengan rentang filter.
+                        $query->whereNotNull('pk.KELUAR')
+                            ->whereDate('pk.MASUK', '<=', $tgle)
+                            ->whereDate('pk.KELUAR', '>=', $tgls);
+                    } else {
+                        // Perilaku tanggal untuk kondisi lainnya tetap berdasarkan MASUK.
+                        $query->whereRaw(
+                            "LEFT(pk.MASUK, 10) BETWEEN ? AND ?",
+                            [$tgls, $tgle]
+                        );
+                    }
                 })
                 // ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
                 // ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
