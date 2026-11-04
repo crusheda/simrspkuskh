@@ -315,7 +315,13 @@
             .on(
                 'shown.bs.collapse.riaRanap',
                 '.multi-collapse',
-                function(){
+                function(e){
+
+                    // Abaikan event dari accordion bersarang.
+                    if (e.target !== this) {
+                        return;
+                    }
+
                     const $section=$(this);
 
                     updateRanapAnakButton();
@@ -337,7 +343,13 @@
             .on(
                 'hidden.bs.collapse.riaRanap',
                 '.multi-collapse',
-                function(){
+                function(e){
+
+                    // Abaikan event dari accordion bersarang.
+                    if (e.target !== this) {
+                        return;
+                    }
+
                     const $section=$(this);
 
                     /*

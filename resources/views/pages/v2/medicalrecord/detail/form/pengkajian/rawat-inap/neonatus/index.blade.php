@@ -303,7 +303,13 @@
                 .on(
                     'shown.bs.collapse.rinRanap',
                     '#rin_dokter, #rin_perawat',
-                    function () {
+                    function (e) {
+
+                        // Abaikan event dari accordion bersarang.
+                        if (e.target !== this) {
+                            return;
+                        }
+
                         const $section =
                             $(this);
 
@@ -356,7 +362,13 @@
                 .on(
                     'hidden.bs.collapse.rinRanap',
                     '#rin_dokter, #rin_perawat',
-                    function () {
+                    function (e) {
+
+                        // Abaikan event dari accordion bersarang.
+                        if (e.target !== this) {
+                            return;
+                        }
+
                         const $section =
                             $(this);
 

@@ -323,7 +323,12 @@
                 .on(
                     'shown.bs.collapse.rjdPengkajian',
                     '#rjd_dokter, #rjd_perawat',
-                    function () {
+                    function (e) {
+
+                        // Abaikan event dari accordion bersarang.
+                        if (e.target !== this) {
+                            return;
+                        }
 
                         const $section = $(this);
 
@@ -374,7 +379,12 @@
                 .on(
                     'hidden.bs.collapse.rjdPengkajian',
                     '#rjd_dokter, #rjd_perawat',
-                    function () {
+                    function (e) {
+
+                        // Abaikan event dari accordion bersarang.
+                        if (e.target !== this) {
+                            return;
+                        }
 
                         const $section = $(this);
 
