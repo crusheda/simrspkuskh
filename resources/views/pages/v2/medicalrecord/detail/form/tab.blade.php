@@ -1,5 +1,6 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/v2/css/emr/tab.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/v2/css/emr/table_penunjang.css') }}">
 @endpush
 
 @php
@@ -1715,3 +1716,362 @@
     (function ($) {
     })(jQuery);
 </script>
+
+{{-- TOMBOL KEMBALI KE BUTTON PEMERIKSAAN PENUNJANG --}}
+{{-- <script>
+(function () {
+
+    // =====================================================
+    // SINGLE INITIALIZATION
+    // =====================================================
+
+    if (window.__penunjangBackButtonInitialized) {
+        return;
+    }
+
+    window.__penunjangBackButtonInitialized = true;
+
+
+    // =====================================================
+    // AMBIL TOGGLE ACCORDION YANG AKTIF
+    // =====================================================
+
+    function getActiveToggle(wrapper) {
+
+        if (!wrapper) return null;
+
+        const accordion = wrapper.querySelector(
+            '#accordionPemeriksaanPenunjang'
+        );
+
+        if (!accordion) return null;
+
+        let activeId = wrapper.dataset.activePanel;
+
+        let panel = activeId
+            ? document.getElementById(activeId)
+            : null;
+
+        // Pastikan panel masih terbuka.
+        if (
+            !panel ||
+            !accordion.contains(panel) ||
+            !panel.classList.contains('show')
+        ) {
+
+            const openedPanels = accordion.querySelectorAll(
+                '.accordion-collapse.show'
+            );
+
+            panel = openedPanels.length
+                ? openedPanels[openedPanels.length - 1]
+                : null;
+
+            activeId = panel?.id;
+        }
+
+        if (!panel) return null;
+
+        // Cari tombol yang mengontrol panel tersebut.
+        return Array.from(
+            accordion.querySelectorAll(
+                '.accordion-button[data-bs-target]'
+            )
+        ).find(function (toggle) {
+
+            return toggle.getAttribute('data-bs-target') ===
+                `#${activeId}`;
+
+        }) || null;
+    }
+
+
+    // =====================================================
+    // DETEKSI BATAS ATAS SCROLL CONTAINER
+    // =====================================================
+
+    function getScrollContainerTop(element) {
+
+        let top = 0;
+        let parent = element.parentElement;
+
+        while (
+            parent &&
+            parent !== document.body &&
+            parent !== document.documentElement
+        ) {
+
+            const style = window.getComputedStyle(parent);
+
+            const overflowY = style.overflowY;
+
+            if (
+                ['auto', 'scroll', 'hidden', 'clip'].includes(overflowY)
+            ) {
+
+                const rect = parent.getBoundingClientRect();
+
+                top = Math.max(
+                    top,
+                    rect.top + parent.clientTop
+                );
+
+            }
+
+            parent = parent.parentElement;
+        }
+
+        return top;
+    }
+
+
+    // =====================================================
+    // CEK APAKAH ACCORDION SUDAH TERLEWATI
+    // =====================================================
+
+    function isAccordionOutOfView(toggle) {
+
+        if (!toggle) return false;
+
+        const rect = toggle.getBoundingClientRect();
+
+        const containerTop = getScrollContainerTop(toggle);
+
+        return rect.bottom <= containerTop + 2;
+    }
+
+
+    // =====================================================
+    // UPDATE TOMBOL KEMBALI
+    // =====================================================
+
+    function updatePenunjangBackButtons() {
+
+        document.querySelectorAll(
+            '.js-penunjang-navigation'
+        ).forEach(function (wrapper) {
+
+            const button = wrapper.querySelector(
+                '#btnBackToPenunjang'
+            );
+
+            if (!button) return;
+
+            const toggle = getActiveToggle(wrapper);
+
+            const shouldShow = Boolean(
+                toggle && isAccordionOutOfView(toggle)
+            );
+
+            button.classList.toggle('show', shouldShow);
+
+            button.setAttribute(
+                'aria-hidden',
+                shouldShow ? 'false' : 'true'
+            );
+
+            button.setAttribute(
+                'tabindex',
+                shouldShow ? '0' : '-1'
+            );
+
+        });
+
+    }
+
+
+    // =====================================================
+    // SIMPAN ACCORDION YANG DIKLIK
+    // =====================================================
+
+    document.addEventListener('click', function (e) {
+
+        const toggle = e.target.closest(
+            '#accordionPemeriksaanPenunjang .accordion-button[data-bs-toggle="collapse"]'
+        );
+
+        if (!toggle) return;
+
+        const wrapper = toggle.closest(
+            '.js-penunjang-navigation'
+        );
+
+        if (!wrapper) return;
+
+        const target = toggle.getAttribute('data-bs-target');
+
+        if (!target) return;
+
+        const panelId = target.replace(/^#/, '');
+
+        // Jika sedang terbuka, berarti klik ini akan menutup.
+        if (toggle.getAttribute('aria-expanded') === 'true') {
+
+            if (wrapper.dataset.activePanel === panelId) {
+                delete wrapper.dataset.activePanel;
+            }
+
+        } else {
+
+            // Simpan panel yang akan dibuka.
+            wrapper.dataset.activePanel = panelId;
+
+        }
+
+        // Tunggu transisi Bootstrap selesai.
+        setTimeout(updatePenunjangBackButtons, 400);
+
+    }, true);
+
+
+    // =====================================================
+    // EVENT BOOTSTRAP: SHOWN
+    // =====================================================
+
+    document.addEventListener('shown.bs.collapse', function (e) {
+
+        const accordion = e.target.closest(
+            '#accordionPemeriksaanPenunjang'
+        );
+
+        if (!accordion) return;
+
+        const wrapper = accordion.closest(
+            '.js-penunjang-navigation'
+        );
+
+        if (!wrapper) return;
+
+        wrapper.dataset.activePanel = e.target.id;
+
+        requestAnimationFrame(updatePenunjangBackButtons);
+
+    }, true);
+
+
+    // =====================================================
+    // EVENT BOOTSTRAP: HIDDEN
+    // =====================================================
+
+    document.addEventListener('hidden.bs.collapse', function (e) {
+
+        const accordion = e.target.closest(
+            '#accordionPemeriksaanPenunjang'
+        );
+
+        if (!accordion) return;
+
+        const wrapper = accordion.closest(
+            '.js-penunjang-navigation'
+        );
+
+        if (!wrapper) return;
+
+        if (wrapper.dataset.activePanel === e.target.id) {
+            delete wrapper.dataset.activePanel;
+        }
+
+        requestAnimationFrame(updatePenunjangBackButtons);
+
+    }, true);
+
+
+    // =====================================================
+    // KLIK TOMBOL KEMBALI
+    // =====================================================
+
+    document.addEventListener('click', function (e) {
+
+        const button = e.target.closest(
+            '.btn-back-penunjang'
+        );
+
+        if (!button) return;
+
+        const wrapper = button.closest(
+            '.js-penunjang-navigation'
+        );
+
+        if (!wrapper) return;
+
+        const toggle = getActiveToggle(wrapper);
+
+        if (!toggle) return;
+
+        toggle.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+
+    });
+
+
+    // =====================================================
+    // DETEKSI SCROLL
+    // =====================================================
+
+    let animationFrame = null;
+
+    function handleScroll() {
+
+        if (animationFrame) return;
+
+        animationFrame = requestAnimationFrame(function () {
+
+            updatePenunjangBackButtons();
+
+            animationFrame = null;
+
+        });
+
+    }
+
+    // Scroll halaman dan seluruh scroll container.
+    document.addEventListener(
+        'scroll',
+        handleScroll,
+        {
+            passive: true,
+            capture: true
+        }
+    );
+
+    window.addEventListener(
+        'scroll',
+        handleScroll,
+        { passive: true }
+    );
+
+    window.addEventListener(
+        'resize',
+        handleScroll
+    );
+
+
+    // =====================================================
+    // DETEKSI PERUBAHAN DOM (AJAX)
+    // =====================================================
+
+    const observer = new MutationObserver(function () {
+
+        handleScroll();
+
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+
+    // =====================================================
+    // DEBUG / FUNGSI GLOBAL
+    // =====================================================
+
+    window.updatePenunjangBackButtons =
+        updatePenunjangBackButtons;
+
+    updatePenunjangBackButtons();
+
+})();
+</script> --}}

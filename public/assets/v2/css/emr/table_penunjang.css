@@ -1,0 +1,167 @@
+
+/* ============================================================
+   SIRMED V3 — TABLE PENUNJANG
+   Compact • Scrollable • Sticky Header • Responsive
+============================================================ */
+
+/* ============================================================
+   SCROLL CONTAINER
+============================================================ */
+
+.table-penunjang-scroll {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+
+    max-height: 360px;
+
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+
+    border: 1px solid var(--bs-border-color);
+    border-radius: 8px;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--bs-secondary-color) transparent;
+}
+
+/* Scrollbar horizontal dan vertikal */
+.table-penunjang-scroll::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.table-penunjang-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-penunjang-scroll::-webkit-scrollbar-thumb {
+    background: var(--bs-secondary-color);
+    border-radius: 10px;
+}
+
+/* ============================================================
+   TABLE
+============================================================ */
+
+.table-penunjang-compact {
+    width: 100% !important;
+    min-width: 0 !important;
+
+    margin-bottom: 0 !important;
+
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* ============================================================
+   STICKY HEADER
+============================================================ */
+
+.table-penunjang-compact thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+
+    padding: 8px 7px !important;
+
+    background: var(--bs-tertiary-bg);
+    background-clip: padding-box;
+
+    color: var(--bs-secondary-color);
+
+    border-top: 0;
+    border-bottom: 1px solid var(--bs-border-color);
+
+    font-size: 10.5px;
+    font-weight: 700;
+    line-height: 1.35;
+
+    vertical-align: middle;
+
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/* ============================================================
+   TABLE BODY
+============================================================ */
+
+.table-penunjang-compact tbody td {
+    padding: 6px 7px !important;
+
+    font-size: 11.5px;
+    line-height: 1.4;
+
+    vertical-align: middle;
+
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+
+    border-top: 0;
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+/* Nomor */
+.table-penunjang-compact th:first-child,
+.table-penunjang-compact td:first-child {
+    text-align: center;
+}
+
+/* Hasil pemeriksaan */
+.table-penunjang-compact tbody td:nth-child(5) {
+    font-weight: 600;
+}
+
+/* ============================================================
+   ALTERNATING ROW
+============================================================ */
+
+.table-penunjang-compact tbody tr:nth-child(even) td {
+    background: var(--bs-tertiary-bg);
+}
+
+.table-penunjang-compact tbody tr:nth-child(odd) td {
+    background: var(--bs-body-bg);
+}
+
+/* Hover */
+.table-penunjang-compact tbody tr:hover td {
+    background: var(--bs-primary-bg-subtle);
+}
+
+/* ============================================================
+   EMPTY STATE
+============================================================ */
+
+.table-penunjang-compact tbody td[colspan] {
+    padding: 15px !important;
+    text-align: center;
+    color: var(--bs-secondary-color);
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 767.98px) {
+
+    .table-penunjang-scroll {
+        max-height: 55vh;
+    }
+
+    .table-penunjang-compact thead th {
+        padding: 6px 5px !important;
+        font-size: 10px;
+    }
+
+    .table-penunjang-compact tbody td {
+        padding: 5px !important;
+        font-size: 10.5px;
+    }
+}

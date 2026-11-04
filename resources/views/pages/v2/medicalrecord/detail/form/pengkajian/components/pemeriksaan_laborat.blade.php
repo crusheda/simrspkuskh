@@ -5,17 +5,17 @@
             <i class="ri-refresh-line"></i>
         </button>
     </div>
-    <div class="table-responsive">
-        <table class="table table-bordered table-display mb-0">
+    <div class="table-responsive table-penunjang-scroll">
+        <table class="table table-bordered table-sm table-display table-penunjang-compact mb-0">
             <colgroup>
-                <col style="width: 1%;">
-                <col style="width: 5%;">
+                <col style="width: 7%;">
+                <col style="width: 12%;">
+                <col style="width: 18%;">
                 <col style="width: 15%;">
-                <col>
-                <col style="width: 5%;">
-                <col style="width: 5%;">
-                <col style="width: 10%;">
-                <col style="width: 20%;">
+                <col style="width: 8%;">
+                <col style="width: 7%;">
+                <col style="width: 12%;">
+                <col style="width: 21%;">
             </colgroup>
             <thead>
                 <tr class="table-light">
@@ -75,7 +75,7 @@
                                 <td>${v.HASIL ?? ''}</td>
                                 <td>${v.SATUAN ?? ''}</td>
                                 <td>${v.NILAI_RUJUKAN ?? ''}</td>
-                                <td>${v.CATATAN ?? ''}${v.KETERANGAN ? '<br>' + v.KETERANGAN : ''}</td>
+                                <td>${v.KETERANGAN ?? ''}</td>
                             </tr>
                         `;
                     });

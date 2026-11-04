@@ -1,0 +1,297 @@
+/* ============================================================
+   SIRMED V3 — FLOATING BACK TO ACCORDION
+   Premium Gradient • Glass Effect • Floating Animation
+============================================================ */
+
+/* ============================================================
+   FLOATING BUTTON
+============================================================ */
+
+.btn-back-penunjang {
+    position: fixed !important;
+    right: 24px !important;
+    bottom: 100px !important;
+    z-index: 1046;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-height: 49px;
+    padding: 8px 20px 8px 10px;
+
+    border: 1px solid rgb(255 255 255 / 35%);
+    border-radius: 999px;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb 0%,
+        #4f46e5 55%,
+        #7c3aed 100%
+    );
+
+    color: #fff !important;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .2px;
+
+    white-space: nowrap;
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 24px rgb(79 70 229 / 30%),
+        0 3px 8px rgb(0 0 0 / 12%),
+        inset 0 1px 0 rgb(255 255 255 / 25%);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translate3d(0, 14px, 0) scale(.94);
+    translate: 0 0;
+
+    transition:
+        opacity .3s ease,
+        visibility .3s ease,
+        transform .3s cubic-bezier(.2, .8, .2, 1),
+        box-shadow .25s ease,
+        filter .25s ease;
+
+    isolation: isolate;
+    overflow: visible;
+}
+
+/* ============================================================
+   GLOW EFFECT
+============================================================ */
+
+.btn-back-penunjang::before {
+    content: "";
+
+    position: absolute;
+    inset: -5px;
+
+    z-index: -1;
+
+    border-radius: inherit;
+
+    background: linear-gradient(
+        135deg,
+        #3b82f6,
+        #8b5cf6
+    );
+
+    filter: blur(13px);
+    opacity: .55;
+
+    pointer-events: none;
+}
+
+/* ============================================================
+   LIGHT REFLECTION
+============================================================ */
+
+.btn-back-penunjang::after {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: -100%;
+
+    width: 55%;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background: linear-gradient(
+        110deg,
+        transparent,
+        rgb(255 255 255 / 30%),
+        transparent
+    );
+
+    transform: skewX(-20deg);
+    transition: left .65s ease;
+
+    pointer-events: none;
+}
+
+/* ============================================================
+   ICON
+============================================================ */
+
+.btn-back-penunjang i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 31px;
+
+    width: 31px;
+    height: 31px;
+
+    border: 1px solid rgb(255 255 255 / 25%);
+    border-radius: 50%;
+
+    background: rgb(255 255 255 / 17%);
+    color: #fff;
+
+    font-size: 19px;
+    line-height: 1;
+
+    transition:
+        transform .3s ease,
+        background-color .3s ease;
+}
+
+/* ============================================================
+   SHOW STATE
+============================================================ */
+
+.btn-back-penunjang.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+
+    transform: translate3d(0, 0, 0) scale(1);
+
+    animation: penunjangFloating 3s ease-in-out infinite;
+}
+
+/* Glow animation */
+.btn-back-penunjang.show::before {
+    animation: penunjangGlow 2.5s ease-in-out infinite;
+}
+
+/* ============================================================
+   HOVER
+============================================================ */
+
+.btn-back-penunjang.show:hover {
+    background: linear-gradient(
+        135deg,
+        #1d4ed8 0%,
+        #4338ca 55%,
+        #6d28d9 100%
+    );
+
+    box-shadow:
+        0 12px 30px rgb(79 70 229 / 40%),
+        0 5px 12px rgb(0 0 0 / 14%),
+        inset 0 1px 0 rgb(255 255 255 / 30%);
+
+    filter: brightness(1.08);
+}
+
+.btn-back-penunjang.show:hover::after {
+    left: 150%;
+}
+
+.btn-back-penunjang.show:hover i {
+    background: rgb(255 255 255 / 28%);
+    transform: translateY(-2px);
+}
+
+/* ============================================================
+   ACTIVE / CLICK
+============================================================ */
+
+.btn-back-penunjang.show:active {
+    transform: scale(.96);
+    filter: brightness(.95);
+}
+
+/* ============================================================
+   FOCUS ACCESSIBILITY
+============================================================ */
+
+.btn-back-penunjang:focus-visible {
+    outline: 3px solid rgb(99 102 241 / 40%);
+    outline-offset: 4px;
+}
+
+/* ============================================================
+   FLOATING ANIMATION
+============================================================ */
+
+@keyframes penunjangFloating {
+    0%,
+    100% {
+        translate: 0 0;
+    }
+
+    50% {
+        translate: 0 -5px;
+    }
+}
+
+/* ============================================================
+   GLOW PULSE
+============================================================ */
+
+@keyframes penunjangGlow {
+    0%,
+    100% {
+        opacity: .45;
+        transform: scale(.98);
+    }
+
+    50% {
+        opacity: .85;
+        transform: scale(1.04);
+    }
+}
+
+/* ============================================================
+   ACCORDION SCROLL OFFSET
+============================================================ */
+
+#accordionPemeriksaanPenunjang .accordion-button {
+    scroll-margin-top: 100px;
+}
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 767.98px) {
+    .btn-back-penunjang {
+        right: 15px !important;
+        bottom: 90px !important;
+
+        min-height: 45px;
+        padding: 7px 15px 7px 8px;
+
+        gap: 8px;
+        font-size: 12px;
+    }
+
+    .btn-back-penunjang i {
+        flex-basis: 29px;
+        width: 29px;
+        height: 29px;
+
+        font-size: 18px;
+    }
+}
+
+/* ============================================================
+   REDUCED MOTION
+============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .btn-back-penunjang,
+    .btn-back-penunjang::before,
+    .btn-back-penunjang::after,
+    .btn-back-penunjang i {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .btn-back-penunjang.show {
+        translate: none;
+    }
+}
