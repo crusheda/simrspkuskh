@@ -303,7 +303,15 @@
                 .on(
                     'shown.bs.collapse.ridRanap',
                     '#riD_dokter, #riD_perawat',
-                    function () {
+                    function (e) {
+
+                        // PENTING:
+                        // Abaikan event dari collapse anak di dalam form.
+                        // Hanya proses event milik elemen induk itu sendiri.
+                        if (e.target !== this) {
+                            return;
+                        }
+
                         const $section =
                             $(this);
 
@@ -356,7 +364,13 @@
                 .on(
                     'hidden.bs.collapse.ridRanap',
                     '#riD_dokter, #riD_perawat',
-                    function () {
+                    function (e) {
+
+                        // Abaikan event dari accordion bersarang.
+                        if (e.target !== this) {
+                            return;
+                        }
+
                         const $section =
                             $(this);
 

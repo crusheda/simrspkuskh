@@ -40,17 +40,12 @@
             <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_obsgyn',['section' => '#rio_dokter'])
             </div>
-            <div class="col-md-12">
-                <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
-                <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_laborat')
-                </div>
-                <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_radiologi')
-                </div>
+            <div class="col-md-12 mb-3">
+                <h4 class="text-danger">Pemeriksaan Penunjang</h4>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_penunjang')
             </div>
             <div class="col-md-12 mb-3">
-                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_penunjang',['section' => '#rio_dokter'])
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_penunjang_lain',['section' => '#rio_dokter'])
             </div>
             <div class="col-md-12">
                 <h4 class="text-danger">Diagnosis (<b class="text-warning">ICD</b>)</h4>

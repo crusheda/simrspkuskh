@@ -1,6 +1,6 @@
 <div class="form-group">
     <div class="d-flex align-items-center justify-content-between mb-2">
-        <h6 class="mb-0">Pemeriksaan Penunjang Laboratorium</h6>
+        <h6 class="mb-0">Tabel Ringkasan</h6>
         <button class="btn btn-subtle-warning btn-icon btn-sm" id="btnRefreshLab" onclick="getRiwayatLab()">
             <i class="ri-refresh-line"></i>
         </button>

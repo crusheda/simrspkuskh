@@ -331,7 +331,12 @@
                 .on(
                     'shown.bs.collapse.gawatDarurat',
                     '#gd_dokter, #gd_perawat',
-                    function () {
+                    function (e) {
+
+                        // Abaikan event dari accordion bersarang.
+                        if (e.target !== this) {
+                            return;
+                        }
 
                         const $section = $(this);
 
@@ -382,7 +387,12 @@
                 .on(
                     'hidden.bs.collapse.gawatDarurat',
                     '#gd_dokter, #gd_perawat',
-                    function () {
+                    function (e) {
+
+                        // Abaikan event dari accordion bersarang.
+                        if (e.target !== this) {
+                            return;
+                        }
 
                         const $section = $(this);
 

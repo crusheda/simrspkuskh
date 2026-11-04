@@ -39,12 +39,8 @@
             </div>
             <div class="col-md-12 mb-3">
                 <div class="card card-body border border-dashed border-info mb-0">
-                    <div class="mb-3">
-                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_laborat')
-                    </div>
-                    <div>
-                        @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_radiologi')
-                    </div>
+                    <h6>Pemeriksaan Penunjang</h6>
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_penunjang')
                 </div>
             </div>
             <div class="col-md-12 mb-3">
@@ -102,18 +98,19 @@
 <script>
     var $sectionGdD = $('#gd_dokter');
 
-        const {
-            kunjungan,
-            ruangan,
-            rm,
-            namaPasien,
-            tgl_sep,
-            sep,
-            tgl_kfr,
-            tgl_masuk,
-            tgl_keluar,
-            tgl_sep_date
-        } = window.EMRData;
+        // const {
+        //     kunjungan,
+        //     ruangan,
+        //     rm,
+        //     namaPasien,
+        //     tgl_sep,
+        //     sep,
+        //     tgl_kfr,
+        //     tgl_masuk,
+        //     tgl_keluar,
+        //     tgl_sep_date
+        // } = window.EMRData;
+
     $(document).ready(function() {
 
     })

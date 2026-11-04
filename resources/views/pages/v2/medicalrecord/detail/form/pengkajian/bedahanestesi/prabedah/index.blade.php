@@ -353,10 +353,8 @@
                     <textarea class="form-control" name="pb_do" id="" rows="4"></textarea>
                 </div>
                 <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_laborat')
-                </div>
-                <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_radiologi')
+                    <h6 class="mb-2">Pemeriksaan Penunjang</h6>
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_penunjang')
                 </div>
                 <div class="form-group mb-3">
                     <h6 class="mb-2">Catatan Penting</h6>

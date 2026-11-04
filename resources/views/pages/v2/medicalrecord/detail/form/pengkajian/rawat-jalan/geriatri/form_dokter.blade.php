@@ -55,14 +55,9 @@
                         <div class="col-md-12 mb-3">
                             @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_jalan.pemeriksaan_fisik_rajal',['section' => '#rjg_dokter'])
                         </div>
-                        <div class="col-md-12">
-                            <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
-                            <div class="mb-3">
-                                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_laborat')
-                            </div>
-                            <div class="mb-3">
-                                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_radiologi')
-                            </div>
+                        <div class="col-md-12 mb-3">
+                            <h4 class="text-danger">Pemeriksaan Penunjang</h4>
+                            @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_penunjang')
                         </div>
                     </div>
                     <div class="form-group mb-2">

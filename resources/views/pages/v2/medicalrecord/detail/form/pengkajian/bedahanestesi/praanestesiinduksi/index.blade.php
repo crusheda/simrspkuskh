@@ -430,14 +430,9 @@
                     <textarea class="form-control" name="pai_eks" id="" rows="2"></textarea>
                 </div>
             </div>
-            <div class="col-md-12">
-                <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
-                <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_laborat')
-                </div>
-                <div class="mb-3">
-                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_radiologi')
-                </div>
+            <div class="col-md-12 mb-3">
+                <h4 class="text-danger">Pemeriksaan Penunjang</h4>
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_penunjang')
             </div>
             <div class="col-md-12">
                 <h6>Ketersediaan Darah</h6>
