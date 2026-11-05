@@ -28,12 +28,15 @@ class AddOnPengkajianController extends Controller
     }
 
     // ======================================================================================================================= FUNCTION STARTED !!!!
-
     public function cariPPK(Request $request)
     {
         $keyword = trim($request->get('q', ''));
 
-        if (mb_strlen($keyword) < 2) {
+        $keywordIsId = ctype_digit($keyword);
+
+        // Minimal 2 karakter untuk pencarian teks.
+        // Pencarian berdasarkan ID tetap diperbolehkan.
+        if (mb_strlen($keyword) < 2 && !$keywordIsId) {
             return response()->json([]);
         }
 
@@ -51,10 +54,17 @@ class AddOnPengkajianController extends Controller
                 'p.DESWILAYAH as WILAYAH'
             )
             ->where('p.STATUS', 1)
-            ->where(function ($query) use ($keyword) {
+            ->where(function ($query) use ($keyword, $keywordIsId) {
+
                 $query->where('p.NAMA', 'LIKE', "%{$keyword}%")
                     ->orWhere('p.ALAMAT', 'LIKE', "%{$keyword}%")
                     ->orWhere('p.DESWILAYAH', 'LIKE', "%{$keyword}%");
+
+                // Pencarian berdasarkan ID PPK
+                if ($keywordIsId) {
+                    $query->orWhere('p.ID', (int) $keyword);
+                }
+
             })
             ->orderBy('p.NAMA')
             ->limit(15)
@@ -10902,9 +10912,11 @@ class AddOnPengkajianController extends Controller
             $request->all(),
             [
                 'NOKUNJ' => 'required',
+                'dd_ck_k' => 'required_if:dd_ck,2|nullable|integer',
             ],
             [
                 'NOKUNJ.required' => 'Kunjungan wajib diisi.',
+                'dd_ck_k.required_if' => 'Asal rujukan wajib diisi.',
             ]
         );
 
@@ -10982,8 +10994,27 @@ class AddOnPengkajianController extends Controller
             // Rujukan dari
             elseif ((int) $jenisKedatangan === 2) {
 
-                $kedatangan['ASAL_RUJUKAN'] =
-                    $request->input('dd_ck_k', '');
+                $asalRujukanId = $request->input('dd_ck_k');
+
+                // Pastikan ID PPK benar-benar tersedia
+                $ppkExists = DB::table('master.ppk')
+                    ->where('ID', $asalRujukanId)
+                    ->where('STATUS', 1)
+                    ->exists();
+
+                if (!$ppkExists) {
+
+                    DB::rollBack();
+
+                    return response()->json([
+                        'status'  => false,
+                        'message' => 'Data fasilitas kesehatan rujukan tidak ditemukan.'
+                    ], 422);
+
+                }
+
+                // Simpan ID PPK, bukan nama
+                $kedatangan['ASAL_RUJUKAN'] = (int) $asalRujukanId;
 
             }
 

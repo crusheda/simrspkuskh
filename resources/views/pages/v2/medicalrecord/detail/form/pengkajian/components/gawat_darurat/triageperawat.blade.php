@@ -16,12 +16,35 @@
                     </div>
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <div class="form-check mb-0 flex-shrink-0">
-                            <input class="form-check-input check-primary single-checkbox" type="checkbox" name="dd_ck" value="2">
+                            <input
+                                class="form-check-input check-primary single-checkbox"
+                                type="checkbox"
+                                name="dd_ck"
+                                value="2"
+                            >
                             <label class="form-check-label ms-1">
                                 Rujukan dari
                             </label>
                         </div>
-                        <input type="text" class="form-control form-control-sm" name="dd_ck_k" id="dd_ck_k" placeholder="Tuliskan Asal Rujukan" disabled>
+
+                        {{-- Input nama PPK untuk ditampilkan --}}
+                        <input
+                            type="text"
+                            class="form-control form-control-sm"
+                            name="dd_ck_k_nama"
+                            id="dd_ck_k"
+                            placeholder="Cari Rumah Sakit / Puskesmas / Klinik"
+                            autocomplete="off"
+                            disabled
+                        >
+
+                        {{-- Hidden input untuk menyimpan ID PPK --}}
+                        <input
+                            type="hidden"
+                            name="dd_ck_k"
+                            id="dd_ck_k_id"
+                            disabled
+                        >
                     </div>
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <div class="form-check mb-0 flex-shrink-0">
@@ -171,6 +194,180 @@
         let isDataLoading = false;
         let isDataSaving = false;
 
+        // =========================================================
+        // AUTOCOMPLETE ASAL RUJUKAN PPK
+        // =========================================================
+        const $inputAsalRujukan = $form.find('#dd_ck_k');
+
+        function initAutocompleteAsalRujukan() {
+
+            if (!$inputAsalRujukan.length) {
+                return;
+            }
+
+            // Hindari inisialisasi berulang
+            if ($inputAsalRujukan.data('autocomplete-initialized')) {
+                return;
+            }
+
+            $inputAsalRujukan.data('autocomplete-initialized', true);
+
+            new autoComplete({
+                selector: '#gd_perawat #form_gd_perawat_triage #dd_ck_k',
+                placeHolder: 'Cari nama Rumah Sakit / Puskesmas / Klinik',
+                threshold: 2,
+                debounce: 300,
+                data: {
+                    src: async function (query) {
+                        try {
+                            return await $.ajax({
+                                url: '/api/v2/emr/pengkajian/asal_rujukan_ppk',
+                                type: 'GET',
+                                dataType: 'json',
+                                data: {
+                                    q: query
+                                }
+                            });
+                        } catch (error) {
+                            console.error(
+                                'Gagal mengambil data PPK:',
+                                error
+                            );
+
+                            return [];
+                        }
+                    },
+                    keys: [
+                        'nama',
+                        'alamat',
+                        'wilayah'
+                    ],
+                    cache: false
+                },
+                resultsList: {
+                    maxResults: 15,
+                    noResults: true,
+                    element: function (list, data) {
+                        if (!data.results.length) {
+                            const message = document.createElement('li');
+                            message.className = 'no_result';
+                            message.textContent = 'Fasilitas kesehatan tidak ditemukan';
+                            list.appendChild(message);
+                        }
+                    }
+                },
+                resultItem: {
+                    highlight: true,
+                    element: function (item, data) {
+
+                        const ppk = data.value;
+
+                        $(item)
+                            .empty()
+                            .append(
+
+                                $('<strong>').text(
+                                    ppk.nama || '-'
+                                ),
+
+                                $('<small>')
+                                    .addClass('d-block text-muted')
+                                    .text(
+                                        `${ppk.jenis || 'Fasilitas Kesehatan'}`
+                                        + ` | ${ppk.wilayah || '-'}`
+                                    ),
+
+                                $('<small>')
+                                    .addClass('d-block text-muted')
+                                    .text(
+                                        ppk.alamat || '-'
+                                    )
+                            );
+                    }
+                },
+                events: {
+                    input: {
+                        selection: function (event) {
+
+                            const ppk = event.detail.selection.value;
+
+                            // Tampilkan nama PPK
+                            $inputAsalRujukan.val(ppk.nama || '');
+
+                            // Simpan ID PPK ke hidden input
+                            $form.find('#dd_ck_k_id').val(ppk.id || '');
+
+                            console.log('PPK dipilih:', {
+                                id: ppk.id,
+                                nama: ppk.nama
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        // =========================================================
+        // LOAD NAMA PPK BERDASARKAN ID
+        // =========================================================
+        async function loadAsalRujukanPPK(value) {
+
+            const $nama = $form.find('#dd_ck_k');
+            const $id = $form.find('#dd_ck_k_id');
+
+            if (
+                value === null ||
+                value === undefined ||
+                String(value).trim() === ''
+            ) {
+                $nama.val('');
+                $id.val('');
+                return;
+            }
+
+            try {
+
+                const response = await $.ajax({
+                    url: '/api/v2/emr/pengkajian/asal_rujukan_ppk',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        q: value
+                    }
+                });
+
+                const isId = /^\d+$/.test(String(value));
+
+                const ppk = response.find(function (item) {
+
+                    if (isId) {
+                        return String(item.id) === String(value);
+                    }
+
+                    return String(item.nama).toLowerCase() ===
+                        String(value).toLowerCase();
+
+                });
+
+                if (ppk) {
+
+                    $nama.val(ppk.nama);
+                    $id.val(ppk.id);
+
+                } else {
+
+                    // Mendukung data lama yang sebelumnya tersimpan sebagai nama
+                    $nama.val(isId ? '' : value);
+                    $id.val(isId ? value : '');
+
+                }
+
+            } catch (error) {
+
+                console.error('Gagal memuat nama PPK:', error);
+
+            }
+        }
 
         /* =========================================================
          * ADDITIONAL INPUT TRIASE PERAWAT
@@ -203,7 +400,7 @@
              */
             const additionalInputDdCk = {
                 '1': ['dd_ck_p'],
-                '2': ['dd_ck_k'],
+                '2': ['dd_ck_k_nama', 'dd_ck_k'],
                 '3': ['dd_ck_a']
             };
 
@@ -491,6 +688,13 @@
                     * =====================================================
                     */
                     AdditionalInputTriagePerawat();
+
+                    // =====================================================
+                    // ASAL RUJUKAN PPK
+                    // =====================================================
+                    loadAsalRujukanPPK(
+                        kedatangan.ASAL_RUJUKAN
+                    );
                 },
 
                 error: function (xhr) {
@@ -654,6 +858,7 @@
         /* =========================================================
          * LOAD DATA PERTAMA KALI
          * ========================================================= */
+        initAutocompleteAsalRujukan();
         getDataTriagePerawat();
 
     });
