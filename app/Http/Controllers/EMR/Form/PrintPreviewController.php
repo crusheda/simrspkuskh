@@ -380,6 +380,20 @@ class PrintPreviewController extends Controller
             | ISI PLACEHOLDER TEKS
             |--------------------------------------------------------------------------
             */
+            // foreach ($data as $key => $value) {
+            //     if (in_array($key, [
+            //         'TTD_DOKTER_FINALISASI',
+            //         'TTD_PERAWAT_FINALISASI',
+            //     ], true)) {
+            //         continue;
+            //     }
+
+            //     $templateProcessor->setValue(
+            //         $key,
+            //         (string) ($value ?? '')
+            //     );
+            // }
+
             foreach ($data as $key => $value) {
                 if (in_array($key, [
                     'TTD_DOKTER_FINALISASI',
@@ -388,10 +402,40 @@ class PrintPreviewController extends Controller
                     continue;
                 }
 
-                $templateProcessor->setValue(
-                    $key,
-                    (string) ($value ?? '')
-                );
+                $value = (string) ($value ?? '');
+
+                // Terapkan rich text pada placeholder apa pun yang berisi centang.
+                if (preg_match('/[☑☐]/u', $value)) {
+                    $textRun = new TextRun();
+
+                    $bagian = preg_split(
+                        '/(☑|☐|\r\n|\r|\n)/u',
+                        $value,
+                        -1,
+                        PREG_SPLIT_DELIM_CAPTURE
+                    );
+
+                    foreach ($bagian as $teks) {
+                        if (in_array($teks, ["\r\n", "\r", "\n"], true)) {
+                            $textRun->addTextBreak();
+                        } elseif ($teks === '☑' || $teks === '☐') {
+                            $textRun->addText($teks, [
+                                'name' => 'OpenSymbol',
+                                'size' => 9,
+                            ]);
+                        } elseif ($teks !== '') {
+                            $textRun->addText($teks, [
+                                'name' => 'Arial',
+                                'size' => 9,
+                            ]);
+                        }
+                    }
+
+                    $templateProcessor->setComplexValue($key, $textRun);
+                    continue;
+                }
+
+                $templateProcessor->setValue($key, $value);
             }
 
             /*

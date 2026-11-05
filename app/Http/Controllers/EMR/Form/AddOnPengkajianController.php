@@ -1424,7 +1424,7 @@ class AddOnPengkajianController extends Controller
                 $request->jenis_persalinan ?? 0,
 
             'PENYULIT' =>
-                $request->penyulit,
+                $request->penyulit ?? 0,
 
             'PENOLONG' =>
                 $request->penolong ?? 0,
