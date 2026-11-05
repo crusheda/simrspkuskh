@@ -645,6 +645,8 @@
     {
         currentKunjunganCppt = kunjungan;
         const $btnCppt=$('#btn-floating-cppt');
+        const userId = @json(auth()->user()->ID);
+
         $.ajax({
             url: `/api/v2/emr/cppt/${kunjungan}/${old}`,
             type:'GET',
@@ -760,6 +762,48 @@
                                         <b>I/ :</b> ${escapeHtmlCPPT(instruksi).replace(/\n/g, '<br>') ?? '-'}
                                     </div>`;
                     }
+                    let btnRiwayat = '';
+                    if (item.CPPT_OLEH_ID == userId) {
+                        btnRiwayat += `<button
+                                        type="button"
+                                        class="btn btn-sm btn-icon btn-subtle-warning border border-warning border-dashed"
+                                        data-bs-toggle="tooltip"
+                                        title="Ubah Cppt"
+                                        id="btn-edit-cppt-${item.ID}"
+                                        onclick="editCPPT('${item.ID}', this)"
+                                    >
+                                        <i class="ri-edit-line"></i>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-icon btn-subtle-danger border border-danger border-dashed"
+                                        data-bs-toggle="tooltip"
+                                        title="Hapus Cppt"
+                                        id="btn-hapus-cppt-${item.ID}"
+                                        onclick="hapusCPPT('${item.ID}')"
+                                    >
+                                        <i class="ri-delete-bin-line"></i>
+                                    </button>`;
+                    } else {
+                        btnRiwayat += `<button
+                                        type="button"
+                                        class="btn btn-sm btn-icon btn-subtle-secondary border border-secondary border-dashed"
+                                        data-bs-toggle="tooltip"
+                                        title="Ubah Cppt"
+                                        disabled
+                                    >
+                                        <i class="ri-edit-line"></i>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-icon btn-subtle-secondary border border-secondary border-dashed"
+                                        data-bs-toggle="tooltip"
+                                        title="Hapus Cppt"
+                                        disabled
+                                    >
+                                        <i class="ri-delete-bin-line"></i>
+                                    </button>`;
+                    }
 
                     riwayat += `<div class="cppt-timeline-item">
 
@@ -806,39 +850,12 @@
                                                             onclick="copyCPPT('${item.ID}', this)">
                                                         <i class="ri-file-copy-2-line"></i>
                                                     </button>
-                                                    ${
-                                                        item.CPPT_SIRMED == null
-                                                            ? `
-                                                                <button
-                                                                    type="button"
-                                                                    class="btn btn-sm btn-icon btn-subtle-warning border border-warning border-dashed"
-                                                                    data-bs-toggle="tooltip"
-                                                                    title="Ubah Cppt"
-                                                                    id="btn-edit-cppt-${item.ID}"
-                                                                    onclick="editCPPT('${item.ID}', this)"
-                                                                >
-                                                                    <i class="ri-edit-line"></i>
-                                                                </button>
-                                                                <button
-                                                                    type="button"
-                                                                    class="btn btn-sm btn-icon btn-subtle-danger border border-danger border-dashed"
-                                                                    data-bs-toggle="tooltip"
-                                                                    title="Hapus Cppt"
-                                                                    id="btn-hapus-cppt-${item.ID}"
-                                                                    onclick="hapusCPPT('${item.ID}')"
-                                                                >
-                                                                    <i class="ri-delete-bin-line"></i>
-                                                                </button>
-                                                            `
-                                                            : ''
-                                                    }
-
+                                                    ${item.CPPT_SIRMED == null ? btnRiwayat : '' }
                                                 </div>
 
                                             </div>
 
                                         </div>
-
 
                                         <!-- CONTENT -->
                                         <div class="cppt-timeline-body p-3">

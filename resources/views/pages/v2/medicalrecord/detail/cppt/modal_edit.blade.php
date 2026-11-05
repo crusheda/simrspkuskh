@@ -726,12 +726,6 @@
             complete: function () {
                 btnEdit.prop('disabled', false);
                 btnEdit.html('<i class="ri-edit-line"></i>');
-                // Showing Tooltip
-                // $('[data-bs-toggle="tooltip"]').tooltip('dispose');
-                // $('.tooltip').remove();
-                // $('[data-bs-toggle="tooltip"]').tooltip({
-                //     trigger : 'hover'
-                // })
             }
         });
     }
@@ -833,6 +827,14 @@
                 $button
                     .prop('disabled', false)
                     .html('<i class="ri-file-copy-2-line"></i>');
+
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Mohon Perhatian!!',
+                    text: 'Silakan periksa sekali kembali Tanggal, Jam, dan Identitas PPA pada informasi CPPT sebelum menyimpan perubahan. Pastikan informasi tersebut akurat.',
+                    timer: 5000,
+                    showConfirmButton: false
+                });
             }
         });
     }

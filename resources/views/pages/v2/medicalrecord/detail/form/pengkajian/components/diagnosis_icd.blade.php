@@ -113,6 +113,23 @@ V.`
             },
             success: function (res) {
                 let html = '';
+
+                // ==========================================================
+                // CHECKBOX DIAGNOSIS UTAMA
+                // ==========================================================
+                const $diagUtama = $('#diag_utama');
+
+                if (res.length === 0) {
+                    // Jika belum ada diagnosis, otomatis centang
+                    $diagUtama.prop('checked', true);
+                } else {
+                    // Jika sudah ada diagnosis, hilangkan centang
+                    $diagUtama.prop('checked', false);
+                }
+
+                // ==========================================================
+                // TABEL DIAGNOSIS
+                // ==========================================================
                 if (res.length > 0) {
                     $.each(res, function (i, v) {
                         html += `

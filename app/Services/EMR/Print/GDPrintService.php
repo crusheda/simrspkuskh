@@ -620,6 +620,7 @@ class GDPrintService implements PrintDataInterface
         $caraPulangText = implode("\n", array_filter([
             'Cara keluar: ' . $this->placeholder($caraKeluar),
             'Keadaan keluar: ' . $this->placeholder($keadaanKeluar),
+            'Diagnosa akhir: ' . $this->placeholder($dataCaraPulang->DIAGNOSA ?? '-'),
         ], fn ($baris) => !str_ends_with($baris, ': -')));
 
         /*

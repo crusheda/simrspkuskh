@@ -13,7 +13,7 @@
                 class="form-control"
                 name="target_terapi"
                 rows="1"
-                placeholder="Masukkan target terapi"></textarea>
+                placeholder=""></textarea>
         </div>
     </div>
 </div>

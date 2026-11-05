@@ -60,6 +60,7 @@
                                 type="checkbox"
                                 name="jn"
                                 value="1"
+                                checked
                             >
 
                             <label class="form-check-label">

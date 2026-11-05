@@ -20,7 +20,6 @@
 
         </div>
 
-
         <div class="col-md-6 mb-3">
 
             <div class="form-group">
@@ -34,6 +33,22 @@
                     <option value="">Pilih</option>
 
                 </select>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-12">
+
+            <div class="form-group">
+
+                <label class="form-label fw-bold">Diagnosa Akhir</label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    name="tla_da"
+                    placeholder="...">
 
             </div>
 
@@ -83,11 +98,9 @@
                 const keadaanKeluar =
                     res.data?.keadaan_keluar || [];
 
-
                 // ==================================================
                 // CARA KELUAR
                 // ==================================================
-
                 const $caraKeluar =
                     $form.find('select[name="tla_ck"]');
 
@@ -111,11 +124,9 @@
                     }
                 );
 
-
                 // ==================================================
                 // KEADAAN KELUAR
                 // ==================================================
-
                 const $keadaanKeluar =
                     $form.find('select[name="tla_kk"]');
 
@@ -138,7 +149,6 @@
 
                     }
                 );
-
             },
 
             error: function (xhr) {
@@ -175,39 +185,39 @@
         isDataLoading = true;
 
         return $.ajax({
-
-            url:
-                `/api/v2/emr/pengkajian/gd/cp/${kunjungan}`,
-
+            url: `/api/v2/emr/pengkajian/gd/cp/${kunjungan}`,
             type: 'GET',
-
             dataType: 'json',
-
             success: function (res) {
 
                 const data =
                     res.data || {};
 
-
                 // ==================================================
                 // CARA KELUAR
                 // ==================================================
-
                 FormHelper.setValue(
                     $form,
                     'tla_ck',
                     data.CARA
                 );
 
-
                 // ==================================================
                 // KEADAAN KELUAR
                 // ==================================================
-
                 FormHelper.setValue(
                     $form,
                     'tla_kk',
                     data.KEADAAN
+                );
+
+                // ==================================================
+                // DIAGNOSA AKHIR
+                // ==================================================
+                FormHelper.setValue(
+                    $form,
+                    'tla_da',
+                    data.DIAGNOSA_AKHIR
                 );
 
             },

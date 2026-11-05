@@ -1,95 +1,33 @@
-<div class="row align-items-center" id="form_kriteria_pulang">
+<div id="form_kriteria_pulang">
 
-    {{-- ==========================================================
-        TITLE
-    =========================================================== --}}
-    <div class="col-md-12 mb-2">
-        <div class="form-group">
-            <h4 class="mb-0 text-danger">
-                Kriteria Pulang
-            </h4>
-        </div>
+    {{-- TITLE --}}
+    <div class="mb-2">
+        <h4 class="mb-0 text-danger">
+            Kriteria Pulang
+        </h4>
     </div>
 
+    {{-- PERKIRAAN LAMA RAWAT --}}
+    <div class="d-flex align-items-center flex-wrap gap-2">
 
-    {{-- ==========================================================
-        PERKIRAAN LAMA RAWAT
-    =========================================================== --}}
-    <div class="col-md-3 fw-bold">
-        Perkiraan Lama Rawat :
-    </div>
+        <label class="fw-bold text-nowrap">
+            Perkiraan Lama Rawat :
+        </label>
 
-    <div class="col-md-9">
+        <input
+            type="number"
+            class="form-control form-control-sm"
+            name="kp_plr_hari"
+            min="1"
+            style="width: 80px;"
+            disabled
+        >
 
-        {{-- ======================================================
-            SUDAH BISA DITETAPKAN
-        ======================================================= --}}
-        <div class="d-flex align-items-center flex-wrap mb-2">
-
-            <div class="form-check me-2">
-                <input
-                    class="form-check-input check-primary single-checkbox"
-                    type="checkbox"
-                    name="kp_plr"
-                    value="1"
-                >
-
-                <label
-                    class="form-check-label"
-                >
-                    Sudah bisa ditetapkan :
-                </label>
-            </div>
-
-            <input
-                type="number"
-                class="form-control form-control-sm me-2"
-                name="kp_plr_hari"
-                min="1"
-                style="width: 120px;"
-                disabled
-            >
-
-            <span>Hari</span>
-
-        </div>
-
-
-        {{-- ======================================================
-            BELUM BISA DITETAPKAN
-        ======================================================= --}}
-        <div class="d-flex align-items-center">
-
-            <div class="form-check">
-
-                <input
-                    class="form-check-input check-danger single-checkbox"
-                    type="checkbox"
-                    name="kp_plr"
-                    value="0"
-                >
-
-                <label
-                    class="form-check-label"
-                >
-                    Belum bisa ditetapkan, karena :
-                </label>
-
-            </div>
-
-            <input
-                type="text"
-                class="form-control form-control-sm ms-2"
-                name="kp_plr_karena"
-                style="max-width: 400px;"
-                disabled
-            >
-
-        </div>
+        <span class="text-nowrap">Hari</span>
 
     </div>
+
 </div>
-
 
 <script>
 (function () {
@@ -100,77 +38,6 @@
 
     let isKriteriaPulangLoading = false;
     let isKriteriaPulangSaving = false;
-
-
-    // ==============================================================
-    // UPDATE STATE INPUT
-    // ==============================================================
-    function updateKriteriaPulangState() {
-
-        const $selected = $form.find(
-            'input[name="kp_plr"]:checked'
-        );
-
-        const value = $selected.length
-            ? String($selected.val())
-            : null;
-
-
-        const $hari = $form.find(
-            'input[name="kp_plr_hari"]'
-        );
-
-        const $karena = $form.find(
-            'input[name="kp_plr_karena"]'
-        );
-
-
-        // ==========================================================
-        // VALUE = 1
-        // Sudah bisa ditetapkan
-        // ==========================================================
-        if (value === '1') {
-
-            $hari
-                .prop('disabled', false);
-
-            $karena
-                .val('')
-                .prop('disabled', true);
-
-            return;
-        }
-
-
-        // ==========================================================
-        // VALUE = 0
-        // Belum bisa ditetapkan
-        // ==========================================================
-        if (value === '0') {
-
-            $hari
-                .val('')
-                .prop('disabled', true);
-
-            $karena
-                .prop('disabled', false);
-
-            return;
-        }
-
-
-        // ==========================================================
-        // BELUM ADA PILIHAN
-        // ==========================================================
-        $hari
-            .val('')
-            .prop('disabled', true);
-
-        $karena
-            .val('')
-            .prop('disabled', true);
-    }
-
 
     // ==============================================================
     // GET DATA
@@ -197,20 +64,8 @@
                 const kpl = res.data;
 
                 if (!kpl) {
-                    updateKriteriaPulangState();
                     return;
                 }
-
-
-                // ==================================================
-                // KRITERIA PULANG
-                // ==================================================
-                FormHelper.setSingleCheckbox(
-                    $section,
-                    'kp_plr',
-                    kpl.KRITERIA_PULANG
-                );
-
 
                 // ==================================================
                 // HARI
@@ -223,25 +78,6 @@
                         kpl.HARI
                     );
                 }
-
-
-                // ==================================================
-                // KARENA
-                // ==================================================
-                if (FormHelper.hasValue(kpl.KARENA)) {
-
-                    FormHelper.setValue(
-                        $section,
-                        'kp_plr_karena',
-                        kpl.KARENA
-                    );
-                }
-
-
-                // ==================================================
-                // UPDATE ENABLE / DISABLE INPUT
-                // ==================================================
-                updateKriteriaPulangState();
             },
 
             error: function (xhr, status, error) {
@@ -264,9 +100,6 @@
             complete: function () {
 
                 isKriteriaPulangLoading = false;
-
-                // Pastikan state terakhir tetap benar
-                updateKriteriaPulangState();
             }
         });
     }
@@ -285,18 +118,11 @@
             return;
         }
 
-
-        // Pastikan status input sesuai pilihan terakhir
-        updateKriteriaPulangState();
-
-
         const data = getFormDataByName($form, {
             NOKUNJ: kunjungan
         });
 
-
         isKriteriaPulangSaving = true;
-
 
         $.ajax({
             url: `/api/v2/emr/pengkajian/kriteriapulang/${kunjungan}/simpan`,
@@ -310,7 +136,6 @@
             },
 
             success: function (res) {
-
                 console.log(
                     'Kriteria Pulang berhasil disimpan.'
                 );
@@ -372,36 +197,6 @@
         // ==========================================================
         getKriteriaPulang();
 
-
-        // ==========================================================
-        // CHECKBOX
-        //
-        // Ketika kp_plr berubah:
-        // 1. Update disabled state
-        // 2. Simpan otomatis
-        // ==========================================================
-        $section
-            .off(
-                'change.kpl',
-                '#form_kriteria_pulang input[name="kp_plr"]'
-            )
-            .on(
-                'change.kpl',
-                '#form_kriteria_pulang input[name="kp_plr"]',
-                function () {
-
-                    if (isKriteriaPulangLoading) {
-                        return;
-                    }
-
-
-                    updateKriteriaPulangState();
-
-                    simpanKriteriaPulang();
-                }
-            );
-
-
         // ==========================================================
         // INPUT HARI
         //
@@ -421,60 +216,9 @@
                         return;
                     }
 
-
-                    // Hanya boleh diproses jika value = 1
-                    const selectedValue =
-                        $form.find(
-                            'input[name="kp_plr"]:checked'
-                        ).val();
-
-
-                    if (String(selectedValue) !== '1') {
-                        return;
-                    }
-
-
                     simpanKriteriaPulang();
                 }
             );
-
-
-        // ==========================================================
-        // INPUT KARENA
-        //
-        // Simpan ketika user selesai mengisi / keluar dari input
-        // ==========================================================
-        $section
-            .off(
-                'blur.kpl',
-                '#form_kriteria_pulang input[name="kp_plr_karena"]'
-            )
-            .on(
-                'blur.kpl',
-                '#form_kriteria_pulang input[name="kp_plr_karena"]',
-                function () {
-
-                    if (isKriteriaPulangLoading) {
-                        return;
-                    }
-
-
-                    // Hanya boleh diproses jika value = 0
-                    const selectedValue =
-                        $form.find(
-                            'input[name="kp_plr"]:checked'
-                        ).val();
-
-
-                    if (String(selectedValue) !== '0') {
-                        return;
-                    }
-
-
-                    simpanKriteriaPulang();
-                }
-            );
-
     });
 
 })();

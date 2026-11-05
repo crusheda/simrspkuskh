@@ -556,7 +556,7 @@ class FinalisasiController extends Controller
             ]);
 
 
-        $cppt_o = "<div style='color:#9CC96B'>Pemeriksan Umum:</div>";
+        $cppt_o = "<div style='color:#9CC96B'><u>Pemeriksan Umum</u>:\n</div>";
 
         if ($tandaVital) {
 
@@ -707,7 +707,7 @@ class FinalisasiController extends Controller
 
                 "",
 
-                "<div style='color:#9CC96B'>Pemeriksaan Fisik: </div>"
+                "<div style='color:#9CC96B'><u>Pemeriksaan Fisik</u>:\n</div>"
                     . ($pemeriksaanFisik->DESKRIPSI ?? '-'),
 
             ], function ($value) {
@@ -1673,6 +1673,13 @@ class FinalisasiController extends Controller
             ->where('STATUS', 1)
             ->value('DESKRIPSI');
 
+        $planTataLaksanaPenunjang = DB::table(
+            'medicalrecord.sirmed_plan_tata_laksana_penunjang'
+        )
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->value('DESKRIPSI');
+
         $rencanaKonsultasi = DB::table(
             'medicalrecord.sirmed_rencana_konsultasi'
         )
@@ -1701,6 +1708,11 @@ class FinalisasiController extends Controller
         if ($this->soapValue($targetTerapi)) {
             $p[] = 'Target Terapi: ' .
                 $this->soapValue($targetTerapi);
+        }
+
+        if ($this->soapValue($planTataLaksanaPenunjang)) {
+            $p[] = 'Plan Tata Laksana Penunjang: ' .
+                $this->soapValue($planTataLaksanaPenunjang);
         }
 
         if ($this->soapValue($rencanaKonsultasi)) {

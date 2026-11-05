@@ -1680,6 +1680,7 @@ class EMRController extends Controller
                 $join->on('pcp.ID_CPPT', '=', 'cp.ID')
                     ->where('pcp.STATUS', '=', 1);
             })
+            ->leftJoin('aplikasi.pengguna as pgol', 'cp.OLEH', '=', 'pgol.ID')
             ->leftJoin('aplikasi.pengguna as pg', 'cp.TENAGA_MEDIS', '=', 'pg.ID')
             ->leftJoin('master.pegawai as p', 'cp.TENAGA_MEDIS', '=', 'p.ID')
             ->leftJoin('master.dokter as d', 'cp.TENAGA_MEDIS', '=', 'd.ID')
@@ -1827,6 +1828,11 @@ class EMRController extends Controller
                         master.getNamaLengkapPegawai(dc.NIP),
                         ''
                     ) AS _CPPT_DOKTER_TBAK
+                "),
+
+                'cp.OLEH as CPPT_OLEH_ID',
+                DB::raw("
+                    master.getNamaLengkapPegawai(pgol.NIP) AS CPPT_OLEH
                 "),
             ])
             ->orderBy('cp.TANGGAL', 'DESC')
@@ -2408,7 +2414,7 @@ class EMRController extends Controller
             ->leftJoin('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
             ->leftJoin('master.pasien as ps', 'pp.NORM', '=', 'ps.NORM')
             ->where('cp.ID', $id)
-            ->where('cp.KUNJUNGAN', $kunjungan)
+            // ->where('cp.KUNJUNGAN', $kunjungan)
             ->where('cp.STATUS', '!=', 0)
             ->select([
                 'cp.ID',
@@ -2467,6 +2473,8 @@ class EMRController extends Controller
                 "),
             ])
             ->first();
+
+        // print_r($cppt.'-'.$kunjungan.'-'.$id); die;
 
         if (!$cppt) {
             return response()->json([
@@ -2527,7 +2535,7 @@ class EMRController extends Controller
 
             $cppt = DB::table('medicalrecord.cppt')
                 ->where('ID', $id)
-                ->where('KUNJUNGAN', $kunjungan)
+                // ->where('KUNJUNGAN', $kunjungan)
                 ->where('STATUS', '!=', 0)
                 ->first();
 
@@ -2645,10 +2653,10 @@ class EMRController extends Controller
             | INSERT CPPT BARU
             |--------------------------------------------------------------------------
             */
-
             $newId = DB::table('medicalrecord.cppt')
                 ->insertGetId($data);
 
+            // print_r($newId); die;
 
             /*
             |--------------------------------------------------------------------------
@@ -2708,7 +2716,7 @@ class EMRController extends Controller
 
         $cppt = DB::table('medicalrecord.cppt')
             ->where('ID', $id)
-            ->where('KUNJUNGAN', $kunjungan)
+            // ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', '!=', 0)
             ->first();
 

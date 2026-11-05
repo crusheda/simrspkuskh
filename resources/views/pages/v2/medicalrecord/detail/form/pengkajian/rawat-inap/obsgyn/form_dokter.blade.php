@@ -60,6 +60,9 @@
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.target_terapi',['section' => '#rio_dokter'])
             </div>
             <div class="col-md-12 mb-3">
+                @include('pages.v2.medicalrecord.detail.form.pengkajian.components.plan_tata_laksana_penunjang',['section' => '#rio_dokter'])
+            </div>
+            <div class="col-md-12 mb-3">
                 @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rencana_konsultasi',['section' => '#rio_dokter'])
             </div>
             <div class="col-md-12 mb-3">

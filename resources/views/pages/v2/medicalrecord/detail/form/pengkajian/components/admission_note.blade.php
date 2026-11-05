@@ -76,9 +76,13 @@
                 <div class="col-md-12 mb-3">
                     <div class="form-group">
                         <label class="form-label fw-bold">DPJP</label>
-                        <select class="form-control" name="pri_dpjp" id="pri_dpjp" style="width: 100%;">
+
+                        <select class="form-control" name="pri_dpjp" id="pri_dpjp">
                             @foreach ($list['dokter'] as $d)
-                                <option value="{{ $d->ID }}" {{ ($list['pasien']->ID ?? null) == $d->ID ? 'selected' : '' }}>
+                                <option
+                                    value="{{ $d->ID }}"
+                                    @selected((string) ($list['pasien']->ID ?? '') === (string) $d->ID)
+                                >
                                     {{ $d->NAMADOKTER }}
                                 </option>
                             @endforeach
@@ -152,7 +156,38 @@
 
         let admissionSaveTimer = null;
 
+        let dpjpChoicesAdn = null;
 
+        // ==========================================================
+        // CHOICES DPJP
+        // ==========================================================
+
+        function initDpjpChoices() {
+
+            const dpjpElement = $form.find('#pri_dpjp')[0];
+
+            if (!dpjpElement) {
+                return;
+            }
+
+            // Hindari inisialisasi berulang
+            if (dpjpElement.choicesInstance) {
+                dpjpChoicesAdn = dpjpElement.choicesInstance;
+                return;
+            }
+
+            dpjpChoicesAdn = new Choices(dpjpElement, {
+                shouldSort: false,
+                allowHTML: true,
+                searchEnabled: true,
+                itemSelectText: '',
+                searchPlaceholderValue: 'Cari nama dokter...',
+                noResultsText: 'Dokter tidak ditemukan',
+                noChoicesText: 'Tidak ada pilihan DPJP'
+            });
+
+            dpjpElement.choicesInstance = dpjpChoicesAdn;
+        }
 
         // ==========================================================
         // GET FORM DATA
@@ -761,17 +796,24 @@
                     // ==================================================
                     // PRI DPJP
                     // ==================================================
-
                     if (
                         tlt.pri_dpjp !== null &&
                         tlt.pri_dpjp !== undefined &&
                         String(tlt.pri_dpjp).trim() !== ''
                     ) {
-
-                        $form.find('#pri_dpjp')
-                            .val(tlt.pri_dpjp);
+                        dpjpChoicesAdn?.setChoiceByValue(
+                            String(tlt.pri_dpjp)
+                        );
 
                     }
+                    // if (
+                    //     tlt.pri_dpjp !== null &&
+                    //     tlt.pri_dpjp !== undefined &&
+                    //     String(tlt.pri_dpjp).trim() !== ''
+                    // ) {
+                    //     $form.find('#pri_dpjp')
+                    //         .val(tlt.pri_dpjp);
+                    // }
 
 
                     // ==================================================
@@ -1586,11 +1628,14 @@
                 }
             );
 
+            // ======================================================
+            // INITIALIZE CHOICES DPJP
+            // ======================================================
+            initDpjpChoices();
 
             // ======================================================
             // LOAD DATA
             // ======================================================
-
             getAdmission();
 
         });

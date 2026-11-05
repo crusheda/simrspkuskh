@@ -323,6 +323,9 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
                 // TARGET TERAPI
                     Route::get('emr/pengkajian/targetterapi/{kunjungan}', [AddOnPengkajianController::class, 'getTargetTerapi']);
                     Route::post('emr/pengkajian/targetterapi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanTargetTerapi']);
+                // PLAN TATA LAKSANA PENUNJANG
+                    Route::get('emr/pengkajian/plantatalaksanapenunjang/{kunjungan}', [AddOnPengkajianController::class, 'getPlanTataLaksanaPenunjang']);
+                    Route::post('emr/pengkajian/plantatalaksanapenunjang/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanPlanTataLaksanaPenunjang']);
                 // RENCANA KONSULTASI
                     Route::get('emr/pengkajian/rencanakonsultasi/{kunjungan}', [AddOnPengkajianController::class, 'getRencanaKonsultasi']);
                     Route::post('emr/pengkajian/rencanakonsultasi/{kunjungan}/simpan', [AddOnPengkajianController::class, 'simpanRencanaKonsultasi']);

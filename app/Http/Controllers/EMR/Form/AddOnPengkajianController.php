@@ -3775,6 +3775,63 @@ class AddOnPengkajianController extends Controller
         }
     }
 
+    function getPlanTataLaksanaPenunjang($KUNJUNGAN)
+    {
+        $data = $this->getData(
+            $KUNJUNGAN,
+            'medicalrecord.sirmed_plan_tata_laksana_penunjang',
+            [
+                'DESKRIPSI',
+            ]
+        );
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+    function simpanPlanTataLaksanaPenunjang(Request $request, $KUNJUNGAN)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $kunjungan = $request->NOKUNJ ?? $KUNJUNGAN;
+
+            DB::table('medicalrecord.sirmed_plan_tata_laksana_penunjang')->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $kunjungan
+                ],
+                [
+                    'DESKRIPSI' => $request->plan_tata_laksana_penunjang,
+                    'TANGGAL' => now(),
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
+            );
+
+            $this->sinkronisasiRencanaTerapi($kunjungan);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Plan Tata Laksana Penunjang berhasil diperbarui.'
+            ], 200);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Data Plan Tata Laksana Penunjang gagal disimpan.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     function getRencanaKonsultasi($KUNJUNGAN)
     {
         $data = $this->getData(
@@ -3844,6 +3901,11 @@ class AddOnPengkajianController extends Controller
             ->where('STATUS', 1)
             ->value('DESKRIPSI');
 
+        $planTataLaksanaPenunjang = DB::table('medicalrecord.sirmed_plan_tata_laksana_penunjang')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->where('STATUS', 1)
+            ->value('DESKRIPSI');
+
         $rencanaKonsultasi = DB::table('medicalrecord.sirmed_rencana_konsultasi')
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
@@ -3857,6 +3919,10 @@ class AddOnPengkajianController extends Controller
 
         if ($targetTerapi !== null && trim($targetTerapi) !== '') {
             $bagian[] = "Target Terapi :\n" . trim($targetTerapi);
+        }
+
+        if ($planTataLaksanaPenunjang !== null && trim($planTataLaksanaPenunjang) !== '') {
+            $bagian[] = "Plan Tata Laksana Penunjang :\n" . trim($planTataLaksanaPenunjang);
         }
 
         if ($rencanaKonsultasi !== null && trim($rencanaKonsultasi) !== '') {
@@ -3884,9 +3950,9 @@ class AddOnPengkajianController extends Controller
             $KUNJUNGAN,
             'medicalrecord.sirmed_kriteria_pulang',
             [
-                'KRITERIA_PULANG',
+                // 'KRITERIA_PULANG',
                 'HARI',
-                'KARENA',
+                // 'KARENA',
             ]
         );
 
@@ -3908,9 +3974,9 @@ class AddOnPengkajianController extends Controller
                 ],
                 [
                     // Edukasi awal
-                    'KRITERIA_PULANG' => $request->kp_plr,
+                    // 'KRITERIA_PULANG' => $request->kp_plr,
                     'HARI' => $request->kp_plr_hari,
-                    'KARENA' => $request->kp_plr_karena,
+                    // 'KARENA' => $request->kp_plr_karena,
 
                     'TANGGAL' => now(),
                     'OLEH' => auth()->id(),
@@ -11035,6 +11101,7 @@ class AddOnPengkajianController extends Controller
                             $join->on('pe.NIP','=','prw.NIP')
                                 ->where('pe.STATUS', 1);
                         })
+                        ->where('pe.ID', auth()->user()->ID)
                         ->where('prw.STATUS', 1)
                         ->select('prw.ID', 'prw.NIP', DB::raw('master.getNamaLengkapPegawai(prw.NIP) AS NAMAPEGAWAI'))
                         ->orderByDesc('prw.ID')
@@ -12084,7 +12151,7 @@ class AddOnPengkajianController extends Controller
                 [
                     'CARA'      => $request->tla_ck,
                     'KEADAAN'   => $request->tla_kk,
-                    'DIAGNOSA'  => '',
+                    'DIAGNOSA'  => $request->tla_da,
                     'TANGGAL'   => now(),
                     'DOKTER'    => $getDataDokter->ID ?? 0,
                     'OLEH'      => auth()->id(),

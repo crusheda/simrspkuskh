@@ -426,7 +426,7 @@
                         * CARA KEDATANGAN
                         * ========================= */
                         dd_ck_p: kedatangan.PENGANTAR,
-                        dd_ck_k: kedatangan.ASAL_RUJUKAN,
+                        // dd_ck_k: kedatangan.ASAL_RUJUKAN,
                         dd_ck_a: kedatangan.KEPOLISIAN,
                         tgl_ck: kedatangan.TANGGAL,
                         tr_ck: kedatangan.ALAT_TRANSPORTASI,
@@ -475,6 +475,13 @@
                         );
                     });
 
+                    // =====================================================
+                    // ASAL RUJUKAN
+                    // =====================================================
+
+                    $form.find('[name="dd_ck_k"]').val(
+                        kedatangan.ASAL_RUJUKAN ?? ''
+                    );
 
                     /*
                     * =====================================================

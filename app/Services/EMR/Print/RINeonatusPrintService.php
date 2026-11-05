@@ -730,31 +730,31 @@ class RINeonatusPrintService implements PrintDataInterface
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
             ->first([
-                'KRITERIA_PULANG',
+                // 'KRITERIA_PULANG',
                 'HARI',
-                'KARENA',
+                // 'KARENA',
             ]);
 
-        $nilaiKriteriaPulang = $kriteriaPulang->KRITERIA_PULANG ?? null;
+        // $nilaiKriteriaPulang = $kriteriaPulang->KRITERIA_PULANG ?? null;
 
-        $kriteriaPulangText = match ((string) $nilaiKriteriaPulang) {
-            '1' => 'Sudah bisa ditetapkan',
-            '0' => 'Belum bisa ditetapkan',
-            default => '',
-        };
+        // $kriteriaPulangText = match ((string) $nilaiKriteriaPulang) {
+        //     '1' => 'Sudah bisa ditetapkan',
+        //     '0' => 'Belum bisa ditetapkan',
+        //     default => '',
+        // };
 
         $kriteriaPulangHari = (
-            (string) $nilaiKriteriaPulang === '1' &&
+            // (string) $nilaiKriteriaPulang === '1' &&
             !empty($kriteriaPulang->HARI)
         )
-            ? ' (' . $kriteriaPulang->HARI . ' Hari)'
+            ? 'Perkiraan Lama Rawat: ' . $kriteriaPulang->HARI . ' Hari'
             : '';
 
-        $kriteriaPulangKarena = (
-            (string) $nilaiKriteriaPulang === '0'
-        )
-            ? $this->value($kriteriaPulang->KARENA ?? null)
-            : '';
+        // $kriteriaPulangKarena = (
+        //     (string) $nilaiKriteriaPulang === '0'
+        // )
+        //     ? $this->value($kriteriaPulang->KARENA ?? null)
+        //     : '';
 
         /*
         |--------------------------------------------------------------------------
@@ -988,17 +988,17 @@ class RINeonatusPrintService implements PrintDataInterface
             'TARGET_TERAPI' => $this->placeholder($targetTerapi),
             'RENCANA_KONSULTASI' => $this->placeholder($rencanaKonsultasi),
 
-            'KRITERIA_PULANG' => $this->placeholder(
-                $kriteriaPulangText
-            ),
+            // 'KRITERIA_PULANG' => $this->placeholder(
+            //     $kriteriaPulangText
+            // ),
 
             'KRITERIA_PULANG_HARI' => $this->placeholder(
                 $kriteriaPulangHari
             ),
 
-            'KRITERIA_PULANG_KARENA' => $this->placeholder(
-                $kriteriaPulangKarena
-            ),
+            // 'KRITERIA_PULANG_KARENA' => $this->placeholder(
+            //     $kriteriaPulangKarena
+            // ),
 
             /*
             | TANDA TANGAN USER FINALISASI

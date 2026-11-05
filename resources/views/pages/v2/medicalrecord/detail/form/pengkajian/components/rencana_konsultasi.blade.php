@@ -13,7 +13,7 @@
                 class="form-control"
                 name="rencana_konsultasi"
                 rows="2"
-                placeholder="Masukkan Rencana Konsultasi"></textarea>
+                placeholder=""></textarea>
         </div>
     </div>
 </div>
