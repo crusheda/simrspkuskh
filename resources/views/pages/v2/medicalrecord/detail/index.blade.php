@@ -641,7 +641,7 @@
         }
     }
 
-    function showModalCppt(kunjungan, old)
+    function showModalCppt(kunjungan, old = 1)
     {
         currentKunjunganCppt = kunjungan;
         const $btnCppt=$('#btn-floating-cppt');
@@ -1328,7 +1328,7 @@
                         isiCppt &&
                         result.isConfirmed
                     ) {
-                        showModalCppt(kunjungan);
+                        showModalCppt(kunjungan, 1);
                     }
 
                 });

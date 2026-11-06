@@ -11427,7 +11427,6 @@ class AddOnPengkajianController extends Controller
 
             $isDokter = $request->input('page') === 'dokter';
 
-
             if ($isDokter) {
 
                 $tandaVital = [
@@ -11691,6 +11690,63 @@ class AddOnPengkajianController extends Controller
             // logger()->info('HASIL SKORING PRIMARY SURVEY', $hasilSkoring);
 
             // ==========================================================
+            // HITUNG UMUR, EWSS, DAN PEWSS
+            // ==========================================================
+            // Gunakan satu waktu pemeriksaan agar konsisten.
+            $waktuPemeriksaan = now();
+            $tandaVital['WAKTU_PEMERIKSAAN'] = $waktuPemeriksaan;
+            $tandaVital['TANGGAL'] = $waktuPemeriksaan;
+
+            // Alat bantu napas:
+            // 0 = Tidak
+            // 2 = Ya
+            $tandaVital['ALAT_BANTU_NAFAS'] = (int) (
+                $tandaVital['ALAT_BANTU_NAFAS'] ?? 0
+            );
+
+            // ==========================================================
+            // AMBIL SCORING TINGKAT KESADARAN
+            // ==========================================================
+            $scoringKesadaran = null;
+            $idTingkatKesadaran = (int) (
+                $tandaVital['TINGKAT_KESADARAN'] ?? 0
+            );
+            if ($idTingkatKesadaran > 0) {
+                $scoringKesadaran = DB::table('master.referensi')
+                    ->where('JENIS', 179)
+                    ->where('STATUS', 1)
+                    ->where('ID', $idTingkatKesadaran)
+                    ->value('SCORING');
+            }
+
+            // ==========================================================
+            // PROSES PERHITUNGAN
+            // ==========================================================
+            $hasilSkoring = EarlyWarningScoreHelper::hitung(
+                [
+                    'SISTOLIK' => $tandaVital['SISTOLIK'] ?? null,
+                    'DISTOLIK' => $tandaVital['DISTOLIK'] ?? null,
+                    'FREKUENSI_NADI' => $tandaVital['FREKUENSI_NADI'] ?? null,
+                    'FREKUENSI_NAFAS' => $tandaVital['FREKUENSI_NAFAS'] ?? null,
+                    'SUHU' => $tandaVital['SUHU'] ?? null,
+                    'SATURASI_O2' => $tandaVital['SATURASI_O2'] ?? null,
+                    'ALAT_BANTU_NAFAS' => $tandaVital['ALAT_BANTU_NAFAS'] ?? null,
+                    'GCS' => $tandaVital['GCS'] ?? null,
+                    'TINGKAT_KESADARAN' => $tandaVital['TINGKAT_KESADARAN'] ?? null,
+                    'SCORING_KESADARAN' => $scoringKesadaran,
+                ],
+                $getDataKunjungan->TANGGAL_LAHIR,
+                $waktuPemeriksaan
+            );
+
+            // ==========================================================
+            // SIMPAN HASIL SKORING KE TANDA VITAL
+            // ==========================================================
+            $tandaVital['UMUR'] = $hasilSkoring['UMUR'] ?? 0;
+            $tandaVital['EWSS'] = $hasilSkoring['EWSS'] ?? 0;
+            $tandaVital['PEWSS'] = $hasilSkoring['PEWSS'] ?? 0;
+
+            // ==========================================================
             // SIMPAN TANDA VITAL
             // ==========================================================
 
@@ -11724,13 +11780,13 @@ class AddOnPengkajianController extends Controller
             // if (!$isDokter) {
 
                 $triageTandaVital = [
-                    'SUHU' => $request->input('p_suhu', ''),
-                    'SISTOLE' => $request->input('p_td_up', ''),
-                    'DIASTOLE' => $request->input('p_td_down', ''),
-                    'FREK_NADI' => $request->input('p_nadi', ''),
-                    'FREK_NAFAS' => $request->input('p_fr', ''),
-                    'METODE_UKUR' => $request->input('p_mu') ?? '',
-                    'SKALA_NYERI' => $request->input('p_sn') ?? '',
+                    'SUHU' => $request->input('suhu', ''),
+                    'SISTOLE' => $request->input('td_up', ''),
+                    'DIASTOLE' => $request->input('td_down', ''),
+                    'FREK_NADI' => $request->input('nadi', ''),
+                    'FREK_NAFAS' => $request->input('fr', ''),
+                    'METODE_UKUR' => $request->input('mu') ?? '',
+                    'SKALA_NYERI' => $request->input('sn') ?? '',
                 ];
 
                 $triageQuery = DB::table('medicalrecord.triage')
@@ -11748,20 +11804,22 @@ class AddOnPengkajianController extends Controller
                     ) ?: [];
 
                     // Update hanya jika nilai lama kosong
-                    foreach ($triageTandaVital as $key => $value) {
-                        $nilaiLama = $tandaVitalLama[$key] ?? null;
+                    // foreach ($triageTandaVital as $key => $value) {
+                    //     $nilaiLama = $tandaVitalLama[$key] ?? null;
 
-                        if (
-                            $nilaiLama === null ||
-                            $nilaiLama === ''
-                        ) {
-                            $tandaVitalLama[$key] = $value;
-                        }
-                    }
+                    //     if (
+                    //         $nilaiLama === null ||
+                    //         $nilaiLama === ''
+                    //     ) {
+                    //         $tandaVitalLama[$key] = $value;
+                    //     }
+                    // }
+
+                    // print_r($triageTandaVital); die();
 
                     $triageQuery->update([
                         'TANDA_VITAL' => json_encode(
-                            $tandaVitalLama,
+                            $triageTandaVital,
                             JSON_UNESCAPED_UNICODE
                         ),
                     ]);
