@@ -4240,12 +4240,37 @@ class AddOnPengkajianController extends Controller
             ];
 
             foreach ($kolomByForm[$form] as $index => $namaKolom) {
-                $data[$namaKolom] = $request->boolean('dmk_' . ($index + 1)) ? 1 : 0;
+                $tercentang = $request->boolean('dmk_' . ($index + 1));
+
+                $data[$namaKolom] = $tercentang ? 1 : 0;
+
+                if ($tercentang) {
+                    // Gunakan nama kolom sebagai isi diagnosis.
+                    $masalahTerpilih[] = str_replace('_', ' ', $namaKolom);
+                }
             }
+
+            // Tambahkan masalah lain jika diisi.
+            if ($masalahLain !== '') {
+                $masalahTerpilih[] = $masalahLain;
+            }
+
+            $teksDiagnosis = implode("\n", $masalahTerpilih);
 
             DB::table('medicalrecord.masalah_keperawatan')->updateOrInsert(
                 ['KUNJUNGAN' => $KUNJUNGAN],
                 $data
+            );
+
+            // Simpan daftar yang sama ke kolom DIAGNOSIS.
+            DB::table('medicalrecord.diagnosis')->updateOrInsert(
+                ['KUNJUNGAN' => $KUNJUNGAN],
+                [
+                    'DIAGNOSIS' => $teksDiagnosis,
+                    'TANGGAL' => now(),
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
             );
 
             DB::commit();
@@ -4438,12 +4463,37 @@ class AddOnPengkajianController extends Controller
             ];
 
             foreach ($kolomByForm[$form] as $index => $namaKolom) {
-                $data[$namaKolom] = $request->boolean('dmk_' . ($index + 1)) ? 1 : 0;
+                $tercentang = $request->boolean('dmk_' . ($index + 1));
+
+                $data[$namaKolom] = $tercentang ? 1 : 0;
+
+                if ($tercentang) {
+                    // Gunakan nama kolom sebagai isi diagnosis.
+                    $masalahTerpilih[] = str_replace('_', ' ', $namaKolom);
+                }
             }
+
+            // Tambahkan masalah lain jika diisi.
+            if ($masalahLain !== '') {
+                $masalahTerpilih[] = $masalahLain;
+            }
+
+            $teksDiagnosis = implode("\n", $masalahTerpilih);
 
             DB::table('medicalrecord.masalah_keperawatan')->updateOrInsert(
                 ['KUNJUNGAN' => $KUNJUNGAN],
                 $data
+            );
+
+            // Simpan daftar yang sama ke kolom DIAGNOSIS.
+            DB::table('medicalrecord.diagnosis')->updateOrInsert(
+                ['KUNJUNGAN' => $KUNJUNGAN],
+                [
+                    'DIAGNOSIS' => $teksDiagnosis,
+                    'TANGGAL' => now(),
+                    'OLEH' => auth()->id(),
+                    'STATUS' => 1,
+                ]
             );
 
             DB::commit();

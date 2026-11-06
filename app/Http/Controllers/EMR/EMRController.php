@@ -259,9 +259,16 @@ class EMRController extends Controller
             // 2. Pengguna memiliki akses ke seluruh kategori 1–4.
             $aksesRuanganInduk = in_array('102', $aksesRuangan, true);
 
-            $aksesSemuaKategori = !in_array(false, $punyaAksesKategori, true);
+            // $aksesSemuaKategori = !in_array(false, $punyaAksesKategori, true);
 
-            if ($aksesRuanganInduk || $aksesSemuaKategori) {
+            // if ($aksesRuanganInduk || $aksesSemuaKategori) {
+            //     $jenisPerawatan[5] = 'Semua Perawatan';
+            // }
+            $jumlahKategoriDiakses = count(
+                array_filter($punyaAksesKategori)
+            );
+
+            if ($aksesRuanganInduk || $jumlahKategoriDiakses >= 2) {
                 $jenisPerawatan[5] = 'Semua Perawatan';
             }
 
