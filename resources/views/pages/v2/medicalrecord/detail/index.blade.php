@@ -109,7 +109,8 @@
                         </h5>
                         <h4 class="text-truncate mb-1 fw-bold">{{ $list['show']->NAMAPASIEN }}</h4>
                         <p class="text-truncate mb-1" style="font-size: 12px">
-                            <b>NOBPJS. <a class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kartu BPJS Pasien">{{ $list['show']->NOBPJS }}</a></b>
+                            <b data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ $list['show']->TGLLAHIRPASIEN?\Carbon\Carbon::parse($list['show']->TGLLAHIRPASIEN)->translatedFormat('d F Y'):'' }}">{{ \Carbon\Carbon::parse($list['show']->TGLLAHIRPASIEN)->translatedFormat('d F Y')}} ({{ $list['show']->UMURPASIEN }})</b>
+                            | <b>NOBPJS. <a class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kartu BPJS Pasien">{{ $list['show']->NOBPJS }}</a></b>
                             | <b data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP Tgl. {{ $list['show']->TGLSEP?\Carbon\Carbon::parse($list['show']->TGLSEP)->translatedFormat('d F Y'):'' }}">SEP. <a class="text-purple-700">{{ $list['show']->NOSEP?$list['show']->NOSEP:'Tidak Ditemukan' }}</a></b>
                         </p>
                         <div class="d-flex align-items-center gap-2 flex-wrap">

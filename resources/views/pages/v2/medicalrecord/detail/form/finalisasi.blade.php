@@ -7,6 +7,14 @@
     $kunjungan = $kunjungan ?? '';
     $initialFinalisasi = $initialFinalisasi ?? null;
     $isInitialFinal = (bool) ($initialFinalisasi['is_final'] ?? false);
+
+    // Nilai ini harus sama dengan kolom r.jenis di database.
+    $jenisUserByRole = [
+        'dokter' => 1,
+        'perawat' => 2, // Sesuaikan dengan nilai r.jenis untuk perawat.
+    ];
+
+    $jenisUser = $jenisUserByRole[$role] ?? null;
 @endphp
 
 <div id="{{ $formId }}_finalisasi_action"
@@ -21,23 +29,29 @@
             Print Preview
         </button>
 
-        {{-- FINALISASI --}}
-        <button type="button"
-            class="btn btn-success {{ $isInitialFinal ? 'd-none' : '' }}"
-            data-finalisasi-action="final"
-            disabled>
-            <i class="fa-solid fa-check me-1"></i>
-            Finalisasi
-        </button>
-
-        {{-- BATAL FINAL --}}
-        <button type="button"
-            class="btn btn-warning {{ $isInitialFinal ? '' : 'd-none' }}"
-            data-finalisasi-action="batal"
-            disabled>
-            <i class="fa-solid fa-rotate-left me-1"></i>
-            Batal Final
-        </button>
+        {{-- FINALISASI DAN BATAL FINAL --}}
+        @if ($jenisUser !== null)
+            @hasJenisRole($jenisUser)
+                <button type="button"
+                    class="btn btn-success {{ $isInitialFinal ? 'd-none' : '' }}"
+                    data-finalisasi-action="final"
+                    disabled>
+                    <i class="fa-solid fa-check me-1"></i>
+                    Finalisasi
+                </button>
+            @endhasJenisRole
+        @endif
+        @if ($jenisUser !== null)
+            @hasJenisRole($jenisUser)
+                <button type="button"
+                    class="btn btn-warning {{ $isInitialFinal ? '' : 'd-none' }}"
+                    data-finalisasi-action="batal"
+                    disabled>
+                    <i class="fa-solid fa-rotate-left me-1"></i>
+                    Batal Final
+                </button>
+            @endhasJenisRole
+        @endif
 
     </div>
     <p class="mb-0 text-end" id="{{ $formId }}_final_identity"></p>
