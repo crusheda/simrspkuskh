@@ -10,7 +10,6 @@
 @section('content')
 
 <div class="container-fluid">
-
     <!-- [ breadcrumb ] start -->
     <nav aria-label="breadcrumb" id="breadcrumb-detail-kunjungan">
         <ol class="breadcrumb px-3 py-2 bg-primary-subtle rounded-3">

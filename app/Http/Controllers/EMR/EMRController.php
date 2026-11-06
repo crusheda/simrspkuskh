@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\EMR;
 
 use App\Http\Controllers\Controller;
+use App\Helpers\UserRoleHelper;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
@@ -177,6 +178,13 @@ class EMRController extends Controller
 
     public function indexV2() // SIRMED v2
     {
+        // if (UserRoleHelper::hasJenisRole(1)) {
+        //     // Dokter
+        // }
+        // if (UserRoleHelper::hasMultipleJenisRole([1, 2])) {
+        //     // Dokter atau Perawat
+        // }
+
         $yearMonth = Carbon::now()->isoFormat('YYYY-MM');
 
         $user = Auth::user();
