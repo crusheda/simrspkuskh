@@ -1202,22 +1202,76 @@ class EMRController extends Controller
                 //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
                 // })
 
+                // ->where(function ($query) use ($tgls, $tgle, $rawat, $status) {
+                //     if ($rawat === 3 && $status === 1) {
+                //         // Rawat Inap yang masih berlangsung
+                //         // Tetap tampil meskipun MASUK lebih awal dari tanggal filter.
+                //         $query->whereNull('pk.KELUAR')
+                //             ->whereDate('pk.MASUK', '<=', $tgle);
+                //     } elseif ($status === 2) {
+                //         // Kunjungan selesai, untuk Rawat Inap maupun perawatan lainnya.
+                //         // Tampilkan jika masa kunjungan beririsan dengan rentang filter.
+                //         $query->whereNotNull('pk.KELUAR')
+                //             ->whereDate('pk.MASUK', '<=', $tgle)
+                //             ->whereDate('pk.KELUAR', '>=', $tgls);
+                //     } else {
+                //         // Perilaku tanggal untuk kondisi lainnya tetap berdasarkan MASUK.
+                //         $query->whereRaw(
+                //             "LEFT(pk.MASUK, 10) BETWEEN ? AND ?",
+                //             [$tgls, $tgle]
+                //         );
+                //     }
+                // })
+
                 ->where(function ($query) use ($tgls, $tgle, $rawat, $status) {
-                    if ($rawat === 3 && $status === 1) {
-                        // Rawat Inap yang masih berlangsung
-                        // Tetap tampil meskipun MASUK lebih awal dari tanggal filter.
-                        $query->whereNull('pk.KELUAR')
-                            ->whereDate('pk.MASUK', '<=', $tgle);
-                    } elseif ($status === 2) {
-                        // Kunjungan selesai, untuk Rawat Inap maupun perawatan lainnya.
-                        // Tampilkan jika masa kunjungan beririsan dengan rentang filter.
+                    if ($status === 2) {
+                        // Kunjungan selesai: masa kunjungan beririsan dengan rentang filter.
                         $query->whereNotNull('pk.KELUAR')
                             ->whereDate('pk.MASUK', '<=', $tgle)
                             ->whereDate('pk.KELUAR', '>=', $tgls);
+
+                    } elseif ($status === 1 && $rawat === 3) {
+                        // Filter Rawat Inap: pasien masih dirawat.
+                        $query->whereNull('pk.KELUAR')
+                            ->whereDate('pk.MASUK', '<=', $tgle)
+                        // Jika KELUAR terisi, tampilkan bila masa rawat beririsan
+                            ->orWhere(function ($q) use ($tgls, $tgle) {
+                                $q->whereNotNull('pk.KELUAR')
+                                    ->whereDate('pk.MASUK', '<=', $tgle)
+                                    ->whereDate('pk.KELUAR', '>=', $tgls);
+                            });
+
+                    } elseif ($status === 1 && $rawat === 5) {
+                        // Semua Perawatan: Rawat Inap memakai rentang masa rawat,
+                        // jenis perawatan lainnya tetap memakai tanggal MASUK.
+                        $query->where(function ($q) use ($tgls, $tgle) {
+                            $q->where(function ($inap) use ($tgls, $tgle) {
+                                $inap->where('pk.RUANGAN', 'LIKE', '10203%')
+                                    ->where(function ($masaRawat) use ($tgls, $tgle) {
+                                        $masaRawat->where(function ($aktif) use ($tgle) {
+                                            $aktif->whereNull('pk.KELUAR')
+                                                ->whereDate('pk.MASUK', '<=', $tgle);
+                                        })
+                                        ->orWhere(function ($selesai) use ($tgls, $tgle) {
+                                            $selesai->whereNotNull('pk.KELUAR')
+                                                    ->whereDate('pk.MASUK', '<=', $tgle)
+                                                    ->whereDate('pk.KELUAR', '>=', $tgls);
+                                        });
+                                    });
+                            })
+                            ->orWhere(function ($lainnya) use ($tgls, $tgle) {
+                                $lainnya->where('pk.RUANGAN', 'NOT LIKE', '10203%')
+                                        ->whereRaw(
+                                            'LEFT(pk.MASUK, 10) BETWEEN ? AND ?',
+                                            [$tgls, $tgle]
+                                        );
+                            });
+                        });
+
                     } else {
-                        // Perilaku tanggal untuk kondisi lainnya tetap berdasarkan MASUK.
+                        // Jenis perawatan lainnya tetap memakai tanggal MASUK.
                         $query->whereRaw(
-                            "LEFT(pk.MASUK, 10) BETWEEN ? AND ?",
+                            'LEFT(pk.MASUK, 10) BETWEEN ? AND ?',
                             [$tgls, $tgle]
                         );
                     }
