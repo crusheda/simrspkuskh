@@ -3126,6 +3126,26 @@ class EMRController extends Controller
     }
 
     /**
+     * Konversi ID aplikasi.pengguna menjadi ID master.dokter.
+     *
+     * Front-end autocomplete Anda mengirim ID dari aplikasi.pengguna,
+     * sementara medicalrecord.cppt.DOKTER_TBAK_OR_SBAR memakai master.dokter.ID.
+     */
+    private function dokterCpptDariPengguna(?int $penggunaId): int
+    {
+        if (!$penggunaId) {
+            return 0;
+        }
+
+        $dokterId = DB::table('aplikasi.pengguna as pe')
+            ->join('master.dokter as d', 'd.NIP', '=', 'pe.NIP')
+            ->where('pe.ID', $penggunaId)
+            ->value('d.ID');
+
+        return (int) ($dokterId ?? 0);
+    }
+
+    /**
      * Normalisasi HTML CPPT agar aman ditampilkan di front-end.
      * Hanya tag tertentu yang diperbolehkan, sisanya dihapus.
      * Tag yang diperbolehkan: <b>, <strong>, <i>, <em>, <u>, <br>, <ul>, <ol>, <li>, <sub>, <sup>.
