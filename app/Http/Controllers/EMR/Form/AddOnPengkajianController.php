@@ -11320,6 +11320,36 @@ class AddOnPengkajianController extends Controller
 
 
         // ==========================================================
+        // TRIAGE
+        // ==========================================================
+
+        $triage = DB::table('medicalrecord.triage')
+            ->select('ID', 'TANDA_VITAL')
+            ->where('KUNJUNGAN', $kunjungan)
+            ->whereIn('STATUS', [1, 2])
+            ->orderByDesc('ID')
+            ->first();
+
+
+        // ==========================================================
+        // DECODE JSON TANDA VITAL TRIAGE
+        // ==========================================================
+
+        $triageTandaVital = [];
+
+        if ($triage && !empty($triage->TANDA_VITAL)) {
+
+            $decoded = is_array($triage->TANDA_VITAL)
+                ? $triage->TANDA_VITAL
+                : json_decode($triage->TANDA_VITAL, true);
+
+            if (is_array($decoded)) {
+                $triageTandaVital = $decoded;
+            }
+        }
+
+
+        // ==========================================================
         // STATUS REPRODUKSI
         // ==========================================================
 
@@ -11332,17 +11362,17 @@ class AddOnPengkajianController extends Controller
             ->first();
 
 
+        // ==========================================================
+        // RESPONSE
+        // ==========================================================
+
         return response()->json([
             'status' => true,
-
             'data' => [
-
                 'anamnesis_diperoleh' => $anamnesisDiperoleh,
-
                 'tanda_vital' => $tandaVital,
-
+                'triage_tanda_vital' => $triageTandaVital,
                 'status_reproduksi' => $statusReproduksi,
-
             ],
         ]);
     }
@@ -11777,16 +11807,16 @@ class AddOnPengkajianController extends Controller
             // Kolom TRIAGE lainnya tidak disentuh.
             // ==========================================================
 
-            // if (!$isDokter) {
+            if (!$isDokter) {
 
                 $triageTandaVital = [
-                    'SUHU' => $request->input('suhu', ''),
-                    'SISTOLE' => $request->input('td_up', ''),
-                    'DIASTOLE' => $request->input('td_down', ''),
-                    'FREK_NADI' => $request->input('nadi', ''),
-                    'FREK_NAFAS' => $request->input('fr', ''),
-                    'METODE_UKUR' => $request->input('mu') ?? '',
-                    'SKALA_NYERI' => $request->input('sn') ?? '',
+                    'SUHU' => $request->input('p_suhu', ''),
+                    'SISTOLE' => $request->input('p_td_up', ''),
+                    'DIASTOLE' => $request->input('p_td_down', ''),
+                    'FREK_NADI' => $request->input('p_nadi', ''),
+                    'FREK_NAFAS' => $request->input('p_fr', ''),
+                    'METODE_UKUR' => $request->input('p_mu') ?? '',
+                    'SKALA_NYERI' => $request->input('p_sn') ?? '',
                 ];
 
                 $triageQuery = DB::table('medicalrecord.triage')
@@ -11804,22 +11834,22 @@ class AddOnPengkajianController extends Controller
                     ) ?: [];
 
                     // Update hanya jika nilai lama kosong
-                    // foreach ($triageTandaVital as $key => $value) {
-                    //     $nilaiLama = $tandaVitalLama[$key] ?? null;
+                    foreach ($triageTandaVital as $key => $value) {
+                        $nilaiLama = $tandaVitalLama[$key] ?? null;
 
-                    //     if (
-                    //         $nilaiLama === null ||
-                    //         $nilaiLama === ''
-                    //     ) {
-                    //         $tandaVitalLama[$key] = $value;
-                    //     }
-                    // }
+                        if (
+                            $nilaiLama === null ||
+                            $nilaiLama === ''
+                        ) {
+                            $tandaVitalLama[$key] = $value;
+                        }
+                    }
 
                     // print_r($triageTandaVital); die();
 
                     $triageQuery->update([
                         'TANDA_VITAL' => json_encode(
-                            $triageTandaVital,
+                            $tandaVitalLama,
                             JSON_UNESCAPED_UNICODE
                         ),
                     ]);
@@ -11839,7 +11869,7 @@ class AddOnPengkajianController extends Controller
                             'TANGGAL' => now(),
                         ]);
                 }
-            // }
+            }
 
             // ==========================================================
             // KHUSUS DOKTER

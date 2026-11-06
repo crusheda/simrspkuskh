@@ -1730,6 +1730,8 @@
                 const tandaVital =
                     data.tanda_vital || {};
 
+                const triageTandaVital =
+                    data.triage_tanda_vital || {};
 
                 // ==================================================
                 // DOKTER
@@ -2059,13 +2061,21 @@
                         tandaVital.KULIT
                     );
 
-                    // Field perawat yang belum ada di
-                    // medicalrecord.tanda_vital pada mapping lama
-                    // tetap tidak dipaksakan.
-                    //
-                    // p_sn dan p_mu tidak dimasukkan ke tabel
-                    // medicalrecord.tanda_vital karena mapping
-                    // controller lama memang tidak menyimpannya.
+                    // ==================================================
+                    // DATA TRIAGE
+                    // ==================================================
+
+                    FormHelper.setValue(
+                        $form,
+                        'p_sn',
+                        triageTandaVital.SKALA_NYERI ?? ''
+                    );
+
+                    FormHelper.setValue(
+                        $form,
+                        'p_mu',
+                        triageTandaVital.METODE_UKUR ?? ''
+                    );
 
                 }
 
