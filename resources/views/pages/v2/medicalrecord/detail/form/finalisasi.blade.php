@@ -8,13 +8,45 @@
     $initialFinalisasi = $initialFinalisasi ?? null;
     $isInitialFinal = (bool) ($initialFinalisasi['is_final'] ?? false);
 
-    // Nilai ini harus sama dengan kolom r.jenis di database.
-    $jenisUserByRole = [
-        'dokter' => 1,
-        'perawat' => 2, // Sesuaikan dengan nilai r.jenis untuk perawat.
-    ];
+    // // Nilai ini harus sama dengan kolom r.jenis di database.
+    // $jenisUserByRole = [
+    //     'dokter' => 1,
+    //     'perawat' => 2, // Sesuaikan dengan nilai r.jenis untuk perawat.
+    // ];
 
-    $jenisUser = $jenisUserByRole[$role] ?? null;
+    // $jenisUser = $jenisUserByRole[$role] ?? null;
+
+    $user = auth()->user();
+    $bolehFinalisasi = false;
+
+    if ($user) {
+        if ($role === 'dokter' && $user->hasRole('admin')) {
+            // Admin boleh finalisasi bagian dokter.
+            $bolehFinalisasi = true;
+        } else {
+            $jenisDiizinkan = match ($role) {
+                'dokter' => [1, 11], // pengkajian medis (dokter)
+                'perawat' => [2, 11],    // pengkajian keperawatan
+                default => [],
+            };
+
+            if ($jenisDiizinkan !== []) {
+                $bolehFinalisasi = \Illuminate\Support\Facades\DB::table(
+                    'simrspku_klaim.model_has_roles as mhr'
+                )
+                    ->join(
+                        'simrspku_klaim.roles as r',
+                        'r.id',
+                        '=',
+                        'mhr.role_id'
+                    )
+                    ->where('mhr.model_id', $user->ID)
+                    ->where('mhr.model_type', $user->getMorphClass())
+                    ->whereIn('r.jenis', $jenisDiizinkan)
+                    ->exists();
+            }
+        }
+    }
 @endphp
 
 <div id="{{ $formId }}_finalisasi_action"
@@ -30,27 +62,23 @@
         </button>
 
         {{-- FINALISASI DAN BATAL FINAL --}}
-        @if ($jenisUser !== null)
-            @hasJenisRole($jenisUser)
-                <button type="button"
-                    class="btn btn-success {{ $isInitialFinal ? 'd-none' : '' }}"
-                    data-finalisasi-action="final"
-                    disabled>
-                    <i class="fa-solid fa-check me-1"></i>
-                    Finalisasi
-                </button>
-            @endhasJenisRole
+        @if ($bolehFinalisasi)
+            <button type="button"
+                class="btn btn-success {{ $isInitialFinal ? 'd-none' : '' }}"
+                data-finalisasi-action="final"
+                disabled>
+                <i class="fa-solid fa-check me-1"></i>
+                Finalisasi
+            </button>
         @endif
-        @if ($jenisUser !== null)
-            @hasJenisRole($jenisUser)
-                <button type="button"
-                    class="btn btn-warning {{ $isInitialFinal ? '' : 'd-none' }}"
-                    data-finalisasi-action="batal"
-                    disabled>
-                    <i class="fa-solid fa-rotate-left me-1"></i>
-                    Batal Final
-                </button>
-            @endhasJenisRole
+        @if ($bolehFinalisasi)
+            <button type="button"
+                class="btn btn-warning {{ $isInitialFinal ? '' : 'd-none' }}"
+                data-finalisasi-action="batal"
+                disabled>
+                <i class="fa-solid fa-rotate-left me-1"></i>
+                Batal Final
+            </button>
         @endif
 
     </div>

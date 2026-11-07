@@ -20,7 +20,6 @@
             name="kp_plr_hari"
             min="1"
             style="width: 80px;"
-            disabled
         >
 
         <span class="text-nowrap">Hari</span>
