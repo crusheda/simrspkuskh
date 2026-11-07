@@ -15,9 +15,15 @@
     window.EMRData = {
         kunjungan: @json($list["KUNJUNGAN"]),
         ruangan: @json($list["show"]->IDRUANGAN),
+        namaRuangan: @json($list["show"]->NAMARUANGAN),
+        namaDokter: @json($list["show"]->NAMADOKTER),
         rm: @json($list["show"]->NORM),
         namaPasien: @json($list["show"]->NAMAPASIEN),
         tglLahir: @json($list["show"]->TGLLAHIRPASIEN),
+        umur: @json($list["show"]->UMURPASIEN),
+        namaAsuransi: @json($list["show"]->NAMAASURANSI),
+        refIdAsuransi: @json($list['show']->REFIDASURANSI),
+        idAsuransi: @json($list['show']->IDASURANSI),
         noAsuransi: @json($list["show"]->NOASURANSI),
         tgl_sep: @json($list["show"]->TGLSEP),
         sep: @json($list["show"]->NOSEP),
@@ -32,7 +38,7 @@
         statusKunjungan: @json($list["show"]->STATUS)
     };
 </script>
-<div class="row gy-4">
+<div class="row gy-4 p-2">
     <div class="col-sm-12">
         <div class="card mb-2" id="btn-top-detail-kunjungan">
             <div class="card-body p-2">
@@ -104,29 +110,11 @@
                 <div class="row justify-content-between d-flex align-items-center p-2">
                     <div class="col-xl-8 col-md-8 col-sm-8">
                         <h5 class="mb-1 d-flex align-items-center gap-2">
-                            <i class="ri-user-3-line me-1"></i>
-                            <b class="fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis Pasien">
-                                RM. {{ str_pad($list['show']->NORM, 8, '0', STR_PAD_LEFT) }}
-                            </b>
                             @if ($list['show']->PRBPASIEN)
                                 <span class="badge bg-danger border border-danger badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">{{ $list['show']->PRBPASIEN }}</span>
                             @endif
                         </h5>
-                        <h4 class="text-truncate mb-1 fw-bold">{{ $list['show']->NAMAPASIEN }}</h4>
-                        <p class="text-truncate mb-1" style="font-size: 12px">
-                            <b>NOBPJS. <a class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kartu BPJS Pasien">{{ $list['show']->NOBPJS }}</a></b>
-                            | <b data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP Tgl. {{ $list['show']->TGLSEP?\Carbon\Carbon::parse($list['show']->TGLSEP)->translatedFormat('d F Y'):'' }}">SEP. <a class="text-purple-700">{{ $list['show']->NOSEP?$list['show']->NOSEP:'Tidak Ditemukan' }}</a></b>
-                        </p>
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            @if ($list['show']->STATUS == 1)
-                                <span class="badge bg-warning-subtle text-dark border border-warning-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien Sedang Dilayani">Pasien Sedang Dilayani</span>
-                            @else
-                                @if ($list['show']->STATUS == 2)
-                                    <span class="badge bg-primary-subtle text-dark border border-primary-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien Selesai / Final">Kunjungan Pasien Selesai / Final</span>
-                                @else
-                                    <span class="badge bg-danger-subtle text-dark border border-danger-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Status Kunjungan Pasien Batal Periksa">Pasien Batal Periksa</span>
-                                @endif
-                            @endif
                             @if ($list['riwayat_alergi']->isNotEmpty())
                                 @php
                                     $alergi = 'Alergi ' . $list['riwayat_alergi']->map(function ($item) {
@@ -149,12 +137,6 @@
                                 </span>
                             @endif
                         </div>
-                    </div>
-                    <div class="col-xl-4 col-md-4 col-sm-4 text-end">
-                        <p class="fw-bold mb-1 fs-16"><b>{{ $list['show']->NAMARUANGAN }}</b></p>
-                        <h6 class="text-truncate text-mint mb-1 fs-20"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="DPJP. {{ $list['show']->NAMADOKTER }}">{{ $list['show']->NAMADOKTER }}</b></h6>
-                        <p class="text-truncate mb-0 ms-3" style="font-size: 13px"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tgl. Pasien mulai dilayani / diterima">Masuk :&nbsp;&nbsp;{{ \Carbon\Carbon::parse($list['show']->MASUK)->locale('id')->translatedFormat('d M Y H.i') . ' WIB' }}</b></p>
-                        <p class="text-truncate mb-0 ms-3" style="font-size: 13px"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tgl. Pasien selesai dilayani / dipulangkan">Keluar :&nbsp;&nbsp;{{ $list['show']->KELUAR?\Carbon\Carbon::parse($list['show']->KELUAR)->locale('id')->translatedFormat('d M Y H.i') . ' WIB':'-' }}</b></p>
                     </div>
                 </div>
             </div>
@@ -214,7 +196,7 @@
         <div class="tab-content">
             <div class="tab-pane active show" id="identitas" role="tabpanel">
                 <div class="row">
-                    <div class="col-lg-7 col-xxl-8 mb-2">
+                    <div class="col-lg-6 col-xxl-7 mb-2">
                         <div class="card">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <h5>Biodata Pasien</h5>
@@ -286,14 +268,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-5 col-xxl-4">
+                    <div class="col-lg-6 col-xxl-5">
                         <div class="card">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <h5 class="card-title">Riwayat Kunjungan Pasien</h5>
                                 <button class="btn btn-sm btn-outline-warning" onclick="EMRDetailPage.loadRiwayatKunjunganPasien()" id="btn-refresh-riwayat-kunjungan"
                                     data-bs-toggle="tooltip" title="Refresh Riwayat Kunjungan Pasien"><i class="fas fa-sync"></i></button>
                             </div>
-                            <div style="max-height: 420px; overflow-y: auto;" class="rounded-bottom">
+                            <div style="max-height: 370px; overflow-y: auto;" class="rounded-bottom">
                                 <ul class="list-group list-group-flush" id="load-riwayat-kunjungan-pasien">
                                     <li class="list-group-item"><center><i class="fas fa-sync fa-spin me-1"></i> Menginisialisasi Riwayat Kunjungan</center></li>
                                 </ul>
@@ -369,11 +351,11 @@
         OPEN MODAL NEW CPPT
     ============================================================ --}}
     <div class="modal fade" id="modalCPPT" tabindex="-1" aria-labelledby="modalCPPTLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered modal-xxl modal-dialog-scrollable">
             <div class="modal-content border-0 rounded-4 overflow-hidden">
 
                 {{-- HEADER --}}
-                <div class="modal-header bg-primary text-white border-0">
+                <div class="modal-header bg-primary text-white border-0" hidden>
                     <div class="d-flex align-items-center gap-3">
                         <div class="cppt-modal-icon">
                             <i class="ph-duotone ph-notepad fs-24"></i>
@@ -398,12 +380,12 @@
                 {{-- BODY --}}
                 <div class="modal-body p-3 p-md-4 position-relative">
 
-                    <div class="cppt-patient-info rounded-3 p-3 mb-3">
+                    <div class="cppt-patient-info rounded-3 p-3 mb-3" hidden>
                         <div class="row g-3" id="cppt_header"></div>
                     </div>
 
                     {{-- MODAL TAMBAH CPPT --}}
-                    @include('pages.v2.medicalrecord.detail.cppt.modal_tambah')
+                    @include('pages.v3.emr.detail.cppt.modal_tambah')
 
                     {{-- RIWAYAT CPPT --}}
                     <div class="d-flex align-items-center justify-content-between mb-3">
@@ -436,7 +418,7 @@
                         <i class="ph-duotone ph-arrow-counter-clockwise me-1"></i> Riwayat CPPT
                     </button>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-outline-light border-dashed waves-effect waves-light" data-bs-dismiss="modal" data-bs-toggle="tooltip" title="Tutup Cppt">
+                        <button type="button" class="btn btn-subtle-secondary border-dashed waves-effect waves-light" data-bs-dismiss="modal" data-bs-toggle="tooltip" title="Tutup Cppt">
                             <i class="ph-duotone ph-x me-1"></i> Tutup
                         </button>
                         <button type="button" class="btn btn-subtle-warning" onclick="EMRDetailPage.showModalCppt('{{ $list['KUNJUNGAN'] }}', 1)" data-bs-toggle="tooltip" title="Refresh Data Riwayat CPPT Kunjungan Saat Ini">
@@ -449,7 +431,7 @@
     </div>
 
     {{-- MODAL EDIT CPPT --}}
-    @include('pages.v2.medicalrecord.detail.cppt.modal_edit')
+    @include('pages.v3.emr.detail.cppt.modal_edit')
 
 </div>
 
@@ -460,18 +442,35 @@
 
         window.EMRDetailPage = {
             initCppt,
+            showICare,
             showModalCppt,
             hapusCPPT,
-            resetFormCPPT
+            resetFormCPPT,
+            loadRiwayatKunjunganPasien,
         };
+
+        // Bridge agar header utama dapat memanggil fungsi i-Care di halaman EMR
+        if (window.parent !== window) {
+            window.parent.showICareActiveEMR = function () {
+                if (typeof window.EMRDetailPage?.showICare === 'function') {
+                    window.EMRDetailPage.showICare();
+                } else {
+                    console.warn('EMRDetailPage.showICare belum tersedia di halaman EMR.');
+                }
+            };
+        }
 
         // Init Variabel Global into Variabel Constant
         const {
             kunjungan,
-            ruangan,
+            namaRuangan,
+            namaDokter,
             rm,
             namaPasien,
             tglLahir,
+            umur,
+            idAsuransi,
+            namaAsuransi,
             noAsuransi,
             tgl_sep,
             sep,
@@ -637,11 +636,14 @@
                         window.parent.EMRWorkspace.openPatient({
                             nomor: nomor,
                             norm: rm,
-                            nama: namaPasien,
+                            namaPasien: namaPasien,
                             tglLahir: tglLahir,
-                            namaRuangan: ruangan,
+                            namaRuangan: namaRuangan,
+                            namaDokter: namaDokter,
                             tglMasuk: tgl_masuk,
                             tglKeluar: tgl_keluar,
+                            idAsuransi: idAsuransi,
+                            namaAsuransi: namaAsuransi,
                             noAsuransi: noAsuransi,
                             statusKunjungan: statusKunjungan,
                             url: `/v2/emr/${encodeURIComponent(nomor)}`
@@ -656,6 +658,34 @@
 
                 }
             );
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalCPPT = document.getElementById('modalCPPT');
+
+            if (!modalCPPT) return;
+
+            const modalDialog = modalCPPT.querySelector('.modal-dialog');
+
+            if (!modalDialog) return;
+
+            modalCPPT.addEventListener('show.bs.modal', function () {
+                modalDialog.classList.remove(
+                    'modal-xxl',
+                    'modal-dialog-centered'
+                );
+
+                modalDialog.classList.add('modal-fullscreen');
+            });
+
+            modalCPPT.addEventListener('hidden.bs.modal', function () {
+                modalDialog.classList.remove('modal-fullscreen');
+
+                modalDialog.classList.add(
+                    'modal-xxl',
+                    'modal-dialog-centered'
+                );
+            });
         });
 
         function initCppt() {
@@ -839,9 +869,9 @@
 
                         let pushInstruksi = '';
                         if (item.INSTRUKSI != null && String(item.INSTRUKSI).trim() !== '') {
-                            let instruksi = htmlKeTextCPPT(item.INSTRUKSI);
+                            let instruksi = window.EMRCPPTPage.htmlKeTextCPPT(item.INSTRUKSI);
                             pushInstruksi = `<div class="small lh-lg">
-                                            <b>I/ :</b> ${escapeHtmlCPPT(instruksi).replace(/\n/g, '<br>') ?? '-'}
+                                            <b>I/ :</b> ${window.EMRCPPTPage.escapeHtmlCPPT(instruksi).replace(/\n/g, '<br>') ?? '-'}
                                         </div>`;
                         }
 
@@ -883,11 +913,11 @@
                                                     <!-- ACTION -->
                                                     <div class="d-flex justify-content-end gap-2">
                                                         <button type="button"
-                                                                class="btn btn-sm btn-icon btn-subtle-info border border-info border-dashed"
+                                                                class="btn btn-sm btn-icon btn-info border border-light border-dashed"
                                                                 data-bs-toggle="tooltip"
                                                                 title="Copy Cppt"
                                                                 id="btn-copy-cppt-${item.ID}"
-                                                                onclick="copyCPPT('${item.ID}', this)">
+                                                                onclick="window.EMRCPPTPage.copyCPPT('${item.ID}', this)">
                                                             <i class="ri-file-copy-2-line"></i>
                                                         </button>
                                                         ${
@@ -895,17 +925,17 @@
                                                                 ? `
                                                                     <button
                                                                         type="button"
-                                                                        class="btn btn-sm btn-icon btn-subtle-warning border border-warning border-dashed"
+                                                                        class="btn btn-sm btn-icon btn-warning border border-light border-dashed"
                                                                         data-bs-toggle="tooltip"
                                                                         title="Ubah Cppt"
                                                                         id="btn-edit-cppt-${item.ID}"
-                                                                        onclick="editCPPT('${item.ID}', this)"
+                                                                        onclick="window.EMRCPPTPage.editCPPT('${item.ID}', this)"
                                                                     >
                                                                         <i class="ri-edit-line"></i>
                                                                     </button>
                                                                     <button
                                                                         type="button"
-                                                                        class="btn btn-sm btn-icon btn-subtle-danger border border-danger border-dashed"
+                                                                        class="btn btn-sm btn-icon btn-danger border border-light border-dashed"
                                                                         data-bs-toggle="tooltip"
                                                                         title="Hapus Cppt"
                                                                         id="btn-hapus-cppt-${item.ID}"

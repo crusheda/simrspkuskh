@@ -1,0 +1,1013 @@
+/* =========================================================
+    GLOBAL
+    ========================================================= */
+
+.list-group-item {
+    border: 0;
+}
+
+.form-search #compo-menu-search {
+    max-width: 100% !important;
+}
+
+.pilih-form-title {
+    display: none;
+}
+
+/* LOADING BAR PENGKAJIAN MENU & SUB MENU */
+.api-loading-bar {
+    position: fixed;
+    z-index: 99999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+
+.api-loading-bar.is-loading {
+    opacity: 1;
+}
+
+.api-loading-bar__progress {
+    width: 32%;
+    height: 100%;
+    border-radius: 0 4px 4px 0;
+    will-change: transform, opacity, background-color, box-shadow;
+    animation: api-loading-progress 2.2s cubic-bezier(.65, 0, .35, 1) infinite;
+}
+
+@keyframes api-loading-progress {
+    0% {
+        transform: translate3d(-115%, 0, 0) scaleX(.55);
+        opacity: 0;
+        background-color: #0d6efd; /* Biru */
+        box-shadow: 0 0 10px rgba(13, 110, 253, .85);
+    }
+
+    10% {
+        opacity: 1;
+        background-color: #416ed2;
+        box-shadow: 0 0 10px rgba(65, 110, 210, .85);
+    }
+
+    35% {
+        background-color: #b44672;
+        box-shadow: 0 0 10px rgba(180, 70, 114, .85);
+    }
+
+    50% {
+        transform: translate3d(85%, 0, 0) scaleX(1.15);
+        opacity: 1;
+        background-color: #dc3545; /* Merah */
+        box-shadow: 0 0 10px rgba(220, 53, 69, .85);
+    }
+
+    70% {
+        background-color: #9b7343;
+        box-shadow: 0 0 10px rgba(155, 115, 67, .85);
+    }
+
+    90% {
+        opacity: 1;
+        background-color: #198754; /* Hijau success */
+        box-shadow: 0 0 10px rgba(25, 135, 84, .85);
+    }
+
+    100% {
+        transform: translate3d(320%, 0, 0) scaleX(.5);
+        opacity: 0;
+        background-color: #198754; /* Hijau success */
+        box-shadow: 0 0 10px rgba(25, 135, 84, .85);
+    }
+}
+
+/*
+=========================================================
+MINIMIZE BUTTON
+=========================================================
+
+Default:
+tombol hanya boleh tampil pada desktop >= 1200px.
+*/
+
+#btn-minimize-pengkajian {
+    display: none !important;
+}
+
+
+/*
+=========================================================
+DESKTOP
+=========================================================
+*/
+
+@media (min-width: 1200px) {
+    .pilih-form-title {
+        display: block;
+    }
+
+    /*
+    =====================================================
+    COLUMN
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col,
+    #pengkajian-content-col {
+        transition:
+            flex-basis .25s ease,
+            max-width .25s ease,
+            margin-right .25s ease;
+    }
+
+
+    /*
+    =====================================================
+    NORMAL
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col {
+        flex: 0 0 25%;
+        max-width: 25%;
+    }
+
+    #pengkajian-content-col {
+        flex: 0 0 75%;
+        max-width: 75%;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZE BUTTON - DESKTOP
+    =====================================================
+    */
+
+    #btn-minimize-pengkajian {
+        display: flex !important;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED SIDEBAR
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized {
+        flex: 0 0 80px;
+        max-width: 80px;
+        margin-right: 12px;
+    }
+
+    #pengkajian-content-col.expanded {
+        flex: 1 1 auto;
+        max-width: none;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED CARD
+    =====================================================
+
+    Hanya card-header yang terlihat.
+    */
+
+    #pengkajian-sidebar-col.minimized .sidebar-menu {
+        width: 80px;
+        overflow: hidden;
+        position: relative;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED HEADER
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized .card-header {
+        position: relative;
+
+        width: 80px;
+        min-width: 80px;
+
+        height: 58px;
+        min-height: 58px;
+
+        padding: 0 !important;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED SEARCH
+    =====================================================
+
+    Search benar-benar dihilangkan dari layout.
+    */
+
+    #pengkajian-sidebar-col.minimized .form-search {
+        display: none !important;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED CARD BODY
+    =====================================================
+
+    Body benar-benar hilang.
+
+    Bukan visibility:hidden karena visibility masih
+    mempertahankan ruang/layout.
+    */
+
+    #pengkajian-sidebar-col.minimized .card-body {
+        display: none !important;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED MENU
+    =====================================================
+
+    Tidak perlu disembunyikan dengan display:none karena
+    card-body sudah tidak ditampilkan.
+
+    visibility digunakan sebagai pengaman tambahan agar
+    tidak muncul ketika ada style lain.
+    */
+
+    #pengkajian-sidebar-col.minimized .menu-group-title,
+    #pengkajian-sidebar-col.minimized .menu-parent,
+    #pengkajian-sidebar-col.minimized .menu-child,
+    #pengkajian-sidebar-col.minimized .menu-wrapper {
+        visibility: hidden;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED SUBMENU
+    =====================================================
+
+    JANGAN mengatur:
+
+        display
+        height
+        transition
+
+    Bootstrap Collapse tetap mengontrol submenu.
+    */
+
+    #pengkajian-sidebar-col.minimized .submenu {
+        visibility: hidden;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED BUTTON
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized #btn-minimize-pengkajian {
+        display: flex !important;
+        visibility: visible !important;
+
+        position: absolute;
+        /* z-index: 100; */
+
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        width: 80px;
+        height: 58px;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        align-items: center;
+        justify-content: center;
+
+        border: 0;
+        border-radius: 0;
+
+        background: transparent;
+        box-shadow: none;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED BUTTON ICON
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized
+    #btn-minimize-pengkajian i {
+        display: block;
+        visibility: visible;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        font-size: 24px;
+        line-height: 1;
+    }
+
+
+    /*
+    =====================================================
+    MINIMIZED BUTTON HOVER
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized
+    #btn-minimize-pengkajian:hover {
+        background: var(--bs-light);
+    }
+
+
+    /*
+    =====================================================
+    HOVER MINIMIZED
+    =====================================================
+
+    Ketika cursor masuk ke area sidebar:
+
+    80px -> 300px
+    */
+
+    #pengkajian-sidebar-col.minimized:hover {
+        flex: 0 0 300px;
+        max-width: 300px;
+
+        /*
+        Sengaja tidak memakai transition pada hover
+        supaya sidebar langsung terbuka.
+        */
+        transition: none !important;
+    }
+
+
+    /*
+    =====================================================
+    HOVER CARD
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .sidebar-menu {
+        width: 300px;
+        overflow: visible;
+
+        transition: none !important;
+    }
+
+
+    /*
+    =====================================================
+    HOVER HEADER
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .card-header {
+        width: auto;
+        min-width: 0;
+
+        height: auto;
+        min-height: auto;
+
+        padding: 1rem !important;
+
+        display: flex;
+        align-items: center;
+    }
+
+
+    /*
+    =====================================================
+    HOVER SEARCH
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .form-search {
+        display: block !important;
+    }
+
+
+    /*
+    =====================================================
+    HOVER CARD BODY
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .card-body {
+        display: block !important;
+    }
+
+
+    /*
+    =====================================================
+    HOVER MENU
+    =====================================================
+
+    visibility dikembalikan.
+
+    Tidak menggunakan display agar JavaScript search
+    tetap bisa menggunakan .hide() / .show().
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .menu-group-title,
+    #pengkajian-sidebar-col.minimized:hover .menu-parent,
+    #pengkajian-sidebar-col.minimized:hover .menu-child,
+    #pengkajian-sidebar-col.minimized:hover .menu-wrapper {
+        visibility: visible;
+    }
+
+
+    /*
+    =====================================================
+    HOVER SUBMENU
+    =====================================================
+
+    Bootstrap tetap sepenuhnya mengatur Collapse.
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .submenu {
+        visibility: visible;
+    }
+
+
+    /*
+    =====================================================
+    MENU COLLAPSE
+    =====================================================
+
+    Parent menu tetap menggunakan flex seperti HTML asli.
+    */
+
+    #pengkajian-sidebar-col.minimized:hover .menu-collapse {
+        display: flex;
+    }
+
+
+    /*
+    =====================================================
+    BUTTON KEMBALI KE HEADER
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover
+    #btn-minimize-pengkajian {
+        position: static;
+
+        width: auto;
+        height: auto;
+
+        margin-left: auto !important;
+
+        padding: .375rem .5rem !important;
+
+        background: var(--bs-light);
+        border-radius: .375rem;
+
+        visibility: visible !important;
+    }
+
+
+    /*
+    =====================================================
+    BUTTON ICON NORMAL
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover
+    #btn-minimize-pengkajian i {
+        font-size: 18px;
+    }
+
+
+    /*
+    =====================================================
+    SEARCH INPUT
+    =====================================================
+    */
+
+    #pengkajian-sidebar-col.minimized:hover
+    .form-search #compo-menu-search {
+        max-width: 100% !important;
+    }
+
+
+    /*
+    =====================================================
+    IMPORTANT:
+    BOOTSTRAP COLLAPSE
+    =====================================================
+
+    JANGAN override:
+
+        .collapse
+        .collapsing
+        .collapse.show
+
+    Dengan demikian Bootstrap tetap memberikan
+    transition collapse asli.
+    */
+
+    /* =========================================================
+    FIX DISPLAY MENU PENGKAJIAN
+    Bootstrap .d-flex menggunakan display:flex !important.
+    ========================================================= */
+
+    #pengkajianMenu .menu-item.d-flex[style*="display: none"],
+    #pengkajianMenu .menu-child.d-flex[style*="display: none"] {
+        display: none !important;
+    }
+
+    #pengkajianMenu .menu-item.d-flex:not([style*="display: none"]),
+    #pengkajianMenu .menu-child.d-flex:not([style*="display: none"]) {
+        display: flex !important;
+    }
+
+}
+
+/* Setelah tombol form diklik: selalu sembunyikan */
+.pilih-form-title.is-hidden {
+    display: none !important;
+}
+
+/* ================================================================
+   SIRMED V3 — PENGKAJIAN THEME OVERRIDES
+   Appearance only. Append after the existing Pengkajian stylesheet.
+   Does not change layout logic, JavaScript hooks, IDs or variables.
+   Uses existing SIRMED theme tokens with Bootstrap fallbacks.
+   ================================================================ */
+
+#pengkajian-sidebar-col .sidebar-menu,
+#pengkajian-content-col #formContent > .card {
+    background: var(--surface, var(--bs-card-bg, var(--bs-body-bg)));
+    color: var(--text, var(--bs-body-color));
+    border: 1px solid var(--border, var(--bs-border-color));
+    border-radius: 1rem;
+    box-shadow: var(--shadow, 0 8px 24px rgba(15, 23, 42, .06));
+    overflow: hidden;
+}
+
+#pengkajian-sidebar-col .sidebar-menu > .card-header {
+    background: var(--soft, var(--bs-tertiary-bg));
+    border-bottom: 1px solid var(--border, var(--bs-border-color));
+}
+
+#pengkajian-sidebar-col .form-search {
+    position: relative;
+}
+
+#pengkajian-sidebar-col #compo-menu-search {
+    color: var(--text, var(--bs-body-color));
+    background: var(--surface, var(--bs-body-bg));
+    border: 1px solid var(--border, var(--bs-border-color));
+    border-radius: .75rem;
+    min-height: 40px;
+    padding-inline: 2.35rem 2.5rem;
+    transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+#pengkajian-sidebar-col #compo-menu-search::placeholder {
+    color: var(--muted, var(--bs-secondary-color));
+    opacity: .85;
+}
+
+#pengkajian-sidebar-col #compo-menu-search:focus {
+    border-color: var(--primary, var(--bs-primary));
+    box-shadow: 0 0 0 .2rem color-mix(in srgb, var(--primary, var(--bs-primary)) 16%, transparent);
+    outline: 0;
+}
+
+#pengkajian-sidebar-col .form-search .icon-search {
+    color: var(--muted, var(--bs-secondary-color));
+}
+
+#pengkajian-sidebar-col .btn-clear-search {
+    color: var(--muted, var(--bs-secondary-color));
+    border-radius: .5rem;
+    transition: color .18s ease, background-color .18s ease;
+}
+
+#pengkajian-sidebar-col .btn-clear-search:hover {
+    color: var(--bs-danger);
+    background: color-mix(in srgb, var(--bs-danger) 9%, transparent);
+}
+
+#btn-minimize-pengkajian {
+    border-radius: .7rem;
+    transition: color .18s ease, background-color .18s ease, border-color .18s ease;
+}
+
+#pengkajian-sidebar-col #pengkajianMenu {
+    background: var(--surface, var(--bs-body-bg));
+    color: var(--text, var(--bs-body-color));
+}
+
+#pengkajianMenu .list-group {
+    background: transparent;
+}
+
+#pengkajianMenu .menu-group-title {
+    margin: .45rem .65rem .25rem;
+    padding: .65rem .8rem !important;
+    background: var(--soft, var(--bs-tertiary-bg));
+    border: 1px solid var(--border, var(--bs-border-color));
+    border-radius: .7rem;
+}
+
+#pengkajianMenu .menu-group-title h5 {
+    margin: 0 !important;
+    color: var(--bs-primary, var(--bs-secondary-color));
+    font-size: .69rem;
+    font-weight: 800;
+    letter-spacing: .085em;
+    line-height: 1.35;
+}
+
+#pengkajianMenu .menu-item,
+#pengkajianMenu .menu-parent,
+#pengkajianMenu .menu-child {
+    position: relative;
+    /* margin: .2rem .65rem;
+    padding: .72rem .85rem; */
+    color: var(--text, var(--bs-body-color));
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: .75rem;
+    font-size: .82rem;
+    font-weight: 550;
+    line-height: 1.45;
+    transition: color .16s ease, background-color .16s ease, border-color .16s ease, transform .16s ease;
+}
+
+#pengkajianMenu .menu-child {
+    /* margin-left: 1.1rem; */
+    padding-top: .62rem;
+    padding-bottom: .62rem;
+    color: var(--bs-dark, var(--bs-secondary-color));
+    font-size: .8rem;
+}
+
+#pengkajianMenu .menu-item:hover,
+#pengkajianMenu .menu-parent:hover,
+#pengkajianMenu .menu-child:hover {
+    color: var(--primary, var(--bs-primary));
+    background: var(--primary-soft, color-mix(in srgb, var(--bs-primary) 9%, transparent));
+    border-color: color-mix(in srgb, var(--primary, var(--bs-primary)) 18%, var(--border, var(--bs-border-color)));
+}
+
+#pengkajianMenu .menu-item.active,
+#pengkajianMenu .menu-parent.active,
+#pengkajianMenu .menu-child.active {
+    color: var(--primary, var(--bs-primary));
+    background: var(--primary-soft, color-mix(in srgb, var(--bs-primary) 11%, transparent));
+    border-color: color-mix(in srgb, var(--primary, var(--bs-primary)) 25%, var(--border, var(--bs-border-color)));
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 var(--primary, var(--bs-primary));
+}
+
+#pengkajianMenu .menu-collapse {
+    gap: .6rem;
+}
+
+#pengkajianMenu .submenu-icon {
+    flex: 0 0 auto;
+    color: var(--muted, var(--bs-secondary-color));
+    transition: transform .18s ease, color .18s ease;
+}
+
+#pengkajianMenu .menu-collapse[aria-expanded="true"] .submenu-icon {
+    color: var(--primary, var(--bs-primary));
+}
+
+#pengkajianMenu .submenu {
+    padding: .15rem 0 .35rem;
+}
+
+#pengkajianMenu .menu-child i {
+    color: var(--muted, var(--bs-secondary-color));
+    opacity: .85;
+}
+
+#pengkajianMenu .menu-child.active i,
+#pengkajianMenu .menu-child:hover i {
+    color: var(--primary, var(--bs-primary));
+}
+
+#pengkajianMenu .js-final-icon,
+#pengkajianMenu .js-ranap-parent-final-icon,
+#pengkajianMenu .js-radar-parent-final-icon {
+    font-size: .75rem;
+    line-height: 1.5;
+    border-radius: .35rem !important;
+}
+
+#apiLoadingBar {
+    height: 3px;
+    background: color-mix(in srgb, var(--primary, var(--bs-primary)) 12%, transparent);
+}
+
+#apiLoadingBar .api-loading-bar__progress {
+    background: var(--primary, var(--bs-primary));
+    box-shadow: 0 0 10px color-mix(in srgb, var(--primary, var(--bs-primary)) 45%, transparent);
+    border-radius: 0 999px 999px 0;
+}
+
+#pengkajian-content-col #formContent > .card {
+    border-radius: 1rem;
+}
+
+#pengkajian-content-col #formContent > .card > .card-body {
+    color: var(--text, var(--bs-body-color));
+}
+
+#pengkajian-content-col #formContent .alert {
+    border-radius: .75rem;
+}
+
+/* Respect the existing minimized / hover interaction; visual treatment only. */
+@media (min-width: 1200px) {
+    #pengkajian-sidebar-col.minimized .sidebar-menu {
+        border-radius: .85rem;
+        box-shadow: var(--shadow, 0 8px 24px rgba(15, 23, 42, .06));
+    }
+
+    #pengkajian-sidebar-col.minimized:hover .sidebar-menu {
+        border-radius: 1rem;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    #pengkajian-sidebar-col .sidebar-menu {
+        border-radius: .9rem;
+    }
+
+    #pengkajianMenu .menu-item,
+    #pengkajianMenu .menu-parent,
+    #pengkajianMenu .menu-child {
+        margin-inline: .5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #pengkajian-sidebar-col #compo-menu-search,
+    #pengkajianMenu .menu-item,
+    #pengkajianMenu .menu-parent,
+    #pengkajianMenu .menu-child,
+    #pengkajianMenu .submenu-icon,
+    #btn-minimize-pengkajian {
+        transition: none;
+    }
+}
+
+/* =====================================================================
+   SIRMED V3 — PENGKAJIAN HEADER REFRESH
+   CSS-only appearance override for the existing search/header controls.
+   Keep this stylesheet AFTER the original Pengkajian CSS and theme overrides.
+   Preserves all existing IDs, classes, attributes, and JavaScript behavior.
+   ===================================================================== */
+
+#pengkajian-sidebar-col .sidebar-menu > .card-header {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    padding: .85rem !important;
+    background: var(--surface, var(--bs-card-bg, var(--bs-body-bg)));
+    border-bottom: 1px solid var(--border, var(--bs-border-color));
+    position: relative;
+}
+
+#pengkajian-sidebar-col .sidebar-menu > .card-header::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: var(--primary, var(--bs-primary));
+    opacity: .8;
+}
+
+#pengkajian-sidebar-col .sidebar-menu > .card-header .form-search {
+    min-width: 0;
+    flex: 1 1 auto;
+    position: relative;
+}
+
+#pengkajian-sidebar-col #compo-menu-search {
+    width: 100%;
+    min-height: 46px;
+    padding: .65rem 2.65rem .65rem 2.8rem;
+    border: 1px solid var(--border, var(--bs-border-color));
+    border-radius: .85rem;
+    background: var(--soft, var(--bs-tertiary-bg));
+    color: var(--text, var(--bs-body-color));
+    font-size: .875rem;
+    font-weight: 500;
+    line-height: 1.4;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, .025);
+    transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+#pengkajian-sidebar-col #compo-menu-search::placeholder {
+    color: var(--muted, var(--bs-secondary-color));
+    opacity: .9;
+    font-weight: 400;
+}
+
+#pengkajian-sidebar-col #compo-menu-search:hover {
+    border-color: color-mix(in srgb, var(--primary, var(--bs-primary)) 35%, var(--border, var(--bs-border-color)));
+}
+
+#pengkajian-sidebar-col #compo-menu-search:focus {
+    outline: 0;
+    background: var(--surface, var(--bs-body-bg));
+    border-color: var(--primary, var(--bs-primary));
+    box-shadow: 0 0 0 .22rem color-mix(in srgb, var(--primary, var(--bs-primary)) 15%, transparent);
+}
+
+#pengkajian-sidebar-col .form-search .icon-search {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: .95rem;
+    transform: translateY(-50%);
+    color: var(--primary, var(--bs-primary));
+    font-size: 1.15rem;
+    pointer-events: none;
+    opacity: .95;
+}
+
+#pengkajian-sidebar-col .btn-clear-search {
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    right: .55rem;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: .55rem;
+    background: transparent;
+    color: var(--muted, var(--bs-secondary-color));
+    cursor: pointer;
+    transition: background-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+#pengkajian-sidebar-col .btn-clear-search:hover {
+    color: var(--bs-danger);
+    background: color-mix(in srgb, var(--bs-danger) 10%, transparent);
+}
+
+#pengkajian-sidebar-col .btn-clear-search i {
+    font-size: 1.1rem;
+}
+
+#pengkajian-sidebar-col #btn-minimize-pengkajian {
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, var(--primary, var(--bs-primary)) 22%, var(--border, var(--bs-border-color)));
+    border-radius: .85rem;
+    background: var(--primary-soft, color-mix(in srgb, var(--primary, var(--bs-primary)) 10%, var(--surface, white)));
+    color: var(--primary, var(--bs-primary));
+    box-shadow: 0 2px 7px color-mix(in srgb, var(--primary, var(--bs-primary)) 8%, transparent);
+    transition: transform .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* New clean sidebar-collapse glyph, drawn with CSS; button action remains untouched. */
+#pengkajian-sidebar-col #btn-minimize-pengkajian::before {
+    content: "";
+    width: 21px;
+    height: 17px;
+    display: block;
+    border: 1.7px solid currentColor;
+    border-radius: 4px;
+    background: linear-gradient(to right, currentColor 0 1.7px, transparent 1.7px 100%);
+    opacity: .95;
+}
+
+#pengkajian-sidebar-col #btn-minimize-pengkajian::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    left: 7px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    border-top: 1.6px solid currentColor;
+    border-right: 1.6px solid currentColor;
+    opacity: .9;
+}
+
+#pengkajian-sidebar-col #btn-minimize-pengkajian i {
+    /* Hide the old glyph visually while retaining its element and all JS hooks. */
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#pengkajian-sidebar-col #btn-minimize-pengkajian:hover {
+    background: color-mix(in srgb, var(--primary, var(--bs-primary)) 13%, var(--surface, white));
+    border-color: color-mix(in srgb, var(--primary, var(--bs-primary)) 48%, var(--border, var(--bs-border-color)));
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--primary, var(--bs-primary)) 13%, transparent);
+    transform: translateY(-1px);
+}
+
+#pengkajian-sidebar-col #btn-minimize-pengkajian:active {
+    transform: translateY(0) scale(.97);
+}
+
+#pengkajian-sidebar-col #btn-minimize-pengkajian:focus-visible,
+#pengkajian-sidebar-col .btn-clear-search:focus-visible {
+    outline: 2px solid var(--primary, var(--bs-primary));
+    outline-offset: 2px;
+}
+
+/* Tablet */
+@media (max-width: 991.98px) {
+    #pengkajian-sidebar-col .sidebar-menu > .card-header {
+        padding: .75rem !important;
+        gap: .6rem;
+    }
+
+    #pengkajian-sidebar-col #compo-menu-search,
+    #pengkajian-sidebar-col #btn-minimize-pengkajian {
+        min-height: 44px;
+        height: 44px;
+    }
+
+    #pengkajian-sidebar-col #btn-minimize-pengkajian {
+        flex-basis: 44px;
+        width: 44px;
+    }
+}
+
+/* Mobile: compact header without squeezing the search input. */
+@media (max-width: 575.98px) {
+    #pengkajian-sidebar-col .sidebar-menu > .card-header {
+        padding: .65rem !important;
+        gap: .5rem;
+    }
+
+    #pengkajian-sidebar-col #compo-menu-search {
+        min-height: 42px;
+        padding-left: 2.45rem;
+        padding-right: 2.35rem;
+        border-radius: .72rem;
+        font-size: .82rem;
+    }
+
+    #pengkajian-sidebar-col .form-search .icon-search {
+        left: .78rem;
+        font-size: 1.05rem;
+    }
+
+    #pengkajian-sidebar-col #btn-minimize-pengkajian {
+        flex-basis: 42px;
+        width: 42px;
+        height: 42px;
+        border-radius: .72rem;
+    }
+
+    #pengkajian-sidebar-col #btn-minimize-pengkajian::before {
+        width: 19px;
+        height: 15px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #pengkajian-sidebar-col #compo-menu-search,
+    #pengkajian-sidebar-col .btn-clear-search,
+    #pengkajian-sidebar-col #btn-minimize-pengkajian {
+        transition: none;
+    }
+}

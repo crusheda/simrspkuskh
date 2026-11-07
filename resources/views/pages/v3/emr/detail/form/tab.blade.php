@@ -1,5 +1,5 @@
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/v2/css/emr/tab.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/v3/components/emr/tab.css') }}">
 @endpush
 
 @php
@@ -74,7 +74,7 @@
                         </button>
                     </div>
                     <div class="card-body p-0 menu-scroll" id="pengkajianMenu">
-                        <div class="list-group">
+                        <div style="max-height: 370px; overflow-y: auto;" class="list-group rounded-bottom">
 
                             <div class="list-group-item menu-group-title p-2" data-group="awal">
                                 <h5 class="mt-2 ms-3">PENGKAJIAN AWAL</h5>

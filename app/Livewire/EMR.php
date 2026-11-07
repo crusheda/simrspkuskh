@@ -120,6 +120,9 @@ class EMR extends Component
                 'pp.TANGGAL AS TGLDAFTAR',
                 'kjs.noSEP AS NOSEP',
                 'kjs.tglSEP AS TGLSEP',
+                'npj.DESKRIPSI AS NAMAASURANSI',
+                'pj.JENIS AS IDASURANSI',
+                'npj.REF_ID AS REFIDASURANSI',
                 'pj.NOMOR AS NOASURANSI',
                 'kjs.noKartu AS NOBPJS',
                 'pjs.prolanisPRB AS PRBPASIEN',
@@ -174,6 +177,10 @@ class EMR extends Component
                 '=',
                 'pp.NOMOR'
             )
+            ->leftJoin('master.referensi as npj', function ($join) {
+                $join->on('npj.ID', '=', 'pj.JENIS')
+                    ->where('npj.JENIS', 10);
+            })
             ->leftJoin(
                 'bpjs.kunjungan AS kjs',
                 'kjs.noSEP',

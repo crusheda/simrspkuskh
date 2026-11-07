@@ -33,6 +33,7 @@
 
     width: 100%;
     min-width: 0;
+    flex: 0 0 auto;
 
     margin: 0;
     padding: 10px;
@@ -304,5 +305,320 @@
     .emr-detail-page .emr-main-nav .nav-link,
     .emr-detail-page .emr-main-nav .nav-link > i {
         transition: none;
+    }
+}
+
+/* ==========================================================
+   SIRMED V3 — FULL VIEWPORT EMR WORKSPACE
+   FINAL FIX:
+   - app-content padding 0
+   - emr-workspace-panel padding 0
+   - Nav tetap terlihat
+   - Workspace tidak tertutup footer
+   - Iframe mengisi area yang tersedia
+========================================================== */
+
+/* ----------------------------------------------------------
+   APP CONTENT
+---------------------------------------------------------- */
+
+.app-content {
+    --content-footer-height: 56px;
+
+    display: flex !important;
+    flex: 1 1 0 !important;
+    flex-direction: column !important;
+
+    width: 100%;
+    height: 0 !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding: 0 !important;
+
+    /*
+     * Footer fixed berada di luar flow.
+     * Margin bottom menyediakan ruang agar konten tidak tertutup footer.
+     */
+    margin: 0 0 var(--content-footer-height) 0 !important;
+
+    box-sizing: border-box !important;
+
+    overflow: hidden !important;
+    overscroll-behavior: none;
+}
+
+/* ----------------------------------------------------------
+   CONTENT CONTAINER
+---------------------------------------------------------- */
+
+.app-content > .content-container {
+    display: flex !important;
+    flex: 1 1 0 !important;
+    flex-direction: column !important;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    overflow: hidden !important;
+}
+
+/* ----------------------------------------------------------
+   EMR WORKSPACE PANEL
+---------------------------------------------------------- */
+
+.emr-workspace-panel {
+    position: relative;
+
+    display: flex !important;
+    flex: 1 1 0 !important;
+    flex-direction: column !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    max-width: none !important;
+    max-height: none !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border-radius: 0 !important;
+
+    box-sizing: border-box !important;
+
+    overflow: hidden !important;
+}
+
+/* ----------------------------------------------------------
+   EMR DETAIL PAGE
+---------------------------------------------------------- */
+
+.emr-workspace-panel .emr-detail-page {
+    display: flex !important;
+    flex: 1 1 0 !important;
+    flex-direction: column !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    overflow: hidden !important;
+}
+
+/* ----------------------------------------------------------
+   NAVIGATION AREA
+   Nav tidak ikut menyusut atau tertutup iframe
+---------------------------------------------------------- */
+
+.emr-workspace-panel .card-header:has(.emr-main-nav) {
+    position: relative;
+    z-index: 20;
+
+    flex: 0 0 auto !important;
+
+    width: 100% !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border-radius: 0 !important;
+
+    overflow: visible !important;
+}
+
+/* Navigation */
+
+.emr-workspace-panel .emr-main-nav {
+    position: relative;
+    z-index: 21;
+
+    flex: 0 0 auto !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+}
+
+/* ----------------------------------------------------------
+   TAB CONTENT
+   Isi tab memakai seluruh ruang sisa setelah nav
+---------------------------------------------------------- */
+
+.emr-workspace-panel .tab-content {
+    display: flex !important;
+    flex: 1 1 0 !important;
+    flex-direction: column !important;
+
+    width: 100% !important;
+    height: 0 !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    overflow: hidden !important;
+}
+
+/* Tab pane */
+
+.emr-workspace-panel .tab-content > .tab-pane {
+    flex: 1 1 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    overflow: hidden !important;
+}
+
+/* Bootstrap active tab */
+
+.emr-workspace-panel .tab-content > .tab-pane.active,
+.emr-workspace-panel .tab-content > .tab-pane.show.active {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* ----------------------------------------------------------
+   IFRAME — FULL AREA
+---------------------------------------------------------- */
+
+.emr-workspace-panel iframe {
+    display: block !important;
+
+    flex: 1 1 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    box-sizing: border-box !important;
+
+    overflow: auto;
+}
+
+/* ----------------------------------------------------------
+   BOOTSTRAP CARD RESET
+   Untuk card yang menjadi pembungkus workspace
+---------------------------------------------------------- */
+
+.emr-workspace-panel > .card,
+.emr-workspace-panel .card-body {
+    display: flex !important;
+    flex: 1 1 0 !important;
+    flex-direction: column !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border-radius: 0 !important;
+
+    overflow: hidden !important;
+}
+
+/* ----------------------------------------------------------
+   CONTENT FOOTER
+   Footer tetap fixed, tidak menutupi workspace
+---------------------------------------------------------- */
+
+.content-footer {
+    position: fixed !important;
+
+    right: 0 !important;
+    bottom: 0 !important;
+    left: var(--sidebar, 268px) !important;
+
+    z-index: 1010 !important;
+
+    min-height: var(--content-footer-height, 56px);
+
+    margin: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+/* Tablet dan mobile */
+
+@media (max-width: 991.98px) {
+    .content-footer {
+        left: 0 !important;
+    }
+
+    .app-content {
+        --content-footer-height: 56px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .app-content {
+        --content-footer-height: 64px;
+    }
+}
+
+/* ----------------------------------------------------------
+   EMR WORKSPACE RESPONSIVE
+---------------------------------------------------------- */
+
+@media (max-width: 768px) {
+    .emr-workspace-panel,
+    .emr-workspace-panel .emr-detail-page,
+    .emr-workspace-panel .tab-content,
+    .emr-workspace-panel .tab-content > .tab-pane {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .emr-workspace-panel iframe {
+        border-radius: 0 !important;
+    }
+}
+
+/* ----------------------------------------------------------
+   REDUCED MOTION
+---------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+    .emr-workspace-panel,
+    .emr-workspace-panel iframe {
+        scroll-behavior: auto !important;
     }
 }

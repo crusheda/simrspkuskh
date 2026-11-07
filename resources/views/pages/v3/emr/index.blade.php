@@ -2,16 +2,9 @@
 @section('page-title', 'Data Kunjungan Pasien')
 
 <section>
-    <div class="row gy-4">
+    <div class="row gy-4" style="padding-bottom: 56px !important;">
         <div class="col-xl-12">
-            <div class="card">
-                <div class="card-header p-2">
-                    <div class="d-sm-flex align-items-center justify-content-between ms-2">
-                        <h5 class="mb-0"><i class="ti ti-table text-primary me-1"></i> Table Kunjungan Pasien <span class="ms-2 f-14 px-2 badge bg-secondary-subtle text-secondary">Total : <a id="jumlah_data">0 Data</a></span></h5>
-                        {{-- <a class="btn btn-link-info btn-sm text-end" href="javascript: void(0);" onclick="tataCara()"><i class="fas fa-info-circle text-info me-2"></i> <s>Tata Cara Penggunaan</s></a> --}}
-                        {{-- <button class="btn btn-link-info btn-sm rounded me-1 mb-1 mt-1" type="button" data-bs-toggle="collapse" data-bs-target="#filter-collapse" aria-expanded="false" aria-controls="collapseExample">Filter <i class="ph-duotone ph-caret-down ms-1"></i></button> --}}
-                    </div>
-                </div>
+            <div class="card rounded-0">
                 <div class="card-body p-0 pb-2">
                     <div class="row p-3">
                         <div class="col-md-3 mb-3">
@@ -73,7 +66,10 @@
                         <div class="col-md-12">
                             <div class="d-sm-flex align-items-center justify-content-between">
                                 <button class="btn btn-outline-warning border-dashed waves-effect waves-light me-2" href="javascript: void(0);" id="clear_text" onclick="EMRPage.clearFilter()"><i class="ph-duotone ph-eraser me-1"></i> Kosongkan Filter</button>
-                                <button class="btn btn-primary" id="tombol-tampilkan" onclick="EMRPage.filter()" disabled><i class="ph-duotone ph-sort-ascending me-1"></i> Refresh Table</button>
+                                <div class="d-flex justify-content-end align-items-center gap-2">
+                                    <span class="f-14 px-2">Total : <a id="jumlah_data">0 Data</a></span>
+                                    <button class="btn btn-primary" id="tombol-tampilkan" onclick="EMRPage.filter()" disabled><i class="ph-duotone ph-sort-ascending me-1"></i> Refresh Table</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -215,16 +211,62 @@
                         const nomor = this.dataset.nomor;
                         const norm = this.dataset.norm;
                         const tglLahir = this.dataset.tgllahir;
+                        const idAsuransi = this.dataset.idAsuransi;
+                        const refIdAsuransi = this.dataset.refIdAsuransi;
+                        const namaAsuransi = this.dataset.namaAsuransi;
+                        const noAsuransi = this.dataset.noAsuransi;
+                        const namaRuangan = this.dataset.namaRuangan;
+                        const namaDokter = this.dataset.namaDokter;
+                        const umur = this.dataset.umur;
+                        const tglMasuk = this.dataset.tglMasuk;
+                        const tglKeluar = this.dataset.tglKeluar;
+                        const statusKunjungan = this.dataset.statusKunjungan;
                         const url = this.dataset.href;
 
-                        let nama = '';
+                        let push_nama = '';
+                        let push_noAsuransi = '';
+                        let push_namaDokter = '';
+                        let push_tglMasuk = '';
+                        let push_tglKeluar = '';
 
                         try {
-                            nama = decodeURIComponent(
+                            push_nama = decodeURIComponent(
                                 this.dataset.nama || ''
                             );
                         } catch (error) {
-                            nama = this.dataset.nama || '';
+                            push_nama = this.dataset.nama || '';
+                        }
+
+                        try {
+                            push_noAsuransi = decodeURIComponent(
+                                this.dataset.noAsuransi || ''
+                            );
+                        } catch (error) {
+                            push_noAsuransi = this.dataset.noAsuransi || '';
+                        }
+
+                        try {
+                            push_namaDokter = decodeURIComponent(
+                                this.dataset.namaDokter || ''
+                            );
+                        } catch (error) {
+                            push_namaDokter = this.dataset.namaDokter || '';
+                        }
+
+                        try {
+                            push_tglMasuk = decodeURIComponent(
+                                this.dataset.tglMasuk || ''
+                            );
+                        } catch (error) {
+                            push_tglMasuk = this.dataset.tglMasuk || '';
+                        }
+
+                        try {
+                            push_tglKeluar = decodeURIComponent(
+                                this.dataset.tglKeluar || ''
+                            );
+                        } catch (error) {
+                            push_tglKeluar = this.dataset.tglKeluar || '';
                         }
 
                         if (!nomor || !url) {
@@ -251,9 +293,25 @@
                         // Buka tab pasien. Halaman induk tidak berpindah URL.
                         window.EMRWorkspace.openPatient({
                             nomor: nomor,
+
                             norm: norm,
-                            nama: nama,
+                            nama: push_nama,
+
                             tglLahir: tglLahir,
+                            umur: umur,
+
+                            namaRuangan: namaRuangan,
+                            namaDokter: push_namaDokter,
+
+                            refIdAsuransi: refIdAsuransi,
+                            namaAsuransi: namaAsuransi,
+                            noAsuransi: push_noAsuransi,
+
+                            tglMasuk: push_tglMasuk,
+                            tglKeluar: push_tglKeluar,
+
+                            statusKunjungan: statusKunjungan,
+
                             url: url
                         });
 
@@ -553,6 +611,16 @@
                                             data-nomor="${item.NOMOR}"
                                             data-norm="${item.NORM}"
                                             data-nama="${encodeURIComponent(item.NAMAPASIEN ?? '')}"
+                                            data-tgllahir="${item.TGLLAHIRPASIEN}"
+                                            data-umur="${item.UMURPASIEN}"
+                                            data-ref-id-asuransi="${item.REFJENISPENJAMIN}"
+                                            data-nama-asuransi="${item.NAMAPENJAMIN}"
+                                            data-no-asuransi="${encodeURIComponent(item.NOMORPENJAMIN ?? '')}"
+                                            data-nama-ruangan="${item.NAMARUANGAN}"
+                                            data-nama-dokter="${encodeURIComponent(item.NAMADOKTER ?? '')}"
+                                            data-tgl-masuk="${encodeURIComponent(item.MASUK ?? '')}"
+                                            data-tgl-keluar="${encodeURIComponent(item.KELUAR ?? '')}"
+                                            data-status-kunjungan="${item.STATUS}"
                                             data-href="/v3/emr/${encodeURIComponent(item.NOMOR)}"
                                             style="cursor:pointer;"
                                         >

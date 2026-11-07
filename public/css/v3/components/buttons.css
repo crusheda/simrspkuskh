@@ -186,13 +186,13 @@ fieldset:disabled .btn {
 /* WARNING */
 
 .btn-warning {
-    color: #212529;
+    color: #fff;
     background-color: var(--bs-warning, #ffc107);
     border-color: var(--bs-warning, #ffc107);
 }
 
 .btn-warning:hover:not(:disabled):not(.disabled) {
-    color: #212529;
+    color: #fff;
     background-color: #ffca2c;
     border-color: #ffc720;
 }

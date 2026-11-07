@@ -1499,3 +1499,287 @@ body {
         font-size: 10px;
     }
 }
+
+
+/* =========================================================
+   TOPBAR PATIENT HEADER — THREE ROWS + PATIENT MENU
+   Override styles for the revised patient context header.
+========================================================= */
+
+.app-topbar {
+    min-height: 88px;
+    padding-block: 10px;
+}
+
+.app-topbar .topbar-left {
+    gap: 13px;
+}
+
+.app-topbar .topbar-context {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(160px, auto);
+    align-items: center;
+    gap: clamp(14px, 2vw, 30px);
+    width: 100%;
+    min-width: 0;
+}
+
+.app-topbar .topbar-patient-identity,
+.app-topbar .topbar-patient-visit {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0;
+}
+
+.app-topbar .topbar-patient-identity > div,
+.app-topbar .topbar-patient-visit > div {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.35;
+}
+
+.app-topbar .topbar-insurance-meta,
+.app-topbar .topbar-patient-meta,
+.app-topbar .topbar-patient-room-doctor,
+.app-topbar .topbar-visit-date-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.app-topbar .topbar-insurance-meta {
+    color: var(--primary);
+    font-weight: 650;
+}
+
+.app-topbar .topbar-patient-meta {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.app-topbar #pageTitleTopbar {
+    display: inline;
+    max-width: 100%;
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 750;
+    letter-spacing: -.25px;
+}
+
+.app-topbar .topbar-patient-birth {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.app-topbar .topbar-patient-room-doctor {
+    font-size: 10.5px;
+}
+
+.app-topbar .topbar-visit-date-row {
+    color: var(--text);
+    font-size: 11px;
+}
+
+.app-topbar .topbar-visit-date-row .visit-date-label {
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.app-topbar .topbar-visit-date-row .visit-date-value {
+    font-weight: 650;
+}
+
+.app-topbar #patientStatusTopbar {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    width: fit-content;
+    margin-top: 1px;
+    padding: 4px 9px;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.25;
+    white-space: nowrap;
+}
+
+.app-topbar .patient-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    flex: 0 0 auto;
+    min-height: 38px;
+    padding: 0 11px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.app-topbar .patient-dropdown-trigger:hover,
+.app-topbar .patient-dropdown-trigger:focus {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.app-topbar .patient-dropdown-menu {
+    min-width: 205px;
+    padding: 7px;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.app-topbar .patient-dropdown-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 11px;
+    border-radius: 9px;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 550;
+}
+
+.app-topbar .patient-dropdown-menu .dropdown-item i {
+    color: var(--primary);
+    font-size: 15px;
+}
+
+.app-topbar .patient-dropdown-menu .dropdown-item:hover {
+    background: var(--primary-soft);
+    color: var(--primary);
+}
+
+/* Default/Home mode: two rows only, no patient dropdown/context rows. */
+.app-topbar.is-home-mode .topbar-context {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 3px;
+}
+
+.app-topbar.is-home-mode .topbar-patient-identity {
+    gap: 3px;
+}
+
+.app-topbar.is-home-mode .topbar-patient-meta {
+    font-size: 10px;
+    letter-spacing: .65px;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.app-topbar.is-home-mode #pageSubTitleTopbar {
+    display: inline;
+    font-size: 10px;
+    letter-spacing: .65px;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.app-topbar.is-home-mode #pageTitleTopbar {
+    display: block;
+    font-size: 15px;
+    letter-spacing: -.25px;
+    color: var(--text);
+}
+
+.app-topbar.is-home-mode .topbar-patient-birth,
+.app-topbar.is-home-mode .topbar-patient-visit {
+    display: none !important;
+}
+
+.app-topbar.is-home-mode #patientDropdownContainer {
+    display: none !important;
+}
+
+[data-bs-theme="dark"] .app-topbar .topbar-patient-meta,
+[data-bs-theme="dark"] .app-topbar #pageTitleTopbar,
+[data-bs-theme="dark"] .app-topbar .topbar-visit-date-row {
+    color: var(--text);
+}
+
+@media (max-width: 1200px) {
+    .app-topbar .topbar-context {
+        grid-template-columns: minmax(0, 1fr) minmax(145px, auto);
+        gap: 12px;
+    }
+
+    .app-topbar .patient-dropdown-trigger .patient-menu-label {
+        display: none;
+    }
+
+    .app-topbar .patient-dropdown-trigger {
+        width: 38px;
+        padding: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-topbar {
+        min-height: 76px;
+        gap: 9px;
+        padding-inline: 13px;
+    }
+
+    .app-topbar .topbar-left,
+    .app-topbar .topbar-actions {
+        gap: 8px;
+    }
+
+    .app-topbar .topbar-context {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 3px;
+    }
+
+    .app-topbar .topbar-patient-visit {
+        display: none;
+    }
+
+    .app-topbar .topbar-insurance-meta {
+        font-size: 9px;
+    }
+
+    .app-topbar .topbar-patient-meta {
+        font-size: 10px;
+    }
+
+    .app-topbar #pageTitleTopbar {
+        font-size: 12px;
+    }
+
+    .app-topbar .topbar-patient-room-doctor {
+        display: none;
+    }
+
+    .app-topbar #patientStatusTopbar {
+        font-size: 9px;
+        padding: 3px 6px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .app-topbar .topbar-date {
+        display: none !important;
+    }
+
+    .app-topbar .patient-dropdown-trigger {
+        display: none;
+    }
+}

@@ -1156,12 +1156,17 @@ class EMRController extends Controller
                     'pk.*',
                     'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
                     'ar.POS AS POS_ANTRIAN','ar.NOMOR AS NOMOR_ANTRIAN','ar.JENIS AS JENIS_ANTRIAN',
+                    'ru.ID AS IDRUANGAN',
                     'ru.DESKRIPSI AS NAMARUANGAN',
+                    'pj.NOMOR AS NOMORPENJAMIN',
                     'pj.JENIS AS JENISPENJAMIN',
+                    'ref.REF_ID AS REFJENISPENJAMIN',
                     'ref.DESKRIPSI AS NAMAPENJAMIN',
                     // DB::raw('kjs.noSEP AS NOSEP'),
                     // DB::raw('kjs.tglSEP AS TGLSEP'),
+                    'ps.TANGGAL_LAHIR AS TGLLAHIRPASIEN',
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
+                    DB::raw('master.getCariUmur(pp.TANGGAL, ps.TANGGAL_LAHIR) AS UMURPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
                 );
                 if (in_array($penjamin,[0,2])) {

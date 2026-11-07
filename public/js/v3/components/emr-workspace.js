@@ -59,12 +59,20 @@
         // =====================================================
         // TOPBAR ELEMENTS
         // =====================================================
+        const topBarDivider1 = document.getElementById('topbarDivider1');
+        const topBarDivider2 = document.getElementById('topbarDivider2');
 
         const pageSubTitle = document.getElementById('pageSubTitleTopbar');
         const pageTitle = document.getElementById('pageTitleTopbar');
 
         const patientBirth = document.getElementById('patientBirthTopbar');
         const patientRoom = document.getElementById('patientRoomTopbar');
+        const patientDoctor = document.getElementById('patientDoctorTopbar');
+        const patientInsuranceNumber = document.getElementById('patientInsuranceTopbar');
+        const patientInsuranceName = document.getElementById('patientInsuranceNameTopbar');
+        const patientRefIdAsuransi = document.getElementById('patientRefIdAsuransiTopbar');
+        const patientDropdownContainer = document.getElementById('patientDropdownContainer');
+        const appTopbar = document.getElementById('appTopbar');
 
         const patientTglMasuk = document.getElementById(
             'patientTglMasukTopbar'
@@ -119,6 +127,14 @@
         // Digunakan ketika kembali ke halaman Home.
         // =====================================================
 
+        // const initialTopBarDivider1 =
+        //     patientInsuranceNumber?.textContent?.trim() ||
+        //     '';
+
+        // const initialTopBarDivider2 =
+        //     patientDoctor?.textContent?.trim() ||
+        //     '';
+
         const initialPageTitle =
             pageTitle?.textContent?.trim() ||
             'Data Kunjungan Pasien';
@@ -130,6 +146,8 @@
         const initialTopbar = {
             birth: patientBirth?.textContent?.trim() ?? '',
             room: patientRoom?.textContent?.trim() ?? '',
+            doctor: patientDoctor?.textContent?.trim() ?? '',
+            insuranceName: patientInsuranceName?.textContent?.trim() ?? '',
             tglMasuk: patientTglMasuk?.textContent?.trim() ?? '',
             tglKeluar: patientTglKeluar?.textContent?.trim() ?? '',
             noAsuransi: patientAsuransi?.textContent?.trim() ?? '',
@@ -263,6 +281,29 @@
             return date;
         }
 
+        function updatePatientNameTooltip(element, title) {
+            if (!element) {
+                return;
+            }
+
+            element.setAttribute('title', title);
+            element.setAttribute('data-bs-original-title', title);
+
+            if (window.bootstrap?.Tooltip) {
+                const existingTooltip =
+                    bootstrap.Tooltip.getInstance(element);
+
+                if (existingTooltip) {
+                    existingTooltip.dispose();
+                }
+
+                new bootstrap.Tooltip(element, {
+                    placement: 'bottom',
+                    trigger: 'hover focus'
+                });
+            }
+        }
+
         /**
          * Menentukan label dan class status kunjungan.
          *
@@ -377,6 +418,44 @@
                     patient.TGLLAHIRPASIEN
                 ),
 
+                umur: firstNonEmpty(
+                    patient.umur,
+                    patient.umurPasien,
+                    patient.Umur,
+                    patient.UMUR
+                ),
+
+                namaAsuransi: firstNonEmpty(
+                    patient.namaAsuransi,
+                    patient.namaAsuransiPasien,
+                    patient.NAMAASURANSI
+                ),
+
+                refIdAsuransi: firstNonEmpty(
+                    patient.refIdAsuransi,
+                    patient.REFIDASURANSI,
+                    patient.ref_id_asuransi
+                ),
+
+                idAsuransi: firstNonEmpty(
+                    patient.idAsuransi,
+                    patient.IDASURANSI,
+                    patient.ref_id_asuransi
+                ),
+
+                noAsuransi: firstNonEmpty(
+                    patient.noAsuransi,
+                    patient.no_asuransi,
+                    patient.NOASURANSI,
+                    patient.NOBPJS
+                ),
+
+                namaDokter: firstNonEmpty(
+                    patient.namaDokter,
+                    patient.NAMADOKTER,
+                    patient.dokter
+                ),
+
                 namaRuangan: firstNonEmpty(
                     patient.namaRuangan,
                     patient.nama_ruangan,
@@ -430,15 +509,19 @@
                 norm: record.norm,
                 nama: record.nama,
                 tglLahir: record.tglLahir,
+                umur: record.umur,
                 namaRuangan: record.namaRuangan,
+                idAsuransi: record.idAsuransi,
+                namaAsuransi: record.namaAsuransi,
+                noAsuransi: record.noAsuransi,
+                namaDokter: record.namaDokter,
                 tglMasuk: record.tglMasuk,
                 tglKeluar: record.tglKeluar,
                 statusKunjungan: record.statusKunjungan,
                 url: record.url
             });
         }
-
-        /**
+                /**
          * Memperbarui label tab jika data pasien berubah.
          */
         function updatePatientTabLabel(record) {
@@ -447,7 +530,7 @@
             }
 
             const labelText =
-                `RM. ${formatRM(record.norm)} · ${record.nama}`;
+                `RM. ${formatRM(record.norm)}`; //  · ${record.nama}
 
             const label = record.tab.querySelector(
                 '.emr-tab-label'
@@ -500,8 +583,28 @@
                 record.tglLahir = data.tglLahir;
             }
 
+            if (data.umur) {
+                record.umur = data.umur;
+            }
+
             if (data.namaRuangan) {
                 record.namaRuangan = data.namaRuangan;
+            }
+
+            if (data.idAsuransi) {
+                record.idAsuransi = data.idAsuransi;
+            }
+
+            if (data.namaAsuransi) {
+                record.namaAsuransi = data.namaAsuransi;
+            }
+
+            if (data.noAsuransi) {
+                record.noAsuransi = data.noAsuransi;
+            }
+
+            if (data.namaDokter) {
+                record.namaDokter = data.namaDokter;
             }
 
             if (data.tglMasuk) {
@@ -564,6 +667,29 @@
                         emrData.TGLLAHIRPASIEN
                     ),
 
+                    umur: firstNonEmpty(
+                        emrData.umurPasien,
+                        emrData.umur,
+                        emrData.UMUR,
+                        emrData.Umur,
+                    ),
+
+                    refIdAsuransi: firstNonEmpty(
+                        emrData.refIdAsuransi,
+                        emrData.REFIDASURANSI,
+                        emrData.ref_id_asuransi
+                    ),
+
+                    namaAsuransi: firstNonEmpty(
+                        emrData.namaAsuransi,
+                        emrData.NAMAASURANSI
+                    ),
+
+                    namaDokter: firstNonEmpty(
+                        emrData.namaDokter,
+                        emrData.NAMADOKTER
+                    ),
+
                     namaRuangan: firstNonEmpty(
                         emrData.namaRuangan,
                         emrData.nama_ruangan,
@@ -618,6 +744,7 @@
                         nama: record.nama,
                         norm: record.norm,
                         tglLahir: record.tglLahir,
+                        umur: record.umur,
                         namaRuangan: record.namaRuangan,
                         tglMasuk: record.tglMasuk,
                         tglKeluar: record.tglKeluar,
@@ -674,43 +801,124 @@
          */
         function resetTopbar() {
 
-            if (pageSubTitle) {
-                pageSubTitle.textContent = initialPageSubTitle;
+            if (appTopbar) {
+                appTopbar.classList.add('is-home-mode');
             }
 
-            if (pageTitle) {
-                pageTitle.textContent = initialPageTitle;
+            if (patientDropdownContainer) {
+                patientDropdownContainer.style.display = 'none';
             }
+
+            // Subtitle default: kecil, berada di atas.
+            if (pageSubTitle) {
+                pageSubTitle.textContent = initialPageSubTitle
+                    .replace(/[•·]/g, '')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+
+                pageSubTitle.classList.remove('text-muted');
+
+                pageSubTitle.style.display = 'block';
+                pageSubTitle.style.fontSize = '0.75rem';
+                pageSubTitle.style.fontWeight = '600';
+                pageSubTitle.style.lineHeight = '1.2';
+                pageSubTitle.style.color = 'var(--bs-body-color)';
+            }
+
+            // Title default: besar, berada di bawah subtitle.
+            if (pageTitle) {
+                pageTitle.textContent = initialPageTitle
+                    .replace(/[•·]/g, '')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+
+                pageTitle.classList.remove('text-muted');
+
+                pageTitle.style.display = 'block';
+                pageTitle.style.fontSize = '1.15rem';
+                pageTitle.style.fontWeight = '700';
+                pageTitle.style.lineHeight = '1.25';
+                pageTitle.style.color = 'var(--bs-body-color)';
+            }
+
+            // Hilangkan bullet dari seluruh informasi pasien.
+            topBarDivider1.textContent = '';
+            topBarDivider2.textContent = '';
 
             if (patientBirth) {
-                patientBirth.textContent = initialTopbar.birth;
+                patientBirth.textContent = initialTopbar.birth
+                    .replace(/[•·]/g, '')
+                    .trim();
+
+                patientBirth.style.color = 'var(--bs-body-color)';
             }
 
             if (patientRoom) {
-                patientRoom.textContent = initialTopbar.room;
+                patientRoom.textContent = initialTopbar.room
+                    .replace(/[•·]/g, '')
+                    .trim();
+
+                patientRoom.style.color = 'var(--bs-body-color)';
+            }
+
+            if (patientDoctor) {
+                patientDoctor.textContent = initialTopbar.doctor
+                    .replace(/[•·]/g, '')
+                    .trim();
+
+                patientDoctor.style.color = 'var(--bs-body-color)';
+            }
+
+            if (patientInsuranceName) {
+                patientInsuranceName.textContent = initialTopbar.insuranceName
+                    .replace(/[•·]/g, '')
+                    .trim();
+
+                patientInsuranceName.classList.remove(
+                    'text-muted',
+                    'text-warning',
+                    'text-primary'
+                );
+
+                patientInsuranceName.style.color = 'var(--bs-body-color)';
+            }
+
+            if (patientRefIdAsuransi) {
+                patientRefIdAsuransi.textContent = initialTopbar.idAsuransi
+                    .replace(/[•·]/g, '')
+                    .trim();
+
+                patientRefIdAsuransi.style.color = 'var(--bs-body-color)';
             }
 
             if (patientTglMasuk) {
-                patientTglMasuk.textContent =
-                    initialTopbar.tglMasuk;
+                patientTglMasuk.textContent = initialTopbar.tglMasuk
+                    .replace(/[•·]/g, '')
+                    .trim();
+
+                patientTglMasuk.style.color = 'var(--bs-body-color)';
             }
 
             if (patientTglKeluar) {
-                patientTglKeluar.textContent =
-                    initialTopbar.tglKeluar;
+                patientTglKeluar.textContent = initialTopbar.tglKeluar
+                    .replace(/[•·]/g, '')
+                    .trim();
+
+                patientTglKeluar.style.color = 'var(--bs-body-color)';
             }
 
             if (patientAsuransi) {
-                patientAsuransi.textContent =
-                    initialTopbar.noAsuransi;
+                patientAsuransi.textContent = initialTopbar.noAsuransi
+                    .replace(/[•·]/g, '')
+                    .trim();
+
+                patientAsuransi.style.color = 'var(--bs-body-color)';
             }
 
             if (patientStatus) {
-                patientStatus.textContent =
-                    initialTopbar.status;
+                patientStatus.textContent = initialTopbar.status;
 
-                patientStatus.className =
-                    initialTopbar.statusClass;
+                patientStatus.className = initialTopbar.statusClass;
             }
         }
 
@@ -734,6 +942,9 @@
                 return;
             }
 
+            if (appTopbar) appTopbar.classList.remove('is-home-mode');
+            if (patientDropdownContainer) patientDropdownContainer.style.display = '';
+
             // =================================================
             // IDENTITAS PASIEN
             // =================================================
@@ -744,21 +955,49 @@
             //         `RM. ${formatRM(record.norm)}`;
             // }
             if (pageSubTitle) {
-                pageSubTitle.textContent =
-                    ``;
+                pageSubTitle.innerHTML = `<i class="ri-user-3-line me-1"></i> RM. ${formatRM(record.norm)}`;
             }
 
             // Nama pasien.
             if (pageTitle) {
                 pageTitle.textContent =
                     record.nama || 'Rekam Medis Pasien';
+
+                const tanggalLahir = record.tglLahir
+                    ? formatTanggalLahir(record.tglLahir)
+                    : '-';
+
+                const umurPasien = record.umur
+                    ? String(record.umur).trim()
+                    : '-';
+
+                const tooltipNamaPasien = [
+                    `Tanggal Lahir: ${tanggalLahir}`,
+                    `Umur: ${umurPasien}`
+                ].join('\n');
+
+                // Tooltip pada nama pasien saja.
+                pageTitle.setAttribute('title', tooltipNamaPasien);
+                pageTitle.setAttribute(
+                    'data-bs-original-title',
+                    tooltipNamaPasien
+                );
+                updatePatientNameTooltip(
+                    pageTitle,
+                    tooltipNamaPasien
+                );
             }
 
             // Tanggal lahir.
-            if (patientBirth) {
-                patientBirth.innerHTML =
-                    `•&nbsp; Lahir ${formatTanggalLahir(record.tglLahir)}`;
-            }
+            // if (patientBirth) {
+            //     patientBirth.textContent =
+            //         `Lahir ${formatTanggalLahir(record.tglLahir)}`;
+
+            //     patientBirth.classList.remove('text-muted');
+
+            //     patientBirth.style.color =
+            //         'var(--bs-body-color)';
+            // }
 
             // =================================================
             // INFORMASI KUNJUNGAN
@@ -766,26 +1005,67 @@
 
             // Nama ruangan.
             if (patientRoom) {
-                patientRoom.textContent =
-                    record.namaRuangan || '-';
+                patientRoom.textContent = record.namaRuangan || '-';
+            }
+
+            if (patientDoctor) {
+                if (record.namaDokter) {
+                    topBarDivider2.textContent = '• ';
+                }
+                patientDoctor.textContent = record.namaDokter || '';
+            }
+
+            // Nama asuransi pasien.
+            if (patientInsuranceName) {
+                patientInsuranceName.textContent =
+                    record.namaAsuransi || '-';
+
+                patientInsuranceName.classList.remove(
+                    'text-muted',
+                    'text-warning',
+                    'text-primary'
+                );
+
+                const refIdAsuransi = String(
+                    record.refIdAsuransi ?? ''
+                ).trim();
+
+                // REF_ID = 1 → Warning / kuning
+                if (refIdAsuransi === '1') {
+                    patientInsuranceName.classList.add('text-warning');
+                    patientInsuranceName.style.color = 'var(--bs-warning)';
+                }
+
+                // REF_ID = 2 → Primary
+                else if (refIdAsuransi === '2') {
+                    patientInsuranceName.classList.add('text-primary');
+                    patientInsuranceName.style.color = 'var(--bs-primary)';
+                }
+
+                // REF_ID selain 1 dan 2 → warna normal
+                else {
+                    patientInsuranceName.style.color = 'var(--bs-body-color)';
+                }
             }
 
             // Tanggal masuk.
             if (patientTglMasuk) {
                 patientTglMasuk.innerHTML =
-                    `<i class="bi bi-calendar2-range me-1"></i> ${formatTanggalKunjungan(record.tglMasuk)}`;
+                    `${formatTanggalKunjungan(record.tglMasuk)} WIB`;
             }
 
             // Tanggal keluar.
             if (patientTglKeluar) {
                 patientTglKeluar.innerHTML =
-                    record.tglKeluar ? `- ${formatTanggalKunjungan(record.tglKeluar)}`: '';
+                    record.tglKeluar ? `${formatTanggalKunjungan(record.tglKeluar)} WIB`: '';
             }
 
             // Nomor asuransi.
             if (patientAsuransi) {
-                patientAsuransi.innerHTML =
-                    `<i class="bi bi-shield-check me-1"></i> ${formatTanggalKunjungan(record.noAsuransi)}`;
+                if (record.noAsuransi) {
+                    topBarDivider1.textContent = '• ';
+                }
+                patientAsuransi.textContent = record.noAsuransi || '';
             }
 
             // =================================================
@@ -824,8 +1104,7 @@
             document.title =
                 `${record.nama || 'Rekam Medis Pasien'} · Sirmed v3`;
         }
-
-        /* =====================================================
+                /* =====================================================
            AKTIFKAN TAB
         ===================================================== */
 
@@ -915,6 +1194,7 @@
                         nama: record?.nama ?? null,
 
                         tglLahir: record?.tglLahir ?? null,
+                        umur: record?.umur ?? null,
                         namaRuangan: record?.namaRuangan ?? null,
 
                         tglMasuk: record?.tglMasuk ?? null,
@@ -1141,7 +1421,12 @@
                                 nama: record.nama,
 
                                 tglLahir: record.tglLahir,
+                                umur: record.umur,
                                 namaRuangan: record.namaRuangan,
+                                namaDokter: record.namaDokter,
+                                idAsuransi: record.idAsuransi,
+                                namaAsuransi: record.namaAsuransi,
+                                noAsuransi: record.noAsuransi,
 
                                 tglMasuk: record.tglMasuk,
                                 tglKeluar: record.tglKeluar,
@@ -1309,8 +1594,7 @@
         function openPatient(patient = {}, options = {}) {
 
             const activateAfterOpen = options.activate !== false;
-
-            const patientData = normalizePatientData(patient);
+                        const patientData = normalizePatientData(patient);
 
             const nomor = patientData.nomor;
 
@@ -1360,7 +1644,7 @@
             workspaceState.tabSequence = tabSequence;
 
             const labelText =
-                `RM. ${formatRM(patientData.norm)} · ${patientData.nama}`;
+                `RM. ${formatRM(patientData.norm)}`; //  · ${patientData.nama}
 
             const fullTitle =
                 `${labelText} | Kunjungan ${nomor}`;
@@ -1492,8 +1776,14 @@
                 nama: patientData.nama,
 
                 tglLahir: patientData.tglLahir,
+                umur: patientData.umur,
 
+                refIdAsuransi: patientData.refIdAsuransi,
+                idAsuransi: patientData.idAsuransi,
+                namaAsuransi: patientData.namaAsuransi,
+                noAsuransi: patientData.noAsuransi,
                 namaRuangan: patientData.namaRuangan,
+                namaDokter: patientData.namaDokter,
 
                 tglMasuk: patientData.tglMasuk,
                 tglKeluar: patientData.tglKeluar,
@@ -1623,7 +1913,12 @@
                         nama: null,
 
                         tglLahir: null,
+                        umur: null,
                         namaRuangan: null,
+                        namaDokter: null,
+                        refIdAsuransi: null,
+                        idAsuransi: null,
+                        namaAsuransi: null,
 
                         tglMasuk: null,
                         tglKeluar: null,
@@ -1640,7 +1935,13 @@
                     nama: record.nama,
 
                     tglLahir: record.tglLahir,
+                    umur: record.umur,
                     namaRuangan: record.namaRuangan,
+                    namaDokter: record.namaDokter,
+                    namaAsuransi: record.namaAsuransi,
+                    refIdAsuransi: record.refIdAsuransi,
+                    idAsuransi: record.idAsuransi,
+                    noAsuransi: record.noAsuransi,
 
                     tglMasuk: record.tglMasuk,
                     tglKeluar: record.tglKeluar,
@@ -1668,7 +1969,10 @@
                     nama: record.nama,
 
                     tglLahir: record.tglLahir,
+                    umur: record.umur,
                     namaRuangan: record.namaRuangan,
+                    idAsuransi: record.idAsuransi,
+                    namaAsuransi: record.namaAsuransi,
 
                     tglMasuk: record.tglMasuk,
                     tglKeluar: record.tglKeluar,
