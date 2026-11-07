@@ -1,5 +1,7 @@
 <header class="app-topbar">
     <div class="topbar-left">
+
+        {{-- SIDEBAR TOGGLE --}}
         <button
             class="icon-button sidebar-toggle"
             id="sidebarToggle"
@@ -8,21 +10,89 @@
             <i class="bi bi-list"></i>
         </button>
 
-        <div>
-            <span class="breadcrumb-kicker">
-                SISTEM INFORMASI RUMAH SAKIT
-            </span>
+        {{-- PATIENT CONTEXT --}}
+        <div class="topbar-context">
 
-            <div class="breadcrumb-title" id="pageTitleTopbar">
-                @yield('page-title', 'Rekam Medis Elektronik')
+            {{-- ==========================================
+                KOLOM KIRI: IDENTITAS PASIEN
+            =========================================== --}}
+            <div class="topbar-patient-identity">
+
+                {{-- NO. RM DAN TANGGAL LAHIR --}}
+                <div class="topbar-patient-meta">
+
+                    <span
+                        class="breadcrumb-kicker"
+                        id="pageSubTitleTopbar"
+                        title="Nomor Rekam Medis"
+                    >
+                        @yield('page-sub-title', 'SISTEM INFORMASI RUMAH SAKIT')
+                    </span>
+
+                    <span
+                        class="breadcrumb-kicker"
+                        id="patientInsuranceTopbar"
+                        title="Nomor Asuransi Pasien"
+                    >
+                        @yield('patient-insurance', '')
+                    </span>
+
+                    <span
+                        id="patientBirthTopbar"
+                        class="topbar-patient-birth"
+                    >
+                        @yield('patient-birth', '')
+                    </span>
+
+                </div>
+
+                {{-- NAMA PASIEN --}}
+                <div
+                    class="breadcrumb-title"
+                    id="pageTitleTopbar"
+                    title="@yield('page-title', 'Rekam Medis Elektronik')"
+                >
+                    @yield('page-title', 'Rekam Medis Elektronik')
+                </div>
+
             </div>
+
+            {{-- ==========================================
+                KOLOM KANAN: INFORMASI KUNJUNGAN
+            =========================================== --}}
+            <div class="topbar-patient-visit">
+
+                {{-- TANGGAL MASUK DAN KELUAR --}}
+                <div class="topbar-visit-period">
+
+                    <span id="patientTglMasukTopbar">
+                        @yield('patient-tgl-masuk', '')
+                    </span>
+
+                    <span id="patientTglKeluarTopbar">
+                        @yield('patient-tgl-keluar', '')
+                    </span>
+
+                </div>
+
+                {{-- NOMOR ASURANSI --}}
+                <div class="topbar-insurance">
+
+                    <strong id="patientInsuranceTopbar">
+                        @yield('patient-insurance', '')
+                    </strong>
+
+                </div>
+
+            </div>
+
         </div>
+
     </div>
 
     <div class="topbar-actions">
-        <span class="topbar-date d-none d-md-inline-flex">
-            <i class="bi bi-calendar3"></i>
-            {{ now()->translatedFormat('l, d F Y') }}
+        <span class="topbar-date d-none d-md-inline-flex" id="patientStatusTopbar">
+            @yield('patient-status', '')
         </span>
 
         <div class="dropdown notification-dropdown"

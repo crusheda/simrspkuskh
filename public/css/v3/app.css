@@ -1259,3 +1259,243 @@ body {
         margin-left: 0;
     }
 }
+
+/* ==========================================================
+   TOPBAR PATIENT CONTEXT
+========================================================== */
+
+.app-topbar .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+/* Wrapper dua kolom */
+
+.app-topbar .topbar-context {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) minmax(220px, auto);
+
+    align-items: center;
+    gap: 24px;
+
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* ==========================================================
+   KOLOM KIRI: IDENTITAS PASIEN
+========================================================== */
+
+.app-topbar .topbar-patient-identity {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    min-width: 0;
+    gap: 3px;
+}
+
+.app-topbar .topbar-patient-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    min-width: 0;
+
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.2;
+
+    color: var(--text-muted, #64748b);
+}
+
+.app-topbar #pageSubTitleTopbar {
+    font-size: 11px;
+    font-weight: 600;
+
+    color: var(--text-muted, #64748b);
+
+    white-space: nowrap;
+}
+
+.app-topbar .topbar-meta-divider {
+    opacity: 0.5;
+}
+
+.app-topbar .topbar-birth-label {
+    white-space: nowrap;
+}
+
+.app-topbar .topbar-patient-birth {
+    font-size: 11px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+/* Nama pasien */
+
+.app-topbar #pageTitleTopbar {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
+
+    color: var(--text-primary, #1e293b);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    max-width: 100%;
+}
+
+/* ==========================================================
+   KOLOM KANAN: INFORMASI KUNJUNGAN
+========================================================== */
+
+.app-topbar .topbar-patient-visit {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    gap: 5px;
+
+    min-width: 0;
+
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.3;
+
+    color: var(--text-muted, #64748b);
+}
+
+/* Tanggal masuk - keluar */
+
+.app-topbar .topbar-visit-period {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    white-space: nowrap;
+}
+
+.app-topbar .topbar-visit-period i {
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.app-topbar .topbar-period-separator {
+    opacity: 0.6;
+}
+
+/* Nomor asuransi */
+
+.app-topbar .topbar-insurance {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    min-width: 0;
+
+    white-space: nowrap;
+}
+
+.app-topbar .topbar-insurance i {
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.app-topbar .topbar-insurance-label {
+    flex-shrink: 0;
+}
+
+.app-topbar #patientInsuranceTopbar {
+    font-size: 11px;
+    font-weight: 600;
+
+    color: var(--text-primary, #1e293b);
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ==========================================================
+   TOPBAR DATE: STATUS KUNJUNGAN
+========================================================== */
+
+.app-topbar .topbar-date {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 6px 10px;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    border-radius: 8px;
+
+    white-space: nowrap;
+}
+
+/* ==========================================================
+   DARK MODE
+========================================================== */
+
+[data-bs-theme="dark"] .app-topbar #pageTitleTopbar,
+[data-bs-theme="dark"] .app-topbar #patientInsuranceTopbar {
+    color: var(--text-primary, #f1f5f9);
+}
+
+[data-bs-theme="dark"] .app-topbar .topbar-patient-meta,
+[data-bs-theme="dark"] .app-topbar .topbar-patient-visit,
+[data-bs-theme="dark"] .app-topbar #pageSubTitleTopbar {
+    color: var(--text-muted, #94a3b8);
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 1200px) {
+    .app-topbar .topbar-context {
+        grid-template-columns: minmax(150px, 1fr) minmax(190px, auto);
+        gap: 14px;
+    }
+
+    .app-topbar #pageTitleTopbar {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-topbar .topbar-context {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 3px;
+    }
+
+    .app-topbar .topbar-patient-visit {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .app-topbar .topbar-insurance {
+        display: none;
+    }
+
+    .app-topbar #pageTitleTopbar {
+        font-size: 13px;
+    }
+
+    .app-topbar .topbar-patient-meta,
+    .app-topbar .topbar-patient-visit {
+        font-size: 10px;
+    }
+}

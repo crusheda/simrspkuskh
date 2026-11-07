@@ -214,6 +214,7 @@
 
                         const nomor = this.dataset.nomor;
                         const norm = this.dataset.norm;
+                        const tglLahir = this.dataset.tgllahir;
                         const url = this.dataset.href;
 
                         let nama = '';
@@ -252,6 +253,7 @@
                             nomor: nomor,
                             norm: norm,
                             nama: nama,
+                            tglLahir: tglLahir,
                             url: url
                         });
 

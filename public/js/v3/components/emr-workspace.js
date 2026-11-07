@@ -12,9 +12,13 @@
    - Menutup tab lainnya.
    - Menutup semua tab pasien.
    - Memuat ulang detail pasien jika terjadi kegagalan.
+   - Sinkronisasi informasi pasien ke topbar.
+   - Informasi identitas dan kunjungan mengikuti tab aktif.
+   - Memulihkan seluruh metadata pasien saat workspace diinisialisasi ulang.
 
    Detail pasien tetap dirender oleh Laravel melalui SSR.
 ========================================================= */
+
 (() => {
     'use strict';
 
@@ -51,7 +55,36 @@
 
         const tabBar = document.getElementById('emrTabBar');
         const content = document.getElementById('emrWorkspaceContent');
+
+        // =====================================================
+        // TOPBAR ELEMENTS
+        // =====================================================
+
+        const pageSubTitle = document.getElementById('pageSubTitleTopbar');
         const pageTitle = document.getElementById('pageTitleTopbar');
+
+        const patientBirth = document.getElementById('patientBirthTopbar');
+        const patientRoom = document.getElementById('patientRoomTopbar');
+
+        const patientTglMasuk = document.getElementById(
+            'patientTglMasukTopbar'
+        );
+
+        const patientTglKeluar = document.getElementById(
+            'patientTglKeluarTopbar'
+        );
+
+        const patientAsuransi = document.getElementById(
+            'patientInsuranceTopbar'
+        );
+
+        const patientStatus = document.getElementById(
+            'patientStatusTopbar'
+        );
+
+        // =====================================================
+        // WORKSPACE BUTTONS
+        // =====================================================
 
         const closeOtherButton = document.getElementById(
             'emrCloseOtherTabs'
@@ -81,9 +114,28 @@
 
         root.dataset.workspaceInitialized = 'true';
 
+        // =====================================================
+        // SIMPAN KONDISI AWAL TOPBAR
+        // Digunakan ketika kembali ke halaman Home.
+        // =====================================================
+
         const initialPageTitle =
             pageTitle?.textContent?.trim() ||
             'Data Kunjungan Pasien';
+
+        const initialPageSubTitle =
+            pageSubTitle?.textContent?.trim() ||
+            'SISTEM INFORMASI RUMAH SAKIT';
+
+        const initialTopbar = {
+            birth: patientBirth?.textContent?.trim() ?? '',
+            room: patientRoom?.textContent?.trim() ?? '',
+            tglMasuk: patientTglMasuk?.textContent?.trim() ?? '',
+            tglKeluar: patientTglKeluar?.textContent?.trim() ?? '',
+            noAsuransi: patientAsuransi?.textContent?.trim() ?? '',
+            status: patientStatus?.textContent?.trim() ?? '',
+            statusClass: patientStatus?.className || 'topbar-status-badge'
+        };
 
         const originalDocumentTitle = document.title;
 
@@ -111,12 +163,165 @@
             return String(value ?? '').trim();
         }
 
+        function normalizeText(value) {
+            if (value === null || value === undefined) {
+                return '';
+            }
+
+            return String(value).trim();
+        }
+
+        /**
+         * Mengambil nilai pertama yang tidak kosong.
+         * Nilai angka 0 tetap dianggap valid.
+         */
+        function firstNonEmpty(...values) {
+            for (const value of values) {
+                if (
+                    value !== null &&
+                    value !== undefined &&
+                    String(value).trim() !== ''
+                ) {
+                    return String(value).trim();
+                }
+            }
+
+            return '';
+        }
+
+        /**
+         * Format Nomor Rekam Medis.
+         */
         function formatRM(norm) {
             const value = String(norm ?? '').trim();
 
             return value
                 ? value.padStart(8, '0')
                 : '-';
+        }
+
+        /**
+         * Format tanggal lahir.
+         * Input: 1992-07-21
+         * Output: 21-07-1992
+         */
+        function formatTanggalLahir(value) {
+            const date = normalizeText(value);
+
+            if (!date) {
+                return '-';
+            }
+
+            const match = date.match(
+                /^(\d{4})-(\d{2})-(\d{2})/
+            );
+
+            if (match) {
+                return `${match[3]}-${match[2]}-${match[1]}`;
+            }
+
+            return date;
+        }
+
+        /**
+         * Format tanggal masuk dan tanggal keluar.
+         *
+         * Input:
+         * 2026-11-07 08:30:00
+         *
+         * Output:
+         * 07-11-2026 08:30
+         *
+         * Jika hanya tanggal:
+         * 2026-11-07
+         *
+         * Output:
+         * 07-11-2026
+         */
+        function formatTanggalKunjungan(value) {
+            const date = normalizeText(value);
+
+            if (!date) {
+                return '-';
+            }
+
+            const match = date.match(
+                /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::\d{2})?)?/
+            );
+
+            if (match) {
+                const tanggal =
+                    `${match[3]}-${match[2]}-${match[1]}`;
+
+                if (match[4] && match[5]) {
+                    return `${tanggal} ${match[4]}:${match[5]}`;
+                }
+
+                return tanggal;
+            }
+
+            return date;
+        }
+
+        /**
+         * Menentukan label dan class status kunjungan.
+         *
+         * 1 = Sedang Dilayani
+         * 2 = Selesai / Final
+         * Selain itu = Batal Periksa
+         */
+        function getStatusKunjungan(value) {
+            const status = normalizeText(value);
+
+            if (!status) {
+                return {
+                    label: '-',
+                    className: ''
+                };
+            }
+
+            const normalizedStatus = status.toLowerCase();
+
+            // Pasien sedang dilayani.
+            if (
+                normalizedStatus === '1' ||
+                normalizedStatus.includes('dilayani') ||
+                normalizedStatus === 'aktif'
+            ) {
+                return {
+                    label: 'SEDANG DILAYANI',
+                    className: 'status-active'
+                };
+            }
+
+            // Kunjungan selesai.
+            if (
+                normalizedStatus === '2' ||
+                normalizedStatus.includes('selesai') ||
+                normalizedStatus.includes('final')
+            ) {
+                return {
+                    label: 'SELESAI / FINAL',
+                    className: 'status-complete'
+                };
+            }
+
+            // Kunjungan batal.
+            if (
+                normalizedStatus === '0' ||
+                normalizedStatus === '3' ||
+                normalizedStatus.includes('batal')
+            ) {
+                return {
+                    label: 'BATAL PERIKSA',
+                    className: 'status-cancelled'
+                };
+            }
+
+            return {
+                label: status.toUpperCase(),
+                className: ''
+            };
         }
 
         /**
@@ -141,6 +346,295 @@
             target.searchParams.set('workspace', '1');
 
             return target.href;
+        }
+
+        /**
+         * Mengambil data pasien dari object pemanggil.
+         *
+         * Nama properti dibuat fleksibel untuk mengakomodasi
+         * beberapa format data yang mungkin digunakan.
+         */
+        function normalizePatientData(patient = {}) {
+            return {
+                nomor: normalizeVisitId(patient.nomor),
+
+                norm: firstNonEmpty(
+                    patient.norm,
+                    patient.rm,
+                    patient.NORM
+                ),
+
+                nama: firstNonEmpty(
+                    patient.nama,
+                    patient.namaPasien,
+                    patient.NAMAPASIEN
+                ) || 'Pasien',
+
+                tglLahir: firstNonEmpty(
+                    patient.tglLahir,
+                    patient.tanggalLahir,
+                    patient.tgl_lahir,
+                    patient.TGLLAHIRPASIEN
+                ),
+
+                namaRuangan: firstNonEmpty(
+                    patient.namaRuangan,
+                    patient.nama_ruangan,
+                    patient.namaruangan,
+                    patient.NAMARUANGAN,
+                    patient.roomName,
+                    patient.ruanganNama
+                ),
+
+                tglMasuk: firstNonEmpty(
+                    patient.tglMasuk,
+                    patient.tgl_masuk,
+                    patient.tanggalMasuk,
+                    patient.TGLMASUK,
+                    patient.MASUK
+                ),
+
+                tglKeluar: firstNonEmpty(
+                    patient.tglKeluar,
+                    patient.tgl_keluar,
+                    patient.tanggalKeluar,
+                    patient.TGLKELUAR,
+                    patient.KELUAR
+                ),
+
+                statusKunjungan: firstNonEmpty(
+                    patient.statusKunjungan,
+                    patient.status_kunjungan,
+                    patient.STATUSKUNJUNGAN,
+                    patient.status,
+                    patient.STATUS
+                ),
+
+                url: normalizeText(patient.url)
+            };
+        }
+
+        /**
+         * Menyimpan metadata record ke workspaceState.
+         *
+         * Metadata tetap tersedia ketika Livewire melakukan
+         * navigasi dan workspace diinisialisasi ulang.
+         */
+        function persistRecordMetadata(record) {
+            if (!record) {
+                return;
+            }
+
+            workspaceState.tabs.set(record.nomor, {
+                nomor: record.nomor,
+                norm: record.norm,
+                nama: record.nama,
+                tglLahir: record.tglLahir,
+                namaRuangan: record.namaRuangan,
+                tglMasuk: record.tglMasuk,
+                tglKeluar: record.tglKeluar,
+                statusKunjungan: record.statusKunjungan,
+                url: record.url
+            });
+        }
+
+        /**
+         * Memperbarui label tab jika data pasien berubah.
+         */
+        function updatePatientTabLabel(record) {
+            if (!record || !record.tab) {
+                return;
+            }
+
+            const labelText =
+                `RM. ${formatRM(record.norm)} · ${record.nama}`;
+
+            const label = record.tab.querySelector(
+                '.emr-tab-label'
+            );
+
+            if (label) {
+                label.textContent = labelText;
+            }
+
+            record.tab.title =
+                `${labelText} | Kunjungan ${record.nomor}`;
+
+            const closeButton = record.tab.querySelector(
+                '[data-close-tab]'
+            );
+
+            if (closeButton) {
+                closeButton.setAttribute(
+                    'aria-label',
+                    `Tutup ${labelText}`
+                );
+            }
+
+            if (record.frame) {
+                record.frame.title =
+                    `Rekam medis ${record.nama}, kunjungan ${record.nomor}`;
+            }
+        }
+
+        /**
+         * Memperbarui metadata record dengan data baru.
+         *
+         * Hanya nilai yang tersedia yang akan menggantikan
+         * metadata sebelumnya.
+         */
+        function mergeRecordData(record, data = {}) {
+            if (!record || !data) {
+                return;
+            }
+
+            if (data.norm) {
+                record.norm = data.norm;
+            }
+
+            if (data.nama) {
+                record.nama = data.nama;
+            }
+
+            if (data.tglLahir) {
+                record.tglLahir = data.tglLahir;
+            }
+
+            if (data.namaRuangan) {
+                record.namaRuangan = data.namaRuangan;
+            }
+
+            if (data.tglMasuk) {
+                record.tglMasuk = data.tglMasuk;
+            }
+
+            if (data.tglKeluar) {
+                record.tglKeluar = data.tglKeluar;
+            }
+
+            if (data.statusKunjungan) {
+                record.statusKunjungan = data.statusKunjungan;
+            }
+
+            updatePatientTabLabel(record);
+
+            persistRecordMetadata(record);
+        }
+
+        /**
+         * Sinkronisasi data dari window.EMRData di dalam iframe.
+         *
+         * Hanya dapat dilakukan jika iframe berasal dari origin
+         * yang sama dengan halaman workspace.
+         */
+        function syncRecordFromFrame(record, frame) {
+            if (!record || !frame) {
+                return false;
+            }
+
+            try {
+                const emrData = frame.contentWindow?.EMRData;
+
+                if (!emrData || typeof emrData !== 'object') {
+                    console.warn(
+                        '[EMRWorkspace] window.EMRData tidak ditemukan di iframe.',
+                        record.nomor
+                    );
+
+                    return false;
+                }
+
+                const patientData = {
+                    norm: firstNonEmpty(
+                        emrData.rm,
+                        emrData.norm,
+                        emrData.NORM
+                    ),
+
+                    nama: firstNonEmpty(
+                        emrData.namaPasien,
+                        emrData.nama,
+                        emrData.NAMAPASIEN
+                    ),
+
+                    tglLahir: firstNonEmpty(
+                        emrData.tglLahir,
+                        emrData.tanggalLahir,
+                        emrData.tgl_lahir,
+                        emrData.TGLLAHIRPASIEN
+                    ),
+
+                    namaRuangan: firstNonEmpty(
+                        emrData.namaRuangan,
+                        emrData.nama_ruangan,
+                        emrData.namaruangan,
+                        emrData.NAMARUANGAN,
+                        emrData.roomName,
+                        emrData.ruanganNama
+                    ),
+
+                    tglMasuk: firstNonEmpty(
+                        emrData.tgl_masuk,
+                        emrData.tglMasuk,
+                        emrData.tanggalMasuk,
+                        emrData.MASUK
+                    ),
+
+                    tglKeluar: firstNonEmpty(
+                        emrData.tgl_keluar,
+                        emrData.tglKeluar,
+                        emrData.tanggalKeluar,
+                        emrData.KELUAR
+                    ),
+
+                    noAsuransi: firstNonEmpty(
+                        emrData.noBpjs,
+                        emrData.no_bpjs,
+                        emrData.noAsuransi,
+                        emrData.nomorAsuransi,
+                        emrData.no_asuransi
+                    ),
+
+                    statusKunjungan: firstNonEmpty(
+                        emrData.statusKunjungan,
+                        emrData.status_kunjungan,
+                        emrData.STATUSKUNJUNGAN,
+                        emrData.status,
+                        emrData.STATUS
+                    )
+                };
+
+                mergeRecordData(record, patientData);
+
+                // Perbarui topbar jika tab ini sedang aktif.
+                if (activeTabId === record.tabId) {
+                    updatePageTitle(record.tabId);
+                }
+
+                console.info(
+                    '[EMRWorkspace] Data pasien berhasil disinkronkan:',
+                    {
+                        nomor: record.nomor,
+                        nama: record.nama,
+                        norm: record.norm,
+                        tglLahir: record.tglLahir,
+                        namaRuangan: record.namaRuangan,
+                        tglMasuk: record.tglMasuk,
+                        tglKeluar: record.tglKeluar,
+                        statusKunjungan: record.statusKunjungan
+                    }
+                );
+
+                return true;
+
+            } catch (error) {
+                console.error(
+                    '[EMRWorkspace] Gagal membaca data pasien dari iframe:',
+                    error
+                );
+
+                return false;
+            }
         }
 
         function findTabElement(tabId) {
@@ -170,14 +664,64 @@
         }
 
         /* =====================================================
-           UPDATE JUDUL HEADER
+           UPDATE TOPBAR
         ===================================================== */
 
+        /**
+         * Mengembalikan seluruh informasi topbar ke kondisi awal.
+         *
+         * Kondisi ini digunakan ketika tab Home aktif.
+         */
+        function resetTopbar() {
+
+            if (pageSubTitle) {
+                pageSubTitle.textContent = initialPageSubTitle;
+            }
+
+            if (pageTitle) {
+                pageTitle.textContent = initialPageTitle;
+            }
+
+            if (patientBirth) {
+                patientBirth.textContent = initialTopbar.birth;
+            }
+
+            if (patientRoom) {
+                patientRoom.textContent = initialTopbar.room;
+            }
+
+            if (patientTglMasuk) {
+                patientTglMasuk.textContent =
+                    initialTopbar.tglMasuk;
+            }
+
+            if (patientTglKeluar) {
+                patientTglKeluar.textContent =
+                    initialTopbar.tglKeluar;
+            }
+
+            if (patientAsuransi) {
+                patientAsuransi.textContent =
+                    initialTopbar.noAsuransi;
+            }
+
+            if (patientStatus) {
+                patientStatus.textContent =
+                    initialTopbar.status;
+
+                patientStatus.className =
+                    initialTopbar.statusClass;
+            }
+        }
+
+        /**
+         * Memperbarui semua informasi topbar berdasarkan pasien aktif.
+         */
         function updatePageTitle(tabId) {
+
+            // Jika kembali ke halaman Home.
             if (tabId === 'home') {
-                if (pageTitle) {
-                    pageTitle.textContent = initialPageTitle;
-                }
+                resetTopbar();
 
                 document.title = originalDocumentTitle;
 
@@ -190,11 +734,93 @@
                 return;
             }
 
+            // =================================================
+            // IDENTITAS PASIEN
+            // =================================================
+
+            // Nomor RM.
+            // if (pageSubTitle) {
+            //     pageSubTitle.textContent =
+            //         `RM. ${formatRM(record.norm)}`;
+            // }
+            if (pageSubTitle) {
+                pageSubTitle.textContent =
+                    ``;
+            }
+
+            // Nama pasien.
             if (pageTitle) {
                 pageTitle.textContent =
                     record.nama || 'Rekam Medis Pasien';
             }
 
+            // Tanggal lahir.
+            if (patientBirth) {
+                patientBirth.innerHTML =
+                    `•&nbsp; Lahir ${formatTanggalLahir(record.tglLahir)}`;
+            }
+
+            // =================================================
+            // INFORMASI KUNJUNGAN
+            // =================================================
+
+            // Nama ruangan.
+            if (patientRoom) {
+                patientRoom.textContent =
+                    record.namaRuangan || '-';
+            }
+
+            // Tanggal masuk.
+            if (patientTglMasuk) {
+                patientTglMasuk.innerHTML =
+                    `<i class="bi bi-calendar2-range me-1"></i> ${formatTanggalKunjungan(record.tglMasuk)}`;
+            }
+
+            // Tanggal keluar.
+            if (patientTglKeluar) {
+                patientTglKeluar.innerHTML =
+                    record.tglKeluar ? `- ${formatTanggalKunjungan(record.tglKeluar)}`: '';
+            }
+
+            // Nomor asuransi.
+            if (patientAsuransi) {
+                patientAsuransi.innerHTML =
+                    `<i class="bi bi-shield-check me-1"></i> ${formatTanggalKunjungan(record.noAsuransi)}`;
+            }
+
+            // =================================================
+            // STATUS KUNJUNGAN
+            // =================================================
+
+            if (patientStatus) {
+                const statusMap = {
+                    '1': {
+                        label: 'Sedang Dilayani',
+                        className: 'badge bg-warning-subtle text-dark border border-warning-subtle'
+                    },
+                    '2': {
+                        label: 'Selesai Dilayani',
+                        className: 'badge bg-success-subtle text-dark border border-success-subtle'
+                    },
+                    '0': {
+                        label: 'Batal Periksa',
+                        className: 'badge bg-danger-subtle text-dark border border-danger-subtle'
+                    }
+                };
+
+                const status = statusMap[String(record.statusKunjungan)] || {
+                    label: '<i class="me-1 ri-loader-line ri-spin"></i> Memproses',
+                    className: 'badge bg-dark-subtle text-dark border border-light-subtle'
+                };
+
+                // Set teks badge.
+                patientStatus.innerHTML = status.label;
+
+                // Set class badge.
+                patientStatus.className = status.className;
+            }
+
+            // Judul browser.
             document.title =
                 `${record.nama || 'Rekam Medis Pasien'} · Sirmed v3`;
         }
@@ -224,7 +850,10 @@
                     ? 'home'
                     : (activeRecord?.nomor || 'home');
 
-            // Status tab.
+            // =================================================
+            // STATUS TAB
+            // =================================================
+
             tabBar.querySelectorAll('.emr-tab').forEach((tab) => {
                 const isActive = tab.dataset.tabId === tabId;
 
@@ -238,7 +867,10 @@
                 tab.tabIndex = isActive ? 0 : -1;
             });
 
-            // Status panel.
+            // =================================================
+            // STATUS PANEL
+            // =================================================
+
             content.querySelectorAll(
                 '.emr-workspace-panel'
             ).forEach((panel) => {
@@ -247,6 +879,10 @@
                 panel.classList.toggle('active', isActive);
                 panel.hidden = !isActive;
             });
+
+            // =================================================
+            // UPDATE TOPBAR
+            // =================================================
 
             updatePageTitle(tabId);
 
@@ -273,9 +909,19 @@
                 new CustomEvent('emr:workspace:activated', {
                     detail: {
                         tabId,
+
                         nomor: record?.nomor ?? null,
                         norm: record?.norm ?? null,
-                        nama: record?.nama ?? null
+                        nama: record?.nama ?? null,
+
+                        tglLahir: record?.tglLahir ?? null,
+                        namaRuangan: record?.namaRuangan ?? null,
+
+                        tglMasuk: record?.tglMasuk ?? null,
+                        tglKeluar: record?.tglKeluar ?? null,
+
+                        statusKunjungan:
+                            record?.statusKunjungan ?? null
                     }
                 })
             );
@@ -396,7 +1042,12 @@
 
             // Jika retry, lepaskan iframe sebelumnya.
             if (retry) {
-                record.frame?.remove();
+                if (record.frame) {
+                    record.frame.onload = null;
+                    record.frame.onerror = null;
+                    record.frame.src = 'about:blank';
+                    record.frame.remove();
+                }
 
                 record.frame = null;
                 record.loaded = false;
@@ -453,7 +1104,10 @@
 
             let didLoad = false;
 
-            // Ketika iframe selesai memuat halaman.
+            // =================================================
+            // KETIKA IFRAME SELESAI MEMUAT HALAMAN
+            // =================================================
+
             frame.onload = () => {
                 didLoad = true;
 
@@ -461,6 +1115,21 @@
                 record.loading = false;
 
                 loading.hidden = true;
+
+                // =================================================
+                // SINKRONISASI DATA PASIEN DARI IFRAME
+                // =================================================
+
+                syncRecordFromFrame(record, frame);
+
+                // Pastikan topbar diperbarui apabila tab ini aktif.
+                if (activeTabId === record.tabId) {
+                    updatePageTitle(record.tabId);
+                }
+
+                // =================================================
+                // EVENT CONTENT LOADED
+                // =================================================
 
                 document.dispatchEvent(
                     new CustomEvent(
@@ -470,6 +1139,16 @@
                                 nomor: record.nomor,
                                 norm: record.norm,
                                 nama: record.nama,
+
+                                tglLahir: record.tglLahir,
+                                namaRuangan: record.namaRuangan,
+
+                                tglMasuk: record.tglMasuk,
+                                tglKeluar: record.tglKeluar,
+
+                                statusKunjungan:
+                                    record.statusKunjungan,
+
                                 frame
                             }
                         }
@@ -618,26 +1297,24 @@
                nomor: '123456',
                norm: '12345',
                nama: 'Nama Pasien',
+               tglLahir: '1992-07-21',
+               namaRuangan: 'RAWAT INAP KELAS I',
+               tglMasuk: '2026-11-07 08:30:00',
+               tglKeluar: null,
+               statusKunjungan: 1,
                url: '/v3/emr/123456'
            });
         ===================================================== */
+
         function openPatient(patient = {}, options = {}) {
+
             const activateAfterOpen = options.activate !== false;
-            const nomor = normalizeVisitId(patient.nomor);
 
-            const norm = String(
-                patient.norm ?? ''
-            ).trim();
+            const patientData = normalizePatientData(patient);
 
-            const nama = String(
-                patient.nama ?? ''
-            ).trim() || 'Pasien';
+            const nomor = patientData.nomor;
 
-            const rawUrl = String(
-                patient.url ?? ''
-            ).trim();
-
-            if (!nomor || !rawUrl) {
+            if (!nomor || !patientData.url) {
                 console.error(
                     '[EMRWorkspace] openPatient memerlukan nomor kunjungan dan URL.',
                     patient
@@ -650,9 +1327,14 @@
              * Jika kunjungan sudah terbuka, aktifkan tab lama.
              * Jangan membuat tab duplikat.
              */
+
             const existing = patientTabs.get(nomor);
 
             if (existing) {
+
+                // Sinkronkan metadata baru jika tersedia.
+                mergeRecordData(existing, patientData);
+
                 activate(existing.tabId);
 
                 return true;
@@ -661,7 +1343,7 @@
             let frameUrl;
 
             try {
-                frameUrl = makeFrameUrl(rawUrl);
+                frameUrl = makeFrameUrl(patientData.url);
             } catch (error) {
                 console.error('[EMRWorkspace]', error);
 
@@ -678,7 +1360,7 @@
             workspaceState.tabSequence = tabSequence;
 
             const labelText =
-                `RM. ${formatRM(norm)} · ${nama}`;
+                `RM. ${formatRM(patientData.norm)} · ${patientData.nama}`;
 
             const fullTitle =
                 `${labelText} | Kunjungan ${nomor}`;
@@ -767,14 +1449,14 @@
 
             panel.hidden = true;
 
-            const loading = createLoadingElement(nama);
+            const loading = createLoadingElement(patientData.nama);
 
             const frame = document.createElement('iframe');
 
             frame.className = 'emr-patient-frame';
 
             frame.title =
-                `Rekam medis ${nama}, kunjungan ${nomor}`;
+                `Rekam medis ${patientData.nama}, kunjungan ${nomor}`;
 
             frame.loading = 'eager';
             frame.referrerPolicy = 'same-origin';
@@ -799,13 +1481,24 @@
             /* ===============================================
                SIMPAN DATA TAB
             =============================================== */
+
             const record = {
                 key: nomor,
                 tabId,
 
                 nomor,
-                norm,
-                nama,
+
+                norm: patientData.norm,
+                nama: patientData.nama,
+
+                tglLahir: patientData.tglLahir,
+
+                namaRuangan: patientData.namaRuangan,
+
+                tglMasuk: patientData.tglMasuk,
+                tglKeluar: patientData.tglKeluar,
+
+                statusKunjungan: patientData.statusKunjungan,
 
                 url: frameUrl,
 
@@ -820,12 +1513,7 @@
             patientTabs.set(nomor, record);
 
             // Simpan metadata tab di memori JavaScript global.
-            workspaceState.tabs.set(nomor, {
-                nomor,
-                norm,
-                nama,
-                url: frameUrl
-            });
+            persistRecordMetadata(record);
 
             // Aktifkan hanya jika diminta.
             if (activateAfterOpen) {
@@ -833,7 +1521,6 @@
             }
 
             return true;
-
         }
 
         /* =====================================================
@@ -907,6 +1594,7 @@
         ===================================================== */
 
         window.EMRWorkspace = {
+
             openPatient,
 
             activate,
@@ -917,7 +1605,11 @@
 
             closeOthers,
 
+            /**
+             * Mengambil informasi tab yang sedang aktif.
+             */
             getActiveTab() {
+
                 const record = findRecordByTabId(
                     activeTabId
                 );
@@ -925,23 +1617,47 @@
                 if (!record) {
                     return {
                         tabId: 'home',
+
                         nomor: null,
                         norm: null,
-                        nama: null
+                        nama: null,
+
+                        tglLahir: null,
+                        namaRuangan: null,
+
+                        tglMasuk: null,
+                        tglKeluar: null,
+
+                        statusKunjungan: null
                     };
                 }
 
                 return {
                     tabId: record.tabId,
+
                     nomor: record.nomor,
                     norm: record.norm,
                     nama: record.nama,
+
+                    tglLahir: record.tglLahir,
+                    namaRuangan: record.namaRuangan,
+
+                    tglMasuk: record.tglMasuk,
+                    tglKeluar: record.tglKeluar,
+
+                    statusKunjungan: record.statusKunjungan,
+
                     url: record.url,
+
                     active: true
                 };
             },
 
+            /**
+             * Mengambil seluruh daftar tab pasien.
+             */
             getTabs() {
+
                 return Array.from(
                     patientTabs.values()
                 ).map((record) => ({
@@ -950,6 +1666,14 @@
                     nomor: record.nomor,
                     norm: record.norm,
                     nama: record.nama,
+
+                    tglLahir: record.tglLahir,
+                    namaRuangan: record.namaRuangan,
+
+                    tglMasuk: record.tglMasuk,
+                    tglKeluar: record.tglKeluar,
+
+                    statusKunjungan: record.statusKunjungan,
 
                     url: record.url,
 
@@ -962,29 +1686,40 @@
             }
         };
 
-        // Tampilkan halaman awal ketika workspace pertama kali aktif.
+        // =====================================================
+        // TAMPILKAN HALAMAN AWAL
+        // =====================================================
+
         activate('home');
 
-        // Buka kunjungan yang sebelumnya dipilih dari notifikasi.
-        // Simpan identitas tab aktif sebelum membangun ulang DOM.
+        // =====================================================
+        // PULIHKAN TAB PASIEN
+        // =====================================================
+
         // Bangun seluruh tab tanpa memuat iframe.
         for (const patient of workspaceState.tabs.values()) {
             openPatient(patient, { activate: false });
         }
 
         // Pulihkan tab yang terakhir aktif.
-        const savedActiveNomor = workspaceState.activeNomor || 'home';
+        const savedActiveNomor =
+            workspaceState.activeNomor || 'home';
 
         if (
             savedActiveNomor !== 'home' &&
             patientTabs.has(savedActiveNomor)
         ) {
-            activate(patientTabs.get(savedActiveNomor).tabId);
+            activate(
+                patientTabs.get(savedActiveNomor).tabId
+            );
         } else {
             activate('home');
         }
 
-        // Buka kunjungan yang sebelumnya dipilih dari notifikasi.
+        // =====================================================
+        // BUKA KUNJUNGAN DARI NOTIFIKASI
+        // =====================================================
+
         // Alur notifikasi yang sudah ada tetap dipertahankan.
         try {
             const pendingPatient = sessionStorage.getItem(
@@ -992,6 +1727,7 @@
             );
 
             if (pendingPatient) {
+
                 // Hapus terlebih dahulu agar tidak dibuka berulang.
                 sessionStorage.removeItem(
                     'sirmed.pendingEmrPatient'
@@ -1003,7 +1739,9 @@
                     openPatient(patient);
                 }
             }
+
         } catch (error) {
+
             console.error(
                 '[EMRWorkspace] Gagal membuka kunjungan tertunda:',
                 error
@@ -1023,15 +1761,20 @@
     /* =========================================================
        INISIALISASI
     ========================================================= */
+
     // Inisialisasi awal, termasuk ketika script dimuat di halaman lain.
     if (document.readyState === 'loading') {
+
         document.addEventListener(
             'DOMContentLoaded',
             initializeEMRWorkspace,
             { once: true }
         );
+
     } else {
+
         initializeEMRWorkspace();
+
     }
 
     // Saat Livewire mengganti halaman, bangun ulang workspace

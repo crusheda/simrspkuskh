@@ -120,6 +120,7 @@ class EMR extends Component
                 'pp.TANGGAL AS TGLDAFTAR',
                 'kjs.noSEP AS NOSEP',
                 'kjs.tglSEP AS TGLSEP',
+                'pj.NOMOR AS NOASURANSI',
                 'kjs.noKartu AS NOBPJS',
                 'pjs.prolanisPRB AS PRBPASIEN',
                 'pjs.ketStatusPeserta AS STATUSBPJS',
@@ -513,5 +514,5 @@ class EMR extends Component
             'kunjungan_sebelumnya' => $pulangSebelumnya->KUNJUNGAN,
         ];
     }
-    
+
 }

@@ -17,6 +17,8 @@
         ruangan: @json($list["show"]->IDRUANGAN),
         rm: @json($list["show"]->NORM),
         namaPasien: @json($list["show"]->NAMAPASIEN),
+        tglLahir: @json($list["show"]->TGLLAHIRPASIEN),
+        noAsuransi: @json($list["show"]->NOASURANSI),
         tgl_sep: @json($list["show"]->TGLSEP),
         sep: @json($list["show"]->NOSEP),
         tgl_kfr: @json(now()->format('Y-m-d H:i:s')),
@@ -26,7 +28,8 @@
             $list["show"]->TGLSEP
                 ? substr($list["show"]->TGLSEP, 0, 10)
                 : null
-        )
+        ),
+        statusKunjungan: @json($list["show"]->STATUS)
     };
 </script>
 <div class="row gy-4">
@@ -211,7 +214,7 @@
         <div class="tab-content">
             <div class="tab-pane active show" id="identitas" role="tabpanel">
                 <div class="row">
-                    <div class="col-lg-7 col-xxl-8">
+                    <div class="col-lg-7 col-xxl-8 mb-2">
                         <div class="card">
                             <div class="card-header d-flex align-items-center justify-content-between">
                                 <h5>Biodata Pasien</h5>
@@ -468,12 +471,15 @@
             ruangan,
             rm,
             namaPasien,
+            tglLahir,
+            noAsuransi,
             tgl_sep,
             sep,
             tgl_kfr,
             tgl_masuk,
             tgl_keluar,
-            tgl_sep_date
+            tgl_sep_date,
+            statusKunjungan
         } = window.EMRData;
 
         let dataPPA = [];
@@ -632,6 +638,12 @@
                             nomor: nomor,
                             norm: rm,
                             nama: namaPasien,
+                            tglLahir: tglLahir,
+                            namaRuangan: ruangan,
+                            tglMasuk: tgl_masuk,
+                            tglKeluar: tgl_keluar,
+                            noAsuransi: noAsuransi,
+                            statusKunjungan: statusKunjungan,
                             url: `/v2/emr/${encodeURIComponent(nomor)}`
                         });
 
