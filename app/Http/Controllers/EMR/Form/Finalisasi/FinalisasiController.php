@@ -3433,6 +3433,7 @@ class FinalisasiController extends Controller
 
         $a[] = $soapDasar['ASSESMENT'];
 
+        $p[] = "";
 
         // Riwayat Terapi
         $rencanaTerapi = DB::table('medicalrecord.rencana_terapi')
