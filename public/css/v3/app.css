@@ -479,10 +479,10 @@ a {
     padding: 0 13px;
     border: 0;
     border-radius: 12px;
-    color: var(--muted);
+    color: var(--text);
     background: transparent;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 450;
     text-align: left;
     transition: .18s
 }
@@ -1782,4 +1782,96 @@ body {
     .app-topbar .patient-dropdown-trigger {
         display: none;
     }
+}
+
+/* =========================================================
+   TOPBAR WORKSPACE — IDENTITY + VISIT INLINE
+   Identity dan informasi kunjungan berdampingan.
+   Dipisahkan vertical divider.
+========================================================= */
+
+.app-topbar:not(.is-home-mode) .topbar-context {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+
+    /* Hilangkan grid yang mendorong visit ke kanan */
+    gap: 0;
+    width: auto;
+    max-width: 100%;
+    flex: 0 1 auto;
+
+    min-width: 0;
+}
+
+/* =========================================
+   IDENTITAS PASIEN
+========================================= */
+
+.app-topbar:not(.is-home-mode) .topbar-patient-identity {
+    flex: 0 1 auto;
+    width: auto;
+    min-width: 0;
+
+    /* Batasi agar tidak mengambil seluruh header */
+    max-width: min(52vw, 680px);
+}
+
+/* =========================================
+   INFORMASI KUNJUNGAN
+========================================= */
+
+.app-topbar:not(.is-home-mode) .topbar-patient-visit {
+    flex: 0 0 auto;
+    width: auto;
+
+    align-self: stretch;
+    justify-content: center;
+
+    /* Jarak dari identitas pasien */
+    margin-left: 18px;
+    padding-left: 18px;
+
+    /* GARIS DIVIDER VERTICAL */
+    border-left: 1px solid var(
+        --border,
+        var(--bs-border-color, rgba(148, 163, 184, 0.35))
+    );
+}
+
+/* =========================================
+   RESPONSIVE TABLET
+========================================= */
+
+@media (max-width: 1200px) {
+
+    .app-topbar:not(.is-home-mode) .topbar-patient-identity {
+        max-width: min(44vw, 520px);
+    }
+
+    .app-topbar:not(.is-home-mode) .topbar-patient-visit {
+        margin-left: 12px;
+        padding-left: 12px;
+    }
+
+}
+
+/* =========================================
+   MOBILE
+   Mengikuti perilaku mobile sebelumnya.
+========================================= */
+
+@media (max-width: 768px) {
+
+    .app-topbar:not(.is-home-mode) .topbar-context {
+        flex: 1 1 auto;
+        width: auto;
+        max-width: 100%;
+    }
+
+    .app-topbar:not(.is-home-mode) .topbar-patient-identity {
+        max-width: 100%;
+    }
+
 }

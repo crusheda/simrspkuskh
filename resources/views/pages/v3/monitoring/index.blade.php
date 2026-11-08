@@ -1,4 +1,5 @@
 @section('title', 'Monitoring Berkas')
+@section('page-sub-title', 'SISTEM INFORMASI RUMAH SAKIT')
 @section('page-title', 'Monitoring Berkas Pasien')
 
 <section>

@@ -1055,3 +1055,219 @@ body.emr-workspace-frame .emr-frame-content > section {
 
     box-sizing: border-box;
 }
+
+/* =========================================================
+   SIRMED V3 — TOPBAR PATIENT IDENTITY
+   DEFAULT MODE vs EMR WORKSPACE MODE
+========================================================= */
+
+/* Container identitas */
+.topbar-patient-identity {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+
+/* =========================================================
+   MODE DEFAULT
+   Menampilkan 2 baris
+========================================================= */
+
+.topbar-default-identity {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+
+    min-width: 0;
+}
+
+.topbar-default-subtitle,
+.topbar-default-title {
+    display: flex;
+    align-items: center;
+
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.topbar-default-subtitle {
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.2;
+
+    color: var(--bs-secondary-color);
+}
+
+.topbar-default-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.25;
+
+    color: var(--bs-body-color);
+}
+
+
+/* =========================================================
+   MODE EMR WORKSPACE
+   Menampilkan 3 baris
+========================================================= */
+
+.topbar-workspace-identity {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+
+    min-width: 0;
+}
+
+
+/* Baris 1 — Asuransi */
+.topbar-insurance-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    min-width: 0;
+
+    font-size: 0.76rem;
+    font-weight: 500;
+    line-height: 1.2;
+
+    color: var(--bs-secondary-color);
+}
+
+
+/* Baris 2 — Identitas pasien */
+.topbar-patient-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    min-width: 0;
+
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.25;
+
+    color: var(--bs-body-color);
+}
+
+
+/* Baris 3 — Ruangan dan dokter */
+.topbar-patient-room-doctor {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    min-width: 0;
+
+    font-size: 0.76rem;
+    font-weight: 500;
+    line-height: 1.2;
+
+    color: var(--bs-secondary-color);
+}
+
+
+/* Divider */
+.topbar-meta-divider {
+    flex: 0 0 auto;
+
+    color: var(--bs-secondary-color);
+}
+
+
+/* Nama pasien */
+#pageTitlebar {
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* Nomor RM */
+#pageSubTitlebar {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+
+/* Tanggal lahir */
+.topbar-patient-birth {
+    flex: 0 0 auto;
+
+    font-size: 0.78rem;
+    font-weight: 500;
+
+    color: var(--bs-secondary-color);
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   MODE SWITCH
+========================================================= */
+
+/* Default: tampilkan 2 baris */
+#appTopbar.is-home-mode .topbar-default-identity {
+    display: flex;
+}
+
+#appTopbar.is-home-mode .topbar-workspace-identity {
+    display: none;
+}
+
+
+/* Workspace: tampilkan 3 baris */
+#appTopbar:not(.is-home-mode) .topbar-default-identity {
+    display: none;
+}
+
+#appTopbar:not(.is-home-mode) .topbar-workspace-identity {
+    display: flex;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991.98px) {
+    .topbar-default-title {
+        font-size: 1rem;
+    }
+
+    .topbar-patient-meta {
+        font-size: 0.9rem;
+    }
+
+    .topbar-insurance-meta,
+    .topbar-patient-room-doctor {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .topbar-patient-identity {
+        min-width: 0;
+    }
+
+    .topbar-default-subtitle,
+    .topbar-default-title,
+    .topbar-insurance-meta,
+    .topbar-patient-meta,
+    .topbar-patient-room-doctor {
+        max-width: 100%;
+    }
+}

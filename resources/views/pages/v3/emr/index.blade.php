@@ -1,5 +1,6 @@
-@section('title', 'Medical Record')
-@section('page-title', 'Data Kunjungan Pasien')
+@section('title', 'Digital Medical Record')
+@section('page-sub-title', 'SISTEM INFORMASI RUMAH SAKIT')
+@section('page-title', 'Digital Medical Record')
 
 <section>
     <div class="row gy-4" style="padding-bottom: 56px !important;">

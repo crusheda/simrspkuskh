@@ -1,4 +1,5 @@
 @section('title', 'Dashboard')
+@section('page-sub-title', 'SISTEM INFORMASI RUMAH SAKIT')
 @section('page-title', 'Dashboard Interaktif')
 
 <section>

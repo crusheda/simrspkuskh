@@ -1,9 +1,8 @@
 /* =========================================================
-    GLOBAL
-    ========================================================= */
-
-.list-group-item {
-    border: 0;
+    HANYA SIDEBAR TAB PENGKAJIAN EMR DIV ID = pengkajian-sidebar-col
+========================================================= */
+#pengkajian-sidebar-col .list-group-item {
+    border: 0 !important;
 }
 
 .form-search #compo-menu-search {
@@ -1010,4 +1009,185 @@ DESKTOP
     #pengkajian-sidebar-col #btn-minimize-pengkajian {
         transition: none;
     }
+}
+
+/* =========================================================
+   SIRMED V3 — PENGKAJIAN SIDEBAR LIST FORCE OVERRIDE
+   Scope: #pengkajian-sidebar-col ONLY
+   Support: Light & Dark Theme
+========================================================= */
+
+/* LIST GROUP */
+#pengkajian-sidebar-col #pengkajianMenu .list-group {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* SEMUA ITEM MENU */
+#pengkajian-sidebar-col #pengkajianMenu .menu-item,
+#pengkajian-sidebar-col #pengkajianMenu .menu-parent,
+#pengkajian-sidebar-col #pengkajianMenu .menu-child,
+#pengkajian-sidebar-col #pengkajianMenu .list-group-item {
+    color: var(--text, var(--bs-body-color)) !important;
+    background: transparent !important;
+
+    border: 1px solid transparent !important;
+    border-radius: .75rem !important;
+
+    font-family: inherit !important;
+    font-size: .82rem !important;
+    font-weight: 550 !important;
+    line-height: 1.45 !important;
+
+    box-shadow: none !important;
+    text-decoration: none !important;
+
+    transition:
+        color .16s ease,
+        background-color .16s ease,
+        border-color .16s ease !important;
+}
+
+/* HOVER */
+#pengkajian-sidebar-col #pengkajianMenu .menu-item:hover,
+#pengkajian-sidebar-col #pengkajianMenu .menu-parent:hover,
+#pengkajian-sidebar-col #pengkajianMenu .menu-child:hover,
+#pengkajian-sidebar-col #pengkajianMenu .list-group-item-action:hover {
+    color: var(--primary, var(--bs-primary)) !important;
+
+    background: var(
+        --primary-soft,
+        color-mix(in srgb, var(--bs-primary) 9%, transparent)
+    ) !important;
+
+    border-color: color-mix(
+        in srgb,
+        var(--primary, var(--bs-primary)) 20%,
+        var(--border, var(--bs-border-color))
+    ) !important;
+}
+
+/* ACTIVE */
+#pengkajian-sidebar-col #pengkajianMenu .menu-item.active,
+#pengkajian-sidebar-col #pengkajianMenu .menu-parent.active,
+#pengkajian-sidebar-col #pengkajianMenu .menu-child.active,
+#pengkajian-sidebar-col #pengkajianMenu .list-group-item.active {
+    color: var(--primary, var(--bs-primary)) !important;
+
+    background: var(
+        --primary-soft,
+        color-mix(in srgb, var(--bs-primary) 11%, transparent)
+    ) !important;
+
+    border-color: color-mix(
+        in srgb,
+        var(--primary, var(--bs-primary)) 25%,
+        var(--border, var(--bs-border-color))
+    ) !important;
+
+    font-weight: 700 !important;
+
+    box-shadow: inset 3px 0 0 var(--primary, var(--bs-primary)) !important;
+}
+
+/* MENU CHILD */
+#pengkajian-sidebar-col #pengkajianMenu .menu-child {
+    color: var(--muted, var(--bs-secondary-color)) !important;
+    background: transparent !important;
+    font-size: .8rem !important;
+}
+
+/* MENU GROUP TITLE */
+#pengkajian-sidebar-col #pengkajianMenu .menu-group-title {
+    color: var(--primary, var(--bs-primary)) !important;
+
+    background: var(
+        --soft,
+        var(--bs-tertiary-bg)
+    ) !important;
+
+    border: 1px solid var(
+        --border,
+        var(--bs-border-color)
+    ) !important;
+
+    border-radius: .7rem !important;
+}
+
+#pengkajian-sidebar-col #pengkajianMenu .menu-group-title h5 {
+    color: var(--primary, var(--bs-primary)) !important;
+    font-weight: 800 !important;
+}
+
+/* ICON */
+#pengkajian-sidebar-col #pengkajianMenu .menu-item i,
+#pengkajian-sidebar-col #pengkajianMenu .menu-parent i,
+#pengkajian-sidebar-col #pengkajianMenu .menu-child i,
+#pengkajian-sidebar-col #pengkajianMenu .submenu-icon {
+    /* color: var(--muted, var(--bs-secondary-color)) !important; */
+    transition: color .16s ease !important;
+}
+
+/* ICON HOVER */
+#pengkajian-sidebar-col #pengkajianMenu .menu-item:hover i,
+#pengkajian-sidebar-col #pengkajianMenu .menu-parent:hover i,
+#pengkajian-sidebar-col #pengkajianMenu .menu-child:hover i {
+    /* color: var(--primary, var(--bs-primary)) !important; */
+}
+
+/* ICON ACTIVE */
+#pengkajian-sidebar-col #pengkajianMenu .menu-item.active i,
+#pengkajian-sidebar-col #pengkajianMenu .menu-parent.active i,
+#pengkajian-sidebar-col #pengkajianMenu .menu-child.active i {
+    color: var(--primary, var(--bs-primary)) !important;
+}
+
+/* SUBMENU */
+#pengkajian-sidebar-col #pengkajianMenu .submenu {
+    background: transparent !important;
+    border: 0 !important;
+}
+
+/* SUBMENU PARENT EXPANDED */
+#pengkajian-sidebar-col #pengkajianMenu
+.menu-collapse[aria-expanded="true"] {
+    color: var(--primary, var(--bs-primary)) !important;
+}
+
+#pengkajian-sidebar-col #pengkajianMenu
+.menu-collapse[aria-expanded="true"] .submenu-icon {
+    color: var(--primary, var(--bs-primary)) !important;
+}
+
+/* BADGE / STATUS DALAM LIST */
+#pengkajian-sidebar-col #pengkajianMenu .menu-item .badge,
+#pengkajian-sidebar-col #pengkajianMenu .menu-parent .badge,
+#pengkajian-sidebar-col #pengkajianMenu .menu-child .badge {
+    font-size: .68rem !important;
+    font-weight: 700 !important;
+    border-radius: .4rem !important;
+}
+
+/* DARK MODE */
+[data-bs-theme="dark"] #pengkajian-sidebar-col #pengkajianMenu .menu-item,
+[data-bs-theme="dark"] #pengkajian-sidebar-col #pengkajianMenu .menu-parent,
+[data-bs-theme="dark"] #pengkajian-sidebar-col #pengkajianMenu .menu-child {
+    color: var(--text, var(--bs-body-color)) !important;
+    background: transparent !important;
+}
+
+[data-bs-theme="dark"] #pengkajian-sidebar-col #pengkajianMenu .menu-item:hover,
+[data-bs-theme="dark"] #pengkajian-sidebar-col #pengkajianMenu .menu-parent:hover,
+[data-bs-theme="dark"] #pengkajian-sidebar-col #pengkajianMenu .menu-child:hover {
+    color: var(--primary, var(--bs-primary)) !important;
+    background: var(--primary-soft, var(--bs-tertiary-bg)) !important;
+}
+
+[data-bs-theme="dark"] #pengkajian-sidebar-col #pengkajianMenu .menu-item.active,
+[data-bs-theme="dark"] #pengkajian-sidebar-col #pengkajianMenu .menu-parent.active,
+[data-bs-theme="dark"] #pengkajian-sidebar-col #pengkajianMenu .menu-child.active {
+    color: var(--primary, var(--bs-primary)) !important;
+    background: var(--primary-soft, var(--bs-tertiary-bg)) !important;
+    border-color: var(--border, var(--bs-border-color)) !important;
 }

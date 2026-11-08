@@ -61,11 +61,12 @@
         // =====================================================
         const topBarDivider1 = document.getElementById('topbarDivider1');
         const topBarDivider2 = document.getElementById('topbarDivider2');
+        const topBarDivider3 = document.getElementById('topbarDivider3');
 
-        const pageSubTitle = document.getElementById('pageSubTitleTopbar');
-        const pageTitle = document.getElementById('pageTitleTopbar');
+        const pageSubTitle = document.getElementById('pageSubTitlebar');
+        const pageTitle = document.getElementById('pageTitlebar');
+        const patientBirth = document.getElementById('patientBirthBar');
 
-        const patientBirth = document.getElementById('patientBirthTopbar');
         const patientRoom = document.getElementById('patientRoomTopbar');
         const patientDoctor = document.getElementById('patientDoctorTopbar');
         const patientInsuranceNumber = document.getElementById('patientInsuranceTopbar');
@@ -137,16 +138,17 @@
 
         const initialPageTitle =
             pageTitle?.textContent?.trim() ||
-            'Data Kunjungan Pasien';
+            'Data Kunjungan Pasien'; //
 
         const initialPageSubTitle =
             pageSubTitle?.textContent?.trim() ||
-            'SISTEM INFORMASI RUMAH SAKIT';
+            'SISTEM INFORMASI RUMAH SAKIT'; //
 
         const initialTopbar = {
             birth: patientBirth?.textContent?.trim() ?? '',
             room: patientRoom?.textContent?.trim() ?? '',
             doctor: patientDoctor?.textContent?.trim() ?? '',
+            idAsuransi: patientRefIdAsuransi?.textContent?.trim() ?? '',
             insuranceName: patientInsuranceName?.textContent?.trim() ?? '',
             tglMasuk: patientTglMasuk?.textContent?.trim() ?? '',
             tglKeluar: patientTglKeluar?.textContent?.trim() ?? '',
@@ -511,6 +513,7 @@
                 tglLahir: record.tglLahir,
                 umur: record.umur,
                 namaRuangan: record.namaRuangan,
+                refIdAsuransi: record.refIdAsuransi,
                 idAsuransi: record.idAsuransi,
                 namaAsuransi: record.namaAsuransi,
                 noAsuransi: record.noAsuransi,
@@ -595,6 +598,10 @@
                 record.idAsuransi = data.idAsuransi;
             }
 
+            if (data.refIdAsuransi) {
+                record.refIdAsuransi = data.refIdAsuransi;
+            }
+
             if (data.namaAsuransi) {
                 record.namaAsuransi = data.namaAsuransi;
             }
@@ -677,7 +684,15 @@
                     refIdAsuransi: firstNonEmpty(
                         emrData.refIdAsuransi,
                         emrData.REFIDASURANSI,
-                        emrData.ref_id_asuransi
+                        emrData.ref_id_asuransi,
+                        emrData.REF_ID,
+                        emrData.REF_ID_ASURANSI
+                    ),
+
+                    idAsuransi: firstNonEmpty(
+                        emrData.idAsuransi,
+                        emrData.IDASURANSI,
+                        emrData.id_asuransi
                     ),
 
                     namaAsuransi: firstNonEmpty(
@@ -819,10 +834,15 @@
                 pageSubTitle.classList.remove('text-muted');
 
                 pageSubTitle.style.display = 'block';
-                pageSubTitle.style.fontSize = '0.75rem';
-                pageSubTitle.style.fontWeight = '600';
-                pageSubTitle.style.lineHeight = '1.2';
+                pageSubTitle.style.fontSize = '1.15rem';
+                pageSubTitle.style.fontWeight = '700';
+                pageSubTitle.style.lineHeight = '1.25';
                 pageSubTitle.style.color = 'var(--bs-body-color)';
+                // pageSubTitle.style.display = 'block';
+                // pageSubTitle.style.fontSize = '0.75rem';
+                // pageSubTitle.style.fontWeight = '600';
+                // pageSubTitle.style.lineHeight = '1.2';
+                // pageSubTitle.style.color = 'var(--bs-body-color)';
             }
 
             // Title default: besar, berada di bawah subtitle.
@@ -844,6 +864,7 @@
             // Hilangkan bullet dari seluruh informasi pasien.
             topBarDivider1.textContent = '';
             topBarDivider2.textContent = '';
+            topBarDivider3.textContent = '';
 
             if (patientBirth) {
                 patientBirth.textContent = initialTopbar.birth
@@ -923,6 +944,52 @@
         }
 
         /**
+         * Mengatur warna nama asuransi berdasarkan REF_ID.
+         */
+        function applyInsuranceColor(idAsuransi) {
+
+            if (!patientInsuranceName) {
+                return;
+            }
+
+            const id = String(idAsuransi ?? '');
+
+            // Bersihkan styling sebelumnya.
+            patientInsuranceName.classList.remove(
+                'text-muted',
+                'text-warning',
+                'text-primary'
+            );
+
+            patientInsuranceName.style.removeProperty('color');
+
+            // REF_ID = 1 → Warning / kuning.
+            if (id === '1') {
+
+                patientInsuranceName.classList.add('text-warning');
+
+                patientInsuranceName.style.color =
+                    'var(--bs-warning)';
+
+            }
+            // REF_ID = 2 → Primary.
+            else if (id === '2') {
+
+                patientInsuranceName.classList.add('text-primary');
+
+                patientInsuranceName.style.color =
+                    'var(--bs-primary)';
+
+            }
+            // REF_ID lainnya → warna normal.
+            else {
+
+                patientInsuranceName.style.color =
+                    'var(--bs-body-color)';
+            }
+        }
+
+        /**
          * Memperbarui semua informasi topbar berdasarkan pasien aktif.
          */
         function updatePageTitle(tabId) {
@@ -960,6 +1027,9 @@
 
             // Nama pasien.
             if (pageTitle) {
+                if (record.nama) {
+                    topBarDivider3.textContent = '• ';
+                }
                 pageTitle.textContent =
                     record.nama || 'Rekam Medis Pasien';
 
@@ -1017,35 +1087,26 @@
 
             // Nama asuransi pasien.
             if (patientInsuranceName) {
+
                 patientInsuranceName.textContent =
                     record.namaAsuransi || '-';
 
-                patientInsuranceName.classList.remove(
-                    'text-muted',
-                    'text-warning',
-                    'text-primary'
+                // Prioritaskan REF_ID asuransi.
+                // Gunakan idAsuransi sebagai fallback.
+                const refIdAsuransi = firstNonEmpty(
+                    record.refIdAsuransi,
+                    record.idAsuransi
                 );
 
-                const refIdAsuransi = String(
-                    record.refIdAsuransi ?? ''
-                ).trim();
+                applyInsuranceColor(refIdAsuransi);
 
-                // REF_ID = 1 → Warning / kuning
-                if (refIdAsuransi === '1') {
-                    patientInsuranceName.classList.add('text-warning');
-                    patientInsuranceName.style.color = 'var(--bs-warning)';
-                }
-
-                // REF_ID = 2 → Primary
-                else if (refIdAsuransi === '2') {
-                    patientInsuranceName.classList.add('text-primary');
-                    patientInsuranceName.style.color = 'var(--bs-primary)';
-                }
-
-                // REF_ID selain 1 dan 2 → warna normal
-                else {
-                    patientInsuranceName.style.color = 'var(--bs-body-color)';
-                }
+                console.debug('[EMRWorkspace] Informasi warna asuransi:', {
+                    nomorKunjungan: record.nomor,
+                    namaAsuransi: record.namaAsuransi,
+                    refIdAsuransi: refIdAsuransi,
+                    className: patientInsuranceName.className,
+                    color: patientInsuranceName.style.color
+                });
             }
 
             // Tanggal masuk.

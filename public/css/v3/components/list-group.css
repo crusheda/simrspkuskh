@@ -1,0 +1,246 @@
+/* =========================================================
+   SIRMED V3 — LIST GROUP FORCE OVERRIDE
+   Global Light & Dark Mode
+   Bootstrap 5.3
+========================================================= */
+
+/* BASE LIST GROUP */
+html body .list-group {
+    --bs-list-group-color: var(--text, #334155) !important;
+    --bs-list-group-bg: var(--surface, #ffffff) !important;
+    --bs-list-group-border-color: var(--border, #e2e8f0) !important;
+    --bs-list-group-border-width: 1px !important;
+    --bs-list-group-border-radius: 12px !important;
+
+    --bs-list-group-action-color: var(--text, #334155) !important;
+    --bs-list-group-action-hover-color: var(--primary, #4f46e5) !important;
+    --bs-list-group-action-hover-bg: var(--primary-soft, #eef2ff) !important;
+    --bs-list-group-action-active-color: var(--primary, #4f46e5) !important;
+    --bs-list-group-action-active-bg: var(--primary-soft, #eef2ff) !important;
+
+    border-radius: 12px !important;
+    /* overflow: hidden !important; */
+    background-color: var(--surface, #ffffff) !important;
+}
+
+/* ITEM */
+html body .list-group .list-group-item {
+    color: var(--text, #334155) !important;
+    background-color: var(--surface, #ffffff) !important;
+
+    border: 1px solid var(--border, #e2e8f0) !important;
+
+    padding: 12px 15px !important;
+
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+
+    transition: all .2s ease !important;
+}
+
+/* ITEM ACTION */
+html body .list-group .list-group-item-action {
+    color: var(--text, #334155) !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+}
+
+/* HOVER */
+html body .list-group .list-group-item-action:hover {
+    color: var(--primary, #4f46e5) !important;
+    background-color: var(--primary-soft, #eef2ff) !important;
+    border-color: var(--border, #e2e8f0) !important;
+}
+
+/* FOCUS */
+html body .list-group .list-group-item-action:focus {
+    color: var(--primary, #4f46e5) !important;
+    background-color: var(--primary-soft, #eef2ff) !important;
+    outline: none !important;
+}
+
+/* ACTIVE */
+html body .list-group .list-group-item.active {
+    color: var(--primary, #4f46e5) !important;
+    background-color: var(--primary-soft, #eef2ff) !important;
+    border-color: var(--border, #e2e8f0) !important;
+    font-weight: 700 !important;
+    z-index: 2 !important;
+}
+
+/* DISABLED */
+html body .list-group .list-group-item.disabled,
+html body .list-group .list-group-item:disabled {
+    color: var(--muted, #94a3b8) !important;
+    background-color: var(--surface, #ffffff) !important;
+    opacity: .55 !important;
+    cursor: not-allowed !important;
+}
+
+/* HEADING */
+html body .list-group .list-group-item h1,
+html body .list-group .list-group-item h2,
+html body .list-group .list-group-item h3,
+html body .list-group .list-group-item h4,
+html body .list-group .list-group-item h5,
+html body .list-group .list-group-item h6 {
+    color: var(--text, #334155) !important;
+    font-weight: 650 !important;
+}
+
+/* DESCRIPTION */
+html body .list-group .list-group-item p,
+html body .list-group .list-group-item small,
+html body .list-group .list-group-item .text-muted {
+    color: var(--text, #64748b) !important;
+}
+
+/* ICON */
+html body .list-group .list-group-item > i,
+html body .list-group .list-group-item .list-group-icon {
+    color: var(--muted, #64748b) !important;
+    transition: color .2s ease !important;
+}
+
+html body .list-group .list-group-item-action:hover > i,
+html body .list-group .list-group-item-action:hover .list-group-icon,
+html body .list-group .list-group-item.active > i,
+html body .list-group .list-group-item.active .list-group-icon {
+    color: var(--primary, #4f46e5) !important;
+}
+
+/* BADGE */
+html body .list-group .list-group-item .badge {
+    font-size: 10px !important;
+    font-weight: 650 !important;
+    border-radius: 6px !important;
+}
+
+/* FLUSH */
+html body .list-group.list-group-flush {
+    border-radius: 0 !important;
+}
+
+html body .list-group.list-group-flush > .list-group-item {
+    border-right: 0 !important;
+    border-left: 0 !important;
+}
+
+html body .list-group.list-group-flush > .list-group-item:first-child {
+    border-top: 0 !important;
+}
+
+html body .list-group.list-group-flush > .list-group-item:last-child {
+    border-bottom: 0 !important;
+}
+
+/* BORDER RADIUS */
+html body .list-group:not(.list-group-flush) > .list-group-item:first-child {
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+}
+
+html body .list-group:not(.list-group-flush) > .list-group-item:last-child {
+    border-bottom-left-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+}
+
+/* =========================================================
+   VARIANT COLORS
+========================================================= */
+
+html body .list-group .list-group-item-primary {
+    color: var(--primary, #4f46e5) !important;
+    background-color: var(--primary-soft, #eef2ff) !important;
+}
+
+html body .list-group .list-group-item-success {
+    color: var(--bs-success-text-emphasis, #146c43) !important;
+    background-color: var(--bs-success-bg-subtle, #d1e7dd) !important;
+}
+
+html body .list-group .list-group-item-danger {
+    color: var(--bs-danger-text-emphasis, #b02a37) !important;
+    background-color: var(--bs-danger-bg-subtle, #f8d7da) !important;
+}
+
+html body .list-group .list-group-item-warning {
+    color: var(--bs-warning-text-emphasis, #997404) !important;
+    background-color: var(--bs-warning-bg-subtle, #fff3cd) !important;
+}
+
+html body .list-group .list-group-item-info {
+    color: var(--bs-info-text-emphasis, #087990) !important;
+    background-color: var(--bs-info-bg-subtle, #cff4fc) !important;
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+[data-bs-theme="dark"] html body .list-group,
+html[data-bs-theme="dark"] body .list-group {
+    --bs-list-group-color: var(--text, #e2e8f0) !important;
+    --bs-list-group-bg: var(--surface, #1e293b) !important;
+    --bs-list-group-border-color: var(--border, #334155) !important;
+
+    --bs-list-group-action-color: var(--text, #e2e8f0) !important;
+    --bs-list-group-action-hover-color: var(--primary, #818cf8) !important;
+    --bs-list-group-action-hover-bg: var(--primary-soft, #293449) !important;
+    --bs-list-group-action-active-color: var(--primary, #818cf8) !important;
+    --bs-list-group-action-active-bg: var(--primary-soft, #293449) !important;
+}
+
+[data-bs-theme="dark"] html body .list-group .list-group-item,
+html[data-bs-theme="dark"] body .list-group .list-group-item {
+    color: var(--text, #e2e8f0) !important;
+    background-color: var(--surface, #1e293b) !important;
+    border-color: var(--border, #334155) !important;
+}
+
+[data-bs-theme="dark"] html body .list-group .list-group-item-action:hover,
+[data-bs-theme="dark"] html body .list-group .list-group-item-action:focus,
+html[data-bs-theme="dark"] body .list-group .list-group-item-action:hover,
+html[data-bs-theme="dark"] body .list-group .list-group-item-action:focus {
+    color: var(--primary, #818cf8) !important;
+    background-color: var(--primary-soft, #293449) !important;
+}
+
+[data-bs-theme="dark"] html body .list-group .list-group-item.active,
+html[data-bs-theme="dark"] body .list-group .list-group-item.active {
+    color: var(--primary, #818cf8) !important;
+    background-color: var(--primary-soft, #293449) !important;
+    border-color: var(--border, #334155) !important;
+}
+
+[data-bs-theme="dark"] html body .list-group .list-group-item h1,
+[data-bs-theme="dark"] html body .list-group .list-group-item h2,
+[data-bs-theme="dark"] html body .list-group .list-group-item h3,
+[data-bs-theme="dark"] html body .list-group .list-group-item h4,
+[data-bs-theme="dark"] html body .list-group .list-group-item h5,
+[data-bs-theme="dark"] html body .list-group .list-group-item h6,
+html[data-bs-theme="dark"] body .list-group .list-group-item h1,
+html[data-bs-theme="dark"] body .list-group .list-group-item h2,
+html[data-bs-theme="dark"] body .list-group .list-group-item h3,
+html[data-bs-theme="dark"] body .list-group .list-group-item h4,
+html[data-bs-theme="dark"] body .list-group .list-group-item h5,
+html[data-bs-theme="dark"] body .list-group .list-group-item h6 {
+    color: var(--text, #e2e8f0) !important;
+}
+
+[data-bs-theme="dark"] html body .list-group .list-group-item p,
+[data-bs-theme="dark"] html body .list-group .list-group-item small,
+[data-bs-theme="dark"] html body .list-group .list-group-item .text-muted,
+html[data-bs-theme="dark"] body .list-group .list-group-item p,
+html[data-bs-theme="dark"] body .list-group .list-group-item small,
+html[data-bs-theme="dark"] body .list-group .list-group-item .text-muted {
+    color: var(--muted, #94a3b8) !important;
+}
+
+[data-bs-theme="dark"] html body .list-group .list-group-item > i,
+[data-bs-theme="dark"] html body .list-group .list-group-item .list-group-icon,
+html[data-bs-theme="dark"] body .list-group .list-group-item > i,
+html[data-bs-theme="dark"] body .list-group .list-group-item .list-group-icon {
+    color: var(--muted, #94a3b8) !important;
+}

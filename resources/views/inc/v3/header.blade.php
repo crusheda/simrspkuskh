@@ -14,36 +14,89 @@
         {{-- PATIENT CONTEXT --}}
         <div class="topbar-context">
 
-            {{-- KOLOM KIRI: INFORMASI PASIEN --}}
+            {{-- KOLOM KIRI: IDENTITAS TOPBAR --}}
             <div class="topbar-patient-identity">
 
-                {{-- BARIS 1: ASURANSI • NOMOR ASURANSI --}}
-                <div class="topbar-insurance-meta" id="patientInsuranceMetaTopbar">
-                    <span id="patientInsuranceNameTopbar">@yield('patient-insurance-name', '')</span>
-                    <span class="topbar-meta-divider" id="topbarDivider1">•</span>
-                    <span id="patientInsuranceTopbar">@yield('patient-insurance', '')</span>
+                {{-- =========================================
+                    MODE DEFAULT HALAMAN
+                    Tampil ketika tidak membuka EMR Workspace
+                ========================================== --}}
+                <div class="topbar-default-identity" id="topbarDefaultIdentity">
+
+                    {{-- BARIS 1: SUBTITLE DEFAULT --}}
+                    <div class="topbar-default-subtitle">
+                        <span id="defaultPageSubTitlebar">
+                            @yield('page-sub-title', '')
+                        </span>
+                    </div>
+
+                    {{-- BARIS 2: TITLE DEFAULT --}}
+                    <div class="topbar-default-title">
+                        <span id="defaultPageTitlebar">
+                            @yield('page-title', '')
+                        </span>
+                    </div>
+
                 </div>
 
-                {{-- BARIS 2: RM • NAMA PASIEN (TANGGAL LAHIR) --}}
-                <div class="topbar-patient-meta">
-                    <span id="pageSubTitleTopbar" title="Nomor Rekam Medis">
-                        @yield('page-sub-title', '')
-                    </span>
-                    <span class="topbar-meta-divider" id="topbarDivider3">•</span>
-                    <span id="pageTitleTopbar" title="@yield('page-title', '')">
-                        @yield('page-title', '')
-                    </span>
-                    <span id="patientBirthTopbar" class="topbar-patient-birth">
-                        @yield('patient-birth', '')
-                    </span>
+
+                {{-- =========================================
+                    MODE EMR WORKSPACE
+                    Tampil ketika tab pasien EMR aktif
+                ========================================== --}}
+                <div class="topbar-workspace-identity" id="topbarWorkspaceIdentity">
+
+                    {{-- BARIS 1: ASURANSI • NOMOR ASURANSI --}}
+                    <div class="topbar-insurance-meta" id="patientInsuranceMetaTopbar">
+                        <span id="patientInsuranceNameTopbar">
+                            @yield('patient-insurance-name', '')
+                        </span>
+
+                        <span class="topbar-meta-divider" id="topbarDivider1"></span>
+
+                        <span id="patientInsuranceTopbar">
+                            @yield('patient-insurance', '')
+                        </span>
+                    </div>
+
+
+                    {{-- BARIS 2: RM • NAMA PASIEN • TANGGAL LAHIR --}}
+                    <div class="topbar-patient-meta">
+
+                        <span id="pageSubTitlebar" title="Nomor Rekam Medis">
+                            @yield('page-sub-title', '')
+                        </span>
+
+                        <span class="topbar-meta-divider" id="topbarDivider3"></span>
+
+                        <span id="pageTitlebar" title="@yield('page-title', '')">
+                            @yield('page-title', '')
+                        </span>
+
+                        <span id="patientBirthBar" class="topbar-patient-birth">
+                            @yield('patient-birth', '')
+                        </span>
+
+                    </div>
+
+
+                    {{-- BARIS 3: RUANGAN • DOKTER --}}
+                    <div class="topbar-patient-room-doctor">
+
+                        <span id="patientRoomTopbar">
+                            @yield('patient-room', '')
+                        </span>
+
+                        <span class="topbar-meta-divider" id="topbarDivider2"></span>
+
+                        <span id="patientDoctorTopbar">
+                            @yield('patient-doctor', '')
+                        </span>
+
+                    </div>
+
                 </div>
 
-                {{-- BARIS 3: RUANGAN • DOKTER --}}
-                <div class="topbar-patient-room-doctor">
-                    <span id="patientRoomTopbar">@yield('patient-room', '')</span>
-                    <span class="topbar-meta-divider" id="topbarDivider2">•</span>
-                    <span id="patientDoctorTopbar">@yield('patient-doctor', '')</span>
-                </div>
             </div>
 
             {{-- KOLOM KANAN: INFORMASI WAKTU DAN STATUS --}}
@@ -85,7 +138,7 @@
                 aria-label="Menu pasien"
             >
                 <i class="bi bi-person-vcard"></i>
-                <span class="patient-menu-label">Menu Pasien</span>
+                <span class="patient-menu-label">E-Patient</span>
             </button>
 
             <ul class="dropdown-menu dropdown-menu-end patient-dropdown-menu" aria-labelledby="patientDropdown">
