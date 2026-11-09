@@ -207,13 +207,76 @@ class RIAnakPrintService implements PrintDataInterface
         |--------------------------------------------------------------------------
         */
 
-        $anatomi = DB::table(
-            'medicalrecord.sirmed_pemeriksaan_anatomi'
+        // $anatomi = DB::table(
+        //     'medicalrecord.sirmed_pemeriksaan_anatomi'
+        // )
+        //     ->where('KUNJUNGAN', $kunjungan)
+        //     ->where('STATUS', 1)
+        //     ->orderByDesc('ID')
+        //     ->first();
+
+        $pemfisDokter = DB::table(
+            'medicalrecord.sirmed_pemeriksaan_fisik_dokter'
         )
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
             ->orderByDesc('ID')
             ->first();
+
+        $formatBarisPemfisDokter = function ($label, $nilai, $detail = null) {
+            $nilai = (string) $this->value($nilai);
+            $detail = trim((string) $this->value($detail));
+
+            $normal = $nilai === '1';
+            $kelainan = $nilai === '2';
+            $baris = $label . "\n"
+                . ($normal ? '☑' : '☐') . ' Normal    '
+                . ($kelainan ? '☑' : '☐') . ' Terdapat kelainan';
+            
+            if ($kelainan && $detail !== '') {
+                $baris .= ' : ' . nl2br(e($detail));
+                $baris .= ' : ' . $detail;
+            }
+
+            return $baris;
+        };
+
+        $barisPemeriksaanFisikDokter = [
+            $formatBarisPemfisDokter(
+                'Kepala / Leher',
+                $pemfisDokter->PF_KEPALA ?? null,
+                $pemfisDokter->PF_KEPALA_DETAIL ?? null
+            ),
+            $formatBarisPemfisDokter(
+                'Cor',
+                $pemfisDokter->PF_COR ?? null,
+                $pemfisDokter->PF_COR_DETAIL ?? null
+            ),
+            $formatBarisPemfisDokter(
+                'Pulmo',
+                $pemfisDokter->PF_PULMO ?? null,
+                $pemfisDokter->PF_PULMO_DETAIL ?? null
+            ),
+            $formatBarisPemfisDokter(
+                'Abdomen',
+                $pemfisDokter->PF_ABDOMEN ?? null,
+                $pemfisDokter->PF_ABDOMEN_DETAIL ?? null
+            ),
+            $formatBarisPemfisDokter(
+                'Ekstremitas',
+                $pemfisDokter->PF_EKS ?? null,
+                $pemfisDokter->PF_EKS_DETAIL ?? null
+            ),
+        ];
+
+        $statusLokalisDokter = trim((string) $this->value(
+            $pemfisDokter->STATUS_LOKALIS ?? null
+        ));
+
+        $barisPemeriksaanFisikDokter[] = "Status Lokalis\n"
+            . ($statusLokalisDokter !== '' ? $statusLokalisDokter : '-');
+
+        $pemeriksaanFisikDokter = implode("\n\n", $barisPemeriksaanFisikDokter);
 
         /*
         |--------------------------------------------------------------------------
@@ -338,7 +401,7 @@ class RIAnakPrintService implements PrintDataInterface
         //     '1' => 'Sudah bisa ditetapkan',
         //     '0' => 'Belum bisa ditetapkan',
         //     default => '',
-        };
+        // };
 
         $kriteriaPulangHari = (
             // (string) $nilaiKriteriaPulang === '1' &&
@@ -426,7 +489,7 @@ class RIAnakPrintService implements PrintDataInterface
         |--------------------------------------------------------------------------
         */
 
-        $pemeriksaanFisik = $this->formatPemeriksaanFisik($anatomi);
+        // $pemeriksaanFisik = $this->formatPemeriksaanFisik($anatomi);
 
         /*
         |--------------------------------------------------------------------------
@@ -504,90 +567,94 @@ class RIAnakPrintService implements PrintDataInterface
             | PEMERIKSAAN FISIK
             */
 
-            'PF_MATA' => $this->placeholder(
-                $this->formatAnatomi($anatomi, [
-                    'pf_anemis' => 'Anemis',
-                    'pf_ikterus' => 'Ikterus',
-                    'pf_upal' => 'Edema palpebra',
-                    'pf_pupil' => 'Pupil',
-                    'pf_dia_up' => 'Diameter pupil kanan',
-                    'pf_dia_down' => 'Diameter pupil kiri',
-                    'pf_kelainan_mata' => 'Kelainan mata',
-                ])
-            ),
+            // 'PF_MATA' => $this->placeholder(
+            //     $this->formatAnatomi($anatomi, [
+            //         'pf_anemis' => 'Anemis',
+            //         'pf_ikterus' => 'Ikterus',
+            //         'pf_upal' => 'Edema palpebra',
+            //         'pf_pupil' => 'Pupil',
+            //         'pf_dia_up' => 'Diameter pupil kanan',
+            //         'pf_dia_down' => 'Diameter pupil kiri',
+            //         'pf_kelainan_mata' => 'Kelainan mata',
+            //     ])
+            // ),
 
-            'PF_MULUT_TENGGOROKAN' => $this->placeholder(
-                $this->formatAnatomi($anatomi, [
-                    'pf_mulut' => 'Mulut / tenggorokan',
-                ])
-            ),
+            // 'PF_MULUT_TENGGOROKAN' => $this->placeholder(
+            //     $this->formatAnatomi($anatomi, [
+            //         'pf_mulut' => 'Mulut / tenggorokan',
+            //     ])
+            // ),
 
-            'PF_LEHER' => $this->placeholder(
-                $this->formatAnatomi($anatomi, [
-                    'pf_jvp' => 'JVP',
-                    'pf_pkl' => 'Pembesaran kelenjar limfe',
-                    'pf_pkl_lain' => 'Keterangan kelenjar limfe',
-                    'pf_kd' => 'Kaku kuduk',
-                    'pf_kd_lain' => 'Keterangan kaku kuduk',
-                    'pf_kelainan_leher' => 'Kelainan leher',
-                ])
-            ),
+            // 'PF_LEHER' => $this->placeholder(
+            //     $this->formatAnatomi($anatomi, [
+            //         'pf_jvp' => 'JVP',
+            //         'pf_pkl' => 'Pembesaran kelenjar limfe',
+            //         'pf_pkl_lain' => 'Keterangan kelenjar limfe',
+            //         'pf_kd' => 'Kaku kuduk',
+            //         'pf_kd_lain' => 'Keterangan kaku kuduk',
+            //         'pf_kelainan_leher' => 'Kelainan leher',
+            //     ])
+            // ),
 
-            'PF_DADA' => $this->placeholder(
-                $this->formatAnatomi($anatomi, [
-                    'pf_thoraks' => 'Thoraks',
-                    'pf_thoraks_lain' => 'Keterangan thoraks',
-                    'pf_kelainan_dada' => 'Kelainan dada',
-                    'pf_dada_lain' => 'Keterangan dada',
-                ])
-            ),
+            // 'PF_DADA' => $this->placeholder(
+            //     $this->formatAnatomi($anatomi, [
+            //         'pf_thoraks' => 'Thoraks',
+            //         'pf_thoraks_lain' => 'Keterangan thoraks',
+            //         'pf_kelainan_dada' => 'Kelainan dada',
+            //         'pf_dada_lain' => 'Keterangan dada',
+            //     ])
+            // ),
 
-            'PF_COR' => $this->placeholder(
-                $this->formatAnatomi($anatomi, [
-                    'pf_cor' => 'Cor',
-                    'pf_cor_cb' => 'Irama jantung',
-                    'pf_murmur' => 'Murmur',
-                    'pf_murmur_lain' => 'Keterangan murmur',
-                ])
-            ),
+            // 'PF_COR' => $this->placeholder(
+            //     $this->formatAnatomi($anatomi, [
+            //         'pf_cor' => 'Cor',
+            //         'pf_cor_cb' => 'Irama jantung',
+            //         'pf_murmur' => 'Murmur',
+            //         'pf_murmur_lain' => 'Keterangan murmur',
+            //     ])
+            // ),
 
-            'PF_PULMO' => $this->placeholder(
-                $this->formatAnatomi($anatomi, [
-                    'pf_pulmo' => 'Pulmo',
-                    'pf_ronchi' => 'Ronki (kiri/kanan)',
-                    'pf_ronchi_lain' => 'Keterangan ronki',
-                    'pf_wheezing' => 'Wheezing (kiri/kanan)',
-                    'pf_wheezing_lain' => 'Keterangan wheezing',
-                ])
-            ),
+            // 'PF_PULMO' => $this->placeholder(
+            //     $this->formatAnatomi($anatomi, [
+            //         'pf_pulmo' => 'Pulmo',
+            //         'pf_ronchi' => 'Ronki (kiri/kanan)',
+            //         'pf_ronchi_lain' => 'Keterangan ronki',
+            //         'pf_wheezing' => 'Wheezing (kiri/kanan)',
+            //         'pf_wheezing_lain' => 'Keterangan wheezing',
+            //     ])
+            // ),
 
-            'PF_PERUT' => $this->placeholder(
-                $this->formatAnatomi($anatomi, [
-                    'pf_distended' => 'Distensi abdomen',
-                    'pf_meteor' => 'Meteorismus',
-                    'pf_asites' => 'Asites',
-                    'pf_peristaltik' => 'Peristaltik',
-                    'pf_nyeri_tekan' => 'Nyeri tekan',
-                    'pf_nyeri_tekan_lain' => 'Lokasi nyeri tekan',
-                    'pf_hepar' => 'Hepar',
-                    'pf_lien' => 'Lien',
-                ])
-            ),
+            // 'PF_PERUT' => $this->placeholder(
+            //     $this->formatAnatomi($anatomi, [
+            //         'pf_distended' => 'Distensi abdomen',
+            //         'pf_meteor' => 'Meteorismus',
+            //         'pf_asites' => 'Asites',
+            //         'pf_peristaltik' => 'Peristaltik',
+            //         'pf_nyeri_tekan' => 'Nyeri tekan',
+            //         'pf_nyeri_tekan_lain' => 'Lokasi nyeri tekan',
+            //         'pf_hepar' => 'Hepar',
+            //         'pf_lien' => 'Lien',
+            //     ])
+            // ),
 
-            'PF_EKSTREMITAS' => $this->placeholder(
-                $this->formatAnatomi($anatomi, [
-                    'pf_akral' => 'Akral',
-                    'pf_udem' => 'Edema',
-                    'pf_udem_lain' => 'Keterangan edema',
-                ])
-            ),
+            // 'PF_EKSTREMITAS' => $this->placeholder(
+            //     $this->formatAnatomi($anatomi, [
+            //         'pf_akral' => 'Akral',
+            //         'pf_udem' => 'Edema',
+            //         'pf_udem_lain' => 'Keterangan edema',
+            //     ])
+            // ),
 
-            'STATUS_LOKALIS' => $this->placeholder(
-                $anatomi->status_lokalis ?? null
-            ),
+            // 'STATUS_LOKALIS' => $this->placeholder(
+            //     $anatomi->status_lokalis ?? null
+            // ),
 
-            'PEMERIKSAAN_FISIK' => $this->placeholder(
-                $pemeriksaanFisik
+            // 'PEMERIKSAAN_FISIK' => $this->placeholder(
+            //     $pemeriksaanFisik
+            // ),
+
+            'PEMERIKSAAN_FISIK_DOKTER' => $this->placeholder(
+                $pemeriksaanFisikDokter
             ),
 
             /*
@@ -2875,79 +2942,79 @@ class RIAnakPrintService implements PrintDataInterface
      * FORMAT PEMERIKSAAN FISIK
      * ========================================================================
      */
-    private function formatPemeriksaanFisik($anatomi): string
-    {
-        if (!$anatomi) {
-            return '-';
-        }
+    // private function formatPemeriksaanFisik($anatomi): string
+    // {
+    //     if (!$anatomi) {
+    //         return '-';
+    //     }
 
-        $bagian = [
-            'Mata' => $this->formatAnatomi($anatomi, [
-                'pf_anemis' => 'Anemis',
-                'pf_ikterus' => 'Ikterus',
-                'pf_upal' => 'Edema palpebra',
-                'pf_pupil' => 'Pupil',
-                'pf_dia_up' => 'Diameter pupil kanan',
-                'pf_dia_down' => 'Diameter pupil kiri',
-                'pf_kelainan_mata' => 'Kelainan mata',
-            ]),
-            'Mulut / tenggorokan' => $this->formatAnatomi($anatomi, [
-                'pf_mulut' => 'Mulut / tenggorokan',
-            ]),
-            'Leher' => $this->formatAnatomi($anatomi, [
-                'pf_jvp' => 'JVP',
-                'pf_pkl' => 'Pembesaran kelenjar limfe',
-                'pf_pkl_lain' => 'Keterangan kelenjar limfe',
-                'pf_kd' => 'Kaku kuduk',
-                'pf_kd_lain' => 'Keterangan kaku kuduk',
-                'pf_kelainan_leher' => 'Kelainan leher',
-            ]),
-            'Thoraks' => $this->formatAnatomi($anatomi, [
-                'pf_thoraks' => 'Thoraks',
-                'pf_thoraks_lain' => 'Keterangan thoraks',
-                'pf_kelainan_dada' => 'Kelainan dada',
-                'pf_dada_lain' => 'Keterangan dada',
-            ]),
-            'Cor' => $this->formatAnatomi($anatomi, [
-                'pf_cor' => 'Cor',
-                'pf_cor_cb' => 'Irama jantung',
-                'pf_murmur' => 'Murmur',
-                'pf_murmur_lain' => 'Keterangan murmur',
-            ]),
-            'Pulmo' => $this->formatAnatomi($anatomi, [
-                'pf_pulmo' => 'Pulmo',
-                'pf_ronchi' => 'Ronki (kiri/kanan)',
-                'pf_ronchi_lain' => 'Keterangan ronki',
-                'pf_wheezing' => 'Wheezing (kiri/kanan)',
-                'pf_wheezing_lain' => 'Keterangan wheezing',
-            ]),
-            'Abdomen' => $this->formatAnatomi($anatomi, [
-                'pf_distended' => 'Distensi abdomen',
-                'pf_meteor' => 'Meteorismus',
-                'pf_asites' => 'Asites',
-                'pf_peristaltik' => 'Peristaltik',
-                'pf_nyeri_tekan' => 'Nyeri tekan',
-                'pf_nyeri_tekan_lain' => 'Lokasi nyeri tekan',
-                'pf_hepar' => 'Hepar',
-                'pf_lien' => 'Lien',
-            ]),
-            'Ekstremitas' => $this->formatAnatomi($anatomi, [
-                'pf_akral' => 'Akral',
-                'pf_udem' => 'Edema',
-                'pf_udem_lain' => 'Keterangan edema',
-            ]),
-            'Status lokalis' => $this->value($anatomi->status_lokalis ?? null),
-        ];
+    //     $bagian = [
+    //         'Mata' => $this->formatAnatomi($anatomi, [
+    //             'pf_anemis' => 'Anemis',
+    //             'pf_ikterus' => 'Ikterus',
+    //             'pf_upal' => 'Edema palpebra',
+    //             'pf_pupil' => 'Pupil',
+    //             'pf_dia_up' => 'Diameter pupil kanan',
+    //             'pf_dia_down' => 'Diameter pupil kiri',
+    //             'pf_kelainan_mata' => 'Kelainan mata',
+    //         ]),
+    //         'Mulut / tenggorokan' => $this->formatAnatomi($anatomi, [
+    //             'pf_mulut' => 'Mulut / tenggorokan',
+    //         ]),
+    //         'Leher' => $this->formatAnatomi($anatomi, [
+    //             'pf_jvp' => 'JVP',
+    //             'pf_pkl' => 'Pembesaran kelenjar limfe',
+    //             'pf_pkl_lain' => 'Keterangan kelenjar limfe',
+    //             'pf_kd' => 'Kaku kuduk',
+    //             'pf_kd_lain' => 'Keterangan kaku kuduk',
+    //             'pf_kelainan_leher' => 'Kelainan leher',
+    //         ]),
+    //         'Thoraks' => $this->formatAnatomi($anatomi, [
+    //             'pf_thoraks' => 'Thoraks',
+    //             'pf_thoraks_lain' => 'Keterangan thoraks',
+    //             'pf_kelainan_dada' => 'Kelainan dada',
+    //             'pf_dada_lain' => 'Keterangan dada',
+    //         ]),
+    //         'Cor' => $this->formatAnatomi($anatomi, [
+    //             'pf_cor' => 'Cor',
+    //             'pf_cor_cb' => 'Irama jantung',
+    //             'pf_murmur' => 'Murmur',
+    //             'pf_murmur_lain' => 'Keterangan murmur',
+    //         ]),
+    //         'Pulmo' => $this->formatAnatomi($anatomi, [
+    //             'pf_pulmo' => 'Pulmo',
+    //             'pf_ronchi' => 'Ronki (kiri/kanan)',
+    //             'pf_ronchi_lain' => 'Keterangan ronki',
+    //             'pf_wheezing' => 'Wheezing (kiri/kanan)',
+    //             'pf_wheezing_lain' => 'Keterangan wheezing',
+    //         ]),
+    //         'Abdomen' => $this->formatAnatomi($anatomi, [
+    //             'pf_distended' => 'Distensi abdomen',
+    //             'pf_meteor' => 'Meteorismus',
+    //             'pf_asites' => 'Asites',
+    //             'pf_peristaltik' => 'Peristaltik',
+    //             'pf_nyeri_tekan' => 'Nyeri tekan',
+    //             'pf_nyeri_tekan_lain' => 'Lokasi nyeri tekan',
+    //             'pf_hepar' => 'Hepar',
+    //             'pf_lien' => 'Lien',
+    //         ]),
+    //         'Ekstremitas' => $this->formatAnatomi($anatomi, [
+    //             'pf_akral' => 'Akral',
+    //             'pf_udem' => 'Edema',
+    //             'pf_udem_lain' => 'Keterangan edema',
+    //         ]),
+    //         'Status lokalis' => $this->value($anatomi->status_lokalis ?? null),
+    //     ];
 
-        $hasil = [];
-        foreach ($bagian as $label => $isi) {
-            if ($isi !== '') {
-                $hasil[] = $label . ': ' . $isi;
-            }
-        }
+    //     $hasil = [];
+    //     foreach ($bagian as $label => $isi) {
+    //         if ($isi !== '') {
+    //             $hasil[] = $label . ': ' . $isi;
+    //         }
+    //     }
 
-        return $hasil ? implode("\n", $hasil) : '-';
-    }
+    //     return $hasil ? implode("\n", $hasil) : '-';
+    // }
 
     /**
      * Format nilai pemeriksaan anatomi menjadi istilah medis.
