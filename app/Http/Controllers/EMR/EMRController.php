@@ -1818,6 +1818,7 @@ class EMRController extends Controller
                     ) AS PERAWAT
                 "),
 
+                'ref.ID as IDJNSPPA',
                 'ref.DESKRIPSI as JNSPPA',
 
                 DB::raw("
@@ -2209,7 +2210,7 @@ class EMRController extends Controller
             ], 422);
         }
 
-        if ($getPPA->PROFESI_PPA_ID != 1) { // JIKA BUKAN DOKTER
+        if ($getPPA->PROFESI_PPA_ID == 3) { // JIKA PERAWAT / PARAMEDIS
             $getPPA = DB::table('master.perawat as per')
                 ->leftJoin('master.pegawai AS peg', 'peg.NIP', '=', 'per.NIP')
 
@@ -2241,12 +2242,40 @@ class EMRController extends Controller
 
                 ->orderBy('ref32.ID', 'asc')
                 ->first();
-        }
 
-        if (!$getPPA) {
-            return response()->json([
-                'message' => 'Data PPA tersebut tidak ditemukan.'
-            ], 422);
+        } else { // JIKA BUKAN DOKTER DAN BUKAN PERAWAT / PARAMEDIS
+
+            $getPPA = DB::table('master.pegawai as peg')
+                // ->leftJoin('master.pegawai AS peg', 'peg.NIP', '=', 'per.NIP')
+
+                // JENIS 36
+                ->leftJoin('master.referensi AS ref36', function ($join) {
+                    $join->on('ref36.ID', '=', 'peg.PROFESI')
+                        ->where('ref36.JENIS', '=', 36);
+                })
+
+                // JENIS 32 berdasarkan REF_ID dari JENIS 36
+                ->leftJoin('master.referensi AS ref32', function ($join) {
+                    $join->on('ref32.REF_ID', '=', 'ref36.ID')
+                        ->where('ref32.JENIS', '=', 32);
+                })
+
+                ->where('peg.NIP', $getPPA->NIP)
+                ->where('peg.STATUS', 1)
+                ->select(
+                    'peg.ID',
+                    'peg.NIP',
+                    'peg.PROFESI',
+
+                    'ref36.ID AS PROFESI_ID',
+                    'ref36.DESKRIPSI AS PROFESI',
+
+                    'ref32.ID AS PROFESI_PPA_ID',
+                    'ref32.DESKRIPSI AS PROFESI_PPA',
+                )
+
+                ->orderBy('ref32.ID', 'asc')
+                ->first();
         }
 
         if ($request->mode != "BIASA") {

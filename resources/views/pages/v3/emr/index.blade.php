@@ -3,102 +3,104 @@
 @section('page-title', 'Digital Medical Record')
 
 <section>
-    <div class="row gy-4" style="padding-bottom: 56px !important;">
-        <div class="col-xl-12">
-            <div class="card rounded-0">
-                <div class="card-body p-0 pb-2">
-                    <div class="row p-3">
-                        <div class="col-md-3 mb-3">
-                            <div class="form-group">
-                                <label class="form-label">Jenis Perawatan</label>
+    <div class="wire-content-emr">
+        <div class="row g-3">
+            <div class="col-xl-12">
+                <div class="card rounded-0">
+                    <div class="card-body p-0 pb-2">
+                        <div class="row p-3">
+                            <div class="col-md-3 mb-3">
+                                <div class="form-group">
+                                    <label class="form-label">Jenis Perawatan</label>
 
-                                <select id="filter_rawat" class="form-control" onchange="EMRPage.getRuangan()">
-                                    @foreach ($list['jenisPerawatan'] as $value => $label)
-                                        <option
-                                            value="{{ $value }}"
-                                            {{ $value == 5 ? 'selected' : '' }}
-                                        >
-                                            {{ $label }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                    <select id="filter_rawat" class="form-control" onchange="EMRPage.getRuangan()">
+                                        @foreach ($list['jenisPerawatan'] as $value => $label)
+                                            <option
+                                                value="{{ $value }}"
+                                                {{ $value == 5 ? 'selected' : '' }}
+                                            >
+                                                {{ $label }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <label class="form-label">Ruangan</label>
-                                <select id="filter_ruang" class="form-control" onchange="EMRPage.getDPJP()" disabled><option value="5" selected>...</option></select>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label class="form-label">Ruangan</label>
+                                    <select id="filter_ruang" class="form-control" onchange="EMRPage.getDPJP()" disabled><option value="5" selected>...</option></select>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="form-group">
-                                <label class="form-label">Status Kunjungan</label>
-                                <select class="form-control" id="filter_status">
-                                    <option value="5">Semua Kunjungan</option>
-                                    <option value="0">Batal Kunjungan</option>
-                                    <option value="1" selected>Sedang Dilayani</option>
-                                    <option value="2">Selesai Kunjungan</option>
-                                </select>
+                            <div class="col-md-3 mb-3">
+                                <div class="form-group">
+                                    <label class="form-label">Status Kunjungan</label>
+                                    <select class="form-control" id="filter_status">
+                                        <option value="5">Semua Kunjungan</option>
+                                        <option value="0">Batal Kunjungan</option>
+                                        <option value="1" selected>Sedang Dilayani</option>
+                                        <option value="2">Selesai Kunjungan</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label class="form-label">Rentang Tgl Kunjungan</label>
-                                <div class="input-group">
-                                    <input type="text" id="filter_tgl" class="form-control flatpickr-input active" placeholder="Pilih Rentang Tanggal" readonly="readonly">
-                                    <span class="input-group-text"><i class="feather icon-calendar"></i></span>
+                            <div class="col-md-4 mb-3">
+                                <div class="form-group">
+                                    <label class="form-label">Rentang Tgl Kunjungan</label>
+                                    <div class="input-group">
+                                        <input type="text" id="filter_tgl" class="form-control flatpickr-input active" placeholder="Pilih Rentang Tanggal" readonly="readonly">
+                                        <span class="input-group-text"><i class="feather icon-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5 mb-3">
+                                <div class="form-group">
+                                    <label class="form-label" for="filter_dpjp">DPJP</label>
+                                    <select class="form-select" id="filter_dpjp" disabled>
+                                        <option value="5" selected>Memuat dokter...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="form-group">
+                                    <label class="form-label">Jenis Penjamin</label>
+                                    <select id="filter_penjamin" class="form-control" disabled><option value="0" selected>...</option></select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="d-sm-flex align-items-center justify-content-between">
+                                    <button class="btn btn-outline-warning border-dashed waves-effect waves-light me-2" href="javascript: void(0);" id="clear_text" onclick="EMRPage.clearFilter()"><i class="ph-duotone ph-eraser me-1"></i> Kosongkan Filter</button>
+                                    <div class="d-flex justify-content-end align-items-center gap-2">
+                                        <span class="f-14 px-2">Total : <a id="jumlah_data">0 Data</a></span>
+                                        <button class="btn btn-primary" id="tombol-tampilkan" onclick="EMRPage.filter()" disabled><i class="ph-duotone ph-sort-ascending me-1"></i> Refresh Table</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-5 mb-3">
-                            <div class="form-group">
-                                <label class="form-label" for="filter_dpjp">DPJP</label>
-                                <select class="form-select" id="filter_dpjp" disabled>
-                                    <option value="5" selected>Memuat dokter...</option>
-                                </select>
-                            </div>
+                        <div class="table-responsive border-top p-3" id="show_table" hidden>
+                            <table class="table mb-0 table-hover table-display" id="vantable">
+                                <thead>
+                                    <tr>
+                                        <th class="kolom-antrian">ANTRIAN</th>
+                                        <th>KUNJUNGAN PASIEN</th>
+                                        <th class="text-start">WAKTU BERKUNJUNG</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tampil-tbody">
+                                    <tr style='font-size:13px'>
+                                        <td colspan="5">
+                                            <center>
+                                                <div class="spinner-border spinner-border-sm" role="status"></div>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="form-group">
-                                <label class="form-label">Jenis Penjamin</label>
-                                <select id="filter_penjamin" class="form-control" disabled><option value="0" selected>...</option></select>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="d-sm-flex align-items-center justify-content-between">
-                                <button class="btn btn-outline-warning border-dashed waves-effect waves-light me-2" href="javascript: void(0);" id="clear_text" onclick="EMRPage.clearFilter()"><i class="ph-duotone ph-eraser me-1"></i> Kosongkan Filter</button>
-                                <div class="d-flex justify-content-end align-items-center gap-2">
-                                    <span class="f-14 px-2">Total : <a id="jumlah_data">0 Data</a></span>
-                                    <button class="btn btn-primary" id="tombol-tampilkan" onclick="EMRPage.filter()" disabled><i class="ph-duotone ph-sort-ascending me-1"></i> Refresh Table</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-responsive border-top p-3" id="show_table" hidden>
-                        <table class="table mb-0 table-hover table-display" id="vantable">
-                            <thead>
-                                <tr>
-                                    <th class="kolom-antrian">ANTRIAN</th>
-                                    <th>KUNJUNGAN PASIEN</th>
-                                    <th class="text-start">WAKTU BERKUNJUNG</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tampil-tbody">
-                                <tr style='font-size:13px'>
-                                    <td colspan="5">
-                                        <center>
-                                            <div class="spinner-border spinner-border-sm" role="status"></div>
-                                        </center>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
+                {{-- <div class="text-end">
+                    <a href="ecom_product.html" class="btn btn-link-secondary d-inline-flex align-items-center"><i class="ti ti-chevron-left me-2"></i> Back to Shopping</a>
+                </div> --}}
             </div>
-            {{-- <div class="text-end">
-                <a href="ecom_product.html" class="btn btn-link-secondary d-inline-flex align-items-center"><i class="ti ti-chevron-left me-2"></i> Back to Shopping</a>
-            </div> --}}
         </div>
     </div>
 </section>

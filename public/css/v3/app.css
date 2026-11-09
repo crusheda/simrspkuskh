@@ -41,6 +41,10 @@ a {
     text-decoration: none !important
 }
 
+.wire-content-emr {
+    padding-bottom: 56px !important;
+}
+
 .app-sidebar {
     width: var(--sidebar);
     position: fixed;

@@ -641,6 +641,72 @@
         }
     }
 
+    function getIconPPA(jnsppa) {
+        const mapping = {};
+
+        const groups = [
+            {
+                values: [1, 2],
+                icon: 'ph-duotone ph-stethoscope',
+                color: 'primary'
+            },
+            {
+                values: [3, 5],
+                icon: 'ph-duotone ph-heartbeat',
+                color: 'success'
+            },
+            {
+                values: [4],
+                icon: 'ph-duotone ph-pill',
+                color: 'warning'
+            },
+            {
+                values: [13, 15],
+                icon: 'ph-duotone ph-bowl-food',
+                color: 'pink-700'
+            },
+            {
+                values: [6],
+                icon: 'ph-duotone ph-flask',
+                color: 'green-700'
+            },
+            {
+                values: [9],
+                icon: 'ph-duotone ph-radioactive',
+                color: 'green-700'
+            },
+            {
+                values: [10, 11, 12],
+                icon: 'ph-duotone ph-plant',
+                color: 'teal-700'
+            },
+            {
+                values: [7, 10],
+                icon: 'ph-duotone ph-syringe',
+                color: 'orange-700'
+            },
+            {
+                values: [16, 17, 19, 20, 21, 22, 26],
+                icon: 'ph-duotone ph-pulse',
+                color: 'indigo-700'
+            }
+        ];
+
+        groups.forEach(group => {
+            group.values.forEach(value => {
+                mapping[value] = {
+                    icon: group.icon,
+                    color: group.color
+                };
+            });
+        });
+
+        return mapping[jnsppa] ?? {
+            icon: 'ph-duotone ph-x',
+            color: 'red-700'
+        };
+    }
+
     function showModalCppt(kunjungan, old = 1)
     {
         currentKunjunganCppt = kunjungan;
@@ -735,25 +801,9 @@
                 $('#cppt_header').empty().append(header);
                 $('#cppt_count').text((res.count??0)+' Catatan');
                 $('#btn-count-cppt').text(res.count??0);
+
                 (res.show||[]).forEach(item=>{
-                    let ic='ph-duotone ph-notepad';
-                    let ic_col='primary';
-                    if(item.JNSPPA=='Dokter'){
-                        ic='ph-duotone ph-stethoscope';
-                        ic_col='primary';
-                    }else if(item.JNSPPA=='Paramedis'){
-                        ic='ph-duotone ph-heartbeat';
-                        ic_col='success';
-                    }else if(item.JNSPPA=='Apoteker'){
-                        ic='ph-duotone ph-pill';
-                        ic_col='warning';
-                    }else if(item.JNSPPA=='Nutrisionis'){
-                        ic='ph-duotone ph-bowl-food';
-                        ic_col='pink-500';
-                    }else {
-                        ic='ph-duotone ph-x';
-                        ic_col='red-700';
-                    }
+                    const { icon: ic, color: ic_col } = getIconPPA(item.IDJNSPPA);
 
                     let pushInstruksi = '';
                     if (item.INSTRUKSI != null && String(item.INSTRUKSI).trim() !== '') {
