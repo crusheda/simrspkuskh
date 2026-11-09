@@ -40,6 +40,9 @@
             <div class="col-md-12">
                 <h4 class="mb-3 text-danger">Pemeriksaan Fisik</h4>
                 <div class="mb-3">
+                    @include('pages.v2.medicalrecord.detail.form.pengkajian.components.rawat_inap.pemeriksaan_fisik_dokter',['section' => '#riA_dokter'])
+                </div>
+                {{-- <div class="mb-3">
                     @include(
                         'pages.v2.medicalrecord.detail.form.pengkajian.components.pemeriksaan_anatomi',
                         [
@@ -54,7 +57,7 @@
                             ]
                         ]
                     )
-                </div>
+                </div> --}}
             </div>
             <div class="col-md-12 mb-3">
                 <h4 class="text-danger">Hasil Pemeriksaan Penunjang</h4>
