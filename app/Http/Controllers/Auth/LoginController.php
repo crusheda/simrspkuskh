@@ -31,8 +31,8 @@ class LoginController extends Controller
         if (Auth::check()) {
             return redirect()->route('v2.dashboard');
         } else {
-            // return view('pages.auth.login');
-            return redirect()->route('v2.login');
+            // return redirect()->route('v2.login');
+            return view('pages.v2.auth.login');
         }
     }
 
