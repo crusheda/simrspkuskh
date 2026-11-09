@@ -13040,80 +13040,51 @@ class AddOnPengkajianController extends Controller
             ]
         );
 
-
         if ($validator->fails()) {
-
             return response()->json([
-
                 'status' => false,
-
-                'message' =>
-                    $validator
-                        ->errors()
-                        ->first(),
-
+                'message' => $validator->errors()->first(),
             ], 422);
         }
 
-
         try {
+
+            DB::beginTransaction();
 
             $data = [
 
                 'NYERI' =>
-                    $request->boolean(
-                        'dmk_1'
-                    ),
+                    $request->boolean('dmk_1'),
 
                 'CEMAS' =>
-                    $request->boolean(
-                        'dmk_2'
-                    ),
+                    $request->boolean('dmk_2'),
 
                 'PERUBAHAN_NUTRISI' =>
-                    $request->boolean(
-                        'dmk_3'
-                    ),
+                    $request->boolean('dmk_3'),
 
                 'GANGGUAN_PERNAFASAN' =>
-                    $request->boolean(
-                        'dmk_4'
-                    ),
+                    $request->boolean('dmk_4'),
 
                 'GANGGUAN_PERFUSI_JARINGAN' =>
-                    $request->boolean(
-                        'dmk_5'
-                    ),
+                    $request->boolean('dmk_5'),
 
                 'GANGGUAN_VOLUME_CAIRAN' =>
-                    $request->boolean(
-                        'dmk_6'
-                    ),
+                    $request->boolean('dmk_6'),
 
                 'POTENSI_INFEKSI' =>
-                    $request->boolean(
-                        'dmk_7'
-                    ),
+                    $request->boolean('dmk_7'),
 
                 'HIPERTERMI' =>
-                    $request->boolean(
-                        'dmk_8'
-                    ),
+                    $request->boolean('dmk_8'),
 
                 'TAKUT' =>
-                    $request->boolean(
-                        'dmk_9'
-                    ),
+                    $request->boolean('dmk_9'),
 
                 'KETIDAKEFEKTIFAN_POLA_MAKAN' =>
-                    $request->boolean(
-                        'dmk_10'
-                    ),
+                    $request->boolean('dmk_10'),
 
                 'MASALAH_LAIN' =>
-                    $request->input(
-                        'dmk_lain'
-                    ),
+                    $request->input('dmk_lain'),
 
                 'OLEH' =>
                     auth()->id(),
@@ -13126,44 +13097,103 @@ class AddOnPengkajianController extends Controller
 
             ];
 
+            // ======================================================
+            // SUSUN DAFTAR DIAGNOSIS YANG DIPILIH
+            // ======================================================
+
+            $masalahTerpilih = [];
+
+            $kolomDiagnosis = [
+                'NYERI',
+                'CEMAS',
+                'PERUBAHAN_NUTRISI',
+                'GANGGUAN_PERNAFASAN',
+                'GANGGUAN_PERFUSI_JARINGAN',
+                'GANGGUAN_VOLUME_CAIRAN',
+                'POTENSI_INFEKSI',
+                'HIPERTERMI',
+                'TAKUT',
+                'KETIDAKEFEKTIFAN_POLA_MAKAN',
+            ];
+
+            foreach ($kolomDiagnosis as $namaKolom) {
+
+                if (!empty($data[$namaKolom])) {
+
+                    // Gunakan nama kolom sebagai isi diagnosis.
+                    $masalahTerpilih[] = str_replace(
+                        '_',
+                        ' ',
+                        $namaKolom
+                    );
+                }
+            }
+
+            // Tambahkan masalah lain jika diisi.
+            $masalahLain = trim(
+                (string) ($data['MASALAH_LAIN'] ?? '')
+            );
+
+            if ($masalahLain !== '') {
+                $masalahTerpilih[] = $masalahLain;
+            }
+
+            // Gabungkan seluruh diagnosis dengan pemisah baris baru.
+            $teksDiagnosis = implode(
+                "\n",
+                $masalahTerpilih
+            );
+
+            // ======================================================
+            // SIMPAN KE TABEL MASALAH KEPERAWATAN
+            // ======================================================
 
             DB::table(
                 'medicalrecord.masalah_keperawatan'
             )->updateOrInsert(
-
                 [
-                    'KUNJUNGAN' =>
-                        $request->NOKUNJ,
+                    'KUNJUNGAN' => $request->NOKUNJ,
                 ],
-
                 $data
-
             );
 
+            // ======================================================
+            // SIMPAN KE TABEL DIAGNOSIS
+            // ======================================================
+
+            DB::table(
+                'medicalrecord.diagnosis'
+            )->updateOrInsert(
+                [
+                    'KUNJUNGAN' => $request->NOKUNJ,
+                ],
+                [
+                    'DIAGNOSIS' => $teksDiagnosis,
+                    'TANGGAL' => $data['TANGGAL'],
+                    'OLEH' => $data['OLEH'],
+                    'STATUS' => $data['STATUS'],
+                ]
+            );
+
+            DB::commit();
 
             return response()->json([
-
                 'status' => true,
-
-                'message' =>
-                    'Diagnosis keperawatan berhasil disimpan.',
-
+                'message' => 'Diagnosis keperawatan berhasil disimpan.',
             ]);
 
         } catch (\Throwable $e) {
 
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+
             report($e);
 
             return response()->json([
-
                 'status' => false,
-
-                'message' =>
-                    'Diagnosis keperawatan gagal disimpan.',
-
-                'error' =>
-                    $e->getMessage(),
-
+                'message' => 'Diagnosis keperawatan gagal disimpan.',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
