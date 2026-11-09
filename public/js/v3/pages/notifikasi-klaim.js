@@ -30,8 +30,6 @@
             }
 
             this.bindEvents();
-
-            // Ambil notifikasi langsung ketika halaman siap.
             this.load();
 
             // Pastikan hanya ada satu timer polling.
@@ -47,8 +45,7 @@
         bindEvents: function () {
             const self = this;
 
-            // Klik notifikasi: ambil detail pasien terlebih dahulu,
-            // kemudian buka kunjungan di workspace EMR.
+            // Klik notifikasi dan ambil detail pasien sebelum membuka workspace.
             $(document)
                 .off('click.notificationKlaim', '.js-notification-item')
                 .on('click.notificationKlaim', '.js-notification-item', function (event) {
@@ -76,32 +73,108 @@
                             .hide();
                     }
 
-                    // Fungsi untuk membuka tab setelah data pasien tersedia.
+                    /**
+                     * Membuka EMR Workspace dengan data pasien yang sudah dipetakan.
+                     */
                     const openWorkspace = function (patientData = {}) {
-                        const patientNorm = String(
-                            patientData.norm ||
-                            patientData.NORM ||
-                            norm ||
-                            ''
-                        ).trim();
+                        const getValue = function (...values) {
+                            for (const value of values) {
+                                if (
+                                    value !== undefined &&
+                                    value !== null &&
+                                    String(value).trim() !== ''
+                                ) {
+                                    return value;
+                                }
+                            }
 
-                        const patientNama = String(
-                            patientData.namapasien ||
-                            patientData.NAMAPASIEN ||
-                            patientData.nama ||
-                            nama ||
-                            ''
-                        ).trim();
+                            return '';
+                        };
 
                         const patient = {
                             nomor: nomor,
-                            norm: patientNorm,
-                            nama: patientNama || 'Pasien',
+
+                            norm: getValue(
+                                patientData.norm,
+                                patientData.NORM,
+                                norm
+                            ),
+
+                            nama: getValue(
+                                patientData.nama,
+                                patientData.NAMAPASIEN,
+                                nama,
+                                'Pasien'
+                            ),
+
+                            tglLahir: getValue(
+                                patientData.tglLahir,
+                                patientData.TGLLAHIRPASIEN,
+                                patientData.TANGGAL_LAHIR
+                            ),
+
+                            umur: getValue(
+                                patientData.umur,
+                                patientData.UMURPASIEN,
+                                patientData.UMUR
+                            ),
+
+                            namaRuangan: getValue(
+                                patientData.namaRuangan,
+                                patientData.NAMARUANGAN,
+                                patientData.NAMARUANG
+                            ),
+
+                            namaDokter: getValue(
+                                patientData.namaDokter,
+                                patientData.NAMADOKTER,
+                                patientData.DPJP
+                            ),
+
+                            namaAsuransi: getValue(
+                                patientData.namaAsuransi,
+                                patientData.NAMAASURANSI
+                            ),
+
+                            refIdAsuransi: getValue(
+                                patientData.refIdAsuransi,
+                                patientData.REFIDASURANSI,
+                                patientData.REF_ID_ASURANSI
+                            ),
+
+                            idAsuransi: getValue(
+                                patientData.idAsuransi,
+                                patientData.IDASURANSI,
+                                patientData.ID_ASURANSI
+                            ),
+
+                            noAsuransi: getValue(
+                                patientData.noAsuransi,
+                                patientData.NOASURANSI,
+                                patientData.NOBPJS,
+                                patientData.NO_KARTU
+                            ),
+
+                            tglMasuk: getValue(
+                                patientData.tglMasuk,
+                                patientData.TGLMASUK,
+                                patientData.TANGGALMASUK
+                            ),
+
+                            tglKeluar: getValue(
+                                patientData.tglKeluar,
+                                patientData.TGLKELUAR,
+                                patientData.TANGGALKELUAR
+                            ),
+
+                            statusKunjungan: getValue(
+                                patientData.statusKunjungan,
+                                patientData.STATUSKUNJUNGAN
+                            ),
+
                             url: url
                         };
 
-                        // Jika bukan di halaman Medical Record,
-                        // simpan kunjungan lalu arahkan ke halaman EMR.
                         const currentPath = window.location.pathname.replace(/\/+$/, '');
                         const isMedicalRecordPage = currentPath === '/v3/emr';
 
@@ -128,7 +201,6 @@
                             return;
                         }
 
-                        // Jika sudah di Medical Record, langsung buka iframe.
                         if (
                             window.EMRWorkspace &&
                             typeof window.EMRWorkspace.openPatient === 'function'
@@ -141,18 +213,17 @@
                         }
                     };
 
-                    // Jika data pasien sudah lengkap, langsung buka workspace.
-                    if (norm && nama) {
-                        openWorkspace();
-                        return;
-                    }
-
-                    // Jika data belum lengkap, ambil dari endpoint detail.
+                    // Detail pasien harus diambil agar parameter workspace lengkap.
                     if (!id) {
                         console.warn(
                             'ID notifikasi tidak tersedia untuk mengambil detail pasien.'
                         );
-                        openWorkspace();
+
+                        openWorkspace({
+                            norm: norm,
+                            nama: nama
+                        });
+
                         return;
                     }
 
@@ -163,22 +234,79 @@
                         cache: false,
 
                         success: function (response) {
-                            const detail = response?.data || {};
-                            const pasien = detail.pasien || {};
+                            if (!response || response.status !== true) {
+                                console.warn('Respons detail notifikasi tidak valid.');
+                                openWorkspace({
+                                    norm: norm,
+                                    nama: nama
+                                });
 
-                            const normPasien = String(
-                                pasien.NORM || pasien.norm || ''
-                            ).trim();
+                                return;
+                            }
 
-                            const namaPasien = String(
-                                pasien.NAMAPASIEN || pasien.namapasien || nama || ''
-                            ).trim();
+                            const detail = response.data || {};
+                            const pasien = detail.pasien || detail;
 
+                            // Gabungkan data detail notifikasi dengan data pasien.
                             openWorkspace({
-                                norm: normPasien,
-                                nama: namaPasien
+                                ...detail,
+                                ...pasien,
+
+                                norm: pasien.NORM || pasien.norm || norm,
+
+                                nama:
+                                    pasien.NAMAPASIEN ||
+                                    pasien.nama ||
+                                    nama,
+
+                                tglLahir:
+                                    pasien.TGLLAHIRPASIEN ||
+                                    pasien.tglLahir,
+
+                                umur:
+                                    pasien.UMURPASIEN ||
+                                    pasien.umur ||
+                                    pasien.UMUR,
+
+                                namaRuangan:
+                                    pasien.NAMARUANGAN ||
+                                    pasien.namaRuangan,
+
+                                namaDokter:
+                                    pasien.NAMADOKTER ||
+                                    pasien.namaDokter,
+
+                                namaAsuransi:
+                                    pasien.NAMAASURANSI ||
+                                    pasien.namaAsuransi,
+
+                                refIdAsuransi:
+                                    pasien.REFIDASURANSI ||
+                                    pasien.refIdAsuransi,
+
+                                idAsuransi:
+                                    pasien.IDASURANSI ||
+                                    pasien.idAsuransi,
+
+                                noAsuransi:
+                                    pasien.NOASURANSI ||
+                                    pasien.NOBPJS ||
+                                    pasien.noAsuransi,
+
+                                tglMasuk:
+                                    pasien.TGLMASUK ||
+                                    pasien.tglMasuk,
+
+                                tglKeluar:
+                                    pasien.TGLKELUAR ||
+                                    pasien.tglKeluar,
+
+                                statusKunjungan:
+                                    pasien.STATUSKUNJUNGAN ||
+                                    pasien.statusKunjungan
                             });
                         },
+
                         error: function (xhr) {
                             console.error(
                                 'Gagal mengambil detail pasien dari notifikasi:',
@@ -187,7 +315,10 @@
                             );
 
                             // Tetap buka kunjungan jika detail gagal diambil.
-                            openWorkspace();
+                            openWorkspace({
+                                norm: norm,
+                                nama: nama
+                            });
                         }
                     });
                 });
@@ -195,9 +326,13 @@
             // Muat ulang saat dropdown dibuka.
             $(document)
                 .off('shown.bs.dropdown.notificationKlaim', '#notificationDropdown')
-                .on('shown.bs.dropdown.notificationKlaim', '#notificationDropdown', function () {
-                    self.load();
-                });
+                .on(
+                    'shown.bs.dropdown.notificationKlaim',
+                    '#notificationDropdown',
+                    function () {
+                        self.load();
+                    }
+                );
 
             // Klik tombol footer membuka halaman semua notifikasi.
             $(document)
@@ -251,6 +386,7 @@
             const label = count > 99 ? '99+' : String(count);
 
             $('#notificationBadge').toggle(count > 0);
+
             $('#notificationHeaderBadge')
                 .text(label)
                 .toggle(count > 0);
@@ -408,7 +544,7 @@
     // Inisialisasi saat halaman selesai dimuat.
     $(initNotificationKlaim);
 
-    // Dukungan tambahan jika masih ada navigasi Livewire.
+    // Dukungan navigasi Livewire.
     document.addEventListener(
         'livewire:navigated',
         initNotificationKlaim

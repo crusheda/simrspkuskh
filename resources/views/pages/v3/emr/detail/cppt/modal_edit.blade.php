@@ -10,8 +10,8 @@
     data-bs-backdrop="static"
     data-bs-keyboard="false">
 
-    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
-        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+    <div class="modal-dialog modal-dialog-centered modal-xxl modal-dialog-scrollable">
+        <div class="modal-content border-0 rounded-4 overflow-hidden">
 
             {{-- HEADER --}}
             <div class="modal-header bg-warning-subtle text-dark border-0 px-4 py-3">
@@ -53,7 +53,7 @@
                 <input type="hidden" id="edit_cppt_ppa_id">
 
                 {{-- Informasi pasien --}}
-                <div class="cppt-patient-info rounded-3 p-3 mb-4">
+                <div class="cppt-patient-info rounded-3 p-3 mb-4" hidden>
                     <div class="row g-3" id="edit_cppt_header">
                         {{-- Diisi lewat JavaScript --}}
                     </div>
@@ -345,6 +345,26 @@
     (() => {
         let editCPPTKembaliKeRiwayat = false;
         let editCPPTPerluRefresh = false;
+
+        const {
+            kunjungan,
+            namaRuangan,
+            namaDokter,
+            rm,
+            namaPasien,
+            tglLahir,
+            umur,
+            idAsuransi,
+            namaAsuransi,
+            noAsuransi,
+            tgl_sep,
+            sep,
+            tgl_kfr,
+            tgl_masuk,
+            tgl_keluar,
+            tgl_sep_date,
+            statusKunjungan
+        } = window.EMRData;
 
         window.EMRCPPTPage = {
             batalEditCPPT,

@@ -909,7 +909,7 @@ body.emr-workspace-frame {
 
     bottom: 0;
     right: 0;
-    left: var(--sidebar, 0px);
+    /* left: var(--sidebar, 0px); */
 
     z-index: 1010;
 

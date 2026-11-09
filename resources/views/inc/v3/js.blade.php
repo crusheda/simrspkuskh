@@ -5,7 +5,7 @@
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.6/dist/signature_pad.umd.min.js" data-navigate-once></script>
 
 {{-- NOTIFIKASI KLAIM --}}
-<script src="{{ asset('assets/v2/js/notifikasi/klaim.js') }}" data-navigate-once></script>
+{{-- <script src="{{ asset('assets/v2/js/notifikasi/klaim.js') }}" data-navigate-once></script> --}}
 
 {{-- TAGIFY --}}
 <script src="{{ asset('assets/v2/libs/tagify/tagify.js') }}" data-navigate-once></script>

@@ -960,7 +960,7 @@
                                                                         data-bs-toggle="tooltip"
                                                                         title="Hapus Cppt"
                                                                         id="btn-hapus-cppt-${item.ID}"
-                                                                        onclick="hapusCPPT('${item.ID}')"
+                                                                        onclick="window.EMRDetailPage.hapusCPPT('${item.ID}')"
                                                                     >
                                                                         <i class="ri-delete-bin-line"></i>
                                                                     </button>

@@ -417,11 +417,94 @@
                 // BUKA KUNJUNGAN PASIEN MELALUI EMR WORKSPACE
                 // Mekanisme sama dengan notifikasi di header.
                 // ======================================================
+                const getPatientValue = function (...values) {
+                    for (const value of values) {
+                        if (
+                            value !== undefined &&
+                            value !== null &&
+                            String(value).trim() !== ''
+                        ) {
+                            return value;
+                        }
+                    }
+
+                    return '';
+                };
 
                 const patient = {
                     nomor: nomor,
-                    norm: pasien.NORM || item.norm || '',
-                    nama: pasien.NAMAPASIEN || item.nama || '',
+
+                    norm: getPatientValue(
+                        pasien.NORM,
+                        item.norm
+                    ),
+
+                    nama: getPatientValue(
+                        pasien.NAMAPASIEN,
+                        item.nama
+                    ),
+
+                    alamat: getPatientValue(
+                        pasien.ALAMATPASIEN,
+                        pasien.alamat
+                    ),
+
+                    tglLahir: getPatientValue(
+                        pasien.TGLLAHIRPASIEN,
+                        pasien.tglLahir
+                    ),
+
+                    umur: getPatientValue(
+                        pasien.UMURPASIEN,
+                        pasien.umur
+                    ),
+
+                    namaRuangan: getPatientValue(
+                        pasien.NAMARUANGAN,
+                        pasien.namaRuangan
+                    ),
+
+                    namaDokter: getPatientValue(
+                        pasien.NAMADOKTER,
+                        pasien.namaDokter
+                    ),
+
+                    namaAsuransi: getPatientValue(
+                        pasien.NAMAASURANSI,
+                        pasien.namaAsuransi
+                    ),
+
+                    refIdAsuransi: getPatientValue(
+                        pasien.REFIDASURANSI,
+                        pasien.refIdAsuransi
+                    ),
+
+                    idAsuransi: getPatientValue(
+                        pasien.IDASURANSI,
+                        pasien.idAsuransi
+                    ),
+
+                    noAsuransi: getPatientValue(
+                        pasien.NOASURANSI,
+                        pasien.NOBPJS,
+                        pasien.noAsuransi
+                    ),
+
+                    tglMasuk: getPatientValue(
+                        pasien.TGLMASUK,
+                        pasien.tglMasuk
+                    ),
+
+                    tglKeluar: getPatientValue(
+                        pasien.TGLKELUAR,
+                        pasien.tglKeluar
+                    ),
+
+                    statusKunjungan: getPatientValue(
+                        pasien.STATUSKUNJUNGAN,
+                        pasien.statusKunjungan
+                    ),
+
                     url: `/v3/emr/${encodeURIComponent(nomor)}`
                 };
 
@@ -524,6 +607,15 @@
 
                             <div class="mb-3">
                                 <label class="form-label text-muted mb-1">
+                                    Nama Asuransi
+                                </label>
+                                <div class="fw-semibold">
+                                    ${escapeHtml(pasien.NAMAASURANSI)}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-muted mb-1">
                                     Nomor Kunjungan
                                 </label>
                                 <div class="fw-semibold">
@@ -542,6 +634,16 @@
 
                             <div class="mb-3">
                                 <label class="form-label text-muted mb-1">
+                                    Tgl. Lahir (Umur)
+                                </label>
+                                <div class="fw-semibold text-truncate">
+                                    ${escapeHtml(pasien.TGLLAHIRPASIEN)}
+                                    (${escapeHtml(pasien.UMURPASIEN)})
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-muted mb-1">
                                     Alamat Pasien
                                 </label>
                                 <div class="fw-semibold text-truncate">
@@ -555,10 +657,37 @@
 
                             <div class="mb-3">
                                 <label class="form-label text-muted mb-1">
+                                    Nomor Asuransi
+                                </label>
+                                <div class="fw-semibold">
+                                    ${escapeHtml(pasien.NOASURANSI)}&nbsp;
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-muted mb-1">
                                     Tgl. Pendaftaran
                                 </label>
                                 <div class="fw-semibold">
                                     ${escapeHtml(pasien.TGLPENDAFTARAN)}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-muted mb-1">
+                                    Tanggal Masuk
+                                </label>
+                                <div class="fw-semibold">
+                                    ${escapeHtml(pasien.TGLMASUK)}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-muted mb-1">
+                                    Tanggal Keluar
+                                </label>
+                                <div class="fw-semibold">
+                                    ${escapeHtml(pasien.TGLKELUAR)}
                                 </div>
                             </div>
 
@@ -569,16 +698,6 @@
                                 <div class="fw-semibold text-truncate">
                                     ${escapeHtml(pasien.NAMARUANGAN)}
                                     (${escapeHtml(pasien.NAMADOKTER)})
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label text-muted mb-1">
-                                    Tgl. Lahir (Umur)
-                                </label>
-                                <div class="fw-semibold text-truncate">
-                                    ${escapeHtml(pasien.TGLLAHIRPASIEN)}
-                                    (${escapeHtml(pasien.UMURPASIEN)})
                                 </div>
                             </div>
 

@@ -191,42 +191,74 @@ class NotifikasiController extends Controller
 
         $unitUser = array_map('strval', $unitUser);
 
-                // Query dasar untuk menghitung total notifikasi
+        /*
+        |--------------------------------------------------------------------------
+        | Query dasar notifikasi berdasarkan hak akses unit
+        |--------------------------------------------------------------------------
+        */
         $queryTotal = klaim_verifikasi_catatan::whereNull('deleted_at')
             ->when(!$isAdmin, function ($query) use ($unitUser) {
                 $query->where(function ($query) use ($unitUser) {
-                    // Unit kosong/null dapat dilihat semua user
+
+                    // Unit kosong/null dapat dilihat semua user.
                     $query->whereNull('unit')
                         ->orWhere('unit', '')
                         ->orWhereRaw("JSON_LENGTH(unit) = 0");
 
-                    // Unit yang sesuai dengan unit user
+                    // Notifikasi yang sesuai unit user.
                     foreach ($unitUser as $unit) {
                         $query->orWhereJsonContains('unit', $unit);
                     }
                 });
             });
 
-        // Total pending: status = 1 dan solved = 0
+        /*
+        |--------------------------------------------------------------------------
+        | Total notifikasi pending
+        |--------------------------------------------------------------------------
+        */
         $totalNotifikasiPending = (clone $queryTotal)
             ->where('status', 1)
             ->where('solved', 0)
             ->count();
 
-        // Total selesai: status = 1 dan solved = 1
+        /*
+        |--------------------------------------------------------------------------
+        | Total notifikasi selesai
+        |--------------------------------------------------------------------------
+        */
         $totalNotifikasiSelesai = (clone $queryTotal)
             ->where('status', 1)
             ->where('solved', 1)
             ->count();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Data notifikasi berdasarkan status yang dipilih
+        |--------------------------------------------------------------------------
+        */
         $data = klaim_verifikasi_catatan::whereNull('deleted_at')
+            ->when(!$isAdmin, function ($query) use ($unitUser) {
+                $query->where(function ($query) use ($unitUser) {
+
+                    $query->whereNull('unit')
+                        ->orWhere('unit', '')
+                        ->orWhereRaw("JSON_LENGTH(unit) = 0");
+
+                    foreach ($unitUser as $unit) {
+                        $query->orWhereJsonContains('unit', $unit);
+                    }
+                });
+            })
             ->when($status !== null && $status !== '', function ($query) use ($status) {
+
                 if ((string) $status === '0') {
-                    // Pending: status = 1 dan solved = 0
+                    // Pending.
                     $query->where('status', 1)
                         ->where('solved', 0);
+
                 } elseif ((string) $status === '1') {
-                    // Selesai: status = 1 dan solved = 1
+                    // Selesai.
                     $query->where('status', 1)
                         ->where('solved', 1);
                 }
@@ -243,53 +275,30 @@ class NotifikasiController extends Controller
                 'created_at',
                 'updated_at',
             ])
-            ->filter(function ($item) use ($unitUser, $isAdmin) {
-
-                // Admin dapat melihat semua data
-                if ($isAdmin) {
-                    return true;
-                }
-
-                // Unit kosong/null = bisa dilihat semua user
-                if (empty($item->unit)) {
-                    return true;
-                }
-
-                $unit = $item->unit;
-
-                // Jika belum otomatis di-cast oleh model
-                if (is_string($unit)) {
-                    $unit = json_decode($unit, true);
-                }
-
-                if (!is_array($unit)) {
-                    return false;
-                }
-
-                $unit = array_map('strval', $unit);
-
-                // User cukup memiliki salah satu unit tujuan
-                return !empty(array_intersect($unitUser, $unit));
-            })
-            ->values()
             ->map(function ($item) {
                 return [
-                    'id' => $item->id,
-                    'nomor' => $item->nomor,
-                    'unit' => $item->unit,
-                    'deskripsi' => strip_tags($item->deskripsi),
-                    'status' => $item->status,
-                    'solved' => $item->solved,
+                    'id'         => $item->id,
+                    'nomor'      => $item->nomor,
+                    'unit'       => $item->unit,
+                    'deskripsi'  => strip_tags($item->deskripsi),
+                    'status'     => $item->status,
+                    'solved'     => $item->solved,
                     'created_at' => $item->created_at,
                     'updated_at' => $item->updated_at,
                 ];
-            });
+            })
+            ->values();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Response JSON
+        |--------------------------------------------------------------------------
+        */
         return response()->json([
-            'status' => true,
-            'data' => $data,
-            'totalNotifikasiPending' => $totalNotifikasiPending,
-            'totalNotifikasiSelesai' => $totalNotifikasiSelesai,
+            'status'                    => true,
+            'data'                      => $data,
+            'totalNotifikasiPending'     => $totalNotifikasiPending,
+            'totalNotifikasiSelesai'     => $totalNotifikasiSelesai,
         ]);
     }
 
@@ -315,10 +324,7 @@ class NotifikasiController extends Controller
         | Validasi hak akses berdasarkan unit
         |--------------------------------------------------------------------------
         */
-
-        // Admin dapat melihat semua data
         if (!$isAdmin && !empty($item->unit)) {
-
             $unit = $item->unit;
 
             if (is_string($unit)) {
@@ -336,32 +342,92 @@ class NotifikasiController extends Controller
             }
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Detail pasien dan kunjungan
+        |--------------------------------------------------------------------------
+        */
         $pasien = DB::table('pendaftaran.kunjungan AS pk')
-            ->leftJoin('pendaftaran.pendaftaran AS pd', 'pd.NOMOR', '=', 'pk.NOPEN')
-            ->leftJoin('master.pasien AS p', 'p.NORM', '=', 'pd.NORM')
-            ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'pk.RUANGAN')
-            ->leftJoin('master.dokter AS dok', 'dok.ID', '=', 'pk.DPJP')
+            ->leftJoin(
+                'pendaftaran.pendaftaran AS pd',
+                'pd.NOMOR',
+                '=',
+                'pk.NOPEN'
+            )
+            ->leftJoin(
+                'pendaftaran.penjamin AS pj',
+                'pj.NOPEN',
+                '=',
+                'pd.NOMOR'
+            )
+            ->leftJoin(
+                'master.referensi AS ref',
+                function ($join) {
+                    $join->on('ref.ID', '=', 'pj.JENIS')
+                        ->where('ref.JENIS', '=', 10);
+                }
+            )
+            ->leftJoin(
+                'master.pasien AS p',
+                'p.NORM',
+                '=',
+                'pd.NORM'
+            )
+            ->leftJoin(
+                'master.ruangan AS ru',
+                'ru.ID',
+                '=',
+                'pk.RUANGAN'
+            )
+            ->leftJoin(
+                'master.dokter AS dok',
+                'dok.ID',
+                '=',
+                'pk.DPJP'
+            )
             ->select(
                 'p.NORM AS NORM',
-                'pd.TANGGAL as TGLPENDAFTARAN',
-                DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'),
-                DB::raw('master.getCariUmur(now(), (p.TANGGAL_LAHIR)) AS UMURPASIEN'),
+                'pd.TANGGAL AS TGLPENDAFTARAN',
+
                 DB::raw('master.getNamaLengkap(p.NORM) AS NAMAPASIEN'),
                 DB::raw('master.getAlamatPasienCustom(p.NORM) AS ALAMATPASIEN'),
-                'ru.DESKRIPSI AS NAMARUANGAN',
+                DB::raw('master.getNamaLengkapPegawai(dok.NIP) AS NAMADOKTER'),
+                DB::raw('master.getCariUmur(now(), p.TANGGAL_LAHIR) AS UMURPASIEN'),
+
                 'p.TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+
+                'ru.DESKRIPSI AS NAMARUANGAN',
+
+                // Asuransi
+                'ref.DESKRIPSI AS NAMAASURANSI',
+                'pj.JENIS AS REFIDASURANSI',
+                'pj.JENIS AS IDASURANSI',
+                'pj.NOMOR AS NOASURANSI',
+
+                // Waktu kunjungan
+                'pk.MASUK AS TGLMASUK',
+                'pk.KELUAR AS TGLKELUAR',
+
+                // Status kunjungan
+                'pk.STATUS AS STATUSKUNJUNGAN'
             )
             ->where('pk.NOMOR', $item->nomor)
             ->first();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Response JSON
+        |--------------------------------------------------------------------------
+        */
         return response()->json([
             'status' => true,
             'data' => [
                 'pasien' => $pasien,
+
                 'id' => $item->id,
                 'nomor' => $item->nomor,
                 'unit' => $item->unit,
-                'deskripsi' => $item->deskripsi,
+                'deskripsi' => strip_tags($item->deskripsi),
                 'status' => $item->status,
                 'solved' => $item->solved,
                 'created_at' => $item->created_at,

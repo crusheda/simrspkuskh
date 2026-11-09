@@ -502,24 +502,46 @@
 }
 
 /* ============================================================
-   CPPT — FULLSCREEN MENUTUPI SELURUH FRAME PAGE
+   CPPT — FULLSCREEN MEMENUHI SELURUH IFRAME
+   FIX modalCPPT dan modalEditCPPT
 ============================================================ */
 
-#modalCPPT.modal {
+/* Modal utama */
+#modalCPPT.modal,
+#modalEditCPPT.modal {
     --bs-modal-width: 100%;
+
+    position: fixed !important;
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+    height: 100dvh !important;
+
+    max-width: 100% !important;
+    max-height: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-/* Dialog fullscreen */
-#modalCPPT .modal-dialog.modal-fullscreen {
+/* Dialog: tidak bergantung pada modal-fullscreen */
+#modalCPPT .modal-dialog,
+#modalEditCPPT .modal-dialog {
     position: fixed !important;
 
     inset: 0 !important;
 
-    width: 100vw !important;
-    max-width: 100vw !important;
+    display: flex !important;
+    align-items: stretch !important;
 
-    height: 100vh !important;
+    width: 100% !important;
+    max-width: 100% !important;
+
+    height: 100% !important;
     height: 100dvh !important;
+
+    max-height: 100% !important;
 
     margin: 0 !important;
     padding: 0 !important;
@@ -528,17 +550,23 @@
 }
 
 /* Modal content */
-#modalCPPT .modal-content {
-    display: flex;
-    flex-direction: column;
+#modalCPPT .modal-content,
+#modalEditCPPT .modal-content {
+    display: flex !important;
+    flex-direction: column !important;
 
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
 
-    min-height: 0;
+    max-height: 100% !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
 
     border: 0 !important;
     border-radius: 0 !important;
+
+    overflow: hidden !important;
 
     background: var(--surface);
     color: var(--text);
@@ -546,38 +574,56 @@
     box-shadow: none !important;
 }
 
-/* Header tetap terlihat */
-#modalCPPT .modal-header {
-    flex: 0 0 auto;
+/* Header */
+#modalCPPT .modal-header,
+#modalEditCPPT .modal-header {
+    flex: 0 0 auto !important;
 }
 
-/* Body bisa scroll */
-#modalCPPT .modal-body {
-    flex: 1 1 auto;
+/* Body — area scroll */
+#modalCPPT .modal-body,
+#modalEditCPPT .modal-body {
+    flex: 1 1 auto !important;
 
-    min-height: 0;
+    height: auto !important;
+    max-height: none !important;
 
-    overflow-y: auto;
-    overflow-x: hidden;
+    min-height: 0 !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
 }
 
-/* Footer tetap terlihat */
-#modalCPPT .modal-footer {
-    flex: 0 0 auto;
+/* Footer */
+#modalCPPT .modal-footer,
+#modalEditCPPT .modal-footer {
+    flex: 0 0 auto !important;
 }
 
-/* Hapus padding dialog Bootstrap */
-#modalCPPT .modal-dialog.modal-fullscreen .modal-content {
-    border-radius: 0 !important;
+/* Bootstrap modal-dialog-scrollable override */
+#modalCPPT .modal-dialog-scrollable .modal-content,
+#modalEditCPPT .modal-dialog-scrollable .modal-content {
+    max-height: 100% !important;
+    height: 100% !important;
+}
+
+#modalCPPT .modal-dialog-scrollable .modal-body,
+#modalEditCPPT .modal-dialog-scrollable .modal-body {
+    max-height: none !important;
 }
 
 /* Fallback browser */
 @supports not (height: 100dvh) {
-    #modalCPPT .modal-dialog.modal-fullscreen {
+    #modalCPPT.modal,
+    #modalEditCPPT.modal,
+    #modalCPPT .modal-dialog,
+    #modalEditCPPT .modal-dialog {
         height: 100vh !important;
     }
 }
 
-#modalCPPT .bg-primary {
+/* Background Primary */
+#modalCPPT .bg-primary,
+#modalEditCPPT .bg-primary {
     background-color: #4f46e5 !important;
 }

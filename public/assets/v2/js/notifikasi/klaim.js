@@ -2,19 +2,52 @@
 
     'use strict';
 
+    // Jangan jalankan notifikasi v2 ketika berada di SIRMED v3.
+    if (window.location.pathname.startsWith('/v3/')) {
+        return;
+    }
+
     const NotificationKlaim = {
 
         endpoint: '/api/v2/notifikasi/klaim',
 
         interval: 30000,
 
+        timer: null,
+
         init: function () {
+
+            // Jika sedang berada di SIRMED v3, hentikan polling v2.
+            if (window.location.pathname.startsWith('/v3/')) {
+
+                if (this.timer) {
+                    clearInterval(this.timer);
+                    this.timer = null;
+                }
+
+                return;
+            }
+
+            // Hindari timer ganda.
+            if (this.timer) {
+                clearInterval(this.timer);
+            }
 
             this.load();
 
-            // Refresh setiap 30 detik
-            setInterval(() => {
+            this.timer = setInterval(() => {
+
+                // Cek ulang halaman aktif.
+                if (window.location.pathname.startsWith('/v3/')) {
+
+                    clearInterval(this.timer);
+                    this.timer = null;
+
+                    return;
+                }
+
                 this.load();
+
             }, this.interval);
 
         },
@@ -215,9 +248,12 @@
 
     // Tunggu jQuery dan DOM
     $(document).ready(function () {
-
         NotificationKlaim.init();
+    });
 
+    // Stop/init ulang sesuai halaman setelah navigasi Livewire.
+    document.addEventListener('livewire:navigated', function () {
+        NotificationKlaim.init();
     });
 
 })();

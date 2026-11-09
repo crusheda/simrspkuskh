@@ -129,6 +129,8 @@ class EMR extends Component
                 'pjs.ketStatusPeserta AS STATUSBPJS',
                 'ru.ID AS IDRUANGAN',
                 'ru.DESKRIPSI AS NAMARUANGAN',
+                'rk.KAMAR AS NAMAKAMAR',
+                'rkt.TEMPAT_TIDUR AS NAMATT',
                 'kips.NOMOR AS NIKPASIEN',
                 'ps.NAMA AS NAMALENGKAPPASIEN',
                 'ps.PANGGILAN AS PANGGILANPASIEN',
@@ -220,6 +222,14 @@ class EMR extends Component
                 '=',
                 'pk.RUANGAN'
             )
+            ->leftJoin('master.ruang_kamar_tidur AS rkt', function ($join) {
+                $join->on('rkt.ID', '=', 'pk.RUANG_KAMAR_TIDUR')
+                        ->whereIn('rkt.STATUS', [1,2,3]);
+            })
+            ->leftJoin('master.ruang_kamar AS rk', function ($join) {
+                $join->on('rk.ID', '=', 'rkt.RUANG_KAMAR')
+                        ->where('rk.STATUS', 1);
+            })
             ->leftJoin(
                 'master.dokter AS dr',
                 'dr.ID',
@@ -423,10 +433,18 @@ class EMR extends Component
 
         /*
         |--------------------------------------------------------------------------
+        | RUANG KAMAR TIDUR UNTUK RANAP
+        |--------------------------------------------------------------------------
+        */
+        if (!empty($show->RUANG_KAMAR_TIDUR)) {
+            $show->NAMARUANGAN = "{$show->NAMARUANGAN} - {$show->NAMAKAMAR} {$show->NAMATT}";
+        }
+
+        /*
+        |--------------------------------------------------------------------------
         | DATA UNTUK VIEW
         |--------------------------------------------------------------------------
         */
-
         $data = [
             'show' => $show,
             'readmisi' => $this->potensiReadmisi($KUNJUNGAN),

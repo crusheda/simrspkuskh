@@ -708,10 +708,10 @@ DESKTOP
     opacity: .85;
 }
 
-#pengkajianMenu .menu-child.active i,
+/* #pengkajianMenu .menu-child.active i,
 #pengkajianMenu .menu-child:hover i {
     color: var(--primary, var(--bs-primary));
-}
+} */
 
 #pengkajianMenu .js-final-icon,
 #pengkajianMenu .js-ranap-parent-final-icon,
@@ -1130,18 +1130,18 @@ DESKTOP
 }
 
 /* ICON HOVER */
-#pengkajian-sidebar-col #pengkajianMenu .menu-item:hover i,
+/* #pengkajian-sidebar-col #pengkajianMenu .menu-item:hover i,
 #pengkajian-sidebar-col #pengkajianMenu .menu-parent:hover i,
 #pengkajian-sidebar-col #pengkajianMenu .menu-child:hover i {
-    /* color: var(--primary, var(--bs-primary)) !important; */
-}
+    color: var(--primary, var(--bs-primary)) !important;
+} */
 
 /* ICON ACTIVE */
-#pengkajian-sidebar-col #pengkajianMenu .menu-item.active i,
+/* #pengkajian-sidebar-col #pengkajianMenu .menu-item.active i,
 #pengkajian-sidebar-col #pengkajianMenu .menu-parent.active i,
 #pengkajian-sidebar-col #pengkajianMenu .menu-child.active i {
     color: var(--primary, var(--bs-primary)) !important;
-}
+} */
 
 /* SUBMENU */
 #pengkajian-sidebar-col #pengkajianMenu .submenu {
