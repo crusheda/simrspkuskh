@@ -1024,28 +1024,28 @@ class FinalisasiController extends Controller
 
         $s = [];
 
-        if ($anamnesisDiperoleh) {
+        // if ($anamnesisDiperoleh) {
 
-            if ((int) $anamnesisDiperoleh->AUTOANAMNESIS === 1) {
-                $s[] = 'Autoanamnesis';
-            }
+        //     if ((int) $anamnesisDiperoleh->AUTOANAMNESIS === 1) {
+        //         $s[] = 'Autoanamnesis';
+        //     }
 
-            if ((int) $anamnesisDiperoleh->ALLOANAMNESIS === 1) {
-                $dari = $this->soapValue($anamnesisDiperoleh->DARI);
+        //     if ((int) $anamnesisDiperoleh->ALLOANAMNESIS === 1) {
+        //         $dari = $this->soapValue($anamnesisDiperoleh->DARI);
 
-                $s[] = 'Alloanamnesis' . (
-                    $dari ? ' dari ' . $dari : ''
-                );
-            }
-        }
+        //         $s[] = 'Alloanamnesis' . (
+        //             $dari ? ' dari ' . $dari : ''
+        //         );
+        //     }
+        // }
 
-        if ($keluhanUtama) {
-            $value = $this->soapValue($keluhanUtama->DESKRIPSI);
+        // if ($keluhanUtama) {
+        //     $value = $this->soapValue($keluhanUtama->DESKRIPSI);
 
-            if ($value) {
-                $s[] = 'Keluhan Utama: ' . $value;
-            }
-        }
+        //     if ($value) {
+        //         $s[] = 'Keluhan Utama: ' . $value;
+        //     }
+        // }
 
         if ($anamnesis) {
             $value = $this->soapValue($anamnesis->DESKRIPSI);
@@ -1055,116 +1055,116 @@ class FinalisasiController extends Controller
             }
         }
 
-        if ($rpp) {
-            $value = $this->soapValue($rpp->DESKRIPSI);
+        // if ($rpp) {
+        //     $value = $this->soapValue($rpp->DESKRIPSI);
 
-            if ($value) {
-                $s[] = 'Riwayat Penyakit Dahulu: ' . $value;
-            }
-        }
+        //     if ($value) {
+        //         $s[] = 'Riwayat Penyakit Dahulu: ' . $value;
+        //     }
+        // }
 
-        if ($rpk) {
+        // if ($rpk) {
 
-            $riwayatKeluarga = [];
+        //     $riwayatKeluarga = [];
 
-            if ((int) $rpk->HIPERTENSI === 1) {
-                $riwayatKeluarga[] = 'Hipertensi';
-            }
+        //     if ((int) $rpk->HIPERTENSI === 1) {
+        //         $riwayatKeluarga[] = 'Hipertensi';
+        //     }
 
-            if ((int) $rpk->DIABETES_MELITUS === 1) {
-                $riwayatKeluarga[] = 'Diabetes Melitus';
-            }
+        //     if ((int) $rpk->DIABETES_MELITUS === 1) {
+        //         $riwayatKeluarga[] = 'Diabetes Melitus';
+        //     }
 
-            if ((int) $rpk->PENYAKIT_JANTUNG === 1) {
-                $riwayatKeluarga[] = 'Penyakit Jantung';
-            }
+        //     if ((int) $rpk->PENYAKIT_JANTUNG === 1) {
+        //         $riwayatKeluarga[] = 'Penyakit Jantung';
+        //     }
 
-            if ((int) $rpk->ASMA === 1) {
-                $riwayatKeluarga[] = 'Asma';
-            }
+        //     if ((int) $rpk->ASMA === 1) {
+        //         $riwayatKeluarga[] = 'Asma';
+        //     }
 
-            $lainnya = $this->soapValue($rpk->LAINNYA);
+        //     $lainnya = $this->soapValue($rpk->LAINNYA);
 
-            if ($lainnya) {
-                $riwayatKeluarga[] = $lainnya;
-            }
+        //     if ($lainnya) {
+        //         $riwayatKeluarga[] = $lainnya;
+        //     }
 
-            if ($riwayatKeluarga) {
-                $s[] = 'Riwayat Penyakit Keluarga: ' .
-                    implode(', ', $riwayatKeluarga);
-            }
-        }
+        //     if ($riwayatKeluarga) {
+        //         $s[] = 'Riwayat Penyakit Keluarga: ' .
+        //             implode(', ', $riwayatKeluarga);
+        //     }
+        // }
 
-        if ($statusReproduksi) {
+        // if ($statusReproduksi) {
 
-            $rows = [];
+        //     $rows = [];
 
-            $rows[] = $this->soapLine(
-                'Riwayat Tumbuh Kembang',
-                $statusReproduksi->RIWAYAT_TUMBUH_KEMBANG
-            );
+        //     $rows[] = $this->soapLine(
+        //         'Riwayat Tumbuh Kembang',
+        //         $statusReproduksi->RIWAYAT_TUMBUH_KEMBANG
+        //     );
 
-            $rows[] = $this->soapLine(
-                'Riwayat Kelahiran',
-                $statusReproduksi->RIWAYAT_KELAHIRAN
-            );
+        //     $rows[] = $this->soapLine(
+        //         'Riwayat Kelahiran',
+        //         $statusReproduksi->RIWAYAT_KELAHIRAN
+        //     );
 
-            $rows[] = $this->soapLine(
-                'Usia Kehamilan',
-                $statusReproduksi->USIA_KEHAMILAN
-            );
+        //     $rows[] = $this->soapLine(
+        //         'Usia Kehamilan',
+        //         $statusReproduksi->USIA_KEHAMILAN
+        //     );
 
-            $persalinan = [
-                1 => 'SC',
-                2 => 'SPONTAN',
-                3 => 'VACUM',
-                4 => 'LAINNYA',
-            ];
+        //     $persalinan = [
+        //         1 => 'SC',
+        //         2 => 'SPONTAN',
+        //         3 => 'VACUM',
+        //         4 => 'LAINNYA',
+        //     ];
 
-            $rows[] = $this->soapLine(
-                'Persalinan',
-                $persalinan[$statusReproduksi->PERSALINAN] ?? $statusReproduksi->PERSALINAN
-            );
+        //     $rows[] = $this->soapLine(
+        //         'Persalinan',
+        //         $persalinan[$statusReproduksi->PERSALINAN] ?? $statusReproduksi->PERSALINAN
+        //     );
 
-            $rows[] = $this->soapLine(
-                'Persalinan Lainnya',
-                $statusReproduksi->PERSALINAN_LAINNYA
-            );
+        //     $rows[] = $this->soapLine(
+        //         'Persalinan Lainnya',
+        //         $statusReproduksi->PERSALINAN_LAINNYA
+        //     );
 
-            $riwayat = array_values(array_filter($rows));
+        //     $riwayat = array_values(array_filter($rows));
 
-            if ($riwayat) {
-                $s[] = implode("\n", $riwayat);
-            }
-        }
+        //     if ($riwayat) {
+        //         $s[] = implode("\n", $riwayat);
+        //     }
+        // }
 
-        if ($tumbuhKembang) {
+        // if ($tumbuhKembang) {
 
-            $rows = [];
+        //     $rows = [];
 
-            $imunisasi = [
-                1 => 'Lengkap',
-                2 => 'Tidak Lengkap',
-                3 => 'Tidak Imunisasi',
-                4 => 'Lain-lain',
-            ];
+        //     $imunisasi = [
+        //         1 => 'Lengkap',
+        //         2 => 'Tidak Lengkap',
+        //         3 => 'Tidak Imunisasi',
+        //         4 => 'Lain-lain',
+        //     ];
 
-            $rows[] = $this->soapLine(
-                'Imunisasi',
-                $imunisasi[$tumbuhKembang->IMUNISASI] ?? $tumbuhKembang->IMUNISASI
-            );
+        //     $rows[] = $this->soapLine(
+        //         'Imunisasi',
+        //         $imunisasi[$tumbuhKembang->IMUNISASI] ?? $tumbuhKembang->IMUNISASI
+        //     );
 
-            $rows[] = $this->soapLine(
-                'Imunisasi Lain',
-                $tumbuhKembang->IMUNISASI_LAIN
-            );
+        //     $rows[] = $this->soapLine(
+        //         'Imunisasi Lain',
+        //         $tumbuhKembang->IMUNISASI_LAIN
+        //     );
 
-            $imunisasi = array_values(array_filter($rows));
+        //     $imunisasi = array_values(array_filter($rows));
 
-            if ($imunisasi) {
-                $s[] = implode("\n", $imunisasi);
-            }
-        }
+        //     if ($imunisasi) {
+        //         $s[] = implode("\n", $imunisasi);
+        //     }
+        // }
 
         /*
         |--------------------------------------------------------------------------
@@ -1308,63 +1308,59 @@ class FinalisasiController extends Controller
         $pemfisDokter = DB::table('medicalrecord.sirmed_pemeriksaan_fisik_dokter')
             ->where('KUNJUNGAN', $kunjungan)
             ->where('STATUS', 1)
+            ->orderByDesc('ID')
             ->first();
 
         if ($pemfisDokter) {
             $barisPemfisDokter = [];
 
-            $formatTemuan = function ($nilai, $detail = null) {
-                $nilai = $this->soapValue($nilai);
-
-                if ((string) $nilai === '1') {
-                    return 'Normal';
-                }
-
-                if ((string) $nilai === '2') {
-                    $hasil = 'Terdapat kelainan';
-                    $detail = trim((string) $this->soapValue($detail));
-
-                    if ($detail !== '') {
-                        $hasil .= ' berupa ' . e($detail);
-                    }
-
-                    return $hasil;
-                }
-
-                return null;
-            };
-
             $daftarPemeriksaan = [
                 ['Kepala / Leher', 'PF_KEPALA', 'PF_KEPALA_DETAIL'],
-                ['Thoraks - Cor', 'PF_COR', 'PF_COR_DETAIL'],
-                ['Thoraks - Pulmo', 'PF_PULMO', 'PF_PULMO_DETAIL'],
+                ['Mata', 'PF_MATA', 'PF_MATA_DETAIL'],
+                ['THT', 'PF_THT', 'PF_THT_DETAIL'],
+                ['Leher', 'PF_LEHER', 'PF_LEHER_DETAIL'],
+                ['Mulut', 'PF_MULUT', 'PF_MULUT_DETAIL'],
+                ['Jantung dan Pembuluh Darah', 'PF_JANTUNG', 'PF_JANTUNG_DETAIL'],
+                ['Thorax, Paru, dan Payudara', 'PF_THORAX', 'PF_THORAX_DETAIL'],
                 ['Abdomen', 'PF_ABDOMEN', 'PF_ABDOMEN_DETAIL'],
-                ['Ekstremitas', 'PF_EKS', 'PF_EKS_DETAIL'],
+                ['Kulit dan Sistem Limpatik', 'PF_KULIT', 'PF_KULIT_DETAIL'],
+                ['Tulang Belakang dan Anggota Gerak', 'PF_TULANG', 'PF_TULANG_DETAIL'],
+                ['Sistem Saraf', 'PF_SARAF', 'PF_SARAF_DETAIL'],
+                ['Genitalia, Anus, Rektum', 'PF_GAR', 'PF_GAR_DETAIL'],
             ];
 
-            foreach ($daftarPemeriksaan as [$label, $kolomNilai, $kolomDetail]) {
-                $temuan = $formatTemuan(
-                    $pemfisDokter->{$kolomNilai} ?? null,
-                    $pemfisDokter->{$kolomDetail} ?? null
+            foreach ($daftarPemeriksaan as [$label, $kolomNormal, $kolomDetail]) {
+                $nilaiNormal = (string) $this->soapValue(
+                    $pemfisDokter->{$kolomNormal} ?? null
                 );
+                $normalDicentang = $nilaiNormal === '1';
+                $detail = trim((string) $this->soapValue(
+                    $pemfisDokter->{$kolomDetail} ?? null
+                ));
 
-                if ($temuan !== null) {
-                    $barisPemfisDokter[] = '<b style="color:#38e2c6">'
-                        . e($label) . '</b>: ' . $temuan;
+                $baris = '<b style="color:#38e2c6">' . e($label) . '</b>: '
+                    . ($normalDicentang ? 'Normal' : 'Tidak normal');
+
+                // Detail ditampilkan tanpa bergantung pada status checkbox Normal.
+                if ($detail !== '') {
+                    $baris .= ' &nbsp; Keterangan: ' . nl2br(e($detail));
                 }
+
+                $barisPemfisDokter[] = $baris;
             }
 
-            $statusLokalis = trim((string) $this->soapValue(
-                $pemfisDokter->STATUS_LOKALIS ?? null
+            $keterangan = trim((string) $this->soapValue(
+                $pemfisDokter->KETERANGAN ?? null
             ));
 
-            if ($statusLokalis !== '') {
-                $barisPemfisDokter[] = '<b style="color:#38e2c6">Status Lokalis</b>: '
-                    . nl2br(e($statusLokalis));
+            if ($keterangan !== '') {
+                $barisPemfisDokter[] = '<b style="color:#38e2c6">Keterangan Lainnya</b>: '
+                    . nl2br(e($keterangan));
             }
 
             if ($barisPemfisDokter) {
                 $o[] = '<b style="color:#9CC96B">Pemeriksaan Fisik Dokter</b>';
+
                 foreach ($barisPemfisDokter as $baris) {
                     $o[] = $baris;
                 }

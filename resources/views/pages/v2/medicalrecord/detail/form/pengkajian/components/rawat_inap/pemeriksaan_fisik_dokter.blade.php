@@ -14,50 +14,103 @@
                             </label>
                         </div>
                         <div class="d-flex align-items-center w-100 gap-2 mb-0">
-                            <div class="form-check mb-0 flex-shrink-0">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="pf_kepala" value="2">
-                                <label class="form-check-label">Terdapat kelainan berupa, </label>
-                            </div>
-                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_kepala_detail" placeholder="Sebutkan......" disabled>
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_kepala_detail" placeholder="Sebutkan......">
                         </div>
                     </div>
                 </div>
                 <div class="form-group mb-3">
                     <h6 class="mb-2 text-primary">
-                        <strong>Thoraks</strong>
+                        <strong>Mata</strong>
                     </h6>
-                    <h6>Cor</h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_cor" value="1" checked="">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_mata" value="1" checked="">
                             <label class="form-check-label">
                                 Normal
                             </label>
                         </div>
                         <div class="d-flex align-items-center w-100 gap-2 mb-0">
-                            <div class="form-check mb-0 flex-shrink-0">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="pf_cor" value="2">
-                                <label class="form-check-label">Terdapat kelainan berupa, </label>
-                            </div>
-                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_cor_detail" placeholder="Sebutkan......" disabled>
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_mata_detail" placeholder="Sebutkan......">
                         </div>
                     </div>
                 </div>
                 <div class="form-group mb-3">
-                    <h6>Pulmo</h6>
+                    <h6 class="mb-2 text-primary">
+                        <strong>THT</strong>
+                    </h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_pulmo" value="1" checked="">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_tht" value="1" checked="">
                             <label class="form-check-label">
                                 Normal
                             </label>
                         </div>
                         <div class="d-flex align-items-center w-100 gap-2 mb-0">
-                            <div class="form-check mb-0 flex-shrink-0">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="pf_pulmo" value="2">
-                                <label class="form-check-label">Terdapat kelainan berupa, </label>
-                            </div>
-                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_pulmo_detail" placeholder="Sebutkan......" disabled>
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_tht_detail" placeholder="Sebutkan......">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <h6 class="mb-2 text-primary">
+                        <strong>Leher</strong>
+                    </h6>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_leher" value="1" checked="">
+                            <label class="form-check-label">
+                                Normal
+                            </label>
+                        </div>
+                        <div class="d-flex align-items-center w-100 gap-2 mb-0">
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_leher_detail" placeholder="Sebutkan......">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <h6 class="mb-2 text-primary">
+                        <strong>Mulut</strong>
+                    </h6>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_mulut" value="1" checked="">
+                            <label class="form-check-label">
+                                Normal
+                            </label>
+                        </div>
+                        <div class="d-flex align-items-center w-100 gap-2 mb-0">
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_mulut_detail" placeholder="Sebutkan......">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <h6 class="mb-2 text-primary">
+                        <strong>Jantung dan Pembuluh Darah</strong>
+                    </h6>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_jantung" value="1" checked="">
+                            <label class="form-check-label">
+                                Normal
+                            </label>
+                        </div>
+                        <div class="d-flex align-items-center w-100 gap-2 mb-0">
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_jantung_detail" placeholder="Sebutkan......">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <h6 class="mb-2 text-primary">
+                        <strong>Thorax, Paru, dan Payudara</strong>
+                    </h6>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_thorax" value="1" checked="">
+                            <label class="form-check-label">
+                                Normal
+                            </label>
+                        </div>
+                        <div class="d-flex align-items-center w-100 gap-2 mb-0">
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_thorax_detail" placeholder="Sebutkan......">
                         </div>
                     </div>
                 </div>
@@ -73,39 +126,79 @@
                             </label>
                         </div>
                         <div class="d-flex align-items-center w-100 gap-2 mb-0">
-                            <div class="form-check mb-0 flex-shrink-0">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="pf_abdomen" value="2">
-                                <label class="form-check-label">Terdapat kelainan berupa, </label>
-                            </div>
-                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_abdomen_detail" placeholder="Sebutkan......" disabled>
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_abdomen_detail" placeholder="Sebutkan......">
                         </div>
                     </div>
                 </div>
                 <div class="form-group mb-3">
                     <h6 class="mb-2 text-primary">
-                        <strong>Ekstremitas</strong>
+                        <strong>Kulit dan Sistem Limpatik</strong>
                     </h6>
                     <div class="d-flex align-items-center">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_eks" value="1" checked="">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_kulit" value="1" checked="">
                             <label class="form-check-label">
                                 Normal
                             </label>
                         </div>
                         <div class="d-flex align-items-center w-100 gap-2 mb-0">
-                            <div class="form-check mb-0 flex-shrink-0">
-                                <input class="form-check-input single-checkbox" type="checkbox" name="pf_eks" value="2">
-                                <label class="form-check-label">Terdapat kelainan berupa, </label>
-                            </div>
-                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_eks_detail" placeholder="Sebutkan......" disabled>
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_kulit_detail" placeholder="Sebutkan......">
                         </div>
                     </div>
                 </div>
                 <div class="form-group mb-3">
                     <h6 class="mb-2 text-primary">
-                        <strong>Status Lokalis</strong>
+                        <strong>Tulang Belakang dan Anggota Gerak</strong>
                     </h6>
-                    <textarea class="form-control" name="status_lokalis" rows="3"></textarea>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_tulang" value="1" checked="">
+                            <label class="form-check-label">
+                                Normal
+                            </label>
+                        </div>
+                        <div class="d-flex align-items-center w-100 gap-2 mb-0">
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_tulang_detail" placeholder="Sebutkan......">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <h6 class="mb-2 text-primary">
+                        <strong>Sistem Saraf</strong>
+                    </h6>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_saraf" value="1" checked="">
+                            <label class="form-check-label">
+                                Normal
+                            </label>
+                        </div>
+                        <div class="d-flex align-items-center w-100 gap-2 mb-0">
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_saraf_detail" placeholder="Sebutkan......">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <h6 class="mb-2 text-primary">
+                        <strong>Genitalia, Anus, Rektum</strong>
+                    </h6>
+                    <div class="d-flex align-items-center">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input single-checkbox" type="checkbox" name="pf_gar" value="1" checked="">
+                            <label class="form-check-label">
+                                Normal
+                            </label>
+                        </div>
+                        <div class="d-flex align-items-center w-100 gap-2 mb-0">
+                            <input type="text" class="form-control form-control-sm flex-grow-1" name="pf_gar_detail" placeholder="Sebutkan......">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <h6 class="mb-2 text-primary">
+                        <strong>Keterangan Lainnya</strong>
+                    </h6>
+                    <textarea class="form-control" name="keterangan" rows="3"></textarea>
                 </div>
             </div>
         </div>
@@ -487,7 +580,11 @@
             {
                 NOKUNJ: kunjungan
             }
-        );
+        ) || {};
+
+        $form.find('input.single-checkbox[type="checkbox"][name]').each(function () {
+            data[this.name] = this.checked ? this.value : '0';
+        });
 
         // console.log(
         //     '========== SIMPAN PEMERIKSAAN FISIK =========='

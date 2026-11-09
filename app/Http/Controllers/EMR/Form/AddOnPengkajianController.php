@@ -4519,23 +4519,31 @@ class AddOnPengkajianController extends Controller
             $row = DB::table('medicalrecord.sirmed_pemeriksaan_fisik_dokter')
                 ->where('KUNJUNGAN', $KUNJUNGAN)
                 ->where('STATUS', 1)
+                ->orderByDesc('ID')
                 ->first();
+
+            if (!$row) {
+                return response()->json([
+                    'status' => true,
+                    'data' => null,
+                ]);
+            }
+
+            $data = [];
+            foreach ([
+                'kepala', 'mata', 'tht', 'leher', 'mulut', 'jantung',
+                'thorax', 'abdomen', 'kulit', 'tulang', 'saraf', 'gar',
+            ] as $field) {
+                $kolom = strtoupper($field);
+                $data['pf_' . $field] = $row->{'PF_' . $kolom};
+                $data['pf_' . $field . '_detail'] = $row->{'PF_' . $kolom . '_DETAIL'};
+            }
+
+            $data['keterangan'] = $row->KETERANGAN;
 
             return response()->json([
                 'status' => true,
-                'data' => $row ? [
-                    'pf_kepala' => $row->PF_KEPALA,
-                    'pf_kepala_detail' => $row->PF_KEPALA_DETAIL,
-                    'pf_cor' => $row->PF_COR,
-                    'pf_cor_detail' => $row->PF_COR_DETAIL,
-                    'pf_pulmo' => $row->PF_PULMO,
-                    'pf_pulmo_detail' => $row->PF_PULMO_DETAIL,
-                    'pf_abdomen' => $row->PF_ABDOMEN,
-                    'pf_abdomen_detail' => $row->PF_ABDOMEN_DETAIL,
-                    'pf_eks' => $row->PF_EKS,
-                    'pf_eks_detail' => $row->PF_EKS_DETAIL,
-                    'status_lokalis' => $row->STATUS_LOKALIS,
-                ] : null,
+                'data' => $data,
             ]);
         } catch (\Throwable $e) {
             return response()->json([
@@ -4550,117 +4558,73 @@ class AddOnPengkajianController extends Controller
     {
         DB::beginTransaction();
 
+        $request->validate([
+            'pf_kepala' => 'nullable|in:0,1',
+            'pf_mata' => 'nullable|in:0,1',
+            'pf_tht' => 'nullable|in:0,1',
+            'pf_leher' => 'nullable|in:0,1',
+            'pf_mulut' => 'nullable|in:0,1',
+            'pf_jantung' => 'nullable|in:0,1',
+            'pf_thorax' => 'nullable|in:0,1',
+            'pf_abdomen' => 'nullable|in:0,1',
+            'pf_kulit' => 'nullable|in:0,1',
+            'pf_tulang' => 'nullable|in:0,1',
+            'pf_saraf' => 'nullable|in:0,1',
+            'pf_gar' => 'nullable|in:0,1',
+            'pf_kepala_detail' => 'nullable|string',
+            'pf_mata_detail' => 'nullable|string',
+            'pf_tht_detail' => 'nullable|string',
+            'pf_leher_detail' => 'nullable|string',
+            'pf_mulut_detail' => 'nullable|string',
+            'pf_jantung_detail' => 'nullable|string',
+            'pf_thorax_detail' => 'nullable|string',
+            'pf_abdomen_detail' => 'nullable|string',
+            'pf_kulit_detail' => 'nullable|string',
+            'pf_tulang_detail' => 'nullable|string',
+            'pf_saraf_detail' => 'nullable|string',
+            'pf_gar_detail' => 'nullable|string',
+            'keterangan' => 'nullable|string',
+        ]);
+
         try {
-            $pendaftaran = DB::table('pendaftaran.kunjungan as pk')
-                ->join('pendaftaran.pendaftaran as pp', 'pp.NOMOR', '=', 'pk.NOPEN')
-                ->where('pk.NOMOR', $KUNJUNGAN)
-                ->select('pp.NOMOR as NOPEN')
-                ->first();
+            $oleh = auth()->user()->ID ?? auth()->id();
+            $data = [];
 
-            if (!$pendaftaran) {
-                DB::rollBack();
+            foreach ([
+                'kepala', 'mata', 'tht', 'leher', 'mulut', 'jantung',
+                'thorax', 'abdomen', 'kulit', 'tulang', 'saraf', 'gar',
+            ] as $field) {
+                $normal = $request->input('pf_' . $field, '0');
+                $data['PF_' . strtoupper($field)] = (string) $normal === '1' ? 1 : 0;
 
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Data pendaftaran untuk kunjungan tidak ditemukan.',
-                ], 404);
+                // Detail selalu disimpan, termasuk saat checkbox Normal dicentang.
+                $detail = $request->input('pf_' . $field . '_detail');
+                $data['PF_' . strtoupper($field) . '_DETAIL'] =
+                    $detail !== null && trim((string) $detail) !== ''
+                        ? trim((string) $detail)
+                        : null;
             }
 
-            $oleh = auth()->user()->ID ?? auth()->id();
+            $keterangan = $request->input('keterangan');
+            $data['KETERANGAN'] = $keterangan !== null && trim((string) $keterangan) !== ''
+                ? trim((string) $keterangan)
+                : null;
 
-            // Simpan data form terstruktur untuk kebutuhan edit dan GET form.
+            $data['TANGGAL'] = now();
+            $data['OLEH'] = $oleh;
+            $data['STATUS'] = 1;
+
             DB::table('medicalrecord.sirmed_pemeriksaan_fisik_dokter')->updateOrInsert(
                 ['KUNJUNGAN' => $KUNJUNGAN],
-                [
-                    'PF_KEPALA' => $request->input('pf_kepala'),
-                    'PF_KEPALA_DETAIL' => $request->input('pf_kepala_detail'),
-                    'PF_COR' => $request->input('pf_cor'),
-                    'PF_COR_DETAIL' => $request->input('pf_cor_detail'),
-                    'PF_PULMO' => $request->input('pf_pulmo'),
-                    'PF_PULMO_DETAIL' => $request->input('pf_pulmo_detail'),
-                    'PF_ABDOMEN' => $request->input('pf_abdomen'),
-                    'PF_ABDOMEN_DETAIL' => $request->input('pf_abdomen_detail'),
-                    'PF_EKS' => $request->input('pf_eks'),
-                    'PF_EKS_DETAIL' => $request->input('pf_eks_detail'),
-                    'STATUS_LOKALIS' => $request->input('status_lokalis'),
-                    'TANGGAL' => now(),
-                    'OLEH' => $oleh,
-                    'STATUS' => 1,
-                ]
-            );
-
-            // Escape input pengguna sebelum menyimpan HTML ke DESKRIPSI.
-            $escape = static function ($value) {
-                return nl2br(e(trim((string) $value)));
-            };
-
-            $baris = [];
-            $tambahkanPemeriksaan = static function ($label, $value, $detail = null) use (&$baris, $escape) {
-                $value = (string) $value;
-
-                if ($value === '1') {
-                    $baris[] = $label . ': Normal';
-                    return;
-                }
-
-                if ($value === '2') {
-                    $baris[] = $label . ': Terdapat kelainan' .
-                        (filled($detail) ? ' berupa ' . $escape($detail) : '');
-                }
-            };
-
-            $tambahkanPemeriksaan(
-                'Kepala / Leher',
-                $request->input('pf_kepala'),
-                $request->input('pf_kepala_detail')
-            );
-            $tambahkanPemeriksaan(
-                'Thoraks - Cor',
-                $request->input('pf_cor'),
-                $request->input('pf_cor_detail')
-            );
-            $tambahkanPemeriksaan(
-                'Thoraks - Pulmo',
-                $request->input('pf_pulmo'),
-                $request->input('pf_pulmo_detail')
-            );
-            $tambahkanPemeriksaan(
-                'Abdomen',
-                $request->input('pf_abdomen'),
-                $request->input('pf_abdomen_detail')
-            );
-            $tambahkanPemeriksaan(
-                'Ekstremitas',
-                $request->input('pf_eks'),
-                $request->input('pf_eks_detail')
-            );
-
-            if ($request->filled('status_lokalis')) {
-                $baris[] = 'Status lokalis: ' . $escape($request->input('status_lokalis'));
-            }
-
-            $deskripsi = implode('<br><br>', $baris);
-
-            // Tabel pemeriksaan_fisik memiliki unique key KUNJUNGAN + PENDAFTARAN.
-            DB::table('medicalrecord.pemeriksaan_fisik')->updateOrInsert(
-                [
-                    'KUNJUNGAN' => $KUNJUNGAN,
-                    'PENDAFTARAN' => $pendaftaran->NOPEN,
-                ],
-                [
-                    'TANGGAL' => now(),
-                    'DESKRIPSI' => $deskripsi,
-                    'OLEH' => $oleh,
-                    'STATUS' => 1,
-                ]
+                $data
             );
 
             DB::commit();
+            $transaksiDimulai = false;
 
             return response()->json([
                 'status' => true,
                 'message' => 'Pemeriksaan Fisik Dokter berhasil disimpan.',
-                'deskripsi' => $deskripsi,
             ]);
         } catch (\Throwable $e) {
             DB::rollBack();

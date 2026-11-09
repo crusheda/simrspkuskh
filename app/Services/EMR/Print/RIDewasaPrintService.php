@@ -227,15 +227,16 @@ class RIDewasaPrintService implements PrintDataInterface
             $nilai = (string) $this->value($nilai);
             $detail = trim((string) $this->value($detail));
 
-            $normal = $nilai === '1';
-            $kelainan = $nilai === '2';
-            $baris = $label . "\n"
-                . ($normal ? '☑' : '☐') . ' Normal    '
-                . ($kelainan ? '☑' : '☐') . ' Terdapat kelainan';
-            
-            if ($kelainan && $detail !== '') {
-                $baris .= ' : ' . nl2br(e($detail));
-                $baris .= ' : ' . $detail;
+            // Form terbaru hanya memiliki checkbox Normal. Nilai 1 berarti dicentang;
+            // nilai 0 berarti tidak dicentang. Jika belum ada nilai, ikuti default form.
+            $normal = $nilai === '1' || $nilai === '';
+
+            $baris = $label . ': '
+                . ($normal ? '☑' : '☐') . ' Normal';
+
+            // Detail dapat diisi baik saat Normal dicentang maupun tidak.
+            if ($detail !== '') {
+                $baris .= ' | Keterangan: ' . $detail;
             }
 
             return $baris;
@@ -248,14 +249,34 @@ class RIDewasaPrintService implements PrintDataInterface
                 $pemfisDokter->PF_KEPALA_DETAIL ?? null
             ),
             $formatBarisPemfisDokter(
-                'Cor',
-                $pemfisDokter->PF_COR ?? null,
-                $pemfisDokter->PF_COR_DETAIL ?? null
+                'Mata',
+                $pemfisDokter->PF_MATA ?? null,
+                $pemfisDokter->PF_MATA_DETAIL ?? null
             ),
             $formatBarisPemfisDokter(
-                'Pulmo',
-                $pemfisDokter->PF_PULMO ?? null,
-                $pemfisDokter->PF_PULMO_DETAIL ?? null
+                'THT',
+                $pemfisDokter->PF_THT ?? null,
+                $pemfisDokter->PF_THT_DETAIL ?? null
+            ),
+            $formatBarisPemfisDokter(
+                'Leher',
+                $pemfisDokter->PF_LEHER ?? null,
+                $pemfisDokter->PF_LEHER_DETAIL ?? null
+            ),
+            $formatBarisPemfisDokter(
+                'Mulut',
+                $pemfisDokter->PF_MULUT ?? null,
+                $pemfisDokter->PF_MULUT_DETAIL ?? null
+            ),
+            $formatBarisPemfisDokter(
+                'Jantung dan Pembuluh Darah',
+                $pemfisDokter->PF_JANTUNG ?? null,
+                $pemfisDokter->PF_JANTUNG_DETAIL ?? null
+            ),
+            $formatBarisPemfisDokter(
+                'Thorax, Paru, dan Payudara',
+                $pemfisDokter->PF_THORAX ?? null,
+                $pemfisDokter->PF_THORAX_DETAIL ?? null
             ),
             $formatBarisPemfisDokter(
                 'Abdomen',
@@ -263,20 +284,36 @@ class RIDewasaPrintService implements PrintDataInterface
                 $pemfisDokter->PF_ABDOMEN_DETAIL ?? null
             ),
             $formatBarisPemfisDokter(
-                'Ekstremitas',
-                $pemfisDokter->PF_EKS ?? null,
-                $pemfisDokter->PF_EKS_DETAIL ?? null
+                'Kulit dan Sistem Limpatik',
+                $pemfisDokter->PF_KULIT ?? null,
+                $pemfisDokter->PF_KULIT_DETAIL ?? null
+            ),
+            $formatBarisPemfisDokter(
+                'Tulang Belakang dan Anggota Gerak',
+                $pemfisDokter->PF_TULANG ?? null,
+                $pemfisDokter->PF_TULANG_DETAIL ?? null
+            ),
+            $formatBarisPemfisDokter(
+                'Sistem Saraf',
+                $pemfisDokter->PF_SARAF ?? null,
+                $pemfisDokter->PF_SARAF_DETAIL ?? null
+            ),
+            $formatBarisPemfisDokter(
+                'Genitalia, Anus, Rektum',
+                $pemfisDokter->PF_GAR ?? null,
+                $pemfisDokter->PF_GAR_DETAIL ?? null
             ),
         ];
 
-        $statusLokalisDokter = trim((string) $this->value(
-            $pemfisDokter->STATUS_LOKALIS ?? null
+        $keteranganDokter = trim((string) $this->value(
+            $pemfisDokter->KETERANGAN ?? null
         ));
 
-        $barisPemeriksaanFisikDokter[] = "Status Lokalis\n"
-            . ($statusLokalisDokter !== '' ? $statusLokalisDokter : '-');
+        $barisPemeriksaanFisikDokter[] = 'Keterangan Lainnya: '
+            . ($keteranganDokter !== '' ? $keteranganDokter : '-');
 
-        $pemeriksaanFisikDokter = implode("\n\n", $barisPemeriksaanFisikDokter);
+        $pemeriksaanFisikDokter = implode("\n", $barisPemeriksaanFisikDokter);
+
         /*
         |--------------------------------------------------------------------------
         | DIAGNOSIS ICD
