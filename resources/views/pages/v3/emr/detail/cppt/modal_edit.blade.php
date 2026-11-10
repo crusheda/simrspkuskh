@@ -14,10 +14,10 @@
         <div class="modal-content border-0 rounded-4 overflow-hidden">
 
             {{-- HEADER --}}
-            <div class="modal-header bg-warning-subtle text-dark border-0 px-4 py-3">
+            <div class="modal-header bg-warning-subtle text-dark border-0 px-4 py-3 rounded-0" id="headerCPPTEditModal">
                 <div class="d-flex align-items-center gap-3">
                     <div class="cppt-modal-icon bg-white bg-opacity-50 text-warning-emphasis">
-                        <i class="ph-duotone ph-note-pencil fs-24"></i>
+                        <i class="ph-duotone ph-note-pencil fs-5"></i>
                     </div>
 
                     <div>
@@ -32,7 +32,7 @@
                             </span>
                         </div>
 
-                        <small class="text-dark-emphasis">
+                        <small class="text-dark">
                             Perbarui Catatan Perkembangan Pasien Terintegrasi
                         </small>
                     </div>
@@ -60,9 +60,9 @@
                 </div>
 
                 {{-- Informasi waktu dan PPA --}}
-                <div class="card border border-warning-subtle shadow-none rounded-3 mb-4">
-                    <div class="card-header bg-warning-subtle border-0 py-2 px-3">
-                        <div class="d-flex align-items-center gap-2 text-warning-emphasis">
+                <div class="card border shadow-none rounded-3 mb-4">
+                    <div class="card-header bg-warning-subtle border-0 py-2 px-3" id="infoCPPTEditModal">
+                        <div class="d-flex align-items-center gap-2">
                             <i class="ph-duotone ph-calendar-check fs-20"></i>
                             <strong>Informasi Catatan</strong>
                         </div>
@@ -739,6 +739,10 @@
                     editCPPTKembaliKeRiwayat = true;
                     editCPPTPerluRefresh = false;
 
+                    $('#modalEditCPPTLabel').text('Ubah CPPT');
+                    $('#headerCPPTEditModal').removeClass('bg-info text-white').addClass('bg-warning-subtle text-dark');
+                    $('#infoCPPTEditModal').removeClass('bg-info text-white').addClass('bg-warning-subtle text-dark');
+
                     $('#modalCPPT').one('hidden.bs.modal', function () {
                         $('#modalEditCPPT').modal('show');
                     });
@@ -817,6 +821,8 @@
 
                     // Ubah tampilan modal
                     $('#modalEditCPPTLabel').text('Copy CPPT');
+                    $('#headerCPPTEditModal').removeClass('bg-warning-subtle text-dark').addClass('bg-info text-white');
+                    $('#infoCPPTEditModal').removeClass('bg-warning-subtle text-dark').addClass('bg-info text-white');
 
                     $('#edit_cppt_mode_badge')
                         .removeClass('bg-primary bg-success bg-dark')

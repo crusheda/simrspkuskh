@@ -19,6 +19,7 @@ use App\Http\Controllers\EMR\EMRController;
 use App\Http\Controllers\EMR\Form\AddOnPengkajianController;
 use App\Http\Controllers\EMR\Form\PrintPreviewController;
 use App\Http\Controllers\EMR\Form\Finalisasi\FinalisasiController;
+use App\Http\Controllers\EMR\Form\ResumeMedis\ResumeRanapController;
 use App\Http\Controllers\EMR\Form\GawatDarurat\PengkajianGawatDaruratController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanDewasaController;
 use App\Http\Controllers\EMR\Form\RawatJalan\PengkajianRawatJalanAnakController;
@@ -492,7 +493,13 @@ Route::prefix('v2')->middleware(['web','auth'])->group(function () { // SIRMED v
             Route::post('emr/pengkajian/batal-finalisasi/{kunjungan}', [FinalisasiController::class, 'batalFinalisasiPengkajian']);
 
             // PRINT PREVIEW
-            Route::get( '/emr/pengkajian/finalisasi/preview/{kunjungan}', [PrintPreviewController::class, 'printPreview']);
+            Route::get( 'emr/pengkajian/finalisasi/preview/{kunjungan}', [PrintPreviewController::class, 'printPreview']);
+
+        // FORM FINALISASI RESUME MEDIS (RAWAT INAP)
+        Route::get('emr/resume/ranap/{kunjungan}', [ResumeRanapController::class, 'getData']);
+        Route::post('emr/resume/ranap/{kunjungan}/simpan', [ResumeRanapController::class, 'simpanData']);
+        Route::post('emr/resume/ranap/{kunjungan}/batal', [ResumeRanapController::class, 'batalFinal']);
+        Route::get('emr/resume/ranap/preview/{kunjungan}', [ResumeRanapController::class, 'printPreview']);
 
         // SMARTCLAIM
         Route::get('generate/individual/{kunjungan}', [BerkasKlaimController::class, 'generateIndividual']);
