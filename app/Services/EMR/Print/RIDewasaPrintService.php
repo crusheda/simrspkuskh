@@ -232,7 +232,7 @@ class RIDewasaPrintService implements PrintDataInterface
             $normal = $nilai === '1' || $nilai === '';
 
             $baris = $label . ': '
-                . ($normal ? '☑' : '☐') . ' Normal';
+                . ($normal ? '☑' : '☐') . ' Dalam batas normal';
 
             // Detail dapat diisi baik saat Normal dicentang maupun tidak.
             if ($detail !== '') {

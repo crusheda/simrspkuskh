@@ -478,28 +478,28 @@ class FinalisasiController extends Controller
 
         $rows_s = [];
 
-        if ($anamnesisDiperoleh) {
+        // if ($anamnesisDiperoleh) {
 
-            if ((int) $anamnesisDiperoleh->AUTOANAMNESIS === 1) {
-                $rows_s[] = 'Autoanamnesis';
-            }
+        //     if ((int) $anamnesisDiperoleh->AUTOANAMNESIS === 1) {
+        //         $rows_s[] = 'Autoanamnesis';
+        //     }
 
-            if ((int) $anamnesisDiperoleh->ALLOANAMNESIS === 1) {
-                $dari = $this->soapValue($anamnesisDiperoleh->DARI);
+        //     if ((int) $anamnesisDiperoleh->ALLOANAMNESIS === 1) {
+        //         $dari = $this->soapValue($anamnesisDiperoleh->DARI);
 
-                $rows_s[] = 'Alloanamnesis' . (
-                    $dari ? ' dari ' . $dari : ''
-                );
-            }
-        }
+        //         $rows_s[] = 'Alloanamnesis' . (
+        //             $dari ? ' dari ' . $dari : ''
+        //         );
+        //     }
+        // }
 
-        if ($keluhanUtama) {
-            $value = $this->soapValue($keluhanUtama->DESKRIPSI);
+        // if ($keluhanUtama) {
+        //     $value = $this->soapValue($keluhanUtama->DESKRIPSI);
 
-            if ($value) {
-                $rows_s[] = 'Keluhan Utama: ' . $value;
-            }
-        }
+        //     if ($value) {
+        //         $rows_s[] = 'Keluhan Utama: ' . $value;
+        //     }
+        // }
 
         if ($anamnesis) {
             $value = $this->soapValue($anamnesis->DESKRIPSI);
@@ -509,13 +509,13 @@ class FinalisasiController extends Controller
             }
         }
 
-        if ($rpp) {
-            $value = $this->soapValue($rpp->DESKRIPSI);
+        // if ($rpp) {
+        //     $value = $this->soapValue($rpp->DESKRIPSI);
 
-            if ($value) {
-                $rows_s[] = 'Riwayat Penyakit Dahulu: ' . $value;
-            }
-        }
+        //     if ($value) {
+        //         $rows_s[] = 'Riwayat Penyakit Dahulu: ' . $value;
+        //     }
+        // }
 
         $cppt_s = implode("\n", $rows_s);
 
