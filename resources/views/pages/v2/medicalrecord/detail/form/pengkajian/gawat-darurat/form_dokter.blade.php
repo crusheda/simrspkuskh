@@ -87,8 +87,9 @@
         [
             'jenis' => 'gawat_darurat',
             'role' => 'dokter',
-            'sub' => 'DOKTER',
             'formKey' => 'gd_dokter',
+            'form' => 'pengkajian-radar',
+            'sub' => 'DOKTER',
             'kunjungan' => $kunjungan ?? $list['kunjungan'],
         ]
     )

@@ -79,7 +79,8 @@ class FinalisasiController extends Controller
             */
             'pengkajian-radar' =>
                 $this->generateSoapGawatDarurat(
-                    $kunjungan
+                    $kunjungan,
+                    $sub
                 ),
 
             /*
@@ -874,7 +875,6 @@ class FinalisasiController extends Controller
             ->where('FORM', $form)
             ->where('SUB', $sub)
             ->first();
-
         /*
         |--------------------------------------------------------------------------
         | UPDATE CPPT
