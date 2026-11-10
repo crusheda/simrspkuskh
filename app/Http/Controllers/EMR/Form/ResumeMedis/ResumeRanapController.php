@@ -3,14 +3,28 @@
 namespace App\Http\Controllers\EMR\Form\ResumeMedis;
 
 use App\Http\Controllers\Controller;
+use App\Services\LibreOfficeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use PhpOffice\PhpWord\TemplateProcessor;
+use PhpOffice\PhpWord\Settings;
+use PhpOffice\PhpWord\Element\TextRun;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Throwable;
+use Storage;
 
 class ResumeRanapController extends Controller
 {
+    protected LibreOfficeService $libreOffice;
+
+    public function __construct(LibreOfficeService $libreOffice)
+    {
+        $this->libreOffice = $libreOffice;
+    }
+
     /**
      * Nama tabel Resume Rawat Inap.
      * Jika tabel berada di database/schema tertentu,
@@ -56,6 +70,73 @@ class ResumeRanapController extends Controller
     {
         try {
 
+            // 1. Ambil data pendaftaran dari kunjungan utama (Rawat Inap)
+            $kunjunganUtama = DB::table('pendaftaran.kunjungan as pk')
+                ->join('pendaftaran.pendaftaran as pp', 'pp.NOMOR', '=', 'pk.NOPEN')
+                ->join('master.dokter as dr', function($join){
+                    $join->on('dr.ID', '=', 'pk.DPJP')
+                        ->where('dr.STATUS', 1);
+                })
+                ->where('pk.NOMOR', $kunjungan)
+                ->where('pk.STATUS', '!=', 0)
+                ->where('pp.STATUS', '!=', 0)
+                ->select(
+                    'pk.NOMOR as KUNJUNGAN',
+                    'pp.NORM',
+                    'pp.TANGGAL as TANGGAL_PENDAFTARAN',
+                    'dr.NIP as NIP_DOKTER'
+                )
+                ->first();
+
+            // 2. Cari kunjungan Poli / Rawat Darurat H-1 sampai tanggal Rawat Inap
+            $kunjunganPoli = null;
+
+            if ($kunjunganUtama) {
+
+                $tanggalUtama = Carbon::parse($kunjunganUtama->TANGGAL_PENDAFTARAN);
+
+                $tanggalAwal = $tanggalUtama->copy()->subDay();
+
+                $kunjunganPoli = DB::table('pendaftaran.kunjungan as pk')
+                    ->join('pendaftaran.pendaftaran as pp', 'pp.NOMOR', '=', 'pk.NOPEN')
+                    ->join('master.ruangan as ru', 'ru.ID', '=', 'pk.RUANGAN')
+                    ->where('pp.NORM', $kunjunganUtama->NORM)
+                    ->where('pp.STATUS', '!=', 0)
+                    ->where('pk.STATUS', '!=', 0)
+                    ->whereIn('ru.JENIS_KUNJUNGAN', [1, 2])
+                    ->whereBetween('pp.TANGGAL', [
+                        $tanggalAwal->format('Y-m-d H:i:s'),
+                        $tanggalUtama->format('Y-m-d H:i:s'),
+                    ])
+                    ->orderBy('pp.TANGGAL', 'DESC')
+                    ->orderBy('pk.NOMOR', 'DESC')
+                    ->value('pk.NOMOR');
+            }
+
+            /*
+             * Pengambilan Data Kebutuhan Resume Medis
+             */
+            // $old = (object) [];
+            $old = collect();
+
+            $perencanaan_ri = DB::table('medicalrecord.perencanaan_rawat_inap')
+                        ->where('KUNJUNGAN', $kunjunganPoli)
+                        ->where('STATUS', 1)
+                        ->orderByDesc('ID')
+                        ->first();
+
+            $old->put('indikasi', $perencanaan_ri->INDIKASI ?? '');
+
+            // if (empty($old->get('indikasi'))) {
+                // indikasi kosong
+            // }
+
+            // print_r($old);
+            // die();
+
+            /*
+             * Pengambilan Data Tahap Final Resume Medis
+             */
             $record = DB::table(self::TABLE)
                 ->where('kunjungan', $kunjungan)
                 ->where('status', 1)
@@ -67,6 +148,7 @@ class ResumeRanapController extends Controller
                     'success' => true,
                     'message' => 'Data Resume Medis belum tersedia.',
                     'data' => null,
+                    'old' => $old,
                 ]);
             }
 
@@ -89,6 +171,7 @@ class ResumeRanapController extends Controller
                 'success' => true,
                 'message' => 'Data Resume Medis berhasil diambil.',
                 'data' => $data,
+                'old' => $old,
             ]);
 
         } catch (Throwable $e) {
@@ -389,18 +472,25 @@ class ResumeRanapController extends Controller
         }
     }
 
-
     /**
-     * ==========================================================
-     * PRINT PREVIEW
-     * ==========================================================
+     * ========================================================================
+     * PRINT PREVIEW RESUME MEDIS RAWAT INAP
+     * ========================================================================
      *
-     * GET:
-     * /api/v2/emr/resume/ranap/preview/{kunjungan}
+     * Word Template:
+     * public/doc/klaim/resumemedis/rawatinap.docx
+     *
+     * Output PDF:
+     * storage/app/public/files/klaim/resumemedis/preview/{kunjungan}/
      */
     public function printPreview($kunjungan)
     {
         try {
+            /*
+            |--------------------------------------------------------------------------
+            | 1. AMBIL DATA RESUME MEDIS
+            |--------------------------------------------------------------------------
+            */
 
             $record = DB::table(self::TABLE)
                 ->where('kunjungan', $kunjungan)
@@ -409,12 +499,108 @@ class ResumeRanapController extends Controller
                 ->first();
 
             if (!$record) {
-                abort(404, 'Data Resume Medis belum tersedia.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data Resume Medis Rawat Inap belum tersedia.',
+                ], 404);
             }
 
             /*
-             * Konversi nilai pilihan menjadi keterangan.
-             */
+            |--------------------------------------------------------------------------
+            | 2. IDENTITAS PASIEN DAN DPJP KUNJUNGAN UTAMA
+            |--------------------------------------------------------------------------
+            */
+
+            $kunjunganUtama = DB::table('pendaftaran.kunjungan as pk')
+                ->join(
+                    'pendaftaran.pendaftaran as pp',
+                    'pp.NOMOR',
+                    '=',
+                    'pk.NOPEN'
+                )
+                ->leftJoin(
+                    'master.pasien as ps',
+                    'ps.NORM',
+                    '=',
+                    'pp.NORM'
+                )
+                ->leftJoin(
+                    'master.ruangan as ru',
+                    'ru.ID',
+                    '=',
+                    'pk.RUANGAN'
+                )
+                ->join('master.dokter as dr', function ($join) {
+                    $join->on('dr.ID', '=', 'pk.DPJP')
+                        ->where('dr.STATUS', 1);
+                })
+                ->select([
+                    'pk.NOMOR as KUNJUNGAN',
+                    'pk.NOPEN',
+                    'pk.MASUK as TGLMASUK',
+                    'pk.KELUAR as TGLKELUAR',
+                    'pk.DPJP',
+
+                    'pp.NORM',
+                    'pp.TANGGAL as TANGGAL_PENDAFTARAN',
+
+                    'ps.*',
+
+                    'ru.DESKRIPSI as NAMARUANGAN',
+
+                    'dr.NIP as NIP_DOKTER',
+
+                    DB::raw(
+                        'master.getNamaLengkap(ps.NORM) as NAMALENGKAP'
+                    ),
+
+                    DB::raw(
+                        'master.getAlamatPasienCustom(ps.NORM) as ALAMAT'
+                    ),
+
+                    DB::raw(
+                        'master.getCariUmur(pp.TANGGAL, ps.TANGGAL_LAHIR) as UMUR'
+                    ),
+
+                    DB::raw(
+                        'master.getNamaLengkapPegawai(dr.NIP) as NAMADOKTER'
+                    ),
+                ])
+                ->where('pk.NOMOR', $kunjungan)
+                ->where('pk.STATUS', '!=', 0)
+                ->where('pp.STATUS', '!=', 0)
+                ->first();
+
+            if (!$kunjunganUtama) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data kunjungan utama atau DPJP tidak ditemukan.',
+                ], 404);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 3. AMBIL TANDA TANGAN DPJP
+            |--------------------------------------------------------------------------
+            */
+
+            $ttd_pegawai = DB::table(
+                'simrspku_klaim.tanda_tangan_pegawai as ttp'
+            )
+                ->where('ttp.nip', $kunjunganUtama->NIP_DOKTER)
+                ->where('ttp.status', 1)
+                ->whereNull('ttp.deleted_at')
+                ->inRandomOrder()
+                ->first();
+
+            $ttdDpjpPath = $ttd_pegawai->signature_path ?? null;
+
+            /*
+            |--------------------------------------------------------------------------
+            | 4. MAPPING KONDISI KELUAR
+            |--------------------------------------------------------------------------
+            */
+
             $kondisiKeluar = [
                 1 => 'Sembuh',
                 2 => 'Belum Sembuh',
@@ -444,328 +630,373 @@ class ResumeRanapController extends Controller
             ];
 
             /*
-             * Helper untuk membuat field HTML.
-             */
-            $renderField = function ($label, $value) {
+            |--------------------------------------------------------------------------
+            | 5. HELPER FORMAT TANGGAL
+            |--------------------------------------------------------------------------
+            */
 
-                $value = ($value === null || $value === '')
-                    ? '-'
-                    : (string) $value;
-
-                return '
-                    <div class="field">
-                        <div class="label">' . e($label) . '</div>
-                        <div class="value">' . nl2br(e($value)) . '</div>
-                    </div>
-                ';
-            };
-
-            /*
-             * Helper untuk membuat bagian dokumen.
-             */
-            $renderSection = function ($title, $fields) use ($renderField) {
-
-                $html = '
-                    <div class="section">
-                        <h3>' . e($title) . '</h3>
-                        <div class="section-content">
-                ';
-
-                foreach ($fields as $label => $value) {
-                    $html .= $renderField($label, $value);
+            $formatTanggal = function ($tanggal) {
+                if (empty($tanggal)) {
+                    return '-';
                 }
 
-                $html .= '
-                        </div>
-                    </div>
-                ';
+                try {
+                    return Carbon::parse($tanggal)
+                        ->timezone('Asia/Jakarta')
+                        ->locale('id')
+                        ->translatedFormat('d F Y');
+                } catch (\Throwable $e) {
+                    return (string) $tanggal;
+                }
+            };
 
-                return $html;
+            $formatTanggalJam = function ($tanggal) {
+                if (empty($tanggal)) {
+                    return '-';
+                }
+
+                try {
+                    return Carbon::parse($tanggal)
+                        ->timezone('Asia/Jakarta')
+                        ->format('d-m-Y H:i') . ' WIB';
+                } catch (\Throwable $e) {
+                    return (string) $tanggal;
+                }
             };
 
             /*
-             * Susun isi Resume Medis.
-             */
-            $html = '';
-
-            $html .= $renderSection('Informasi Rawat Inap', [
-
-                'Nomor Kunjungan' => $record->kunjungan,
-
-                'Indikasi Rawat Inap' => $record->indikasi,
-
-            ]);
-
-            $html .= $renderSection('Riwayat Penyakit', [
-
-                'Riwayat Penyakit Sekarang' => $record->rps,
-
-                'Riwayat Penyakit Dahulu' => $record->rpd,
-
-                'Riwayat Pengobatan Medis' => $record->rpm,
-
-                'Pemeriksaan Fisik' => $record->pemeriksaan_fisik,
-
-            ]);
-
-            $html .= $renderSection('Diagnosis dan Terapi', [
-
-                'Diagnosis Utama' => $record->diagnosa_utama,
-
-                'Diagnosis Sekunder' => $record->diagnosa_sekunder,
-
-                'Tindakan / Prosedur Lainnya' => $record->diagnosa_perawat,
-
-                'Terapi dan Tindakan' => $record->terapi,
-
-            ]);
-
-            $html .= $renderSection('Kondisi Keluar Rumah Sakit', [
-
-                'Kondisi Waktu Keluar RS' =>
-                    $kondisiKeluar[$record->kondisi_keluar] ?? '-',
-
-                'Cara Keluar / Pasien Pulang' =>
-                    $caraKeluar[$record->cara_keluar] ?? '-',
-
-            ]);
-
-            $html .= $renderSection('Kondisi Umum Pasien', [
-
-                'Tekanan Darah' =>
-                    $record->ku_td !== null
-                        ? $record->ku_td . ' mmHg'
-                        : '-',
-
-                'Frekuensi Nafas' =>
-                    $record->ku_nafas !== null
-                        ? $record->ku_nafas . ' x/Menit'
-                        : '-',
-
-                'Tingkat Kesadaran' => $record->ku_tk,
-
-                'Skala Nyeri' => $record->ku_sn,
-
-                'Frekuensi Nadi' =>
-                    $record->ku_nadi !== null
-                        ? $record->ku_nadi . ' x/Menit'
-                        : '-',
-
-                'Suhu' =>
-                    $record->ku_suhu !== null
-                        ? $record->ku_suhu . ' °C'
-                        : '-',
-
-            ]);
-
-            $html .= $renderSection('Layanan Lanjutan dan Edukasi', [
-
-                'Layanan Lanjutan' =>
-                    $layananLanjutan[$record->layanan_lanjutan] ?? '-',
-
-                'Edukasi' => $record->edukasi,
-
-            ]);
-
-            $statusFinal = (int) $record->final === 1;
-
-            $statusText = $statusFinal
-                ? 'SUDAH FINAL'
-                : 'BELUM FINAL';
-
-            $tanggalDibuat = $record->tgl_dibuat
-                ? Carbon::parse($record->tgl_dibuat)
-                    ->timezone('Asia/Jakarta')
-                    ->format('d-m-Y H:i:s')
-                : '-';
-
-            $tanggalFinal = $record->tgl_difinal
-                ? Carbon::parse($record->tgl_difinal)
-                    ->timezone('Asia/Jakarta')
-                    ->format('d-m-Y H:i:s')
-                : '-';
-
-            $document = '
-                <!DOCTYPE html>
-                <html lang="id">
-
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-                    <title>Resume Medis Rawat Inap</title>
-
-                    <style>
-                        * {
-                            box-sizing: border-box;
-                        }
-
-                        body {
-                            font-family: Arial, Helvetica, sans-serif;
-                            color: #222;
-                            font-size: 12px;
-                            line-height: 1.5;
-                            margin: 30px;
-                        }
-
-                        .toolbar {
-                            margin-bottom: 20px;
-                            display: flex;
-                            justify-content: flex-end;
-                            gap: 10px;
-                        }
-
-                        .toolbar button {
-                            border: 0;
-                            padding: 10px 18px;
-                            cursor: pointer;
-                            border-radius: 5px;
-                            color: #fff;
-                            background: #2563eb;
-                        }
-
-                        .toolbar .close {
-                            background: #64748b;
-                        }
-
-                        .header {
-                            text-align: center;
-                            padding-bottom: 15px;
-                            margin-bottom: 20px;
-                            border-bottom: 2px solid #222;
-                        }
-
-                        .header h2 {
-                            font-size: 20px;
-                            margin: 0 0 5px;
-                            text-transform: uppercase;
-                        }
-
-                        .header p {
-                            margin: 0;
-                        }
-
-                        .meta {
-                            display: flex;
-                            justify-content: space-between;
-                            gap: 10px;
-                            margin-bottom: 20px;
-                        }
-
-                        .section {
-                            margin-bottom: 18px;
-                            page-break-inside: avoid;
-                        }
-
-                        .section h3 {
-                            font-size: 13px;
-                            background: #f1f5f9;
-                            border: 1px solid #cbd5e1;
-                            padding: 7px 10px;
-                            margin: 0 0 10px;
-                        }
-
-                        .section-content {
-                            padding: 0 5px;
-                        }
-
-                        .field {
-                            display: flex;
-                            margin-bottom: 9px;
-                            gap: 15px;
-                        }
-
-                        .label {
-                            width: 220px;
-                            min-width: 220px;
-                            font-weight: bold;
-                        }
-
-                        .value {
-                            flex: 1;
-                            white-space: pre-wrap;
-                            overflow-wrap: anywhere;
-                        }
-
-                        .footer {
-                            margin-top: 35px;
-                            padding-top: 10px;
-                            border-top: 1px solid #ddd;
-                            font-size: 10px;
-                            color: #555;
-                        }
-
-                        @media print {
-                            body {
-                                margin: 15mm;
-                            }
-
-                            .toolbar {
-                                display: none !important;
-                            }
-
-                            .section h3 {
-                                background: #eee !important;
-                                -webkit-print-color-adjust: exact;
-                                print-color-adjust: exact;
-                            }
-                        }
-                    </style>
-                </head>
-
-                <body>
-
-                    <div class="toolbar">
-                        <button onclick="window.print()">
-                            Print
-                        </button>
-
-                        <button class="close" onclick="window.close()">
-                            Tutup
-                        </button>
-                    </div>
-
-                    <div class="header">
-                        <h2>Resume Medis</h2>
-                        <p>Rawat Inap</p>
-                    </div>
-
-                    <div class="meta">
-                        <div>
-                            <strong>Nomor Kunjungan:</strong>
-                            ' . e($record->kunjungan) . '
-                        </div>
-
-                        <div>
-                            <strong>Status:</strong>
-                            ' . e($statusText) . '
-                        </div>
-                    </div>
-
-                    ' . $html . '
-
-                    <div class="footer">
-                        Status Finalisasi: ' . e($statusText) . '<br>
-                        Tanggal Dibuat: ' . e($tanggalDibuat) . '<br>
-                        Tanggal Finalisasi: ' . e($tanggalFinal) . '
-                    </div>
-
-                </body>
-                </html>
-            ';
-
-            return response($document, 200, [
-                'Content-Type' => 'text/html; charset=UTF-8',
-            ]);
-
-        } catch (Throwable $e) {
-
-            report($e);
-
-            return response(
-                'Gagal membuat Print Preview Resume Medis.',
-                500
+            |--------------------------------------------------------------------------
+            | 6. TEMPLATE WORD
+            |--------------------------------------------------------------------------
+            */
+
+            $templatePath = public_path(
+                'doc/klaim/resumemedis/rawatinap.docx'
             );
+
+            if (!File::exists($templatePath)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Template Word Resume Medis Rawat Inap tidak ditemukan.',
+                ], 404);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 7. OUTPUT DIRECTORY
+            |--------------------------------------------------------------------------
+            */
+
+            $outputDir = storage_path(
+                'app/public/files/klaim/resumemedis/preview/' . $kunjungan
+            );
+
+            if (!File::exists($outputDir)) {
+                File::makeDirectory(
+                    $outputDir,
+                    0755,
+                    true
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 8. NAMA FILE
+            |--------------------------------------------------------------------------
+            */
+
+            $fileName = 'resume_ranap_' . $kunjungan;
+
+            $temporaryWord = $outputDir
+                . DIRECTORY_SEPARATOR
+                . $fileName
+                . '.docx';
+
+            $finalPdf = $outputDir
+                . DIRECTORY_SEPARATOR
+                . $fileName
+                . '.pdf';
+
+            /*
+            |--------------------------------------------------------------------------
+            | 9. HAPUS FILE LAMA
+            |--------------------------------------------------------------------------
+            */
+
+            if (File::exists($temporaryWord)) {
+                File::delete($temporaryWord);
+            }
+
+            if (File::exists($finalPdf)) {
+                File::delete($finalPdf);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 10. TEMPLATE PROCESSOR
+            |--------------------------------------------------------------------------
+            */
+
+            Settings::setOutputEscapingEnabled(true);
+
+            $templateProcessor = new TemplateProcessor($templatePath);
+
+            /*
+            |--------------------------------------------------------------------------
+            | 11. DATA TEMPLATE
+            |--------------------------------------------------------------------------
+            */
+
+            $data = [
+
+                // INSTANSI
+                'NAMAINST' => 'RS PKU MUHAMMADIYAH SUKOHARJO',
+
+                'ALAMATINST' => 'Jl. Mayor Sunaryo No.37, Gawanan, Sukoharjo',
+
+                // IDENTITAS PASIEN
+                'NORM' => str_pad(
+                    (string) ($kunjunganUtama->NORM ?? ''),
+                    8,
+                    '0',
+                    STR_PAD_LEFT
+                ),
+
+                'NAMALENGKAP' => $kunjunganUtama->NAMALENGKAP ?? '',
+
+                'JK' => (
+                    $kunjunganUtama->JENIS_KELAMIN
+                    ?? $kunjunganUtama->JK
+                    ?? ''
+                ),
+
+                'TGLLAHIR' => $formatTanggal(
+                    $kunjunganUtama->TANGGAL_LAHIR ?? null
+                ),
+
+                'UMUR' => $kunjunganUtama->UMUR ?? '',
+
+                'ALAMAT' => $kunjunganUtama->ALAMAT ?? '',
+
+                // KUNJUNGAN
+                'KUNJUNGAN' => $kunjungan,
+
+                'TGLMASUK' => $formatTanggalJam(
+                    $kunjunganUtama->TGLMASUK
+                ),
+
+                'TGLKELUAR' => $formatTanggalJam(
+                    $kunjunganUtama->TGLKELUAR
+                ),
+
+                'NAMARUANGAN' => $kunjunganUtama->NAMARUANGAN ?? '',
+
+                // INFORMASI RAWAT INAP
+                'INDIKASI' => $record->indikasi ?? '',
+
+                // RIWAYAT PENYAKIT
+                'RPS' => $record->rps ?? '',
+
+                'RPD' => $record->rpd ?? '',
+
+                'RPM' => $record->rpm ?? '',
+
+                'PEMERIKSAAN_FISIK' => $record->pemeriksaan_fisik ?? '',
+
+                // DIAGNOSIS DAN TERAPI
+                'DIAGNOSA_UTAMA' => $record->diagnosa_utama ?? '',
+
+                'DIAGNOSA_SEKUNDER' => $record->diagnosa_sekunder ?? '',
+
+                'DIAGNOSA_PERAWAT' => $record->diagnosa_perawat ?? '',
+
+                'TERAPI' => $record->terapi ?? '',
+
+                // KONDISI KELUAR
+                'KONDISI_KELUAR' =>
+                    $kondisiKeluar[$record->kondisi_keluar] ?? '',
+
+                'CARA_KELUAR' =>
+                    $caraKeluar[$record->cara_keluar] ?? '',
+
+                // KONDISI UMUM
+                'KU_TD' => $record->ku_td !== null
+                    ? $record->ku_td . ' mmHg'
+                    : '',
+
+                'KU_NAFAS' => $record->ku_nafas !== null
+                    ? $record->ku_nafas . ' x/Menit'
+                    : '',
+
+                'KU_TK' => $record->ku_tk ?? '',
+
+                'KU_SN' => $record->ku_sn ?? '',
+
+                'KU_NADI' => $record->ku_nadi !== null
+                    ? $record->ku_nadi . ' x/Menit'
+                    : '',
+
+                'KU_SUHU' => $record->ku_suhu !== null
+                    ? $record->ku_suhu . ' °C'
+                    : '',
+
+                // LAYANAN LANJUTAN
+                'LAYANAN_LANJUTAN' =>
+                    $layananLanjutan[$record->layanan_lanjutan] ?? '',
+
+                'EDUKASI' => $record->edukasi ?? '',
+
+                // DPJP
+                'NAMA_DPJP' => $kunjunganUtama->NAMADOKTER ?? '',
+
+                'NIP_DPJP' => $kunjunganUtama->NIP_DOKTER ?? '',
+
+                // TANGGAL CETAK
+                'TANGGAL_CETAK' => now('Asia/Jakarta')
+                    ->locale('id')
+                    ->isoFormat('D MMMM YYYY [Pukul] HH:mm:ss')
+                    . ' WIB',
+            ];
+
+            /*
+            |--------------------------------------------------------------------------
+            | 12. ISI PLACEHOLDER TEKS
+            |--------------------------------------------------------------------------
+            */
+
+            foreach ($data as $key => $value) {
+                $templateProcessor->setValue(
+                    $key,
+                    (string) ($value ?? '')
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 13. MASUKKAN GAMBAR TANDA TANGAN DPJP
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                $ttdDpjpPath &&
+                Storage::disk('public')->exists($ttdDpjpPath)
+            ) {
+                $imagePath = Storage::disk('public')->path(
+                    $ttdDpjpPath
+                );
+
+                [$originalWidth, $originalHeight] = getimagesize(
+                    $imagePath
+                );
+
+                if ($originalWidth > 0) {
+                    $targetWidth = 150;
+
+                    $targetHeight = $targetWidth
+                        * ($originalHeight / $originalWidth);
+
+                    $templateProcessor->setImageValue(
+                        'TTD_DPJP',
+                        [
+                            'path' => $imagePath,
+                            'width' => $targetWidth,
+                            'height' => $targetHeight,
+                        ]
+                    );
+                } else {
+                    $templateProcessor->setValue('TTD_DPJP', '');
+                }
+            } else {
+                // Jika TTD belum tersedia, placeholder dikosongkan.
+                $templateProcessor->setValue('TTD_DPJP', '');
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 14. SAVE DOCX
+            |--------------------------------------------------------------------------
+            */
+
+            $templateProcessor->saveAs($temporaryWord);
+
+            if (!File::exists($temporaryWord)) {
+                throw new \Exception(
+                    'Gagal membuat file DOCX Resume Medis Rawat Inap.'
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 15. CONVERT DOCX -> PDF MENGGUNAKAN LIBREOFFICE
+            |--------------------------------------------------------------------------
+            */
+
+            [$success, $convertLog, $exitCode] =
+                $this->libreOffice->generatePdf(
+                    $temporaryWord,
+                    $outputDir
+                );
+
+            clearstatcache(true, $finalPdf);
+
+            if (
+                !$success ||
+                !File::exists($finalPdf) ||
+                File::size($finalPdf) === 0
+            ) {
+                Log::error('Print Preview Resume Ranap gagal generate PDF', [
+                    'kunjungan' => $kunjungan,
+                    'temporaryWord' => $temporaryWord,
+                    'finalPdf' => $finalPdf,
+                    'exitCode' => $exitCode,
+                    'convertLog' => $convertLog,
+                ]);
+
+                throw new \Exception(
+                    'Gagal generate PDF Resume Medis Rawat Inap.'
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 16. HAPUS DOCX TEMPORARY
+            |--------------------------------------------------------------------------
+            */
+
+            if (File::exists($temporaryWord)) {
+                File::delete($temporaryWord);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 17. RETURN PDF
+            |--------------------------------------------------------------------------
+            */
+
+            return response()->file($finalPdf, [
+                'Content-Type' => 'application/pdf',
+
+                'Cache-Control' =>
+                    'no-store, no-cache, must-revalidate, max-age=0',
+
+                'Pragma' => 'no-cache',
+
+                'Expires' => '0',
+            ]);
+
+        } catch (\Throwable $e) {
+
+            Log::error('Print Preview Resume Ranap Exception', [
+                'kunjungan' => $kunjungan,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 }

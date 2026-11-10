@@ -1084,7 +1084,7 @@ a {
     border-radius: 10px;
     background-color: var(--surface);
     color: var(--text);
-    font-size: 12px
+    font-size: 14px
 }
 
 .form-control:focus,
