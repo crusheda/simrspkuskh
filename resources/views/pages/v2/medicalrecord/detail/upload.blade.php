@@ -30,13 +30,13 @@
     </div>
 
     <div class="col-md-6">
-        <div class="card" id="preview-card" hidden>
+        <div class="card mt-3" id="preview-card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0" id="preview-title">Preview Dokumen</h5>
-                <button type="button" class="btn btn-sm btn-secondary" id="close-preview">Tutup Preview</button>
+                {{-- <button type="button" class="btn btn-sm btn-secondary" id="close-preview">Tutup Preview</button> --}}
             </div>
             <div class="card-body p-0">
-                <iframe id="document-preview" title="Preview dokumen" style="width:100%; height:70vh; border:0;" loading="lazy"></iframe>
+                <iframe id="document-preview" title="Preview dokumen" srcdoc="<!doctype html><html lang='id'><meta charset='utf-8'><body style='font:16px Arial,sans-serif;color:#666;display:grid;place-items:center;height:95vh;margin:0;text-align:center'><p>Pilih dokumen pada daftar file untuk melihat preview.</p></body></html>" style="width:100%; height:70vh; border:0;" loading="lazy"></iframe>
             </div>
         </div>
     </div>
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function showPreview(file) {
         previewTitle.textContent = 'Preview: ' + (file.nama_tambahan || file.title || 'Dokumen');
         previewFrame.src = fileUrl(file.filename);
-        previewCard.hidden = false;
+        // previewCard.hidden = false;
     }
 
     function renderFiles(files) {
@@ -164,10 +164,10 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(function (error) { alert(error.message); });
     });
 
-    document.getElementById('close-preview').addEventListener('click', function () {
-        previewFrame.src = 'about:blank';
-        previewCard.hidden = true;
-    });
+    // document.getElementById('close-preview').addEventListener('click', function () {
+    //     previewFrame.src = 'about:blank';
+    //     previewCard.hidden = true;
+    // });
 
     loadFileList();
 });

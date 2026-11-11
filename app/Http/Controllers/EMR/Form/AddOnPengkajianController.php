@@ -6925,8 +6925,8 @@ class AddOnPengkajianController extends Controller
                     'KUNJUNGAN' => $request->NOKUNJ ?? $KUNJUNGAN
                 ],
                 [
-                    'HASIL' => $request->usg_hasil,
-                    'KESIMPULAN' => $request->usg_kesimpulan,
+                    'HASIL' => $request->usg_hasil ?? '',
+                    'KESIMPULAN' => $request->usg_kesimpulan ?? '',
                     'DOKTER'  => DB::table('pendaftaran.kunjungan')->where('NOMOR', $request->NOKUNJ ?? $KUNJUNGAN)->value('DPJP'),
                     'OLEH' => auth()->id(),
                     'STATUS' => 1,
