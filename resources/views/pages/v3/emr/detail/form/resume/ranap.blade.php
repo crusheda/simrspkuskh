@@ -400,7 +400,7 @@
             </div>
 
             {{-- FOOTER --}}
-            <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="card-footer d-flex justify-content-left align-items-center flex-wrap gap-2">
 
                 <button
                     type="button"
@@ -410,8 +410,6 @@
                     <i class="ph-duotone ph-printer me-2"></i>
                     Print Preview
                 </button>
-
-                <div class="d-flex gap-2 flex-wrap">
 
                     <button
                         type="button"
@@ -440,13 +438,11 @@
                         Batal Final
                     </button>
 
-                </div>
             </div>
 
         </div>
     </div>
 </div>
-
 
 <script>
 (() => {
@@ -684,7 +680,43 @@
     // ==========================================================
     // GET DATA
     // ==========================================================
+    function setFieldValue(section, name, value = null) {
 
+        const $fields = section.find(`[name="${name}"]`);
+
+        if (!$fields.length) return;
+
+        const type = ($fields.first().attr('type') || '').toLowerCase();
+
+        // Radio
+        if (type === 'radio') {
+            $fields.each(function () {
+                this.checked =
+                    value !== null &&
+                    String(this.value) === String(value);
+            });
+
+            return;
+        }
+
+        // Checkbox
+        if (type === 'checkbox') {
+            $fields.each(function () {
+                this.checked =
+                    value !== null &&
+                    String(this.value) === String(value);
+            });
+
+            return;
+        }
+
+        // Text, Number, Textarea, Select
+        $fields.val(value ?? '');
+    }
+
+    // ==========================================================
+    // GET DATA
+    // ==========================================================
     async function getData() {
 
         if (isLoading) {
@@ -703,8 +735,11 @@
             });
 
             const data = response.data || {};
+            const old = response.old || {};
 
-            setFormData(data);
+            setFieldValue($form, 'indikasi',
+                data.indikasi || old.indikasi || ''
+            );
 
             isFinal = Number(data.status_final || 0) === 1;
 
