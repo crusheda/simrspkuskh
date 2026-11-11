@@ -3,7 +3,6 @@
 @endphp
 
 <div class="row">
-    <!-- Upload Form -->
     <div class="col-md-6">
         <div class="card">
             <div class="card-header"><h5>Upload File</h5></div>
@@ -22,120 +21,154 @@
                 </form>
             </div>
         </div>
-    </div>
-
-    <!-- File List -->
-    <div class="col-md-6">
         <div class="card">
             <div class="card-header"><h5>Uploaded Files</h5></div>
             <div class="card-body" id="file-list">
-                @if(isset($files) && $files->count())
-                    <ul class="list-group">
-                        @foreach($files as $file)
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <a href="{{ asset('storage/files/upload/' . $file->filename) }}" target="_blank">
-                                        {{ $file->title }}
-                                    </a>
-                                    <br>
-                                    <small><i>Nama Tambahan: {{ $file->nama_tambahan }}</i></small>
-                                </div>
-                                <button class="btn btn-danger btn-sm delete-file" data-id="{{ $file->id }}">Hapus</button>
-                            </li>
-                        @endforeach
-                    </ul>
-                @else
-                    <p>Tidak ada file diunggah.</p>
-                @endif
+                <p>Tidak ada file diunggah.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card" id="preview-card" hidden>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0" id="preview-title">Preview Dokumen</h5>
+                <button type="button" class="btn btn-sm btn-secondary" id="close-preview">Tutup Preview</button>
+            </div>
+            <div class="card-body p-0">
+                <iframe id="document-preview" title="Preview dokumen" style="width:100%; height:70vh; border:0;" loading="lazy"></iframe>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const NOMOR = @json($NOMOR);
+document.addEventListener('DOMContentLoaded', function () {
+    const nomor = @json($NOMOR);
+    const fileList = document.getElementById('file-list');
+    const previewCard = document.getElementById('preview-card');
+    const previewFrame = document.getElementById('document-preview');
+    const previewTitle = document.getElementById('preview-title');
 
-        // Fungsi untuk load ulang daftar file dan render ke #file-list
-        function loadFileList() {
-            fetch(`/api/emr/file-upload/${NOMOR}/list`)
-            .then(res => res.json())
-            .then(files => {
-                const fileList = document.getElementById('file-list');
-                if (files.length === 0) {
-                    fileList.innerHTML = '<p>Tidak ada file diunggah.</p>';
-                    return;
-                }
-                let html = '<ul class="list-group">';
-                files.forEach(file => {
-                    html += `
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <a href="href="/storage/files/upload/${file.filename}" target="_blank">
-                                    ${file.title}
-                                </a>
-                                <br>
-                                <small><i>Nama File: ${file.nama_tambahan}</i></small>
-                            </div>
-                            <button class="btn btn-danger btn-sm delete-file" data-id="${file.id}">Hapus</button>
-                        </li>
-                    `;
-                });
-                html += '</ul>';
-                fileList.innerHTML = html;
-            });
+    // filename dari Laravel berisi path relatif, misalnya files/upload/dokumen.pdf.
+    function fileUrl(filename) {
+        return '/storage/' + String(filename).split('/').map(encodeURIComponent).join('/');
+    }
+
+    function showPreview(file) {
+        previewTitle.textContent = 'Preview: ' + (file.nama_tambahan || file.title || 'Dokumen');
+        previewFrame.src = fileUrl(file.filename);
+        previewCard.hidden = false;
+    }
+
+    function renderFiles(files) {
+        fileList.replaceChildren();
+        if (!files.length) {
+            const empty = document.createElement('p');
+            empty.textContent = 'Tidak ada file diunggah.';
+            fileList.appendChild(empty);
+            return;
         }
 
-        // Upload via AJAX
-        document.getElementById('upload-form').addEventListener('submit', function (e) {
-            e.preventDefault();
+        const list = document.createElement('ul');
+        list.className = 'list-group';
+        files.forEach(function (file) {
+            const item = document.createElement('li');
+            item.className = 'list-group-item d-flex justify-content-between align-items-center gap-2';
 
-            const formData = new FormData(this);
+            const details = document.createElement('div');
+            const title = document.createElement('div');
+            title.textContent = file.title || 'Dokumen';
+            const name = document.createElement('small');
+            name.innerHTML = '<i></i>';
+            name.firstElementChild.textContent = 'Nama Tambahan: ' + (file.nama_tambahan || '-');
+            details.append(title, document.createElement('br'), name);
 
-            fetch(`/api/emr/file-upload/${NOMOR}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: formData
+            const actions = document.createElement('div');
+            actions.className = 'd-flex gap-2 flex-shrink-0';
+            const previewButton = document.createElement('button');
+            previewButton.type = 'button';
+            previewButton.className = 'btn btn-info btn-sm preview-file';
+            previewButton.textContent = 'Preview';
+            previewButton.dataset.id = file.id;
+            previewButton.dataset.filename = file.filename || '';
+            previewButton.dataset.title = file.title || '';
+            previewButton.dataset.namaTambahan = file.nama_tambahan || '';
+
+            const deleteButton = document.createElement('button');
+            deleteButton.type = 'button';
+            deleteButton.className = 'btn btn-danger btn-sm delete-file';
+            deleteButton.textContent = 'Hapus';
+            deleteButton.dataset.id = file.id;
+            actions.append(previewButton, deleteButton);
+            item.append(details, actions);
+            list.appendChild(item);
+        });
+        fileList.appendChild(list);
+    }
+
+    function loadFileList() {
+        return fetch(`/api/emr/file-upload/${encodeURIComponent(nomor)}/list`)
+            .then(function (response) {
+                if (!response.ok) throw new Error('Daftar file gagal dimuat.');
+                return response.json();
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    loadFileList();  // refresh list saja, tanpa reload halaman
-                    document.getElementById('upload-form').reset(); // reset form input file
-                } else {
-                    alert('Upload gagal.');
-                }
-            });
-        });
+            .then(renderFiles)
+            .catch(function (error) { alert(error.message); });
+    }
 
-        // Delete file via AJAX
-        document.getElementById('file-list').addEventListener('click', function (e) {
-            if (e.target.classList.contains('delete-file')) {
-                const id = e.target.dataset.id;
-
-                if (confirm('Yakin ingin menghapus file ini?')) {
-                    fetch(`/api/emr/file-upload/${NOMOR}/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            loadFileList();  // refresh list tanpa reload halaman
-                        } else {
-                            alert('Gagal menghapus file.');
-                        }
-                    });
-                }
-            }
-        });
-
-        // Load daftar file saat pertama kali halaman dibuka
-        loadFileList();
+    document.getElementById('upload-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        fetch(`/api/emr/file-upload/${encodeURIComponent(nomor)}`, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': @json(csrf_token()) },
+            body: new FormData(this)
+        })
+        .then(function (response) {
+            if (!response.ok) throw new Error('Upload gagal. Periksa ukuran dan format file.');
+            return response.json();
+        })
+        .then(function (data) {
+            if (!data.success) throw new Error('Upload gagal.');
+            document.getElementById('upload-form').reset();
+            return loadFileList();
+        })
+        .catch(function (error) { alert(error.message); });
     });
 
+    fileList.addEventListener('click', function (event) {
+        const previewButton = event.target.closest('.preview-file');
+        if (previewButton) {
+            showPreview({
+                filename: previewButton.dataset.filename,
+                title: previewButton.dataset.title,
+                nama_tambahan: previewButton.dataset.namaTambahan
+            });
+            return;
+        }
+
+        const deleteButton = event.target.closest('.delete-file');
+        if (!deleteButton || !confirm('Yakin ingin menghapus file ini?')) return;
+        fetch(`/api/emr/file-upload/${encodeURIComponent(nomor)}/${encodeURIComponent(deleteButton.dataset.id)}`, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': @json(csrf_token()) }
+        })
+        .then(function (response) {
+            if (!response.ok) throw new Error('Gagal menghapus file.');
+            return response.json();
+        })
+        .then(function (data) {
+            if (!data.success) throw new Error('Gagal menghapus file.');
+            return loadFileList();
+        })
+        .catch(function (error) { alert(error.message); });
+    });
+
+    document.getElementById('close-preview').addEventListener('click', function () {
+        previewFrame.src = 'about:blank';
+        previewCard.hidden = true;
+    });
+
+    loadFileList();
+});
 </script>
