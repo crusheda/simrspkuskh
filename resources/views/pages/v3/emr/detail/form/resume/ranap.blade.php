@@ -94,51 +94,92 @@
                                 <textarea
                                     class="form-control"
                                     name="pemeriksaan_fisik"
-                                    rows="3"></textarea>
+                                    rows="9"></textarea>
                             </div>
                         </div>
 
                         {{-- DIAGNOSIS --}}
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <h6>
-                                    Diagnosa Utama
-                                    [<b class="text-danger">ICD 10</b>]
-                                </h6>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="card card-body border border-dashed border-danger mb-0">
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-group">
+                                                <h6>
+                                                    Diagnosa Utama
+                                                    [<b class="text-danger">ICD 10</b>]
+                                                </h6>
 
-                                <textarea
-                                    class="form-control"
-                                    name="diagnosa_utama"
-                                    rows="3"></textarea>
-                            </div>
-                        </div>
+                                                <textarea
+                                                    class="form-control"
+                                                    name="diagnosa_utama"
+                                                    rows="2"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-group">
+                                                <h6>
+                                                    Diagnosa Sekunder
+                                                    [<b class="text-danger">ICD 10</b>]
+                                                </h6>
 
-                        <div class="col-md-6 mb-3">
-                            <div class="form-group">
-                                <h6>
-                                    Diagnosa Sekunder
-                                    [<b class="text-danger">ICD 10</b>]
-                                </h6>
+                                                <textarea
+                                                    class="form-control"
+                                                    name="diagnosa_sekunder"
+                                                    rows="2"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-group">
+                                                <h6>
+                                                    Diagnosa Dokter
+                                                    [<b class="text-danger">ICD 10</b>]
+                                                </h6>
 
-                                <textarea
-                                    class="form-control"
-                                    name="diagnosa_sekunder"
-                                    rows="3"></textarea>
+                                                <textarea
+                                                    class="form-control"
+                                                    name="diagnosa_dokter_icd10"
+                                                    rows="2"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         {{-- TINDAKAN --}}
-                        <div class="col-md-12 mb-3">
-                            <div class="form-group">
-                                <h6>
-                                    Tindakan / Prosedur Lainnya
-                                    [<b class="text-success">ICD 9</b>]
-                                </h6>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="card card-body border border-dashed border-success mb-0">
+                                    <div class="row">
+                                        <div class="col-md-8 mb-3">
+                                            <div class="form-group">
+                                                <h6>
+                                                    Tindakan / Prosedur Lainnya
+                                                    [<b class="text-success">ICD 9</b>]
+                                                </h6>
 
-                                <textarea
-                                    class="form-control"
-                                    name="diagnosa_perawat"
-                                    rows="3"></textarea>
+                                                <textarea
+                                                    class="form-control"
+                                                    name="diagnosa_perawat"
+                                                    rows="2"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-group">
+                                                <h6>
+                                                    Diagnosa Dokter
+                                                    [<b class="text-success">ICD 9</b>]
+                                                </h6>
+
+                                                <textarea
+                                                    class="form-control"
+                                                    name="diagnosa_dokter_icd9"
+                                                    rows="2"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -250,10 +291,18 @@
                                             <input
                                                 class="form-control"
                                                 type="number"
-                                                name="ku_td"
+                                                name="ku_td_up"
                                                 min="0"
                                                 step="1">
-
+                                            <div class="input-group-text">
+                                                /
+                                            </div>
+                                            <input
+                                                class="form-control"
+                                                type="number"
+                                                name="ku_td_down"
+                                                min="0"
+                                                step="1">
                                             <div class="input-group-text">
                                                 mmHg
                                             </div>
@@ -286,12 +335,7 @@
                                             Tingkat Kesadaran
                                         </label>
 
-                                        <input
-                                            class="form-control"
-                                            type="number"
-                                            name="ku_tk"
-                                            min="0"
-                                            step="1">
+                                        <select class="form-control" name="ku_tk" id="ku_tk"></select>
                                     </div>
 
                                     {{-- SKALA NYERI --}}
@@ -746,8 +790,7 @@
 
             const data = response.data || {};
             const old = response.old || {};
-
-            console.log(old.ra);
+            const ref = response.ref || {};
 
             setFieldValue($form, 'indikasi',
                 data.indikasi || old.indikasi || ''
@@ -766,6 +809,45 @@
             );
             setFieldValue($form, 'pemeriksaan_fisik',
                 data.pemeriksaan_fisik || old.pemeriksaan_fisik || ''
+            );
+            setFieldValue($form, 'diagnosa_utama',
+                data.diagnosa_utama || old.diagnosa_utama || ''
+            );
+            setFieldValue($form, 'diagnosa_sekunder',
+                data.diagnosa_sekunder || old.diagnosa_sekunder || ''
+            );
+            setFieldValue($form, 'diagnosa_dokter_icd10',
+                data.diagnosa_dokter_icd10 || old.diagnosa_dokter_icd10 || ''
+            );
+            setFieldValue($form, 'diagnosa_perawat',
+                data.diagnosa_perawat || old.diagnosa_perawat || ''
+            );
+            setFieldValue($form, 'diagnosa_dokter_icd9',
+                data.diagnosa_dokter_icd9 || old.diagnosa_dokter_icd9 || ''
+            );
+            setFieldValue($form, 'terapi',
+                data.terapi || old.terapi || ''
+            );
+            setFieldValue($form, 'kondisi_keluar',
+                data.kondisi_keluar || old.kondisi_keluar || ''
+            );
+            setFieldValue($form, 'cara_keluar',
+                data.cara_keluar || old.cara_keluar || ''
+            );
+
+            let select = $form.find('[name="ku_tk"]');
+            select.empty().append('<option value="">Pilih Tingkat Kesadaran</option>');
+            $.each(ref.tingkat_kesadaran, function (index, item) {
+                select.append(
+                    $('<option>', {
+                        value: item.SCORING,
+                        text: item.DESKRIPSI
+                    })
+                );
+            });
+
+            setFieldValue($form, 'cara_keluar',
+                data.cara_keluar || old.cara_keluar || ''
             );
 
             isFinal = Number(data.status_final || 0) === 1;
