@@ -847,6 +847,18 @@ class FinalisasiController extends Controller
             $sub
         );
 
+        //DOKTER CPPT
+        $dokter = DB::table('aplikasi.pengguna AS pe')
+            ->leftJoin('master.pegawai AS peg','peg.NIP','=','pe.NIP')
+            ->leftJoin('master.dokter AS dr','dr.NIP','=','pe.NIP')
+            ->where('pe.ID', auth()->id())
+            ->select(
+                'dr.ID',
+                'peg.NIP'
+            )
+            ->first();
+
+        //TENAGA MEDIS CPPT
         $tenagaMedis = DB::table('aplikasi.pengguna AS pe')
             ->leftJoin('master.pegawai AS peg','peg.NIP','=','pe.NIP')
             ->where('pe.ID', auth()->id())
@@ -855,6 +867,8 @@ class FinalisasiController extends Controller
                 'peg.NIP'
             )
             ->first();
+
+        $petugas = $dokter->ID ? $dokter : $tenagaMedis;
 
         $dataCppt = [
             'KUNJUNGAN' => $kunjungan,
@@ -865,7 +879,7 @@ class FinalisasiController extends Controller
             'PLANNING' => $soap['PLANNING'] ?? '',
             'INSTRUKSI' => $soap['INSTRUKSI'] ?? '',
             'JENIS' => 1,
-            'TENAGA_MEDIS' => $tenagaMedis->ID,
+            'TENAGA_MEDIS' => $petugas->ID,
             'OLEH' => auth()->id(),
             'STATUS' => 1,
         ];
