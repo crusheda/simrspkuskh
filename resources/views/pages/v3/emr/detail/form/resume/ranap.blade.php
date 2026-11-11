@@ -47,7 +47,7 @@
                         </div>
 
                         {{-- RIWAYAT PENYAKIT --}}
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <h6>Ringkasan Penyakit Sekarang</h6>
                                 <textarea
@@ -57,7 +57,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <h6>Ringkasan Penyakit Dahulu</h6>
                                 <textarea
@@ -67,13 +67,23 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <h6>Riwayat Pengobatan Medis</h6>
                                 <textarea
                                     class="form-control"
                                     name="rpm"
-                                    rows="4"></textarea>
+                                    rows="2"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <h6>Riwayat Alergi</h6>
+                                <textarea
+                                    class="form-control"
+                                    name="ra"
+                                    rows="2"></textarea>
                             </div>
                         </div>
 
@@ -737,8 +747,25 @@
             const data = response.data || {};
             const old = response.old || {};
 
+            console.log(old.ra);
+
             setFieldValue($form, 'indikasi',
                 data.indikasi || old.indikasi || ''
+            );
+            setFieldValue($form, 'rps',
+                data.rps || old.rps || ''
+            );
+            setFieldValue($form, 'rpd',
+                data.rpd || old.rpd || ''
+            );
+            setFieldValue($form, 'rpm',
+                data.rpm || old.rpm || ''
+            );
+            setFieldValue($form, 'ra',
+                data.ra || old.ra || ''
+            );
+            setFieldValue($form, 'pemeriksaan_fisik',
+                data.pemeriksaan_fisik || old.pemeriksaan_fisik || ''
             );
 
             isFinal = Number(data.status_final || 0) === 1;

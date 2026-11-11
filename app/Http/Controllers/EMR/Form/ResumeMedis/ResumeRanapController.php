@@ -40,6 +40,7 @@ class ResumeRanapController extends Controller
         'rps',
         'rpd',
         'rpm',
+        'ra',
         'pemeriksaan_fisik',
         'diagnosa_utama',
         'diagnosa_sekunder',
@@ -100,6 +101,7 @@ class ResumeRanapController extends Controller
                 $kunjunganPoli = DB::table('pendaftaran.kunjungan as pk')
                     ->join('pendaftaran.pendaftaran as pp', 'pp.NOMOR', '=', 'pk.NOPEN')
                     ->join('master.ruangan as ru', 'ru.ID', '=', 'pk.RUANGAN')
+                    ->select('pk.*')
                     ->where('pp.NORM', $kunjunganUtama->NORM)
                     ->where('pp.STATUS', '!=', 0)
                     ->where('pk.STATUS', '!=', 0)
@@ -110,7 +112,8 @@ class ResumeRanapController extends Controller
                     ])
                     ->orderBy('pp.TANGGAL', 'DESC')
                     ->orderBy('pk.NOMOR', 'DESC')
-                    ->value('pk.NOMOR');
+                    // ->value('pk.NOMOR');
+                    ->first();
             }
 
             /*
@@ -119,19 +122,249 @@ class ResumeRanapController extends Controller
             // $old = (object) [];
             $old = collect();
 
+            // INDIKASI
             $perencanaan_ri = DB::table('medicalrecord.perencanaan_rawat_inap')
-                        ->where('KUNJUNGAN', $kunjunganPoli)
+                        ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
                         ->where('STATUS', 1)
                         ->orderByDesc('ID')
                         ->first();
 
+            // RPS
+            $anamnesis = DB::table('medicalrecord.anamnesis')
+                ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                ->where('PENDAFTARAN', $kunjunganPoli->NOPEN)
+                ->where('STATUS', 1)
+                ->orderByDesc('ID')
+                ->first();
+
+            // RPD
+            $rpp = DB::table('medicalrecord.rpp')
+                ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                ->where('STATUS', 1)
+                ->orderByDesc('ID')
+                ->first();
+
+            // RIWAYAT PENGGUNAAN OBAT
+            $rpm = DB::table('medicalrecord.riwayat_pemberian_obat as rpo')
+                ->leftJoin('master.frekuensi_aturan_resep as far', function($join){
+                    $join->on('rpo.FREKUENSI', '=', 'far.ID')
+                        ->where('far.STATUS',1);
+                })
+                ->leftJoin('master.referensi as ref_rute', function($join){
+                    $join->on('rpo.RUTE', '=', 'ref_rute.ID')
+                        ->where('ref_rute.JENIS',217)
+                        ->where('ref_rute.STATUS',1);
+                })
+                ->select('rpo.*', 'far.FREKUENSI as FREKUENSI_NAMA', 'far.KETERANGAN as FREKUENSI_KETERANGAN', 'ref_rute.DESKRIPSI as RUTE_NAMA')
+                ->where('rpo.KUNJUNGAN', $kunjunganPoli->NOMOR)
+                ->where('rpo.STATUS', 1)
+                ->get();
+
+            $riwayatPenggunaanObatText = $rpm->isNotEmpty()
+                                        ? $rpm->sortBy('ID')
+                                            ->pluck('OBAT')
+                                            ->implode(', ')
+                                        : '';
+
+            // RIWAYAT ALERGI
+            $ra = DB::table('medicalrecord.riwayat_alergi as ra')
+                ->leftJoin('master.referensi as ref', function($join){
+                    $join->on('ra.JENIS', '=', 'ref.ID')
+                        ->where('ref.JENIS',180)
+                        ->where('ref.STATUS',1);
+                })
+                ->join('pendaftaran.kunjungan as pk', 'ra.KUNJUNGAN', '=', 'pk.NOMOR')
+                ->join('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
+                ->leftJoin('master.ruangan as ru', 'ru.ID', '=', 'pk.RUANGAN')
+                ->leftJoin('aplikasi.pengguna as pe', 'pe.ID', '=', 'ra.OLEH')
+                ->select('ra.*', 'ref.DESKRIPSI as JENIS_ALERGI', 'ru.DESKRIPSI as NAMA_RUANGAN', DB::raw('master.getNamaLengkapPegawai(pe.NIP) as NAMA_USER'))
+                ->where('pp.NORM', $kunjunganUtama->NORM)
+                ->where('ra.STATUS', 1)
+                ->get();
+
+            $riwayatAlergiText = $ra->isNotEmpty()
+                                ? $ra->sortBy('JENIS')
+                                    ->map(function ($item) {
+                                        return "{$item->JENIS_ALERGI}: {$item->DESKRIPSI}";
+                                    })
+                                    ->implode("\n")
+                                : '';
+
+            // TANDA VITAL
+            $tandaVital = DB::table('medicalrecord.tanda_vital as ttv')
+                ->leftJoin('master.referensi as refKesadaran', function ($join) {
+                    $join->on('ttv.TINGKAT_KESADARAN', '=', 'refKesadaran.SCORING')
+                        ->where('refKesadaran.JENIS', 179)
+                        ->where('refKesadaran.STATUS', 1);
+                })
+                ->select(
+                    'ttv.*',
+                    'refKesadaran.DESKRIPSI as DESKRIPSI_TINGKAT_KESADARAN'
+                )
+                ->where('ttv.KUNJUNGAN', $kunjunganPoli->NOMOR)
+                ->where('ttv.STATUS', 1)
+                ->orderByDesc('ttv.ID')
+                ->first();
+
+            // PEMERIKSAAN FISIK
+            $pemeriksaanFisik = DB::table('medicalrecord.pemeriksaan_fisik')
+                ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                ->where('PENDAFTARAN', $kunjunganPoli->NOPEN)
+                ->where('STATUS', 1)
+                ->orderByDesc('ID')
+                ->first();
+
+            // FORMAT TANDA VITAL
+            $ttvText = '';
+
+            if ($tandaVital) {
+                $ttv = $tandaVital;
+
+                $frekuensiNadiCB = match ((int) $ttv->FREKUENSI_NADI_CB) {
+                    1 => 'Reguler',
+                    2 => 'Ireguler',
+                    default => '',
+                };
+
+                $frekuensiNafasCB = match ((int) $ttv->FREKUENSI_NAFAS_CB) {
+                    1 => 'Simetris',
+                    2 => 'Asimetris',
+                    default => '',
+                };
+
+                $jalanNafas = match ((int) $ttv->JALAN_NAFAS) {
+                    1 => 'Paten',
+                    2 => 'Obstruksi Parsial',
+                    3 => 'Obstruksi Total',
+                    default => '',
+                };
+
+                $alatBantuNafas = match ((int) $ttv->ALAT_BANTU_NAFAS) {
+                    0 => 'Tidak',
+                    1 => 'Ya',
+                    default => '',
+                };
+
+                $kulit = match ((int) $ttv->KULIT) {
+                    1 => 'Normal',
+                    2 => 'Jaundice',
+                    3 => 'Akral Dingin',
+                    4 => 'Sianotik',
+                    5 => 'Berkeringat',
+                    default => '',
+                };
+
+                $pupil = match ((int) $ttv->PUPIL) {
+                    1 => 'Isokor',
+                    2 => 'Anisokor',
+                    default => '',
+                };
+
+                $gcs = $ttv->GCS !== null
+                    ? rtrim(rtrim(number_format((float) $ttv->GCS, 2, '.', ''), '0'), '.')
+                    : '';
+
+                $eye = $ttv->EYE ?? '';
+                $motorik = $ttv->MOTORIK ?? '';
+                $verbal = $ttv->VERBAL ?? '';
+
+                $gcsDetail = "E/{$eye} M/{$motorik} V/{$verbal}";
+
+                $tekananDarah = ($ttv->SISTOLIK !== null && $ttv->DISTOLIK !== null)
+                    ? number_format($ttv->SISTOLIK, 0) . '/' . number_format($ttv->DISTOLIK, 0) . ' mmHg'
+                    : '';
+
+                $suhu = $ttv->SUHU !== null
+                    ? "{$ttv->SUHU} °C"
+                    : '';
+
+                $frekuensiNadi = $ttv->FREKUENSI_NADI !== null
+                    ? number_format($ttv->FREKUENSI_NADI) ." x/menit"
+                    : '';
+
+                if ($frekuensiNadiCB !== '') {
+                    $frekuensiNadi .= " ({$frekuensiNadiCB})";
+                }
+
+                $frekuensiNafas = $ttv->FREKUENSI_NAFAS !== null
+                    ? number_format($ttv->FREKUENSI_NAFAS)." x/menit"
+                    : '';
+
+                if ($frekuensiNafasCB !== '') {
+                    $frekuensiNafas .= " ({$frekuensiNafasCB})";
+                }
+
+                $diameterPupil = ($ttv->DIAMETER_PUPIL_UP !== null && $ttv->DIAMETER_PUPIL_DOWN !== null)
+                    ? "{$ttv->DIAMETER_PUPIL_UP}mm/{$ttv->DIAMETER_PUPIL_DOWN}mm"
+                    : '';
+
+                $rc = ($ttv->RC_UP !== null && $ttv->RC_DOWN !== null)
+                    ? "{$ttv->RC_UP}/{$ttv->RC_DOWN}"
+                    : '';
+
+                $pupilDetail = trim(
+                    "{$pupil}, {$diameterPupil}, RC : {$rc}",
+                    ', '
+                );
+
+                $ttvLines = [
+                    "Keadaan Umum : {$ttv->KEADAAN_UMUM}",
+                    "Tingkat Kesadaran : {$ttv->DESKRIPSI_TINGKAT_KESADARAN}",
+                    "GCS : {$gcs} ({$gcsDetail}), VAS : {$ttv->VAS}",
+                    "Tekanan Darah : {$tekananDarah}",
+                    "Suhu : {$suhu}",
+                    "Frekuensi Nadi : {$frekuensiNadi}",
+                    "Frekuensi Nafas : {$frekuensiNafas}",
+                    "Jalan Nafas : {$jalanNafas}",
+                    "Pupil : {$pupilDetail}",
+                    "Kulit : {$kulit}",
+                    "Alat Bantu Nafas : {$alatBantuNafas}",
+                ];
+
+                $ttvText = implode("\n", $ttvLines);
+            }
+
+            // FORMAT PEMERIKSAAN FISIK
+            $pemeriksaanFisikText = $ttvText;
+
+            if ($pemeriksaanFisik) {
+                $fisikText = collect((array) $pemeriksaanFisik)
+                    ->except([
+                        'ID',
+                        'KUNJUNGAN',
+                        'PENDAFTARAN',
+                        'STATUS',
+                    ])
+                    ->filter(function ($value) {
+                        return $value !== null && $value !== '';
+                    })
+                    ->map(function ($value, $key) {
+                        return "{$key} : {$value}";
+                    })
+                    ->implode("\n");
+
+                if ($fisikText !== '') {
+                    $pemeriksaanFisikText .= ($pemeriksaanFisikText !== '' ? "\n\n" : '')
+                        . "PEMERIKSAAN FISIK\n"
+                        . $fisikText;
+                }
+            }
+
+            /*
+             * PUSH VALUE INTO $OLD
+             */
             $old->put('indikasi', $perencanaan_ri->INDIKASI ?? '');
+            $old->put('rps', $anamnesis->DESKRIPSI ?? '');
+            $old->put('rpd', $rpp->DESKRIPSI ?? '');
+            $old->put('rpm', $riwayatPenggunaanObatText);
+            $old->put('ra', $riwayatAlergiText);
+            $old->put('pemeriksaan_fisik', $pemeriksaanFisikText);
 
             // if (empty($old->get('indikasi'))) {
                 // indikasi kosong
             // }
 
-            // print_r($old);
+            // print_r($old->get('riwayat_alergi'));
             // die();
 
             /*
@@ -223,6 +456,7 @@ class ResumeRanapController extends Controller
             'rps' => 'nullable|string',
             'rpd' => 'nullable|string',
             'rpm' => 'nullable|string',
+            'ra' => 'nullable|string',
             'pemeriksaan_fisik' => 'nullable|string',
 
             'diagnosa_utama' => 'nullable|string',
