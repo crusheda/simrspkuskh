@@ -2971,138 +2971,631 @@ class RIObsgynPrintService implements PrintDataInterface
     }
 
     private function getRiwayatLab($kunjungan) {
-        $data = DB::select("
-            SELECT LPAD(p.NORM, 8, '0') AS NORM,
-            master.getNamaLengkap(p.NORM) AS NAMALENGKAP,
-            CONCAT(rjk.DESKRIPSI, ' / ', DATE_FORMAT(p.TANGGAL_LAHIR, '%d-%m-%Y')) AS JKTGLLAHIR,
+        // $data = DB::select("
+        //     SELECT LPAD(p.NORM, 8, '0') AS NORM,
+        //     master.getNamaLengkap(p.NORM) AS NAMALENGKAP,
+        //     CONCAT(rjk.DESKRIPSI, ' / ', DATE_FORMAT(p.TANGGAL_LAHIR, '%d-%m-%Y')) AS JKTGLLAHIR,
 
-            master.getNamaLengkapPegawai(mp.NIP) AS DOKTER,
-            mp.NIP AS NIPDPJP,
-            master.getNamaLengkapPegawai(mpasal.NIP) AS DOKTERASAL,
-            master.getNamaLengkapPegawai(mpper.NIP) AS ANALIS,
+        //     master.getNamaLengkapPegawai(mp.NIP) AS DOKTER,
+        //     mp.NIP AS NIPDPJP,
+        //     master.getNamaLengkapPegawai(mpasal.NIP) AS DOKTERASAL,
+        //     master.getNamaLengkapPegawai(mpper.NIP) AS ANALIS,
 
-            pk.NOPEN,
-            pk.MASUK AS TGLREG,
-            hlab.TANGGAL AS TANGGALHASIL,
-            chl.CATATAN,
+        //     pk.NOPEN,
+        //     pk.MASUK AS TGLREG,
+        //     hlab.TANGGAL AS TANGGALHASIL,
+        //     chl.CATATAN,
 
-            r.DESKRIPSI AS UNITPENGANTAR,
-            ks.ALASAN AS DIAGNOSA,
+        //     r.DESKRIPSI AS UNITPENGANTAR,
+        //     ks.ALASAN AS DIAGNOSA,
 
-            tm.KUNJUNGAN,
+        //     tm.KUNJUNGAN,
 
-            ggl.DESKRIPSI AS GROUPLAB,
-            kgl.DESKRIPSI AS KLPLAB,
+        //     ggl.DESKRIPSI AS GROUPLAB,
+        //     kgl.DESKRIPSI AS KLPLAB,
 
-            mt.NAMA AS NAMATINDAKAN,
-            ptl.PARAMETER,
+        //     mt.NAMA AS NAMATINDAKAN,
+        //     ptl.PARAMETER,
 
-            IFNULL(hlab.NILAI_NORMAL, ptl.NILAI_RUJUKAN) AS NILAI_RUJUKAN,
-            hlab.HASIL,
-            IFNULL(hlab.SATUAN, sl.DESKRIPSI) AS SATUAN,
-            hlab.KETERANGAN
+        //     IFNULL(hlab.NILAI_NORMAL, ptl.NILAI_RUJUKAN) AS NILAI_RUJUKAN,
+        //     hlab.HASIL,
+        //     IFNULL(hlab.SATUAN, sl.DESKRIPSI) AS SATUAN,
+        //     hlab.KETERANGAN
 
-            FROM layanan.hasil_lab hlab
+        //     FROM layanan.hasil_lab hlab
 
-            JOIN layanan.tindakan_medis tm ON hlab.TINDAKAN_MEDIS = tm.ID
-            LEFT JOIN layanan.catatan_hasil_lab chl ON tm.KUNJUNGAN = chl.KUNJUNGAN
-            LEFT JOIN master.dokter dok ON chl.DOKTER = dok.ID
-            LEFT JOIN master.pegawai mp ON dok.NIP = mp.NIP
-            LEFT JOIN layanan.petugas_tindakan_medis ptm ON ptm.TINDAKAN_MEDIS = tm.ID AND ptm.JENIS = 6 AND ptm.KE = 1 AND ptm.STATUS <> 0
-            LEFT JOIN master.pegawai mpper ON ptm.MEDIS = mpper.ID
+        //     JOIN layanan.tindakan_medis tm ON hlab.TINDAKAN_MEDIS = tm.ID
+        //     LEFT JOIN layanan.catatan_hasil_lab chl ON tm.KUNJUNGAN = chl.KUNJUNGAN
+        //     LEFT JOIN master.dokter dok ON chl.DOKTER = dok.ID
+        //     LEFT JOIN master.pegawai mp ON dok.NIP = mp.NIP
+        //     LEFT JOIN layanan.petugas_tindakan_medis ptm ON ptm.TINDAKAN_MEDIS = tm.ID AND ptm.JENIS = 6 AND ptm.KE = 1 AND ptm.STATUS <> 0
+        //     LEFT JOIN master.pegawai mpper ON ptm.MEDIS = mpper.ID
 
-            JOIN master.parameter_tindakan_lab ptl ON hlab.PARAMETER_TINDAKAN = ptl.ID
-            LEFT JOIN master.referensi sl ON ptl.SATUAN = sl.ID AND sl.JENIS = 35
+        //     JOIN master.parameter_tindakan_lab ptl ON hlab.PARAMETER_TINDAKAN = ptl.ID
+        //     LEFT JOIN master.referensi sl ON ptl.SATUAN = sl.ID AND sl.JENIS = 35
 
-            JOIN master.tindakan mt ON ptl.TINDAKAN = mt.ID
-            LEFT JOIN master.mapping_group_pemeriksaan mgp ON mt.ID = mgp.PEMERIKSAAN AND mgp.STATUS = 1
-            LEFT JOIN master.group_pemeriksaan kgl ON mgp.GROUP_PEMERIKSAAN_ID = kgl.ID AND kgl.JENIS = 8 AND kgl.STATUS = 1
-            LEFT JOIN master.group_pemeriksaan ggl ON ggl.KODE = LEFT(kgl.KODE, 2) AND ggl.JENIS = 8 AND ggl.STATUS = 1
+        //     JOIN master.tindakan mt ON ptl.TINDAKAN = mt.ID
+        //     LEFT JOIN master.mapping_group_pemeriksaan mgp ON mt.ID = mgp.PEMERIKSAAN AND mgp.STATUS = 1
+        //     LEFT JOIN master.group_pemeriksaan kgl ON mgp.GROUP_PEMERIKSAAN_ID = kgl.ID AND kgl.JENIS = 8 AND kgl.STATUS = 1
+        //     LEFT JOIN master.group_pemeriksaan ggl ON ggl.KODE = LEFT(kgl.KODE, 2) AND ggl.JENIS = 8 AND ggl.STATUS = 1
 
-            JOIN pendaftaran.kunjungan pk ON tm.KUNJUNGAN = pk.NOMOR
+        //     JOIN pendaftaran.kunjungan pk ON tm.KUNJUNGAN = pk.NOMOR
 
-            JOIN pendaftaran.pendaftaran pp ON pk.NOPEN = pp.NOMOR
+        //     JOIN pendaftaran.pendaftaran pp ON pk.NOPEN = pp.NOMOR
 
-            JOIN master.pasien p ON pp.NORM = p.NORM
-            LEFT JOIN master.referensi rjk ON p.JENIS_KELAMIN = rjk.ID AND rjk.JENIS = 2
-            LEFT JOIN layanan.order_lab ks ON pk.REF = ks.NOMOR
-            LEFT JOIN pendaftaran.kunjungan kj ON ks.KUNJUNGAN = kj.NOMOR
-            LEFT JOIN master.ruangan r ON kj.RUANGAN = r.ID AND r.JENIS = 5
-            LEFT JOIN master.dokter dokasal ON ks.DOKTER_ASAL = dokasal.ID
-            LEFT JOIN master.pegawai mpasal ON dokasal.NIP = mpasal.NIP
+        //     JOIN master.pasien p ON pp.NORM = p.NORM
+        //     LEFT JOIN master.referensi rjk ON p.JENIS_KELAMIN = rjk.ID AND rjk.JENIS = 2
+        //     LEFT JOIN layanan.order_lab ks ON pk.REF = ks.NOMOR
+        //     LEFT JOIN pendaftaran.kunjungan kj ON ks.KUNJUNGAN = kj.NOMOR
+        //     LEFT JOIN master.ruangan r ON kj.RUANGAN = r.ID AND r.JENIS = 5
+        //     LEFT JOIN master.dokter dokasal ON ks.DOKTER_ASAL = dokasal.ID
+        //     LEFT JOIN master.pegawai mpasal ON dokasal.NIP = mpasal.NIP
 
-            WHERE kj.NOMOR = ?
-            AND hlab.STATUS = 1 AND hlab.HASIL IS NOT NULL AND hlab.HASIL <> ''
+        //     WHERE kj.NOMOR = ?
+        //     AND hlab.STATUS = 1 AND hlab.HASIL IS NOT NULL AND hlab.HASIL <> ''
 
-            ORDER BY ggl.ID,
-            kgl.ID,
-            mt.ID,
-            ptl.INDEKS ", [$kunjungan]);
+        //     ORDER BY ggl.ID,
+        //     kgl.ID,
+        //     mt.ID,
+        //     ptl.INDEKS ", [$kunjungan]);
 
-            return $data;
+        //     return $data;
+        /*
+        |--------------------------------------------------------------------------
+        | AMBIL DAFTAR KUNJUNGAN PASIEN
+        |--------------------------------------------------------------------------
+        | Riwayat berdasarkan NORM dan tanggal pendaftaran yang sama
+        |--------------------------------------------------------------------------
+        */
+        $kunjunganList = DB::table('pendaftaran.pendaftaran as pp')
+            ->leftJoin('pendaftaran.kunjungan as pk', 'pk.NOPEN', '=', 'pp.NOMOR')
+            ->where('pp.STATUS', '!=', 0)
+            ->where('pk.STATUS', '!=', 0)
+            ->whereRaw(
+                '(pp.NORM, DATE(pp.TANGGAL)) = (
+                    SELECT
+                        pp1.NORM,
+                        DATE(pp1.TANGGAL)
+                    FROM pendaftaran.kunjungan as pk1
+                    LEFT JOIN pendaftaran.pendaftaran as pp1
+                        ON pp1.NOMOR = pk1.NOPEN
+                        AND pp1.STATUS != 0
+                    WHERE pk1.NOMOR = ?
+                )',
+                [$kunjungan]
+            )
+            ->pluck('pk.NOMOR');
+
+        /*
+        |--------------------------------------------------------------------------
+        | AMBIL RIWAYAT PEMERIKSAAN LABORATORIUM
+        |--------------------------------------------------------------------------
+        | Base query menggunakan layanan.tindakan_medis
+        | agar pemeriksaan tetap tampil walaupun belum ada hasil_lab
+        |--------------------------------------------------------------------------
+        */
+        $data = DB::table('layanan.tindakan_medis as tm')
+
+            /*
+            |--------------------------------------------------------------------------
+            | HASIL LAB
+            |--------------------------------------------------------------------------
+            | LEFT JOIN agar tindakan tanpa hasil_lab tetap muncul
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('layanan.hasil_lab as hlab', function ($join) {
+                $join->on('hlab.TINDAKAN_MEDIS', '=', 'tm.ID')
+                    ->where('hlab.STATUS', 1)
+                    ->whereNotNull('hlab.HASIL')
+                    ->where('hlab.HASIL', '<>', '');
+            })
+
+            /*
+            |--------------------------------------------------------------------------
+            | CATATAN HASIL LAB
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('layanan.catatan_hasil_lab as chl', 'tm.KUNJUNGAN', '=', 'chl.KUNJUNGAN')
+            ->leftJoin('master.dokter as dok', 'chl.DOKTER', '=', 'dok.ID')
+            ->leftJoin('master.pegawai as mp', 'dok.NIP', '=', 'mp.NIP')
+
+            /*
+            |--------------------------------------------------------------------------
+            | PETUGAS / ANALIS LABORATORIUM
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('layanan.petugas_tindakan_medis as ptm', function ($join) {
+                $join->on('ptm.TINDAKAN_MEDIS', '=', 'tm.ID')
+                    ->where('ptm.JENIS', 6)
+                    ->where('ptm.KE', 1)
+                    ->where('ptm.STATUS', '<>', 0);
+            })
+            ->leftJoin('master.pegawai as mpper', 'ptm.MEDIS', '=', 'mpper.ID')
+
+            /*
+            |--------------------------------------------------------------------------
+            | TINDAKAN LABORATORIUM
+            |--------------------------------------------------------------------------
+            | Join tindakan langsung dari tindakan_medis
+            | agar pemeriksaan tanpa parameter tetap muncul
+            |--------------------------------------------------------------------------
+            */
+            ->join('master.tindakan as mt', function ($join) {
+                $join->on('tm.TINDAKAN', '=', 'mt.ID')
+                    ->where('mt.STATUS', 1);
+            })
+
+            /*
+            |--------------------------------------------------------------------------
+            | PARAMETER TINDAKAN LAB
+            |--------------------------------------------------------------------------
+            | LEFT JOIN agar tindakan tanpa parameter tidak terbuang
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('master.parameter_tindakan_lab as ptl', function ($join) {
+                $join->on('hlab.PARAMETER_TINDAKAN', '=', 'ptl.ID')
+                    ->where('ptl.STATUS', 1)
+                    ->whereRaw("TRIM(ptl.PARAMETER) <> ''");
+            })
+
+            /*
+            |--------------------------------------------------------------------------
+            | SATUAN
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('master.referensi as sl', function ($join) {
+                $join->on('ptl.SATUAN', '=', 'sl.ID')
+                    ->where('sl.JENIS', 35);
+            })
+
+            /*
+            |--------------------------------------------------------------------------
+            | GROUP PEMERIKSAAN
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('master.mapping_group_pemeriksaan as mgp', function ($join) {
+                $join->on('mt.ID', '=', 'mgp.PEMERIKSAAN')
+                    ->where('mgp.STATUS', 1);
+            })
+            ->leftJoin('master.group_pemeriksaan as kgl', function ($join) {
+                $join->on('mgp.GROUP_PEMERIKSAAN_ID', '=', 'kgl.ID')
+                    ->where('kgl.JENIS', 8)
+                    ->where('kgl.STATUS', 1);
+            })
+            ->leftJoin('master.group_pemeriksaan as ggl', function ($join) {
+                $join->on(
+                    'ggl.KODE',
+                    '=',
+                    DB::raw('LEFT(kgl.KODE, 2)')
+                )
+                ->where('ggl.JENIS', 8)
+                ->where('ggl.STATUS', 1);
+            })
+
+            /*
+            |--------------------------------------------------------------------------
+            | KUNJUNGAN DAN PENDAFTARAN
+            |--------------------------------------------------------------------------
+            */
+            ->join('pendaftaran.kunjungan as pk', 'tm.KUNJUNGAN', '=', 'pk.NOMOR')
+            ->join('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
+            ->join('master.pasien as p', 'pp.NORM', '=', 'p.NORM')
+            ->leftJoin('master.referensi as rjk', function ($join) {
+                $join->on('p.JENIS_KELAMIN', '=', 'rjk.ID')
+                    ->where('rjk.JENIS', 2);
+            })
+
+            /*
+            |--------------------------------------------------------------------------
+            | ORDER LAB
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('layanan.order_lab as ks', 'pk.REF', '=', 'ks.NOMOR')
+            ->leftJoin('pendaftaran.kunjungan as kj', 'ks.KUNJUNGAN', '=', 'kj.NOMOR')
+
+            /*
+            |--------------------------------------------------------------------------
+            | RUANGAN ASAL
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('master.ruangan as r', function ($join) {
+                $join->on('kj.RUANGAN', '=', 'r.ID')
+                    ->where('r.JENIS', 5);
+            })
+
+            /*
+            |--------------------------------------------------------------------------
+            | DOKTER ASAL
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('master.dokter as dokasal', 'ks.DOKTER_ASAL', '=', 'dokasal.ID')
+            ->leftJoin('master.pegawai as mpasal', 'dokasal.NIP', '=', 'mpasal.NIP')
+
+            /*
+            |--------------------------------------------------------------------------
+            | SELECT DATA
+            |--------------------------------------------------------------------------
+            */
+            ->select([
+                DB::raw("LPAD(p.NORM, 8, '0') AS NORM"),
+                DB::raw("master.getNamaLengkap(p.NORM) AS NAMALENGKAP"),
+                DB::raw("
+                    CONCAT(
+                        rjk.DESKRIPSI,
+                        ' / ',
+                        DATE_FORMAT(p.TANGGAL_LAHIR, '%d-%m-%Y')
+                    ) AS JKTGLLAHIR
+                "),
+                DB::raw("master.getNamaLengkapPegawai(mp.NIP) AS DOKTER"),
+                'mp.NIP AS NIPDPJP',
+                DB::raw("master.getNamaLengkapPegawai(mpasal.NIP) AS DOKTERASAL"),
+                DB::raw("master.getNamaLengkapPegawai(mpper.NIP) AS ANALIS"),
+                'pk.NOPEN',
+                'pk.MASUK AS TGLREG',
+                'hlab.TANGGAL AS TANGGALHASIL',
+                'chl.CATATAN',
+                'r.DESKRIPSI AS UNITPENGANTAR',
+                'ks.ALASAN AS DIAGNOSA',
+                'tm.KUNJUNGAN',
+                'ggl.DESKRIPSI AS GROUPLAB',
+                'kgl.DESKRIPSI AS KLPLAB',
+                'mt.NAMA AS NAMATINDAKAN',
+
+                /*
+                |--------------------------------------------------------------------------
+                | PARAMETER
+                |--------------------------------------------------------------------------
+                | Jika parameter tidak ada, gunakan nama tindakan
+                |--------------------------------------------------------------------------
+                */
+                DB::raw("IFNULL(ptl.PARAMETER, mt.NAMA) AS PARAMETER"),
+
+                /*
+                |--------------------------------------------------------------------------
+                | NILAI RUJUKAN
+                |--------------------------------------------------------------------------
+                */
+                DB::raw("IFNULL(hlab.NILAI_NORMAL, ptl.NILAI_RUJUKAN) AS NILAI_RUJUKAN"),
+
+                /*
+                |--------------------------------------------------------------------------
+                | HASIL
+                |--------------------------------------------------------------------------
+                | Jika belum ada hasil, tampilkan Belum ada hasil
+                |--------------------------------------------------------------------------
+                */
+                'hlab.TINDAKAN_MEDIS as KODE_TINDAKAN_MEDIS',
+                DB::raw("
+                    IFNULL(
+                        NULLIF(hlab.HASIL, ''),
+                        ' '
+                    ) AS HASIL
+                "),
+
+                /*
+                |--------------------------------------------------------------------------
+                | SATUAN
+                |--------------------------------------------------------------------------
+                */
+                DB::raw("IFNULL(hlab.SATUAN, sl.DESKRIPSI) AS SATUAN"),
+
+                /*
+                |--------------------------------------------------------------------------
+                | KETERANGAN
+                |--------------------------------------------------------------------------
+                */
+                'hlab.KETERANGAN',
+            ])
+
+            /*
+            |--------------------------------------------------------------------------
+            | FILTER RIWAYAT KUNJUNGAN
+            |--------------------------------------------------------------------------
+            | Mengambil order laboratorium yang kunjungan asalnya
+            | termasuk dalam daftar kunjungan pasien yang sama
+            |--------------------------------------------------------------------------
+            */
+            ->whereIn('kj.NOMOR', $kunjunganList)
+
+            /*
+            |--------------------------------------------------------------------------
+            | PASTIKAN TINDAKAN TERKAIT ORDER LAB
+            |--------------------------------------------------------------------------
+            */
+            ->whereNotNull('ks.NOMOR')
+
+            /*
+            |--------------------------------------------------------------------------
+            | URUTAN DATA
+            |--------------------------------------------------------------------------
+            */
+            ->orderBy('ggl.ID')
+            ->orderBy('kgl.ID')
+            ->orderBy('mt.ID')
+            ->orderBy('ptl.INDEKS')
+            ->distinct()
+            ->get();
+
+        return $data;
     }
 
     private function getRiwayatRad($kunjungan)
     {
+        // $data = DB::table('layanan.hasil_rad as hrad')
+        //     ->leftJoin('master.dokter as dok', 'hrad.DOKTER', '=', 'dok.ID')
+        //     ->leftJoin('master.pegawai as mp', 'dok.NIP', '=', 'mp.NIP')
+        //     ->join('layanan.tindakan_medis as tm', 'hrad.TINDAKAN_MEDIS', '=', 'tm.ID')
+        //     ->leftJoin('master.tindakan as t', 'tm.TINDAKAN', '=', 't.ID')
+        //     ->leftJoin('pendaftaran.kunjungan as pku', 'pku.NOMOR', '=', 'tm.KUNJUNGAN')
+        //     ->leftJoin('layanan.order_rad as orad', function($join){
+        //         $join->on('orad.NOMOR', '=', 'pku.REF')
+        //             ->whereIn('orad.STATUS', [1,2]);
+        //     })
+        //     ->leftJoin('master.dokter as dokasal', 'orad.DOKTER_ASAL', '=', 'dokasal.ID')
+        //     ->leftJoin('layanan.petugas_tindakan_medis as ptm', function($join){
+        //         $join->on('ptm.TINDAKAN_MEDIS', '=', 'tm.ID')
+        //             ->where('ptm.JENIS', 3)
+        //             ->where('ptm.KE', 1)
+        //             ->where('ptm.STATUS', '!=', 0);
+        //     })
+        //     ->leftJoin('master.perawat as prad', 'ptm.MEDIS', '=', 'prad.ID')
+        //     ->join('pendaftaran.kunjungan as pk', 'tm.KUNJUNGAN', '=', 'pk.NOMOR')
+        //     ->leftJoin('layanan.order_rad as ks', 'pk.REF', '=', 'ks.NOMOR')
+        //     ->leftJoin('pendaftaran.kunjungan as kj', 'ks.KUNJUNGAN', '=', 'kj.NOMOR')
+        //     ->leftJoin('master.ruangan as r', function($join){
+        //         $join->on('kj.RUANGAN', '=', 'r.ID')
+        //             ->where('r.JENIS', 5);
+        //     })
+        //     ->join('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
+        //     ->join('master.pasien as p', 'pp.NORM', '=', 'p.NORM')
+        //     ->leftJoin('master.referensi as rjk', function($join){
+        //         $join->on('p.JENIS_KELAMIN', '=', 'rjk.ID')
+        //             ->where('rjk.JENIS', 2);
+        //     })
+        //     ->select([
+        //         DB::raw("DATE_FORMAT(SYSDATE(),'%d-%m-%Y %H:%i:%s') AS TGLSKRG"),
+        //         DB::raw("LPAD(p.NORM,8,'0') AS NORM"),
+        //         DB::raw("master.getNamaLengkap(p.NORM) AS NAMALENGKAP"),
+        //         DB::raw("CONCAT(rjk.DESKRIPSI,' / ',DATE_FORMAT(p.TANGGAL_LAHIR,'%d-%m-%Y')) AS JKTGLALHIR"),
+        //     'hrad.TANGGAL',
+        //         'hrad.KLINIS',
+        //         'hrad.KESAN',
+        //         'hrad.USUL',
+        //         'hrad.HASIL',
+        //         'hrad.BTK',
+        //     DB::raw("master.getNamaLengkapPegawai(mp.NIP) AS DOKTER"),
+        //         'mp.NIP AS NIPDOKTER',
+        //     'pk.NOPEN',
+        //         'pk.MASUK AS TGLREG',
+        //     't.NAMA AS NAMATINDAKAN',
+        //         'r.DESKRIPSI AS UNITPENGANTAR',
+        //         'orad.ALASAN AS DIAGNOSA',
+        //     'p.ALAMAT',
+        //     DB::raw("master.getNamaLengkapPegawai(dokasal.NIP) AS DOKTERASAL"),
+        //         DB::raw("master.getNamaLengkapPegawai(prad.NIP) AS RADIOGRAFER"),
+        //     ])
+
+        //     ->whereIn('tm.STATUS', [1,2])
+        //     ->where('hrad.STATUS', '!=', 0)
+        //     ->where('kj.NOMOR', $kunjungan)
+
+        //     ->orderBy('t.ID')
+        //     ->get();
+
+        // return $data;
+        /*
+        |--------------------------------------------------------------------------
+        | AMBIL DAFTAR KUNJUNGAN PASIEN
+        |--------------------------------------------------------------------------
+        | Riwayat berdasarkan NORM dan tanggal pendaftaran yang sama
+        |--------------------------------------------------------------------------
+        */
+        $kunjunganList = DB::table('pendaftaran.pendaftaran as pp')
+            ->leftJoin('pendaftaran.kunjungan as pk', 'pk.NOPEN', '=', 'pp.NOMOR')
+            ->where('pp.STATUS', '!=', 0)
+            ->where('pk.STATUS', '!=', 0)
+            ->whereRaw(
+                '(pp.NORM, DATE(pp.TANGGAL)) = (
+                    SELECT
+                        pp1.NORM,
+                        DATE(pp1.TANGGAL)
+                    FROM pendaftaran.kunjungan as pk1
+                    LEFT JOIN pendaftaran.pendaftaran as pp1
+                        ON pp1.NOMOR = pk1.NOPEN
+                        AND pp1.STATUS != 0
+                    WHERE pk1.NOMOR = ?
+                )',
+                [$kunjungan]
+            )
+            ->pluck('pk.NOMOR');
+
+        /*
+        |--------------------------------------------------------------------------
+        | AMBIL RIWAYAT PEMERIKSAAN RADIOLOGI
+        |--------------------------------------------------------------------------
+        | Mengambil hasil radiologi dari kunjungan asal order.
+        | Kunjungan asal order harus masuk ke dalam $kunjunganList.
+        |--------------------------------------------------------------------------
+        */
         $data = DB::table('layanan.hasil_rad as hrad')
+
+            /*
+            |--------------------------------------------------------------------------
+            | DOKTER RADIOLOGI
+            |--------------------------------------------------------------------------
+            */
             ->leftJoin('master.dokter as dok', 'hrad.DOKTER', '=', 'dok.ID')
             ->leftJoin('master.pegawai as mp', 'dok.NIP', '=', 'mp.NIP')
+
+            /*
+            |--------------------------------------------------------------------------
+            | TINDAKAN MEDIS
+            |--------------------------------------------------------------------------
+            */
             ->join('layanan.tindakan_medis as tm', 'hrad.TINDAKAN_MEDIS', '=', 'tm.ID')
             ->leftJoin('master.tindakan as t', 'tm.TINDAKAN', '=', 't.ID')
-            ->leftJoin('pendaftaran.kunjungan as pku', 'pku.NOMOR', '=', 'tm.KUNJUNGAN')
-            ->leftJoin('layanan.order_rad as orad', function($join){
-                $join->on('orad.NOMOR', '=', 'pku.REF')
-                    ->whereIn('orad.STATUS', [1,2]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | KUNJUNGAN PEMERIKSAAN
+            |--------------------------------------------------------------------------
+            */
+            ->join('pendaftaran.kunjungan as pk', 'tm.KUNJUNGAN', '=', 'pk.NOMOR')
+
+            /*
+            |--------------------------------------------------------------------------
+            | ORDER RADIOLOGI
+            |--------------------------------------------------------------------------
+            | pk.REF merupakan nomor order radiologi.
+            | Hanya mengambil order dengan status 1 atau 2.
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('layanan.order_rad as ks', function ($join) {
+                $join->on('pk.REF', '=', 'ks.NOMOR')
+                    ->whereIn('ks.STATUS', [1, 2]);
             })
-            ->leftJoin('master.dokter as dokasal', 'orad.DOKTER_ASAL', '=', 'dokasal.ID')
-            ->leftJoin('layanan.petugas_tindakan_medis as ptm', function($join){
+
+            /*
+            |--------------------------------------------------------------------------
+            | KUNJUNGAN ASAL ORDER
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('pendaftaran.kunjungan as kj', 'ks.KUNJUNGAN', '=', 'kj.NOMOR')
+
+            /*
+            |--------------------------------------------------------------------------
+            | RUANGAN ASAL
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('master.ruangan as r', function ($join) {
+                $join->on('kj.RUANGAN', '=', 'r.ID')
+                    ->where('r.JENIS', 5);
+            })
+
+            /*
+            |--------------------------------------------------------------------------
+            | DOKTER ASAL
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('master.dokter as dokasal', 'ks.DOKTER_ASAL', '=', 'dokasal.ID')
+            ->leftJoin('master.pegawai as mpasal', 'dokasal.NIP', '=', 'mpasal.NIP')
+
+            /*
+            |--------------------------------------------------------------------------
+            | PETUGAS / RADIOGRAFER
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('layanan.petugas_tindakan_medis as ptm', function ($join) {
                 $join->on('ptm.TINDAKAN_MEDIS', '=', 'tm.ID')
                     ->where('ptm.JENIS', 3)
                     ->where('ptm.KE', 1)
                     ->where('ptm.STATUS', '!=', 0);
             })
             ->leftJoin('master.perawat as prad', 'ptm.MEDIS', '=', 'prad.ID')
-            ->join('pendaftaran.kunjungan as pk', 'tm.KUNJUNGAN', '=', 'pk.NOMOR')
-            ->leftJoin('layanan.order_rad as ks', 'pk.REF', '=', 'ks.NOMOR')
-            ->leftJoin('pendaftaran.kunjungan as kj', 'ks.KUNJUNGAN', '=', 'kj.NOMOR')
-            ->leftJoin('master.ruangan as r', function($join){
-                $join->on('kj.RUANGAN', '=', 'r.ID')
-                    ->where('r.JENIS', 5);
-            })
+
+            /*
+            |--------------------------------------------------------------------------
+            | PENDAFTARAN DAN PASIEN
+            |--------------------------------------------------------------------------
+            */
             ->join('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
             ->join('master.pasien as p', 'pp.NORM', '=', 'p.NORM')
-            ->leftJoin('master.referensi as rjk', function($join){
+
+            /*
+            |--------------------------------------------------------------------------
+            | JENIS KELAMIN
+            |--------------------------------------------------------------------------
+            */
+            ->leftJoin('master.referensi as rjk', function ($join) {
                 $join->on('p.JENIS_KELAMIN', '=', 'rjk.ID')
                     ->where('rjk.JENIS', 2);
             })
+
+            /*
+            |--------------------------------------------------------------------------
+            | SELECT DATA
+            |--------------------------------------------------------------------------
+            */
             ->select([
-                DB::raw("DATE_FORMAT(SYSDATE(),'%d-%m-%Y %H:%i:%s') AS TGLSKRG"),
-                DB::raw("LPAD(p.NORM,8,'0') AS NORM"),
+                DB::raw("DATE_FORMAT(SYSDATE(), '%d-%m-%Y %H:%i:%s') AS TGLSKRG"),
+
+                DB::raw("LPAD(p.NORM, 8, '0') AS NORM"),
+
                 DB::raw("master.getNamaLengkap(p.NORM) AS NAMALENGKAP"),
-                DB::raw("CONCAT(rjk.DESKRIPSI,' / ',DATE_FORMAT(p.TANGGAL_LAHIR,'%d-%m-%Y')) AS JKTGLALHIR"),
-            'hrad.TANGGAL',
+
+                DB::raw("
+                    CONCAT(
+                        rjk.DESKRIPSI,
+                        ' / ',
+                        DATE_FORMAT(p.TANGGAL_LAHIR, '%d-%m-%Y')
+                    ) AS JKTGLALHIR
+                "),
+
+                'hrad.TANGGAL',
                 'hrad.KLINIS',
                 'hrad.KESAN',
                 'hrad.USUL',
                 'hrad.HASIL',
                 'hrad.BTK',
-            DB::raw("master.getNamaLengkapPegawai(mp.NIP) AS DOKTER"),
+
+                DB::raw("master.getNamaLengkapPegawai(mp.NIP) AS DOKTER"),
                 'mp.NIP AS NIPDOKTER',
-            'pk.NOPEN',
+
+                'pk.NOPEN',
                 'pk.MASUK AS TGLREG',
-            't.NAMA AS NAMATINDAKAN',
+
+                't.NAMA AS NAMATINDAKAN',
+
                 'r.DESKRIPSI AS UNITPENGANTAR',
-                'orad.ALASAN AS DIAGNOSA',
-            'p.ALAMAT',
-            DB::raw("master.getNamaLengkapPegawai(dokasal.NIP) AS DOKTERASAL"),
+
+                'ks.ALASAN AS DIAGNOSA',
+
+                'p.ALAMAT',
+
+                DB::raw("master.getNamaLengkapPegawai(mpasal.NIP) AS DOKTERASAL"),
+
                 DB::raw("master.getNamaLengkapPegawai(prad.NIP) AS RADIOGRAFER"),
             ])
 
-            ->whereIn('tm.STATUS', [1,2])
-            ->where('hrad.STATUS', '!=', 0)
-            ->where('kj.NOMOR', $kunjungan)
+            /*
+            |--------------------------------------------------------------------------
+            | FILTER STATUS TINDAKAN MEDIS
+            |--------------------------------------------------------------------------
+            */
+            ->whereIn('tm.STATUS', [1, 2])
 
+            /*
+            |--------------------------------------------------------------------------
+            | FILTER STATUS HASIL RADIOLOGI
+            |--------------------------------------------------------------------------
+            */
+            ->where('hrad.STATUS', '!=', 0)
+
+            /*
+            |--------------------------------------------------------------------------
+            | FILTER KUNJUNGAN ASAL ORDER
+            |--------------------------------------------------------------------------
+            | Mengambil order radiologi dari kunjungan sebelumnya yang
+            | termasuk dalam daftar kunjungan pasien pada tanggal yang sama.
+            |--------------------------------------------------------------------------
+            */
+            ->whereIn('kj.NOMOR', $kunjunganList)
+
+            /*
+            |--------------------------------------------------------------------------
+            | URUTAN DATA
+            |--------------------------------------------------------------------------
+            */
             ->orderBy('t.ID')
+            ->orderBy('hrad.TANGGAL')
+
+            /*
+            |--------------------------------------------------------------------------
+            | HINDARI DUPLIKASI DATA IDENTIK
+            |--------------------------------------------------------------------------
+            */
+            ->distinct()
+
             ->get();
 
         return $data;
