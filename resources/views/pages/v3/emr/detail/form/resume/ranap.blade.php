@@ -3,7 +3,9 @@
         <div class="card">
 
             {{-- HEADER --}}
-            <div class="card-header d-flex align-items-center justify-content-between">
+            <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+
+                {{-- HEADER KIRI --}}
                 <div class="d-flex align-items-center gap-3">
                     <div class="cppt-modal-icon bg-white bg-opacity-50 text-warning-emphasis">
                         <i class="ph-duotone ph-clipboard-text fs-5"></i>
@@ -15,8 +17,9 @@
                                 Formulir Resume Medis
                             </h5>
 
-                            <span class="badge rounded-pill bg-danger" id="badge_final_resume">
-                                Belum Final
+                            <span class="badge rounded-pill bg-dark-subtle text-body-secondary"
+                                id="badge_final_resume">
+                                <i class="ri-loader-line ri-spin"></i>
                             </span>
                         </div>
 
@@ -25,6 +28,24 @@
                         </small>
                     </div>
                 </div>
+
+                {{-- HEADER KANAN: INFO FINALISASI --}}
+                <div id="info_final_resume" class="d-none text-end">
+                    <div class="d-flex align-items-center justify-content-end gap-2">
+                        <i class="ri-shield-check-line text-success fs-5"></i>
+
+                        <div>
+                            <div class="fw-semibold text-success" id="info_final_oleh">
+                                -
+                            </div>
+
+                            <small class="text-body-secondary" id="info_final_tanggal">
+                                -
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             {{-- BODY --}}
@@ -521,6 +542,20 @@
 
     const $badge = $form.find('#badge_final_resume');
 
+    // TAB RESUME RANAP
+    const $tabResume = $('#tab-resume-ranap');
+    const $tabBadge = $tabResume.find('#badge_tab_final_resume');
+
+    const $infoFinal = $form.find('#info_final_resume');
+    const $infoFinalOleh = $form.find('#info_final_oleh');
+    const $infoFinalTanggal = $form.find('#info_final_tanggal');
+
+    // INFORMASI FINALISASI
+    let finalMeta = {
+        oleh_nama: '',
+        tgl_difinal: ''
+    };
+
     // const $btnSimpan = $form.find('#btn_simpan_resume');
     const $btnFinal = $form.find('#btn_final_resume');
     const $btnBatalFinal = $form.find('#btn_batal_final_resume');
@@ -550,6 +585,105 @@
 
     let saveTimer = null;
 
+    // ==========================================================
+    // INFORMASI FINALISASI
+    // ==========================================================
+    function setFinalMeta(response = {}) {
+
+        finalMeta = {
+            oleh_nama: response.oleh_nama ?? '',
+            tgl_difinal: response.tgl_difinal_text ?? response.tgl_difinal ?? ''
+        };
+
+        console.log('Final Meta:', finalMeta);
+    }
+
+    // ==========================================================
+    // UPDATE BADGE TAB RESUME
+    // ==========================================================
+    function updateTabFinalStatus() {
+
+        if (!$tabResume.length) {
+            return;
+        }
+
+        if (isLoading) {
+
+            $tabBadge
+                .removeClass('bg-success bg-danger bg-warning text-dark')
+                .addClass('bg-dark-subtle text-body-secondary')
+                .html('<i class="ri-loader-line ri-spin"></i>');
+
+            $tabResume.attr('title', 'Memuat status Resume Medis...');
+
+            return;
+        }
+
+        if (isFinal) {
+
+            $tabBadge
+                .removeClass('bg-danger bg-warning text-dark bg-dark-subtle text-body-secondary')
+                .addClass('bg-success')
+                .text('Sudah Final');
+
+            const detail = [];
+
+            if (finalMeta.oleh_nama) {
+                detail.push(`Difinalkan oleh ${finalMeta.oleh_nama}`);
+            }
+
+            if (finalMeta.tgl_difinal) {
+                detail.push(finalMeta.tgl_difinal);
+            }
+
+            const informasi = detail.join(' · ');
+
+            $tabResume.attr(
+                'title',
+                informasi || 'Resume Medis sudah difinalisasi'
+            );
+
+        } else {
+
+            $tabBadge
+                .removeClass('bg-success bg-warning text-dark bg-dark-subtle text-body-secondary')
+                .addClass('bg-danger')
+                .text('Belum Final');
+
+            $tabResume.attr(
+                'title',
+                'Resume Medis belum difinalisasi'
+            );
+        }
+    }
+
+    function updateInfoFinalResume() {
+
+        if (isLoading) {
+            $infoFinal.addClass('d-none');
+            return;
+        }
+
+        if (isFinal) {
+
+            $infoFinalOleh.text(
+                finalMeta.oleh_nama || 'Petugas tidak diketahui'
+            );
+
+            $infoFinalTanggal.text(
+                finalMeta.tgl_difinal || '-'
+            );
+
+            $infoFinal.removeClass('d-none');
+
+        } else {
+
+            $infoFinal.addClass('d-none');
+
+            $infoFinalOleh.text('');
+            $infoFinalTanggal.text('');
+        }
+    }
 
     // ==========================================================
     // NOTIFICATION
@@ -597,11 +731,9 @@
         return window.confirm(text);
     }
 
-
     // ==========================================================
     // STATUS FORM
     // ==========================================================
-
     function updateFormStatus() {
 
         $fieldset.prop(
@@ -609,39 +741,45 @@
             isLoading || isSaving || isFinal
         );
 
-        if (isFinal) {
+        // BADGE STATUS FINALISASI
+        if (isLoading) {
 
             $badge
-                .removeClass('bg-danger bg-warning text-dark')
+                .removeClass('bg-success bg-danger bg-warning text-dark')
+                .addClass('bg-dark-subtle text-body-secondary')
+                .html('<i class="ri-loader-line ri-spin"></i>');
+
+        } else if (isFinal) {
+
+            $badge
+                .removeClass('bg-danger bg-warning text-dark bg-dark-subtle text-body-secondary')
                 .addClass('bg-success')
                 .text('Sudah Final');
 
-            // $btnSimpan.addClass('d-none');
             $btnFinal.addClass('d-none');
-
             $btnBatalFinal.removeClass('d-none');
 
         } else {
 
             $badge
-                .removeClass('bg-success bg-warning text-dark')
+                .removeClass('bg-success bg-warning text-dark bg-dark-subtle text-body-secondary')
                 .addClass('bg-danger')
                 .text('Belum Final');
 
-            // $btnSimpan.removeClass('d-none');
             $btnFinal.removeClass('d-none');
-
             $btnBatalFinal.addClass('d-none');
         }
 
+        // UPDATE BADGE PADA TAB UTAMA
+        updateTabFinalStatus();
+        updateInfoFinalResume();
+
         const busy = isLoading || isSaving;
 
-        // $btnSimpan.prop('disabled', busy);
         $btnFinal.prop('disabled', busy);
         $btnBatalFinal.prop('disabled', busy);
         $btnPrint.prop('disabled', busy);
     }
-
 
     // ==========================================================
     // GET FORM DATA
@@ -874,6 +1012,9 @@
 
             isFinal = Number(data.status_final || 0) === 1;
 
+            // Ambil informasi siapa dan kapan finalisasi
+            setFinalMeta(response);
+
             updateFormStatus();
 
         } catch (xhr) {
@@ -935,6 +1076,8 @@
             });
 
             isFinal = Number(response.data?.status_final || 0) === 1;
+
+            setFinalMeta(response.data || {});
 
             if (finalisasi) {
 
@@ -1037,6 +1180,11 @@
             });
 
             isFinal = false;
+
+            finalMeta = {
+                oleh_nama: '',
+                tgl_difinal: ''
+            };
 
             updateFormStatus();
 

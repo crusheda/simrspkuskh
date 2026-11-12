@@ -11903,19 +11903,16 @@ class AddOnPengkajianController extends Controller
             // ==========================================================
             // SIMPAN TANDA VITAL
             // ==========================================================
-
             DB::table(
                 'medicalrecord.tanda_vital'
             )->updateOrInsert(
-
                 [
-                    'KUNJUNGAN' =>
-                        $request->NOKUNJ,
+                    'KUNJUNGAN' => $request->NOKUNJ,
                 ],
-
                 $tandaVital
-
             );
+            // LOG SEMENTARA
+            DB::table('medicalrecord.log_tanda_vital')->insert($tandaVital);
 
             // ==========================================================
             // KHUSUS PERAWAT
@@ -11977,6 +11974,17 @@ class AddOnPengkajianController extends Controller
                             JSON_UNESCAPED_UNICODE
                         ),
                     ]);
+                    // LOG SEMENTARA TRIAGE
+                    DB::table('medicalrecord.log_triage')->insert([
+                        'KUNJUNGAN' => $request->NOKUNJ,
+                        'TANDA_VITAL' => json_encode(
+                            $tandaVitalLama,
+                            JSON_UNESCAPED_UNICODE
+                        ),
+                        'OLEH' => auth()->id(),
+                        'STATUS' => 2,
+                        'TANGGAL' => now(),
+                    ]);
 
                 } else {
 
@@ -11992,6 +12000,17 @@ class AddOnPengkajianController extends Controller
                             'STATUS' => 2,
                             'TANGGAL' => now(),
                         ]);
+                    // LOG SEMENTARA TRIAGE
+                    DB::table('medicalrecord.log_triage')->insert([
+                        'KUNJUNGAN' => $request->NOKUNJ,
+                        'TANDA_VITAL' => json_encode(
+                            $triageTandaVital,
+                            JSON_UNESCAPED_UNICODE
+                        ),
+                        'OLEH' => auth()->id(),
+                        'STATUS' => 2,
+                        'TANGGAL' => now(),
+                    ]);
                 }
             }
 

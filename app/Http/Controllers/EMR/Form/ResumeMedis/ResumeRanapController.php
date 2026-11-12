@@ -72,6 +72,643 @@ class ResumeRanapController extends Controller
      * GET:
      * /api/v2/emr/resume/ranap/{kunjungan}
      */
+    // public function getData($kunjungan)
+    // {
+    //     try {
+
+    //         // 1. Ambil data pendaftaran dari kunjungan utama (Rawat Inap)
+    //         $kunjunganUtama = DB::table('pendaftaran.kunjungan as pk')
+    //             ->join('pendaftaran.pendaftaran as pp', 'pp.NOMOR', '=', 'pk.NOPEN')
+    //             ->join('master.dokter as dr', function($join){
+    //                 $join->on('dr.ID', '=', 'pk.DPJP')
+    //                     ->where('dr.STATUS', 1);
+    //             })
+    //             ->where('pk.NOMOR', $kunjungan)
+    //             ->where('pk.STATUS', '!=', 0)
+    //             ->where('pp.STATUS', '!=', 0)
+    //             ->select(
+    //                 'pk.NOMOR as KUNJUNGAN',
+    //                 'pk.NOPEN',
+    //                 'pp.NORM',
+    //                 'pp.TANGGAL as TANGGAL_PENDAFTARAN',
+    //                 'dr.NIP as NIP_DOKTER'
+    //             )
+    //             ->first();
+
+    //         // 2. Cari kunjungan Poli / Rawat Darurat H-1 sampai tanggal Rawat Inap
+    //         $kunjunganPoli = null;
+
+    //         if ($kunjunganUtama) {
+
+    //             $tanggalUtama = Carbon::parse($kunjunganUtama->TANGGAL_PENDAFTARAN);
+
+    //             $tanggalAwal = $tanggalUtama->copy()->subDay();
+
+    //             $kunjunganPoli = DB::table('pendaftaran.kunjungan as pk')
+    //                 ->join('pendaftaran.pendaftaran as pp', 'pp.NOMOR', '=', 'pk.NOPEN')
+    //                 ->join('master.ruangan as ru', 'ru.ID', '=', 'pk.RUANGAN')
+    //                 ->select('pk.*')
+    //                 ->where('pp.NORM', $kunjunganUtama->NORM)
+    //                 ->where('pp.STATUS', '!=', 0)
+    //                 ->where('pk.STATUS', '!=', 0)
+    //                 ->whereIn('ru.JENIS_KUNJUNGAN', [1, 2])
+    //                 ->whereBetween('pp.TANGGAL', [
+    //                     $tanggalAwal->format('Y-m-d H:i:s'),
+    //                     $tanggalUtama->format('Y-m-d H:i:s'),
+    //                 ])
+    //                 ->orderBy('pp.TANGGAL', 'DESC')
+    //                 ->orderBy('pk.NOMOR', 'DESC')
+    //                 // ->value('pk.NOMOR');
+    //                 ->first();
+    //         }
+
+    //         /*
+    //          * Pengambilan Data Kebutuhan Resume Medis
+    //          */
+    //         // $old = (object) [];
+    //         $old = collect();
+
+    //         // INDIKASI
+    //         $perencanaan_ri = DB::table('medicalrecord.perencanaan_rawat_inap')
+    //                     ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+    //                     ->where('STATUS', 1)
+    //                     ->orderByDesc('ID')
+    //                     ->first();
+
+    //         // RPS
+    //         $anamnesis = DB::table('medicalrecord.anamnesis')
+    //             ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+    //             ->where('PENDAFTARAN', $kunjunganPoli->NOPEN)
+    //             ->where('STATUS', 1)
+    //             ->orderByDesc('ID')
+    //             ->first();
+
+    //         // RPD
+    //         $rpp = DB::table('medicalrecord.rpp')
+    //             ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+    //             ->where('STATUS', 1)
+    //             ->orderByDesc('ID')
+    //             ->first();
+
+    //         // RIWAYAT PENGGUNAAN OBAT
+    //         $rpm = DB::table('medicalrecord.riwayat_pemberian_obat as rpo')
+    //             ->leftJoin('master.frekuensi_aturan_resep as far', function($join){
+    //                 $join->on('rpo.FREKUENSI', '=', 'far.ID')
+    //                     ->where('far.STATUS',1);
+    //             })
+    //             ->leftJoin('master.referensi as ref_rute', function($join){
+    //                 $join->on('rpo.RUTE', '=', 'ref_rute.ID')
+    //                     ->where('ref_rute.JENIS',217)
+    //                     ->where('ref_rute.STATUS',1);
+    //             })
+    //             ->select('rpo.*', 'far.FREKUENSI as FREKUENSI_NAMA', 'far.KETERANGAN as FREKUENSI_KETERANGAN', 'ref_rute.DESKRIPSI as RUTE_NAMA')
+    //             ->where('rpo.KUNJUNGAN', $kunjunganPoli->NOMOR)
+    //             ->where('rpo.STATUS', 1)
+    //             ->get();
+
+    //         $riwayatPenggunaanObatText = $rpm->isNotEmpty()
+    //                                     ? $rpm->sortBy('ID')
+    //                                         ->pluck('OBAT')
+    //                                         ->implode(', ')
+    //                                     : '';
+
+    //         // RIWAYAT ALERGI
+    //         $ra = DB::table('medicalrecord.riwayat_alergi as ra')
+    //             ->leftJoin('master.referensi as ref', function($join){
+    //                 $join->on('ra.JENIS', '=', 'ref.ID')
+    //                     ->where('ref.JENIS',180)
+    //                     ->where('ref.STATUS',1);
+    //             })
+    //             ->join('pendaftaran.kunjungan as pk', 'ra.KUNJUNGAN', '=', 'pk.NOMOR')
+    //             ->join('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
+    //             ->leftJoin('master.ruangan as ru', 'ru.ID', '=', 'pk.RUANGAN')
+    //             ->leftJoin('aplikasi.pengguna as pe', 'pe.ID', '=', 'ra.OLEH')
+    //             ->select('ra.*', 'ref.DESKRIPSI as JENIS_ALERGI', 'ru.DESKRIPSI as NAMA_RUANGAN', DB::raw('master.getNamaLengkapPegawai(pe.NIP) as NAMA_USER'))
+    //             ->where('pp.NORM', $kunjunganUtama->NORM)
+    //             ->where('ra.STATUS', 1)
+    //             ->get();
+
+    //         $riwayatAlergiText = $ra->isNotEmpty()
+    //                             ? $ra->sortBy('JENIS')
+    //                                 ->map(function ($item) {
+    //                                     return "{$item->JENIS_ALERGI}: {$item->DESKRIPSI}";
+    //                                 })
+    //                                 ->implode("\n")
+    //                             : '';
+
+    //         // TANDA VITAL
+    //         $tandaVital = DB::table('medicalrecord.tanda_vital as ttv')
+    //             ->leftJoin('master.referensi as refKesadaran', function ($join) {
+    //                 $join->on('ttv.TINGKAT_KESADARAN', '=', 'refKesadaran.SCORING')
+    //                     ->where('refKesadaran.JENIS', 179)
+    //                     ->where('refKesadaran.STATUS', 1);
+    //             })
+    //             ->select(
+    //                 'ttv.*',
+    //                 'refKesadaran.DESKRIPSI as DESKRIPSI_TINGKAT_KESADARAN'
+    //             )
+    //             ->where('ttv.KUNJUNGAN', $kunjunganPoli->NOMOR)
+    //             ->where('ttv.STATUS', 1)
+    //             ->orderByDesc('ttv.ID')
+    //             ->first();
+
+    //         // PEMERIKSAAN FISIK
+    //         $pemeriksaanFisik = DB::table('medicalrecord.pemeriksaan_fisik')
+    //             ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+    //             ->where('PENDAFTARAN', $kunjunganPoli->NOPEN)
+    //             ->where('STATUS', 1)
+    //             ->orderByDesc('ID')
+    //             ->first();
+
+    //         // FORMAT TANDA VITAL
+    //         $ttvText = '';
+
+    //         if ($tandaVital) {
+    //             $ttv = $tandaVital;
+
+    //             $frekuensiNadiCB = match ((int) $ttv->FREKUENSI_NADI_CB) {
+    //                 1 => 'Reguler',
+    //                 2 => 'Ireguler',
+    //                 default => '',
+    //             };
+
+    //             $frekuensiNafasCB = match ((int) $ttv->FREKUENSI_NAFAS_CB) {
+    //                 1 => 'Simetris',
+    //                 2 => 'Asimetris',
+    //                 default => '',
+    //             };
+
+    //             $jalanNafas = match ((int) $ttv->JALAN_NAFAS) {
+    //                 1 => 'Paten',
+    //                 2 => 'Obstruksi Parsial',
+    //                 3 => 'Obstruksi Total',
+    //                 default => '',
+    //             };
+
+    //             $alatBantuNafas = match ((int) $ttv->ALAT_BANTU_NAFAS) {
+    //                 0 => 'Tidak',
+    //                 1 => 'Ya',
+    //                 default => '',
+    //             };
+
+    //             $kulit = match ((int) $ttv->KULIT) {
+    //                 1 => 'Normal',
+    //                 2 => 'Jaundice',
+    //                 3 => 'Akral Dingin',
+    //                 4 => 'Sianotik',
+    //                 5 => 'Berkeringat',
+    //                 default => '',
+    //             };
+
+    //             $pupil = match ((int) $ttv->PUPIL) {
+    //                 1 => 'Isokor',
+    //                 2 => 'Anisokor',
+    //                 default => '',
+    //             };
+
+    //             $gcs = $ttv->GCS !== null
+    //                 ? rtrim(rtrim(number_format((float) $ttv->GCS, 2, '.', ''), '0'), '.')
+    //                 : '';
+
+    //             $eye = $ttv->EYE ?? '';
+    //             $motorik = $ttv->MOTORIK ?? '';
+    //             $verbal = $ttv->VERBAL ?? '';
+
+    //             $gcsDetail = "E/{$eye} M/{$motorik} V/{$verbal}";
+
+    //             $tekananDarah = ($ttv->SISTOLIK !== null && $ttv->DISTOLIK !== null)
+    //                 ? number_format($ttv->SISTOLIK, 0) . '/' . number_format($ttv->DISTOLIK, 0) . ' mmHg'
+    //                 : '';
+
+    //             $suhu = $ttv->SUHU !== null
+    //                 ? "{$ttv->SUHU} °C"
+    //                 : '';
+
+    //             $frekuensiNadi = $ttv->FREKUENSI_NADI !== null
+    //                 ? number_format($ttv->FREKUENSI_NADI) ." x/menit"
+    //                 : '';
+
+    //             if ($frekuensiNadiCB !== '') {
+    //                 $frekuensiNadi .= " ({$frekuensiNadiCB})";
+    //             }
+
+    //             $frekuensiNafas = $ttv->FREKUENSI_NAFAS !== null
+    //                 ? number_format($ttv->FREKUENSI_NAFAS)." x/menit"
+    //                 : '';
+
+    //             if ($frekuensiNafasCB !== '') {
+    //                 $frekuensiNafas .= " ({$frekuensiNafasCB})";
+    //             }
+
+    //             $diameterPupil = ($ttv->DIAMETER_PUPIL_UP !== null && $ttv->DIAMETER_PUPIL_DOWN !== null)
+    //                 ? "{$ttv->DIAMETER_PUPIL_UP}mm/{$ttv->DIAMETER_PUPIL_DOWN}mm"
+    //                 : '';
+
+    //             $rc = ($ttv->RC_UP !== null && $ttv->RC_DOWN !== null)
+    //                 ? "{$ttv->RC_UP}/{$ttv->RC_DOWN}"
+    //                 : '';
+
+    //             $pupilDetail = trim(
+    //                 "{$pupil}, {$diameterPupil}, RC : {$rc}",
+    //                 ', '
+    //             );
+
+    //             $ttvLines = [
+    //                 "Keadaan Umum : {$ttv->KEADAAN_UMUM}",
+    //                 "Tingkat Kesadaran : {$ttv->DESKRIPSI_TINGKAT_KESADARAN}",
+    //                 "GCS : {$gcs} ({$gcsDetail}), VAS : {$ttv->VAS}",
+    //                 "Tekanan Darah : {$tekananDarah}",
+    //                 "Suhu : {$suhu}",
+    //                 "Frekuensi Nadi : {$frekuensiNadi}",
+    //                 "Frekuensi Nafas : {$frekuensiNafas}",
+    //                 "Jalan Nafas : {$jalanNafas}",
+    //                 "Pupil : {$pupilDetail}",
+    //                 "Kulit : {$kulit}",
+    //                 "Alat Bantu Nafas : {$alatBantuNafas}",
+    //             ];
+
+    //             $ttvText = implode("\n", $ttvLines);
+    //         }
+
+    //         // FORMAT PEMERIKSAAN FISIK
+    //         $pemeriksaanFisikText = $ttvText;
+
+    //         if ($pemeriksaanFisik) {
+    //             $fisikText = collect((array) $pemeriksaanFisik)
+    //                 ->except([
+    //                     'ID',
+    //                     'KUNJUNGAN',
+    //                     'PENDAFTARAN',
+    //                     'TANGGAL',
+    //                     'STATUS',
+    //                 ])
+    //                 ->filter(function ($value) {
+    //                     return $value !== null && $value !== '';
+    //                 })
+    //                 ->map(function ($value, $key) {
+    //                     return "{$value}";
+    //                 })
+    //                 ->implode("\n");
+
+    //             if ($fisikText !== '') {
+    //                 $pemeriksaanFisikText .= ($pemeriksaanFisikText !== '' ? "\n\n" : '')
+    //                     . "PEMERIKSAAN FISIK\n"
+    //                     . $fisikText;
+    //             }
+    //         }
+
+    //         // GET DIAGNOSA DOKTER
+    //         $getDiagnosa = DB::table('medicalrecord.diagnosa as diag')
+    //                 ->select(
+    //                     'diag.ID',
+    //                     'diag.DIAGNOSA',
+    //                     DB::raw("CASE WHEN diag.UTAMA = 1 THEN 'UTAMA' ELSE 'SEKUNDER' END AS UTAMA"),
+    //                     'diag.KODE as KODE_DIAGNOSA',
+    //                     'mrc.STR as NAMA_DIAGNOSA'
+    //                 )
+    //                 ->leftJoin('master.mrconso as mrc', function ($join) {
+    //                     $join->on('diag.KODE', '=', 'mrc.CODE')
+    //                         ->whereNotIn('mrc.TTY', ['HT', 'PS'])
+    //                         ->where(function ($q) {
+
+    //                             // ==========================================
+    //                             // PRIORITAS ICD10_2020
+    //                             // ==========================================
+    //                             $q->where('mrc.SAB', 'ICD10_2020')
+
+    //                                 // ==========================================
+    //                                 // FALLBACK ICD10_1998
+    //                                 // hanya jika ICD10_2020 tidak ada
+    //                                 // ==========================================
+    //                                 ->orWhere(function ($q) {
+    //                                     $q->where('mrc.SAB', 'ICD10_1998')
+    //                                         ->whereNotExists(function ($sub) {
+    //                                             $sub->select(DB::raw(1))
+    //                                                 ->from('master.mrconso as mrc2020')
+    //                                                 ->whereColumn('mrc2020.CODE', 'diag.KODE')
+    //                                                 ->where('mrc2020.SAB', 'ICD10_2020')
+    //                                                 ->whereNotIn('mrc2020.TTY', ['HT', 'PS']);
+    //                                         });
+    //                                 });
+    //                         });
+    //                 })
+    //                 ->where('diag.NOPEN', $kunjunganUtama->NOPEN)
+    //                 ->where('diag.STATUS', 1)
+    //                 ->get();
+
+    //         // DIAGNOSA UTAMA
+    //         $diagUtamaText = $getDiagnosa
+    //             ->where('UTAMA', 'UTAMA')
+    //             ->sortBy('ID')
+    //             ->map(function ($item) {
+    //                 $kode = trim($item->KODE_DIAGNOSA ?? '');
+    //                 $nama = trim($item->NAMA_DIAGNOSA ?? '');
+
+    //                 if ($kode === '' && $nama === '') {
+    //                     return null;
+    //                 }
+
+    //                 return "{$nama} ({$kode})";
+    //             })
+    //             ->filter()
+    //             ->implode("\n");
+
+    //         // DIAGNOSA SEKUNDER
+    //         $diagSekunderText = $getDiagnosa
+    //             ->where('UTAMA', 'SEKUNDER')
+    //             ->sortBy('ID')
+    //             ->map(function ($item) {
+    //                 $kode = trim($item->KODE_DIAGNOSA ?? '');
+    //                 $nama = trim($item->NAMA_DIAGNOSA ?? '');
+
+    //                 if ($kode === '' && $nama === '') {
+    //                     return null;
+    //                 }
+
+    //                 return "{$nama} ({$kode})";
+    //             })
+    //             ->filter()
+    //             ->implode("\n");
+
+    //         // KETERANGAN ICD-10
+    //         $ketICD10Text = $getDiagnosa
+    //             ->sortBy('ID')
+    //             ->map(function ($item) {
+    //                 $diagnosa = trim($item->DIAGNOSA ?? '');
+
+    //                 return $diagnosa !== ''
+    //                     ? "{$diagnosa}"
+    //                     : null;
+    //             })
+    //             ->filter()
+    //             ->implode(", ");
+
+    //         // DIAGNOSA PERAWAT
+    //         $getDiagPerawat = DB::table('medicalrecord.prosedur as prs')
+    //                 ->select(
+    //                     'prs.ID',
+    //                     'prs.TINDAKAN',
+    //                     'prs.KODE as KODE_DIAGNOSA',
+    //                     'mrc.STR as NAMA_DIAGNOSA'
+    //                 )
+    //                 ->leftJoin('master.mrconso as mrc', function ($join) {
+    //                     $join->on('prs.KODE', '=', 'mrc.CODE')
+    //                         ->whereNotIn('mrc.TTY', ['HT', 'PS'])
+    //                         ->where(function ($q) {
+
+    //                             // ==========================================
+    //                             // PRIORITAS ICD10_2020
+    //                             // ==========================================
+    //                             $q->where('mrc.SAB', 'ICD9CM_2020')
+
+    //                                 // ==========================================
+    //                                 // FALLBACK ICD10_1998
+    //                                 // hanya jika ICD10_2020 tidak ada
+    //                                 // ==========================================
+    //                                 ->orWhere(function ($q) {
+    //                                     $q->where('mrc.SAB', 'ICD_9CM_2010')
+    //                                         ->whereNotExists(function ($sub) {
+    //                                             $sub->select(DB::raw(1))
+    //                                                 ->from('master.mrconso as mrc2020')
+    //                                                 ->whereColumn('mrc2020.CODE', 'prs.KODE')
+    //                                                 ->where('mrc2020.SAB', 'ICD9CM_2020')
+    //                                                 ->whereNotIn('mrc2020.TTY', ['HT', 'PS']);
+    //                                         });
+    //                                 });
+    //                         });
+    //                 })
+    //                 ->where('prs.NOPEN', $kunjunganUtama->NOPEN)
+    //                 ->where('prs.STATUS', 1)
+    //                 ->get();
+
+    //         // DIAGNOSA / TINDAKAN PERAWAT
+    //         $diagnosaPerawatText = $getDiagPerawat
+    //             ->map(function ($item) {
+    //                 $kode = trim($item->KODE_DIAGNOSA ?? '');
+    //                 $nama = trim($item->NAMA_DIAGNOSA ?? '');
+
+    //                 if ($kode === '' && $nama === '') {
+    //                     return null;
+    //                 }
+
+    //                 return "{$nama} ({$kode})";
+    //             })
+    //             ->filter()
+    //             ->implode("\n");
+
+    //         // DIAGNOSA DOKTER ICD-9
+    //         $diagnosaDokterICD9Text = $getDiagPerawat
+    //             ->pluck('TINDAKAN')
+    //             ->filter(fn($item) => !empty(trim($item ?? '')))
+    //             ->map(fn($item) => "{$item}")
+    //             ->implode(", ");
+
+    //         // TERAPI DAN TINDAKAN
+    //             // TATALAKSANA AWAL
+    //                 // PERENCANAAN TERAPI
+    //                 $pt = DB::table('medicalrecord.rencana_terapi')
+    //                     ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+    //                     ->where('STATUS', 1)
+    //                     ->orderByDesc('ID')
+    //                     ->first();
+    //                 // HASIL LAPOR DPJP
+    //                 $hld = DB::table('medicalrecord.hasil_lapor_dpjp')
+    //                     ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+    //                     ->where('STATUS', 1)
+    //                     ->orderByDesc('ID')
+    //                     ->first();
+
+    //                 // Ambil isi field (sesuaikan nama kolom dengan tabel)
+    //                 $perencanaanTerapi = trim($pt->DESKRIPSI ?? '');
+    //                 $hasilLaporDPJP = trim($hld->DESKRIPSI ?? '');
+
+    //                 // ==========================================
+    //                 // SUSUN TEXT TERAPI
+    //                 // ==========================================
+    //                 $terapiText = implode("\n", [
+    //                     "• TATALAKSANA AWAL",
+    //                     $perencanaanTerapi,
+    //                     $hasilLaporDPJP,
+    //                     "",
+    //                     "• TATALAKSANA TAMBAHAN",
+    //                     "-"
+    //                 ]);
+
+    //         // KONDISI SAAT KELUAR RS & CARA KELUAR / PASIEN PULANG
+    //         $kondisi_cara_keluar = DB::table('layanan.pasien_pulang')
+    //             ->where('KUNJUNGAN', $kunjunganUtama->KUNJUNGAN)
+    //             ->where('STATUS', 1)
+    //             ->orderByDesc('ID')
+    //             ->first();
+
+    //         // KONDISI UMUM (TTV RANAP TERAKHIR SEBELUM PASIEN PULANG)
+    //         $kondisi_umum = DB::table('medicalrecord.tanda_vital')
+    //             ->where('KUNJUNGAN', $kunjunganUtama->KUNJUNGAN)
+    //             ->where('STATUS', 1)
+    //             ->orderByDesc('ID')
+    //             ->first();
+
+    //         // SKALA NYERI
+    //         $nyeri = DB::table('medicalrecord.penilaian_nyeri AS pn')
+    //             // ->join('pendaftaran.kunjungan AS pkrp', 'pkrp.NOMOR', '=', 'pn.KUNJUNGAN')
+    //             ->leftJoin('master.referensi AS mny', function ($join) {
+    //                 $join->on('pn.METODE', '=', 'mny.ID')->where('mny.JENIS', 71);
+    //             })
+    //             ->select('pn.NYERI', 'mny.DESKRIPSI AS METODE')
+    //             ->where('pn.KUNJUNGAN', $kunjunganUtama->KUNJUNGAN)
+    //             ->where('pn.STATUS', 1)
+    //             // ->where('pkrp.NOPEN', $kunjunganUtama)
+    //             ->orderByDesc('pn.ID')
+    //             ->first();
+
+    //         $nyeriText = '';
+    //         if ($nyeri) {
+    //             if ($nyeri->NYERI == 0) {
+    //                 $nyeriText = 'Tidak Ada';
+    //             } elseif ($nyeri->NYERI == 1) {
+    //                 $nyeriText = 'Ada, ' . ($nyeri->METODE ?? '');
+    //             }
+    //         } else {
+    //             $nyeriText = 'Tidak Ada';
+    //         }
+
+    //         // EDUKASI
+    //         $edukasiText = DB::table('medicalrecord.edukasi_emergency')
+    //             ->where('KUNJUNGAN', $kunjunganUtama->KUNJUNGAN)
+    //             ->where('STATUS', 1)
+    //             ->orderByDesc('ID')
+    //             ->value('EDUKASI');
+
+    //         /*
+    //          * PUSH VALUE INTO $OLD
+    //          */
+    //         $old->put('indikasi', $perencanaan_ri->INDIKASI ?? '');
+    //         $old->put('rps', $anamnesis->DESKRIPSI ?? '');
+    //         $old->put('rpd', $rpp->DESKRIPSI ?? '');
+    //         $old->put('rpm', $riwayatPenggunaanObatText);
+    //         $old->put('ra', $riwayatAlergiText);
+    //         $old->put('pemeriksaan_fisik', $pemeriksaanFisikText);
+    //         $old->put('diagnosa_utama', $diagUtamaText);
+    //         $old->put('diagnosa_sekunder', $diagSekunderText);
+    //         $old->put('diagnosa_dokter_icd10', $ketICD10Text);
+    //         $old->put('diagnosa_perawat', $diagnosaPerawatText);
+    //         $old->put('diagnosa_dokter_icd9', $diagnosaDokterICD9Text);
+    //         $old->put('terapi', $terapiText);
+    //         $old->put('kondisi_keluar', $kondisi_cara_keluar->KEADAAN);
+    //         $old->put('cara_keluar', $kondisi_cara_keluar->CARA);
+    //         $old->put('ku_td_up', (int) $kondisi_umum->SISTOLIK ?? '');
+    //         $old->put('ku_td_down', (int) $kondisi_umum->DISTOLIK ?? '');
+    //         $old->put('ku_nafas', (int) $kondisi_umum->FREKUENSI_NAFAS ?? '');
+    //         $old->put('ku_tk', (int) $kondisi_umum->TINGKAT_KESADARAN ?? '');
+    //         $old->put('ku_sn', $nyeriText);
+    //         $old->put('ku_nadi', (int) $kondisi_umum->FREKUENSI_NADI ?? '');
+    //         $old->put('ku_suhu', $kondisi_umum->SUHU ?? '');
+    //         $old->put('edukasi', $edukasiText ?? '');
+
+    //         // $old->put('perawat', $prosedurText);
+    //         // $old->put('ket_icd9', $ketICD9Text);
+
+    //         // if (empty($old->get('indikasi'))) {
+    //             // indikasi kosong
+    //         // }
+
+    //         // print_r($old->get('riwayat_alergi'));
+    //         // die();
+
+    //         // REFERENSI TINGKAT KESADARAN
+    //         $refTingkatKesadaran = DB::table('master.referensi as ref')
+    //                             ->select('ID','DESKRIPSI','SCORING')
+    //                             ->where('ref.JENIS', 179)
+    //                             ->where('ref.STATUS', 1)
+    //                             ->get();
+
+    //         /*
+    //          * Push ke Referensi
+    //          */
+    //         $ref = [
+    //             'tingkat_kesadaran' => $refTingkatKesadaran
+    //         ];
+
+    //         /*
+    //          * Pengambilan Data Tahap Final Resume Medis
+    //          */
+    //         $record = DB::table(self::TABLE)
+    //             ->where('kunjungan', $kunjungan)
+    //             ->where('status', 1)
+    //             ->orderByDesc('id')
+    //             ->first();
+
+    //         // ==========================================
+    //         // INFORMASI FINALISASI
+    //         // ==========================================
+
+    //         $olehNama = null;
+
+    //         if (!empty($record->oleh)) {
+
+    //             $olehNama = DB::table('aplikasi.pengguna as pe')
+    //                 ->where('pe.ID', $record->oleh)
+    //                 ->selectRaw(
+    //                     'master.getNamaLengkapPegawai(pe.NIP) AS NAMA'
+    //                 )
+    //                 ->value('NAMA');
+    //         }
+
+    //         $tglDifinalText = $record->tgl_difinal
+    //             ? Carbon::parse($record->tgl_difinal)
+    //                 ->timezone('Asia/Jakarta')
+    //                 ->format('d-m-Y H:i') . ' WIB'
+    //             : null;
+
+    //         if (!$record) {
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'message' => 'Data Resume Medis belum tersedia.',
+    //                 'data' => null,
+    //                 'old' => $old,
+    //                 'ref' => $ref,
+    //             ]);
+    //         }
+
+    //         $data = [];
+
+    //         foreach (self::FIELDS as $field) {
+    //             $data[$field] = $record->{$field};
+    //         }
+
+    //         /*
+    //          * Status finalisasi.
+    //          * Disesuaikan dengan nama kolom final pada tabel.
+    //          * status_final digunakan oleh JavaScript Blade.
+    //          */
+    //         $data['status_final'] = (int) $record->final;
+    //         $data['final_at'] = $record->tgl_difinal;
+    //         $data['final_by'] = $record->oleh;
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Data Resume Medis berhasil diambil.',
+    //             'data' => $data,
+    //             'old' => $old,
+    //             'ref' => $ref,
+    //             'status_final' => (int) ($record->final ?? 0),
+    //             'tgl_difinal' => $record->tgl_difinal ?? null,
+    //             'tgl_difinal_text' => $tglDifinalText,
+    //             'oleh' => $record->oleh ?? null,
+    //             'oleh_nama' => $olehNama,
+    //         ]);
+
+    //     } catch (Throwable $e) {
+
+    //         report($e);
+
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Gagal mengambil data Resume Medis.',
+    //             'error' => config('app.debug') ? $e->getMessage() : null,
+    //         ], 500);
+    //     }
+    // }
     public function getData($kunjungan)
     {
         try {
@@ -79,7 +716,7 @@ class ResumeRanapController extends Controller
             // 1. Ambil data pendaftaran dari kunjungan utama (Rawat Inap)
             $kunjunganUtama = DB::table('pendaftaran.kunjungan as pk')
                 ->join('pendaftaran.pendaftaran as pp', 'pp.NOMOR', '=', 'pk.NOPEN')
-                ->join('master.dokter as dr', function($join){
+                ->join('master.dokter as dr', function ($join) {
                     $join->on('dr.ID', '=', 'pk.DPJP')
                         ->where('dr.STATUS', 1);
                 })
@@ -95,10 +732,21 @@ class ResumeRanapController extends Controller
                 )
                 ->first();
 
+            // Pengamanan jika kunjungan utama tidak ditemukan
+            if (!$kunjunganUtama) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data kunjungan Rawat Inap tidak ditemukan.',
+                    'data' => null,
+                    'old' => collect(),
+                    'ref' => [],
+                ], 404);
+            }
+
             // 2. Cari kunjungan Poli / Rawat Darurat H-1 sampai tanggal Rawat Inap
             $kunjunganPoli = null;
 
-            if ($kunjunganUtama) {
+            if (!empty($kunjunganUtama->TANGGAL_PENDAFTARAN)) {
 
                 $tanggalUtama = Carbon::parse($kunjunganUtama->TANGGAL_PENDAFTARAN);
 
@@ -122,18 +770,29 @@ class ResumeRanapController extends Controller
                     ->first();
             }
 
+            // Pengamanan jika kunjungan Poli / IGD tidak ditemukan
+            if (!$kunjunganPoli) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data kunjungan Poli / Rawat Darurat H-1 tidak ditemukan.',
+                    'data' => null,
+                    'old' => collect(),
+                    'ref' => [],
+                ], 404);
+            }
+
             /*
-             * Pengambilan Data Kebutuhan Resume Medis
-             */
+            * Pengambilan Data Kebutuhan Resume Medis
+            */
             // $old = (object) [];
             $old = collect();
 
             // INDIKASI
             $perencanaan_ri = DB::table('medicalrecord.perencanaan_rawat_inap')
-                        ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
-                        ->where('STATUS', 1)
-                        ->orderByDesc('ID')
-                        ->first();
+                ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                ->where('STATUS', 1)
+                ->orderByDesc('ID')
+                ->first();
 
             // RPS
             $anamnesis = DB::table('medicalrecord.anamnesis')
@@ -152,49 +811,68 @@ class ResumeRanapController extends Controller
 
             // RIWAYAT PENGGUNAAN OBAT
             $rpm = DB::table('medicalrecord.riwayat_pemberian_obat as rpo')
-                ->leftJoin('master.frekuensi_aturan_resep as far', function($join){
+                ->leftJoin('master.frekuensi_aturan_resep as far', function ($join) {
                     $join->on('rpo.FREKUENSI', '=', 'far.ID')
-                        ->where('far.STATUS',1);
+                        ->where('far.STATUS', 1);
                 })
-                ->leftJoin('master.referensi as ref_rute', function($join){
+                ->leftJoin('master.referensi as ref_rute', function ($join) {
                     $join->on('rpo.RUTE', '=', 'ref_rute.ID')
-                        ->where('ref_rute.JENIS',217)
-                        ->where('ref_rute.STATUS',1);
+                        ->where('ref_rute.JENIS', 217)
+                        ->where('ref_rute.STATUS', 1);
                 })
-                ->select('rpo.*', 'far.FREKUENSI as FREKUENSI_NAMA', 'far.KETERANGAN as FREKUENSI_KETERANGAN', 'ref_rute.DESKRIPSI as RUTE_NAMA')
+                ->select(
+                    'rpo.*',
+                    'far.FREKUENSI as FREKUENSI_NAMA',
+                    'far.KETERANGAN as FREKUENSI_KETERANGAN',
+                    'ref_rute.DESKRIPSI as RUTE_NAMA'
+                )
                 ->where('rpo.KUNJUNGAN', $kunjunganPoli->NOMOR)
                 ->where('rpo.STATUS', 1)
                 ->get();
 
             $riwayatPenggunaanObatText = $rpm->isNotEmpty()
-                                        ? $rpm->sortBy('ID')
-                                            ->pluck('OBAT')
-                                            ->implode(', ')
-                                        : '';
+                ? $rpm->sortBy('ID')
+                    ->pluck('OBAT')
+                    ->filter(fn($item) => $item !== null && $item !== '')
+                    ->implode(', ')
+                : '';
 
             // RIWAYAT ALERGI
             $ra = DB::table('medicalrecord.riwayat_alergi as ra')
-                ->leftJoin('master.referensi as ref', function($join){
+                ->leftJoin('master.referensi as ref', function ($join) {
                     $join->on('ra.JENIS', '=', 'ref.ID')
-                        ->where('ref.JENIS',180)
-                        ->where('ref.STATUS',1);
+                        ->where('ref.JENIS', 180)
+                        ->where('ref.STATUS', 1);
                 })
                 ->join('pendaftaran.kunjungan as pk', 'ra.KUNJUNGAN', '=', 'pk.NOMOR')
                 ->join('pendaftaran.pendaftaran as pp', 'pk.NOPEN', '=', 'pp.NOMOR')
                 ->leftJoin('master.ruangan as ru', 'ru.ID', '=', 'pk.RUANGAN')
                 ->leftJoin('aplikasi.pengguna as pe', 'pe.ID', '=', 'ra.OLEH')
-                ->select('ra.*', 'ref.DESKRIPSI as JENIS_ALERGI', 'ru.DESKRIPSI as NAMA_RUANGAN', DB::raw('master.getNamaLengkapPegawai(pe.NIP) as NAMA_USER'))
+                ->select(
+                    'ra.*',
+                    'ref.DESKRIPSI as JENIS_ALERGI',
+                    'ru.DESKRIPSI as NAMA_RUANGAN',
+                    DB::raw('master.getNamaLengkapPegawai(pe.NIP) as NAMA_USER')
+                )
                 ->where('pp.NORM', $kunjunganUtama->NORM)
                 ->where('ra.STATUS', 1)
                 ->get();
 
             $riwayatAlergiText = $ra->isNotEmpty()
-                                ? $ra->sortBy('JENIS')
-                                    ->map(function ($item) {
-                                        return "{$item->JENIS_ALERGI}: {$item->DESKRIPSI}";
-                                    })
-                                    ->implode("\n")
-                                : '';
+                ? $ra->sortBy('JENIS')
+                    ->map(function ($item) {
+                        $jenisAlergi = trim((string) ($item->JENIS_ALERGI ?? ''));
+                        $deskripsi = trim((string) ($item->DESKRIPSI ?? ''));
+
+                        if ($jenisAlergi === '' && $deskripsi === '') {
+                            return null;
+                        }
+
+                        return "{$jenisAlergi}: {$deskripsi}";
+                    })
+                    ->filter()
+                    ->implode("\n")
+                : '';
 
             // TANDA VITAL
             $tandaVital = DB::table('medicalrecord.tanda_vital as ttv')
@@ -226,32 +904,32 @@ class ResumeRanapController extends Controller
             if ($tandaVital) {
                 $ttv = $tandaVital;
 
-                $frekuensiNadiCB = match ((int) $ttv->FREKUENSI_NADI_CB) {
+                $frekuensiNadiCB = match ((int) ($ttv->FREKUENSI_NADI_CB ?? 0)) {
                     1 => 'Reguler',
                     2 => 'Ireguler',
                     default => '',
                 };
 
-                $frekuensiNafasCB = match ((int) $ttv->FREKUENSI_NAFAS_CB) {
+                $frekuensiNafasCB = match ((int) ($ttv->FREKUENSI_NAFAS_CB ?? 0)) {
                     1 => 'Simetris',
                     2 => 'Asimetris',
                     default => '',
                 };
 
-                $jalanNafas = match ((int) $ttv->JALAN_NAFAS) {
+                $jalanNafas = match ((int) ($ttv->JALAN_NAFAS ?? 0)) {
                     1 => 'Paten',
                     2 => 'Obstruksi Parsial',
                     3 => 'Obstruksi Total',
                     default => '',
                 };
 
-                $alatBantuNafas = match ((int) $ttv->ALAT_BANTU_NAFAS) {
+                $alatBantuNafas = match ((int) ($ttv->ALAT_BANTU_NAFAS ?? -1)) {
                     0 => 'Tidak',
                     1 => 'Ya',
                     default => '',
                 };
 
-                $kulit = match ((int) $ttv->KULIT) {
+                $kulit = match ((int) ($ttv->KULIT ?? 0)) {
                     1 => 'Normal',
                     2 => 'Jaundice',
                     3 => 'Akral Dingin',
@@ -260,13 +938,13 @@ class ResumeRanapController extends Controller
                     default => '',
                 };
 
-                $pupil = match ((int) $ttv->PUPIL) {
+                $pupil = match ((int) ($ttv->PUPIL ?? 0)) {
                     1 => 'Isokor',
                     2 => 'Anisokor',
                     default => '',
                 };
 
-                $gcs = $ttv->GCS !== null
+                $gcs = ($ttv->GCS ?? null) !== null
                     ? rtrim(rtrim(number_format((float) $ttv->GCS, 2, '.', ''), '0'), '.')
                     : '';
 
@@ -276,36 +954,45 @@ class ResumeRanapController extends Controller
 
                 $gcsDetail = "E/{$eye} M/{$motorik} V/{$verbal}";
 
-                $tekananDarah = ($ttv->SISTOLIK !== null && $ttv->DISTOLIK !== null)
-                    ? number_format($ttv->SISTOLIK, 0) . '/' . number_format($ttv->DISTOLIK, 0) . ' mmHg'
+                $sistolik = $ttv->SISTOLIK ?? null;
+                $distolik = $ttv->DISTOLIK ?? null;
+
+                $tekananDarah = ($sistolik !== null && $distolik !== null)
+                    ? number_format((float) $sistolik, 0) . '/' . number_format((float) $distolik, 0) . ' mmHg'
                     : '';
 
-                $suhu = $ttv->SUHU !== null
+                $suhu = ($ttv->SUHU ?? null) !== null
                     ? "{$ttv->SUHU} °C"
                     : '';
 
-                $frekuensiNadi = $ttv->FREKUENSI_NADI !== null
-                    ? number_format($ttv->FREKUENSI_NADI) ." x/menit"
+                $frekuensiNadi = ($ttv->FREKUENSI_NADI ?? null) !== null
+                    ? number_format((float) $ttv->FREKUENSI_NADI) . " x/menit"
                     : '';
 
                 if ($frekuensiNadiCB !== '') {
                     $frekuensiNadi .= " ({$frekuensiNadiCB})";
                 }
 
-                $frekuensiNafas = $ttv->FREKUENSI_NAFAS !== null
-                    ? number_format($ttv->FREKUENSI_NAFAS)." x/menit"
+                $frekuensiNafas = ($ttv->FREKUENSI_NAFAS ?? null) !== null
+                    ? number_format((float) $ttv->FREKUENSI_NAFAS) . " x/menit"
                     : '';
 
                 if ($frekuensiNafasCB !== '') {
                     $frekuensiNafas .= " ({$frekuensiNafasCB})";
                 }
 
-                $diameterPupil = ($ttv->DIAMETER_PUPIL_UP !== null && $ttv->DIAMETER_PUPIL_DOWN !== null)
-                    ? "{$ttv->DIAMETER_PUPIL_UP}mm/{$ttv->DIAMETER_PUPIL_DOWN}mm"
+                $diameterPupilUp = $ttv->DIAMETER_PUPIL_UP ?? null;
+                $diameterPupilDown = $ttv->DIAMETER_PUPIL_DOWN ?? null;
+
+                $diameterPupil = ($diameterPupilUp !== null && $diameterPupilDown !== null)
+                    ? "{$diameterPupilUp}mm/{$diameterPupilDown}mm"
                     : '';
 
-                $rc = ($ttv->RC_UP !== null && $ttv->RC_DOWN !== null)
-                    ? "{$ttv->RC_UP}/{$ttv->RC_DOWN}"
+                $rcUp = $ttv->RC_UP ?? null;
+                $rcDown = $ttv->RC_DOWN ?? null;
+
+                $rc = ($rcUp !== null && $rcDown !== null)
+                    ? "{$rcUp}/{$rcDown}"
                     : '';
 
                 $pupilDetail = trim(
@@ -313,10 +1000,14 @@ class ResumeRanapController extends Controller
                     ', '
                 );
 
+                $keadaanUmum = $ttv->KEADAAN_UMUM ?? '';
+                $deskripsiKesadaran = $ttv->DESKRIPSI_TINGKAT_KESADARAN ?? '';
+                $vas = $ttv->VAS ?? '';
+
                 $ttvLines = [
-                    "Keadaan Umum : {$ttv->KEADAAN_UMUM}",
-                    "Tingkat Kesadaran : {$ttv->DESKRIPSI_TINGKAT_KESADARAN}",
-                    "GCS : {$gcs} ({$gcsDetail}), VAS : {$ttv->VAS}",
+                    "Keadaan Umum : {$keadaanUmum}",
+                    "Tingkat Kesadaran : {$deskripsiKesadaran}",
+                    "GCS : {$gcs} ({$gcsDetail}), VAS : {$vas}",
                     "Tekanan Darah : {$tekananDarah}",
                     "Suhu : {$suhu}",
                     "Frekuensi Nadi : {$frekuensiNadi}",
@@ -359,50 +1050,46 @@ class ResumeRanapController extends Controller
 
             // GET DIAGNOSA DOKTER
             $getDiagnosa = DB::table('medicalrecord.diagnosa as diag')
-                    ->select(
-                        'diag.ID',
-                        'diag.DIAGNOSA',
-                        DB::raw("CASE WHEN diag.UTAMA = 1 THEN 'UTAMA' ELSE 'SEKUNDER' END AS UTAMA"),
-                        'diag.KODE as KODE_DIAGNOSA',
-                        'mrc.STR as NAMA_DIAGNOSA'
-                    )
-                    ->leftJoin('master.mrconso as mrc', function ($join) {
-                        $join->on('diag.KODE', '=', 'mrc.CODE')
-                            ->whereNotIn('mrc.TTY', ['HT', 'PS'])
-                            ->where(function ($q) {
+                ->select(
+                    'diag.ID',
+                    'diag.DIAGNOSA',
+                    DB::raw("CASE WHEN diag.UTAMA = 1 THEN 'UTAMA' ELSE 'SEKUNDER' END AS UTAMA"),
+                    'diag.KODE as KODE_DIAGNOSA',
+                    'mrc.STR as NAMA_DIAGNOSA'
+                )
+                ->leftJoin('master.mrconso as mrc', function ($join) {
+                    $join->on('diag.KODE', '=', 'mrc.CODE')
+                        ->whereNotIn('mrc.TTY', ['HT', 'PS'])
+                        ->where(function ($q) {
 
-                                // ==========================================
-                                // PRIORITAS ICD10_2020
-                                // ==========================================
-                                $q->where('mrc.SAB', 'ICD10_2020')
+                            // PRIORITAS ICD10_2020
+                            $q->where('mrc.SAB', 'ICD10_2020')
 
-                                    // ==========================================
-                                    // FALLBACK ICD10_1998
-                                    // hanya jika ICD10_2020 tidak ada
-                                    // ==========================================
-                                    ->orWhere(function ($q) {
-                                        $q->where('mrc.SAB', 'ICD10_1998')
-                                            ->whereNotExists(function ($sub) {
-                                                $sub->select(DB::raw(1))
-                                                    ->from('master.mrconso as mrc2020')
-                                                    ->whereColumn('mrc2020.CODE', 'diag.KODE')
-                                                    ->where('mrc2020.SAB', 'ICD10_2020')
-                                                    ->whereNotIn('mrc2020.TTY', ['HT', 'PS']);
-                                            });
-                                    });
-                            });
-                    })
-                    ->where('diag.NOPEN', $kunjunganUtama->NOPEN)
-                    ->where('diag.STATUS', 1)
-                    ->get();
+                                // FALLBACK ICD10_1998
+                                // hanya jika ICD10_2020 tidak ada
+                                ->orWhere(function ($q) {
+                                    $q->where('mrc.SAB', 'ICD10_1998')
+                                        ->whereNotExists(function ($sub) {
+                                            $sub->select(DB::raw(1))
+                                                ->from('master.mrconso as mrc2020')
+                                                ->whereColumn('mrc2020.CODE', 'diag.KODE')
+                                                ->where('mrc2020.SAB', 'ICD10_2020')
+                                                ->whereNotIn('mrc2020.TTY', ['HT', 'PS']);
+                                        });
+                                });
+                        });
+                })
+                ->where('diag.NOPEN', $kunjunganUtama->NOPEN)
+                ->where('diag.STATUS', 1)
+                ->get();
 
             // DIAGNOSA UTAMA
             $diagUtamaText = $getDiagnosa
                 ->where('UTAMA', 'UTAMA')
                 ->sortBy('ID')
                 ->map(function ($item) {
-                    $kode = trim($item->KODE_DIAGNOSA ?? '');
-                    $nama = trim($item->NAMA_DIAGNOSA ?? '');
+                    $kode = trim((string) ($item->KODE_DIAGNOSA ?? ''));
+                    $nama = trim((string) ($item->NAMA_DIAGNOSA ?? ''));
 
                     if ($kode === '' && $nama === '') {
                         return null;
@@ -418,8 +1105,8 @@ class ResumeRanapController extends Controller
                 ->where('UTAMA', 'SEKUNDER')
                 ->sortBy('ID')
                 ->map(function ($item) {
-                    $kode = trim($item->KODE_DIAGNOSA ?? '');
-                    $nama = trim($item->NAMA_DIAGNOSA ?? '');
+                    $kode = trim((string) ($item->KODE_DIAGNOSA ?? ''));
+                    $nama = trim((string) ($item->NAMA_DIAGNOSA ?? ''));
 
                     if ($kode === '' && $nama === '') {
                         return null;
@@ -434,7 +1121,7 @@ class ResumeRanapController extends Controller
             $ketICD10Text = $getDiagnosa
                 ->sortBy('ID')
                 ->map(function ($item) {
-                    $diagnosa = trim($item->DIAGNOSA ?? '');
+                    $diagnosa = trim((string) ($item->DIAGNOSA ?? ''));
 
                     return $diagnosa !== ''
                         ? "{$diagnosa}"
@@ -445,47 +1132,43 @@ class ResumeRanapController extends Controller
 
             // DIAGNOSA PERAWAT
             $getDiagPerawat = DB::table('medicalrecord.prosedur as prs')
-                    ->select(
-                        'prs.ID',
-                        'prs.TINDAKAN',
-                        'prs.KODE as KODE_DIAGNOSA',
-                        'mrc.STR as NAMA_DIAGNOSA'
-                    )
-                    ->leftJoin('master.mrconso as mrc', function ($join) {
-                        $join->on('prs.KODE', '=', 'mrc.CODE')
-                            ->whereNotIn('mrc.TTY', ['HT', 'PS'])
-                            ->where(function ($q) {
+                ->select(
+                    'prs.ID',
+                    'prs.TINDAKAN',
+                    'prs.KODE as KODE_DIAGNOSA',
+                    'mrc.STR as NAMA_DIAGNOSA'
+                )
+                ->leftJoin('master.mrconso as mrc', function ($join) {
+                    $join->on('prs.KODE', '=', 'mrc.CODE')
+                        ->whereNotIn('mrc.TTY', ['HT', 'PS'])
+                        ->where(function ($q) {
 
-                                // ==========================================
-                                // PRIORITAS ICD10_2020
-                                // ==========================================
-                                $q->where('mrc.SAB', 'ICD9CM_2020')
+                            // PRIORITAS ICD9CM_2020
+                            $q->where('mrc.SAB', 'ICD9CM_2020')
 
-                                    // ==========================================
-                                    // FALLBACK ICD10_1998
-                                    // hanya jika ICD10_2020 tidak ada
-                                    // ==========================================
-                                    ->orWhere(function ($q) {
-                                        $q->where('mrc.SAB', 'ICD_9CM_2010')
-                                            ->whereNotExists(function ($sub) {
-                                                $sub->select(DB::raw(1))
-                                                    ->from('master.mrconso as mrc2020')
-                                                    ->whereColumn('mrc2020.CODE', 'prs.KODE')
-                                                    ->where('mrc2020.SAB', 'ICD9CM_2020')
-                                                    ->whereNotIn('mrc2020.TTY', ['HT', 'PS']);
-                                            });
-                                    });
-                            });
-                    })
-                    ->where('prs.NOPEN', $kunjunganUtama->NOPEN)
-                    ->where('prs.STATUS', 1)
-                    ->get();
+                                // FALLBACK ICD_9CM_2010
+                                // hanya jika ICD9CM_2020 tidak ada
+                                ->orWhere(function ($q) {
+                                    $q->where('mrc.SAB', 'ICD_9CM_2010')
+                                        ->whereNotExists(function ($sub) {
+                                            $sub->select(DB::raw(1))
+                                                ->from('master.mrconso as mrc2020')
+                                                ->whereColumn('mrc2020.CODE', 'prs.KODE')
+                                                ->where('mrc2020.SAB', 'ICD9CM_2020')
+                                                ->whereNotIn('mrc2020.TTY', ['HT', 'PS']);
+                                        });
+                                });
+                        });
+                })
+                ->where('prs.NOPEN', $kunjunganUtama->NOPEN)
+                ->where('prs.STATUS', 1)
+                ->get();
 
             // DIAGNOSA / TINDAKAN PERAWAT
             $diagnosaPerawatText = $getDiagPerawat
                 ->map(function ($item) {
-                    $kode = trim($item->KODE_DIAGNOSA ?? '');
-                    $nama = trim($item->NAMA_DIAGNOSA ?? '');
+                    $kode = trim((string) ($item->KODE_DIAGNOSA ?? ''));
+                    $nama = trim((string) ($item->NAMA_DIAGNOSA ?? ''));
 
                     if ($kode === '' && $nama === '') {
                         return null;
@@ -499,40 +1182,39 @@ class ResumeRanapController extends Controller
             // DIAGNOSA DOKTER ICD-9
             $diagnosaDokterICD9Text = $getDiagPerawat
                 ->pluck('TINDAKAN')
-                ->filter(fn($item) => !empty(trim($item ?? '')))
+                ->filter(fn($item) => !empty(trim((string) ($item ?? ''))))
                 ->map(fn($item) => "{$item}")
                 ->implode(", ");
 
             // TERAPI DAN TINDAKAN
-                // TATALAKSANA AWAL
-                    // PERENCANAAN TERAPI
-                    $pt = DB::table('medicalrecord.rencana_terapi')
-                        ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
-                        ->where('STATUS', 1)
-                        ->orderByDesc('ID')
-                        ->first();
-                    // HASIL LAPOR DPJP
-                    $hld = DB::table('medicalrecord.hasil_lapor_dpjp')
-                        ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
-                        ->where('STATUS', 1)
-                        ->orderByDesc('ID')
-                        ->first();
+            // TATALAKSANA AWAL
+            // PERENCANAAN TERAPI
+            $pt = DB::table('medicalrecord.rencana_terapi')
+                ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                ->where('STATUS', 1)
+                ->orderByDesc('ID')
+                ->first();
 
-                    // Ambil isi field (sesuaikan nama kolom dengan tabel)
-                    $perencanaanTerapi = trim($pt->DESKRIPSI ?? '');
-                    $hasilLaporDPJP = trim($hld->DESKRIPSI ?? '');
+            // HASIL LAPOR DPJP
+            $hld = DB::table('medicalrecord.hasil_lapor_dpjp')
+                ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                ->where('STATUS', 1)
+                ->orderByDesc('ID')
+                ->first();
 
-                    // ==========================================
-                    // SUSUN TEXT TERAPI
-                    // ==========================================
-                    $terapiText = implode("\n", [
-                        "• TATALAKSANA AWAL",
-                        $perencanaanTerapi,
-                        $hasilLaporDPJP,
-                        "",
-                        "• TATALAKSANA TAMBAHAN",
-                        "-"
-                    ]);
+            // Ambil isi field (sesuaikan nama kolom dengan tabel)
+            $perencanaanTerapi = trim((string) ($pt->DESKRIPSI ?? ''));
+            $hasilLaporDPJP = trim((string) ($hld->DESKRIPSI ?? ''));
+
+            // SUSUN TEXT TERAPI
+            $terapiText = implode("\n", [
+                "• TATALAKSANA AWAL",
+                $perencanaanTerapi,
+                $hasilLaporDPJP,
+                "",
+                "• TATALAKSANA TAMBAHAN",
+                "-"
+            ]);
 
             // KONDISI SAAT KELUAR RS & CARA KELUAR / PASIEN PULANG
             $kondisi_cara_keluar = DB::table('layanan.pasien_pulang')
@@ -547,12 +1229,13 @@ class ResumeRanapController extends Controller
                 ->where('STATUS', 1)
                 ->orderByDesc('ID')
                 ->first();
-            
+
             // SKALA NYERI
             $nyeri = DB::table('medicalrecord.penilaian_nyeri AS pn')
                 // ->join('pendaftaran.kunjungan AS pkrp', 'pkrp.NOMOR', '=', 'pn.KUNJUNGAN')
                 ->leftJoin('master.referensi AS mny', function ($join) {
-                    $join->on('pn.METODE', '=', 'mny.ID')->where('mny.JENIS', 71);
+                    $join->on('pn.METODE', '=', 'mny.ID')
+                        ->where('mny.JENIS', 71);
                 })
                 ->select('pn.NYERI', 'mny.DESKRIPSI AS METODE')
                 ->where('pn.KUNJUNGAN', $kunjunganUtama->KUNJUNGAN)
@@ -560,12 +1243,13 @@ class ResumeRanapController extends Controller
                 // ->where('pkrp.NOPEN', $kunjunganUtama)
                 ->orderByDesc('pn.ID')
                 ->first();
-            
+
             $nyeriText = '';
+
             if ($nyeri) {
-                if ($nyeri->NYERI == 0) {
+                if (($nyeri->NYERI ?? null) == 0) {
                     $nyeriText = 'Tidak Ada';
-                } elseif ($nyeri->NYERI == 1) {
+                } elseif (($nyeri->NYERI ?? null) == 1) {
                     $nyeriText = 'Ada, ' . ($nyeri->METODE ?? '');
                 }
             } else {
@@ -580,8 +1264,8 @@ class ResumeRanapController extends Controller
                 ->value('EDUKASI');
 
             /*
-             * PUSH VALUE INTO $OLD
-             */
+            * PUSH VALUE INTO $OLD
+            */
             $old->put('indikasi', $perencanaan_ri->INDIKASI ?? '');
             $old->put('rps', $anamnesis->DESKRIPSI ?? '');
             $old->put('rpd', $rpp->DESKRIPSI ?? '');
@@ -594,14 +1278,18 @@ class ResumeRanapController extends Controller
             $old->put('diagnosa_perawat', $diagnosaPerawatText);
             $old->put('diagnosa_dokter_icd9', $diagnosaDokterICD9Text);
             $old->put('terapi', $terapiText);
-            $old->put('kondisi_keluar', $kondisi_cara_keluar->KEADAAN);
-            $old->put('cara_keluar', $kondisi_cara_keluar->CARA);
-            $old->put('ku_td_up', (int) $kondisi_umum->SISTOLIK ?? '');
-            $old->put('ku_td_down', (int) $kondisi_umum->DISTOLIK ?? '');
-            $old->put('ku_nafas', (int) $kondisi_umum->FREKUENSI_NAFAS ?? '');
-            $old->put('ku_tk', (int) $kondisi_umum->TINGKAT_KESADARAN ?? '');
+
+            // Pengamanan kondisi pasien pulang
+            $old->put('kondisi_keluar', $kondisi_cara_keluar->KEADAAN ?? '');
+            $old->put('cara_keluar', $kondisi_cara_keluar->CARA ?? '');
+
+            // Pengamanan nilai TTV rawat inap
+            $old->put('ku_td_up', isset($kondisi_umum->SISTOLIK) ? (int) $kondisi_umum->SISTOLIK : '');
+            $old->put('ku_td_down', isset($kondisi_umum->DISTOLIK) ? (int) $kondisi_umum->DISTOLIK : '');
+            $old->put('ku_nafas', isset($kondisi_umum->FREKUENSI_NAFAS) ? (int) $kondisi_umum->FREKUENSI_NAFAS : '');
+            $old->put('ku_tk', isset($kondisi_umum->TINGKAT_KESADARAN) ? (int) $kondisi_umum->TINGKAT_KESADARAN : '');
             $old->put('ku_sn', $nyeriText);
-            $old->put('ku_nadi', (int) $kondisi_umum->FREKUENSI_NADI ?? '');
+            $old->put('ku_nadi', isset($kondisi_umum->FREKUENSI_NADI) ? (int) $kondisi_umum->FREKUENSI_NADI : '');
             $old->put('ku_suhu', $kondisi_umum->SUHU ?? '');
             $old->put('edukasi', $edukasiText ?? '');
 
@@ -609,7 +1297,7 @@ class ResumeRanapController extends Controller
             // $old->put('ket_icd9', $ketICD9Text);
 
             // if (empty($old->get('indikasi'))) {
-                // indikasi kosong
+            // indikasi kosong
             // }
 
             // print_r($old->get('riwayat_alergi'));
@@ -617,27 +1305,28 @@ class ResumeRanapController extends Controller
 
             // REFERENSI TINGKAT KESADARAN
             $refTingkatKesadaran = DB::table('master.referensi as ref')
-                                ->select('ID','DESKRIPSI','SCORING')
-                                ->where('ref.JENIS', 179)
-                                ->where('ref.STATUS', 1)
-                                ->get();
+                ->select('ID', 'DESKRIPSI', 'SCORING')
+                ->where('ref.JENIS', 179)
+                ->where('ref.STATUS', 1)
+                ->get();
 
             /*
-             * Push ke Referensi
-             */
+            * Push ke Referensi
+            */
             $ref = [
                 'tingkat_kesadaran' => $refTingkatKesadaran
             ];
 
             /*
-             * Pengambilan Data Tahap Final Resume Medis
-             */
+            * Pengambilan Data Tahap Final Resume Medis
+            */
             $record = DB::table(self::TABLE)
                 ->where('kunjungan', $kunjungan)
                 ->where('status', 1)
                 ->orderByDesc('id')
                 ->first();
 
+            // Jika data Resume Medis belum tersedia
             if (!$record) {
                 return response()->json([
                     'success' => true,
@@ -645,23 +1334,50 @@ class ResumeRanapController extends Controller
                     'data' => null,
                     'old' => $old,
                     'ref' => $ref,
+                    'status_final' => 0,
+                    'tgl_difinal' => null,
+                    'tgl_difinal_text' => null,
+                    'oleh' => null,
+                    'oleh_nama' => null,
                 ]);
             }
+
+            // ==========================================
+            // INFORMASI FINALISASI
+            // ==========================================
+
+            $olehNama = null;
+
+            if (!empty($record->oleh)) {
+
+                $olehNama = DB::table('aplikasi.pengguna as pe')
+                    ->where('pe.ID', $record->oleh)
+                    ->selectRaw(
+                        'master.getNamaLengkapPegawai(pe.NIP) AS NAMA'
+                    )
+                    ->value('NAMA');
+            }
+
+            $tglDifinalText = !empty($record->tgl_difinal)
+                ? Carbon::parse($record->tgl_difinal)
+                    ->timezone('Asia/Jakarta')
+                    ->format('d-m-Y H:i') . ' WIB'
+                : null;
 
             $data = [];
 
             foreach (self::FIELDS as $field) {
-                $data[$field] = $record->{$field};
+                $data[$field] = $record->{$field} ?? null;
             }
 
             /*
-             * Status finalisasi.
-             * Disesuaikan dengan nama kolom final pada tabel.
-             * status_final digunakan oleh JavaScript Blade.
-             */
-            $data['status_final'] = (int) $record->final;
-            $data['final_at'] = $record->tgl_difinal;
-            $data['final_by'] = $record->oleh;
+            * Status finalisasi.
+            * Disesuaikan dengan nama kolom final pada tabel.
+            * status_final digunakan oleh JavaScript Blade.
+            */
+            $data['status_final'] = (int) ($record->final ?? 0);
+            $data['final_at'] = $record->tgl_difinal ?? null;
+            $data['final_by'] = $record->oleh ?? null;
 
             return response()->json([
                 'success' => true,
@@ -669,6 +1385,11 @@ class ResumeRanapController extends Controller
                 'data' => $data,
                 'old' => $old,
                 'ref' => $ref,
+                'status_final' => (int) ($record->final ?? 0),
+                'tgl_difinal' => $record->tgl_difinal ?? null,
+                'tgl_difinal_text' => $tglDifinalText,
+                'oleh' => $record->oleh ?? null,
+                'oleh_nama' => $olehNama,
             ]);
 
         } catch (Throwable $e) {
@@ -682,7 +1403,6 @@ class ResumeRanapController extends Controller
             ], 500);
         }
     }
-
 
     /**
      * ==========================================================
@@ -1098,7 +1818,7 @@ class ResumeRanapController extends Controller
                 ->where('pk.STATUS', '!=', 0)
                 ->where('pp.STATUS', '!=', 0)
                 ->first();
-                
+
             if (!$kunjunganUtama) {
                 return response()->json([
                     'success' => false,
@@ -1157,7 +1877,7 @@ class ResumeRanapController extends Controller
                 4 => 'Dokter Luar',
                 5 => 'Komunitas',
             ];
-            
+
             $tingkatKesadaran = DB::table('master.referensi as ref')
                                 ->select('ID','DESKRIPSI','SCORING')
                                 ->where('ref.JENIS', 179)
@@ -1279,7 +1999,7 @@ class ResumeRanapController extends Controller
             |--------------------------------------------------------------------------
             */
             $addOn = app(AddOnPengkajianController::class);
-            
+
             // RIWAYAT LABORATORIUM
             $labRows = collect(
                 $addOn->getRiwayatLaborat($kunjungan)
@@ -1476,7 +2196,7 @@ class ResumeRanapController extends Controller
                     $kunjunganUtama->TGLKELUAR
                 ),
 
-                'RUANG_RAWAT' => 
+                'RUANG_RAWAT' =>
                     $kunjunganUtama->NAMATT ? trim($kunjunganUtama->NAMARUANGAN . ' (' . $kunjunganUtama->NAMATT . ' - ' . $kunjunganUtama->NAMAKAMAR . ')') : '',
 
                 // INFORMASI RAWAT INAP
@@ -1504,7 +2224,7 @@ class ResumeRanapController extends Controller
                 'DIAGNOSA_DOKTER_ICD9' => $record->diagnosa_dokter_icd9 ?? '',
 
                 'TERAPI' => $record->terapi ?? '',
-                
+
                 // KONDISI KELUAR
                 'KK_1' => $record->kondisi_keluar == 1 ? '☑' : '☐',
                 'KK_2' => $record->kondisi_keluar == 2 ? '☑' : '☐',
@@ -1811,7 +2531,7 @@ class ResumeRanapController extends Controller
             ], 500);
         }
     }
-    
+
     public static function setImgWord(TemplateProcessor $templateProcessor, string $key, string $imagePath, int $targetWidth)
     {
         if (!file_exists($imagePath)) {

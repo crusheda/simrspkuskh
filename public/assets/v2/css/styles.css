@@ -22142,7 +22142,7 @@ span.flatpickr-weekday {
    ============================================================ */
 
 .text-white { color: #ffffff !important; }
-.bg-white { background-color: #ffffff !important; }
+/* .bg-white { background-color: #ffffff !important; } */
 .text-bg-white { background-color: #ffffff !important; color: #212529 !important; }
 .border-white { border-color: #ffffff !important; }
 

@@ -31,6 +31,7 @@ use App\Http\Controllers\Display\RatingController;
 //---------------------------------------------------------------------------------------------------------------------------------------------------------
 // NEW SIRMED v3 WITH LIVEWIRE v4
 use App\Livewire\Auth\Login;
+use App\Livewire\Setting\Profil;
 use App\Livewire\Dashboard;
 use App\Livewire\Monitoring;
 use App\Livewire\EMR;
@@ -41,10 +42,10 @@ use App\Http\Controllers\Auth\LoginController;
 // =====================================================
 // SIRMED v3 - LIVEWIRE
 // =====================================================
-Route::prefix('v3')->group(function () {
+Route::prefix('v3')->group(function () { // PUBLIC
 
     Route::get('/', function () {
-        return redirect()->route('v3.dashboard');
+        return redirect()->route('v3.emr');
     });
 
     // Halaman login Livewire
@@ -53,16 +54,11 @@ Route::prefix('v3')->group(function () {
     // Proses autentikasi tetap melalui LoginController
     Route::post('/login', [LoginController::class, 'login'])->middleware('guest')->name('v3.login.process');
 });
-
-
-// =====================================================
-// SIRMED v3
-// =====================================================
-Route::middleware(['auth'])
+Route::middleware(['auth']) // AUTHENTICATED
     ->prefix('v3')
     ->group(function () {
-        Route::get('/dashboard', Dashboard::class)->name('v3.dashboard');
-        Route::get('/monitoring', Monitoring::class)->name('v3.monitoring');
+        // Route::get('/dashboard', Dashboard::class)->name('v3.dashboard');
+        // Route::get('/monitoring', Monitoring::class)->name('v3.monitoring');
         Route::get('/emr', EMR::class)->name('v3.emr');
 
         // Detail kunjungan pasien — SSR
@@ -74,13 +70,11 @@ Route::middleware(['auth'])
             ->name('v3.emr.detail');
 
         Route::get('/smartclaim', SmartClaim::class)->name('v3.smartclaim');
-        Route::get('/notifikasi', Notifikasi::class)->name('v3.notifikasi');
 
-        // Dropdown navbar
+        Route::get('/profil', Profil::class)->name('v3.profil');
+        Route::get('/notifikasi', Notifikasi::class)->name('v3.notifikasi');
         Route::get('/notifikasi/klaim', [NotifikasiController::class, 'notifikasiKlaimV3'])->name('v3.notifikasi.klaim');
-        // Halaman seluruh notifikasi
         Route::get('/setting/notifikasi', Notifikasi::class)->name('v3.setting.notifikasi');
-        // Data tabel dan detail notifikasi
         Route::get('/setting/notifikasi/data', [NotifikasiController::class, 'getData'])->name('v3.notifikasi.data');
         Route::get('/setting/notifikasi/data/{id}', [NotifikasiController::class, 'showDetail'])->name('v3.notifikasi.detail');
     });

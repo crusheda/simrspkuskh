@@ -153,7 +153,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12 mb-3">
+        <div class="col-md-12">
             <h6>Anamnesis</h6>
             <div class="row">
                 <div class="col">
@@ -169,16 +169,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-12">
-            @include(
-                'pages.v2.medicalrecord.detail.form.pengkajian.components.gawat_darurat.primary_survey',
-                [
-                    'section' => '#gd_perawat',
-                    'page' => 'perawat',
-                    'kunjungan' => $kunjungan ?? $list['kunjungan'],
-                ]
-            )
         </div>
     </div>
 </div>

@@ -1,0 +1,148 @@
+.profil-v3 {
+    --profile-border: var(--bs-border-color);
+    --profile-soft: var(--bs-tertiary-bg);
+    font-family: 'Poppins', sans-serif;
+}
+
+.profil-v3 .profile-hero {
+    position: relative;
+    overflow: hidden;
+    border: 0;
+    border-radius: 1.2rem;
+    color: #fff;
+    background: linear-gradient(135deg, var(--bs-primary), #766cff);
+}
+
+.profil-v3 .profile-avatar {
+    width: 76px;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 22px;
+    background: rgba(255,255,255,.17);
+    border: 1px solid rgba(255,255,255,.25);
+    font-size: 2rem;
+}
+
+.profil-v3 .profile-card {
+    border: 1px solid var(--profile-border);
+    border-radius: 1rem;
+}
+
+.profil-v3 .profile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+}
+
+.profil-v3 .profile-nav button {
+    text-align: left;
+    border: 0;
+    padding: .85rem 1rem;
+    border-radius: .75rem;
+    color: var(--bs-body-color);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    font-weight: 500;
+}
+
+.profil-v3 .profile-nav button.active {
+    color: var(--bs-primary);
+    background: rgba(var(--bs-primary-rgb), .10);
+}
+
+.profil-v3 .profile-nav button:hover {
+    background: var(--profile-soft);
+}
+
+.profil-v3 .info-item {
+    height: 100%;
+    border: 1px solid var(--profile-border);
+    border-radius: .85rem;
+    padding: 1rem;
+}
+
+.profil-v3 .info-label {
+    display: block;
+    font-size: .75rem;
+    color: var(--bs-secondary-color);
+    margin-bottom: .4rem;
+}
+
+.profil-v3 .info-value {
+    font-size: .9rem;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+.profil-v3 .ttd-card {
+    height: 100%;
+    padding: 1rem;
+    border: 1px solid var(--profile-border);
+    border-radius: .9rem;
+    background: var(--bs-body-bg);
+}
+
+.profil-v3 .ttd-canvas-wrapper {
+    position: relative;
+    height: 185px;
+    width: 100%;
+    border: 1px dashed var(--profile-border);
+    border-radius: .75rem;
+    overflow: hidden;
+    background: #fff;
+}
+
+.profil-v3 .ttd-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+.profil-v3 .ttd-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    pointer-events: none;
+    font-size: .8rem;
+}
+
+.profil-v3 .ttd-preview {
+    padding: .75rem;
+    border: 1px solid var(--profile-border);
+    border-radius: .8rem;
+    background: var(--bs-body-bg);
+}
+
+.profil-v3 .ttd-preview img {
+    width: 100%;
+    height: 130px;
+    object-fit: contain;
+    background: #fff;
+}
+
+.profil-v3 .ttd-guidance {
+    background: rgba(var(--bs-primary-rgb), .07);
+    border: 1px solid rgba(var(--bs-primary-rgb), .15);
+    border-radius: .85rem;
+}
+
+.profil-v3 .profile-muted {
+    color: var(--bs-secondary-color);
+}
+
+@media(max-width: 767px) {
+    .profil-v3 .profile-avatar {
+        width: 62px;
+        height: 62px;
+        border-radius: 18px;
+    }
+}

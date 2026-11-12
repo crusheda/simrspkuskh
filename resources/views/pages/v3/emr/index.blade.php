@@ -632,7 +632,7 @@
 
                                             <!-- Informasi Pasien -->
                                             <td class="ps-3">
-                                                <h4 class="mb-1">
+                                                <h4>
                                                     <b data-bs-toggle="tooltip" data-bs-placement="top" title="Nomor Rekam Medis">
                                                         RM. ${item.NORM}
                                                     </b>
@@ -640,17 +640,15 @@
                                                     <b class="text-primary">${item.NAMAPASIEN}</b>
                                                 </h4>
 
-                                                <a class="text-dark" href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" title="Dokter Penanggung Jawab Pasien">
+                                                <h6 class="text-dark" href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" title="Dokter Penanggung Jawab Pasien">
                                                     <b>DPJP : ${item.NAMADOKTER}</b>
-                                                </a><br>
+                                                </h6>
 
-                                                <a class="fw-medium text-dark" href="javascript:void(0);">
+                                                <h6 class="fw-medium text-dark" href="javascript:void(0);">
                                                     Ruangan <b class="text-pink">${item.NAMARUANGAN}</b> <i class="ri-subtract-line"></i>
                                                     <b ${sepNF?'hidden':''}><b class="text-lavender" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor SEP">${SEP}</b> <i class="ri-subtract-line"></i></b>
                                                     <b class="${clrTxPj}">${item.NAMAPENJAMIN}</b>
-                                                </a>
-
-                                                <br>
+                                                </h6>
 
                                                 ${status}
                                             </td>
@@ -660,7 +658,7 @@
                                                 <button type="button" class="btn btn-link-info btn-sm mb-0"
                                                     onclick="event.stopPropagation();">
                                                     Masuk
-                                                    <span class="badge badge-soft-light text-dark ms-2">
+                                                    <span class="badge badge-soft-light badge-lg text-dark ms-2">
                                                         ${item.MASUK}
                                                     </span>
                                                 </button>
@@ -670,7 +668,7 @@
                                                 <button type="button" class="btn btn-link-danger btn-sm mb-0"
                                                     onclick="event.stopPropagation();">
                                                     Keluar
-                                                    <span class="badge badge-soft-light text-dark ms-2">
+                                                    <span class="badge badge-soft-light badge-lg text-dark ms-2">
                                                         ${item.KELUAR ?? '-'}
                                                     </span>
                                                 </button>

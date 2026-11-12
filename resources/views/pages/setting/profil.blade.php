@@ -494,7 +494,7 @@
                 .find('i').addClass('fa-spin fa-sync');
 
             $.ajax({
-                url: "{{ route('api.pegawai.storeTtdPeg') }}",
+                url: "/api/pegawai/ttd",
                 method: "POST",
                 contentType: "application/json",
                 headers: {

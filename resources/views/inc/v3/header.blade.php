@@ -213,24 +213,65 @@
             <i class="bi bi-moon-stars"></i>
         </button>
 
-        {{-- USER PROFILE: TETAP --}}
+        {{-- USER PROFILE --}}
+        @php
+            $user = Auth::user();
+            $namaUser = $user->NAMA ?? $user->name ?? 'Pengguna';
+            $nipUser = $user->NIP ?? 'Pengguna SIRMED';
+        @endphp
+
         <div class="dropdown">
-            <button type="button" class="user-menu dropdown-toggle" data-bs-toggle="dropdown">
+            <button
+                type="button"
+                class="user-menu dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+            >
                 <span class="user-avatar">
-                    {{ mb_substr(Auth::user()->NAMA ?? (Auth::user()->name ?? 'U'), 0, 1) }}
+                    {{ mb_substr($namaUser, 0, 1) }}
                 </span>
+
                 <span class="user-menu-copy d-none d-sm-flex">
-                    <strong>{{ Auth::user()->NAMA ?? (Auth::user()->name ?? 'Pengguna') }}</strong>
-                    <small>{{ Auth::user()->NIP ?? 'Pengguna SIRMED' }}</small>
+                    <strong>{{ $namaUser }}</strong>
+                    <small>{{ $nipUser }}</small>
                 </span>
             </button>
 
             <ul class="dropdown-menu dropdown-menu-end user-dropdown">
-                <li class="dropdown-header">Akun pengguna</li>
-                <li><hr class="dropdown-divider"></li>
+                <li class="dropdown-header">
+                    <div class="fw-semibold">{{ $namaUser }}</div>
+                    <small class="text-muted">{{ $nipUser }}</small>
+                </li>
+
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                {{-- Profil Saya --}}
+                <li>
+                    <a href="{{ route('v3.profil') }}" class="dropdown-item" wire:navigate>
+                        <i class="bi bi-person-circle me-2"></i>
+                        Profil Saya
+                    </a>
+                </li>
+
+                {{-- Pengaturan Akun --}}
+                {{-- <li>
+                    <a href="{{ route('v3.profil') }}" class="dropdown-item" wire:navigate>
+                        <i class="bi bi-gear me-2"></i>
+                        Pengaturan Akun
+                    </a>
+                </li> --}}
+
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                {{-- Logout --}}
                 <li>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
+
                         <button type="submit" class="dropdown-item text-danger">
                             <i class="bi bi-box-arrow-right me-2"></i>
                             Keluar

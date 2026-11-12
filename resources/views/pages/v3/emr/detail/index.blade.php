@@ -130,12 +130,29 @@
             {{-- @endhasanyrole --}}
             @endcan
             @if (Str::startsWith($list['show']->IDRUANGAN, '10203'))
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fresumeranap" role="tab"
-                    aria-selected="false" tabindex="-1" id="tab-resume-ranap">
-                    <i class="ph-duotone ph-clipboard-text me-2"></i> Form Resume Medis
-                </button>
-            </li>
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link d-flex flex-column align-items-start"
+                        data-bs-toggle="tab"
+                        data-bs-target="#fresumeranap"
+                        role="tab"
+                        aria-selected="false"
+                        tabindex="-1"
+                        id="tab-resume-ranap">
+
+                        <span class="d-flex align-items-center gap-2">
+                            <i class="ph-duotone ph-clipboard-text"></i>
+                            Form Resume Medis
+
+                            <span
+                                class="badge rounded-pill bg-dark-subtle text-body-secondary"
+                                id="badge_tab_final_resume">
+                                <i class="ri-loader-line ri-spin"></i>
+                            </span>
+                        </span>
+
+                    </button>
+                </li>
             @endif
             @if (Str::startsWith($list['show']->IDRUANGAN, '10207'))
                 <li class="nav-item" role="presentation" hidden> <!-- TIDAK DIPAKAI LAGI -->

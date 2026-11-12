@@ -1,5 +1,5 @@
 
-@section('title', 'Realtime')
+@section('title', 'Realtime Notification')
 @section('page-title', 'Notifikasi Sistem')
 
 <div id="notifikasi-page">

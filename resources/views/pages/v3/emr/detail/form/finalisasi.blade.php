@@ -1127,10 +1127,9 @@
 
                         backdrop: `
                             rgb(54 22 22 / 40%)
-                            url("/images/nyan-cat.gif")
                             left top
                             no-repeat
-                        `
+                        ` // url("/images/nyan-cat.gif")
                     });
 
                 },

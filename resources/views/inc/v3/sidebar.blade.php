@@ -1,7 +1,7 @@
 <div class="sidebar-backdrop" data-sidebar-close></div>
 
 <aside class="app-sidebar" id="appSidebar">
-    <a class="brand" href="{{ route('v3.dashboard') }}" wire:navigate> <span class="brand-mark"> <img src="{{ asset('images/logo/logo.png') }}" alt="SIRMED Logo"> </span>
+    <a class="brand" href="{{ route('v3.emr') }}" wire:navigate> <span class="brand-mark"> <img src="{{ asset('images/logo/logo.png') }}" alt="SIRMED Logo"> </span>
 
         <span class="brand-copy">
             <strong>SIR<span class="brand-accent">MED</span></strong>
@@ -32,7 +32,7 @@
     <div class="nav-caption">MENU UTAMA</div>
 
     <nav class="app-nav">
-        <a
+        {{-- <a
             href="{{ route('v3.dashboard') }}"
             wire:navigate
             wire:current="active"
@@ -40,9 +40,9 @@
         >
             <i class="bi bi-grid-1x2"></i>
             <span>Dashboard</span>
-        </a>
+        </a> --}}
 
-        <a
+        {{-- <a
             href="{{ route('v3.monitoring') }}"
             wire:navigate
             wire:current="active"
@@ -50,7 +50,7 @@
         >
             <i class="bi bi-activity"></i>
             <span>Monitoring</span>
-        </a>
+        </a> --}}
 
         <a
             href="{{ route('v3.emr') }}"
@@ -72,9 +72,9 @@
         </a>
     </nav>
 
-    <div class="nav-caption mt-4">PREFERENSI</div>
+    <div class="nav-caption mt-4" hidden>PREFERENSI</div>
 
-    <nav class="app-nav">
+    <nav class="app-nav" hidden>
         <button
             type="button"
             class="app-nav-link app-nav-button"
@@ -105,8 +105,8 @@
 
             <p>Hubungi tim IT jika mengalami kendala aplikasi.</p>
 
-            <a href="mailto:it@rspkusukoharjo.com">
-                Hubungi IT
+            <a href="javascript:void(0);">
+                Hubungi 193 / 102 (Telf RS)
                 <i class="bi bi-arrow-up-right"></i>
             </a>
         </div>
