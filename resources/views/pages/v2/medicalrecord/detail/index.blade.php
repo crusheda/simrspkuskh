@@ -174,6 +174,14 @@
                     </li>
                     {{-- @endhasanyrole --}}
                     @endcan
+                    {{-- @if (Str::startsWith($list['show']->IDRUANGAN, '10203'))
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fresumeranap" role="tab"
+                            aria-selected="false" tabindex="-1" id="tab-resume-ranap">
+                            <i class="ph-duotone ph-clipboard-text me-2"></i> Form Resume Medis
+                        </button>
+                    </li>
+                    @endif --}}
                     @if (Str::startsWith($list['show']->IDRUANGAN, '10207'))
                         <li class="nav-item" role="presentation" hidden> <!-- TIDAK DIPAKAI LAGI -->
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frehab" role="tab"
@@ -308,6 +316,11 @@
                 @include('pages.v2.medicalrecord.detail.form.tab')
             </div>
         </div>
+        {{-- <div class="tab-content">
+            <div class="tab-pane" id="fresumeranap" role="tabpanel">
+                @include('pages.v3.emr.detail.form.resume.ranap')
+            </div>
+        </div> --}}
         <div class="tab-content">
             <div class="tab-pane" id="fmrehab" role="tabpanel">
                 @include('pages.v2.medicalrecord.detail.rehabmedik.tab_rehab')

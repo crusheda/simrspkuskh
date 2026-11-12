@@ -545,10 +545,37 @@ class ResumeRanapController extends Controller
                 ->where('STATUS', 1)
                 ->orderByDesc('ID')
                 ->first();
-
-            // LAYANAN LANJUTAN
+            
+            // SKALA NYERI
+            $nyeri = DB::table('medicalrecord.penilaian_nyeri AS pn')
+                // ->join('pendaftaran.kunjungan AS pkrp', 'pkrp.NOMOR', '=', 'pn.KUNJUNGAN')
+                ->leftJoin('master.referensi AS mny', function ($join) {
+                    $join->on('pn.METODE', '=', 'mny.ID')->where('mny.JENIS', 71);
+                })
+                ->select('pn.NYERI', 'mny.DESKRIPSI AS METODE')
+                ->where('pn.KUNJUNGAN', $kunjunganUtama->KUNJUNGAN)
+                ->where('pn.STATUS', 1)
+                // ->where('pkrp.NOPEN', $kunjunganUtama)
+                ->orderByDesc('pn.ID')
+                ->first();
+            
+            $nyeriText = '';
+            if ($nyeri) {
+                if ($nyeri->NYERI == 0) {
+                    $nyeriText = 'Tidak Ada';
+                } elseif ($nyeri->NYERI == 1) {
+                    $nyeriText = 'Ada, ' . ($nyeri->METODE ?? '');
+                }
+            } else {
+                $nyeriText = 'Tidak Ada';
+            }
 
             // EDUKASI
+            $edukasiText = DB::table('medicalrecord.edukasi_emergency')
+                ->where('KUNJUNGAN', $kunjunganUtama->KUNJUNGAN)
+                ->where('STATUS', 1)
+                ->orderByDesc('ID')
+                ->value('EDUKASI');
 
             /*
              * PUSH VALUE INTO $OLD
@@ -567,12 +594,14 @@ class ResumeRanapController extends Controller
             $old->put('terapi', $terapiText);
             $old->put('kondisi_keluar', $kondisi_cara_keluar->KEADAAN);
             $old->put('cara_keluar', $kondisi_cara_keluar->CARA);
-            $old->put('ku_td_up', $kondisi_umum->SISTOLIK);
-            $old->put('ku_td_up', $kondisi_umum->DISTOLIK);
-            $old->put('ku_nafas', $kondisi_umum->FREKUENSI_NAFAS);
-            // $old->put('ku_sn', $kondisi_umum->);
-            $old->put('ku_nadi', $kondisi_umum->FREKUENSI_NADI);
-            $old->put('ku_suhu', $kondisi_umum->SUHU);
+            $old->put('ku_td_up', (int) $kondisi_umum->SISTOLIK ?? '');
+            $old->put('ku_td_down', (int) $kondisi_umum->DISTOLIK ?? '');
+            $old->put('ku_nafas', (int) $kondisi_umum->FREKUENSI_NAFAS ?? '');
+            $old->put('ku_tk', (int) $kondisi_umum->TINGKAT_KESADARAN ?? '');
+            $old->put('ku_sn', $nyeriText);
+            $old->put('ku_nadi', (int) $kondisi_umum->FREKUENSI_NADI ?? '');
+            $old->put('ku_suhu', $kondisi_umum->SUHU ?? '');
+            $old->put('edukasi', $edukasiText ?? '');
 
             // $old->put('perawat', $prosedurText);
             // $old->put('ket_icd9', $ketICD9Text);
@@ -706,9 +735,9 @@ class ResumeRanapController extends Controller
             'ku_td' => 'nullable|integer|min:0',
             'ku_nafas' => 'nullable|integer|min:0',
             'ku_tk' => 'nullable|integer|min:0',
-            'ku_sn' => 'nullable|integer|min:0',
+            'ku_sn' => 'nullable|string',
             'ku_nadi' => 'nullable|integer|min:0',
-            'ku_suhu' => 'nullable|integer|min:0',
+            'ku_suhu' => 'nullable|numeric',
 
             'layanan_lanjutan' => 'nullable|integer|in:1,2,3,4,5',
 

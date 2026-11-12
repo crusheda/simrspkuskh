@@ -338,20 +338,6 @@
                                         <select class="form-control" name="ku_tk" id="ku_tk"></select>
                                     </div>
 
-                                    {{-- SKALA NYERI --}}
-                                    <div class="form-group mb-3">
-                                        <label class="form-label">
-                                            Skala Nyeri
-                                        </label>
-
-                                        <input
-                                            class="form-control"
-                                            type="number"
-                                            name="ku_sn"
-                                            min="0"
-                                            step="1">
-                                    </div>
-
                                 </div>
 
                                 <div class="col-md-6">
@@ -394,6 +380,18 @@
                                         </div>
                                     </div>
 
+                                    {{-- SKALA NYERI --}}
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">
+                                            Skala Nyeri
+                                        </label>
+
+                                        <input
+                                            class="form-control"
+                                            type="text"
+                                            name="ku_sn">
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -423,7 +421,7 @@
                                                 type="radio"
                                                 name="layanan_lanjutan"
                                                 id="layanan_lanjutan_{{ $value }}"
-                                                value="{{ $value }}">
+                                                value="{{ $value }}" @if ($value==1) checked @endif>
 
                                             <label
                                                 class="form-check-label"
@@ -465,14 +463,14 @@
                     Print Preview
                 </button>
 
-                    <button
+                    {{-- <button
                         type="button"
                         class="btn btn-success"
                         id="btn_simpan_resume">
 
                         <i class="ph-duotone ph-floppy-disk me-2"></i>
                         Simpan
-                    </button>
+                    </button> --}}
 
                     <button
                         type="button"
@@ -522,7 +520,7 @@
 
     const $badge = $form.find('#badge_final_resume');
 
-    const $btnSimpan = $form.find('#btn_simpan_resume');
+    // const $btnSimpan = $form.find('#btn_simpan_resume');
     const $btnFinal = $form.find('#btn_final_resume');
     const $btnBatalFinal = $form.find('#btn_batal_final_resume');
     const $btnPrint = $form.find('#btn_print_resume');
@@ -617,7 +615,7 @@
                 .addClass('bg-success')
                 .text('Sudah Final');
 
-            $btnSimpan.addClass('d-none');
+            // $btnSimpan.addClass('d-none');
             $btnFinal.addClass('d-none');
 
             $btnBatalFinal.removeClass('d-none');
@@ -629,7 +627,7 @@
                 .addClass('bg-danger')
                 .text('Belum Final');
 
-            $btnSimpan.removeClass('d-none');
+            // $btnSimpan.removeClass('d-none');
             $btnFinal.removeClass('d-none');
 
             $btnBatalFinal.addClass('d-none');
@@ -637,7 +635,7 @@
 
         const busy = isLoading || isSaving;
 
-        $btnSimpan.prop('disabled', busy);
+        // $btnSimpan.prop('disabled', busy);
         $btnFinal.prop('disabled', busy);
         $btnBatalFinal.prop('disabled', busy);
         $btnPrint.prop('disabled', busy);
@@ -835,19 +833,42 @@
                 data.cara_keluar || old.cara_keluar || ''
             );
 
+            // TINGKAT KESADARAN
             let select = $form.find('[name="ku_tk"]');
             select.empty().append('<option value="">Pilih Tingkat Kesadaran</option>');
             $.each(ref.tingkat_kesadaran, function (index, item) {
                 select.append(
                     $('<option>', {
-                        value: item.SCORING,
+                        value: item.ID,
                         text: item.DESKRIPSI
                     })
                 );
             });
+            setFieldValue($form, 'ku_tk',
+                data.ku_tk || old.ku_tk || ''
+            );
 
-            setFieldValue($form, 'cara_keluar',
-                data.cara_keluar || old.cara_keluar || ''
+            setFieldValue($form, 'ku_td_up',
+                data.ku_td_up || old.ku_td_up || ''
+            );
+            setFieldValue($form, 'ku_td_down',
+                data.ku_td_down || old.ku_td_down || ''
+            );
+            setFieldValue($form, 'ku_nafas',
+                data.ku_nafas || old.ku_nafas || ''
+            );
+            setFieldValue($form, 'ku_sn',
+                data.ku_sn || old.ku_sn || ''
+            );
+            setFieldValue($form, 'ku_nadi',
+                data.ku_nadi || old.ku_nadi || ''
+            );
+            setFieldValue($form, 'ku_suhu',
+                data.ku_suhu || old.ku_suhu || ''
+            );
+
+            setFieldValue($form, 'edukasi',
+                data.edukasi || old.edukasi || ''
             );
 
             isFinal = Number(data.status_final || 0) === 1;
@@ -1003,7 +1024,7 @@
 
             const response = await $.ajax({
 
-                url: `${baseUrl}/batal-final`,
+                url: `${baseUrl}/batal`,
 
                 type: 'POST',
 
@@ -1131,12 +1152,12 @@
     );
 
     // Tombol simpan.
-    $btnSimpan.on('click', function () {
+    // $btnSimpan.on('click', function () {
 
-        clearTimeout(saveTimer);
+    //     clearTimeout(saveTimer);
 
-        simpanData(false);
-    });
+    //     simpanData(false);
+    // });
 
     // Tombol finalisasi.
     $btnFinal.on('click', async function () {
