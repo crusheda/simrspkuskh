@@ -529,7 +529,7 @@ class ResumeRanapController extends Controller
                         $hasilLaporDPJP,
                         "",
                         "• TATALAKSANA TAMBAHAN",
-                        ""
+                        "-"
                     ]);
 
             // KONDISI SAAT KELUAR RS & CARA KELUAR / PASIEN PULANG
@@ -732,7 +732,8 @@ class ResumeRanapController extends Controller
             'kondisi_keluar' => 'nullable|integer|in:1,2,3,4,5,6,7',
             'cara_keluar' => 'nullable|integer|in:1,2,3,4,5,6,7',
 
-            'ku_td' => 'nullable|integer|min:0',
+            'ku_td_up' => 'nullable|integer|min:0',
+            'ku_td_down' => 'nullable|integer|min:0',
             'ku_nafas' => 'nullable|integer|min:0',
             'ku_tk' => 'nullable|integer|min:0',
             'ku_sn' => 'nullable|string',
@@ -1028,9 +1029,21 @@ class ResumeRanapController extends Controller
                     '=',
                     'pk.RUANGAN'
                 )
+                ->leftJoin('ruang_kamar_tidur as rkt', function ($join) {
+                    $join->on('pk.RUANG_KAMAR_TIDUR', '=', 'rkt.ID')
+                        ->whereIn('rkt.STATUS', [1,2,3]);
+                })
+                ->leftJoin('master.ruang_kamar as rk', function ($join) {
+                    $join->on('rkt.RUANG_KAMAR', '=', 'rk.ID')
+                        ->where('rk.STATUS', 1);
+                })
                 ->join('master.dokter as dr', function ($join) {
                     $join->on('dr.ID', '=', 'pk.DPJP')
                         ->where('dr.STATUS', 1);
+                })
+                ->leftJoin('pendaftaran.penjamin as pj', 'pk.NOPEN', '=', 'pj.NOPEN')
+                ->leftJoin('master.referensi as rf', function ($join) {
+                    $join->on('pj.JENIS', '=', 'rf.ID')->where('rf.JENIS', '=', 10);
                 })
                 ->select([
                     'pk.NOMOR as KUNJUNGAN',
@@ -1038,13 +1051,28 @@ class ResumeRanapController extends Controller
                     'pk.MASUK as TGLMASUK',
                     'pk.KELUAR as TGLKELUAR',
                     'pk.DPJP',
+                    'ps.TANGGAL_LAHIR AS TGLLAHIR',
+                    DB::raw("
+                        IF(
+                            ps.JENIS_KELAMIN = 1,
+                            'LAKI-LAKI',
+                            IF(
+                                ps.JENIS_KELAMIN = 2,
+                                'PEREMPUAN',
+                                'TIDAK DIKETAHUI'
+                            )
+                        ) AS JK
+                    "),
 
                     'pp.NORM',
                     'pp.TANGGAL as TANGGAL_PENDAFTARAN',
+                    'rf.DESKRIPSI as CARABAYAR',
 
                     'ps.*',
 
                     'ru.DESKRIPSI as NAMARUANGAN',
+                    'rk.KAMAR as NAMAKAMAR',
+                    'rkt.TEMPAT_TIDUR as NAMATT',
 
                     'dr.NIP as NIP_DOKTER',
 
@@ -1068,7 +1096,7 @@ class ResumeRanapController extends Controller
                 ->where('pk.STATUS', '!=', 0)
                 ->where('pp.STATUS', '!=', 0)
                 ->first();
-
+                
             if (!$kunjunganUtama) {
                 return response()->json([
                     'success' => false,
@@ -1126,6 +1154,19 @@ class ResumeRanapController extends Controller
                 4 => 'Dokter Luar',
                 5 => 'Komunitas',
             ];
+            
+            $tingkatKesadaran = DB::table('master.referensi as ref')
+                                ->select('ID','DESKRIPSI','SCORING')
+                                ->where('ref.JENIS', 179)
+                                ->where('ref.STATUS', 1)
+                                ->pluck('DESKRIPSI', 'ID')
+                                ->toArray();
+            // $tingkatKesadaran = [
+            //     1 => 'Sadar Baik / Alert',
+            //     2 => 'Berespon dengan kata-kata / Voice',
+            //     3 => 'Hanya berespons jika dirangsang nyeri / Pain',
+            //     4 => 'Pasien tidak sadar / Unresponsive',
+            // ];
 
             /*
             |--------------------------------------------------------------------------
@@ -1248,7 +1289,9 @@ class ResumeRanapController extends Controller
             $data = [
 
                 // INSTANSI
-                'NAMAINST' => 'RS PKU MUHAMMADIYAH SUKOHARJO',
+                'TITLE' => 'RESUME MEDIS RAWAT INAP',
+
+                'NAMAINSTANSI' => 'RS PKU MUHAMMADIYAH SUKOHARJO',
 
                 'ALAMATINST' => 'Jl. Mayor Sunaryo No.37, Gawanan, Sukoharjo',
 
@@ -1262,15 +1305,17 @@ class ResumeRanapController extends Controller
 
                 'NAMALENGKAP' => $kunjunganUtama->NAMALENGKAP ?? '',
 
-                'JK' => (
+                'JENISKELAMIN' => (
                     $kunjunganUtama->JENIS_KELAMIN
                     ?? $kunjunganUtama->JK
                     ?? ''
                 ),
 
                 'TGLLAHIR' => $formatTanggal(
-                    $kunjunganUtama->TANGGAL_LAHIR ?? null
+                    $kunjunganUtama->TGLLAHIR ?? null
                 ),
+
+                'JK' => $kunjunganUtama->JK ?? '',
 
                 'UMUR' => $kunjunganUtama->UMUR ?? '',
 
@@ -1278,6 +1323,11 @@ class ResumeRanapController extends Controller
 
                 // KUNJUNGAN
                 'KUNJUNGAN' => $kunjungan,
+                'CARA_BAYAR' => $kunjunganUtama->CARABAYAR,
+
+                'TGLDAFTAR' => $formatTanggalJam(
+                    $kunjunganUtama->TANGGAL_PENDAFTARAN
+                ),
 
                 'TGLMASUK' => $formatTanggalJam(
                     $kunjunganUtama->TGLMASUK
@@ -1287,67 +1337,103 @@ class ResumeRanapController extends Controller
                     $kunjunganUtama->TGLKELUAR
                 ),
 
-                'NAMARUANGAN' => $kunjunganUtama->NAMARUANGAN ?? '',
+                'RUANG_RAWAT' => 
+                    $kunjunganUtama->NAMATT ? trim($kunjunganUtama->NAMARUANGAN . ' (' . $kunjunganUtama->NAMATT . ' - ' . $kunjunganUtama->NAMAKAMAR . ')') : '',
 
                 // INFORMASI RAWAT INAP
-                'INDIKASI' => $record->indikasi ?? '',
+                'INDIKASI_RANAP' => $record->indikasi ?? '',
 
                 // RIWAYAT PENYAKIT
                 'RPS' => $record->rps ?? '',
 
                 'RPD' => $record->rpd ?? '',
 
+                'RA' => $record->ra ?? '',
+
                 'RPM' => $record->rpm ?? '',
 
                 'PEMERIKSAAN_FISIK' => $record->pemeriksaan_fisik ?? '',
 
+                'BERKAS_LAB' => '',
+                'BERKAS_RAD' => '',
+                'PENUNJANG_LAIN' => '',
+
                 // DIAGNOSIS DAN TERAPI
                 'DIAGNOSA_UTAMA' => $record->diagnosa_utama ?? '',
-
                 'DIAGNOSA_SEKUNDER' => $record->diagnosa_sekunder ?? '',
-
+                'DIAGNOSA_DOKTER_ICD10' => $record->diagnosa_dokter_icd10 ?? '',
                 'DIAGNOSA_PERAWAT' => $record->diagnosa_perawat ?? '',
+                'DIAGNOSA_DOKTER_ICD9' => $record->diagnosa_dokter_icd9 ?? '',
 
                 'TERAPI' => $record->terapi ?? '',
 
-                // KONDISI KELUAR
-                'KONDISI_KELUAR' =>
-                    $kondisiKeluar[$record->kondisi_keluar] ?? '',
+                // CARA KELUAR
+                'CK_1' => $record->cara_keluar == 1 ? '☑' : '☐',
+                'CK_2' => $record->cara_keluar == 2 ? '☑' : '☐',
+                'CK_3' => $record->cara_keluar == 3 ? '☑' : '☐',
+                'CK_4' => $record->cara_keluar == 4 ? '☑' : '☐',
+                'CK_5' => $record->cara_keluar == 5 ? '☑' : '☐',
+                'CK_6' => $record->cara_keluar == 6 ? '☑' : '☐',
+                'CK_7' => $record->cara_keluar == 7 ? '☑' : '☐',
+                'CK_8' => $record->cara_keluar == 8 ? '☑' : '☐',
 
-                'CARA_KELUAR' =>
-                    $caraKeluar[$record->cara_keluar] ?? '',
+                // KONDISI KELUAR
+                'KK_1' => $record->kondisi_keluar == 1 ? '☑' : '☐',
+                'KK_2' => $record->kondisi_keluar == 2 ? '☑' : '☐',
+                'KK_3' => $record->kondisi_keluar == 3 ? '☑' : '☐',
+                'KK_4' => $record->kondisi_keluar == 4 ? '☑' : '☐',
+                'KK_5' => $record->kondisi_keluar == 5 ? '☑' : '☐',
+                'KK_6' => $record->kondisi_keluar == 6 ? '☑' : '☐',
+                'KK_7' => $record->kondisi_keluar == 7 ? '☑' : '☐',
+                'KK_8' => $record->kondisi_keluar == 8 ? '☑' : '☐',
+                'KK_9' => $record->kondisi_keluar == 9 ? '☑' : '☐',
 
                 // KONDISI UMUM
-                'KU_TD' => $record->ku_td !== null
-                    ? $record->ku_td . ' mmHg'
+                'KU_TD_UP' => $record->ku_td_up !== null
+                    ? (int) $record->ku_td_up
+                    : '',
+
+                'KU_TD_DOWN' => $record->ku_td_down !== null
+                    ? ' / ' . (int) $record->ku_td_down . ' mmHg'
                     : '',
 
                 'KU_NAFAS' => $record->ku_nafas !== null
-                    ? $record->ku_nafas . ' x/Menit'
+                    ? (int) $record->ku_nafas . ' x/Menit'
                     : '',
 
-                'KU_TK' => $record->ku_tk ?? '',
+                'KU_TK' => $tingkatKesadaran[$record->ku_tk] ?? '',
 
                 'KU_SN' => $record->ku_sn ?? '',
 
                 'KU_NADI' => $record->ku_nadi !== null
-                    ? $record->ku_nadi . ' x/Menit'
+                    ? (int) $record->ku_nadi . ' x/Menit'
                     : '',
 
                 'KU_SUHU' => $record->ku_suhu !== null
                     ? $record->ku_suhu . ' °C'
                     : '',
 
-                // LAYANAN LANJUTAN
-                'LAYANAN_LANJUTAN' =>
-                    $layananLanjutan[$record->layanan_lanjutan] ?? '',
-
+                // 'LAYANAN_LANJUTAN' => $layananLanjutan[$record->layanan_lanjutan] ?? '',
+                'LAYANAN_LANJUTAN' => $record->layanan_lanjutan ? '☑' : '☐',
                 'EDUKASI' => $record->edukasi ?? '',
+                
+                'OBAT_NAMA' => '',
+                'OBAT_JUMLAH' => '',
+                'OBAT_DOSIS' => '',
+                'OBAT_FREKUENSI' => '',
+                'OBAT_CARA' => '',
+                'OBAT_RACIKAN' => '',
+                'TANGGAL_KONTROL' => '',
+                'RUANG_KONTROL' => '',
+                'NOMOR_KONTROL' => '',
+                'NOMOR_REFERENSI' => '',
 
                 // DPJP
                 'NAMA_DPJP' => $kunjunganUtama->NAMADOKTER ?? '',
-
                 'NIP_DPJP' => $kunjunganUtama->NIP_DOKTER ?? '',
+
+                'TGL_FINAL' => $record->tgl_difinal ? $formatTanggalJam($record->tgl_difinal) : '',
+                'TGL_SURAT' => $record->tgl_difinal ? $formatTanggal($record->tgl_difinal) : '',
 
                 // TANGGAL CETAK
                 'TANGGAL_CETAK' => now('Asia/Jakarta')
@@ -1358,10 +1444,21 @@ class ResumeRanapController extends Controller
 
             /*
             |--------------------------------------------------------------------------
+            | ADD LOGO RS
+            |--------------------------------------------------------------------------
+            */
+            $logoPath = public_path('doc/klaim/resumemedis/logo-pku.png');
+            if (is_file($logoPath)) {
+                self::setImgWord($templateProcessor, 'LOGO_RS', $logoPath, 52);
+            } else {
+                $templateProcessor->setValue('LOGO_RS', '');
+            }
+
+            /*
+            |--------------------------------------------------------------------------
             | 12. ISI PLACEHOLDER TEKS
             |--------------------------------------------------------------------------
             */
-
             foreach ($data as $key => $value) {
                 $templateProcessor->setValue(
                     $key,
@@ -1496,5 +1593,27 @@ class ResumeRanapController extends Controller
                 'message' => $e->getMessage(),
             ], 500);
         }
+    }
+    
+    public static function setImgWord(TemplateProcessor $templateProcessor, string $key, string $imagePath, int $targetWidth)
+    {
+        if (!file_exists($imagePath)) {
+            throw new \Exception("Gambar TTE tidak ditemukan: {$imagePath}");
+        }
+
+        [$originalWidth, $originalHeight] = getimagesize($imagePath);
+
+        if ($originalWidth === 0) {
+            throw new \Exception("Lebar gambar 0: {$imagePath}");
+        }
+
+        $ratio = $originalHeight / $originalWidth;
+        $targetHeight = $targetWidth * $ratio;
+
+        $templateProcessor->setImageValue($key, [
+            'path' => $imagePath,
+            'width' => $targetWidth,
+            'height' => $targetHeight,
+        ]);
     }
 }
