@@ -16,6 +16,8 @@ use Carbon\Carbon;
 use Throwable;
 use Storage;
 
+use App\Http\Controllers\EMR\Form\AddOnPengkajianController;
+
 class ResumeRanapController extends Controller
 {
     protected LibreOfficeService $libreOffice;
@@ -1129,22 +1131,23 @@ class ResumeRanapController extends Controller
 
             $kondisiKeluar = [
                 1 => 'Sembuh',
-                2 => 'Belum Sembuh',
-                3 => 'Membaik',
-                4 => 'DOA',
-                5 => 'Meninggal < 48 Jam',
-                6 => 'Meninggal > 48 Jam',
+                2 => 'Membaik',
+                3 => 'Belum Sembuh',
+                4 => 'Meninggal <= 48 Jam',
+                5 => 'Meninggal > 48 Jam',
+                6 => 'DOA',
                 7 => 'Rujuk RS Lain',
             ];
 
             $caraKeluar = [
                 1 => 'Diijinkan Pulang',
                 2 => 'Pulang Atas Permintaan Sendiri',
-                3 => 'Pindah RS',
-                4 => 'Dirujuk ke Rumah Sakit Lain',
-                5 => 'Dead On Arrival (DOA)',
+                3 => 'Dirujuk ke Rumah Sakit Lain',
+                4 => 'Lari',
+                5 => 'Pindah RS <Lain></Lain>',
                 6 => 'Meninggal',
-                7 => 'Lain-lain',
+                7 => 'Dead On Arrival (DOA)',
+                8 => 'Lain-lain',
             ];
 
             $layananLanjutan = [
@@ -1272,6 +1275,142 @@ class ResumeRanapController extends Controller
 
             /*
             |--------------------------------------------------------------------------
+            | PEMERIKSAAN PENUNJANG
+            |--------------------------------------------------------------------------
+            */
+            $addOn = app(AddOnPengkajianController::class);
+            
+            // RIWAYAT LABORATORIUM
+            $labRows = collect(
+                $addOn->getRiwayatLaborat($kunjungan)
+            )->values();
+
+            // RIWAYAT RADIOLOGI
+            $radRows = collect(
+                $addOn->getRiwayatRadiologi($kunjungan)
+            )->values();
+
+            // PENUNJANG LAIN
+            $penunjangResponse = $addOn->getPenunjangLain($kunjungan);
+
+            $penunjangData = $penunjangResponse->getData(true)['data'] ?? [];
+
+            if ($penunjangData['HASIL']) {
+                $penunjangText = implode("\n", [
+                    ($penunjangData['HASIL'] ? 'HASIL : ' . $penunjangData['HASIL'] : ''),
+                    ($penunjangData['KESIMPULAN'] ? 'KESIMPULAN : ' . $penunjangData['KESIMPULAN'] : ''),
+                    ($penunjangData['DESKRIPSI'] ? 'DESKRIPSI : ' . $penunjangData['DESKRIPSI'] : ''),
+                ]);
+            } else {
+                $penunjangText = 'Tidak Ada';
+            }
+
+            // ==========================================
+            // TERAPI OBAT PULANG
+            // ==========================================
+            $obatRows = DB::table('layanan.farmasi AS lf')
+                ->join('pendaftaran.kunjungan AS pk', 'lf.KUNJUNGAN', '=', 'pk.NOMOR')
+                ->join('inventory.barang AS ib', 'lf.FARMASI', '=', 'ib.ID')
+                ->join('layanan.order_resep AS o', 'o.NOMOR', '=', 'pk.REF')
+                ->leftJoin('master.frekuensi_aturan_resep AS f', function ($join) {
+                    $join->on('lf.FREKUENSI', '=', 'f.ID')
+                        ->where('f.STATUS', '!=', 0);
+                })
+                ->where('lf.STATUS', '!=', 0)
+                ->whereIn('pk.STATUS', [1, 2])
+                ->where('pk.NOPEN', $kunjunganUtama->NOPEN)
+                ->whereExists(function ($q) {
+                    $q->select('rt.REF_ID')
+                        ->from('pembayaran.rincian_tagihan AS rt')
+                        ->whereColumn('rt.REF_ID', 'lf.ID')
+                        ->where('rt.JENIS', 4);
+                })
+                ->where('o.RESEP_PASIEN_PULANG', 1)
+                ->where(function ($q) {
+                    $q->where('ib.KATEGORI', 'like', '101%')
+                        ->orWhere('ib.KATEGORI', 'like', '102%');
+                })
+                ->orderBy('lf.RACIKAN')
+                ->orderBy('lf.GROUP_RACIKAN')
+                ->select(
+                    'ib.NAMA AS NAMAOBAT',
+                    'lf.JUMLAH',
+                    'f.FREKUENSI',
+                    'lf.DOSIS',
+                    'lf.KETERANGAN',
+                    'lf.PETUNJUK_RACIKAN',
+                    'lf.RACIKAN AS RACIKAN_DASAR',
+                    'lf.GROUP_RACIKAN AS GROUP_RACIKAN'
+                )
+                ->get();
+
+            // Format informasi racikan
+            $obatRows->transform(function ($item) {
+                $racikan = trim(
+                    (string) ($item->RACIKAN_DASAR ?? '') .
+                    (string) ($item->GROUP_RACIKAN ?? '')
+                );
+
+                $petunjuk = trim((string) ($item->PETUNJUK_RACIKAN ?? ''));
+
+                $item->OBAT_RACIKAN = implode(' | ', array_filter([
+                    $racikan,
+                    $petunjuk,
+                ], fn ($value) => $value !== ''));
+
+                return $item;
+            });
+
+            // Helper untuk menggabungkan data obat
+            $formatObatColumn = function ($column) use ($obatRows) {
+                if ($obatRows->isEmpty()) {
+                    return '-';
+                }
+
+                return $obatRows->map(function ($item) use ($column) {
+                    $value = trim((string) ($item->{$column} ?? ''));
+
+                    return $value !== '' ? $value : '-';
+                })->implode('; ');
+            };
+
+
+            // ==========================================
+            // TANGGAL DAN RUANG KONTROL
+            // ==========================================
+
+            // Ambil data pasien pulang
+            $pasienPulang = DB::table('layanan.pasien_pulang')
+                ->where('NOPEN', $kunjunganUtama->NOPEN)
+                ->where('STATUS', 1)
+                ->first();
+
+            // Ambil kunjungan saat pasien pulang
+            $kunjunganPulang = $pasienPulang
+                ? DB::table('pendaftaran.kunjungan')
+                    ->where('NOMOR', $pasienPulang->KUNJUNGAN)
+                    ->where('STATUS', '!=', 0)
+                    ->first()
+                : null;
+
+            // Ambil jadwal kontrol
+            $jadwalKontrol = $kunjunganPulang
+                ? DB::table('medicalrecord.jadwal_kontrol')
+                    ->where('KUNJUNGAN', $kunjunganPulang->NOMOR)
+                    ->where('STATUS', '!=', 0)
+                    ->first()
+                : null;
+
+            // Ambil nama ruangan kontrol
+            $ruangKontrol = $jadwalKontrol
+                ? DB::table('master.ruangan')
+                    ->where('ID', $jadwalKontrol->RUANGAN)
+                    ->where('STATUS', '!=', 0)
+                    ->value('DESKRIPSI')
+                : null;
+
+            /*
+            |--------------------------------------------------------------------------
             | 10. TEMPLATE PROCESSOR
             |--------------------------------------------------------------------------
             */
@@ -1354,9 +1493,8 @@ class ResumeRanapController extends Controller
 
                 'PEMERIKSAAN_FISIK' => $record->pemeriksaan_fisik ?? '',
 
-                'BERKAS_LAB' => '',
-                'BERKAS_RAD' => '',
-                'PENUNJANG_LAIN' => '',
+                // RIWAYAT LAB DAN RADIOLOGI FUNCTION ADA DIBAWAH
+                'PENUNJANG_LAIN' => $penunjangText,
 
                 // DIAGNOSIS DAN TERAPI
                 'DIAGNOSA_UTAMA' => $record->diagnosa_utama ?? '',
@@ -1366,6 +1504,16 @@ class ResumeRanapController extends Controller
                 'DIAGNOSA_DOKTER_ICD9' => $record->diagnosa_dokter_icd9 ?? '',
 
                 'TERAPI' => $record->terapi ?? '',
+                
+                // KONDISI KELUAR
+                'KK_1' => $record->kondisi_keluar == 1 ? '☑' : '☐',
+                'KK_2' => $record->kondisi_keluar == 2 ? '☑' : '☐',
+                'KK_3' => $record->kondisi_keluar == 3 ? '☑' : '☐',
+                'KK_4' => $record->kondisi_keluar == 4 ? '☑' : '☐',
+                'KK_5' => $record->kondisi_keluar == 5 ? '☑' : '☐',
+                'KK_6' => $record->kondisi_keluar == 6 ? '☑' : '☐',
+                'KK_7' => $record->kondisi_keluar == 7 ? '☑' : '☐',
+                'KK_8' => $record->kondisi_keluar == 8 ? '☑' : '☐',
 
                 // CARA KELUAR
                 'CK_1' => $record->cara_keluar == 1 ? '☑' : '☐',
@@ -1376,17 +1524,7 @@ class ResumeRanapController extends Controller
                 'CK_6' => $record->cara_keluar == 6 ? '☑' : '☐',
                 'CK_7' => $record->cara_keluar == 7 ? '☑' : '☐',
                 'CK_8' => $record->cara_keluar == 8 ? '☑' : '☐',
-
-                // KONDISI KELUAR
-                'KK_1' => $record->kondisi_keluar == 1 ? '☑' : '☐',
-                'KK_2' => $record->kondisi_keluar == 2 ? '☑' : '☐',
-                'KK_3' => $record->kondisi_keluar == 3 ? '☑' : '☐',
-                'KK_4' => $record->kondisi_keluar == 4 ? '☑' : '☐',
-                'KK_5' => $record->kondisi_keluar == 5 ? '☑' : '☐',
-                'KK_6' => $record->kondisi_keluar == 6 ? '☑' : '☐',
-                'KK_7' => $record->kondisi_keluar == 7 ? '☑' : '☐',
-                'KK_8' => $record->kondisi_keluar == 8 ? '☑' : '☐',
-                'KK_9' => $record->kondisi_keluar == 9 ? '☑' : '☐',
+                'CK_9' => $record->cara_keluar == 9 ? '☑' : '☐',
 
                 // KONDISI UMUM
                 'KU_TD_UP' => $record->ku_td_up !== null
@@ -1416,20 +1554,25 @@ class ResumeRanapController extends Controller
                 // 'LAYANAN_LANJUTAN' => $layananLanjutan[$record->layanan_lanjutan] ?? '',
                 'LAYANAN_LANJUTAN' => $record->layanan_lanjutan ? '☑' : '☐',
                 'EDUKASI' => $record->edukasi ?? '',
-                
-                'OBAT_NAMA' => '',
-                'OBAT_JUMLAH' => '',
-                'OBAT_DOSIS' => '',
-                'OBAT_FREKUENSI' => '',
-                'OBAT_CARA' => '',
-                'OBAT_RACIKAN' => '',
-                'TANGGAL_KONTROL' => '',
-                'RUANG_KONTROL' => '',
-                'NOMOR_KONTROL' => '',
-                'NOMOR_REFERENSI' => '',
+
+                // OBAT PULANG
+                'OBAT_NAMA' => $formatObatColumn('NAMAOBAT'),
+                'OBAT_JUMLAH' => $formatObatColumn('JUMLAH'),
+                'OBAT_DOSIS' => $formatObatColumn('DOSIS'),
+                'OBAT_FREKUENSI' => $formatObatColumn('FREKUENSI'),
+                'OBAT_CARA' => $formatObatColumn('KETERANGAN'),
+                'OBAT_RACIKAN' => $formatObatColumn('OBAT_RACIKAN'),
+
+                // JADWAL KONTROL
+                'TANGGAL_KONTROL' => !empty($jadwalKontrol->TANGGAL)
+                    ? $formatTanggal($jadwalKontrol->TANGGAL)
+                    : 'Tidak Ada',
+                'RUANG_KONTROL' => $ruangKontrol ?: 'Tidak Ada',
+                'NOMOR_KONTROL' => $jadwalKontrol->NOMOR ?? 'Tidak Ada',
+                'NOMOR_REFERENSI' => $jadwalKontrol->NOMOR_REFERENSI ?? 'Tidak Ada',
 
                 // DPJP
-                'NAMA_DPJP' => $kunjunganUtama->NAMADOKTER ?? '',
+                'NAMA_DPJP' => $kunjunganUtama->NAMADOKTER  ?? '',
                 'NIP_DPJP' => $kunjunganUtama->NIP_DOKTER ?? '',
 
                 'TGL_FINAL' => $record->tgl_difinal ? $formatTanggalJam($record->tgl_difinal) : '',
@@ -1466,12 +1609,86 @@ class ResumeRanapController extends Controller
                 );
             }
 
+            // ==========================================
+            // HELPER ISI TABEL WORD (CLONE ROW)
+            // ==========================================
+            $fillTableRows = function (
+                string $marker,
+                $rows,
+                array $fields
+            ) use ($templateProcessor) {
+
+                $rows = collect($rows)->values();
+
+                // Minimal satu baris agar tabel tetap tampil meskipun data kosong
+                $templateProcessor->cloneRow(
+                    $marker,
+                    max(1, $rows->count())
+                );
+
+                // Jika tidak ada data, buat satu baris kosong
+                if ($rows->isEmpty()) {
+                    $rows = collect([null]);
+                }
+
+                foreach ($rows as $index => $row) {
+
+                    $suffix = '#' . ($index + 1);
+
+                    foreach ($fields as $placeholder => $resolver) {
+
+                        $value = is_callable($resolver)
+                            ? $resolver($row, $index)
+                            : data_get($row, $resolver);
+
+                        $value = ($value === null || trim((string) $value) === '')
+                            ? '-'
+                            : (string) $value;
+
+                        $templateProcessor->setValue(
+                            $placeholder . $suffix,
+                            $value
+                        );
+                    }
+                }
+            };
+
+            // ==========================================
+            // TABEL LABORATORIUM
+            // ==========================================
+            $fillTableRows('LAB_NO', $labRows, [
+                'LAB_NO' => fn($row, $i) => $row !== null ? $i + 1 : '-',
+
+                'LAB_UNITPENGANTAR' => 'UNITPENGANTAR',
+                'LAB_NAMATINDAKAN' => 'NAMATINDAKAN',
+                'LAB_PARAMETER' => 'PARAMETER',
+                'LAB_HASIL' => 'HASIL',
+                'LAB_SATUAN' => 'SATUAN',
+                'LAB_NILAI_RUJUKAN' => 'NILAI_RUJUKAN',
+                'LAB_KETERANGAN' => 'KETERANGAN',
+            ]);
+
+            // ==========================================
+            // TABEL RADIOLOGI
+            // ==========================================
+            $fillTableRows('RAD_NO', $radRows, [
+                'RAD_NO' => fn($row, $i) => $row !== null ? $i + 1 : '-',
+
+                'RAD_UNITPENGANTAR' => 'UNITPENGANTAR',
+                'RAD_NAMATINDAKAN' => 'NAMATINDAKAN',
+                'RAD_KLINIS' => 'KLINIS',
+                'RAD_KESAN' => 'KESAN',
+                'RAD_USUL' => 'USUL',
+                'RAD_HASIL' => 'HASIL',
+                'RAD_BTK' => 'BTK',
+                'RAD_DOKTER' => 'DOKTER',
+            ]);
+
             /*
             |--------------------------------------------------------------------------
             | 13. MASUKKAN GAMBAR TANDA TANGAN DPJP
             |--------------------------------------------------------------------------
             */
-
             if (
                 $ttdDpjpPath &&
                 Storage::disk('public')->exists($ttdDpjpPath)

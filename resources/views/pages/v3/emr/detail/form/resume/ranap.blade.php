@@ -204,11 +204,11 @@
                                     @php
                                         $kondisiKeluar = [
                                             1 => 'Sembuh',
-                                            2 => 'Belum Sembuh',
-                                            3 => 'Membaik',
-                                            4 => 'DOA',
-                                            5 => 'Meninggal < 48 Jam',
-                                            6 => 'Meninggal > 48 Jam',
+                                            2 => 'Membaik',
+                                            3 => 'Belum Sembuh',
+                                            4 => 'Meninggal <= 48 Jam',
+                                            5 => 'Meninggal > 48 Jam',
+                                            6 => 'DOA',
                                             7 => 'Rujuk RS Lain',
                                         ];
                                     @endphp
@@ -245,11 +245,12 @@
                                         $caraKeluar = [
                                             1 => 'Diijinkan Pulang',
                                             2 => 'Pulang Atas Permintaan Sendiri',
-                                            3 => 'Pindah RS',
-                                            4 => 'Dirujuk ke Rumah Sakit Lain',
-                                            5 => 'Dead On Arrival (DOA)',
+                                            3 => 'Dirujuk ke Rumah Sakit Lain',
+                                            4 => 'Lari',
+                                            5 => 'Pindah RS <Lain></Lain>',
                                             6 => 'Meninggal',
-                                            7 => 'Lain-lain',
+                                            7 => 'Dead On Arrival (DOA)',
+                                            8 => 'Lain-lain',
                                         ];
                                     @endphp
 
