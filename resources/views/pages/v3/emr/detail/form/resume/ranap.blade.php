@@ -106,7 +106,7 @@
                                         <div class="col-md-4 mb-3">
                                             <div class="form-group">
                                                 <h6>
-                                                    Diagnosa Utama
+                                                    Coding Diagnosa <span class="badge text-bg-info ms-1 me-1 p-1 py-0">Utama</span>
                                                     [<b class="text-danger">ICD 10</b>]
                                                 </h6>
 
@@ -119,7 +119,7 @@
                                         <div class="col-md-4 mb-3">
                                             <div class="form-group">
                                                 <h6>
-                                                    Diagnosa Sekunder
+                                                    Coding Diagnosa <span class="badge text-bg-warning ms-1 me-1 p-1 py-0">Sekunder</span>
                                                     [<b class="text-danger">ICD 10</b>]
                                                 </h6>
 
@@ -132,7 +132,7 @@
                                         <div class="col-md-4 mb-3">
                                             <div class="form-group">
                                                 <h6>
-                                                    Diagnosa Dokter
+                                                    Diagnosa
                                                     [<b class="text-danger">ICD 10</b>]
                                                 </h6>
 
@@ -155,7 +155,7 @@
                                         <div class="col-md-8 mb-3">
                                             <div class="form-group">
                                                 <h6>
-                                                    Tindakan / Prosedur Lainnya
+                                                    Coding Tindakan / Prosedur Lainnya
                                                     [<b class="text-success">ICD 9</b>]
                                                 </h6>
 
@@ -168,7 +168,7 @@
                                         <div class="col-md-4 mb-3">
                                             <div class="form-group">
                                                 <h6>
-                                                    Diagnosa Dokter
+                                                    Tindakan
                                                     [<b class="text-success">ICD 9</b>]
                                                 </h6>
 
