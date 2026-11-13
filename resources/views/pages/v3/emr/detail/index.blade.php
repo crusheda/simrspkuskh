@@ -482,10 +482,15 @@
             statusKunjungan
         } = window.EMRData;
 
-        let dataPPA = [];
-        let dataDokter = [];
+        // Data referensi PPA tersedia secara global untuk modal tambah dan edit.
+        window.dataPPA = [];
+        window.dataDokter = [];
+        window.currentKunjunganCppt = null;
+
+        let dataPPA = window.dataPPA;
+        let dataDokter = window.dataDokter;
+
         let ppaSelected = false;
-        let currentKunjunganCppt = null;
         let cpptEditMode = 'edit';
         let cpptCopyId = null;
 
@@ -863,12 +868,29 @@
                         });
                     }
 
-                    dataPPA=(res.ppa||[]).filter(item=>item.ID&&item.NAMA);
-                    dataDokter=(res.dokter||[]).filter(item=>item.ID&&item.NAMA);
+                    /*
+                    |--------------------------------------------------------------------------
+                    | DATA REFERENSI PPA
+                    |--------------------------------------------------------------------------
+                    */
 
+                    // Filter data PPA yang valid
+                    dataPPA = (res.ppa || []).filter(item => item.ID && item.NAMA);
+
+                    // Simpan ke window agar modal_edit.blade.php dapat mengaksesnya
+                    window.dataPPA = dataPPA;
+                    console.log('Data PPA Global:', window.dataPPA);
+                    console.log('Jumlah Data PPA:', window.dataPPA.length);
+
+                    // Data dokter
+                    dataDokter = (res.dokter || []).filter(item => item.ID && item.NAMA);
+
+                    window.dataDokter = dataDokter;
+
+                    // Simpan juga pada input autocomplete modal tambah
                     $('#cppt_ppa_autocomplete').hide().empty();
-                    $('#cppt_ppa').data('ppa',dataPPA);
-                    $('#cppt_dokter_sbar').data('dokter',dataDokter);
+                    $('#cppt_ppa').data('ppa', window.dataPPA);
+                    $('#cppt_dokter_sbar').data('dokter', window.dataDokter);
 
                     // ============================================================
                     // DEFAULT PPA SESUAI USER LOGIN
@@ -1053,6 +1075,9 @@
             });
         }
 
+        // Jadikan function tersedia secara global
+        window.showModalCppt = showModalCppt;
+
         function hapusCPPT(id) {
 
             if (!id) {
@@ -1118,7 +1143,7 @@
 
                             // Refresh data CPPT
                             if (currentKunjunganCppt) {
-                                showModalCppt(currentKunjunganCppt);
+                                showModalCppt(currentKunjunganCppt, 1);
                             }
 
                         } else {
@@ -1479,7 +1504,7 @@
                             isiCppt &&
                             result.isConfirmed
                         ) {
-                            showModalCppt(kunjungan);
+                            showModalCppt(kunjungan, 1);
                         }
 
                     });

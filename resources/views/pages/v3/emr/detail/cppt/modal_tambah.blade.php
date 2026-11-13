@@ -883,8 +883,7 @@
                 | REFRESH RIWAYAT CPPT
                 |--------------------------------------------------------------------------
                 */
-
-                showModalCppt(currentKunjunganCppt);
+                window.showModalCppt(currentKunjunganCppt, 1);
             },
 
             error: function (xhr) {

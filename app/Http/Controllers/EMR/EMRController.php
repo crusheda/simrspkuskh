@@ -2038,6 +2038,161 @@ class EMRController extends Controller
         return response()->json($data, 200);
     }
 
+    /**
+     * Mencari tenaga medis berdasarkan ID aplikasi.pengguna.
+     *
+     * Mengembalikan ID tenaga medis sesuai tabel sumber:
+     * - Dokter   : master.dokter.ID
+     * - Perawat  : master.perawat.ID
+     * - Lainnya  : master.pegawai.ID
+     *
+     * @param int|string $penggunaId
+     * @return object|null
+     */
+    private function resolvePPA($penggunaId)
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | CARI PENGGUNA DAN PROFESI PPA
+        |--------------------------------------------------------------------------
+        */
+
+        $penggunaPPA = DB::table('aplikasi.pengguna AS pe')
+            ->leftJoin('master.pegawai AS peg', 'peg.NIP', '=', 'pe.NIP')
+
+            // JENIS 36
+            ->leftJoin('master.referensi AS ref36', function ($join) {
+                $join->on('ref36.ID', '=', 'peg.PROFESI')
+                    ->where('ref36.JENIS', '=', 36);
+            })
+
+            // JENIS 32
+            ->leftJoin('master.referensi AS ref32', function ($join) {
+                $join->on('ref32.REF_ID', '=', 'ref36.ID')
+                    ->where('ref32.JENIS', '=', 32);
+            })
+
+            ->where('pe.ID', $penggunaId)
+
+            ->select([
+                'peg.NIP',
+                'ref36.ID AS PROFESI_ID',
+                'ref36.DESKRIPSI AS PROFESI',
+                'ref32.ID AS PROFESI_PPA_ID',
+                'ref32.DESKRIPSI AS PROFESI_PPA',
+            ])
+            ->first();
+
+        if (!$penggunaPPA || !$penggunaPPA->NIP) {
+            return null;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | TENTUKAN TABEL TENAGA MEDIS
+        |--------------------------------------------------------------------------
+        */
+
+        // PERAWAT / PARAMEDIS
+        if ((int) $penggunaPPA->PROFESI_PPA_ID === 3) {
+
+            $getPPA = DB::table('master.perawat AS per')
+                ->leftJoin('master.pegawai AS peg', 'peg.NIP', '=', 'per.NIP')
+
+                ->leftJoin('master.referensi AS ref36', function ($join) {
+                    $join->on('ref36.ID', '=', 'peg.PROFESI')
+                        ->where('ref36.JENIS', '=', 36);
+                })
+
+                ->leftJoin('master.referensi AS ref32', function ($join) {
+                    $join->on('ref32.REF_ID', '=', 'ref36.ID')
+                        ->where('ref32.JENIS', '=', 32);
+                })
+
+                ->where('per.NIP', $penggunaPPA->NIP)
+                ->where('per.STATUS', 1)
+
+                ->select([
+                    'per.ID',
+                    'per.NIP',
+                    'peg.PROFESI AS PROFESI_MASTER_ID',
+                    'ref36.ID AS PROFESI_ID',
+                    'ref36.DESKRIPSI AS PROFESI',
+                    'ref32.ID AS PROFESI_PPA_ID',
+                    'ref32.DESKRIPSI AS PROFESI_PPA',
+                ])
+
+                ->first();
+
+        }
+
+        // DOKTER
+        elseif ((int) $penggunaPPA->PROFESI_PPA_ID === 1) {
+
+            $getPPA = DB::table('master.dokter AS dr')
+                ->leftJoin('master.pegawai AS peg', 'peg.NIP', '=', 'dr.NIP')
+
+                ->leftJoin('master.referensi AS ref36', function ($join) {
+                    $join->on('ref36.ID', '=', 'peg.PROFESI')
+                        ->where('ref36.JENIS', '=', 36);
+                })
+
+                ->leftJoin('master.referensi AS ref32', function ($join) {
+                    $join->on('ref32.REF_ID', '=', 'ref36.ID')
+                        ->where('ref32.JENIS', '=', 32);
+                })
+
+                ->where('dr.NIP', $penggunaPPA->NIP)
+                ->where('dr.STATUS', 1)
+
+                ->select([
+                    'dr.ID',
+                    'dr.NIP',
+                    'peg.PROFESI AS PROFESI_MASTER_ID',
+                    'ref36.ID AS PROFESI_ID',
+                    'ref36.DESKRIPSI AS PROFESI',
+                    'ref32.ID AS PROFESI_PPA_ID',
+                    'ref32.DESKRIPSI AS PROFESI_PPA',
+                ])
+
+                ->first();
+
+        }
+
+        // PEGAWAI LAINNYA
+        else {
+
+            $getPPA = DB::table('master.pegawai AS peg')
+
+                ->leftJoin('master.referensi AS ref36', function ($join) {
+                    $join->on('ref36.ID', '=', 'peg.PROFESI')
+                        ->where('ref36.JENIS', '=', 36);
+                })
+
+                ->leftJoin('master.referensi AS ref32', function ($join) {
+                    $join->on('ref32.REF_ID', '=', 'ref36.ID')
+                        ->where('ref32.JENIS', '=', 32);
+                })
+
+                ->where('peg.NIP', $penggunaPPA->NIP)
+                ->where('peg.STATUS', 1)
+
+                ->select([
+                    'peg.ID',
+                    'peg.NIP',
+                    'peg.PROFESI AS PROFESI_MASTER_ID',
+                    'ref36.ID AS PROFESI_ID',
+                    'ref36.DESKRIPSI AS PROFESI',
+                    'ref32.ID AS PROFESI_PPA_ID',
+                    'ref32.DESKRIPSI AS PROFESI_PPA',
+                ])
+
+                ->first();
+        }
+
+        return $getPPA ?: null;
+    }
+
     public function simpanCPPT(Request $request, $PKUNJUNGAN)
     {
         /*
@@ -2210,6 +2365,9 @@ class EMRController extends Controller
             ], 422);
         }
 
+        // print_r($getPPA);
+        // die();
+
         if ($getPPA->PROFESI_PPA_ID == 3) { // JIKA PERAWAT / PARAMEDIS
             $getPPA = DB::table('master.perawat as per')
                 ->leftJoin('master.pegawai AS peg', 'peg.NIP', '=', 'per.NIP')
@@ -2231,6 +2389,40 @@ class EMRController extends Controller
                 ->select(
                     'per.ID',
                     'per.NIP',
+                    'peg.PROFESI',
+
+                    'ref36.ID AS PROFESI_ID',
+                    'ref36.DESKRIPSI AS PROFESI',
+
+                    'ref32.ID AS PROFESI_PPA_ID',
+                    'ref32.DESKRIPSI AS PROFESI_PPA',
+                )
+
+                ->orderBy('ref32.ID', 'asc')
+                ->first();
+
+        } elseif ($getPPA->PROFESI_PPA_ID == 1) { // JIKA DOKTER
+
+            $getPPA = DB::table('master.dokter as dr')
+                ->leftJoin('master.pegawai AS peg', 'peg.NIP', '=', 'dr.NIP')
+
+                // JENIS 36
+                ->leftJoin('master.referensi AS ref36', function ($join) {
+                    $join->on('ref36.ID', '=', 'peg.PROFESI')
+                        ->where('ref36.JENIS', '=', 36);
+                })
+
+                // JENIS 32 berdasarkan REF_ID dari JENIS 36
+                ->leftJoin('master.referensi AS ref32', function ($join) {
+                    $join->on('ref32.REF_ID', '=', 'ref36.ID')
+                        ->where('ref32.JENIS', '=', 32);
+                })
+
+                ->where('dr.NIP', $getPPA->NIP)
+                ->where('dr.STATUS', 1)
+                ->select(
+                    'dr.ID',
+                    'dr.NIP',
                     'peg.PROFESI',
 
                     'ref36.ID AS PROFESI_ID',
@@ -2610,6 +2802,11 @@ class EMRController extends Controller
             'jam' => ['required', 'date_format:H:i'],
             'tbak_sbar' => ['nullable', Rule::in(['', 'SBAR', 'TBAK'])],
             'instruksi' => ['nullable', 'string'],
+            'ppa_id' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
 
             's' => ['nullable', 'string'],
             'o' => ['nullable', 'string'],
@@ -2653,6 +2850,20 @@ class EMRController extends Controller
 
             /*
             |--------------------------------------------------------------------------
+            | CARI TENAGA MEDIS BERDASARKAN NIP
+            |--------------------------------------------------------------------------
+            */
+            $getPPA = $this->resolvePPA($request->ppa_id);
+
+            if (!$getPPA) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data PPA tersebut tidak ditemukan atau sudah tidak aktif.'
+                ], 422);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
             | SIAPKAN DATA CPPT BARU
             |--------------------------------------------------------------------------
             */
@@ -2667,8 +2878,10 @@ class EMRController extends Controller
                 'PLANNING' => '',
                 'INSTRUKSI' => '',
 
-                'TENAGA_MEDIS' => $cppt->TENAGA_MEDIS,
-                'JENIS' => $cppt->JENIS,
+                'JENIS'         => $getPPA->PROFESI_PPA_ID,
+                'TENAGA_MEDIS'  => $getPPA->ID,
+                // 'TENAGA_MEDIS'   => $cppt->TENAGA_MEDIS,
+                // 'JENIS'          => $cppt->JENIS,
                 'RENCANA_PULANG' => $cppt->RENCANA_PULANG ?? 0,
                 'TANGGAL_RENCANA_PULANG' => $cppt->TANGGAL_RENCANA_PULANG,
                 'SUB_DEVISI' => $cppt->SUB_DEVISI ?? 0,
@@ -2795,6 +3008,11 @@ class EMRController extends Controller
             'jam' => ['required', 'date_format:H:i'],
             'tbak_sbar' => ['nullable', Rule::in(['', 'SBAR', 'TBAK'])],
             'instruksi' => ['nullable', 'string'],
+            'ppa_id' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
 
             // CPPT Biasa
             's' => ['nullable', 'string'],
@@ -2827,6 +3045,19 @@ class EMRController extends Controller
             return response()->json([
                 'message' => 'Data CPPT tidak ditemukan atau bukan milik kunjungan ini.'
             ], 404);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | RESOLVE PPA
+        |--------------------------------------------------------------------------
+        */
+        $getPPA = $this->resolvePPA($validated['ppa_id']);
+
+        if (!$getPPA) {
+            return response()->json([
+                'message' => 'Data PPA tersebut tidak ditemukan atau sudah tidak aktif.'
+            ], 422);
         }
 
         /*
@@ -2869,7 +3100,14 @@ class EMRController extends Controller
 
         $update = [
             'TANGGAL' => $tanggal,
-            'INSTRUKSI' => $this->cpptTextKeHtml($validated['instruksi'] ?? ''),
+
+            // PPA hasil resolusi dari aplikasi.pengguna
+            'JENIS'         => $getPPA->PROFESI_PPA_ID,
+            'TENAGA_MEDIS'  => $getPPA->ID,
+
+            'INSTRUKSI' => $this->cpptTextKeHtml(
+                $validated['instruksi'] ?? ''
+            ),
         ];
 
         /*

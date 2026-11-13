@@ -84,16 +84,29 @@
                                     id="edit_cppt_jam">
                             </div>
 
-                            <div class="col-md-7">
+                            {{-- PPA --}}
+                            <div class="col-md-7 position-relative">
                                 <label class="form-label fw-semibold">
                                     PPA
                                     <small class="text-muted fw-normal">(Pencatat CPPT)</small>
                                 </label>
 
                                 <input type="text"
-                                    class="form-control bg-light"
+                                    class="form-control"
                                     id="edit_cppt_ppa"
-                                    readonly>
+                                    placeholder="Cari nama atau NIP PPA..."
+                                    autocomplete="off"
+                                    spellcheck="false">
+
+                                {{-- ID PPA sudah tersedia di bagian hidden input atas --}}
+                                <div id="edit_cppt_ppa_autocomplete"
+                                    class="list-group position-absolute start-0 end-0 shadow-sm bg-body"
+                                    style="z-index: 1065; display: none; max-height: 260px; overflow-y: auto;">
+                                </div>
+
+                                <small class="text-muted">
+                                    Ketik nama atau NIP, kemudian pilih PPA dari daftar.
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -401,22 +414,35 @@
         }
 
         function initModalEditCPPT() {
+
+            // Inisialisasi autocomplete PPA
+            initAutocompleteEditPPA();
+
             $('#modalEditCPPT').off('hidden.bs.modal.editCPPT');
 
             $('#modalEditCPPT').on('hidden.bs.modal.editCPPT', function () {
+
                 if (!editCPPTKembaliKeRiwayat) return;
 
                 editCPPTKembaliKeRiwayat = false;
 
                 // Setelah Simpan: ambil ulang riwayat dari server.
                 if (editCPPTPerluRefresh) {
+
                     editCPPTPerluRefresh = false;
-                    showModalCppt(currentKunjunganCppt);
+
+                    if (typeof window.showModalCppt === 'function') {
+                        window.showModalCppt(currentKunjunganCppt, 1);
+                    } else {
+                        console.error('Function showModalCppt belum tersedia secara global.');
+                    }
+
                     return;
                 }
 
-                // Setelah Batal: kembali ke riwayat yang sudah terbuka sebelumnya.
+                // Setelah Batal: kembali ke riwayat sebelumnya.
                 $('#modalCPPT').modal('show');
+
             });
         }
 
@@ -580,6 +606,232 @@
             return hasil ? hasil[1] : '';
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | AUTOCOMPLETE PPA MODAL EDIT / COPY CPPT
+        |--------------------------------------------------------------------------
+        */
+        function ambilDataPPAEditCPPT() {
+
+            // Ambil data referensi PPA dari global window
+            if (Array.isArray(window.dataPPA)) {
+                return window.dataPPA;
+            }
+
+            // Fallback: ambil dari data autocomplete modal tambah
+            const dataModalTambah = $('#cppt_ppa').data('ppa');
+
+            if (Array.isArray(dataModalTambah)) {
+                return dataModalTambah;
+            }
+
+            return [];
+        }
+
+        function initAutocompleteEditPPA() {
+
+            const $input = $('#edit_cppt_ppa');
+            const $hidden = $('#edit_cppt_ppa_id');
+            const $container = $('#edit_cppt_ppa_autocomplete');
+
+            // Cegah event terpasang berulang.
+            $input.off('.autocompleteEditPPA');
+            $container.off('.autocompleteEditPPA');
+
+            /*
+            |--------------------------------------------------------------------------
+            | INPUT / SEARCH PPA
+            |--------------------------------------------------------------------------
+            */
+
+            $input.on('input.autocompleteEditPPA', function () {
+
+                const keyword = String($(this).val() || '')
+                    .trim()
+                    .toLowerCase();
+
+                /*
+                |--------------------------------------------------------------------------
+                | Ketika user mengetik ulang:
+                | ID PPA sebelumnya harus dibatalkan.
+                |--------------------------------------------------------------------------
+                */
+
+                $hidden.val('');
+
+                $container.empty();
+
+                if (keyword.length < 2) {
+
+                    $container.hide();
+
+                    return;
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | AMBIL DATA PPA
+                |--------------------------------------------------------------------------
+                */
+
+                const daftarPPA = ambilDataPPAEditCPPT();
+
+                if (!daftarPPA.length) {
+
+                    $('<div>', {
+                        class: 'list-group-item text-muted',
+                        text: 'Data referensi PPA belum tersedia.'
+                    }).appendTo($container);
+
+                    $container.show();
+
+                    return;
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | FILTER BERDASARKAN NAMA ATAU NIP
+                |--------------------------------------------------------------------------
+                */
+
+                const hasil = daftarPPA.filter(item => {
+
+                    const nama = String(item.NAMA || '').toLowerCase();
+
+                    const nip = String(item.NIP || '').toLowerCase();
+
+                    return nama.includes(keyword) ||
+                        nip.includes(keyword);
+
+                }).slice(0, 10);
+
+                /*
+                |--------------------------------------------------------------------------
+                | JIKA TIDAK DITEMUKAN
+                |--------------------------------------------------------------------------
+                */
+
+                if (!hasil.length) {
+
+                    $('<div>', {
+                        class: 'list-group-item text-muted',
+                        text: 'PPA tidak ditemukan.'
+                    }).appendTo($container);
+
+                    $container.show();
+
+                    return;
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | TAMPILKAN HASIL AUTOCOMPLETE
+                |--------------------------------------------------------------------------
+                */
+
+                hasil.forEach(item => {
+
+                    const id = String(item.ID ?? '');
+
+                    const nama = String(item.NAMA ?? '');
+
+                    const nip = String(item.NIP ?? '');
+
+                    const $item = $('<button>', {
+                        type: 'button',
+                        class: 'list-group-item list-group-item-action text-start bg-body edit-cppt-ppa-item'
+                    });
+
+                    $item
+                        .attr('data-id', id)
+                        .attr('data-nama', nama);
+
+                    $('<div>', {
+                        class: 'fw-semibold',
+                        text: nama || '-'
+                    }).appendTo($item);
+
+                    $('<small>', {
+                        class: 'text-muted',
+                        text: `NIP: ${nip || '-'}`
+                    }).appendTo($item);
+
+                    $container.append($item);
+
+                });
+
+                $container.show();
+
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | CEGAH INPUT KEHILANGAN FOKUS SAAT MEMILIH HASIL
+            |--------------------------------------------------------------------------
+            */
+
+            $container.on(
+                'mousedown.autocompleteEditPPA',
+                '.edit-cppt-ppa-item',
+                function (e) {
+
+                    e.preventDefault();
+
+                }
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PILIH PPA
+            |--------------------------------------------------------------------------
+            */
+
+            $container.on(
+                'click.autocompleteEditPPA',
+                '.edit-cppt-ppa-item',
+                function () {
+
+                    const id = $(this).attr('data-id');
+
+                    const nama = $(this).attr('data-nama');
+
+                    if (!id) return;
+
+                    // Simpan ID PPA.
+                    $hidden.val(id);
+
+                    // Tampilkan nama PPA.
+                    $input.val(nama);
+
+                    // Tutup autocomplete.
+                    $container
+                        .hide()
+                        .empty();
+
+                }
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | BLUR
+            |--------------------------------------------------------------------------
+            */
+
+            $input.on('blur.autocompleteEditPPA', function () {
+
+                setTimeout(function () {
+
+                    $container.hide();
+
+                }, 200);
+
+            });
+
+        }
+
         function ubahModeEditCPPT(mode) {
 
             // Sembunyikan semua mode
@@ -628,6 +880,7 @@
         }
 
         function resetFormEditCPPT() {
+
             $('#modalEditCPPT')
                 .find('input[type="text"], input[type="hidden"], textarea')
                 .val('');
@@ -637,6 +890,12 @@
                 .prop('checked', false);
 
             $('#edit_cppt_tanggal, #edit_cppt_jam').val('');
+
+            // Bersihkan autocomplete PPA.
+            $('#edit_cppt_ppa_autocomplete')
+                .empty()
+                .hide();
+
         }
 
         function isiFormEditCPPT(data) {
@@ -653,8 +912,15 @@
             $('#edit_cppt_kunjungan').val(data.KUNJUNGAN || '');
             $('#edit_cppt_tanggal').val(data.TANGGAL || '');
             $('#edit_cppt_jam').val(data.JAM || '');
+
+            // Informasi PPA.
             $('#edit_cppt_ppa').val(data.PPA || '');
             $('#edit_cppt_ppa_id').val(data.PPA_ID || '');
+
+            // Bersihkan hasil autocomplete sebelumnya.
+            $('#edit_cppt_ppa_autocomplete')
+                .empty()
+                .hide();
 
             if (mode === 'SBAR') {
 
@@ -887,6 +1153,9 @@
                 tanggal: $('#edit_cppt_tanggal').val(),
                 jam: $('#edit_cppt_jam').val(),
 
+                // PPA yang dipilih.
+                ppa_id: $('#edit_cppt_ppa_id').val(),
+
                 // '' untuk CPPT biasa, 'SBAR', atau 'TBAK'
                 tbak_sbar: mode === 'BIASA' ? '' : mode
             };
@@ -951,6 +1220,26 @@
 
             const id = $('#edit_cppt_id').val();
             const mode = $('#modalEditCPPT').data('mode');
+
+            /*
+            |--------------------------------------------------------------------------
+            | VALIDASI PPA
+            |--------------------------------------------------------------------------
+            */
+            const ppaId = $('#edit_cppt_ppa_id').val();
+
+            if (!ppaId) {
+
+                iziToast.warning({
+                    title: 'Perhatian!',
+                    message: 'Silakan pilih PPA dari daftar autocomplete terlebih dahulu.',
+                    position: 'topRight'
+                });
+
+                $('#edit_cppt_ppa').trigger('focus');
+
+                return;
+            }
 
             const payload = ambilPayloadEditCPPT();
 
