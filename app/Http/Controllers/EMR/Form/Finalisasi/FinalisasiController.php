@@ -639,7 +639,7 @@ class FinalisasiController extends Controller
 
                 ($tandaVital->FREKUENSI_NADI ?? '') !== ''
                     ? "Frekuensi Nadi: "
-                        . $this->soapNumber($tandaVital->FREKUENSI_NADI)
+                        . $this->soapNumber($tandaVital->FREKUENSI_NADI) . 'x/menit'
                         . " {$freknadicp}"
                     : '',
 
@@ -1180,12 +1180,6 @@ class FinalisasiController extends Controller
         //     }
         // }
 
-        /*
-        |--------------------------------------------------------------------------
-        | O - TANDA VITAL
-        |--------------------------------------------------------------------------
-        */
-
         $tandaVital = DB::table('medicalrecord.tanda_vital')
             ->where('KUNJUNGAN', $kunjungan)
             // ->where('PPA', 1)
@@ -1235,9 +1229,9 @@ class FinalisasiController extends Controller
                 $tandaVital->DISTOLIK !== null
             ) {
                 $o[] = 'TD: ' .
-                    ($tandaVital->SISTOLIK ?? '-') .
+                    ($tandaVital->SISTOLIK !== null ? round($tandaVital->SISTOLIK) : '-') .
                     '/' .
-                    ($tandaVital->DISTOLIK ?? '-') .
+                    ($tandaVital->DISTOLIK !== null ? round($tandaVital->DISTOLIK) : '-') .
                     ' mmHg';
             }
 
@@ -1250,24 +1244,20 @@ class FinalisasiController extends Controller
 
             if ($tandaVital->FREKUENSI_NADI !== null) {
                 $o[] = 'Nadi: ' .
-                    $tandaVital->FREKUENSI_NADI .
-                    ' x/menit' . ($freknadicb != '' ? " ({$freknadicb})" : "");
+                    round($tandaVital->FREKUENSI_NADI) .
+                    ' x/menit' .
+                    ($freknadicb != '' ? " ({$freknadicb})" : "");
             }
 
+            // SUHU tetap menggunakan angka asli
             if ($tandaVital->SUHU !== null) {
                 $o[] = 'Suhu: ' .
                     $tandaVital->SUHU .
                     ' °C';
             }
 
-            if ($tandaVital->SATURASI_O2 !== null) {
-                $o[] = 'SpO2: ' .
-                    $tandaVital->SATURASI_O2 .
-                    ' %';
-            }
-
             $freknafascb = '';
-            if ($tandaVital->FREKUENSI_NADI_CB == 1) {
+            if ($tandaVital->FREKUENSI_NAFAS_CB == 1) {
                 $freknafascb = 'Simetris';
             } else {
                 $freknafascb = 'Asimetris';
@@ -1275,13 +1265,14 @@ class FinalisasiController extends Controller
 
             if ($tandaVital->FREKUENSI_NAFAS !== null) {
                 $o[] = 'RR: ' .
-                    $tandaVital->FREKUENSI_NAFAS .
-                    ' x/menit' . ($freknafascb != '' ? " ({$freknafascb})" : "");
+                    round($tandaVital->FREKUENSI_NAFAS) .
+                    ' x/menit' .
+                    ($freknafascb != '' ? " ({$freknafascb})" : "");
             }
 
             if ($tandaVital->GCS !== null) {
                 $o[] = 'GCS: ' .
-                    $tandaVital->GCS .
+                    round($tandaVital->GCS) .
                     ' (E/' .
                     ($tandaVital->EYE ?? '-') .
                     ' V/' .
@@ -1296,19 +1287,19 @@ class FinalisasiController extends Controller
 
             if ($nutrisi->BERAT_BADAN !== null) {
                 $o[] = 'BB: ' .
-                    $nutrisi->BERAT_BADAN .
+                    round($nutrisi->BERAT_BADAN) .
                     ' kg';
             }
 
             if ($nutrisi->TINGGI_BADAN !== null) {
                 $o[] = 'TB: ' .
-                    $nutrisi->TINGGI_BADAN .
+                    round($nutrisi->TINGGI_BADAN) .
                     ' cm';
             }
 
             if ($nutrisi->INDEX_MASSA_TUBUH !== null) {
                 $o[] = 'IMT: ' .
-                    $nutrisi->INDEX_MASSA_TUBUH;
+                    round($nutrisi->INDEX_MASSA_TUBUH);
             }
         }
 
@@ -2930,11 +2921,9 @@ class FinalisasiController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $o = ['-'];
-
         $tandaVital = DB::table('medicalrecord.tanda_vital')
             ->where('KUNJUNGAN', $kunjungan)
-            ->whereIn('PPA', [1, 2])
+            // ->where('PPA', 1)
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -2951,66 +2940,12 @@ class FinalisasiController extends Controller
                 'VERBAL',
                 'MOTORIK',
                 'GCS',
+                'KESADARAN_NEONATUS',
             ]);
-
-        if ($tandaVital) {
-
-            if ($this->soapValue($tandaVital->KEADAAN_UMUM)) {
-                $o[] = 'Keadaan Umum: ' .
-                    $this->soapValue($tandaVital->KEADAAN_UMUM);
-            }
-
-            if (
-                $tandaVital->SISTOLIK !== null ||
-                $tandaVital->DISTOLIK !== null
-            ) {
-                $o[] = 'TD: ' .
-                    ($tandaVital->SISTOLIK ?? '-') .
-                    '/' .
-                    ($tandaVital->DISTOLIK ?? '-') .
-                    ' mmHg';
-            }
-
-            if ($tandaVital->FREKUENSI_NADI !== null) {
-                $o[] = 'Nadi: ' .
-                    $tandaVital->FREKUENSI_NADI .
-                    ' x/menit';
-            }
-
-            if ($tandaVital->SUHU !== null) {
-                $o[] = 'Suhu: ' .
-                    $tandaVital->SUHU .
-                    ' °C';
-            }
-
-            if ($tandaVital->SATURASI_O2 !== null) {
-                $o[] = 'SpO2: ' .
-                    $tandaVital->SATURASI_O2 .
-                    ' %';
-            }
-
-            if ($tandaVital->FREKUENSI_NAFAS !== null) {
-                $o[] = 'RR: ' .
-                    $tandaVital->FREKUENSI_NAFAS .
-                    ' x/menit';
-            }
-
-            if ($tandaVital->GCS !== null) {
-                $o[] = 'GCS: ' .
-                    $tandaVital->GCS .
-                    ' (E' .
-                    ($tandaVital->EYE ?? '-') .
-                    ' V' .
-                    ($tandaVital->VERBAL ?? '-') .
-                    ' M' .
-                    ($tandaVital->MOTORIK ?? '-') .
-                    ')';
-            }
-        }
 
         $nutrisi = DB::table('medicalrecord.nutrisi')
             ->where('KUNJUNGAN', $kunjungan)
-            ->where('PPA', 1)
+            // ->where('PPA', 1)
             ->whereIn('STATUS', [1, 2])
             ->orderByDesc('ID')
             ->first([
@@ -3019,23 +2954,93 @@ class FinalisasiController extends Controller
                 'INDEX_MASSA_TUBUH',
             ]);
 
+        $o = [];
+
+        $o[] = "<b style='color:#9CC96B'>Pemeriksaan Umum</b>";
+
+        if ($tandaVital) {
+
+            $o[] = $this->soapLine(
+                'Keadaan Umum',
+                $tandaVital->KEADAAN_UMUM
+            );
+
+            if (
+                $tandaVital->SISTOLIK !== null ||
+                $tandaVital->DISTOLIK !== null
+            ) {
+                $o[] = 'TD: ' .
+                    ($tandaVital->SISTOLIK !== null ? round($tandaVital->SISTOLIK) : '-') .
+                    '/' .
+                    ($tandaVital->DISTOLIK !== null ? round($tandaVital->DISTOLIK) : '-') .
+                    ' mmHg';
+            }
+
+            $freknadicb = '';
+            if ($tandaVital->FREKUENSI_NADI_CB == 1) {
+                $freknadicb = 'Reguler';
+            } else {
+                $freknadicb = 'Ireguler';
+            }
+
+            if ($tandaVital->FREKUENSI_NADI !== null) {
+                $o[] = 'Nadi: ' .
+                    round($tandaVital->FREKUENSI_NADI) .
+                    ' x/menit' .
+                    ($freknadicb != '' ? " ({$freknadicb})" : "");
+            }
+
+            // SUHU tetap menggunakan angka asli
+            if ($tandaVital->SUHU !== null) {
+                $o[] = 'Suhu: ' .
+                    $tandaVital->SUHU .
+                    ' °C';
+            }
+
+            $freknafascb = '';
+            if ($tandaVital->FREKUENSI_NAFAS_CB == 1) {
+                $freknafascb = 'Simetris';
+            } else {
+                $freknafascb = 'Asimetris';
+            }
+
+            if ($tandaVital->FREKUENSI_NAFAS !== null) {
+                $o[] = 'RR: ' .
+                    round($tandaVital->FREKUENSI_NAFAS) .
+                    ' x/menit' .
+                    ($freknafascb != '' ? " ({$freknafascb})" : "");
+            }
+
+            if ($tandaVital->GCS !== null) {
+                $o[] = 'GCS: ' .
+                    round($tandaVital->GCS) .
+                    ' (E/' .
+                    ($tandaVital->EYE ?? '-') .
+                    ' V/' .
+                    ($tandaVital->VERBAL ?? '-') .
+                    ' M/' .
+                    ($tandaVital->MOTORIK ?? '-') .
+                    ')';
+            }
+        }
+
         if ($nutrisi) {
 
             if ($nutrisi->BERAT_BADAN !== null) {
                 $o[] = 'BB: ' .
-                    $nutrisi->BERAT_BADAN .
+                    round($nutrisi->BERAT_BADAN) .
                     ' kg';
             }
 
             if ($nutrisi->TINGGI_BADAN !== null) {
                 $o[] = 'TB: ' .
-                    $nutrisi->TINGGI_BADAN .
+                    round($nutrisi->TINGGI_BADAN) .
                     ' cm';
             }
 
             if ($nutrisi->INDEX_MASSA_TUBUH !== null) {
                 $o[] = 'IMT: ' .
-                    $nutrisi->INDEX_MASSA_TUBUH;
+                    round($nutrisi->INDEX_MASSA_TUBUH);
             }
         }
 
