@@ -57,10 +57,10 @@
                 <p class="section-subtitle">Buka modul yang sering digunakan.</p>
             </div>
             <div class="row g-3">
-                <div class="col-12 col-md-6 col-xl-4"><a href="{{ route('v3.monitoring') }}" wire:navigate
+                {{-- <div class="col-12 col-md-6 col-xl-4"><a href="{{ route('v3.monitoring') }}" wire:navigate
                         class="quick-action"><span class="quick-action-icon"><i
                                 class="bi bi-activity"></i></span><span><strong>Monitoring</strong><small>Pantau informasi
-                                sistem</small></span><i class="bi bi-arrow-up-right ms-auto"></i></a></div>
+                                sistem</small></span><i class="bi bi-arrow-up-right ms-auto"></i></a></div> --}}
                 <div class="col-12 col-md-6 col-xl-4"><a href="{{ route('v3.emr') }}" wire:navigate
                         class="quick-action"><span class="quick-action-icon"><i
                                 class="bi bi-clipboard2-pulse"></i></span><span><strong>Medical Record</strong><small>Modul

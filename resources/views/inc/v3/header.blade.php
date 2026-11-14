@@ -131,7 +131,7 @@
         <div class="dropdown" id="patientDropdownContainer" style="display: none;">
             <button
                 type="button"
-                class="patient-dropdown-trigger dropdown-toggle"
+                class="patient-dropdown-trigger"
                 id="patientDropdown"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
@@ -149,7 +149,7 @@
                     </button>
                 </li>
                 <li>
-                    <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#dummySEPModal">
+                    <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#showSEPModal">
                         <i class="bi bi-file-earmark-medical"></i>
                         <span>Digital SEP</span>
                     </button>
@@ -217,7 +217,7 @@
         @php
             $user = Auth::user();
             $namaUser = $user->NAMA ?? $user->name ?? 'Pengguna';
-            $nipUser = $user->NIP ?? 'Pengguna SIRMED';
+            $nipUser = $user->NIP ? 'NIP. ' . $user->NIP : 'Pengguna SIRMED';
         @endphp
 
         <div class="dropdown">
@@ -283,48 +283,4 @@
     </div>
 </header>
 
-{{-- MODAL DUMMY i-CARE --}}
-<div class="modal fade" id="dummyICareModal" tabindex="-1" aria-labelledby="dummyICareModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="dummyICareModalLabel">
-                    <i class="bi bi-heart-pulse text-primary me-2"></i>Lihat i-Care
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-info mb-0">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Modal dummy i-Care. Integrasi i-Care dapat ditambahkan di sini.
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- MODAL DUMMY SEP --}}
-<div class="modal fade" id="dummySEPModal" tabindex="-1" aria-labelledby="dummySEPModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="dummySEPModalLabel">
-                    <i class="bi bi-file-earmark-medical text-primary me-2"></i>Lihat SEP
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-info mb-0">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Modal dummy SEP. Informasi SEP dapat ditampilkan di sini.
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-            </div>
-        </div>
-    </div>
-</div>
+@include('inc.v3.emr.epatient')

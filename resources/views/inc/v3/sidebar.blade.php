@@ -22,7 +22,7 @@
             </strong>
 
             <small>
-                {{ Auth::user()->NIP ?? 'Akun SIRMED' }}
+                {{ Auth::user()->NIP ? 'NIP. ' . Auth::user()->NIP : 'Akun SIRMED' }}
             </small>
         </div>
 
@@ -32,7 +32,7 @@
     <div class="nav-caption">MENU UTAMA</div>
 
     <nav class="app-nav">
-        {{-- <a
+        <a
             href="{{ route('v3.dashboard') }}"
             wire:navigate
             wire:current="active"
@@ -40,7 +40,7 @@
         >
             <i class="bi bi-grid-1x2"></i>
             <span>Dashboard</span>
-        </a> --}}
+        </a>
 
         {{-- <a
             href="{{ route('v3.monitoring') }}"
@@ -52,15 +52,19 @@
             <span>Monitoring</span>
         </a> --}}
 
+        @can('emr')
         <a
             href="{{ route('v3.emr') }}"
             wire:navigate
+            wire:current="active"
             class="app-nav-link {{ request()->routeIs('v3.emr', 'v3.emr.detail') ? 'active' : '' }}"
         >
             <i class="bi bi-clipboard2-pulse"></i>
             <span>Medical Record</span>
         </a>
+        @endcan
 
+        @canany(['smart_claim', 'smart_claim_farmasi'])
         <a
             href="{{ route('v3.smartclaim') }}"
             wire:navigate
@@ -70,6 +74,7 @@
             <i class="bi bi-file-earmark-medical"></i>
             <span>Smart Claim</span>
         </a>
+        @endcan
     </nav>
 
     <div class="nav-caption mt-4" hidden>PREFERENSI</div>

@@ -640,7 +640,7 @@
                                                     <b class="text-primary">${item.NAMAPASIEN}</b>
                                                 </h4>
 
-                                                <h6 class="text-dark" href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" title="Dokter Penanggung Jawab Pasien">
+                                                <h6 class="text-dark" href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" title="">
                                                     <b>DPJP : ${item.NAMADOKTER}</b>
                                                 </h6>
 

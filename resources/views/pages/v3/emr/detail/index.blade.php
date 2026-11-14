@@ -45,7 +45,7 @@
                 <div class="d-flex align-items-center justify-content-between gap-3 p-2 px-3 rounded-3 border border-danger-subtle bg-danger-subtle pb-2">
 
                     {{-- Left Content --}}
-                    <div class="d-flex align-items-center gap-2 min-w-0">
+                    <div class="d-flex align-items-center gap-2 min-w-0 mb-2">
                         <div class="d-flex align-items-center justify-content-center rounded-circle bg-danger text-white flex-shrink-0"
                             style="width: 36px; height: 36px;">
                             <i class="ri-alarm-warning-line fs-5"></i>
@@ -98,7 +98,7 @@
                 @endphp
 
                 <span
-                    class="badge bg-warning text-dark border border-warning badge-sm fs-12 p-0 ps-1 pe-1 fw-medium alergi-badge rounded-5 w-100 pb-2"
+                    class="badge bg-warning text-dark border border-warning badge-sm fs-12 p-0 ps-1 pe-1 fw-medium alergi-badge rounded-3 w-100 pb-2"
                     role="button"
                     tabindex="0"
                     data-bs-toggle="tooltip"

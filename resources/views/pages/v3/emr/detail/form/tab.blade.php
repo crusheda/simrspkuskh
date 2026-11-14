@@ -496,11 +496,11 @@
                         class="d-flex justify-content-center align-items-center"
                         style="min-height: 70vh;"
                     >
-                        <img
+                        {{-- <img
                             src="{{ asset('assets/v2/images/auth/vector1.svg') }}"
                             alt="" style="width: 600px;height:auto;"
                             class="img-fluid cover-img"
-                        >
+                        > --}}
                     </div>
                 </div>
             </div>

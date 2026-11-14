@@ -85,41 +85,47 @@
 
                 {{-- ERROR --}}
                 @if (session('error') || $errors->any())
-                    <div class="cl-login04__error" style="display:block;margin-bottom:15px">
+                    <div class="cl-login04__error"
+                        style="display:block;margin-bottom:15px"
+                        role="alert">
                         {{ session('error') ?? $errors->first() }}
                     </div>
                 @endif
 
                 {{-- FORM --}}
-                <form class="cl-login04__form"
-                    method="POST"
-                    action="{{ route('v3.login.process') }}"
-                    data-form>
-
-                    @csrf
+                <form class="cl-login04__form" wire:submit.prevent="login">
 
                     {{-- USERNAME --}}
-                    <div class="cl-login04__field" data-field>
+                    <div class="cl-login04__field @error('name') is-error @enderror"
+                        data-field>
 
                         <label class="cl-login04__label" for="cl-login04-email">
                             Username
                         </label>
 
                         <input
-                            class="cl-login04__input"
+                            class="cl-login04__input @error('name') is-invalid @enderror"
                             id="cl-login04-email"
+                            wire:model="name"
                             name="name"
                             type="text"
                             autocomplete="username"
-                            value="{{ old('name') }}"
                             placeholder="e.g. sunaryo"
                             autofocus
-                            required>
+                            required
+                            @error('name') aria-invalid="true" @enderror>
+
+                        @error('name')
+                            <div class="invalid-feedback d-block">
+                                {{ $message }}
+                            </div>
+                        @enderror
 
                     </div>
 
                     {{-- PASSWORD --}}
-                    <div class="cl-login04__field" data-field>
+                    <div class="cl-login04__field @error('password') is-error @enderror"
+                        data-field>
 
                         <label class="cl-login04__label" for="cl-login04-pw">
                             Password
@@ -128,13 +134,15 @@
                         <div class="cl-login04__pw">
 
                             <input
-                                class="cl-login04__input"
+                                class="cl-login04__input @error('password') is-invalid @enderror"
                                 id="cl-login04-pw"
+                                wire:model="password"
                                 name="password"
                                 type="password"
                                 autocomplete="current-password"
                                 placeholder="Masukkan password"
-                                required>
+                                required
+                                @error('password') aria-invalid="true" @enderror>
 
                             <button
                                 class="cl-login04__eye"
@@ -179,6 +187,12 @@
 
                         </div>
 
+                        @error('password')
+                            <div class="invalid-feedback d-block">
+                                {{ $message }}
+                            </div>
+                        @enderror
+
                     </div>
 
                     {{-- REMEMBER + FORGOT PASSWORD --}}
@@ -188,9 +202,9 @@
 
                             <input
                                 type="checkbox"
+                                wire:model="remember"
                                 name="remember"
-                                value="1"
-                                {{ old('remember') ? 'checked' : '' }}>
+                                value="1">
 
                             <span>Ingat Saya</span>
 
@@ -204,12 +218,32 @@
                     </div>
 
                     {{-- SUBMIT --}}
-                    <button class="cl-login04__submit btn btn-info text-white"
-                        type="submit">
+                    <button
+                        class="cl-login04__submit btn btn-info text-white"
+                        type="submit"
+                        wire:loading.attr="disabled"
+                        wire:target="login">
 
-                        <span class="cl-login04__submit-text">Masuk</span>
+                        <span class="cl-login04__submit-text"
+                            wire:loading.remove
+                            wire:target="login">
+                            Masuk
+                        </span>
 
-                        <svg viewBox="0 0 24 24"
+                        <span class="cl-login04__submit-text"
+                            wire:loading
+                            wire:target="login">
+
+                            <i class="fas fa-sync fa-spin me-1"
+                                style="font-size:12pt"></i>
+
+                            Memproses...
+                        </span>
+
+                        <svg
+                            wire:loading.remove
+                            wire:target="login"
+                            viewBox="0 0 24 24"
                             width="18"
                             height="18"
                             fill="none"
@@ -339,78 +373,6 @@
     </div>
 
 </div>
-
-{{-- JQUERY --}}
-<script src="{{ asset('js/jquery.min.js') }}"></script>
-
-{{-- LOGIN VALIDATION + LOADING --}}
-<script>
-$(function () {
-    const $form = $('[data-form]');
-    const $btn = $form.find('button[type="submit"]');
-
-    if (!$form.length || !$btn.length) return;
-
-    $form.on('submit', function (e) {
-        const $fields = $form.find('[data-field]');
-        let valid = true;
-        let $firstInvalid = null;
-
-        $fields.each(function () {
-            const $field = $(this);
-            const $input = $field.find('input').first();
-
-            if (!$input.length) return;
-
-            $field.attr('data-touched', '1');
-
-            const value = $.trim($input.val());
-
-            if ($input.prop('required') && !value) {
-                valid = false;
-
-                $field.addClass('is-error');
-                $input.attr('aria-invalid', 'true');
-
-                if (!$firstInvalid) {
-                    $firstInvalid = $input;
-                }
-
-                return;
-            }
-
-            $field.removeClass('is-error');
-            $input.removeAttr('aria-invalid');
-        });
-
-        if (!valid) {
-            e.preventDefault();
-
-            const $live = $('[data-live]');
-
-            if ($live.length) {
-                $live.text('Username dan password wajib diisi.');
-            }
-
-            if ($firstInvalid) {
-                $firstInvalid.trigger('focus');
-            }
-
-            return;
-        }
-
-        // Jangan preventDefault: form dikirim ke Laravel.
-        $btn.prop('disabled', true);
-
-        $btn.data('original-html', $btn.html());
-
-        $btn.html(`
-            <i class="fas fa-sync fa-spin me-1" style="font-size:12pt"></i>
-            Memproses...
-        `);
-    });
-});
-</script>
 
 {{-- PASSWORD TOGGLE --}}
 <script>

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 // INITIALIZE PATH CONTROLLER
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LupaPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RilisController;
@@ -37,7 +38,7 @@ use App\Livewire\Monitoring;
 use App\Livewire\EMR;
 use App\Livewire\SmartClaim;
 use App\Livewire\Setting\Notifikasi;
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LoginV3Controller;
 
 // =====================================================
 // SIRMED v3 - LIVEWIRE
@@ -51,13 +52,13 @@ Route::prefix('v3')->group(function () { // PUBLIC
     // Halaman login Livewire
     Route::get('/login', Login::class)->middleware('guest')->name('v3.login');
 
-    // Proses autentikasi tetap melalui LoginController
-    Route::post('/login', [LoginController::class, 'login'])->middleware('guest')->name('v3.login.process');
+    // Proses autentikasi tetap melalui LoginV3Controller
+    Route::post('/login', [LoginV3Controller::class, 'login'])->middleware('guest')->name('v3.login.process');
 });
 Route::middleware(['auth']) // AUTHENTICATED
     ->prefix('v3')
     ->group(function () {
-        // Route::get('/dashboard', Dashboard::class)->name('v3.dashboard');
+        Route::get('/dashboard', Dashboard::class)->name('v3.dashboard');
         // Route::get('/monitoring', Monitoring::class)->name('v3.monitoring');
         Route::get('/emr', EMR::class)->name('v3.emr');
 
@@ -70,6 +71,8 @@ Route::middleware(['auth']) // AUTHENTICATED
             ->name('v3.emr.detail');
 
         Route::get('/smartclaim', SmartClaim::class)->name('v3.smartclaim');
+        Route::get('/smartclaim/{KUNJUNGAN}', SmartClaim::class)->name('v3.smartclaim.detail');
+        Route::get('/smartclaim/{KUNJUNGAN}/farmasi', SmartClaim::class)->name('v3.smartclaim.detail.farmasi');
 
         Route::get('/profil', Profil::class)->name('v3.profil');
         Route::get('/notifikasi', Notifikasi::class)->name('v3.notifikasi');

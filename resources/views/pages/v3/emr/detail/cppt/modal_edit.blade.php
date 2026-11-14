@@ -14,9 +14,9 @@
         <div class="modal-content border-0 rounded-4 overflow-hidden">
 
             {{-- HEADER --}}
-            <div class="modal-header bg-warning-subtle text-dark border-0 px-4 py-3 rounded-0" id="headerCPPTEditModal">
+            <div class="modal-header bg-warning-subtle text-white border-0 px-4 py-3 rounded-0" id="headerCPPTEditModal">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="cppt-modal-icon bg-white bg-opacity-50 text-warning-emphasis">
+                    <div class="cppt-modal-icon bg-white bg-opacity-50 text-warning-emphasis border-0">
                         <i class="ph-duotone ph-note-pencil fs-5"></i>
                     </div>
 
@@ -32,7 +32,7 @@
                             </span>
                         </div>
 
-                        <small class="text-dark">
+                        <small class="">
                             Perbarui Catatan Perkembangan Pasien Terintegrasi
                         </small>
                     </div>
@@ -61,7 +61,7 @@
 
                 {{-- Informasi waktu dan PPA --}}
                 <div class="card border shadow-none rounded-3 mb-4">
-                    <div class="card-header bg-warning-subtle border-0 py-2 px-3" id="infoCPPTEditModal">
+                    <div class="card-header bg-warning-subtle text-white border-0 py-2 px-3" id="infoCPPTEditModal">
                         <div class="d-flex align-items-center gap-2">
                             <i class="ph-duotone ph-calendar-check fs-20"></i>
                             <strong>Informasi Catatan</strong>
@@ -334,11 +334,11 @@
             </div>
 
             {{-- FOOTER --}}
-            <div class="modal-footer border-0 bg-body-tertiary px-4 py-3">
+            <div class="modal-footer border-0 px-4 py-3">
                 <button type="button"
-                        class="btn btn-outline-dark border-dashed waves-effect waves-light me-2"
+                        class="btn btn-secondary border-dashed waves-effect waves-light me-2"
                         onclick="EMRCPPTPage.batalEditCPPT()">
-                    <i class="ph ph-arrow-u-up-left me-1"></i>
+                    <i class="ph-duotone ph-arrow-square-left me-1"></i>
                     Batal & Kembali
                 </button>
 
@@ -1006,8 +1006,8 @@
                     editCPPTPerluRefresh = false;
 
                     $('#modalEditCPPTLabel').text('Ubah CPPT');
-                    $('#headerCPPTEditModal').removeClass('bg-info text-white').addClass('bg-warning-subtle text-dark');
-                    $('#infoCPPTEditModal').removeClass('bg-info text-white').addClass('bg-warning-subtle text-dark');
+                    $('#headerCPPTEditModal').removeClass('bg-info text-white').addClass('bg-warning-subtle text-white');
+                    $('#infoCPPTEditModal').removeClass('bg-info text-white').addClass('bg-warning-subtle text-white');
 
                     $('#modalCPPT').one('hidden.bs.modal', function () {
                         $('#modalEditCPPT').modal('show');
@@ -1087,8 +1087,8 @@
 
                     // Ubah tampilan modal
                     $('#modalEditCPPTLabel').text('Copy CPPT');
-                    $('#headerCPPTEditModal').removeClass('bg-warning-subtle text-dark').addClass('bg-info text-white');
-                    $('#infoCPPTEditModal').removeClass('bg-warning-subtle text-dark').addClass('bg-info text-white');
+                    $('#headerCPPTEditModal').removeClass('bg-warning-subtle text-white').addClass('bg-info text-white');
+                    $('#infoCPPTEditModal').removeClass('bg-warning-subtle text-white').addClass('bg-info text-white');
 
                     $('#edit_cppt_mode_badge')
                         .removeClass('bg-primary bg-success bg-dark')

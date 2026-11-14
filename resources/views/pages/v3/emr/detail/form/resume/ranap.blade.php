@@ -268,7 +268,7 @@
                                             2 => 'Pulang Atas Permintaan Sendiri',
                                             3 => 'Dirujuk ke Rumah Sakit Lain',
                                             4 => 'Lari',
-                                            5 => 'Pindah RS <Lain></Lain>',
+                                            5 => 'Pindah RS Lain',
                                             6 => 'Meninggal',
                                             7 => 'Dead On Arrival (DOA)',
                                             8 => 'Lain-lain',
