@@ -2731,6 +2731,7 @@ class EMRController extends Controller
                 'cp.STATUS_TBAK',
                 'cp.STATUS_SBAR',
 
+                'cp.TENAGA_MEDIS as CHOICES_PPA_ID',
                 'cp.TENAGA_MEDIS as PPA_ID',
                 'cp.DOKTER_TBAK_OR_SBAR as DOKTER_MASTER_ID',
                 'pengguna_dokter.ID as DOKTER_ID',
@@ -2762,6 +2763,14 @@ class EMRController extends Controller
                     ) as PPA
                 "),
 
+                DB::raw("
+                    CASE
+                        WHEN ref.REF_ID = '4' THEN d.NIP
+                        WHEN ref.REF_ID = '6' THEN pr.NIP
+                        ELSE p.NIP
+                    END AS PPA_NIP
+                "),
+
                 'ps.NORM',
                 DB::raw("
                     master.getNamaLengkap(ps.NORM) as NAMAPASIEN
@@ -2777,6 +2786,11 @@ class EMRController extends Controller
             ], 404);
         }
 
+        $data_ppa = DB::table('aplikasi.pengguna as pe')
+                    ->where('pe.NIP', $cppt->PPA_NIP)
+                    ->where('pe.STATUS', 1)
+                    ->first();
+
         $cppt->COUNT_CPPT = DB::table('medicalrecord.cppt')
                                 ->where('KUNJUNGAN', $cppt->KUNJUNGAN)
                                 ->where('STATUS', '!=', 0)
@@ -2791,7 +2805,8 @@ class EMRController extends Controller
         $cppt->TULIS = $this->cpptHtmlKeText($cppt->TULIS);
 
         return response()->json([
-            'data' => $cppt
+            'data' => $cppt,
+            'ppa' => $data_ppa
         ]);
     }
 
@@ -2854,6 +2869,8 @@ class EMRController extends Controller
             |--------------------------------------------------------------------------
             */
             $getPPA = $this->resolvePPA($request->ppa_id);
+            // print_r($getPPA);
+            // die();
 
             if (!$getPPA) {
                 return response()->json([

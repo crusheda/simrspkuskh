@@ -706,6 +706,8 @@
 
                 isiFormEditCPPT(data);
 
+                $('#edit_cppt_ppa_id').val(res.ppa?.ID);
+
                 editCPPTKembaliKeRiwayat = true;
                 editCPPTPerluRefresh = false;
 
@@ -773,6 +775,7 @@
                 // Isi modal dengan data CPPT lama
                 isiFormEditCPPT(data);
 
+                $('#edit_cppt_ppa_id').val(res.ppa?.ID);
                 /*
                 |--------------------------------------------------------------------------
                 | MODE COPY
@@ -851,6 +854,9 @@
             tanggal: $('#edit_cppt_tanggal').val(),
             jam: $('#edit_cppt_jam').val(),
 
+            // Identitas PPA dari JSON PPA_ID
+            ppa_id: $('#edit_cppt_ppa_id').val(),
+
             // '' untuk CPPT biasa, 'SBAR', atau 'TBAK'
             tbak_sbar: mode === 'BIASA' ? '' : mode
         };
@@ -917,6 +923,16 @@
         const mode = $('#modalEditCPPT').data('mode');
 
         const payload = ambilPayloadEditCPPT();
+
+        if (!payload.ppa_id || Number(payload.ppa_id) < 1) {
+            iziToast.error({
+                title: 'PPA Tidak Valid!',
+                message: 'Identitas PPA tidak ditemukan. Silakan periksa data CPPT.',
+                position: 'topRight'
+            });
+
+            return;
+        }
 
         const $btnSimpanEditCppt =
             $('#btn-update-cppt');
