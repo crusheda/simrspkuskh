@@ -625,9 +625,16 @@ class EMRController extends Controller
 
             if ($idRuangan === '102030106') {
 
-                $formPengkajian = [
-                    'pengkajian-ranap-obsgyn',
-                ];
+                if ($umurHari !== null && $umurHari > 28) {
+
+                    $formPengkajian = ['pengkajian-ranap-obsgyn'];
+
+                } elseif ($umurHari !== null && $umurHari <= 28) {
+
+                    $formPengkajian = ['pengkajian-ranap-neonatus','pengkajian-ranap-obsgyn'];
+
+                }
+
             }
 
 
