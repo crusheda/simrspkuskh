@@ -63,7 +63,7 @@
                                     class="form-control"
                                     name="indikasi"
                                     rows="2"
-                                    placeholder="Tuliskan indikasi pasien menjalani rawat inap..."></textarea>
+                                    placeholder=""></textarea>
                             </div>
                         </div>
 

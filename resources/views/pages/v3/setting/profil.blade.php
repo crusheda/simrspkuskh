@@ -538,7 +538,9 @@
             if (window.iziToast) {
                 iziToast.warning({
                     title: 'Perhatian',
-                    message: 'Minimal satu variasi tanda tangan harus diisi.'
+                    message: 'Minimal satu variasi tanda tangan harus diisi.',
+                    position: 'topRight',
+                    timeout: 5000
                 });
             } else {
                 alert('Minimal satu variasi tanda tangan harus diisi.');
@@ -558,7 +560,9 @@
                 if (window.iziToast) {
                     iziToast.success({
                         title: 'Berhasil',
-                        message: result.message
+                        message: result.message,
+                        position: 'topRight',
+                        timeout: 3000
                     });
                 } else {
                     alert(result.message);
@@ -571,7 +575,9 @@
                 if (window.iziToast) {
                     iziToast.error({
                         title: 'Gagal',
-                        message: message
+                        message: message,
+                        position: 'topRight',
+                        timeout: 3000
                     });
                 } else {
                     alert(message);
@@ -583,7 +589,9 @@
             if (window.iziToast) {
                 iziToast.error({
                     title: 'Gagal',
-                    message: message
+                    message: message,
+                    position: 'topRight',
+                    timeout: 3000
                 });
             } else {
                 alert(message);
@@ -615,7 +623,9 @@
         if (window.iziToast) {
             iziToast.success({
                 title: 'Berhasil',
-                message: event.message
+                message: event.message,
+                position: 'topRight',
+                timeout: 3000
             });
         }
     });
@@ -624,7 +634,9 @@
         if (window.iziToast) {
             iziToast.success({
                 title: 'Berhasil',
-                message: event.message
+                message: event.message,
+                position: 'topRight',
+                timeout: 3000
             });
         }
     });

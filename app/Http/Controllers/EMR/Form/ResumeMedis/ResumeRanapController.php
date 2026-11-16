@@ -887,7 +887,8 @@ class ResumeRanapController extends Controller
                 )
                 ->where('ttv.KUNJUNGAN', $kunjunganPoli->NOMOR)
                 ->where('ttv.STATUS', 1)
-                ->orderByDesc('ttv.ID')
+                // ->orderByDesc('ttv.ID')
+                ->orderBy('ttv.ID', 'asc')
                 ->first();
 
             // PEMERIKSAAN FISIK

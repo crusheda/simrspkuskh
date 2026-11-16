@@ -5120,14 +5120,24 @@ class BerkasKlaimController extends Controller
             | 10. GET TTD PETUGAS
             |--------------------------------------------------------------------------
             */
+            $nipPetugasKasir = null;
+            if (!$header->NIP) {
+                $nipPetugasKasir = '1405059'; // Mbak Ayu Wulandari (Kepala Ruang Kasir)
+            } else {
+                $nipPetugasKasir = $header->NIP;
+            }
+
             $ttd_petugas = DB::table('simrspku_klaim.tanda_tangan_pegawai as ttd')
-                ->where('ttd.nip', $header->NIP)
+                ->where('ttd.nip', $nipPetugasKasir)
                 // ->where('nip', 1912314)
                 ->where('ttd.status', 1)
                 ->whereNull('ttd.deleted_at')
                 // ->select('ttd.*', DB::raw('master.getNamaLengkapPegawai(ttd.nip) as nama_pegawai'))
                 ->inRandomOrder()
                 ->first();
+
+            // print_r($ttd_petugas);
+            // die();
 
             if (!$ttd_petugas) {
                 throw new \Exception("Tanda Tangan {$header->PENGGUNA} tidak ditemukan atau belum dilakukan Enrollment.");

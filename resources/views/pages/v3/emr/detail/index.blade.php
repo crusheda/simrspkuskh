@@ -42,7 +42,7 @@
     <div class="col-sm-12">
         <div id="alert-potensi-readmisi">
             @if ($list['readmisi']['potensi_readmisi'])
-                <div class="d-flex align-items-center justify-content-between gap-3 p-2 px-3 rounded-3 border border-danger-subtle bg-danger-subtle pb-2">
+                <div class="d-flex align-items-center justify-content-between gap-3 p-2 px-3 rounded-3 border border-danger-subtle bg-danger-subtle pb-2 mb-2">
 
                     {{-- Left Content --}}
                     <div class="d-flex align-items-center gap-2 min-w-0 mb-2">
