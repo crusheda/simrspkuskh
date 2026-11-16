@@ -1,3 +1,4 @@
+
 /*
 |--------------------------------------------------------------------------
 | SIRMED V3 — CLAIM WORKSPACE
@@ -110,9 +111,11 @@
 
         const normalizedType = normalizeClaimType(type);
 
-        return normalizedType === 'smart_claim_farmasi'
+        const path = normalizedType === 'smart_claim_farmasi'
             ? `/v3/smartclaim/${encodeURIComponent(visitId)}/farmasi`
             : `/v3/smartclaim/${encodeURIComponent(visitId)}`;
+
+        return path;
     }
 
     function makeFrameUrl(url) {
@@ -313,12 +316,8 @@
             tab.loaded = true;
             tab.loading = false;
             tab.error = false;
-
-            if (tab.loadingElement) {
-                tab.loadingElement.hidden = true;
-            } else {
-                loading.hidden = true;
-            }
+            if (tab.loadingElement) tab.loadingElement.hidden = true;
+            else loading.hidden = true;
         });
 
         frame.addEventListener('error', () => {
@@ -347,8 +346,12 @@
             return false;
         }
 
-        // Refresh references in case Livewire replaced the workspace DOM.
-        getElements();
+        const homeTab = document.querySelector('[data-claim-home]');
+        if (homeTab) {
+            homeTab.classList.remove('active');
+            homeTab.setAttribute('aria-selected', 'false');
+            homeTab.tabIndex = -1;
+        }
 
         state.tabs.forEach((item) => {
             const isActive = item.tabId === tabId;
@@ -367,19 +370,40 @@
 
         state.activeTabId = tabId;
 
+        // Saat detail klaim aktif, panel index SSR disembunyikan.
         if (homePanel) {
             homePanel.hidden = true;
         }
 
-        if (content) {
-            content.hidden = false;
-        }
-
-        if (root) {
-            root.dataset.activeTabId = tabId;
-        }
+        content.hidden = false;
+        root.dataset.activeTabId = tabId;
 
         scrollTabIntoView(tab.tabElement);
+
+        return true;
+    }
+
+    function showHomePanel() {
+        state.activeTabId = null;
+
+        state.tabs.forEach((item) => {
+            item.tabElement.classList.remove('active');
+            item.tabElement.setAttribute('aria-selected', 'false');
+            item.tabElement.tabIndex = -1;
+            item.panel.classList.remove('active');
+            item.panel.hidden = true;
+        });
+
+        const homeTab = document.querySelector('[data-claim-home]');
+        if (homeTab) {
+            homeTab.classList.add('active');
+            homeTab.setAttribute('aria-selected', 'true');
+            homeTab.tabIndex = 0;
+        }
+
+        if (homePanel) homePanel.hidden = false;
+        if (content) content.hidden = true;
+        if (root) root.removeAttribute('data-active-tab-id');
 
         return true;
     }
@@ -441,8 +465,6 @@
             return false;
         }
 
-        getElements();
-
         const wasActive = state.activeTabId === tabId;
 
         const tabElements = Array.from(state.tabs.values());
@@ -472,17 +494,7 @@
 
                 activateTab(nextTab.tabId);
             } else {
-                if (root) {
-                    root.removeAttribute('data-active-tab-id');
-                }
-
-                if (homePanel) {
-                    homePanel.hidden = false;
-                }
-
-                if (content) {
-                    content.hidden = true;
-                }
+                showHomePanel();
             }
         }
 
@@ -514,21 +526,7 @@
             closeTab(tab.tabId);
         });
 
-        state.activeTabId = null;
-
-        getElements();
-
-        if (root) {
-            root.removeAttribute('data-active-tab-id');
-        }
-
-        if (homePanel) {
-            homePanel.hidden = false;
-        }
-
-        if (content) {
-            content.hidden = true;
-        }
+        showHomePanel();
 
         return true;
     }
@@ -618,15 +616,15 @@
     }
 
     function handleWorkspaceClick(event) {
-        const targetElement = event.target instanceof Element
-            ? event.target
-            : event.target?.parentElement;
+        const homeTab = event.target.closest('[data-claim-home]');
 
-        if (!targetElement) {
+        if (homeTab) {
+            event.preventDefault();
+            showHomePanel();
             return;
         }
 
-        const closeButton = targetElement.closest(
+        const closeButton = event.target.closest(
             '[data-close-claim-tab]'
         );
 
@@ -639,7 +637,7 @@
             return;
         }
 
-        const retryButton = targetElement.closest(
+        const retryButton = event.target.closest(
             '[data-claim-retry]'
         );
 
@@ -651,7 +649,7 @@
             return;
         }
 
-        const tabElement = targetElement.closest(
+        const tabElement = event.target.closest(
             '.claim-tab[data-tab-id]'
         );
 
@@ -663,47 +661,27 @@
     }
 
     function handleDocumentClick(event) {
-        const targetElement = event.target instanceof Element
-            ? event.target
-            : event.target?.parentElement;
-
-        if (!targetElement) {
-            return;
-        }
-
-        const row = targetElement.closest(
+        const row = event.target.closest(
             '[data-claim-href], [data-href]'
         );
 
-        if (!row) {
-            return;
-        }
+        if (!row) return;
 
-        const interactive = targetElement.closest(
+        // Jangan mengambil alih interaksi kontrol yang berada di dalam row.
+        // data-claim-href adalah penanda eksplisit untuk workspace.
+        const interactive = event.target.closest(
             'a, button, input, select, textarea, label, [role="button"], [contenteditable="true"], [data-bs-toggle], [data-action]'
         );
-
-        if (
-            interactive &&
-            interactive !== row &&
-            !row.hasAttribute('data-claim-href')
-        ) {
+        if (interactive && interactive !== row && !row.hasAttribute('data-claim-href')) {
             return;
         }
 
-        if (
-            event.ctrlKey ||
-            event.metaKey ||
-            event.shiftKey ||
-            event.altKey ||
-            event.button !== 0
-        ) {
+        // Biarkan perilaku browser normal untuk Ctrl/Cmd/Shift-click.
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) {
             return;
         }
 
-        const href = row.dataset.claimHref ||
-            row.dataset.href ||
-            row.getAttribute('href');
+        const href = row.dataset.claimHref || row.dataset.href || row.getAttribute('href');
 
         if (!href) {
             return;
@@ -725,14 +703,13 @@
             /^\/v3\/smartclaim\/([^/]+)(\/farmasi)?\/?$/
         );
 
-        if (!match) {
+        if (!match || event.defaultPrevented) {
             return;
         }
 
         event.preventDefault();
 
         let nomor;
-
         try {
             nomor = decodeURIComponent(match[1]);
         } catch {
@@ -743,7 +720,23 @@
             ? 'smart_claim_farmasi'
             : 'smart_claim';
 
-        openClaim(nomor, type);
+        // Metadata disediakan oleh row tabel untuk label tab dan konteks kunjungan.
+        // Format atributnya di-encodeURIComponent() dari index.blade.php.
+        let metadata = {};
+        const rawMetadata = row.dataset.claimMeta;
+
+        if (rawMetadata) {
+            try {
+                metadata = JSON.parse(decodeURIComponent(rawMetadata));
+            } catch (error) {
+                console.warn(
+                    '[ClaimWorkspace] Metadata row tidak dapat dibaca:',
+                    error
+                );
+            }
+        }
+
+        openClaim(nomor, type, metadata);
     }
 
     function initializeWorkspace() {
@@ -756,26 +749,17 @@
         }
 
         root.dataset.workspaceInitialized = 'true';
+        showHomePanel();
 
-        if (homePanel) {
-            homePanel.hidden = false;
-        }
+        root.addEventListener(
+            'click',
+            handleWorkspaceClick
+        );
 
-        if (content) {
-            content.hidden = true;
-        }
-
-        // Delegasi pada document agar klik tetap tertangani saat Livewire
-        // mengganti DOM workspace.
-        if (!window.__SIRMED_CLAIM_WORKSPACE_EVENTS__) {
-            window.__SIRMED_CLAIM_WORKSPACE_EVENTS__ = true;
-
-            document.addEventListener('click', (event) => {
-                getElements();
-                handleWorkspaceClick(event);
-                handleDocumentClick(event);
-            });
-        }
+        document.addEventListener(
+            'click',
+            handleDocumentClick
+        );
 
         const closeOtherButton = document.querySelector(
             SELECTORS.closeOther

@@ -66,9 +66,12 @@
 
                 @if (request()->routeIs('v3.emr'))
 
-                    {{-- WORKSPACE KHUSUS HALAMAN MEDICAL RECORD --}}
+                    {{-- ==================================================
+                        WORKSPACE KHUSUS MEDICAL RECORD
+                    =================================================== --}}
                     <div class="emr-workspace" id="emrWorkspace">
 
+                        {{-- TABBAR EMR --}}
                         <div class="emr-tabbar">
 
                             <div
@@ -119,6 +122,7 @@
                             </div>
                         </div>
 
+                        {{-- KONTEN EMR --}}
                         <main class="app-content">
 
                             <div id="emrWorkspaceContent">
@@ -141,12 +145,58 @@
 
                     </div>
 
+                @elseif (request()->routeIs('v3.smartclaim*'))
+
+                    <div class="claim-workspace" id="claimWorkspace">
+                        <div class="claim-tabbar" id="claimTabBar">
+                            <div class="claim-tabbar-scroll" id="claimTabBarScroll" role="tablist">
+                                <div id="claimHomeTab" class="claim-tab claim-home-tab active" data-claim-home>
+                                    <i class="ti ti-home me-2"></i>
+                                    <span>Smart Claim</span>
+                                </div>
+                            </div>
+
+                            <div class="claim-tabbar-actions">
+                                <button type="button" class="claim-tab-action" id="claimRefreshActiveTab" title="Refresh tab aktif" aria-label="Refresh tab aktif">
+                                    <i class="ti ti-refresh"></i>
+                                </button>
+                                <button type="button" class="claim-tab-action" id="claimCloseOtherTabs" title="Tutup tab lainnya" aria-label="Tutup tab lainnya">
+                                    <i class="ti ti-square-x"></i>
+                                </button>
+                                <button type="button" class="claim-tab-action" id="claimCloseAllTabs" title="Tutup semua tab" aria-label="Tutup semua tab">
+                                    <i class="ti ti-x"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <main class="app-content">
+                            {{--
+                                Home panel dan kontainer detail harus sejajar.
+                                JS menyembunyikan #claimWorkspaceContent saat home aktif,
+                                sehingga #claimHomePanel jangan dimasukkan ke dalamnya.
+                            --}}
+                            <section id="claimHomePanel" class="claim-workspace-panel active" data-panel-id="home">
+                                {{ $slot }}
+                            </section>
+
+                            {{-- Panel iframe detail dibuat dinamis oleh claim-workspace.js. --}}
+                            <div id="claimWorkspaceContent" hidden></div>
+
+                            @include('inc.v3.footer')
+                        </main>
+                    </div>
+
                 @else
 
-                    {{-- HALAMAN APLIKASI SELAIN MEDICAL RECORD --}}
+                    {{-- ==================================================
+                        HALAMAN APLIKASI SELAIN WORKSPACE
+                    =================================================== --}}
                     <main class="app-content">
+
                         {{ $slot }}
+
                         @include('inc.v3.footer')
+
                     </main>
 
                 @endif

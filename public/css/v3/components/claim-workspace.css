@@ -988,3 +988,139 @@ body.claim-workspace-frame .content-footer {
         padding: 10px !important;
     }
 }
+
+/* =========================================================
+   CLAIM WORKSPACE — MAIN LAYOUT INTEGRATION
+   Mengikuti struktur EMR Workspace SIRMED V3
+========================================================= */
+
+.app-main > .claim-workspace {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1 1 0;
+
+    width: 100%;
+    height: 0;
+
+    min-width: 0;
+    min-height: 0;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+/* TABBAR */
+.claim-workspace > .claim-tabbar {
+    position: relative;
+    top: auto;
+
+    flex: 0 0 auto;
+
+    width: 100%;
+    min-width: 0;
+}
+
+/* APP CONTENT */
+.claim-workspace > .app-content {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1 1 0;
+
+    width: 100%;
+    height: auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    padding: 0 !important;
+    margin: 0;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+/* WORKSPACE CONTENT */
+.claim-workspace > .app-content > #claimWorkspaceContent {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1 1 0;
+
+    width: 100%;
+    height: auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    margin-bottom: var(--content-footer-height, 56px);
+    padding: 0;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+/* PANEL */
+#claimWorkspaceContent > .claim-workspace-panel.active {
+    display: flex;
+    flex-direction: column;
+
+    flex: 1 1 0;
+
+    width: 100%;
+    height: auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    overflow: auto;
+
+    box-sizing: border-box;
+}
+
+/* HOME PANEL */
+#claimHomePanel {
+    background: var(--bg);
+}
+
+/* DETAIL IFRAME */
+#claimWorkspaceContent .claim-detail-frame {
+    display: block;
+
+    flex: 1 1 0;
+
+    width: 100%;
+    height: 100%;
+
+    min-width: 0;
+    min-height: 0;
+
+    margin: 0;
+    padding: 0;
+
+    border: 0;
+    border-radius: 0;
+
+    box-sizing: border-box;
+}
+
+/* MOBILE */
+@media (max-width: 575.98px) {
+
+    .app-main > .claim-workspace {
+        height: auto;
+        min-height: 0;
+    }
+
+    .claim-workspace > .app-content {
+        overflow-y: auto;
+    }
+
+}

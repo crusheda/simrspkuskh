@@ -98,6 +98,7 @@ class SmartClaim extends Component
         $data = [
             'KUNJUNGAN' => $this->KUNJUNGAN,
             'mode' => $this->mode,
+
             'title' => match ($this->mode) {
                 'detail' => 'Smart Claim Detail',
                 'farmasi' => 'Smart Claim Farmasi',
@@ -109,6 +110,25 @@ class SmartClaim extends Component
             $data['list'] = $this->getDataIndex();
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | LAYOUT WORKSPACE
+        |--------------------------------------------------------------------------
+        |
+        | workspace=1:
+        | Detail dirender dalam iframe tanpa header/sidebar utama.
+        |
+        | Tanpa workspace=1:
+        | Menggunakan layout utama SIRMED V3.
+        |
+        */
+        // $layout = request()->boolean('workspace')
+        //     ? 'layouts.v3.workspace.smartclaim'
+        //     : 'layouts.v3.app';
+        // return view($view, $data)
+        //     ->layout($layout, [
+        //         'title' => $data['title'],
+        //     ]);
         return view($view, $data)
             ->layout('layouts.v3.app', [
                 'title' => $data['title'],

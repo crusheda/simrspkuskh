@@ -1,514 +1,440 @@
+@assets
+    <link rel="stylesheet" href="{{ asset('css/v3/components/claim-workspace.css') }}">
+    <script src="{{ asset('js/v3/components/claim-workspace.js') }}" defer></script>
+@endassets
+
 @section('title', 'Smart Claim')
 @section('page-sub-title', 'SISTEM INFORMASI RUMAH SAKIT')
 @section('page-title', 'Smart Claim')
 
-<section>
-    <div class="wire-content-emr">
-        <div class="row g-3">
-            <div class="col-xl-12">
+<style>
+    #sep_px::placeholder {
+        color: #999;
+        opacity: 1;
+    }
 
-                <style>
-                    #sep_px::placeholder {
-                        color: #999;
-                        opacity: 1;
-                    }
-                </style>
+    /* Konten halaman Home Smart Claim di dalam panel workspace. */
+    .claim-home-content {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        min-height: 100%;
+        padding: 1rem;
+        box-sizing: border-box;
+    }
 
-                <div class="container-fluid px-0">
+    .claim-home-content .row {
+        max-width: 100%;
+    }
 
-                    {{-- BREADCRUMB --}}
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb px-3 py-2 bg-primary-subtle rounded-3">
-                            <li class="breadcrumb-item">
-                                <a class="link-primary" href="{{ route('v3.dashboard') }}">
-                                    <i class="fi fi-rr-home"></i>
-                                </a>
-                            </li>
+    .claim-home-content .card {
+        min-width: 0;
+    }
 
-                            <li class="breadcrumb-item">
-                                <a class="link-primary fw-medium text-decoration-none"
-                                   href="javascript:void(0);">
-                                    Digital
-                                </a>
-                            </li>
+    @media (max-width: 575.98px) {
+        .claim-home-content {
+            padding: .75rem;
+        }
+    }
+</style>
 
-                            <li class="breadcrumb-item active" aria-current="page">
-                                Smart Claim
-                            </li>
-                        </ol>
-                    </nav>
+<section class="claim-home-content">
 
-                    {{-- MAIN CONTENT --}}
-                    <div class="row g-3">
+        {{-- MAIN CONTENT --}}
+        <div class="row g-3 w-100">
 
-                        {{-- CLAIM TABLE --}}
-                        <div class="col-xl-8">
-                            <div class="card">
+            {{-- CLAIM TABLE --}}
+            <div class="col-xl-8">
+                <div class="card rounded-0">
 
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0">
-                                        <i class="ti ti-table text-primary me-1"></i>
-                                        Claim Table
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="ti ti-table text-primary me-1"></i>
+                            Claim Table
 
-                                        <span
-                                            class="ms-2 f-14 px-2 badge bg-secondary-subtle text-secondary"
-                                            id="jumlah_claim"
-                                        >
-                                            <i class="fas fa-sync fa-spin"></i>
-                                        </span>
-                                    </h5>
-                                </div>
+                            <span class="ms-2 f-14 px-2 badge bg-secondary-subtle text-secondary"
+                                id="jumlah_claim">
+                                <i class="fas fa-sync fa-spin"></i>
+                            </span>
+                        </h5>
+                    </div>
 
-                                <div class="card-body p-3 pb-0 table-body">
-                                    <div class="table-responsive pb-3">
+                    <div class="card-body p-3 pb-0 table-body">
+                        <div class="table-responsive pb-3">
 
-                                        <table class="table mb-0 table-hover table-striped" id="dttable">
-                                            <thead>
-                                                <tr>
-                                                    <th style="width: 50%;">KUNJUNGAN</th>
-                                                    <th style="width: 30%;" class="text-end">
-                                                        TGL KUNJUNGAN
-                                                    </th>
-                                                    <th style="width: 10%;" class="text-end">
-                                                        STATUS
-                                                    </th>
-                                                    <th style="width: 10%;" class="text-end">
-                                                        CATATAN
-                                                    </th>
-                                                </tr>
-                                            </thead>
+                            <table class="table mb-0 table-hover table-striped" id="dttable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50%;">KUNJUNGAN</th>
+                                        <th style="width: 30%;" class="text-end">
+                                            TGL KUNJUNGAN
+                                        </th>
+                                        <th style="width: 10%;" class="text-end">
+                                            STATUS
+                                        </th>
+                                        <th style="width: 10%;" class="text-end">
+                                            CATATAN
+                                        </th>
+                                    </tr>
+                                </thead>
 
-                                            <tbody id="tampil-tbody">
-                                                <tr style="font-size:13px">
-                                                    <td colspan="4">
-                                                        <center>
-                                                            <div
-                                                                class="spinner-border spinner-border-sm"
-                                                                role="status"
-                                                            ></div>
-                                                        </center>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                <tbody id="tampil-tbody">
+                                    <tr style="font-size:13px">
+                                        <td colspan="4">
+                                            <center>
+                                                <div class="spinner-border spinner-border-sm"
+                                                    role="status"></div>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
 
-                            </div>
+                </div>
+            </div>
+
+            {{-- SIDEBAR --}}
+            <div class="col-xl-4">
+
+                {{-- PENCARIAN SEP --}}
+                <div class="card rounded-0">
+                    <div class="card-body">
+
+                        <h5>
+                            <i class="ti ti-list-search text-primary me-1"></i>
+                            Pencarian No.SEP
+                        </h5>
+
+                        <label class="form-label">
+                            <small>
+                                Tuliskan No.SEP dengan nilai default adalah
+                                0151R013<b class="text-teal">xxx</b>
+                                (<b class="text-orange">19 Digit</b>)
+                            </small>
+                        </label>
+
+                        <div class="input-group my-3 mt-2 mb-0">
+                            <input type="text" class="form-control"
+                                placeholder="Masukkan No.SEP Pasien" id="sep_px" maxlength="19"
+                                autocomplete="off">
+
+                            <button class="btn btn-secondary" type="button" id="btn-cari"
+                                onclick="cariSep()" disabled>
+                                <i class="fas fa-search align-middle me-1"></i>
+                                Cari
+                            </button>
                         </div>
 
-                        {{-- SIDEBAR --}}
-                        <div class="col-xl-4">
+                    </div>
+                </div>
 
-                            {{-- PENCARIAN SEP --}}
-                            <div class="card">
-                                <div class="card-body">
+                {{-- FILTER --}}
+                <div class="card rounded-0">
+                    <div class="card-body">
 
-                                    <h5>
-                                        <i class="ti ti-list-search text-primary me-1"></i>
-                                        Pencarian No.SEP
-                                    </h5>
+                        <h5 class="mb-2">
+                            <i class="ti ti-filter text-primary me-1"></i>
+                            Filter
+                        </h5>
 
+                        <div class="row">
+
+                            {{-- JENIS PERAWATAN --}}
+                            <div class="col-md-12 mb-3">
+                                <div class="form-group">
                                     <label class="form-label">
-                                        <small>
-                                            Tuliskan No.SEP dengan nilai default adalah
-                                            0151R013<b class="text-teal">xxx</b>
-                                            (<b class="text-orange">19 Digit</b>)
-                                        </small>
+                                        Jenis Perawatan
                                     </label>
 
-                                    <div class="input-group my-3 mt-2 mb-0">
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            placeholder="Masukkan No.SEP Pasien"
-                                            id="sep_px"
-                                            maxlength="19"
-                                            autocomplete="off"
-                                        >
-
-                                        <button
-                                            class="btn btn-secondary"
-                                            type="button"
-                                            id="btn-cari"
-                                            onclick="cariSep()"
-                                            disabled
-                                        >
-                                            <i class="fas fa-search align-middle me-1"></i>
-                                            Cari
-                                        </button>
-                                    </div>
-
+                                    <select id="filter_rawat" class="form-control">
+                                        <option value="5">
+                                            Semua Perawatan
+                                        </option>
+                                        <option value="1" selected>
+                                            Rawat Jalan
+                                        </option>
+                                        <option value="2">
+                                            Rawat Darurat (Tanpa Inap)
+                                        </option>
+                                        <option value="3">
+                                            Rawat Inap
+                                        </option>
+                                    </select>
                                 </div>
                             </div>
 
-                            {{-- FILTER --}}
-                            <div class="card">
-                                <div class="card-body">
+                            {{-- FILTER TANGGAL --}}
+                            <div class="col-md-12 mb-3" id="hide-filter-tgl" hidden>
+                                <label class="form-label">
+                                    Rentang Tgl Kunjungan
+                                </label>
 
-                                    <h5 class="mb-2">
-                                        <i class="ti ti-filter text-primary me-1"></i>
-                                        Filter
-                                    </h5>
+                                <div class="input-group">
+                                    <input type="text" id="filter_tgl"
+                                        class="form-control flatpickr-input active border border-2"
+                                        placeholder="Pilih Rentang Tanggal" disabled>
 
-                                    <div class="row">
-
-                                        {{-- JENIS PERAWATAN --}}
-                                        <div class="col-md-12 mb-3">
-                                            <div class="form-group">
-                                                <label class="form-label">
-                                                    Jenis Perawatan
-                                                </label>
-
-                                                <select id="filter_rawat" class="form-control">
-                                                    <option value="5">
-                                                        Semua Perawatan
-                                                    </option>
-                                                    <option value="1" selected>
-                                                        Rawat Jalan
-                                                    </option>
-                                                    <option value="2">
-                                                        Rawat Darurat (Tanpa Inap)
-                                                    </option>
-                                                    <option value="3">
-                                                        Rawat Inap
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        {{-- FILTER TANGGAL --}}
-                                        <div
-                                            class="col-md-12 mb-3"
-                                            id="hide-filter-tgl"
-                                            hidden
-                                        >
-                                            <label class="form-label">
-                                                Rentang Tgl Kunjungan
-                                            </label>
-
-                                            <div class="input-group">
-                                                <input
-                                                    type="text"
-                                                    id="filter_tgl"
-                                                    class="form-control flatpickr-input active border border-2"
-                                                    placeholder="Pilih Rentang Tanggal"
-                                                    disabled
-                                                >
-
-                                                <button
-                                                    class="btn btn-secondary"
-                                                    type="button"
-                                                    id="btn-clear-filter-tgl"
-                                                    disabled
-                                                >
-                                                    <i class="ri-search-line"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {{-- FILTER BULAN --}}
-                                        <div
-                                            class="col-md-12 mb-3"
-                                            id="hide-filter-bulan"
-                                        >
-                                            <label class="form-label">
-                                                Bulan Kunjungan
-                                            </label>
-
-                                            <div class="input-group">
-                                                <input
-                                                    type="month"
-                                                    class="form-control"
-                                                    value="{{ $list['yearMonth'] }}"
-                                                    placeholder="Pilih Bulan"
-                                                    id="filter_bulan"
-                                                >
-
-                                                <button
-                                                    class="btn btn-warning"
-                                                    type="button"
-                                                    id="btn-clear-filter-bulan"
-                                                >
-                                                    <i class="ri-search-line"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {{-- FILTER DPJP --}}
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="form-label">
-                                                    DPJP
-                                                </label>
-
-                                                <select class="form-control" id="filter_dpjp">
-                                                    <option value="">
-                                                        Pilih Dokter
-                                                    </option>
-
-                                                    @if ($list['dr'])
-                                                        @foreach ($list['dr'] as $item)
-                                                            <option value="{{ $item->NIP }}">
-                                                                {{ $item->NAMADOKTER }}
-                                                                ({{ $item->DESKRIPSI }})
-                                                            </option>
-                                                        @endforeach
-                                                    @endif
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                    </div>
+                                    <button class="btn btn-secondary" type="button"
+                                        id="btn-clear-filter-tgl" disabled>
+                                        <i class="ri-search-line"></i>
+                                    </button>
                                 </div>
                             </div>
 
-                            {{-- TOMBOL TAMPILKAN --}}
-                            <div class="d-grid mb-3">
-                                <button
-                                    class="btn btn-primary"
-                                    onclick="filter()"
-                                    id="tombol-tampilkan"
-                                    disabled
-                                >
-                                    <i
-                                        class="fa fa-filter me-1"
-                                        style="font-size: 13px"
-                                    ></i>
-                                    Tampilkan
-                                </button>
-                            </div>
+                            {{-- FILTER BULAN --}}
+                            <div class="col-md-12 mb-3" id="hide-filter-bulan">
+                                <label class="form-label">
+                                    Bulan Kunjungan
+                                </label>
 
-                        </div>
-                    </div>
+                                <div class="input-group">
+                                    <input type="month" class="form-control"
+                                        value="{{ $list['yearMonth'] }}" placeholder="Pilih Bulan"
+                                        id="filter_bulan">
 
-                </div>
-
-                {{-- MODAL CATATAN --}}
-                <div
-                    id="catatan"
-                    class="modal fade"
-                    tabindex="-1"
-                    role="dialog"
-                    aria-labelledby="catatanLabel"
-                >
-                    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-                        <div class="modal-content">
-
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="catatanLabel">
-                                    <span class="badge text-bg-secondary">
-                                        CATATAN
-                                    </span>
-                                    |
-                                    IDKUNJUNGAN :
-                                    <a id="show-id-catatan" class="text-primary"></a>
-                                </h5>
-
-                                <button
-                                    type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="modal"
-                                    aria-label="Close"
-                                ></button>
-                            </div>
-
-                            <div class="modal-body p-3">
-
-                                <small>
-                                    <i class="fas fa-sort-amount-down me-1"></i>
-                                    <b>
-                                        Tabel di bawah diurutkan berdasarkan
-                                        <mark>TANGGAL</mark>
-                                        catatan pertama kali ditambahkan
-                                    </b>
-                                </small>
-
-                                <div class="table-responsive mt-2">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 10%;" class="text-center">
-                                                    AKSI
-                                                </th>
-                                                <th style="width: 25%;">
-                                                    NAMA PENGGUNA
-                                                </th>
-                                                <th style="width: 65%;">
-                                                    DESKRIPSI CATATAN
-                                                </th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody id="tampil-catatan">
-                                            <tr>
-                                                <td colspan="3">
-                                                    <center>
-                                                        <div
-                                                            class="spinner-border spinner-border-sm"
-                                                            role="status"
-                                                        ></div>
-                                                    </center>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                    <button class="btn btn-warning" type="button"
+                                        id="btn-clear-filter-bulan">
+                                        <i class="ri-search-line"></i>
+                                    </button>
                                 </div>
-
                             </div>
 
-                            <div class="modal-footer">
-                                <div id="btn-refresh-catatan"></div>
+                            {{-- FILTER DPJP --}}
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        DPJP
+                                    </label>
 
-                                <button
-                                    type="button"
-                                    class="btn btn-secondary"
-                                    data-bs-dismiss="modal"
-                                >
-                                    Tutup
-                                </button>
+                                    <select class="form-control" id="filter_dpjp">
+                                        <option value="">
+                                            Pilih Dokter
+                                        </option>
+
+                                        @if ($list['dr'])
+                                            @foreach ($list['dr'] as $item)
+                                                <option value="{{ $item->NIP }}">
+                                                    {{ $item->NAMADOKTER }}
+                                                    ({{ $item->DESKRIPSI }})
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
                             </div>
 
                         </div>
                     </div>
                 </div>
-                {{-- END MODAL CATATAN --}}
 
-                @script
-                <script>
-                    $(function () {
+                {{-- TOMBOL TAMPILKAN --}}
+                <div class="d-grid mb-3">
+                    <button class="btn btn-primary" onclick="filter()" id="tombol-tampilkan"
+                        disabled>
+                        <i class="fa fa-filter me-1" style="font-size: 13px"></i>
+                        Tampilkan
+                    </button>
+                </div>
 
-                        // SELECT DPJP
-                        const elm = $('#filter_dpjp')[0];
+            </div>
+        </div>
 
-                        if (elm && !elm.choicesInstance) {
-                            elm.choicesInstance = new Choices(elm);
-                        }
+        {{-- MODAL CATATAN --}}
+        <div id="catatan" class="modal fade" tabindex="-1" role="dialog"
+            aria-labelledby="catatanLabel">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                <div class="modal-content">
 
-                        // INPUT SEP
-                        initSepInput();
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="catatanLabel">
+                            <span class="badge text-bg-secondary">
+                                CATATAN
+                            </span>
+                            |
+                            IDKUNJUNGAN :
+                            <a id="show-id-catatan" class="text-primary"></a>
+                        </h5>
 
-                        // INITIAL FILTER
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body p-3">
+
+                        <small>
+                            <i class="fas fa-sort-amount-down me-1"></i>
+                            <b>
+                                Tabel di bawah diurutkan berdasarkan
+                                <mark>TANGGAL</mark>
+                                catatan pertama kali ditambahkan
+                            </b>
+                        </small>
+
+                        <div class="table-responsive mt-2">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10%;" class="text-center">
+                                            AKSI
+                                        </th>
+                                        <th style="width: 25%;">
+                                            NAMA PENGGUNA
+                                        </th>
+                                        <th style="width: 65%;">
+                                            DESKRIPSI CATATAN
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="tampil-catatan">
+                                    <tr>
+                                        <td colspan="3">
+                                            <center>
+                                                <div class="spinner-border spinner-border-sm"
+                                                    role="status"></div>
+                                            </center>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <div id="btn-refresh-catatan"></div>
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Tutup
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {{-- END MODAL CATATAN --}}
+
+</section>
+
+@script
+    <script>
+        $(function() {
+
+            // SELECT DPJP
+            const elm = $('#filter_dpjp')[0];
+
+            if (elm && !elm.choicesInstance) {
+                elm.choicesInstance = new Choices(elm);
+            }
+
+            // INPUT SEP
+            initSepInput();
+
+            // INITIAL FILTER
+            filter();
+
+            // ENTER CARI SEP
+            $('#sep_px').on('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    cariSep();
+                }
+            });
+
+            // ENTER TAMPILKAN
+            $('#filter_rawat, #filter_bulan, #filter_dpjp, #filter_tgl')
+                .on('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
                         filter();
+                    }
+                });
 
-                        // ENTER CARI SEP
-                        $('#sep_px').on('keydown', function (e) {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                cariSep();
-                            }
-                        });
+            // FLATPICKR DATE
+            const today = new Date();
+            const fiveYearsAgo = new Date();
 
-                        // ENTER TAMPILKAN
-                        $('#filter_rawat, #filter_bulan, #filter_dpjp, #filter_tgl')
-                            .on('keydown', function (e) {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    filter();
-                                }
-                            });
+            fiveYearsAgo.setFullYear(today.getFullYear() - 5);
 
-                        // FLATPICKR DATE
-                        const today = new Date();
-                        const fiveYearsAgo = new Date();
+            $("#filter_tgl").flatpickr({
+                mode: 'range',
+                minDate: fiveYearsAgo,
+                maxDate: today,
+                dateFormat: 'Y-m-d'
+            });
 
-                        fiveYearsAgo.setFullYear(today.getFullYear() - 5);
+            // CLEAR FILTER TANGGAL
+            $("#btn-clear-filter-tgl").on("click", function() {
+                $(this)
+                    .removeClass('btn-warning')
+                    .addClass('btn-secondary')
+                    .prop('disabled', true);
 
-                        $("#filter_tgl").flatpickr({
-                            mode: 'range',
-                            minDate: fiveYearsAgo,
-                            maxDate: today,
-                            dateFormat: 'Y-m-d'
-                        });
+                $("#btn-clear-filter-bulan")
+                    .removeClass('btn-secondary')
+                    .addClass('btn-warning')
+                    .prop('disabled', false);
 
-                        // CLEAR FILTER TANGGAL
-                        $("#btn-clear-filter-tgl").on("click", function () {
-                            $(this)
-                                .removeClass('btn-warning')
-                                .addClass('btn-secondary')
-                                .prop('disabled', true);
+                $("#filter_tgl")
+                    .val("")
+                    .trigger("change")
+                    .prop('disabled', true);
 
-                            $("#btn-clear-filter-bulan")
-                                .removeClass('btn-secondary')
-                                .addClass('btn-warning')
-                                .prop('disabled', false);
+                $("#filter_bulan")
+                    .val("")
+                    .trigger("change")
+                    .prop('disabled', false);
 
-                            $("#filter_tgl")
-                                .val("")
-                                .trigger("change")
-                                .prop('disabled', true);
+                $("#hide-filter-bulan").prop('hidden', false);
+                $("#hide-filter-tgl").prop('hidden', true);
+            });
 
-                            $("#filter_bulan")
-                                .val("")
-                                .trigger("change")
-                                .prop('disabled', false);
+            // CLEAR FILTER BULAN
+            $("#btn-clear-filter-bulan").on("click", function() {
+                $(this)
+                    .removeClass('btn-warning')
+                    .addClass('btn-secondary')
+                    .prop('disabled', true);
 
-                            $("#hide-filter-bulan").prop('hidden', false);
-                            $("#hide-filter-tgl").prop('hidden', true);
-                        });
+                $("#btn-clear-filter-tgl")
+                    .removeClass('btn-secondary')
+                    .addClass('btn-warning')
+                    .prop('disabled', false);
 
-                        // CLEAR FILTER BULAN
-                        $("#btn-clear-filter-bulan").on("click", function () {
-                            $(this)
-                                .removeClass('btn-warning')
-                                .addClass('btn-secondary')
-                                .prop('disabled', true);
+                $("#filter_bulan")
+                    .val("")
+                    .trigger("change")
+                    .prop('disabled', true);
 
-                            $("#btn-clear-filter-tgl")
-                                .removeClass('btn-secondary')
-                                .addClass('btn-warning')
-                                .prop('disabled', false);
+                $("#filter_tgl")
+                    .val("")
+                    .trigger("change")
+                    .prop('disabled', false);
 
-                            $("#filter_bulan")
-                                .val("")
-                                .trigger("change")
-                                .prop('disabled', true);
+                $("#hide-filter-tgl").prop('hidden', false);
+                $("#hide-filter-bulan").prop('hidden', true);
+            });
 
-                            $("#filter_tgl")
-                                .val("")
-                                .trigger("change")
-                                .prop('disabled', false);
+            $('#btn-cari').prop('disabled', false);
 
-                            $("#hide-filter-tgl").prop('hidden', false);
-                            $("#hide-filter-bulan").prop('hidden', true);
-                        });
+        });
 
-                        $('#btn-cari').prop('disabled', false);
+        // PERMISSION
+        const canSmartClaim = {{ auth()->user()->can('smart_claim') ? 'true' : 'false' }};
+        const canSmartClaimFarmasi = {{ auth()->user()->can('smart_claim_farmasi') ? 'true' : 'false' }};
 
-                    });
+        // FUNCTION FILTER
+        function filter() {
+            $('#tombol-tampilkan')
+                .prop('disabled', true)
+                .find('i')
+                .removeClass('fa-filter')
+                .addClass('fa-sync fa-spin');
 
-                    // PERMISSION
-                    const canSmartClaim = {{ auth()->user()->can('smart_claim') ? 'true' : 'false' }};
-                    const canSmartClaimFarmasi = {{ auth()->user()->can('smart_claim_farmasi') ? 'true' : 'false' }};
-
-                    // CLICK ROW - CLAIM WORKSPACE
-                    $(document)
-                        .off('click.smartclaim', '#dttable tbody tr.clickable')
-                        .on('click.smartclaim', '#dttable tbody tr.clickable', function (e) {
-
-                            // Jangan navigasi apabila klik berasal dari tombol/link di dalam baris
-                            if ($(e.target).closest('a, button').length) {
-                                return;
-                            }
-
-                            const url = $(this).attr('data-href');
-
-                            if (url && url !== '#') {
-                                window.location.href = url;
-                            }
-
-                        });
-
-                    // FUNCTION FILTER
-                    function filter() {
-                                $('#tombol-tampilkan')
-            .prop('disabled', true)
-            .find('i')
-            .removeClass('fa-filter')
-            .addClass('fa-sync fa-spin');
-
-        $("#tampil-tbody").empty().append(`
+            $("#tampil-tbody").empty().append(`
             <tr style="font-size:13px">
                 <td colspan="4">
                     <center>
@@ -518,109 +444,111 @@
             </tr>
         `);
 
-        // INITIALIZE FILTER
-        var pel = $("#filter_rawat").val();
-        var bln = $("#filter_bulan").val() ? $("#filter_bulan").val() : '0';
-        var dpjp = $("#filter_dpjp").val() ? $("#filter_dpjp").val() : '0';
-        var tgl = $("#filter_tgl").val() ? $("#filter_tgl").val() : '0';
+            // INITIALIZE FILTER
+            var pel = $("#filter_rawat").val();
+            var bln = $("#filter_bulan").val() ? $("#filter_bulan").val() : '0';
+            var dpjp = $("#filter_dpjp").val() ? $("#filter_dpjp").val() : '0';
+            var tgl = $("#filter_tgl").val() ? $("#filter_tgl").val() : '0';
 
-        var exTgl = tgl.split(' to ');
+            var exTgl = tgl.split(' to ');
 
-        if (exTgl.length == 2) {
-            tgls = exTgl[0];
-            tgle = exTgl[1];
-        } else {
-            tgls = exTgl[0];
-            tgle = exTgl[0];
-        }
+            if (exTgl.length == 2) {
+                tgls = exTgl[0];
+                tgle = exTgl[1];
+            } else {
+                tgls = exTgl[0];
+                tgle = exTgl[0];
+            }
 
-        $.ajax({
-            url: `/api/klaim/table/${pel}/${tgls}/${tgle}/${bln}/${dpjp}`,
-            type: 'GET',
-            dataType: 'json',
+            $.ajax({
+                url: `/api/klaim/table/${pel}/${tgls}/${tgle}/${bln}/${dpjp}`,
+                type: 'GET',
+                dataType: 'json',
 
-            beforeSend: function () {
-                $('#jumlah_claim')
-                    .empty()
-                    .append('<i class="fas fa-sync fa-spin"></i>');
-            },
+                beforeSend: function() {
+                    $('#jumlah_claim')
+                        .empty()
+                        .append('<i class="fas fa-sync fa-spin"></i>');
+                },
 
-            success: function (res) {
+                success: function(res) {
 
-                $("#tampil-tbody").empty();
+                    $("#tampil-tbody").empty();
 
-                if ($.fn.DataTable.isDataTable('#dttable')) {
-                    $('#dttable').DataTable().clear().destroy();
-                }
+                    if ($.fn.DataTable.isDataTable('#dttable')) {
+                        $('#dttable').DataTable().clear().destroy();
+                    }
 
-                if (res.show && Array.isArray(res.show)) {
+                    const jumlahData = Array.isArray(res.show) ? res.show.length : 0;
+                    $('#jumlah_claim').text(jumlahData + ' Data');
 
-                    res.show.forEach(item => {
+                    if (res.show && Array.isArray(res.show)) {
 
-                        let badgeKonsul = '';
-                        let addOnKonsul = null;
+                        res.show.forEach(item => {
 
-                        if (item.JENIS_KUNJUNGAN == 'UTAMA') {
+                            let badgeKonsul = '';
+                            let addOnKonsul = null;
 
-                            badgeKonsul = `
+                            if (item.JENIS_KUNJUNGAN == 'UTAMA') {
+
+                                badgeKonsul = `
                                 <span class="badge bg-primary-subtle text-primary border border-primary-subtle badge-sm">
                                     UTAMA
                                 </span>
                             `;
 
-                        } else {
+                            } else {
 
-                            if (item.JENIS_KUNJUNGAN == 'KONSUL') {
+                                if (item.JENIS_KUNJUNGAN == 'KONSUL') {
 
-                                badgeKonsul = `
+                                    badgeKonsul = `
                                     <span class="badge bg-danger-subtle text-danger border border-danger-subtle badge-sm">
                                         KONSUL
                                     </span>
                                 `;
 
-                                if (item.RUANGAN_KONSUL && item.DOKTER_KONSUL) {
+                                    if (item.RUANGAN_KONSUL && item.DOKTER_KONSUL) {
 
-                                    addOnKonsul = `
+                                        addOnKonsul = `
                                         <span class="badge bg-success-subtle text-success border border-success-subtle badge-sm">
                                             Dari Ruangan ${item.RUANGAN_KONSUL}
                                             &nbsp;&nbsp;-&nbsp;&nbsp;
                                             ${item.DOKTER_KONSUL}
                                         </span>
                                     `;
-                                }
+                                    }
 
-                            } else {
+                                } else {
 
-                                badgeKonsul = `
+                                    badgeKonsul = `
                                     <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle badge-sm">
                                         TIDAK DITEMUKAN
                                     </span>
                                 `;
+                                }
                             }
-                        }
 
-                        $('#jumlah_claim').text(res.show.length + ' Data');
 
-                        // SEP
-                        let SEP = '';
+                            // SEP
+                            let SEP = '';
 
-                        if (item.NOSEP) {
+                            if (item.NOSEP) {
 
-                            let valSEP = item.NOSEP.substring(8, 12);
-                            let parts = item.TGLSEP.split("-");
-                            let valTGLSEP = parts[1] + parts[0].slice(-2);
+                                let valSEP = item.NOSEP.substring(8, 12);
+                                let parts = item.TGLSEP.split("-");
+                                let valTGLSEP = parts[1] + parts[0].slice(-2);
 
-                            if (valSEP == valTGLSEP) {
+                                if (valSEP == valTGLSEP) {
 
-                                SEP = `
+                                    SEP = `
                                     <b class="text-salmon">
                                         ${item.NOSEP}
                                     </b>
                                 `;
 
-                            } else {
+                                } else {
 
-                                SEP = `
+                                    SEP = `
                                     <b class="text-salmon">
                                         ${item.NOSEP}
                                     </b>
@@ -629,23 +557,23 @@
                                         <b>Tanggal SEP Tidak Sesuai!</b>
                                     </span>
                                 `;
-                            }
+                                }
 
-                        } else {
+                            } else {
 
-                            SEP = `
+                                SEP = `
                                 <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
                                     <b>SEP Tidak Ditemukan</b>
                                 </span>
                             `;
-                        }
+                            }
 
-                        // STATUS VERIFIKASI
-                        let stt = '';
+                            // STATUS VERIFIKASI
+                            let stt = '';
 
-                        if (item.STATUSVERIF) {
+                            if (item.STATUSVERIF) {
 
-                            stt = `
+                                stt = `
                                 <a
                                     href="javascript:void(0);"
                                     class="btn btn-action-success btn-sm p-0"
@@ -658,9 +586,9 @@
                                 </a>
                             `;
 
-                        } else {
+                            } else {
 
-                            stt = `
+                                stt = `
                                 <a
                                     href="javascript:void(0);"
                                     class="btn btn-action-danger btn-sm p-0"
@@ -672,14 +600,14 @@
                                     <i class="ti ti-square-x fs-40"></i>
                                 </a>
                             `;
-                        }
+                            }
 
-                        // CATATAN
-                        let cat = '';
+                            // CATATAN
+                            let cat = '';
 
-                        if (item.CATATAN == 2) {
+                            if (item.CATATAN == 2) {
 
-                            cat = `
+                                cat = `
                                 <a
                                     href="javascript:void(0);"
                                     class="btn btn-action-success btn-sm p-0"
@@ -693,9 +621,9 @@
                                 </a>
                             `;
 
-                        } else if (item.CATATAN == 1) {
+                            } else if (item.CATATAN == 1) {
 
-                            cat = `
+                                cat = `
                                 <a
                                     href="javascript:void(0);"
                                     class="btn btn-action-warning btn-sm p-0"
@@ -709,9 +637,9 @@
                                 </a>
                             `;
 
-                        } else {
+                            } else {
 
-                            cat = `
+                                cat = `
                                 <a
                                     href="javascript:void(0);"
                                     class="btn btn-action-secondary btn-sm p-0"
@@ -723,23 +651,79 @@
                                     <i class="ti ti-file-x fs-40"></i>
                                 </a>
                             `;
-                        }
+                            }
 
-                        // URL DETAIL V3 - CLAIM WORKSPACE
-                        let urlKlaim = '#';
+                            // =====================================================
+                            // URL DETAIL SMARTCLAIM
+                            // =====================================================
 
-                        if (canSmartClaim) {
-                            urlKlaim = `/v3/smartclaim/${encodeURIComponent(item.NOMOR)}`;
-                        } else if (canSmartClaimFarmasi) {
-                            urlKlaim = `/v3/smartclaim/${encodeURIComponent(item.NOMOR)}/farmasi`;
-                        }
+                            let urlKlaim = '#';
+                            let claimType = 'smart_claim';
 
-                        // ROW CLAIM
-                        let content = `
+                            if (canSmartClaim) {
+
+                                claimType = 'smart_claim';
+
+                                urlKlaim = `/v3/smartclaim/${encodeURIComponent(item.NOMOR)}`;
+
+                            } else if (canSmartClaimFarmasi) {
+
+                                claimType = 'smart_claim_farmasi';
+
+                                urlKlaim = `/v3/smartclaim/${encodeURIComponent(item.NOMOR)}/farmasi`;
+
+                            }
+
+                            // =====================================================
+                            // METADATA CLAIM WORKSPACE
+                            // =====================================================
+
+                            const claimMeta = encodeURIComponent(JSON.stringify({
+
+                                nomor: String(item.NOMOR ?? ''),
+
+                                type: claimType,
+
+                                norm: item.NORM ?? '',
+
+                                nama: item.NAMAPASIEN ?? '',
+
+                                noSEP: item.NOSEP ?? '',
+
+                                namaAsuransi: 'BPJS KESEHATAN',
+
+                                namaRuangan: item.NAMARUANGAN ?? '',
+
+                                namaDokter: item.NAMADOKTER ?? '',
+
+                                tglMasuk: item.MASUK ?? '',
+
+                                tglKeluar: item.KELUAR ?? '',
+
+                                statusVerif:
+                                    item.STATUSVERIF === true ||
+                                    Number(item.STATUSVERIF) === 1,
+
+                                statusKlaim:
+                                    (
+                                        item.STATUSVERIF === true ||
+                                        Number(item.STATUSVERIF) === 1
+                                    )
+                                        ? 'SUDAH DIVERIFIKASI'
+                                        : 'BELUM DIVERIFIKASI',
+
+                                label: `RM.${item.NORM ?? '-'} - ${item.NAMAPASIEN ?? item.NOMOR}`
+
+                            }));
+
+                            // ROW CLAIM
+                            let content = `
                             <tr
                                 style="cursor:pointer;"
                                 class="clickable"
                                 data-href="${urlKlaim}"
+                                data-claim-href="${urlKlaim}"
+                                data-claim-meta="${claimMeta}"
                             >
                                 <td>
                                     <h5 class="mb-0">
@@ -794,256 +778,302 @@
                             </tr>
                         `;
 
-                        $('#tampil-tbody').append(content);
+                            $('#tampil-tbody').append(content);
+                        });
+                    }
+
+                    // DATATABLE
+                    $('#dttable').DataTable({
+                        order: [
+                            [1, "desc"]
+                        ],
+
+                        columnDefs: [{
+                                targets: [0],
+                                sortable: true
+                            },
+                            {
+                                targets: [2],
+                                sortable: false
+                            },
+                            {
+                                targets: [3],
+                                sortable: false
+                            }
+                        ],
+
+                        displayLength: 10
                     });
+
+                    // TOOLTIP
+                    $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                    $('.tooltip').remove();
+
+                    $('[data-bs-toggle="tooltip"]').tooltip({
+                        trigger: 'hover'
+                    });
+
+                    // TOMBOL FILTER
+                    $('#tombol-tampilkan')
+                        .prop('disabled', false)
+                        .find('i')
+                        .removeClass('fa-sync fa-spin')
+                        .addClass('fa-filter');
+                },
+                error: function(xhr, status, error) {
+
+                    let pesan = xhr.responseJSON ?? xhr.responseText ?? 'Gagal mengambil data. Coba lagi.';
+
+                    iziToast.error({
+                        title: 'Pesan System!',
+                        message: pesan,
+                        position: 'topRight'
+                    });
+
+                    $("#tampil-tbody").empty().append(`
+                        <tr style="font-size:13px">
+                            <td colspan="4">
+                                <center>Gagal Memuat Data Klaim</center>
+                            </td>
+                        </tr>
+                    `);
+
+                    $('#tombol-tampilkan')
+                        .prop('disabled', false)
+                        .find('i')
+                        .removeClass('fa-sync fa-spin')
+                        .addClass('fa-filter');
+
+                    $('#jumlah_claim').empty().append('0 Data');
+                },
+                complete: function() {
                 }
-
-                // DATATABLE
-                $('#dttable').DataTable({
-                    order: [
-                        [1, "desc"]
-                    ],
-
-                    columnDefs: [
-                        { targets: [0], sortable: true },
-                        { targets: [2], sortable: false },
-                        { targets: [3], sortable: false }
-                    ],
-
-                    displayLength: 10
-                });
-
-                // TOOLTIP
-                $('[data-bs-toggle="tooltip"]').tooltip('dispose');
-                $('.tooltip').remove();
-
-                $('[data-bs-toggle="tooltip"]').tooltip({
-                    trigger: 'hover'
-                });
-
-                // TOMBOL FILTER
-                $('#tombol-tampilkan')
-                    .prop('disabled', false)
-                    .find('i')
-                    .removeClass('fa-sync fa-spin')
-                    .addClass('fa-filter');
-            },
-
-            error: function (xhr, status, error) {
-
-                let pesan = xhr.responseJSON ?? xhr.responseText ?? 'Gagal mengambil data. Coba lagi.';
-
-                iziToast.error({
-                    title: 'Pesan System!',
-                    message: pesan,
-                    position: 'topRight'
-                });
-
-                $("#tampil-tbody").empty().append(`
-                    <tr style="font-size:13px">
-                        <td colspan="4">
-                            <center>Gagal Memuat Data Klaim</center>
-                        </td>
-                    </tr>
-                `);
-
-                $('#tombol-tampilkan')
-                    .prop('disabled', false)
-                    .find('i')
-                    .removeClass('fa-sync fa-spin')
-                    .addClass('fa-filter');
-            },
-
-            complete: function () {
-                $('#jumlah_claim').empty().append('0 Data');
-            }
-        });
-    }
-
-    // FUNCTION INPUT SEP
-    function initSepInput() {
-
-        const PREFIX = '0151R013';
-        const MAX_LENGTH = 19;
-        const $input = $('#sep_px');
-
-        function sanitize(value) {
-
-            value = value.toUpperCase();
-
-            // Hanya huruf dan angka
-            value = value.replace(/[^A-Z0-9]/g, '');
-
-            // Pastikan prefix selalu ada
-            if (!value.startsWith(PREFIX)) {
-                value = PREFIX + value.replace(new RegExp('^' + PREFIX), '');
-            }
-
-            // Buang prefix ganda
-            while (value.substring(PREFIX.length).startsWith(PREFIX)) {
-                value = PREFIX + value.substring(PREFIX.length * 2);
-            }
-
-            // Batasi panjang
-            value = value.substring(0, MAX_LENGTH);
-
-            return value;
+            });
         }
 
-        // Nilai awal
-        $input.val(PREFIX);
+        // FUNCTION INPUT SEP
+        function initSepInput() {
 
-        // Cursor selalu minimal setelah prefix
-        $input.on('focus click mouseup', function () {
+            const PREFIX = '0151R013';
+            const MAX_LENGTH = 19;
+            const $input = $('#sep_px');
 
-            const el = this;
+            function sanitize(value) {
 
-            setTimeout(function () {
+                value = value.toUpperCase();
 
-                if (el.selectionStart < PREFIX.length) {
-                    el.setSelectionRange(PREFIX.length, el.selectionEnd);
+                // Hanya huruf dan angka
+                value = value.replace(/[^A-Z0-9]/g, '');
+
+                // Pastikan prefix selalu ada
+                if (!value.startsWith(PREFIX)) {
+                    value = PREFIX + value.replace(new RegExp('^' + PREFIX), '');
                 }
 
-            }, 0);
+                // Buang prefix ganda
+                while (value.substring(PREFIX.length).startsWith(PREFIX)) {
+                    value = PREFIX + value.substring(PREFIX.length * 2);
+                }
 
-        });
+                // Batasi panjang
+                value = value.substring(0, MAX_LENGTH);
 
-        // Cegah backspace/delete prefix
-        $input.on('keydown', function (e) {
-
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-            const allSelected = (start === 0 && end === this.value.length);
-
-            if (e.ctrlKey && e.key.toLowerCase() === 'a') {
-                return;
+                return value;
             }
 
-            if (allSelected) {
-                return;
-            }
+            // Nilai awal
+            $input.val(PREFIX);
 
-            if (
-                (e.key === 'Backspace' && start <= PREFIX.length) ||
-                (e.key === 'Delete' && start < PREFIX.length)
-            ) {
-                e.preventDefault();
-            }
+            // Cursor selalu minimal setelah prefix
+            $input.on('focus click mouseup', function() {
 
-        });
+                const el = this;
 
-        // Setiap perubahan
-        $input.on('input', function () {
+                setTimeout(function() {
 
-            let value = $(this).val();
+                    if (el.selectionStart < PREFIX.length) {
+                        el.setSelectionRange(PREFIX.length, el.selectionEnd);
+                    }
 
-            if (value === '') {
-                $(this).val(PREFIX);
-                this.setSelectionRange(PREFIX.length, PREFIX.length);
-                return;
-            }
+                }, 0);
 
-            value = sanitize(value);
-
-            $(this).val(value);
-        });
-
-        // Handle paste
-        $input.on('paste', function (e) {
-
-            e.preventDefault();
-
-            let pasted = (e.originalEvent.clipboardData || window.clipboardData)
-                .getData('text');
-
-            pasted = pasted.toUpperCase().replace(/[^A-Z0-9]/g, '');
-
-            if (pasted.startsWith(PREFIX)) {
-                pasted = pasted.substring(PREFIX.length);
-            }
-
-            $(this).val(
-                sanitize(PREFIX + pasted)
-            );
-        });
-
-        // Jika seluruh isi dihapus
-        $input.on('keyup', function () {
-
-            if ($(this).val().length < PREFIX.length) {
-                $(this).val(PREFIX);
-            }
-
-        });
-    }
-        // FUNCTION CARI SEP
-    function cariSep() {
-
-        let sepPX = $('#sep_px').val();
-
-        if (sepPX.length != 19) {
-
-            iziToast.error({
-                title: 'Pesan System!',
-                message: 'Nomor SEP (Surat Eligibilitas Peserta) Tidak Valid (Harus 19 Digit)',
-                position: 'topRight'
             });
 
-            return;
+            // Cegah backspace/delete prefix
+            $input.on('keydown', function(e) {
+
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                const allSelected = (start === 0 && end === this.value.length);
+
+                if (e.ctrlKey && e.key.toLowerCase() === 'a') {
+                    return;
+                }
+
+                if (allSelected) {
+                    return;
+                }
+
+                if (
+                    (e.key === 'Backspace' && start <= PREFIX.length) ||
+                    (e.key === 'Delete' && start < PREFIX.length)
+                ) {
+                    e.preventDefault();
+                }
+
+            });
+
+            // Setiap perubahan
+            $input.on('input', function() {
+
+                let value = $(this).val();
+
+                if (value === '') {
+                    $(this).val(PREFIX);
+                    this.setSelectionRange(PREFIX.length, PREFIX.length);
+                    return;
+                }
+
+                value = sanitize(value);
+
+                $(this).val(value);
+            });
+
+            // Handle paste
+            $input.on('paste', function(e) {
+
+                e.preventDefault();
+
+                let pasted = (e.originalEvent.clipboardData || window.clipboardData)
+                    .getData('text');
+
+                pasted = pasted.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+                if (pasted.startsWith(PREFIX)) {
+                    pasted = pasted.substring(PREFIX.length);
+                }
+
+                $(this).val(
+                    sanitize(PREFIX + pasted)
+                );
+            });
+
+            // Jika seluruh isi dihapus
+            $input.on('keyup', function() {
+
+                if ($(this).val().length < PREFIX.length) {
+                    $(this).val(PREFIX);
+                }
+
+            });
         }
+        // FUNCTION CARI SEP
+        function cariSep() {
 
-        $.ajax({
-            url: `/api/klaim/${sepPX}/verif`,
-            type: 'GET',
-            dataType: 'json',
+            let sepPX = $('#sep_px').val();
 
-            beforeSend: function () {
-
-                $('#btn-cari')
-                    .prop('disabled', true)
-                    .find('i')
-                    .removeClass('fa-search')
-                    .addClass('fa-sync fa-spin');
-            },
-
-            success: function (res) {
-
-                iziToast.success({
-                    title: 'Pesan System!',
-                    message: res.message,
-                    position: 'topRight'
-                });
-
-                // URL DETAIL SMARTCLAIM V3
-                let url = '/v3/smartclaim/' + res.kunjungan;
-
-                window.open(url, '_blank', 'noopener,noreferrer');
-            },
-
-            error: function (xhr) {
+            if (sepPX.length != 19) {
 
                 iziToast.error({
                     title: 'Pesan System!',
-                    message: xhr.responseText,
+                    message: 'Nomor SEP (Surat Eligibilitas Peserta) Tidak Valid (Harus 19 Digit)',
                     position: 'topRight'
                 });
-            },
 
-            complete: function () {
-
-                $('#btn-cari')
-                    .prop('disabled', false)
-                    .find('i')
-                    .removeClass('fa-sync fa-spin')
-                    .addClass('fa-search');
+                return;
             }
-        });
-    }
 
-    // FUNCTION LIHAT CATATAN
-    function lihatCatatan(kunjungan) {
+            $.ajax({
+                url: `/api/klaim/${sepPX}/verif`,
+                type: 'GET',
+                dataType: 'json',
 
-        $("#tampil-catatan").empty().append(`
+                beforeSend: function() {
+
+                    $('#btn-cari')
+                        .prop('disabled', true)
+                        .find('i')
+                        .removeClass('fa-search')
+                        .addClass('fa-sync fa-spin');
+                },
+
+                success: function(res) {
+
+                    iziToast.success({
+                        title: 'Pesan System!',
+                        message: res.message,
+                        position: 'topRight'
+                    });
+
+                    const type = canSmartClaim
+                        ? 'smart_claim'
+                        : 'smart_claim_farmasi';
+
+                    const url = type === 'smart_claim_farmasi'
+                        ? `/v3/smartclaim/${encodeURIComponent(res.kunjungan)}/farmasi`
+                        : `/v3/smartclaim/${encodeURIComponent(res.kunjungan)}`;
+
+                    const metadata = {
+                        nomor: String(res.kunjungan),
+
+                        norm: res.NORM ?? res.norm ?? '',
+
+                        nama: res.NAMAPASIEN ?? res.namaPasien ?? '',
+
+                        noSEP: sepPX,
+
+                        namaAsuransi: 'BPJS KESEHATAN',
+
+                        namaRuangan: res.NAMARUANGAN ?? '',
+
+                        namaDokter: res.NAMADOKTER ?? '',
+
+                        statusKlaim: 'PENCARIAN SEP',
+
+                        label: `SEP ${sepPX}`,
+
+                        url: url
+                    };
+
+                    if (window.ClaimWorkspace) {
+
+                        window.ClaimWorkspace.openClaim(
+                            res.kunjungan,
+                            type,
+                            metadata
+                        );
+
+                    } else {
+
+                        window.location.href = url;
+
+                    }
+                },
+
+                error: function(xhr) {
+
+                    iziToast.error({
+                        title: 'Pesan System!',
+                        message: xhr.responseText,
+                        position: 'topRight'
+                    });
+                },
+
+                complete: function() {
+
+                    $('#btn-cari')
+                        .prop('disabled', false)
+                        .find('i')
+                        .removeClass('fa-sync fa-spin')
+                        .addClass('fa-search');
+                }
+            });
+        }
+
+        // FUNCTION LIHAT CATATAN
+        function lihatCatatan(kunjungan) {
+
+            $("#tampil-catatan").empty().append(`
             <tr style="font-size:13px">
                 <td colspan="3">
                     <center>
@@ -1053,38 +1083,38 @@
             </tr>
         `);
 
-        $('#show-id-catatan').text(kunjungan);
+            $('#show-id-catatan').text(kunjungan);
 
-        $('#catatan' + kunjungan)
-            .find('i')
-            .removeClass('ti ti-file-text fs-40')
-            .addClass('fas fa-sync fa-spin fs-30');
+            $('#catatan' + kunjungan)
+                .find('i')
+                .removeClass('ti ti-file-text fs-40')
+                .addClass('fas fa-sync fa-spin fs-30');
 
-        $.ajax({
-            url: "/api/klaim/" + kunjungan + "/catatan",
-            type: 'GET',
-            dataType: 'json',
+            $.ajax({
+                url: "/api/klaim/" + kunjungan + "/catatan",
+                type: 'GET',
+                dataType: 'json',
 
-            success: function (res) {
+                success: function(res) {
 
-                if (res.show.length != 0) {
+                    if (res.show.length != 0) {
 
-                    $('#tampil-catatan').empty();
+                        $('#tampil-catatan').empty();
 
-                    let content = '';
+                        let content = '';
 
-                    res.show.forEach(item => {
+                        res.show.forEach(item => {
 
-                        content += `
+                            content += `
                             <tr>
                                 <td class="custom-column">
                         `;
 
-                        if (!res.klaim || res.klaim.verif == 0) {
+                            if (!res.klaim || res.klaim.verif == 0) {
 
-                            if (item.solved == 0) {
+                                if (item.solved == 0) {
 
-                                content += `
+                                    content += `
                                     <button
                                         class="btn btn-link-success"
                                         onclick="selesaiCatatan('${item.id}')"
@@ -1097,9 +1127,9 @@
                                     </button>
                                 `;
 
-                            } else {
+                                } else {
 
-                                content += `
+                                    content += `
                                     <button
                                         class="btn btn-link-danger"
                                         onclick="batalSelesaiCatatan('${item.id}')"
@@ -1111,11 +1141,11 @@
                                         <i class="ti ti-thumb-down ms-1"></i>
                                     </button>
                                 `;
-                            }
+                                }
 
-                        } else {
+                            } else {
 
-                            content += `
+                                content += `
                                 <button
                                     class="btn btn-link-secondary"
                                     data-bs-toggle="tooltip"
@@ -1125,9 +1155,9 @@
                                     <i class="ti ti-thumb-up fs-40"></i>
                                 </button>
                             `;
-                        }
+                            }
 
-                        content += `
+                            content += `
                                 </td>
 
                                 <td class="custom-column">
@@ -1143,35 +1173,35 @@
                                 <td class="custom-column">
                         `;
 
-                        if (item.solved == 0) {
+                            if (item.solved == 0) {
 
-                            content += `
+                                content += `
                                 <span class="badge text-bg-danger p-1">
                                     Belum Terselesaikan
                                 </span>
                                 <br>
                             `;
 
-                        } else {
+                            } else {
 
-                            content += `
+                                content += `
                                 <span class="badge text-bg-success p-1">
                                     Terselesaikan
                                 </span>
                                 <br>
                             `;
-                        }
+                            }
 
-                        content += `
+                            content += `
                                     ${item.deskripsi}
                                 </td>
                             </tr>
                         `;
-                    });
+                        });
 
-                    $('#tampil-catatan').append(content);
+                        $('#tampil-catatan').append(content);
 
-                    $('#btn-refresh-catatan').empty().append(`
+                        $('#btn-refresh-catatan').empty().append(`
                         <button
                             type="button"
                             class="btn btn-warning"
@@ -1181,27 +1211,42 @@
                         </button>
                     `);
 
-                    // TAMPILKAN MODAL
-                    $('#catatan').modal('show');
+                        // TAMPILKAN MODAL
+                        $('#catatan').modal('show');
 
-                    $('#catatan' + kunjungan)
-                        .find('i')
-                        .removeClass('fas fa-sync fa-spin fs-30')
-                        .addClass('ti ti-file-text fs-40');
+                        $('#catatan' + kunjungan)
+                            .find('i')
+                            .removeClass('fas fa-sync fa-spin fs-30')
+                            .addClass('ti ti-file-text fs-40');
 
-                    // TOOLTIP
-                    $('[data-bs-toggle="tooltip"]').tooltip('dispose');
-                    $('.tooltip').remove();
+                        // TOOLTIP
+                        $('[data-bs-toggle="tooltip"]').tooltip('dispose');
+                        $('.tooltip').remove();
 
-                    $('[data-bs-toggle="tooltip"]').tooltip({
-                        trigger: 'hover'
-                    });
+                        $('[data-bs-toggle="tooltip"]').tooltip({
+                            trigger: 'hover'
+                        });
 
-                } else {
+                    } else {
+
+                        iziToast.error({
+                            title: 'Maaf!',
+                            message: 'Data Catatan tidak ditemukan / belum diisi',
+                            position: 'topRight'
+                        });
+
+                        $('#catatan' + kunjungan)
+                            .find('i')
+                            .removeClass('fas fa-sync fa-spin fs-30')
+                            .addClass('ti ti-file-text fs-40');
+                    }
+                },
+
+                error: function(xhr) {
 
                     iziToast.error({
-                        title: 'Maaf!',
-                        message: 'Data Catatan tidak ditemukan / belum diisi',
+                        title: 'Pesan System!',
+                        message: xhr.responseText,
                         position: 'topRight'
                     });
 
@@ -1210,62 +1255,42 @@
                         .removeClass('fas fa-sync fa-spin fs-30')
                         .addClass('ti ti-file-text fs-40');
                 }
-            },
+            });
+        }
 
-            error: function (xhr) {
+        // FUNCTION SELESAI CATATAN
+        function selesaiCatatan(id) {
 
-                iziToast.error({
-                    title: 'Pesan System!',
-                    message: xhr.responseText,
-                    position: 'topRight'
-                });
+            $.ajax({
+                url: "/api/klaim/catatan/" + id + "/solved",
+                type: 'GET',
+                dataType: 'json',
 
-                $('#catatan' + kunjungan)
-                    .find('i')
-                    .removeClass('fas fa-sync fa-spin fs-30')
-                    .addClass('ti ti-file-text fs-40');
-            }
-        });
-    }
+                success: function(res) {
+                    lihatCatatan(res.nomor);
+                }
+            });
+        }
 
-    // FUNCTION SELESAI CATATAN
-    function selesaiCatatan(id) {
+        // FUNCTION BATAL SELESAI CATATAN
+        function batalSelesaiCatatan(id) {
 
-        $.ajax({
-            url: "/api/klaim/catatan/" + id + "/solved",
-            type: 'GET',
-            dataType: 'json',
+            $.ajax({
+                url: "/api/klaim/catatan/" + id + "/unsolved",
+                type: 'GET',
+                dataType: 'json',
 
-            success: function (res) {
-                lihatCatatan(res.nomor);
-            }
-        });
-    }
+                success: function(res) {
+                    lihatCatatan(res.nomor);
+                }
+            });
+        }
 
-    // FUNCTION BATAL SELESAI CATATAN
-    function batalSelesaiCatatan(id) {
-
-        $.ajax({
-            url: "/api/klaim/catatan/" + id + "/unsolved",
-            type: 'GET',
-            dataType: 'json',
-
-            success: function (res) {
-                lihatCatatan(res.nomor);
-            }
-        });
-    }
-
-    // EXPORT FUNCTION UNTUK INLINE ONCLICK
-    window.filter = filter;
-    window.cariSep = cariSep;
-    window.lihatCatatan = lihatCatatan;
-    window.selesaiCatatan = selesaiCatatan;
-    window.batalSelesaiCatatan = batalSelesaiCatatan;
-</script>
+        // EXPORT FUNCTION UNTUK INLINE ONCLICK
+        window.filter = filter;
+        window.cariSep = cariSep;
+        window.lihatCatatan = lihatCatatan;
+        window.selesaiCatatan = selesaiCatatan;
+        window.batalSelesaiCatatan = batalSelesaiCatatan;
+    </script>
 @endscript
-
-            </div>
-        </div>
-    </div>
-</section>

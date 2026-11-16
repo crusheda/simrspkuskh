@@ -5,6 +5,13 @@
 @section('content')
 
 <style>
+    /* Halaman detail berjalan di dalam iframe ClaimWorkspace. */
+    html,
+    body {
+        width: 100%;
+        min-width: 0 !important;
+    }
+
     body.claim-workspace-frame {
         min-width: 0 !important;
         min-height: 100vh !important;
@@ -14,49 +21,103 @@
         background: var(--bg, #f5f7fa) !important;
         color: var(--text, #1f2937) !important;
     }
-    body.claim-workspace-frame :is(.app-sidebar, .app-topbar, .app-header, .app-navbar,
-        .pc-sidebar, .pc-header, .pc-navbar, .content-footer, .sidebar, .topbar) {
+
+    /* Shell milik halaman detail tidak diperlukan di dalam tab.
+       Header dan sidebar utama tetap berada di dokumen parent. */
+    body.claim-workspace-frame :is(
+        .app-sidebar,
+        .app-topbar,
+        .app-header,
+        .app-navbar,
+        .pc-sidebar,
+        .pc-header,
+        .pc-navbar,
+        .content-footer,
+        .sidebar,
+        .topbar
+    ) {
         display: none !important;
     }
+
     body.claim-workspace-frame :is(.app-shell, #app, .app-wrapper) {
         display: block !important;
         width: 100% !important;
+        min-width: 0 !important;
         min-height: 100vh !important;
         margin: 0 !important;
         padding: 0 !important;
     }
+
     body.claim-workspace-frame .app-content {
         display: block !important;
         width: 100% !important;
+        min-width: 0 !important;
         min-height: 100vh !important;
         height: auto !important;
         margin: 0 !important;
         padding: 0 !important;
         overflow: visible !important;
     }
+
     body.claim-workspace-frame .claim-frame-content {
+        display: block;
         width: 100%;
+        max-width: none;
         min-width: 0;
         min-height: 100vh;
         margin: 0;
         padding: 16px;
+        overflow-x: hidden;
         box-sizing: border-box;
     }
-    @media(max-width:575.98px) {
-        body.claim-workspace-frame .claim-frame-content { padding: 10px; }
+
+    body.claim-workspace-frame .claim-detail-container {
+        width: 100%;
+        max-width: none !important;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    body.claim-workspace-frame #preview {
+        min-width: 0;
+        overflow: auto;
+    }
+
+    body.claim-workspace-frame #preview iframe {
+        display: block;
+        width: 100% !important;
+        max-width: 100%;
+        height: min(650px, 72vh) !important;
+        min-height: 420px;
+        border: 0;
+    }
+
+    @media (max-width: 767.98px) {
+        body.claim-workspace-frame .claim-frame-content {
+            padding: 10px;
+        }
+
+        body.claim-workspace-frame #preview iframe {
+            height: 60vh !important;
+            min-height: 320px;
+        }
     }
 </style>
+
 <script>
     (function () {
         const params = new URLSearchParams(window.location.search);
+
         if (params.get('workspace') === '1') {
+            document.documentElement.classList.add('claim-workspace-frame');
             document.body.classList.add('claim-workspace-frame');
         }
     })();
 </script>
 
-<div class="claim-frame-content">
-<div class="container-fluid">
+<div class="claim-frame-content claim-detail-workspace">
+<div class="container-fluid claim-detail-container">
 
     <!-- [ breadcrumb ] start -->
     <nav aria-label="breadcrumb">
@@ -69,9 +130,6 @@
             <li class="breadcrumb-item"><a class="link-primary fw-medium text-decoration-none" href="javascript:void(0);">Digital</a></li>
             <li class="breadcrumb-item"><a class="link-primary fw-medium text-decoration-none" href="{{ url('/v3/smartclaim') }}">Smart Claim</a></li>
             <li class="breadcrumb-item active" aria-current="page">KUNJ#{{ $list['KUNJUNGAN'] }}</li>
-        </ol>
-
-        <ol class="breadcrumb mb-0">
         </ol>
     </nav>
     <!-- [ breadcrumb ] end -->
@@ -106,7 +164,7 @@
         <div class="col-md-3">
             <div class="card mb-3">
                 <div class="card-body p-0">
-                    <div data-back-button class="d-flex align-items-center btn btn-outline-secondary border-dashed waves-effect waves-light">
+                    <div data-back-button role="button" tabindex="0" title="Tutup tab Smart Claim ini" class="d-flex align-items-center btn btn-outline-secondary border-dashed waves-effect waves-light">
                         <div class="flex-shrink-0 me-3">
                             <i class="ph-duotone ph-caret-double-left align-middle"></i>
                             {{-- <div class="btn btn-icon btn-link-secondary avtar">
@@ -606,7 +664,15 @@
                         console.error(error);
                     });
             }
-                        $('[data-back-button]').on('click', function() {
+                        $('[data-back-button]').on('click keydown', function(event) {
+                if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') {
+                    return;
+                }
+
+                if (event.type === 'keydown') {
+                    event.preventDefault();
+                }
+
                 // Saat halaman berada dalam iframe workspace, tutup tab aktif pada parent.
                 try {
                     if (window.parent !== window && window.parent.ClaimWorkspace) {
