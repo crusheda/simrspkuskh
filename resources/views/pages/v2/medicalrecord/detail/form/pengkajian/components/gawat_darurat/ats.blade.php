@@ -977,6 +977,37 @@
 
         </div>
 
+        <div class="col-md-12 mb-3">
+            <div class="form-group">
+                <h6>Indikasi Rawat Inap</h6>
+
+                @foreach ([
+                    'ancaman_nyawa' => 'Mengancam nyawa, membahayakan diri dan orang lain/lingkungan',
+                    'gangguan_jalan_napas' => 'Adanya gangguan pada jalan napas, pernapasan, dan sirkulasi',
+                    'penurunan_kesadaran' => 'Adanya penurunan kesadaran',
+                    'gangguan_hemodinamik' => 'Adanya gangguan hemodinamik',
+                    'tindakan_segera' => 'Memerlukan tindakan segera',
+                    'tidak_memenuhi_kriteria' => 'Tidak memenuhi kriteria Gawat Darurat',
+                ] as $kode => $label)
+                    <div class="form-check mb-1">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            name="ats_alasan[]"
+                            id="ats_alasan_{{ $kode }}"
+                            value="{{ $kode }}"
+                        >
+                        <label
+                            class="form-check-label"
+                            for="ats_alasan_{{ $kode }}"
+                        >
+                            {{ $label }}
+                        </label>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
     </div>
 
 </div>
@@ -1186,6 +1217,14 @@
                 //
                 // Prioritas mengikuti urutan kategori di atas.
                 // ==================================================
+
+                const alasanTersimpan = Array.isArray(triage.KRITERIA_TAMBAHAN)
+                    ? triage.KRITERIA_TAMBAHAN
+                    : [];
+
+                $form.find('input[name="ats_alasan[]"]').each(function () {
+                    $(this).prop('checked', alasanTersimpan.includes(this.value));
+                });
 
                 const kategoriATS = [
                     {
@@ -1687,6 +1726,14 @@
                 $form
                     .find('input[name="ats_p"]:checked')
                     .val() || '',
+
+            ats_alasan:
+                $form
+                    .find('input[name="ats_alasan[]"]:checked')
+                    .map(function () {
+                        return this.value;
+                    })
+                    .get(),
         };
 
 

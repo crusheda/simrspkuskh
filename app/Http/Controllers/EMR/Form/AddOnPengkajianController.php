@@ -10346,6 +10346,7 @@ class AddOnPengkajianController extends Controller
                 'LESS_URGENT',
                 'NON_URGENT',
                 'DOA',
+                'KRITERIA_TAMBAHAN',
             ];
 
             foreach ($jsonFields as $field) {
@@ -10460,6 +10461,11 @@ class AddOnPengkajianController extends Controller
                 'ats_sr_5_5' => 'nullable',
                 'ats_sr_5_6' => 'nullable',
                 'ats_sr_5_7' => 'nullable',
+
+                'ats_alasan' => 'nullable|array',
+                'ats_alasan.*' => [
+                    'in:ancaman_nyawa,gangguan_jalan_napas,penurunan_kesadaran,gangguan_hemodinamik,tindakan_segera,tidak_memenuhi_kriteria',
+                ],
             ],
             [
                 'NOKUNJ.required' =>
@@ -11021,6 +11027,12 @@ class AddOnPengkajianController extends Controller
                 ),
 
                 'KRITERIA' => $request->input('ats'),
+
+                'KRITERIA_TAMBAHAN' => json_encode(
+                    array_values($request->input('ats_alasan', [])),
+                    JSON_UNESCAPED_UNICODE
+                ),
+
                 'PLAN' => $planTriage,
                 'DOKTER_ID' => $getDataDokter->ID ?? 0,
                 'OLEH' => auth()->id(),

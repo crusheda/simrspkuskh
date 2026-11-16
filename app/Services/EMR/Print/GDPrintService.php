@@ -255,6 +255,36 @@ class GDPrintService implements PrintDataInterface
                 '4' => 'DOA',
                 default => '',
             };
+
+            $atsKriteriaTambahanMap = [
+                'ancaman_nyawa' => 'Mengancam nyawa, membahayakan diri dan orang lain/lingkungan',
+                'gangguan_jalan_napas' => 'Gangguan jalan napas, pernapasan, dan sirkulasi',
+                'penurunan_kesadaran' => 'Penurunan kesadaran',
+                'gangguan_hemodinamik' => 'Gangguan hemodinamik',
+                'tindakan_segera' => 'Memerlukan tindakan segera',
+                'tidak_memenuhi_kriteria' => 'Tidak memenuhi kriteria Gawat Darurat',
+            ];
+
+            $rawKriteriaTambahan = $triage->KRITERIA_TAMBAHAN ?? null;
+
+            $kriteriaTambahanTersimpan = is_array($rawKriteriaTambahan)
+                ? $rawKriteriaTambahan
+                : json_decode((string) $rawKriteriaTambahan, true);
+
+            $atsKriteriaTambahan = [];
+
+            if (is_array($kriteriaTambahanTersimpan)) {
+                foreach ($atsKriteriaTambahanMap as $kode => $label) {
+                    if (in_array($kode, $kriteriaTambahanTersimpan, true)) {
+                        $atsKriteriaTambahan[] = $label;
+                    }
+                }
+            }
+
+            if ($atsKriteriaTambahan) {
+                $atsDetail[] = 'Indikasi Rawat Inap: '
+                    . implode(', ', $atsKriteriaTambahan);
+            }
         }
 
         /*
