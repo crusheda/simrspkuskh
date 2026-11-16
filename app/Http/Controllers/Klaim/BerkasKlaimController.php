@@ -5035,10 +5035,20 @@ class BerkasKlaimController extends Controller
                     : ''
             );
 
+            $namaPetugasKasir = null;
+            if (!$header->NIP) {
+                $namaPetugasKasir = 'Ayu Wulandari'; // Mbak Ayu Wulandari (Kepala Ruang Kasir)
+            } else {
+                $namaPetugasKasir = $header->PENGGUNA;
+            }
             $templateProcessor->setValue(
                 'PENGGUNA',
-                $header->PENGGUNA ?: ($header->NAMA_KASIR ?? '')
+                $namaPetugasKasir ?? ''
             );
+            // $templateProcessor->setValue(
+            //     'PENGGUNA',
+            //     $header->PENGGUNA ?: ($header->NAMA_KASIR ?? '')
+            // );
 
             $templateProcessor->setValue(
                 'NAMA_KELUARGA_PASIEN',
