@@ -322,13 +322,8 @@
 @script
     <script>
         $(function() {
-
-            // SELECT DPJP
-            const elm = $('#filter_dpjp')[0];
-
-            if (elm && !elm.choicesInstance) {
-                elm.choicesInstance = new Choices(elm);
-            }
+            // SELECT2 DPJP
+            initSelectDPJP();
 
             // INPUT SEP
             initSepInput();
@@ -425,6 +420,41 @@
         // PERMISSION
         const canSmartClaim = {{ auth()->user()->can('smart_claim') ? 'true' : 'false' }};
         const canSmartClaimFarmasi = {{ auth()->user()->can('smart_claim_farmasi') ? 'true' : 'false' }};
+
+        /**
+         * SELECT2 DPJP
+         * Select biasa dengan fitur pencarian.
+         */
+        function initSelectDPJP() {
+            const $dpjp = $('#filter_dpjp');
+
+            if (!$dpjp.length) {
+                return;
+            }
+
+            // Hindari inisialisasi ganda saat navigasi Livewire
+            if ($dpjp.hasClass('select2-hidden-accessible')) {
+                $dpjp.select2('destroy');
+            }
+
+            $dpjp.select2({
+                width: '100%',
+                placeholder: 'Pilih Dokter',
+                allowClear: false,
+                closeOnSelect: true,
+                minimumResultsForSearch: 0,
+
+                language: {
+                    noResults: function () {
+                        return 'Dokter tidak ditemukan';
+                    },
+
+                    searching: function () {
+                        return 'Mencari dokter...';
+                    }
+                }
+            });
+        }
 
         // FUNCTION FILTER
         function filter() {
@@ -677,42 +707,73 @@
                             // =====================================================
                             // METADATA CLAIM WORKSPACE
                             // =====================================================
+                            const statusVerif =
+                                item.STATUSVERIF === true ||
+                                Number(item.STATUSVERIF) === 1;
+
+                            const namaRuangan = [
+                                item.NAMARUANGAN ?? '',
+                                item.NAMAKAMAR ?? '',
+                                item.NAMATT ?? ''
+                            ]
+                                .filter(value => String(value).trim() !== '')
+                                .join(' - ');
 
                             const claimMeta = encodeURIComponent(JSON.stringify({
 
+                                // Identitas kunjungan
                                 nomor: String(item.NOMOR ?? ''),
-
                                 type: claimType,
 
+                                // Identitas pasien (mengikuti alias EMR)
                                 norm: item.NORM ?? '',
-
                                 nama: item.NAMAPASIEN ?? '',
+                                namaLengkap: item.NAMALENGKAPPASIEN ?? '',
+                                panggilan: item.PANGGILANPASIEN ?? '',
+                                tglLahir: item.TGLLAHIRPASIEN ?? '',
+                                umur: item.UMURPASIEN ?? '',
+                                jenisKelamin: item.JKPASIEN ?? '',
+                                nik: item.NIKPASIEN ?? '',
+                                noHP: item.NOHPPASIEN ?? '',
 
+                                // Asuransi / BPJS
+                                namaAsuransi: item.NAMAASURANSI ?? '',
+                                idAsuransi: item.IDASURANSI ?? '',
+                                refIdAsuransi: item.REFIDASURANSI ?? '',
+                                noAsuransi: item.NOASURANSI ?? '',
+                                noBPJS: item.NOBPJS ?? '',
                                 noSEP: item.NOSEP ?? '',
+                                tglSEP: item.TGLSEP ?? '',
+                                statusBPJS: item.STATUSBPJS ?? '',
+                                prbPasien: item.PRBPASIEN ?? '',
 
-                                namaAsuransi: 'BPJS KESEHATAN',
-
-                                namaRuangan: item.NAMARUANGAN ?? '',
-
+                                // Ruangan dan DPJP
+                                idRuangan: item.IDRUANGAN ?? '',
+                                namaRuangan: namaRuangan,
+                                namaRuanganAsalKonsul: item.RUANGAN_KONSUL ?? '',
                                 namaDokter: item.NAMADOKTER ?? '',
+                                namaDokterAsalKonsul: item.DOKTER_KONSUL ?? '',
 
+                                // Waktu kunjungan
+                                tglDaftar: item.TGLDAFTAR ?? '',
                                 tglMasuk: item.MASUK ?? '',
-
                                 tglKeluar: item.KELUAR ?? '',
 
-                                statusVerif:
-                                    item.STATUSVERIF === true ||
-                                    Number(item.STATUSVERIF) === 1,
+                                // Informasi konsul
+                                jenisKunjungan: item.JENIS_KUNJUNGAN ?? '',
+                                noKunjunganKonsul: item.NO_KUNJUNGAN_KONSUL ?? '',
+                                tglKunjunganKonsul: item.TGL_KUNJUNGAN_KONSUL ?? '',
 
-                                statusKlaim:
-                                    (
-                                        item.STATUSVERIF === true ||
-                                        Number(item.STATUSVERIF) === 1
-                                    )
-                                        ? 'SUDAH DIVERIFIKASI'
-                                        : 'BELUM DIVERIFIKASI',
+                                // Status klaim
+                                statusVerif: statusVerif,
+                                statusKlaim: statusVerif
+                                    ? 'SUDAH DIVERIFIKASI'
+                                    : 'BELUM DIVERIFIKASI',
 
-                                label: `RM.${item.NORM ?? '-'} - ${item.NAMAPASIEN ?? item.NOMOR}`
+                                // Label tab
+                                label: `RM.${item.NORM ?? '-'} - ${
+                                    item.NAMAPASIEN ?? item.NOMOR
+                                }`
 
                             }));
 

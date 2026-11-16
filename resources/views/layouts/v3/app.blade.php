@@ -147,7 +147,7 @@
 
                 @elseif (request()->routeIs('v3.smartclaim*'))
 
-                    <div class="claim-workspace" id="claimWorkspace">
+                    <div class="claim-workspace" id="claimWorkspace" data-user-id="{{ auth()->id() }}">
                         <div class="claim-tabbar" id="claimTabBar">
                             <div class="claim-tabbar-scroll" id="claimTabBarScroll" role="tablist">
                                 <div id="claimHomeTab" class="claim-tab claim-home-tab active" data-claim-home>

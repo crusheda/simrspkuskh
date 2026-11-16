@@ -1,33 +1,22 @@
-
 /*
 |--------------------------------------------------------------------------
 | SIRMED V3 — CLAIM WORKSPACE
 |--------------------------------------------------------------------------
-| Fitur:
-| - Membuka Smart Claim dalam tab workspace.
-| - Membuka Smart Claim Farmasi dalam tab workspace.
-| - Satu tab untuk satu jenis klaim + nomor kunjungan.
-| - Tidak reload halaman utama.
-| - Header, sidebar, dan topbar tetap.
-| - Berpindah antar-tab.
-| - Menutup tab.
-| - Menutup tab lainnya.
-| - Menutup semua tab.
-| - Reload konten tab aktif.
-| - Loading overlay iframe.
-| - Error handling iframe.
-| - Membuka detail melalui klik tabel.
-| - Mendukung pencarian SEP.
+| - Mempertahankan daftar tab saat navigasi Livewire.
+| - Saat kembali ke Smart Claim, hanya render header tab (tanpa iframe).
+| - Iframe detail hanya dibuat ketika tab diklik (lazy loading).
+| - F5 membersihkan tab karena state hanya berada di window memory.
+| - Label tab menampilkan nomor SEP, bukan nomor RM/nama pasien.
+| - Smart Claim dan Smart Claim Farmasi.
+| - Close tab, close other, close all, refresh, retry, topbar identity.
 |--------------------------------------------------------------------------
 */
 
 (() => {
     'use strict';
 
-    if (window.__SIRMED_CLAIM_WORKSPACE_BOOTSTRAP__) {
-        return;
-    }
-
+    // Script dimuat sekali; Livewire navigation ditangani event livewire:navigated.
+    if (window.__SIRMED_CLAIM_WORKSPACE_BOOTSTRAP__) return;
     window.__SIRMED_CLAIM_WORKSPACE_BOOTSTRAP__ = true;
 
     const state = window.__SIRMED_CLAIM_WORKSPACE_STATE__ ||
@@ -37,6 +26,11 @@
             sequence: 0,
         });
 
+    // Pastikan struktur state sesuai versi ini.
+    if (!(state.tabs instanceof Map)) state.tabs = new Map();
+    if (!Number.isFinite(state.sequence)) state.sequence = 0;
+    if (!('activeTabId' in state)) state.activeTabId = null;
+
     const SELECTORS = {
         root: '#claimWorkspace',
         tabBar: '#claimTabBar',
@@ -45,22 +39,106 @@
         closeOther: '#claimCloseOtherTabs',
         closeAll: '#claimCloseAllTabs',
         refresh: '#claimRefreshActiveTab',
+        homePanel: '#claimHomePanel',
     };
 
-    let root;
-    let tabBar;
-    let tabScroll;
-    let content;
-    let homePanel;
+    let root = null;
+    let tabBar = null;
+    let tabScroll = null;
+    let content = null;
+    let homePanel = null;
 
     function getElements() {
         root = document.querySelector(SELECTORS.root);
         tabBar = document.querySelector(SELECTORS.tabBar);
         tabScroll = document.querySelector(SELECTORS.tabScroll);
         content = document.querySelector(SELECTORS.content);
-        homePanel = document.querySelector('#claimHomePanel');
+        homePanel = document.querySelector(SELECTORS.homePanel);
 
         return Boolean(root && tabBar && tabScroll && content && homePanel);
+    }
+
+    function setTopbarText(selector, value) {
+        const element = document.querySelector(selector);
+        if (element) element.textContent = value ?? '-';
+    }
+
+    function showClaimPatientIdentity(metadata = {}) {
+        const topbar = document.querySelector('#appTopbar');
+        const defaultIdentity = document.querySelector('#topbarDefaultIdentity');
+        const workspaceIdentity = document.querySelector('#topbarWorkspaceIdentity');
+
+        if (!topbar || !defaultIdentity || !workspaceIdentity) return;
+
+        topbar.classList.remove('is-home-mode');
+        topbar.classList.add('is-workspace-mode');
+
+        defaultIdentity.style.display = 'none';
+        workspaceIdentity.style.display = 'flex';
+
+        setTopbarText(
+            '#patientInsuranceNameTopbar',
+            metadata.namaAsuransi || '-'
+        );
+
+        setTopbarText(
+            '#patientInsuranceTopbar',
+            metadata.noBPJS || metadata.noAsuransi || metadata.noSEP || '-'
+        );
+
+        setTopbarText(
+            '#pageSubTitlebar',
+            metadata.norm ? `RM.${metadata.norm}` : '-'
+        );
+
+        setTopbarText(
+            '#pageTitlebar',
+            metadata.nama || metadata.namaLengkap || '-'
+        );
+
+        setTopbarText(
+            '#patientBirthBar',
+            metadata.tglLahir || '-'
+        );
+
+        setTopbarText(
+            '#patientRoomTopbar',
+            metadata.namaRuangan || '-'
+        );
+
+        setTopbarText(
+            '#patientDoctorTopbar',
+            metadata.namaDokter || '-'
+        );
+
+        setTopbarText(
+            '#patientTglMasukTopbar',
+            metadata.tglMasuk || '-'
+        );
+
+        setTopbarText(
+            '#patientTglKeluarTopbar',
+            metadata.tglKeluar || '-'
+        );
+
+        setTopbarText(
+            '#patientStatusTopbar',
+            metadata.statusKlaim || metadata.statusVerif || '-'
+        );
+    }
+
+    function showDefaultTopbarIdentity() {
+        const topbar = document.querySelector('#appTopbar');
+        const defaultIdentity = document.querySelector('#topbarDefaultIdentity');
+        const workspaceIdentity = document.querySelector('#topbarWorkspaceIdentity');
+
+        if (!topbar || !defaultIdentity || !workspaceIdentity) return;
+
+        topbar.classList.remove('is-workspace-mode');
+        topbar.classList.add('is-home-mode');
+
+        defaultIdentity.style.display = '';
+        workspaceIdentity.style.display = 'none';
     }
 
     function escapeHtml(value) {
@@ -102,6 +180,37 @@
             : 'ti ti-file-check';
     }
 
+    // Cari SEP dari beberapa variasi key metadata yang lazim digunakan.
+    function getNoSEP(metadata = {}) {
+        const candidates = [
+            metadata.noSEP,
+            metadata.NOSEP,
+            metadata.no_sep,
+            metadata.nomorSEP,
+            metadata.nomor_sep,
+            metadata.sep,
+            metadata.SEP,
+        ];
+
+        const value = candidates.find(
+            item =>
+                item !== null &&
+                item !== undefined &&
+                String(item).trim() !== ''
+        );
+
+        return value ? String(value).trim() : '';
+    }
+
+    // Tab caption hanya SEP. Tidak fallback ke nomor RM atau nama pasien.
+    function getTabLabel(metadata = {}) {
+        const noSEP = getNoSEP(metadata);
+
+        return noSEP
+            ? `SEP ${noSEP}`
+            : 'SEP belum tersedia';
+    }
+
     function getClaimUrl(nomor, type = 'smart_claim') {
         const visitId = normalizeVisitId(nomor);
 
@@ -109,13 +218,9 @@
             throw new Error('Nomor kunjungan tidak boleh kosong.');
         }
 
-        const normalizedType = normalizeClaimType(type);
-
-        const path = normalizedType === 'smart_claim_farmasi'
+        return normalizeClaimType(type) === 'smart_claim_farmasi'
             ? `/v3/smartclaim/${encodeURIComponent(visitId)}/farmasi`
             : `/v3/smartclaim/${encodeURIComponent(visitId)}`;
-
-        return path;
     }
 
     function makeFrameUrl(url) {
@@ -144,9 +249,7 @@
 
         loading.innerHTML = `
             <span class="spinner-border" aria-hidden="true"></span>
-            <span>
-                Memuat ${escapeHtml(label)}...
-            </span>
+            <span>Memuat ${escapeHtml(label)}...</span>
         `;
 
         return loading;
@@ -179,10 +282,24 @@
         return errorPanel;
     }
 
+    function createIdleElement(label) {
+        const idle = document.createElement('div');
+
+        idle.className = 'claim-panel-loading claim-panel-idle';
+
+        idle.innerHTML = `
+            <span>
+                <i class="ti ti-click me-1" aria-hidden="true"></i>
+                Klik tab <strong>${escapeHtml(label)}</strong>
+                untuk memuat detail klaim.
+            </span>
+        `;
+
+        return idle;
+    }
+
     function scrollTabIntoView(tabElement) {
-        if (!tabElement || !tabScroll) {
-            return;
-        }
+        if (!tabElement || !tabScroll) return;
 
         tabElement.scrollIntoView({
             behavior: 'smooth',
@@ -195,30 +312,9 @@
         return `${normalizeClaimType(type)}::${normalizeVisitId(nomor)}`;
     }
 
-    function createTab(nomor, type, metadata = {}) {
-        const normalizedNomor = normalizeVisitId(nomor);
-        const normalizedType = normalizeClaimType(type);
-
-        const tabId = getTabId(normalizedNomor, normalizedType);
-
-        if (state.tabs.has(tabId)) {
-            const existing = state.tabs.get(tabId);
-
-            existing.metadata = {
-                ...existing.metadata,
-                ...metadata,
-            };
-
-            activateTab(tabId);
-
-            return existing;
-        }
-
-        const url = getClaimUrl(normalizedNomor, normalizedType);
-        const frameUrl = makeFrameUrl(url);
-
-        const label = metadata.label ||
-            `${getClaimLabel(normalizedType)} - ${normalizedNomor}`;
+    // Membuat header dan panel placeholder saja. Fungsi ini TIDAK membuat iframe.
+    function renderTabShell(tab) {
+        if (!tabScroll || !content) return;
 
         const sequence = ++state.sequence;
 
@@ -226,28 +322,35 @@
 
         tabElement.className = 'claim-tab';
         tabElement.id = `claimTab-${sequence}`;
-        tabElement.dataset.tabId = tabId;
+        tabElement.dataset.tabId = tab.tabId;
+
         tabElement.setAttribute('role', 'tab');
         tabElement.setAttribute('aria-selected', 'false');
         tabElement.setAttribute('aria-controls', `claimPanel-${sequence}`);
+
         tabElement.tabIndex = -1;
-        tabElement.title = label;
+        tabElement.title = tab.label;
 
         const icon = document.createElement('i');
-        icon.className = getClaimIcon(normalizedType);
+
+        icon.className = getClaimIcon(tab.type);
         icon.setAttribute('aria-hidden', 'true');
 
         const labelElement = document.createElement('span');
+
         labelElement.className = 'claim-tab-label';
-        labelElement.textContent = label;
+        labelElement.textContent = tab.label;
 
         const closeButton = document.createElement('button');
 
         closeButton.type = 'button';
         closeButton.className = 'claim-tab-close';
-        closeButton.dataset.closeClaimTab = tabId;
+        closeButton.dataset.closeClaimTab = tab.tabId;
         closeButton.title = 'Tutup tab';
-        closeButton.setAttribute('aria-label', `Tutup ${label}`);
+        closeButton.setAttribute(
+            'aria-label',
+            `Tutup ${tab.label}`
+        );
 
         closeButton.innerHTML = `
             <i class="ti ti-x" aria-hidden="true"></i>
@@ -265,120 +368,238 @@
 
         panel.className = 'claim-workspace-panel';
         panel.id = `claimPanel-${sequence}`;
-        panel.dataset.panelId = tabId;
+        panel.dataset.panelId = tab.tabId;
+
         panel.setAttribute('role', 'tabpanel');
         panel.setAttribute('aria-labelledby', tabElement.id);
+
         panel.hidden = true;
 
-        const loading = createLoadingElement(label);
-
-        const frame = document.createElement('iframe');
-
-        frame.className = 'claim-detail-frame';
-        frame.title = label;
-        frame.loading = 'eager';
-        frame.referrerPolicy = 'same-origin';
-        frame.setAttribute('frameborder', '0');
-        frame.setAttribute(
-            'allow',
-            'clipboard-read; clipboard-write'
-        );
-
-        panel.append(
-            loading,
-            frame
-        );
+        panel.appendChild(createIdleElement(tab.label));
 
         content.appendChild(panel);
+
+        tab.tabElement = tabElement;
+        tab.panel = panel;
+
+        tab.frame = null;
+        tab.loadingElement = null;
+
+        tab.loaded = false;
+        tab.loading = false;
+        tab.error = false;
+    }
+
+    function createTab(nomor, type, metadata = {}) {
+        const normalizedNomor = normalizeVisitId(nomor);
+        const normalizedType = normalizeClaimType(type);
+
+        if (!normalizedNomor) {
+            throw new Error('Nomor kunjungan tidak boleh kosong.');
+        }
+
+        const tabId = getTabId(
+            normalizedNomor,
+            normalizedType
+        );
+
+        const existing = state.tabs.get(tabId);
+
+        if (existing) {
+            existing.metadata = {
+                ...(existing.metadata || {}),
+                ...metadata,
+            };
+
+            existing.label = getTabLabel(existing.metadata);
+
+            if (existing.tabElement) {
+                const labelElement = existing.tabElement.querySelector(
+                    '.claim-tab-label'
+                );
+
+                if (labelElement) {
+                    labelElement.textContent = existing.label;
+                }
+
+                existing.tabElement.title = existing.label;
+
+                const closeButton = existing.tabElement.querySelector(
+                    '[data-close-claim-tab]'
+                );
+
+                if (closeButton) {
+                    closeButton.setAttribute(
+                        'aria-label',
+                        `Tutup ${existing.label}`
+                    );
+                }
+            }
+
+            return existing;
+        }
+
+        const url = getClaimUrl(
+            normalizedNomor,
+            normalizedType
+        );
 
         const tab = {
             tabId,
             nomor: normalizedNomor,
             type: normalizedType,
-            label,
+
+            label: getTabLabel(metadata),
             url,
-            frameUrl,
-            tabElement,
-            panel,
-            frame,
-            loading,
-            metadata: {
-                ...metadata,
-            },
+
+            metadata: { ...metadata },
+
+            tabElement: null,
+            panel: null,
+
+            frame: null,
+            loadingElement: null,
+
             loaded: false,
-            loading: true,
+            loading: false,
             error: false,
         };
 
         state.tabs.set(tabId, tab);
 
+        renderTabShell(tab);
+
+        return tab;
+    }
+
+    // Iframe dibuat hanya saat user memilih tab. Jika sudah ada, tidak reload.
+    function ensureTabFrame(tab) {
+        if (!tab || !tab.panel) return false;
+
+        if (tab.frame && tab.loaded) return true;
+        if (tab.frame && tab.loading) return true;
+
+        const loading = createLoadingElement(tab.label);
+
+        const frame = document.createElement('iframe');
+
+        frame.className = 'claim-detail-frame';
+        frame.title = tab.label;
+        frame.loading = 'eager';
+        frame.referrerPolicy = 'same-origin';
+
+        frame.setAttribute('frameborder', '0');
+
+        frame.setAttribute(
+            'allow',
+            'clipboard-read; clipboard-write'
+        );
+
+        tab.panel.replaceChildren(
+            loading,
+            frame
+        );
+
+        tab.frame = frame;
+        tab.loadingElement = loading;
+
+        tab.loaded = false;
+        tab.loading = true;
+        tab.error = false;
+
         frame.addEventListener('load', () => {
             tab.loaded = true;
             tab.loading = false;
             tab.error = false;
-            if (tab.loadingElement) tab.loadingElement.hidden = true;
-            else loading.hidden = true;
+
+            if (tab.loadingElement) {
+                tab.loadingElement.hidden = true;
+            }
         });
 
         frame.addEventListener('error', () => {
             tab.loading = false;
+            tab.loaded = false;
             tab.error = true;
 
-            panel.replaceChildren(
-                createErrorElement(
-                    'Browser tidak dapat memuat halaman klaim.',
-                    tabId
-                )
-            );
+            if (tab.panel) {
+                tab.panel.replaceChildren(
+                    createErrorElement(
+                        'Browser tidak dapat memuat halaman klaim.',
+                        tab.tabId
+                    )
+                );
+            }
+
+            tab.frame = null;
+            tab.loadingElement = null;
         });
 
-        tab.loadingElement = loading;
+        frame.src = makeFrameUrl(tab.url);
 
-        frame.src = frameUrl;
-
-        return tab;
+        return true;
     }
 
     function activateTab(tabId) {
         const tab = state.tabs.get(tabId);
 
-        if (!tab) {
-            return false;
-        }
+        if (!tab || !getElements()) return false;
 
-        const homeTab = document.querySelector('[data-claim-home]');
+        const homeTab = root.querySelector('[data-claim-home]');
+
         if (homeTab) {
             homeTab.classList.remove('active');
-            homeTab.setAttribute('aria-selected', 'false');
+
+            homeTab.setAttribute(
+                'aria-selected',
+                'false'
+            );
+
             homeTab.tabIndex = -1;
         }
 
-        state.tabs.forEach((item) => {
+        state.tabs.forEach(item => {
             const isActive = item.tabId === tabId;
 
-            item.tabElement.classList.toggle('active', isActive);
-            item.panel.classList.toggle('active', isActive);
+            if (item.tabElement) {
+                item.tabElement.classList.toggle(
+                    'active',
+                    isActive
+                );
 
-            item.tabElement.setAttribute(
-                'aria-selected',
-                isActive ? 'true' : 'false'
-            );
+                item.tabElement.setAttribute(
+                    'aria-selected',
+                    isActive ? 'true' : 'false'
+                );
 
-            item.tabElement.tabIndex = isActive ? 0 : -1;
-            item.panel.hidden = !isActive;
+                item.tabElement.tabIndex = isActive ? 0 : -1;
+            }
+
+            if (item.panel) {
+                item.panel.classList.toggle(
+                    'active',
+                    isActive
+                );
+
+                item.panel.hidden = !isActive;
+            }
         });
 
         state.activeTabId = tabId;
 
-        // Saat detail klaim aktif, panel index SSR disembunyikan.
         if (homePanel) {
             homePanel.hidden = true;
         }
 
         content.hidden = false;
+
         root.dataset.activeTabId = tabId;
 
+        ensureTabFrame(tab);
+
         scrollTabIntoView(tab.tabElement);
+
+        showClaimPatientIdentity(tab.metadata || {});
 
         return true;
     }
@@ -386,24 +607,52 @@
     function showHomePanel() {
         state.activeTabId = null;
 
-        state.tabs.forEach((item) => {
-            item.tabElement.classList.remove('active');
-            item.tabElement.setAttribute('aria-selected', 'false');
-            item.tabElement.tabIndex = -1;
-            item.panel.classList.remove('active');
-            item.panel.hidden = true;
+        state.tabs.forEach(item => {
+            if (item.tabElement) {
+                item.tabElement.classList.remove('active');
+
+                item.tabElement.setAttribute(
+                    'aria-selected',
+                    'false'
+                );
+
+                item.tabElement.tabIndex = -1;
+            }
+
+            if (item.panel) {
+                item.panel.classList.remove('active');
+                item.panel.hidden = true;
+            }
         });
 
-        const homeTab = document.querySelector('[data-claim-home]');
+        const homeTab = root
+            ? root.querySelector('[data-claim-home]')
+            : document.querySelector('[data-claim-home]');
+
         if (homeTab) {
             homeTab.classList.add('active');
-            homeTab.setAttribute('aria-selected', 'true');
+
+            homeTab.setAttribute(
+                'aria-selected',
+                'true'
+            );
+
             homeTab.tabIndex = 0;
         }
 
-        if (homePanel) homePanel.hidden = false;
-        if (content) content.hidden = true;
-        if (root) root.removeAttribute('data-active-tab-id');
+        if (homePanel) {
+            homePanel.hidden = false;
+        }
+
+        if (content) {
+            content.hidden = true;
+        }
+
+        if (root) {
+            root.removeAttribute('data-active-tab-id');
+        }
+
+        showDefaultTopbarIdentity();
 
         return true;
     }
@@ -443,14 +692,12 @@
             if (typeof window.iziToast !== 'undefined') {
                 window.iziToast.error({
                     title: 'Pesan System!',
-                    message: error.message ||
-                        'Gagal membuka detail klaim.',
+                    message: error.message || 'Gagal membuka detail klaim.',
                     position: 'topRight',
                 });
             } else {
                 window.alert(
-                    error.message ||
-                    'Gagal membuka detail klaim.'
+                    error.message || 'Gagal membuka detail klaim.'
                 );
             }
 
@@ -461,30 +708,38 @@
     function closeTab(tabId) {
         const tab = state.tabs.get(tabId);
 
-        if (!tab) {
-            return false;
-        }
+        if (!tab) return false;
 
         const wasActive = state.activeTabId === tabId;
 
-        const tabElements = Array.from(state.tabs.values());
-        const currentIndex = tabElements.findIndex(
+        const tabsBefore = Array.from(state.tabs.values());
+
+        const currentIndex = tabsBefore.findIndex(
             item => item.tabId === tabId
         );
 
-        tab.frame.src = 'about:blank';
+        if (tab.frame) {
+            tab.frame.src = 'about:blank';
+        }
 
-        tab.tabElement.remove();
-        tab.panel.remove();
+        if (tab.tabElement) {
+            tab.tabElement.remove();
+        }
+
+        if (tab.panel) {
+            tab.panel.remove();
+        }
 
         state.tabs.delete(tabId);
 
         if (wasActive) {
             state.activeTabId = null;
 
-            const remainingTabs = Array.from(state.tabs.values());
+            const remainingTabs = Array.from(
+                state.tabs.values()
+            );
 
-            if (remainingTabs.length > 0) {
+            if (remainingTabs.length) {
                 const nextTab = remainingTabs[
                     Math.min(
                         Math.max(currentIndex - 1, 0),
@@ -502,13 +757,9 @@
     }
 
     function closeOtherTabs(tabId) {
-        if (!state.tabs.has(tabId)) {
-            return false;
-        }
+        if (!state.tabs.has(tabId)) return false;
 
-        const tabs = Array.from(state.tabs.values());
-
-        tabs.forEach((tab) => {
+        Array.from(state.tabs.values()).forEach(tab => {
             if (tab.tabId !== tabId) {
                 closeTab(tab.tabId);
             }
@@ -520,11 +771,25 @@
     }
 
     function closeAllTabs() {
-        const tabs = Array.from(state.tabs.values());
+        // Tutup langsung tanpa activateTab() di tengah proses, agar tidak terjadi
+        // iframe baru yang sempat loading saat semua tab sedang ditutup.
+        Array.from(state.tabs.values()).forEach(tab => {
+            if (tab.frame) {
+                tab.frame.src = 'about:blank';
+            }
 
-        tabs.forEach((tab) => {
-            closeTab(tab.tabId);
+            if (tab.tabElement) {
+                tab.tabElement.remove();
+            }
+
+            if (tab.panel) {
+                tab.panel.remove();
+            }
         });
+
+        state.tabs.clear();
+
+        state.activeTabId = null;
 
         showHomePanel();
 
@@ -534,8 +799,11 @@
     function refreshTab(tabId) {
         const tab = state.tabs.get(tabId);
 
-        if (!tab) {
-            return false;
+        if (!tab) return false;
+
+        if (!tab.frame) {
+            return activateTab(tabId);
+            // Tab yang belum diload akan diload pada aktivasi.
         }
 
         tab.loading = true;
@@ -552,9 +820,7 @@
     }
 
     function refreshActiveTab() {
-        if (!state.activeTabId) {
-            return false;
-        }
+        if (!state.activeTabId) return false;
 
         return refreshTab(state.activeTabId);
     }
@@ -562,154 +828,152 @@
     function retryTab(tabId) {
         const tab = state.tabs.get(tabId);
 
-        if (!tab) {
-            return false;
-        }
+        if (!tab || !tab.panel) return false;
 
-        const loading = createLoadingElement(tab.label);
+        tab.frame = null;
+        tab.loadingElement = null;
 
-        const frame = document.createElement('iframe');
-
-        frame.className = 'claim-detail-frame';
-        frame.title = tab.label;
-        frame.loading = 'eager';
-        frame.referrerPolicy = 'same-origin';
-        frame.setAttribute('frameborder', '0');
-        frame.setAttribute(
-            'allow',
-            'clipboard-read; clipboard-write'
-        );
-
-        tab.panel.replaceChildren(
-            loading,
-            frame
-        );
-
-        tab.frame = frame;
-        tab.loadingElement = loading;
-        tab.loading = true;
         tab.loaded = false;
+        tab.loading = false;
         tab.error = false;
 
-        frame.addEventListener('load', () => {
-            tab.loaded = true;
-            tab.loading = false;
-            tab.error = false;
-            loading.hidden = true;
-        });
-
-        frame.addEventListener('error', () => {
-            tab.loading = false;
-            tab.error = true;
-
-            tab.panel.replaceChildren(
-                createErrorElement(
-                    'Browser tidak dapat memuat halaman klaim.',
-                    tabId
-                )
-            );
-        });
-
-        frame.src = makeFrameUrl(tab.url);
-
-        return true;
+        return ensureTabFrame(tab);
     }
 
-    function handleWorkspaceClick(event) {
-        const homeTab = event.target.closest('[data-claim-home]');
+    // Pada navigasi Livewire: DOM lama sudah/akan diganti.
+    // Recreate tab headers and blank panels only; iframe deliberately stays unloaded.
+    function initializeWorkspace() {
+        if (!getElements()) return;
 
-        if (homeTab) {
-            event.preventDefault();
-            showHomePanel();
-            return;
-        }
+        root.dataset.workspaceInitialized = 'true';
 
-        const closeButton = event.target.closest(
-            '[data-close-claim-tab]'
-        );
+        const tabDescriptors = Array.from(
+            state.tabs.values()
+        ).map(tab => ({
+            tabId: tab.tabId || getTabId(tab.nomor, tab.type),
 
-        if (closeButton) {
-            event.preventDefault();
-            event.stopPropagation();
+            nomor: normalizeVisitId(tab.nomor),
 
-            closeTab(closeButton.dataset.closeClaimTab);
+            type: normalizeClaimType(tab.type),
 
-            return;
-        }
+            metadata: {
+                ...(tab.metadata || {}),
+            },
+        })).filter(item => item.nomor && item.type);
 
-        const retryButton = event.target.closest(
-            '[data-claim-retry]'
-        );
+        tabScroll
+            .querySelectorAll('.claim-tab[data-tab-id]')
+            .forEach(element => element.remove());
 
-        if (retryButton) {
-            event.preventDefault();
+        content.replaceChildren();
 
-            retryTab(retryButton.dataset.claimRetry);
+        // Reattach descriptor data to fresh DOM shells. Force lazy load state.
+        state.tabs.clear();
 
-            return;
-        }
+        state.activeTabId = null;
 
-        const tabElement = event.target.closest(
-            '.claim-tab[data-tab-id]'
-        );
+        tabDescriptors.forEach(item => {
+            const tab = {
+                tabId: item.tabId,
 
-        if (tabElement) {
-            event.preventDefault();
+                nomor: item.nomor,
 
-            activateTab(tabElement.dataset.tabId);
-        }
+                type: item.type,
+
+                label: getTabLabel(item.metadata),
+
+                url: getClaimUrl(
+                    item.nomor,
+                    item.type
+                ),
+
+                metadata: item.metadata,
+
+                tabElement: null,
+                panel: null,
+
+                frame: null,
+                loadingElement: null,
+
+                loaded: false,
+                loading: false,
+                error: false,
+            };
+
+            state.tabs.set(tab.tabId, tab);
+
+            renderTabShell(tab);
+        });
+
+        // Return to Smart Claim landing/home panel; do not automatically activate
+        // previously active claim, and do not issue any iframe request.
+        showHomePanel();
     }
 
     function handleDocumentClick(event) {
-        const row = event.target.closest(
+        const targetElement = event.target instanceof Element
+            ? event.target
+            : null;
+
+        if (!targetElement) return;
+
+        const row = targetElement.closest(
             '[data-claim-href], [data-href]'
         );
 
         if (!row) return;
 
-        // Jangan mengambil alih interaksi kontrol yang berada di dalam row.
-        // data-claim-href adalah penanda eksplisit untuk workspace.
-        const interactive = event.target.closest(
+        const interactive = targetElement.closest(
             'a, button, input, select, textarea, label, [role="button"], [contenteditable="true"], [data-bs-toggle], [data-action]'
         );
-        if (interactive && interactive !== row && !row.hasAttribute('data-claim-href')) {
+
+        if (
+            interactive &&
+            interactive !== row &&
+            !row.hasAttribute('data-claim-href')
+        ) {
             return;
         }
 
-        // Biarkan perilaku browser normal untuk Ctrl/Cmd/Shift-click.
-        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) {
+        if (
+            event.ctrlKey ||
+            event.metaKey ||
+            event.shiftKey ||
+            event.altKey ||
+            event.button !== 0
+        ) {
             return;
         }
 
-        const href = row.dataset.claimHref || row.dataset.href || row.getAttribute('href');
+        const href = row.dataset.claimHref ||
+            row.dataset.href ||
+            row.getAttribute('href');
 
-        if (!href) {
-            return;
-        }
+        if (!href) return;
 
         let target;
 
         try {
-            target = new URL(href, window.location.origin);
+            target = new URL(
+                href,
+                window.location.origin
+            );
         } catch {
             return;
         }
 
-        if (target.origin !== window.location.origin) {
-            return;
-        }
+        if (target.origin !== window.location.origin) return;
 
         const match = target.pathname.match(
             /^\/v3\/smartclaim\/([^/]+)(\/farmasi)?\/?$/
         );
 
-        if (!match || event.defaultPrevented) {
-            return;
-        }
+        if (!match || event.defaultPrevented) return;
 
         event.preventDefault();
 
         let nomor;
+
         try {
             nomor = decodeURIComponent(match[1]);
         } catch {
@@ -720,14 +984,15 @@
             ? 'smart_claim_farmasi'
             : 'smart_claim';
 
-        // Metadata disediakan oleh row tabel untuk label tab dan konteks kunjungan.
-        // Format atributnya di-encodeURIComponent() dari index.blade.php.
         let metadata = {};
+
         const rawMetadata = row.dataset.claimMeta;
 
         if (rawMetadata) {
             try {
-                metadata = JSON.parse(decodeURIComponent(rawMetadata));
+                metadata = JSON.parse(
+                    decodeURIComponent(rawMetadata)
+                );
             } catch (error) {
                 console.warn(
                     '[ClaimWorkspace] Metadata row tidak dapat dibaca:',
@@ -736,80 +1001,29 @@
             }
         }
 
-        openClaim(nomor, type, metadata);
+        openClaim(
+            nomor,
+            type,
+            metadata
+        );
     }
 
-    function initializeWorkspace() {
-        if (!getElements()) {
-            return;
-        }
-
-        if (root.dataset.workspaceInitialized === 'true') {
-            return;
-        }
-
-        root.dataset.workspaceInitialized = 'true';
-        showHomePanel();
-
-        root.addEventListener(
-            'click',
-            handleWorkspaceClick
-        );
-
-        document.addEventListener(
-            'click',
-            handleDocumentClick
-        );
-
-        const closeOtherButton = document.querySelector(
-            SELECTORS.closeOther
-        );
-
-        if (closeOtherButton) {
-            closeOtherButton.addEventListener('click', () => {
-                if (state.activeTabId) {
-                    closeOtherTabs(state.activeTabId);
-                }
-            });
-        }
-
-        const closeAllButton = document.querySelector(
-            SELECTORS.closeAll
-        );
-
-        if (closeAllButton) {
-            closeAllButton.addEventListener(
-                'click',
-                closeAllTabs
-            );
-        }
-
-        const refreshButton = document.querySelector(
-            SELECTORS.refresh
-        );
-
-        if (refreshButton) {
-            refreshButton.addEventListener(
-                'click',
-                refreshActiveTab
-            );
-        }
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | PUBLIC API
-    |--------------------------------------------------------------------------
-    */
-
+    // Public API
     window.ClaimWorkspace = {
         openClaim,
+
         activateTab,
+
         closeTab,
+
         closeOtherTabs,
+
         closeAllTabs,
+
         refreshTab,
+
         refreshActiveTab,
+
         retryTab,
 
         getActiveTab() {
@@ -838,4 +1052,133 @@
     } else {
         initializeWorkspace();
     }
+
+    document.addEventListener(
+        'livewire:navigated',
+        initializeWorkspace
+    );
+
+    document.addEventListener(
+        'click',
+        handleDocumentClick
+    );
+
+    // Delegated workspace interactions. Listeners attach once and survive DOM replacement.
+    document.addEventListener('click', function (event) {
+        const targetElement = event.target instanceof Element
+            ? event.target
+            : null;
+
+        if (!targetElement) return;
+
+        const workspaceRoot = document.querySelector(
+            SELECTORS.root
+        );
+
+        if (
+            !workspaceRoot ||
+            !workspaceRoot.contains(targetElement)
+        ) {
+            return;
+        }
+
+        const homeTab = targetElement.closest(
+            '[data-claim-home]'
+        );
+
+        if (homeTab) {
+            event.preventDefault();
+
+            showHomePanel();
+
+            return;
+        }
+
+        const closeButton = targetElement.closest(
+            '[data-close-claim-tab]'
+        );
+
+        if (closeButton) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            closeTab(
+                closeButton.dataset.closeClaimTab
+            );
+
+            return;
+        }
+
+        const retryButton = targetElement.closest(
+            '[data-claim-retry]'
+        );
+
+        if (retryButton) {
+            event.preventDefault();
+
+            retryTab(
+                retryButton.dataset.claimRetry
+            );
+
+            return;
+        }
+
+        const tabElement = targetElement.closest(
+            '.claim-tab[data-tab-id]'
+        );
+
+        if (tabElement) {
+            event.preventDefault();
+
+            activateTab(
+                tabElement.dataset.tabId
+            );
+        }
+    });
+
+    document.addEventListener('click', function (event) {
+        const targetElement = event.target instanceof Element
+            ? event.target
+            : null;
+
+        if (!targetElement) return;
+
+        const refreshButton = targetElement.closest(
+            SELECTORS.refresh
+        );
+
+        if (refreshButton) {
+            event.preventDefault();
+
+            refreshActiveTab();
+
+            return;
+        }
+
+        const closeOtherButton = targetElement.closest(
+            SELECTORS.closeOther
+        );
+
+        if (closeOtherButton) {
+            event.preventDefault();
+
+            if (state.activeTabId) {
+                closeOtherTabs(
+                    state.activeTabId
+                );
+            }
+
+            return;
+        }
+
+        const closeAllButton = targetElement.closest(
+            SELECTORS.closeAll
+        );
+
+        if (closeAllButton) {
+            event.preventDefault();
+
+            closeAllTabs();
+        }
+    });
 })();

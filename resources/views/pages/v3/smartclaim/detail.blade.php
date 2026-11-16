@@ -1,8 +1,6 @@
-@extends('layouts.v3.index')
-
-@section('title', 'Detail Smart Claim | SIRMED V3')
-
-@section('content')
+@section('title', 'Smart Claim')
+@section('page-sub-title', 'SISTEM INFORMASI RUMAH SAKIT')
+@section('page-title', 'Smart Claim')
 
 <style>
     /* Halaman detail berjalan di dalam iframe ClaimWorkspace. */
@@ -119,21 +117,6 @@
 <div class="claim-frame-content claim-detail-workspace">
 <div class="container-fluid claim-detail-container">
 
-    <!-- [ breadcrumb ] start -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb px-3 py-2 bg-primary-subtle rounded-3">
-            <li class="breadcrumb-item">
-                <a class="link-primary" href="{{ url('/v3/dashboard') }}">
-                    <i class="fi fi-rr-home"></i>
-                </a>
-            </li>
-            <li class="breadcrumb-item"><a class="link-primary fw-medium text-decoration-none" href="javascript:void(0);">Digital</a></li>
-            <li class="breadcrumb-item"><a class="link-primary fw-medium text-decoration-none" href="{{ url('/v3/smartclaim') }}">Smart Claim</a></li>
-            <li class="breadcrumb-item active" aria-current="page">KUNJ#{{ $list['KUNJUNGAN'] }}</li>
-        </ol>
-    </nav>
-    <!-- [ breadcrumb ] end -->
-
     <!-- [ Main Content ] start -->
     <div class="row">
         <div class="col-md-12">
@@ -162,20 +145,6 @@
             @endif
         </div>
         <div class="col-md-3">
-            <div class="card mb-3">
-                <div class="card-body p-0">
-                    <div data-back-button role="button" tabindex="0" title="Tutup tab Smart Claim ini" class="d-flex align-items-center btn btn-outline-secondary border-dashed waves-effect waves-light">
-                        <div class="flex-shrink-0 me-3">
-                            <i class="ph-duotone ph-caret-double-left align-middle"></i>
-                            {{-- <div class="btn btn-icon btn-link-secondary avtar">
-                            </div> --}}
-                        </div>
-                        <div class="flex-grow-1 align-items-left">
-                            <small>Kembali ke Halaman Sebelumnya</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="card list-group mb-3">
                 <div class="card-header p-3 d-flex align-items-center gap-2 bg-teal text-white">
                     <div class="mb-0 flex-shrink-0 form-check d-flex align-items-center">
@@ -264,37 +233,6 @@
             </div>
         </div>
         <div class="col-md-9">
-            <div class="card mb-3">
-                <div class="card-body p-2">
-                    <div class="row justify-content-between d-flex align-items-center p-2">
-                        <div class="col-md-8 col-xl-8 col-xxl-8">
-                            <h5 class="mb-1 d-flex align-items-center align-middle"><i class="ri-user-3-line me-1"></i> <b class="fw-medium" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Rekam Medis Pasien">RM. {{ str_pad($list['show']->NORM, 8, '0', STR_PAD_LEFT) }}</b>
-                                @if ($list['show']->JENIS_KUNJUNGAN == 'UTAMA') <span class="badge bg-success badge-sm ms-2" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Kunjungan Pasien saat ini adalah Kunjungan Utama / Bukan Konsul">UTAMA</span> @endif
-                            </h5>
-                            <h4 class="text-truncate mb-1 fw-bold">{{ $list['show']->NAMAPASIEN }}</h4>
-                            <p class="text-truncate mb-1" style="font-size: 12px">
-                                <b>NOBPJS. <a class="text-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Nomor Kartu BPJS Pasien">{{ $list['show']->NOBPJS }}</a></b>
-                                | <b data-bs-toggle="tooltip" data-bs-placement="bottom" title="SEP Tgl. {{ $list['show']->TGLSEP?\Carbon\Carbon::parse($list['show']->TGLSEP)->translatedFormat('d F Y'):'' }}">SEP. <a class="text-purple-700">{{ $list['show']->NOSEP?$list['show']->NOSEP:'Tidak Ditemukan' }}</a></b>
-                            </p>
-                            @if ($list['show']->STATUS == 1)
-                                <span class="badge bg-warning-subtle text-dark border border-warning-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">Pasien Sedang Dilayani</span>
-                            @else
-                                @if ($list['show']->STATUS == 2)
-                                    <span class="badge bg-primary-subtle text-dark border border-primary-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">Kunjungan Pasien Selesai / Final</span>
-                                @else
-                                    <span class="badge bg-danger-subtle text-dark border border-danger-subtle badge-sm fs-12 p-0 ps-1 pe-1 fw-medium">Pasien Batal Periksa</span>
-                                @endif
-                            @endif
-                        </div>
-                        <div class="col-md-4 col-xl-4 col-xxl-4 text-end">
-                            <p class="fw-bold mb-1 fs-16"><b>{{ $list['show']->NAMARUANGAN }}</b></p>
-                            <h6 class="text-truncate text-mint mb-1 fs-20"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="DPJP. {{ $list['show']->NAMADOKTER }}">{{ $list['show']->NAMADOKTER }}</b></h6>
-                            <p class="text-truncate mb-0 ms-3" style="font-size: 13px"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tgl. Pasien mulai dilayani / diterima">Masuk :&nbsp;&nbsp;{{ \Carbon\Carbon::parse($list['show']->MASUK)->locale('id')->translatedFormat('d M Y H.i') . ' WIB' }}</b></p>
-                            <p class="text-truncate mb-0 ms-3" style="font-size: 13px"><b data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tgl. Pasien selesai dilayani / dipulangkan">Keluar :&nbsp;&nbsp;{{ $list['show']->KELUAR?\Carbon\Carbon::parse($list['show']->KELUAR)->locale('id')->translatedFormat('d M Y H.i') . ' WIB':'-' }}</b></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div id="alert_verif"></div>
             <div class="card mb-3">
                 <div class="card-header d-flex align-items-center justify-content-between py-3">
@@ -596,9 +534,11 @@
     <script>
         var editorCatatanTambah; // global variable
         var editorCatatanEdit; // global variable
-        let unitAddChoices;
-        let unitEditChoices;
+
+        let $unitAddSelect2;
+        let $unitEditSelect2;
         let daftarRoles = [];
+
         $(document).ready(function() {
             const listCheckbox = [
                 '#ck_individual',
@@ -624,28 +564,10 @@
             //             console.error(error);
             //         });
             // });
-            unitAddChoices = new Choices('#unit_add', {
-                removeItemButton: true,
-                searchEnabled: true,
-                searchPlaceholderValue: 'Cari unit...',
-                placeholder: true,
-                placeholderValue: 'Pilih Unit Tujuan',
-                shouldSort: false,
-                itemSelectText: '',
-                noResultsText: 'Unit tidak ditemukan',
-                noChoicesText: 'Tidak ada unit',
-            });
-            unitEditChoices = new Choices('#unit_edit', {
-                removeItemButton: true,
-                searchEnabled: true,
-                searchPlaceholderValue: 'Cari unit...',
-                placeholder: true,
-                placeholderValue: 'Pilih Unit Tujuan',
-                shouldSort: false,
-                itemSelectText: '',
-                noResultsText: 'Unit tidak ditemukan',
-                noChoicesText: 'Tidak ada unit',
-            });
+
+            // INIT SELECT2 MULTIPLE UNIT TUJUAN
+            initSelect2Unit();
+
             ClassicEditor.create(document.querySelector('#catatan_add'), {
                     placeholder: 'Silakan isi catatan klaim di sini...'
                 })
@@ -694,6 +616,72 @@
             });
             verify();
         });
+
+        /**
+         * SELECT2 UNIT TUJUAN
+         * Select multiple untuk unit tujuan catatan klaim.
+         */
+        function initSelect2Unit() {
+            $unitAddSelect2 = $('#unit_add');
+            $unitEditSelect2 = $('#unit_edit');
+
+            // SELECT2 UNIT ADD
+            if ($unitAddSelect2.length) {
+
+                // Hindari inisialisasi ganda
+                if ($unitAddSelect2.hasClass('select2-hidden-accessible')) {
+                    $unitAddSelect2.select2('destroy');
+                }
+
+                $unitAddSelect2.select2({
+                    width: '100%',
+                    placeholder: 'Pilih Unit Tujuan',
+                    allowClear: true,
+                    closeOnSelect: false,
+                    minimumResultsForSearch: 0,
+
+                    language: {
+                        noResults: function () {
+                            return 'Unit tidak ditemukan';
+                        },
+
+                        searching: function () {
+                            return 'Mencari unit...';
+                        }
+                    }
+                });
+            }
+
+            // SELECT2 UNIT EDIT
+            if ($unitEditSelect2.length) {
+
+                // Hindari inisialisasi ganda
+                if ($unitEditSelect2.hasClass('select2-hidden-accessible')) {
+                    $unitEditSelect2.select2('destroy');
+                }
+
+                $unitEditSelect2.select2({
+                    width: '100%',
+                    placeholder: 'Pilih Unit Tujuan',
+                    allowClear: true,
+                    closeOnSelect: false,
+                    minimumResultsForSearch: 0,
+
+                    // Agar dropdown Select2 tampil di dalam modal Bootstrap
+                    dropdownParent: $('#ubahCatatan'),
+
+                    language: {
+                        noResults: function () {
+                            return 'Unit tidak ditemukan';
+                        },
+
+                        searching: function () {
+                            return 'Mencari unit...';
+                        }
+                    }
+                });
+            }
+        }
 
         function getNamaUnit(unit) {
             if (!unit) {
@@ -748,30 +736,48 @@
                 success: function(res) {
                     // ISI ROLES SELECT
                     if (Array.isArray(res.roles)) {
-                        const choices = res.roles.map(function(role) {
-                            return {
-                                value: String(role.id),
-                                label: role.name
-                            };
-                        });
+                        // ISI OPTIONS SELECT2 UNIT TUJUAN
+                        if (Array.isArray(res.roles)) {
 
-                        unitAddChoices.clearChoices();
-                        unitAddChoices.setChoices(
-                            choices,
-                            'value',
-                            'label',
-                            true
-                        );
+                            daftarRoles = res.roles;
 
-                        unitEditChoices.clearChoices();
-                        unitEditChoices.setChoices(
-                            choices,
-                            'value',
-                            'label',
-                            true
-                        );
+                            // UNIT ADD
+                            $unitAddSelect2.empty();
 
-                        daftarRoles = res.roles;
+                            res.roles.forEach(function(role) {
+                                const option = new Option(
+                                    role.name,
+                                    String(role.id),
+                                    false,
+                                    false
+                                );
+
+                                $unitAddSelect2.append(option);
+                            });
+
+                            $unitAddSelect2
+                                .val(null)
+                                .trigger('change');
+
+
+                            // UNIT EDIT
+                            $unitEditSelect2.empty();
+
+                            res.roles.forEach(function(role) {
+                                const option = new Option(
+                                    role.name,
+                                    String(role.id),
+                                    false,
+                                    false
+                                );
+
+                                $unitEditSelect2.append(option);
+                            });
+
+                            $unitEditSelect2
+                                .val(null)
+                                .trigger('change');
+                        }
                     }
 
                     // REFRESH HALAMAN
@@ -2395,7 +2401,7 @@
                 .trim();
 
             const kunjungan = "{{ $list['KUNJUNGAN'] }}";
-            const unitTujuan = unitAddChoices.getValue(true).map(Number);
+            const unitTujuan = ($unitAddSelect2.val() || []).map(Number);
 
             if (isiBersih === '') {
                 iziToast.warning({
@@ -2453,8 +2459,10 @@
 
                     editorCatatanTambah.setData('');
 
-                    // Bersihkan pilihan unit
-                    unitAddChoices.removeActiveItems();
+                    // Bersihkan pilihan Select2 Unit
+                    $unitAddSelect2
+                        .val(null)
+                        .trigger('change');
 
                     $icon.removeClass('fa-sync fa-spin').addClass('fa-sticky-note');
                     $button.prop('disabled', false);
@@ -2484,8 +2492,10 @@
 
                     editorCatatanEdit.setData(res.deskripsi || '');
 
-                    // Bersihkan pilihan sebelumnya
-                    unitEditChoices.removeActiveItems();
+                    // Bersihkan pilihan Select2 sebelumnya
+                    $unitEditSelect2
+                        .val(null)
+                        .trigger('change');
 
                     let unit = res.unit || [];
 
@@ -2500,11 +2510,14 @@
 
                     // Pastikan array
                     if (Array.isArray(unit)) {
-                        unitEditChoices.setChoiceByValue(
-                            unit.map(function(unitId) {
-                                return String(unitId);
-                            })
-                        );
+
+                        const selectedUnits = unit.map(function(unitId) {
+                            return String(unitId);
+                        });
+
+                        $unitEditSelect2
+                            .val(selectedUnits)
+                            .trigger('change');
                     }
 
                     $('#ubahCatatan').modal('show');
@@ -2529,7 +2542,7 @@
                 .replace(/&nbsp;/g, '')
                 .trim();
 
-            const unitTujuan = unitEditChoices.getValue(true).map(Number);
+            const unitTujuan = ($unitEditSelect2.val() || []).map(Number);
 
             if (isiBersih === '') {
                 iziToast.warning({
@@ -2736,4 +2749,3 @@
     </script>
 
 </div>
-@endsection
