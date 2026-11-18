@@ -293,7 +293,6 @@
                                 href="javascript:void(0);"
                                 class="btn btn-sm btn-subtle-danger"
                                 id="btn-lihat-klaim"
-                                target="_blank"
                             >
                                 <i class="ri-git-repository-line me-1"></i>
                                 Lihat Berkas Klaim Pasien
@@ -305,7 +304,6 @@
                                 href="javascript:void(0);"
                                 class="btn btn-sm btn-subtle-warning"
                                 id="btn-lihat-klaim-farmasi"
-                                target="_blank"
                             >
                                 <i class="ri-git-repository-line me-1"></i>
                                 Lihat Berkas Klaim Farmasi Pasien
@@ -379,12 +377,15 @@
                     .addClass('fa-sync fa-spin');
 
                 $btnLihatKunjungan
+                    .off('click.emr')
                     .attr('href', 'javascript:void(0);');
 
                 $btnLihatKlaim
+                    .off('click.smartclaim')
                     .attr('href', 'javascript:void(0);');
 
                 $btnLihatKlaimFarmasi
+                    .off('click.smartclaim')
                     .attr('href', 'javascript:void(0);');
 
             },
@@ -434,31 +435,65 @@
                 const patient = {
                     nomor: nomor,
 
+                    // Identitas utama pasien
                     norm: getPatientValue(
                         pasien.NORM,
+                        pasien.norm,
                         item.norm
                     ),
 
                     nama: getPatientValue(
                         pasien.NAMAPASIEN,
+                        pasien.namaPasien,
+                        pasien.nama,
+                        item.nama
+                    ),
+
+                    namaLengkap: getPatientValue(
+                        pasien.NAMALENGKAPPASIEN,
+                        pasien.NAMAPASIEN,
+                        pasien.namaLengkap,
+                        pasien.nama,
                         item.nama
                     ),
 
                     alamat: getPatientValue(
                         pasien.ALAMATPASIEN,
+                        pasien.alamatPasien,
                         pasien.alamat
                     ),
 
                     tglLahir: getPatientValue(
                         pasien.TGLLAHIRPASIEN,
+                        pasien.TGLLAHIR,
                         pasien.tglLahir
                     ),
 
                     umur: getPatientValue(
                         pasien.UMURPASIEN,
+                        pasien.UMUR,
                         pasien.umur
                     ),
 
+                    jenisKelamin: getPatientValue(
+                        pasien.JKPASIEN,
+                        pasien.JENISKELAMIN,
+                        pasien.jenisKelamin
+                    ),
+
+                    nik: getPatientValue(
+                        pasien.NIKPASIEN,
+                        pasien.NIK,
+                        pasien.nik
+                    ),
+
+                    noHP: getPatientValue(
+                        pasien.NOHPPASIEN,
+                        pasien.NOHP,
+                        pasien.noHP
+                    ),
+
+                    // Informasi ruangan dan DPJP
                     namaRuangan: getPatientValue(
                         pasien.NAMARUANGAN,
                         pasien.namaRuangan
@@ -469,6 +504,12 @@
                         pasien.namaDokter
                     ),
 
+                    idRuangan: getPatientValue(
+                        pasien.IDRUANGAN,
+                        pasien.idRuangan
+                    ),
+
+                    // Informasi asuransi
                     namaAsuransi: getPatientValue(
                         pasien.NAMAASURANSI,
                         pasien.namaAsuransi
@@ -490,6 +531,34 @@
                         pasien.noAsuransi
                     ),
 
+                    noBPJS: getPatientValue(
+                        pasien.NOBPJS,
+                        pasien.NOASURANSI,
+                        pasien.noBPJS
+                    ),
+
+                    // Data SEP dan jenis kunjungan jika tersedia dari API
+                    noSEP: getPatientValue(
+                        pasien.NOSEP,
+                        pasien.noSEP,
+                        item.NOSEP,
+                        item.noSEP
+                    ),
+
+                    jenisKunjungan: getPatientValue(
+                        pasien.JENIS_KUNJUNGAN,
+                        pasien.jenisKunjungan,
+                        item.JENIS_KUNJUNGAN,
+                        item.jenisKunjungan
+                    ),
+
+                    // Waktu kunjungan
+                    tglDaftar: getPatientValue(
+                        pasien.TGLPENDAFTARAN,
+                        pasien.TGLDAFTAR,
+                        pasien.tglDaftar
+                    ),
+
                     tglMasuk: getPatientValue(
                         pasien.TGLMASUK,
                         pasien.tglMasuk
@@ -505,8 +574,160 @@
                         pasien.statusKunjungan
                     ),
 
+                    // Status verifikasi klaim, bukan status notifikasi.
+                    statusVerif: getPatientValue(
+                        item.STATUSVERIF,
+                        item.statusVerif,
+                        pasien.STATUSVERIF,
+                        pasien.statusVerif
+                    ),
+
+                    statusKlaim: getPatientValue(
+                        item.STATUSKLAIM,
+                        item.statusKlaim,
+                        pasien.STATUSKLAIM,
+                        pasien.statusKlaim
+                    ),
+
                     url: `/v3/emr/${encodeURIComponent(nomor)}`
                 };
+
+                // ======================================================
+                // BUKA SMART CLAIM WORKSPACE
+                // ======================================================
+                function openSmartClaimWorkspace(type) {
+
+                    if (!nomor) {
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Nomor kunjungan pasien tidak ditemukan.',
+                            position: 'topRight'
+                        });
+
+                        return;
+                    }
+
+                    const metadata = {
+                        nomor: nomor,
+
+                        // Identitas pasien untuk header ClaimWorkspace
+                        norm: patient.norm,
+                        nama: patient.nama,
+                        namaPasien: patient.nama,
+                        namaLengkap: patient.namaLengkap,
+                        alamat: patient.alamat,
+                        tglLahir: patient.tglLahir,
+                        umur: patient.umur,
+                        jenisKelamin: patient.jenisKelamin,
+                        nik: patient.nik,
+                        noHP: patient.noHP,
+
+                        // Asuransi
+                        namaAsuransi: patient.namaAsuransi,
+                        idAsuransi: patient.idAsuransi,
+                        refIdAsuransi: patient.refIdAsuransi,
+                        noAsuransi: patient.noAsuransi,
+                        noBPJS: patient.noBPJS,
+
+                        // SEP dan jenis kunjungan
+                        noSEP: patient.noSEP,
+                        jenisKunjungan: patient.jenisKunjungan,
+
+                        // Informasi pelayanan
+                        idRuangan: patient.idRuangan,
+                        namaRuangan: patient.namaRuangan,
+                        namaDokter: patient.namaDokter,
+
+                        // Tanggal kunjungan
+                        tglDaftar: patient.tglDaftar,
+                        tglMasuk: patient.tglMasuk,
+                        tglKeluar: patient.tglKeluar,
+
+                        // Status klaim (tidak menggunakan status notifikasi)
+                        statusVerif: patient.statusVerif,
+                        statusKlaim: patient.statusKlaim ? 'SUDAH DIVERIFIKASI' : 'BELUM DIVERIFIKASI',
+
+                        label: `SEP. ${patient.noSEP ?? '-'}`
+                    };
+
+                    const pending = {
+                        nomor: nomor,
+                        type: type,
+                        metadata: metadata
+                    };
+
+                    // Tutup modal.
+                    modal.hide();
+
+                    // Jika sudah berada di halaman Smart Claim,
+                    // langsung buka workspace pasien.
+                    if (
+                        document.querySelector('#claimWorkspace') &&
+                        window.ClaimWorkspace &&
+                        typeof window.ClaimWorkspace.openClaim === 'function'
+                    ) {
+                        window.ClaimWorkspace.openClaim(
+                            nomor,
+                            type,
+                            metadata
+                        );
+
+                        return;
+                    }
+
+                    // Simpan tujuan workspace sebelum berpindah halaman.
+                    try {
+                        sessionStorage.setItem(
+                            'sirmed.pendingClaimWorkspace',
+                            JSON.stringify(pending)
+                        );
+                    } catch (error) {
+                        console.error(
+                            '[Notifikasi] Gagal menyimpan pending claim:',
+                            error
+                        );
+
+                        iziToast.error({
+                            title: 'Error',
+                            message: 'Gagal mempersiapkan workspace klaim.',
+                            position: 'topRight'
+                        });
+
+                        return;
+                    }
+
+                    // Navigasi ke halaman utama Smart Claim.
+                    if (
+                        window.Livewire &&
+                        typeof window.Livewire.navigate === 'function'
+                    ) {
+                        window.Livewire.navigate('/v3/smartclaim');
+                    } else {
+                        window.location.href = '/v3/smartclaim';
+                    }
+                }
+
+                // ======================================================
+                // TOMBOL SMART CLAIM
+                // ======================================================
+                $btnLihatKlaim
+                    .off('click.smartclaim')
+                    .on('click.smartclaim', function (e) {
+                        e.preventDefault();
+
+                        openSmartClaimWorkspace('smart_claim');
+                    });
+
+                // ======================================================
+                // TOMBOL SMART CLAIM FARMASI
+                // ======================================================
+                $btnLihatKlaimFarmasi
+                    .off('click.smartclaim')
+                    .on('click.smartclaim', function (e) {
+                        e.preventDefault();
+
+                        openSmartClaimWorkspace('smart_claim_farmasi');
+                    });
 
                 // Hindari event click terpasang berulang kali.
                 $btnLihatKunjungan
@@ -589,16 +810,6 @@
                         }
                     });
 
-                $btnLihatKlaim.attr(
-                    'href',
-                    `/v3/klaim/${encodeURIComponent(nomor)}`
-                );
-
-                $btnLihatKlaimFarmasi.attr(
-                    'href',
-                    `/v3/klaim/${encodeURIComponent(nomor)}/farmasi`
-                );
-
                 // Identitas pasien.
                 const html = `
                     <div class="row">
@@ -610,7 +821,7 @@
                                     Nama Asuransi
                                 </label>
                                 <div class="fw-semibold">
-                                    ${escapeHtml(pasien.NAMAASURANSI)}
+                                    ${escapeHtml(patient.namaAsuransi)}
                                 </div>
                             </div>
 
@@ -628,7 +839,7 @@
                                     Nama Pasien
                                 </label>
                                 <div class="fw-semibold text-truncate">
-                                    ${escapeHtml(pasien.NAMAPASIEN)}
+                                    ${escapeHtml(patient.nama)}
                                 </div>
                             </div>
 
@@ -637,8 +848,8 @@
                                     Tgl. Lahir (Umur)
                                 </label>
                                 <div class="fw-semibold text-truncate">
-                                    ${escapeHtml(pasien.TGLLAHIRPASIEN)}
-                                    (${escapeHtml(pasien.UMURPASIEN)})
+                                    ${escapeHtml(patient.tglLahir)}
+                                    (${escapeHtml(patient.umur)})
                                 </div>
                             </div>
 
@@ -647,7 +858,7 @@
                                     Alamat Pasien
                                 </label>
                                 <div class="fw-semibold text-truncate">
-                                    ${escapeHtml(pasien.ALAMATPASIEN)}
+                                    ${escapeHtml(patient.alamat)}
                                 </div>
                             </div>
 
@@ -660,7 +871,7 @@
                                     Nomor Asuransi
                                 </label>
                                 <div class="fw-semibold">
-                                    ${escapeHtml(pasien.NOASURANSI)}&nbsp;
+                                    ${escapeHtml(patient.noAsuransi)}&nbsp;
                                 </div>
                             </div>
 
@@ -669,7 +880,7 @@
                                     Tgl. Pendaftaran
                                 </label>
                                 <div class="fw-semibold">
-                                    ${escapeHtml(pasien.TGLPENDAFTARAN)}
+                                    ${escapeHtml(patient.tglDaftar)}
                                 </div>
                             </div>
 
@@ -678,7 +889,7 @@
                                     Tanggal Masuk
                                 </label>
                                 <div class="fw-semibold">
-                                    ${escapeHtml(pasien.TGLMASUK)}
+                                    ${escapeHtml(patient.tglMasuk)}
                                 </div>
                             </div>
 
@@ -687,7 +898,7 @@
                                     Tanggal Keluar
                                 </label>
                                 <div class="fw-semibold">
-                                    ${escapeHtml(pasien.TGLKELUAR)}
+                                    ${escapeHtml(patient.tglKeluar)}
                                 </div>
                             </div>
 
@@ -696,8 +907,8 @@
                                     Ruangan Dirawat (DPJP)
                                 </label>
                                 <div class="fw-semibold text-truncate">
-                                    ${escapeHtml(pasien.NAMARUANGAN)}
-                                    (${escapeHtml(pasien.NAMADOKTER)})
+                                    ${escapeHtml(patient.namaRuangan)}
+                                    (${escapeHtml(patient.namaDokter)})
                                 </div>
                             </div>
 

@@ -48,6 +48,16 @@
     let content = null;
     let homePanel = null;
 
+    // Simpan kondisi awal topbar agar bisa dikembalikan
+    // ketika user kembali ke halaman Home Smart Claim.
+    if (!('initialTopbar' in state)) {
+        state.initialTopbar = null;
+    }
+
+    if (!('initialDocumentTitle' in state)) {
+        state.initialDocumentTitle = null;
+    }
+
     function getElements() {
         root = document.querySelector(SELECTORS.root);
         tabBar = document.querySelector(SELECTORS.tabBar);
@@ -63,6 +73,195 @@
         if (element) element.textContent = value ?? '-';
     }
 
+    function getTopbarText(selector) {
+        return document.querySelector(selector)?.textContent?.trim() ?? '';
+    }
+
+    function cleanTopbarText(value) {
+        return String(value ?? '')
+            .replace(/[•·]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    /**
+     * Menyimpan kondisi awal topbar satu kali.
+     * Dipakai oleh resetTopbar() ketika kembali ke Home.
+     */
+    function captureInitialTopbar() {
+        if (state.initialTopbar) return;
+
+        state.initialTopbar = {
+            pageSubTitle: getTopbarText('#pageSubTitlebar'),
+            pageTitle: getTopbarText('#pageTitlebar'),
+            pageTitleTitle: document.querySelector('#pageTitlebar')?.getAttribute('title') ?? '',
+
+            birth: getTopbarText('#patientBirthBar'),
+            room: getTopbarText('#patientRoomTopbar'),
+            doctor: getTopbarText('#patientDoctorTopbar'),
+
+            idAsuransi: getTopbarText('#patientRefIdAsuransiTopbar'),
+            insuranceName: getTopbarText('#patientInsuranceNameTopbar'),
+
+            tglMasuk: getTopbarText('#patientTglMasukTopbar'),
+            tglKeluar: getTopbarText('#patientTglKeluarTopbar'),
+            noAsuransi: getTopbarText('#patientInsuranceTopbar'),
+
+            status: getTopbarText('#patientStatusTopbar'),
+            statusClass: document.querySelector('#patientStatusTopbar')?.className
+                || 'badge'
+        };
+
+        state.initialDocumentTitle = document.title;
+    }
+
+    /**
+     * Typography topbar.
+     * Dipakai oleh Home maupun identitas pasien.
+     */
+    function applyTopbarTypography(element) {
+        if (!element) return;
+
+        element.classList.remove('text-muted');
+
+        element.style.display = 'block';
+        element.style.fontSize = '1.15rem';
+        element.style.fontWeight = '700';
+        element.style.lineHeight = '1.25';
+        element.style.color = 'var(--bs-body-color)';
+    }
+
+    function normalizeText(value) {
+        if (value === null || value === undefined) return '';
+        return String(value).trim();
+    }
+
+    function firstNonEmpty(...values) {
+        for (const value of values) {
+            if (
+                value !== null &&
+                value !== undefined &&
+                String(value).trim() !== ''
+            ) {
+                return String(value).trim();
+            }
+        }
+
+        return '';
+    }
+
+    function formatRM(norm) {
+        const value = normalizeText(norm);
+        return value ? value.padStart(8, '0') : '-';
+    }
+
+    // Mengikuti format EMRWorkspace: YYYY-MM-DD menjadi DD-MM-YYYY.
+    function formatTanggalLahir(value) {
+        const date = normalizeText(value);
+        if (!date) return '-';
+
+        const match = date.match(/^(\d{4})-(\d{2})-(\d{2})/);
+
+        return match
+            ? `${match[3]}-${match[2]}-${match[1]}`
+            : date;
+    }
+
+    // Mengikuti format EMRWorkspace: DD-MM-YYYY HH:mm WIB.
+    function formatTanggalKunjungan(value) {
+        const date = normalizeText(value);
+        if (!date) return '-';
+
+        const match = date.match(
+            /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::\d{2})?)?/
+        );
+
+        if (!match) return date;
+
+        const tanggal = `${match[3]}-${match[2]}-${match[1]}`;
+
+        return match[4] && match[5]
+            ? `${tanggal} ${match[4]}:${match[5]}`
+            : tanggal;
+    }
+
+    function updatePatientNameTooltip(element, title) {
+        if (!element) return;
+
+        element.setAttribute('title', title);
+        element.setAttribute('data-bs-original-title', title);
+
+        if (window.bootstrap?.Tooltip) {
+            const existingTooltip = window.bootstrap.Tooltip.getInstance(element);
+
+            if (existingTooltip) existingTooltip.dispose();
+
+            new window.bootstrap.Tooltip(element, {
+                placement: 'bottom',
+                trigger: 'hover focus'
+            });
+        }
+    }
+
+    function applyInsuranceColor(idAsuransi) {
+        const patientInsuranceName = document.querySelector(
+            '#patientInsuranceNameTopbar'
+        );
+
+        if (!patientInsuranceName) return;
+
+        const id = String(idAsuransi ?? '');
+
+        patientInsuranceName.classList.remove(
+            'text-muted',
+            'text-warning',
+            'text-primary'
+        );
+
+        patientInsuranceName.style.removeProperty('color');
+
+        // Sama dengan pemetaan warna pada EMRWorkspace.
+        if (id === '1') {
+            patientInsuranceName.classList.add('text-warning');
+            patientInsuranceName.style.color = 'var(--bs-warning)';
+        } else if (id === '2') {
+            patientInsuranceName.classList.add('text-primary');
+            patientInsuranceName.style.color = 'var(--bs-primary)';
+        } else {
+            patientInsuranceName.style.color = 'var(--bs-body-color)';
+        }
+    }
+
+    function getClaimVerificationStatus(metadata = {}) {
+        const explicitStatus = firstNonEmpty(
+            metadata.statusKlaim,
+            metadata.statusVerifText,
+            metadata.STATUSKLAIM
+        ).toUpperCase();
+
+        const rawStatus = firstNonEmpty(
+            metadata.statusVerif,
+            metadata.STATUSVERIF,
+            metadata.verif,
+            metadata.VERIF
+        ).toLowerCase();
+
+        const verified =
+            explicitStatus.includes('SUDAH DIVERIFIKASI') ||
+            explicitStatus.includes('TERVERIFIKASI') ||
+            ['1', 'true', 'yes', 'verified'].includes(rawStatus);
+
+        return verified
+            ? {
+                label: 'SUDAH DIVERIFIKASI',
+                className: 'badge bg-success-subtle text-success border border-success-subtle'
+            }
+            : {
+                label: 'BELUM DIVERIFIKASI',
+                className: 'badge bg-danger-subtle text-danger border border-danger-subtle'
+            };
+    }
+
     function showClaimPatientIdentity(metadata = {}) {
         const topbar = document.querySelector('#appTopbar');
         const defaultIdentity = document.querySelector('#topbarDefaultIdentity');
@@ -76,69 +275,335 @@
         defaultIdentity.style.display = 'none';
         workspaceIdentity.style.display = 'flex';
 
-        setTopbarText(
-            '#patientInsuranceNameTopbar',
-            metadata.namaAsuransi || '-'
+        const patientDropdownContainer = document.querySelector(
+            '#patientDropdownContainer'
         );
 
-        setTopbarText(
-            '#patientInsuranceTopbar',
-            metadata.noBPJS || metadata.noAsuransi || metadata.noSEP || '-'
+        if (patientDropdownContainer) {
+            patientDropdownContainer.style.display = 'none';
+        }
+
+        const topBarDivider1 = document.querySelector('#topbarDivider1');
+        const topBarDivider2 = document.querySelector('#topbarDivider2');
+        const topBarDivider3 = document.querySelector('#topbarDivider3');
+
+        const pageSubTitle = document.querySelector('#pageSubTitlebar');
+        const pageTitle = document.querySelector('#pageTitlebar');
+
+        const patientRoom = document.querySelector('#patientRoomTopbar');
+        const patientDoctor = document.querySelector('#patientDoctorTopbar');
+        const patientInsuranceNumber = document.querySelector('#patientInsuranceTopbar');
+        const patientInsuranceName = document.querySelector('#patientInsuranceNameTopbar');
+        const patientTglMasuk = document.querySelector('#patientTglMasukTopbar');
+        const patientTglKeluar = document.querySelector('#patientTglKeluarTopbar');
+        const patientStatus = document.querySelector('#patientStatusTopbar');
+        const patientBirth = document.querySelector('#patientBirthBar');
+
+        const norm = firstNonEmpty(metadata.norm, metadata.NORM);
+        const nama = firstNonEmpty(
+            metadata.nama,
+            metadata.namaPasien,
+            metadata.NAMAPASIEN,
+            metadata.namaLengkap,
+            metadata.NAMALENGKAPPASIEN
+        ) || 'Rekam Medis Pasien';
+
+        const tanggalLahir = formatTanggalLahir(firstNonEmpty(
+            metadata.tglLahir,
+            metadata.tanggalLahir,
+            metadata.TGLLAHIRPASIEN
+        ));
+
+        const umurPasien = firstNonEmpty(
+            metadata.umur,
+            metadata.umurPasien,
+            metadata.UMURPASIEN,
+            metadata.UMUR,
+            metadata.Umur
+        ) || '-';
+
+        const namaAsuransi = firstNonEmpty(
+            metadata.namaAsuransi,
+            metadata.NAMAASURANSI
+        ) || '-';
+
+        const refIdAsuransi = firstNonEmpty(
+            metadata.refIdAsuransi,
+            metadata.REFIDASURANSI,
+            metadata.idAsuransi,
+            metadata.IDASURANSI
         );
 
-        setTopbarText(
-            '#pageSubTitlebar',
-            metadata.norm ? `RM.${metadata.norm}` : '-'
+        const noAsuransi = firstNonEmpty(
+            metadata.noAsuransi,
+            metadata.NOASURANSI,
+            metadata.noBPJS,
+            metadata.NOBPJS,
+            metadata.noSEP,
+            metadata.NOSEP
         );
 
-        setTopbarText(
-            '#pageTitlebar',
-            metadata.nama || metadata.namaLengkap || '-'
+        const namaRuangan = firstNonEmpty(
+            metadata.namaRuangan,
+            metadata.NAMARUANGAN
         );
 
-        setTopbarText(
-            '#patientBirthBar',
-            metadata.tglLahir || '-'
+        const namaDokter = firstNonEmpty(
+            metadata.namaDokter,
+            metadata.NAMADOKTER
         );
 
-        setTopbarText(
-            '#patientRoomTopbar',
-            metadata.namaRuangan || '-'
+        const tglMasuk = firstNonEmpty(
+            metadata.tglMasuk,
+            metadata.MASUK
         );
 
-        setTopbarText(
-            '#patientDoctorTopbar',
-            metadata.namaDokter || '-'
+        const tglKeluar = firstNonEmpty(
+            metadata.tglKeluar,
+            metadata.KELUAR
         );
 
-        setTopbarText(
-            '#patientTglMasukTopbar',
-            metadata.tglMasuk || '-'
-        );
+        // =================================================
+        // IDENTITAS PASIEN — disamakan dengan EMRWorkspace
+        // =================================================
+        if (pageSubTitle) {
+            pageSubTitle.innerHTML =
+                `<i class="ri-user-3-line me-1"></i> RM. ${escapeHtml(formatRM(norm))}`;
 
-        setTopbarText(
-            '#patientTglKeluarTopbar',
-            metadata.tglKeluar || '-'
-        );
+            applyTopbarTypography(pageSubTitle);
+        }
 
-        setTopbarText(
-            '#patientStatusTopbar',
-            metadata.statusKlaim || metadata.statusVerif || '-'
-        );
+        if (pageTitle) {
+            pageTitle.textContent = nama;
+
+            applyTopbarTypography(pageTitle);
+
+            const tooltipNamaPasien = [
+                `Tanggal Lahir: ${tanggalLahir}`,
+                `Umur: ${umurPasien}`
+            ].join('\n');
+
+            updatePatientNameTooltip(pageTitle, tooltipNamaPasien);
+        }
+
+        // Tooltip menjadi tempat informasi tanggal lahir dan umur,
+        // sama seperti EMRWorkspace. Tidak ditampilkan sebagai teks terpisah.
+        if (patientBirth) patientBirth.textContent = '';
+
+        // =================================================
+        // INFORMASI KUNJUNGAN
+        // =================================================
+
+        if (topBarDivider1) {
+            topBarDivider1.textContent = noAsuransi ? '• ' : '';
+        }
+
+        if (topBarDivider2) {
+            topBarDivider2.textContent = namaDokter ? '• ' : '';
+        }
+
+        if (topBarDivider3) {
+            topBarDivider3.textContent = nama ? '• ' : '';
+        }
+
+        setTopbarText('#patientInsuranceNameTopbar', namaAsuransi);
+        applyInsuranceColor(refIdAsuransi);
+
+        setTopbarText('#patientInsuranceTopbar', noAsuransi || '');
+        setTopbarText('#patientRoomTopbar', namaRuangan || '-');
+        setTopbarText('#patientDoctorTopbar', namaDokter || '');
+
+        if (patientTglMasuk) {
+            patientTglMasuk.textContent =
+                `${formatTanggalKunjungan(tglMasuk)} WIB`;
+        }
+
+        if (patientTglKeluar) {
+            patientTglKeluar.textContent = tglKeluar
+                ? `${formatTanggalKunjungan(tglKeluar)} WIB`
+                : '';
+        }
+
+        // =================================================
+        // BADGE STATUS VERIFIKASI KLAIM
+        // =================================================
+
+        if (patientStatus) {
+            const status = getClaimVerificationStatus(metadata);
+            patientStatus.textContent = status.label;
+            patientStatus.className = status.className;
+        }
+
+        document.title = `${nama} · Smart Claim · Sirmed v3`;
     }
+        /**
+     * Mengembalikan seluruh informasi dan styling topbar
+     * ke kondisi awal seperti EMRWorkspace.
+     */
+    function resetTopbar() {
+        const initial = state.initialTopbar || {};
 
-    function showDefaultTopbarIdentity() {
         const topbar = document.querySelector('#appTopbar');
         const defaultIdentity = document.querySelector('#topbarDefaultIdentity');
         const workspaceIdentity = document.querySelector('#topbarWorkspaceIdentity');
+        const patientDropdownContainer = document.querySelector('#patientDropdownContainer');
 
-        if (!topbar || !defaultIdentity || !workspaceIdentity) return;
+        const pageSubTitle = document.querySelector('#pageSubTitlebar');
+        const pageTitle = document.querySelector('#pageTitlebar');
 
-        topbar.classList.remove('is-workspace-mode');
-        topbar.classList.add('is-home-mode');
+        const patientBirth = document.querySelector('#patientBirthBar');
+        const patientRoom = document.querySelector('#patientRoomTopbar');
+        const patientDoctor = document.querySelector('#patientDoctorTopbar');
 
-        defaultIdentity.style.display = '';
-        workspaceIdentity.style.display = 'none';
+        const patientInsuranceName = document.querySelector('#patientInsuranceNameTopbar');
+        const patientRefIdAsuransi = document.querySelector('#patientRefIdAsuransiTopbar');
+
+        const patientTglMasuk = document.querySelector('#patientTglMasukTopbar');
+        const patientTglKeluar = document.querySelector('#patientTglKeluarTopbar');
+        const patientInsurance = document.querySelector('#patientInsuranceTopbar');
+
+        const patientStatus = document.querySelector('#patientStatusTopbar');
+
+        const divider1 = document.querySelector('#topbarDivider1');
+        const divider2 = document.querySelector('#topbarDivider2');
+        const divider3 = document.querySelector('#topbarDivider3');
+
+        // =====================================================
+        // MODE HOME
+        // =====================================================
+
+        if (topbar) {
+            topbar.classList.remove('is-workspace-mode');
+            topbar.classList.add('is-home-mode');
+        }
+
+        if (defaultIdentity) {
+            defaultIdentity.style.display = '';
+        }
+
+        if (workspaceIdentity) {
+            workspaceIdentity.style.display = 'none';
+        }
+
+        if (patientDropdownContainer) {
+            patientDropdownContainer.style.display = 'none';
+        }
+
+        // =====================================================
+        // PAGE SUBTITLE
+        // =====================================================
+
+        if (pageSubTitle) {
+            pageSubTitle.textContent = cleanTopbarText(initial.pageSubTitle);
+
+            applyTopbarTypography(pageSubTitle);
+        }
+
+        // =====================================================
+        // PAGE TITLE
+        // =====================================================
+
+        if (pageTitle) {
+            pageTitle.textContent = cleanTopbarText(initial.pageTitle);
+
+            applyTopbarTypography(pageTitle);
+
+            // Hapus tooltip identitas pasien.
+            const tooltip = window.bootstrap?.Tooltip?.getInstance(pageTitle);
+
+            if (tooltip) {
+                tooltip.dispose();
+            }
+
+            pageTitle.removeAttribute('data-bs-original-title');
+
+            if (initial.pageTitleTitle) {
+                pageTitle.setAttribute('title', initial.pageTitleTitle);
+            } else {
+                pageTitle.removeAttribute('title');
+            }
+        }
+
+        // =====================================================
+        // DIVIDER
+        // =====================================================
+
+        if (divider1) divider1.textContent = '';
+        if (divider2) divider2.textContent = '';
+        if (divider3) divider3.textContent = '';
+
+        // =====================================================
+        // INFORMASI PASIEN
+        // =====================================================
+
+        if (patientBirth) {
+            patientBirth.textContent = cleanTopbarText(initial.birth);
+            patientBirth.style.color = 'var(--bs-body-color)';
+        }
+
+        if (patientRoom) {
+            patientRoom.textContent = cleanTopbarText(initial.room);
+            patientRoom.style.color = 'var(--bs-body-color)';
+        }
+
+        if (patientDoctor) {
+            patientDoctor.textContent = cleanTopbarText(initial.doctor);
+            patientDoctor.style.color = 'var(--bs-body-color)';
+        }
+
+        // =====================================================
+        // ASURANSI
+        // =====================================================
+
+        if (patientInsuranceName) {
+            patientInsuranceName.textContent = cleanTopbarText(initial.insuranceName);
+
+            patientInsuranceName.classList.remove(
+                'text-muted',
+                'text-warning',
+                'text-primary'
+            );
+
+            patientInsuranceName.style.color = 'var(--bs-body-color)';
+        }
+
+        if (patientRefIdAsuransi) {
+            patientRefIdAsuransi.textContent = cleanTopbarText(initial.idAsuransi);
+            patientRefIdAsuransi.style.color = 'var(--bs-body-color)';
+        }
+
+        if (patientInsurance) {
+            patientInsurance.textContent = cleanTopbarText(initial.noAsuransi);
+            patientInsurance.style.color = 'var(--bs-body-color)';
+        }
+
+        // =====================================================
+        // TANGGAL KUNJUNGAN
+        // =====================================================
+
+        if (patientTglMasuk) {
+            patientTglMasuk.textContent = cleanTopbarText(initial.tglMasuk);
+            patientTglMasuk.style.color = 'var(--bs-body-color)';
+        }
+
+        if (patientTglKeluar) {
+            patientTglKeluar.textContent = cleanTopbarText(initial.tglKeluar);
+            patientTglKeluar.style.color = 'var(--bs-body-color)';
+        }
+
+        // =====================================================
+        // STATUS
+        // =====================================================
+
+        if (patientStatus) {
+            patientStatus.textContent = initial.status || '';
+            patientStatus.className = initial.statusClass || 'badge';
+        }
+
+        // Kembalikan document title.
+        if (state.initialDocumentTitle) {
+            document.title = state.initialDocumentTitle;
+        }
     }
 
     function escapeHtml(value) {
@@ -202,13 +667,59 @@
         return value ? String(value).trim() : '';
     }
 
+    // Jenis kunjungan untuk badge tab: K = Konsul, U = Utama.
+    function getVisitKind(metadata = {}) {
+        const jenis = firstNonEmpty(
+            metadata.jenisKunjungan,
+            metadata.JENIS_KUNJUNGAN,
+            metadata.jenis_kunjungan
+        ).toUpperCase();
+
+        if (['KONSUL', 'K'].includes(jenis)) return 'K';
+        if (['UTAMA', 'U'].includes(jenis)) return 'U';
+
+        return '';
+    }
+
+    function getVisitKindBadgeClass(kind) {
+        return kind === 'K'
+            ? 'badge bg-danger-subtle text-danger border border-danger-subtle badge-sm'
+            : 'badge bg-primary-subtle text-primary border border-primary-subtle badge-sm';
+    }
+
     // Tab caption hanya SEP. Tidak fallback ke nomor RM atau nama pasien.
     function getTabLabel(metadata = {}) {
         const noSEP = getNoSEP(metadata);
 
         return noSEP
-            ? `SEP ${noSEP}`
+            ? `SEP. ${noSEP}`
             : 'SEP belum tersedia';
+    }
+
+    // Render label tab sebagai DOM agar badge K/U menjadi elemen terpisah.
+        // Nomor SEP ditambahkan sebagai text node, bukan HTML mentah.
+    function renderTabLabel(element, metadata = {}) {
+        if (!element) return;
+
+        element.replaceChildren();
+
+        const noSEP = getNoSEP(metadata);
+        const kind = getVisitKind(metadata);
+
+        element.appendChild(
+            document.createTextNode(
+                noSEP ? `SEP. ${noSEP}` : 'SEP belum tersedia'
+            )
+        );
+
+        if (!kind) return;
+
+        const badge = document.createElement('span');
+        badge.className = getVisitKindBadgeClass(kind);
+        badge.textContent = kind;
+
+        element.appendChild(document.createTextNode(' '));
+        element.appendChild(badge);
     }
 
     function getClaimUrl(nomor, type = 'smart_claim') {
@@ -339,7 +850,7 @@
         const labelElement = document.createElement('span');
 
         labelElement.className = 'claim-tab-label';
-        labelElement.textContent = tab.label;
+        renderTabLabel(labelElement, tab.metadata || {});
 
         const closeButton = document.createElement('button');
 
@@ -349,7 +860,7 @@
         closeButton.title = 'Tutup tab';
         closeButton.setAttribute(
             'aria-label',
-            `Tutup ${tab.label}`
+            `Tutup ${tab.label}${getVisitKind(tab.metadata || {}) ? ` (${getVisitKind(tab.metadata || {})})` : ''}`
         );
 
         closeButton.innerHTML = `
@@ -419,7 +930,7 @@
                 );
 
                 if (labelElement) {
-                    labelElement.textContent = existing.label;
+                    renderTabLabel(labelElement, existing.metadata || {});
                 }
 
                 existing.tabElement.title = existing.label;
@@ -431,7 +942,7 @@
                 if (closeButton) {
                     closeButton.setAttribute(
                         'aria-label',
-                        `Tutup ${existing.label}`
+                        `Tutup ${existing.label}${getVisitKind(existing.metadata || {}) ? ` (${getVisitKind(existing.metadata || {})})` : ''}`
                     );
                 }
             }
@@ -506,8 +1017,7 @@
         tab.loaded = false;
         tab.loading = true;
         tab.error = false;
-
-        frame.addEventListener('load', () => {
+                frame.addEventListener('load', () => {
             tab.loaded = true;
             tab.loading = false;
             tab.error = false;
@@ -652,7 +1162,7 @@
             root.removeAttribute('data-active-tab-id');
         }
 
-        showDefaultTopbarIdentity();
+        resetTopbar();
 
         return true;
     }
@@ -845,6 +1355,11 @@
     function initializeWorkspace() {
         if (!getElements()) return;
 
+        // Ambil kondisi awal topbar sebelum workspace mengubah tampilannya.
+        captureInitialTopbar();
+                // Ambil kondisi awal topbar sebelum workspace mengubah tampilannya.
+        captureInitialTopbar();
+
         root.dataset.workspaceInitialized = 'true';
 
         const tabDescriptors = Array.from(
@@ -908,6 +1423,86 @@
         // Return to Smart Claim landing/home panel; do not automatically activate
         // previously active claim, and do not issue any iframe request.
         showHomePanel();
+
+        // Jika ada permintaan membuka klaim dari halaman lain,
+        // langsung buka workspace pasien tersebut.
+        consumePendingClaim();
+    }
+
+    // ======================================================
+    // CONSUME PENDING CLAIM WORKSPACE
+    // ======================================================
+    function consumePendingClaim() {
+
+        // Pastikan halaman workspace sudah tersedia.
+        if (!getElements()) {
+            return;
+        }
+
+        let pending = null;
+
+        try {
+            const raw = sessionStorage.getItem(
+                'sirmed.pendingClaimWorkspace'
+            );
+
+            if (!raw) {
+                return;
+            }
+
+            pending = JSON.parse(raw);
+
+        } catch (error) {
+
+            console.error(
+                '[ClaimWorkspace] Pending claim tidak valid:',
+                error
+            );
+
+            sessionStorage.removeItem(
+                'sirmed.pendingClaimWorkspace'
+            );
+
+            return;
+        }
+
+        if (
+            !pending ||
+            !pending.nomor
+        ) {
+            sessionStorage.removeItem(
+                'sirmed.pendingClaimWorkspace'
+            );
+
+            return;
+        }
+
+        const nomor = pending.nomor;
+
+        const type = pending.type || 'smart_claim';
+
+        const metadata = pending.metadata || {};
+
+        // Buka tab pasien.
+        const success = openClaim(
+            nomor,
+            type,
+            metadata
+        );
+
+        // Hapus hanya jika berhasil membuka workspace.
+        if (success) {
+
+            sessionStorage.removeItem(
+                'sirmed.pendingClaimWorkspace'
+            );
+
+            console.info(
+                '[ClaimWorkspace] Pending claim berhasil dibuka:',
+                nomor,
+                type
+            );
+        }
     }
 
     function handleDocumentClick(event) {
@@ -1042,6 +1637,152 @@
 
         getClaimUrl,
     };
+
+    // =====================================================
+    // SINKRONISASI METADATA SEP DARI IFRAME SMART CLAIM
+    // =====================================================
+    window.addEventListener('message', function (event) {
+        // Hanya menerima pesan dari origin aplikasi SIRMED.
+        if (event.origin !== window.location.origin) return;
+
+        const data = event.data;
+
+        if (!data || data.type !== 'CLAIM_METADATA_UPDATED') {
+            return;
+        }
+
+        const nomor = normalizeVisitId(data.kunjungan);
+
+        if (!nomor) return;
+
+        if (!data.metadata || typeof data.metadata !== 'object') {
+            return;
+        }
+
+        // Pesan ini khusus untuk detail Smart Claim utama.
+        const tab = Array.from(state.tabs.values()).find(item =>
+            item.nomor === nomor &&
+            item.type === 'smart_claim'
+        );
+
+        if (!tab || !tab.frame) return;
+
+        // Pastikan pesan benar-benar dikirim oleh iframe tab tersebut.
+        if (event.source !== tab.frame.contentWindow) return;
+
+        const noSEP = firstNonEmpty(
+            data.metadata.noSEP,
+            data.metadata.NOSEP,
+            data.metadata.no_sep,
+            data.metadata.nomorSEP,
+            data.metadata.nomor_sep
+        );
+
+        const jenisKunjungan = firstNonEmpty(
+            data.metadata.jenisKunjungan,
+            data.metadata.JENIS_KUNJUNGAN,
+            data.metadata.jenis_kunjungan
+        );
+
+        // Perbarui jika setidaknya SEP atau jenis kunjungan tersedia.
+        if (!noSEP && !jenisKunjungan) return;
+
+        // Metadata yang sudah ada tetap dipertahankan.
+        tab.metadata = {
+            ...(tab.metadata || {}),
+            ...(noSEP ? { noSEP: noSEP } : {}),
+            ...(jenisKunjungan ? { jenisKunjungan: jenisKunjungan } : {})
+        };
+
+        // Perbarui label dan badge tab.
+        tab.label = getTabLabel(tab.metadata);
+
+        if (tab.tabElement) {
+            const labelElement = tab.tabElement.querySelector(
+                '.claim-tab-label'
+            );
+
+            if (labelElement) {
+                renderTabLabel(labelElement, tab.metadata);
+            }
+
+            tab.tabElement.title = tab.label;
+
+            const closeButton = tab.tabElement.querySelector(
+                '[data-close-claim-tab]'
+            );
+
+            if (closeButton) {
+                closeButton.setAttribute(
+                    'aria-label',
+                    `Tutup ${tab.label}${getVisitKind(tab.metadata) ? ` (${getVisitKind(tab.metadata)})` : ''}`
+                );
+            }
+        }
+
+        // Perbarui title iframe jika tersedia.
+        if (tab.frame) {
+            tab.frame.title = tab.label;
+        }
+
+        // Jika tab sedang aktif, update identitas topbar.
+        if (state.activeTabId === tab.tabId) {
+            showClaimPatientIdentity(tab.metadata);
+        }
+    });
+
+    // =====================================================
+    // SINKRONISASI STATUS VERIFIKASI DARI IFRAME SMART CLAIM
+    // =====================================================
+    window.addEventListener('message', function (event) {
+        if (event.origin !== window.location.origin) return;
+
+        const data = event.data;
+
+        if (!data || data.type !== 'CLAIM_VERIFICATION_UPDATED') return;
+
+        // Ambil tab yang sedang aktif.
+        const activeTab = window.ClaimWorkspace.getActiveTab();
+
+        // Abaikan pesan dari iframe yang bukan tab aktif.
+        if (!activeTab || String(activeTab.nomor) !== String(data.kunjungan)) {
+            return;
+        }
+
+        // Normalisasi nilai boolean.
+        const verified = [
+            true, 1, '1', 'true', 'yes'
+        ].includes(
+            typeof data.verifikasi === 'string'
+                ? data.verifikasi.toLowerCase()
+                : data.verifikasi
+        );
+
+        // Update metadata tab aktif.
+        activeTab.metadata = {
+            ...(activeTab.metadata || {}),
+            statusVerif: verified ? 1 : 0,
+            statusKlaim: verified
+                ? 'SUDAH DIVERIFIKASI'
+                : 'BELUM DIVERIFIKASI',
+            statusVerifText: verified
+                ? 'SUDAH DIVERIFIKASI'
+                : 'BELUM DIVERIFIKASI',
+        };
+
+        // Update badge topbar.
+        const badge = document.getElementById('patientStatusTopbar');
+
+        if (!badge) return;
+
+        badge.textContent = verified
+            ? 'SUDAH DIVERIFIKASI'
+            : 'BELUM DIVERIFIKASI';
+
+        badge.className = verified
+            ? 'badge bg-success-subtle text-success border border-success-subtle'
+            : 'badge bg-danger-subtle text-danger border border-danger-subtle';
+    });
 
     if (document.readyState === 'loading') {
         document.addEventListener(

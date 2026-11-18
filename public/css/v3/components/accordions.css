@@ -1,0 +1,495 @@
+
+/* =========================================================
+   SIRMED V3 — GLOBAL ACCORDION COMPONENT
+   Bootstrap 5 Override
+   Scope: GLOBAL
+========================================================= */
+
+
+/* =========================================================
+   01. ACCORDION VARIABLES
+========================================================= */
+
+.accordion {
+    /* SIRMED Variables */
+    --sirmed-accordion-bg: var(--bs-body-bg);
+    --sirmed-accordion-color: var(--bs-body-color);
+    --sirmed-accordion-border: var(--bs-border-color);
+    --sirmed-accordion-primary: var(--bs-primary);
+    --sirmed-accordion-muted: var(--bs-secondary-color);
+    --sirmed-accordion-hover: var(--bs-tertiary-bg);
+
+    --sirmed-accordion-radius: 10px;
+
+    --sirmed-accordion-active-bg: color-mix(
+        in srgb,
+        var(--sirmed-accordion-primary) 5%,
+        var(--sirmed-accordion-bg)
+    );
+
+    /* Override Bootstrap Accordion Variables */
+    --bs-accordion-color: var(--sirmed-accordion-color) !important;
+    --bs-accordion-bg: var(--sirmed-accordion-bg) !important;
+
+    --bs-accordion-border-color: var(--sirmed-accordion-border) !important;
+    --bs-accordion-border-width: 1px !important;
+    --bs-accordion-border-radius: var(--sirmed-accordion-radius) !important;
+    --bs-accordion-inner-border-radius: 9px !important;
+
+    --bs-accordion-btn-color: var(--sirmed-accordion-color) !important;
+    --bs-accordion-btn-bg: var(--sirmed-accordion-bg) !important;
+
+    --bs-accordion-active-color: var(--sirmed-accordion-primary) !important;
+    --bs-accordion-active-bg: var(--sirmed-accordion-active-bg) !important;
+
+    --bs-accordion-btn-focus-box-shadow: none !important;
+
+    --bs-accordion-btn-icon: none !important;
+    --bs-accordion-btn-active-icon: none !important;
+
+    /* Layout */
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+}
+
+
+/* =========================================================
+   02. ACCORDION ITEM
+========================================================= */
+
+.accordion > .accordion-item {
+    position: relative !important;
+
+    color: var(--sirmed-accordion-color) !important;
+    background-color: transparent !important;
+
+    border: 1px solid var(--sirmed-accordion-border) !important;
+    border-radius: var(--sirmed-accordion-radius) !important;
+
+    overflow: hidden !important;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background-color .2s ease !important;
+}
+
+/* Reset Bootstrap border antar-item */
+.accordion > .accordion-item:not(:first-of-type) {
+    border-top: 1px solid var(--sirmed-accordion-border) !important;
+}
+
+/* Hover item */
+.accordion > .accordion-item:hover {
+    border-color: color-mix(
+        in srgb,
+        var(--sirmed-accordion-primary) 30%,
+        var(--sirmed-accordion-border)
+    ) !important;
+}
+
+/* Header */
+.accordion .accordion-header {
+    margin: 0 !important;
+}
+
+
+/* =========================================================
+   03. ACCORDION BUTTON
+========================================================= */
+
+.accordion > .accordion-item > .accordion-header > .accordion-button,
+.accordion > .accordion-item > .accordion-header > .accordion-button.collapsed {
+    position: relative !important;
+
+    display: flex !important;
+    align-items: center !important;
+    /* gap: 12px !important; */
+
+    width: 100% !important;
+    min-height: 48px !important;
+
+    padding: 13px 16px !important;
+
+    font-family: inherit !important;
+    font-size: .875rem !important;
+    font-weight: 600 !important;
+    line-height: 1.5 !important;
+
+    color: var(--sirmed-accordion-color) !important;
+    text-align: left !important;
+
+    background-color: var(--sirmed-accordion-bg) !important;
+    background-image: none !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    box-shadow: none !important;
+    outline: none !important;
+
+    overflow-anchor: none !important;
+
+    transition:
+        color .2s ease,
+        background-color .2s ease !important;
+}
+
+
+/* =========================================================
+   04. BUTTON EXPANDED
+========================================================= */
+
+.accordion > .accordion-item > .accordion-header > .accordion-button:not(.collapsed) {
+    /* color: var(--sirmed-accordion-primary) !important; */
+
+    background-color: var(--sirmed-accordion-active-bg) !important;
+
+    border: 0 !important;
+
+    box-shadow: none !important;
+}
+
+
+/* =========================================================
+   05. BUTTON HOVER
+========================================================= */
+
+.accordion > .accordion-item > .accordion-header > .accordion-button:hover {
+    color: var(--sirmed-accordion-primary) !important;
+
+    background-color: var(--sirmed-accordion-hover) !important;
+
+    box-shadow: none !important;
+
+    z-index: 2 !important;
+}
+
+
+/* =========================================================
+   06. BUTTON FOCUS
+========================================================= */
+
+.accordion > .accordion-item > .accordion-header > .accordion-button:focus,
+.accordion > .accordion-item > .accordion-header > .accordion-button:focus-visible {
+    color: var(--sirmed-accordion-color) !important;
+
+    outline: none !important;
+    box-shadow: none !important;
+
+    z-index: 3 !important;
+}
+
+
+/* =========================================================
+   07. BUTTON DISABLED
+========================================================= */
+
+.accordion .accordion-button:disabled,
+.accordion .accordion-button.disabled {
+    color: var(--sirmed-accordion-muted) !important;
+
+    background-color: var(--sirmed-accordion-bg) !important;
+
+    opacity: .55 !important;
+
+    cursor: not-allowed !important;
+}
+
+
+/* =========================================================
+   08. ACCORDION ARROW ICON
+   Replace Bootstrap SVG with CSS Chevron
+========================================================= */
+
+.accordion > .accordion-item > .accordion-header > .accordion-button::after {
+    display: block !important;
+    flex-shrink: 0 !important;
+
+    width: 10px !important;
+    height: 10px !important;
+
+    margin-left: auto !important;
+
+    content: "" !important;
+
+    background-image: none !important;
+    background-color: transparent !important;
+
+    background-repeat: unset !important;
+    background-position: center !important;
+    background-size: unset !important;
+
+    border: 0 !important;
+
+    border-right: 2px solid var(--sirmed-accordion-muted) !important;
+    border-bottom: 2px solid var(--sirmed-accordion-muted) !important;
+
+    transform: rotate(45deg) !important;
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease !important;
+}
+
+/* Expanded arrow */
+.accordion > .accordion-item > .accordion-header > .accordion-button:not(.collapsed)::after {
+    background-image: none !important;
+
+    border-right-color: var(--sirmed-accordion-primary) !important;
+    border-bottom-color: var(--sirmed-accordion-primary) !important;
+
+    transform: rotate(225deg) !important;
+}
+
+
+/* =========================================================
+   09. HEADER ICON
+========================================================= */
+
+.accordion .accordion-button .accordion-icon {
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex-shrink: 0 !important;
+
+    width: 30px !important;
+    height: 30px !important;
+
+    color: var(--sirmed-accordion-muted) !important;
+
+    background-color: var(--sirmed-accordion-hover) !important;
+
+    border: 0 !important;
+    border-radius: 8px !important;
+
+    font-size: 16px !important;
+
+    transition:
+        color .2s ease,
+        background-color .2s ease !important;
+}
+
+/* Active icon */
+.accordion .accordion-button:not(.collapsed) .accordion-icon {
+    color: var(--sirmed-accordion-primary) !important;
+
+    background-color: color-mix(
+        in srgb,
+        var(--sirmed-accordion-primary) 12%,
+        var(--sirmed-accordion-bg)
+    ) !important;
+}
+
+
+/* =========================================================
+   10. HEADER TITLE
+========================================================= */
+
+.accordion .accordion-button .accordion-title {
+    flex: 1 1 auto !important;
+
+    min-width: 0 !important;
+
+    color: inherit !important;
+}
+
+
+/* =========================================================
+   11. HEADER SUBTITLE
+========================================================= */
+
+.accordion .accordion-button .accordion-subtitle {
+    display: block !important;
+
+    margin-top: 2px !important;
+
+    color: var(--sirmed-accordion-muted) !important;
+
+    font-size: .75rem !important;
+    font-weight: 400 !important;
+}
+
+
+/* =========================================================
+   12. HEADER BADGE
+========================================================= */
+
+.accordion .accordion-button .accordion-badge {
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    min-width: 22px !important;
+    height: 22px !important;
+
+    padding: 0 7px !important;
+
+    color: var(--sirmed-accordion-muted) !important;
+
+    background-color: var(--sirmed-accordion-hover) !important;
+
+    border: 0 !important;
+    border-radius: 6px !important;
+
+    font-size: .7rem !important;
+    font-weight: 600 !important;
+}
+
+
+/* =========================================================
+   13. ACCORDION COLLAPSE
+========================================================= */
+
+.accordion > .accordion-item > .accordion-collapse {
+    border-top: 1px solid var(--sirmed-accordion-border) !important;
+}
+
+
+/* =========================================================
+   14. ACCORDION BODY
+========================================================= */
+
+.accordion .accordion-body {
+    padding: 16px !important;
+
+    color: var(--sirmed-accordion-color) !important;
+
+    background-color: var(--sirmed-accordion-bg) !important;
+
+    font-family: inherit !important;
+    font-size: .875rem !important;
+    line-height: 1.6 !important;
+}
+
+
+/* =========================================================
+   15. COMPACT VARIANT
+========================================================= */
+
+.accordion.accordion-sm {
+    gap: 7px !important;
+}
+
+.accordion.accordion-sm .accordion-button {
+    min-height: 40px !important;
+
+    padding: 9px 12px !important;
+
+    font-size: .8125rem !important;
+}
+
+.accordion.accordion-sm .accordion-body {
+    padding: 12px !important;
+}
+
+
+/* =========================================================
+   16. FLUSH VARIANT
+========================================================= */
+
+.accordion.accordion-flush {
+    gap: 0 !important;
+}
+
+.accordion.accordion-flush > .accordion-item {
+    border: 0 !important;
+
+    border-bottom: 1px solid var(--sirmed-accordion-border) !important;
+
+    border-radius: 0 !important;
+}
+
+.accordion.accordion-flush > .accordion-item:first-child {
+    border-top: 0 !important;
+}
+
+.accordion.accordion-flush > .accordion-item:last-child {
+    border-bottom: 0 !important;
+}
+
+.accordion.accordion-flush .accordion-button,
+.accordion.accordion-flush .accordion-button.collapsed {
+    border-radius: 0 !important;
+}
+
+.accordion.accordion-flush .accordion-collapse {
+    border-radius: 0 !important;
+}
+
+
+/* =========================================================
+   17. PRIMARY VARIANT
+========================================================= */
+
+.accordion.accordion-primary > .accordion-item:has(
+    > .accordion-header > .accordion-button:not(.collapsed)
+) {
+    border-color: color-mix(
+        in srgb,
+        var(--sirmed-accordion-primary) 40%,
+        var(--sirmed-accordion-border)
+    ) !important;
+}
+
+
+/* =========================================================
+   18. DARK MODE
+========================================================= */
+
+[data-bs-theme="dark"] .accordion {
+    --sirmed-accordion-bg: var(--bs-body-bg);
+    --sirmed-accordion-color: var(--bs-body-color);
+    --sirmed-accordion-border: var(--bs-border-color);
+    --sirmed-accordion-primary: var(--bs-primary);
+    --sirmed-accordion-muted: var(--bs-secondary-color);
+    --sirmed-accordion-hover: var(--bs-tertiary-bg);
+}
+
+
+/* =========================================================
+   19. RESPONSIVE
+========================================================= */
+
+@media (max-width: 576px) {
+
+    .accordion .accordion-button {
+        min-height: 44px !important;
+
+        padding: 11px 12px !important;
+
+        font-size: .8125rem !important;
+    }
+
+    .accordion .accordion-body {
+        padding: 12px !important;
+    }
+
+    .accordion .accordion-button .accordion-icon {
+        width: 27px !important;
+        height: 27px !important;
+
+        font-size: 14px !important;
+    }
+
+}
+
+
+/* =========================================================
+   20. REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .accordion *,
+    .accordion *::before,
+    .accordion *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+
+}

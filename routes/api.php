@@ -71,6 +71,8 @@ Route::get('/simgos/kunjungan/pasien', [App\Http\Controllers\Pelayanan\Pasien\Da
 
 //---------------------------------------------------------------    A  P  I    L  O  K  A  L    -----------------------------------------------------------------
 Route::prefix('v3')->middleware(['web','auth'])->group(function () { // SIRMED v.3
+    Route::get('klaim/table/{pel}/{tgls}/{tgle}/{bln}/{dpjp}', [ApiSmartKlaimController::class, 'tableV3'])->name('api.v3.klaim.table');
+    Route::get('klaim/{sep}/verif', [ApiSmartKlaimController::class, 'verifSepV3'])->name('api.v3.klaim.verifSep');
     // Route::get('notifikasi/klaim', [NotifikasiController::class, 'notifikasiKlaimV3']);
 });
 

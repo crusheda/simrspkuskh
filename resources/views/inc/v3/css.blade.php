@@ -46,6 +46,7 @@
 
 {{-- CSS EACH PAGES --}}
 <link rel="stylesheet" href="{{ asset('assets/v2/css/custom.css') }}">
+{{-- <link rel="stylesheet" href="{{ asset('css/v3/components/reboot.css') }}"> --}}
 <link rel="stylesheet" href="{{ asset('css/v3/components/typography.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/components/form-controls.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/components/modals.css') }}">
@@ -55,6 +56,7 @@
 <link rel="stylesheet" href="{{ asset('css/v3/components/datatables.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/components/buttons.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/components/list-group.css') }}">
+<link rel="stylesheet" href="{{ asset('css/v3/components/accordions.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/pages/notifikasi.css') }}">
 <link rel="stylesheet" href="{{ asset('css/v3/pages/profil.css') }}">
 

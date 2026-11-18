@@ -1,8 +1,3 @@
-@assets
-    <link rel="stylesheet" href="{{ asset('css/v3/components/claim-workspace.css') }}">
-    <script src="{{ asset('js/v3/components/claim-workspace.js') }}" defer></script>
-@endassets
-
 @section('title', 'Smart Claim')
 @section('page-sub-title', 'SISTEM INFORMASI RUMAH SAKIT')
 @section('page-title', 'Smart Claim')
@@ -23,9 +18,9 @@
         box-sizing: border-box;
     }
 
-    .claim-home-content .row {
+    /* .claim-home-content .row {
         max-width: 100%;
-    }
+    } */
 
     .claim-home-content .card {
         min-width: 0;
@@ -45,14 +40,14 @@
 
             {{-- CLAIM TABLE --}}
             <div class="col-xl-8">
-                <div class="card rounded-0">
+                <div class="card rounded-4">
 
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">
                             <i class="ti ti-table text-primary me-1"></i>
                             Claim Table
 
-                            <span class="ms-2 f-14 px-2 badge bg-secondary-subtle text-secondary"
+                            <span class="ms-2 f-14 px-2 badge text-bg-secondary"
                                 id="jumlah_claim">
                                 <i class="fas fa-sync fa-spin"></i>
                             </span>
@@ -60,7 +55,7 @@
                     </div>
 
                     <div class="card-body p-3 pb-0 table-body">
-                        <div class="table-responsive pb-3">
+                        <div class="table-responsive">
 
                             <table class="table mb-0 table-hover table-striped" id="dttable">
                                 <thead>
@@ -100,7 +95,7 @@
             <div class="col-xl-4">
 
                 {{-- PENCARIAN SEP --}}
-                <div class="card rounded-0">
+                <div class="card rounded-4 mb-3">
                     <div class="card-body">
 
                         <h5>
@@ -110,9 +105,7 @@
 
                         <label class="form-label">
                             <small>
-                                Tuliskan No.SEP dengan nilai default adalah
-                                0151R013<b class="text-teal">xxx</b>
-                                (<b class="text-orange">19 Digit</b>)
+                                Lengkapi No.SEP dibawah dengan Format Nilai : 0151R013<b class="text-teal">xxx</b> (<b class="text-orange">19 Digit</b>)
                             </small>
                         </label>
 
@@ -121,7 +114,7 @@
                                 placeholder="Masukkan No.SEP Pasien" id="sep_px" maxlength="19"
                                 autocomplete="off">
 
-                            <button class="btn btn-secondary" type="button" id="btn-cari"
+                            <button class="btn btn-subtle-success" type="button" id="btn-cari"
                                 onclick="cariSep()" disabled>
                                 <i class="fas fa-search align-middle me-1"></i>
                                 Cari
@@ -132,7 +125,7 @@
                 </div>
 
                 {{-- FILTER --}}
-                <div class="card rounded-0">
+                <div class="card rounded-4">
                     <div class="card-body">
 
                         <h5 class="mb-2">
@@ -228,15 +221,13 @@
 
                         </div>
                     </div>
-                </div>
-
-                {{-- TOMBOL TAMPILKAN --}}
-                <div class="d-grid mb-3">
-                    <button class="btn btn-primary" onclick="filter()" id="tombol-tampilkan"
-                        disabled>
-                        <i class="fa fa-filter me-1" style="font-size: 13px"></i>
-                        Tampilkan
-                    </button>
+                    <div class="card-footer">
+                        <button class="btn btn-primary w-100" onclick="filter()" id="tombol-tampilkan"
+                            disabled>
+                            <i class="fa fa-filter me-1" style="font-size: 13px"></i>
+                            Tampilkan
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -491,7 +482,7 @@
             }
 
             $.ajax({
-                url: `/api/klaim/table/${pel}/${tgls}/${tgle}/${bln}/${dpjp}`,
+                url: `/api/v3/klaim/table/${pel}/${tgls}/${tgle}/${bln}/${dpjp}`,
                 type: 'GET',
                 dataType: 'json',
 
@@ -606,7 +597,7 @@
                                 stt = `
                                 <a
                                     href="javascript:void(0);"
-                                    class="btn btn-action-success btn-sm p-0"
+                                    class="btn btn-subtle-success btn-sm"
                                     data-bs-toggle="tooltip"
                                     data-bs-placement="bottom"
                                     title="Telah Diverifikasi Oleh ${item.NAMAVERIF} pada ${item.TGLVERIF}"
@@ -621,7 +612,7 @@
                                 stt = `
                                 <a
                                     href="javascript:void(0);"
-                                    class="btn btn-action-danger btn-sm p-0"
+                                    class="btn btn-subtle-danger btn-sm"
                                     data-bs-toggle="tooltip"
                                     data-bs-placement="bottom"
                                     title="Berkas Belum Diverifikasi"
@@ -640,7 +631,7 @@
                                 cat = `
                                 <a
                                     href="javascript:void(0);"
-                                    class="btn btn-action-success btn-sm p-0"
+                                    class="btn btn-subtle-success btn-sm"
                                     data-bs-toggle="tooltip"
                                     data-bs-placement="bottom"
                                     title="Semua Catatan Berkas Klaim Terselesaikan"
@@ -656,7 +647,7 @@
                                 cat = `
                                 <a
                                     href="javascript:void(0);"
-                                    class="btn btn-action-warning btn-sm p-0"
+                                    class="btn btn-subtle-warning btn-sm"
                                     data-bs-toggle="tooltip"
                                     data-bs-placement="bottom"
                                     title="Lihat Catatan Berkas Klaim"
@@ -672,7 +663,7 @@
                                 cat = `
                                 <a
                                     href="javascript:void(0);"
-                                    class="btn btn-action-secondary btn-sm p-0"
+                                    class="btn btn-subtle-secondary btn-sm"
                                     data-bs-toggle="tooltip"
                                     data-bs-placement="bottom"
                                     title="Tidak Ada Catatan"
@@ -760,7 +751,7 @@
                                 tglKeluar: item.KELUAR ?? '',
 
                                 // Informasi konsul
-                                jenisKunjungan: item.JENIS_KUNJUNGAN ?? '',
+                                jenisKunjungan: String(item.JENIS_KUNJUNGAN ?? '').trim().toUpperCase(),
                                 noKunjunganKonsul: item.NO_KUNJUNGAN_KONSUL ?? '',
                                 tglKunjunganKonsul: item.TGL_KUNJUNGAN_KONSUL ?? '',
 
@@ -771,9 +762,7 @@
                                     : 'BELUM DIVERIFIKASI',
 
                                 // Label tab
-                                label: `RM.${item.NORM ?? '-'} - ${
-                                    item.NAMAPASIEN ?? item.NOMOR
-                                }`
+                                label: `SEP. ${item.NOSEP ?? '-'}`
 
                             }));
 
@@ -799,18 +788,18 @@
                                         </a>
                                     </h5>
 
-                                    <p class="text-muted mb-0 fs-16">
+                                    <p class="mb-0 fs-16">
                                         RM.${item.NORM} -
                                         <b class="text-skyblue">
                                             ${item.NAMAPASIEN}
                                         </b>
                                     </p>
 
-                                    <p class="text-muted mb-0 fs-12">
+                                    <p class="mb-0 fs-12">
                                         ${item.NAMARUANGAN} - ${item.NAMADOKTER}
                                     </p>
 
-                                    <p class="text-muted mb-0 fs-12">
+                                    <p class="mb-0 fs-12">
                                         Jenis Kunjungan :
                                         &nbsp;${badgeKonsul}
                                         ${addOnKonsul ?? ''}
@@ -818,7 +807,7 @@
                                 </td>
 
                                 <td class="text-end align-middle">
-                                    <a href="javascript:void(0);" class="text-muted">
+                                    <a href="javascript:void(0);" class="">
                                         ${item.MASUK}
                                     </a>
                                 </td>
@@ -1045,7 +1034,7 @@
             }
 
             $.ajax({
-                url: `/api/klaim/${sepPX}/verif`,
+                url: `/api/v3/klaim/${sepPX}/verif`,
                 type: 'GET',
                 dataType: 'json',
 
@@ -1075,24 +1064,55 @@
                         : `/v3/smartclaim/${encodeURIComponent(res.kunjungan)}`;
 
                     const metadata = {
-                        nomor: String(res.kunjungan),
+                        nomor: String(res.NOMOR ?? ''),
+                        norm: res.NORM ?? '',
 
-                        norm: res.NORM ?? res.norm ?? '',
+                        nama: res.NAMAPASIEN ?? '',
+                        namaLengkap: res.NAMALENGKAPPASIEN ?? '',
+                        panggilan: res.PANGGILANPASIEN ?? '',
 
-                        nama: res.NAMAPASIEN ?? res.namaPasien ?? '',
+                        tglLahir: res.TGLLAHIRPASIEN ?? '',
+                        umur: res.UMURPASIEN ?? '',
+                        jenisKelamin: res.JKPASIEN ?? '',
 
-                        noSEP: sepPX,
+                        nik: res.NIKPASIEN ?? '',
+                        noHP: res.NOHPPASIEN ?? '',
 
-                        namaAsuransi: 'BPJS KESEHATAN',
+                        namaAsuransi: res.NAMAASURANSI ?? '',
+                        idAsuransi: res.IDASURANSI ?? '',
+                        refIdAsuransi: res.REFIDASURANSI ?? '',
+                        noAsuransi: res.NOASURANSI ?? '',
 
+                        noBPJS: res.NOBPJS ?? '',
+                        noSEP: res.NOSEP ?? '',
+                        tglSEP: res.TGLSEP ?? '',
+
+                        statusBPJS: res.STATUSBPJS ?? '',
+
+                        idRuangan: res.IDRUANGAN ?? '',
                         namaRuangan: res.NAMARUANGAN ?? '',
 
                         namaDokter: res.NAMADOKTER ?? '',
 
-                        statusKlaim: 'PENCARIAN SEP',
+                        tglDaftar: res.TGLDAFTAR ?? '',
+                        tglMasuk: res.MASUK ?? '',
+                        tglKeluar: res.KELUAR ?? '',
 
-                        label: `SEP ${sepPX}`,
+                        jenisKunjungan: String(res.JENIS_KUNJUNGAN ?? '').trim().toUpperCase(),
+                        ruanganKonsul: res.RUANGAN_KONSUL ?? '',
+                        dokterKonsul: res.DOKTER_KONSUL ?? '',
 
+                        statusVerif: res.STATUSVERIF ?? 0,
+                        tglVerif: res.TGLVERIF ?? '',
+                        namaVerif: res.NAMAVERIF ?? '',
+
+                        statusKlaim: Number(res.STATUSVERIF) === 1
+                            ? 'SUDAH DIVERIFIKASI'
+                            : 'BELUM DIVERIFIKASI',
+
+                        catatan: res.CATATAN ?? 0,
+
+                        label: `SEP. ${res.NOSEP ?? ''}`,
                         url: url
                     };
 

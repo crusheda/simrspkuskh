@@ -225,6 +225,255 @@ class ApiSmartKlaimController extends Controller
         return response()->json($data, 200);
     }
 
+    function tableV3($pel,$tgls,$tgle,$bln,$dpjp)
+    {
+        $time = Carbon::now()->isoFormat('YYYY-MM-DD HH:mm:ss');
+
+        if ($tgls === '0' && $tgle === '0' && $bln === '0') {
+            return response()->json("Pilih tanggal / bulan terlebih dahulu.", 401);
+        }
+
+        $subCatatanAgg = DB::table('simrspku_klaim.klaim_verifikasi_catatan')
+            ->select(
+                'nomor',
+                DB::raw("
+                    CASE
+                        WHEN SUM(CASE WHEN status = 1 AND solved = 0 THEN 1 ELSE 0 END) > 0 THEN 1
+                        WHEN SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) > 0 THEN 2
+                        ELSE 0
+                    END AS catatan_status
+                ")
+            )
+            ->whereNull('deleted_at')
+            ->where('status',1)
+            ->groupBy('nomor');
+
+        // MAIN QUERY
+            $show = DB::table('pendaftaran.kunjungan AS pk')
+                    ->select(
+                        'pk.*',
+
+                        // PENDAFTARAN
+                        'pp.NORM',
+                        'pp.TANGGAL AS TGLDAFTAR',
+
+                        // IDENTITAS PASIEN
+                        'ps.NAMA AS NAMALENGKAPPASIEN',
+                        'ps.PANGGILAN AS PANGGILANPASIEN',
+                        'ps.TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+                        'ps.JENIS_KELAMIN AS JENISKELAMINPASIEN',
+
+                        DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
+
+                        DB::raw("
+                            CASE
+                                WHEN ps.JENIS_KELAMIN = 1 THEN 'LAKI-LAKI'
+                                WHEN ps.JENIS_KELAMIN = 2 THEN 'PEREMPUAN'
+                                ELSE 'TIDAK DIKETAHUI'
+                            END AS JKPASIEN
+                        "),
+
+                        DB::raw('master.getCariUmur(pp.TANGGAL, ps.TANGGAL_LAHIR) AS UMURPASIEN'),
+
+                        // IDENTITAS TAMBAHAN
+                        'kips.NOMOR AS NIKPASIEN',
+                        'kps.NOMOR AS NOHPPASIEN',
+
+                        // PENJAMIN / ASURANSI
+                        'pj.JENIS AS IDASURANSI',
+                        'npj.DESKRIPSI AS NAMAASURANSI',
+                        'npj.REF_ID AS REFIDASURANSI',
+                        'pj.NOMOR AS NOASURANSI',
+
+                        // BPJS
+                        'kjs.noKartu AS NOBPJS',
+                        'kjs.noSEP AS NOSEP',
+                        'kjs.tglSEP AS TGLSEP',
+                        'pjs.prolanisPRB AS PRBPASIEN',
+                        'pjs.ketStatusPeserta AS STATUSBPJS',
+
+                        // RUANGAN
+                        'ru.ID AS IDRUANGAN',
+                        'ru.DESKRIPSI AS NAMARUANGAN',
+
+                        // DOKTER
+                        DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
+
+                        // KONSUL / UTAMA
+                        DB::raw("
+                            CASE
+                                WHEN pkonsul.NOMOR IS NOT NULL THEN 'KONSUL'
+                                ELSE 'UTAMA'
+                            END AS JENIS_KUNJUNGAN
+                        "),
+
+                        // RUANGAN ASAL KONSUL
+                        DB::raw("
+                            CASE
+                                WHEN pkonsul.NOMOR IS NOT NULL
+                                THEN ru_asal.DESKRIPSI
+                                ELSE NULL
+                            END AS RUANGAN_KONSUL
+                        "),
+
+                        // DOKTER ASAL KONSUL
+                        DB::raw("
+                            CASE
+                                WHEN pkonsul.NOMOR IS NOT NULL
+                                THEN master.getNamaLengkapPegawai(dr_asal.NIP)
+                                ELSE NULL
+                            END AS DOKTER_KONSUL
+                        "),
+
+                        // VERIFIKASI KLAIM
+                        'kv.id AS IDKLAIM',
+                        'kv.verif AS STATUSVERIF',
+                        'kv.verif_tgl AS TGLVERIF',
+                        DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAVERIF'),
+
+                        // CATATAN KLAIM
+                        'catagg.catatan_status AS CATATAN'
+                    )
+                    ->leftJoinSub($subCatatanAgg,'catagg',function($join){
+                        $join->on('catagg.nomor','=','pk.NOMOR');
+                    })
+
+                    ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
+
+                    // ambil data konsul / utama
+                    ->leftJoin('pendaftaran.konsul AS pkonsul','pkonsul.NOMOR','=','pk.REF')
+
+                    // ambil kunjungan asal konsul
+                    ->leftJoin('pendaftaran.kunjungan AS pk_asal','pk_asal.NOMOR','=','pkonsul.KUNJUNGAN')
+
+                    // ambil nama dokter asal
+                    ->leftJoin('master.dokter AS dr_asal','dr_asal.ID','=','pkonsul.DOKTER_ASAL')
+
+                    // ambil nama ruangan asal
+                    ->leftJoin('master.ruangan AS ru_asal','ru_asal.ID','=','pk_asal.RUANGAN')
+
+                    ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                    ->leftJoin('medicalrecord.perencanaan_rawat_inap AS pri','pri.KUNJUNGAN','=','pk.NOMOR')
+                    ->leftJoin('pembayaran.tagihan_pendaftaran AS tp','tp.PENDAFTARAN','=','pk.NOPEN')
+                    ->join('bpjs.kunjungan AS kjs', function ($join) {
+                        $join->on('kjs.noSEP', '=', 'pj.NOMOR')
+                            ->whereNotNull('pj.NOMOR')
+                            ->where('pj.NOMOR', '<>', '');
+                    })
+                    ->leftJoin('master.pasien AS ps','ps.NORM','=','pp.NORM')
+                    ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                    ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
+                    ->leftJoin('master.referensi AS npj', function ($join) {
+                        $join->on('npj.ID', '=', 'pj.JENIS')
+                            ->where('npj.JENIS', 10);
+                    })
+                    ->leftJoin('bpjs.peserta AS pjs', 'pjs.noKartu', '=', 'kjs.noKartu')
+                    ->leftJoin('master.kontak_pasien AS kps', 'kps.NORM', '=', 'ps.NORM')
+                    ->leftJoin('master.kartu_identitas_pasien AS kips', 'kips.NORM', '=', 'ps.NORM')
+                    ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) {
+                        $join->on('kv.nomor','=','pk.NOMOR')
+                            ->where('kv.status', true);
+                    })
+                    // ->leftJoin('simrspku_klaim.klaim_verifikasi_catatan AS kvc', function($join) {
+                    //     $join->on('kvc.nomor','=','pk.NOMOR')
+                    //         ->where('kvc.status', true);
+                    // })
+                    ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','kv.verif_user')
+                    // ->where(function ($query) {
+                    //     $query->where('pk.RUANGAN', 'LIKE', '1020101%');
+                    // })
+
+                    // FILTER RUANGAN
+                    ->when(in_array($pel, [1, 2, 3]), function ($query) use ($pel) {
+                        $prefix = [];
+                        switch ($pel) {
+                            case 1:
+                                $prefix = ['1020101%','1020702%'];
+                                break;
+                            case 2:
+                                $prefix = ['1020201%'];
+                                break;
+                            case 3:
+                                $prefix = ['1020301%','1020302%'];
+                                break;
+                        }
+
+                        $query->where(function ($q) use ($prefix) {
+                            foreach ($prefix as $p) {
+                                $q->orWhere('pk.RUANGAN', 'LIKE', $p);
+                            }
+                        });
+                    })
+                    ->when($pel == 5, function ($query) {
+                        $query->where(function ($q) {
+                            $q->where('pk.RUANGAN', 'LIKE', '1020101%')
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020301%')
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020302%')
+                                ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
+                        });
+                    })
+
+                    // FILTER BULAN TAHUN
+                    // ->where(function ($query) use ($tgls,$tgle) {
+                    //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
+                    // })
+                    // ->where(function ($query) use ($year,$month) {
+                    //     $query->whereYear('pk.MASUK', $year)
+                    //             ->whereMonth('pk.MASUK', $month);
+                    // })
+
+                    // ->where(function ($query) use ($tgls,$tgle) {
+                    //     $query->whereRaw("LEFT(pk.MASUK, 10) BETWEEN ? AND ?", [$tgls, $tgle]);
+                    // })
+                    ->when($tgls !== '0' && $tgle !== '0' && $bln === '0', function ($query) use ($tgls, $tgle) {
+                        $query->where('pk.MASUK', '>=', $tgls . ' 00:00:00')
+                            ->where('pk.MASUK', '<', Carbon::parse($tgle)->addDay()->toDateString() . ' 00:00:00');
+                    })
+                    ->when($tgls === '0' && $tgle === '0' && $bln !== '0', function ($query) use ($bln) {
+                        [$year, $month] = explode('-', $bln);
+
+                        $startDate = Carbon::createFromDate((int) $year, (int) $month, 1)
+                            ->startOfDay();
+
+                        $endDate = $startDate->copy()->addMonth();
+
+                        $query->where('pk.MASUK', '>=', $startDate)
+                            ->where('pk.MASUK', '<', $endDate);
+                    })
+
+                    // KHUSUS RAWAT DARURAT
+                    ->when($pel == 2, function ($query) use ($pel) {
+                        $query->where(function ($q) {
+                            $q->where('tp.UTAMA', 1)
+                                ->where('tp.STATUS', 1)
+                                ->whereNull('pri.KUNJUNGAN');
+                        });
+                    })
+
+                    // FILTER DPJP
+                    ->when($dpjp != 0, function ($query) use ($dpjp) {
+                        // Hanya menambahkan where jika $dpjp bukan 0
+                        $query->where('dr.NIP', $dpjp);
+                    })
+
+                    ->where('pj.JENIS', 2) // PENJAMIN BPJS ONLY
+                    // ->where('pk.BARU', 1) // KUNJUNGAN PERTAMA
+                    ->where('ru.STATUS', 1) // STATUS RUANGAN AKTIF
+                    ->where('pk.STATUS', 2) // KUNJUNGAN SELESAI
+                    ->where('pk.KELUAR', '!=', null)
+                    ->orderBy('pk.MASUK','DESC')
+                    ->get();
+        // print_r($show);
+        // die();
+        $data = [
+            'show' => $show,
+            'time' => $time,
+        ];
+
+        return response()->json($data, 200);
+    }
+
     function showUpload($id)
     {
         $getFile = klaim_file::where('id',$id)->first();
@@ -800,6 +1049,224 @@ class ApiSmartKlaimController extends Controller
         }
 
         return response()->json($data, $status);
+    }
+
+    public function verifSepV3($sep)
+    {
+        $show = DB::table('pendaftaran.kunjungan AS pk')
+            ->select(
+                // =====================================================
+                // KUNJUNGAN
+                // =====================================================
+                'pk.NOMOR',
+                'pk.STATUS',
+                'pk.MASUK',
+                'pk.KELUAR',
+
+                // =====================================================
+                // PENDAFTARAN
+                // =====================================================
+                'pp.NORM',
+                'pp.TANGGAL AS TGLDAFTAR',
+
+                // =====================================================
+                // ASURANSI / BPJS
+                // =====================================================
+                'npj.DESKRIPSI AS NAMAASURANSI',
+                'npj.REF_ID AS REFIDASURANSI',
+                'pj.JENIS AS IDASURANSI',
+                'pj.NOMOR AS NOASURANSI',
+
+                'kjs.noKartu AS NOBPJS',
+                'kjs.noSEP AS NOSEP',
+                'kjs.tglSEP AS TGLSEP',
+
+                // =====================================================
+                // IDENTITAS PASIEN
+                // =====================================================
+                'ps.NAMA AS NAMALENGKAPPASIEN',
+                'ps.PANGGILAN AS PANGGILANPASIEN',
+                'ps.TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+
+                'kips.NOMOR AS NIKPASIEN',
+                'kps.NOMOR AS NOHPPASIEN',
+
+                DB::raw(
+                    'master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'
+                ),
+
+                DB::raw("
+                    CASE
+                        WHEN ps.JENIS_KELAMIN = 1 THEN 'LAKI-LAKI'
+                        WHEN ps.JENIS_KELAMIN = 2 THEN 'PEREMPUAN'
+                        ELSE 'TIDAK DIKETAHUI'
+                    END AS JKPASIEN
+                "),
+
+                DB::raw(
+                    'master.getCariUmur(pp.TANGGAL, ps.TANGGAL_LAHIR) AS UMURPASIEN'
+                ),
+
+                // =====================================================
+                // RUANGAN
+                // =====================================================
+                'ru.ID AS IDRUANGAN',
+                'ru.DESKRIPSI AS NAMARUANGAN',
+
+                // =====================================================
+                // DPJP
+                // =====================================================
+                DB::raw(
+                    'master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'
+                ),
+
+                // VERIFIKASI KLAIM
+                'kv.id AS IDKLAIM',
+                'kv.verif AS STATUSVERIF',
+                'kv.verif_tgl AS TGLVERIF',
+                DB::raw('master.getNamaLengkapPegawai(pe.NIP) AS NAMAVERIF'),
+            )
+
+            // =========================================================
+            // RELASI PENDAFTARAN
+            // =========================================================
+            ->leftJoin(
+                'pendaftaran.pendaftaran AS pp',
+                'pp.NOMOR',
+                '=',
+                'pk.NOPEN'
+            )
+
+            // =========================================================
+            // RELASI PENJAMIN
+            // =========================================================
+            ->leftJoin(
+                'pendaftaran.penjamin AS pj',
+                'pj.NOPEN',
+                '=',
+                'pp.NOMOR'
+            )
+
+            // =========================================================
+            // RELASI BPJS
+            // =========================================================
+            ->leftJoin(
+                'bpjs.kunjungan AS kjs',
+                'kjs.noSEP',
+                '=',
+                'pj.NOMOR'
+            )
+
+            // =========================================================
+            // RELASI PASIEN
+            // =========================================================
+            ->leftJoin(
+                'master.pasien AS ps',
+                'ps.NORM',
+                '=',
+                'pp.NORM'
+            )
+
+            // =========================================================
+            // RELASI RUANGAN
+            // =========================================================
+            ->leftJoin(
+                'master.ruangan AS ru',
+                'ru.ID',
+                '=',
+                'pk.RUANGAN'
+            )
+
+            // =========================================================
+            // RELASI DPJP
+            // =========================================================
+            ->leftJoin(
+                'master.dokter AS dr',
+                'dr.ID',
+                '=',
+                'pk.DPJP'
+            )
+
+            // =========================================================
+            // JENIS PENJAMIN
+            // =========================================================
+            ->leftJoin('master.referensi AS npj', function ($join) {
+                $join->on('npj.ID', '=', 'pj.JENIS')
+                    ->where('npj.JENIS', 10);
+            })
+
+            // =========================================================
+            // KONTAK PASIEN
+            // =========================================================
+            ->leftJoin('master.kontak_pasien AS kps', function ($join) {
+                $join->on('ps.NORM', '=', 'kps.NORM');
+            })
+
+            // =========================================================
+            // VERIFIKASI BERKAS KLAIM
+            // =========================================================
+            ->leftJoin('simrspku_klaim.klaim_verifikasi AS kv', function($join) {
+                $join->on('kv.nomor','=','pk.NOMOR')
+                    ->where('kv.status', true);
+            })
+            ->leftJoin('aplikasi.pengguna AS pe','pe.ID','=','kv.verif_user')
+
+            // =========================================================
+            // KARTU IDENTITAS
+            // =========================================================
+            ->leftJoin('master.kartu_identitas_pasien AS kips', function ($join) {
+                $join->on('ps.NORM', '=', 'kips.NORM');
+            })
+
+            // =========================================================
+            // FILTER RUANGAN
+            // =========================================================
+            ->where(function ($query) {
+                $query->where('pk.RUANGAN', 'LIKE', '1020101%')
+                    ->orWhere('pk.RUANGAN', 'LIKE', '1020201%')
+                    ->orWhere('pk.RUANGAN', 'LIKE', '1020301%')
+                    ->orWhere('pk.RUANGAN', 'LIKE', '1020702%');
+            })
+
+            // =========================================================
+            // FILTER SEP
+            // =========================================================
+            ->where('pj.NOMOR', $sep)
+
+            ->orderBy('pk.MASUK', 'ASC')
+            ->first();
+
+        // =============================================================
+        // VALIDASI HASIL
+        // =============================================================
+        if (!$show) {
+            return response()->json(
+                'No. SEP '.$sep.' Tidak Ditemukan',
+                400
+            );
+        }
+
+        // Kunjungan dibatalkan
+        if ($show->STATUS == 0) {
+            return response()->json(
+                'Kunjungan dengan No. SEP '.$sep.' telah dibatalkan',
+                400
+            );
+        }
+
+        // =============================================================
+        // RESPONSE
+        // Kirim seluruh field ke JavaScript dalam level teratas.
+        // =============================================================
+        $data = array_merge(
+            (array) $show,
+            [
+                'message' => 'No. SEP '.$sep.' Ditemukan',
+                'kunjungan' => $show->NOMOR,
+            ]
+        );
+
+        return response()->json($data, 200);
     }
 
     function getCatatan($kunjungan) // Semua catatan berkas klaim kunjungan tersebut

@@ -1,10 +1,21 @@
+
 /*
 |--------------------------------------------------------------------------
 | SIRMED V3 — CLAIM WORKSPACE
 |--------------------------------------------------------------------------
 | Smart Claim Workspace
-| Mengikuti pola layout, warna, tabbar, scrolling, footer,
-| iframe height, dan responsive dari EMR Workspace.
+|
+| Fitur:
+| - Tabbar floating glass
+| - Tab navigation dan horizontal scrolling
+| - Home panel dan detail panel
+| - Detail iframe responsive
+| - Loading overlay
+| - Error panel
+| - Footer integration
+| - Iframe standalone mode
+| - Light / dark theme support
+| - Desktop, tablet, dan mobile
 |
 | Design tokens:
 | --surface
@@ -21,24 +32,54 @@
 
 
 /* =========================================================
-   WORKSPACE BASE
+   1. WORKSPACE BASE
 ========================================================= */
 
 .claim-workspace {
-    --claim-glass-bg: color-mix(in srgb, var(--surface) 78%, transparent);
-    --claim-glass-border: color-mix(in srgb, var(--border) 75%, transparent);
-    --claim-glass-shadow: 0 8px 28px rgb(15 23 42 / 8%);
+    --claim-surface: var(--surface, #ffffff);
+    --claim-border: var(--border, #e5e7eb);
+    --claim-primary: var(--primary, #2563eb);
+    --claim-primary-soft: var(--primary-soft, #eff6ff);
+    --claim-text: var(--text, #1f2937);
+    --claim-muted: var(--muted, #6b7280);
+    --claim-bg: var(--bg, #f5f7fa);
+    --claim-soft: var(--soft, #f3f4f6);
+
+    --claim-glass-bg: color-mix(
+        in srgb,
+        var(--claim-surface) 82%,
+        transparent
+    );
+
+    --claim-glass-border: color-mix(
+        in srgb,
+        var(--claim-border) 78%,
+        transparent
+    );
+
     --claim-tab-radius: 12px;
+    --claim-tabbar-height: 54px;
 
-    min-width: 0;
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
     width: 100%;
+    min-width: 0;
 
+    box-sizing: border-box;
+}
+
+.claim-workspace *,
+.claim-workspace *::before,
+.claim-workspace *::after {
     box-sizing: border-box;
 }
 
 
 /* =========================================================
-   FLOATING GLASS TAB BAR
+   2. FLOATING GLASS TABBAR
 ========================================================= */
 
 .claim-tabbar {
@@ -48,32 +89,33 @@
 
     display: flex;
     align-items: stretch;
+
     gap: 10px;
 
+    width: 100%;
     min-width: 0;
-    min-height: 54px;
+    min-height: var(--claim-tabbar-height);
 
     padding: 5px 32px 0;
 
-    background: var(--claim-glass-bg);
+    background: var(--claim-glass-bg, rgba(255, 255, 255, .82));
+
     border-bottom: 1px solid var(--claim-glass-border);
+
+    box-shadow: 0 5px 18px rgb(15 23 42 / 4%);
 
     backdrop-filter: blur(18px) saturate(150%);
     -webkit-backdrop-filter: blur(18px) saturate(150%);
 
-    box-shadow: 0 5px 18px rgb(15 23 42 / 4%);
-
     transition:
         background-color .25s ease,
         border-color .25s ease,
-        box-shadow .25s ease,
-        backdrop-filter .25s ease;
+        box-shadow .25s ease;
 
     box-sizing: border-box;
 }
 
-
-/* Garis cahaya tipis di bagian atas tabbar */
+/* Decorative top highlight */
 
 .claim-tabbar::before {
     content: "";
@@ -85,37 +127,39 @@
 
     height: 1px;
 
-    pointer-events: none;
-
     background: linear-gradient(
         90deg,
         transparent,
-        color-mix(in srgb, var(--primary) 35%, transparent),
+        color-mix(in srgb, var(--claim-primary) 35%, transparent),
         transparent
     );
 
     opacity: .7;
+
+    pointer-events: none;
 }
 
 
 /* =========================================================
-   TABBAR SCROLL AREA
+   3. TABBAR SCROLL AREA
 ========================================================= */
 
 .claim-tabbar-scroll {
     display: flex;
     align-items: stretch;
-    gap: 6px;
 
     flex: 1 1 auto;
 
+    gap: 6px;
+
+    width: 0;
     min-width: 0;
 
     overflow-x: auto;
     overflow-y: hidden;
 
     scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+    scrollbar-color: var(--claim-border) transparent;
 
     scroll-behavior: smooth;
     overscroll-behavior-x: contain;
@@ -123,30 +167,31 @@
     box-sizing: border-box;
 }
 
-
 .claim-tabbar-scroll::-webkit-scrollbar {
     height: 4px;
 }
-
 
 .claim-tabbar-scroll::-webkit-scrollbar-track {
     background: transparent;
 }
 
-
 .claim-tabbar-scroll::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--primary) 35%, var(--border));
+    background: color-mix(
+        in srgb,
+        var(--claim-primary) 35%,
+        var(--claim-border)
+    );
+
     border-radius: 10px;
 }
 
-
 .claim-tabbar-scroll::-webkit-scrollbar-thumb:hover {
-    background: var(--primary);
+    background: var(--claim-primary);
 }
 
 
 /* =========================================================
-   TAB
+   4. TAB
 ========================================================= */
 
 .claim-tab {
@@ -155,9 +200,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
 
     flex: 0 0 auto;
+
+    gap: 8px;
 
     min-width: 0;
     max-width: 310px;
@@ -174,8 +220,13 @@
         0
         0;
 
-    background: color-mix(in srgb, var(--soft) 65%, transparent);
-    color: var(--muted);
+    background: color-mix(
+        in srgb,
+        var(--claim-soft) 65%,
+        transparent
+    );
+
+    color: var(--claim-muted);
 
     font: inherit;
     font-size: 12px;
@@ -197,68 +248,67 @@
     box-sizing: border-box;
 }
 
-
-/* Icon tab */
-
 .claim-tab > i {
     flex: 0 0 auto;
 
-    font-size: 15px;
-
     color: inherit;
+    font-size: 15px;
 
     transition: transform .2s ease;
 }
 
-
 /* Hover */
 
 .claim-tab:hover {
-    background: color-mix(in srgb, var(--primary-soft) 80%, transparent);
-    color: var(--primary);
+    background: color-mix(
+        in srgb,
+        var(--claim-primary-soft) 80%,
+        transparent
+    );
 
-    border-color: color-mix(in srgb, var(--primary) 15%, var(--border));
+    color: var(--claim-primary);
+
+    border-color: color-mix(
+        in srgb,
+        var(--claim-primary) 15%,
+        var(--claim-border)
+    );
 
     transform: translateY(-2px);
 }
-
 
 .claim-tab:hover > i {
     transform: scale(1.08);
 }
 
-
 /* Focus */
 
 .claim-tab:focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--claim-primary);
     outline-offset: -3px;
 }
 
 
 /* =========================================================
-   ACTIVE TAB
+   5. ACTIVE TAB
 ========================================================= */
 
 .claim-tab.active {
     z-index: 1;
 
-    background: var(--surface);
-    color: var(--primary);
+    background: var(--claim-surface);
+    color: var(--claim-primary);
 
     border-color: var(--claim-glass-border);
-    border-bottom-color: var(--surface);
+    border-bottom-color: var(--claim-surface);
 
     box-shadow:
         0 -2px 10px rgb(15 23 42 / 3%),
         0 3px 12px rgb(15 23 42 / 5%),
-        inset 0 2px 0 var(--primary);
+        inset 0 2px 0 var(--claim-primary);
 
     transform: translateY(0);
 }
-
-
-/* Indikator tab aktif */
 
 .claim-tab.active::after {
     content: "";
@@ -273,19 +323,18 @@
 
     border-radius: 4px 4px 0 0;
 
-    background: var(--primary);
+    background: var(--claim-primary);
 
     opacity: .8;
 }
 
-
 .claim-tab.active > i {
-    color: var(--primary);
+    color: var(--claim-primary);
 }
 
 
 /* =========================================================
-   TAB LABEL
+   6. TAB LABEL
 ========================================================= */
 
 .claim-tab-label {
@@ -295,6 +344,7 @@
     max-width: 235px;
 
     overflow: hidden;
+
     text-overflow: ellipsis;
     white-space: nowrap;
 
@@ -303,7 +353,7 @@
 
 
 /* =========================================================
-   TAB CLOSE BUTTON
+   7. TAB CLOSE BUTTON
 ========================================================= */
 
 .claim-tab-close {
@@ -322,7 +372,7 @@
     border-radius: 6px;
 
     background: transparent;
-    color: var(--muted);
+    color: var(--claim-muted);
 
     font-size: 12px;
     line-height: 1;
@@ -335,42 +385,42 @@
         transform .18s ease;
 }
 
-
 .claim-tab-close:hover {
-    background: color-mix(in srgb, var(--primary) 12%, transparent);
-    color: var(--primary);
+    background: color-mix(
+        in srgb,
+        var(--claim-primary) 12%,
+        transparent
+    );
+
+    color: var(--claim-primary);
 
     transform: scale(1.08);
 }
-
 
 .claim-tab-close:active {
     transform: scale(.94);
 }
 
-
 .claim-tab-close:focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--claim-primary);
     outline-offset: 1px;
 }
 
 
 /* =========================================================
-   TABBAR ACTION BUTTONS
+   8. TABBAR ACTION BUTTONS
 ========================================================= */
 
 .claim-tabbar-actions {
     display: flex;
     align-items: center;
-    gap: 5px;
 
     flex: 0 0 auto;
 
+    gap: 5px;
+
     padding-bottom: 1px;
 }
-
-
-/* Action button */
 
 .claim-tab-action {
     display: inline-grid;
@@ -385,7 +435,7 @@
     border-radius: 10px;
 
     background: transparent;
-    color: var(--muted);
+    color: var(--claim-muted);
 
     font-size: 14px;
 
@@ -399,58 +449,61 @@
         box-shadow .2s ease;
 }
 
-
 .claim-tab-action:hover {
     border-color: var(--claim-glass-border);
 
-    background: var(--surface);
-    color: var(--primary);
+    background: var(--claim-surface);
+    color: var(--claim-primary);
 
     box-shadow: 0 3px 10px rgb(15 23 42 / 6%);
 
     transform: translateY(-1px);
 }
 
-
 .claim-tab-action:active {
     transform: scale(.95);
 }
 
-
 .claim-tab-action:focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--claim-primary);
     outline-offset: 2px;
 }
 
 
 /* =========================================================
-   WORKSPACE CONTENT BASE
+   9. WORKSPACE CONTENT
 ========================================================= */
 
 #claimWorkspaceContent {
+    position: relative;
+
     width: 100%;
     min-width: 0;
 
     box-sizing: border-box;
 }
 
+#claimWorkspaceContent:empty {
+    display: none;
+}
 
-/* Panel workspace */
+#claimWorkspaceContent[hidden] {
+    display: none !important;
+}
+
+/* Generic panel */
 
 .claim-workspace-panel {
-    display: none;
-
     position: relative;
     isolation: isolate;
 
+    display: none;
+
     width: 100%;
     min-width: 0;
 
     box-sizing: border-box;
 }
-
-
-/* Panel aktif */
 
 .claim-workspace-panel.active {
     display: block;
@@ -458,73 +511,30 @@
 
 
 /* =========================================================
-   SMART CLAIM HOME / INDEX PANEL
+   10. HOME PANEL
 ========================================================= */
 
 #claimHomePanel {
+    display: none;
+
     width: 100%;
     min-width: 0;
 
-    background: var(--bg);
+    margin: 0;
+    padding: 0;
+
+    background: var(--bg, #f5f7fa);
 
     box-sizing: border-box;
 }
-
-
-/* Panel home aktif */
 
 #claimHomePanel.active {
     display: block;
 }
 
 
-/* Scroll home panel pada desktop */
-
-@media (min-width: 576px) {
-    #claimHomePanel {
-        flex: 1 1 auto;
-
-        height: auto;
-
-        min-width: 0;
-        min-height: 0;
-
-        overflow-x: hidden;
-        overflow-y: auto;
-
-        overscroll-behavior-y: contain;
-
-        scrollbar-width: thin;
-        scrollbar-color: var(--border) transparent;
-
-        padding-bottom: var(--content-footer-height, 56px);
-    }
-
-
-    #claimHomePanel::-webkit-scrollbar {
-        width: 6px;
-    }
-
-
-    #claimHomePanel::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-
-    #claimHomePanel::-webkit-scrollbar-thumb {
-        background: color-mix(in srgb, var(--primary) 30%, var(--border));
-        border-radius: 10px;
-    }
-
-
-    #claimHomePanel::-webkit-scrollbar-thumb:hover {
-        background: var(--primary);
-    }
-}
-
-
 /* =========================================================
-   DETAIL IFRAME
+   11. DETAIL IFRAME
 ========================================================= */
 
 .claim-detail-frame {
@@ -536,24 +546,26 @@
     min-width: 0;
     min-height: 480px;
 
+    margin: 0;
+    padding: 0;
+
     border: 0;
     border-radius: 12px;
 
-    background: var(--bg);
+    background: var(--bg, #f5f7fa);
 
     box-sizing: border-box;
 }
 
 
 /* =========================================================
-   LOADING OVERLAY
+   12. LOADING OVERLAY
 ========================================================= */
 
 .claim-workspace-panel {
     position: relative;
     isolation: isolate;
 }
-
 
 .claim-panel-loading {
     position: absolute;
@@ -568,14 +580,12 @@
 
     gap: 16px;
 
-    padding: 30px 20px 20px;
+    padding: 30px 20px;
 
-    box-sizing: border-box;
+    background: rgb(15 23 42 / 78%);
 
-    color: var(--text);
+    color: #ffffff;
     text-align: center;
-
-    background: rgba(15, 23, 42, 0.78);
 
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
@@ -586,15 +596,13 @@
     transition:
         opacity .2s ease,
         visibility .2s ease;
+
+    box-sizing: border-box;
 }
-
-
-/* Overlay tersembunyi */
 
 .claim-panel-loading[hidden] {
     display: none !important;
 }
-
 
 /* Spinner */
 
@@ -605,14 +613,12 @@
     width: 42px;
     height: 42px;
 
-    border: 3px solid rgba(255, 255, 255, 0.25);
-
+    border: 3px solid rgb(255 255 255 / 25%);
     border-top-color: #ffffff;
-    border-right-color: var(--primary);
+    border-right-color: var(--claim-primary, #2563eb);
 
     animation: claim-loading-spin .8s linear infinite;
 }
-
 
 /* Loading text */
 
@@ -629,9 +635,6 @@
     line-height: 1.7;
 }
 
-
-/* Spinner animation */
-
 @keyframes claim-loading-spin {
     to {
         transform: rotate(360deg);
@@ -640,21 +643,21 @@
 
 
 /* =========================================================
-   ERROR PANEL
+   13. ERROR PANEL
 ========================================================= */
 
 .claim-panel-error {
+    margin: 0;
     padding: 24px;
 
-    border: 1px solid var(--border);
+    border: 1px solid var(--border, #e5e7eb);
     border-radius: 14px;
 
-    background: var(--surface);
-    color: var(--text);
+    background: var(--surface, #ffffff);
+    color: var(--text, #1f2937);
 
     box-sizing: border-box;
 }
-
 
 .claim-panel-error .error-icon {
     display: inline-grid;
@@ -667,32 +670,29 @@
 
     border-radius: 12px;
 
-    background: var(--soft);
+    background: var(--soft, #f3f4f6);
     color: #dc3545;
 
     font-size: 20px;
 }
 
-
 .claim-panel-error h5 {
-    margin-bottom: 8px;
+    margin: 0 0 8px;
 
-    color: var(--text);
+    color: var(--text, #1f2937);
 
     font-size: 15px;
     font-weight: 600;
 }
 
-
 .claim-panel-error p {
     margin: 7px 0 15px;
 
-    color: var(--muted);
+    color: var(--muted, #6b7280);
 
     font-size: 13px;
     line-height: 1.6;
 }
-
 
 .claim-panel-error .btn {
     border-radius: 9px;
@@ -700,15 +700,14 @@
 
 
 /* =========================================================
-   FOOTER
-   Mengikuti footer EMR Workspace
+   14. FOOTER
 ========================================================= */
 
 .claim-workspace .content-footer {
     position: fixed;
 
-    bottom: 0;
     right: 0;
+    bottom: 0;
 
     z-index: 1010;
 
@@ -719,30 +718,12 @@
 
 
 /* =========================================================
-   CLAIM WORKSPACE — MAIN LAYOUT INTEGRATION
-   Mengikuti struktur EMR Workspace
-========================================================= */
-
-
-/*
-   Struktur layout yang diasumsikan:
-
-   .app-main
-       ├── header
-       └── #claimWorkspace.claim-workspace
-            ├── #claimTabBar.claim-tabbar
-            └── .app-content
-                 ├── #claimHomePanel
-                 ├── #claimWorkspaceContent
-                 └── .content-footer
-*/
-
-
-/* =========================================================
-   APP MAIN
+   15. DESKTOP WORKSPACE LAYOUT
 ========================================================= */
 
 @media (min-width: 576px) {
+
+    /* Main application */
 
     #sirmedApp {
         height: 100vh;
@@ -752,7 +733,6 @@
 
         overflow: hidden;
     }
-
 
     #sirmedApp > .app-main {
         display: flex;
@@ -765,7 +745,6 @@
 
         overflow: hidden;
     }
-
 
     /* Workspace wrapper */
 
@@ -786,10 +765,7 @@
         box-sizing: border-box;
     }
 
-
-    /* =====================================================
-       TABBAR DESKTOP
-    ===================================================== */
+    /* Tabbar */
 
     .claim-workspace > .claim-tabbar {
         position: relative;
@@ -801,14 +777,9 @@
         min-width: 0;
 
         margin: 0;
-
-        box-sizing: border-box;
     }
 
-
-    /* =====================================================
-       APP CONTENT
-    ===================================================== */
+    /* App content */
 
     .claim-workspace > .app-content {
         display: flex;
@@ -822,19 +793,15 @@
         min-width: 0;
         min-height: 0;
 
-        padding: 0 !important;
         margin: 0;
+        padding: 0 !important;
 
         overflow: hidden;
 
         box-sizing: border-box;
     }
 
-
-    /* =====================================================
-       HOME PANEL
-       Index Smart Claim scroll secara mandiri
-    ===================================================== */
+    /* Home panel */
 
     .claim-workspace > .app-content > #claimHomePanel {
         display: none;
@@ -855,9 +822,9 @@
 
         overscroll-behavior-y: contain;
 
-        box-sizing: border-box;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border, #e5e7eb) transparent;
     }
-
 
     .claim-workspace > .app-content > #claimHomePanel.active {
         display: block;
@@ -866,20 +833,38 @@
 
         min-height: 0;
 
+        padding-bottom: var(--content-footer-height, 56px);
+
         overflow-x: hidden;
         overflow-y: auto;
-
-        padding-bottom: var(--content-footer-height, 56px);
     }
 
+    #claimHomePanel::-webkit-scrollbar {
+        width: 6px;
+    }
 
-    /* =====================================================
-       DYNAMIC WORKSPACE CONTENT
-    ===================================================== */
+    #claimHomePanel::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    #claimHomePanel::-webkit-scrollbar-thumb {
+        background: color-mix(
+            in srgb,
+            var(--primary, #2563eb) 30%,
+            var(--border, #e5e7eb)
+        );
+
+        border-radius: 10px;
+    }
+
+    #claimHomePanel::-webkit-scrollbar-thumb:hover {
+        background: var(--primary, #2563eb);
+    }
+
+    /* Dynamic workspace content */
 
     .claim-workspace > .app-content > #claimWorkspaceContent {
-        display: flex;
-        flex-direction: column;
+        display: none;
 
         flex: 1 1 0;
 
@@ -897,24 +882,12 @@
         box-sizing: border-box;
     }
 
-
-    /* Content kosong */
-
-    #claimWorkspaceContent:empty {
-        display: none;
+    .claim-workspace > .app-content > #claimWorkspaceContent:not(:empty):not([hidden]) {
+        display: flex;
+        flex-direction: column;
     }
 
-
-    /* Hidden tetap hidden */
-
-    #claimWorkspaceContent[hidden] {
-        display: none !important;
-    }
-
-
-    /* =====================================================
-       DETAIL PANEL ACTIVE
-    ===================================================== */
+    /* Active detail panel */
 
     #claimWorkspaceContent > .claim-workspace-panel.active {
         display: flex;
@@ -936,10 +909,7 @@
         box-sizing: border-box;
     }
 
-
-    /* =====================================================
-       DETAIL IFRAME
-    ===================================================== */
+    /* Detail iframe */
 
     #claimWorkspaceContent .claim-detail-frame {
         display: block;
@@ -958,40 +928,55 @@
         border: 0;
         border-radius: 0;
 
-        background: var(--bg);
+        background: var(--bg, #f5f7fa);
 
         box-sizing: border-box;
     }
 
+    /* Footer */
+
+    .claim-workspace .content-footer {
+        flex: 0 0 auto;
+    }
 }
 
 
 /* =========================================================
-   IFRAME MODE — BODY
+   16. IFRAME MODE — BODY
+   Digunakan pada halaman detail yang dibuka melalui iframe
 ========================================================= */
 
 body.claim-workspace-frame {
     width: 100%;
-
     min-width: 0;
 
-    height: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
+    height: auto !important;
 
-    margin: 0;
-    padding: 0;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
 
-    overflow-x: hidden;
+    margin: 0 !important;
+    padding: 0 !important;
 
-    background: var(--bg);
-    color: var(--text);
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+
+    background: var(--bg, #f5f7fa) !important;
+    color: var(--text, #1f2937) !important;
 
     box-sizing: border-box;
 }
 
+body.claim-workspace-frame *,
+body.claim-workspace-frame *::before,
+body.claim-workspace-frame *::after {
+    box-sizing: border-box;
+}
 
-/* Hide shell elements inside iframe */
+
+/* =========================================================
+   17. IFRAME MODE — HIDE MAIN SHELL
+========================================================= */
 
 body.claim-workspace-frame :is(
     .app-sidebar,
@@ -1009,7 +994,9 @@ body.claim-workspace-frame :is(
 }
 
 
-/* Shell inside iframe */
+/* =========================================================
+   18. IFRAME MODE — APP SHELL
+========================================================= */
 
 body.claim-workspace-frame :is(
     .app-shell,
@@ -1019,51 +1006,33 @@ body.claim-workspace-frame :is(
     display: block !important;
 
     width: 100% !important;
-
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    box-sizing: border-box !important;
-}
-
-
-/* App content inside iframe */
-
-body.claim-workspace-frame .app-content {
-    display: block !important;
-
-    width: 100% !important;
-
     min-width: 0 !important;
-
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
 
     height: auto !important;
 
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+
     margin: 0 !important;
     padding: 0 !important;
 
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
+    overflow: visible !important;
 
     box-sizing: border-box !important;
 }
 
 
 /* =========================================================
-   FRAME CONTENT
+   19. IFRAME MODE — APP CONTENT
 ========================================================= */
 
-body.claim-workspace-frame .claim-frame-content {
-    position: relative;
+body.claim-workspace-frame .app-content {
+    display: block !important;
 
     width: 100% !important;
-
     min-width: 0 !important;
+
+    height: auto !important;
 
     min-height: 100vh !important;
     min-height: 100dvh !important;
@@ -1071,11 +1040,52 @@ body.claim-workspace-frame .claim-frame-content {
     margin: 0 !important;
     padding: 0 !important;
 
+    overflow: visible !important;
+
     box-sizing: border-box !important;
 }
 
 
-/* Section content */
+/* =========================================================
+   20. IFRAME MODE — FRAME CONTENT
+========================================================= */
+
+body.claim-workspace-frame .claim-frame-content {
+    position: relative;
+
+    display: block;
+
+    width: 100% !important;
+    max-width: none !important;
+
+    min-width: 0 !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+
+    margin: 0 !important;
+    padding: 16px 16px 72px !important;
+
+    overflow: visible !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* =========================================================
+   21. IFRAME MODE — DETAIL CONTAINER
+========================================================= */
+
+body.claim-workspace-frame .claim-detail-container {
+    width: 100% !important;
+    max-width: none !important;
+
+    min-width: 0 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
 
 body.claim-workspace-frame .claim-frame-content > section {
     width: 100% !important;
@@ -1090,16 +1100,32 @@ body.claim-workspace-frame .claim-frame-content > section {
 }
 
 
-/* Footer iframe disembunyikan
-   karena footer berada di parent workspace */
+/* =========================================================
+   22. IFRAME MODE — PREVIEW
+========================================================= */
 
-body.claim-workspace-frame .content-footer {
-    display: none !important;
+body.claim-workspace-frame #preview {
+    width: 100%;
+    min-width: 0;
+
+    overflow: auto;
+}
+
+body.claim-workspace-frame #preview iframe {
+    display: block;
+
+    width: 100% !important;
+    max-width: 100%;
+
+    height: min(650px, 72vh) !important;
+    min-height: 420px;
+
+    border: 0;
 }
 
 
 /* =========================================================
-   RESPONSIVE — LARGE TABLET
+   23. RESPONSIVE — LARGE TABLET
 ========================================================= */
 
 @media (max-width: 1199.98px) {
@@ -1108,20 +1134,18 @@ body.claim-workspace-frame .content-footer {
         padding-inline: 24px;
     }
 
-
     .claim-tabbar::before {
         left: 24px;
         right: 24px;
     }
-
 }
 
 
 /* =========================================================
-   RESPONSIVE — TABLET
+   24. RESPONSIVE — TABLET
 ========================================================= */
 
-@media (max-width: 991.98px) {
+@media (min-width: 576px) and (max-width: 991.98px) {
 
     .claim-tabbar {
         top: 72px;
@@ -1131,12 +1155,10 @@ body.claim-workspace-frame .content-footer {
         padding-inline: 18px;
     }
 
-
     .claim-tabbar::before {
         left: 18px;
         right: 18px;
     }
-
 
     .claim-tab {
         max-width: 270px;
@@ -1144,21 +1166,18 @@ body.claim-workspace-frame .content-footer {
         padding-inline: 10px;
     }
 
-
     .claim-tab-label {
         max-width: 195px;
     }
 
-
     .claim-detail-frame {
         height: calc(100vh - 185px);
     }
-
 }
 
 
 /* =========================================================
-   RESPONSIVE — MOBILE
+   25. RESPONSIVE — MOBILE
 ========================================================= */
 
 @media (max-width: 575.98px) {
@@ -1170,13 +1189,11 @@ body.claim-workspace-frame .content-footer {
         flex-direction: column;
 
         width: 100%;
-
         min-width: 0;
         min-height: 0;
 
         overflow: visible;
     }
-
 
     /* Tabbar */
 
@@ -1194,21 +1211,17 @@ body.claim-workspace-frame .content-footer {
         padding: 3px 13px 0;
     }
 
-
     .claim-tabbar::before {
         left: 13px;
         right: 13px;
     }
 
-
     /* Tab scrolling */
 
     .claim-tabbar-scroll {
         gap: 4px;
-
         min-width: 0;
     }
-
 
     /* Tab */
 
@@ -1223,11 +1236,9 @@ body.claim-workspace-frame .content-footer {
         font-size: 11px;
     }
 
-
     .claim-tab-label {
         max-width: 155px;
     }
-
 
     /* Actions */
 
@@ -1235,14 +1246,12 @@ body.claim-workspace-frame .content-footer {
         gap: 2px;
     }
 
-
     .claim-tab-action {
         width: 30px;
         height: 32px;
 
         font-size: 13px;
     }
-
 
     /* Close button */
 
@@ -1254,7 +1263,6 @@ body.claim-workspace-frame .content-footer {
 
         font-size: 12px;
     }
-
 
     /* App content */
 
@@ -1270,19 +1278,20 @@ body.claim-workspace-frame .content-footer {
         min-width: 0;
         min-height: 0;
 
-        padding: 0 !important;
         margin: 0;
+        padding: 0 !important;
 
         overflow-x: hidden;
-        overflow-y: auto;
+        overflow-y: visible;
 
         box-sizing: border-box;
     }
 
-
-    /* Home index */
+    /* Home panel */
 
     #claimHomePanel {
+        display: none;
+
         width: 100%;
 
         min-width: 0;
@@ -1292,18 +1301,36 @@ body.claim-workspace-frame .content-footer {
         padding: 0;
 
         overflow-x: hidden;
-        overflow-y: auto;
-
-        overscroll-behavior-y: contain;
+        overflow-y: visible;
 
         box-sizing: border-box;
     }
-
 
     #claimHomePanel.active {
         display: block;
     }
 
+    /* Dynamic content */
+
+    #claimWorkspaceContent {
+        display: none;
+    }
+
+    #claimWorkspaceContent:not(:empty):not([hidden]) {
+        display: block;
+    }
+
+    /* Detail panel */
+
+    #claimWorkspaceContent > .claim-workspace-panel.active {
+        display: block;
+
+        width: 100%;
+        min-width: 0;
+        min-height: 0;
+
+        overflow: visible;
+    }
 
     /* Detail iframe */
 
@@ -1313,7 +1340,7 @@ body.claim-workspace-frame .content-footer {
         width: 100%;
         height: calc(100dvh - 180px);
 
-        min-height: 0;
+        min-height: 320px;
 
         margin: 0;
         padding: 0;
@@ -1324,13 +1351,11 @@ body.claim-workspace-frame .content-footer {
         box-sizing: border-box;
     }
 
-
     /* Frame content */
 
     .claim-frame-content {
         padding: 10px !important;
     }
-
 
     /* Error panel */
 
@@ -1339,18 +1364,80 @@ body.claim-workspace-frame .content-footer {
         padding: 18px;
     }
 
-
     /* Footer */
 
     .claim-workspace .content-footer {
         min-height: var(--content-footer-height, 64px);
     }
 
+    /* Preview */
+
+    body.claim-workspace-frame #preview iframe {
+        height: 60vh !important;
+        min-height: 320px;
+    }
+
+    /* Iframe content */
+
+    body.claim-workspace-frame .claim-frame-content {
+        padding: 10px !important;
+    }
 }
 
 
 /* =========================================================
-   REDUCED MOTION
+   26. DARK MODE SUPPORT
+========================================================= */
+
+[data-bs-theme="dark"] .claim-workspace {
+    --claim-glass-bg: color-mix(
+        in srgb,
+        var(--surface, #1e293b) 82%,
+        transparent
+    );
+
+    --claim-glass-border: color-mix(
+        in srgb,
+        var(--border, #334155) 78%,
+        transparent
+    );
+}
+
+[data-bs-theme="dark"] .claim-tab {
+    background: color-mix(
+        in srgb,
+        var(--soft, #334155) 65%,
+        transparent
+    );
+}
+
+[data-bs-theme="dark"] .claim-tab:hover {
+    background: color-mix(
+        in srgb,
+        var(--primary-soft, #1e3a5f) 80%,
+        transparent
+    );
+}
+
+[data-bs-theme="dark"] .claim-tab.active {
+    background: var(--surface, #1e293b);
+
+    border-bottom-color: var(--surface, #1e293b);
+
+    box-shadow:
+        0 -2px 10px rgb(0 0 0 / 12%),
+        0 3px 12px rgb(0 0 0 / 15%),
+        inset 0 2px 0 var(--primary, #3b82f6);
+}
+
+[data-bs-theme="dark"] .claim-tab-action:hover {
+    background: var(--surface, #1e293b);
+    box-shadow: 0 3px 10px rgb(0 0 0 / 15%);
+}
+
+
+/* =========================================================
+   27. REDUCED MOTION
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1367,5 +1454,4 @@ body.claim-workspace-frame .content-footer {
         animation: none !important;
         scroll-behavior: auto !important;
     }
-
 }

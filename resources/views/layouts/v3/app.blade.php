@@ -31,7 +31,9 @@
 
     @include('inc.v3.css')
 
+    <link rel="stylesheet" href="{{ asset('css/v3/components/workspace.css') }}">
     <link rel="stylesheet" href="{{ asset('css/v3/components/emr-workspace.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/v3/components/claim-workspace.css') }}">
 
     @livewireStyles
 
@@ -99,6 +101,18 @@
 
                             <div class="emr-tabbar-actions">
 
+                                {{-- Refresh tab aktif --}}
+                                <button
+                                    type="button"
+                                    class="emr-tab-action"
+                                    id="emrRefreshActiveTab"
+                                    title="Refresh tab aktif"
+                                    aria-label="Refresh tab aktif"
+                                >
+                                    <i class="ti ti-refresh"></i>
+                                </button>
+
+                                {{-- Tutup tab lainnya --}}
                                 <button
                                     type="button"
                                     class="emr-tab-action"
@@ -106,9 +120,10 @@
                                     title="Tutup tab lainnya"
                                     aria-label="Tutup tab lainnya"
                                 >
-                                    <i class="bi bi-copy"></i>
+                                    <i class="ti ti-square-x"></i>
                                 </button>
 
+                                {{-- Tutup semua tab --}}
                                 <button
                                     type="button"
                                     class="emr-tab-action"
@@ -116,7 +131,7 @@
                                     title="Tutup semua tab pasien"
                                     aria-label="Tutup semua tab pasien"
                                 >
-                                    <i class="bi bi-x-lg"></i>
+                                    <i class="ti ti-x"></i>
                                 </button>
 
                             </div>
@@ -151,8 +166,8 @@
                         <div class="claim-tabbar" id="claimTabBar">
                             <div class="claim-tabbar-scroll" id="claimTabBarScroll" role="tablist">
                                 <div id="claimHomeTab" class="claim-tab claim-home-tab active" data-claim-home>
-                                    <i class="ti ti-home me-2"></i>
-                                    <span>Smart Claim</span>
+                                    <i class="bi bi-house-door"></i>
+                                    <span>Claim Table</span>
                                 </div>
                             </div>
 
@@ -213,6 +228,7 @@
 
     {{-- JavaScript workspace --}}
     <script src="{{ asset('js/v3/components/emr-workspace.js') }}"></script>
+    <script src="{{ asset('js/v3/components/claim-workspace.js') }}" defer></script>
 
     @stack('scripts')
 

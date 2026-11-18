@@ -95,6 +95,10 @@
         // WORKSPACE BUTTONS
         // =====================================================
 
+        const refreshButton = document.getElementById(
+            'emrRefreshActiveTab'
+        );
+
         const closeOtherButton = document.getElementById(
             'emrCloseOtherTabs'
         );
@@ -1603,6 +1607,42 @@
         }
 
         /* =====================================================
+        REFRESH TAB AKTIF
+        ===================================================== */
+
+        function refreshActiveTab() {
+
+            // Tidak melakukan refresh jika Home sedang aktif.
+            if (!activeTabId || activeTabId === 'home') {
+                return false;
+            }
+
+            const record = findRecordByTabId(activeTabId);
+
+            if (!record) {
+                console.warn(
+                    '[EMRWorkspace] Tidak ada data pasien pada tab aktif.'
+                );
+
+                return false;
+            }
+
+            // Muat ulang iframe pasien aktif.
+            // Parameter true mengaktifkan mekanisme retry/reload.
+            loadRecordFrame(record, true);
+
+            console.info(
+                '[EMRWorkspace] Refresh tab aktif:',
+                {
+                    nomor: record.nomor,
+                    nama: record.nama
+                }
+            );
+
+            return true;
+        }
+
+        /* =====================================================
            TUTUP SEMUA TAB PASIEN
         ===================================================== */
 
@@ -1927,14 +1967,22 @@
         });
 
         /* =====================================================
-           EVENT TOMBOL AKSI TAB
+        EVENT TOMBOL AKSI TAB
         ===================================================== */
 
+        // Refresh tab pasien aktif.
+        refreshButton?.addEventListener(
+            'click',
+            refreshActiveTab
+        );
+
+        // Tutup semua tab kecuali tab aktif.
         closeOtherButton?.addEventListener(
             'click',
             closeOthers
         );
 
+        // Tutup seluruh tab pasien dan kembali ke Home.
         closeAllButton?.addEventListener(
             'click',
             closeAll
@@ -1955,6 +2003,8 @@
             closeAll,
 
             closeOthers,
+
+            refreshActiveTab,
 
             /**
              * Mengambil informasi tab yang sedang aktif.
@@ -2117,9 +2167,9 @@
             );
         }
 
-        console.info(
-            '[EMRWorkspace] Workspace berhasil diinisialisasi.'
-        );
+        // console.info(
+        //     '[EMRWorkspace] Workspace berhasil diinisialisasi.'
+        // );
 
     }
 

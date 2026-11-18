@@ -113,8 +113,8 @@ class SmartClaim extends Component
                 // ASURANSI / BPJS
                 // =====================================================
                 'npj.DESKRIPSI AS NAMAASURANSI',
-                'pj.JENIS AS IDASURANSI',
                 'npj.REF_ID AS REFIDASURANSI',
+                'pj.JENIS AS IDASURANSI',
                 'pj.NOMOR AS NOASURANSI',
 
                 'kjs.noKartu AS NOBPJS',

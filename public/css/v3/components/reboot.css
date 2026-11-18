@@ -1,0 +1,839 @@
+
+/* =========================================================
+   SIRMED V3 — GLOBAL REBOOT
+   Based on Bootstrap 5 Reboot
+   Scope: GLOBAL
+========================================================= */
+
+
+/* =========================================================
+   01. ROOT VARIABLES
+========================================================= */
+
+:root {
+    --sirmed-font-family: 'Poppins', sans-serif;
+
+    --sirmed-body-bg: var(--bs-body-bg, #ffffff);
+    --sirmed-body-color: var(--bs-body-color, #343a40);
+
+    --sirmed-heading-color: var(--bs-heading-color, var(--bs-body-color));
+    --sirmed-muted-color: var(--bs-secondary-color, #6c757d);
+
+    --sirmed-border-color: var(--bs-border-color, #dee2e6);
+
+    --sirmed-link-color: var(--bs-link-color, var(--bs-primary));
+    --sirmed-link-hover-color: var(--bs-link-hover-color, var(--bs-primary));
+
+    --sirmed-selection-bg: rgba(var(--bs-primary-rgb, 13, 110, 253), .18);
+
+    --sirmed-focus-color: var(--bs-primary, #0d6efd);
+    --sirmed-focus-ring: 0 0 0 .2rem rgba(
+        var(--bs-primary-rgb, 13, 110, 253),
+        .18
+    );
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] {
+    --sirmed-body-bg: var(--bs-body-bg);
+    --sirmed-body-color: var(--bs-body-color);
+
+    --sirmed-heading-color: var(--bs-heading-color);
+    --sirmed-muted-color: var(--bs-secondary-color);
+
+    --sirmed-border-color: var(--bs-border-color);
+
+    --sirmed-link-color: var(--bs-link-color);
+    --sirmed-link-hover-color: var(--bs-link-hover-color);
+}
+
+
+/* =========================================================
+   02. BOX SIZING
+========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box !important;
+}
+
+
+/* =========================================================
+   03. HTML & ROOT
+========================================================= */
+
+html {
+    width: 100% !important;
+    min-height: 100% !important;
+
+    -webkit-text-size-adjust: 100% !important;
+    -webkit-tap-highlight-color: transparent !important;
+
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto !important;
+    }
+}
+
+body {
+    width: 100% !important;
+    min-height: 100vh !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    font-family: var(--sirmed-font-family) !important;
+    font-size: var(--bs-body-font-size, .875rem) !important;
+    font-weight: var(--bs-body-font-weight, 400) !important;
+    line-height: var(--bs-body-line-height, 1.5) !important;
+
+    color: var(--sirmed-body-color) !important;
+    text-align: var(--bs-body-text-align, left) !important;
+
+    background-color: var(--sirmed-body-bg) !important;
+
+    -webkit-text-size-adjust: 100% !important;
+    -webkit-tap-highlight-color: transparent !important;
+
+    transition:
+        background-color .2s ease,
+        color .2s ease;
+}
+
+
+/* =========================================================
+   04. TYPOGRAPHY
+========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 0 !important;
+    margin-bottom: .5rem !important;
+
+    font-family: var(--sirmed-font-family) !important;
+    font-style: normal !important;
+
+    font-weight: 600 !important;
+    line-height: 1.35 !important;
+
+    color: var(--sirmed-heading-color) !important;
+}
+
+h1 {
+    font-size: 2rem !important;
+}
+
+h2 {
+    font-size: 1.75rem !important;
+}
+
+h3 {
+    font-size: 1.5rem !important;
+}
+
+h4 {
+    font-size: 1.25rem !important;
+}
+
+h5 {
+    font-size: 1.0625rem !important;
+}
+
+h6 {
+    font-size: .9375rem !important;
+}
+
+p {
+    margin-top: 0 !important;
+    margin-bottom: 1rem !important;
+
+    font-family: inherit !important;
+    color: inherit;
+}
+
+small,
+.small {
+    font-size: .8125em !important;
+}
+
+b,
+strong {
+    font-weight: 600 !important;
+}
+
+em,
+i {
+    font-style: italic;
+}
+
+mark {
+    padding: .15em .3em !important;
+
+    color: var(--bs-highlight-color, inherit) !important;
+    background-color: var(--bs-highlight-bg, rgba(255, 193, 7, .2)) !important;
+
+    border-radius: 3px !important;
+}
+
+sub,
+sup {
+    position: relative;
+
+    font-size: .75em !important;
+    line-height: 0 !important;
+    vertical-align: baseline !important;
+}
+
+sub {
+    bottom: -.25em;
+}
+
+sup {
+    top: -.5em;
+}
+
+
+/* =========================================================
+   05. LINKS
+========================================================= */
+
+a {
+    color: var(--sirmed-link-color) !important;
+
+    text-decoration: none;
+
+    transition:
+        color .15s ease,
+        opacity .15s ease;
+}
+
+a:hover {
+    color: var(--sirmed-link-hover-color) !important;
+}
+
+a:focus-visible {
+    outline: 2px solid var(--sirmed-focus-color) !important;
+    outline-offset: 2px !important;
+}
+
+/* Placeholder links / anchors without href */
+a:not([href]):not([class]),
+a:not([href]):not([class]):hover {
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+
+/* =========================================================
+   06. ABBREVIATIONS
+========================================================= */
+
+abbr[title] {
+    text-decoration: underline dotted !important;
+    text-decoration-skip-ink: none !important;
+
+    cursor: help !important;
+}
+
+
+/* =========================================================
+   07. ADDRESS
+========================================================= */
+
+address {
+    margin-bottom: 1rem !important;
+
+    font-style: normal !important;
+    line-height: inherit !important;
+}
+
+
+/* =========================================================
+   08. LISTS
+========================================================= */
+
+ol,
+ul {
+    margin-top: 0 !important;
+    margin-bottom: 1rem !important;
+
+    padding-left: 2rem !important;
+}
+
+ol ol,
+ul ul,
+ol ul,
+ul ol {
+    margin-bottom: 0 !important;
+}
+
+dl {
+    margin-top: 0 !important;
+    margin-bottom: 1rem !important;
+}
+
+dt {
+    font-weight: 600 !important;
+}
+
+dd {
+    margin-bottom: .5rem !important;
+    margin-left: 0 !important;
+}
+
+
+/* =========================================================
+   09. BLOCKQUOTE
+========================================================= */
+
+blockquote {
+    margin: 0 0 1rem !important;
+}
+
+
+/* =========================================================
+   10. HORIZONTAL RULE
+========================================================= */
+
+hr {
+    margin: 1rem 0 !important;
+
+    color: var(--sirmed-muted-color) !important;
+
+    border: 0 !important;
+    border-top: 1px solid var(--sirmed-border-color) !important;
+
+    opacity: .6 !important;
+}
+
+
+/* =========================================================
+   11. CODE & PRE
+========================================================= */
+
+pre,
+code,
+kbd,
+samp {
+    font-family: var(--bs-font-monospace, monospace) !important;
+    font-size: 1em;
+}
+
+pre {
+    display: block !important;
+
+    margin-top: 0 !important;
+    margin-bottom: 1rem !important;
+
+    overflow: auto !important;
+
+    font-size: .875em !important;
+    line-height: 1.5 !important;
+}
+
+pre code {
+    font-size: inherit !important;
+
+    color: inherit !important;
+
+    word-break: normal !important;
+}
+
+code {
+    font-size: .875em !important;
+
+    color: var(--bs-code-color, #d63384) !important;
+
+    word-wrap: break-word !important;
+}
+
+a > code {
+    color: inherit !important;
+}
+
+kbd {
+    padding: .2rem .4rem !important;
+
+    font-size: .875em !important;
+
+    color: var(--bs-body-bg) !important;
+    background-color: var(--bs-body-color) !important;
+
+    border-radius: 4px !important;
+}
+
+kbd kbd {
+    padding: 0 !important;
+
+    font-size: 1em !important;
+    font-weight: 600 !important;
+}
+
+
+/* =========================================================
+   12. FIGURE
+========================================================= */
+
+figure {
+    margin: 0 0 1rem !important;
+}
+
+figcaption {
+    color: var(--sirmed-muted-color);
+    font-size: .8125rem;
+}
+
+
+/* =========================================================
+   13. IMAGES & MEDIA
+========================================================= */
+
+img,
+svg {
+    vertical-align: middle;
+}
+
+img {
+    max-width: 100%;
+}
+
+img,
+video,
+canvas,
+iframe {
+    height: auto;
+}
+
+iframe {
+    border: 0 !important;
+}
+
+audio,
+video {
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   14. TABLES
+========================================================= */
+
+table {
+    caption-side: bottom !important;
+    border-collapse: collapse !important;
+}
+
+caption {
+    padding-top: .5rem !important;
+    padding-bottom: .5rem !important;
+
+    color: var(--sirmed-muted-color) !important;
+    text-align: left !important;
+}
+
+th {
+    font-weight: 600 !important;
+    text-align: inherit !important;
+}
+
+thead,
+tbody,
+tfoot,
+tr,
+td,
+th {
+    border-color: inherit;
+    border-style: solid;
+    border-width: 0;
+}
+
+
+/* =========================================================
+   15. FORMS — BASE
+========================================================= */
+
+label {
+    display: inline-block;
+}
+
+input,
+button,
+select,
+optgroup,
+textarea {
+    margin: 0 !important;
+
+    font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: inherit !important;
+}
+
+button,
+select {
+    text-transform: none;
+}
+
+select {
+    word-wrap: normal;
+}
+
+textarea {
+    resize: vertical;
+}
+
+fieldset {
+    min-width: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: 0 !important;
+}
+
+legend {
+    float: left;
+
+    width: 100%;
+
+    padding: 0;
+
+    margin-bottom: .5rem !important;
+
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    line-height: inherit !important;
+}
+
+legend + * {
+    clear: left;
+}
+
+
+/* =========================================================
+   16. BUTTONS
+========================================================= */
+
+button {
+    font-family: inherit !important;
+
+    border-radius: 0;
+}
+
+button:focus:not(:focus-visible) {
+    outline: 0 !important;
+}
+
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+    -webkit-appearance: button;
+}
+
+button:not(:disabled),
+[type="button"]:not(:disabled),
+[type="reset"]:not(:disabled),
+[type="submit"]:not(:disabled) {
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   17. FORM INPUT TYPES
+========================================================= */
+
+input,
+textarea,
+select {
+    max-width: 100%;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--bs-secondary-color) !important;
+    opacity: .75 !important;
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled {
+    cursor: not-allowed;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    cursor: pointer;
+}
+
+input[type="file"] {
+    max-width: 100%;
+}
+
+input[type="search"] {
+    -webkit-appearance: textfield;
+    outline-offset: -2px;
+}
+
+input[type="number"] {
+    appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+input[type="color"] {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: 0;
+    border-radius: inherit;
+}
+
+input[type="color"]::-moz-color-swatch {
+    border: 0;
+    border-radius: inherit;
+}
+
+
+/* =========================================================
+   18. FOCUS ACCESSIBILITY
+========================================================= */
+
+:focus {
+    outline: none;
+}
+
+:focus-visible {
+    outline: 2px solid var(--sirmed-focus-color) !important;
+    outline-offset: 2px !important;
+}
+
+/* Jangan memberikan outline global pada komponen yang
+   sudah memiliki focus ring sendiri */
+.form-control:focus-visible,
+.form-select:focus-visible,
+.form-check-input:focus-visible,
+.btn:focus-visible,
+.accordion-button:focus-visible,
+.nav-link:focus-visible,
+.dropdown-item:focus-visible {
+    outline: none !important;
+}
+
+
+/* =========================================================
+   19. FILE INPUT
+========================================================= */
+
+::file-selector-button {
+    font: inherit !important;
+    -webkit-appearance: button;
+}
+
+::-webkit-file-upload-button {
+    font: inherit !important;
+    -webkit-appearance: button;
+}
+
+
+/* =========================================================
+   20. DATETIME INPUT
+========================================================= */
+
+::-webkit-datetime-edit-fields-wrapper,
+::-webkit-datetime-edit-text,
+::-webkit-datetime-edit-minute,
+::-webkit-datetime-edit-hour-field,
+::-webkit-datetime-edit-day-field,
+::-webkit-datetime-edit-month-field,
+::-webkit-datetime-edit-year-field {
+    padding: 0;
+}
+
+::-webkit-inner-spin-button {
+    height: auto;
+}
+
+
+/* =========================================================
+   21. SEARCH INPUT
+========================================================= */
+
+::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+
+/* =========================================================
+   22. PROGRESS
+========================================================= */
+
+progress {
+    vertical-align: baseline;
+}
+
+
+/* =========================================================
+   23. OUTPUT
+========================================================= */
+
+output {
+    display: inline-block;
+}
+
+
+/* =========================================================
+   24. SUMMARY & DETAILS
+========================================================= */
+
+summary {
+    display: list-item !important;
+
+    cursor: pointer !important;
+}
+
+details > summary {
+    list-style-position: outside;
+}
+
+
+/* =========================================================
+   25. HIDDEN ATTRIBUTE
+========================================================= */
+
+[hidden] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   26. SELECTION
+========================================================= */
+
+::selection {
+    color: var(--sirmed-body-color);
+
+    background-color: var(--sirmed-selection-bg);
+}
+
+::-moz-selection {
+    color: var(--sirmed-body-color);
+
+    background-color: var(--sirmed-selection-bg);
+}
+
+
+/* =========================================================
+   27. SCROLLBAR
+========================================================= */
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color:
+        var(--bs-secondary-bg, #dee2e6)
+        transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--bs-secondary-bg, #dee2e6);
+
+    border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--bs-secondary-color, #6c757d);
+}
+
+
+/* =========================================================
+   28. DARK MODE COLOR SCHEME
+========================================================= */
+
+[data-bs-theme="light"] {
+    color-scheme: light;
+}
+
+[data-bs-theme="dark"] {
+    color-scheme: dark;
+}
+
+
+/* =========================================================
+   29. REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+
+        transition-duration: .01ms !important;
+    }
+
+}
+
+
+/* =========================================================
+   30. RESPONSIVE TYPOGRAPHY
+========================================================= */
+
+@media (max-width: 576px) {
+
+    h1 {
+        font-size: 1.625rem !important;
+    }
+
+    h2 {
+        font-size: 1.375rem !important;
+    }
+
+    h3 {
+        font-size: 1.2rem !important;
+    }
+
+    h4 {
+        font-size: 1.0625rem !important;
+    }
+
+    h5 {
+        font-size: .9375rem !important;
+    }
+
+    h6 {
+        font-size: .875rem !important;
+    }
+
+}
