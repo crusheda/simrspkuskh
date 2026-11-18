@@ -506,7 +506,8 @@ class FinalisasiController extends Controller
             $value = $this->soapValue($anamnesis->DESKRIPSI);
 
             if ($value) {
-                $rows_s[] = 'Riwayat Penyakit Sekarang: ' . $value;
+                // $rows_s[] = 'Riwayat Penyakit Sekarang: ' . $value;
+                $rows_s[] = $value;
             }
         }
 
@@ -557,7 +558,8 @@ class FinalisasiController extends Controller
             ]);
 
 
-        $cppt_o = "<div style='color:#9CC96B'><u>Pemeriksan Umum</u>:\n</div>";
+        // $cppt_o = "<div style='color:#9CC96B'><u>Pemeriksan Umum</u>:\n</div>";
+        $cppt_o = '';
 
         if ($tandaVital) {
 
@@ -708,8 +710,10 @@ class FinalisasiController extends Controller
 
                 "",
 
-                "<div style='color:#9CC96B'><u>Pemeriksaan Fisik</u>:\n</div>"
-                    . ($pemeriksaanFisik->DESKRIPSI ?? '-'),
+                // "<div style='color:#9CC96B'><u>Pemeriksaan Fisik</u>:\n</div>"
+                //     . ($pemeriksaanFisik->DESKRIPSI ?? '-'),
+
+                ($pemeriksaanFisik->DESKRIPSI ?? '-'),
 
             ], function ($value) {
 
@@ -791,10 +795,15 @@ class FinalisasiController extends Controller
 
         $cppt_p = implode("\n", array_filter([
 
-            "<div style='color:#9CC96B'>Perencanaan Terapi:</div>" .
-                ($rencanaTerapi->DESKRIPSI ?? ''),
+            // "<div style='color:#9CC96B'>Perencanaan Terapi:</div>" .
+            //     ($rencanaTerapi->DESKRIPSI ?? ''),
 
-            "\n<div style='color:#9CC96B'>Hasil Lapor DPJP:</div>" .
+            // "\n<div style='color:#9CC96B'>Hasil Lapor DPJP:</div>" .
+            //     ($hasilLapor->DESKRIPSI ?? ''),
+
+            ($rencanaTerapi->DESKRIPSI ?? ''),
+
+            "\n".
                 ($hasilLapor->DESKRIPSI ?? ''),
 
         ], function ($value) {
@@ -1065,7 +1074,8 @@ class FinalisasiController extends Controller
             $value = $this->soapValue($anamnesis->DESKRIPSI);
 
             if ($value) {
-                $s[] = 'Riwayat Penyakit Sekarang: ' . $value;
+                // $s[] = 'Riwayat Penyakit Sekarang: ' . $value;
+                $s[] = $value;
             }
         }
 
@@ -1215,7 +1225,7 @@ class FinalisasiController extends Controller
 
         $o = [];
 
-        $o[] = "<b style='color:#9CC96B'>Pemeriksaan Umum</b>";
+        // $o[] = "<b style='color:#9CC96B'>Pemeriksaan Umum</b>";
 
         if ($tandaVital) {
 
@@ -1343,7 +1353,10 @@ class FinalisasiController extends Controller
                     $pemfisDokter->{$kolomDetail} ?? null
                 ));
 
-                $baris = '<b style="color:#38e2c6">' . e($label) . '</b>: '
+                // $baris = '<b style="color:#38e2c6">' . e($label) . '</b>: '
+                //     . ($normalDicentang ? 'Normal' : 'Tidak normal');
+
+                $baris = e($label) . ' : '
                     . ($normalDicentang ? 'Normal' : 'Tidak normal');
 
                 // Detail ditampilkan tanpa bergantung pada status checkbox Normal.
@@ -1359,12 +1372,13 @@ class FinalisasiController extends Controller
             ));
 
             if ($keterangan !== '') {
-                $barisPemfisDokter[] = '<b style="color:#38e2c6">Keterangan Lainnya</b>: '
+                $barisPemfisDokter[] = 'Keterangan Lainnya : '
                     . nl2br(e($keterangan));
             }
 
             if ($barisPemfisDokter) {
-                $o[] = '<b style="color:#9CC96B">Pemeriksaan Fisik Dokter</b>';
+                // $o[] = '<b style="color:#9CC96B">Pemeriksaan Fisik Dokter</b>';
+                $o[] = '';
 
                 foreach ($barisPemfisDokter as $baris) {
                     $o[] = $baris;
@@ -2956,7 +2970,7 @@ class FinalisasiController extends Controller
 
         $o = [];
 
-        $o[] = "<b style='color:#9CC96B'>Pemeriksaan Umum</b>";
+        // $o[] = "<b style='color:#9CC96B'>Pemeriksaan Umum</b>";
 
         if ($tandaVital) {
 
@@ -3246,7 +3260,8 @@ class FinalisasiController extends Controller
             $value = $this->soapValue($anamnesis->DESKRIPSI);
 
             if ($value) {
-                $s[] = 'Riwayat Penyakit Sekarang: ' . $value;
+                // $s[] = 'Riwayat Penyakit Sekarang: ' . $value;
+                $s[] = $value;
             }
         }
 
@@ -3402,7 +3417,7 @@ class FinalisasiController extends Controller
 
         $o = [];
 
-        $o[] = "<b style='color:#9CC96B'>Pemeriksaan Umum</b>";
+        // $o[] = "<b style='color:#9CC96B'>Pemeriksaan Umum</b>";
 
         if ($tandaVital) {
 
@@ -3490,7 +3505,7 @@ class FinalisasiController extends Controller
             }
         }
 
-        $o[] = "<b style='color:#9CC96B'>Pemeriksaan Fisik</b>";
+        // $o[] = "<b style='color:#9CC96B'>Pemeriksaan Fisik</b>";
 
         $pemfis = DB::table('medicalrecord.pemeriksaan_fisik')
             ->where('KUNJUNGAN', $kunjungan)
@@ -3654,7 +3669,8 @@ class FinalisasiController extends Controller
         */
         if ($data->count() > 0) {
 
-            $s[] = "<b style='color:#9CC96B'>Riwayat Obstetri</b>";
+            // $s[] = "<b style='color:#9CC96B'>Riwayat Obstetri</b>";
+            $s[] = "Riwayat Obstetri";
 
             foreach ($data as $i => $ro) {
 
@@ -3859,7 +3875,7 @@ class FinalisasiController extends Controller
 
                     if (!$fisikAda) {
 
-                        $o[] = "<b style='color:#9CC96B'>Pemeriksaan Fisik Obstetri</b>";
+                        $o[] = "Pemeriksaan Fisik Obstetri";
 
                         $fisikAda = true;
                     }

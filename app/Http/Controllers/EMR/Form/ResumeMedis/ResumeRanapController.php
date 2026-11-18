@@ -794,6 +794,36 @@ class ResumeRanapController extends Controller
                 ->orderByDesc('ID')
                 ->first();
 
+            $triageATS = DB::table('medicalrecord.triage')
+                ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                ->whereIn('STATUS', [1, 2])
+                ->orderByDesc('ID')
+                ->first(['KRITERIA_TAMBAHAN']);
+
+            $mapIndikasiRawatInap = [
+                'ancaman_nyawa' => 'Mengancam nyawa, membahayakan diri dan orang lain/lingkungan',
+                'gangguan_jalan_napas' => 'Adanya gangguan pada jalan napas, pernapasan, dan sirkulasi',
+                'penurunan_kesadaran' => 'Adanya penurunan kesadaran',
+                'gangguan_hemodinamik' => 'Adanya gangguan hemodinamik',
+                'tindakan_segera' => 'Memerlukan tindakan segera',
+                'tidak_memenuhi_kriteria' => 'Tidak memenuhi kriteria Gawat Darurat',
+            ];
+
+            $rawIndikasi = $triageATS->KRITERIA_TAMBAHAN ?? null;
+
+            $kodeIndikasiTerpilih = is_array($rawIndikasi)
+                ? $rawIndikasi
+                : json_decode((string) $rawIndikasi, true);
+
+            $indikasiRawatInap = collect($mapIndikasiRawatInap)
+                ->filter(
+                    fn ($label, $kode) =>
+                        is_array($kodeIndikasiTerpilih)
+                        && in_array($kode, $kodeIndikasiTerpilih, true)
+                )
+                ->values()
+                ->implode(', ');
+
             // RPS
             $anamnesis = DB::table('medicalrecord.anamnesis')
                 ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
@@ -874,6 +904,52 @@ class ResumeRanapController extends Controller
                     ->implode("\n")
                 : '';
 
+            //STATUS REPRODUKSI
+            $statusReproduksiRow = DB::table('medicalrecord.sirmed_status_reproduksi')
+                ->where('KUNJUNGAN', $kunjunganPoli->NOMOR)
+                ->where('STATUS', 1)
+                ->orderByDesc('ID')
+                ->first([
+                    'KASUS_OBSTETRI_GINEKOLOGI',
+                    'STATUS_REPRODUKSI',
+                    'HPHT',
+                    'SIKLUS',
+                    'KB',
+                    'HAMIL_GRAVIDA',
+                    'HAMIL_PARITAS',
+                    'HAMIL_ABORTUS',
+                ]);
+
+            $statusReproduksiText = 'Tidak';
+
+            if (
+                $statusReproduksiRow &&
+                (int) $statusReproduksiRow->KASUS_OBSTETRI_GINEKOLOGI === 2
+            ) {
+                $detail = match ((int) $statusReproduksiRow->STATUS_REPRODUKSI) {
+                    1 => 'Hamil'
+                        . ' (Gravida: ' . ($statusReproduksiRow->HAMIL_GRAVIDA ?: '-')
+                        . ', Paritas: ' . ($statusReproduksiRow->HAMIL_PARITAS ?: '-')
+                        . ', Abortus: ' . ($statusReproduksiRow->HAMIL_ABORTUS ?: '-') . ')',
+
+                    0 => 'Tidak Hamil',
+
+                    2 => 'HPHT: ' . ($statusReproduksiRow->HPHT ?: '-')
+                        . ', Siklus: ' . ($statusReproduksiRow->SIKLUS ?: '-'),
+
+                    3 => 'KB' . (
+                        !empty($statusReproduksiRow->KB)
+                            ? ': ' . $statusReproduksiRow->KB
+                            : ''
+                    ),
+
+                    default => '',
+                };
+
+                $statusReproduksiText = 'Kasus Obstetri Ginekologi'
+                    . ($detail !== '' ? '; ' . $detail : '');
+            }
+
             // TANDA VITAL
             $tandaVital = DB::table('medicalrecord.tanda_vital as ttv')
                 ->leftJoin('master.referensi as refKesadaran', function ($join) {
@@ -936,7 +1012,7 @@ class ResumeRanapController extends Controller
                     3 => 'Akral Dingin',
                     4 => 'Sianotik',
                     5 => 'Berkeringat',
-                    default => '',
+                    default => 'Normal',
                 };
 
                 $pupil = match ((int) ($ttv->PUPIL ?? 0)) {
@@ -1209,12 +1285,14 @@ class ResumeRanapController extends Controller
 
             // SUSUN TEXT TERAPI
             $terapiText = implode("\n", [
-                "• TATALAKSANA AWAL",
+                // "• TATALAKSANA AWAL",
                 $perencanaanTerapi,
+                "",
+                "",
                 $hasilLaporDPJP,
                 "",
-                "• TATALAKSANA TAMBAHAN",
-                "-"
+                // "• TATALAKSANA TAMBAHAN",
+                // "-"
             ]);
 
             // KONDISI SAAT KELUAR RS & CARA KELUAR / PASIEN PULANG
@@ -1267,8 +1345,18 @@ class ResumeRanapController extends Controller
             /*
             * PUSH VALUE INTO $OLD
             */
-            $old->put('indikasi', $perencanaan_ri->INDIKASI ?? '');
-            $old->put('rps', $anamnesis->DESKRIPSI ?? '');
+            // $old->put('indikasi', $perencanaan_ri->INDIKASI ?? '');
+            $old->put('indikasi', $indikasiRawatInap);
+            // $old->put('rps', $anamnesis->DESKRIPSI ?? '');
+            $rpsText = trim((string) ($anamnesis->DESKRIPSI ?? ''));
+
+            if ($statusReproduksiText !== '') {
+                $rpsText .= ($rpsText !== '' ? "\n" : '')
+                    . 'Status Reproduksi: '
+                    . $statusReproduksiText;
+            }
+
+            $old->put('rps', $rpsText);
             $old->put('rpd', $rpp->DESKRIPSI ?? '');
             $old->put('rpm', $riwayatPenggunaanObatText);
             $old->put('ra', $riwayatAlergiText);

@@ -154,7 +154,7 @@
                                             <div class="form-group">
                                                 <h6>
                                                     Diagnosa
-                                                    [<b class="text-danger">ICD 10</b>]
+                                                    {{-- [<b class="text-danger">ICD 10</b>] --}}
                                                 </h6>
 
                                                 <textarea
@@ -190,7 +190,7 @@
                                             <div class="form-group">
                                                 <h6>
                                                     Tindakan
-                                                    [<b class="text-success">ICD 9</b>]
+                                                    {{-- [<b class="text-success">ICD 9</b>] --}}
                                                 </h6>
 
                                                 <textarea
@@ -268,7 +268,7 @@
                                             2 => 'Pulang Atas Permintaan Sendiri',
                                             3 => 'Dirujuk ke Rumah Sakit Lain',
                                             4 => 'Lari',
-                                            5 => 'Pindah RS Lain',
+                                            // 5 => 'Pindah RS Lain',
                                             6 => 'Meninggal',
                                             7 => 'Dead On Arrival (DOA)',
                                             8 => 'Lain-lain',
