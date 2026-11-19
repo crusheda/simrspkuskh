@@ -127,6 +127,10 @@
     {{-- ACTIONS: MENU PASIEN, NOTIFIKASI, TEMA, PROFIL --}}
     <div class="topbar-actions">
 
+        <button type="button" class="icon-button" id="cariEMRPasien" aria-label="Cari EMR Pasien">
+            <i class="bi bi-search"></i>
+        </button>
+
         {{-- DROPDOWN MENU PASIEN (hanya aktif saat workspace pasien) --}}
         <div class="dropdown" id="patientDropdownContainer" style="display: none;">
             <button
@@ -255,13 +259,15 @@
                     </a>
                 </li>
 
+                @hasrole('admin')
                 {{-- Pengaturan Akun --}}
-                {{-- <li>
-                    <a href="{{ route('v3.profil') }}" class="dropdown-item" wire:navigate>
+                <li>
+                    <a href="{{ route('v2.roles') }}" class="dropdown-item">
                         <i class="bi bi-gear me-2"></i>
-                        Pengaturan Akun
+                        Pengaturan Akses Pengguna
                     </a>
-                </li> --}}
+                </li>
+                @endhasrole
 
                 <li>
                     <hr class="dropdown-divider">

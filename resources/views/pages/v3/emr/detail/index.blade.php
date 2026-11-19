@@ -45,7 +45,7 @@
                 <div class="d-flex align-items-center justify-content-between gap-3 p-2 px-3 rounded-3 border border-danger-subtle bg-danger-subtle pb-2 mb-2">
 
                     {{-- Left Content --}}
-                    <div class="d-flex align-items-center gap-2 min-w-0 mb-2">
+                    <div class="d-flex align-items-center gap-2 min-w-0">
                         <div class="d-flex align-items-center justify-content-center rounded-circle bg-danger text-white flex-shrink-0"
                             style="width: 36px; height: 36px;">
                             <i class="ri-alarm-warning-line fs-5"></i>

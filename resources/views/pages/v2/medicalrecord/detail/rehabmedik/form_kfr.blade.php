@@ -18,7 +18,7 @@
             <div class="card-body p-3 pb-0">
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <div class="alert alert-primary mb-0" role="alert">
+                        <div class="alert alert-light mb-0" role="alert">
                             <i class="ph-duotone ph-arrow-bend-down-right me-1"></i> Pastikan untuk mengisi formulir dengan lengkap dan akurat. Formulir ini akan digunakan sebagai acuan dalam perencanaan dan pelaksanaan program rehabilitasi medik pasien. <br>
                             <i class="ph-duotone ph-arrow-bend-down-right me-1"></i> Isian dengan tanda (<a class="text-danger">*</a>) wajib diisi. Jangan lupa untuk menyimpan formulir setelah selesai mengisi. <br>
                             <i class="ph-duotone ph-arrow-bend-down-right me-1"></i> Apabila ingin menggunakan formulir KFR dari kunjungan sebelumnya, silakan klik tombol <span class="badge bg-info badge-sm" disabled><i class="ph-duotone ph-file-search me-1"></i> Gunakan Form Lama</span> di atas, lalu pilih formulir yang ingin digunakan. <br>
@@ -145,7 +145,7 @@
                 </h2>
                 <div id="btn-collapse-riwayat-cppt-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-cppt-kfr" data-bs-parent="#collapse-riwayat-cppt-kfr">
                     <div class="accordion-body rounded-bottom p-3" style="max-height: 613px; overflow-y: auto;">
-                        <div id="load-riwayat-cppt-kfr">
+                        <div id="load-riwayat-cppt-kfr" style="display: flex; flex-direction: column; gap: 8px;">
                             <div class="d-flex justify-content-center">
                                 <div class="spinner-grow spinner-grow-sm me-2" role="status">
                                     <span class="sr-only">Loading...</span>
@@ -381,20 +381,20 @@
                                                         ${badgeSistem}
                                                         ${starForm}
                                                         ${kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success badge-sm me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
-                                                        <b class="text-teal-900" data-bs-toggle="tooltip" title="Nama Ruangan">${item.NAMARUANGAN}</b>
+                                                        <a class="text-teal-500" data-bs-toggle="tooltip" title="Nama Ruangan">${item.NAMARUANGAN}</a>
                                                         <i class="fas fa-angle-right mx-1"></i>
-                                                        <b class="text-pink-900" data-bs-toggle="tooltip" title="Tgl. Pendaftaran Kunjungan">${tanggalDaftar}</b>
+                                                        <a class="text-pink-500" data-bs-toggle="tooltip" title="Tgl. Pendaftaran Kunjungan">${tanggalDaftar}</a>
                                                         <i class="fas fa-angle-right mx-1"></i>
-                                                        <b class="text-purple-900" data-bs-toggle="tooltip" title="Nama Dokter DPJP">${item.NAMADPJP}</b>
+                                                        <a class="text-purple-500" data-bs-toggle="tooltip" title="Nama Dokter DPJP">${item.NAMADPJP}</a>
                                                     </div>
                                                     <div class="small mt-1 text-truncate w-100">
-                                                        <b data-bs-toggle="tooltip" title="Nama User Input CPPT"><i class="fas fa-user-md text-primary me-1"></i>
-                                                        CPPT <b class="text-blue-900">${jeniscppt}</b> Oleh <u>${item.NAMAUSER}</u></b>
+                                                        <a data-bs-toggle="tooltip" title="Nama User Input CPPT"><i class="fas fa-user-md text-primary me-1"></i>
+                                                        CPPT <a class="text-blue-500">${jeniscppt}</a> Oleh <u>${item.NAMAUSER}</u></a>
                                                     </div>
                                                     <div class="small mt-1 text-truncate w-100">
-                                                        <b data-bs-toggle="tooltip" title="Tanggal Input CPPT"><i class="fas fa-calendar-check text-orange-400 me-1"></i>
+                                                        <a data-bs-toggle="tooltip" title="Tanggal Input CPPT"><i class="fas fa-calendar-check text-orange-400 me-1"></i>
                                                             Ditambahkan Tgl. ${tanggal} WIB
-                                                        </b>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </button>
@@ -649,8 +649,8 @@
                                                 <div class="row g-1">
                                                     <div class="col-6">
                                                         <h6 class="mb-1">${item.sep !=0 ?'SEP<b class="text-info">#</b>'+item.sep:'KUNJUNGAN <b class="text-danger">TANPA SEP</b>'} ${item.nomor == kunjungan?'<span class="badge bg-primary badge-sm">SAAT INI</span>':''} ${utama}</h6>
-                                                        <p class="text-muted mb-0"><small><b class="text-red-900">DPJP</b>: <u>${item.nama_dokter}</u> (${item.nip_dokter})</small></p>
-                                                        <p class="text-muted mb-0"><small><b class="text-purple-900">Tgl.Form</b>: <b class="me-1">${item.tgl}</b> ${item.bertemu_dokter === 1 ? '<span class="badge bg-success-subtle text-success border-success badge-sm">Bertemu Dokter</span>' : '<span class="badge bg-danger-subtle text-danger border-danger badge-sm">Tidak Bertemu Dokter</span>'}</small></p>
+                                                        <p class="text-muted mb-2"><small><b class="text-red-500">DPJP</b>: <u>${item.nama_dokter}</u> (${item.nip_dokter})</small></p>
+                                                        <p class="text-muted mb-0"><small><b class="text-purple-500">Tgl.Form</b>: <b class="me-1">${item.tgl}</b> ${item.bertemu_dokter === 1 ? '<span class="badge bg-success-subtle text-success border-success badge-sm">Bertemu Dokter</span>' : '<span class="badge bg-danger-subtle text-danger border-danger badge-sm">Tidak Bertemu Dokter</span>'}</small></p>
                                                     </div>
                                                     <div class="col-6 text-end">
                                                         <h6 class="mb-1">Kunjungan/SEP Tgl. <span class="badge text-bg-secondary ms-1">${tanggalKunj}</span></h6>

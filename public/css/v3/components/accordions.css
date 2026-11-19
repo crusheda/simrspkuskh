@@ -120,8 +120,9 @@
     color: var(--sirmed-accordion-color) !important;
     text-align: left !important;
 
-    background-color: var(--sirmed-accordion-bg) !important;
-    background-image: none !important;
+    /* background-color: var(--sirmed-accordion-bg) !important; */
+    background-color: transparent;
+    background-image: none;
 
     border: 0 !important;
     border-radius: 0 !important;
@@ -144,7 +145,8 @@
 .accordion > .accordion-item > .accordion-header > .accordion-button:not(.collapsed) {
     /* color: var(--sirmed-accordion-primary) !important; */
 
-    background-color: var(--sirmed-accordion-active-bg) !important;
+    /* background-color: var(--sirmed-accordion-active-bg) !important; */
+    background-color: transparent;
 
     border: 0 !important;
 
@@ -359,7 +361,8 @@
 
     color: var(--sirmed-accordion-color) !important;
 
-    background-color: var(--sirmed-accordion-bg) !important;
+    /* background-color: var(--sirmed-accordion-bg) !important; */
+    background-color: transparent !important;
 
     font-family: inherit !important;
     font-size: .875rem !important;
