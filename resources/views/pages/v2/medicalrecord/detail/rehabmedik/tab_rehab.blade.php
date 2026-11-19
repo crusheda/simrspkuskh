@@ -26,13 +26,33 @@
 </div>
 
 <script>
+    // const {
+    //     kunjungan,
+    //     namaRuangan,
+    //     namaDokter,
+    //     rm,
+    //     namaPasien,
+    //     tglLahir,
+    //     umur,
+    //     idAsuransi,
+    //     namaAsuransi,
+    //     noAsuransi,
+    //     tgl_sep,
+    //     sep,
+    //     tgl_kfr,
+    //     tgl_masuk,
+    //     tgl_keluar,
+    //     tgl_sep_date,
+    //     statusKunjungan
+    // } = window.EMRData;
+
     $(document).ready(function() {
 
     });
 
     function loadFormKfr() {
         $.ajax({
-            url: '/api/emr/kfr/' + kunjungan,
+            url: '/api/emr/kfr/' + window.EMRData.kunjungan,
             type: 'GET',
             success: function(res) {
                 if (!res.status) { // Jika Tidak Ada Data Kunjungan / Form KFR
@@ -64,7 +84,7 @@
                     return;
                 }
 
-                if (res.kunjungan_init !== kunjungan) { // Jika Kunjungan / Form KFR Tidak UTAMA
+                if (res.kunjungan_init !== window.EMRData.kunjungan) { // Jika Kunjungan / Form KFR Tidak UTAMA
                     // Swal.fire('Info', 'Form KFR ini berasal dari kunjungan sebelumnya. Silakan sinkronisasi data jika ingin menggunakannya pada kunjungan ini.', 'info');
                     $('#btn-kosongi-form-kfr').prop('hidden', true);
                     $('#btn-simpan-form-kfr').prop('hidden', true);
@@ -155,7 +175,7 @@
 
     function loadFormProgramTerapi() {
         $.ajax({
-            url: '/api/emr/pterapi/' + kunjungan,
+            url: '/api/emr/pterapi/' + window.EMRData.kunjungan,
             type: 'GET',
             beforeSend: function() {
                 $('#btn-kosongi-form-program-terapi').prop('disabled', true).prop('hidden', false);
@@ -198,7 +218,7 @@
 
     function loadFormJadwalPelayanan() {
         $.ajax({
-            url: `/api/emr/jadwal/${kunjungan}`,
+            url: `/api/emr/jadwal/${window.EMRData.kunjungan}`,
             type: 'GET',
             beforeSend: function() {
 

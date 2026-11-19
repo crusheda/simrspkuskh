@@ -2,7 +2,7 @@
     <div class="col-md-12" id="formJPel" hidden>
         <div class="card table-card border shadow-none">
             <div class="card-header d-flex align-items-center justify-content-between p-3">
-                <h5 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Form <b class="text-success">Jadwal Pelayanan Pasien</b></h5>
+                <h6 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Form <b class="text-success">Jadwal Pelayanan Pasien</b></h6>
                 <div>
                     Pengisian Formulir ini <b class="text-danger">Hanya Sekali Pada Setiap Kunjungan</b>, Pastikan Data <b class="text-success">Sudah Benar Sebelum Menyimpan</b>!
                 </div>
@@ -20,9 +20,9 @@
         </div>
     </div>
     <div class="col-md-7">
-        <div class="card table-card border shadow-none">
+        <div class="card table-card border shadow-none mb-2">
             <div class="card-header d-flex align-items-center justify-content-between p-3">
-                <h5 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Form <b class="text-primary">Program Terapi</b></h5>
+                <h6 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Form <b class="text-primary">Program Terapi</b></h6>
                 <div>
                     <a><i class="fas fa-exclamation-circle me-1"></i><i>Anda masuk sebagai <b><u class="text-primary" >{{ Auth::user()->NAMA }}</u> (NIP#{{ Auth::user()->NIP }})</b></i></a>
                     <button class="btn btn-subtle-primary btn-sm ms-2" onclick="loadCpptProgramTerapi()" id="btn-refresh-riwayat-cppt-program" data-bs-toggle="tooltip" title="Refresh Riwayat CPPT"><i class="fas fa-sync"></i></button>
@@ -396,7 +396,7 @@
         </div>
     </div>
     <div class="col-md-5">
-        <div class="accordion card" id="collapse-riwayat-program-kfr">
+        <div class="accordion card mb-2" id="collapse-riwayat-program-kfr">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-program-kfr">
                     <button class="accordion-button bg-success-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-program-kfr" aria-expanded="true" aria-controls="collapseOne">
@@ -409,7 +409,7 @@
                             <div class="d-flex justify-content-center">
                                 <div class="spinner-grow spinner-grow-sm me-2" role="status">
                                     <span class="sr-only">Loading...</span>
-                                </div> <a class="align-middle">Memproses Data Riwayat..</a>
+                                </div> <a class="align-middle text-muted">Memproses Data Riwayat..</a>
                             </div>
                         </div>
                     </div>
@@ -429,7 +429,7 @@
                             <div class="d-flex justify-content-center">
                                 <div class="spinner-grow spinner-grow-sm me-2" role="status">
                                     <span class="sr-only">Loading...</span>
-                                </div> <a class="align-middle">Mengambil Data Riwayat..</a>
+                                </div> <a class="align-middle text-muted">Mengambil Data Riwayat..</a>
                             </div>
                         </div>
                     </div>
@@ -444,9 +444,9 @@
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">
+                <h6 class="modal-title">
                     Preview <b class="text-primary">Jadwal Pelayanan Terapi</b> (<a id="showTxModalPJPel"><i class="fas fa-sync fa-spin ms-1 me-1 fs-15"></i></a>)
-                </h5>
+                </h6>
             </div>
             <div class="modal-body">
                 <div id="prevFormJadwalPelayanan"></div>
@@ -465,7 +465,7 @@
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="showFormPTerapiLabel"><span class="badge text-bg-secondary">Formulir Program Terapi</span> | IDKUNJUNGAN : <a id="show-id-form-programterapi" class="text-primary"></a></h5>
+                <h6 class="modal-title" id="showFormPTerapiLabel"><span class="badge text-bg-secondary">Formulir Program Terapi</span> | IDKUNJUNGAN : <a id="show-id-form-programterapi" class="text-primary"></a></h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3">
@@ -486,7 +486,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Tanda Tangan Pasien</h5>
+                <h6 class="modal-title">Tanda Tangan Pasien</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -845,13 +845,13 @@
         const data = {
             _token: $('meta[name="csrf-token"]').attr('content'),
 
-            rm: rm,
-            kunjungan: kunjungan,
-            sep: sep ?? 0,
-            tgl_sep: tgl_sep ?? tgl_masuk,
-            tgl: tgl_kfr,
-            tgl_masuk: tgl_masuk,
-            tgl_keluar: tgl_keluar,
+            rm: window.EMRData.rm,
+            kunjungan: window.EMRData.kunjungan,
+            sep: window.EMRData.sep ?? 0,
+            tgl_sep: window.EMRData.tgl_sep ?? window.EMRData.tgl_masuk,
+            tgl: window.EMRData.tgl_kfr,
+            tgl_masuk: window.EMRData.tgl_masuk,
+            tgl_keluar: window.EMRData.tgl_keluar,
 
             // CPPT
             cppt_s_t: $('#cppt_s_t').val(),
@@ -926,13 +926,13 @@
             .append(`<div class="d-flex justify-content-center">
                         <div class="spinner-grow spinner-grow-sm me-2" role="status">
                             <span class="sr-only">Loading...</span>
-                        </div> <a class="align-middle">Memproses Data Riwayat..</a>
+                        </div> <a class="align-middle text-muted">Memproses Data Riwayat..</a>
                     </div>`);
         $.ajax({
-            url: `/api/emr/pterapi/${rm}/cppt/${kunjungan}/${
-                tgl_sep_date
-                    ?? tgl_keluar?.substring(0, 10)
-                    ?? tgl_masuk?.substring(0, 10)
+            url: `/api/emr/pterapi/${window.EMRData.rm}/cppt/${window.EMRData.kunjungan}/${
+                window.EMRData.tgl_sep_date
+                    ?? window.EMRData.tgl_keluar?.substring(0, 10)
+                    ?? window.EMRData.tgl_masuk?.substring(0, 10)
             }`,
             type: 'GET',
             beforeSend: function () {
@@ -943,7 +943,7 @@
                     // Swal.fire('Info', res.message, 'info');
                     $('#load-riwayat-cppt-program-kfr').empty()
                         .append(`<div class="d-flex justify-content-center">
-                                    <center><a class="align-middle">Data CPPT Tidak Ditemukan</a></center>
+                                    <center><a class="align-middle text-muted">Data CPPT Tidak Ditemukan</a></center>
                                 </div>`);
                     return;
                 }
@@ -1024,7 +1024,7 @@
                                                 <div class="d-flex flex-column w-100 min-w-0 pe-5">
                                                     <div class="text-truncate w-100">
                                                         ${badgeSistem}
-                                                        ${kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success badge-sm me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
+                                                        ${window.EMRData.kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success badge-sm me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
                                                         <b class="text-teal-900" data-bs-toggle="tooltip" title="Nama Ruangan">${item.NAMARUANGAN}</b>
                                                         <i class="fas fa-angle-right mx-1"></i>
                                                         <b class="text-pink-900" data-bs-toggle="tooltip" title="Tgl. Pendaftaran Kunjungan">${tanggalDaftar}</b>
@@ -1090,7 +1090,7 @@
         const btn = $('#btn-copy-cppt-form-program-terapi-' + IDCPPT);
 
         $.ajax({
-            url: `/api/emr/pterapi/${kunjungan}/cppt/${IDCPPT}/copy`,
+            url: `/api/emr/pterapi/${window.EMRData.kunjungan}/cppt/${IDCPPT}/copy`,
             type: 'GET',
 
             beforeSend: function () {
@@ -1183,11 +1183,11 @@
             .append(`<div class="d-flex justify-content-center">
                         <div class="spinner-grow spinner-grow-sm me-2" role="status">
                             <span class="sr-only">Loading...</span>
-                        </div> <a class="align-middle">Memproses Data Riwayat..</a>
+                        </div> <a class="align-middle text-muted">Memproses Data Riwayat..</a>
                     </div>`);
         const btn = $('#btn-refresh-riwayat-form-program');
         $.ajax({
-            url: `/api/emr/pterapi/${kunjungan}/riwayat`,
+            url: `/api/emr/pterapi/${window.EMRData.kunjungan}/riwayat`,
             type: 'GET',
             beforeSend: function () {
                 btn.prop('disabled', true)
@@ -1199,7 +1199,7 @@
                     // Swal.fire('Info', res.message, 'info');
                     $('#load-riwayat-program-terapi').empty()
                         .append(`<div class="d-flex justify-content-center">
-                                    <center><a class="align-middle">${res.message}</a></center>
+                                    <center><a class="align-middle text-muted">${res.message}</a></center>
                                 </div>`);
                     $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', true).removeClass('btn-secondary btn-info').addClass('btn-secondary');
                     return;
@@ -1403,7 +1403,7 @@
         kosongiFormProgramTerapi();
 
         $.ajax({
-            url: `/api/emr/pterapi/get/${kunjungan}/${group}/${queue}`,
+            url: `/api/emr/pterapi/get/${window.EMRData.kunjungan}/${group}/${queue}`,
             type: 'GET',
 
             beforeSend: function () {
@@ -1497,15 +1497,15 @@
         const data = {
             _token: $('meta[name="csrf-token"]').attr('content'),
 
-            rm: rm,
-            kunjungan: kunjungan,
+            rm: window.EMRData.rm,
+            kunjungan: window.EMRData.kunjungan,
             queue: $('#kode_program_terapi').val(),
 
-            sep: sep ?? 0,
-            tgl_sep: tgl_sep ?? tgl_masuk,
-            tgl: tgl_kfr,
-            tgl_masuk: tgl_masuk,
-            tgl_keluar: tgl_keluar,
+            sep: window.EMRData.sep ?? 0,
+            tgl_sep: window.EMRData.tgl_sep ?? window.EMRData.tgl_masuk,
+            tgl: window.EMRData.tgl_kfr,
+            tgl_masuk: window.EMRData.tgl_masuk,
+            tgl_keluar: window.EMRData.tgl_keluar,
 
             // CPPT
             cppt_s_t: $('#cppt_s_t').val(),
@@ -1756,12 +1756,12 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             data: JSON.stringify({
-                kunjungan: kunjungan,
-                rm: rm,
+                kunjungan: window.EMRData.kunjungan,
+                rm: window.EMRData.rm,
                 image: image,
-                sep: sep,
-                tgl_sep: tgl_sep_date,
-                tgl: tgl_masuk
+                sep: window.EMRData.sep,
+                tgl_sep: window.EMRData.tgl_sep_date,
+                tgl: window.EMRData.tgl_masuk
             }),
             success: function (res) {
                 iziToast.success({
@@ -1813,11 +1813,11 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data: JSON.stringify({
-                    kunjungan: kunjungan,
-                    rm: rm,
-                    sep: sep,
-                    tgl_sep: tgl_sep_date,
-                    tgl: tgl_masuk
+                    kunjungan: window.EMRData.kunjungan,
+                    rm: window.EMRData.rm,
+                    sep: window.EMRData.sep,
+                    tgl_sep: window.EMRData.tgl_sep_date,
+                    tgl: window.EMRData.tgl_masuk
                 }),
                 beforeSend: function () {
                     btn.prop('disabled', true)
@@ -1862,10 +1862,10 @@
         $('#prevFormJadwalPelayanan').html(`
             <div class="spinner-grow spinner-grow-sm me-2" role="status">
                 <span class="sr-only">Loading...</span>
-            </div> <a class="align-middle">Memuat Data Formulir..</a>
+            </div> <a class="align-middle text-muted">Memuat Data Formulir..</a>
         `);
 
-        fetch("/api/emr/jadwal/" + encodeURIComponent(kunjungan) + "/preview")
+        fetch("/api/emr/jadwal/" + encodeURIComponent(window.EMRData.kunjungan) + "/preview")
         .then(async response => {
 
             if (!response.ok) {
@@ -1884,7 +1884,7 @@
         .then(blob => {
             const fileURL = URL.createObjectURL(blob);
 
-            $('#showTxModalPJPel').text(kunjungan);
+            $('#showTxModalPJPel').text(window.EMRData.kunjungan);
 
             $('#prevFormJadwalPelayanan').html(`
                 <iframe src="${fileURL}" width="100%" height="500px" frameborder="0" class="rounded"></iframe>
@@ -1919,7 +1919,7 @@
             if (!result.isConfirmed) return;
 
             $.ajax({
-                url: "/api/emr/jadwal/hapus/" + encodeURIComponent(kunjungan),
+                url: "/api/emr/jadwal/hapus/" + encodeURIComponent(window.EMRData.kunjungan),
                 method: "DELETE",
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -163,7 +163,7 @@
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="showFormKfrLabel"><span class="badge text-bg-secondary">Formulir KFR</span> | IDKUNJUNGAN : <a id="show-id-formKFR" class="text-primary"></a></h5>
+                <h6 class="modal-title" id="showFormKfrLabel"><span class="badge text-bg-secondary">Formulir KFR</span> | IDKUNJUNGAN : <a id="show-id-formKFR" class="text-primary"></a></h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3">
@@ -185,7 +185,7 @@
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="showFormKfrLabel">Daftar Formulir KFR <span class="badge bg-danger ms-1">UTAMA</span> (Kunjungan Sebelumnya)</h5>
+                <h6 class="modal-title" id="showFormKfrLabel">Daftar Formulir KFR <span class="badge bg-danger ms-1">UTAMA</span> (Kunjungan Sebelumnya)</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-3">
@@ -282,10 +282,10 @@
                         </div> <a class="align-middle text-muted">Memproses Data Riwayat..</a>
                     </div>`);
         $.ajax({
-            url: `/api/emr/kfr/${rm}/cppt/${kunjungan}/${
-                tgl_sep_date
-                    ?? tgl_keluar?.substring(0, 10)
-                    ?? tgl_masuk?.substring(0, 10)
+            url: `/api/emr/kfr/${window.EMRData.rm}/cppt/${window.EMRData.kunjungan}/${
+                window.EMRData.tgl_sep_date
+                    ?? window.EMRData.tgl_keluar?.substring(0, 10)
+                    ?? window.EMRData.tgl_masuk?.substring(0, 10)
             }`,
             type: 'GET',
             beforeSend: function () {
@@ -380,7 +380,7 @@
                                                     <div class="text-truncate w-100">
                                                         ${badgeSistem}
                                                         ${starForm}
-                                                        ${kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success badge-sm me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
+                                                        ${window.EMRData.kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success badge-sm me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
                                                         <a class="text-teal-500" data-bs-toggle="tooltip" title="Nama Ruangan">${item.NAMARUANGAN}</a>
                                                         <i class="fas fa-angle-right mx-1"></i>
                                                         <a class="text-pink-500" data-bs-toggle="tooltip" title="Tgl. Pendaftaran Kunjungan">${tanggalDaftar}</a>
@@ -446,7 +446,7 @@
         const btn = $('#btn-copy-cppt-form-kfr-' + IDCPPT);
         // const tgl_sep_date = tgl_sep.substring(0, 10);
         $.ajax({
-            url: `/api/emr/kfr/${kunjungan}/cppt/${IDCPPT}/copy`,
+            url: `/api/emr/kfr/${window.EMRData.kunjungan}/cppt/${IDCPPT}/copy`,
             type: 'GET',
             beforeSend: function () {
                 btn.prop('disabled', true)
@@ -503,7 +503,7 @@
 
                 // Atur Tombol dan Hidden Input
                 if (res.form) {
-                    if (res.form.nomor_init !== kunjungan) { // Jika Kunjungan / Form KFR Tidak UTAMA
+                    if (res.form.nomor_init !== window.EMRData.kunjungan) { // Jika Kunjungan / Form KFR Tidak UTAMA
                         $('#btn-kosongi-form-kfr').prop('hidden', true);
                         $('#btn-simpan-form-kfr').prop('hidden', true);
                         $('#form-kfr-utama').prop('hidden', true);
@@ -562,10 +562,10 @@
         const btn = $('#btn-refresh-riwayat-form-kfr');
         // const tgl_sep_date = tgl_sep.substring(0, 10);
         $.ajax({
-            url: `/api/emr/kfr/rm/${rm}/${kunjungan}/${
-                tgl_sep_date
-                    ?? tgl_keluar?.substring(0, 10)
-                    ?? tgl_masuk?.substring(0, 10)
+            url: `/api/emr/kfr/rm/${window.EMRData.rm}/${window.EMRData.kunjungan}/${
+                window.EMRData.tgl_sep_date
+                    ?? window.EMRData.tgl_keluar?.substring(0, 10)
+                    ?? window.EMRData.tgl_masuk?.substring(0, 10)
             }`,
             type: 'GET',
             beforeSend: function () {
@@ -610,7 +610,7 @@
                     content += `<li class="list-group-item list-group-item-action kfr-item" data-id="${item.nomor}" data-init="${item.nomor_init}" data-group="${item.group}" data-queue="${item.queue}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Berkas Formulir" style="cursor:pointer;">
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="flex-shrink-0" data-bs-toggle="tooltip" data-bs-placement="top" title="GROUP - KUNJ. KE XX">
-                                                ${item.nomor == kunjungan && item.bertemu_dokter == 1 && admin == true
+                                                ${item.nomor == window.EMRData.kunjungan && item.bertemu_dokter == 1 && admin == true
                                                     ? `<div class="dropdown" onclick="event.stopPropagation();">
 
                                                             <div
@@ -631,7 +631,7 @@
                                                                         type="button"
                                                                         class="dropdown-item"
                                                                         onclick="showUbahGroupKunjungan('${item.nomor}')"
-                                                                        data-rm="${rm}"
+                                                                        data-rm="${window.EMRData.rm}"
                                                                         data-group="${item.group}"
                                                                         data-queue="${item.queue}"
                                                                     >
@@ -648,7 +648,7 @@
                                             <div class="flex-grow-1 ms-3">
                                                 <div class="row g-1">
                                                     <div class="col-6">
-                                                        <h6 class="mb-1">${item.sep !=0 ?'SEP<b class="text-info">#</b>'+item.sep:'KUNJUNGAN <b class="text-danger">TANPA SEP</b>'} ${item.nomor == kunjungan?'<span class="badge bg-primary badge-sm">SAAT INI</span>':''} ${utama}</h6>
+                                                        <h6 class="mb-1">${item.sep !=0 ?'SEP<b class="text-info">#</b>'+item.sep:'KUNJUNGAN <b class="text-danger">TANPA SEP</b>'} ${item.nomor == window.EMRData.kunjungan?'<span class="badge bg-primary badge-sm">SAAT INI</span>':''} ${utama}</h6>
                                                         <p class="text-muted mb-2"><small><b class="text-red-500">DPJP</b>: <u>${item.nama_dokter}</u> (${item.nip_dokter})</small></p>
                                                         <p class="text-muted mb-0"><small><b class="text-purple-500">Tgl.Form</b>: <b class="me-1">${item.tgl}</b> ${item.bertemu_dokter === 1 ? '<span class="badge bg-success-subtle text-success border-success badge-sm">Bertemu Dokter</span>' : '<span class="badge bg-danger-subtle text-danger border-danger badge-sm">Tidak Bertemu Dokter</span>'}</small></p>
                                                     </div>
@@ -666,7 +666,7 @@
                 $('#load-riwayat-form-kfr').empty().append(content);
 
                 if (res.data && res.data.form) {
-                    if (res.data.form.nomor_init != kunjungan) {
+                    if (res.data.form.nomor_init != window.EMRData.kunjungan) {
                         $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', true).removeClass('btn-secondary btn-info').addClass('btn-secondary');
                     } else {
                         $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', true).removeClass('btn-secondary btn-info').addClass('btn-secondary');
@@ -695,8 +695,8 @@
                     const nomor_kunjungan_init = $(this).data('init');
 
                     // ===== LOGIC ASLI KAMU (TIDAK DIUBAH) =====
-                    if (nomor_kunjungan == kunjungan) {
-                        if (nomor_kunjungan_init == kunjungan) { // JIKA FORM YANG DIKLIK ADALAH FORM KUNJUNGAN SAAT INI UTAMA
+                    if (nomor_kunjungan == window.EMRData.kunjungan) {
+                        if (nomor_kunjungan_init == window.EMRData.kunjungan) { // JIKA FORM YANG DIKLIK ADALAH FORM KUNJUNGAN SAAT INI UTAMA
                             showFormKfr();
                             return;
                         } else {
@@ -749,10 +749,10 @@
         }).then((result) => {
 
             if (result.isConfirmed) {
-                ubahGroupKunjungan(NOKUNJ,rm, 1); // Buat Group Baru
+                ubahGroupKunjungan(NOKUNJ,window.EMRData.rm, 1); // Buat Group Baru
 
             } else if (result.isDenied) {
-                ubahGroupKunjungan(NOKUNJ,rm, 0); // Lanjut GROUP Sebelumnya
+                ubahGroupKunjungan(NOKUNJ,window.EMRData.rm, 0); // Lanjut GROUP Sebelumnya
 
             } else {
                 // cancel
@@ -813,7 +813,7 @@
                     </div>`);
         const btn = $('#btn-list-form-kfr-lama');
         $.ajax({
-            url: `/api/emr/kfr/rm/${rm}/${kunjungan}`,
+            url: `/api/emr/kfr/rm/${window.EMRData.rm}/${window.EMRData.kunjungan}`,
             type: 'GET',
             beforeSend: function () {
                 btn.prop('disabled', true)
@@ -860,7 +860,7 @@
                                             <div class="flex-grow-1 ms-3">
                                                 <div class="row g-1">
                                                     <div class="col-6">
-                                                        <h6 class="mb-1">SEP<b class="text-info">#</b>${item.sep} ${item.nomor_init == kunjungan?'<span class="badge bg-primary">SAAT INI</span>':''}</h6>
+                                                        <h6 class="mb-1">SEP<b class="text-info">#</b>${item.sep} ${item.nomor_init == window.EMRData.kunjungan?'<span class="badge bg-primary">SAAT INI</span>':''}</h6>
                                                         <p class="text-muted mb-0"><small><b class="text-danger">DPJP</b>: <u>${item.nama_dokter}</u></small></p>
                                                     </div>
                                                     <div class="col-6 text-end">
@@ -884,7 +884,7 @@
 
                     $('#showListFormKfr').modal('hide');
 
-                    if (nomor_init == kunjungan) {
+                    if (nomor_init == window.EMRData.kunjungan) {
                         Swal.fire({title: 'Maaf!!', text: 'Formulir yang dipilih adalah formulir pada kunjungan saat ini', icon: 'info', timer: 5000, timerProgressBar: true});
                         return;
                     }
@@ -958,13 +958,13 @@
             type: 'POST',
             data: {
                 nomor_init: nomor_init,
-                nomor_kunjungan: kunjungan,
-                rm: rm,
-                sep: sep ?? 0,
-                tgl_sep: tgl_sep ?? tgl_masuk,
-                tgl_kfr: tgl_kfr,
-                tgl_masuk   : tgl_masuk,
-                tgl_keluar  : tgl_keluar,
+                nomor_kunjungan: window.EMRData.kunjungan,
+                rm: window.EMRData.rm,
+                sep: window.EMRData.sep ?? 0,
+                tgl_sep: window.EMRData.tgl_sep ?? window.EMRData.tgl_masuk,
+                tgl_kfr: window.EMRData.tgl_kfr,
+                tgl_masuk   : window.EMRData.tgl_masuk,
+                tgl_keluar  : window.EMRData.tgl_keluar,
                 bertemu_dokter: bertemu_dokter,
                 _token: '{{ csrf_token() }}'
             },
@@ -1023,7 +1023,7 @@
             url: '/api/emr/kfr/unsync',
             type: 'POST',
             data: {
-                nomor_kunjungan: kunjungan,
+                nomor_kunjungan: window.EMRData.kunjungan,
                 _token: '{{ csrf_token() }}'
             },
             beforeSend: function () {
@@ -1062,13 +1062,13 @@
 
         let data = {
             _token      : $('meta[name="csrf-token"]').attr('content'),
-            rm          : rm,
-            kunjungan   : kunjungan,
-            sep         : sep ?? 0,
-            tgl_sep     : tgl_sep ?? tgl_masuk,
-            tgl         : tgl_kfr,
-            tgl_masuk   : tgl_masuk,
-            tgl_keluar  : tgl_keluar,
+            rm          : window.EMRData.rm,
+            kunjungan   : window.EMRData.kunjungan,
+            sep         : window.EMRData.sep ?? 0,
+            tgl_sep     : window.EMRData.tgl_sep ?? window.EMRData.tgl_masuk,
+            tgl         : window.EMRData.tgl_kfr,
+            tgl_masuk   : window.EMRData.tgl_masuk,
+            tgl_keluar  : window.EMRData.tgl_keluar,
 
             cppt_s      : $('#cppt_s').val(),
             cppt_o      : $('#cppt_o').val(),
@@ -1138,7 +1138,7 @@
         $('#showFormKfr').modal('hide');
 
         $.ajax({
-            url: `/api/emr/kfr/${kunjungan}/generate`,
+            url: `/api/emr/kfr/${window.EMRData.kunjungan}/generate`,
             type: "GET",
             beforeSend: function () {
                 // disable button & show spinner
@@ -1181,7 +1181,7 @@
     function showFormKfr(pushkunjungan,pushkunjunganinit) {
         var generate = 0;
         if (!pushkunjungan && !pushkunjunganinit) {
-            pushkunjungan = kunjungan;
+            pushkunjungan = window.EMRData.kunjungan;
             generate = 1;
         }
         $('#show-id-formKFR').text(pushkunjungan);
@@ -1257,10 +1257,10 @@
         let data = {
             _token     : $('meta[name="csrf-token"]').attr('content'),
             id_cppt    : $('#id_cppt_kfr').val(),
-            kunjungan  : kunjungan,
-            tgl        : tgl_kfr,
-            tgl_masuk  : tgl_masuk,
-            tgl_keluar : tgl_keluar,
+            kunjungan  : window.EMRData.kunjungan,
+            tgl        : window.EMRData.tgl_kfr,
+            tgl_masuk  : window.EMRData.tgl_masuk,
+            tgl_keluar : window.EMRData.tgl_keluar,
 
             cppt_s     : $('#cppt_s').val(),
             cppt_o     : $('#cppt_o').val(),

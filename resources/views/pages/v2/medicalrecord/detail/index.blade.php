@@ -505,6 +505,25 @@
     // var tgl_masuk = @json($list["show"]->MASUK);
     // var tgl_keluar = @json($list['show']->KELUAR);
     // var tgl_sep_date = tgl_sep?tgl_sep.substring(0, 10):null;
+    const {
+        kunjungan,
+        namaRuangan,
+        namaDokter,
+        rm,
+        namaPasien,
+        tglLahir,
+        umur,
+        idAsuransi,
+        namaAsuransi,
+        noAsuransi,
+        tgl_sep,
+        sep,
+        tgl_kfr,
+        tgl_masuk,
+        tgl_keluar,
+        tgl_sep_date,
+        statusKunjungan
+    } = window.EMRData;
 
     let dataPPA = [];
     let dataDokter = [];

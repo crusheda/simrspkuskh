@@ -269,6 +269,14 @@
                 </li>
                 @endhasrole
 
+                {{-- Capaian --}}
+                <li>
+                    <a href="{{ route('v3.capaian') }}" class="dropdown-item" wire:navigate>
+                        <i class="bi bi-leaderboard me-2"></i>
+                        Capaian
+                    </a>
+                </li>
+
                 <li>
                     <hr class="dropdown-divider">
                 </li>

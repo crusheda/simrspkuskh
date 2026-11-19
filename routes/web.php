@@ -33,11 +33,12 @@ use App\Http\Controllers\Display\RatingController;
 // NEW SIRMED v3 WITH LIVEWIRE v4
 use App\Livewire\Auth\Login;
 use App\Livewire\Setting\Profil;
+use App\Livewire\Setting\Notifikasi;
+use App\Livewire\Setting\Capaian;
 use App\Livewire\Dashboard;
 use App\Livewire\Monitoring;
 use App\Livewire\EMR;
 use App\Livewire\SmartClaim;
-use App\Livewire\Setting\Notifikasi;
 use App\Http\Controllers\Auth\LoginV3Controller;
 
 // =====================================================
@@ -62,7 +63,6 @@ Route::middleware(['auth']) // AUTHENTICATED
         // Route::get('/monitoring', Monitoring::class)->name('v3.monitoring');
         Route::get('/emr', EMR::class)->name('v3.emr');
 
-        // Detail kunjungan pasien — SSR
         Route::get('/emr/{KUNJUNGAN}', [
             EMR::class,
             'detailV3',
@@ -75,6 +75,7 @@ Route::middleware(['auth']) // AUTHENTICATED
         Route::get('/smartclaim/{KUNJUNGAN}/farmasi', SmartClaim::class)->name('v3.smartclaim.detail.farmasi');
 
         Route::get('/profil', Profil::class)->name('v3.profil');
+        Route::get('/capaian', Capaian::class)->name('v3.capaian');
         Route::get('/notifikasi', Notifikasi::class)->name('v3.notifikasi');
         Route::get('/notifikasi/klaim', [NotifikasiController::class, 'notifikasiKlaimV3'])->name('v3.notifikasi.klaim');
         Route::get('/setting/notifikasi', Notifikasi::class)->name('v3.setting.notifikasi');
