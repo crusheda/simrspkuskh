@@ -217,7 +217,7 @@
                 FormHelper.setValue(
                     $form,
                     'tla_da',
-                    data.DIAGNOSA_AKHIR
+                    data.DIAGNOSA
                 );
 
             },
