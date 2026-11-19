@@ -139,7 +139,10 @@
                 </div>
             </div>
             <div class="container-fluid py-3 card" id="myDiv">
-                <h2 class="text-center mt-3 mb-4">Display Tempat Tidur Rawat Inap</h2>
+                <h2 class="text-center mt-3 mb-1">Display Tempat Tidur Rawat Inap</h2>
+                <h5 class="text-center text-danger mb-4">
+                    Update terakhir: <span id="lastUpdated">Belum ada data</span>
+                </h5>
 
                 <!-- Progress Bar -->
                 <div class="progress mb-3 ms-3 me-3" style="height:7px; position: sticky; top:0;">
@@ -381,6 +384,17 @@
 
                 // RENDER HTML (wajib di luar if)
                 $("#tampil-tbody").html(html);
+                $("#lastUpdated").text(
+                    new Date().toLocaleString('id-ID', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    })
+                );
 
                 // UPDATE TOTAL
                 $("#totalKosong").text(res.total.kosong);
