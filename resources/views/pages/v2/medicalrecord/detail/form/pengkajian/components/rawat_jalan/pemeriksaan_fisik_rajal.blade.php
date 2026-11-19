@@ -28,7 +28,7 @@
         isPemFisLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rajal/pemeriksaan_fisik/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/rajal/pemeriksaan_fisik/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -86,13 +86,13 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isPemFisSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rajal/pemeriksaan_fisik/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/rajal/pemeriksaan_fisik/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

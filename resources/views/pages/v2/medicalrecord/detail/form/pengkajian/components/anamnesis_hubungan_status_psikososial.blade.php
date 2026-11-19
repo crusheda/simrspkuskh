@@ -399,7 +399,7 @@
         isHSPLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/hubunganstatuspsikososial/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/hubunganstatuspsikososial/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -637,13 +637,13 @@
         updateAdditionalFieldState();
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isHSPSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/hubunganstatuspsikososial/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/hubunganstatuspsikososial/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

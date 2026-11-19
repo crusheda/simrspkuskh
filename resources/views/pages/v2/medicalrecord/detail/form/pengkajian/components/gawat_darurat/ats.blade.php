@@ -1156,7 +1156,7 @@
             return;
         }
 
-        if (!kunjungan) {
+        if (!window.EMRData.kunjungan) {
             console.warn(
                 'Nomor kunjungan ATS tidak ditemukan.'
             );
@@ -1170,7 +1170,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/gd/ats/${kunjungan}`,
+                `/api/v2/emr/pengkajian/gd/ats/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -1700,14 +1700,7 @@
             return;
         }
 
-
-        if (!kunjungan) {
-            return;
-        }
-
-
         isDataSaving = true;
-
 
         const data = {
 
@@ -1715,7 +1708,7 @@
                 $('meta[name="csrf-token"]').attr('content'),
 
             NOKUNJ:
-                kunjungan,
+                window.EMRData.kunjungan,
 
             ats:
                 $form
@@ -1759,7 +1752,7 @@
 
         $.ajax({
 
-            url: `/api/v2/emr/pengkajian/gd/ats/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/gd/ats/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

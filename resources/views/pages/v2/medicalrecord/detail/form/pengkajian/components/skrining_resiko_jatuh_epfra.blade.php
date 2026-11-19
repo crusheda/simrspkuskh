@@ -285,7 +285,7 @@
 
     function getSkriningEPFRA() {
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/epfra/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/epfra/${window.EMRData.kunjungan}`,
             type: "GET",
             dataType: "json",
             beforeSend: function () {
@@ -357,10 +357,10 @@
         const $sectionSkriningEPFRA = $('#form_skrining_epfra');
 
         const data = getFormDataByName($sectionSkriningEPFRA, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/epfra/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/epfra/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {

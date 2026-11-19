@@ -47,7 +47,7 @@
         const $button = $('#btnRefreshLab');
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/laborat/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/laborat/${window.EMRData.kunjungan}`,
             type: 'GET',
 
             beforeSend: function () {

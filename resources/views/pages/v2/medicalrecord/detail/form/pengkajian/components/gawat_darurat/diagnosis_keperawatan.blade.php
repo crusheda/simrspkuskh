@@ -220,18 +220,12 @@
 
     function getData() {
 
-        if (!kunjungan) {
-            return;
-        }
-
-
         isDataLoading = true;
-
 
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/gd/dk/${kunjungan}`,
+                `/api/v2/emr/pengkajian/gd/dk/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -339,7 +333,6 @@
     function simpanData() {
 
         if (
-            !kunjungan ||
             isDataLoading ||
             isDataSaving
         ) {
@@ -351,7 +344,7 @@
             getFormDataByName(
                 $form,
                 {
-                    NOKUNJ: kunjungan
+                    NOKUNJ: window.EMRData.kunjungan
                 }
             );
 
@@ -362,7 +355,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/gd/dk/${kunjungan}/simpan`,
+                `/api/v2/emr/pengkajian/gd/dk/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

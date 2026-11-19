@@ -158,7 +158,7 @@
         isALPHLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/alph/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/alph/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
             success: function (res) {
@@ -243,13 +243,13 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isALPHSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/alph/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/alph/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {

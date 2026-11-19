@@ -402,7 +402,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/pemeriksaan_fisik_neonatus/${kunjungan}`,
+                `/api/v2/emr/pengkajian/pemeriksaan_fisik_neonatus/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -711,7 +711,7 @@
             getFormDataByName(
                 $form,
                 {
-                    NOKUNJ: kunjungan
+                    NOKUNJ: window.EMRData.kunjungan
                 }
             );
 
@@ -725,7 +725,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/pemeriksaan_fisik_neonatus/${kunjungan}/simpan`,
+                `/api/v2/emr/pengkajian/pemeriksaan_fisik_neonatus/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

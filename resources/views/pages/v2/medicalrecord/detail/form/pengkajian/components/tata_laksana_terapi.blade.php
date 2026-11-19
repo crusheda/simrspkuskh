@@ -41,7 +41,7 @@
         isTataLaksanaTerapiLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/tatalaksanaterapi/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/tatalaksanaterapi/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -99,13 +99,13 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isTataLaksanaTerapiSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/tatalaksanaterapi/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/tatalaksanaterapi/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

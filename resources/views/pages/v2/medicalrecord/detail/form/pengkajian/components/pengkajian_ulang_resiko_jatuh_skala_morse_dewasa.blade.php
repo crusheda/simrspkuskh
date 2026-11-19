@@ -450,7 +450,7 @@
         `);
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/pengkajianulang/resikojatuh/morse/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/pengkajianulang/resikojatuh/morse/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -745,7 +745,7 @@
         const data = getFormDataByName(
             $form,
             {
-                NOKUNJ: kunjungan,
+                NOKUNJ: window.EMRData.kunjungan,
                 SKOR: totalSkor
             }
         );
@@ -768,7 +768,7 @@
         // AJAX
         // ------------------------------------------------------
         $.ajax({
-            url: `/api/v2/emr/pengkajian/pengkajianulang/resikojatuh/morse/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/pengkajianulang/resikojatuh/morse/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 
@@ -866,7 +866,7 @@
             }
 
             $.ajax({
-                url: `/api/v2/emr/pengkajian/pengkajianulang/resikojatuh/morse/${kunjungan}/hapus/${id}`,
+                url: `/api/v2/emr/pengkajian/pengkajianulang/resikojatuh/morse/${window.EMRData.kunjungan}/hapus/${id}`,
                 type: 'DELETE',
 
                 headers: {

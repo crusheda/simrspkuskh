@@ -388,7 +388,7 @@
         isDischargePlanningLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/dischargeplanning/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/dischargeplanning/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
             success: function (res) {
@@ -617,13 +617,13 @@
         updateAdditionalFieldState();
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isDischargePlanningSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/dischargeplanning/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/dischargeplanning/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {

@@ -149,7 +149,7 @@
         const $button = $('#btnRefreshAlergi');
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_alergi/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/riwayat_alergi/${window.EMRData.kunjungan}`,
             type: 'GET',
             beforeSend: function () {
                 $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
@@ -281,7 +281,7 @@
         let deskripsi = $("[name='ra_deskripsi']").val();
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_alergi/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/riwayat_alergi/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: {
                 'jenis': jenis,
@@ -347,7 +347,7 @@
             }
 
             $.ajax({
-                url: `/api/v2/emr/pengkajian/riwayat_alergi/${kunjungan}/hapus/${id}`,
+                url: `/api/v2/emr/pengkajian/riwayat_alergi/${window.EMRData.kunjungan}/hapus/${id}`,
                 type: 'DELETE',
 
                 headers: {
@@ -452,7 +452,7 @@
     function hapusSemuaRiwayatAlergi() {
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_alergi/${kunjungan}/hapus`,
+            url: `/api/v2/emr/pengkajian/riwayat_alergi/${window.EMRData.kunjungan}/hapus`,
             type: 'DELETE',
 
             headers: {

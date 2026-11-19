@@ -624,8 +624,8 @@ $(function(){
     if(!$component.length)return;
 
     const kunjungan=@json($kunjungan ?? request()->route('kunjungan'));
-    const urlGet='/api/v2/emr/pengkajian/ri/pemeriksaananatomi/'+encodeURIComponent(kunjungan);
-    const urlSave='/api/v2/emr/pengkajian/ri/pemeriksaananatomi/'+encodeURIComponent(kunjungan)+'/simpan';
+    const urlGet='/api/v2/emr/pengkajian/ri/pemeriksaananatomi/'+encodeURIComponent(window.EMRData.kunjungan);
+    const urlSave='/api/v2/emr/pengkajian/ri/pemeriksaananatomi/'+encodeURIComponent(window.EMRData.kunjungan)+'/simpan';
 
     let isLoadingAnatomi=false;
     let isSavingAnatomi=false;
@@ -771,7 +771,7 @@ $(function(){
        getFormAnatomi()
        ========================================================== */
     window.getFormAnatomi=function(){
-        if(!kunjungan)return;
+        if(!window.EMRData.kunjungan)return;
         if(isLoadingAnatomi)return;
 
         isLoadingAnatomi=true;
@@ -813,7 +813,7 @@ $(function(){
        simpanFormAnatomi()
        ========================================================== */
     window.simpanFormAnatomi=function(){
-        if(!kunjungan)return;
+        if(!window.EMRData.kunjungan)return;
         if(isLoadingAnatomi)return;
         if(isSavingAnatomi)return;
 

@@ -347,7 +347,7 @@
 
         $.ajax({
 
-            url: `/api/v2/emr/pengkajian/ri/pemfis/dokter/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/ri/pemfis/dokter/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -578,7 +578,7 @@
         const data = getFormDataByName(
             $form,
             {
-                NOKUNJ: kunjungan
+                NOKUNJ: window.EMRData.kunjungan
             }
         ) || {};
 
@@ -609,7 +609,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/ri/pemfis/dokter/${kunjungan}/simpan`,
+                `/api/v2/emr/pengkajian/ri/pemfis/dokter/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

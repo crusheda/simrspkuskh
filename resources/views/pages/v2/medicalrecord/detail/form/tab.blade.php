@@ -552,7 +552,7 @@
 
 <script>
     const formPengkajianAllowed = @json($list['form_pengkajian'] ?? []);
-    let {
+    const {
         kunjungan,
         namaRuangan,
         namaDokter,

@@ -32,7 +32,7 @@
         isTuTerapiLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rajal/tu_terapi/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/rajal/tu_terapi/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -98,13 +98,13 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isTuTerapiSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rajal/tu_terapi/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/rajal/tu_terapi/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

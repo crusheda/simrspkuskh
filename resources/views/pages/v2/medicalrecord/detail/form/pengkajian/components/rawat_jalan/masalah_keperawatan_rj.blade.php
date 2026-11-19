@@ -133,7 +133,7 @@
         isLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rj/masalahkeperawatan/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/rj/masalahkeperawatan/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
             data: { form: formType },
@@ -174,7 +174,7 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan,
+            NOKUNJ: window.EMRData.kunjungan,
             form: formType
         });
 
@@ -182,7 +182,7 @@
         savePending = false;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rj/masalahkeperawatan/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/rj/masalahkeperawatan/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {

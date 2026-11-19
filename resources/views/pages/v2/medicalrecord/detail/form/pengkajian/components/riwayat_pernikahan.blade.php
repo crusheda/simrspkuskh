@@ -61,7 +61,7 @@
         const $button = $('#btnRefreshNikah');
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_nikah/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/riwayat_nikah/${window.EMRData.kunjungan}`,
             type: 'GET',
             beforeSend: function () {
                 $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
@@ -138,7 +138,7 @@
         }
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_nikah/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/riwayat_nikah/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: {
                 'tahun': tahun,
@@ -183,7 +183,7 @@
 
     function hapusRiwayatNikah(id){
         $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_nikah/${kunjungan}/hapus/${id}`,
+            url: `/api/v2/emr/pengkajian/riwayat_nikah/${window.EMRData.kunjungan}/hapus/${id}`,
             type: 'DELETE',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

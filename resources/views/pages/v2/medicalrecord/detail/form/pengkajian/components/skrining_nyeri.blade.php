@@ -580,7 +580,7 @@
 
     function getSkriningNyeri() {
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/nyeri/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/skrining/nyeri/${window.EMRData.kunjungan}`,
             type: "GET",
             dataType: "json",
             beforeSend: function () {
@@ -656,10 +656,10 @@
         const $sectionSkriningNyeri = $('#form_skrining_nyeri');
 
         const data = getFormDataByName($sectionSkriningNyeri, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/nyeri/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/skrining/nyeri/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {

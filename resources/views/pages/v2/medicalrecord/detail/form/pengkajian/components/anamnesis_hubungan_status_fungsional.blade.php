@@ -208,7 +208,7 @@
         isStatusFungsionalLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/hubunganstatusfungsional/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/hubunganstatusfungsional/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -334,13 +334,13 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isStatusFungsionalSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/hubunganstatusfungsional/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/hubunganstatusfungsional/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

@@ -620,7 +620,7 @@
 
         $.ajax({
 
-            url: `/api/v2/emr/pengkajian/ri/pemeriksaanfisikobsgyn/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/ri/pemeriksaanfisikobsgyn/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -891,14 +891,14 @@
         const data = getFormDataByName(
             $form,
             {
-                NOKUNJ: kunjungan
+                NOKUNJ: window.EMRData.kunjungan
             }
         );
 
 
         $.ajax({
 
-            url: `/api/v2/emr/pengkajian/ri/pemeriksaanfisikobsgyn/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/ri/pemeriksaanfisikobsgyn/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

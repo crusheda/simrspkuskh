@@ -280,7 +280,7 @@
             isRiwayatPerinatalLoading = true;
 
             $.ajax({
-                url: `/api/v2/emr/pengkajian/rj/riwayatperinatal/${kunjungan}`,
+                url: `/api/v2/emr/pengkajian/rj/riwayatperinatal/${window.EMRData.kunjungan}`,
                 type: 'GET',
                 dataType: 'json',
 
@@ -434,13 +434,13 @@
             }
 
             const data = getFormDataByName($form, {
-                NOKUNJ: kunjungan
+                NOKUNJ: window.EMRData.kunjungan
             });
 
             isRiwayatPerinatalSaving = true;
 
             $.ajax({
-                url: `/api/v2/emr/pengkajian/rj/riwayatperinatal/${kunjungan}/simpan`,
+                url: `/api/v2/emr/pengkajian/rj/riwayatperinatal/${window.EMRData.kunjungan}/simpan`,
                 type: 'POST',
                 data: data,
 

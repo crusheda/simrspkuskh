@@ -515,7 +515,7 @@
     {
         $.ajax({
 
-            url: `/api/v2/emr/pengkajian/rajal/barthel/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/rajal/barthel/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -823,8 +823,7 @@
                 $sectionBarthel,
 
                 {
-                    NOKUNJ:
-                        kunjungan
+                    NOKUNJ: window.EMRData.kunjungan
                 }
 
             );
@@ -839,7 +838,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/rajal/barthel/${kunjungan}/simpan`,
+                `/api/v2/emr/pengkajian/rajal/barthel/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

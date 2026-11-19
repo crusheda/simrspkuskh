@@ -43,7 +43,7 @@
         isPenunjangLainLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/penunjanglain/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/penunjanglain/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -111,13 +111,13 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isPenunjangLainSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/penunjanglain/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/penunjanglain/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

@@ -624,7 +624,7 @@
         isAsesmenGeriatriLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rj/asesmengeriatri/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/rj/asesmengeriatri/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -815,13 +815,13 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isAsesmenGeriatriSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rj/asesmengeriatri/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/rj/asesmengeriatri/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

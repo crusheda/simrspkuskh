@@ -105,7 +105,7 @@ V.`
         const $button = $('#btnRefreshDiagnosis');
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/diagnosis/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/diagnosis/${window.EMRData.kunjungan}`,
             type: 'GET',
             beforeSend: function () {
                 $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
@@ -179,7 +179,7 @@ V.`
         let diagnosa = $("[name='diag_detail']").val();
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/diagnosis/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/diagnosis/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: {
                 'utama': utama,
@@ -228,7 +228,7 @@ V.`
 
     function hapusDiagnosis(id){
         $.ajax({
-            url: `/api/v2/emr/pengkajian/diagnosis/${kunjungan}/hapus/${id}`,
+            url: `/api/v2/emr/pengkajian/diagnosis/${window.EMRData.kunjungan}/hapus/${id}`,
             type: 'DELETE',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

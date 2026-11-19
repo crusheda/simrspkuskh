@@ -41,7 +41,7 @@
         isPlanTataLaksanaPenunjangLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/plantatalaksanapenunjang/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/plantatalaksanapenunjang/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -99,13 +99,13 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isPlanTataLaksanaPenunjangSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/plantatalaksanapenunjang/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/plantatalaksanapenunjang/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

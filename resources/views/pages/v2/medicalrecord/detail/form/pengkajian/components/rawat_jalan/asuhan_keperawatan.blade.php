@@ -41,7 +41,7 @@
         isAskepLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rj/askep/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/rj/askep/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -99,13 +99,13 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isAskepSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rj/askep/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/rj/askep/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

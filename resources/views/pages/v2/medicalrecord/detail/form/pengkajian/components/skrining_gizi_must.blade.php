@@ -282,7 +282,7 @@
 
     function getSkriningMust() {
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/gizi/must/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/skrining/gizi/must/${window.EMRData.kunjungan}`,
             type: "GET",
             dataType: "json",
             beforeSend: function () {
@@ -356,10 +356,10 @@
         }
 
         const data = getFormDataByName($sectionSkriningMust, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/gizi/must/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/skrining/gizi/must/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {

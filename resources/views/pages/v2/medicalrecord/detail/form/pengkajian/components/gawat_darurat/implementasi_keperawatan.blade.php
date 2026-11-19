@@ -56,7 +56,7 @@
                     <tr>
                         <td class="text-center">
                             <input
-                                class="form-check-input check-primary"
+                                class="form-check-input"
                                 type="checkbox"
                                 name="ik_2"
                             >
@@ -308,18 +308,12 @@
 
     function getData() {
 
-        if (!kunjungan) {
-            return;
-        }
-
-
         isDataLoading = true;
-
 
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/gd/ik/${kunjungan}`,
+                `/api/v2/emr/pengkajian/gd/ik/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -394,7 +388,6 @@
     function simpanData() {
 
         if (
-            !kunjungan ||
             isDataLoading ||
             isDataSaving
         ) {
@@ -406,7 +399,7 @@
             getFormDataByName(
                 $form,
                 {
-                    NOKUNJ: kunjungan
+                    NOKUNJ: window.EMRData.kunjungan
                 }
             );
 
@@ -417,7 +410,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/gd/ik/${kunjungan}/simpan`,
+                `/api/v2/emr/pengkajian/gd/ik/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

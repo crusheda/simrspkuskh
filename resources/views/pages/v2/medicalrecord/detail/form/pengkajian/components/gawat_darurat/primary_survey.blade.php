@@ -1574,10 +1574,10 @@
     // ==========================================================
 
     const urlGet =
-        `/api/v2/emr/pengkajian/gd/ps/${kunjungan}`;
+        `/api/v2/emr/pengkajian/gd/ps/${window.EMRData.kunjungan}`;
 
     const urlSave =
-        `/api/v2/emr/pengkajian/gd/ps/${kunjungan}/simpan`;
+        `/api/v2/emr/pengkajian/gd/ps/${window.EMRData.kunjungan}/simpan`;
 
 
     // ==========================================================
@@ -1700,10 +1700,6 @@
     // ==========================================================
 
     function getDataPrimarySurvey() {
-
-        if (!kunjungan) {
-            return;
-        }
 
         isDataLoading = true;
 
@@ -2109,8 +2105,7 @@
 
         if (
             isDataLoading ||
-            isDataSaving ||
-            !kunjungan
+            isDataSaving
         ) {
             return;
         }
@@ -2122,7 +2117,7 @@
             getFormDataByName(
                 $form,
                 {
-                    NOKUNJ: kunjungan,
+                    NOKUNJ: window.EMRData.kunjungan,
                     page: page
                 }
             );

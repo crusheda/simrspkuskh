@@ -110,7 +110,7 @@
 
         $.ajax({
 
-            url: `/api/v2/emr/pengkajian/gd/ss/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/gd/ss/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -256,7 +256,7 @@
         const data = getFormDataByName(
             $form,
             {
-                NOKUNJ: kunjungan
+                NOKUNJ: window.EMRData.kunjungan
             }
         );
 
@@ -264,7 +264,7 @@
 
         $.ajax({
 
-            url: `/api/v2/emr/pengkajian/gd/ss/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/gd/ss/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

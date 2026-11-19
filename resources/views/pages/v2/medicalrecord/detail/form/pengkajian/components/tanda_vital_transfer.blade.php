@@ -973,7 +973,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/tandavitaltf/${kunjungan}`,
+                `/api/v2/emr/pengkajian/tandavitaltf/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -1378,7 +1378,7 @@
         const data = getFormDataByName(
             $formTTV,
             {
-                NOKUNJ: kunjungan,
+                NOKUNJ: window.EMRData.kunjungan,
                 transfer: transfer
             }
         );
@@ -1391,7 +1391,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/tandavitaltf/${kunjungan}/simpan`,
+                `/api/v2/emr/pengkajian/tandavitaltf/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

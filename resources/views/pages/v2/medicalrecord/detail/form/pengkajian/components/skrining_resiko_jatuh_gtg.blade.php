@@ -535,7 +535,7 @@
 
         $.ajax({
 
-            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/gtg/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/gtg/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -622,14 +622,14 @@
         const data = getFormDataByName(
             $sectionGetUpAndGo,
             {
-                NOKUNJ: kunjungan
+                NOKUNJ: window.EMRData.kunjungan
             }
         );
 
 
         $.ajax({
 
-            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/gtg/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/gtg/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

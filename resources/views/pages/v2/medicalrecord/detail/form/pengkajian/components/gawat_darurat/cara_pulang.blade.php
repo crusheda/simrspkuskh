@@ -185,7 +185,7 @@
         isDataLoading = true;
 
         return $.ajax({
-            url: `/api/v2/emr/pengkajian/gd/cp/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/gd/cp/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
             success: function (res) {
@@ -260,7 +260,7 @@
             getFormDataByName(
                 $form,
                 {
-                    NOKUNJ: kunjungan
+                    NOKUNJ: window.EMRData.kunjungan
                 }
             );
 
@@ -269,7 +269,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/gd/cp/${kunjungan}/simpan`,
+                `/api/v2/emr/pengkajian/gd/cp/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

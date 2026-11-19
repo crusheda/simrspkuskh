@@ -1024,7 +1024,7 @@
         }
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/ri/pemeriksaanfisikneonatus/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/ri/pemeriksaanfisikneonatus/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -1234,7 +1234,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/ri/pemeriksaanfisikneonatus/${kunjungan}/simpan`,
+                `/api/v2/emr/pengkajian/ri/pemeriksaanfisikneonatus/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

@@ -455,7 +455,7 @@
             isDataLoading = true;
 
             $.ajax({
-                url: `/api/v2/emr/pengkajian/gd/tp/${kunjungan}`,
+                url: `/api/v2/emr/pengkajian/gd/tp/${window.EMRData.kunjungan}`,
                 type: 'GET',
                 dataType: 'json',
 
@@ -730,14 +730,14 @@
             const data = getFormDataByName(
                 $form,
                 {
-                    NOKUNJ: kunjungan
+                    NOKUNJ: window.EMRData.kunjungan
                 }
             );
 
             isDataSaving = true;
 
             $.ajax({
-                url: `/api/v2/emr/pengkajian/gd/tp/${kunjungan}/simpan`,
+                url: `/api/v2/emr/pengkajian/gd/tp/${window.EMRData.kunjungan}/simpan`,
                 type: 'POST',
                 data: data,
 

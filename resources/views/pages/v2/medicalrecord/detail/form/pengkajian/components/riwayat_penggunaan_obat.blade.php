@@ -130,7 +130,7 @@
     function getPenggunaanObat() {
         const $button = $('#btnRefreshObat');
         $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${window.EMRData.kunjungan}`,
             type: 'GET',
             beforeSend: function () {
                 $button.prop('disabled', true).html('<i class="ri-refresh-line ri-spin"></i>');
@@ -194,7 +194,7 @@
         let lama = $("input[name='rpo_lama']").val();
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: {
                 'nama_obat': nama_obat,
@@ -241,7 +241,7 @@
 
     function hapusPenggunaanObat(id){
         $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${kunjungan}/hapus/${id}`,
+            url: `/api/v2/emr/pengkajian/riwayat_pemberian_obat/${window.EMRData.kunjungan}/hapus/${id}`,
             type: 'DELETE',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

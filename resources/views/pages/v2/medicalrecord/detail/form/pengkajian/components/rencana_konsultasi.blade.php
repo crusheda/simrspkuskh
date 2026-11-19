@@ -41,7 +41,7 @@
         isRencanaKonsultasiLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rencanakonsultasi/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/rencanakonsultasi/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -99,13 +99,13 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isRencanaKonsultasiSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rencanakonsultasi/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/rencanakonsultasi/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

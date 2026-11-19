@@ -87,7 +87,7 @@
             isMateriEdukasiLoading = true;
 
             $.ajax({
-                url: `/api/v2/emr/pengkajian/rajal/materiedukasi/${kunjungan}`,
+                url: `/api/v2/emr/pengkajian/rajal/materiedukasi/${window.EMRData.kunjungan}`,
                 type: 'GET',
                 dataType: 'json',
 
@@ -209,13 +209,13 @@
             }
 
             const data = getFormDataByName($form, {
-                NOKUNJ: kunjungan
+                NOKUNJ: window.EMRData.kunjungan
             });
 
             isMateriEdukasiSaving = true;
 
             $.ajax({
-                url: `/api/v2/emr/pengkajian/rajal/materiedukasi/${kunjungan}/simpan`,
+                url: `/api/v2/emr/pengkajian/rajal/materiedukasi/${window.EMRData.kunjungan}/simpan`,
                 type: 'POST',
                 data: data,
 

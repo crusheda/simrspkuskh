@@ -168,7 +168,7 @@
         const $button = $('#btnRefreshObstetri');
         const kunjungan = $('#rjo_dokter').data('kunjungan');
         $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_obstetri/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/riwayat_obstetri/${window.EMRData.kunjungan}`,
             type: 'GET',
             beforeSend: function () {
                 $button
@@ -269,7 +269,7 @@
                 $('#obstetri_keadaan_saat_ini').val()
         };
         $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_obstetri/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/riwayat_obstetri/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {
@@ -332,7 +332,7 @@
     function hapusRiwayatObstetri(id) {
         const kunjungan = $('#rjo_dokter').data('kunjungan');
         $.ajax({
-            url: `/api/v2/emr/pengkajian/riwayat_obstetri/${kunjungan}/hapus/${id}`,
+            url: `/api/v2/emr/pengkajian/riwayat_obstetri/${window.EMRData.kunjungan}/hapus/${id}`,
             type: 'DELETE',
             headers: {
                 'X-CSRF-TOKEN':

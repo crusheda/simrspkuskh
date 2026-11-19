@@ -509,7 +509,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/penilaian_awal_bayi/${kunjungan}`,
+                `/api/v2/emr/pengkajian/penilaian_awal_bayi/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -862,7 +862,7 @@
             getFormDataByName(
                 $form,
                 {
-                    NOKUNJ: kunjungan
+                    NOKUNJ: window.EMRData.kunjungan
                 }
             );
 
@@ -876,7 +876,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/penilaian_awal_bayi/${kunjungan}/simpan`,
+                `/api/v2/emr/pengkajian/penilaian_awal_bayi/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

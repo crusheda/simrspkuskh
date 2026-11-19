@@ -1575,7 +1575,7 @@
 
         $.ajax({
 
-            url: `/api/v2/emr/pengkajian/ri/pemeriksaanfisik/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/ri/pemeriksaanfisik/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -1806,7 +1806,7 @@
         const data = getFormDataByName(
             $form,
             {
-                NOKUNJ: kunjungan
+                NOKUNJ: window.EMRData.kunjungan
             }
         );
 
@@ -1833,7 +1833,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/ri/pemeriksaanfisik/${kunjungan}/simpan`,
+                `/api/v2/emr/pengkajian/ri/pemeriksaanfisik/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

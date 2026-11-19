@@ -43,7 +43,7 @@
         isPemeriksaanObsgynLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/pobgn/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/pobgn/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -111,13 +111,13 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isPemeriksaanObsgynSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/pobgn/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/pobgn/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

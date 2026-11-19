@@ -211,7 +211,7 @@
 
     function getSkriningSkalaMorse() {
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/sm/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/sm/${window.EMRData.kunjungan}`,
             type: "GET",
             dataType: "json",
             beforeSend: function () {
@@ -248,10 +248,10 @@
         const $sectionSkriningSkalaMorse = $('#form_skrining_skala_morse');
 
         const data = getFormDataByName($sectionSkriningSkalaMorse, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/sm/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/sm/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {

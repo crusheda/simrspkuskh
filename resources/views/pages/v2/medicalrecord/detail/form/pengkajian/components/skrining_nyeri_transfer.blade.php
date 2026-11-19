@@ -1837,7 +1837,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/skrining/nyeri-transfer/${kunjungan}`,
+                `/api/v2/emr/pengkajian/skrining/nyeri-transfer/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -2164,7 +2164,7 @@
             const data = getFormDataByName(
                 $currentForm,
                 {
-                    NOKUNJ: kunjungan,
+                    NOKUNJ: window.EMRData.kunjungan,
                     transfer: transfer
                 }
             );
@@ -2179,7 +2179,7 @@
 
             const dataTransfer = {
 
-                NOKUNJ: kunjungan,
+                NOKUNJ: window.EMRData.kunjungan,
 
                 transfer: transfer,
 
@@ -2367,7 +2367,7 @@
             $.ajax({
 
                 url:
-                    `/api/v2/emr/pengkajian/skrining/nyeri-transfer/${kunjungan}/simpan`,
+                    `/api/v2/emr/pengkajian/skrining/nyeri-transfer/${window.EMRData.kunjungan}/simpan`,
 
                 type: 'POST',
 

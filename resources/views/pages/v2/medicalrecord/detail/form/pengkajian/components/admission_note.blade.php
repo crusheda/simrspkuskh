@@ -196,7 +196,7 @@
         function getAdmissionFormData() {
 
             const data = getFormDataByName($form, {
-                NOKUNJ: kunjungan
+                NOKUNJ: window.EMRData.kunjungan
             });
 
             delete data.NOKUNJ;
@@ -582,7 +582,7 @@
             $.ajax({
 
                 url:
-                    `/api/v2/emr/pengkajian/admission/${kunjungan}`,
+                    `/api/v2/emr/pengkajian/admission/${window.EMRData.kunjungan}`,
 
                 type:
                     'GET',
@@ -1085,7 +1085,7 @@
                 getFormDataByName(
                     $form,
                     {
-                        NOKUNJ: kunjungan
+                        NOKUNJ: window.EMRData.kunjungan
                     }
                 );
 
@@ -1149,7 +1149,7 @@
             $.ajax({
 
                 url:
-                    `/api/v2/emr/pengkajian/admission/${kunjungan}/simpan`,
+                    `/api/v2/emr/pengkajian/admission/${window.EMRData.kunjungan}/simpan`,
 
                 type:
                     'POST',

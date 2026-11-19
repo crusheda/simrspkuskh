@@ -228,7 +228,7 @@
 
     function getSkriningStrongKid() {
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/gizi/strongkid/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/skrining/gizi/strongkid/${window.EMRData.kunjungan}`,
             type: "GET",
             dataType: "json",
             beforeSend: function () {
@@ -287,10 +287,10 @@
         const $sectionSkriningStrongKid = $('#form_skrining_strong_kid');
 
         const data = getFormDataByName($sectionSkriningStrongKid, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/gizi/strongkid/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/skrining/gizi/strongkid/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {

@@ -415,7 +415,7 @@
             </tr>
         `);
         $.ajax({
-            url: `/api/v2/emr/pengkajian/pengkajianulang/resikojatuh/humptydumpty/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/pengkajianulang/resikojatuh/humptydumpty/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
             beforeSend: function () {
@@ -652,7 +652,7 @@
         // DATA
         // ------------------------------------------------------
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan,
+            NOKUNJ: window.EMRData.kunjungan,
             SKOR: totalSkor
         });
         // ------------------------------------------------------
@@ -671,7 +671,7 @@
         // AJAX
         // ------------------------------------------------------
         $.ajax({
-            url: `/api/v2/emr/pengkajian/pengkajianulang/resikojatuh/humptydumpty/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/pengkajianulang/resikojatuh/humptydumpty/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {
@@ -748,7 +748,7 @@
                 return;
             }
             $.ajax({
-                url: `/api/v2/emr/pengkajian/pengkajianulang/resikojatuh/humptydumpty/${kunjungan}/hapus/${id}`,
+                url: `/api/v2/emr/pengkajian/pengkajianulang/resikojatuh/humptydumpty/${window.EMRData.kunjungan}/hapus/${id}`,
                 type: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN':

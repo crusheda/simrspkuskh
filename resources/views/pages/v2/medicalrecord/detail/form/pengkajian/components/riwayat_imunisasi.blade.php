@@ -93,7 +93,7 @@
 
         $.ajax({
 
-            url: `/api/v2/emr/pengkajian/riwayat_imunisasi/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/riwayat_imunisasi/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -205,14 +205,14 @@
         const data = getFormDataByName(
             $form,
             {
-                NOKUNJ: kunjungan
+                NOKUNJ: window.EMRData.kunjungan
             }
         );
 
 
         $.ajax({
 
-            url: `/api/v2/emr/pengkajian/riwayat_imunisasi/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/riwayat_imunisasi/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

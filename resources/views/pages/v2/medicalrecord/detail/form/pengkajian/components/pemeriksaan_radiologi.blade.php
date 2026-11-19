@@ -49,7 +49,7 @@
         const $button = $('#btnRefreshRad');
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/radiologi/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/radiologi/${window.EMRData.kunjungan}`,
             type: 'GET',
 
             beforeSend: function () {

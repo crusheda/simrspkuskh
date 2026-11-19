@@ -47,7 +47,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/gd/hld/${kunjungan}`,
+                `/api/v2/emr/pengkajian/gd/hld/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -104,7 +104,7 @@
             getFormDataByName(
                 $form,
                 {
-                    NOKUNJ: kunjungan
+                    NOKUNJ: window.EMRData.kunjungan
                 }
             );
 
@@ -113,7 +113,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/gd/hld/${kunjungan}/simpan`,
+                `/api/v2/emr/pengkajian/gd/hld/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

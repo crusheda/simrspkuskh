@@ -219,7 +219,7 @@
 
     function getSkriningHumptyDumpty() {
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/hd/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/hd/${window.EMRData.kunjungan}`,
             type: "GET",
             dataType: "json",
             beforeSend: function () {
@@ -258,10 +258,10 @@
         const $sectionSkriningHumptyDumpty = $('#form_skrining_humpty_dumpty');
 
         const data = getFormDataByName($sectionSkriningHumptyDumpty, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/hd/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/skrining/resikojatuh/hd/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {

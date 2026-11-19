@@ -212,7 +212,7 @@
         $section.data('decu-initializing', true);
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/dekubitus/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/skrining/dekubitus/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
             success: function(res) {
@@ -264,7 +264,7 @@
         hitungSkorDecubitus($sectionSkriningDecubitus);
 
         const data = getFormDataByName($sectionSkriningDecubitus, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         if (btn) {
@@ -273,7 +273,7 @@
         }
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/skrining/dekubitus/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/skrining/dekubitus/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
             headers: {

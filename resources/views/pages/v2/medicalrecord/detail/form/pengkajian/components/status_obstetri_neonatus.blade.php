@@ -384,7 +384,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/status_obstetri_neonatus/${kunjungan}`,
+                `/api/v2/emr/pengkajian/status_obstetri_neonatus/${window.EMRData.kunjungan}`,
 
             type: 'GET',
 
@@ -617,7 +617,7 @@
         const data = getFormDataByName(
             $form,
             {
-                NOKUNJ: kunjungan
+                NOKUNJ: window.EMRData.kunjungan
             }
         );
 
@@ -625,7 +625,7 @@
         $.ajax({
 
             url:
-                `/api/v2/emr/pengkajian/status_obstetri_neonatus/${kunjungan}/simpan`,
+                `/api/v2/emr/pengkajian/status_obstetri_neonatus/${window.EMRData.kunjungan}/simpan`,
 
             type: 'POST',
 

@@ -30,7 +30,7 @@
         isPemFisLoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rajal/keluhan_utama/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/rajal/keluhan_utama/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -88,13 +88,13 @@
         }
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isPemFisSaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/rajal/keluhan_utama/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/rajal/keluhan_utama/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 

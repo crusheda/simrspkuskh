@@ -413,7 +413,7 @@
         isAnamnesisRILoading = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/ri/anam_prwt/${kunjungan}`,
+            url: `/api/v2/emr/pengkajian/ri/anam_prwt/${window.EMRData.kunjungan}`,
             type: 'GET',
             dataType: 'json',
 
@@ -857,13 +857,13 @@
         updatePersalinanState();
 
         const data = getFormDataByName($form, {
-            NOKUNJ: kunjungan
+            NOKUNJ: window.EMRData.kunjungan
         });
 
         isAnamnesisRISaving = true;
 
         $.ajax({
-            url: `/api/v2/emr/pengkajian/ri/anam_prwt/${kunjungan}/simpan`,
+            url: `/api/v2/emr/pengkajian/ri/anam_prwt/${window.EMRData.kunjungan}/simpan`,
             type: 'POST',
             data: data,
 
