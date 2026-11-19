@@ -116,8 +116,8 @@ class Profil extends Component
             return [
                 'queue' => (int) $row->queue,
                 'signature_path' => $row->signature_path,
-                'signature_url' => Storage::disk('public')
-                    ->url($row->signature_path),
+                // 'signature_url' => Storage::disk('public')->url($row->signature_path),
+                'signature_url' => '/storage/' . ltrim($row->signature_path, '/'),
                 'updated_at' => $row->updated_at,
             ];
         })->values()->toArray();
@@ -144,6 +144,7 @@ class Profil extends Component
     public function editTtd(): void
     {
         $this->editingTtd = true;
+        $this->dispatch('profil-ttd-edit');
     }
 
     /**

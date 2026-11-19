@@ -298,13 +298,21 @@ class EMRController extends Controller
         $show = DB::table('pendaftaran.kunjungan AS pk')
                 ->select(
                     'pk.*',
-                    'pp.NORM','pp.TANGGAL AS TGLDAFTAR',
-                    'kjs.noSEP AS NOSEP','kjs.tglSEP AS TGLSEP',
+                    'pp.NORM',
+                    'pp.TANGGAL AS TGLDAFTAR',
+                    'kjs.noSEP AS NOSEP',
+                    'kjs.tglSEP AS TGLSEP',
+                    'npj.DESKRIPSI AS NAMAASURANSI',
+                    'pj.JENIS AS IDASURANSI',
+                    'npj.REF_ID AS REFIDASURANSI',
+                    'pj.NOMOR AS NOASURANSI',
                     'kjs.noKartu AS NOBPJS',
                     'pjs.prolanisPRB AS PRBPASIEN',
                     'pjs.ketStatusPeserta AS STATUSBPJS',
                     'ru.ID AS IDRUANGAN',
                     'ru.DESKRIPSI AS NAMARUANGAN',
+                    'rk.KAMAR AS NAMAKAMAR',
+                    'rkt.TEMPAT_TIDUR AS NAMATT',
                     'kips.NOMOR AS NIKPASIEN',
                     'ps.NAMA AS NAMALENGKAPPASIEN',
                     'ps.PANGGILAN AS PANGGILANPASIEN',
@@ -312,26 +320,18 @@ class EMRController extends Controller
                     'kps.NOMOR AS NOHPPASIEN',
                     'kgs.NAMA AS KELUARGAPASIEN',
                     DB::raw("
-                        IF(
-                            ps.JENIS_KELAMIN = 1,
-                            'LAKI-LAKI',
-                            IF(
-                                ps.JENIS_KELAMIN = 2,
-                                'PEREMPUAN',
-                                'TIDAK DIKETAHUI'
-                            )
-                        ) AS JKPASIEN
+                        CASE
+                            WHEN ps.JENIS_KELAMIN = 1 THEN 'LAKI-LAKI'
+                            WHEN ps.JENIS_KELAMIN = 2 THEN 'PEREMPUAN'
+                            ELSE 'TIDAK DIKETAHUI'
+                        END AS JKPASIEN
                     "),
                     DB::raw("
-                        IF(
-                            kgs.JENIS_KELAMIN = 1,
-                            'LAKI-LAKI',
-                            IF(
-                                kgs.JENIS_KELAMIN = 2,
-                                'PEREMPUAN',
-                                'TIDAK DIKETAHUI'
-                            )
-                        ) AS JKKELUARGAPASIEN
+                        CASE
+                            WHEN kgs.JENIS_KELAMIN = 1 THEN 'LAKI-LAKI'
+                            WHEN kgs.JENIS_KELAMIN = 2 THEN 'PEREMPUAN'
+                            ELSE 'TIDAK DIKETAHUI'
+                        END AS JKKELUARGAPASIEN
                     "),
                     DB::raw("(
                         SELECT DESKRIPSI
@@ -342,15 +342,19 @@ class EMRController extends Controller
                     DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
                     DB::raw('master.getAlamatPasienCustom(ps.NORM) AS ALAMATPASIEN'),
                     DB::raw('master.getNamaLengkapPegawai(dr.NIP) AS NAMADOKTER'),
-                    DB::raw('master.getCariUmur(pp.TANGGAL,ps.TANGGAL_LAHIR) AS UMURPASIEN'),
+                    DB::raw('master.getCariUmur(pp.TANGGAL, ps.TANGGAL_LAHIR) AS UMURPASIEN'),
                     DB::raw("(
                         SELECT DESKRIPSI
                         FROM master.wilayah AS wil
                         WHERE wil.ID = ps.TEMPAT_LAHIR
-                    ) AS TLPASIEN"),
+                    ) AS TLPASIEN")
                 )
                 ->leftJoin('pendaftaran.pendaftaran AS pp','pp.NOMOR','=','pk.NOPEN')
                 ->leftJoin('pendaftaran.penjamin AS pj','pj.NOPEN','=','pp.NOMOR')
+                ->leftJoin('master.referensi as npj', function ($join) {
+                    $join->on('npj.ID', '=', 'pj.JENIS')
+                        ->where('npj.JENIS', 10);
+                })
                 ->leftJoin('bpjs.kunjungan AS kjs','kjs.noSEP','=','pj.NOMOR')
                 ->leftJoin('bpjs.peserta AS pjs', function($join){
                     $join->on('pjs.noKartu','=','kjs.noKartu');
@@ -360,6 +364,14 @@ class EMRController extends Controller
                 ->leftJoin('master.keluarga_pasien AS kgs','ps.NORM','=','kgs.NORM')
                 ->leftJoin('master.kartu_identitas_pasien AS kips','ps.NORM','=','kips.NORM')
                 ->leftJoin('master.ruangan AS ru','ru.ID','=','pk.RUANGAN')
+                ->leftJoin('master.ruang_kamar_tidur AS rkt', function ($join) {
+                    $join->on('rkt.ID', '=', 'pk.RUANG_KAMAR_TIDUR')
+                            ->whereIn('rkt.STATUS', [1,2,3]);
+                })
+                ->leftJoin('master.ruang_kamar AS rk', function ($join) {
+                    $join->on('rk.ID', '=', 'rkt.RUANG_KAMAR')
+                            ->where('rk.STATUS', 1);
+                })
                 ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
                 ->where('pk.NOMOR',$KUNJUNGAN)
                 ->first();

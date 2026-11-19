@@ -9,6 +9,34 @@
 
 @section('content')
 
+<script>
+    window.EMRData = {
+        kunjungan: @json($list["KUNJUNGAN"]),
+        ruangan: @json($list["show"]->IDRUANGAN),
+        namaRuangan: @json($list["show"]->NAMARUANGAN),
+        namaDokter: @json($list["show"]->NAMADOKTER),
+        rm: @json($list["show"]->NORM),
+        namaPasien: @json($list["show"]->NAMAPASIEN),
+        tglLahir: @json($list["show"]->TGLLAHIRPASIEN),
+        umur: @json($list["show"]->UMURPASIEN),
+        namaAsuransi: @json($list["show"]->NAMAASURANSI),
+        refIdAsuransi: @json($list['show']->REFIDASURANSI),
+        idAsuransi: @json($list['show']->IDASURANSI),
+        noAsuransi: @json($list["show"]->NOASURANSI),
+        tgl_sep: @json($list["show"]->TGLSEP),
+        sep: @json($list["show"]->NOSEP),
+        tgl_kfr: @json(now()->format('Y-m-d H:i:s')),
+        tgl_masuk: @json($list["show"]->MASUK),
+        tgl_keluar: @json($list['show']->KELUAR),
+        tgl_sep_date: @json(
+            $list["show"]->TGLSEP
+                ? substr($list["show"]->TGLSEP, 0, 10)
+                : null
+        ),
+        statusKunjungan: @json($list["show"]->STATUS)
+    };
+</script>
+
 <div class="container-fluid">
     <!-- [ breadcrumb ] start -->
     <nav aria-label="breadcrumb" id="breadcrumb-detail-kunjungan">
@@ -468,15 +496,15 @@
 
 <script>
     // INIT VARIABLE
-    const kunjungan = @json($list["KUNJUNGAN"]);
-    const ruangan = @json($list["show"]->IDRUANGAN);
-    const rm = @json($list["show"]->NORM);
-    const tgl_sep = @json($list["show"]->TGLSEP);
-    const sep = @json($list["show"]->NOSEP);
-    const tgl_kfr = @json(now()->format('Y-m-d H:i:s'));
-    const tgl_masuk = @json($list["show"]->MASUK);
-    const tgl_keluar = @json($list['show']->KELUAR);
-    const tgl_sep_date = tgl_sep?tgl_sep.substring(0, 10):null;
+    // var kunjungan = @json($list["KUNJUNGAN"]);
+    // var ruangan = @json($list["show"]->IDRUANGAN);
+    // var rm = @json($list["show"]->NORM);
+    // var tgl_sep = @json($list["show"]->TGLSEP);
+    // var sep = @json($list["show"]->NOSEP);
+    // var tgl_kfr = @json(now()->format('Y-m-d H:i:s'));
+    // var tgl_masuk = @json($list["show"]->MASUK);
+    // var tgl_keluar = @json($list['show']->KELUAR);
+    // var tgl_sep_date = tgl_sep?tgl_sep.substring(0, 10):null;
 
     let dataPPA = [];
     let dataDokter = [];

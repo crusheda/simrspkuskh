@@ -15,7 +15,7 @@
 
                         <div class="d-flex align-items-center gap-3">
                             <div class="profile-avatar">
-                                <i class="ti ti-user"></i>
+                                <i class="ti ti-user text-white"></i>
                             </div>
 
                             <div class="min-w-0">
@@ -248,8 +248,7 @@
                                                     </span>
                                                 </div>
 
-                                                <img src="{{ $ttd['signature_url'] }}"
-                                                     alt="TTE variasi {{ $ttd['queue'] }}">
+                                                <img src="{{ $ttd['signature_url'] }}" alt="TTE variasi {{ $ttd['queue'] }}" onerror="console.error('Gagal memuat TTE:', this.src); this.style.border='1px dashed red';">
 
                                                 <div class="small profile-muted text-center mt-2">
                                                     {{ $ttd['updated_at'] ? \Carbon\Carbon::parse($ttd['updated_at'])->translatedFormat('d M Y, H:i') : '-' }}
@@ -443,37 +442,50 @@
 
     let profilSignaturePads = {};
 
+    Livewire.on('profil-ttd-edit', () => {
+        profilInitSignaturePads();
+    });
+
     function profilInitSignaturePads() {
         profilSignaturePads = {};
 
-        for (let i = 1; i <= 6; i++) {
-            const canvas = document.getElementById(`signature-pad-user-${i}`);
+        requestAnimationFrame(() => {
+            for (let i = 1; i <= 6; i++) {
+                const canvas = document.getElementById(`signature-pad-user-${i}`);
 
-            if (!canvas) continue;
+                if (!canvas) continue;
 
-            const pad = new SignaturePad(canvas, {
-                minWidth: 0.8,
-                maxWidth: 2.5,
-                penColor: '#111827',
-                backgroundColor: 'rgba(255,255,255,0)'
-            });
-
-            profilSignaturePads[i] = pad;
-
-            pad.onBegin = function () {
-                document.getElementById(`ttd-placeholder-${i}`)
-                    ?.classList.add('d-none');
-            };
-
-            pad.onEnd = function () {
-                if (pad.isEmpty()) {
-                    document.getElementById(`ttd-placeholder-${i}`)
-                        ?.classList.remove('d-none');
+                // Pastikan canvas belum diinisialisasi
+                if (canvas.signaturePad) {
+                    profilSignaturePads[i] = canvas.signaturePad;
+                    continue;
                 }
-            };
 
-            profilResizeCanvas(canvas, pad);
-        }
+                const pad = new SignaturePad(canvas, {
+                    minWidth: 0.8,
+                    maxWidth: 2.5,
+                    penColor: '#111827',
+                    backgroundColor: 'rgba(255,255,255,0)'
+                });
+
+                canvas.signaturePad = pad;
+                profilSignaturePads[i] = pad;
+
+                pad.onBegin = function () {
+                    document.getElementById(`ttd-placeholder-${i}`)
+                        ?.classList.add('d-none');
+                };
+
+                pad.onEnd = function () {
+                    if (pad.isEmpty()) {
+                        document.getElementById(`ttd-placeholder-${i}`)
+                            ?.classList.remove('d-none');
+                    }
+                };
+
+                profilResizeCanvas(canvas, pad);
+            }
+        });
     }
 
     function profilResizeCanvas(canvas, pad) {
