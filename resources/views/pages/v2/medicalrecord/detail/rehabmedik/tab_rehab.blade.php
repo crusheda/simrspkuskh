@@ -1,23 +1,19 @@
-<div class="card">
-    <div class="card-header px-2">
-        <ul class="nav nav-pills card-header-pills gap-2" role="tablist">
-            @if (Str::startsWith($list['show']->IDRUANGAN, '10207'))
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frjkfr" role="tab"
-                        aria-selected="false" tabindex="-1" id="tab-frjkfr" disabled>
-                        <i class="ph-duotone ph-files me-2"></i> Formulir Rawat Jalan
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pterapi" role="tab"
-                        aria-selected="false" tabindex="-1" id="tab-pterapi" disabled>
-                        <i class="ph-duotone ph-files me-2"></i> Program Terapi
-                    </button>
-                </li>
-            @endif
-        </ul>
-    </div>
-</div>
+<ul class="nav nav-pills card-header-pills emr-main-nav gap-2 mb-2" role="tablist">
+    @if (Str::startsWith($list['show']->IDRUANGAN, '10207'))
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#frjkfr" role="tab"
+                aria-selected="false" tabindex="-1" id="tab-frjkfr" disabled>
+                <i class="ph-duotone ph-files me-2"></i> Formulir Rawat Jalan
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pterapi" role="tab"
+                aria-selected="false" tabindex="-1" id="tab-pterapi" disabled>
+                <i class="ph-duotone ph-files me-2"></i> Program Terapi
+            </button>
+        </li>
+    @endif
+</ul>
 <div class="tab-content">
     <div class="tab-pane" id="frjkfr" role="tabpanel">
         @include('pages.v2.medicalrecord.detail.rehabmedik.form_kfr')

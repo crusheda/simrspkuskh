@@ -1,8 +1,8 @@
 <div class="row">
     <div class="col-md-7">
-        <div class="card table-card border shadow-none">
+        <div class="card table-card border shadow-none mb-2">
             <div class="card-header d-flex align-items-center justify-content-between p-3">
-                <h5 class="card-title mb-0"><i class="fas fa-file-signature me-1"></i> Formulir <b class="text-teal">Rawat Jalan KFR</b> <span class="badge bg-danger badge-sm ms-1" id="form-kfr-utama" hidden>UTAMA</span></h5>
+                <h6 class="card-title mb-0"><i class="fas fa-file-signature me-1"></i> Formulir <b class="text-teal">Rawat Jalan KFR</b> <span class="badge bg-danger badge-sm ms-1" id="form-kfr-utama" hidden>UTAMA</span></h6>
                 <div class="btn-group">
                     @role(['admin','dokterspesialis','fisioterapis','okupasiterapi','terapiwicara'])
                         <button class="btn btn-info btn-sm" onclick="showListFormKfr()" id="btn-list-form-kfr-lama" hidden disabled><i class="ph-duotone ph-file-search me-1"></i> Gunakan Form Lama</button>
@@ -116,11 +116,11 @@
         </div>
     </div>
     <div class="col-md-5">
-        <div class="accordion card" id="collapse-riwayat-form-kfr">
+        <div class="accordion card mb-2" id="collapse-riwayat-form-kfr">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-form-kfr">
                     <button class="accordion-button text-dark bg-warning-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-form-kfr" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fas fa-sort-alpha-down me-1"></i> Riwayat Formulir KFR <span class="badge bg-secondary-subtle text-secondary ms-1" data-bs-toggle="tooltip" title="Riwayat Form KFR Diurutkan Dari Data Terbaru Dimulai Dari Kunjungan Saat Ini">By.NORM</span>
+                        <i class="fas fa-sort-alpha-down me-2"></i> Riwayat Formulir KFR <span class="badge text-bg-secondary ms-2" data-bs-toggle="tooltip" title="Riwayat Form KFR Diurutkan Dari Data Terbaru Dimulai Dari Kunjungan Saat Ini">By.NORM</span>
                     </button>
                 </h2>
                 <div id="btn-collapse-riwayat-form-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-form-kfr" data-bs-parent="#collapse-riwayat-form-kfr">
@@ -129,7 +129,7 @@
                             <div class="d-flex justify-content-center">
                                 <div class="spinner-grow spinner-grow-sm me-2" role="status">
                                     <span class="sr-only">Loading...</span>
-                                </div> <a class="align-middle">Memproses Data Riwayat..</a>
+                                </div> <a class="align-middle text-muted">Memproses Data Riwayat..</a>
                             </div>
                         </div>
                     </div>
@@ -140,7 +140,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-cppt-kfr">
                     <button class="accordion-button text-dark bg-primary-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-cppt-kfr" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge bg-secondary-subtle text-secondary ms-1" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.NORM</span>
+                        <i class="fas fa-sort-amount-down me-2"></i> Riwayat CPPT <span class="badge text-bg-secondary ms-2" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.NORM</span>
                     </button>
                 </h2>
                 <div id="btn-collapse-riwayat-cppt-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-cppt-kfr" data-bs-parent="#collapse-riwayat-cppt-kfr">
@@ -149,7 +149,7 @@
                             <div class="d-flex justify-content-center">
                                 <div class="spinner-grow spinner-grow-sm me-2" role="status">
                                     <span class="sr-only">Loading...</span>
-                                </div> <a class="align-middle">Mengambil Data Riwayat..</a>
+                                </div> <a class="align-middle text-muted">Mengambil Data Riwayat..</a>
                             </div>
                         </div>
                     </div>
@@ -279,7 +279,7 @@
             .append(`<div class="d-flex justify-content-center">
                         <div class="spinner-grow spinner-grow-sm me-2" role="status">
                             <span class="sr-only">Loading...</span>
-                        </div> <a class="align-middle">Memproses Data Riwayat..</a>
+                        </div> <a class="align-middle text-muted">Memproses Data Riwayat..</a>
                     </div>`);
         $.ajax({
             url: `/api/emr/kfr/${rm}/cppt/${kunjungan}/${
@@ -296,7 +296,7 @@
                     // Swal.fire('Info', res.message, 'info');
                     $('#load-riwayat-cppt-kfr').empty()
                         .append(`<div class="d-flex justify-content-center">
-                                    <center><a class="align-middle">Data CPPT Tidak Ditemukan</a></center>
+                                    <center><a class="align-middle text-muted">Data CPPT Tidak Ditemukan</a></center>
                                 </div>`);
                     return;
                 }
@@ -557,7 +557,7 @@
             .append(`<div class="d-flex justify-content-center">
                         <div class="spinner-grow spinner-grow-sm me-2" role="status">
                             <span class="sr-only">Loading...</span>
-                        </div> <a class="align-middle">Memproses Data Riwayat..</a>
+                        </div> <a class="align-middle text-muted">Memproses Data Riwayat..</a>
                     </div>`);
         const btn = $('#btn-refresh-riwayat-form-kfr');
         // const tgl_sep_date = tgl_sep.substring(0, 10);
@@ -579,7 +579,7 @@
                     // Swal.fire('Info', res.message, 'info');
                     $('#load-riwayat-form-kfr').empty()
                         .append(`<div class="d-flex justify-content-center">
-                                    <center><a class="align-middle">${res.message}</a></center>
+                                    <center><a class="align-middle text-muted">${res.message}</a></center>
                                 </div>`);
                     $('#btn-list-form-kfr-lama').prop('hidden', false).prop('disabled', true).removeClass('btn-secondary btn-info').addClass('btn-secondary');
                     return;
@@ -809,7 +809,7 @@
             .append(`<div class="d-flex justify-content-center">
                         <div class="spinner-grow spinner-grow-sm me-2" role="status">
                             <span class="sr-only">Loading...</span>
-                        </div> <a class="align-middle">Memproses Data Riwayat..</a>
+                        </div> <a class="align-middle text-muted">Memproses Data Riwayat..</a>
                     </div>`);
         const btn = $('#btn-list-form-kfr-lama');
         $.ajax({
@@ -826,7 +826,7 @@
                     // Swal.fire('Info', res.message, 'info');
                     $('#list-form-kfr').empty()
                         .append(`<div class="d-flex justify-content-center">
-                                    <center><a class="align-middle">${res.message}</a></center>
+                                    <center><a class="align-middle text-muted">${res.message}</a></center>
                                 </div>`);
                     return;
                 }
@@ -981,7 +981,7 @@
                     Swal.fire('Info', res.message, 'info');
                     $('#list-form-kfr').empty()
                         .append(`<div class="d-flex justify-content-center">
-                                    <center><a class="align-middle">Data Formulir KFR Tidak Ditemukan</a></center>
+                                    <center><a class="align-middle text-muted">Data Formulir KFR Tidak Ditemukan</a></center>
                                 </div>`);
                     return;
                 }
@@ -1039,7 +1039,7 @@
                     Swal.fire('Info', res.message, 'info');
                     $('#list-form-kfr').empty()
                         .append(`<div class="d-flex justify-content-center">
-                                    <center><a class="align-middle">Data Formulir KFR Tidak Ditemukan</a></center>
+                                    <center><a class="align-middle text-muted">Data Formulir KFR Tidak Ditemukan</a></center>
                                 </div>`);
                     return;
                 }

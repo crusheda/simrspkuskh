@@ -169,6 +169,12 @@
                 </li>
             @endif
             <li class="nav-item" role="presentation">
+                <a class="nav-link" id="" data-bs-toggle="tab" href="#forder" role="tab"
+                    aria-selected="false" tabindex="-1" id="tab-forder">
+                    <i class="ph-duotone ph-first-aid-kit me-2"></i> Order Penunjang
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
                 <a class="nav-link" id="" data-bs-toggle="tab" href="#konsul" role="tab"
                     aria-selected="false" tabindex="-1" id="tab-konsul" disabled>
                     <i class="ph-duotone ph-files me-2"></i> Form Konsul
@@ -294,6 +300,11 @@
         <div class="tab-content">
             <div class="tab-pane" id="fmrehab" role="tabpanel">
                 @include('pages.v2.medicalrecord.detail.rehabmedik.tab_rehab')
+            </div>
+        </div>
+        <div class="tab-content">
+            <div class="tab-pane" id="forder" role="tabpanel">
+                @include('pages.v3.emr.detail.order.tab')
             </div>
         </div>
         <div class="tab-content">
@@ -616,14 +627,8 @@
             // BUKA KUNJUNGAN LAIN DARI RIWAYAT PASIEN
             // =====================================================
             $(document)
-            .off(
-                'click.emrOpenKunjungan',
-                '[data-open-kunjungan]'
-            )
-            .on(
-                'click.emrOpenKunjungan',
-                '[data-open-kunjungan]',
-                function (event) {
+                .off('click.emrOpenKunjungan', '[data-open-kunjungan]')
+                .on('click.emrOpenKunjungan', '[data-open-kunjungan]', function (event) {
 
                     event.preventDefault();
 
@@ -633,37 +638,43 @@
                         return;
                     }
 
-                    // Detail pasien berjalan di dalam workspace.
-                    // Buka kunjungan di tab baru pada halaman induk.
+                    // =================================================
+                    // BACA METADATA KUNJUNGAN DARI BUTTON
+                    // =================================================
+                    let patient = {};
+
+                    try {
+                        const rawPatient = this.dataset.kunjunganPatient;
+
+                        if (rawPatient) {
+                            patient = JSON.parse(decodeURIComponent(rawPatient));
+                        }
+                    } catch (error) {
+                        console.error('[EMRDetailPage] Gagal membaca metadata kunjungan:', error);
+                    }
+
+                    // Fallback nomor kunjungan dan URL
+                    patient.nomor = nomor;
+                    patient.url = patient.url || `/v2/emr/${encodeURIComponent(nomor)}`;
+
+                    // =================================================
+                    // BUKA EMR WORKSPACE PADA PARENT
+                    // =================================================
                     if (
                         window.parent !== window &&
-                        window.parent.EMRWorkspace
+                        window.parent.EMRWorkspace &&
+                        typeof window.parent.EMRWorkspace.openPatient === 'function'
                     ) {
-                        window.parent.EMRWorkspace.openPatient({
-                            nomor: nomor,
-                            norm: rm,
-                            namaPasien: namaPasien,
-                            tglLahir: tglLahir,
-                            namaRuangan: namaRuangan,
-                            namaDokter: namaDokter,
-                            tglMasuk: tgl_masuk,
-                            tglKeluar: tgl_keluar,
-                            idAsuransi: idAsuransi,
-                            namaAsuransi: namaAsuransi,
-                            noAsuransi: noAsuransi,
-                            statusKunjungan: statusKunjungan,
-                            url: `/v2/emr/${encodeURIComponent(nomor)}`
-                        });
+                        window.parent.EMRWorkspace.openPatient(patient);
 
                         return;
                     }
 
-                    // Fallback jika halaman detail dibuka langsung.
-                    window.location.href =
-                        `/v2/emr/${encodeURIComponent(nomor)}`;
-
-                }
-            );
+                    // =================================================
+                    // FALLBACK JIKA HALAMAN DIBUKA LANGSUNG
+                    // =================================================
+                    window.location.href = patient.url;
+                });
         });
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -1358,10 +1369,27 @@
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0">
                                         <button
-                                            class="btn btn-sm btn-outline-${item.NOKUNJUNGAN == kunjungan ? 'warning' : 'secondary'} border-dashed waves-effect waves-light flex-shrink-0 me-2"
+                                            type="button"
+                                            class="btn btn-sm btn-subtle-${item.NOKUNJUNGAN == kunjungan ? 'warning' : 'warning'} border-dashed waves-effect waves-light flex-shrink-0 me-2"
                                             data-bs-toggle="tooltip"
-                                            title="Lihat Detail Kunjungan"
+                                            title=""
                                             data-open-kunjungan="${item.NOKUNJUNGAN}"
+                                            data-kunjungan-patient="${encodeURIComponent(JSON.stringify({
+                                                nomor: item.NOKUNJUNGAN,
+                                                norm: rm,
+                                                nama: item.NAMAPASIEN ?? namaPasien,
+                                                tglLahir: item.TGLLAHIRPASIEN ?? tglLahir,
+                                                umur: item.UMURPASIEN ?? umur,
+                                                namaRuangan: item.NAMARUANGAN ?? namaRuangan,
+                                                namaDokter: item.NAMADOKTER ?? namaDokter,
+                                                tglMasuk: item.TGLMASUK ?? tgl_masuk,
+                                                tglKeluar: item.TGLKELUAR ?? tgl_keluar,
+                                                idAsuransi: item.IDASURANSI ?? idAsuransi,
+                                                namaAsuransi: item.NAMAASURANSI ?? namaAsuransi,
+                                                noAsuransi: item.NOASURANSI ?? noAsuransi,
+                                                statusKunjungan: item.STATUSKUNJUNGAN,
+                                                url: '/v3/emr/' + encodeURIComponent(item.NOKUNJUNGAN)
+                                            }))}"
                                             ${item.NOKUNJUNGAN == kunjungan ? 'disabled' : ''}
                                         >
                                             <i class="ph-duotone ph-stethoscope fs-20"></i>
@@ -1374,11 +1402,11 @@
                                     </div>
 
                                     <div class="flex-shrink-0">
-                                        <p class="mb-0 text-end" style="font-size:12px" data-bs-toggle="tooltip" title="Status Kunjungan">
+                                        <p class="mb-1 text-end" style="font-size:12px" data-bs-toggle="tooltip" title="Status Kunjungan">
                                             Status : ${statusdaftar}
                                         </p>
 
-                                        <span class="badge bg-secondary-subtle text-secondary"
+                                        <span class="badge text-bg-secondary"
                                             style="font-size:12px"
                                             data-bs-toggle="tooltip"
                                             title="Pasien didaftarkan ${dayjs(item.TGLDAFTAR).fromNow()}">

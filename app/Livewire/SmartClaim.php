@@ -349,6 +349,10 @@ class SmartClaim extends Component
             ->where('pk.NOMOR', $KUNJUNGAN)
             ->first();
 
+        if (!empty($show->RUANG_KAMAR_TIDUR)) {
+            $show->NAMARUANGAN = "{$show->NAMARUANGAN} - {$show->NAMAKAMAR} {$show->NAMATT}";
+        }
+
         /**
          * DATA UNTUK BLADE
          *
