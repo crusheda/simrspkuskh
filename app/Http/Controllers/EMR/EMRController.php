@@ -1012,13 +1012,9 @@ class EMRController extends Controller
 
         $riwayat = DB::table('pendaftaran.kunjungan AS pk')
             ->select(
-                'pk.NOMOR AS NOKUNJUNGAN',
-                'pp.TANGGAL AS TGLDAFTAR',
-                'pp.STATUS AS STATUSDAFTAR',
-                'pk.STATUS AS STATUSKUNJUNGAN',
-                // 'kjs.noSEP AS NOSEP',
-                // 'kjs.tglSEP AS TGLSEP',
-                'ru.DESKRIPSI AS NAMARUANGAN',
+                DB::raw('master.getNamaLengkap(ps.NORM) AS NAMAPASIEN'),
+                DB::raw('master.getAlamatPasienCustom(ps.NORM) AS ALAMATPASIEN'),
+                DB::raw('master.getCariUmur(pp.TANGGAL, ps.TANGGAL_LAHIR) AS UMURPASIEN'),
                 DB::raw("
                     master.getNamaLengkapPegawai(
                         CASE
@@ -1028,11 +1024,76 @@ class EMRController extends Controller
                         END
                     ) AS NAMADOKTER
                 "),
+
+                'pk.NOMOR AS NOKUNJUNGAN',
+                'pp.TANGGAL AS TGLDAFTAR',
+                'pk.MASUK AS TGLMASUK',
+                'pk.KELUAR AS TGLKELUAR',
+
+                'kjs.noSEP AS NOSEP',
+                'kjs.tglSEP AS TGLSEP',
+                'npj.DESKRIPSI AS NAMAASURANSI',
+                'pj.JENIS AS IDASURANSI',
+                'npj.REF_ID AS REFIDASURANSI',
+                'pj.NOMOR AS NOASURANSI',
+
+                'ru.ID AS IDRUANGAN',
+                'ru.DESKRIPSI AS NAMARUANGAN',
+                'rk.KAMAR AS NAMAKAMAR',
+                'rkt.TEMPAT_TIDUR AS NAMATT',
+                'ps.TANGGAL_LAHIR AS TGLLAHIRPASIEN',
+
+                'pp.STATUS AS STATUSDAFTAR',
+                'pk.STATUS AS STATUSKUNJUNGAN',
             )
             ->leftJoin('pendaftaran.pendaftaran AS pp', 'pp.NOMOR', '=', 'pk.NOPEN')
             ->leftJoin('pendaftaran.penjamin AS pj', 'pj.NOPEN', '=', 'pp.NOMOR')
-            // ->leftJoin('bpjs.kunjungan AS kjs', 'kjs.noSEP', '=', 'pj.NOMOR')
+            ->leftJoin('master.referensi as npj', function ($join) {
+                $join->on('npj.ID', '=', 'pj.JENIS')
+                    ->where('npj.JENIS', 10);
+            })
+            ->leftJoin(
+                'bpjs.kunjungan AS kjs',
+                'kjs.noSEP',
+                '=',
+                'pj.NOMOR'
+            )
+            ->leftJoin('bpjs.peserta AS pjs', function ($join) {
+                $join->on('pjs.noKartu', '=', 'kjs.noKartu');
+            })
+            ->leftJoin(
+                'master.pasien AS ps',
+                'ps.NORM',
+                '=',
+                'pp.NORM'
+            )
+            ->leftJoin(
+                'master.kontak_pasien AS kps',
+                'ps.NORM',
+                '=',
+                'kps.NORM'
+            )
+            ->leftJoin(
+                'master.keluarga_pasien AS kgs',
+                'ps.NORM',
+                '=',
+                'kgs.NORM'
+            )
+            ->leftJoin(
+                'master.kartu_identitas_pasien AS kips',
+                'ps.NORM',
+                '=',
+                'kips.NORM'
+            )
             ->leftJoin('master.ruangan AS ru', 'ru.ID', '=', 'pk.RUANGAN')
+            ->leftJoin('master.ruang_kamar_tidur AS rkt', function ($join) {
+                $join->on('rkt.ID', '=', 'pk.RUANG_KAMAR_TIDUR')
+                        ->whereIn('rkt.STATUS', [1,2,3]);
+            })
+            ->leftJoin('master.ruang_kamar AS rk', function ($join) {
+                $join->on('rk.ID', '=', 'rkt.RUANG_KAMAR')
+                        ->where('rk.STATUS', 1);
+            })
             ->leftJoin('master.dokter AS dr', 'dr.ID', '=', 'pk.DPJP')
             ->where(function ($q) {
                 $q->where('pk.RUANGAN', 'LIKE', '1020101%')
@@ -1044,7 +1105,19 @@ class EMRController extends Controller
             ->where('pp.NORM', $NORM)
             ->where('pp.STATUS', '!=', 0)
             ->orderBy('pp.TANGGAL', 'DESC')
+            ->distinct()
             ->get();
+
+        // Modifikasi NAMARUANGAN untuk seluruh data riwayat
+        foreach ($riwayat as $show) {
+            if (!empty($show->NAMAKAMAR) || !empty($show->NAMATT)) {
+                $show->NAMARUANGAN = trim(
+                    $show->NAMARUANGAN . ' - ' .
+                    $show->NAMAKAMAR . ' ' .
+                    $show->NAMATT
+                );
+            }
+        }
 
         return response()->json([
             'show' => $riwayat,
@@ -1165,6 +1238,8 @@ class EMRController extends Controller
                     'ar.POS AS POS_ANTRIAN','ar.NOMOR AS NOMOR_ANTRIAN','ar.JENIS AS JENIS_ANTRIAN',
                     'ru.ID AS IDRUANGAN',
                     'ru.DESKRIPSI AS NAMARUANGAN',
+                    'rk.KAMAR AS NAMAKAMAR',
+                    'rkt.TEMPAT_TIDUR AS NAMATT',
                     'pj.NOMOR AS NOMORPENJAMIN',
                     'pj.JENIS AS JENISPENJAMIN',
                     'ref.REF_ID AS REFJENISPENJAMIN',
@@ -1218,6 +1293,14 @@ class EMRController extends Controller
                 ->join('master.ruangan AS ru', function($join){
                     $join->on('ru.ID','=','pk.RUANGAN')
                         ->where('ru.STATUS', 1);
+                })
+                ->leftJoin('master.ruang_kamar_tidur AS rkt', function ($join) {
+                    $join->on('rkt.ID', '=', 'pk.RUANG_KAMAR_TIDUR')
+                            ->whereIn('rkt.STATUS', [1,2,3]);
+                })
+                ->leftJoin('master.ruang_kamar AS rk', function ($join) {
+                    $join->on('rk.ID', '=', 'rkt.RUANG_KAMAR')
+                            ->where('rk.STATUS', 1);
                 })
                 ->leftJoin('master.dokter AS dr','dr.ID','=','pk.DPJP')
                 // KHUSUS $penjamin = 2 / BPJS
@@ -1370,8 +1453,17 @@ class EMRController extends Controller
                 ->distinct()
                 ->get();
 
-                // print_r($show);
-                // die();
+        // Modifikasi NAMARUANGAN untuk seluruh data riwayat
+        foreach ($show as $item) {
+            if (!empty($item->NAMAKAMAR) || !empty($item->NAMATT)) {
+                $item->NAMARUANGAN = trim(
+                    $item->NAMARUANGAN . ' - ' .
+                    $item->NAMAKAMAR . ' ' .
+                    $item->NAMATT
+                );
+            }
+        }
+
         $data = [
             'show' => $show,
             'time' => $time,

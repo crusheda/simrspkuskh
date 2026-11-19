@@ -77,9 +77,9 @@
         @endcan
     </nav>
 
-    <div class="nav-caption mt-4" hidden>PREFERENSI</div>
+    <div class="nav-caption mt-4">PREFERENSI</div>
 
-    <nav class="app-nav" hidden>
+    <nav class="app-nav">
         <button
             type="button"
             class="app-nav-link app-nav-button"
@@ -88,8 +88,7 @@
             <i class="bi bi-moon-stars"></i>
             <span>Mode gelap</span>
         </button>
-
-        <button
+        {{-- <button
             type="button"
             class="app-nav-link app-nav-button"
             data-bs-toggle="modal"
@@ -97,7 +96,15 @@
         >
             <i class="bi bi-info-circle"></i>
             <span>Tentang SIRMED</span>
-        </button>
+        </button> --}}
+        <a
+            type="button"
+            class="app-nav-link app-nav-button"
+            href="{{ route('v2.dashboard') }}"
+        >
+            <i class="bi bi-display"></i>
+            <span>Sirmed v2</span>
+        </a>
     </nav>
 
     <div class="sidebar-bottom">

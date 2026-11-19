@@ -13,7 +13,7 @@
                 </a>
             </li>
             <li class="nav-item-hr"></li>
-            <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Digital">
+            <li class="nav-item mb-auto" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Digital">
                 <a class="menu-link" href="#digitalTab" role="tab" aria-controls="digitalTab"
                     aria-selected="false" data-bs-toggle="tab">
                     <i class="ri-health-book-line fs-24"></i>
@@ -43,20 +43,17 @@
                             stroke-width="2" stroke-linecap="round" />
                     </svg>
                 </a>
-            </li>
-            <li class="nav-item mt-5" data-bs-toggle="tooltip" data-bs-placement="right"
-                data-bs-title="Login">
-                <a class="menu-link" href="authentication/login-frame.html">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path opacity="0.5"
-                            d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2H16.0002C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8V16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.2429 22 18.8286 22 16.0002 22H15.0002C12.1718 22 10.7576 22 9.87889 21.1213C9.11051 20.3529 9.01406 19.175 9.00195 17"
-                            stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" />
-                        <path d="M15 12H2M2 12L5.5 9M2 12L5.5 15" stroke="var(--bs-heading-color)"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </li> --}}
+            @canany(['smart_claim', 'smart_claim_farmasi'])
+            <li class="nav-item mt-5" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Ujicoba Sirmed v3">
+                <a class="menu-link" href="{{ route('v3.dashboard') }}">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21.609 13.5616L21.8382 11.1263C22.0182 9.2137 22.1082 8.25739 21.781 7.86207C21.604 7.64823 21.3633 7.5172 21.106 7.4946C20.6303 7.45282 20.0329 8.1329 18.8381 9.49307C18.2202 10.1965 17.9113 10.5482 17.5666 10.6027C17.3757 10.6328 17.1811 10.6018 17.0047 10.5131C16.6865 10.3529 16.4743 9.91812 16.0499 9.04851L13.8131 4.46485C13.0112 2.82162 12.6102 2 12 2C11.3898 2 10.9888 2.82162 10.1869 4.46486L7.95007 9.04852C7.5257 9.91812 7.31351 10.3529 6.99526 10.5131C6.81892 10.6018 6.62434 10.6328 6.43337 10.6027C6.08872 10.5482 5.77977 10.1965 5.16187 9.49307C3.96708 8.1329 3.36968 7.45282 2.89399 7.4946C2.63666 7.5172 2.39598 7.64823 2.21899 7.86207C1.8918 8.25739 1.9818 9.2137 2.16181 11.1263L2.391 13.5616C2.76865 17.5742 2.95748 19.5805 4.14009 20.7902C5.32271 22 7.09517 22 10.6401 22H13.3599C16.9048 22 18.6773 22 19.8599 20.7902C21.0425 19.5805 21.2313 17.5742 21.609 13.5616Z" stroke="var(--bs-heading-color)" stroke-width="2"></path>
+                        <path opacity="0.5" d="M9 18H15" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
                     </svg>
                 </a>
-            </li> --}}
+            </li>
+            @endcanany
         </ul>
     </div>
     <div class="app-tab-content">
