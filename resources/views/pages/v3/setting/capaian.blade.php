@@ -1,24 +1,8 @@
-<div class="app-shell py-3">
+@section('title', 'Integrated System')
+@section('page-sub-title', 'SISTEM INFORMASI RUMAH SAKIT')
+@section('page-title', 'Capaian TTE Pengguna')
 
-    {{-- HEADER --}}
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-        <div>
-            <h4 class="fw-bold mb-1">
-                <i class="bi bi-leaderboard me-2 text-primary"></i>
-                Capaian TTE Pegawai
-            </h4>
-            <div class="text-muted small">
-                Monitoring enrollment dan penggunaan variasi tanda tangan elektronik pegawai
-            </div>
-        </div>
-
-        <div class="d-flex align-items-center gap-2">
-            <span class="badge bg-primary-subtle text-primary px-3 py-2">
-                <i class="bi bi-shield-check me-1"></i>
-                Monitoring TTE
-            </span>
-        </div>
-    </div>
+<div id="capaian-page">
 
     {{-- STATISTIK --}}
     <div class="row g-3 mb-4">
@@ -232,7 +216,7 @@
                     </div>
                 </div>
 
-                <div class="badge bg-secondary-subtle text-secondary">
+                <div class="badge text-bg-secondary">
                     {{ number_format($pegawai->total()) }} Data
                 </div>
             </div>
@@ -243,7 +227,7 @@
             {{-- FILTER --}}
             <div class="row g-2 mb-3">
 
-                <div class="col-xl-5 col-lg-5">
+                <div class="col-xl-5">
                     <div class="input-group">
                         <span class="input-group-text">
                             <i class="bi bi-search"></i>
@@ -264,7 +248,19 @@
                     </div>
                 </div>
 
-                <div class="col-xl-3 col-lg-3 col-md-4">
+                <div class="col-xl-2">
+                    <select wire:model.live="filterRole" class="form-select">
+                        <option value="all">Semua Role</option>
+
+                        @foreach ($roleOptions as $role)
+                            <option value="{{ $role->id }}">
+                                {{ $role->jabatan }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-xl-2">
                     <select class="form-select"
                             wire:model.live="filterStatus">
                         <option value="all">Semua Status TTE</option>
@@ -273,7 +269,7 @@
                     </select>
                 </div>
 
-                <div class="col-xl-2 col-lg-2 col-md-4">
+                <div class="col-xl-2">
                     <select class="form-select"
                             wire:model.live="filterVariant">
                         <option value="all">Semua Variasi</option>
@@ -285,7 +281,7 @@
                     </select>
                 </div>
 
-                <div class="col-xl-2 col-lg-2 col-md-4">
+                <div class="col-xl-1">
                     <select class="form-select"
                             wire:model.live="perPage">
                         <option value="15">15 Data</option>

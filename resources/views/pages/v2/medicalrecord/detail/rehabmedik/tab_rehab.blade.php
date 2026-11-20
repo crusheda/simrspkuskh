@@ -26,26 +26,6 @@
 </div>
 
 <script>
-    // const {
-    //     kunjungan,
-    //     namaRuangan,
-    //     namaDokter,
-    //     rm,
-    //     namaPasien,
-    //     tglLahir,
-    //     umur,
-    //     idAsuransi,
-    //     namaAsuransi,
-    //     noAsuransi,
-    //     tgl_sep,
-    //     sep,
-    //     tgl_kfr,
-    //     tgl_masuk,
-    //     tgl_keluar,
-    //     tgl_sep_date,
-    //     statusKunjungan
-    // } = window.EMRData;
-
     $(document).ready(function() {
 
     });

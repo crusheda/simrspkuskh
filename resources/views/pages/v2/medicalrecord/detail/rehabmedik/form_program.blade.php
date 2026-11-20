@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-md-12" id="formJPel" hidden>
-        <div class="card table-card border shadow-none">
+        <div class="card table-card border shadow-none mb-2">
             <div class="card-header d-flex align-items-center justify-content-between p-3">
                 <h6 class="card-title mb-0"><i class="fas fa-file-contract me-1"></i> Form <b class="text-success">Jadwal Pelayanan Pasien</b></h6>
                 <div>
@@ -400,7 +400,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-program-kfr">
                     <button class="accordion-button bg-success-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-program-kfr" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fas fa-sort-alpha-down me-1"></i> Riwayat Program Terapi <span class="badge bg-secondary-subtle text-secondary ms-1" data-bs-toggle="tooltip" title="Riwayat Program Terapi Diurutkan Dari Data Terbaru Khusus Hanya Kunjungan Saat Ini">By.KUNJUNGAN</span>
+                        <i class="fas fa-sort-alpha-down me-1"></i> Riwayat Program Terapi <span class="badge text-bg-secondary ms-2" data-bs-toggle="tooltip" title="Riwayat Program Terapi Diurutkan Dari Data Terbaru Khusus Hanya Kunjungan Saat Ini">By.KUNJUNGAN</span>
                     </button>
                 </h2>
                 <div id="btn-collapse-riwayat-program-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-program-kfr" data-bs-parent="#collapse-riwayat-program-kfr">
@@ -420,12 +420,12 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading-riwayat-cppt-program-kfr">
                     <button class="accordion-button bg-primary-subtle" type="button" data-bs-toggle="collapse" data-bs-target="#btn-collapse-riwayat-cppt-program-kfr" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge bg-secondary-subtle text-secondary ms-1" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.NORM</span>
+                        <i class="fas fa-sort-amount-down me-1"></i> Riwayat CPPT <span class="badge text-bg-secondary ms-2" data-bs-toggle="tooltip" title="Riwayat CPPT Diurutkan Dari Data Terbaru">By.NORM</span>
                     </button>
                 </h2>
                 <div id="btn-collapse-riwayat-cppt-program-kfr" class="accordion-collapse collapse show" aria-labelledby="heading-riwayat-cppt-program-kfr" data-bs-parent="#collapse-riwayat-cppt-program-kfr">
                     <div class="accordion-body rounded-bottom p-3" style="max-height: 613px; overflow-y: auto;">
-                        <div id="load-riwayat-cppt-program-kfr">
+                        <div id="load-riwayat-cppt-program-kfr" style="display: flex; flex-direction: column; gap: 8px;">
                             <div class="d-flex justify-content-center">
                                 <div class="spinner-grow spinner-grow-sm me-2" role="status">
                                     <span class="sr-only">Loading...</span>
@@ -1025,20 +1025,20 @@
                                                     <div class="text-truncate w-100">
                                                         ${badgeSistem}
                                                         ${window.EMRData.kunjungan == item.KUNJUNGAN ? '<span class="badge bg-success badge-sm me-1" data-bs-toggle="tooltip" title="CPPT dari Kunjungan Saat Ini"><i class="fas fa-flag-checkered"></i></span>' : ''}
-                                                        <b class="text-teal-900" data-bs-toggle="tooltip" title="Nama Ruangan">${item.NAMARUANGAN}</b>
+                                                        <a class="text-teal-900" data-bs-toggle="tooltip" title="Nama Ruangan">${item.NAMARUANGAN}</a>
                                                         <i class="fas fa-angle-right mx-1"></i>
-                                                        <b class="text-pink-900" data-bs-toggle="tooltip" title="Tgl. Pendaftaran Kunjungan">${tanggalDaftar}</b>
+                                                        <a class="text-pink-900" data-bs-toggle="tooltip" title="Tgl. Pendaftaran Kunjungan">${tanggalDaftar}</a>
                                                         <i class="fas fa-angle-right mx-1"></i>
-                                                        <b class="text-purple-900" data-bs-toggle="tooltip" title="Nama Dokter DPJP">${item.NAMADPJP}</b>
+                                                        <a class="text-purple-900" data-bs-toggle="tooltip" title="Nama Dokter DPJP">${item.NAMADPJP}</a>
                                                     </div>
                                                     <div class="small mt-1 text-truncate w-100">
-                                                        <b data-bs-toggle="tooltip" title="Nama User Input CPPT"><i class="fas fa-user-md text-primary me-1"></i>
-                                                        CPPT <b class="text-blue-900">${jeniscppt}</b> Oleh <u>${item.NAMAUSER}</u></b>
+                                                        <a data-bs-toggle="tooltip" title="Nama User Input CPPT"><i class="fas fa-user-md text-primary me-1"></i>
+                                                        CPPT <a class="text-blue-900">${jeniscppt}</a> Oleh <u>${item.NAMAUSER}</u></a>
                                                     </div>
                                                     <div class="small mt-1 text-truncate w-100">
-                                                        <b data-bs-toggle="tooltip" title="Tanggal Input CPPT"><i class="fas fa-calendar-check text-orange-400 me-1"></i>
+                                                        <a data-bs-toggle="tooltip" title="Tanggal Input CPPT"><i class="fas fa-calendar-check text-orange-400 me-1"></i>
                                                             Ditambahkan Tgl. ${tanggal} WIB
-                                                        </b>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </button>
@@ -1240,12 +1240,12 @@
                     content += `<li class="list-group-item list-group-item-action ftr-item" data-id="${item.nomor}" data-group="${item.group}" data-queue="${item.queue}" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lihat Berkas Formulir" style="cursor:pointer;">
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="flex-shrink-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="GROUP - PROGRAM. KE XX">
-                                                <div class="badge bg-light-subtle border border-primary-subtle text-secondary shadow-lg fs-25 h-100"> ${item.group} <i class="ti ti-minus"></i> ${item.queue} </div>
+                                                <div class="badge text-bg-light border border-dark-subtle shadow-lg fs-25 h-100"> ${item.group} <i class="ti ti-minus"></i> ${item.queue} </div>
                                             </div>
                                             <div class="flex-grow-1 ms-3">
                                                 <div class="row g-1">
                                                     <div class="col-6">
-                                                        <h6 class="mb-1">PROGRAM TERAPI <b class="text-info">#</b> <b class="text-red-900">${jenis}</b></h6>
+                                                        <h6 class="mb-1">PROGRAM TERAPI <b class="text-info">#</b> <a class="text-red-900">${jenis}</a></h6>
                                                         <p class="text-muted mb-0"><small><b class="text-danger">DPJP</b>: <u>${item.nama_dokter}</u></small></p>
                                                         <p class="text-muted mb-0"><small><b class="text-primary">TIM</b>: ${item.nama_tim}</small></p>
                                                     </div>
@@ -1257,7 +1257,7 @@
                                                 </div>
                                             </div>
                                             <div class="flex-shrink-2 ms-4 d-flex flex-column gap-1">
-                                                <button class="btn btn-sm btn-outline-warning" data-queue="${item.queue}" id="btn-edit-form-ptr" onclick="event.stopPropagation(); editFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ubah Form Program Terapi" ${btnDis}>
+                                                <button class="btn btn-sm btn-outline-warning text-white" data-queue="${item.queue}" id="btn-edit-form-ptr" onclick="event.stopPropagation(); editFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ubah Form Program Terapi" ${btnDis}>
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                                 <button class="btn btn-sm btn-outline-danger" data-queue="${item.queue}" id="btn-delete-form-ptr" onclick="event.stopPropagation(); deleteFormProgramTerapi('${item.nomor}', '${item.group}', '${item.queue}')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hapus Form Program Terapi" ${btnDis}>

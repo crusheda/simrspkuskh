@@ -78,19 +78,19 @@
                     <div class="col-md-12 mt-3">
                         <div class="row align-items-center justify-content-between g-3">
                             <div class="col-sm-auto">
-                                <button class="btn btn-warning me-2" onclick="kosongiFormKfr()" id="btn-kosongi-form-kfr" hidden>
+                                <button class="btn btn-subtle-warning me-2" onclick="kosongiFormKfr()" id="btn-kosongi-form-kfr" hidden>
                                     <i  class="fas fa-edit me-1"></i> Kosongkan Formulir
                                 </button>
-                                <button class="btn btn-danger me-2" onclick="deleteFormKfr()" id="btn-hapus-form-kfr" data-bs-toggle="tooltip" title="Hapus Formulir KFR Utama" hidden>
+                                <button class="btn btn-subtle-danger me-2" onclick="deleteFormKfr()" id="btn-hapus-form-kfr" data-bs-toggle="tooltip" title="Hapus Formulir KFR Utama" hidden>
                                     <i class="fas fa-trash"></i>
                                 </button>
-                                <button class="btn btn-warning me-2" onclick="generateFormKfr()" id="btn-generate-form-kfr" data-bs-toggle="tooltip" title="Generate Ulang Formulir KFR" hidden>
+                                <button class="btn btn-subtle-warning me-2" onclick="generateFormKfr()" id="btn-generate-form-kfr" data-bs-toggle="tooltip" title="Generate Ulang Formulir KFR" hidden>
                                     <i class="fas fa-paper-plane"></i>
                                 </button>
-                                <button class="btn btn-info me-2" onclick="showFormKfr()" id="btn-lihat-form-kfr" data-bs-toggle="tooltip" title="Lihat Berkas Formulir KFR Saat Ini" hidden>
+                                <button class="btn btn-subtle-info me-2" onclick="showFormKfr()" id="btn-lihat-form-kfr" data-bs-toggle="tooltip" title="Lihat Berkas Formulir KFR Saat Ini" hidden>
                                     <i class="fas fa-book-open"></i>
                                 </button>
-                                <button class="btn btn-danger" onclick="confirmUnSyncFormKfrLama()" id="btn-unsync-form-lama" data-bs-toggle="tooltip" title="Batalkan/Putuskan Hubungan dengan Form KFR Utama" hidden>
+                                <button class="btn btn-subtle-danger" onclick="confirmUnSyncFormKfrLama()" id="btn-unsync-form-lama" data-bs-toggle="tooltip" title="Batalkan/Putuskan Hubungan dengan Form KFR Utama" hidden>
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -101,7 +101,7 @@
                                 <button class="btn btn-success" onclick="updateFormKfr()" id="btn-update-form-kfr" data-bs-toggle="tooltip" title="Perbarui Formulir & TTE" hidden>
                                     <i class="fas fa-edit me-1"></i> Update Formulir
                                 </button>
-                                <button class="btn btn-light-dark" onclick="loadFormKfr()" id="btn-tutup-update-form-kfr" data-bs-toggle="tooltip" title="Batalkan" hidden>
+                                <button class="btn btn-subtle-secondary" onclick="loadFormKfr()" id="btn-tutup-update-form-kfr" data-bs-toggle="tooltip" title="Batalkan" hidden>
                                     <i class="fas fa-reply me-1"></i>
                                 </button>
                                 <button class="btn btn-dark" onclick="bukaUpdateFormKfr()" id="btn-buka-update-form-kfr" data-bs-toggle="tooltip" title="Buat Form Baru di Group Yang Sama" hidden>
@@ -642,7 +642,7 @@
                                                             </ul>
 
                                                         </div>`
-                                                    : `<div class="badge bg-light-subtle border border-primary-subtle text-secondary shadow-lg fs-25 h-100" onclick="event.stopPropagation();" id="icoGQ`+item.nomor+`"> `+item.group+` <i class="ti ti-minus text-pink"></i> `+item.queue+` </div>` }
+                                                    : `<div class="badge text-bg-light border border-dark-subtle shadow-lg fs-25 h-100" onclick="event.stopPropagation();" id="icoGQ`+item.nomor+`"> `+item.group+` <i class="ti ti-minus text-pink"></i> `+item.queue+` </div>` }
 
                                             </div>
                                             <div class="flex-grow-1 ms-3">

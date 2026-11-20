@@ -13,6 +13,7 @@ class Capaian extends Component
     protected $paginationTheme = 'bootstrap';
 
     public string $search = '';
+    public string $filterRole = 'all';
     public string $filterStatus = 'all';
     public string $filterVariant = 'all';
     public string $sortBy = 'nama';
@@ -21,11 +22,17 @@ class Capaian extends Component
 
     protected $queryString = [
         'search' => ['except' => ''],
+        'filterRole' => ['except' => 'all'],
         'filterStatus' => ['except' => 'all'],
         'filterVariant' => ['except' => 'all'],
     ];
 
     public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterRole()
     {
         $this->resetPage();
     }
@@ -65,6 +72,17 @@ class Capaian extends Component
         $this->resetPage();
     }
 
+    private function getRoleOptions()
+    {
+        return DB::table('simrspku_klaim.roles')
+            ->where('visible', 1)
+            ->where('guard_name', 'web')
+            ->whereNotNull('jabatan')
+            ->where('jabatan', '!=', '')
+            ->orderBy('jabatan')
+            ->get(['id', 'name', 'jabatan']);
+    }
+
     /**
      * Query agregasi TTE per NIP.
      */
@@ -95,6 +113,23 @@ class Capaian extends Component
             ->join('aplikasi.pengguna as ap', 'ap.NIP', '=', 'pg.NIP')
             ->leftJoinSub($tte, 'tte', function ($join) {
                 $join->on('tte.nip', '=', 'pg.NIP');
+            })
+            ->whereExists(function ($query) {
+                $query->selectRaw('1')
+                    ->from('simrspku_klaim.model_has_roles as mhr')
+                    ->whereColumn('mhr.model_id', 'ap.ID')
+                    ->where('mhr.model_type', 'App\Models\Pengguna');
+            })
+            ->whereExists(function ($query) {
+                $query->selectRaw('1')
+                    ->from('simrspku_klaim.model_has_roles as mhr')
+                    ->join(
+                        'simrspku_klaim.roles as r',
+                        'r.id',
+                        '=',
+                        'mhr.role_id'
+                    )
+                    ->whereColumn('mhr.model_id', 'ap.ID');
             })
             ->select(
                 'pg.NIP as nip',
@@ -129,6 +164,15 @@ class Capaian extends Component
                       'master.getNamaLengkapPegawai(pg.NIP) LIKE ?',
                       ["%{$keyword}%"]
                   );
+            });
+        }
+
+        if ($this->filterRole !== 'all') {
+            $query->whereExists(function ($subQuery) {
+                $subQuery->selectRaw('1')
+                    ->from('simrspku_klaim.model_has_roles as mhr')
+                    ->whereColumn('mhr.model_id', 'ap.ID')
+                    ->where('mhr.role_id', $this->filterRole);
             });
         }
 
@@ -231,11 +275,10 @@ class Capaian extends Component
                 break;
         }
 
-        $pegawai = $query->paginate($this->perPage);
-
         return view('pages.v3.setting.capaian', [
-            'pegawai' => $pegawai,
+            'pegawai' => $query->paginate($this->perPage),
             'stats' => $this->getStatistics(),
-        ]);
+            'roleOptions' => $this->getRoleOptions(),
+        ])->layout('layouts.v3.app');
     }
 }

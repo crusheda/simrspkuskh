@@ -1,5 +1,5 @@
-
 @section('title', 'Realtime Notification')
+@section('page-sub-title', 'SISTEM INFORMASI RUMAH SAKIT')
 @section('page-title', 'Notifikasi Sistem')
 
 <div id="notifikasi-page">

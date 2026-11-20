@@ -272,7 +272,7 @@
                 {{-- Capaian --}}
                 <li>
                     <a href="{{ route('v3.capaian') }}" class="dropdown-item" wire:navigate>
-                        <i class="bi bi-leaderboard me-2"></i>
+                        <i class="bi bi-bezier2 me-2"></i>
                         Capaian
                     </a>
                 </li>

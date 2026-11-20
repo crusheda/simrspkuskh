@@ -11,6 +11,7 @@
 
 <script>
     window.EMRData = {
+        isAdmin: @json(Auth::user()->hasRole(['admin']));
         kunjungan: @json($list["KUNJUNGAN"]),
         ruangan: @json($list["show"]->IDRUANGAN),
         namaRuangan: @json($list["show"]->NAMARUANGAN),
@@ -506,6 +507,7 @@
     // var tgl_keluar = @json($list['show']->KELUAR);
     // var tgl_sep_date = tgl_sep?tgl_sep.substring(0, 10):null;
     const {
+        isAdmin,
         kunjungan,
         namaRuangan,
         namaDokter,
